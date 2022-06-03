@@ -12,14 +12,13 @@
 #include "utils/command_line_args_util.h"
 #include "utils/rbe_file_system_utils.h"
 #include "utils/rbe_assert.h"
-#include "utils/rbe_benchmark_util.h"
 #include "scripting/python/rbe_py.h"
 #include "rendering/renderer.h"
-#include "rendering/texture.h"
-#include "math/rbe_math.h"
+#include "audio/audio_manager.h"
 
 bool rbe_initialize_sdl();
 bool rbe_initialize_rendering();
+bool rbe_initialize_audio();
 bool rbe_initialize_input();
 void rbe_process_inputs();
 void rbe_process_game_logic();
@@ -58,6 +57,10 @@ bool rbe_initialize(int argv, char** args) {
     }
     if (!rbe_initialize_rendering()) {
         rbe_logger_error("Failed to initialize rendering!");
+        return false;
+    }
+    if (!rbe_initialize_audio()) {
+        rbe_logger_error("Failed to initialize audio!");
         return false;
     }
     if (!rbe_initialize_input()) {
@@ -126,12 +129,18 @@ bool rbe_initialize_rendering() {
     return true;
 }
 
+bool rbe_initialize_audio() {
+    return rbe_audio_manager_init();
+}
+
 bool rbe_initialize_input() {
     if (!rbe_input_initialize()) {
         return false;
     }
     // Temp shutdown input
     rbe_input_add_action_value("exit", "esc");
+    // Temp play sfx
+    rbe_input_add_action_value("play_sfx", "space");
     return true;
 }
 
@@ -156,6 +165,10 @@ void rbe_process_inputs() {
     // Temp shutdown
     if (rbe_input_is_action_just_pressed("exit")) {
         isRunning = false;
+    }
+    // Temp play sfx
+    if (rbe_input_is_action_just_pressed("play_sfx")) {
+        rbe_audio_manager_play_sound("test_games/fighter_test/assets/audio/sfx/rainbow_orb.wav");
     }
 }
 

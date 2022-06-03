@@ -23,3 +23,5 @@ Texture* rbe_asset_manager_load_texture(const char* fileName, const char* key) {
 Texture* rbe_asset_manager_get_texture(const char* key) {
     return rbe_string_hash_map_get(texturesMap, key);
 }
+
+void rbe_asset_manager_finalize() {}
