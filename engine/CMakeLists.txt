@@ -17,17 +17,26 @@ cmake_path(SET FREETYPE_LIBS_PATH "$ENV{FREETYPE_LIBS}")
 add_library(${PROJECT_NAME} STATIC
         src/core/core.c
         src/core/game_properties.c
+        src/core/asset_manager.c
         src/core/memory/rbe_mem.c
         src/core/input/input.c
         src/core/input/input_action.c
         src/core/scripting/python/py_helper.c
         src/core/scripting/python/rbe_py.c
         src/core/scripting/python/rbe_py_api_module.c
+        src/core/rendering/renderer.c
+        src/core/rendering/shader.c
+        src/core/rendering/texture.c
+        src/core/audio/audio_manager.c
+        src/core/audio/audio.c
+        src/core/thread/rbe_pthread.c
+        src/core/thread/rbe_thread_pool.c
         src/core/utils/command_line_args_util.c
         src/core/utils/logger.c
         src/core/utils/rbe_file_system_utils.c
         src/core/data_structures/rbe_hash_map.c
         src/core/data_structures/rbe_hash_map_string.c
+        ../include/stb_image/stb_image.c
         ../include/glad/glad.c
         )
 
