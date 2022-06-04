@@ -8,6 +8,8 @@ extern "C" {
 
 bool rbe_audio_manager_init();
 void rbe_audio_manager_finalize();
+// Process current jobs for resource manager
+void rbe_audio_manager_process();
 void rbe_audio_manager_play_sound(const char* filePath);
 
 #ifdef __cplusplus
