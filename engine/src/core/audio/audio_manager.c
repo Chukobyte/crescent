@@ -7,6 +7,8 @@
 #include "../memory/rbe_mem.h"
 #include "../thread/rbe_thread_pool.h"
 
+#define MAX_AUDIO_DATA_SOURCES 100
+
 void audio_data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frameCount);
 void audio_manager_thread_job(void* arg);
 
@@ -15,8 +17,12 @@ static ma_device* audioDevice = NULL;
 static ma_resource_manager* resourceManager = NULL;
 static ThreadPool* audioJobTP = NULL; // Can use a global job queue
 
-// Temp datasource
-static ma_resource_manager_data_source* resourceManagerDataSource = NULL;
+struct ResourceManagerDataSources {
+    ma_resource_manager_data_source* data[MAX_AUDIO_DATA_SOURCES];
+    size_t count;
+} ResourceManagerDataSources;
+
+static struct ResourceManagerDataSources* dataSources = NULL;
 
 bool rbe_audio_manager_init() {
     audioEngine = RBE_MEM_ALLOCATE(ma_engine);
@@ -56,6 +62,11 @@ bool rbe_audio_manager_init() {
     audioJobTP = tpool_create(1);
     tpool_add_work(audioJobTP, audio_manager_thread_job, NULL);
 
+    // Temp
+    dataSources = RBE_MEM_ALLOCATE(struct ResourceManagerDataSources);
+    memset(dataSources, 0, sizeof(struct ResourceManagerDataSources));
+    dataSources->count = 0;
+
     return true;
 }
 
@@ -68,6 +79,9 @@ void rbe_audio_manager_finalize() {
     RBE_MEM_FREE(audioDevice);
     audioDevice = NULL;
 
+    RBE_MEM_FREE(dataSources); // TODO: Free up data in data sources...
+    dataSources = NULL;
+
     tpool_destroy(audioJobTP);
 }
 
@@ -78,45 +92,43 @@ void rbe_audio_manager_process() {
 }
 
 void rbe_audio_manager_play_sound(const char* filePath, bool loops) {
-//    ma_engine_play_sound(audioEngine, filePath, NULL);
-
-    // Temp Resource Manager
-//    ma_resource_manager_data_source dataSource;
     ma_result result;
-    if (resourceManagerDataSource == NULL) {
-        resourceManagerDataSource = RBE_MEM_ALLOCATE(ma_resource_manager_data_source);
-        result = ma_resource_manager_data_source_init(resourceManager, filePath, 0, NULL, resourceManagerDataSource);
-        if (result != MA_SUCCESS) {
-            rbe_logger_error("Failed to play sound at file path: '%s'", filePath);
-            return;
-        }
-        if (loops) {
-            ma_data_source_set_looping(resourceManagerDataSource, true);
-        }
+    ma_resource_manager_data_source* newDataSource = RBE_MEM_ALLOCATE(ma_resource_manager_data_source);
+    result = ma_resource_manager_data_source_init(resourceManager, filePath, 0, NULL, newDataSource);
+    if (result != MA_SUCCESS) {
+        rbe_logger_error("Failed to play sound at file path: '%s'", filePath);
+        return;
     }
-
-    // ...
+    ma_data_source_set_looping(newDataSource, loops);
+    dataSources->data[dataSources->count++] = newDataSource;
 
     // A ma_resource_manager_data_source object is compatible with the ma_data_source API. To read data, just call
     // the ma_data_source_read_pcm_frames() like you would with any normal data source.
-    result = ma_data_source_read_pcm_frames(resourceManagerDataSource, NULL, 1000, NULL);
+    result = ma_data_source_read_pcm_frames(dataSources->data[dataSources->count - 1], NULL, 1000, NULL);
     if (result != MA_SUCCESS) {
         // Failed to read PCM frames.
         rbe_logger_error("Error playing sound!  result = '%d'", result);
     }
-
-//    ma_resource_manager_data_source_uninit(&dataSource);
 }
 
 // --- Thread/Job --- //
 void audio_data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frameCount) {
-    if (resourceManagerDataSource != NULL) {
-        ma_result result = ma_data_source_read_pcm_frames(resourceManagerDataSource, pOutput, frameCount, NULL);
+    for (size_t i = 0; i < dataSources->count; i++) {
+        if (dataSources->data[i] == NULL) {
+            rbe_logger_error("Trying to read null audio data with index = %d", i);
+            continue;
+        }
+        ma_result result = ma_data_source_read_pcm_frames(dataSources->data[i], pOutput, frameCount, NULL);
         if (result != MA_SUCCESS) {
             // Failed to read PCM frames.
-            rbe_logger_debug("Closing sound data resource because of result '%d'", result);
-            ma_resource_manager_data_source_uninit(resourceManagerDataSource);
-            resourceManagerDataSource = NULL;
+            if (result == MA_AT_END) {
+                rbe_logger_debug("Sound data resource reached the end...");
+            } else {
+                rbe_logger_error("Error in audio manager 'audio data callback' result '%d'", result);
+            }
+            ma_resource_manager_data_source_uninit(dataSources->data[i]);
+            dataSources->data[i] = NULL;
+            dataSources->count--;
         }
     }
 }
@@ -124,7 +136,6 @@ void audio_data_callback(ma_device* pDevice, void* pOutput, const void* pInput, 
 void audio_manager_thread_job(void* arg) {
     (void) arg;
     while (true) {
-//        printf("Hey\n");
         ma_job job;
         ma_result result = ma_resource_manager_next_job(resourceManager, &job);
         if (result != MA_SUCCESS) {
