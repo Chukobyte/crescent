@@ -31,6 +31,9 @@ bool rbe_audio_manager_init() {
         rbe_logger_error("Failed to initialize miniaudio!");
         return false;
     }
+    // Data Sources
+    dataSources = RBE_MEM_ALLOCATE(struct ResourceManagerDataSources);
+    dataSources->count = 0;
     // Resource Manager
     resourceManager = RBE_MEM_ALLOCATE(ma_resource_manager);
     ma_resource_manager_config resourceManagerConfig = ma_resource_manager_config_init();
@@ -63,9 +66,8 @@ bool rbe_audio_manager_init() {
     tpool_add_work(audioJobTP, audio_manager_thread_job, NULL);
 
     // Temp
-    dataSources = RBE_MEM_ALLOCATE(struct ResourceManagerDataSources);
-    memset(dataSources, 0, sizeof(struct ResourceManagerDataSources));
-    dataSources->count = 0;
+
+//    memset(dataSources, 0, sizeof(struct ResourceManagerDataSources));
 
     return true;
 }
@@ -101,10 +103,12 @@ void rbe_audio_manager_play_sound(const char* filePath, bool loops) {
     }
     ma_data_source_set_looping(newDataSource, loops);
     dataSources->data[dataSources->count++] = newDataSource;
+    const size_t newDataSourceIndex = dataSources->count - 1;
+    rbe_logger_debug("New Data source at file path = '%s' created with index = %d", filePath, newDataSourceIndex);
 
     // A ma_resource_manager_data_source object is compatible with the ma_data_source API. To read data, just call
     // the ma_data_source_read_pcm_frames() like you would with any normal data source.
-    result = ma_data_source_read_pcm_frames(dataSources->data[dataSources->count - 1], NULL, 1000, NULL);
+    result = ma_data_source_read_pcm_frames(dataSources->data[newDataSourceIndex], NULL, 1000, NULL);
     if (result != MA_SUCCESS) {
         // Failed to read PCM frames.
         rbe_logger_error("Error playing sound!  result = '%d'", result);
@@ -113,6 +117,7 @@ void rbe_audio_manager_play_sound(const char* filePath, bool loops) {
 
 // --- Thread/Job --- //
 void audio_data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frameCount) {
+    size_t removedDataSources = 0;
     for (size_t i = 0; i < dataSources->count; i++) {
         if (dataSources->data[i] == NULL) {
             rbe_logger_error("Trying to read null audio data with index = %d", i);
@@ -122,14 +127,24 @@ void audio_data_callback(ma_device* pDevice, void* pOutput, const void* pInput, 
         if (result != MA_SUCCESS) {
             // Failed to read PCM frames.
             if (result == MA_AT_END) {
-                rbe_logger_debug("Sound data resource reached the end...");
+                rbe_logger_debug("Sound data resource with index '%d' reached the end... data source count '%d'", i, dataSources->count - 1);
             } else {
-                rbe_logger_error("Error in audio manager 'audio data callback' result '%d'", result);
+                rbe_logger_error("Error in audio manager 'audio data callback' result '%d' with index '%d'", result, i);
             }
             ma_resource_manager_data_source_uninit(dataSources->data[i]);
             dataSources->data[i] = NULL;
-            dataSources->count--;
+            removedDataSources++;
         }
+    }
+    // Reshuffle array and update count if data sources have been removed
+    if (removedDataSources > 0) {
+        for (size_t i = 0; i < dataSources->count; i++) {
+            if (dataSources->data[i] == NULL && i + 1 < dataSources->count) {
+                dataSources->data[i] = dataSources->data[i + 1];
+                dataSources->data[i + 1] = NULL;
+            }
+        }
+        dataSources->count -= removedDataSources;
     }
 }
 
