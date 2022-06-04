@@ -1,8 +1,8 @@
+#pragma once
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-#pragma once
 
 #define RBE_LOG_BUFFER_SIZE 512
 

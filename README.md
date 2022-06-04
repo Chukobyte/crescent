@@ -5,14 +5,14 @@ A work in progress fighting game engine with the core written in C99.  The name 
 ### Tech Stack
 
 * Engine
-  * C (c99) - Engine Core
+  * [C](https://en.wikipedia.org/wiki/C_(programming_language)) (c99) - Engine Core
   * [SDL2](https://github.com/libsdl-org/SDL) - Windowing, inputs
   * [MiniAudio](https://github.com/mackron/miniaudio) - Audio
-  * Python - Scripting
+  * [Python](https://en.wikipedia.org/wiki/Python_(programming_language)) - Scripting
   * [Unity](https://github.com/ThrowTheSwitch/Unity) - Testing
 * Editor
-    * C++ (c++20) - Editor Core
-    * SDL2 - Windowing, inputs
+    * [C++](https://en.wikipedia.org/wiki/C%2B%2B) (c++20) - Editor Core
+    * [SDL2](https://github.com/libsdl-org/SDL) - Windowing, inputs
     * [MiniAudio](https://github.com/mackron/miniaudio) - Audio
     * [Catch2](https://github.com/catchorg/Catch2) - Testing
 
