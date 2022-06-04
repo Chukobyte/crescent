@@ -77,7 +77,7 @@ void rbe_audio_manager_process() {
 //    tpool_wait(audioJobTP);
 }
 
-void rbe_audio_manager_play_sound(const char* filePath) {
+void rbe_audio_manager_play_sound(const char* filePath, bool loops) {
 //    ma_engine_play_sound(audioEngine, filePath, NULL);
 
     // Temp Resource Manager
@@ -89,6 +89,9 @@ void rbe_audio_manager_play_sound(const char* filePath) {
         if (result != MA_SUCCESS) {
             rbe_logger_error("Failed to play sound at file path: '%s'", filePath);
             return;
+        }
+        if (loops) {
+            ma_data_source_set_looping(resourceManagerDataSource, true);
         }
     }
 

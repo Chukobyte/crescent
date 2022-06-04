@@ -169,7 +169,7 @@ void rbe_process_inputs() {
     }
     // Temp play sfx
     if (rbe_input_is_action_just_pressed("play_sfx")) {
-        rbe_audio_manager_play_sound("test_games/fighter_test/assets/audio/sfx/rainbow_orb.wav");
+        rbe_audio_manager_play_sound("test_games/fighter_test/assets/audio/sfx/rainbow_orb.wav", false);
     }
 }
 
