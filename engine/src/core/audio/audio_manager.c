@@ -111,6 +111,9 @@ void audio_data_callback(ma_device* pDevice, void* pOutput, const void* pInput, 
         ma_result result = ma_data_source_read_pcm_frames(resourceManagerDataSource, pOutput, frameCount, NULL);
         if (result != MA_SUCCESS) {
             // Failed to read PCM frames.
+            rbe_logger_debug("Closing sound data resource because of result '%d'", result);
+            ma_resource_manager_data_source_uninit(resourceManagerDataSource);
+            resourceManagerDataSource = NULL;
         }
     }
 }
