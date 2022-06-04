@@ -8,7 +8,7 @@ ifeq ($(OS),Windows_NT)
     CORE_BUILD_OBJECT_TEST := $(CORE_PROJECT_NAME)_test.exe
     EDITOR_BUILD_OBJECT := $(EDITOR_PROJECT_NAME).exe
     EDITOR_BUILD_OBJECT_TEST := $(EDITOR_PROJECT_NAME)_test.exe
-    L_FLAGS := -lmingw32 -static-libgcc -lSDL2main -lSDL2 -lSDL2_mixer -lpython37 -lfreetype
+    L_FLAGS := -lmingw32 -static-libgcc -lSDL2main -lSDL2 -lpython37 -lfreetype
     DELETE_CMD := del
 else
     OS_TYPE := linux
@@ -17,7 +17,7 @@ else
     EDITOR_BUILD_OBJECT := $(EDITOR_PROJECT_NAME)
     EDITOR_BUILD_OBJECT_TEST := $(EDITOR_PROJECT_NAME)_test
     # TODO: Need to validate linux flags
-    L_FLAGS := -lSDL2 -lSDL2_mixer -lGL -lpython3.7m -lfreetype -lcrypt -lpthread -ldl  -lutil -lm -static-libgcc
+    L_FLAGS := -lSDL2 -lGL -lpython3.7m -lfreetype -lcrypt -lpthread -ldl  -lutil -lm -static-libgcc
     DELETE_CMD := rm
 endif
 

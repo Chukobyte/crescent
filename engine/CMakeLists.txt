@@ -45,5 +45,5 @@ target_link_directories(${PROJECT_NAME} PUBLIC
         ${FREETYPE_LIBS_PATH}
         )
 
-target_link_libraries(${PROJECT_NAME} PUBLIC -lmingw32 -static-libgcc -lSDL2main -lSDL2 -lSDL2_mixer -lpython37 -lfreetype)
+target_link_libraries(${PROJECT_NAME} PUBLIC -lmingw32 -static-libgcc -lSDL2main -lSDL2 -lpython37 -lfreetype)
 target_compile_options(${PROJECT_NAME} PUBLIC -std=c99 -Wfatal-errors -Wall -Wextra -Wno-write-strings -Wno-deprecated-declarations -Wno-unused-variable -Wno-cast-function-type -Wno-unused-parameter -Wno-missing-field-initializers)

@@ -6,15 +6,15 @@ A work in progress fighting game engine with the core written in C99.  The name 
 
 * Engine
   * C (c99) - Engine Core
-  * SDL2 - Windowing, inputs
-  * SDL2_mixer - Audio
+  * [SDL2](https://github.com/libsdl-org/SDL) - Windowing, inputs
+  * [MiniAudio](https://github.com/mackron/miniaudio) - Audio
   * Python - Scripting
-  * Unity - Testing
+  * [Unity](https://github.com/ThrowTheSwitch/Unity) - Testing
 * Editor
     * C++ (c++20) - Editor Core
     * SDL2 - Windowing, inputs
-    * SDL2_mixer - Audio
-    * Catch2 - Testing
+    * [MiniAudio](https://github.com/mackron/miniaudio) - Audio
+    * [Catch2](https://github.com/catchorg/Catch2) - Testing
 
 ### Project Configuration
 
