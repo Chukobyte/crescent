@@ -131,9 +131,9 @@ void audio_data_callback(ma_device* pDevice, void* pOutput, const void* pInput, 
             int16_t targetLeftSample = 0;
             int16_t targetRightSample = 0;
             {
-                uint64_t leftId = (ma_uint32) startSamplePosition;
+                uint64_t leftId = (uint64_t) startSamplePosition;
                 if (channels > 1) {
-                    leftId &= ((ma_uint32)(0x01));
+                    leftId &= ((uint64_t)(0x01));
                 }
                 uint64_t rightId = leftId + (channels - 1);
 
@@ -168,7 +168,6 @@ void audio_data_callback(ma_device* pDevice, void* pOutput, const void* pInput, 
             }
         }
     }
-    pthread_mutex_unlock(audioMutex);
 
     // Reshuffle array and update count if data sources have been removed
     if (removedInstances > 0) {
@@ -182,6 +181,7 @@ void audio_data_callback(ma_device* pDevice, void* pOutput, const void* pInput, 
         audioInstances->count -= removedInstances;
         rbe_logger_debug("Destroying finished!");
     }
+    pthread_mutex_unlock(audioMutex);
 }
 
 // --- RBE Audio --- //
