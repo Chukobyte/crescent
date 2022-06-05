@@ -105,11 +105,12 @@ void audio_data_callback(ma_device* pDevice, void* pOutput, const void* pInput, 
         const int32_t channels = audioInst->source->channels;
         int16_t* sampleOut = (int16_t*) pOutput;
         int16_t* samples = (int16_t*) audioInst->source->samples;
-        ma_uint32 samplesToWrite = frameCount;
+        uint64_t samplesToWrite = frameCount;
 
         // Write to output
 //        rbe_logger_debug("Writing to output with instance id = %d", audioInst->id);
-        for (ma_uint32 writeSample = 0; writeSample < samplesToWrite; writeSample++) {
+        ma_uint32 writeSample;
+        for (writeSample = 0; writeSample < samplesToWrite; writeSample++) {
             double startSamplePosition = audioInst->samplePosition;
 //            rbe_logger_debug("Write sample '%d' of '%d'.  Sample position = %f", writeSample, samplesToWrite, audioInst->samplePosition);
             int16_t startLeftSample = 0;
@@ -123,11 +124,11 @@ void audio_data_callback(ma_device* pDevice, void* pOutput, const void* pInput, 
             int16_t targetLeftSample = 0;
             int16_t targetRightSample = 0;
             {
-                ma_uint32 leftId = (ma_uint32) startSamplePosition;
+                uint64_t leftId = (ma_uint32) startSamplePosition;
                 if (channels > 1) {
                     leftId &= ((ma_uint32)(0x01));
                 }
-                ma_uint32 rightId = leftId + (channels - 1);
+                uint64_t rightId = leftId + (channels - 1);
 
                 int16_t firstLeftSample = samples[leftId];
                 int16_t firstRightSample = samples[rightId];
@@ -138,8 +139,8 @@ void audio_data_callback(ma_device* pDevice, void* pOutput, const void* pInput, 
                 startRightSample = (int16_t)(firstRightSample + (secondRightSample - firstRightSample) * (startSamplePosition / channels - (ma_uint32)(startSamplePosition / channels)));
             }
 
-            int16_t leftSample = (int16_t)((((ma_uint32)startLeftSample + (ma_uint32)targetLeftSample) / 2));
-            int16_t rightSample = (int16_t)((((ma_uint32)startRightSample + (ma_uint32)targetRightSample) / 2));
+            int16_t leftSample = (int16_t) ((((ma_uint32) startLeftSample + (ma_uint32) targetLeftSample) / 2));
+            int16_t rightSample = (int16_t) ((((ma_uint32) startRightSample + (ma_uint32) targetRightSample) / 2));
 
             *sampleOut++ += leftSample;  // Left
             *sampleOut++ += rightSample; // Right
