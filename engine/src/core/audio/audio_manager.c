@@ -21,7 +21,6 @@ static ma_engine* audioEngine = NULL;
 static ma_device* audioDevice = NULL;
 static ma_resource_manager* resourceManager = NULL;
 //static ThreadPool* audioJobTP = NULL; // Can use a global job queue
-static RBEStringHashMap* rbeDataSources = NULL;
 
 struct ResourceManagerDataSources {
     ma_resource_manager_data_source* data[MAX_AUDIO_DATA_SOURCES];
@@ -33,7 +32,6 @@ static struct ResourceManagerDataSources* dataSources = NULL;
 // --- Audio Manager --- //
 
 bool rbe_audio_manager_init() {
-    rbeDataSources = rbe_string_hash_map_create(32);
     audioEngine = RBE_MEM_ALLOCATE(ma_engine);
     ma_result result = ma_engine_init(NULL, audioEngine);
     if (result != MA_SUCCESS) {
@@ -98,9 +96,6 @@ void rbe_audio_manager_finalize() {
 
     RBE_MEM_FREE(dataSources); // TODO: Free up data in data sources...
     dataSources = NULL;
-
-    rbe_string_hash_map_destroy(rbeDataSources);
-    rbeDataSources = NULL;
 
 //    tpool_destroy(audioJobTP);
 }
