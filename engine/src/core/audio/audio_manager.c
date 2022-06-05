@@ -10,12 +10,12 @@
 #define MAX_AUDIO_DATA_SOURCES 100
 
 void audio_data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frameCount);
-void audio_manager_thread_job(void* arg);
+//void audio_manager_thread_job(void* arg);
 
 static ma_engine* audioEngine = NULL;
 static ma_device* audioDevice = NULL;
 static ma_resource_manager* resourceManager = NULL;
-static ThreadPool* audioJobTP = NULL; // Can use a global job queue
+//static ThreadPool* audioJobTP = NULL; // Can use a global job queue
 
 struct ResourceManagerDataSources {
     ma_resource_manager_data_source* data[MAX_AUDIO_DATA_SOURCES];
@@ -148,28 +148,28 @@ void audio_data_callback(ma_device* pDevice, void* pOutput, const void* pInput, 
     }
 }
 
-void audio_manager_thread_job(void* arg) {
-    (void) arg;
-    while (true) {
-        ma_job job;
-        ma_result result = ma_resource_manager_next_job(resourceManager, &job);
-        if (result != MA_SUCCESS) {
-            if (result == MA_NO_DATA_AVAILABLE) {
-                // No jobs are available. Keep going. Will only get this if the resource manager was initialized
-                // with MA_RESOURCE_MANAGER_FLAG_NON_BLOCKING.
-                continue;
-            }
-            if (result == MA_CANCELLED) {
-                rbe_logger_debug("Audio manager thread ended!");
-                // MA_JOB_TYPE_QUIT was posted. Exit.
-                break;
-            } else {
-                rbe_logger_debug("Audio manager thread ended in error! result = '%d'", result);
-                // Some other error occurred.
-                break;
-            }
-        }
-        rbe_logger_debug("Job process!");
-        ma_job_process(&job);
-    }
-}
+//void audio_manager_thread_job(void* arg) {
+//    (void) arg;
+//    while (true) {
+//        ma_job job;
+//        ma_result result = ma_resource_manager_next_job(resourceManager, &job);
+//        if (result != MA_SUCCESS) {
+//            if (result == MA_NO_DATA_AVAILABLE) {
+//                // No jobs are available. Keep going. Will only get this if the resource manager was initialized
+//                // with MA_RESOURCE_MANAGER_FLAG_NON_BLOCKING.
+//                continue;
+//            }
+//            if (result == MA_CANCELLED) {
+//                rbe_logger_debug("Audio manager thread ended!");
+//                // MA_JOB_TYPE_QUIT was posted. Exit.
+//                break;
+//            } else {
+//                rbe_logger_debug("Audio manager thread ended in error! result = '%d'", result);
+//                // Some other error occurred.
+//                break;
+//            }
+//        }
+//        rbe_logger_debug("Job process!");
+//        ma_job_process(&job);
+//    }
+//}
