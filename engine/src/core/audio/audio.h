@@ -13,3 +13,5 @@ typedef struct RBEAudioSource {
 typedef struct Audio {
 
 } Audio;
+
+void rbe_audio_print_audio_source(RBEAudioSource* audioSource);

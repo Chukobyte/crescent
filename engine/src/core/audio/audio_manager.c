@@ -114,6 +114,8 @@ void rbe_audio_manager_play_sound(const char* filePath, bool loops) {
     }
 
     // TODO: Create audio instance that audio manager manages
+    RBEAudioSource* rbeAudioSource = rbe_asset_manager_get_audio_source(filePath);
+    rbe_audio_print_audio_source(rbeAudioSource);
 
     ma_result result;
     ma_resource_manager_data_source* newDataSource = RBE_MEM_ALLOCATE(ma_resource_manager_data_source);
