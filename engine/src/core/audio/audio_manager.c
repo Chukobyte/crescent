@@ -4,6 +4,8 @@
 #include <miniaudio/miniaudio.h>
 #include <stdint.h>
 
+#include "audio.h"
+#include "../asset_manager.h"
 #include "../utils/logger.h"
 #include "../memory/rbe_mem.h"
 #include "../thread/rbe_thread_pool.h"
@@ -13,7 +15,6 @@
 #define MAX_AUDIO_DATA_SOURCES 100
 
 void audio_data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frameCount);
-bool audio_load_wav_data_from_file(const char* file_path, int32_t* sample_count, int32_t* channels, int32_t* sample_rate, void** samples);
 //void audio_manager_thread_job(void* arg);
 
 static ma_engine* audioEngine = NULL;
@@ -29,12 +30,7 @@ struct ResourceManagerDataSources {
 
 static struct ResourceManagerDataSources* dataSources = NULL;
 
-typedef struct RBEAudioSource {
-    int32_t channels;
-    int32_t sample_rate;
-    void* samples;
-    int32_t sample_count;
-} RBEAudioSource;
+// --- Audio Manager --- //
 
 bool rbe_audio_manager_init() {
     rbeDataSources = rbe_string_hash_map_create(32);
@@ -117,14 +113,12 @@ void rbe_audio_manager_process() {
 
 void rbe_audio_manager_play_sound(const char* filePath, bool loops) {
     // Temp asset creation
-    if (!rbe_string_hash_map_has(rbeDataSources, filePath)) {
-        RBEAudioSource* newAudioSource = RBE_MEM_ALLOCATE(RBEAudioSource);
-        if (!audio_load_wav_data_from_file(filePath, &newAudioSource->sample_count, &newAudioSource->channels, &newAudioSource->sample_rate, &newAudioSource->samples)) {
-            rbe_logger_error("Failed to load audio wav file at '%s'", filePath);
-            return;
-        }
-        rbe_string_hash_map_add(rbeDataSources, filePath, newAudioSource, sizeof(RBEAudioSource*));
+    if (!rbe_asset_manager_has_audio_source(filePath)) {
+        rbe_logger_error("Doesn't have audio source loaded at path '%s' loaded!  Aborting...", filePath);
+        return;
     }
+
+    // TODO: Create audio instance that audio manager manages
 
     ma_result result;
     ma_resource_manager_data_source* newDataSource = RBE_MEM_ALLOCATE(ma_resource_manager_data_source);
@@ -180,7 +174,9 @@ void audio_data_callback(ma_device* pDevice, void* pOutput, const void* pInput, 
     }
 }
 
-bool audio_load_wav_data_from_file(const char* file_path, int32_t* sample_count, int32_t* channels, int32_t* sample_rate, void** samples) {
+// --- RBE Audio --- //
+
+bool rbe_audio_load_wav_data_from_file(const char* file_path, int32_t* sample_count, int32_t* channels, int32_t* sample_rate, void** samples) {
     size_t len = 0;
     char* file_data = rbe_fs_read_file_contents(file_path, &len);
 
