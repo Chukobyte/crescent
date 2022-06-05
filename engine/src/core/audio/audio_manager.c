@@ -86,30 +86,85 @@ void rbe_audio_manager_play_sound(const char* filePath, bool loops) {
     audioInstance->isPlaying = true; // Sets sound instance to be played
 
     audioInstances->instances[audioInstances->count++] = audioInstance;
+    rbe_logger_debug("Added audio instance from file path '%s' to play!", filePath);
 }
 
 // --- Mini Audio Callback --- //
 void audio_data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frameCount) {
-    size_t removedDataSources = 0;
+    memset(pOutput, 0, frameCount * pDevice->playback.channels * ma_get_bytes_per_sample(pDevice->playback.format));
+
     size_t removedInstances = 0;
-    for (size_t i = 0; audioInstances->count; i++) {
+    for (size_t i = 0; i < audioInstances->count; i++) {
         RBEAudioInstance* audioInst = audioInstances->instances[i];
+        if (!audioInst->isPlaying) {
+            audioInstances->instances[i] = NULL;
+            removedInstances++;
+            continue;
+        }
 
-        // ... do stuff
+        const int32_t channels = audioInst->source->channels;
+        int16_t* sampleOut = (int16_t*) pOutput;
+        int16_t* samples = (int16_t*) audioInst->source->samples;
+        ma_uint32 samplesToWrite = frameCount;
 
-        const bool isAtEnd = audioInst->samplePosition >= audioInst->source->sample_count - audioInst->source->channels - 1;
-        if (isAtEnd) {
-            audioInst->samplePosition = 0;
-            if (!audioInst->doesLoop) {
-                audioInst->isPlaying = false;
-                audioInstances->instances[i] = NULL;
-                removedInstances++;
+        // Write to output
+        rbe_logger_debug("Writing to output with instance id = %d", audioInst->id);
+        for (ma_uint32 writeSample = 0; writeSample < samplesToWrite; writeSample++) {
+            rbe_logger_debug("Write sample '%d' of '%d'", writeSample, samplesToWrite);
+            double startSamplePosition = audioInst->samplePosition;
+            int16_t startLeftSample = 0;
+            int16_t startRightSample = 0;
+
+            double targetSamplePosition = startSamplePosition + (double) channels;
+            if (targetSamplePosition >= audioInst->source->sample_count) {
+                targetSamplePosition -= audioInst->source->sample_count;
+            }
+
+            int16_t targetLeftSample = 0;
+            int16_t targetRightSample = 0;
+            {
+                ma_uint32 leftId = (ma_uint32) startSamplePosition;
+                if (channels > 1) {
+                    leftId &= ((ma_uint32)(0x01));
+                }
+                ma_uint32 rightId = leftId + (channels - 1);
+
+                int16_t firstLeftSample = samples[leftId];
+                int16_t firstRightSample = samples[rightId];
+                int16_t secondLeftSample = samples[leftId + channels];
+                int16_t secondRightSample = samples[rightId + channels];
+
+                startLeftSample = (int16_t)(firstLeftSample + (secondLeftSample - firstLeftSample) * (startSamplePosition / channels - (ma_uint32)(startSamplePosition / channels)));
+                startRightSample = (int16_t)(firstRightSample + (secondRightSample - firstRightSample) * (startSamplePosition / channels - (ma_uint32)(startSamplePosition / channels)));
+            }
+
+            int16_t leftSample = (int16_t)((((ma_uint32)startLeftSample + (ma_uint32)targetLeftSample) / 2));
+            int16_t rightSample = (int16_t)((((ma_uint32)startRightSample + (ma_uint32)targetRightSample) / 2));
+
+            *sampleOut++ += leftSample;  // Left
+            *sampleOut++ += rightSample; // Right
+
+            // Possibly need fixed sampling instead
+            audioInst->samplePosition = targetSamplePosition;
+
+//            const bool isAtEnd = audioInst->samplePosition >= audioInst->source->sample_count - channels - 1;
+            const bool isAtEnd = audioInst->samplePosition >= audioInst->source->sample_count - 1;
+            if (isAtEnd) {
+                rbe_logger_debug("At the end!");
+                audioInst->samplePosition = 0;
+                if (!audioInst->doesLoop) {
+                    audioInst->isPlaying = false;
+                    audioInstances->instances[i] = NULL;
+                    removedInstances++;
+                    break;
+                }
             }
         }
     }
 
     // Reshuffle array and update count if data sources have been removed
     if (removedInstances > 0) {
+        rbe_logger_debug("Destroying '%d' audio instance!", removedInstances);
         for (size_t i = 0; i < audioInstances->count; i++) {
             if (audioInstances->instances[i] == NULL && i + 1 < audioInstances->count) {
                 audioInstances->instances[i] = audioInstances->instances[i + 1];
@@ -117,6 +172,7 @@ void audio_data_callback(ma_device* pDevice, void* pOutput, const void* pInput, 
             }
         }
         audioInstances->count -= removedInstances;
+        rbe_logger_debug("Destroying finished!");
     }
 }
 

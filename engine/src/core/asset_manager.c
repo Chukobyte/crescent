@@ -50,6 +50,7 @@ RBEAudioSource* rbe_asset_manager_load_audio_source_wav(const char* fileName, co
         return NULL;
     }
     rbe_string_hash_map_add(audioSourceMap, key, newAudioSource, sizeof(RBEAudioSource));
+    rbe_audio_print_audio_source(newAudioSource);
     return newAudioSource;
 }
 
