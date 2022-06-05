@@ -62,8 +62,8 @@ bool rbe_audio_manager_init() {
     ma_device_start(audioDevice);
 
     // TODO: Temp until job stuff is figured out
-    audioJobTP = tpool_create(1);
-    tpool_add_work(audioJobTP, audio_manager_thread_job, NULL);
+//    audioJobTP = tpool_create(1);
+//    tpool_add_work(audioJobTP, audio_manager_thread_job, NULL);
 
     // Temp
 
@@ -84,7 +84,7 @@ void rbe_audio_manager_finalize() {
     RBE_MEM_FREE(dataSources); // TODO: Free up data in data sources...
     dataSources = NULL;
 
-    tpool_destroy(audioJobTP);
+//    tpool_destroy(audioJobTP);
 }
 
 void rbe_audio_manager_process() {
