@@ -102,7 +102,7 @@ PyObject* pyh_cache_get_module(const char* modulePath) {
         PyObject* pName = PyUnicode_FromString(modulePath);
         PyObject* pNewModule = PyImport_Import(pName);
         RBE_ASSERT(pNewModule != NULL);
-        rbe_string_hash_map_add(pyCacheHashMap, modulePath, pNewModule, sizeof(pNewModule));
+        rbe_string_hash_map_add(pyCacheHashMap, modulePath, pNewModule, sizeof(*pNewModule));
         Py_DecRef(pName);
         // Increase ref to store in cache and to return to caller
         Py_IncRef(pNewModule);
