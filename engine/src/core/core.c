@@ -152,7 +152,6 @@ bool rbe_initialize_input() {
 void rbe_update() {
     rbe_process_inputs();
     rbe_process_game_logic();
-    rbe_audio_manager_process();
     rbe_render();
 }
 
