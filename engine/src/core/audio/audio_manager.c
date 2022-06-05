@@ -163,7 +163,7 @@ void audio_data_callback(ma_device* pDevice, void* pOutput, const void* pInput, 
 
     // Reshuffle array and update count if data sources have been removed
     if (removedInstances > 0) {
-        rbe_logger_debug("Destroying '%d' audio instance!", removedInstances);
+        rbe_logger_debug("Destroying '%d' audio instances!", removedInstances);
         for (size_t i = 0; i < audioInstances->count; i++) {
             if (audioInstances->instances[i] == NULL && i + 1 < audioInstances->count) {
                 audioInstances->instances[i] = audioInstances->instances[i + 1];
