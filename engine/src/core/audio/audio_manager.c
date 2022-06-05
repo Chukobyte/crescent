@@ -108,10 +108,10 @@ void audio_data_callback(ma_device* pDevice, void* pOutput, const void* pInput, 
         ma_uint32 samplesToWrite = frameCount;
 
         // Write to output
-        rbe_logger_debug("Writing to output with instance id = %d", audioInst->id);
+//        rbe_logger_debug("Writing to output with instance id = %d", audioInst->id);
         for (ma_uint32 writeSample = 0; writeSample < samplesToWrite; writeSample++) {
-            rbe_logger_debug("Write sample '%d' of '%d'", writeSample, samplesToWrite);
             double startSamplePosition = audioInst->samplePosition;
+//            rbe_logger_debug("Write sample '%d' of '%d'.  Sample position = %f", writeSample, samplesToWrite, audioInst->samplePosition);
             int16_t startLeftSample = 0;
             int16_t startRightSample = 0;
 
@@ -147,8 +147,7 @@ void audio_data_callback(ma_device* pDevice, void* pOutput, const void* pInput, 
             // Possibly need fixed sampling instead
             audioInst->samplePosition = targetSamplePosition;
 
-//            const bool isAtEnd = audioInst->samplePosition >= audioInst->source->sample_count - channels - 1;
-            const bool isAtEnd = audioInst->samplePosition >= audioInst->source->sample_count - 1;
+            const bool isAtEnd = audioInst->samplePosition >= audioInst->source->sample_count - channels - 1;
             if (isAtEnd) {
                 rbe_logger_debug("At the end!");
                 audioInst->samplePosition = 0;
