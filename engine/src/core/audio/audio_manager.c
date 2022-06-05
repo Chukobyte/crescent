@@ -6,15 +6,18 @@
 
 #include "audio.h"
 #include "../asset_manager.h"
-#include "../utils/logger.h"
 #include "../memory/rbe_mem.h"
+#include "../thread/rbe_pthread.h"
+#include "../utils/logger.h"
 #include "../utils/rbe_file_system_utils.h"
+
 
 #define MAX_AUDIO_INSTANCES 32
 
 void audio_data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frameCount);
 
 static ma_device* audioDevice = NULL;
+static pthread_mutex_t* audioMutex = NULL;
 
 // An instance of an RBE audio source
 typedef struct RBEAudioInstance {
@@ -35,6 +38,7 @@ static struct AudioInstances* audioInstances = NULL;
 // --- Audio Manager --- //
 bool rbe_audio_manager_init() {
     audioInstances = RBE_MEM_ALLOCATE(struct AudioInstances);
+    pthread_mutex_init(audioMutex, NULL);
     // Device
     ma_device_config config = ma_device_config_init(ma_device_type_playback);
     config.playback.pDeviceID = NULL;
@@ -64,6 +68,8 @@ void rbe_audio_manager_finalize() {
 
     RBE_MEM_FREE(audioInstances); // TODO: Properly free up all instances
     audioInstances = NULL;
+
+    pthread_mutex_destroy(audioMutex);
 }
 
 void rbe_audio_manager_play_sound(const char* filePath, bool loops) {
@@ -94,6 +100,7 @@ void audio_data_callback(ma_device* pDevice, void* pOutput, const void* pInput, 
     memset(pOutput, 0, frameCount * pDevice->playback.channels * ma_get_bytes_per_sample(pDevice->playback.format));
 
     size_t removedInstances = 0;
+    pthread_mutex_lock(audioMutex);
     for (size_t i = 0; i < audioInstances->count; i++) {
         RBEAudioInstance* audioInst = audioInstances->instances[i];
         if (!audioInst->isPlaying) {
@@ -161,6 +168,7 @@ void audio_data_callback(ma_device* pDevice, void* pOutput, const void* pInput, 
             }
         }
     }
+    pthread_mutex_unlock(audioMutex);
 
     // Reshuffle array and update count if data sources have been removed
     if (removedInstances > 0) {
