@@ -13,6 +13,7 @@ A work in progress fighting game engine with the core written in C99.  The name 
 * Editor
     * [C++](https://en.wikipedia.org/wiki/C%2B%2B) (c++20) - Editor Core
     * [SDL2](https://github.com/libsdl-org/SDL) - Windowing, inputs
+    * [ImGui](https://github.com/ocornut/imgui) - GUI Library
     * [MiniAudio](https://github.com/mackron/miniaudio) - Audio
     * [Catch2](https://github.com/catchorg/Catch2) - Testing
 
