@@ -131,8 +131,6 @@ void audio_data_callback(ma_device* pDevice, void* pOutput, const void* pInput, 
             if (targetSamplePosition >= audioInst->source->sample_count) {
                 targetSamplePosition -= (double) audioInst->source->sample_count;
             }
-//            rbe_logger_debug("Write sample '%u' of '%u'.", writeSample, samplesToWrite);
-//            rbe_logger_debug("Start Sample position = %f, target sample position = %f", startSamplePosition, targetSamplePosition);
 
             int16_t startLeftSample;
             int16_t startRightSample;
@@ -163,12 +161,13 @@ void audio_data_callback(ma_device* pDevice, void* pOutput, const void* pInput, 
 
             const bool isAtEnd = audioInst->samplePosition >= audioInst->source->sample_count - channels - 1;
             if (isAtEnd) {
-                rbe_logger_debug("At the end!");
                 audioInst->samplePosition = 0;
                 if (!audioInst->doesLoop) {
+                    rbe_logger_debug("Audio instance with id '%u' is queued for deletion!", audioInst->id);
                     audioInst->isPlaying = false;
                     audioInstances->instances[i] = NULL;
                     removedInstances++;
+                    RBE_MEM_FREE(audioInst);
                     break;
                 }
             }
@@ -177,7 +176,6 @@ void audio_data_callback(ma_device* pDevice, void* pOutput, const void* pInput, 
 
     // Reshuffle array and update count if data sources have been removed
     if (removedInstances > 0) {
-        rbe_logger_debug("Destroying '%d' audio instances!", removedInstances);
         for (size_t i = 0; i < audioInstances->count; i++) {
             if (audioInstances->instances[i] == NULL && i + 1 < audioInstances->count) {
                 audioInstances->instances[i] = audioInstances->instances[i + 1];
@@ -185,7 +183,6 @@ void audio_data_callback(ma_device* pDevice, void* pOutput, const void* pInput, 
             }
         }
         audioInstances->count -= removedInstances;
-        rbe_logger_debug("Destroying finished!");
     }
     pthread_mutex_unlock(audioMutex);
 }
