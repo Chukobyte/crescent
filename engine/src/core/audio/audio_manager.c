@@ -11,10 +11,9 @@
 #include "../utils/logger.h"
 #include "../utils/rbe_file_system_utils.h"
 
-
 #define MAX_AUDIO_INSTANCES 32
 
-typedef size_t wu;
+//typedef size_t wu;
 //typedef uint64_t wu;
 
 void audio_data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frameCount);
@@ -121,11 +120,11 @@ void audio_data_callback(ma_device* pDevice, void* pOutput, const void* pInput, 
         const int32_t channels = audioInst->source->channels;
         int16_t* sampleOut = (int16_t*) pOutput;
         int16_t* samples = (int16_t*) audioInst->source->samples;
-        wu samplesToWrite = (wu) frameCount;
+        uint64_t samplesToWrite = (uint64_t) frameCount;
 
         // Write to output
 //        rbe_logger_debug("Writing to output with instance id = %d", audioInst->id);
-        for (wu writeSample = 0; writeSample < samplesToWrite; writeSample++) {
+        for (uint64_t writeSample = 0; writeSample < samplesToWrite; writeSample++) {
             double startSamplePosition = audioInst->samplePosition;
 
             double targetSamplePosition = startSamplePosition + (double) channels;
@@ -138,11 +137,11 @@ void audio_data_callback(ma_device* pDevice, void* pOutput, const void* pInput, 
             int16_t startLeftSample;
             int16_t startRightSample;
             {
-                wu leftId = (wu) startSamplePosition;
+                uint64_t leftId = (uint64_t) startSamplePosition;
                 if (channels > 1) {
-                    leftId &= ~((wu)(0x01));
+                    leftId &= ~((uint64_t)(0x01));
                 }
-                wu rightId = leftId + (wu) (channels - 1);
+                uint64_t rightId = leftId + (uint64_t) (channels - 1);
 
                 int16_t firstLeftSample = samples[leftId];
                 int16_t firstRightSample = samples[rightId];
