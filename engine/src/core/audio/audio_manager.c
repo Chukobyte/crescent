@@ -13,9 +13,6 @@
 
 #define MAX_AUDIO_INSTANCES 32
 
-//typedef size_t wu;
-//typedef uint64_t wu;
-
 void audio_data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frameCount);
 
 static ma_device* audioDevice = NULL;
@@ -123,7 +120,6 @@ void audio_data_callback(ma_device* pDevice, void* pOutput, const void* pInput, 
         uint64_t samplesToWrite = (uint64_t) frameCount;
 
         // Write to output
-//        rbe_logger_debug("Writing to output with instance id = %d", audioInst->id);
         for (uint64_t writeSample = 0; writeSample < samplesToWrite; writeSample++) {
             double startSamplePosition = audioInst->samplePosition;
 
@@ -195,8 +191,7 @@ bool rbe_audio_load_wav_data_from_file(const char* file_path, int32_t* sample_co
 
     uint64_t totalPcmFrameCount = 0;
     *samples =  drwav_open_memory_and_read_pcm_frames_s16(file_data, len, (uint32_t*)channels, (uint32_t*)sample_rate, &totalPcmFrameCount, NULL);
-//    RBE_MEM_FREE(file_data);
-    drwav_free(file_data, NULL);
+    RBE_MEM_FREE(file_data);
 
     if (!*samples) {
         *samples = NULL;
