@@ -127,7 +127,7 @@ void audio_data_callback(ma_device* pDevice, void* pOutput, const void* pInput, 
         for (uint64_t writeSample = 0; writeSample < samplesToWrite; writeSample++) {
             double startSamplePosition = audioInst->samplePosition;
 
-            double targetSamplePosition = startSamplePosition + (double) channels;
+            double targetSamplePosition = startSamplePosition + (double) channels * 1.1f; // TODO: Not sure why '1.1f'
             if (targetSamplePosition >= audioInst->source->sample_count) {
                 targetSamplePosition -= (double) audioInst->source->sample_count;
             }
