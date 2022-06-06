@@ -5,14 +5,14 @@
 #define MAX_ENTITY_SYSTEMS_PER_HOOK 4
 
 typedef struct EntitySystemData {
-    size_t entitySystemsCount;
-    size_t renderSystemsCount;
-    size_t processSystemsCount;
-    size_t physicsProcessSystemsCount;
-    EntitySystem* entitySystems[MAX_COMPONENTS];
-    EntitySystem* renderSystems[MAX_ENTITY_SYSTEMS_PER_HOOK];
-    EntitySystem* processSystems[MAX_ENTITY_SYSTEMS_PER_HOOK];
-    EntitySystem* physicsProcessSystems[MAX_ENTITY_SYSTEMS_PER_HOOK];
+    size_t entity_systems_count;
+    size_t render_systems_count;
+    size_t process_systems_count;
+    size_t physics_process_systems_count;
+    EntitySystem* entity_systems[MAX_COMPONENTS];
+    EntitySystem* render_systems[MAX_ENTITY_SYSTEMS_PER_HOOK];
+    EntitySystem* process_systems[MAX_ENTITY_SYSTEMS_PER_HOOK];
+    EntitySystem* physics_process_systems[MAX_ENTITY_SYSTEMS_PER_HOOK];
 } EntitySystemData;
 
 bool rbe_ec_system_has_entity(Entity entity, EntitySystem* system);
@@ -24,60 +24,60 @@ Entity entityIndex = 1; // 0 is NULL_ENTITY
 
 void rbe_ec_system_initialize() {
     for (size_t i = 0; i < MAX_COMPONENTS; i++) {
-        entitySystemData.entitySystems[i] = NULL;
+        entitySystemData.entity_systems[i] = NULL;
     }
     for (size_t i = 0; i < MAX_ENTITY_SYSTEMS_PER_HOOK; i++) {
-        entitySystemData.renderSystems[i] = NULL;
-        entitySystemData.processSystems[i] = NULL;
-        entitySystemData.physicsProcessSystems[i] = NULL;
+        entitySystemData.render_systems[i] = NULL;
+        entitySystemData.process_systems[i] = NULL;
+        entitySystemData.physics_process_systems[i] = NULL;
     }
 }
 
 void rbe_ec_system_finalize() {}
 
 void rbe_ec_system_register(EntitySystem* system, EntitySystemHook systemHook) {
-    entitySystemData.entitySystems[entitySystemData.entitySystemsCount] = system;
-    entitySystemData.entitySystemsCount++;
+    entitySystemData.entity_systems[entitySystemData.entity_systems_count] = system;
+    entitySystemData.entity_systems_count++;
     if (systemHook & EntitySystemHook_RENDER) {
-        entitySystemData.renderSystems[entitySystemData.renderSystemsCount] = system;
-        entitySystemData.renderSystemsCount++;
+        entitySystemData.render_systems[entitySystemData.render_systems_count] = system;
+        entitySystemData.render_systems_count++;
     }
     if (systemHook & EntitySystemHook_PROCESS) {
-        entitySystemData.processSystems[entitySystemData.processSystemsCount] = system;
-        entitySystemData.processSystemsCount++;
+        entitySystemData.process_systems[entitySystemData.process_systems_count] = system;
+        entitySystemData.process_systems_count++;
     }
     if (systemHook & EntitySystemHook_PHYSICS_PROCESS) {
-        entitySystemData.physicsProcessSystems[entitySystemData.physicsProcessSystemsCount] = system;
-        entitySystemData.physicsProcessSystemsCount++;
+        entitySystemData.physics_process_systems[entitySystemData.physics_process_systems_count] = system;
+        entitySystemData.physics_process_systems_count++;
     }
 }
 
 void rbe_ec_system_register_entity_to_systems(Entity entity) {
     ComponentType entityComponentSignature = component_manager_get_component_signature(entity);
-    for (size_t i = 0; i < entitySystemData.entitySystemsCount; i++) {
-        if ((entityComponentSignature & entitySystemData.entitySystems[i]->component_signature) == entityComponentSignature) {
-            rbe_ec_system_insert_entity_into_system(entity, entitySystemData.entitySystems[i]);
+    for (size_t i = 0; i < entitySystemData.entity_systems_count; i++) {
+        if ((entityComponentSignature & entitySystemData.entity_systems[i]->component_signature) == entityComponentSignature) {
+            rbe_ec_system_insert_entity_into_system(entity, entitySystemData.entity_systems[i]);
         } else {
-            rbe_ec_system_remove_entity_from_system(entity, entitySystemData.entitySystems[i]);
+            rbe_ec_system_remove_entity_from_system(entity, entitySystemData.entity_systems[i]);
         }
     }
 }
 
 void rbe_ec_system_render_systems() {
-    for (size_t i = 0; i < entitySystemData.renderSystemsCount; i++) {
-        entitySystemData.renderSystems[i]->render_func();
+    for (size_t i = 0; i < entitySystemData.render_systems_count; i++) {
+        entitySystemData.render_systems[i]->render_func();
     }
 }
 
 void rbe_ec_system_process_systems(float deltaTime) {
-    for (size_t i = 0; i < entitySystemData.processSystemsCount; i++) {
-        entitySystemData.processSystems[i]->process_func(deltaTime);
+    for (size_t i = 0; i < entitySystemData.process_systems_count; i++) {
+        entitySystemData.process_systems[i]->process_func(deltaTime);
     }
 }
 
 void rbe_ec_system_physics_process_systems(float deltaTime) {
-    for (size_t i = 0; i < entitySystemData.physicsProcessSystemsCount; i++) {
-        entitySystemData.physicsProcessSystems[i]->physics_process_func(deltaTime);
+    for (size_t i = 0; i < entitySystemData.physics_process_systems_count; i++) {
+        entitySystemData.physics_process_systems[i]->physics_process_func(deltaTime);
     }
 }
 
