@@ -43,12 +43,19 @@ bool rbe_asset_manager_has_texture(const char* key) {
 RBEAudioSource* rbe_asset_manager_load_audio_source_wav(const char* fileName, const char* key) {
     RBE_ASSERT(audioSourceMap != NULL);
     RBE_ASSERT_FMT(!rbe_string_hash_map_has(audioSourceMap, fileName), "Already loaded audio source at file path '%'s!  Has key '%s'.", fileName, key);
-    RBEAudioSource* newAudioSource = RBE_MEM_ALLOCATE(RBEAudioSource);
-    if (!rbe_audio_load_wav_data_from_file(fileName, &newAudioSource->sample_count, &newAudioSource->channels, &newAudioSource->sample_rate, &newAudioSource->samples)) {
+    int32_t sampleCount;
+    int32_t channels;
+    int32_t sampleRate;
+    void* samples = NULL;
+    if (!rbe_audio_load_wav_data_from_file(fileName, &sampleCount, &channels, &sampleRate, &samples)) {
         rbe_logger_error("Failed to load audio wav file at '%s'", fileName);
-        RBE_MEM_FREE(newAudioSource);
         return NULL;
     }
+    RBEAudioSource* newAudioSource = RBE_MEM_ALLOCATE_SIZE(sizeof(RBEAudioSource*) + (sampleCount * sizeof(int16_t*)));
+    newAudioSource->sample_count = sampleCount;
+    newAudioSource->channels = channels;
+    newAudioSource->sample_rate = sampleRate;
+    newAudioSource->samples = samples;
     rbe_string_hash_map_add(audioSourceMap, key, newAudioSource, sizeof(RBEAudioSource));
     rbe_audio_print_audio_source(newAudioSource);
     return newAudioSource;

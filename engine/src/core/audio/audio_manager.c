@@ -50,7 +50,6 @@ bool rbe_audio_manager_init() {
     config.capture.pDeviceID = NULL;
     config.capture.format = ma_format_s16;
     config.capture.channels = 1;
-//    config.sampleRate = 48000;
     config.sampleRate = 44100;
     config.dataCallback = audio_data_callback;
     config.pUserData = NULL;
