@@ -5,6 +5,7 @@ extern "C" {
 #endif
 
 #include <stdbool.h>
+#include <stdint.h>
 #include <corecrt.h>
 
 // Change directory

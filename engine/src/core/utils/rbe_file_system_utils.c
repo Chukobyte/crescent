@@ -47,7 +47,7 @@ size_t rbe_fs_get_file_size(const char* filePath) {
 #else
     struct stat st;
     stat(file_path, &st);
-    return (int32_t)st.st_size;
+    return (size_t) st.st_size;
 #endif
 }
 

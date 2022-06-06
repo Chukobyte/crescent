@@ -14,6 +14,9 @@
 
 #define MAX_AUDIO_INSTANCES 32
 
+typedef size_t wu;
+//typedef uint64_t wu;
+
 void audio_data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frameCount);
 
 static ma_device* audioDevice = NULL;
@@ -47,7 +50,8 @@ bool rbe_audio_manager_init() {
     config.capture.pDeviceID = NULL;
     config.capture.format = ma_format_s16;
     config.capture.channels = 1;
-    config.sampleRate = 48000;
+//    config.sampleRate = 48000;
+    config.sampleRate = 44100;
     config.dataCallback = audio_data_callback;
     config.pUserData = NULL;
     audioDevice = RBE_MEM_ALLOCATE(ma_device);
@@ -56,7 +60,10 @@ bool rbe_audio_manager_init() {
         return false;
     }
 
-    ma_device_start(audioDevice);
+    if (ma_device_start(audioDevice) != MA_SUCCESS) {
+        rbe_logger_error("Failed to start audio device!");
+        return false;
+    }
 
     return true;
 }
@@ -101,10 +108,9 @@ void audio_data_callback(ma_device* pDevice, void* pOutput, const void* pInput, 
         return;
     }
 
-    memset(pOutput, 0, frameCount * pDevice->playback.channels * ma_get_bytes_per_sample(pDevice->playback.format));
-
-    size_t removedInstances = 0;
     pthread_mutex_lock(audioMutex);
+    memset(pOutput, 0, frameCount * pDevice->playback.channels * ma_get_bytes_per_sample(pDevice->playback.format));
+    size_t removedInstances = 0;
     for (size_t i = 0; i < audioInstances->count; i++) {
         RBEAudioInstance* audioInst = audioInstances->instances[i];
         if (!audioInst->isPlaying) {
@@ -116,45 +122,54 @@ void audio_data_callback(ma_device* pDevice, void* pOutput, const void* pInput, 
         const int32_t channels = audioInst->source->channels;
         int16_t* sampleOut = (int16_t*) pOutput;
         int16_t* samples = (int16_t*) audioInst->source->samples;
-        uint64_t samplesToWrite = frameCount;
+        wu samplesToWrite = (wu) frameCount;
 
         // Write to output
 //        rbe_logger_debug("Writing to output with instance id = %d", audioInst->id);
-        uint64_t writeSample;
-        for (writeSample = 0; writeSample < samplesToWrite; writeSample++) {
+        for (wu writeSample = 0; writeSample < samplesToWrite; writeSample++) {
             double startSamplePosition = audioInst->samplePosition;
 
-            double targetSamplePosition = startSamplePosition + (double) channels * (double) 1.0f;
+            double targetSamplePosition = startSamplePosition + (double) channels;
             if (targetSamplePosition >= audioInst->source->sample_count) {
-                targetSamplePosition -= audioInst->source->sample_count;
+                targetSamplePosition -= (double) audioInst->source->sample_count;
             }
-//            rbe_logger_debug("Write sample '%u' of '%u'.  Sample position = %f, target sample position = %f", writeSample, samplesToWrite, startSamplePosition, targetSamplePosition);
-//            rbe_logger_debug("Write sample '%u' of '%u'", writeSample, samplesToWrite);
+            rbe_logger_debug("Write sample '%u' of '%u'.", writeSample, samplesToWrite);
+            rbe_logger_debug("Start Sample position = %f, target sample position = %f", startSamplePosition, targetSamplePosition);
 
-            int16_t targetLeftSample = 0;
-            int16_t targetRightSample = 0;
-            int16_t startLeftSample;
-            int16_t startRightSample;
-            {
-                uint64_t leftId = (uint64_t) startSamplePosition;
-                if (channels > 1) {
-                    leftId &= ((uint64_t)(0x01));
-                }
-                uint64_t rightId = leftId + (channels - 1);
+//            int16_t startLeftSample;
+//            int16_t startRightSample;
+//            {
+//                wu leftId = (wu) startSamplePosition;
+//                if (channels > 1) {
+//                    leftId &= ((wu)(0x01));
+//                }
+//                wu rightId = leftId + (wu) (channels - 1);
+//
+//                int16_t firstLeftSample = samples[leftId];
+//                int16_t firstRightSample = samples[rightId];
+//                int16_t secondLeftSample = samples[leftId + channels];
+//                int16_t secondRightSample = samples[rightId + channels];
+//
+//                startLeftSample = (int16_t) (firstLeftSample + secondLeftSample - firstLeftSample);
+//                startRightSample = (int16_t) (firstRightSample + secondRightSample - firstRightSample);
+//            }
+//
+//            int16_t leftSample = (int16_t) (startLeftSample / channels);
+//            int16_t rightSample = (int16_t) (startRightSample / channels);
 
-                int16_t firstLeftSample = samples[leftId];
-                int16_t firstRightSample = samples[rightId];
-                int16_t secondLeftSample = samples[leftId + channels];
-                int16_t secondRightSample = samples[rightId + channels];
+//            *sampleOut++ += leftSample;  // Left
+//            *sampleOut++ += rightSample; // Right
 
-                startLeftSample = (int16_t)(firstLeftSample + (secondLeftSample - firstLeftSample) * (startSamplePosition / channels - (uint64_t) (startSamplePosition / channels)));
-                startRightSample = (int16_t)(firstRightSample + (secondRightSample - firstRightSample) * (startSamplePosition / channels - (uint64_t) (startSamplePosition / channels)));
-            }
+//            const wu leftId = channels > 1 ? (wu) startSamplePosition & 0x01 : (wu) startSamplePosition;
+//            const wu rightId = leftId + channels - 1;
+            const wu leftId = (wu) startSamplePosition ;
+            const wu rightId = leftId + 1;
+            const int16_t leftSample = samples[leftId];
+            const int16_t rightSample = samples[rightId];
 
-            int16_t leftSample = (int16_t) ((((uint64_t) startLeftSample + (uint64_t) targetLeftSample) / 2));
-            int16_t rightSample = (int16_t) ((((uint64_t) startRightSample + (uint64_t) targetRightSample) / 2));
+            rbe_logger_debug("left_sample = %d, right_sample = %d", leftSample, rightSample);
 
-            *sampleOut++ += leftSample;  // Left
+            *sampleOut++ += leftSample; // Left
             *sampleOut++ += rightSample; // Right
 
             // Possibly need fixed sampling instead
@@ -193,10 +208,12 @@ void audio_data_callback(ma_device* pDevice, void* pOutput, const void* pInput, 
 bool rbe_audio_load_wav_data_from_file(const char* file_path, int32_t* sample_count, int32_t* channels, int32_t* sample_rate, void** samples) {
     size_t len = 0;
     char* file_data = rbe_fs_read_file_contents(file_path, &len);
+    rbe_logger_debug("file '%s' size '%u' bytes", file_path, len);
 
     uint64_t totalPcmFrameCount = 0;
     *samples =  drwav_open_memory_and_read_pcm_frames_s16(file_data, len, (uint32_t*)channels, (uint32_t*)sample_rate, &totalPcmFrameCount, NULL);
-    RBE_MEM_FREE(file_data);
+//    RBE_MEM_FREE(file_data);
+    drwav_free(file_data, NULL);
 
     if (!*samples) {
         *samples = NULL;
