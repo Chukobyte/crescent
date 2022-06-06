@@ -2,174 +2,204 @@
 #define MINIAUDIO_IMPLEMENTATION
 
 #include <miniaudio/miniaudio.h>
+#include <stdint.h>
 
-#include "../utils/logger.h"
+#include "audio.h"
+#include "../asset_manager.h"
 #include "../memory/rbe_mem.h"
-#include "../thread/rbe_thread_pool.h"
+#include "../thread/rbe_pthread.h"
+#include "../utils/logger.h"
+#include "../utils/rbe_file_system_utils.h"
 
-#define MAX_AUDIO_DATA_SOURCES 100
+#define MAX_AUDIO_INSTANCES 32
 
 void audio_data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frameCount);
-void audio_manager_thread_job(void* arg);
 
-static ma_engine* audioEngine = NULL;
 static ma_device* audioDevice = NULL;
-static ma_resource_manager* resourceManager = NULL;
-static ThreadPool* audioJobTP = NULL; // Can use a global job queue
+static pthread_mutex_t* audioMutex = NULL;
 
-struct ResourceManagerDataSources {
-    ma_resource_manager_data_source* data[MAX_AUDIO_DATA_SOURCES];
+// An instance of an RBE audio source
+typedef struct RBEAudioInstance {
+    RBEAudioSource* source;
+    unsigned int id;
+    bool isPlaying;
+    bool doesLoop;
+    double samplePosition;
+} RBEAudioInstance;
+
+struct AudioInstances {
+    RBEAudioInstance* instances[MAX_AUDIO_INSTANCES];
     size_t count;
-} ResourceManagerDataSources;
+} AudioInstances;
 
-static struct ResourceManagerDataSources* dataSources = NULL;
+static struct AudioInstances* audioInstances = NULL;
 
+// --- Audio Manager --- //
 bool rbe_audio_manager_init() {
-    audioEngine = RBE_MEM_ALLOCATE(ma_engine);
-    ma_result result = ma_engine_init(NULL, audioEngine);
-    if (result != MA_SUCCESS) {
-        rbe_logger_error("Failed to initialize miniaudio!");
-        return false;
-    }
-    // Data Sources
-    dataSources = RBE_MEM_ALLOCATE(struct ResourceManagerDataSources);
-    dataSources->count = 0;
-    // Resource Manager
-    resourceManager = RBE_MEM_ALLOCATE(ma_resource_manager);
-    ma_resource_manager_config resourceManagerConfig = ma_resource_manager_config_init();
-    resourceManagerConfig.decodedFormat = ma_format_f32;
-    resourceManagerConfig.decodedSampleRate = 48000;
-    resourceManagerConfig.jobThreadCount = 0; // Managing with custom job system threads
-    resourceManagerConfig.flags = MA_RESOURCE_MANAGER_FLAG_NON_BLOCKING;
-    ma_result resourceManagerResult = ma_resource_manager_init(&resourceManagerConfig, resourceManager);
-    if (resourceManagerResult != MA_SUCCESS) {
-        ma_device_uninit(audioDevice);
-        rbe_logger_error("Error failed to initialize resource manager!");
-        return false;
-    }
+    audioInstances = RBE_MEM_ALLOCATE(struct AudioInstances);
+    pthread_mutex_init(audioMutex, NULL);
     // Device
     ma_device_config config = ma_device_config_init(ma_device_type_playback);
-    config.playback.format = ma_format_f32;
-    config.sampleRate = 48000;
+    config.playback.pDeviceID = NULL;
+    config.playback.format = ma_format_s16;
+    config.playback.channels = 2;
+    config.capture.pDeviceID = NULL;
+    config.capture.format = ma_format_s16;
+    config.capture.channels = 1;
+    config.sampleRate = 44100;
     config.dataCallback = audio_data_callback;
-    config.pUserData = resourceManager;
+    config.pUserData = NULL;
     audioDevice = RBE_MEM_ALLOCATE(ma_device);
     if (ma_device_init(NULL, &config, audioDevice) != MA_SUCCESS) {
         rbe_logger_error("Failed to initialize miniaudio device!");
         return false;
     }
 
-    ma_device_start(audioDevice);
-
-    // TODO: Temp until job stuff is figured out
-    audioJobTP = tpool_create(1);
-    tpool_add_work(audioJobTP, audio_manager_thread_job, NULL);
-
-    // Temp
-
-//    memset(dataSources, 0, sizeof(struct ResourceManagerDataSources));
+    if (ma_device_start(audioDevice) != MA_SUCCESS) {
+        rbe_logger_error("Failed to start audio device!");
+        return false;
+    }
 
     return true;
 }
 
 void rbe_audio_manager_finalize() {
-    ma_engine_uninit(audioEngine);
-    RBE_MEM_FREE(audioEngine);
-    audioEngine = NULL;
-
     ma_device_uninit(audioDevice);
     RBE_MEM_FREE(audioDevice);
     audioDevice = NULL;
 
-    RBE_MEM_FREE(dataSources); // TODO: Free up data in data sources...
-    dataSources = NULL;
+    RBE_MEM_FREE(audioInstances); // TODO: Properly free up all instances
+    audioInstances = NULL;
 
-    tpool_destroy(audioJobTP);
-}
-
-void rbe_audio_manager_process() {
-    // TODO: Make non blocking
-//    tpool_add_work(audioJobTP, audio_manager_thread_job, NULL);
-//    tpool_wait(audioJobTP);
+    pthread_mutex_destroy(audioMutex);
 }
 
 void rbe_audio_manager_play_sound(const char* filePath, bool loops) {
-    ma_result result;
-    ma_resource_manager_data_source* newDataSource = RBE_MEM_ALLOCATE(ma_resource_manager_data_source);
-    result = ma_resource_manager_data_source_init(resourceManager, filePath, 0, NULL, newDataSource);
-    if (result != MA_SUCCESS) {
-        rbe_logger_error("Failed to play sound at file path: '%s'", filePath);
+    // Temp asset creation
+    if (!rbe_asset_manager_has_audio_source(filePath)) {
+        rbe_logger_error("Doesn't have audio source loaded at path '%s' loaded!  Aborting...", filePath);
+        return;
+    } else if (audioInstances->count >= MAX_AUDIO_INSTANCES) {
+        rbe_logger_warn("Reached max audio instances of '%d', not playing sound!", MAX_AUDIO_INSTANCES);
         return;
     }
-    ma_data_source_set_looping(newDataSource, loops);
-    dataSources->data[dataSources->count++] = newDataSource;
-    const size_t newDataSourceIndex = dataSources->count - 1;
-    rbe_logger_debug("New Data source at file path = '%s' created with index = %d", filePath, newDataSourceIndex);
 
-    // A ma_resource_manager_data_source object is compatible with the ma_data_source API. To read data, just call
-    // the ma_data_source_read_pcm_frames() like you would with any normal data source.
-    result = ma_data_source_read_pcm_frames(dataSources->data[newDataSourceIndex], NULL, 1000, NULL);
-    if (result != MA_SUCCESS) {
-        // Failed to read PCM frames.
-        rbe_logger_error("Error playing sound!  result = '%d'", result);
-    }
+    // Create audio instance and add to instances array
+    static unsigned int audioInstanceId = 0;  // TODO: temp id for now in case we need to grab a hold of an audio instance for roll back later...
+    RBEAudioInstance* audioInstance = RBE_MEM_ALLOCATE(RBEAudioInstance);
+    audioInstance->source = rbe_asset_manager_get_audio_source(filePath);
+    audioInstance->id = audioInstanceId++;
+    audioInstance->doesLoop = loops;
+    audioInstance->samplePosition = 0.0f;
+    audioInstance->isPlaying = true; // Sets sound instance to be played
+
+    audioInstances->instances[audioInstances->count++] = audioInstance;
+    rbe_logger_debug("Added audio instance from file path '%s' to play!", filePath);
 }
 
-// --- Thread/Job --- //
+// --- Mini Audio Callback --- //
 void audio_data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frameCount) {
-    size_t removedDataSources = 0;
-    for (size_t i = 0; i < dataSources->count; i++) {
-        if (dataSources->data[i] == NULL) {
-            rbe_logger_error("Trying to read null audio data with index = %d", i);
+    if (audioInstances->count <= 0) {
+        return;
+    }
+
+    pthread_mutex_lock(audioMutex);
+    memset(pOutput, 0, frameCount * pDevice->playback.channels * ma_get_bytes_per_sample(pDevice->playback.format));
+    size_t removedInstances = 0;
+    for (size_t i = 0; i < audioInstances->count; i++) {
+        RBEAudioInstance* audioInst = audioInstances->instances[i];
+        if (!audioInst->isPlaying) {
+            audioInstances->instances[i] = NULL;
+            removedInstances++;
             continue;
         }
-        ma_result result = ma_data_source_read_pcm_frames(dataSources->data[i], pOutput, frameCount, NULL);
-        if (result != MA_SUCCESS) {
-            // Failed to read PCM frames.
-            if (result == MA_AT_END) {
-                rbe_logger_debug("Sound data resource with index '%d' reached the end... data source count '%d'", i, dataSources->count - 1);
-            } else {
-                rbe_logger_error("Error in audio manager 'audio data callback' result '%d' with index '%d'", result, i);
+
+        const int32_t channels = audioInst->source->channels;
+        int16_t* sampleOut = (int16_t*) pOutput;
+        int16_t* samples = (int16_t*) audioInst->source->samples;
+        uint64_t samplesToWrite = (uint64_t) frameCount;
+
+        // Write to output
+        for (uint64_t writeSample = 0; writeSample < samplesToWrite; writeSample++) {
+            double startSamplePosition = audioInst->samplePosition;
+
+            double targetSamplePosition = startSamplePosition + (double) channels * 1.1f; // TODO: Not sure why '1.1f'
+            if (targetSamplePosition >= audioInst->source->sample_count) {
+                targetSamplePosition -= (double) audioInst->source->sample_count;
             }
-            ma_resource_manager_data_source_uninit(dataSources->data[i]);
-            dataSources->data[i] = NULL;
-            removedDataSources++;
+
+            int16_t startLeftSample;
+            int16_t startRightSample;
+            {
+                uint64_t leftId = (uint64_t) startSamplePosition;
+                if (channels > 1) {
+                    leftId &= ~((uint64_t)(0x01));
+                }
+                uint64_t rightId = leftId + (uint64_t) (channels - 1);
+
+                int16_t firstLeftSample = samples[leftId];
+                int16_t firstRightSample = samples[rightId];
+                int16_t secondLeftSample = samples[leftId + channels];
+                int16_t secondRightSample = samples[rightId + channels];
+
+                startLeftSample = (int16_t) (firstLeftSample + secondLeftSample - firstLeftSample);
+                startRightSample = (int16_t) (firstRightSample + secondRightSample - firstRightSample);
+            }
+
+            int16_t leftSample = (int16_t) (startLeftSample / channels);
+            int16_t rightSample = (int16_t) (startRightSample / channels);
+
+            *sampleOut++ += leftSample;  // Left
+            *sampleOut++ += rightSample; // Right
+
+            // Possibly need fixed sampling instead
+            audioInst->samplePosition = targetSamplePosition;
+
+            const bool isAtEnd = audioInst->samplePosition >= audioInst->source->sample_count - channels - 1;
+            if (isAtEnd) {
+                audioInst->samplePosition = 0;
+                if (!audioInst->doesLoop) {
+                    rbe_logger_debug("Audio instance with id '%u' is queued for deletion!", audioInst->id);
+                    audioInst->isPlaying = false;
+                    audioInstances->instances[i] = NULL;
+                    removedInstances++;
+                    RBE_MEM_FREE(audioInst);
+                    break;
+                }
+            }
         }
     }
+
     // Reshuffle array and update count if data sources have been removed
-    if (removedDataSources > 0) {
-        for (size_t i = 0; i < dataSources->count; i++) {
-            if (dataSources->data[i] == NULL && i + 1 < dataSources->count) {
-                dataSources->data[i] = dataSources->data[i + 1];
-                dataSources->data[i + 1] = NULL;
+    if (removedInstances > 0) {
+        for (size_t i = 0; i < audioInstances->count; i++) {
+            if (audioInstances->instances[i] == NULL && i + 1 < audioInstances->count) {
+                audioInstances->instances[i] = audioInstances->instances[i + 1];
+                audioInstances->instances[i + 1] = NULL;
             }
         }
-        dataSources->count -= removedDataSources;
+        audioInstances->count -= removedInstances;
     }
+    pthread_mutex_unlock(audioMutex);
 }
 
-void audio_manager_thread_job(void* arg) {
-    (void) arg;
-    while (true) {
-        ma_job job;
-        ma_result result = ma_resource_manager_next_job(resourceManager, &job);
-        if (result != MA_SUCCESS) {
-            if (result == MA_NO_DATA_AVAILABLE) {
-                // No jobs are available. Keep going. Will only get this if the resource manager was initialized
-                // with MA_RESOURCE_MANAGER_FLAG_NON_BLOCKING.
-                continue;
-            }
-            if (result == MA_CANCELLED) {
-                rbe_logger_debug("Audio manager thread ended!");
-                // MA_JOB_TYPE_QUIT was posted. Exit.
-                break;
-            } else {
-                rbe_logger_debug("Audio manager thread ended in error! result = '%d'", result);
-                // Some other error occurred.
-                break;
-            }
-        }
-        rbe_logger_debug("Job process!");
-        ma_job_process(&job);
+// --- RBE Audio --- //
+bool rbe_audio_load_wav_data_from_file(const char* file_path, int32_t* sample_count, int32_t* channels, int32_t* sample_rate, void** samples) {
+    size_t len = 0;
+    char* file_data = rbe_fs_read_file_contents(file_path, &len);
+    rbe_logger_debug("file '%s' size '%u' bytes", file_path, len);
+
+    uint64_t totalPcmFrameCount = 0;
+    *samples =  drwav_open_memory_and_read_pcm_frames_s16(file_data, len, (uint32_t*)channels, (uint32_t*)sample_rate, &totalPcmFrameCount, NULL);
+    RBE_MEM_FREE(file_data);
+
+    if (!*samples) {
+        *samples = NULL;
+        rbe_logger_error("Could not load .wav file: %s", file_path);
+        return false;
     }
+
+    *sample_count = (int32_t) totalPcmFrameCount * *channels;
+
+    return true;
 }

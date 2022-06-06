@@ -130,7 +130,12 @@ bool rbe_initialize_rendering() {
 }
 
 bool rbe_initialize_audio() {
-    return rbe_audio_manager_init();
+    bool success = rbe_audio_manager_init();
+    if (success) {
+        // Temp
+        rbe_asset_manager_load_audio_source_wav("test_games/fighter_test/assets/audio/sfx/rainbow_orb.wav", "test_games/fighter_test/assets/audio/sfx/rainbow_orb.wav");
+    }
+    return success;
 }
 
 bool rbe_initialize_input() {
@@ -147,7 +152,6 @@ bool rbe_initialize_input() {
 void rbe_update() {
     rbe_process_inputs();
     rbe_process_game_logic();
-    rbe_audio_manager_process();
     rbe_render();
 }
 
