@@ -135,36 +135,28 @@ void audio_data_callback(ma_device* pDevice, void* pOutput, const void* pInput, 
 //            rbe_logger_debug("Write sample '%u' of '%u'.", writeSample, samplesToWrite);
 //            rbe_logger_debug("Start Sample position = %f, target sample position = %f", startSamplePosition, targetSamplePosition);
 
-//            int16_t startLeftSample;
-//            int16_t startRightSample;
-//            {
-//                wu leftId = (wu) startSamplePosition;
-//                if (channels > 1) {
-//                    leftId &= ((wu)(0x01));
-//                }
-//                wu rightId = leftId + (wu) (channels - 1);
-//
-//                int16_t firstLeftSample = samples[leftId];
-//                int16_t firstRightSample = samples[rightId];
-//                int16_t secondLeftSample = samples[leftId + channels];
-//                int16_t secondRightSample = samples[rightId + channels];
-//
-//                startLeftSample = (int16_t) (firstLeftSample + secondLeftSample - firstLeftSample);
-//                startRightSample = (int16_t) (firstRightSample + secondRightSample - firstRightSample);
-//            }
-//
-//            int16_t leftSample = (int16_t) (startLeftSample / channels);
-//            int16_t rightSample = (int16_t) (startRightSample / channels);
+            int16_t startLeftSample;
+            int16_t startRightSample;
+            {
+                wu leftId = (wu) startSamplePosition;
+                if (channels > 1) {
+                    leftId &= ~((wu)(0x01));
+                }
+                wu rightId = leftId + (wu) (channels - 1);
 
-//            *sampleOut++ += leftSample;  // Left
-//            *sampleOut++ += rightSample; // Right
+                int16_t firstLeftSample = samples[leftId];
+                int16_t firstRightSample = samples[rightId];
+                int16_t secondLeftSample = samples[leftId + channels];
+                int16_t secondRightSample = samples[rightId + channels];
 
-            const wu leftId = channels > 1 ? ~((wu) startSamplePosition & 0x01) : (wu) startSamplePosition;
-            const wu rightId = leftId + (channels - 1);
-            const int16_t leftSample = samples[leftId];
-            const int16_t rightSample = samples[rightId];
+                startLeftSample = (int16_t) (firstLeftSample + secondLeftSample - firstLeftSample);
+                startRightSample = (int16_t) (firstRightSample + secondRightSample - firstRightSample);
+            }
 
-            *sampleOut++ += leftSample; // Left
+            int16_t leftSample = (int16_t) (startLeftSample / channels);
+            int16_t rightSample = (int16_t) (startRightSample / channels);
+
+            *sampleOut++ += leftSample;  // Left
             *sampleOut++ += rightSample; // Right
 
             // Possibly need fixed sampling instead
