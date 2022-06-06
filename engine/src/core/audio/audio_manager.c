@@ -133,8 +133,8 @@ void audio_data_callback(ma_device* pDevice, void* pOutput, const void* pInput, 
             if (targetSamplePosition >= audioInst->source->sample_count) {
                 targetSamplePosition -= (double) audioInst->source->sample_count;
             }
-            rbe_logger_debug("Write sample '%u' of '%u'.", writeSample, samplesToWrite);
-            rbe_logger_debug("Start Sample position = %f, target sample position = %f", startSamplePosition, targetSamplePosition);
+//            rbe_logger_debug("Write sample '%u' of '%u'.", writeSample, samplesToWrite);
+//            rbe_logger_debug("Start Sample position = %f, target sample position = %f", startSamplePosition, targetSamplePosition);
 
 //            int16_t startLeftSample;
 //            int16_t startRightSample;
@@ -160,14 +160,10 @@ void audio_data_callback(ma_device* pDevice, void* pOutput, const void* pInput, 
 //            *sampleOut++ += leftSample;  // Left
 //            *sampleOut++ += rightSample; // Right
 
-//            const wu leftId = channels > 1 ? (wu) startSamplePosition & 0x01 : (wu) startSamplePosition;
-//            const wu rightId = leftId + channels - 1;
-            const wu leftId = (wu) startSamplePosition ;
-            const wu rightId = leftId + 1;
+            const wu leftId = channels > 1 ? ~((wu) startSamplePosition & 0x01) : (wu) startSamplePosition;
+            const wu rightId = leftId + (channels - 1);
             const int16_t leftSample = samples[leftId];
             const int16_t rightSample = samples[rightId];
-
-            rbe_logger_debug("left_sample = %d, right_sample = %d", leftSample, rightSample);
 
             *sampleOut++ += leftSample; // Left
             *sampleOut++ += rightSample; // Right
