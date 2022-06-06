@@ -13,18 +13,18 @@
 
 #define MAX_AUDIO_INSTANCES 32
 
-void audio_data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frameCount);
+void audio_data_callback(ma_device* device, void* output, const void* input, ma_uint32 frame_count);
 
-static ma_device* audioDevice = NULL;
-static pthread_mutex_t* audioMutex = NULL;
+static ma_device* audio_device = NULL;
+static pthread_mutex_t* audio_mutex = NULL;
 
 // An instance of an RBE audio source
 typedef struct RBEAudioInstance {
     RBEAudioSource* source;
     unsigned int id;
-    bool isPlaying;
-    bool doesLoop;
-    double samplePosition;
+    bool is_playing;
+    bool does_loop;
+    double sample_position;
 } RBEAudioInstance;
 
 struct AudioInstances {
@@ -32,12 +32,12 @@ struct AudioInstances {
     size_t count;
 } AudioInstances;
 
-static struct AudioInstances* audioInstances = NULL;
+static struct AudioInstances* audio_instances = NULL;
 
 // --- Audio Manager --- //
 bool rbe_audio_manager_init() {
-    audioInstances = RBE_MEM_ALLOCATE(struct AudioInstances);
-    pthread_mutex_init(audioMutex, NULL);
+    audio_instances = RBE_MEM_ALLOCATE(struct AudioInstances);
+    pthread_mutex_init(audio_mutex, NULL);
     // Device
     ma_device_config config = ma_device_config_init(ma_device_type_playback);
     config.playback.pDeviceID = NULL;
@@ -49,13 +49,13 @@ bool rbe_audio_manager_init() {
     config.sampleRate = 44100;
     config.dataCallback = audio_data_callback;
     config.pUserData = NULL;
-    audioDevice = RBE_MEM_ALLOCATE(ma_device);
-    if (ma_device_init(NULL, &config, audioDevice) != MA_SUCCESS) {
+    audio_device = RBE_MEM_ALLOCATE(ma_device);
+    if (ma_device_init(NULL, &config, audio_device) != MA_SUCCESS) {
         rbe_logger_error("Failed to initialize miniaudio device!");
         return false;
     }
 
-    if (ma_device_start(audioDevice) != MA_SUCCESS) {
+    if (ma_device_start(audio_device) != MA_SUCCESS) {
         rbe_logger_error("Failed to start audio device!");
         return false;
     }
@@ -64,14 +64,14 @@ bool rbe_audio_manager_init() {
 }
 
 void rbe_audio_manager_finalize() {
-    ma_device_uninit(audioDevice);
-    RBE_MEM_FREE(audioDevice);
-    audioDevice = NULL;
+    ma_device_uninit(audio_device);
+    RBE_MEM_FREE(audio_device);
+    audio_device = NULL;
 
-    RBE_MEM_FREE(audioInstances); // TODO: Properly free up all instances
-    audioInstances = NULL;
+    RBE_MEM_FREE(audio_instances); // TODO: Properly free up all instances
+    audio_instances = NULL;
 
-    pthread_mutex_destroy(audioMutex);
+    pthread_mutex_destroy(audio_mutex);
 }
 
 void rbe_audio_manager_play_sound(const char* filePath, bool loops) {
@@ -79,7 +79,7 @@ void rbe_audio_manager_play_sound(const char* filePath, bool loops) {
     if (!rbe_asset_manager_has_audio_source(filePath)) {
         rbe_logger_error("Doesn't have audio source loaded at path '%s' loaded!  Aborting...", filePath);
         return;
-    } else if (audioInstances->count >= MAX_AUDIO_INSTANCES) {
+    } else if (audio_instances->count >= MAX_AUDIO_INSTANCES) {
         rbe_logger_warn("Reached max audio instances of '%d', not playing sound!", MAX_AUDIO_INSTANCES);
         return;
     }
@@ -89,39 +89,39 @@ void rbe_audio_manager_play_sound(const char* filePath, bool loops) {
     RBEAudioInstance* audioInstance = RBE_MEM_ALLOCATE(RBEAudioInstance);
     audioInstance->source = rbe_asset_manager_get_audio_source(filePath);
     audioInstance->id = audioInstanceId++;
-    audioInstance->doesLoop = loops;
-    audioInstance->samplePosition = 0.0f;
-    audioInstance->isPlaying = true; // Sets sound instance to be played
+    audioInstance->does_loop = loops;
+    audioInstance->sample_position = 0.0f;
+    audioInstance->is_playing = true; // Sets sound instance to be played
 
-    audioInstances->instances[audioInstances->count++] = audioInstance;
+    audio_instances->instances[audio_instances->count++] = audioInstance;
     rbe_logger_debug("Added audio instance from file path '%s' to play!", filePath);
 }
 
 // --- Mini Audio Callback --- //
-void audio_data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frameCount) {
-    if (audioInstances->count <= 0) {
+void audio_data_callback(ma_device* device, void* output, const void* input, ma_uint32 frame_count) {
+    if (audio_instances->count <= 0) {
         return;
     }
 
-    pthread_mutex_lock(audioMutex);
-    memset(pOutput, 0, frameCount * pDevice->playback.channels * ma_get_bytes_per_sample(pDevice->playback.format));
+    pthread_mutex_lock(audio_mutex);
+    memset(output, 0, frame_count * device->playback.channels * ma_get_bytes_per_sample(device->playback.format));
     size_t removedInstances = 0;
-    for (size_t i = 0; i < audioInstances->count; i++) {
-        RBEAudioInstance* audioInst = audioInstances->instances[i];
-        if (!audioInst->isPlaying) {
-            audioInstances->instances[i] = NULL;
+    for (size_t i = 0; i < audio_instances->count; i++) {
+        RBEAudioInstance* audioInst = audio_instances->instances[i];
+        if (!audioInst->is_playing) {
+            audio_instances->instances[i] = NULL;
             removedInstances++;
             continue;
         }
 
         const int32_t channels = audioInst->source->channels;
-        int16_t* sampleOut = (int16_t*) pOutput;
+        int16_t* sampleOut = (int16_t*) output;
         int16_t* samples = (int16_t*) audioInst->source->samples;
-        uint64_t samplesToWrite = (uint64_t) frameCount;
+        uint64_t samplesToWrite = (uint64_t) frame_count;
 
         // Write to output
         for (uint64_t writeSample = 0; writeSample < samplesToWrite; writeSample++) {
-            double startSamplePosition = audioInst->samplePosition;
+            double startSamplePosition = audioInst->sample_position;
 
             double targetSamplePosition = startSamplePosition + (double) channels * 1.1f; // TODO: Not sure why '1.1f'
             if (targetSamplePosition >= audioInst->source->sample_count) {
@@ -153,15 +153,15 @@ void audio_data_callback(ma_device* pDevice, void* pOutput, const void* pInput, 
             *sampleOut++ += rightSample; // Right
 
             // Possibly need fixed sampling instead
-            audioInst->samplePosition = targetSamplePosition;
+            audioInst->sample_position = targetSamplePosition;
 
-            const bool isAtEnd = audioInst->samplePosition >= audioInst->source->sample_count - channels - 1;
+            const bool isAtEnd = audioInst->sample_position >= audioInst->source->sample_count - channels - 1;
             if (isAtEnd) {
-                audioInst->samplePosition = 0;
-                if (!audioInst->doesLoop) {
+                audioInst->sample_position = 0;
+                if (!audioInst->does_loop) {
                     rbe_logger_debug("Audio instance with id '%u' is queued for deletion!", audioInst->id);
-                    audioInst->isPlaying = false;
-                    audioInstances->instances[i] = NULL;
+                    audioInst->is_playing = false;
+                    audio_instances->instances[i] = NULL;
                     removedInstances++;
                     RBE_MEM_FREE(audioInst);
                     break;
@@ -172,15 +172,15 @@ void audio_data_callback(ma_device* pDevice, void* pOutput, const void* pInput, 
 
     // Reshuffle array and update count if data sources have been removed
     if (removedInstances > 0) {
-        for (size_t i = 0; i < audioInstances->count; i++) {
-            if (audioInstances->instances[i] == NULL && i + 1 < audioInstances->count) {
-                audioInstances->instances[i] = audioInstances->instances[i + 1];
-                audioInstances->instances[i + 1] = NULL;
+        for (size_t i = 0; i < audio_instances->count; i++) {
+            if (audio_instances->instances[i] == NULL && i + 1 < audio_instances->count) {
+                audio_instances->instances[i] = audio_instances->instances[i + 1];
+                audio_instances->instances[i + 1] = NULL;
             }
         }
-        audioInstances->count -= removedInstances;
+        audio_instances->count -= removedInstances;
     }
-    pthread_mutex_unlock(audioMutex);
+    pthread_mutex_unlock(audio_mutex);
 }
 
 // --- RBE Audio --- //
