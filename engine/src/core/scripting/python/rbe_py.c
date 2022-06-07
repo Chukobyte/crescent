@@ -4,17 +4,19 @@
 
 #include "py_helper.h"
 #include "rbe_py_api_module.h"
+#include "rbe_py_api_source.h"
 #include "../../utils/rbe_assert.h"
 #include "../../game_properties.h"
 
 void rbe_py_initialize() {
     pyh_cache_initialize();
     Py_SetProgramName(L"roll_back_engine_python");
-    PyImport_AppendInittab("rbe_py_api", &PyInit_rbe_py_API); // Load engine modules
+    PyImport_AppendInittab("rbe_py_api_internal", &PyInit_rbe_py_API); // Load engine modules
     Py_Initialize();
     PyRun_SimpleString("import sys");
     PyRun_SimpleString("sys.path.insert(0, \".\")");
     PyRun_SimpleString("sys.dont_write_bytecode = True");
+    rbe_logger_debug("py_source = \n%s", RBE_PY_API_SOURCE);
 }
 
 void rbe_py_finalize() {

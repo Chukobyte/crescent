@@ -1,3 +1,6 @@
+import rbe_py_api_internal
+
+
 class AudioSource:
     def __init__(self, uid: str, file_path: str):
         self.file_path = file_path
@@ -35,7 +38,14 @@ def configure_game(
     resolution_height=800,
     target_fps=66,
 ):
-    pass
+    rbe_py_api_internal.configure_game(
+        game_tile=game_tile,
+        window_width=window_width,
+        window_height=window_height,
+        resolution_width=resolution_width,
+        resolution_height=resolution_height,
+        target_fps=target_fps,
+    )
 
 
 def create_assets(audio_sources=None, textures=None, fonts=None):
@@ -45,8 +55,12 @@ def create_assets(audio_sources=None, textures=None, fonts=None):
         textures = []
     if audio_sources is None:
         audio_sources = []
+    rbe_py_api_internal.create_assets(
+        audio_sources=audio_sources, textures=textures, fonts=fonts
+    )
 
 
 def configure_inputs(input_actions=None):
     if input_actions is None:
         input_actions = []
+    rbe_py_api_internal.configure_inputs(input_actions=input_actions)
