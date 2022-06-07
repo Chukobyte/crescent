@@ -208,6 +208,8 @@ void rbe_render() {
     glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
+    rbe_ec_system_render_systems();
+
     Texture* walkTexture = rbe_asset_manager_get_texture("walk");
     RBE_ASSERT(walkTexture != NULL);
     static Rect2 sourceRect = { 0.0f, 0.0f, 32.0f, 32.0f };

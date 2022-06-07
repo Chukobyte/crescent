@@ -2,6 +2,7 @@
 
 #include "../../memory/rbe_mem.h"
 #include "../../utils/logger.h"
+#include "../../utils/rbe_assert.h"
 
 #define MAX_ENTITY_SYSTEMS_PER_HOOK 4
 
@@ -35,6 +36,10 @@ void rbe_ec_system_initialize() {
 }
 
 void rbe_ec_system_finalize() {
+    for (size_t i = 0; i < entitySystemData.entity_systems_count; i++) {
+        rbe_ec_system_destroy(entitySystemData.entity_systems[i]);
+        entitySystemData.entity_systems[i] = NULL;
+    }
     entitySystemData.entity_systems_count = 0;
     entitySystemData.render_systems_count = 0;
     entitySystemData.process_systems_count = 0;
@@ -58,6 +63,7 @@ void rbe_ec_system_destroy(EntitySystem* entitySystem) {
 }
 
 void rbe_ec_system_register(EntitySystem* system) {
+    RBE_ASSERT_FMT(system != NULL, "Passed in system is NULL!");
     entitySystemData.entity_systems[entitySystemData.entity_systems_count++] = system;
     if (system->render_func != NULL) {
         entitySystemData.render_systems[entitySystemData.render_systems_count++] = system;
