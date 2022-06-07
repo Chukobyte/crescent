@@ -16,7 +16,9 @@ void rbe_py_initialize() {
     PyRun_SimpleString("import sys");
     PyRun_SimpleString("sys.path.insert(0, \".\")");
     PyRun_SimpleString("sys.dont_write_bytecode = True");
-    rbe_logger_debug("py_source = \n%s", RBE_PY_API_SOURCE);
+
+    PyRun_SimpleString(RBE_PY_API_SOURCE_IMPORTER);
+    PyRun_SimpleString(RBE_PY_API_SOURCE_IMPORTER_MODULE_IMPORTS);
 }
 
 void rbe_py_finalize() {

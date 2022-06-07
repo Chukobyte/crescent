@@ -81,7 +81,6 @@ void rbe_ec_system_register_entity_to_systems(Entity entity) {
     rbe_logger_debug("entityComponentSignature = %d", entityComponentSignature);
     for (size_t i = 0; i < entitySystemData.entity_systems_count; i++) {
         if ((entityComponentSignature & entitySystemData.entity_systems[i]->component_signature) == entityComponentSignature) {
-            rbe_logger_debug("reg");
             rbe_ec_system_insert_entity_into_system(entity, entitySystemData.entity_systems[i]);
         } else {
             rbe_ec_system_remove_entity_from_system(entity, entitySystemData.entity_systems[i]);

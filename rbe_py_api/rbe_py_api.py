@@ -42,8 +42,8 @@ def configure_game(
         game_tile=game_tile,
         window_width=window_width,
         window_height=window_height,
-        resolution_width=resolution_width,
-        resolution_height=resolution_height,
+        # resolution_width=resolution_width,
+        # resolution_height=resolution_height,
         target_fps=target_fps,
     )
 
