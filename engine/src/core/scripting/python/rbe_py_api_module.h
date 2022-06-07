@@ -24,7 +24,7 @@ static struct PyModuleDef rbePyAPIModDef = {
 };
 
 // --- Argument Lists --- //
-static char *rbePyApiProjectConfigureKWList[] = {"game_tile", "window_width", "window_height", "target_fps", NULL};
+static char *rbePyApiProjectConfigureKWList[] = {"game_tile", "window_width", "window_height", "resolution_width", "resolution_height", "target_fps", NULL};
 
 // --- Module Init --- //
 PyObject* PyInit_rbe_py_API(void);

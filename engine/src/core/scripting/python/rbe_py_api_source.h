@@ -81,8 +81,8 @@
 "        game_tile=game_tile,\n"\
 "        window_width=window_width,\n"\
 "        window_height=window_height,\n"\
-"        # resolution_width=resolution_width,\n"\
-"        # resolution_height=resolution_height,\n"\
+"        resolution_width=resolution_width,\n"\
+"        resolution_height=resolution_height,\n"\
 "        target_fps=target_fps,\n"\
 "    )\n"\
 "\n"\
