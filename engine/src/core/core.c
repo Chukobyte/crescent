@@ -15,11 +15,14 @@
 #include "scripting/python/rbe_py.h"
 #include "rendering/renderer.h"
 #include "audio/audio_manager.h"
+#include "ecs/ecs_manager.h"
+#include "ecs/system/ec_system.h"
 
 bool rbe_initialize_sdl();
 bool rbe_initialize_rendering();
 bool rbe_initialize_audio();
 bool rbe_initialize_input();
+bool rbe_initialize_ecs();
 void rbe_process_inputs();
 void rbe_process_game_logic();
 void rbe_render();
@@ -65,6 +68,10 @@ bool rbe_initialize(int argv, char** args) {
     }
     if (!rbe_initialize_input()) {
         rbe_logger_error("Failed to initialize input!");
+        return false;
+    }
+    if (!rbe_initialize_ecs()) {
+        rbe_logger_error("Failed to initialize ecs!");
         return false;
     }
 
@@ -149,6 +156,11 @@ bool rbe_initialize_input() {
     return true;
 }
 
+bool rbe_initialize_ecs() {
+    rbe_ecs_manager_initialize();
+    return true;
+}
+
 void rbe_update() {
     rbe_process_inputs();
     rbe_process_game_logic();
@@ -196,12 +208,8 @@ void rbe_render() {
     glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-    Texture* walkTexture = rbe_asset_manager_get_texture("walk");
-    RBE_ASSERT(walkTexture != NULL);
-    static Rect2 sourceRect = { 0.0f, 0.0f, 32.0f, 32.0f };
-    static Rect2 destRect = { 300.0f, 300.0f, 32.0f * 2.0f, 32.0f * 2.0f };
-    static Color walkTextureColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-    rbe_renderer_queue_sprite_draw_call(walkTexture, sourceRect, destRect, 0.0f, walkTextureColor, false, false);
+    rbe_ec_system_render_systems();
+
     rbe_renderer_flush_batches();
 
     SDL_GL_SwapWindow(window);
@@ -216,5 +224,10 @@ void rbe_shutdown() {
     SDL_GL_DeleteContext(openGlContext);
     SDL_Quit();
     rbe_py_finalize();
+    rbe_game_props_finalize();
+    rbe_audio_manager_finalize();
+    rbe_input_finalize();
+    rbe_asset_manager_finalize();
+    rbe_ec_system_finalize();
     rbe_logger_info("RBE Engine shutdown!");
 }

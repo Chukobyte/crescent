@@ -1,5 +1,11 @@
 #pragma once
 
+// --- Vector2 --- //
+typedef struct Vector2 {
+    float x;
+    float y;
+} Vector2;
+
 // --- Rect2 --- //
 typedef struct Rect2 {
     float x;

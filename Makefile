@@ -27,9 +27,9 @@ C_FLAGS := # Overridden by builds
 
 # Engine
 CORE_C_FLAGS := -std=c99 -Wfatal-errors -Wall -Wextra -Wno-write-strings -Wno-deprecated-declarations -Wno-unused-variable -Wno-cast-function-type -Wno-unused-parameter -Wno-missing-field-initializers
-CORE_SRC = $(wildcard engine/src/main.c engine/src/core/*.c engine/src/core/utils/*.c engine/src/core/data_structures/*.c engine/src/core/memory/*.c engine/src/core/input/*.c engine/src/core/rendering/*.c engine/src/core/audio/*.c engine/src/core/scripting/python/*.c engine/src/core/thread/*.c include/stb_image/stb_image.c include/glad/glad.c)
+CORE_SRC = $(wildcard engine/src/main.c engine/src/core/*.c engine/src/core/utils/*.c engine/src/core/data_structures/*.c engine/src/core/memory/*.c engine/src/core/input/*.c engine/src/core/rendering/*.c engine/src/core/audio/*.c engine/src/core/ecs/*.c engine/src/core/ecs/component/*.c engine/src/core/ecs/entity/*.c engine/src/core/ecs/system/*.c engine/src/core/scripting/python/*.c engine/src/core/thread/*.c include/stb_image/stb_image.c include/glad/glad.c)
 CORE_OBJ_C = $(CORE_SRC:.c=.o)
-CORE_SRC_TEST = $(wildcard engine/src/test/main.c include/unity.c engine/src/core/*.c engine/src/core/utils/*.c engine/src/core/data_structures/*.c engine/src/core/memory/*.c engine/src/core/input/*.c engine/src/core/rendering/*.c engine/src/core/audio/*.c engine/src/core/scripting/python/*.c engine/src/core/thread/*.c include/stb_image/stb_image.c include/glad/glad.c)
+CORE_SRC_TEST = $(wildcard engine/src/test/main.c include/unity.c engine/src/core/*.c engine/src/core/utils/*.c engine/src/core/data_structures/*.c engine/src/core/memory/*.c engine/src/core/input/*.c engine/src/core/rendering/*.c engine/src/core/audio/*.c engine/src/core/ecs/component/*.c engine/src/core/ecs/*.c engine/src/core/ecs/entity/*.c engine/src/core/ecs/system/*.c engine/src/core/scripting/python/*.c engine/src/core/thread/*.c include/stb_image/stb_image.c include/glad/glad.c)
 CORE_OBJ_C_TEST = $(CORE_SRC_TEST:.c=.o)
 
 # Editor
