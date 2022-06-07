@@ -2,7 +2,7 @@ import rbe_py_api_internal
 
 
 class AudioSource:
-    def __init__(self, uid: str, file_path: str):
+    def __init__(self, file_path: str):
         self.file_path = file_path
 
 
@@ -18,9 +18,9 @@ class Texture:
 
 
 class Font:
-    def __init__(self, uid: str, file_path: str, size: int):
-        self.uid = uid
+    def __init__(self, file_path: str, uid: str, size: int):
         self.file_path = file_path
+        self.uid = uid
         self.size = size
 
 

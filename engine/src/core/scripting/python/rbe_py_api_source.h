@@ -41,7 +41,7 @@
 "\n"\
 "\n"\
 "class AudioSource:\n"\
-"    def __init__(self, uid: str, file_path: str):\n"\
+"    def __init__(self, file_path: str):\n"\
 "        self.file_path = file_path\n"\
 "\n"\
 "\n"\
@@ -57,9 +57,9 @@
 "\n"\
 "\n"\
 "class Font:\n"\
-"    def __init__(self, uid: str, file_path: str, size: int):\n"\
-"        self.uid = uid\n"\
+"    def __init__(self, file_path: str, uid: str, size: int):\n"\
 "        self.file_path = file_path\n"\
+"        self.uid = uid\n"\
 "        self.size = size\n"\
 "\n"\
 "\n"\

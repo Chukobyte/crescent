@@ -23,6 +23,24 @@ PyObject* rbe_py_api_configure_game(PyObject* self, PyObject* args, PyObject* kw
     return NULL;
 }
 
+PyObject* rbe_py_api_create_assets(PyObject* self, PyObject* args, PyObject* kwargs) {
+    PyObject* audioSourcesList;
+    PyObject* texturesList;
+    PyObject* fontsList;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "OOO", rbePyApiCreateAssetsKWList, &audioSourcesList, &texturesList, &fontsList)) {
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* rbe_py_api_configure_inputs(PyObject* self, PyObject* args, PyObject* kwargs) {
+    PyObject* inputActionsList;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "O", rbePyApiConfigureInputsKWList, &inputActionsList)) {
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
 PyObject* PyInit_rbe_py_API(void) {
     return PyModule_Create(&rbePyAPIModDef);
 }
