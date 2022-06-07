@@ -23,6 +23,7 @@ typedef enum ComponentType {
 } ComponentType;
 
 void component_manager_initialize();
+void component_manager_finalize();
 void* component_manager_get_component(Entity entity, ComponentDataIndex index);
 void component_manager_set_component(Entity entity, ComponentDataIndex index, void* component);
 void component_manager_remove_component(Entity entity, ComponentDataIndex index);

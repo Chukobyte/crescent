@@ -30,6 +30,8 @@ typedef struct EntitySystem {
 
 void rbe_ec_system_initialize();
 void rbe_ec_system_finalize();
+EntitySystem* rbe_ec_system_create();
+void rbe_ec_system_destroy(EntitySystem* entitySystem);
 void rbe_ec_system_register(EntitySystem* system, EntitySystemHook systemHook);
 void rbe_ec_system_register_entity_to_systems(Entity entity);
 void rbe_ec_system_render_systems();

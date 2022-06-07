@@ -63,6 +63,8 @@ void component_manager_initialize() {
     }
 }
 
+void component_manager_finalize() {}
+
 void* component_manager_get_component(Entity entity, ComponentDataIndex index) {
     return component_array_get_component(&componentManager.entityComponentArrays[entity], index);
 }

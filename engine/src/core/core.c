@@ -15,11 +15,14 @@
 #include "scripting/python/rbe_py.h"
 #include "rendering/renderer.h"
 #include "audio/audio_manager.h"
+#include "ecs/ecs_manager.h"
+#include "ecs/system/ec_system.h"
 
 bool rbe_initialize_sdl();
 bool rbe_initialize_rendering();
 bool rbe_initialize_audio();
 bool rbe_initialize_input();
+bool rbe_initialize_ecs();
 void rbe_process_inputs();
 void rbe_process_game_logic();
 void rbe_render();
@@ -65,6 +68,10 @@ bool rbe_initialize(int argv, char** args) {
     }
     if (!rbe_initialize_input()) {
         rbe_logger_error("Failed to initialize input!");
+        return false;
+    }
+    if (!rbe_initialize_ecs()) {
+        rbe_logger_error("Failed to initialize ecs!");
         return false;
     }
 
@@ -149,6 +156,11 @@ bool rbe_initialize_input() {
     return true;
 }
 
+bool rbe_initialize_ecs() {
+    rbe_ecs_manager_initialize();
+    return true;
+}
+
 void rbe_update() {
     rbe_process_inputs();
     rbe_process_game_logic();
@@ -216,5 +228,10 @@ void rbe_shutdown() {
     SDL_GL_DeleteContext(openGlContext);
     SDL_Quit();
     rbe_py_finalize();
+    rbe_game_props_finalize();
+    rbe_audio_manager_finalize();
+    rbe_input_finalize();
+    rbe_asset_manager_finalize();
+    rbe_ec_system_finalize();
     rbe_logger_info("RBE Engine shutdown!");
 }

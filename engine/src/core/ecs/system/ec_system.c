@@ -1,5 +1,6 @@
 #include "ec_system.h"
 
+#include "../../memory/rbe_mem.h"
 #include "../../utils/logger.h"
 
 #define MAX_ENTITY_SYSTEMS_PER_HOOK 4
@@ -33,22 +34,39 @@ void rbe_ec_system_initialize() {
     }
 }
 
-void rbe_ec_system_finalize() {}
+void rbe_ec_system_finalize() {
+    entitySystemData.entity_systems_count = 0;
+    entitySystemData.render_systems_count = 0;
+    entitySystemData.process_systems_count = 0;
+    entitySystemData.physics_process_systems_count = 0;
+}
+
+EntitySystem* rbe_ec_system_create() {
+    EntitySystem* newSystem = RBE_MEM_ALLOCATE(EntitySystem);
+    newSystem->entity_count = 0;
+    newSystem->on_entity_registered_func = NULL;
+    newSystem->on_entity_unregistered_func = NULL;
+    newSystem->render_func = NULL;
+    newSystem->process_func = NULL;
+    newSystem->physics_process_func = NULL;
+    newSystem->component_signature = ComponentType_NONE;
+    return newSystem;
+}
+
+void rbe_ec_system_destroy(EntitySystem* entitySystem) {
+    RBE_MEM_FREE(entitySystem);
+}
 
 void rbe_ec_system_register(EntitySystem* system, EntitySystemHook systemHook) {
-    entitySystemData.entity_systems[entitySystemData.entity_systems_count] = system;
-    entitySystemData.entity_systems_count++;
+    entitySystemData.entity_systems[entitySystemData.entity_systems_count++] = system;
     if (systemHook & EntitySystemHook_RENDER) {
-        entitySystemData.render_systems[entitySystemData.render_systems_count] = system;
-        entitySystemData.render_systems_count++;
+        entitySystemData.render_systems[entitySystemData.render_systems_count++] = system;
     }
     if (systemHook & EntitySystemHook_PROCESS) {
-        entitySystemData.process_systems[entitySystemData.process_systems_count] = system;
-        entitySystemData.process_systems_count++;
+        entitySystemData.process_systems[entitySystemData.process_systems_count++] = system;
     }
     if (systemHook & EntitySystemHook_PHYSICS_PROCESS) {
-        entitySystemData.physics_process_systems[entitySystemData.physics_process_systems_count] = system;
-        entitySystemData.physics_process_systems_count++;
+        entitySystemData.physics_process_systems[entitySystemData.physics_process_systems_count++] = system;
     }
 }
 
