@@ -22,6 +22,7 @@ typedef enum ComponentType {
     ComponentType_TEXT_LABEL = 1 << 3,
 } ComponentType;
 
+// --- Component Manager --- //
 void component_manager_initialize();
 void component_manager_finalize();
 void* component_manager_get_component(Entity entity, ComponentDataIndex index);

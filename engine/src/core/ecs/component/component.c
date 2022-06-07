@@ -6,7 +6,7 @@
 #include "../../utils/rbe_assert.h"
 #include "../../utils/logger.h"
 
-// Component Array
+// --- Component Array --- //
 typedef struct ComponentArray {
     void* components[MAX_COMPONENTS];
 } ComponentArray;
@@ -46,7 +46,7 @@ void component_array_finalize(ComponentArray* componentArray) {
     //    RBE_MEM_FREE(componentArray);
 }
 
-// Component Manager
+// --- Component Manager --- //
 typedef struct ComponentManager {
     ComponentArray entityComponentArrays[MAX_ENTITIES];
     ComponentType entityComponentSignatures[MAX_ENTITIES];
