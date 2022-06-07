@@ -6,6 +6,7 @@
 void rbe_ecs_manager_initialize() {
     component_manager_initialize();
     rbe_ec_system_initialize();
+    // Initialize and register ec systems
 }
 
 void rbe_ecs_manager_finalize() {

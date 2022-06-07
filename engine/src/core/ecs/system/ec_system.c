@@ -57,15 +57,15 @@ void rbe_ec_system_destroy(EntitySystem* entitySystem) {
     RBE_MEM_FREE(entitySystem);
 }
 
-void rbe_ec_system_register(EntitySystem* system, EntitySystemHook systemHook) {
+void rbe_ec_system_register(EntitySystem* system) {
     entitySystemData.entity_systems[entitySystemData.entity_systems_count++] = system;
-    if (systemHook & EntitySystemHook_RENDER) {
+    if (system->render_func != NULL) {
         entitySystemData.render_systems[entitySystemData.render_systems_count++] = system;
     }
-    if (systemHook & EntitySystemHook_PROCESS) {
+    if (system->process_func != NULL) {
         entitySystemData.process_systems[entitySystemData.process_systems_count++] = system;
     }
-    if (systemHook & EntitySystemHook_PHYSICS_PROCESS) {
+    if (system->physics_process_func != NULL) {
         entitySystemData.physics_process_systems[entitySystemData.physics_process_systems_count++] = system;
     }
 }
@@ -120,7 +120,9 @@ bool rbe_ec_system_has_entity(Entity entity, EntitySystem* system) {
 void rbe_ec_system_insert_entity_into_system(Entity entity, EntitySystem* system) {
     if (!rbe_ec_system_has_entity(entity, system)) {
         system->entities[system->entity_count] = entity;
-        system->on_entity_registered_func(entity);
+        if (system->on_entity_registered_func != NULL) {
+            system->on_entity_registered_func(entity);
+        }
         system->entity_count++;
     } else {
         rbe_logger_error("Entity already in system!");
@@ -137,7 +139,9 @@ bool rbe_ec_system_remove_entity_from_system(Entity entity, EntitySystem* system
                 // Swaps from front to place removed unless at the end
                 system->entities[i] = system->entities[i + 1];
             }
-            system->on_entity_unregistered_func(entity);
+            if (system->on_entity_unregistered_func != NULL) {
+                system->on_entity_unregistered_func(entity);
+            }
             system->entity_count--;
             return true;
         }
