@@ -35,7 +35,7 @@ def configure_game(
     window_width=800,
     window_height=600,
     resolution_width=800,
-    resolution_height=800,
+    resolution_height=600,
     target_fps=66,
 ):
     rbe_py_api_internal.configure_game(
