@@ -5,6 +5,7 @@
 #define RBE_PY_API_SOURCE ""\
 "import rbe_py_api_internal\\n"\
 "\\n"\
+"\\n"\
 "class AudioSource:\\n"\
 "    def __init__(self, uid: str, file_path: str):\\n"\
 "        self.file_path = file_path\\n"\
@@ -42,12 +43,14 @@
 "    resolution_height=800,\\n"\
 "    target_fps=66,\\n"\
 "):\\n"\
-"    rbe_py_api_internal.configure_game(game_tile=game_tile,\\n"\
-"                                       window_width=window_width,\\n"\
-"                                       window_height=window_height,\\n"\
-"                                       resolution_width=resolution_width,\\n"\
-"                                       resolution_height=resolution_height,\\n"\
-"                                       target_fps=target_fps)\\n"\
+"    rbe_py_api_internal.configure_game(\\n"\
+"        game_tile=game_tile,\\n"\
+"        window_width=window_width,\\n"\
+"        window_height=window_height,\\n"\
+"        resolution_width=resolution_width,\\n"\
+"        resolution_height=resolution_height,\\n"\
+"        target_fps=target_fps,\\n"\
+"    )\\n"\
 "\\n"\
 "\\n"\
 "def create_assets(audio_sources=None, textures=None, fonts=None):\\n"\
@@ -57,7 +60,9 @@
 "        textures = []\\n"\
 "    if audio_sources is None:\\n"\
 "        audio_sources = []\\n"\
-"    rbe_py_api_internal.create_assets(audio_sources=audio_sources, textures=textures, fonts=fonts)\\n"\
+"    rbe_py_api_internal.create_assets(\\n"\
+"        audio_sources=audio_sources, textures=textures, fonts=fonts\\n"\
+"    )\\n"\
 "\\n"\
 "\\n"\
 "def configure_inputs(input_actions=None):\\n"\
