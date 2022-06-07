@@ -210,12 +210,6 @@ void rbe_render() {
 
     rbe_ec_system_render_systems();
 
-    Texture* walkTexture = rbe_asset_manager_get_texture("walk");
-    RBE_ASSERT(walkTexture != NULL);
-    static Rect2 sourceRect = { 0.0f, 0.0f, 32.0f, 32.0f };
-    static Rect2 destRect = { 300.0f, 300.0f, 32.0f * 2.0f, 32.0f * 2.0f };
-    static Color walkTextureColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-    rbe_renderer_queue_sprite_draw_call(walkTexture, sourceRect, destRect, 0.0f, walkTextureColor, false, false);
     rbe_renderer_flush_batches();
 
     SDL_GL_SwapWindow(window);
