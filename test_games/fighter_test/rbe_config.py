@@ -1,12 +1,4 @@
-from rbe_py_api import (
-    configure_game,
-    AudioSource,
-    Texture,
-    Font,
-    InputAction,
-    create_assets,
-    configure_inputs,
-)
+from rbe_py_api import *
 
 configure_game(
     game_tile="Test Game",
@@ -15,7 +7,7 @@ configure_game(
     target_fps=66,
 )
 
-create_assets(
+configure_assets(
     audio_sources=[
         AudioSource(
             file_path="test_games/fighter_test/assets/audio/sfx/rainbow_orb.wav"
