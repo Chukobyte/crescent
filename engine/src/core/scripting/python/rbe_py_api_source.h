@@ -56,10 +56,9 @@
 "        return f\"({self.r}, {self.g}, {self.b}, {self.a})\"\n"\
 "\n"\
 "    @staticmethod\n"\
-"    def normalize(r=0, g=0, b=0, a=255):\n"\
-"        return Color(\n"\
-"            r / 255.0, g / 255.0, b / 255.0, a / 255.0\n"\
-"        )\n"\
+"    def normalize(r: int, g: int, b: int, a=255):\n"\
+"        return Color(r / 255.0, g / 255.0, b / 255.0, a / 255.0)\n"\
+"\n"\
 "\n"\
 "# MATH\n"\
 "class Math:\n"\
@@ -322,8 +321,9 @@
 "\n"\
 "    @staticmethod\n"\
 "    def is_action_just_released(action_name: str) -> bool:\n"\
-"        return rbe_py_api_internal.input_is_action_just_released(action_name=action_name)\n"\
-"\n"\
+"        return rbe_py_api_internal.input_is_action_just_released(\n"\
+"            action_name=action_name\n"\
+"        )\n"\
 "\n"\
 "    class Mouse:\n"\
 "        LEFT_BUTTON = \"mb_left\"\n"\
@@ -333,7 +333,6 @@
 "        def get_position() -> Vector2:\n"\
 "            mouse_x, mouse_y = rbe_py_api_internal.mouse_get_position()\n"\
 "            return Vector2(mouse_x, mouse_y)\n"\
-"\n"\
 "\n"\
 "    class Keyboard:\n"\
 "        NUM_0 = \"0\"\n"\

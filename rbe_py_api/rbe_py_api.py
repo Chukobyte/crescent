@@ -17,7 +17,7 @@ class Color:
         return f"({self.r}, {self.g}, {self.b}, {self.a})"
 
     @staticmethod
-    def normalize(r=0, g=0, b=0, a=255):
+    def normalize(r: int, g: int, b: int, a=255):
         return Color(r / 255.0, g / 255.0, b / 255.0, a / 255.0)
 
 

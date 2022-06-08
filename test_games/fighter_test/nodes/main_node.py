@@ -21,14 +21,11 @@ create_stage_nodes(
                     draw_source=Rect2(0.0, 0.0, 48.0, 48.0),
                     flip_x=False,
                     flip_y=False,
-                    modulate=Color.normalize(255, 255, 255, 255)
+                    modulate=Color.normalize(255, 255, 255, 255),
                 ),
-                ScriptComponent(
-                    class_path="src.main",
-                    class_name="Main"
-                ),
+                ScriptComponent(class_path="src.main", class_name="Main"),
             ],
-            children=[]
+            children=[],
         )
     ]
 )
