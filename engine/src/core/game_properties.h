@@ -9,23 +9,23 @@ extern "C" {
 
 typedef struct RBEAssetAudioSource {
     char* file_path;
-}RBEAssetAudioSource;
+} RBEAssetAudioSource;
 
 typedef struct RBEAssetTexture {
     char* file_path;
-}RBEAssetTexture;
+} RBEAssetTexture;
 
 typedef struct RBEAssetFont {
     char* file_path;
     char* uid;
     size_t size;
-}RBEAssetFont;
+} RBEAssetFont;
 
 typedef struct RBEInputAction {
     char* name;
     size_t valueCount;
     char* values[4];
-}RBEInputAction;
+} RBEInputAction;
 
 typedef struct RBEGameProperties {
     char gameTitle[32];

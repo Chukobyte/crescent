@@ -23,7 +23,7 @@ bool rbe_initialize_rendering();
 bool rbe_initialize_audio();
 bool rbe_initialize_input();
 bool rbe_initialize_ecs();
-bool rbe_load_game_assets();
+bool rbe_load_assets_from_configuration();
 void rbe_process_inputs();
 void rbe_process_game_logic();
 void rbe_render();
@@ -76,7 +76,7 @@ bool rbe_initialize(int argv, char** args) {
         return false;
     }
 
-    rbe_load_game_assets();
+    rbe_load_assets_from_configuration();
 
     rbe_logger_info("RBE Engine v%s initialized!", RBE_CORE_VERSION);
     isRunning = true;
@@ -151,7 +151,7 @@ bool rbe_initialize_ecs() {
     return true;
 }
 
-bool rbe_load_game_assets() {
+bool rbe_load_assets_from_configuration() {
     // Audio Sources
     for (size_t i = 0; i < gameProperties->audioSourceCount; i++) {
         const RBEAssetAudioSource assetAudioSource = gameProperties->audioSources[i];
@@ -165,7 +165,7 @@ bool rbe_load_game_assets() {
         RBE_ASSERT(texture != NULL);
     }
 
-    // Inputs TODO: (May move in a different area)
+    // Inputs
     for (size_t i = 0; i < gameProperties->inputActionCount; i++) {
         const RBEInputAction inputAction = gameProperties->inputActions[i];
         for (size_t valueIndex = 0; valueIndex < inputAction.valueCount; valueIndex++) {
@@ -174,11 +174,6 @@ bool rbe_load_game_assets() {
             rbe_input_add_action_value(inputAction.name, actionValue);
         }
     }
-
-    // Temp shutdown input
-    //    rbe_input_add_action_value("exit", "esc");
-    //    // Temp play sfx
-    //    rbe_input_add_action_value("play_sfx", "space");
 
     return true;
 }
