@@ -134,6 +134,7 @@ void setup_scene_stage_nodes(PyObject* stageNodeList) {
         const char* nodeName = phy_get_string_from_var(pStageNode, "name");
         const char* nodeType = phy_get_string_from_var(pStageNode, "type");
         rbe_logger_debug("node_name = %s, node_type = %s", nodeName, nodeType);
+        Py_DecRef(pStageNode);
     }
     Py_DecRef(stageNodeList);
 }

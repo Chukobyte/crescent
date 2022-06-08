@@ -36,8 +36,8 @@ configure_assets(
 
 configure_inputs(
     input_actions=[
-        InputAction(name="exit", values=["esc"]),
-        InputAction(name="play_sfx", values=["space"]),
+        InputAction(name="exit", values=[Input.Keyboard.ESC]),
+        InputAction(name="play_sfx", values=[Input.Keyboard.SPACE]),
     ]
 )
 
