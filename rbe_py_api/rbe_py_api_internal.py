@@ -25,3 +25,7 @@ def configure_assets(audio_sources=None, textures=None, fonts=None) -> None:
 def configure_inputs(input_actions=None) -> None:
     if input_actions is None:
         input_actions = []
+
+
+def create_stage_nodes(stage_nodes: list) -> None:
+    pass

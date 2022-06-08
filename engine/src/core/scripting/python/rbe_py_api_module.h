@@ -9,9 +9,11 @@ PyObject* rbe_py_api_configure_game(PyObject* self, PyObject* args, PyObject* kw
 PyObject* rbe_py_api_configure_assets(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* rbe_py_api_configure_inputs(PyObject* self, PyObject* args, PyObject* kwargs);
 
+PyObject* rbe_py_api_create_stage_nodes(PyObject* self, PyObject* args, PyObject* kwargs);
+
 // --- Module Methods Definitions --- //
 static struct PyMethodDef rbePyApiMethods[] = {
-    // ENGINE
+    // CONFIGURATION
     {
         "configure_game", (PyCFunction) rbe_py_api_configure_game,
         METH_VARARGS | METH_KEYWORDS, "Configures the game project properties."
@@ -23,6 +25,11 @@ static struct PyMethodDef rbePyApiMethods[] = {
     {
         "configure_inputs", (PyCFunction) rbe_py_api_configure_inputs,
         METH_VARARGS | METH_KEYWORDS, "Configure the game inputs."
+    },
+    // STAGE
+    {
+        "create_stage_nodes", (PyCFunction) rbe_py_api_create_stage_nodes,
+        METH_VARARGS | METH_KEYWORDS, "Create stage nodes that will be added to the scene.."
     },
     { NULL, NULL, 0,NULL },
 };
@@ -37,6 +44,8 @@ static struct PyModuleDef rbePyAPIModDef = {
 static char *rbePyApiProjectConfigureKWList[] = {"game_tile", "window_width", "window_height", "resolution_width", "resolution_height", "target_fps", NULL};
 static char *rbePyApiConfigureAssetsKWList[] = {"audio_sources", "textures", "fonts", NULL};
 static char *rbePyApiConfigureInputsKWList[] = {"input_actions", NULL};
+
+static char *rbePyApiCreateStageNodesKWList[] = {"stage_nodes", NULL};
 
 // --- Module Init --- //
 PyObject* PyInit_rbe_py_API(void);

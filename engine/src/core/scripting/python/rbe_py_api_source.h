@@ -397,21 +397,39 @@
 "\n"\
 "# STAGE SETUP\n"\
 "class StageNode:\n"\
-"    def __init__(self):\n"\
-"        pass\n"\
+"    def __init__(self, name: str, type: str, tags, external_node_source, components, children):\n"\
+"        self.name = name\n"\
+"        self.type = type\n"\
+"        self.tags = tags\n"\
+"        self.external_node_source = external_node_source\n"\
+"        self.components = components\n"\
+"        self.children = children\n"\
 "\n"\
 "\n"\
 "# COMPONENTS\n"\
 "class Transform2DComponent:\n"\
-"    pass\n"\
+"    def __init__(self, position: Vector2, scale: Vector2, rotation: float, z_index: int, z_index_relative_to_parent: bool, ignore_camera: bool):\n"\
+"        self.position = position\n"\
+"        self.scale = scale\n"\
+"        self.rotation = rotation\n"\
+"        self.z_index = z_index\n"\
+"        self.z_index_relative_to_parent = z_index_relative_to_parent\n"\
+"        self.ignore_camera = ignore_camera\n"\
 "\n"\
 "\n"\
 "class SpriteComponent:\n"\
-"    pass\n"\
+"    def __init__(self, texture_path: str, draw_source: Rect2, flip_x: bool, flip_y: bool, modulate: Color):\n"\
+"        self.texture_path = texture_path\n"\
+"        self.draw_source = draw_source\n"\
+"        self.flip_x = flip_x\n"\
+"        self.flip_y = flip_y\n"\
+"        self.modulate = modulate\n"\
 "\n"\
 "\n"\
 "class ScriptComponent:\n"\
-"    pass\n"\
+"    def __init__(self, class_path: str, class_name: str):\n"\
+"        self.class_path = class_path\n"\
+"        self.class_name = class_name\n"\
 "\n"\
 "\n"\
 "# CONFIGURATION\n"\
@@ -422,7 +440,7 @@
 "    resolution_width=800,\n"\
 "    resolution_height=600,\n"\
 "    target_fps=66,\n"\
-"):\n"\
+") -> None:\n"\
 "    rbe_py_api_internal.configure_game(\n"\
 "        game_tile=game_tile,\n"\
 "        window_width=window_width,\n"\
@@ -433,7 +451,7 @@
 "    )\n"\
 "\n"\
 "\n"\
-"def configure_assets(audio_sources=None, textures=None, fonts=None):\n"\
+"def configure_assets(audio_sources=None, textures=None, fonts=None) -> None:\n"\
 "    if fonts is None:\n"\
 "        fonts = []\n"\
 "    if textures is None:\n"\
@@ -445,10 +463,15 @@
 "    )\n"\
 "\n"\
 "\n"\
-"def configure_inputs(input_actions=None):\n"\
+"def configure_inputs(input_actions=None) -> None:\n"\
 "    if input_actions is None:\n"\
 "        input_actions = []\n"\
 "    rbe_py_api_internal.configure_inputs(input_actions=input_actions)\n"\
+"\n"\
+"\n"\
+"# STAGE\n"\
+"def create_stage_nodes(stage_nodes: list) -> None:\n"\
+"    rbe_py_api_internal.create_stage_nodes(stage_nodes=stage_nodes)\n"\
 "\n"
 
 #define RBE_PY_API_SOURCE_IMPORTER_MODULE_IMPORTS ""\

@@ -5,6 +5,7 @@
 #include "../../utils/rbe_assert.h"
 #include "../../scripting/python/py_helper.h"
 
+// CONFIGURE
 PyObject* rbe_py_api_configure_game(PyObject* self, PyObject* args, PyObject* kwargs) {
     char* gameTitle;
     int windowWidth;
@@ -124,6 +125,28 @@ PyObject* rbe_py_api_configure_inputs(PyObject* self, PyObject* args, PyObject* 
             Py_DECREF(pInputAction);
         }
         Py_DECREF(inputActionsList);
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+// STAGE
+void setup_scene_stage_nodes(PyObject* stageNodeList) {
+    for (Py_ssize_t i = 0; i < PyList_Size(stageNodeList); i++) {
+        PyObject* pStageNode = PyList_GetItem(stageNodeList, i);
+        const char* nodeName = phy_get_string_from_var(pStageNode, "name");
+        const char* nodeType = phy_get_string_from_var(pStageNode, "type");
+        rbe_logger_debug("node_name = %s, node_type = %s", nodeName, nodeType);
+    }
+    Py_DecRef(stageNodeList);
+}
+
+PyObject* rbe_py_api_create_stage_nodes(PyObject* self, PyObject* args, PyObject* kwargs) {
+    PyObject* stageNodeList;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "O", rbePyApiCreateStageNodesKWList, &stageNodeList)) {
+        RBE_ASSERT_FMT(PyList_Check(stageNodeList), "Passed in stage nodes are not a python list, check python api implementation...");
+        rbe_logger_debug("setup stage nodes:");
+        setup_scene_stage_nodes(stageNodeList);
         Py_RETURN_NONE;
     }
     return NULL;

@@ -358,21 +358,39 @@ class Input:
 
 # STAGE SETUP
 class StageNode:
-    def __init__(self):
-        pass
+    def __init__(self, name: str, type: str, tags, external_node_source, components, children):
+        self.name = name
+        self.type = type
+        self.tags = tags
+        self.external_node_source = external_node_source
+        self.components = components
+        self.children = children
 
 
 # COMPONENTS
 class Transform2DComponent:
-    pass
+    def __init__(self, position: Vector2, scale: Vector2, rotation: float, z_index: int, z_index_relative_to_parent: bool, ignore_camera: bool):
+        self.position = position
+        self.scale = scale
+        self.rotation = rotation
+        self.z_index = z_index
+        self.z_index_relative_to_parent = z_index_relative_to_parent
+        self.ignore_camera = ignore_camera
 
 
 class SpriteComponent:
-    pass
+    def __init__(self, texture_path: str, draw_source: Rect2, flip_x: bool, flip_y: bool, modulate: Color):
+        self.texture_path = texture_path
+        self.draw_source = draw_source
+        self.flip_x = flip_x
+        self.flip_y = flip_y
+        self.modulate = modulate
 
 
 class ScriptComponent:
-    pass
+    def __init__(self, class_path: str, class_name: str):
+        self.class_path = class_path
+        self.class_name = class_name
 
 
 # CONFIGURATION
@@ -383,7 +401,7 @@ def configure_game(
     resolution_width=800,
     resolution_height=600,
     target_fps=66,
-):
+) -> None:
     rbe_py_api_internal.configure_game(
         game_tile=game_tile,
         window_width=window_width,
@@ -394,7 +412,7 @@ def configure_game(
     )
 
 
-def configure_assets(audio_sources=None, textures=None, fonts=None):
+def configure_assets(audio_sources=None, textures=None, fonts=None) -> None:
     if fonts is None:
         fonts = []
     if textures is None:
@@ -406,7 +424,12 @@ def configure_assets(audio_sources=None, textures=None, fonts=None):
     )
 
 
-def configure_inputs(input_actions=None):
+def configure_inputs(input_actions=None) -> None:
     if input_actions is None:
         input_actions = []
     rbe_py_api_internal.configure_inputs(input_actions=input_actions)
+
+
+# STAGE
+def create_stage_nodes(stage_nodes: list) -> None:
+    rbe_py_api_internal.create_stage_nodes(stage_nodes=stage_nodes)
