@@ -1,3 +1,7 @@
+def input_add_action(action_name: str, value: list) -> None:
+    pass
+
+
 def configure_game(
     game_tile="Test Game",
     window_width=800,
@@ -5,11 +9,11 @@ def configure_game(
     resolution_width=800,
     resolution_height=800,
     target_fps=66,
-):
+) -> None:
     pass
 
 
-def configure_assets(audio_sources=None, textures=None, fonts=None):
+def configure_assets(audio_sources=None, textures=None, fonts=None) -> None:
     if fonts is None:
         fonts = []
     if textures is None:
@@ -18,6 +22,6 @@ def configure_assets(audio_sources=None, textures=None, fonts=None):
         audio_sources = []
 
 
-def configure_inputs(input_actions=None):
+def configure_inputs(input_actions=None) -> None:
     if input_actions is None:
         input_actions = []
