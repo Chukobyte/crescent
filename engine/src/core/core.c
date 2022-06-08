@@ -152,13 +152,28 @@ bool rbe_initialize_ecs() {
 }
 
 bool rbe_load_game_assets() {
-    // Test texture
-    rbe_asset_manager_load_texture("test_games/fighter_test/assets/images/melissa_walk_animation.png", "test_games/fighter_test/assets/images/melissa_walk_animation.png");
-    Texture* texture = rbe_asset_manager_get_texture("test_games/fighter_test/assets/images/melissa_walk_animation.png");
-    RBE_ASSERT(texture != NULL);
+    // Audio Sources
+    for (size_t i = 0; i < gameProperties->audioSourceCount; i++) {
+        const RBEAssetAudioSource assetAudioSource = gameProperties->audioSources[i];
+        rbe_asset_manager_load_audio_source_wav(assetAudioSource.file_path, assetAudioSource.file_path);
+    }
 
-    // Audio Source
-//    rbe_asset_manager_load_audio_source_wav("test_games/fighter_test/assets/audio/sfx/rainbow_orb.wav", "test_games/fighter_test/assets/audio/sfx/rainbow_orb.wav");
+    // Textures
+    for (size_t i = 0; i < gameProperties->textureCount; i++) {
+        const RBEAssetTexture assetTexture = gameProperties->textures[i];
+        Texture* texture = rbe_asset_manager_load_texture(assetTexture.file_path, assetTexture.file_path);
+        RBE_ASSERT(texture != NULL);
+    }
+
+    // Inputs TODO: (May move in a different area)
+    for (size_t i = 0; i < gameProperties->inputActionCount; i++) {
+        const RBEInputAction inputAction = gameProperties->inputActions[i];
+        for (size_t valueIndex = 0; valueIndex < inputAction.valueCount; valueIndex++) {
+            const char* actionValue = inputAction.values[valueIndex];
+            rbe_logger_debug("action_name = %s, action_value = %s", inputAction.name, actionValue);
+            rbe_input_add_action_value(inputAction.name, actionValue);
+        }
+    }
 
     // Temp shutdown input
     //    rbe_input_add_action_value("exit", "esc");

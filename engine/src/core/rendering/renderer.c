@@ -98,7 +98,6 @@ void draw_sprite(Texture* texture, Rect2 sourceRect, Rect2 destRect, float rotat
 }
 
 void rbe_renderer_queue_sprite_draw_call(Texture* texture, Rect2 sourceRect, Rect2 destRect, float rotation, Color color, bool flipX, bool flipY) {
-    RBE_ASSERT(texture != NULL);
     draw_sprite(texture, sourceRect, destRect, rotation, color, flipX, flipY);
 }
 
