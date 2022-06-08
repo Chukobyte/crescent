@@ -74,7 +74,7 @@
 "    window_width=800,\n"\
 "    window_height=600,\n"\
 "    resolution_width=800,\n"\
-"    resolution_height=800,\n"\
+"    resolution_height=600,\n"\
 "    target_fps=66,\n"\
 "):\n"\
 "    rbe_py_api_internal.configure_game(\n"\
@@ -87,14 +87,14 @@
 "    )\n"\
 "\n"\
 "\n"\
-"def create_assets(audio_sources=None, textures=None, fonts=None):\n"\
+"def configure_assets(audio_sources=None, textures=None, fonts=None):\n"\
 "    if fonts is None:\n"\
 "        fonts = []\n"\
 "    if textures is None:\n"\
 "        textures = []\n"\
 "    if audio_sources is None:\n"\
 "        audio_sources = []\n"\
-"    rbe_py_api_internal.create_assets(\n"\
+"    rbe_py_api_internal.configure_assets(\n"\
 "        audio_sources=audio_sources, textures=textures, fonts=fonts\n"\
 "    )\n"\
 "\n"\

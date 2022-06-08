@@ -9,7 +9,7 @@ configure_game(
     target_fps=66,
 )
 
-create_assets(
+configure_assets(
     audio_sources=[
         AudioSource(
             file_path="test_games/fighter_test/assets/audio/sfx/rainbow_orb.wav"

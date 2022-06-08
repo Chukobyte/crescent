@@ -48,14 +48,14 @@ def configure_game(
     )
 
 
-def create_assets(audio_sources=None, textures=None, fonts=None):
+def configure_assets(audio_sources=None, textures=None, fonts=None):
     if fonts is None:
         fonts = []
     if textures is None:
         textures = []
     if audio_sources is None:
         audio_sources = []
-    rbe_py_api_internal.create_assets(
+    rbe_py_api_internal.configure_assets(
         audio_sources=audio_sources, textures=textures, fonts=fonts
     )
 

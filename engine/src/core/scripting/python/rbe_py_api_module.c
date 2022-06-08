@@ -2,7 +2,6 @@
 
 #include "../../game_properties.h"
 #include "../../asset_manager.h"
-#include "../../input/input.h"
 #include "../../utils/rbe_assert.h"
 #include "../../scripting/python/py_helper.h"
 
@@ -31,11 +30,11 @@ PyObject* rbe_py_api_configure_game(PyObject* self, PyObject* args, PyObject* kw
     return NULL;
 }
 
-PyObject* rbe_py_api_create_assets(PyObject* self, PyObject* args, PyObject* kwargs) {
+PyObject* rbe_py_api_configure_assets(PyObject* self, PyObject* args, PyObject* kwargs) {
     PyObject* audioSourcesList;
     PyObject* texturesList;
     PyObject* fontsList;
-    if (PyArg_ParseTupleAndKeywords(args, kwargs, "OOO", rbePyApiCreateAssetsKWList, &audioSourcesList, &texturesList, &fontsList)) {
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "OOO", rbePyApiConfigureAssetsKWList, &audioSourcesList, &texturesList, &fontsList)) {
         RBE_ASSERT_FMT(PyList_Check(audioSourcesList), "Passed in audio source assets are not a python list, check python api implementation...");
         RBE_ASSERT_FMT(PyList_Check(texturesList), "Passed in texture assets are not a python list, check python api implementation...");
         RBE_ASSERT_FMT(PyList_Check(fontsList), "Passed in font assets are not a python list, check python api implementation...");

@@ -9,7 +9,7 @@ def configure_game(
     pass
 
 
-def create_assets(audio_sources=None, textures=None, fonts=None):
+def configure_assets(audio_sources=None, textures=None, fonts=None):
     if fonts is None:
         fonts = []
     if textures is None:

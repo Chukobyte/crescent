@@ -6,7 +6,7 @@
 // --- Module Methods --- //
 // Will all act as if submodules of the 'rbe_py_api'.  The prefix is the module name.
 PyObject* rbe_py_api_configure_game(PyObject* self, PyObject* args, PyObject* kwargs);
-PyObject* rbe_py_api_create_assets(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* rbe_py_api_configure_assets(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* rbe_py_api_configure_inputs(PyObject* self, PyObject* args, PyObject* kwargs);
 
 // --- Module Methods Definitions --- //
@@ -17,8 +17,8 @@ static struct PyMethodDef rbePyApiMethods[] = {
         METH_VARARGS | METH_KEYWORDS, "Configures the game project properties."
     },
     {
-        "create_assets", (PyCFunction) rbe_py_api_create_assets,
-        METH_VARARGS | METH_KEYWORDS, "Create game assets."
+        "configure_assets", (PyCFunction) rbe_py_api_configure_assets,
+        METH_VARARGS | METH_KEYWORDS, "Configure metadata for game assets."
     },
     {
         "configure_inputs", (PyCFunction) rbe_py_api_configure_inputs,
@@ -35,7 +35,7 @@ static struct PyModuleDef rbePyAPIModDef = {
 
 // --- Argument Lists --- //
 static char *rbePyApiProjectConfigureKWList[] = {"game_tile", "window_width", "window_height", "resolution_width", "resolution_height", "target_fps", NULL};
-static char *rbePyApiCreateAssetsKWList[] = {"audio_sources", "textures", "fonts", NULL};
+static char *rbePyApiConfigureAssetsKWList[] = {"audio_sources", "textures", "fonts", NULL};
 static char *rbePyApiConfigureInputsKWList[] = {"input_actions", NULL};
 
 // --- Module Init --- //
