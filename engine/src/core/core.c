@@ -23,6 +23,7 @@ bool rbe_initialize_rendering();
 bool rbe_initialize_audio();
 bool rbe_initialize_input();
 bool rbe_initialize_ecs();
+bool rbe_load_assets_from_configuration();
 void rbe_process_inputs();
 void rbe_process_game_logic();
 void rbe_render();
@@ -75,8 +76,11 @@ bool rbe_initialize(int argv, char** args) {
         return false;
     }
 
+    rbe_load_assets_from_configuration();
+
     rbe_logger_info("RBE Engine v%s initialized!", RBE_CORE_VERSION);
     isRunning = true;
+    rbe_ecs_manager_run_test_scene();
     return true;
 }
 
@@ -127,37 +131,50 @@ bool rbe_initialize_rendering() {
         return false;
     }
 
-    // Initialize renderer
     rbe_renderer_initialize();
-    // Test texture
-    rbe_asset_manager_load_texture("test_games/fighter_test/assets/images/melissa_walk_animation.png", "walk");
-    Texture* texture = rbe_asset_manager_get_texture("walk");
-    RBE_ASSERT(texture != NULL);
     return true;
 }
 
 bool rbe_initialize_audio() {
-    bool success = rbe_audio_manager_init();
-    if (success) {
-        // Temp
-        rbe_asset_manager_load_audio_source_wav("test_games/fighter_test/assets/audio/sfx/rainbow_orb.wav", "test_games/fighter_test/assets/audio/sfx/rainbow_orb.wav");
-    }
-    return success;
+    return rbe_audio_manager_init();
 }
 
 bool rbe_initialize_input() {
     if (!rbe_input_initialize()) {
         return false;
     }
-    // Temp shutdown input
-    rbe_input_add_action_value("exit", "esc");
-    // Temp play sfx
-    rbe_input_add_action_value("play_sfx", "space");
     return true;
 }
 
 bool rbe_initialize_ecs() {
     rbe_ecs_manager_initialize();
+    return true;
+}
+
+bool rbe_load_assets_from_configuration() {
+    // Audio Sources
+    for (size_t i = 0; i < gameProperties->audioSourceCount; i++) {
+        const RBEAssetAudioSource assetAudioSource = gameProperties->audioSources[i];
+        rbe_asset_manager_load_audio_source_wav(assetAudioSource.file_path, assetAudioSource.file_path);
+    }
+
+    // Textures
+    for (size_t i = 0; i < gameProperties->textureCount; i++) {
+        const RBEAssetTexture assetTexture = gameProperties->textures[i];
+        Texture* texture = rbe_asset_manager_load_texture(assetTexture.file_path, assetTexture.file_path);
+        RBE_ASSERT(texture != NULL);
+    }
+
+    // Inputs
+    for (size_t i = 0; i < gameProperties->inputActionCount; i++) {
+        const RBEInputAction inputAction = gameProperties->inputActions[i];
+        for (size_t valueIndex = 0; valueIndex < inputAction.valueCount; valueIndex++) {
+            const char* actionValue = inputAction.values[valueIndex];
+            rbe_logger_debug("action_name = %s, action_value = %s", inputAction.name, actionValue);
+            rbe_input_add_action_value(inputAction.name, actionValue);
+        }
+    }
+
     return true;
 }
 

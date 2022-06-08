@@ -1,6 +1,8 @@
 #pragma once
 
+#include <stdint.h>
+
 #define MAX_ENTITIES 100
 #define NULL_ENTITY 0
 
-typedef unsigned int Entity;
+typedef uint32_t Entity;

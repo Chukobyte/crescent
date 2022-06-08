@@ -73,6 +73,26 @@ bool pyh_run_python_file(const char* filePath) {
     return false;
 }
 
+const char* phy_get_string_from_var(struct _object* obj, const char* variableName) {
+    RBE_ASSERT(obj != NULL);
+    Py_IncRef(obj);
+    PyObject* objVar = PyObject_GetAttrString(obj, variableName);
+    RBE_ASSERT(objVar != NULL);
+    const char* varString = PyUnicode_AsUTF8(objVar);
+    Py_DecRef(objVar);
+    return varString;
+}
+
+int phy_get_int_from_var(struct _object* obj, const char* variableName) {
+    RBE_ASSERT(obj != NULL);
+    Py_IncRef(obj);
+    PyObject* objVar = PyObject_GetAttrString(obj, variableName);
+    RBE_ASSERT(objVar != NULL);
+    int varInt = PyLong_AsLong(objVar);
+    Py_DecRef(objVar);
+    return varInt;
+}
+
 // Python Cache
 #define PY_REF_CLEANER_OBJ_MAX 32
 

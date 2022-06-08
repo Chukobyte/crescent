@@ -5,6 +5,7 @@
 #include "shader.h"
 #include "shader_source.h"
 #include "../game_properties.h"
+#include "../utils/rbe_assert.h"
 
 typedef struct TextureCoordinates {
     GLfloat sMin;
