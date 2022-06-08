@@ -28,12 +28,13 @@ typedef struct RBEInputAction {
 } RBEInputAction;
 
 typedef struct RBEGameProperties {
-    char gameTitle[32];
+    char* gameTitle;
     int resolutionWidth;
     int resolutionHeight;
     int windowWidth;
     int windowHeight;
     int targetFPS;
+    char* initialScenePath;
     RBEAssetAudioSource audioSources[20];
     size_t audioSourceCount;
     RBEAssetTexture textures[20];

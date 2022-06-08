@@ -9,6 +9,7 @@ def configure_game(
     resolution_width=800,
     resolution_height=800,
     target_fps=66,
+    initial_node_path="",
 ) -> None:
     pass
 

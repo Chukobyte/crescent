@@ -397,7 +397,9 @@
 "\n"\
 "# STAGE SETUP\n"\
 "class StageNode:\n"\
-"    def __init__(self, name: str, type: str, tags, external_node_source, components, children):\n"\
+"    def __init__(\n"\
+"        self, name: str, type: str, tags, external_node_source, components, children\n"\
+"    ):\n"\
 "        self.name = name\n"\
 "        self.type = type\n"\
 "        self.tags = tags\n"\
@@ -408,7 +410,15 @@
 "\n"\
 "# COMPONENTS\n"\
 "class Transform2DComponent:\n"\
-"    def __init__(self, position: Vector2, scale: Vector2, rotation: float, z_index: int, z_index_relative_to_parent: bool, ignore_camera: bool):\n"\
+"    def __init__(\n"\
+"        self,\n"\
+"        position: Vector2,\n"\
+"        scale: Vector2,\n"\
+"        rotation: float,\n"\
+"        z_index: int,\n"\
+"        z_index_relative_to_parent: bool,\n"\
+"        ignore_camera: bool,\n"\
+"    ):\n"\
 "        self.position = position\n"\
 "        self.scale = scale\n"\
 "        self.rotation = rotation\n"\
@@ -418,7 +428,14 @@
 "\n"\
 "\n"\
 "class SpriteComponent:\n"\
-"    def __init__(self, texture_path: str, draw_source: Rect2, flip_x: bool, flip_y: bool, modulate: Color):\n"\
+"    def __init__(\n"\
+"        self,\n"\
+"        texture_path: str,\n"\
+"        draw_source: Rect2,\n"\
+"        flip_x: bool,\n"\
+"        flip_y: bool,\n"\
+"        modulate: Color,\n"\
+"    ):\n"\
 "        self.texture_path = texture_path\n"\
 "        self.draw_source = draw_source\n"\
 "        self.flip_x = flip_x\n"\
@@ -440,6 +457,7 @@
 "    resolution_width=800,\n"\
 "    resolution_height=600,\n"\
 "    target_fps=66,\n"\
+"    initial_node_path=\"\",\n"\
 ") -> None:\n"\
 "    rbe_py_api_internal.configure_game(\n"\
 "        game_tile=game_tile,\n"\
@@ -448,6 +466,7 @@
 "        resolution_width=resolution_width,\n"\
 "        resolution_height=resolution_height,\n"\
 "        target_fps=target_fps,\n"\
+"        initial_node_path=initial_node_path,\n"\
 "    )\n"\
 "\n"\
 "\n"\

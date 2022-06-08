@@ -7,6 +7,7 @@ configure_game(
     resolution_width=800,
     resolution_height=600,
     target_fps=66,
+    initial_node_path="test_games/fighter_test/nodes/main_node.py",
 )
 
 configure_assets(

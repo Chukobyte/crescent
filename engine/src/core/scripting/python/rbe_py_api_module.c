@@ -13,19 +13,16 @@ PyObject* rbe_py_api_configure_game(PyObject* self, PyObject* args, PyObject* kw
     int resolutionWidth;
     int resolutionHeight;
     int targetFPS;
-    if (PyArg_ParseTupleAndKeywords(args, kwargs, "siiiii", rbePyApiProjectConfigureKWList, &gameTitle, &windowWidth, &windowHeight, &resolutionWidth, &resolutionHeight, &targetFPS)) {
+    char* initialScenePath;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "siiiiis", rbePyApiProjectConfigureKWList, &gameTitle, &windowWidth, &windowHeight, &resolutionWidth, &resolutionHeight, &targetFPS, &initialScenePath)) {
         RBEGameProperties* gameProperties = rbe_game_props_get();
-        strncpy(gameProperties->gameTitle, gameTitle, sizeof(gameProperties->gameTitle) - 1);
-        gameProperties->gameTitle[sizeof(gameProperties->gameTitle) - 1] = '\0';
+        gameProperties->gameTitle = strdup(gameTitle);
         gameProperties->windowWidth = windowWidth;
         gameProperties->windowHeight = windowHeight;
         gameProperties->resolutionWidth = resolutionWidth;
         gameProperties->resolutionHeight = resolutionHeight;
         gameProperties->targetFPS = targetFPS;
-        gameProperties->audioSourceCount = 0;
-        gameProperties->textureCount = 0;
-        gameProperties->fontCount = 0;
-        gameProperties->inputActionCount = 0;
+        gameProperties->initialScenePath = strdup(initialScenePath);
         Py_RETURN_NONE;
     }
     return NULL;

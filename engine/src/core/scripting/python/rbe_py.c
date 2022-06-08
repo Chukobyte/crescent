@@ -35,13 +35,13 @@ RBEGameProperties rbe_py_read_config_path(const char* filePath) {
     RBE_ASSERT_FMT(load_success == true, "Failed to load config at '%s'", filePath);
     RBEGameProperties* gameProps = rbe_game_props_get();
     RBEGameProperties props = {
-        .gameTitle = {0},
+        .gameTitle = gameProps->gameTitle,
         .resolutionWidth = gameProps->resolutionWidth,
         .resolutionHeight = gameProps->resolutionHeight,
         .windowWidth = gameProps->windowWidth,
         .windowHeight = gameProps->windowHeight,
-        .targetFPS = gameProps->targetFPS
+        .targetFPS = gameProps->targetFPS,
+        .initialScenePath = gameProps->initialScenePath
     };
-    strcpy(props.gameTitle, gameProps->gameTitle);
     return props;
 }

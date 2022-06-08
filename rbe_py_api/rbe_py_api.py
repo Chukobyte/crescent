@@ -358,7 +358,9 @@ class Input:
 
 # STAGE SETUP
 class StageNode:
-    def __init__(self, name: str, type: str, tags, external_node_source, components, children):
+    def __init__(
+        self, name: str, type: str, tags, external_node_source, components, children
+    ):
         self.name = name
         self.type = type
         self.tags = tags
@@ -369,7 +371,15 @@ class StageNode:
 
 # COMPONENTS
 class Transform2DComponent:
-    def __init__(self, position: Vector2, scale: Vector2, rotation: float, z_index: int, z_index_relative_to_parent: bool, ignore_camera: bool):
+    def __init__(
+        self,
+        position: Vector2,
+        scale: Vector2,
+        rotation: float,
+        z_index: int,
+        z_index_relative_to_parent: bool,
+        ignore_camera: bool,
+    ):
         self.position = position
         self.scale = scale
         self.rotation = rotation
@@ -379,7 +389,14 @@ class Transform2DComponent:
 
 
 class SpriteComponent:
-    def __init__(self, texture_path: str, draw_source: Rect2, flip_x: bool, flip_y: bool, modulate: Color):
+    def __init__(
+        self,
+        texture_path: str,
+        draw_source: Rect2,
+        flip_x: bool,
+        flip_y: bool,
+        modulate: Color,
+    ):
         self.texture_path = texture_path
         self.draw_source = draw_source
         self.flip_x = flip_x
@@ -401,6 +418,7 @@ def configure_game(
     resolution_width=800,
     resolution_height=600,
     target_fps=66,
+    initial_node_path="",
 ) -> None:
     rbe_py_api_internal.configure_game(
         game_tile=game_tile,
@@ -409,6 +427,7 @@ def configure_game(
         resolution_width=resolution_width,
         resolution_height=resolution_height,
         target_fps=target_fps,
+        initial_node_path=initial_node_path,
     )
 
 
