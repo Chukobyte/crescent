@@ -22,7 +22,9 @@ void sprite_rendering_system_render() {
     for (size_t i = 0; i < spriteRenderingSystem->entity_count; i++) {
         Entity entity = spriteRenderingSystem->entities[i];
         Transform2DComponent* spriteTransformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
-        SpriteComponent * spriteComponent = (SpriteComponent *) component_manager_get_component(entity, ComponentDataIndex_SPRITE);
+        RBE_ASSERT(spriteTransformComp != NULL);
+        SpriteComponent* spriteComponent = (SpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_SPRITE);
+        RBE_ASSERT(spriteComponent != NULL);
         const Rect2 destinationRectangle = {
             spriteTransformComp->position.x,
             spriteTransformComp->position.y,

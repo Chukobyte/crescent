@@ -1,6 +1,8 @@
 #include "rbe_py_api_module.h"
 
 #include "../../game_properties.h"
+#include "../../asset_manager.h"
+#include "../../input/input.h"
 #include "../../utils/rbe_assert.h"
 #include "../../scripting/python/py_helper.h"
 
@@ -20,6 +22,10 @@ PyObject* rbe_py_api_configure_game(PyObject* self, PyObject* args, PyObject* kw
         gameProperties->resolutionWidth = resolutionWidth;
         gameProperties->resolutionHeight = resolutionHeight;
         gameProperties->targetFPS = targetFPS;
+        gameProperties->audioSourceCount = 0;
+        gameProperties->textureCount = 0;
+        gameProperties->fontCount = 0;
+        gameProperties->inputActionCount = 0;
         Py_RETURN_NONE;
     }
     return NULL;
@@ -34,6 +40,8 @@ PyObject* rbe_py_api_create_assets(PyObject* self, PyObject* args, PyObject* kwa
         RBE_ASSERT_FMT(PyList_Check(texturesList), "Passed in texture assets are not a python list, check python api implementation...");
         RBE_ASSERT_FMT(PyList_Check(fontsList), "Passed in font assets are not a python list, check python api implementation...");
 
+        RBEGameProperties* gameProperties = rbe_game_props_get();
+
         // TODO: Actually put assets into structures
         // Audio Sources
         rbe_logger_debug("audio_sources:");
@@ -42,6 +50,9 @@ PyObject* rbe_py_api_create_assets(PyObject* self, PyObject* args, PyObject* kwa
             RBE_ASSERT(pAudioSourceAsset != NULL);
             const char* filePath = phy_get_string_from_var(pAudioSourceAsset, "file_path");
             rbe_logger_debug("file_path = %s", filePath);
+//            rbe_asset_manager_load_audio_source_wav(filePath, filePath);
+            RBEAssetAudioSource assetAudioSource = { .file_path = filePath };
+            gameProperties->audioSources[gameProperties->audioSourceCount++] = assetAudioSource;
             Py_DECREF(pAudioSourceAsset);
         }
         Py_DECREF(audioSourcesList);
@@ -58,6 +69,9 @@ PyObject* rbe_py_api_create_assets(PyObject* self, PyObject* args, PyObject* kwa
             const char* filterMag = phy_get_string_from_var(pTextureAsset, "filter_mag");
             rbe_logger_debug("file_path = %s, wrap_s = %s, wrap_t = %s, filter_min = %s, filter_mag = %s",
                              filePath, wrapS, wrapT, filterMin, filterMag);
+//            rbe_asset_manager_load_texture(filePath, filePath);
+            RBEAssetTexture assetTexture = { .file_path = filePath };
+            gameProperties->textures[gameProperties->textureCount++] = assetTexture;
             Py_DECREF(pTextureAsset);
         }
         Py_DECREF(texturesList);
@@ -71,6 +85,8 @@ PyObject* rbe_py_api_create_assets(PyObject* self, PyObject* args, PyObject* kwa
             const char* uid = phy_get_string_from_var(pFontAsset, "uid");
             const int size = phy_get_int_from_var(pFontAsset, "size");
             rbe_logger_debug("file_path = %s, uid = %s, size = %d", filePath, uid, size);
+            RBEAssetFont assetFont = { .file_path = filePath, .uid = uid, .size = size };
+            gameProperties->fonts[gameProperties->fontCount++] = assetFont;
             Py_DECREF(pFontAsset);
         }
         Py_DECREF(fontsList);
@@ -85,20 +101,27 @@ PyObject* rbe_py_api_configure_inputs(PyObject* self, PyObject* args, PyObject* 
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "O", rbePyApiConfigureInputsKWList, &inputActionsList)) {
         RBE_ASSERT_FMT(PyList_Check(inputActionsList), "Passed in input actions are not a python list, check python api implementation...");
 
+        RBEGameProperties* gameProperties = rbe_game_props_get();
+
         rbe_logger_debug("input actions:");
         for (Py_ssize_t i = 0; i < PyList_Size(inputActionsList); i++) {
             PyObject* pInputAction = PyList_GetItem(inputActionsList, i);
             RBE_ASSERT(pInputAction != NULL);
-            const char* name = phy_get_string_from_var(pInputAction, "name");
-            rbe_logger_debug("name = %s", name);
+            const char* actionName = phy_get_string_from_var(pInputAction, "name");
+            rbe_logger_debug("name = %s", actionName);
             PyObject* valuesList = PyObject_GetAttrString(pInputAction, "values");
             RBE_ASSERT(valuesList != NULL);
-            RBE_ASSERT_FMT(PyList_Check(valuesList), "Input action values for '%s' is not a list!  Check python api implementation.", name);
-            for (Py_ssize_t actionIndex = 0; actionIndex < PyList_Size(valuesList); actionIndex++) {
+            RBE_ASSERT_FMT(PyList_Check(valuesList), "Input action values for '%s' is not a list!  Check python api implementation.", actionName);
+            Py_ssize_t valueListSize = PyList_Size(valuesList);
+            RBEInputAction inputAction = { .name = actionName, .valueCount = (size_t) valueListSize };
+            for (Py_ssize_t actionIndex = 0; actionIndex < valueListSize; actionIndex++) {
                 PyObject* pActionValue = PyList_GetItem(valuesList, actionIndex);
                 const char* actionValue = pyh_get_string_from_obj(pActionValue);
                 rbe_logger_debug("action value = '%s'", actionValue);
+                inputAction.values[actionIndex] = actionValue;
+//                rbe_input_add_action_value(actionName, actionValue);
             }
+            gameProperties->inputActions[gameProperties->inputActionCount++] = inputAction;
             Py_DECREF(pInputAction);
         }
         Py_DECREF(inputActionsList);
