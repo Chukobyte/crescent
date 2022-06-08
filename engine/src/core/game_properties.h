@@ -8,23 +8,23 @@ extern "C" {
 #include <stddef.h>
 
 typedef struct RBEAssetAudioSource {
-    const char* file_path;
+    char* file_path;
 }RBEAssetAudioSource;
 
 typedef struct RBEAssetTexture {
-    const char* file_path;
+    char* file_path;
 }RBEAssetTexture;
 
 typedef struct RBEAssetFont {
-    const char* file_path;
-    const char* uid;
+    char* file_path;
+    char* uid;
     size_t size;
 }RBEAssetFont;
 
 typedef struct RBEInputAction {
-    const char* name;
+    char* name;
     size_t valueCount;
-    const char* values[4];
+    char* values[4];
 }RBEInputAction;
 
 typedef struct RBEGameProperties {
