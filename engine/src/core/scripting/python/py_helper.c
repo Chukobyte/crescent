@@ -77,7 +77,7 @@ const char* phy_get_string_from_var(struct _object* obj, const char* variableNam
     RBE_ASSERT(obj != NULL);
     Py_IncRef(obj);
     PyObject* objVar = PyObject_GetAttrString(obj, variableName);
-    RBE_ASSERT(objVar != NULL);
+    RBE_ASSERT_FMT(objVar != NULL, "Failed to read variable '%s'", variableName);
     const char* varString = PyUnicode_AsUTF8(objVar);
     Py_DecRef(objVar);
     return varString;
@@ -88,60 +88,28 @@ int phy_get_int_from_var(struct _object* obj, const char* variableName) {
     Py_IncRef(obj);
     PyObject* objVar = PyObject_GetAttrString(obj, variableName);
     RBE_ASSERT(objVar != NULL);
-    int varInt = PyLong_AsLong(objVar);
+    const int varInt = (int) PyLong_AsLong(objVar);
     Py_DecRef(objVar);
     return varInt;
 }
 
-// Python Cache
-#define PY_REF_CLEANER_OBJ_MAX 32
-
-typedef struct PyRefCountCleaner {
-    PyObject* objects[PY_REF_CLEANER_OBJ_MAX];
-    int count;
-} PyRefCountCleaner;
-
-static PyRefCountCleaner refCountCleaner;
-static RBEStringHashMap * pyCacheHashMap = NULL;
-
-void pyh_cache_initialize() {
-    for (int i = 0; i < PY_REF_CLEANER_OBJ_MAX; i++) {
-        refCountCleaner.objects[i] = NULL;
-    }
-    refCountCleaner.count = 0;
-    pyCacheHashMap = rbe_string_hash_map_create(128);
+float phy_get_float_from_var(struct _object* obj, const char* variableName) {
+    RBE_ASSERT(obj != NULL);
+    Py_IncRef(obj);
+    PyObject* objVar = PyObject_GetAttrString(obj, variableName);
+    RBE_ASSERT(objVar != NULL);
+    const float varFloat = (float) PyLong_AsLong(objVar);
+    Py_DecRef(objVar);
+    return varFloat;
 }
 
-void pyh_cache_finalize() {
-    pyh_ref_clean();
-    rbe_string_hash_map_destroy(pyCacheHashMap);
-}
-
-PyObject* pyh_cache_get_module(const char* modulePath) {
-    if (!rbe_string_hash_map_has(pyCacheHashMap, modulePath)) {
-        PyObject* pName = PyUnicode_FromString(modulePath);
-        PyObject* pNewModule = PyImport_Import(pName);
-        RBE_ASSERT(pNewModule != NULL);
-        rbe_string_hash_map_add(pyCacheHashMap, modulePath, pNewModule, sizeof(*pNewModule));
-        Py_DecRef(pName);
-        // Increase ref to store in cache and to return to caller
-        Py_IncRef(pNewModule);
-    }
-    PyObject* pModule = (PyObject*) rbe_string_hash_map_get(pyCacheHashMap, modulePath);
-    RBE_ASSERT_FMT(pModule != NULL, "pModule is NULL");
-    return pModule;
-}
-
-PyObject* pyh_ref_count(PyObject* pyObject) {
-    refCountCleaner.objects[refCountCleaner.count] = pyObject;
-    refCountCleaner.count++;
-    return pyObject;
-}
-
-void pyh_ref_clean() {
-    for (int i = 0; i < refCountCleaner.count; i++) {
-        Py_DecRef(refCountCleaner.objects[i]);
-        refCountCleaner.objects[i] = NULL;
-    }
-    refCountCleaner.count = 0;
+bool phy_get_bool_from_var(struct _object* obj, const char* variableName) {
+    RBE_ASSERT(obj != NULL);
+    Py_IncRef(obj);
+    PyObject* objVar = PyObject_GetAttrString(obj, variableName);
+    RBE_ASSERT(objVar != NULL);
+    RBE_ASSERT_FMT(PyBool_Check(objVar), "variable '%s' is not of a bool type!", variableName);
+    const bool varBool = PyObject_IsTrue(objVar);
+    Py_DecRef(objVar);
+    return varBool;
 }

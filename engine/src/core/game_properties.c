@@ -12,12 +12,17 @@ static RBEGameProperties* properties = NULL;
 
 void rbe_game_props_initialize(bool loadConfig) {
     properties = RBE_MEM_ALLOCATE(RBEGameProperties);
-    memset(properties->gameTitle, 0, sizeof(properties->gameTitle));
+    properties->gameTitle = NULL;
     properties->windowWidth = 800;
     properties->windowHeight = 600;
     properties->resolutionWidth = properties->windowWidth;
     properties->resolutionHeight = properties->windowHeight;
     properties->targetFPS = 66;
+    properties->initialScenePath = NULL;
+    properties->audioSourceCount = 0;
+    properties->textureCount = 0;
+    properties->fontCount = 0;
+    properties->inputActionCount = 0;
 
     if (loadConfig) {
         bool readSuccess = rbe_py_load_project_config();

@@ -3,13 +3,14 @@
 #include <Python.h>
 
 #include "py_helper.h"
+#include "py_cache.h"
 #include "rbe_py_api_module.h"
 #include "rbe_py_api_source.h"
 #include "../../utils/rbe_assert.h"
 #include "../../game_properties.h"
 
 void rbe_py_initialize() {
-    pyh_cache_initialize();
+    rbe_py_cache_initialize();
     Py_SetProgramName(L"roll_back_engine_python");
     PyImport_AppendInittab("rbe_py_api_internal", &PyInit_rbe_py_API); // Load engine modules
     Py_Initialize();
@@ -23,7 +24,7 @@ void rbe_py_initialize() {
 
 void rbe_py_finalize() {
     Py_Finalize();
-    pyh_cache_finalize();
+    rbe_py_cache_finalize();
 }
 
 bool rbe_py_load_project_config() {
@@ -35,13 +36,13 @@ RBEGameProperties rbe_py_read_config_path(const char* filePath) {
     RBE_ASSERT_FMT(load_success == true, "Failed to load config at '%s'", filePath);
     RBEGameProperties* gameProps = rbe_game_props_get();
     RBEGameProperties props = {
-        .gameTitle = {0},
+        .gameTitle = gameProps->gameTitle,
         .resolutionWidth = gameProps->resolutionWidth,
         .resolutionHeight = gameProps->resolutionHeight,
         .windowWidth = gameProps->windowWidth,
         .windowHeight = gameProps->windowHeight,
-        .targetFPS = gameProps->targetFPS
+        .targetFPS = gameProps->targetFPS,
+        .initialScenePath = gameProps->initialScenePath
     };
-    strcpy(props.gameTitle, gameProps->gameTitle);
     return props;
 }
