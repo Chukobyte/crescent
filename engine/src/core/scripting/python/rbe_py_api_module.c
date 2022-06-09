@@ -176,8 +176,11 @@ void setup_scene_stage_nodes(Entity parentEntity, PyObject* stageNodeList) {
                 PyObject* pComponent = PyList_GetItem(componentsListVar, componentIndex);
                 RBE_ASSERT(pComponent != NULL);
                 setup_scene_component_node(nodeEntity, pComponent);
+                Py_DecRef(pComponent);
             }
         }
+        // TODO: Do in a different step or having different functionality to add node to scene tree
+        rbe_ec_system_register_entity_to_systems(nodeEntity);
         // Children Nodes
         PyObject* childrenListVar = PyObject_GetAttrString(pStageNode, "children");
         if (PyList_Check(childrenListVar)) {
@@ -186,6 +189,10 @@ void setup_scene_stage_nodes(Entity parentEntity, PyObject* stageNodeList) {
         }
 
         rbe_logger_debug("node_name = %s, node_type = %s", nodeName, nodeType);
+        Py_DecRef(tagsListVar);
+        Py_DecRef(externalNodeSourceVar);
+        Py_DecRef(componentsListVar);
+        Py_DecRef(childrenListVar);
         Py_DecRef(pStageNode);
     }
     Py_DecRef(stageNodeList);
@@ -235,7 +242,7 @@ void setup_scene_component_node(Entity entity, PyObject* component) {
         const int modulateA = phy_get_int_from_var(pModulate, "a");
         SpriteComponent* spriteComponent = sprite_component_create();
         spriteComponent->texture = rbe_asset_manager_get_texture(texturePath);
-//        RBE_ASSERT_FMT(spriteComponent->texture != NULL, "Unable to read texture path '%s'", texturePath); // TODO: Fix texture being NULL...
+        RBE_ASSERT_FMT(spriteComponent->texture != NULL, "Unable to read texture path '%s'", texturePath);
         spriteComponent->drawSource.x = drawSourceX;
         spriteComponent->drawSource.y = drawSourceY;
         spriteComponent->drawSource.w = drawSourceW;
@@ -247,9 +254,11 @@ void setup_scene_component_node(Entity entity, PyObject* component) {
         spriteComponent->modulate.g = modulateColor.g;
         spriteComponent->modulate.b = modulateColor.b;
         spriteComponent->modulate.a = modulateColor.a;
+        component_manager_set_component(entity, ComponentDataIndex_SPRITE, spriteComponent);
         rbe_logger_debug("texture_path = %s, draw_source = (%f, %f, %f, %f), flip_x: %d, flip_y: %d, modulate: (%d, %d, %d, %d)",
                          texturePath, drawSourceX, drawSourceY, drawSourceW, drawSourceH, flipX, flipY, modulateR, modulateG, modulateB, modulateA);
-
+        Py_DecRef(pDrawSource);
+        Py_DecRef(pModulate);
     } else if (strcmp(className, "ScriptComponent") == 0) {
         rbe_logger_debug("Building script component");
         const char* scriptClassPath = phy_get_string_from_var(component, "class_path");

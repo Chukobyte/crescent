@@ -4,4 +4,3 @@
 
 void rbe_ecs_manager_initialize();
 void rbe_ecs_manager_finalize();
-void rbe_ecs_manager_run_test_scene();

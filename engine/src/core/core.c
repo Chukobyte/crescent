@@ -17,6 +17,7 @@
 #include "audio/audio_manager.h"
 #include "ecs/ecs_manager.h"
 #include "ecs/system/ec_system.h"
+#include "scripting/python/py_helper.h"
 
 bool rbe_initialize_sdl();
 bool rbe_initialize_rendering();
@@ -80,7 +81,11 @@ bool rbe_initialize(int argv, char** args) {
 
     rbe_logger_info("RBE Engine v%s initialized!", RBE_CORE_VERSION);
     isRunning = true;
-    rbe_ecs_manager_run_test_scene();
+
+    // Go to initial scene (TODO: Move to process loop)
+    RBE_ASSERT(gameProperties->initialScenePath != NULL);
+    pyh_run_python_file(gameProperties->initialScenePath);
+
     return true;
 }
 
@@ -246,5 +251,6 @@ void rbe_shutdown() {
     rbe_input_finalize();
     rbe_asset_manager_finalize();
     rbe_ec_system_finalize();
+    rbe_ecs_manager_finalize();
     rbe_logger_info("RBE Engine shutdown!");
 }
