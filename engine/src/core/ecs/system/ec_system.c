@@ -78,7 +78,6 @@ void rbe_ec_system_register(EntitySystem* system) {
 
 void rbe_ec_system_register_entity_to_systems(Entity entity) {
     ComponentType entityComponentSignature = component_manager_get_component_signature(entity);
-    rbe_logger_info("entityComponentSignature = %d", entityComponentSignature);
     for (size_t i = 0; i < entitySystemData.entity_systems_count; i++) {
         if ((entityComponentSignature & entitySystemData.entity_systems[i]->component_signature) == entityComponentSignature) {
             rbe_ec_system_insert_entity_into_system(entity, entitySystemData.entity_systems[i]);

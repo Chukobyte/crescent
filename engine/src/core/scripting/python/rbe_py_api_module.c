@@ -264,7 +264,7 @@ void setup_scene_component_node(Entity entity, PyObject* component) {
         rbe_logger_debug("Building script component");
         const char* scriptClassPath = phy_get_string_from_var(component, "class_path");
         const char* scriptClassName = phy_get_string_from_var(component, "class_name");
-//        rbe_py_cache_create_instance(scriptClassPath, scriptClassName, entity);
+        rbe_py_cache_create_instance(scriptClassPath, scriptClassName, entity);
         rbe_logger_debug("class_path: %s, class_name: %s", scriptClassPath, scriptClassName);
     } else {
         rbe_logger_error("Invalid component class name: '%s'", className);
