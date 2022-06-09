@@ -1,3 +1,5 @@
+from enum import Enum
+
 import rbe_py_api_internal
 
 import math
@@ -406,6 +408,253 @@ class ScriptComponent:
     def __init__(self, class_path: str, class_name: str):
         self.class_path = class_path
         self.class_name = class_name
+
+
+# NODE
+class NodeType(str, Enum):
+    NODE = "Node"
+    TIMER = "Timer"
+    NODE2D = "Node2D"
+    SPRITE = "Sprite"
+    ANIMATED_SPRITE = "AnimatedSprite"
+    TEXT_LABEL = "TextLabel"
+    COLLISION_SHAPE2D = "CollisionShape2D"
+
+
+class Node:
+    def __init__(self, entity_id: int) -> None:
+        self.entity_id = entity_id
+
+    def __eq__(self, other) -> bool:
+        if self.entity_id == other.entity_id:
+            return True
+        else:
+            return False
+
+    @classmethod
+    def extract_valid_inheritance_node(cls) -> str:
+        valid_node_type_list = [e.value for e in NodeType]
+        for class_path in cls.__mro__:
+            if class_path.__name__ in valid_node_type_list:
+                return class_path.__name__
+        return ""
+
+    @classmethod
+    def new(cls):
+        return rbe_py_api_internal.node_new(
+            class_path=f"{cls.__module__}",
+            class_name=f"{cls.__name__}",
+            node_type=f"{cls.extract_valid_inheritance_node()}",
+        )
+
+    @staticmethod
+    def parse_scene_node_from_engine(scene_node):
+        if not isinstance(scene_node, tuple):
+            return scene_node
+        elif scene_node:
+            node_type = scene_node[0]
+            entity_id = scene_node[1]
+            node_class = globals()[node_type]
+            instance = node_class(entity_id=entity_id)
+            return instance
+        print("Error with python api function 'parse_scene_node_from_engine'")
+        return None
+
+    def add_child(self, child_node) -> None:
+        rbe_py_api_internal.node_add_child(
+            parent_entity_id=self.entity_id, child_entity_id=child_node.entity_id
+        )
+
+    def get_node(self, name: str):
+        node = rbe_py_api_internal.node_get_node(name=name)
+        if not node:
+            return None
+        return self.parse_scene_node_from_engine(scene_node=node)
+
+    def queue_deletion(self) -> None:
+        rbe_py_api_internal.node_queue_deletion(entity_id=self.entity_id)
+
+    def create_signal(self, signal_id: str) -> None:
+        rbe_py_api_internal.node_signal_create(
+            entity_id=self.entity_id, signal_id=signal_id
+        )
+
+    def connect_signal(self, signal_id: str, listener_node, function_name: str) -> None:
+        rbe_py_api_internal.node_signal_connect(
+            entity_id=self.entity_id,
+            signal_id=signal_id,
+            listener_entity_id=listener_node.entity_id,
+            function_name=function_name,
+        )
+
+    def emit_signal(self, signal_id: str, args=[]) -> None:
+        rbe_py_api_internal.node_signal_emit(
+            entity_id=self.entity_id, signal_id=signal_id, args=args
+        )
+
+    @property
+    def name(self) -> str:
+        return rbe_py_api_internal.node_get_name(entity_id=self.entity_id)
+
+    @property
+    def tags(self) -> list:
+        return rbe_py_api_internal.node_get_tags(entity_id=self.entity_id)
+
+    @tags.setter
+    def tags(self, value: list) -> None:
+        rbe_py_api_internal.node_set_tags(entity_id=self.entity_id, tags=value)
+
+    def show(self) -> None:
+        rbe_py_api_internal.node_show(entity_id=self.entity_id)
+
+    def hide(self) -> None:
+        rbe_py_api_internal.node_hide(entity_id=self.entity_id)
+
+    @property
+    def visibility(self) -> bool:
+        return rbe_py_api_internal.node_is_visible(entity_id=self.entity_id)
+
+    @visibility.setter
+    def visibility(self, value: bool) -> None:
+        if value:
+            self.show()
+        else:
+            self.hide()
+
+    def get_parent(self):
+        parent_node = rbe_py_api_internal.node_get_parent(entity_id=self.entity_id)
+        if parent_node:
+            return parent_node
+        return self.parse_scene_node_from_engine(scene_node=parent_node)
+
+    def get_children(self) -> list:
+        children_nodes = []
+        children = rbe_py_api_internal.node_get_children(entity_id=self.entity_id)
+        for child_node in children:
+            children_nodes.append(
+                self.parse_scene_node_from_engine(scene_node=child_node)
+            )
+        return children_nodes
+
+
+# 2D
+class Node2D(Node):
+    def set_position(self, value: Vector2) -> None:
+        rbe_py_api_internal.node2D_set_position(
+            entity_id=self.entity_id, x=value.x, y=value.y
+        )
+
+    def add_to_position(self, value: Vector2) -> None:
+        rbe_py_api_internal.node2D_add_to_position(
+            entity_id=self.entity_id, x=value.x, y=value.y
+        )
+
+    def get_position(self) -> Vector2:
+        px, py = rbe_py_api_internal.node2D_get_position(entity_id=self.entity_id)
+        return Vector2(px, py)
+
+    @property
+    def position(self) -> Vector2:
+        px, py = rbe_py_api_internal.node2D_get_position(entity_id=self.entity_id)
+        return Vector2(px, py)
+
+    @position.setter
+    def position(self, value: Vector2) -> None:
+        rbe_py_api_internal.node2D_set_position(
+            entity_id=self.entity_id, x=value.x, y=value.y
+        )
+
+    @property
+    def rotation(self) -> float:
+        return rbe_py_api_internal.node2D_get_rotation(entity_id=self.entity_id)
+
+    @rotation.setter
+    def rotation(self, value: float) -> None:
+        rbe_py_api_internal.node2D_set_rotation(
+            entity_id=self.entity_id, rotation=value
+        )
+
+    @property
+    def z_index(self) -> int:
+        return rbe_py_api_internal.node2D_get_z_index(entity_id=self.entity_id)
+
+    @z_index.setter
+    def z_index(self, value: int) -> None:
+        rbe_py_api_internal.node2D_set_z_index(entity_id=self.entity_id, z_index=value)
+
+
+class Sprite(Node2D):
+    @property
+    def flip_h(self) -> bool:
+        return rbe_py_api_internal.sprite_get_flip_h(entity_id=self.entity_id)
+
+    @flip_h.setter
+    def flip_h(self, value: bool) -> None:
+        rbe_py_api_internal.sprite_set_flip_h(entity_id=self.entity_id, flip_h=value)
+
+    @property
+    def flip_v(self) -> bool:
+        return rbe_py_api_internal.sprite_get_flip_v(entity_id=self.entity_id)
+
+    @flip_v.setter
+    def flip_v(self, value: bool) -> None:
+        rbe_py_api_internal.sprite_set_flip_v(entity_id=self.entity_id, flip_h=value)
+
+    @property
+    def modulate(self) -> Color:
+        red, green, blue, alpha = rbe_py_api_internal.sprite_get_modulate(
+            entity_id=self.entity_id
+        )
+        return Color(r=red, g=green, b=blue, a=alpha)
+
+    @modulate.setter
+    def modulate(self, color: Color) -> None:
+        rbe_py_api_internal.sprite_set_modulate(
+            entity_id=self.entity_id,
+            red=color.r,
+            green=color.g,
+            blue=color.b,
+            alpha=color.a,
+        )
+
+    @property
+    def texture(self) -> Texture:
+        (
+            file_path,
+            wrap_s,
+            wrap_t,
+            filter_min,
+            filter_mag,
+        ) = rbe_py_api_internal.sprite_get_texture(entity_id=self.entity_id)
+        return Texture(
+            file_path=file_path,
+            wrap_s=wrap_s,
+            wrap_t=wrap_t,
+            filter_min=filter_min,
+            filter_mag=filter_mag,
+        )
+
+    @texture.setter
+    def texture(self, value: Texture) -> None:
+        rbe_py_api_internal.sprite_set_texture(
+            entity_id=self.entity_id, file_path=value.file_path
+        )
+
+    @property
+    def draw_source(self) -> Rect2:
+        (
+            x,
+            y,
+            w,
+            h,
+        ) = rbe_py_api_internal.sprite_get_draw_source(entity_id=self.entity_id)
+        return Rect2(x=x, y=y, w=w, h=h)
+
+    @draw_source.setter
+    def draw_source(self, value: Rect2) -> None:
+        rbe_py_api_internal.sprite_set_draw_source(
+            entity_id=self.entity_id, x=value.x, y=value.y, w=value.w, h=value.h
+        )
 
 
 # CONFIGURATION
