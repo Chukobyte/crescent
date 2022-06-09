@@ -250,7 +250,6 @@ void rbe_shutdown() {
     rbe_audio_manager_finalize();
     rbe_input_finalize();
     rbe_asset_manager_finalize();
-    rbe_ec_system_finalize();
     rbe_ecs_manager_finalize();
     rbe_logger_info("RBE Engine shutdown!");
 }
