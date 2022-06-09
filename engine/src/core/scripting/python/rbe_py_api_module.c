@@ -128,11 +128,36 @@ PyObject* rbe_py_api_configure_inputs(PyObject* self, PyObject* args, PyObject* 
 }
 
 // STAGE
+// TODO: Pass whatever references the parent node structure
 void setup_scene_stage_nodes(PyObject* stageNodeList) {
     for (Py_ssize_t i = 0; i < PyList_Size(stageNodeList); i++) {
         PyObject* pStageNode = PyList_GetItem(stageNodeList, i);
         const char* nodeName = phy_get_string_from_var(pStageNode, "name");
         const char* nodeType = phy_get_string_from_var(pStageNode, "type");
+        // Process tags if tags var is a list
+        PyObject* tagsListVar = PyObject_GetAttrString(pStageNode, "tags");
+        if (PyList_Check(tagsListVar)) {
+            for (Py_ssize_t tagIndex = 0; tagIndex < PyList_Size(tagsListVar); tagIndex++) {}
+        }
+        // TODO: Actually load external scene file here and updated variables
+        PyObject* externalNodeSourceVar = PyObject_GetAttrString(pStageNode, "external_node_source");
+        if (externalNodeSourceVar != Py_None) {
+            const char* externalNodeSourcePath = phy_get_string_from_var(externalNodeSourceVar, "external_node_source");
+        }
+        // Components
+        PyObject* componentsListVar = PyObject_GetAttrString(pStageNode, "components");
+        if (PyList_Check(componentsListVar)) {
+            for (Py_ssize_t componentIndex = 0; componentIndex < PyList_Size(componentsListVar); componentIndex++) {
+
+            }
+        }
+        // Children Nodes
+        PyObject* childrenListVar = PyObject_GetAttrString(pStageNode, "children");
+        if (PyList_Check(childrenListVar)) {
+            // Recurse through children nodes
+            setup_scene_stage_nodes(childrenListVar);
+        }
+
         rbe_logger_debug("node_name = %s, node_type = %s", nodeName, nodeType);
         Py_DecRef(pStageNode);
     }
