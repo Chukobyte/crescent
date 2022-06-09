@@ -32,14 +32,29 @@ add_library(${PROJECT_NAME} STATIC
         ../include/imgui/imgui_impl_sdl.cpp
         # C
         ../engine/src/core/game_properties.c
+        ../engine/src/core/asset_manager.c
+        ../engine/src/core/math/rbe_math.c
         ../engine/src/core/utils/logger.c
         ../engine/src/core/utils/rbe_file_system_utils.c
         ../engine/src/core/data_structures/rbe_hash_map.c
         ../engine/src/core/data_structures/rbe_hash_map_string.c
         ../engine/src/core/memory/rbe_mem.c
+        ../engine/src/core/scripting/python/py_cache.c
         ../engine/src/core/scripting/python/rbe_py.c
         ../engine/src/core/scripting/python/py_helper.c
         ../engine/src/core/scripting/python/rbe_py_api_module.c
+        ../engine/src/core/ecs/ecs_manager.c
+        ../engine/src/core/ecs/system/sprite_rendering_ec_system.c
+        ../engine/src/core/ecs/system/ec_system.c
+        ../engine/src/core/ecs/component/transform2d_component.c
+        ../engine/src/core/ecs/component/sprite_component.c
+        ../engine/src/core/ecs/component/component.c
+        ../engine/src/core/rendering/renderer.c
+        ../engine/src/core/rendering/shader.c
+        ../engine/src/core/rendering/texture.c
+        ../engine/src/core/audio/audio.c
+        ../engine/src/core/audio/audio_manager.c
+        ../include/stb_image/stb_image.c
         ../include/glad/glad.c
         )
 

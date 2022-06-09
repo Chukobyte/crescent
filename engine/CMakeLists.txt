@@ -19,11 +19,13 @@ add_library(${PROJECT_NAME} STATIC
         src/core/game_properties.c
         src/core/asset_manager.c
         src/core/memory/rbe_mem.c
+        src/core/math/rbe_math.c
         src/core/input/input.c
         src/core/input/input_action.c
         src/core/scripting/python/py_helper.c
         src/core/scripting/python/rbe_py.c
         src/core/scripting/python/rbe_py_api_module.c
+        src/core/scripting/python/py_cache.c
         src/core/rendering/renderer.c
         src/core/rendering/shader.c
         src/core/rendering/texture.c
