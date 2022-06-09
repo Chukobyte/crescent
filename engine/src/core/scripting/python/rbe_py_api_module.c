@@ -5,6 +5,8 @@
 #include "../../utils/rbe_assert.h"
 #include "../../scripting/python/py_helper.h"
 #include "../../ecs/system/ec_system.h"
+#include "../../ecs/component/transform2d_component.h"
+#include "../../ecs/component/sprite_component.h"
 
 // --- Node Utils --- //
 void setup_scene_stage_nodes(Entity parentEntity, PyObject* stageNodeList);
@@ -203,53 +205,57 @@ void setup_scene_component_node(Entity entity, PyObject* component) {
         const int zIndex = phy_get_int_from_var(component, "z_index");
         const bool zIndexRelativeToParent = phy_get_bool_from_var(component, "z_index_relative_to_parent");
         const bool ignoreCamera = phy_get_bool_from_var(component, "ignore_camera");
+        Transform2DComponent* transform2DComponent = transform2d_component_create();
+        transform2DComponent->position.x = positionX;
+        transform2DComponent->position.y = positionY;
+        transform2DComponent->scale.x = scaleX;
+        transform2DComponent->scale.y = scaleY;
+        transform2DComponent->zIndex = zIndex;
+        transform2DComponent->isZIndexRelativeToParent = zIndexRelativeToParent;
+        transform2DComponent->ignoreCamera = ignoreCamera;
+        component_manager_set_component(entity, ComponentDataIndex_TRANSFORM_2D, transform2DComponent);
         rbe_logger_debug("position: (%f, %f), scale: (%f, %f), rotation: %f, z_index: %d, z_index_relative: %d, ignore_camera: %d",
                          positionX, positionY, scaleX, scaleY, rotation, zIndex, zIndexRelativeToParent, ignoreCamera);
         Py_DecRef(pPosition);
+        Py_DecRef(pScale);
     } else if (strcmp(className, "SpriteComponent") == 0) {
         rbe_logger_debug("Building sprite component");
+        const char* texturePath = phy_get_string_from_var(component, "texture_path");
+        PyObject* pDrawSource = PyObject_GetAttrString(component, "draw_source");
+        const float drawSourceX = phy_get_float_from_var(pDrawSource, "x");
+        const float drawSourceY = phy_get_float_from_var(pDrawSource, "y");
+        const float drawSourceW = phy_get_float_from_var(pDrawSource, "w");
+        const float drawSourceH = phy_get_float_from_var(pDrawSource, "h");
+        const bool flipX = phy_get_bool_from_var(component, "flip_x");
+        const bool flipY = phy_get_bool_from_var(component, "flip_y");
+        PyObject* pModulate = PyObject_GetAttrString(component, "modulate");
+        const int modulateR = phy_get_int_from_var(pModulate, "r");
+        const int modulateG = phy_get_int_from_var(pModulate, "g");
+        const int modulateB = phy_get_int_from_var(pModulate, "b");
+        const int modulateA = phy_get_int_from_var(pModulate, "a");
+        SpriteComponent* spriteComponent = sprite_component_create();
+        spriteComponent->texture = rbe_asset_manager_get_texture(texturePath);
+//        RBE_ASSERT_FMT(spriteComponent->texture != NULL, "Unable to read texture path '%s'", texturePath); // TODO: Fix texture being NULL...
+        spriteComponent->drawSource.x = drawSourceX;
+        spriteComponent->drawSource.y = drawSourceY;
+        spriteComponent->drawSource.w = drawSourceW;
+        spriteComponent->drawSource.h = drawSourceH;
+        spriteComponent->flipX = flipX;
+        spriteComponent->flipY = flipY;
+        Color modulateColor = rbe_color_get_normalized_color(modulateR, modulateG, modulateB, modulateA);
+        spriteComponent->modulate.r = modulateColor.r;
+        spriteComponent->modulate.g = modulateColor.g;
+        spriteComponent->modulate.b = modulateColor.b;
+        spriteComponent->modulate.a = modulateColor.a;
+        rbe_logger_debug("texture_path = %s, draw_source = (%f, %f, %f, %f), flip_x: %d, flip_y: %d, modulate: (%d, %d, %d, %d)",
+                         texturePath, drawSourceX, drawSourceY, drawSourceW, drawSourceH, flipX, flipY, modulateR, modulateG, modulateB, modulateA);
+
     } else if (strcmp(className, "ScriptComponent") == 0) {
         rbe_logger_debug("Building script component");
+        const char* scriptClassPath = phy_get_string_from_var(component, "class_path");
+        const char* scriptClassName = phy_get_string_from_var(component, "class_name");
+        rbe_logger_debug("class_path: %s, class_name: %s", scriptClassPath, scriptClassName);
     } else {
         rbe_logger_error("Invalid component class name: '%s'", className);
     }
 }
-
-//class Transform2DComponent:
-//    def __init__(
-//        self,
-//        position: Vector2,
-//        scale: Vector2,
-//        rotation: float,
-//        z_index: int,
-//        z_index_relative_to_parent: bool,
-//        ignore_camera: bool,
-//    ):
-//        self.position = position
-//        self.scale = scale
-//        self.rotation = rotation
-//        self.z_index = z_index
-//        self.z_index_relative_to_parent = z_index_relative_to_parent
-//        self.ignore_camera = ignore_camera
-//
-//
-//class SpriteComponent:
-//    def __init__(
-//        self,
-//        texture_path: str,
-//        draw_source: Rect2,
-//        flip_x: bool,
-//        flip_y: bool,
-//        modulate: Color,
-//    ):
-//        self.texture_path = texture_path
-//        self.draw_source = draw_source
-//        self.flip_x = flip_x
-//        self.flip_y = flip_y
-//        self.modulate = modulate
-//
-//
-//class ScriptComponent:
-//    def __init__(self, class_path: str, class_name: str):
-//        self.class_path = class_path
-//        self.class_name = class_name

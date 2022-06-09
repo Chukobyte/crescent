@@ -59,11 +59,11 @@ create_stage_nodes(
                     ignore_camera=False,
                 ),
                 SpriteComponent(
-                    texture_path="assets/images/melissa_walk_animation.png",
+                    texture_path="test_games/fighter_test/assets/images/melissa_walk_animation.png",
                     draw_source=Rect2(0.0, 0.0, 48.0, 48.0),
                     flip_x=False,
                     flip_y=False,
-                    modulate=Color.normalize(255, 255, 255, 255),
+                    modulate=Color(255, 255, 255, 255),
                 ),
                 ScriptComponent(class_path="src.main", class_name="Main"),
             ],

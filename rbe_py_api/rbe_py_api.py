@@ -2,9 +2,11 @@ import rbe_py_api_internal
 
 import math
 
+
 # COLOR
 class Color:
-    def __init__(self, r=0.0, g=0.0, b=0.0, a=1.0):
+    # 255 is the limit...
+    def __init__(self, r=0, g=0, b=0, a=255):
         self.r = r
         self.g = g
         self.b = b
@@ -15,10 +17,6 @@ class Color:
 
     def __repr__(self):
         return f"({self.r}, {self.g}, {self.b}, {self.a})"
-
-    @staticmethod
-    def normalize(r: int, g: int, b: int, a=255):
-        return Color(r / 255.0, g / 255.0, b / 255.0, a / 255.0)
 
 
 # MATH

@@ -77,7 +77,7 @@ const char* phy_get_string_from_var(struct _object* obj, const char* variableNam
     RBE_ASSERT(obj != NULL);
     Py_IncRef(obj);
     PyObject* objVar = PyObject_GetAttrString(obj, variableName);
-    RBE_ASSERT(objVar != NULL);
+    RBE_ASSERT_FMT(objVar != NULL, "Failed to read variable '%s'", variableName);
     const char* varString = PyUnicode_AsUTF8(objVar);
     Py_DecRef(objVar);
     return varString;
