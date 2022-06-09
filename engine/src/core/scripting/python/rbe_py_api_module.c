@@ -53,7 +53,6 @@ PyObject* rbe_py_api_configure_assets(PyObject* self, PyObject* args, PyObject* 
             RBE_ASSERT(pAudioSourceAsset != NULL);
             const char* filePath = phy_get_string_from_var(pAudioSourceAsset, "file_path");
             rbe_logger_debug("file_path = %s", filePath);
-//            rbe_asset_manager_load_audio_source_wav(filePath, filePath);
             RBEAssetAudioSource assetAudioSource = { .file_path = strdup(filePath) };
             gameProperties->audioSources[gameProperties->audioSourceCount++] = assetAudioSource;
             Py_DECREF(pAudioSourceAsset);
@@ -72,7 +71,6 @@ PyObject* rbe_py_api_configure_assets(PyObject* self, PyObject* args, PyObject* 
             const char* filterMag = phy_get_string_from_var(pTextureAsset, "filter_mag");
             rbe_logger_debug("file_path = %s, wrap_s = %s, wrap_t = %s, filter_min = %s, filter_mag = %s",
                              filePath, wrapS, wrapT, filterMin, filterMag);
-//            rbe_asset_manager_load_texture(filePath, filePath);
             RBEAssetTexture assetTexture = { .file_path = strdup(filePath) };
             gameProperties->textures[gameProperties->textureCount++] = assetTexture;
             Py_DECREF(pTextureAsset);
@@ -122,7 +120,6 @@ PyObject* rbe_py_api_configure_inputs(PyObject* self, PyObject* args, PyObject* 
                 const char* actionValue = pyh_get_string_from_obj(pActionValue);
                 rbe_logger_debug("action value = '%s'", actionValue);
                 inputAction.values[actionIndex] = strdup(actionValue);
-//                rbe_input_add_action_value(actionName, actionValue);
             }
             gameProperties->inputActions[gameProperties->inputActionCount++] = inputAction;
             Py_DECREF(pInputAction);
