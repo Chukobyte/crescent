@@ -19,6 +19,8 @@ int pyh_get_int_from_dict_default(struct _object* pyDict, const char* key, int d
 
 const char* phy_get_string_from_var(struct _object* obj, const char* variableName);
 int phy_get_int_from_var(struct _object* obj, const char* variableName);
+float phy_get_float_from_var(struct _object* obj, const char* variableName);
+bool phy_get_bool_from_var(struct _object* obj, const char* variableName);
 
 bool pyh_run_python_file(const char* filePath);
 

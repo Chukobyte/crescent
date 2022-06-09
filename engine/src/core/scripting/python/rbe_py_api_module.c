@@ -4,10 +4,11 @@
 #include "../../asset_manager.h"
 #include "../../utils/rbe_assert.h"
 #include "../../scripting/python/py_helper.h"
+#include "../../ecs/system/ec_system.h"
 
 // --- Node Utils --- //
-void setup_scene_stage_nodes(PyObject* stageNodeList);
-void setup_scene_component_node(PyObject* component);
+void setup_scene_stage_nodes(Entity parentEntity, PyObject* stageNodeList);
+void setup_scene_component_node(Entity entity, PyObject* component);
 
 // --- RBE PY API --- //
 
@@ -136,7 +137,7 @@ PyObject* rbe_py_api_create_stage_nodes(PyObject* self, PyObject* args, PyObject
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "O", rbePyApiCreateStageNodesKWList, &stageNodeList)) {
         RBE_ASSERT_FMT(PyList_Check(stageNodeList), "Passed in stage nodes are not a python list, check python api implementation...");
         rbe_logger_debug("setup stage nodes:");
-        setup_scene_stage_nodes(stageNodeList);
+        setup_scene_stage_nodes(NULL_ENTITY, stageNodeList); // Assumes this is the root entity node for the scene
         Py_RETURN_NONE;
     }
     return NULL;
@@ -149,8 +150,9 @@ PyObject* PyInit_rbe_py_API(void) {
 // --- Node Utils --- //
 
 // TODO: Pass whatever references the parent node structure
-void setup_scene_stage_nodes(PyObject* stageNodeList) {
+void setup_scene_stage_nodes(Entity parentEntity, PyObject* stageNodeList) {
     for (Py_ssize_t i = 0; i < PyList_Size(stageNodeList); i++) {
+        const Entity nodeEntity = rbe_ec_system_create_entity();
         PyObject* pStageNode = PyList_GetItem(stageNodeList, i);
         const char* nodeName = phy_get_string_from_var(pStageNode, "name");
         const char* nodeType = phy_get_string_from_var(pStageNode, "type");
@@ -166,20 +168,19 @@ void setup_scene_stage_nodes(PyObject* stageNodeList) {
         }
         // Components
         // Testing module getting stuff to store component classes
-
         PyObject* componentsListVar = PyObject_GetAttrString(pStageNode, "components");
         if (PyList_Check(componentsListVar)) {
             for (Py_ssize_t componentIndex = 0; componentIndex < PyList_Size(componentsListVar); componentIndex++) {
                 PyObject* pComponent = PyList_GetItem(componentsListVar, componentIndex);
                 RBE_ASSERT(pComponent != NULL);
-                setup_scene_component_node(pComponent);
+                setup_scene_component_node(nodeEntity, pComponent);
             }
         }
         // Children Nodes
         PyObject* childrenListVar = PyObject_GetAttrString(pStageNode, "children");
         if (PyList_Check(childrenListVar)) {
             // Recurse through children nodes
-            setup_scene_stage_nodes(childrenListVar);
+            setup_scene_stage_nodes(nodeEntity, childrenListVar);
         }
 
         rbe_logger_debug("node_name = %s, node_type = %s", nodeName, nodeType);
@@ -188,10 +189,23 @@ void setup_scene_stage_nodes(PyObject* stageNodeList) {
     Py_DecRef(stageNodeList);
 }
 
-void setup_scene_component_node(PyObject* component) {
+void setup_scene_component_node(Entity entity, PyObject* component) {
     const char* className = Py_TYPE(component)->tp_name; // TODO: Should probably Py_DecRed()?
     if (strcmp(className, "Transform2DComponent") == 0) {
         rbe_logger_debug("Building transform 2d component");
+        PyObject* pPosition = PyObject_GetAttrString(component, "position");
+        const float positionX = phy_get_float_from_var(pPosition, "x");
+        const float positionY = phy_get_float_from_var(pPosition, "y");
+        PyObject* pScale = PyObject_GetAttrString(component, "scale");
+        const float scaleX = phy_get_float_from_var(pScale, "x");
+        const float scaleY = phy_get_float_from_var(pScale, "y");
+        const float rotation = phy_get_float_from_var(component, "rotation");
+        const int zIndex = phy_get_int_from_var(component, "z_index");
+        const bool zIndexRelativeToParent = phy_get_bool_from_var(component, "z_index_relative_to_parent");
+        const bool ignoreCamera = phy_get_bool_from_var(component, "ignore_camera");
+        rbe_logger_debug("position: (%f, %f), scale: (%f, %f), rotation: %f, z_index: %d, z_index_relative: %d, ignore_camera: %d",
+                         positionX, positionY, scaleX, scaleY, rotation, zIndex, zIndexRelativeToParent, ignoreCamera);
+        Py_DecRef(pPosition);
     } else if (strcmp(className, "SpriteComponent") == 0) {
         rbe_logger_debug("Building sprite component");
     } else if (strcmp(className, "ScriptComponent") == 0) {
@@ -200,3 +214,42 @@ void setup_scene_component_node(PyObject* component) {
         rbe_logger_error("Invalid component class name: '%s'", className);
     }
 }
+
+//class Transform2DComponent:
+//    def __init__(
+//        self,
+//        position: Vector2,
+//        scale: Vector2,
+//        rotation: float,
+//        z_index: int,
+//        z_index_relative_to_parent: bool,
+//        ignore_camera: bool,
+//    ):
+//        self.position = position
+//        self.scale = scale
+//        self.rotation = rotation
+//        self.z_index = z_index
+//        self.z_index_relative_to_parent = z_index_relative_to_parent
+//        self.ignore_camera = ignore_camera
+//
+//
+//class SpriteComponent:
+//    def __init__(
+//        self,
+//        texture_path: str,
+//        draw_source: Rect2,
+//        flip_x: bool,
+//        flip_y: bool,
+//        modulate: Color,
+//    ):
+//        self.texture_path = texture_path
+//        self.draw_source = draw_source
+//        self.flip_x = flip_x
+//        self.flip_y = flip_y
+//        self.modulate = modulate
+//
+//
+//class ScriptComponent:
+//    def __init__(self, class_path: str, class_name: str):
+//        self.class_path = class_path
+//        self.class_name = class_name
