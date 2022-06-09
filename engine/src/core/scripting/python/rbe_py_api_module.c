@@ -5,7 +5,13 @@
 #include "../../utils/rbe_assert.h"
 #include "../../scripting/python/py_helper.h"
 
-// CONFIGURE
+// --- Node Utils --- //
+void setup_scene_stage_nodes(PyObject* stageNodeList);
+void setup_scene_component_node(PyObject* component);
+
+// --- RBE PY API --- //
+
+// Configure
 PyObject* rbe_py_api_configure_game(PyObject* self, PyObject* args, PyObject* kwargs) {
     char* gameTitle;
     int windowWidth;
@@ -127,7 +133,24 @@ PyObject* rbe_py_api_configure_inputs(PyObject* self, PyObject* args, PyObject* 
     return NULL;
 }
 
-// STAGE
+// Stage
+PyObject* rbe_py_api_create_stage_nodes(PyObject* self, PyObject* args, PyObject* kwargs) {
+    PyObject* stageNodeList;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "O", rbePyApiCreateStageNodesKWList, &stageNodeList)) {
+        RBE_ASSERT_FMT(PyList_Check(stageNodeList), "Passed in stage nodes are not a python list, check python api implementation...");
+        rbe_logger_debug("setup stage nodes:");
+        setup_scene_stage_nodes(stageNodeList);
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* PyInit_rbe_py_API(void) {
+    return PyModule_Create(&rbePyAPIModDef);
+}
+
+// --- Node Utils --- //
+
 // TODO: Pass whatever references the parent node structure
 void setup_scene_stage_nodes(PyObject* stageNodeList) {
     for (Py_ssize_t i = 0; i < PyList_Size(stageNodeList); i++) {
@@ -145,10 +168,14 @@ void setup_scene_stage_nodes(PyObject* stageNodeList) {
             const char* externalNodeSourcePath = phy_get_string_from_var(externalNodeSourceVar, "external_node_source");
         }
         // Components
+        // Testing module getting stuff to store component classes
+
         PyObject* componentsListVar = PyObject_GetAttrString(pStageNode, "components");
         if (PyList_Check(componentsListVar)) {
             for (Py_ssize_t componentIndex = 0; componentIndex < PyList_Size(componentsListVar); componentIndex++) {
-
+                PyObject* pComponent = PyList_GetItem(componentsListVar, componentIndex);
+                RBE_ASSERT(pComponent != NULL);
+                setup_scene_component_node(pComponent);
             }
         }
         // Children Nodes
@@ -164,17 +191,15 @@ void setup_scene_stage_nodes(PyObject* stageNodeList) {
     Py_DecRef(stageNodeList);
 }
 
-PyObject* rbe_py_api_create_stage_nodes(PyObject* self, PyObject* args, PyObject* kwargs) {
-    PyObject* stageNodeList;
-    if (PyArg_ParseTupleAndKeywords(args, kwargs, "O", rbePyApiCreateStageNodesKWList, &stageNodeList)) {
-        RBE_ASSERT_FMT(PyList_Check(stageNodeList), "Passed in stage nodes are not a python list, check python api implementation...");
-        rbe_logger_debug("setup stage nodes:");
-        setup_scene_stage_nodes(stageNodeList);
-        Py_RETURN_NONE;
+void setup_scene_component_node(PyObject* component) {
+    const char* className = Py_TYPE(component)->tp_name; // TODO: Should probably Py_DecRed()?
+    if (strcmp(className, "Transform2DComponent") == 0) {
+        rbe_logger_debug("Building transform 2d component");
+    } else if (strcmp(className, "SpriteComponent") == 0) {
+        rbe_logger_debug("Building sprite component");
+    } else if (strcmp(className, "ScriptComponent") == 0) {
+        rbe_logger_debug("Building script component");
+    } else {
+        rbe_logger_error("Invalid component class name: '%s'", className);
     }
-    return NULL;
-}
-
-PyObject* PyInit_rbe_py_API(void) {
-    return PyModule_Create(&rbePyAPIModDef);
 }
