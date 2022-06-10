@@ -11,7 +11,8 @@ typedef enum ComponentDataIndex {
     ComponentDataIndex_TRANSFORM_2D = 0,
     ComponentDataIndex_SPRITE = 1,
     ComponentDataIndex_ANIMATED_SPRITE = 2,
-    ComponentDataIndex_TEXT_LABEL = 3
+    ComponentDataIndex_TEXT_LABEL = 3,
+    ComponentDataIndex_SCRIPT = 4
 } ComponentDataIndex;
 
 typedef enum ComponentType {
@@ -20,6 +21,7 @@ typedef enum ComponentType {
     ComponentType_SPRITE = 1 << 1,
     ComponentType_ANIMATED_SPRITE = 1 << 2,
     ComponentType_TEXT_LABEL = 1 << 3,
+    ComponentType_SCRIPT = 1 << 4,
 } ComponentType;
 
 // --- Component Manager --- //

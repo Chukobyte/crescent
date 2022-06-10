@@ -1,5 +1,6 @@
 #include "rbe_py_api_module.h"
 
+#include "py_cache.h"
 #include "../../game_properties.h"
 #include "../../asset_manager.h"
 #include "../../utils/rbe_assert.h"
@@ -7,7 +8,9 @@
 #include "../../ecs/system/ec_system.h"
 #include "../../ecs/component/transform2d_component.h"
 #include "../../ecs/component/sprite_component.h"
-#include "py_cache.h"
+#include "../../ecs/component/script_component.h"
+
+// TODO: Clean up strdups
 
 // --- Node Utils --- //
 void setup_scene_stage_nodes(Entity parentEntity, PyObject* stageNodeList);
@@ -264,6 +267,10 @@ void setup_scene_component_node(Entity entity, PyObject* component) {
         rbe_logger_debug("Building script component");
         const char* scriptClassPath = phy_get_string_from_var(component, "class_path");
         const char* scriptClassName = phy_get_string_from_var(component, "class_name");
+        ScriptComponent* scriptComponent = script_component_create();
+        scriptComponent->classPath = strdup(scriptClassPath);
+        scriptComponent->className = strdup(scriptClassName);
+        component_manager_set_component(entity, ComponentDataIndex_SCRIPT, scriptComponent);
         PyObject* pScriptInstance = rbe_py_cache_create_instance(scriptClassPath, scriptClassName, entity);
         rbe_logger_debug("class_path: %s, class_name: %s, script_instance = %x", scriptClassPath, scriptClassName, pScriptInstance);
     } else {
