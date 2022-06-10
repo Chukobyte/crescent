@@ -50,13 +50,13 @@ PyObject* rbe_py_cache_get_class(const char* modulePath, const char* classPath) 
         RBE_ASSERT(pModuleDict != NULL);
         PyObject* pNewClass = PyDict_GetItemString(pModuleDict, classPath);
         RBE_ASSERT(pNewClass != NULL);
-        rbe_string_hash_map_add(moduleCacheItem->classHashMap, classPath, pNewClass, sizeof(PyObject*) * 50); // TODO: Fix size allocation, not sure how to get python object size
+        // Store a pointer to the PyObject pointer to not worry about PyObject size...
+        rbe_string_hash_map_add(moduleCacheItem->classHashMap, classPath, &pNewClass, sizeof(PyObject**));
         Py_DecRef(pModuleDict);
-        return pNewClass; // TODO: Need to fix size as not able to create instance properly with PyObject in hash map.  Can we copy PyObjects?
     }
-    PyObject* pClass = (PyObject*) rbe_string_hash_map_get(moduleCacheItem->classHashMap, classPath);
+    PyObject** pClass = (PyObject**) rbe_string_hash_map_get(moduleCacheItem->classHashMap, classPath);
     RBE_ASSERT(pClass != NULL);
-    return pClass;
+    return *pClass;
 }
 
 PyObject* rbe_py_cache_create_instance(const char* modulePath, const char* classPath, Entity entity) {
