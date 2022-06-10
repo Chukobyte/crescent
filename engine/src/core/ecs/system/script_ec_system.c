@@ -25,6 +25,7 @@ EntitySystem* script_ec_system_create() {
 }
 
 void script_system_on_entity_registered(Entity entity) {
+    RBE_ASSERT_FMT(!rbe_hash_map_has(scriptInstanceHashMap, &entity), "Entity '%d' already exists in script ec system!", entity);
     ScriptComponent* scriptComponent = (ScriptComponent*) component_manager_get_component(entity, ComponentDataIndex_SCRIPT);
     PyObject* pScriptInstance = rbe_py_cache_create_instance(scriptComponent->classPath, scriptComponent->className, entity);
     rbe_hash_map_add(scriptInstanceHashMap, &entity, &pScriptInstance);

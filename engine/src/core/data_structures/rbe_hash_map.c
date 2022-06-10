@@ -128,43 +128,37 @@ bool rbe_hash_map_erase(RBEHashMap* hashMap, void* key) {
     return false;
 }
 
-// String Key
-bool rbe_hash_map_add_from_string_key(RBEHashMap* hashMap, const char* key, void* value) {
-    char* keyStr = (char*) strdup(key);
-    bool hasAddedValue = rbe_hash_map_add(hashMap, keyStr, value);
-    RBE_MEM_FREE(keyStr);
-    return hasAddedValue;
+// --- Iterator --- //
+RBEHashMapIterator rbe_hash_map_iter_create(RBEHashMap* hashMap) {
+    // Get initial node if exists
+    HashMapNode* initialNode = NULL;
+    size_t initialIndex = 0;
+    for (size_t chain = 0; chain < hashMap->capacity; chain++) {
+        HashMapNode* node = hashMap->nodes[chain];
+        if (node != NULL) {
+            initialNode = node;
+            initialIndex = chain;
+            break;
+        }
+    }
+    RBEHashMapIterator iterator = { .begin = 0, .end = hashMap->capacity, .index = initialIndex, .pair = initialNode };
+    return iterator;
 }
 
-void* rbe_hash_map_get_from_string_key(RBEHashMap* hashMap, const char* key) {
-    char* keyStr = (char*) strdup(key);
-    void* returnedValue = rbe_hash_map_get(hashMap, keyStr);
-    RBE_MEM_FREE(keyStr);
-    return returnedValue;
+bool rbe_hash_map_iter_is_valid(RBEHashMap* hashMap, RBEHashMapIterator* iterator) {
+    return iterator->pair != NULL && iterator->index < hashMap->capacity;
 }
 
-bool rbe_hash_map_has_from_string_key(RBEHashMap* hashMap, const char* key) {
-    char* keyStr = (char*) strdup(key);
-    bool hasValue = rbe_hash_map_has(hashMap, keyStr);
-    RBE_MEM_FREE(keyStr);
-    return hasValue;
-}
-
-bool rbe_hash_map_erase_from_string_key(RBEHashMap* hashMap, const char* key) {
-    char* keyStr = (char*) strdup(key);
-    bool hasErased = rbe_hash_map_erase(hashMap, keyStr);
-    RBE_MEM_FREE(keyStr);
-    return hasErased;
-}
-
-// String Key & String Value
-bool rbe_hash_map_add_from_string_key_and_value(RBEHashMap* hashMap, const char* key, const char* value) {
-    char* keyStr = (char*) strdup(key);
-    char* valueStr = (char*) strdup(value);
-    bool hasAddedValue = rbe_hash_map_add(hashMap, keyStr, valueStr);
-    RBE_MEM_FREE(keyStr);
-    RBE_MEM_FREE(valueStr);
-    return hasAddedValue;
+RBEHashMapIterator rbe_hash_map_iter_advance(RBEHashMap* hashMap, RBEHashMapIterator* iterator) {
+    RBEHashMapIterator newIterator = { .begin = iterator->begin, .end = iterator->end, .index = iterator->index, .pair = NULL };
+    if (rbe_hash_map_iter_is_valid(hashMap, iterator)) {
+        HashMapNode* node = hashMap->nodes[iterator->index];
+        if (node) {
+            newIterator.pair = node->next;
+            newIterator.index++;
+        }
+    }
+    return newIterator;
 }
 
 // Misc

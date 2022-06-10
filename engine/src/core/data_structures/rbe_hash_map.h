@@ -14,7 +14,6 @@ typedef struct HashMapNode {
     struct HashMapNode* next;
     void* key;
     void* value;
-
 } HashMapNode;
 
 typedef struct RBEHashMap {
@@ -27,6 +26,13 @@ typedef struct RBEHashMap {
     HashMapNode** nodes;
 } RBEHashMap;
 
+typedef struct RBEHashMapIterator {
+    size_t begin;
+    size_t end;
+    size_t index;
+    HashMapNode* pair;
+} RBEHashMapIterator;
+
 // Generic hash map methods
 RBEHashMap* rbe_hash_map_create(size_t keySize, size_t valueSize, size_t capacity);
 bool rbe_hash_map_destroy(RBEHashMap* hashMap);
@@ -34,14 +40,11 @@ bool rbe_hash_map_add(RBEHashMap* hashMap, void* key, void* value);
 void* rbe_hash_map_get(RBEHashMap* hashMap, void* key);
 bool rbe_hash_map_has(RBEHashMap* hashMap, void* key);
 bool rbe_hash_map_erase(RBEHashMap* hashMap, void* key);
-// String key methods, creates temp string dynamically for key
-// TODO: Check performance and stuff.  If it's bash, don't use string key version or create separate api.
-bool rbe_hash_map_add_from_string_key(RBEHashMap* hashMap, const char* key, void* value);
-void* rbe_hash_map_get_from_string_key(RBEHashMap* hashMap, const char* key);
-bool rbe_hash_map_has_from_string_key(RBEHashMap* hashMap, const char* key);
-bool rbe_hash_map_erase_from_string_key(RBEHashMap* hashMap, const char* key);
-// String key and string value methods
-bool rbe_hash_map_add_from_string_key_and_value(RBEHashMap* hashMap, const char* key, const char* value);
+
+// Iterator
+RBEHashMapIterator rbe_hash_map_iter_create(RBEHashMap* hashMap);
+bool rbe_hash_map_iter_is_valid(RBEHashMap* hashMap, RBEHashMapIterator* iterator);
+RBEHashMapIterator rbe_hash_map_iter_advance(RBEHashMap* hashMap, RBEHashMapIterator* iterator);
 
 #ifdef __cplusplus
 }
