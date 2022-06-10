@@ -10,7 +10,7 @@ EntitySystem* spriteRenderingSystem = NULL;
 
 void sprite_rendering_system_render();
 
-EntitySystem* sprite_rendering_system_create() {
+EntitySystem* sprite_rendering_ec_system_create() {
     RBE_ASSERT(spriteRenderingSystem == NULL);
     spriteRenderingSystem = rbe_ec_system_create();
     spriteRenderingSystem->render_func = sprite_rendering_system_render;

@@ -106,6 +106,8 @@ ComponentType component_manager_translate_index_to_type(ComponentDataIndex index
         return ComponentType_SPRITE;
     case ComponentDataIndex_TEXT_LABEL:
         return ComponentType_TEXT_LABEL;
+    case ComponentDataIndex_SCRIPT:
+        return ComponentType_SCRIPT;
     case ComponentDataIndex_NONE:
     default:
         rbe_logger_error("Not a valid component data index: '%d'", index);

@@ -23,7 +23,9 @@ create_stage_nodes(
                     flip_y=False,
                     modulate=Color(255, 255, 255, 255),
                 ),
-                ScriptComponent(class_path="src.main", class_name="Main"),
+                ScriptComponent(
+                    class_path="test_games.fighter_test.src.main", class_name="Main"
+                ),
             ],
             children=[],
         )
