@@ -58,6 +58,16 @@ void rbe_hash_main_test() {
     // Clean up
     RBE_MEM_FREE(user);
     RBE_MEM_FREE(hashMapKey);
+
+    RBEHashMap* map2 = rbe_hash_map_create(sizeof(int), sizeof(int), 32);
+    TEST_ASSERT_TRUE(map2);
+    int key1 = 1;
+    int value1 = 10;
+    rbe_hash_map_add(map2, &key1, &value1);
+    TEST_ASSERT_TRUE(rbe_hash_map_has(map2, &key1));
+    int returnedValue1 = *(int*) rbe_hash_map_get(map2, &key1);
+    TEST_ASSERT_EQUAL_INT(returnedValue1, value1);
+    rbe_hash_map_destroy(map2);
 }
 
 void rbe_string_hashmap_test() {
