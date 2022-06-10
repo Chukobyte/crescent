@@ -271,8 +271,7 @@ void setup_scene_component_node(Entity entity, PyObject* component) {
         scriptComponent->classPath = strdup(scriptClassPath);
         scriptComponent->className = strdup(scriptClassName);
         component_manager_set_component(entity, ComponentDataIndex_SCRIPT, scriptComponent);
-        PyObject* pScriptInstance = rbe_py_cache_create_instance(scriptClassPath, scriptClassName, entity);
-        rbe_logger_debug("class_path: %s, class_name: %s, script_instance = %x", scriptClassPath, scriptClassName, pScriptInstance);
+        rbe_logger_debug("class_path: %s, class_name: %s", scriptClassPath, scriptClassName);
     } else {
         rbe_logger_error("Invalid component class name: '%s'", className);
     }
