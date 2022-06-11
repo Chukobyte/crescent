@@ -8,14 +8,6 @@
 #include "../utils/rbe_assert.h"
 
 // --- Scene Tree --- //
-// Maintains parent child relationship between nodes
-typedef struct SceneTreeNode {
-    Entity entity;
-    struct SceneTreeNode* parent;
-    struct SceneTreeNode** children;
-    size_t childCount;
-} SceneTreeNode;
-
 typedef void (*ExecuteOnAllTreeNodesFunc) (SceneTreeNode*);
 
 // Executes function on passed in tree node and all child tree nodes
@@ -30,6 +22,14 @@ typedef struct SceneTree {
     SceneTreeNode* root;
 } SceneTree;
 
+SceneTreeNode* rbe_scene_tree_create_tree_node(Entity entity, SceneTreeNode* parent) {
+    SceneTreeNode* treeNode = RBE_MEM_ALLOCATE(SceneTreeNode);
+    treeNode->entity = entity;
+    treeNode->parent = parent;
+    treeNode->childCount = 0;
+    return treeNode;
+}
+
 // --- Scene --- //
 typedef struct Scene {
     const char* scenePath;
@@ -39,7 +39,8 @@ typedef struct Scene {
 Scene* rbe_scene_create_scene(const char* scenePath) {
     Scene* scene = RBE_MEM_ALLOCATE(Scene);
     scene->scenePath = scenePath;
-    scene->sceneTree = NULL;
+    scene->sceneTree = RBE_MEM_ALLOCATE(SceneTree);
+    scene->sceneTree->root = NULL;
     return scene;
 }
 
@@ -119,4 +120,10 @@ void rbe_scene_manager_process_queued_scene_change() {
         // Queues entities for creation
         pyh_run_python_file(activeScene->scenePath);
     }
+}
+
+void rbe_scene_manager_set_active_scene_root(SceneTreeNode* root) {
+    RBE_ASSERT(activeScene != NULL);
+    RBE_ASSERT_FMT(activeScene->sceneTree->root == NULL, "Trying to overwrite an already existing scene root!");
+    activeScene->sceneTree->root = root;
 }
