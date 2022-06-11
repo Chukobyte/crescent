@@ -1,5 +1,6 @@
 #include "rbe_hash_map.h"
 
+#include <stdio.h>
 #include <string.h>
 
 #include "../memory/rbe_mem.h"
@@ -141,18 +142,20 @@ RBEHashMapIterator rbe_hash_map_iter_create(RBEHashMap* hashMap) {
             break;
         }
     }
-    RBEHashMapIterator iterator = { .begin = 0, .end = hashMap->capacity, .index = initialIndex, .pair = initialNode };
+    size_t iteratorCount = initialNode != NULL ? 1 : 0;
+    RBEHashMapIterator iterator = { .count = iteratorCount, .end = hashMap->capacity, .index = initialIndex, .pair = initialNode };
     return iterator;
 }
 
 bool rbe_hash_map_iter_is_valid(RBEHashMap* hashMap, RBEHashMapIterator* iterator) {
-    return iterator->pair != NULL && iterator->index < hashMap->capacity;
+    return iterator->pair != NULL && iterator->count < hashMap->size;
 }
 
 void rbe_hash_map_iter_advance(RBEHashMap* hashMap, RBEHashMapIterator* iterator) {
     if (rbe_hash_map_iter_is_valid(hashMap, iterator)) {
         if (iterator->pair->next != NULL) {
             iterator->pair = iterator->pair->next;
+            iterator->count++;
             return;
         }
 
@@ -162,6 +165,7 @@ void rbe_hash_map_iter_advance(RBEHashMap* hashMap, RBEHashMapIterator* iterator
             if (node != NULL) {
                 iterator->pair = node;
                 iterator->index = chain + 1;
+                iterator->count++;
                 return;
             }
         }

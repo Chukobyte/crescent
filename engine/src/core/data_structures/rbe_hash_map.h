@@ -27,7 +27,7 @@ typedef struct RBEHashMap {
 } RBEHashMap;
 
 typedef struct RBEHashMapIterator {
-    size_t begin;
+    size_t count;
     size_t end;
     size_t index;
     HashMapNode* pair;
