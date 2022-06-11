@@ -7,7 +7,7 @@
 typedef struct SceneTreeNode {
     Entity entity;
     struct SceneTreeNode* parent;
-    struct SceneTreeNode** children;
+    struct SceneTreeNode* children[MAX_ENTITIES / 2]; // TODO: Clean up temp
     size_t childCount;
 } SceneTreeNode;
 

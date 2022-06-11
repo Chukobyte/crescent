@@ -164,7 +164,7 @@ void setup_scene_stage_nodes(SceneTreeNode* parent, PyObject* stageNodeList) {
         if (node->parent == NULL) {
             rbe_scene_manager_set_active_scene_root(node);
         } else {
-            parent->childCount++;
+            parent->children[parent->childCount++] = node;
         }
         PyObject* pStageNode = PyList_GetItem(stageNodeList, i);
         const char* nodeName = phy_get_string_from_var(pStageNode, "name");
