@@ -39,6 +39,8 @@ add_library(${PROJECT_NAME} STATIC
         ../engine/src/core/data_structures/rbe_hash_map.c
         ../engine/src/core/data_structures/rbe_hash_map_string.c
         ../engine/src/core/memory/rbe_mem.c
+        ../engine/src/core/scene/scene_manager.c
+        ../engine/src/core/scripting/script_context.c
         ../engine/src/core/scripting/python/py_cache.c
         ../engine/src/core/scripting/python/rbe_py.c
         ../engine/src/core/scripting/python/py_helper.c

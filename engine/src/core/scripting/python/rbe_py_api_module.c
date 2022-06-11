@@ -5,6 +5,7 @@
 #include "../../asset_manager.h"
 #include "../../utils/rbe_assert.h"
 #include "../../scripting/python/py_helper.h"
+#include "../../scene/scene_manager.h"
 #include "../../ecs/system/ec_system.h"
 #include "../../ecs/component/transform2d_component.h"
 #include "../../ecs/component/sprite_component.h"
@@ -271,6 +272,7 @@ void setup_scene_component_node(Entity entity, PyObject* component) {
         scriptComponent->classPath = strdup(scriptClassPath);
         scriptComponent->className = strdup(scriptClassName);
         component_manager_set_component(entity, ComponentDataIndex_SCRIPT, scriptComponent);
+        rbe_scene_manager_queue_entity_for_creation(entity); // May move in a different place TODO: Figure out...
         rbe_logger_debug("class_path: %s, class_name: %s", scriptClassPath, scriptClassName);
     } else {
         rbe_logger_error("Invalid component class name: '%s'", className);
