@@ -4,6 +4,7 @@
 #include "../scripting/python/py_helper.h"
 #include "../memory/rbe_mem.h"
 #include "../ecs/component/component.h"
+#include "../ecs/system/ec_system.h"
 #include "../utils/logger.h"
 #include "../utils/rbe_assert.h"
 
@@ -87,7 +88,9 @@ void rbe_scene_manager_queue_entity_for_deletion(Entity entity) {
 
 void rbe_scene_manager_process_queued_deletion_entities() {
     for (size_t i = 0; i < entitiesQueuedForDeletionSize; i++) {
-        sceneManagerScriptContext->on_delete_instance(entitiesQueuedForDeletion[i]);
+        // Remove entity from systems
+        rbe_ec_system_remove_entity_from_all_systems(entitiesQueuedForDeletion[i]);
+        // Remove all components
         component_manager_remove_all_components(entitiesQueuedForDeletion[i]);
     }
     entitiesQueuedForDeletionSize = 0;

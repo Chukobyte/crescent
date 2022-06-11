@@ -30,7 +30,7 @@ bool component_array_has_component(ComponentArray* componentArray, ComponentData
 }
 
 void* component_array_get_component(ComponentArray* componentArray, ComponentDataIndex index) {
-    RBE_ASSERT_FMT(component_array_has_component(componentArray, index), "Doesn't have component!");
+    RBE_ASSERT_FMT(component_array_has_component(componentArray, index), "Doesn't have component with index = %d!", index);
     return componentArray->components[index];
 }
 

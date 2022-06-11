@@ -192,7 +192,7 @@ void setup_scene_stage_nodes(SceneTreeNode* parent, PyObject* stageNodeList) {
             }
         }
         // TODO: Do in a different step or having different functionality to add node to scene tree
-        rbe_ec_system_register_entity_to_systems(node->entity);
+        rbe_ec_system_update_entity_signature_with_systems(node->entity);
         // Children Nodes
         PyObject* childrenListVar = PyObject_GetAttrString(pStageNode, "children");
         if (PyList_Check(childrenListVar)) {

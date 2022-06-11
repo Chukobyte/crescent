@@ -76,7 +76,7 @@ void rbe_ec_system_register(EntitySystem* system) {
     }
 }
 
-void rbe_ec_system_register_entity_to_systems(Entity entity) {
+void rbe_ec_system_update_entity_signature_with_systems(Entity entity) {
     ComponentType entityComponentSignature = component_manager_get_component_signature(entity);
     for (size_t i = 0; i < entitySystemData.entity_systems_count; i++) {
         if ((entityComponentSignature & entitySystemData.entity_systems[i]->component_signature) == entitySystemData.entity_systems[i]->component_signature) {
@@ -153,4 +153,10 @@ bool rbe_ec_system_remove_entity_from_system(Entity entity, EntitySystem* system
         }
     }
     return false;
+}
+
+void rbe_ec_system_remove_entity_from_all_systems(Entity entity) {
+    for (size_t i = 0; i < entitySystemData.entity_systems_count; i++) {
+        rbe_ec_system_remove_entity_from_system(entity, entitySystemData.entity_systems[i]);
+    }
 }
