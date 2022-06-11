@@ -30,4 +30,5 @@ void script_system_on_entity_registered(Entity entity) {
 }
 
 void script_system_on_entity_unregistered(Entity entity) {
+    scriptContext->on_delete_instance(entity);
 }
