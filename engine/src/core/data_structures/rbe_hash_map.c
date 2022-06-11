@@ -41,7 +41,7 @@ bool rbe_hash_map_destroy(RBEHashMap* hashMap) {
     HashMapNode* next = NULL;
     for (size_t chain = 0; chain < hashMap->capacity; chain++) {
         node = hashMap->nodes[chain];
-        while (node) {
+        while (node != NULL) {
             next = node->next;
             hash_map_destroy_node(node);
             node = next;
@@ -137,7 +137,7 @@ RBEHashMapIterator rbe_hash_map_iter_create(RBEHashMap* hashMap) {
         HashMapNode* node = hashMap->nodes[chain];
         if (node != NULL) {
             initialNode = node;
-            initialIndex = chain;
+            initialIndex = chain + 1;
             break;
         }
     }
@@ -149,16 +149,25 @@ bool rbe_hash_map_iter_is_valid(RBEHashMap* hashMap, RBEHashMapIterator* iterato
     return iterator->pair != NULL && iterator->index < hashMap->capacity;
 }
 
-RBEHashMapIterator rbe_hash_map_iter_advance(RBEHashMap* hashMap, RBEHashMapIterator* iterator) {
-    RBEHashMapIterator newIterator = { .begin = iterator->begin, .end = iterator->end, .index = iterator->index, .pair = NULL };
+void rbe_hash_map_iter_advance(RBEHashMap* hashMap, RBEHashMapIterator* iterator) {
     if (rbe_hash_map_iter_is_valid(hashMap, iterator)) {
-        HashMapNode* node = hashMap->nodes[iterator->index];
-        if (node) {
-            newIterator.pair = node->next;
-            newIterator.index++;
+        if (iterator->pair->next != NULL) {
+            iterator->pair = iterator->pair->next;
+            return;
+        }
+
+        // Search nodes array if there are no more linked pairs
+        for (size_t chain = iterator->index; chain < hashMap->capacity; chain++) {
+            HashMapNode* node = hashMap->nodes[chain];
+            if (node != NULL) {
+                iterator->pair = node;
+                iterator->index = chain + 1;
+                return;
+            }
         }
     }
-    return newIterator;
+    // Invalidate iterator since we've reached the end
+    iterator->pair = NULL;
 }
 
 // Misc

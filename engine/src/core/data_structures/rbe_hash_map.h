@@ -44,7 +44,7 @@ bool rbe_hash_map_erase(RBEHashMap* hashMap, void* key);
 // Iterator
 RBEHashMapIterator rbe_hash_map_iter_create(RBEHashMap* hashMap);
 bool rbe_hash_map_iter_is_valid(RBEHashMap* hashMap, RBEHashMapIterator* iterator);
-RBEHashMapIterator rbe_hash_map_iter_advance(RBEHashMap* hashMap, RBEHashMapIterator* iterator);
+void rbe_hash_map_iter_advance(RBEHashMap* hashMap, RBEHashMapIterator* iterator);
 
 #ifdef __cplusplus
 }
