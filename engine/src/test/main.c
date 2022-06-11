@@ -22,7 +22,7 @@ int main(int argv, char** args) {
     UNITY_BEGIN();
     RUN_TEST(rbe_hash_main_test);
     RUN_TEST(rbe_string_hashmap_test);
-//    RUN_TEST(rbe_thread_main_test);
+    RUN_TEST(rbe_thread_main_test);
     return UNITY_END();
 }
 
