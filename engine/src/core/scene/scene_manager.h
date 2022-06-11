@@ -8,3 +8,5 @@ void rbe_scene_manager_queue_entity_for_creation(Entity entity);
 void rbe_scene_manager_process_queued_creation_entities();
 void rbe_scene_manager_queue_entity_for_deletion(Entity entity);
 void rbe_scene_manager_process_queued_deletion_entities();
+void rbe_scene_manager_queue_scene_change(const char* scenePath);
+void rbe_scene_manager_process_queued_scene_change();
