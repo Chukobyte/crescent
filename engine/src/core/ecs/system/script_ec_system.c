@@ -26,6 +26,7 @@ EntitySystem* script_ec_system_create(RBEScriptContext* newScriptContext) {
 void script_system_on_entity_registered(Entity entity) {
     ScriptComponent* scriptComponent = (ScriptComponent*) component_manager_get_component(entity, ComponentDataIndex_SCRIPT);
     scriptContext->on_create_instance(entity, scriptComponent->classPath, scriptComponent->className);
+    scriptContext->on_start(entity); // TODO: Move this once there is a place for it especially during stage creation
 }
 
 void script_system_on_entity_unregistered(Entity entity) {

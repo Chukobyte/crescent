@@ -45,7 +45,7 @@ void py_on_delete_instance(Entity entity) {
 
 void py_on_start(Entity entity) {
     RBE_ASSERT(rbe_hash_map_has(pythonInstanceHashMap, &entity));
-    PyObject* pScriptInstance = (PyObject*) rbe_hash_map_get(pythonInstanceHashMap, &entity);
+    PyObject* pScriptInstance = (PyObject*) *(PyObject**) rbe_hash_map_get(pythonInstanceHashMap, &entity);
     RBE_ASSERT(pScriptInstance != NULL);
     if (PyObject_HasAttrString(pScriptInstance, "_start")) {
         PyObject_CallMethod(pScriptInstance, "_start", NULL);
@@ -60,7 +60,7 @@ void py_on_update_all_instances(float deltaTime) {
 
 void py_on_end(Entity entity) {
     RBE_ASSERT(rbe_hash_map_has(pythonInstanceHashMap, &entity));
-    PyObject* pScriptInstance = (PyObject*) rbe_hash_map_get(pythonInstanceHashMap, &entity);
+    PyObject* pScriptInstance = (PyObject*) *(PyObject**) rbe_hash_map_get(pythonInstanceHashMap, &entity);
     RBE_ASSERT(pScriptInstance != NULL);
     if (PyObject_HasAttrString(pScriptInstance, "_end")) {
         PyObject_CallMethod(pScriptInstance, "_end", NULL);
