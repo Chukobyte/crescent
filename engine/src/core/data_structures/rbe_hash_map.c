@@ -1,5 +1,6 @@
 #include "rbe_hash_map.h"
 
+#include <stdio.h>
 #include <string.h>
 
 #include "../memory/rbe_mem.h"
@@ -41,7 +42,7 @@ bool rbe_hash_map_destroy(RBEHashMap* hashMap) {
     HashMapNode* next = NULL;
     for (size_t chain = 0; chain < hashMap->capacity; chain++) {
         node = hashMap->nodes[chain];
-        while (node) {
+        while (node != NULL) {
             next = node->next;
             hash_map_destroy_node(node);
             node = next;
@@ -128,43 +129,49 @@ bool rbe_hash_map_erase(RBEHashMap* hashMap, void* key) {
     return false;
 }
 
-// String Key
-bool rbe_hash_map_add_from_string_key(RBEHashMap* hashMap, const char* key, void* value) {
-    char* keyStr = (char*) strdup(key);
-    bool hasAddedValue = rbe_hash_map_add(hashMap, keyStr, value);
-    RBE_MEM_FREE(keyStr);
-    return hasAddedValue;
+// --- Iterator --- //
+RBEHashMapIterator rbe_hash_map_iter_create(RBEHashMap* hashMap) {
+    // Get initial node if exists
+    HashMapNode* initialNode = NULL;
+    size_t initialIndex = 0;
+    for (size_t chain = 0; chain < hashMap->capacity; chain++) {
+        HashMapNode* node = hashMap->nodes[chain];
+        if (node != NULL) {
+            initialNode = node;
+            initialIndex = chain + 1;
+            break;
+        }
+    }
+    size_t iteratorCount = initialNode != NULL ? 1 : 0;
+    RBEHashMapIterator iterator = { .count = iteratorCount, .end = hashMap->capacity, .index = initialIndex, .pair = initialNode };
+    return iterator;
 }
 
-void* rbe_hash_map_get_from_string_key(RBEHashMap* hashMap, const char* key) {
-    char* keyStr = (char*) strdup(key);
-    void* returnedValue = rbe_hash_map_get(hashMap, keyStr);
-    RBE_MEM_FREE(keyStr);
-    return returnedValue;
+bool rbe_hash_map_iter_is_valid(RBEHashMap* hashMap, RBEHashMapIterator* iterator) {
+    return iterator->pair != NULL && iterator->count < hashMap->size;
 }
 
-bool rbe_hash_map_has_from_string_key(RBEHashMap* hashMap, const char* key) {
-    char* keyStr = (char*) strdup(key);
-    bool hasValue = rbe_hash_map_has(hashMap, keyStr);
-    RBE_MEM_FREE(keyStr);
-    return hasValue;
-}
+void rbe_hash_map_iter_advance(RBEHashMap* hashMap, RBEHashMapIterator* iterator) {
+    if (rbe_hash_map_iter_is_valid(hashMap, iterator)) {
+        if (iterator->pair->next != NULL) {
+            iterator->pair = iterator->pair->next;
+            iterator->count++;
+            return;
+        }
 
-bool rbe_hash_map_erase_from_string_key(RBEHashMap* hashMap, const char* key) {
-    char* keyStr = (char*) strdup(key);
-    bool hasErased = rbe_hash_map_erase(hashMap, keyStr);
-    RBE_MEM_FREE(keyStr);
-    return hasErased;
-}
-
-// String Key & String Value
-bool rbe_hash_map_add_from_string_key_and_value(RBEHashMap* hashMap, const char* key, const char* value) {
-    char* keyStr = (char*) strdup(key);
-    char* valueStr = (char*) strdup(value);
-    bool hasAddedValue = rbe_hash_map_add(hashMap, keyStr, valueStr);
-    RBE_MEM_FREE(keyStr);
-    RBE_MEM_FREE(valueStr);
-    return hasAddedValue;
+        // Search nodes array if there are no more linked pairs
+        for (size_t chain = iterator->index; chain < hashMap->capacity; chain++) {
+            HashMapNode* node = hashMap->nodes[chain];
+            if (node != NULL) {
+                iterator->pair = node;
+                iterator->index = chain + 1;
+                iterator->count++;
+                return;
+            }
+        }
+    }
+    // Invalidate iterator since we've reached the end
+    iterator->pair = NULL;
 }
 
 // Misc

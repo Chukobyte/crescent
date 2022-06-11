@@ -47,6 +47,7 @@ add_library(${PROJECT_NAME} STATIC
         ../engine/src/core/ecs/system/sprite_rendering_ec_system.c
         ../engine/src/core/ecs/system/ec_system.c
         ../engine/src/core/ecs/component/transform2d_component.c
+        ../engine/src/core/ecs/component/script_component.c
         ../engine/src/core/ecs/component/sprite_component.c
         ../engine/src/core/ecs/component/component.c
         ../engine/src/core/rendering/renderer.c

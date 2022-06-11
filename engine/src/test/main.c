@@ -58,6 +58,36 @@ void rbe_hash_main_test() {
     // Clean up
     RBE_MEM_FREE(user);
     RBE_MEM_FREE(hashMapKey);
+
+    // Int keys and values
+    RBEHashMap* map2 = rbe_hash_map_create(sizeof(int), sizeof(int), 32);
+    TEST_ASSERT_TRUE(map2);
+    int key1 = 1;
+    int value1 = 10;
+    rbe_hash_map_add(map2, &key1, &value1);
+    TEST_ASSERT_TRUE(rbe_hash_map_has(map2, &key1));
+    int returnedValue1 = *(int*) rbe_hash_map_get(map2, &key1);
+    TEST_ASSERT_EQUAL_INT(returnedValue1, value1);
+
+    // Iterator test
+    int key2 = 2;
+    int value2 = 20;
+    int key3 = 3;
+    int value3 = 30;
+    rbe_hash_map_add(map2, &key2, &value2);
+    rbe_hash_map_add(map2, &key3, &value3);
+    int returnedValue2 = *(int*) rbe_hash_map_get(map2, &key2);
+    TEST_ASSERT_EQUAL_INT(returnedValue2, value2);
+
+    int iteratorIterationCount = 0;
+    for (RBEHashMapIterator it = rbe_hash_map_iter_create(map2); rbe_hash_map_iter_is_valid(map2, &it); rbe_hash_map_iter_advance(map2, &it)) {
+        const HashMapNode* pair = it.pair;
+        printf("pair->key: '%d', pair->value: '%d'\n", *(int*) pair->key, *(int*) pair->value);
+        iteratorIterationCount++;
+    }
+    TEST_ASSERT_EQUAL_INT(iteratorIterationCount, 3);
+
+    rbe_hash_map_destroy(map2);
 }
 
 void rbe_string_hashmap_test() {

@@ -22,10 +22,12 @@ add_library(${PROJECT_NAME} STATIC
         src/core/math/rbe_math.c
         src/core/input/input.c
         src/core/input/input_action.c
+        src/core/scripting/script_context.c
         src/core/scripting/python/py_helper.c
         src/core/scripting/python/rbe_py.c
         src/core/scripting/python/rbe_py_api_module.c
         src/core/scripting/python/py_cache.c
+        src/core/scripting/python/py_script_context.c
         src/core/rendering/renderer.c
         src/core/rendering/shader.c
         src/core/rendering/texture.c
@@ -42,7 +44,9 @@ add_library(${PROJECT_NAME} STATIC
         src/core/ecs/component/component.c
         src/core/ecs/component/sprite_component.c
         src/core/ecs/component/transform2d_component.c
+        src/core/ecs/component/script_component.c
         src/core/ecs/system/ec_system.c
+        src/core/ecs/system/script_ec_system.c
         src/core/ecs/system/sprite_rendering_ec_system.c
         ../include/stb_image/stb_image.c
         ../include/glad/glad.c
