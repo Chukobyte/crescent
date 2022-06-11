@@ -222,6 +222,9 @@ void rbe_process_game_logic() {
     }
     lastFrameTime = (int) SDL_GetTicks();
 
+    const float variableDeltaTime = (float ) (SDL_GetTicks() - lastFrameTime) / 1000.0f;
+    rbe_ec_system_process_systems(variableDeltaTime);
+
     rbe_input_clean_up_flags();
 }
 

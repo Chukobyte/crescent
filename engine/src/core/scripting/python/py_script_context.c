@@ -59,7 +59,9 @@ void py_on_start(Entity entity) {
 
 void py_on_update_all_instances(float deltaTime) {
     for (size_t i = 0; i < entitiesToUpdateCount; i++) {
-        PyObject_CallMethod(*entitiesToUpdate[i], "_update", "(f)", deltaTime);
+        // TODO: Fix
+//        RBE_ASSERT_FMT(*entitiesToUpdate[i] != NULL, "Python instance is null!");
+//        PyObject_CallMethod(*entitiesToUpdate[i], "_update", "(f)", deltaTime);
     }
 }
 

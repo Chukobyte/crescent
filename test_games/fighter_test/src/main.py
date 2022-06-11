@@ -6,7 +6,7 @@ class Main(Node2D):
         print(f"[SCRIPT] Entity entered stage with id = {self.entity_id}")
 
     def _update(self, delta_time: float) -> None:
-        pass
+        print("Hey")
 
     def _end(self) -> None:
         pass
