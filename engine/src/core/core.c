@@ -17,6 +17,7 @@
 #include "audio/audio_manager.h"
 #include "ecs/ecs_manager.h"
 #include "ecs/system/ec_system.h"
+#include "scene/scene_manager.h"
 #include "scripting/python/py_helper.h"
 
 bool rbe_initialize_sdl();
@@ -76,6 +77,8 @@ bool rbe_initialize(int argv, char** args) {
         rbe_logger_error("Failed to initialize ecs!");
         return false;
     }
+
+    rbe_scene_manager_initialize();
 
     rbe_load_assets_from_configuration();
 
@@ -184,6 +187,13 @@ bool rbe_load_assets_from_configuration() {
 }
 
 void rbe_update() {
+    // Clear out queued nodes for deletion
+    rbe_scene_manager_process_queued_deletion_entities();
+
+    // Create nodes queued for creation a.k.a. '_start()'
+    rbe_scene_manager_process_queued_creation_entities();
+
+    // Main loop
     rbe_process_inputs();
     rbe_process_game_logic();
     rbe_render();
@@ -253,6 +263,7 @@ void rbe_shutdown() {
     rbe_audio_manager_finalize();
     rbe_input_finalize();
     rbe_asset_manager_finalize();
+    rbe_scene_manager_finalize();
     rbe_ecs_manager_finalize();
     rbe_logger_info("RBE Engine shutdown!");
 }

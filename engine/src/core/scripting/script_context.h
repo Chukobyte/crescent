@@ -17,3 +17,4 @@ typedef struct RBEScriptContext {
 } RBEScriptContext;
 
 RBEScriptContext* rbe_script_context_create();
+RBEScriptContext* rbe_script_context_get_current();
