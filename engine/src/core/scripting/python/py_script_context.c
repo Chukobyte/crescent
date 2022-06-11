@@ -15,7 +15,7 @@ void py_on_start(Entity entity);
 void py_on_update_all_instances(float deltaTime);
 void py_on_end(Entity entity);
 
-void py_refresh_update_instance_array(Entity entityRemoved);
+void py_remove_entity_from_update_array(Entity entityRemoved);
 
 static PyObject* entitiesToUpdate[MAX_ENTITIES];
 static size_t entitiesToUpdateCount = 0;
@@ -44,7 +44,7 @@ void py_on_create_instance(Entity entity, const char* classPath, const char* cla
 void py_on_delete_instance(Entity entity) {
     RBE_ASSERT(rbe_hash_map_has(pythonInstanceHashMap, &entity));
     entitiesToUpdateCount--;
-    py_refresh_update_instance_array(entity);
+    py_remove_entity_from_update_array(entity);
     PyObject* pScriptInstance = (PyObject*) *(PyObject**) rbe_hash_map_get(pythonInstanceHashMap, &entity);
     Py_DecRef(pScriptInstance);
     rbe_hash_map_erase(pythonInstanceHashMap, &entity);
@@ -75,7 +75,7 @@ void py_on_end(Entity entity) {
     }
 }
 
-void py_refresh_update_instance_array(Entity entityRemoved) {
+void py_remove_entity_from_update_array(Entity entityRemoved) {
     PyObject* pScriptInstance = (PyObject*) *(PyObject**) rbe_hash_map_get(pythonInstanceHashMap, &entityRemoved);
     for (size_t i = 0; i < entitiesToUpdateCount; i++) {
         if (entitiesToUpdate[i] == pScriptInstance && i + 1 < entitiesToUpdateCount) {
