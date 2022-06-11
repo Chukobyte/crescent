@@ -18,7 +18,6 @@
 #include "ecs/ecs_manager.h"
 #include "ecs/system/ec_system.h"
 #include "scene/scene_manager.h"
-#include "scripting/python/py_helper.h"
 
 bool rbe_initialize_sdl();
 bool rbe_initialize_rendering();
@@ -86,8 +85,7 @@ bool rbe_initialize(int argv, char** args) {
     isRunning = true;
 
     // Go to initial scene (TODO: Move to process loop)
-    RBE_ASSERT(gameProperties->initialScenePath != NULL);
-    pyh_run_python_file(gameProperties->initialScenePath);
+    rbe_scene_manager_queue_scene_change(gameProperties->initialScenePath);
 
     return true;
 }
@@ -187,6 +185,9 @@ bool rbe_load_assets_from_configuration() {
 }
 
 void rbe_update() {
+    // Process Scene change if exists
+    rbe_scene_manager_process_queued_scene_change();
+
     // Clear out queued nodes for deletion
     rbe_scene_manager_process_queued_deletion_entities();
 

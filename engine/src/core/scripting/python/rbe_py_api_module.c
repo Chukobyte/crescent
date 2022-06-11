@@ -14,7 +14,7 @@
 // TODO: Clean up strdups
 
 // --- Node Utils --- //
-void setup_scene_stage_nodes(Entity parentEntity, PyObject* stageNodeList);
+void setup_scene_stage_nodes(SceneTreeNode* parent, PyObject* stageNodeList);
 void setup_scene_component_node(Entity entity, PyObject* component);
 
 // --- RBE PY API --- //
@@ -157,9 +157,15 @@ PyObject* PyInit_rbe_py_API(void) {
 // --- Node Utils --- //
 
 // TODO: Pass whatever references the parent node structure
-void setup_scene_stage_nodes(Entity parentEntity, PyObject* stageNodeList) {
+void setup_scene_stage_nodes(SceneTreeNode* parent, PyObject* stageNodeList) {
     for (Py_ssize_t i = 0; i < PyList_Size(stageNodeList); i++) {
-        const Entity nodeEntity = rbe_ec_system_create_entity();
+        SceneTreeNode* node = rbe_scene_tree_create_tree_node(rbe_ec_system_create_entity(), parent);
+        // Set tree root if parent is absent
+        if (node->parent == NULL) {
+            rbe_scene_manager_set_active_scene_root(node);
+        } else {
+            parent->childCount++;
+        }
         PyObject* pStageNode = PyList_GetItem(stageNodeList, i);
         const char* nodeName = phy_get_string_from_var(pStageNode, "name");
         const char* nodeType = phy_get_string_from_var(pStageNode, "type");
@@ -180,17 +186,17 @@ void setup_scene_stage_nodes(Entity parentEntity, PyObject* stageNodeList) {
             for (Py_ssize_t componentIndex = 0; componentIndex < PyList_Size(componentsListVar); componentIndex++) {
                 PyObject* pComponent = PyList_GetItem(componentsListVar, componentIndex);
                 RBE_ASSERT(pComponent != NULL);
-                setup_scene_component_node(nodeEntity, pComponent);
+                setup_scene_component_node(node->entity, pComponent);
                 Py_DecRef(pComponent);
             }
         }
         // TODO: Do in a different step or having different functionality to add node to scene tree
-        rbe_ec_system_register_entity_to_systems(nodeEntity);
+        rbe_ec_system_update_entity_signature_with_systems(node->entity);
         // Children Nodes
         PyObject* childrenListVar = PyObject_GetAttrString(pStageNode, "children");
         if (PyList_Check(childrenListVar)) {
             // Recurse through children nodes
-            setup_scene_stage_nodes(nodeEntity, childrenListVar);
+            setup_scene_stage_nodes(node, childrenListVar);
         }
 
         rbe_logger_debug("node_name = %s, node_type = %s", nodeName, nodeType);
