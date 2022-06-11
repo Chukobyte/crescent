@@ -1,6 +1,5 @@
 #include "rbe_hash_map.h"
 
-#include <stdio.h>
 #include <string.h>
 
 #include "../memory/rbe_mem.h"
