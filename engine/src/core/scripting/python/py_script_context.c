@@ -42,7 +42,7 @@ void py_on_create_instance(Entity entity, const char* classPath, const char* cla
 }
 
 void py_on_delete_instance(Entity entity) {
-    RBE_ASSERT_FMT(rbe_hash_map_has(pythonInstanceHashMap, &entity), "Doesn't have entity '%d'" , entity);
+    RBE_ASSERT_FMT(rbe_hash_map_has(pythonInstanceHashMap, &entity), "Doesn't have entity '%d'", entity);
     rbe_logger_debug("py_on_delete_instance(%d)", entity);
     entitiesToUpdateCount--;
     py_remove_entity_from_update_array(entity);
