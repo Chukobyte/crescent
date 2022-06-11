@@ -18,7 +18,6 @@
 #include "ecs/ecs_manager.h"
 #include "ecs/system/ec_system.h"
 #include "scene/scene_manager.h"
-#include "scripting/python/py_helper.h"
 
 bool rbe_initialize_sdl();
 bool rbe_initialize_rendering();

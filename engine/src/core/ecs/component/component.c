@@ -39,11 +39,16 @@ void component_array_set_component(ComponentArray* componentArray, ComponentData
 }
 
 void component_array_remove_component(ComponentArray* componentArray, ComponentDataIndex index) {
-    componentArray->components[index] = NULL;
+    if (component_array_has_component(componentArray, index)) {
+        RBE_MEM_FREE(componentArray->components[index]);
+        componentArray->components[index] = NULL;
+    }
 }
 
-void component_array_finalize(ComponentArray* componentArray) {
-    //    RBE_MEM_FREE(componentArray);
+void component_array_remove_all_components(ComponentArray* componentArray) {
+    for (size_t i = 0; i < MAX_COMPONENTS; i++) {
+        component_array_remove_component(componentArray, i);
+    }
 }
 
 // --- Component Manager --- //
@@ -78,12 +83,14 @@ void component_manager_set_component(Entity entity, ComponentDataIndex index, vo
 }
 
 void component_manager_remove_component(Entity entity, ComponentDataIndex index) {
-    void* component = &componentManager.entityComponentArrays[entity];
     ComponentType componentSignature = component_manager_get_component_signature(entity);
     componentSignature &= component_manager_translate_index_to_type(index);
     component_manager_set_component_signature(entity, componentSignature);
     component_array_remove_component(&componentManager.entityComponentArrays[entity], index);
-    RBE_MEM_FREE(component);
+}
+
+void component_manager_remove_all_components(Entity entity) {
+    component_array_remove_all_components(&componentManager.entityComponentArrays[entity]);
 }
 
 bool component_manager_has_component(Entity entity, ComponentDataIndex index) {
