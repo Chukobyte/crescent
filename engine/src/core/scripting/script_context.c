@@ -7,7 +7,7 @@ RBEScriptContext* rbe_script_context_create() {
     scriptContext->on_create_instance = NULL;
     scriptContext->on_delete_instance = NULL;
     scriptContext->on_start = NULL;
-    scriptContext->on_update = NULL;
+    scriptContext->on_update_all_instances = NULL;
     scriptContext->on_end = NULL;
     return scriptContext;
 }
