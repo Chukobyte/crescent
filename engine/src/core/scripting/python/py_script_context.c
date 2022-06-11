@@ -18,6 +18,7 @@ void py_on_end(Entity entity);
 void py_refresh_update_instance_array(Entity entityRemoved);
 
 static PyObject** entitiesToUpdate[MAX_ENTITIES];
+static Entity entitiesToUpdateInt[MAX_ENTITIES];
 static size_t entitiesToUpdateCount = 0;
 RBEHashMap* pythonInstanceHashMap = NULL;
 
@@ -36,7 +37,8 @@ RBEScriptContext* rbe_py_create_script_context() {
 void py_on_create_instance(Entity entity, const char* classPath, const char* className) {
     PyObject* pScriptInstance = rbe_py_cache_create_instance(classPath, className, entity);
     if (PyObject_HasAttrString(pScriptInstance, "_update")) {
-        entitiesToUpdate[entitiesToUpdateCount++] = &pScriptInstance;
+//        entitiesToUpdate[entitiesToUpdateCount++] = &pScriptInstance;
+        entitiesToUpdateInt[entitiesToUpdateCount++] = entity;
     }
     rbe_hash_map_add(pythonInstanceHashMap, &entity, &pScriptInstance);
 }
@@ -45,6 +47,8 @@ void py_on_delete_instance(Entity entity) {
     RBE_ASSERT(rbe_hash_map_has(pythonInstanceHashMap, &entity));
     entitiesToUpdateCount--;
     py_refresh_update_instance_array(entity);
+    PyObject* pScriptInstance = (PyObject*) *(PyObject**) rbe_hash_map_get(pythonInstanceHashMap, &entity);
+    Py_DecRef(pScriptInstance);
     rbe_hash_map_erase(pythonInstanceHashMap, &entity);
 }
 
@@ -59,7 +63,11 @@ void py_on_start(Entity entity) {
 
 void py_on_update_all_instances(float deltaTime) {
     for (size_t i = 0; i < entitiesToUpdateCount; i++) {
-        // TODO: Fix
+        Entity entity = entitiesToUpdateInt[i];
+        PyObject* pScriptInstance = (PyObject*) *(PyObject**) rbe_hash_map_get(pythonInstanceHashMap, &entity);
+        PyObject_CallMethod(pScriptInstance, "_update", "(f)", deltaTime);
+        RBE_ASSERT_FMT(pScriptInstance != NULL, "Python instance is null!");
+        // TODO: Fix not being able to get PyObject from array
 //        RBE_ASSERT_FMT(*entitiesToUpdate[i] != NULL, "Python instance is null!");
 //        PyObject_CallMethod(*entitiesToUpdate[i], "_update", "(f)", deltaTime);
     }
