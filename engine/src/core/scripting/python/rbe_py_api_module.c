@@ -14,7 +14,6 @@
 // TODO: Clean up strdups
 
 // --- Node Utils --- //
-//void setup_scene_stage_nodes(Entity parentEntity, PyObject* stageNodeList);
 void setup_scene_stage_nodes(SceneTreeNode* parent, PyObject* stageNodeList);
 void setup_scene_component_node(Entity entity, PyObject* component);
 
