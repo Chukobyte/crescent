@@ -17,8 +17,7 @@ void py_on_end(Entity entity);
 
 void py_refresh_update_instance_array(Entity entityRemoved);
 
-static PyObject** entitiesToUpdate[MAX_ENTITIES];
-static Entity entitiesToUpdateInt[MAX_ENTITIES];
+static PyObject* entitiesToUpdate[MAX_ENTITIES];
 static size_t entitiesToUpdateCount = 0;
 RBEHashMap* pythonInstanceHashMap = NULL;
 
@@ -37,8 +36,7 @@ RBEScriptContext* rbe_py_create_script_context() {
 void py_on_create_instance(Entity entity, const char* classPath, const char* className) {
     PyObject* pScriptInstance = rbe_py_cache_create_instance(classPath, className, entity);
     if (PyObject_HasAttrString(pScriptInstance, "_update")) {
-//        entitiesToUpdate[entitiesToUpdateCount++] = &pScriptInstance;
-        entitiesToUpdateInt[entitiesToUpdateCount++] = entity;
+        entitiesToUpdate[entitiesToUpdateCount++] = pScriptInstance;
     }
     rbe_hash_map_add(pythonInstanceHashMap, &entity, &pScriptInstance);
 }
@@ -63,13 +61,8 @@ void py_on_start(Entity entity) {
 
 void py_on_update_all_instances(float deltaTime) {
     for (size_t i = 0; i < entitiesToUpdateCount; i++) {
-        Entity entity = entitiesToUpdateInt[i];
-        PyObject* pScriptInstance = (PyObject*) *(PyObject**) rbe_hash_map_get(pythonInstanceHashMap, &entity);
-        PyObject_CallMethod(pScriptInstance, "_update", "(f)", deltaTime);
-        RBE_ASSERT_FMT(pScriptInstance != NULL, "Python instance is null!");
-        // TODO: Fix not being able to get PyObject from array
-//        RBE_ASSERT_FMT(*entitiesToUpdate[i] != NULL, "Python instance is null!");
-//        PyObject_CallMethod(*entitiesToUpdate[i], "_update", "(f)", deltaTime);
+        RBE_ASSERT_FMT(entitiesToUpdate[i] != NULL, "Python instance is null!");
+        PyObject_CallMethod(entitiesToUpdate[i], "_update", "(f)", deltaTime);
     }
 }
 
@@ -85,7 +78,7 @@ void py_on_end(Entity entity) {
 void py_refresh_update_instance_array(Entity entityRemoved) {
     PyObject* pScriptInstance = (PyObject*) *(PyObject**) rbe_hash_map_get(pythonInstanceHashMap, &entityRemoved);
     for (size_t i = 0; i < entitiesToUpdateCount; i++) {
-        if (*entitiesToUpdate[i] == pScriptInstance && i + 1 < entitiesToUpdateCount) {
+        if (entitiesToUpdate[i] == pScriptInstance && i + 1 < entitiesToUpdateCount) {
             entitiesToUpdate[i] = entitiesToUpdate[i + 1];
             entitiesToUpdate[i + 1] = NULL;
         }
