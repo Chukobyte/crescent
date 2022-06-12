@@ -51,12 +51,12 @@ size_t entitiesQueuedForCreationSize = 0;
 Entity entitiesQueuedForDeletion[MAX_ENTITIES];
 size_t entitiesQueuedForDeletionSize = 0;
 
-RBEScriptContext* sceneManagerScriptContext = NULL;
+//RBEScriptContext* sceneManagerScriptContext = NULL;
 Scene* activeScene = NULL;
 Scene* queuedSceneToChangeTo = NULL;
 
 void rbe_scene_manager_initialize() {
-    sceneManagerScriptContext = rbe_script_context_get_current();
+//    sceneManagerScriptContext = rbe_script_context_get_current();
 }
 
 void rbe_scene_manager_finalize() {}
@@ -67,7 +67,8 @@ void rbe_scene_manager_queue_entity_for_creation(Entity entity) {
 
 void rbe_scene_manager_process_queued_creation_entities() {
     for (size_t i = 0; i < entitiesQueuedForCreationSize; i++) {
-        sceneManagerScriptContext->on_start(entitiesQueuedForCreation[i]);
+//        sceneManagerScriptContext->on_start(entitiesQueuedForCreation[i]);
+        rbe_ec_system_entity_start(entitiesQueuedForCreation[i]);
     }
     entitiesQueuedForCreationSize = 0;
 }
@@ -83,7 +84,8 @@ void rbe_scene_manager_queue_entity_for_deletion(Entity entity) {
     // Insert queued entity
     entitiesQueuedForDeletion[entitiesQueuedForDeletionSize++] = entity;
     // Clean up
-    sceneManagerScriptContext->on_end(entity);
+    rbe_ec_system_entity_end(entity);
+//    sceneManagerScriptContext->on_end(entity);
 }
 
 void rbe_scene_manager_process_queued_deletion_entities() {

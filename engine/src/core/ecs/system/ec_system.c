@@ -8,10 +8,14 @@
 
 typedef struct EntitySystemData {
     size_t entity_systems_count;
+    size_t on_entity_start_systems_count;
+    size_t on_entity_end_systems_count;
     size_t render_systems_count;
     size_t process_systems_count;
     size_t physics_process_systems_count;
     EntitySystem* entity_systems[MAX_COMPONENTS];
+    EntitySystem* on_entity_start_systems[MAX_ENTITY_SYSTEMS_PER_HOOK];
+    EntitySystem* on_entity_end_systems[MAX_ENTITY_SYSTEMS_PER_HOOK];
     EntitySystem* render_systems[MAX_ENTITY_SYSTEMS_PER_HOOK];
     EntitySystem* process_systems[MAX_ENTITY_SYSTEMS_PER_HOOK];
     EntitySystem* physics_process_systems[MAX_ENTITY_SYSTEMS_PER_HOOK];
@@ -29,10 +33,18 @@ void rbe_ec_system_initialize() {
         entitySystemData.entity_systems[i] = NULL;
     }
     for (size_t i = 0; i < MAX_ENTITY_SYSTEMS_PER_HOOK; i++) {
+        entitySystemData.on_entity_start_systems[i] = NULL;
+        entitySystemData.on_entity_end_systems[i] = NULL;
         entitySystemData.render_systems[i] = NULL;
         entitySystemData.process_systems[i] = NULL;
         entitySystemData.physics_process_systems[i] = NULL;
     }
+    entitySystemData.entity_systems_count = 0;
+    entitySystemData.on_entity_start_systems_count = 0;
+    entitySystemData.on_entity_end_systems_count = 0;
+    entitySystemData.render_systems_count = 0;
+    entitySystemData.process_systems_count = 0;
+    entitySystemData.physics_process_systems_count = 0;
 }
 
 void rbe_ec_system_finalize() {
@@ -40,16 +52,15 @@ void rbe_ec_system_finalize() {
         rbe_ec_system_destroy(entitySystemData.entity_systems[i]);
         entitySystemData.entity_systems[i] = NULL;
     }
-    entitySystemData.entity_systems_count = 0;
-    entitySystemData.render_systems_count = 0;
-    entitySystemData.process_systems_count = 0;
-    entitySystemData.physics_process_systems_count = 0;
 }
 
 EntitySystem* rbe_ec_system_create() {
     EntitySystem* newSystem = RBE_MEM_ALLOCATE(EntitySystem);
+    newSystem->name = NULL;
     newSystem->entity_count = 0;
     newSystem->on_entity_registered_func = NULL;
+    newSystem->on_entity_start_func = NULL;
+    newSystem->on_entity_end_func = NULL;
     newSystem->on_entity_unregistered_func = NULL;
     newSystem->render_func = NULL;
     newSystem->process_func = NULL;
@@ -65,6 +76,12 @@ void rbe_ec_system_destroy(EntitySystem* entitySystem) {
 void rbe_ec_system_register(EntitySystem* system) {
     RBE_ASSERT_FMT(system != NULL, "Passed in system is NULL!");
     entitySystemData.entity_systems[entitySystemData.entity_systems_count++] = system;
+    if (system->on_entity_start_func != NULL) {
+        entitySystemData.on_entity_start_systems[entitySystemData.on_entity_start_systems_count++] = system;
+    }
+    if (system->on_entity_end_func != NULL) {
+        entitySystemData.on_entity_end_systems[entitySystemData.on_entity_end_systems_count++] = system;
+    }
     if (system->render_func != NULL) {
         entitySystemData.render_systems[entitySystemData.render_systems_count++] = system;
     }
@@ -84,6 +101,18 @@ void rbe_ec_system_update_entity_signature_with_systems(Entity entity) {
         } else {
             rbe_ec_system_remove_entity_from_system(entity, entitySystemData.entity_systems[i]);
         }
+    }
+}
+
+void rbe_ec_system_entity_start(Entity entity) {
+    for (size_t i = 0; i < entitySystemData.on_entity_start_systems_count; i++) {
+        entitySystemData.on_entity_start_systems[i]->on_entity_start_func(entity);
+    }
+}
+
+void rbe_ec_system_entity_end(Entity entity) {
+    for (size_t i = 0; i < entitySystemData.on_entity_end_systems_count; i++) {
+        entitySystemData.on_entity_end_systems[i]->on_entity_end_func(entity);
     }
 }
 

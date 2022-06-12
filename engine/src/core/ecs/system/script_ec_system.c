@@ -10,6 +10,8 @@
 
 void script_system_on_entity_registered(Entity entity);
 void script_system_on_entity_unregistered(Entity entity);
+void script_system_entity_start(Entity entity);
+void script_system_entity_end(Entity entity);
 void script_system_instance_update(float deltaTime);
 void script_system_instance_physics_update(float deltaTime);
 
@@ -21,8 +23,11 @@ static size_t scriptContextsCount = 0;
 EntitySystem* script_ec_system_create() {
     RBE_ASSERT(scriptSystem == NULL);
     scriptSystem = rbe_ec_system_create();
+    scriptSystem->name = strdup("Script");
     scriptSystem->on_entity_registered_func = script_system_on_entity_registered;
     scriptSystem->on_entity_unregistered_func = script_system_on_entity_unregistered;
+    scriptSystem->on_entity_start_func = script_system_entity_start;
+    scriptSystem->on_entity_end_func = script_system_entity_end;
     scriptSystem->process_func = script_system_instance_update;
     scriptSystem->physics_process_func = script_system_instance_physics_update;
     scriptContexts[ScriptContextType_PYTHON] = rbe_py_create_script_context();
@@ -41,6 +46,16 @@ void script_system_on_entity_registered(Entity entity) {
 void script_system_on_entity_unregistered(Entity entity) {
     ScriptComponent* scriptComponent = (ScriptComponent*) component_manager_get_component(entity, ComponentDataIndex_SCRIPT);
     scriptContexts[scriptComponent->contextType]->on_delete_instance(entity);
+}
+
+void script_system_entity_start(Entity entity) {
+    ScriptComponent* scriptComponent = (ScriptComponent*) component_manager_get_component(entity, ComponentDataIndex_SCRIPT);
+    scriptContexts[scriptComponent->contextType]->on_start(entity);
+}
+
+void script_system_entity_end(Entity entity) {
+    ScriptComponent* scriptComponent = (ScriptComponent*) component_manager_get_component(entity, ComponentDataIndex_SCRIPT);
+    scriptContexts[scriptComponent->contextType]->on_end(entity);
 }
 
 void script_system_instance_update(float deltaTime) {
