@@ -25,6 +25,9 @@ PyObject* rbe_py_api_input_is_action_just_released(PyObject* self, PyObject* arg
 // SceneTree
 PyObject* rbe_py_api_scene_tree_change_scene(PyObject* self, PyObject* args, PyObject* kwargs);
 
+// Audio Manager
+PyObject* rbe_py_api_audio_manager_play_sound(PyObject* self, PyObject* args, PyObject* kwargs);
+
 // --- Module Methods Definitions --- //
 static struct PyMethodDef rbePyApiMethods[] = {
     // ENGINE
@@ -72,6 +75,11 @@ static struct PyMethodDef rbePyApiMethods[] = {
         "scene_tree_change_scene", (PyCFunction) rbe_py_api_scene_tree_change_scene,
         METH_VARARGS | METH_KEYWORDS, "Change to a new scene."
     },
+    // AUDIO MANAGER
+    {
+        "audio_manager_play_sound", (PyCFunction) rbe_py_api_audio_manager_play_sound,
+        METH_VARARGS | METH_KEYWORDS, "Plays a sound."
+    },
     { NULL, NULL, 0,NULL },
 };
 
@@ -94,6 +102,8 @@ static char *rbePyApiInputAddActionKWList[] = {"name", "value", NULL};
 static char *rbePyApiInputActionInputCheckKWList[] = {"name", NULL};
 
 static char *rbePyApiSceneTreeChangeSceneKWList[] = {"path", NULL};
+
+static char *rbePyApiAudioManagerPlaySoundKWList[] = {"path", "loops", NULL};
 
 // --- Module Init --- //
 PyObject* PyInit_rbe_py_API(void);

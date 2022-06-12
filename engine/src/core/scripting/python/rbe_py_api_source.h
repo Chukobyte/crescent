@@ -708,6 +708,13 @@
 "        rbe_py_api_internal.scene_tree_change_scene(path=path)\n"\
 "\n"\
 "\n"\
+"# AUDIO MANAGER\n"\
+"class AudioManager:\n"\
+"    @staticmethod\n"\
+"    def play_sound(path: str, loops=False):\n"\
+"        rbe_py_api_internal.audio_manager_play_sound(path=path, loops=loops)\n"\
+"\n"\
+"\n"\
 "# CONFIGURATION\n"\
 "def configure_game(\n"\
 "    game_tile=\"Test Game\",\n"\

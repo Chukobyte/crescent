@@ -669,6 +669,13 @@ class SceneTree:
         rbe_py_api_internal.scene_tree_change_scene(path=path)
 
 
+# AUDIO MANAGER
+class AudioManager:
+    @staticmethod
+    def play_sound(path: str, loops=False):
+        rbe_py_api_internal.audio_manager_play_sound(path=path, loops=loops)
+
+
 # CONFIGURATION
 def configure_game(
     game_tile="Test Game",

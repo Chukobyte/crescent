@@ -5,6 +5,7 @@
 #include "../../engine_context.h"
 #include "../../asset_manager.h"
 #include "../../input/input.h"
+#include "../../audio/audio_manager.h"
 #include "../../scripting/python/py_helper.h"
 #include "../../scene/scene_manager.h"
 #include "../../ecs/system/ec_system.h"
@@ -347,6 +348,17 @@ PyObject* rbe_py_api_scene_tree_change_scene(PyObject* self, PyObject* args, PyO
     char* scenePath;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "s", rbePyApiSceneTreeChangeSceneKWList, &scenePath)) {
         rbe_scene_manager_queue_scene_change(scenePath);
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+// Audio Manager
+PyObject* rbe_py_api_audio_manager_play_sound(PyObject* self, PyObject* args, PyObject* kwargs) {
+    char* audioPath;
+    bool loops;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "sb", rbePyApiAudioManagerPlaySoundKWList, &audioPath, &loops)) {
+        rbe_audio_manager_play_sound(audioPath, loops);
         Py_RETURN_NONE;
     }
     return NULL;

@@ -50,3 +50,7 @@ def input_is_action_just_released(name: str) -> bool:
 
 def scene_tree_change_scene(path: str) -> None:
     pass
+
+
+def audio_manager_play_sound(path: str, loops: bool) -> None:
+    pass
