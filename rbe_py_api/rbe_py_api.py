@@ -266,25 +266,30 @@ class InputAction:
         self.values = values
 
 
+# ENGINE
+class Engine:
+    @staticmethod
+    def exit(code=0) -> None:
+        rbe_py_api_internal.engine_exit(code=code)
+
+
 # INPUT
 class Input:
     @staticmethod
-    def add_action(action_name: str, value: str) -> None:
-        rbe_py_api_internal.input_add_action(action_name=action_name, value=value)
+    def add_action(name: str, value: str) -> None:
+        rbe_py_api_internal.input_add_action(name=name, value=value)
 
     @staticmethod
-    def is_action_pressed(action_name: str) -> bool:
-        return rbe_py_api_internal.input_is_action_pressed(action_name=action_name)
+    def is_action_pressed(name: str) -> bool:
+        return rbe_py_api_internal.input_is_action_pressed(name=name)
 
     @staticmethod
-    def is_action_just_pressed(action_name: str) -> bool:
-        return rbe_py_api_internal.input_is_action_just_pressed(action_name=action_name)
+    def is_action_just_pressed(name: str) -> bool:
+        return rbe_py_api_internal.input_is_action_just_pressed(name=name)
 
     @staticmethod
-    def is_action_just_released(action_name: str) -> bool:
-        return rbe_py_api_internal.input_is_action_just_released(
-            action_name=action_name
-        )
+    def is_action_just_released(name: str) -> bool:
+        return rbe_py_api_internal.input_is_action_just_released(name=name)
 
     class Mouse:
         LEFT_BUTTON = "mb_left"
@@ -655,6 +660,13 @@ class Sprite(Node2D):
         rbe_py_api_internal.sprite_set_draw_source(
             entity_id=self.entity_id, x=value.x, y=value.y, w=value.w, h=value.h
         )
+
+
+# SCENE TREE
+class SceneTree:
+    @staticmethod
+    def change_scene(path: str) -> None:
+        rbe_py_api_internal.scene_tree_change_scene(path=path)
 
 
 # CONFIGURATION

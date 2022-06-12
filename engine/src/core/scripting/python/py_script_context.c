@@ -64,6 +64,7 @@ void py_on_update_all_instances(float deltaTime) {
         RBE_ASSERT_FMT(entitiesToUpdate[i] != NULL, "Python instance is null!");
         PyObject_CallMethod(entitiesToUpdate[i], "_update", "(f)", deltaTime);
     }
+    PyErr_Print();
 }
 
 void py_on_end(Entity entity) {

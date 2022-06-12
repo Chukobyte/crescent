@@ -69,7 +69,7 @@ bool rbe_input_initialize() {
     rbe_string_hash_map_add_int(keyboardStringValuesMap, "up", SDL_SCANCODE_UP);
     rbe_string_hash_map_add_int(keyboardStringValuesMap, "down", SDL_SCANCODE_DOWN);
 
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "enter", SDL_SCANCODE_RETURN);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, "return", SDL_SCANCODE_RETURN);
     rbe_string_hash_map_add_int(keyboardStringValuesMap, "space", SDL_SCANCODE_SPACE);
     rbe_string_hash_map_add_int(keyboardStringValuesMap, "esc", SDL_SCANCODE_ESCAPE);
 

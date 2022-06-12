@@ -305,25 +305,30 @@
 "        self.values = values\n"\
 "\n"\
 "\n"\
+"# ENGINE\n"\
+"class Engine:\n"\
+"    @staticmethod\n"\
+"    def exit(code=0) -> None:\n"\
+"        rbe_py_api_internal.engine_exit(code=code)\n"\
+"\n"\
+"\n"\
 "# INPUT\n"\
 "class Input:\n"\
 "    @staticmethod\n"\
-"    def add_action(action_name: str, value: str) -> None:\n"\
-"        rbe_py_api_internal.input_add_action(action_name=action_name, value=value)\n"\
+"    def add_action(name: str, value: str) -> None:\n"\
+"        rbe_py_api_internal.input_add_action(name=name, value=value)\n"\
 "\n"\
 "    @staticmethod\n"\
-"    def is_action_pressed(action_name: str) -> bool:\n"\
-"        return rbe_py_api_internal.input_is_action_pressed(action_name=action_name)\n"\
+"    def is_action_pressed(name: str) -> bool:\n"\
+"        return rbe_py_api_internal.input_is_action_pressed(name=name)\n"\
 "\n"\
 "    @staticmethod\n"\
-"    def is_action_just_pressed(action_name: str) -> bool:\n"\
-"        return rbe_py_api_internal.input_is_action_just_pressed(action_name=action_name)\n"\
+"    def is_action_just_pressed(name: str) -> bool:\n"\
+"        return rbe_py_api_internal.input_is_action_just_pressed(name=name)\n"\
 "\n"\
 "    @staticmethod\n"\
-"    def is_action_just_released(action_name: str) -> bool:\n"\
-"        return rbe_py_api_internal.input_is_action_just_released(\n"\
-"            action_name=action_name\n"\
-"        )\n"\
+"    def is_action_just_released(name: str) -> bool:\n"\
+"        return rbe_py_api_internal.input_is_action_just_released(name=name)\n"\
 "\n"\
 "    class Mouse:\n"\
 "        LEFT_BUTTON = \"mb_left\"\n"\
@@ -694,6 +699,13 @@
 "        rbe_py_api_internal.sprite_set_draw_source(\n"\
 "            entity_id=self.entity_id, x=value.x, y=value.y, w=value.w, h=value.h\n"\
 "        )\n"\
+"\n"\
+"\n"\
+"# SCENE TREE\n"\
+"class SceneTree:\n"\
+"    @staticmethod\n"\
+"    def change_scene(path: str) -> None:\n"\
+"        rbe_py_api_internal.scene_tree_change_scene(path=path)\n"\
 "\n"\
 "\n"\
 "# CONFIGURATION\n"\
