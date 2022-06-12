@@ -33,7 +33,7 @@ class Main(Node2D):
 
     def _physics_update(self, delta_time: float) -> None:
         if self.velocity != Vector2.ZERO():
-            print(f"delta time = {delta_time}")
+            # print(f"delta time = {delta_time}")
             delta_vector = Vector2(self.speed * delta_time, self.speed * delta_time)
             self.add_to_position(self.velocity * delta_vector)
             self.velocity = Vector2.ZERO()
