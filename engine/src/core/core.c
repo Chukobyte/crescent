@@ -6,6 +6,7 @@
 #include <glad/glad.h>
 
 #include "game_properties.h"
+#include "engine_context.h"
 #include "asset_manager.h"
 #include "input/input.h"
 #include "utils/logger.h"
@@ -31,8 +32,8 @@ void rbe_render();
 
 static SDL_Window* window = NULL;
 static SDL_GLContext openGlContext;
-static bool isRunning = false;
 RBEGameProperties* gameProperties = NULL;
+RBEEngineContext* engineContext = NULL;
 
 bool rbe_initialize(int argv, char** args) {
     // Set random seed
@@ -82,7 +83,8 @@ bool rbe_initialize(int argv, char** args) {
     rbe_load_assets_from_configuration();
 
     rbe_logger_info("RBE Engine v%s initialized!", RBE_CORE_VERSION);
-    isRunning = true;
+    engineContext = rbe_engine_context_initialize();
+    engineContext->isRunning = true;
 
     // Go to initial scene (TODO: Move to process loop)
     rbe_scene_manager_queue_scene_change(gameProperties->initialScenePath);
@@ -205,21 +207,13 @@ void rbe_process_inputs() {
     while (SDL_PollEvent(&event)) {
         switch(event.type) {
         case SDL_QUIT:
-            isRunning = false;
+            engineContext->isRunning = false;
             break;
         default:
             break;
         }
     }
     rbe_input_process(event);
-    // Temp shutdown
-    if (rbe_input_is_action_just_pressed("exit")) {
-        isRunning = false;
-    }
-    // Temp play sfx
-    if (rbe_input_is_action_just_pressed("play_sfx")) {
-        rbe_audio_manager_play_sound("test_games/fighter_test/assets/audio/sfx/rainbow_orb.wav", false);
-    }
 }
 
 void rbe_process_game_logic() {
@@ -252,7 +246,7 @@ void rbe_render() {
 }
 
 bool rbe_is_running() {
-    return isRunning;
+    return engineContext->isRunning;
 }
 
 void rbe_shutdown() {

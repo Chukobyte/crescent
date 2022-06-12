@@ -2,14 +2,17 @@
 
 #include "py_cache.h"
 #include "../../game_properties.h"
+#include "../../engine_context.h"
 #include "../../asset_manager.h"
-#include "../../utils/rbe_assert.h"
+#include "../../input/input.h"
+#include "../../audio/audio_manager.h"
 #include "../../scripting/python/py_helper.h"
 #include "../../scene/scene_manager.h"
 #include "../../ecs/system/ec_system.h"
 #include "../../ecs/component/transform2d_component.h"
 #include "../../ecs/component/sprite_component.h"
 #include "../../ecs/component/script_component.h"
+#include "../../utils/rbe_assert.h"
 
 // TODO: Clean up strdups
 
@@ -18,6 +21,17 @@ void setup_scene_stage_nodes(SceneTreeNode* parent, PyObject* stageNodeList);
 void setup_scene_component_node(Entity entity, PyObject* component);
 
 // --- RBE PY API --- //
+
+// Engine
+PyObject* rbe_py_api_engine_exit(PyObject* self, PyObject* args, PyObject* kwargs) {
+    int exitCode;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", rbePyApiEngineExitKWList, &exitCode)) {
+        RBEEngineContext* engineContext = rbe_engine_context_get();
+        engineContext->isRunning = false;
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
 
 // Configure
 PyObject* rbe_py_api_configure_game(PyObject* self, PyObject* args, PyObject* kwargs) {
@@ -164,7 +178,7 @@ void setup_scene_stage_nodes(SceneTreeNode* parent, PyObject* stageNodeList) {
         if (node->parent == NULL) {
             rbe_scene_manager_set_active_scene_root(node);
         } else {
-            parent->childCount++;
+            parent->children[parent->childCount++] = node;
         }
         PyObject* pStageNode = PyList_GetItem(stageNodeList, i);
         const char* nodeName = phy_get_string_from_var(pStageNode, "name");
@@ -283,4 +297,69 @@ void setup_scene_component_node(Entity entity, PyObject* component) {
     } else {
         rbe_logger_error("Invalid component class name: '%s'", className);
     }
+}
+
+// Input
+PyObject* rbe_py_api_input_add_action(PyObject* self, PyObject* args, PyObject* kwargs) {
+    char* actionName;
+    char* actionValue;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "ss", rbePyApiInputAddActionKWList, &actionName, &actionValue)) {
+        rbe_input_add_action_value(actionName, actionValue);
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* rbe_py_api_input_is_action_pressed(PyObject* self, PyObject* args, PyObject* kwargs) {
+    char* actionName;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "s", rbePyApiInputActionInputCheckKWList, &actionName)) {
+        if (rbe_input_is_action_pressed(actionName)) {
+            Py_RETURN_TRUE;
+        }
+        Py_RETURN_FALSE;
+    }
+    return NULL;
+}
+
+PyObject* rbe_py_api_input_is_action_just_pressed(PyObject* self, PyObject* args, PyObject* kwargs) {
+    char* actionName;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "s", rbePyApiInputActionInputCheckKWList, &actionName)) {
+        if (rbe_input_is_action_just_pressed(actionName)) {
+            Py_RETURN_TRUE;
+        }
+        Py_RETURN_FALSE;
+    }
+    return NULL;
+}
+
+PyObject* rbe_py_api_input_is_action_just_released(PyObject* self, PyObject* args, PyObject* kwargs) {
+    char* actionName;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "s", rbePyApiInputActionInputCheckKWList, &actionName)) {
+        if (rbe_input_is_action_just_released(actionName)) {
+            Py_RETURN_TRUE;
+        }
+        Py_RETURN_FALSE;
+    }
+    return NULL;
+}
+
+// Scene Tree
+PyObject* rbe_py_api_scene_tree_change_scene(PyObject* self, PyObject* args, PyObject* kwargs) {
+    char* scenePath;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "s", rbePyApiSceneTreeChangeSceneKWList, &scenePath)) {
+        rbe_scene_manager_queue_scene_change(scenePath);
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+// Audio Manager
+PyObject* rbe_py_api_audio_manager_play_sound(PyObject* self, PyObject* args, PyObject* kwargs) {
+    char* audioPath;
+    bool loops;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "sb", rbePyApiAudioManagerPlaySoundKWList, &audioPath, &loops)) {
+        rbe_audio_manager_play_sound(audioPath, loops);
+        Py_RETURN_NONE;
+    }
+    return NULL;
 }
