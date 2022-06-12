@@ -17,6 +17,7 @@ cmake_path(SET FREETYPE_LIBS_PATH "$ENV{FREETYPE_LIBS}")
 add_library(${PROJECT_NAME} STATIC
         src/core/core.c
         src/core/game_properties.c
+        src/core/engine_context.c
         src/core/asset_manager.c
         src/core/memory/rbe_mem.c
         src/core/math/rbe_math.c

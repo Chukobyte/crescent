@@ -32,6 +32,7 @@ add_library(${PROJECT_NAME} STATIC
         ../include/imgui/imgui_impl_sdl.cpp
         # C
         ../engine/src/core/game_properties.c
+        ../engine/src/core/engine_context.c
         ../engine/src/core/asset_manager.c
         ../engine/src/core/math/rbe_math.c
         ../engine/src/core/utils/logger.c
@@ -40,6 +41,8 @@ add_library(${PROJECT_NAME} STATIC
         ../engine/src/core/data_structures/rbe_hash_map_string.c
         ../engine/src/core/memory/rbe_mem.c
         ../engine/src/core/scene/scene_manager.c
+        ../engine/src/core/input/input.c
+        ../engine/src/core/input/input_action.c
         ../engine/src/core/scripting/script_context.c
         ../engine/src/core/scripting/python/py_cache.c
         ../engine/src/core/scripting/python/rbe_py.c
