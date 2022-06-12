@@ -6,7 +6,8 @@ configure_game(
     window_height=600,
     resolution_width=800,
     resolution_height=600,
-    target_fps=66,
+    # target_fps=66,
+    target_fps=6666,
     initial_node_path="test_games/fighter_test/nodes/main_node.py",
 )
 

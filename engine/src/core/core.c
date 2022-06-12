@@ -200,6 +200,13 @@ void rbe_update() {
     rbe_process_inputs();
     rbe_process_game_update();
     rbe_render();
+
+    // Get FPS
+    static unsigned int countedFrames = 0;
+    countedFrames++;
+    float averageFPS = (float) countedFrames / ((float) SDL_GetTicks() / 1000.f);
+    engineContext->currentFPS = averageFPS;
+    rbe_logger_debug("averageFPS = %f", averageFPS);
 }
 
 void rbe_process_inputs() {
