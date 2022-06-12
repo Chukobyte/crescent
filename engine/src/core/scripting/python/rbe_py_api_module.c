@@ -33,6 +33,26 @@ PyObject* rbe_py_api_engine_exit(PyObject* self, PyObject* args, PyObject* kwarg
     return NULL;
 }
 
+PyObject* rbe_py_api_engine_set_target_fps(PyObject* self, PyObject* args, PyObject* kwargs) {
+    int targetFPS;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", rbePyApiEngineSetTargetFPSKWList, &targetFPS)) {
+        RBEEngineContext* engineContext = rbe_engine_context_get();
+        engineContext->targetFPS = targetFPS;
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* rbe_py_api_engine_get_target_fps(PyObject* self, PyObject* args) {
+    RBEEngineContext* engineContext = rbe_engine_context_get();
+    return Py_BuildValue("(f)", engineContext->targetFPS);
+}
+
+PyObject* rbe_py_api_engine_get_average_fps(PyObject* self, PyObject* args) {
+    RBEEngineContext* engineContext = rbe_engine_context_get();
+    return Py_BuildValue("(f)", engineContext->averageFPS);
+}
+
 // Configure
 PyObject* rbe_py_api_configure_game(PyObject* self, PyObject* args, PyObject* kwargs) {
     char* gameTitle;
@@ -291,6 +311,7 @@ void setup_scene_component_node(Entity entity, PyObject* component) {
         ScriptComponent* scriptComponent = script_component_create();
         scriptComponent->classPath = strdup(scriptClassPath);
         scriptComponent->className = strdup(scriptClassName);
+        scriptComponent->contextType = ScriptContextType_PYTHON;
         component_manager_set_component(entity, ComponentDataIndex_SCRIPT, scriptComponent);
         rbe_scene_manager_queue_entity_for_creation(entity); // May move in a different place TODO: Figure out...
         rbe_logger_debug("class_path: %s, class_name: %s", scriptClassPath, scriptClassName);
@@ -346,7 +367,7 @@ PyObject* rbe_py_api_input_is_action_just_released(PyObject* self, PyObject* arg
 // Scene Tree
 PyObject* rbe_py_api_scene_tree_change_scene(PyObject* self, PyObject* args, PyObject* kwargs) {
     char* scenePath;
-    if (PyArg_ParseTupleAndKeywords(args, kwargs, "s", rbePyApiSceneTreeChangeSceneKWList, &scenePath)) {
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "s", rbePyApiGenericPathKWList, &scenePath)) {
         rbe_scene_manager_queue_scene_change(scenePath);
         Py_RETURN_NONE;
     }
@@ -359,6 +380,52 @@ PyObject* rbe_py_api_audio_manager_play_sound(PyObject* self, PyObject* args, Py
     bool loops;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "sb", rbePyApiAudioManagerPlaySoundKWList, &audioPath, &loops)) {
         rbe_audio_manager_play_sound(audioPath, loops);
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* rbe_py_api_audio_manager_stop_sound(PyObject* self, PyObject* args, PyObject* kwargs) {
+    char* audioPath;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "s", rbePyApiGenericPathKWList, &audioPath)) {
+        rbe_audio_manager_stop_sound(audioPath);
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+// Node2D
+PyObject* rbe_py_api_node2D_set_position(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    float x;
+    float y;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "iff", rbePyApiNode2DSetPositionKWList, &entity, &x, &y)) {
+        Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
+        transformComp->position.x = x;
+        transformComp->position.y = y;
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* rbe_py_api_node2D_add_to_position(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    float x;
+    float y;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "iff", rbePyApiNode2DSetPositionKWList, &entity, &x, &y)) {
+        Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
+        transformComp->position.x += x;
+        transformComp->position.y += y;
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* rbe_py_api_node2D_get_position(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", rbePyApiGenericGetEntityKWList, &entity)) {
+        Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
+        return Py_BuildValue("(ff)", transformComp->position.x, transformComp->position.y);
         Py_RETURN_NONE;
     }
     return NULL;

@@ -2,6 +2,18 @@ def engine_exit(code=0) -> None:
     pass
 
 
+def engine_set_target_fps(fps: float) -> None:
+    pass
+
+
+def engine_get_target_fps() -> int:
+    return 66
+
+
+def engine_get_average_fps() -> float:
+    return 66.0
+
+
 def configure_game(
     game_tile="Test Game",
     window_width=800,
@@ -54,3 +66,19 @@ def scene_tree_change_scene(path: str) -> None:
 
 def audio_manager_play_sound(path: str, loops: bool) -> None:
     pass
+
+
+def audio_manager_stop_sound(path: str) -> None:
+    pass
+
+
+def node2D_set_position(entity_id: int, x: float, y: float) -> None:
+    pass
+
+
+def node2D_add_to_position(entity_id: int, x: float, y: float) -> None:
+    pass
+
+
+def node2D_get_position(entity_id: int) -> tuple:
+    return 0.0, 0.0

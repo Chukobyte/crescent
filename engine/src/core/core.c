@@ -27,7 +27,7 @@ bool rbe_initialize_input();
 bool rbe_initialize_ecs();
 bool rbe_load_assets_from_configuration();
 void rbe_process_inputs();
-void rbe_process_game_logic();
+void rbe_process_game_update();
 void rbe_render();
 
 static SDL_Window* window = NULL;
@@ -84,6 +84,7 @@ bool rbe_initialize(int argv, char** args) {
 
     rbe_logger_info("RBE Engine v%s initialized!", RBE_CORE_VERSION);
     engineContext = rbe_engine_context_initialize();
+    engineContext->targetFPS = gameProperties->targetFPS;
     engineContext->isRunning = true;
 
     // Go to initial scene (TODO: Move to process loop)
@@ -198,8 +199,14 @@ void rbe_update() {
 
     // Main loop
     rbe_process_inputs();
-    rbe_process_game_logic();
+    rbe_process_game_update();
     rbe_render();
+
+    // Get FPS
+    static unsigned int countedFrames = 0;
+    countedFrames++;
+    float averageFPS = (float) countedFrames / ((float) SDL_GetTicks() / 1000.f);
+    engineContext->averageFPS = averageFPS;
 }
 
 void rbe_process_inputs() {
@@ -216,9 +223,9 @@ void rbe_process_inputs() {
     rbe_input_process(event);
 }
 
-void rbe_process_game_logic() {
+void rbe_process_game_update() {
     static int lastFrameTime = 0;
-    const int targetFps = gameProperties->targetFPS;
+    const int targetFps = engineContext->targetFPS;
     const int MILLISECONDS_PER_TICK = 1000;
     const unsigned int FRAME_TARGET_TIME = MILLISECONDS_PER_TICK / targetFps;
     unsigned int timeToWait = FRAME_TARGET_TIME - (SDL_GetTicks() - lastFrameTime);
@@ -227,9 +234,31 @@ void rbe_process_game_logic() {
     }
     lastFrameTime = (int) SDL_GetTicks();
 
+    // Variable Time Step
     const float variableDeltaTime = (float ) (SDL_GetTicks() - lastFrameTime) / 1000.0f;
     rbe_ec_system_process_systems(variableDeltaTime);
 
+    // Fixed Time Step
+    static double fixedTime = 0.0f;
+    static const double PHYSICS_DELTA_TIME = 0.1f;
+    static uint32_t fixedCurrentTime = 0;
+    static double accumulator = 0.0f;
+
+    uint32_t newTime = SDL_GetTicks();
+    uint32_t frameTime = newTime - fixedCurrentTime;
+    static const uint32_t MAX_FRAME_TIME = 250;
+    if (frameTime > MAX_FRAME_TIME) {
+        frameTime = MAX_FRAME_TIME;
+    }
+    fixedCurrentTime = newTime;
+    accumulator += (double) frameTime / 1000.0f;
+
+    while (accumulator >= PHYSICS_DELTA_TIME) {
+        fixedTime += PHYSICS_DELTA_TIME;
+        accumulator -= PHYSICS_DELTA_TIME;
+        rbe_ec_system_physics_process_systems((float) PHYSICS_DELTA_TIME);
+        rbe_input_clean_up_flags();
+    }
     rbe_input_clean_up_flags();
 }
 

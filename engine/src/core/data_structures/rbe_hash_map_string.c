@@ -14,18 +14,18 @@ void hash_map_destroy_node_string(StringHashMapNode* node);
 bool hash_map_push_front_string(RBEStringHashMap* hashMap, size_t index, const char* key, void* value, size_t valueSize);
 
 RBEStringHashMap* rbe_string_hash_map_create(size_t capacity) {
-    RBEStringHashMap* map = RBE_MEM_ALLOCATE_SIZE(sizeof(RBEStringHashMap));
+    RBEStringHashMap* map = (RBEStringHashMap*) RBE_MEM_ALLOCATE_SIZE(sizeof(RBEStringHashMap));
     map->capacity = capacity;
     map->size = 0;
     map->hashFunc = rbe_default_hash_string;
     map->compareFunc = rbe_default_compare_string;
-    map->nodes = RBE_MEM_ALLOCATE_SIZE(capacity * sizeof(StringHashMapNode*));
+    map->nodes = (StringHashMapNode**) RBE_MEM_ALLOCATE_SIZE(capacity * sizeof(StringHashMapNode*));
     memset(map->nodes, 0, capacity * sizeof(StringHashMapNode*)); // TODO: fix
     return map;
 }
 
 StringHashMapNode* hash_map_create_node_string(RBEStringHashMap* hashMap, const char* key, void* value, size_t valueSize, StringHashMapNode* next) {
-    StringHashMapNode* node = RBE_MEM_ALLOCATE_SIZE(sizeof(StringHashMapNode));
+    StringHashMapNode* node = (StringHashMapNode*) RBE_MEM_ALLOCATE_SIZE(sizeof(StringHashMapNode));
     node->key = strdup(key);
     node->value = RBE_MEM_ALLOCATE_SIZE(valueSize);
     memcpy(node->value, value, valueSize);

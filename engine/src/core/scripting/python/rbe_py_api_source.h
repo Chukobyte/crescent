@@ -311,6 +311,18 @@
 "    def exit(code=0) -> None:\n"\
 "        rbe_py_api_internal.engine_exit(code=code)\n"\
 "\n"\
+"    @staticmethod\n"\
+"    def set_target_fps(fps: int) -> None:\n"\
+"        rbe_py_api_internal.engine_set_target_fps(fps=fps)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def get_target_fps() -> int:\n"\
+"        return rbe_py_api_internal.engine_get_target_fps()\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def get_average_fps() -> float:\n"\
+"        return rbe_py_api_internal.engine_get_average_fps()\n"\
+"\n"\
 "\n"\
 "# INPUT\n"\
 "class Input:\n"\
@@ -713,6 +725,10 @@
 "    @staticmethod\n"\
 "    def play_sound(path: str, loops=False):\n"\
 "        rbe_py_api_internal.audio_manager_play_sound(path=path, loops=loops)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def stop_sound(path: str):\n"\
+"        rbe_py_api_internal.audio_manager_stop_sound(path=path)\n"\
 "\n"\
 "\n"\
 "# CONFIGURATION\n"\

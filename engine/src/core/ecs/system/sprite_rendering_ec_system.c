@@ -1,5 +1,7 @@
 #include "sprite_rendering_ec_system.h"
 
+#include <string.h>
+
 #include "ec_system.h"
 #include "../component/transform2d_component.h"
 #include "../component/sprite_component.h"
@@ -13,6 +15,7 @@ void sprite_rendering_system_render();
 EntitySystem* sprite_rendering_ec_system_create() {
     RBE_ASSERT(spriteRenderingSystem == NULL);
     spriteRenderingSystem = rbe_ec_system_create();
+    spriteRenderingSystem->name = strdup("Sprite Rendering");
     spriteRenderingSystem->render_func = sprite_rendering_system_render;
     spriteRenderingSystem->component_signature = ComponentType_TRANSFORM_2D | ComponentType_SPRITE;
     return spriteRenderingSystem;
