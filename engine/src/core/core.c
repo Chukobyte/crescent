@@ -259,6 +259,7 @@ void rbe_process_game_update() {
         rbe_ec_system_physics_process_systems((float) PHYSICS_DELTA_TIME);
         rbe_input_clean_up_flags();
     }
+    rbe_input_clean_up_flags();
 }
 
 void rbe_render() {
