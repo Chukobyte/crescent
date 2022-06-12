@@ -16,7 +16,6 @@ class Main(Node2D):
                 path="test_games/fighter_test/assets/audio/sfx/rainbow_orb.wav",
                 loops=False,
             )
-            SceneTree.change_scene(path="test_games/fighter_test/nodes/main_node.py")
 
     def _end(self) -> None:
         pass
