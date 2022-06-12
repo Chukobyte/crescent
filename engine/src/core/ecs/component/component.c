@@ -47,7 +47,7 @@ void component_array_remove_component(ComponentArray* componentArray, ComponentD
 
 void component_array_remove_all_components(ComponentArray* componentArray) {
     for (size_t i = 0; i < MAX_COMPONENTS; i++) {
-        component_array_remove_component(componentArray, i);
+        component_array_remove_component(componentArray, (ComponentDataIndex) i);
     }
 }
 

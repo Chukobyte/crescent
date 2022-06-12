@@ -14,20 +14,20 @@ void hash_map_destroy_node(HashMapNode* node);
 bool hash_map_push_front(RBEHashMap* hashMap, size_t index, void* key, void* value);
 
 RBEHashMap* rbe_hash_map_create(size_t keySize, size_t valueSize, size_t capacity) {
-    RBEHashMap* map = RBE_MEM_ALLOCATE_SIZE(sizeof(RBEHashMap));
+    RBEHashMap* map = (RBEHashMap*) RBE_MEM_ALLOCATE_SIZE(sizeof(RBEHashMap));
     map->keySize = keySize;
     map->valueSize = valueSize;
     map->capacity = capacity;
     map->size = 0;
     map->hashFunc = rbe_default_hash;
     map->compareFunc = rbe_default_compare;
-    map->nodes = RBE_MEM_ALLOCATE_SIZE(capacity * sizeof(HashMapNode*));
+    map->nodes = (HashMapNode**) RBE_MEM_ALLOCATE_SIZE(capacity * sizeof(HashMapNode*));
     memset(map->nodes, 0, capacity * sizeof(HashMapNode*)); // TODO: fix
     return map;
 }
 
 HashMapNode* hash_map_create_node(RBEHashMap* hashMap, void* key, void* value, HashMapNode* next) {
-    HashMapNode* node = RBE_MEM_ALLOCATE_SIZE(sizeof(HashMapNode));
+    HashMapNode* node = (HashMapNode*) RBE_MEM_ALLOCATE_SIZE(sizeof(HashMapNode));
     node->key = RBE_MEM_ALLOCATE_SIZE(hashMap->keySize);
     node->value = RBE_MEM_ALLOCATE_SIZE(hashMap->valueSize);
     memcpy(node->key, key, hashMap->keySize);
@@ -179,7 +179,7 @@ size_t rbe_default_hash(void* raw_key, size_t key_size) {
     // sstp://www.cse.yorku.ca/~oz/hash.ssml
     size_t byte;
     size_t hash = 5381;
-    char* key = raw_key;
+    char* key = (char*) raw_key;
 
     for (byte = 0; byte < key_size; ++byte) {
         // (hash << 5) + hash = hash * 33

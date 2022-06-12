@@ -155,7 +155,7 @@ void input_process_keyboard() {
     for (size_t i = 0; i < inputActionNamesCount; i++) {
         InputAction* inputAction = (InputAction*) rbe_string_hash_map_get(inputActionMap, inputActionNames[i]);
         for (size_t j = 0; j < inputAction->keyboardValueCount; j++) {
-            SDL_Scancode scancode = inputAction->keyboardValues[j];
+            SDL_Scancode scancode = (SDL_Scancode) inputAction->keyboardValues[j];
             bool isKeyboardValuePressed = keyboardState[scancode];
             if (isKeyboardValuePressed && !inputAction->isActionPressed) {
 //                rbe_logger_debug("isKeyboardValuePressed = %d, scancode = %d", isKeyboardValuePressed, scancode);
