@@ -7,6 +7,9 @@
 
 // Engine
 PyObject* rbe_py_api_engine_exit(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* rbe_py_api_engine_set_target_fps(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* rbe_py_api_engine_get_target_fps(PyObject* self, PyObject* args);
+PyObject* rbe_py_api_engine_get_average_fps(PyObject* self, PyObject* args);
 
 // Configuration
 PyObject* rbe_py_api_configure_game(PyObject* self, PyObject* args, PyObject* kwargs);
@@ -41,6 +44,18 @@ static struct PyMethodDef rbePyApiMethods[] = {
     {
         "engine_exit", (PyCFunction) rbe_py_api_engine_exit,
         METH_VARARGS | METH_KEYWORDS, "Exits the game."
+    },
+    {
+            "engine_set_target_fps", (PyCFunction) rbe_py_api_engine_set_target_fps,
+            METH_VARARGS | METH_KEYWORDS, "Sets the target fps."
+    },
+    {
+            "engine_get_target_fps", rbe_py_api_engine_get_target_fps,
+            METH_VARARGS, "Gets the target fps."
+    },
+    {
+            "engine_get_average_fps", rbe_py_api_engine_get_average_fps,
+            METH_VARARGS, "Gets the average fps."
     },
     // CONFIGURATION
     {
@@ -118,6 +133,7 @@ static char *rbePyApiGenericGetEntityKWList[] = {"entity_id", NULL};
 static char *rbePyApiGenericPathKWList[] = {"path", NULL};
 
 static char *rbePyApiEngineExitKWList[] = {"code", NULL};
+static char *rbePyApiEngineSetTargetFPSKWList[] = {"fps", NULL};
 
 static char *rbePyApiProjectConfigureKWList[] = {"game_tile", "window_width", "window_height", "resolution_width", "resolution_height", "target_fps", "initial_node_path", NULL};
 static char *rbePyApiConfigureAssetsKWList[] = {"audio_sources", "textures", "fonts", NULL};

@@ -84,6 +84,7 @@ bool rbe_initialize(int argv, char** args) {
 
     rbe_logger_info("RBE Engine v%s initialized!", RBE_CORE_VERSION);
     engineContext = rbe_engine_context_initialize();
+    engineContext->targetFPS = gameProperties->targetFPS;
     engineContext->isRunning = true;
 
     // Go to initial scene (TODO: Move to process loop)
@@ -205,8 +206,7 @@ void rbe_update() {
     static unsigned int countedFrames = 0;
     countedFrames++;
     float averageFPS = (float) countedFrames / ((float) SDL_GetTicks() / 1000.f);
-    engineContext->currentFPS = averageFPS;
-    rbe_logger_debug("averageFPS = %f", averageFPS);
+    engineContext->averageFPS = averageFPS;
 }
 
 void rbe_process_inputs() {
@@ -225,7 +225,7 @@ void rbe_process_inputs() {
 
 void rbe_process_game_update() {
     static int lastFrameTime = 0;
-    const int targetFps = gameProperties->targetFPS;
+    const int targetFps = engineContext->targetFPS;
     const int MILLISECONDS_PER_TICK = 1000;
     const unsigned int FRAME_TARGET_TIME = MILLISECONDS_PER_TICK / targetFps;
     unsigned int timeToWait = FRAME_TARGET_TIME - (SDL_GetTicks() - lastFrameTime);

@@ -272,6 +272,18 @@ class Engine:
     def exit(code=0) -> None:
         rbe_py_api_internal.engine_exit(code=code)
 
+    @staticmethod
+    def set_target_fps(fps: int) -> None:
+        rbe_py_api_internal.engine_set_target_fps(fps=fps)
+
+    @staticmethod
+    def get_target_fps() -> int:
+        return rbe_py_api_internal.engine_get_target_fps()
+
+    @staticmethod
+    def get_average_fps() -> float:
+        return rbe_py_api_internal.engine_get_average_fps()
+
 
 # INPUT
 class Input:

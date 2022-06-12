@@ -311,6 +311,18 @@
 "    def exit(code=0) -> None:\n"\
 "        rbe_py_api_internal.engine_exit(code=code)\n"\
 "\n"\
+"    @staticmethod\n"\
+"    def set_target_fps(fps: int) -> None:\n"\
+"        rbe_py_api_internal.engine_set_target_fps(fps=fps)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def get_target_fps() -> int:\n"\
+"        return rbe_py_api_internal.engine_get_target_fps()\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def get_average_fps() -> float:\n"\
+"        return rbe_py_api_internal.engine_get_average_fps()\n"\
+"\n"\
 "\n"\
 "# INPUT\n"\
 "class Input:\n"\

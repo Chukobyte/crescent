@@ -2,6 +2,18 @@ def engine_exit(code=0) -> None:
     pass
 
 
+def engine_set_target_fps(fps: float) -> None:
+    pass
+
+
+def engine_get_target_fps() -> int:
+    return 66
+
+
+def engine_get_average_fps() -> float:
+    return 66.0
+
+
 def configure_game(
     game_tile="Test Game",
     window_width=800,

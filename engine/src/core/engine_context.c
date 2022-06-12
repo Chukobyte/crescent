@@ -11,7 +11,8 @@ RBEEngineContext* rbe_engine_context_initialize() {
     RBE_ASSERT(rbeEngineContext == NULL);
     rbeEngineContext = RBE_MEM_ALLOCATE(RBEEngineContext);
     rbeEngineContext->isRunning = false;
-    rbeEngineContext->currentFPS = 0.0f;
+    rbeEngineContext->targetFPS = 66;
+    rbeEngineContext->averageFPS = 0.0f;
     return rbeEngineContext;
 }
 

@@ -33,6 +33,26 @@ PyObject* rbe_py_api_engine_exit(PyObject* self, PyObject* args, PyObject* kwarg
     return NULL;
 }
 
+PyObject* rbe_py_api_engine_set_target_fps(PyObject* self, PyObject* args, PyObject* kwargs) {
+    int targetFPS;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", rbePyApiEngineSetTargetFPSKWList, &targetFPS)) {
+        RBEEngineContext* engineContext = rbe_engine_context_get();
+        engineContext->targetFPS = targetFPS;
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* rbe_py_api_engine_get_target_fps(PyObject* self, PyObject* args) {
+    RBEEngineContext* engineContext = rbe_engine_context_get();
+    return Py_BuildValue("(f)", engineContext->targetFPS);
+}
+
+PyObject* rbe_py_api_engine_get_average_fps(PyObject* self, PyObject* args) {
+    RBEEngineContext* engineContext = rbe_engine_context_get();
+    return Py_BuildValue("(f)", engineContext->averageFPS);
+}
+
 // Configure
 PyObject* rbe_py_api_configure_game(PyObject* self, PyObject* args, PyObject* kwargs) {
     char* gameTitle;
