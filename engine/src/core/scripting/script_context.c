@@ -17,7 +17,7 @@ RBEScriptContext* rbe_script_context_create() {
         scriptContext = newScriptContext;
         return scriptContext;
     } else {
-        rbe_logger_warn("Adding additional script context, won't be recongnized by scene manager!");
+        rbe_logger_warn("Adding additional script context, won't be recognized by scene manager!");
     }
     return newScriptContext;
 }

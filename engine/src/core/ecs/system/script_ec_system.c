@@ -6,6 +6,7 @@
 #include "../../data_structures/rbe_hash_map.h"
 #include "../../scripting/python/py_script_context.h"
 #include "../../scripting/native/native_script_context.h"
+#include "../../scripting/native/internal_classes/fps_display_class.h"
 #include "../../utils/rbe_assert.h"
 
 void script_system_on_entity_registered(Entity entity);
@@ -30,11 +31,15 @@ EntitySystem* script_ec_system_create() {
     scriptSystem->on_entity_end_func = script_system_entity_end;
     scriptSystem->process_func = script_system_instance_update;
     scriptSystem->physics_process_func = script_system_instance_physics_update;
+    // Python Context
     scriptContexts[ScriptContextType_PYTHON] = rbe_py_create_script_context();
     scriptContextsCount++;
     RBE_ASSERT(scriptContexts[ScriptContextType_PYTHON] != NULL);
+    // Native Context
     scriptContexts[ScriptContextType_NATIVE] = rbe_native_create_script_context();
     scriptContextsCount++;
+    // Register internal classed
+    rbe_native_class_register_new_class(fps_display_native_class_create_new());
     return scriptSystem;
 }
 
