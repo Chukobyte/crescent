@@ -4,7 +4,6 @@
 
 #include "py_cache.h"
 #include "../script_context.h"
-#include "../../ecs/entity/entity.h"
 #include "../../data_structures/rbe_hash_map.h"
 #include "../../utils/rbe_assert.h"
 

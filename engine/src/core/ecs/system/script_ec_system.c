@@ -5,6 +5,7 @@
 #include "ec_system.h"
 #include "../../data_structures/rbe_hash_map.h"
 #include "../../scripting/python/py_script_context.h"
+#include "../../scripting/native/native_script_context.h"
 #include "../../utils/rbe_assert.h"
 
 void script_system_on_entity_registered(Entity entity);
@@ -27,6 +28,8 @@ EntitySystem* script_ec_system_create() {
     scriptContexts[ScriptContextType_PYTHON] = rbe_py_create_script_context();
     scriptContextsCount++;
     RBE_ASSERT(scriptContexts[ScriptContextType_PYTHON] != NULL);
+    scriptContexts[ScriptContextType_NATIVE] = rbe_native_create_script_context();
+    scriptContextsCount++;
     return scriptSystem;
 }
 
