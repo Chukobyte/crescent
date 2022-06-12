@@ -105,14 +105,20 @@ void rbe_ec_system_update_entity_signature_with_systems(Entity entity) {
 }
 
 void rbe_ec_system_entity_start(Entity entity) {
+    ComponentType entityComponentSignature = component_manager_get_component_signature(entity);
     for (size_t i = 0; i < entitySystemData.on_entity_start_systems_count; i++) {
-        entitySystemData.on_entity_start_systems[i]->on_entity_start_func(entity);
+        if ((entityComponentSignature & entitySystemData.on_entity_start_systems[i]->component_signature) == entitySystemData.on_entity_start_systems[i]->component_signature) {
+            entitySystemData.on_entity_start_systems[i]->on_entity_start_func(entity);
+        }
     }
 }
 
 void rbe_ec_system_entity_end(Entity entity) {
+    ComponentType entityComponentSignature = component_manager_get_component_signature(entity);
     for (size_t i = 0; i < entitySystemData.on_entity_end_systems_count; i++) {
-        entitySystemData.on_entity_end_systems[i]->on_entity_end_func(entity);
+        if ((entityComponentSignature & entitySystemData.on_entity_end_systems[i]->component_signature) == entitySystemData.on_entity_end_systems[i]->component_signature) {
+            entitySystemData.on_entity_end_systems[i]->on_entity_end_func(entity);
+        }
     }
 }
 

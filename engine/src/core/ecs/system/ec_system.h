@@ -33,6 +33,7 @@ void rbe_ec_system_destroy(EntitySystem* entitySystem);
 void rbe_ec_system_register(EntitySystem* system);
 void rbe_ec_system_update_entity_signature_with_systems(Entity entity);
 void rbe_ec_system_remove_entity_from_all_systems(Entity entity);
+bool rbe_ec_system_has_entity(Entity entity, EntitySystem* system);
 
 void rbe_ec_system_entity_start(Entity entity);
 void rbe_ec_system_entity_end(Entity entity);
