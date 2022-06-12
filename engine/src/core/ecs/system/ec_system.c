@@ -144,6 +144,7 @@ void rbe_ec_system_physics_process_systems(float deltaTime) {
 Entity rbe_ec_system_create_entity() {
     // TODO: Create entity pool
     Entity newEntity = entityIndex;
+    rbe_logger_info("New entity created with id = '%d'", newEntity);
     entityIndex++;
     return newEntity;
 }

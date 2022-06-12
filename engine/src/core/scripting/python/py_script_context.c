@@ -93,15 +93,29 @@ void py_on_end(Entity entity) {
 void py_remove_entity_from_update_array(Entity entityRemoved) {
     PyObject* pScriptInstance = (PyObject*) *(PyObject**) rbe_hash_map_get(pythonInstanceHashMap, &entityRemoved);
     // Update
-    for (size_t i = 0; i < entitiesToUpdateCount; i++) {
-        if (entitiesToUpdate[i] == pScriptInstance && i + 1 < entitiesToUpdateCount) {
+    const size_t entitiesToUpdateCountRef = entitiesToUpdateCount;
+    for (size_t i = 0; i < entitiesToUpdateCountRef; i++) {
+        if (entitiesToUpdate[i] == pScriptInstance) {
+            // Swap if found
+            entitiesToUpdate[i] = entitiesToUpdate[i + 1];
+            entitiesToUpdate[i + 1] = NULL;
+            entitiesToUpdateCount--;
+        }
+        // Swap other nulls
+        if (entitiesToUpdate[i] == NULL) {
             entitiesToUpdate[i] = entitiesToUpdate[i + 1];
             entitiesToUpdate[i + 1] = NULL;
         }
     }
     // Physics Update
-    for (size_t i = 0; i < entitiesToPhysicsUpdateCount; i++) {
-        if (entitiesToPhysicsUpdate[i] == pScriptInstance && i + 1 < entitiesToPhysicsUpdateCount) {
+    const size_t entitiesToPhysicsUpdateCountRef = entitiesToPhysicsUpdateCount;
+    for (size_t i = 0; i < entitiesToPhysicsUpdateCountRef; i++) {
+        if (entitiesToPhysicsUpdate[i] == pScriptInstance) {
+            entitiesToPhysicsUpdate[i] = entitiesToPhysicsUpdate[i + 1];
+            entitiesToPhysicsUpdate[i + 1] = NULL;
+            entitiesToPhysicsUpdateCount--;
+        }
+        if (entitiesToPhysicsUpdate[i] == NULL) {
             entitiesToPhysicsUpdate[i] = entitiesToPhysicsUpdate[i + 1];
             entitiesToPhysicsUpdate[i + 1] = NULL;
         }

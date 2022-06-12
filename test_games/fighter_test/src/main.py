@@ -23,8 +23,10 @@ class Main(Node2D):
                 loops=False,
             )
         if Input.is_action_pressed(name="move_left"):
+            print(f"entity_id = {self.entity_id}")
             self.add_to_position(Vector2(-1, 0))
         if Input.is_action_pressed(name="move_right"):
+            print(f"entity_id = {self.entity_id}")
             self.add_to_position(Vector2(1, 0))
 
         # print(f"average fps = {Engine.get_average_fps()}")
@@ -33,4 +35,5 @@ class Main(Node2D):
     #     pass
 
     def _end(self) -> None:
+        print(f"entity {self.entity_id} end was called!")
         pass
