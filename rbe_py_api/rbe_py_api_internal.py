@@ -58,3 +58,15 @@ def audio_manager_play_sound(path: str, loops: bool) -> None:
 
 def audio_manager_stop_sound(path: str) -> None:
     pass
+
+
+def node2D_set_position(entity_id: int, x: float, y: float) -> None:
+    pass
+
+
+def node2D_add_to_position(entity_id: int, x: float, y: float) -> None:
+    pass
+
+
+def node2D_get_position(entity_id: int) -> tuple:
+    return 0.0, 0.0

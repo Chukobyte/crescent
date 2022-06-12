@@ -29,6 +29,12 @@ PyObject* rbe_py_api_scene_tree_change_scene(PyObject* self, PyObject* args, PyO
 PyObject* rbe_py_api_audio_manager_play_sound(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* rbe_py_api_audio_manager_stop_sound(PyObject* self, PyObject* args, PyObject* kwargs);
 
+// Node2D
+PyObject* rbe_py_api_node2D_set_position(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* rbe_py_api_node2D_add_to_position(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* rbe_py_api_node2D_get_position(PyObject* self, PyObject* args, PyObject* kwargs);
+
+
 // --- Module Methods Definitions --- //
 static struct PyMethodDef rbePyApiMethods[] = {
     // ENGINE
@@ -85,6 +91,19 @@ static struct PyMethodDef rbePyApiMethods[] = {
         "audio_manager_stop_sound", (PyCFunction) rbe_py_api_audio_manager_stop_sound,
         METH_VARARGS | METH_KEYWORDS, "Stops a sound."
     },
+    // NODE2D
+    {
+            "node2D_set_position", (PyCFunction) rbe_py_api_node2D_set_position,
+            METH_VARARGS | METH_KEYWORDS, "Set the position of a node."
+    },
+    {
+            "node2D_add_to_position", (PyCFunction) rbe_py_api_node2D_add_to_position,
+            METH_VARARGS | METH_KEYWORDS, "Adds to the position of a node."
+    },
+    {
+            "node2D_get_position", (PyCFunction) rbe_py_api_node2D_get_position,
+            METH_VARARGS | METH_KEYWORDS, "Get the position of a node."
+    },
     { NULL, NULL, 0,NULL },
 };
 
@@ -95,6 +114,7 @@ static struct PyModuleDef rbePyAPIModDef = {
 };
 
 // --- Argument Lists --- //
+static char *rbePyApiGenericGetEntityKWList[] = {"entity_id", NULL};
 static char *rbePyApiGenericPathKWList[] = {"path", NULL};
 
 static char *rbePyApiEngineExitKWList[] = {"code", NULL};
@@ -109,6 +129,8 @@ static char *rbePyApiInputAddActionKWList[] = {"name", "value", NULL};
 static char *rbePyApiInputActionInputCheckKWList[] = {"name", NULL};
 
 static char *rbePyApiAudioManagerPlaySoundKWList[] = {"path", "loops", NULL};
+
+static char *rbePyApiNode2DSetPositionKWList[] = {"entity_id", "x", "y", NULL};
 
 // --- Module Init --- //
 PyObject* PyInit_rbe_py_API(void);
