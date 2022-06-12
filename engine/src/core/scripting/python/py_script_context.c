@@ -13,12 +13,15 @@ void py_on_create_instance(Entity entity, const char* classPath, const char* cla
 void py_on_delete_instance(Entity entity);
 void py_on_start(Entity entity);
 void py_on_update_all_instances(float deltaTime);
+void py_on_physics_update_all_instances(float deltaTime);
 void py_on_end(Entity entity);
 
 void py_remove_entity_from_update_array(Entity entityRemoved);
 
 static PyObject* entitiesToUpdate[MAX_ENTITIES];
 static size_t entitiesToUpdateCount = 0;
+static PyObject* entitiesToPhysicsUpdate[MAX_ENTITIES];
+static size_t entitiesToPhysicsUpdateCount = 0;
 RBEHashMap* pythonInstanceHashMap = NULL;
 
 RBEScriptContext* rbe_py_create_script_context() {
@@ -27,6 +30,7 @@ RBEScriptContext* rbe_py_create_script_context() {
     scriptContext->on_delete_instance = py_on_delete_instance;
     scriptContext->on_start = py_on_start;
     scriptContext->on_update_all_instances = py_on_update_all_instances;
+    scriptContext->on_physics_update_all_instances = py_on_physics_update_all_instances;
     scriptContext->on_end = py_on_end;
 
     pythonInstanceHashMap = rbe_hash_map_create(sizeof(Entity), sizeof(PyObject**), MAX_ENTITIES);
@@ -37,6 +41,9 @@ void py_on_create_instance(Entity entity, const char* classPath, const char* cla
     PyObject* pScriptInstance = rbe_py_cache_create_instance(classPath, className, entity);
     if (PyObject_HasAttrString(pScriptInstance, "_update")) {
         entitiesToUpdate[entitiesToUpdateCount++] = pScriptInstance;
+    }
+    if (PyObject_HasAttrString(pScriptInstance, "_physics_update")) {
+        entitiesToPhysicsUpdate[entitiesToPhysicsUpdateCount++] = pScriptInstance;
     }
     rbe_hash_map_add(pythonInstanceHashMap, &entity, &pScriptInstance);
 }
@@ -68,6 +75,13 @@ void py_on_update_all_instances(float deltaTime) {
     PyErr_Print();
 }
 
+void py_on_physics_update_all_instances(float deltaTime) {
+    for (size_t i = 0; i < entitiesToPhysicsUpdateCount; i++) {
+        RBE_ASSERT_FMT(entitiesToPhysicsUpdate[i] != NULL, "Python instance is null!");
+        PyObject_CallMethod(entitiesToPhysicsUpdate[i], "_physics_update", "(f)", deltaTime);
+    }
+}
+
 void py_on_end(Entity entity) {
     RBE_ASSERT(rbe_hash_map_has(pythonInstanceHashMap, &entity));
     PyObject* pScriptInstance = (PyObject*) *(PyObject**) rbe_hash_map_get(pythonInstanceHashMap, &entity);
@@ -79,10 +93,18 @@ void py_on_end(Entity entity) {
 
 void py_remove_entity_from_update_array(Entity entityRemoved) {
     PyObject* pScriptInstance = (PyObject*) *(PyObject**) rbe_hash_map_get(pythonInstanceHashMap, &entityRemoved);
+    // Update
     for (size_t i = 0; i < entitiesToUpdateCount; i++) {
         if (entitiesToUpdate[i] == pScriptInstance && i + 1 < entitiesToUpdateCount) {
             entitiesToUpdate[i] = entitiesToUpdate[i + 1];
             entitiesToUpdate[i + 1] = NULL;
+        }
+    }
+    // Physics Update
+    for (size_t i = 0; i < entitiesToPhysicsUpdateCount; i++) {
+        if (entitiesToPhysicsUpdate[i] == pScriptInstance && i + 1 < entitiesToPhysicsUpdateCount) {
+            entitiesToPhysicsUpdate[i] = entitiesToPhysicsUpdate[i + 1];
+            entitiesToPhysicsUpdate[i + 1] = NULL;
         }
     }
 }

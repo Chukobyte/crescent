@@ -27,5 +27,8 @@ class Main(Node2D):
         if Input.is_action_pressed(name="move_right"):
             self.add_to_position(Vector2(1, 0))
 
+    # def _physics_update(self, delta_time: float) -> None:
+    #     pass
+
     def _end(self) -> None:
         pass

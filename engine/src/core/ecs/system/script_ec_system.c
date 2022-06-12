@@ -10,6 +10,7 @@
 void script_system_on_entity_registered(Entity entity);
 void script_system_on_entity_unregistered(Entity entity);
 void script_system_instance_update(float deltaTime);
+void script_system_instance_physics_update(float deltaTime);
 
 EntitySystem* scriptSystem = NULL;
 RBEScriptContext* scriptContext = NULL;
@@ -20,6 +21,7 @@ EntitySystem* script_ec_system_create(RBEScriptContext* newScriptContext) {
     scriptSystem->on_entity_registered_func = script_system_on_entity_registered;
     scriptSystem->on_entity_unregistered_func = script_system_on_entity_unregistered;
     scriptSystem->process_func = script_system_instance_update;
+    scriptSystem->physics_process_func = script_system_instance_physics_update;
     RBE_ASSERT(newScriptContext != NULL);
     scriptContext = newScriptContext;
     return scriptSystem;
@@ -36,4 +38,8 @@ void script_system_on_entity_unregistered(Entity entity) {
 
 void script_system_instance_update(float deltaTime) {
     scriptContext->on_update_all_instances(deltaTime);
+}
+
+void script_system_instance_physics_update(float deltaTime) {
+    scriptContext->on_physics_update_all_instances(deltaTime);
 }
