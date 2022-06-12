@@ -97,6 +97,16 @@ void rbe_audio_manager_play_sound(const char* filePath, bool loops) {
     rbe_logger_debug("Added audio instance from file path '%s' to play!", filePath);
 }
 
+void rbe_audio_manager_stop_sound(const char* filePath) {
+    for (size_t i = 0; i < audio_instances->count; i++) {
+        RBEAudioInstance* audioInst = audio_instances->instances[i];
+        if (strcmp(audioInst->source->file_path, filePath) == 0) {
+            audioInst->is_playing = false;
+            break;
+        }
+    }
+}
+
 // --- Mini Audio Callback --- //
 void audio_data_callback(ma_device* device, void* output, const void* input, ma_uint32 frame_count) {
     if (audio_instances->count <= 0) {

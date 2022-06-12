@@ -52,6 +52,7 @@ RBEAudioSource* rbe_asset_manager_load_audio_source_wav(const char* fileName, co
         return NULL;
     }
     RBEAudioSource* newAudioSource = (RBEAudioSource*) RBE_MEM_ALLOCATE_SIZE(sizeof(RBEAudioSource*) + (sampleCount * sizeof(int16_t*)));
+    newAudioSource->file_path = fileName;
     newAudioSource->sample_count = sampleCount;
     newAudioSource->channels = channels;
     newAudioSource->sample_rate = sampleRate;

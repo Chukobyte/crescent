@@ -346,7 +346,7 @@ PyObject* rbe_py_api_input_is_action_just_released(PyObject* self, PyObject* arg
 // Scene Tree
 PyObject* rbe_py_api_scene_tree_change_scene(PyObject* self, PyObject* args, PyObject* kwargs) {
     char* scenePath;
-    if (PyArg_ParseTupleAndKeywords(args, kwargs, "s", rbePyApiSceneTreeChangeSceneKWList, &scenePath)) {
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "s", rbePyApiGenericPathKWList, &scenePath)) {
         rbe_scene_manager_queue_scene_change(scenePath);
         Py_RETURN_NONE;
     }
@@ -359,6 +359,15 @@ PyObject* rbe_py_api_audio_manager_play_sound(PyObject* self, PyObject* args, Py
     bool loops;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "sb", rbePyApiAudioManagerPlaySoundKWList, &audioPath, &loops)) {
         rbe_audio_manager_play_sound(audioPath, loops);
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* rbe_py_api_audio_manager_stop_sound(PyObject* self, PyObject* args, PyObject* kwargs) {
+    char* audioPath;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "s", rbePyApiGenericPathKWList, &audioPath)) {
+        rbe_audio_manager_stop_sound(audioPath);
         Py_RETURN_NONE;
     }
     return NULL;

@@ -675,6 +675,10 @@ class AudioManager:
     def play_sound(path: str, loops=False):
         rbe_py_api_internal.audio_manager_play_sound(path=path, loops=loops)
 
+    @staticmethod
+    def stop_sound(path: str):
+        rbe_py_api_internal.audio_manager_stop_sound(path=path)
+
 
 # CONFIGURATION
 def configure_game(

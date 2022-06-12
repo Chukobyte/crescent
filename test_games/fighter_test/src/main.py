@@ -11,6 +11,7 @@ class Main(Node2D):
             Engine.exit()
         if Input.is_action_just_pressed(name="test"):
             SceneTree.change_scene(path="test_games/fighter_test/nodes/main_node.py")
+            AudioManager.stop_sound(path="test_games/fighter_test/assets/audio/sfx/rainbow_orb.wav")
         if Input.is_action_just_pressed(name="play_sfx"):
             AudioManager.play_sound(
                 path="test_games/fighter_test/assets/audio/sfx/rainbow_orb.wav",

@@ -27,6 +27,7 @@ PyObject* rbe_py_api_scene_tree_change_scene(PyObject* self, PyObject* args, PyO
 
 // Audio Manager
 PyObject* rbe_py_api_audio_manager_play_sound(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* rbe_py_api_audio_manager_stop_sound(PyObject* self, PyObject* args, PyObject* kwargs);
 
 // --- Module Methods Definitions --- //
 static struct PyMethodDef rbePyApiMethods[] = {
@@ -80,6 +81,10 @@ static struct PyMethodDef rbePyApiMethods[] = {
         "audio_manager_play_sound", (PyCFunction) rbe_py_api_audio_manager_play_sound,
         METH_VARARGS | METH_KEYWORDS, "Plays a sound."
     },
+    {
+        "audio_manager_stop_sound", (PyCFunction) rbe_py_api_audio_manager_stop_sound,
+        METH_VARARGS | METH_KEYWORDS, "Stops a sound."
+    },
     { NULL, NULL, 0,NULL },
 };
 
@@ -90,6 +95,8 @@ static struct PyModuleDef rbePyAPIModDef = {
 };
 
 // --- Argument Lists --- //
+static char *rbePyApiGenericPathKWList[] = {"path", NULL};
+
 static char *rbePyApiEngineExitKWList[] = {"code", NULL};
 
 static char *rbePyApiProjectConfigureKWList[] = {"game_tile", "window_width", "window_height", "resolution_width", "resolution_height", "target_fps", "initial_node_path", NULL};
@@ -100,8 +107,6 @@ static char *rbePyApiCreateStageNodesKWList[] = {"stage_nodes", NULL};
 
 static char *rbePyApiInputAddActionKWList[] = {"name", "value", NULL};
 static char *rbePyApiInputActionInputCheckKWList[] = {"name", NULL};
-
-static char *rbePyApiSceneTreeChangeSceneKWList[] = {"path", NULL};
 
 static char *rbePyApiAudioManagerPlaySoundKWList[] = {"path", "loops", NULL};
 

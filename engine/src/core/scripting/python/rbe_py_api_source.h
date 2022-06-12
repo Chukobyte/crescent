@@ -714,6 +714,10 @@
 "    def play_sound(path: str, loops=False):\n"\
 "        rbe_py_api_internal.audio_manager_play_sound(path=path, loops=loops)\n"\
 "\n"\
+"    @staticmethod\n"\
+"    def stop_sound(path: str):\n"\
+"        rbe_py_api_internal.audio_manager_stop_sound(path=path)\n"\
+"\n"\
 "\n"\
 "# CONFIGURATION\n"\
 "def configure_game(\n"\
