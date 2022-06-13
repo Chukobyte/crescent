@@ -45,7 +45,6 @@ void native_on_create_instance(Entity entity, const char* classPath, const char*
     RBE_ASSERT(scriptClassRef != NULL);
     RBE_ASSERT(scriptClassRef->create_new_instance_func != NULL);
     RBENativeScriptClass* newScriptClass = scriptClassRef->create_new_instance_func();
-//    newScriptClass->on_start_func(entity, newScriptClass->instance_data);
 }
 
 void native_on_delete_instance(Entity entity) {}

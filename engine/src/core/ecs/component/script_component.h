@@ -9,8 +9,8 @@ typedef enum ScriptContextType {
 } ScriptContextType;
 
 typedef struct ScriptComponent {
-    char* classPath;
-    char* className;
+    const char* classPath;
+    const char* className;
     ScriptContextType contextType;
 } ScriptComponent;
 

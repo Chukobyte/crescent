@@ -57,6 +57,8 @@ void script_system_on_entity_unregistered(Entity entity) {
 
 void script_system_entity_start(Entity entity) {
     ScriptComponent* scriptComponent = (ScriptComponent*) component_manager_get_component(entity, ComponentDataIndex_SCRIPT);
+    RBE_ASSERT(scriptComponent != NULL);
+    RBE_ASSERT_FMT(scriptComponent->contextType == ScriptContextType_PYTHON || scriptComponent->contextType == ScriptContextType_NATIVE, "Invalid context type '%d'", scriptComponent->contextType);
     scriptContexts[scriptComponent->contextType]->on_start(entity);
 }
 
