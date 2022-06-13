@@ -44,6 +44,7 @@ void native_on_create_instance(Entity entity, const char* classPath, const char*
     RBENativeScriptClass* scriptClassRef = rbe_string_hash_map_get(classCache, className);
     RBE_ASSERT(scriptClassRef != NULL);
     RBE_ASSERT(scriptClassRef->create_new_instance_func != NULL);
+    rbe_logger_error("native_on_create_instance");
     RBENativeScriptClass* newScriptClass = scriptClassRef->create_new_instance_func();
 }
 

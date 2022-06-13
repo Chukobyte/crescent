@@ -53,29 +53,32 @@ void component_array_remove_all_components(ComponentArray* componentArray) {
 
 // --- Component Manager --- //
 typedef struct ComponentManager {
-    ComponentArray entityComponentArrays[MAX_ENTITIES];
+    ComponentArray* entityComponentArrays[MAX_ENTITIES];
     ComponentType entityComponentSignatures[MAX_ENTITIES];
 } ComponentManager;
 
-static ComponentManager componentManager = {0};
+static ComponentManager* componentManager = NULL;
 
 ComponentType component_manager_translate_index_to_type(ComponentDataIndex index);
 
 void component_manager_initialize() {
+    RBE_ASSERT(componentManager == NULL);
+    componentManager = RBE_MEM_ALLOCATE(ComponentManager);
     for (int i = 0; i < MAX_ENTITIES; i++) {
-        component_array_initialize(&componentManager.entityComponentArrays[i]);
-        componentManager.entityComponentSignatures[i] = ComponentType_NONE;
+        componentManager->entityComponentArrays[i] = RBE_MEM_ALLOCATE(ComponentArray);
+        component_array_initialize(componentManager->entityComponentArrays[i]);
+        componentManager->entityComponentSignatures[i] = ComponentType_NONE;
     }
 }
 
 void component_manager_finalize() {}
 
 void* component_manager_get_component(Entity entity, ComponentDataIndex index) {
-    return component_array_get_component(&componentManager.entityComponentArrays[entity], index);
+    return component_array_get_component(componentManager->entityComponentArrays[entity], index);
 }
 
 void component_manager_set_component(Entity entity, ComponentDataIndex index, void* component) {
-    component_array_set_component(&componentManager.entityComponentArrays[entity], index, component);
+    component_array_set_component(componentManager->entityComponentArrays[entity], index, component);
     // Update signature
     ComponentType componentSignature = component_manager_get_component_signature(entity);
     componentSignature |= component_manager_translate_index_to_type(index);
@@ -86,23 +89,23 @@ void component_manager_remove_component(Entity entity, ComponentDataIndex index)
     ComponentType componentSignature = component_manager_get_component_signature(entity);
     componentSignature &= component_manager_translate_index_to_type(index);
     component_manager_set_component_signature(entity, componentSignature);
-    component_array_remove_component(&componentManager.entityComponentArrays[entity], index);
+    component_array_remove_component(componentManager->entityComponentArrays[entity], index);
 }
 
 void component_manager_remove_all_components(Entity entity) {
-    component_array_remove_all_components(&componentManager.entityComponentArrays[entity]);
+    component_array_remove_all_components(componentManager->entityComponentArrays[entity]);
 }
 
 bool component_manager_has_component(Entity entity, ComponentDataIndex index) {
-    return component_array_has_component(&componentManager.entityComponentArrays[entity], index);
+    return component_array_has_component(componentManager->entityComponentArrays[entity], index);
 }
 
 void component_manager_set_component_signature(Entity entity, ComponentType componentTypeSignature) {
-    componentManager.entityComponentSignatures[entity] = componentTypeSignature;
+    componentManager->entityComponentSignatures[entity] = componentTypeSignature;
 }
 
 ComponentType component_manager_get_component_signature(Entity entity) {
-    return componentManager.entityComponentSignatures[entity];
+    return componentManager->entityComponentSignatures[entity];
 }
 
 ComponentType component_manager_translate_index_to_type(ComponentDataIndex index) {
