@@ -309,8 +309,8 @@ void setup_scene_component_node(Entity entity, PyObject* component) {
         const char* scriptClassPath = phy_get_string_from_var(component, "class_path");
         const char* scriptClassName = phy_get_string_from_var(component, "class_name");
         ScriptComponent* scriptComponent = script_component_create();
-        scriptComponent->classPath = strdup(scriptClassPath);
-        scriptComponent->className = strdup(scriptClassName);
+        scriptComponent->classPath = scriptClassPath;
+        scriptComponent->className = scriptClassName;
         scriptComponent->contextType = ScriptContextType_PYTHON;
         component_manager_set_component(entity, ComponentDataIndex_SCRIPT, scriptComponent);
         rbe_scene_manager_queue_entity_for_creation(entity); // May move in a different place TODO: Figure out...
