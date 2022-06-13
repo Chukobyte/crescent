@@ -2,6 +2,7 @@
 #include "fps_display_class.h"
 
 #include "../native_script_class.h"
+#include "../../../engine_context.h"
 #include "../../../memory/rbe_mem.h"
 
 typedef struct FpsDisplayClassData {
@@ -36,5 +37,5 @@ void fps_display_on_start(Entity entity, void* inst_data) {
 }
 
 void fps_display_update(Entity entity, void* inst_data, float deltaTime) {
-    printf("[C SCRIPT] - Update entity '%d'\n", entity);
+//    printf("[C SCRIPT] - fps '%f'\n", rbe_engine_context_get()->averageFPS);
 }
