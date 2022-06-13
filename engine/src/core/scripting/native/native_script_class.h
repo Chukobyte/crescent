@@ -2,10 +2,12 @@
 
 #include <stddef.h>
 
-typedef void (*NativeClassOnStartFunc)(void* inst_data);
-typedef void (*NativeClassOnEndFunc)(void* inst_data);
-typedef void (*NativeClassUpdateFunc)(void* inst_data);
-typedef void (*NativeClassPhysicsUpdateFunc)(void* inst_data);
+#include "../../ecs/entity/entity.h"
+
+typedef void (*NativeClassOnStartFunc)(Entity entity, void* inst_data);
+typedef void (*NativeClassOnEndFunc)(Entity entity, void* inst_data);
+typedef void (*NativeClassUpdateFunc)(Entity entity, void* inst_data, float deltaTime);
+typedef void (*NativeClassPhysicsUpdateFunc)(Entity entity, void* inst_data, float deltaTime);
 
 typedef struct RBENativeScriptClass {
     const char* path;

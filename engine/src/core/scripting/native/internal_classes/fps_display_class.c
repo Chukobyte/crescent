@@ -1,15 +1,16 @@
+#include <stdio.h>
 #include "fps_display_class.h"
 
 #include "../native_script_class.h"
 #include "../../../memory/rbe_mem.h"
-#include "../../../utils/logger.h"
 
 typedef struct FpsDisplayClassData {
     int value;
 } FpsDisplayClassData;
 
 RBENativeScriptClass* fps_display_create_new_instance();
-void fps_display_on_start(void* inst_data);
+void fps_display_on_start(Entity entity, void* inst_data);
+void fps_display_update(Entity entity, void* inst_data, float deltaTime);
 
 RBENativeScriptClass* fps_display_native_class_create_new() {
     RBENativeScriptClass* fpsClassInstance = fps_display_create_new_instance();
@@ -19,15 +20,20 @@ RBENativeScriptClass* fps_display_native_class_create_new() {
 
 RBENativeScriptClass* fps_display_create_new_instance() {
     RBENativeScriptClass* fpsClassInstance = rbe_native_class_create_new("main", "FpsDisplay");
+    fpsClassInstance->on_start_func = fps_display_on_start;
+    fpsClassInstance->update_func = fps_display_update;
     FpsDisplayClassData* classData = RBE_MEM_ALLOCATE(FpsDisplayClassData);
     classData->value = 10;
-    fpsClassInstance->on_start_func = fps_display_on_start;
     fpsClassInstance->instance_data = classData;
     fpsClassInstance->class_instance_size = (sizeof(RBENativeScriptClass*) + sizeof(FpsDisplayClassData*)) * 2;
     return fpsClassInstance;
 }
 
-void fps_display_on_start(void* inst_data) {
+void fps_display_on_start(Entity entity, void* inst_data) {
     FpsDisplayClassData* data = (FpsDisplayClassData*) inst_data;
-    rbe_logger_error("NOT AN ERROR - on start value = %d", data->value);
+    printf("[C SCRIPT] - entity '%d' on start value = %d\n", entity, data->value);
+}
+
+void fps_display_update(Entity entity, void* inst_data, float deltaTime) {
+    printf("[C SCRIPT] - Update entity '%d'", entity);
 }

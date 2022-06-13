@@ -56,7 +56,7 @@ void py_on_delete_instance(Entity entity) {
 }
 
 void py_on_start(Entity entity) {
-    RBE_ASSERT(rbe_hash_map_has(pythonInstanceHashMap, &entity));
+    RBE_ASSERT_FMT(rbe_hash_map_has(pythonInstanceHashMap, &entity), "Tried to call py on_start to non existent python instance entity '%d'", entity);
     PyObject* pScriptInstance = (PyObject*) *(PyObject**) rbe_hash_map_get(pythonInstanceHashMap, &entity);
     RBE_ASSERT(pScriptInstance != NULL);
     if (PyObject_HasAttrString(pScriptInstance, "_start")) {
