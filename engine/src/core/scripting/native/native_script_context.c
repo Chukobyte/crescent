@@ -93,7 +93,11 @@ void native_on_update_all_instances(float deltaTime) {
     }
 }
 
-void native_on_physics_update_all_instances(float deltaTime) {}
+void native_on_physics_update_all_instances(float deltaTime) {
+    for (size_t i = 0; i < entities_to_physics_update_count; i++) {
+        entities_to_physics_update[i]->update_func(entities_to_physics_update[i]->entity, entities_to_physics_update[i]->instance_data, deltaTime);
+    }
+}
 
 void native_on_end(Entity entity) {
     RBE_ASSERT(rbe_hash_map_has(entityToClassName, &entity));
