@@ -14,19 +14,10 @@ for (size_t i = 0; i < ARRAY_NAME ##_count; i++) {       \
 if (ARRAY_NAME[i] == ARRAY_VALUE) {                      \
 ARRAY_NAME[i] = ARRAY_NAME[i + 1];                       \
 ARRAY_NAME[i + 1] = EMPTY_VALUE;                         \
+ARRAY_NAME ##_count--;                                   \
 }                                                        \
 if (ARRAY_NAME[i] == EMPTY_VALUE) {                      \
 ARRAY_NAME[i] = ARRAY_NAME[i + 1];                       \
 ARRAY_NAME[i + 1] = EMPTY_VALUE;                         \
 }                                                        \
 }
-
-
-//if (entitiesToPhysicsUpdate[i] == NULL) {
-//entitiesToPhysicsUpdate[i] = entitiesToPhysicsUpdate[i + 1];
-//entitiesToPhysicsUpdate[i + 1] = NULL;
-//}
-
-//entitiesToPhysicsUpdate[i] = entitiesToPhysicsUpdate[i + 1];
-//entitiesToPhysicsUpdate[i + 1] = NULL;
-//entitiesToPhysicsUpdateCount--;
