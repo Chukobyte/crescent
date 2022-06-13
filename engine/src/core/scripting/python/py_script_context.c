@@ -49,8 +49,12 @@ void py_on_delete_instance(Entity entity) {
     RBE_ASSERT_FMT(rbe_hash_map_has(pythonInstanceHashMap, &entity), "Doesn't have entity '%d'", entity);
     PyObject* pScriptInstance = (PyObject*) *(PyObject**) rbe_hash_map_get(pythonInstanceHashMap, &entity);
     // Remove from update arrays
-    RBE_STATIC_ARRAY_REMOVE(entities_to_update, pScriptInstance, NULL);
-    RBE_STATIC_ARRAY_REMOVE(entities_to_physics_update, pScriptInstance, NULL);
+    if (PyObject_HasAttrString(pScriptInstance, "_update")) {
+        RBE_STATIC_ARRAY_REMOVE(entities_to_update, pScriptInstance, NULL);
+    }
+    if (PyObject_HasAttrString(pScriptInstance, "_physics_update")) {
+        RBE_STATIC_ARRAY_REMOVE(entities_to_physics_update, pScriptInstance, NULL);
+    }
 
     Py_DecRef(pScriptInstance);
     rbe_hash_map_erase(pythonInstanceHashMap, &entity);
