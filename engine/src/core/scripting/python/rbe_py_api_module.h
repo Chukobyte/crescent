@@ -46,16 +46,16 @@ static struct PyMethodDef rbePyApiMethods[] = {
         METH_VARARGS | METH_KEYWORDS, "Exits the game."
     },
     {
-            "engine_set_target_fps", (PyCFunction) rbe_py_api_engine_set_target_fps,
-            METH_VARARGS | METH_KEYWORDS, "Sets the target fps."
+        "engine_set_target_fps", (PyCFunction) rbe_py_api_engine_set_target_fps,
+        METH_VARARGS | METH_KEYWORDS, "Sets the target fps."
     },
     {
-            "engine_get_target_fps", rbe_py_api_engine_get_target_fps,
-            METH_VARARGS, "Gets the target fps."
+        "engine_get_target_fps", rbe_py_api_engine_get_target_fps,
+        METH_VARARGS, "Gets the target fps."
     },
     {
-            "engine_get_average_fps", rbe_py_api_engine_get_average_fps,
-            METH_VARARGS, "Gets the average fps."
+        "engine_get_average_fps", rbe_py_api_engine_get_average_fps,
+        METH_VARARGS, "Gets the average fps."
     },
     // CONFIGURATION
     {
@@ -108,16 +108,16 @@ static struct PyMethodDef rbePyApiMethods[] = {
     },
     // NODE2D
     {
-            "node2D_set_position", (PyCFunction) rbe_py_api_node2D_set_position,
-            METH_VARARGS | METH_KEYWORDS, "Set the position of a node."
+        "node2D_set_position", (PyCFunction) rbe_py_api_node2D_set_position,
+        METH_VARARGS | METH_KEYWORDS, "Set the position of a node."
     },
     {
-            "node2D_add_to_position", (PyCFunction) rbe_py_api_node2D_add_to_position,
-            METH_VARARGS | METH_KEYWORDS, "Adds to the position of a node."
+        "node2D_add_to_position", (PyCFunction) rbe_py_api_node2D_add_to_position,
+        METH_VARARGS | METH_KEYWORDS, "Adds to the position of a node."
     },
     {
-            "node2D_get_position", (PyCFunction) rbe_py_api_node2D_get_position,
-            METH_VARARGS | METH_KEYWORDS, "Get the position of a node."
+        "node2D_get_position", (PyCFunction) rbe_py_api_node2D_get_position,
+        METH_VARARGS | METH_KEYWORDS, "Get the position of a node."
     },
     { NULL, NULL, 0,NULL },
 };

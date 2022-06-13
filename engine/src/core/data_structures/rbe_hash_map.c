@@ -147,7 +147,7 @@ RBEHashMapIterator rbe_hash_map_iter_create(RBEHashMap* hashMap) {
 }
 
 bool rbe_hash_map_iter_is_valid(RBEHashMap* hashMap, RBEHashMapIterator* iterator) {
-    return iterator->pair != NULL && iterator->count < hashMap->size;
+    return iterator->pair != NULL && iterator->count <= hashMap->size;
 }
 
 void rbe_hash_map_iter_advance(RBEHashMap* hashMap, RBEHashMapIterator* iterator) {
