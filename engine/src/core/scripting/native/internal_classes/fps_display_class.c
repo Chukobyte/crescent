@@ -23,11 +23,11 @@ RBENativeScriptClass* fps_display_create_new_instance() {
     classData->value = 10;
     fpsClassInstance->on_start_func = fps_display_on_start;
     fpsClassInstance->instance_data = classData;
-    fpsClassInstance->class_instance_size = sizeof(FpsDisplayClassData*) + sizeof(FpsDisplayClassData*);
+    fpsClassInstance->class_instance_size = (sizeof(RBENativeScriptClass*) + sizeof(FpsDisplayClassData*)) * 2;
     return fpsClassInstance;
 }
 
 void fps_display_on_start(void* inst_data) {
     FpsDisplayClassData* data = (FpsDisplayClassData*) inst_data;
-    rbe_logger_info("on start value = %d", data->value);
+    rbe_logger_error("NOT AN ERROR - on start value = %d", data->value);
 }

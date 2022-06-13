@@ -42,6 +42,8 @@ void rbe_native_class_register_new_class(RBENativeScriptClass* scriptClass) {
 void native_on_create_instance(Entity entity, const char* classPath, const char* className) {
     RBE_ASSERT(rbe_string_hash_map_has(classCache, className));
     RBENativeScriptClass* scriptClassRef = rbe_string_hash_map_get(classCache, className);
+    RBE_ASSERT(scriptClassRef != NULL);
+    RBE_ASSERT(scriptClassRef->create_new_instance_func != NULL);
     RBENativeScriptClass* newScriptClass = scriptClassRef->create_new_instance_func();
     newScriptClass->on_start_func(newScriptClass->instance_data);
 }

@@ -45,6 +45,8 @@ EntitySystem* script_ec_system_create() {
 
 void script_system_on_entity_registered(Entity entity) {
     ScriptComponent* scriptComponent = (ScriptComponent*) component_manager_get_component(entity, ComponentDataIndex_SCRIPT);
+    RBE_ASSERT(scriptContexts[scriptComponent->contextType] != NULL);
+    RBE_ASSERT(scriptContexts[scriptComponent->contextType]->on_create_instance != NULL);
     scriptContexts[scriptComponent->contextType]->on_create_instance(entity, scriptComponent->classPath, scriptComponent->className);
 }
 
