@@ -38,11 +38,9 @@ void py_on_create_instance(Entity entity, const char* classPath, const char* cla
     PyObject* pScriptInstance = rbe_py_cache_create_instance(classPath, className, entity);
     if (PyObject_HasAttrString(pScriptInstance, "_update")) {
         RBE_STATIC_ARRAY_ADD(entities_to_update, pScriptInstance);
-//        entities_to_update[entities_to_update_count++] = pScriptInstance;
     }
     if (PyObject_HasAttrString(pScriptInstance, "_physics_update")) {
         RBE_STATIC_ARRAY_ADD(entities_to_physics_update, pScriptInstance);
-//        entities_to_physics_update[entities_to_physics_update_count++] = pScriptInstance;
     }
     rbe_hash_map_add(pythonInstanceHashMap, &entity, &pScriptInstance);
 }
