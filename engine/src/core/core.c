@@ -87,8 +87,11 @@ bool rbe_initialize(int argv, char** args) {
     engineContext->targetFPS = gameProperties->targetFPS;
     engineContext->isRunning = true;
 
-    // Go to initial scene (TODO: Move to process loop)
+    // Go to initial scene
     rbe_scene_manager_queue_scene_change(gameProperties->initialScenePath);
+
+    // temp
+//    rbe_ecs_manager_temp_internal_test();
 
     return true;
 }
