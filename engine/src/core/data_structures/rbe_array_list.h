@@ -10,5 +10,4 @@ typedef struct RBEArrayList {
     void* values[];
 } RBEArrayList;
 
-RBEArrayList rbe_array_list_create_on_stack(size_t size, size_t valueSize);
-RBEArrayList* rbe_array_list_create_on_heap(size_t size, size_t valueSize);
+RBEArrayList* rbe_array_list_create(size_t size, size_t valueSize);
