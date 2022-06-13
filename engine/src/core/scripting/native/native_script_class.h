@@ -12,7 +12,8 @@ typedef void (*NativeClassPhysicsUpdateFunc)(Entity entity, void* inst_data, flo
 typedef struct RBENativeScriptClass {
     const char* path;
     const char* name;
-    struct RBENativeScriptClass* (*create_new_instance_func)();
+    Entity entity;
+    struct RBENativeScriptClass* (*create_new_instance_func)(Entity);
     NativeClassOnStartFunc on_start_func;
     NativeClassOnEndFunc on_end_func;
     NativeClassUpdateFunc update_func;
@@ -21,4 +22,4 @@ typedef struct RBENativeScriptClass {
     size_t class_instance_size;
 } RBENativeScriptClass;
 
-RBENativeScriptClass* rbe_native_class_create_new(const char* path, const char* name);
+RBENativeScriptClass* rbe_native_class_create_new(Entity entity, const char* path, const char* name);

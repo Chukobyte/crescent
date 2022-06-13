@@ -4,8 +4,9 @@
 
 #include "../../memory/rbe_mem.h"
 
-RBENativeScriptClass* rbe_native_class_create_new(const char* path, const char* name) {
+RBENativeScriptClass* rbe_native_class_create_new(Entity entity, const char* path, const char* name) {
     RBENativeScriptClass* scriptClass = RBE_MEM_ALLOCATE(RBENativeScriptClass);
+    scriptClass->entity = entity;
     scriptClass->path = path;
     scriptClass->name = name;
     scriptClass->create_new_instance_func = NULL;

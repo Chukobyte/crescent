@@ -5,6 +5,7 @@
 #include "py_cache.h"
 #include "../script_context.h"
 #include "../../data_structures/rbe_hash_map.h"
+#include "../../data_structures/rbe_static_array.h"
 #include "../../utils/rbe_assert.h"
 
 // --- Script Context Interface --- //
@@ -15,12 +16,9 @@ void py_on_update_all_instances(float deltaTime);
 void py_on_physics_update_all_instances(float deltaTime);
 void py_on_end(Entity entity);
 
-void py_remove_entity_from_update_array(Entity entityRemoved);
+RBE_STATIC_ARRAY_CREATE(PyObject*, MAX_ENTITIES, entities_to_update);
+RBE_STATIC_ARRAY_CREATE(PyObject*, MAX_ENTITIES, entities_to_physics_update);
 
-static PyObject* entitiesToUpdate[MAX_ENTITIES];
-static size_t entitiesToUpdateCount = 0;
-static PyObject* entitiesToPhysicsUpdate[MAX_ENTITIES];
-static size_t entitiesToPhysicsUpdateCount = 0;
 RBEHashMap* pythonInstanceHashMap = NULL;
 
 RBEScriptContext* rbe_py_create_script_context() {
@@ -39,18 +37,25 @@ RBEScriptContext* rbe_py_create_script_context() {
 void py_on_create_instance(Entity entity, const char* classPath, const char* className) {
     PyObject* pScriptInstance = rbe_py_cache_create_instance(classPath, className, entity);
     if (PyObject_HasAttrString(pScriptInstance, "_update")) {
-        entitiesToUpdate[entitiesToUpdateCount++] = pScriptInstance;
+        RBE_STATIC_ARRAY_ADD(entities_to_update, pScriptInstance);
     }
     if (PyObject_HasAttrString(pScriptInstance, "_physics_update")) {
-        entitiesToPhysicsUpdate[entitiesToPhysicsUpdateCount++] = pScriptInstance;
+        RBE_STATIC_ARRAY_ADD(entities_to_physics_update, pScriptInstance);
     }
     rbe_hash_map_add(pythonInstanceHashMap, &entity, &pScriptInstance);
 }
 
 void py_on_delete_instance(Entity entity) {
     RBE_ASSERT_FMT(rbe_hash_map_has(pythonInstanceHashMap, &entity), "Doesn't have entity '%d'", entity);
-    py_remove_entity_from_update_array(entity);
     PyObject* pScriptInstance = (PyObject*) *(PyObject**) rbe_hash_map_get(pythonInstanceHashMap, &entity);
+    // Remove from update arrays
+    if (PyObject_HasAttrString(pScriptInstance, "_update")) {
+        RBE_STATIC_ARRAY_REMOVE(entities_to_update, pScriptInstance, NULL);
+    }
+    if (PyObject_HasAttrString(pScriptInstance, "_physics_update")) {
+        RBE_STATIC_ARRAY_REMOVE(entities_to_physics_update, pScriptInstance, NULL);
+    }
+
     Py_DecRef(pScriptInstance);
     rbe_hash_map_erase(pythonInstanceHashMap, &entity);
 }
@@ -65,18 +70,18 @@ void py_on_start(Entity entity) {
 }
 
 void py_on_update_all_instances(float deltaTime) {
-    for (size_t i = 0; i < entitiesToUpdateCount; i++) {
-        RBE_ASSERT_FMT(entitiesToUpdate[i] != NULL, "Python instance is null!");
-        PyObject_CallMethod(entitiesToUpdate[i], "_update", "(f)", deltaTime);
+    for (size_t i = 0; i < entities_to_update_count; i++) {
+        RBE_ASSERT_FMT(entities_to_update[i] != NULL, "Python instance is null!");
+        PyObject_CallMethod(entities_to_update[i], "_update", "(f)", deltaTime);
     }
     // TODO: More robust error checking
     PyErr_Print();
 }
 
 void py_on_physics_update_all_instances(float deltaTime) {
-    for (size_t i = 0; i < entitiesToPhysicsUpdateCount; i++) {
-        RBE_ASSERT_FMT(entitiesToPhysicsUpdate[i] != NULL, "Python instance is null!");
-        PyObject_CallMethod(entitiesToPhysicsUpdate[i], "_physics_update", "(f)", deltaTime);
+    for (size_t i = 0; i < entities_to_physics_update_count; i++) {
+        RBE_ASSERT_FMT(entities_to_physics_update[i] != NULL, "Python instance is null!");
+        PyObject_CallMethod(entities_to_physics_update[i], "_physics_update", "(f)", deltaTime);
     }
 }
 
@@ -86,37 +91,5 @@ void py_on_end(Entity entity) {
     RBE_ASSERT(pScriptInstance != NULL);
     if (PyObject_HasAttrString(pScriptInstance, "_end")) {
         PyObject_CallMethod(pScriptInstance, "_end", NULL);
-    }
-}
-
-void py_remove_entity_from_update_array(Entity entityRemoved) {
-    PyObject* pScriptInstance = (PyObject*) *(PyObject**) rbe_hash_map_get(pythonInstanceHashMap, &entityRemoved);
-    // Update
-    const size_t entitiesToUpdateCountRef = entitiesToUpdateCount;
-    for (size_t i = 0; i < entitiesToUpdateCountRef; i++) {
-        if (entitiesToUpdate[i] == pScriptInstance) {
-            // Swap if found
-            entitiesToUpdate[i] = entitiesToUpdate[i + 1];
-            entitiesToUpdate[i + 1] = NULL;
-            entitiesToUpdateCount--;
-        }
-        // Swap other nulls
-        if (entitiesToUpdate[i] == NULL) {
-            entitiesToUpdate[i] = entitiesToUpdate[i + 1];
-            entitiesToUpdate[i + 1] = NULL;
-        }
-    }
-    // Physics Update
-    const size_t entitiesToPhysicsUpdateCountRef = entitiesToPhysicsUpdateCount;
-    for (size_t i = 0; i < entitiesToPhysicsUpdateCountRef; i++) {
-        if (entitiesToPhysicsUpdate[i] == pScriptInstance) {
-            entitiesToPhysicsUpdate[i] = entitiesToPhysicsUpdate[i + 1];
-            entitiesToPhysicsUpdate[i + 1] = NULL;
-            entitiesToPhysicsUpdateCount--;
-        }
-        if (entitiesToPhysicsUpdate[i] == NULL) {
-            entitiesToPhysicsUpdate[i] = entitiesToPhysicsUpdate[i + 1];
-            entitiesToPhysicsUpdate[i + 1] = NULL;
-        }
     }
 }

@@ -7,11 +7,15 @@
 #include "../core/memory/rbe_mem.h"
 #include "../core/data_structures/rbe_hash_map.h"
 #include "../core/data_structures/rbe_hash_map_string.h"
+#include "../core/data_structures/rbe_array_list.h"
+#include "../core/data_structures/rbe_static_array.h"
 #include "../core/thread/rbe_pthread.h"
 #include "../core/thread/rbe_thread_pool.h"
 
 void rbe_hash_main_test();
 void rbe_string_hashmap_test();
+void rbe_static_array_test();
+void rbe_array_list_test();
 
 void rbe_thread_main_test();
 
@@ -22,6 +26,8 @@ int main(int argv, char** args) {
     UNITY_BEGIN();
     RUN_TEST(rbe_hash_main_test);
     RUN_TEST(rbe_string_hashmap_test);
+    RUN_TEST(rbe_array_list_test);
+    RUN_TEST(rbe_static_array_test);
     RUN_TEST(rbe_thread_main_test);
     return UNITY_END();
 }
@@ -120,6 +126,22 @@ void rbe_string_hashmap_test() {
     TEST_ASSERT_EQUAL_INT(rbe_string_hash_map_get_int(hashMap2, "one"), 1);
     rbe_string_hash_map_destroy(hashMap2);
 }
+
+void rbe_array_list_test() {
+    RBEArrayList* arrayList = rbe_array_list_create(10, sizeof(int));
+    TEST_ASSERT_EQUAL_INT(arrayList->size, 10);
+}
+
+void rbe_static_array_test() {
+    RBE_STATIC_ARRAY_CREATE(int, 10, test_array);
+    TEST_ASSERT_EQUAL_INT(test_array_count, 0);
+    RBE_STATIC_ARRAY_ADD(test_array, 4);
+    TEST_ASSERT_EQUAL_INT(test_array[0], 4);
+    RBE_STATIC_ARRAY_REMOVE(test_array, 4, 0);
+    TEST_ASSERT_EQUAL_INT(test_array[0], 0);
+}
+
+// --- Thread Test --- //
 
 int test_thread_func(void* arg) {
     printf("Test\n");
