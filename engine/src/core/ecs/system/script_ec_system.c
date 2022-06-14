@@ -31,6 +31,7 @@ EntitySystem* script_ec_system_create() {
     scriptSystem->on_entity_end_func = script_system_entity_end;
     scriptSystem->process_func = script_system_instance_update;
     scriptSystem->physics_process_func = script_system_instance_physics_update;
+    scriptSystem->component_signature = ComponentType_SCRIPT;
     // Python Context
     scriptContexts[ScriptContextType_PYTHON] = rbe_py_create_script_context();
     scriptContextsCount++;

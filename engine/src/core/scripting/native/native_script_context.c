@@ -84,23 +84,23 @@ void native_on_delete_instance(Entity entity) {
 void native_on_start(Entity entity) {
     RBE_ASSERT(rbe_hash_map_has(entityToClassName, &entity));
     RBENativeScriptClass* scriptClassRef = (RBENativeScriptClass*) rbe_hash_map_get(entityToClassName, &entity);
-    scriptClassRef->on_start_func(entity, scriptClassRef->instance_data);
+    scriptClassRef->on_start_func(scriptClassRef);
 }
 
 void native_on_update_all_instances(float deltaTime) {
     for (size_t i = 0; i < entities_to_update_count; i++) {
-        entities_to_update[i]->update_func(entities_to_update[i]->entity, entities_to_update[i]->instance_data, deltaTime);
+        entities_to_update[i]->update_func(entities_to_update[i], deltaTime);
     }
 }
 
 void native_on_physics_update_all_instances(float deltaTime) {
     for (size_t i = 0; i < entities_to_physics_update_count; i++) {
-        entities_to_physics_update[i]->update_func(entities_to_physics_update[i]->entity, entities_to_physics_update[i]->instance_data, deltaTime);
+        entities_to_physics_update[i]->update_func(entities_to_physics_update[i], deltaTime);
     }
 }
 
 void native_on_end(Entity entity) {
     RBE_ASSERT(rbe_hash_map_has(entityToClassName, &entity));
     RBENativeScriptClass* scriptClassRef = (RBENativeScriptClass*) rbe_hash_map_get(entityToClassName, &entity);
-    scriptClassRef->on_end_func(entity, scriptClassRef->instance_data);
+    scriptClassRef->on_end_func(scriptClassRef);
 }
