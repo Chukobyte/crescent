@@ -30,7 +30,12 @@ configure_assets(
             file_path="test_games/fighter_test/assets/fonts/verdana.ttf",
             uid="verdana-32",
             size=32,
-        )
+        ),
+        Font(
+            file_path="test_games/fighter_test/assets/fonts/fight_font.ttf",
+            uid="fight-64",
+            size=64,
+        ),
     ],
 )
 
