@@ -3,6 +3,8 @@
 
 #include "../native_script_class.h"
 #include "../../../engine_context.h"
+#include "../../../asset_manager.h"
+#include "../../../rendering/renderer.h"
 #include "../../../memory/rbe_mem.h"
 
 typedef struct FpsDisplayClassData {
@@ -37,5 +39,7 @@ void fps_display_on_start(RBENativeScriptClass* nativeScriptClass) {
 }
 
 void fps_display_update(RBENativeScriptClass* nativeScriptClass, float deltaTime) {
+//    const Color fpsTextColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+//    rbe_renderer_queue_font_draw_call(rbe_asset_manager_get_font("verdana-32"), "FPS: ", 200, 200, 1.0f, fpsTextColor);
 //    printf("[C SCRIPT] - fps '%f'\n", rbe_engine_context_get()->averageFPS);
 }
