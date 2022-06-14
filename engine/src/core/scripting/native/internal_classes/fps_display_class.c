@@ -10,8 +10,10 @@ typedef struct FpsDisplayClassData {
 } FpsDisplayClassData;
 
 RBENativeScriptClass* fps_display_create_new_instance(Entity entity);
-void fps_display_on_start(Entity entity, void* inst_data);
-void fps_display_update(Entity entity, void* inst_data, float deltaTime);
+//void fps_display_on_start(Entity entity, void* inst_data);
+//void fps_display_update(Entity entity, void* inst_data, float deltaTime);
+void fps_display_on_start(RBENativeScriptClass* nativeScriptClass);
+void fps_display_update(RBENativeScriptClass* nativeScriptClass, float deltaTime);
 
 RBENativeScriptClass* fps_display_native_class_create_new() {
     RBENativeScriptClass* fpsClassInstance = fps_display_create_new_instance(NULL_ENTITY);
@@ -31,11 +33,11 @@ RBENativeScriptClass* fps_display_create_new_instance(Entity entity) {
     return fpsClassInstance;
 }
 
-void fps_display_on_start(Entity entity, void* inst_data) {
-    FpsDisplayClassData* data = (FpsDisplayClassData*) inst_data;
-    printf("[C SCRIPT] - entity '%d' on start value = %d\n", entity, data->value);
+void fps_display_on_start(RBENativeScriptClass* nativeScriptClass) {
+    FpsDisplayClassData* data = (FpsDisplayClassData*) nativeScriptClass->instance_data;
+    printf("[C SCRIPT] - entity '%d' on start value = %d\n", nativeScriptClass->entity, data->value);
 }
 
-void fps_display_update(Entity entity, void* inst_data, float deltaTime) {
+void fps_display_update(RBENativeScriptClass* nativeScriptClass, float deltaTime) {
 //    printf("[C SCRIPT] - fps '%f'\n", rbe_engine_context_get()->averageFPS);
 }
