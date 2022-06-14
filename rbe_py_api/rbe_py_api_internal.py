@@ -14,6 +14,10 @@ def engine_get_average_fps() -> float:
     return 66.0
 
 
+def engine_set_fps_display_enabled(enabled: bool) -> None:
+    pass
+
+
 def configure_game(
     game_tile="Test Game",
     window_width=800,

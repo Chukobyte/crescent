@@ -10,6 +10,7 @@ class Main(Node2D):
         Input.add_action(name="move_left", value=Input.Keyboard.A)
         Input.add_action(name="move_right", value=Input.Keyboard.D)
         print(f"[PY SCRIPT] position = {self.get_position()}")
+        Engine.set_fps_display_enabled(True)
 
     def _update(self, delta_time: float) -> None:
         if Input.is_action_just_pressed(name="exit"):

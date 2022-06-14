@@ -6,6 +6,7 @@
 #include "shader.h"
 #include "shader_source.h"
 #include "../game_properties.h"
+#include "../data_structures/rbe_static_array.h"
 #include "../utils/rbe_assert.h"
 
 typedef struct TextureCoordinates {
@@ -47,11 +48,68 @@ void rbe_renderer_finalize() {
     rbe_render_context_finalize();
 }
 
+// --- Sprite Batching --- //
+typedef struct SpriteBatchItem {
+    Texture* texture;
+    Rect2 sourceRect;
+    Rect2 destRect;
+    float rotation;
+    Color color;
+    bool flipX;
+    bool flipY;
+} SpriteBatchItem;
+
+typedef struct FontBatchItem {
+    Font* font;
+    const char* text;
+    float x;
+    float y;
+    float scale;
+    Color color;
+} FontBatchItem;
+
+RBE_STATIC_ARRAY_CREATE(SpriteBatchItem, 100, sprite_batch_items);
+RBE_STATIC_ARRAY_CREATE(FontBatchItem, 100, font_batch_items);
+
 void rbe_renderer_queue_sprite_draw_call(Texture* texture, Rect2 sourceRect, Rect2 destRect, float rotation, Color color, bool flipX, bool flipY) {
-    sprite_renderer_draw_sprite(texture, sourceRect, destRect, rotation, color, flipX, flipY);
+    SpriteBatchItem item = { .texture = texture, .sourceRect = sourceRect, .destRect = destRect, .rotation = rotation, .color = color, .flipX = flipX, .flipY = flipY };
+    RBE_STATIC_ARRAY_ADD(sprite_batch_items, item);
+//    sprite_renderer_draw_sprite(texture, sourceRect, destRect, rotation, color, flipX, flipY);
 }
 
-void rbe_renderer_flush_batches() {}
+void rbe_renderer_queue_font_draw_call(Font* font, const char* text, float x, float y, float scale, Color color) {
+    FontBatchItem item = { .font = font, .text = text, .x = x, .y = y, .scale = scale, .color = color };
+    RBE_STATIC_ARRAY_ADD(font_batch_items, item);
+//    font_renderer_draw_text(font, text, x, y, scale, color);
+}
+
+void rbe_renderer_flush_batches() {
+    // Sprite
+    for (size_t i = 0; i < sprite_batch_items_count; i++) {
+        sprite_renderer_draw_sprite(
+            sprite_batch_items[i].texture,
+            sprite_batch_items[i].sourceRect,
+            sprite_batch_items[i].destRect,
+            sprite_batch_items[i].rotation,
+            sprite_batch_items[i].color,
+            sprite_batch_items[i].flipX,
+            sprite_batch_items[i].flipY
+        );
+    }
+    RBE_STATIC_ARRAY_EMPTY(sprite_batch_items);
+    // Fonts
+    for (size_t i = 0; i < font_batch_items_count; i++) {
+        font_renderer_draw_text(
+            font_batch_items[i].font,
+            font_batch_items[i].text,
+            font_batch_items[i].x,
+            font_batch_items[i].y,
+            font_batch_items[i].scale,
+            font_batch_items[i].color
+        );
+    }
+    RBE_STATIC_ARRAY_EMPTY(font_batch_items);
+}
 
 // --- Sprite Renderer --- //
 void sprite_renderer_initialize() {
@@ -233,10 +291,6 @@ void font_renderer_draw_text(Font* font, const char* text, float x, float y, flo
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
     glBindTexture(GL_TEXTURE_2D, 0);
-}
-
-void rbe_renderer_queue_font_draw_call(Font* font, const char* text, float x, float y, float scale, Color color) {
-    font_renderer_draw_text(font, text, x, y, scale, color);
 }
 
 // --- Misc --- //

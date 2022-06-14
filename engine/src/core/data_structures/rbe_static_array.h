@@ -24,3 +24,6 @@ ARRAY_NAME[i + 1] = EMPTY_VALUE;                         \
 }                                                        \
 }                                                        \
 }
+
+#define RBE_STATIC_ARRAY_EMPTY(ARRAY_NAME) \
+ARRAY_NAME ##_count = 0;

@@ -10,6 +10,7 @@ PyObject* rbe_py_api_engine_exit(PyObject* self, PyObject* args, PyObject* kwarg
 PyObject* rbe_py_api_engine_set_target_fps(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* rbe_py_api_engine_get_target_fps(PyObject* self, PyObject* args);
 PyObject* rbe_py_api_engine_get_average_fps(PyObject* self, PyObject* args);
+PyObject* rbe_py_api_engine_set_fps_display_enabled(PyObject* self, PyObject* args, PyObject* kwargs);
 
 // Configuration
 PyObject* rbe_py_api_configure_game(PyObject* self, PyObject* args, PyObject* kwargs);
@@ -56,6 +57,10 @@ static struct PyMethodDef rbePyApiMethods[] = {
     {
         "engine_get_average_fps", rbe_py_api_engine_get_average_fps,
         METH_VARARGS, "Gets the average fps."
+    },
+    {
+        "engine_set_fps_display_enabled", (PyCFunction) rbe_py_api_engine_set_fps_display_enabled,
+        METH_VARARGS | METH_KEYWORDS, "If enabled will display the average fps."
     },
     // CONFIGURATION
     {
@@ -131,6 +136,7 @@ static struct PyModuleDef rbePyAPIModDef = {
 // --- Argument Lists --- //
 static char *rbePyApiGenericGetEntityKWList[] = {"entity_id", NULL};
 static char *rbePyApiGenericPathKWList[] = {"path", NULL};
+static char *rbePyApiGenericEnabledKWList[] = {"enabled", NULL};
 
 static char *rbePyApiEngineExitKWList[] = {"code", NULL};
 static char *rbePyApiEngineSetTargetFPSKWList[] = {"fps", NULL};
