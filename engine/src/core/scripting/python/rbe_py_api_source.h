@@ -323,6 +323,10 @@
 "    def get_average_fps() -> float:\n"\
 "        return rbe_py_api_internal.engine_get_average_fps()\n"\
 "\n"\
+"    @staticmethod\n"\
+"    def set_fps_display_enabled(enabled: bool) -> None:\n"\
+"        rbe_py_api_internal.engine_set_fps_display_enabled(enabled=enabled)\n"\
+"\n"\
 "\n"\
 "# INPUT\n"\
 "class Input:\n"\

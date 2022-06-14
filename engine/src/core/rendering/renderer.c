@@ -100,12 +100,12 @@ void rbe_renderer_flush_batches() {
     // Fonts
     for (size_t i = 0; i < font_batch_items_count; i++) {
         font_renderer_draw_text(
-                font_batch_items[i].font,
-                font_batch_items[i].text,
-                font_batch_items[i].x,
-                font_batch_items[i].y,
-                font_batch_items[i].scale,
-                font_batch_items[i].color
+            font_batch_items[i].font,
+            font_batch_items[i].text,
+            font_batch_items[i].x,
+            font_batch_items[i].y,
+            font_batch_items[i].scale,
+            font_batch_items[i].color
         );
     }
     RBE_STATIC_ARRAY_EMPTY(font_batch_items);

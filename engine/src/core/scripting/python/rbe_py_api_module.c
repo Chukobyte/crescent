@@ -200,7 +200,7 @@ void setup_scene_stage_nodes(SceneTreeNode* parent, PyObject* stageNodeList) {
             parent->children[parent->childCount++] = node;
         }
 
-        rbe_scene_manager_queue_entity_for_creation(node->entity); // May move in a different place TODO: Figure out...
+        rbe_scene_manager_queue_entity_for_creation(node); // May move in a different place TODO: Figure out...
 
         PyObject* pStageNode = PyList_GetItem(stageNodeList, i);
         const char* nodeName = phy_get_string_from_var(pStageNode, "name");
