@@ -31,8 +31,8 @@ void rbe_ecs_manager_enable_fps_display_entity(bool enabled) {
         currentFpsEntity = node->entity;
         // Transform 2D
         Transform2DComponent* transform2DComponent = transform2d_component_create();
-        transform2DComponent->position.x = 275.0f;
-        transform2DComponent->position.y = 200.0f;
+        transform2DComponent->position.x = 20.0f;
+        transform2DComponent->position.y = 30.0f;
         component_manager_set_component(currentFpsEntity, ComponentDataIndex_TRANSFORM_2D, transform2DComponent);
         // Text Label Component
         TextLabelComponent* textLabelComponent = text_label_component_create();
