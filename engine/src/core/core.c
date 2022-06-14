@@ -209,7 +209,11 @@ void rbe_update() {
 
     // Get FPS
     static unsigned int countedFrames = 0;
-    countedFrames++;
+    if (countedFrames == 0) {
+        countedFrames = engineContext->targetFPS;
+    } else {
+        countedFrames++;
+    }
     float averageFPS = (float) countedFrames / ((float) SDL_GetTicks() / 1000.f);
     engineContext->averageFPS = averageFPS;
 }
