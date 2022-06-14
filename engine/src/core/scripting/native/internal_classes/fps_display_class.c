@@ -9,6 +9,8 @@
 #include "../../../asset_manager.h"
 #include "../../../rendering/renderer.h"
 #include "../../../memory/rbe_mem.h"
+#include "../../../ecs/component/text_label_component.h"
+#include "../../../ecs/component/component.h"
 
 typedef struct FpsDisplayClassData {
     int value;
@@ -46,11 +48,10 @@ void fps_display_on_start(RBENativeScriptClass* nativeScriptClass) {
 void fps_display_on_end(RBENativeScriptClass* nativeScriptClass) {}
 
 void fps_display_update(RBENativeScriptClass* nativeScriptClass, float deltaTime) {
-    static const Color fpsTextColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-    static char fpsDisplayBuffer[16];
+    // Update Text Label Component's Text
     static char fpsAmountBuffer[6];
     gcvt(rbe_engine_context_get()->averageFPS, 4, fpsAmountBuffer);
-    strcpy(fpsDisplayBuffer, "FPS: ");
-    strcat(fpsDisplayBuffer, fpsAmountBuffer);
-    rbe_renderer_queue_font_draw_call(rbe_asset_manager_get_font("verdana-32"), fpsDisplayBuffer, 275, 200, 1.0f, fpsTextColor);
+    TextLabelComponent* textLabelComponent = (TextLabelComponent*) component_manager_get_component(nativeScriptClass->entity, ComponentDataIndex_TEXT_LABEL);
+    strcpy(textLabelComponent->text, "FPS: ");
+    strcat(textLabelComponent->text, fpsAmountBuffer);
 }

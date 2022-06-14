@@ -12,6 +12,7 @@
 #include "../../ecs/system/ec_system.h"
 #include "../../ecs/component/transform2d_component.h"
 #include "../../ecs/component/sprite_component.h"
+#include "../../ecs/component/text_label_component.h"
 #include "../../ecs/component/script_component.h"
 #include "../../utils/rbe_assert.h"
 
@@ -306,7 +307,7 @@ void setup_scene_component_node(Entity entity, PyObject* component) {
         spriteComponent->drawSource.h = drawSourceH;
         spriteComponent->flipX = flipX;
         spriteComponent->flipY = flipY;
-        Color modulateColor = rbe_color_get_normalized_color(modulateR, modulateG, modulateB, modulateA);
+        const Color modulateColor = rbe_color_get_normalized_color(modulateR, modulateG, modulateB, modulateA);
         spriteComponent->modulate.r = modulateColor.r;
         spriteComponent->modulate.g = modulateColor.g;
         spriteComponent->modulate.b = modulateColor.b;
@@ -316,6 +317,24 @@ void setup_scene_component_node(Entity entity, PyObject* component) {
                          texturePath, drawSourceX, drawSourceY, drawSourceW, drawSourceH, flipX, flipY, modulateR, modulateG, modulateB, modulateA);
         Py_DecRef(pDrawSource);
         Py_DecRef(pModulate);
+    } else if (strcmp(className, "TextLabelComponent") == 0) {
+        rbe_logger_debug("Building text label component");
+        const char* textLabelUID = phy_get_string_from_var(component, "uid");
+        const char* textLabelText = phy_get_string_from_var(component, "text");
+        PyObject* pColor = PyObject_GetAttrString(component, "color");
+        const int colorR = phy_get_int_from_var(pColor, "r");
+        const int colorG = phy_get_int_from_var(pColor, "g");
+        const int colorB = phy_get_int_from_var(pColor, "b");
+        const int colorA = phy_get_int_from_var(pColor, "a");
+        const Color textLabelColor = rbe_color_get_normalized_color(colorR, colorG, colorB, colorA);
+        TextLabelComponent* textLabelComponent = text_label_component_create();
+        textLabelComponent->font = rbe_asset_manager_get_font(textLabelUID);
+        RBE_ASSERT(textLabelComponent->font != NULL);
+        strcpy(textLabelComponent->text, textLabelText);
+        textLabelComponent->color = textLabelColor;
+        component_manager_set_component(entity, ComponentDataIndex_TEXT_LABEL, textLabelComponent);
+        rbe_logger_debug("uid: %s, text: %s, color(%d, %d, %d, %d)", textLabelUID, textLabelText, colorR, colorG, colorB, colorA);
+        Py_DecRef(pColor);
     } else if (strcmp(className, "ScriptComponent") == 0) {
         rbe_logger_debug("Building script component");
         const char* scriptClassPath = phy_get_string_from_var(component, "class_path");

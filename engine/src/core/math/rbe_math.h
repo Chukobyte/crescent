@@ -24,6 +24,7 @@ typedef struct Color {
 
 Color rbe_color_get_normalized_color_default_alpha(unsigned int r, unsigned int g, unsigned int b);
 Color rbe_color_get_normalized_color(unsigned int r, unsigned int g, unsigned int b, unsigned int a);
+Color rbe_color_get_white();
 
 // --- Misc --- //
 float rbe_math_map_to_range(float input, float inputLow, float inputHigh, float outputLow, float outputHigh);

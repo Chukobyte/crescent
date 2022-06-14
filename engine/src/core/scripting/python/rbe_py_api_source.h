@@ -464,6 +464,18 @@
 "        self.modulate = modulate\n"\
 "\n"\
 "\n"\
+"class TextLabelComponent:\n"\
+"    def __init__(\n"\
+"        self,\n"\
+"        uid: str,\n"\
+"        text: str,\n"\
+"        color: Color,\n"\
+"    ):\n"\
+"        self.uid = uid\n"\
+"        self.text = text\n"\
+"        self.color = color\n"\
+"\n"\
+"\n"\
 "class ScriptComponent:\n"\
 "    def __init__(self, class_path: str, class_name: str):\n"\
 "        self.class_path = class_path\n"\
