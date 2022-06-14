@@ -173,8 +173,13 @@ bool rbe_load_assets_from_configuration() {
     // Textures
     for (size_t i = 0; i < gameProperties->textureCount; i++) {
         const RBEAssetTexture assetTexture = gameProperties->textures[i];
-        Texture* texture = rbe_asset_manager_load_texture(assetTexture.file_path, assetTexture.file_path);
-        RBE_ASSERT(texture != NULL);
+        rbe_asset_manager_load_texture(assetTexture.file_path, assetTexture.file_path);
+    }
+
+    // Fonts
+    for (size_t i = 0; i < gameProperties->fontCount; i++) {
+        const RBEAssetFont assetFont = gameProperties->fonts[i];
+        rbe_asset_manager_load_font(assetFont.file_path, assetFont.uid, assetFont.size);
     }
 
     // Inputs
@@ -274,6 +279,10 @@ void rbe_render() {
 
     rbe_renderer_flush_batches();
 
+    // TEMP
+    static Color fontDrawColor = { 1.0f, 1.0f ,1.0f, 1.0f };
+    rbe_renderer_queue_font_draw_call(rbe_asset_manager_get_font("fight-64"), "Fight Engine", 200, 200, 1.0f, fontDrawColor);
+
     SDL_GL_SwapWindow(window);
 }
 
@@ -285,6 +294,7 @@ void rbe_shutdown() {
     SDL_DestroyWindow(window);
     SDL_GL_DeleteContext(openGlContext);
     SDL_Quit();
+    rbe_renderer_finalize();
     rbe_py_finalize();
     rbe_game_props_finalize();
     rbe_audio_manager_finalize();
