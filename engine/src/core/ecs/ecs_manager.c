@@ -3,15 +3,17 @@
 #include "component/component.h"
 #include "system/ec_system.h"
 #include "system/sprite_rendering_ec_system.h"
-#include "../utils/rbe_assert.h"
+#include "system/font_rendering_ec_system.h"
 #include "system/script_ec_system.h"
 #include "../scene/scene_manager.h"
+#include "../utils/rbe_assert.h"
 
 void rbe_ecs_manager_initialize() {
     component_manager_initialize();
     rbe_ec_system_initialize();
     // Initialize and register ec systems
     rbe_ec_system_register(sprite_rendering_ec_system_create());
+    rbe_ec_system_register(font_rendering_ec_system_create());
     rbe_ec_system_register(script_ec_system_create());
 }
 

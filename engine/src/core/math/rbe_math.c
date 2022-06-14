@@ -1,5 +1,6 @@
 #include "rbe_math.h"
 
+// --- Color --- //
 Color rbe_color_get_normalized_color_default_alpha(unsigned int r, unsigned int g, unsigned int b) {
     Color color = {
         .r = (float) r / 255.0f,
@@ -18,6 +19,11 @@ Color rbe_color_get_normalized_color(unsigned int r, unsigned int g, unsigned in
         .a = (float) a / 255.0f
     };
     return color;
+}
+
+Color rbe_color_get_white() {
+    Color white = { 1.0f, 1.0f, 1.0f, 1.0f};
+    return white;
 }
 
 // --- Misc --- //
