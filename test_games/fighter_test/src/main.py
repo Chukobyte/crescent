@@ -30,7 +30,7 @@ class Main(Node2D):
         if Input.is_action_pressed(name="move_right"):
             self.velocity += Vector2.RIGHT()
 
-    print(f"average fps = {Engine.get_average_fps()}")
+    # print(f"average fps = {Engine.get_average_fps()}")
 
     def _physics_update(self, delta_time: float) -> None:
         if self.velocity != Vector2.ZERO():
