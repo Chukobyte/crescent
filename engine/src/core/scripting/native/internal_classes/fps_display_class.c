@@ -10,8 +10,6 @@ typedef struct FpsDisplayClassData {
 } FpsDisplayClassData;
 
 RBENativeScriptClass* fps_display_create_new_instance(Entity entity);
-//void fps_display_on_start(Entity entity, void* inst_data);
-//void fps_display_update(Entity entity, void* inst_data, float deltaTime);
 void fps_display_on_start(RBENativeScriptClass* nativeScriptClass);
 void fps_display_update(RBENativeScriptClass* nativeScriptClass, float deltaTime);
 
