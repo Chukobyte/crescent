@@ -2,6 +2,7 @@
 
 #include "data_structures/rbe_hash_map_string.h"
 #include "rendering/texture.h"
+#include "rendering/font.h"
 #include "audio/audio.h"
 #include "audio/audio_manager.h"
 #include "memory/rbe_mem.h"
@@ -10,15 +11,18 @@
 #define INITIAL_ASSET_HASHMAP_SIZE 64
 
 RBEStringHashMap* texturesMap = NULL;
+RBEStringHashMap* fontMap = NULL;
 RBEStringHashMap* audioSourceMap = NULL;
 
 void rbe_asset_manager_initialize() {
     texturesMap = rbe_string_hash_map_create(INITIAL_ASSET_HASHMAP_SIZE);
+    fontMap = rbe_string_hash_map_create(INITIAL_ASSET_HASHMAP_SIZE);
     audioSourceMap = rbe_string_hash_map_create(INITIAL_ASSET_HASHMAP_SIZE);
 }
 
 void rbe_asset_manager_finalize() {
     rbe_string_hash_map_destroy(texturesMap);
+    rbe_string_hash_map_destroy(fontMap);
     rbe_string_hash_map_destroy(audioSourceMap);
 }
 
@@ -37,6 +41,23 @@ Texture* rbe_asset_manager_get_texture(const char* key) {
 
 bool rbe_asset_manager_has_texture(const char* key) {
     return rbe_string_hash_map_has(texturesMap, key);
+}
+
+// --- Font --- //
+Font* rbe_asset_manager_load_font(const char* fileName, const char* key, int size) {
+    RBE_ASSERT_FMT(!rbe_asset_manager_has_font(key), "Font key '%s' already exists!", key);
+    Font* font = font_create_font(fileName, size);
+    RBE_ASSERT_FMT(font != NULL, "Failed to load font! file_name: '%s', key: '%s', size: '%d'", fileName, key, size);
+    rbe_string_hash_map_add(fontMap, key, font, sizeof(Font));
+    return font;
+}
+
+Font* rbe_asset_manager_get_font(const char* key) {
+    return (Font*) rbe_string_hash_map_get(fontMap, key);
+}
+
+bool rbe_asset_manager_has_font(const char* key) {
+    return rbe_string_hash_map_has(fontMap, key);
 }
 
 // --- Audio Source --- //
