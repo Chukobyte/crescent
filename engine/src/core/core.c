@@ -279,6 +279,10 @@ void rbe_render() {
 
     rbe_renderer_flush_batches();
 
+    // TEMP
+    static Color fontDrawColor = { 1.0f, 1.0f ,1.0f, 1.0f };
+    rbe_renderer_queue_font_draw_call(rbe_asset_manager_get_font("verdana-32"), "Fight Engine", 275, 200, 1.0f, fontDrawColor);
+
     SDL_GL_SwapWindow(window);
 }
 
