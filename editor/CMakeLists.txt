@@ -55,7 +55,9 @@ add_library(${PROJECT_NAME} STATIC
         ../engine/src/core/ecs/component/script_component.c
         ../engine/src/core/ecs/component/sprite_component.c
         ../engine/src/core/ecs/component/component.c
+        ../engine/src/core/rendering/font.c
         ../engine/src/core/rendering/renderer.c
+        ../engine/src/core/rendering/render_context.c
         ../engine/src/core/rendering/shader.c
         ../engine/src/core/rendering/texture.c
         ../engine/src/core/audio/audio.c

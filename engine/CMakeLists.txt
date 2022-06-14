@@ -31,7 +31,11 @@ add_library(${PROJECT_NAME} STATIC
         src/core/scripting/python/py_cache.c
         src/core/scripting/python/py_script_context.c
         src/core/scripting/native/native_script_context.c
+        src/core/scripting/native/native_script_class.c
+        src/core/scripting/native/internal_classes/fps_display_class.c
+        src/core/rendering/font.c
         src/core/rendering/renderer.c
+        src/core/rendering/render_context.c
         src/core/rendering/shader.c
         src/core/rendering/texture.c
         src/core/audio/audio_manager.c
