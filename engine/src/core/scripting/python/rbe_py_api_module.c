@@ -87,7 +87,6 @@ PyObject* rbe_py_api_configure_assets(PyObject* self, PyObject* args, PyObject* 
 
         RBEGameProperties* gameProperties = rbe_game_props_get();
 
-        // TODO: Actually put assets into structures
         // Audio Sources
         rbe_logger_debug("audio_sources:");
         for (Py_ssize_t i = 0; i < PyList_Size(audioSourcesList); i++) {

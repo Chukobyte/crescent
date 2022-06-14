@@ -18,7 +18,7 @@ typedef struct RBEAssetTexture {
 typedef struct RBEAssetFont {
     char* file_path;
     char* uid;
-    size_t size;
+    int size;
 } RBEAssetFont;
 
 typedef struct RBEInputAction {
