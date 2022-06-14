@@ -200,6 +200,9 @@ void setup_scene_stage_nodes(SceneTreeNode* parent, PyObject* stageNodeList) {
         } else {
             parent->children[parent->childCount++] = node;
         }
+
+        rbe_scene_manager_queue_entity_for_creation(node->entity); // May move in a different place TODO: Figure out...
+
         PyObject* pStageNode = PyList_GetItem(stageNodeList, i);
         const char* nodeName = phy_get_string_from_var(pStageNode, "name");
         const char* nodeType = phy_get_string_from_var(pStageNode, "type");
@@ -313,7 +316,6 @@ void setup_scene_component_node(Entity entity, PyObject* component) {
         scriptComponent->className = scriptClassName;
         scriptComponent->contextType = ScriptContextType_PYTHON;
         component_manager_set_component(entity, ComponentDataIndex_SCRIPT, scriptComponent);
-        rbe_scene_manager_queue_entity_for_creation(entity); // May move in a different place TODO: Figure out...
         rbe_logger_debug("class_path: %s, class_name: %s", scriptClassPath, scriptClassName);
     } else {
         rbe_logger_error("Invalid component class name: '%s'", className);
