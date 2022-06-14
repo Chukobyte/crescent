@@ -2,6 +2,7 @@
 
 #include <cglm/cglm.h>
 
+#include "render_context.h"
 #include "shader.h"
 #include "shader_source.h"
 #include "../game_properties.h"
@@ -15,6 +16,9 @@ typedef struct TextureCoordinates {
 } TextureCoordinates;
 
 void sprite_renderer_initialize();
+void sprite_renderer_finalize();
+void font_renderer_initialize();
+void font_renderer_finalize();
 TextureCoordinates renderer_get_texture_coordinates(Texture* texture, Rect2 drawSource, bool flipX, bool flipY);
 void renderer_print_opengl_errors();
 
@@ -28,7 +32,15 @@ void rbe_renderer_initialize() {
     glEnable(GL_CULL_FACE);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    rbe_render_context_initialize();
     sprite_renderer_initialize();
+    font_renderer_initialize();
+}
+
+void rbe_renderer_finalize() {
+    font_renderer_finalize();
+    sprite_renderer_finalize();
+    rbe_render_context_finalize();
 }
 
 // temp
@@ -154,6 +166,13 @@ void sprite_renderer_initialize() {
     shader_set_mat4_float(spriteShader, "projection", &proj);
     shader_set_int(spriteShader, "sprite", 0);
 }
+
+void sprite_renderer_finalize() {}
+
+// --- Font Renderer --- //
+void font_renderer_initialize() {}
+
+void font_renderer_finalize() {}
 
 // --- Misc --- //
 TextureCoordinates renderer_get_texture_coordinates(Texture* texture, Rect2 drawSource, bool flipX, bool flipY) {

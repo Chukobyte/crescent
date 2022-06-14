@@ -285,6 +285,7 @@ void rbe_shutdown() {
     SDL_DestroyWindow(window);
     SDL_GL_DeleteContext(openGlContext);
     SDL_Quit();
+    rbe_renderer_finalize();
     rbe_py_finalize();
     rbe_game_props_finalize();
     rbe_audio_manager_finalize();
