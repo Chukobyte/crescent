@@ -425,6 +425,18 @@ class SpriteComponent:
         self.modulate = modulate
 
 
+class TextLabelComponent:
+    def __init__(
+        self,
+        uid: str,
+        text: str,
+        color: Color,
+    ):
+        self.uid = uid
+        self.text = text
+        self.color = color
+
+
 class ScriptComponent:
     def __init__(self, class_path: str, class_name: str):
         self.class_path = class_path
