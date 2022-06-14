@@ -90,9 +90,6 @@ bool rbe_initialize(int argv, char** args) {
     // Go to initial scene
     rbe_scene_manager_queue_scene_change(gameProperties->initialScenePath);
 
-    // temp
-    rbe_ecs_manager_enable_fps_display_entity(true);
-
     return true;
 }
 

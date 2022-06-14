@@ -8,6 +8,7 @@
 #include "../../audio/audio_manager.h"
 #include "../../scripting/python/py_helper.h"
 #include "../../scene/scene_manager.h"
+#include "../../ecs/ecs_manager.h"
 #include "../../ecs/system/ec_system.h"
 #include "../../ecs/component/transform2d_component.h"
 #include "../../ecs/component/sprite_component.h"
@@ -51,6 +52,15 @@ PyObject* rbe_py_api_engine_get_target_fps(PyObject* self, PyObject* args) {
 PyObject* rbe_py_api_engine_get_average_fps(PyObject* self, PyObject* args) {
     RBEEngineContext* engineContext = rbe_engine_context_get();
     return Py_BuildValue("(f)", engineContext->averageFPS);
+}
+
+PyObject* rbe_py_api_engine_set_fps_display_enabled(PyObject* self, PyObject* args, PyObject* kwargs) {
+    bool isEnabled;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "b", rbePyApiGenericEnabledKWList, &isEnabled)) {
+        rbe_ecs_manager_enable_fps_display_entity(isEnabled);
+        Py_RETURN_NONE;
+    }
+    return NULL;
 }
 
 // Configure

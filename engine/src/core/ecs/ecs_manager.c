@@ -1,7 +1,5 @@
 #include "ecs_manager.h"
 
-#include <string.h>
-
 #include "component/component.h"
 #include "system/ec_system.h"
 #include "system/sprite_rendering_ec_system.h"
