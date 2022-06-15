@@ -9,7 +9,7 @@
 
 // Server
 void server_callback(const char* message) {
-    printf("Received from client: %s", message);
+    printf("Received from client: '%s'\n", message);
     rbe_udp_server_send_message(message);
 }
 
@@ -21,7 +21,7 @@ void server_start() {
 
 // Client
 void client_callback(const char* message) {
-    printf("Received from server: %s", message);
+    printf("Received from server: '%s'\n", message);
 }
 
 void client_start() {
@@ -32,8 +32,6 @@ void client_start() {
         printf("Enter message:\n");
         gets(sendMessageBuffer);
         rbe_udp_client_send_message(sendMessageBuffer);
-        rbe_udp_client_poll();
-        printf("Read from server!\n");
     }
     rbe_udp_client_finalize();
 }
