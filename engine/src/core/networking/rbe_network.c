@@ -53,29 +53,28 @@ bool rbe_udp_server_initialize(int port, on_network_server_callback user_callbac
 bool rbe_udp_server_poll() {
     //keep listening for data
     while (true) {
-        rbe_logger_debug("Waiting for data...");
-        fflush(stdout);
-
         //clear the buffer by filling null, it might have previously received data
         memset(server_buffer, '\0', SERVER_BUFFER_SIZE);
-
         //try to receive some data, this is a blocking call
         if ((server_recv_len = recvfrom(server_socket, server_buffer, SERVER_BUFFER_SIZE, 0, (struct sockaddr *) &server_si_other, &server_socket_size)) == SOCKET_ERROR) {
             rbe_logger_error("recvfrom() failed with error code : %d", WSAGetLastError());
             return false;
         }
-
+        // Call user callback
         server_user_callback(server_buffer);
 
         //print details of the client/peer and the data received
-        rbe_logger_debug("Received packet from %s:%d", inet_ntoa(server_si_other.sin_addr), ntohs(server_si_other.sin_port));
-        rbe_logger_debug("Data: %s", server_buffer);
+//        rbe_logger_debug("Received packet from %s:%d", inet_ntoa(server_si_other.sin_addr), ntohs(server_si_other.sin_port));
+//        rbe_logger_debug("Data: %s", server_buffer);
 
-        //now reply the client with the same data
-        if (sendto(server_socket, server_buffer, server_recv_len, 0, (struct sockaddr*) &server_si_other, server_socket_size) == SOCKET_ERROR) {
-            rbe_logger_error("sendto() failed with error code : %d", WSAGetLastError());
-            return false;
-        }
+    }
+    return true;
+}
+
+bool rbe_udp_server_send_message(const char* message) {
+    if (sendto(server_socket, server_buffer, server_recv_len, 0, (struct sockaddr*) &server_si_other, server_socket_size) == SOCKET_ERROR) {
+        rbe_logger_error("sendto() failed with error code : %d", WSAGetLastError());
+        return false;
     }
     return true;
 }
@@ -93,9 +92,11 @@ static struct sockaddr_in client_si_other;
 static int client_socket_size = 0;
 static char client_buffer[CLIENT_BUFFER_SIZE];
 static char client_message_buffer[CLIENT_BUFFER_SIZE];
+static on_network_client_callback client_user_callback = NULL;
 
-bool rbe_udp_client_initialize(const char* serverAddr, int serverPort) {
+bool rbe_udp_client_initialize(const char* serverAddr, int serverPort, on_network_client_callback userCallback) {
     client_socket_size = sizeof(client_si_other);
+    client_user_callback = userCallback;
     WSADATA wsa;
 
     //Initialise winsock
@@ -125,17 +126,6 @@ bool rbe_udp_client_initialize(const char* serverAddr, int serverPort) {
 
 bool rbe_udp_client_poll() {
     while (true) {
-        printf("Enter message : ");
-        fflush(stdout);
-        gets(client_message_buffer);
-
-        //send the message
-        if (sendto(client_socket, client_message_buffer, strlen(client_message_buffer), 0, (struct sockaddr*) &client_si_other, client_socket_size) == SOCKET_ERROR) {
-            rbe_logger_error("sendto() failed with error code : %d", WSAGetLastError());
-            return false;
-        }
-
-        //receive a reply and print it
         //clear the buffer by filling null, it might have previously received data
         memset(client_buffer,'\0', CLIENT_BUFFER_SIZE);
         //try to receive some data, this is a blocking call
@@ -143,10 +133,20 @@ bool rbe_udp_client_poll() {
             rbe_logger_error("recvfrom() failed with error code : %d", WSAGetLastError());
             return false;
         }
+        // Call user callback
+        client_user_callback(client_buffer);
 
-        rbe_logger_debug("Server response = %s", client_buffer);
+        rbe_logger_debug("Server received data = '%s'", client_buffer);
     }
 
+    return true;
+}
+
+bool rbe_udp_client_send_message(const char* message) {
+    if (sendto(client_socket, client_message_buffer, strlen(client_message_buffer), 0, (struct sockaddr*) &client_si_other, client_socket_size) == SOCKET_ERROR) {
+        rbe_logger_error("sendto() failed with error code : %d", WSAGetLastError());
+        return false;
+    }
     return true;
 }
 

@@ -11,6 +11,10 @@ void server_callback(const char* message) {
     printf("server_callback - message: '%s'\n", message);
 }
 
+void client_callback(const char* message) {
+    printf("server_callback - message: '%s'\n", message);
+}
+
 void run_server() {
     RBE_ASSERT(rbe_udp_server_initialize(RBE_TEST_PORT, server_callback));
     rbe_udp_server_poll();
@@ -18,7 +22,7 @@ void run_server() {
 }
 
 void run_client() {
-    RBE_ASSERT(rbe_udp_client_initialize("127.0.0.1", RBE_TEST_PORT));
+    RBE_ASSERT(rbe_udp_client_initialize("127.0.0.1", RBE_TEST_PORT, client_callback));
     rbe_udp_client_poll();
     rbe_udp_client_finalize();
 }
