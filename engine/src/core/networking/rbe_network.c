@@ -87,28 +87,30 @@ void rbe_udp_server_finalize() {
 
 static int client_socket;
 static struct sockaddr_in client_si_other;
-static int client_socket_size = 0; //slen
+static int client_socket_size = 0;
 static char client_buffer[CLIENT_BUFFER_SIZE];
 static char client_message_buffer[CLIENT_BUFFER_SIZE];
 
 bool rbe_udp_client_initialize(const char* serverAddr, int serverPort) {
+    rbe_logger_set_level(LogLevel_DEBUG);
+    client_socket_size = sizeof(client_si_other);
     WSADATA wsa;
 
     //Initialise winsock
     rbe_logger_debug("Initialising client Winsock...");
-    if (WSAStartup(MAKEWORD(2,2),&wsa) != 0)
-    {
+    if (WSAStartup(MAKEWORD(2,2),&wsa) != 0) {
         rbe_logger_error("Failed. Error Code : %d", WSAGetLastError());
         return false;
     }
-    rbe_logger_debug("Initialised.");
+    rbe_logger_debug("Initialized Winsock.");
 
     //create socket
-    if ((client_socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == SOCKET_ERROR)
-    {
-        rbe_logger_error("socket() failed with error code : %d" , WSAGetLastError());
+    rbe_logger_debug("Creating client socket....");
+    if ((client_socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == SOCKET_ERROR) {
+        rbe_logger_error("socket() failed with error code : %d", WSAGetLastError());
         return false;
     }
+    rbe_logger_debug("Client socket created.");
 
     //setup address structure
     memset((char*) &client_si_other, 0, sizeof(client_si_other));
@@ -125,8 +127,8 @@ bool rbe_udp_client_poll() {
         gets(client_message_buffer);
 
         //send the message
-        if (sendto(client_socket, client_message_buffer, strlen(client_message_buffer) , 0 , (struct sockaddr *) &client_si_other, client_socket_size) == SOCKET_ERROR) {
-            rbe_logger_error("sendto() failed with error code : %d" , WSAGetLastError());
+        if (sendto(client_socket, client_message_buffer, strlen(client_message_buffer), 0, (struct sockaddr*) &client_si_other, client_socket_size) == SOCKET_ERROR) {
+            rbe_logger_error("sendto() failed with error code : %d", WSAGetLastError());
             return false;
         }
 
@@ -135,11 +137,11 @@ bool rbe_udp_client_poll() {
         memset(client_buffer,'\0', CLIENT_BUFFER_SIZE);
         //try to receive some data, this is a blocking call
         if (recvfrom(client_socket, client_buffer, CLIENT_BUFFER_SIZE, 0, (struct sockaddr *) &client_si_other, &client_socket_size) == SOCKET_ERROR) {
-            rbe_logger_error("recvfrom() failed with error code : %d" , WSAGetLastError());
+            rbe_logger_error("recvfrom() failed with error code : %d", WSAGetLastError());
             return false;
         }
 
-        rbe_logger_debug("client buffer = %s", client_buffer);
+        rbe_logger_debug("Server response = %s", client_buffer);
     }
 
     return true;
