@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 //#include "core/core.h"
 
 #include "core/networking/rbe_network.h"
@@ -6,8 +7,12 @@
 
 #define RBE_TEST_PORT 8888
 
+void server_callback(const char* message) {
+    printf("server_callback - message: '%s'\n", message);
+}
+
 void run_server() {
-    RBE_ASSERT(rbe_udp_server_initialize(RBE_TEST_PORT));
+    RBE_ASSERT(rbe_udp_server_initialize(RBE_TEST_PORT, server_callback));
     rbe_udp_server_poll();
     rbe_udp_server_finalize();
 }
@@ -29,6 +34,7 @@ int main(int argv, char** args) {
 //
 //    rbe_shutdown();
 
+//    rbe_logger_set_level(LogLevel_DEBUG);
     run_server();
 //    run_client();
 

@@ -14,10 +14,11 @@ static struct sockaddr_in server_si_other;
 static int server_socket_size = 0;
 static int server_recv_len = 0;
 static char server_buffer[SERVER_BUFFER_SIZE];
+static on_network_server_callback server_user_callback = NULL;
 
-bool rbe_udp_server_initialize(int port) {
-    rbe_logger_set_level(LogLevel_DEBUG);
+bool rbe_udp_server_initialize(int port, on_network_server_callback user_callback) {
     server_socket_size = sizeof(server_si_other);
+    server_user_callback = user_callback;
     WSADATA wsa;
 
     // Initialize Winsock
@@ -64,6 +65,8 @@ bool rbe_udp_server_poll() {
             return false;
         }
 
+        server_user_callback(server_buffer);
+
         //print details of the client/peer and the data received
         rbe_logger_debug("Received packet from %s:%d", inet_ntoa(server_si_other.sin_addr), ntohs(server_si_other.sin_port));
         rbe_logger_debug("Data: %s", server_buffer);
@@ -92,7 +95,6 @@ static char client_buffer[CLIENT_BUFFER_SIZE];
 static char client_message_buffer[CLIENT_BUFFER_SIZE];
 
 bool rbe_udp_client_initialize(const char* serverAddr, int serverPort) {
-    rbe_logger_set_level(LogLevel_DEBUG);
     client_socket_size = sizeof(client_si_other);
     WSADATA wsa;
 

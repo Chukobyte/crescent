@@ -3,7 +3,9 @@
 #include <stdbool.h>
 
 //--- UDP SERVER ---//
-bool rbe_udp_server_initialize(int port);
+typedef void (*on_network_server_callback) (const char*);
+
+bool rbe_udp_server_initialize(int port, on_network_server_callback user_callback);
 bool rbe_udp_server_poll();
 void rbe_udp_server_finalize();
 
