@@ -124,6 +124,7 @@ bool rbe_udp_client_initialize(const char* serverAddr, int serverPort) {
 bool rbe_udp_client_poll() {
     while (true) {
         printf("Enter message : ");
+        fflush(stdout);
         gets(client_message_buffer);
 
         //send the message
