@@ -1,9 +1,11 @@
 #include "rbe_network.h"
 
-#include<stdio.h>
-#include<winsock2.h>
+#include <stdio.h>
+#include <winsock2.h>
 
+#include "../thread/rbe_pthread.h"
 #include "../utils/logger.h"
+#include "../utils/rbe_assert.h"
 
 //--- UDP SERVER ---//
 #define SERVER_BUFFER_SIZE 512
@@ -23,17 +25,17 @@ bool rbe_udp_server_initialize(int port, on_network_server_callback user_callbac
 
     // Initialize Winsock
     if (WSAStartup(MAKEWORD(2,2),&wsa) != 0) {
-        rbe_logger_error("Failed to initialize winsock! Error Code : %d", WSAGetLastError());
+        rbe_logger_error("Server: Failed to initialize winsock! Error Code : %d", WSAGetLastError());
         return false;
     }
-    rbe_logger_debug("Winsock initialized!");
+    rbe_logger_debug("Server: winsock initialized!");
 
     // Create a socket
     if ((server_socket = socket(AF_INET, SOCK_DGRAM, 0 )) == INVALID_SOCKET) {
-        rbe_logger_debug("Could not create socket : %d", WSAGetLastError());
+        rbe_logger_debug("Server: could not create socket : %d", WSAGetLastError());
         return false;
     }
-    rbe_logger_debug("Socket created!");
+    rbe_logger_debug("Server: socket created!");
 
     // Prepare the sockaddr_in structure
     server.sin_family = AF_INET;
@@ -42,23 +44,30 @@ bool rbe_udp_server_initialize(int port, on_network_server_callback user_callbac
 
     // Bind
     if (bind(server_socket, (struct sockaddr *) &server, sizeof(server)) == SOCKET_ERROR) {
-        rbe_logger_error("Bind failed with error code : %d", WSAGetLastError());
+        rbe_logger_error("Server: Bind failed with error code : %d", WSAGetLastError());
         return false;
     }
-    rbe_logger_debug("Bind done!");
+    rbe_logger_debug("Server: Bind done!");
+
+    // Start Networking Thread
+    pthread_t thread;
+    int thread1Return = pthread_create(&thread, NULL, rbe_udp_server_poll, NULL);
+    rbe_logger_debug("Server: Initialized thread.");
 
     return true;
 }
 
-bool rbe_udp_server_poll() {
+void* rbe_udp_server_poll(void* arg) {
     //keep listening for data
     while (true) {
+        fflush(stdout);
+
         //clear the buffer by filling null, it might have previously received data
         memset(server_buffer, '\0', SERVER_BUFFER_SIZE);
         //try to receive some data, this is a blocking call
         if ((server_recv_len = recvfrom(server_socket, server_buffer, SERVER_BUFFER_SIZE, 0, (struct sockaddr *) &server_si_other, &server_socket_size)) == SOCKET_ERROR) {
-            rbe_logger_error("recvfrom() failed with error code : %d", WSAGetLastError());
-            return false;
+            rbe_logger_error("Server: recvfrom() failed with error code : %d", WSAGetLastError());
+            return NULL;
         }
         // Call user callback
         server_user_callback(server_buffer);
@@ -68,12 +77,12 @@ bool rbe_udp_server_poll() {
 //        rbe_logger_debug("Data: %s", server_buffer);
 
     }
-    return true;
+    return NULL;
 }
 
 bool rbe_udp_server_send_message(const char* message) {
     if (sendto(server_socket, server_buffer, server_recv_len, 0, (struct sockaddr*) &server_si_other, server_socket_size) == SOCKET_ERROR) {
-        rbe_logger_error("sendto() failed with error code : %d", WSAGetLastError());
+        rbe_logger_error("Server: sendto() failed with error code : %d", WSAGetLastError());
         return false;
     }
     return true;
@@ -102,18 +111,18 @@ bool rbe_udp_client_initialize(const char* serverAddr, int serverPort, on_networ
     //Initialise winsock
     rbe_logger_debug("Initialising client Winsock...");
     if (WSAStartup(MAKEWORD(2,2),&wsa) != 0) {
-        rbe_logger_error("Failed. Error Code : %d", WSAGetLastError());
+        rbe_logger_error("Client: Failed. Error Code : %d", WSAGetLastError());
         return false;
     }
-    rbe_logger_debug("Initialized Winsock.");
+    rbe_logger_debug("Client: Initialized Winsock.");
 
     //create socket
-    rbe_logger_debug("Creating client socket....");
+    rbe_logger_debug("Client: Creating socket....");
     if ((client_socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == SOCKET_ERROR) {
-        rbe_logger_error("socket() failed with error code : %d", WSAGetLastError());
+        rbe_logger_error("Client: socket() failed with error code : %d", WSAGetLastError());
         return false;
     }
-    rbe_logger_debug("Client socket created.");
+    rbe_logger_debug("Client: socket created.");
 
     //setup address structure
     memset((char*) &client_si_other, 0, sizeof(client_si_other));
@@ -121,25 +130,30 @@ bool rbe_udp_client_initialize(const char* serverAddr, int serverPort, on_networ
     client_si_other.sin_port = htons(serverPort);
     client_si_other.sin_addr.S_un.S_addr = inet_addr(serverAddr);
 
+    // Start Networking Thread
+//    pthread_t thread;
+//    int thread1Return = pthread_create(&thread, NULL, rbe_udp_client_poll, NULL);
+//    rbe_logger_debug("Client: Initialized thread.");
+
     return true;
 }
 
-bool rbe_udp_client_poll() {
+void* rbe_udp_client_poll() {
     while (true) {
+        fflush(stdout);
         //clear the buffer by filling null, it might have previously received data
         memset(client_buffer,'\0', CLIENT_BUFFER_SIZE);
         //try to receive some data, this is a blocking call
         if (recvfrom(client_socket, client_buffer, CLIENT_BUFFER_SIZE, 0, (struct sockaddr *) &client_si_other, &client_socket_size) == SOCKET_ERROR) {
-            rbe_logger_error("recvfrom() failed with error code : %d", WSAGetLastError());
-            return false;
+            rbe_logger_error("Client: recvfrom() failed with error code : %d", WSAGetLastError());
+            RBE_ASSERT(false);
+            return NULL;
         }
         // Call user callback
         client_user_callback(client_buffer);
-
-        rbe_logger_debug("Server received data = '%s'", client_buffer);
     }
 
-    return true;
+    return NULL;
 }
 
 bool rbe_udp_client_send_message(const char* message) {
