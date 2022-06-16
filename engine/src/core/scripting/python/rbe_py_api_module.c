@@ -15,6 +15,7 @@
 #include "../../ecs/component/text_label_component.h"
 #include "../../ecs/component/script_component.h"
 #include "../../utils/rbe_assert.h"
+#include "../../networking/rbe_network.h"
 
 // TODO: Clean up strdups
 
@@ -456,6 +457,83 @@ PyObject* rbe_py_api_node2D_get_position(PyObject* self, PyObject* args, PyObjec
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", rbePyApiGenericGetEntityKWList, &entity)) {
         Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
         return Py_BuildValue("(ff)", transformComp->position.x, transformComp->position.y);
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+// Network
+PyObject* rbe_py_api_network_is_server(PyObject* self, PyObject* args) {
+    if (rbe_network_is_server()) {
+        Py_RETURN_TRUE;
+    }
+    Py_RETURN_FALSE;
+}
+
+// Server
+PyObject* rbe_py_api_server_start(PyObject* self, PyObject* args, PyObject* kwargs) {
+    int port;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", rbePyApiServerStartKWList, &port)) {
+        rbe_udp_server_initialize(port, NULL); // TODO: Add callback func
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* rbe_py_api_server_stop(PyObject* self, PyObject* args) {
+    rbe_udp_server_finalize();
+    Py_RETURN_NONE;
+}
+
+PyObject* rbe_py_api_server_send(PyObject* self, PyObject* args, PyObject* kwargs) {
+    char* message;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "s", rbePyApiNetworkSendMessageKWList, &message)) {
+        rbe_udp_server_send_message(message);
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* rbe_py_api_server_subscribe(PyObject* self, PyObject* args, PyObject* kwargs) {
+    char* signalId;
+    Entity listenerNode;
+    char* listenerFunc;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "sis", rbePyApiNetworkSubscribeKWList, &signalId, &listenerNode, &listenerFunc)) {
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+// Client
+PyObject* rbe_py_api_client_start(PyObject* self, PyObject* args, PyObject* kwargs) {
+    char* host;
+    int port;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "si", rbePyApiClientStartKWList, &host, &port)) {
+        rbe_udp_server_initialize(port, NULL); // TODO: Add callback func
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* rbe_py_api_client_stop(PyObject* self, PyObject* args) {
+    rbe_udp_client_finalize();
+    Py_RETURN_NONE;
+}
+
+PyObject* rbe_py_api_client_send(PyObject* self, PyObject* args, PyObject* kwargs) {
+    char* message;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "s", rbePyApiNetworkSendMessageKWList, &message)) {
+        rbe_udp_client_send_message(message);
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* rbe_py_api_client_subscribe(PyObject* self, PyObject* args, PyObject* kwargs) {
+    char* signalId;
+    Entity listenerNode;
+    char* listenerFunc;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "sis", rbePyApiNetworkSubscribeKWList, &signalId, &listenerNode, &listenerFunc)) {
         Py_RETURN_NONE;
     }
     return NULL;

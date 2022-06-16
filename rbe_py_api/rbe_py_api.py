@@ -708,6 +708,57 @@ class AudioManager:
         rbe_py_api_internal.audio_manager_stop_sound(path=path)
 
 
+# NETWORK
+class Network:
+    @staticmethod
+    def is_server() -> bool:
+        return rbe_py_api_internal.network_is_server()
+
+
+class Server:
+    @staticmethod
+    def start(port: int) -> None:
+        rbe_py_api_internal.server_start(host=host, port=port)
+
+    @staticmethod
+    def stop() -> None:
+        rbe_py_api_internal.server_stop()
+
+    @staticmethod
+    def send(message: str) -> None:
+        rbe_py_api_internal.server_send(message=message)
+
+    @staticmethod
+    def subscribe(signal_id: str, listener_node: Node, listener_func: str) -> None:
+        rbe_py_api_internal.server_subscribe(
+            signal_id=signal_id,
+            listener_node=listener_node.entity_id,
+            listener_func=listener_func,
+        )
+
+
+class Client:
+    @staticmethod
+    def start(host: str, port: int) -> None:
+        rbe_py_api_internal.client_start(host=host, port=port)
+
+    @staticmethod
+    def stop() -> None:
+        rbe_py_api_internal.client_stop()
+
+    @staticmethod
+    def send(message: str) -> None:
+        rbe_py_api_internal.client_send(message=message)
+
+    @staticmethod
+    def subscribe(signal_id: str, listener_node: Node, listener_func: str) -> None:
+        rbe_py_api_internal.client_subscribe(
+            signal_id=signal_id,
+            listener_node=listener_node.entity_id,
+            listener_func=listener_func,
+        )
+
+
 # CONFIGURATION
 def configure_game(
     game_tile="Test Game",

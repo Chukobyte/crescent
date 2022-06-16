@@ -7,8 +7,17 @@
 #include "../utils/logger.h"
 #include "../utils/rbe_assert.h"
 
+//--- NETWORK ---//
+static bool rbe_is_server = false;
+
+bool rbe_network_is_server() {
+    return rbe_is_server;
+}
+
 //--- UDP SERVER ---//
 #define SERVER_BUFFER_SIZE 512
+
+void* rbe_udp_server_poll(void* arg);
 
 static SOCKET server_socket;
 static struct sockaddr_in server;
@@ -56,6 +65,7 @@ bool rbe_udp_server_initialize(int port, on_network_server_callback user_callbac
         return false;
     }
     rbe_logger_debug("Server: Initialized thread.");
+    rbe_is_server = true;
 
     return true;
 }
@@ -101,6 +111,8 @@ void rbe_udp_server_finalize() {
 
 //--- UDP CLIENT ---//
 #define CLIENT_BUFFER_SIZE 512
+
+void* rbe_udp_client_poll();
 
 static int client_socket;
 static struct sockaddr_in client_si_other;

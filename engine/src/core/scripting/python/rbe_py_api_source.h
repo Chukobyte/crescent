@@ -747,6 +747,57 @@
 "        rbe_py_api_internal.audio_manager_stop_sound(path=path)\n"\
 "\n"\
 "\n"\
+"# NETWORK\n"\
+"class Network:\n"\
+"    @staticmethod\n"\
+"    def is_server() -> bool:\n"\
+"        return rbe_py_api_internal.network_is_server()\n"\
+"\n"\
+"\n"\
+"class Server:\n"\
+"    @staticmethod\n"\
+"    def start(port: int) -> None:\n"\
+"        rbe_py_api_internal.server_start(host=host, port=port)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def stop() -> None:\n"\
+"        rbe_py_api_internal.server_stop()\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def send(message: str) -> None:\n"\
+"        rbe_py_api_internal.server_send(message=message)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def subscribe(signal_id: str, listener_node: Node, listener_func: str) -> None:\n"\
+"        rbe_py_api_internal.server_subscribe(\n"\
+"            signal_id=signal_id,\n"\
+"            listener_node=listener_node.entity_id,\n"\
+"            listener_func=listener_func,\n"\
+"        )\n"\
+"\n"\
+"\n"\
+"class Client:\n"\
+"    @staticmethod\n"\
+"    def start(host: str, port: int) -> None:\n"\
+"        rbe_py_api_internal.client_start(host=host, port=port)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def stop() -> None:\n"\
+"        rbe_py_api_internal.client_stop()\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def send(message: str) -> None:\n"\
+"        rbe_py_api_internal.client_send(message=message)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def subscribe(signal_id: str, listener_node: Node, listener_func: str) -> None:\n"\
+"        rbe_py_api_internal.client_subscribe(\n"\
+"            signal_id=signal_id,\n"\
+"            listener_node=listener_node.entity_id,\n"\
+"            listener_func=listener_func,\n"\
+"        )\n"\
+"\n"\
+"\n"\
 "# CONFIGURATION\n"\
 "def configure_game(\n"\
 "    game_tile=\"Test Game\",\n"\
