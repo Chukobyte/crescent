@@ -768,7 +768,7 @@
 "        rbe_py_api_internal.server_send(message=message)\n"\
 "\n"\
 "    @staticmethod\n"\
-"    def subscribe(signal_id: str, listener_node: Node, listener_func: str) -> None:\n"\
+"    def subscribe(signal_id: str, listener_node: Node, listener_func) -> None:\n"\
 "        rbe_py_api_internal.server_subscribe(\n"\
 "            signal_id=signal_id,\n"\
 "            listener_node=listener_node.entity_id,\n"\

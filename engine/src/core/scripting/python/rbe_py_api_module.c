@@ -497,8 +497,14 @@ PyObject* rbe_py_api_server_send(PyObject* self, PyObject* args, PyObject* kwarg
 PyObject* rbe_py_api_server_subscribe(PyObject* self, PyObject* args, PyObject* kwargs) {
     char* signalId;
     Entity listenerNode;
-    char* listenerFunc;
-    if (PyArg_ParseTupleAndKeywords(args, kwargs, "sis", rbePyApiNetworkSubscribeKWList, &signalId, &listenerNode, &listenerFunc)) {
+    PyObject* listenerFunc;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "siO", rbePyApiNetworkSubscribeKWList, &signalId, &listenerNode, &listenerFunc)) {
+        RBE_ASSERT(PyObject_IsTrue(listenerFunc));
+        PyObject* listenerFuncArg = Py_BuildValue("(s)", "From engine server!");
+        PyObject_CallObject(listenerFunc, listenerFuncArg);
+
+        Py_DecRef(listenerFuncArg);
+        Py_DecRef(listenerFunc);
         Py_RETURN_NONE;
     }
     return NULL;
