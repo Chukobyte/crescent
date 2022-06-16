@@ -718,7 +718,7 @@ class Network:
 class Server:
     @staticmethod
     def start(port: int) -> None:
-        rbe_py_api_internal.server_start(host=host, port=port)
+        rbe_py_api_internal.server_start(port=port)
 
     @staticmethod
     def stop() -> None:

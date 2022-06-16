@@ -14,15 +14,16 @@ typedef struct EntitySystemData {
     size_t render_systems_count;
     size_t process_systems_count;
     size_t physics_process_systems_count;
+    size_t network_callback_systems_count;
     EntitySystem* entity_systems[MAX_COMPONENTS];
     EntitySystem* on_entity_start_systems[MAX_ENTITY_SYSTEMS_PER_HOOK];
     EntitySystem* on_entity_end_systems[MAX_ENTITY_SYSTEMS_PER_HOOK];
     EntitySystem* render_systems[MAX_ENTITY_SYSTEMS_PER_HOOK];
     EntitySystem* process_systems[MAX_ENTITY_SYSTEMS_PER_HOOK];
     EntitySystem* physics_process_systems[MAX_ENTITY_SYSTEMS_PER_HOOK];
+    EntitySystem* network_callback_systems[MAX_ENTITY_SYSTEMS_PER_HOOK];
 } EntitySystemData;
 
-bool rbe_ec_system_has_entity(Entity entity, EntitySystem* system);
 void rbe_ec_system_insert_entity_into_system(Entity entity, EntitySystem* system);
 bool rbe_ec_system_remove_entity_from_system(Entity entity, EntitySystem* system);
 
@@ -39,6 +40,7 @@ void rbe_ec_system_initialize() {
         entitySystemData.render_systems[i] = NULL;
         entitySystemData.process_systems[i] = NULL;
         entitySystemData.physics_process_systems[i] = NULL;
+        entitySystemData.network_callback_systems[i] = NULL;
     }
     entitySystemData.entity_systems_count = 0;
     entitySystemData.on_entity_start_systems_count = 0;
@@ -46,6 +48,7 @@ void rbe_ec_system_initialize() {
     entitySystemData.render_systems_count = 0;
     entitySystemData.process_systems_count = 0;
     entitySystemData.physics_process_systems_count = 0;
+    entitySystemData.network_callback_systems_count = 0;
 }
 
 void rbe_ec_system_finalize() {
@@ -92,6 +95,9 @@ void rbe_ec_system_register(EntitySystem* system) {
     }
     if (system->physics_process_func != NULL) {
         entitySystemData.physics_process_systems[entitySystemData.physics_process_systems_count++] = system;
+    }
+    if (system->network_callback_func != NULL) {
+        entitySystemData.network_callback_systems[entitySystemData.network_callback_systems_count++] = system;
     }
 }
 
@@ -142,7 +148,11 @@ void rbe_ec_system_physics_process_systems(float deltaTime) {
     }
 }
 
-void rbe_ec_system_network_callback(const char* message) {}
+void rbe_ec_system_network_callback(const char* message) {
+    for (size_t i = 0; i < entitySystemData.network_callback_systems_count; i++) {
+        entitySystemData.network_callback_systems[i]->network_callback_func(message);
+    }
+}
 
 // --- Entity Management --- //
 Entity rbe_ec_system_create_entity() {

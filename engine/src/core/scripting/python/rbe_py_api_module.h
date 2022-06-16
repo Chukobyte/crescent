@@ -156,7 +156,7 @@ static struct PyMethodDef rbePyApiMethods[] = {
         METH_VARARGS | METH_KEYWORDS, "Sends a message to a connected client."
     },
     {
-        "server_start", (PyCFunction) rbe_py_api_server_subscribe,
+        "server_subscribe", (PyCFunction) rbe_py_api_server_subscribe,
         METH_VARARGS | METH_KEYWORDS, "Subscribe a node's function to one of the server's signals."
     },
     // Client

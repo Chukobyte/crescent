@@ -12,6 +12,8 @@ class Main(Node2D):
         print(f"[PY SCRIPT] position = {self.get_position()}")
         Engine.set_fps_display_enabled(True)
 
+        Server.start(port=8888)
+
     def _update(self, delta_time: float) -> None:
         if Input.is_action_just_pressed(name="exit"):
             Engine.exit()

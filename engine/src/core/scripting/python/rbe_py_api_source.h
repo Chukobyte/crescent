@@ -757,7 +757,7 @@
 "class Server:\n"\
 "    @staticmethod\n"\
 "    def start(port: int) -> None:\n"\
-"        rbe_py_api_internal.server_start(host=host, port=port)\n"\
+"        rbe_py_api_internal.server_start(port=port)\n"\
 "\n"\
 "    @staticmethod\n"\
 "    def stop() -> None:\n"\
