@@ -12,5 +12,6 @@ RBEScriptContext* rbe_script_context_create() {
     newScriptContext->on_update_all_instances = NULL;
     newScriptContext->on_end = NULL;
     newScriptContext->on_network_callback = NULL;
+    newScriptContext->on_entity_subscribe_to_network_callback = NULL;
     return newScriptContext;
 }

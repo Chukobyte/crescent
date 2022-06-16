@@ -13,7 +13,11 @@ class Main(Node2D):
         Engine.set_fps_display_enabled(True)
 
         Server.start(port=8888)
-        Server.subscribe(signal_id="data_callback", listener_node=self, listener_func=self._network_callback)
+        Server.subscribe(
+            signal_id="data_callback",
+            listener_node=self,
+            listener_func=self._network_callback,
+        )
 
     def _update(self, delta_time: float) -> None:
         if Input.is_action_just_pressed(name="exit"):

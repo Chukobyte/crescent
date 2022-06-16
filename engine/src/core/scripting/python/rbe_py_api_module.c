@@ -1,11 +1,13 @@
 #include "rbe_py_api_module.h"
 
 #include "py_cache.h"
+#include "py_script_context.h"
 #include "../../game_properties.h"
 #include "../../engine_context.h"
 #include "../../asset_manager.h"
 #include "../../input/input.h"
 #include "../../audio/audio_manager.h"
+#include "../../scripting/script_context.h"
 #include "../../scripting/python/py_helper.h"
 #include "../../scene/scene_manager.h"
 #include "../../ecs/ecs_manager.h"
@@ -14,8 +16,8 @@
 #include "../../ecs/component/sprite_component.h"
 #include "../../ecs/component/text_label_component.h"
 #include "../../ecs/component/script_component.h"
-#include "../../utils/rbe_assert.h"
 #include "../../networking/rbe_network.h"
+#include "../../utils/rbe_assert.h"
 
 // TODO: Clean up strdups
 
@@ -500,10 +502,12 @@ PyObject* rbe_py_api_server_subscribe(PyObject* self, PyObject* args, PyObject* 
     PyObject* listenerFunc;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "siO", rbePyApiNetworkSubscribeKWList, &signalId, &listenerNode, &listenerFunc)) {
         RBE_ASSERT(PyObject_IsTrue(listenerFunc));
-        PyObject* listenerFuncArg = Py_BuildValue("(s)", "From engine server!");
-        PyObject_CallObject(listenerFunc, listenerFuncArg);
+        RBEScriptContext* scriptContext =  rbe_py_get_script_context();
+        RBE_ASSERT(scriptContext != NULL && scriptContext->on_entity_subscribe_to_network_callback != NULL);
+        rbe_logger_debug("Before subscribe callback");
+        scriptContext->on_entity_subscribe_to_network_callback(listenerNode, listenerFunc);
+        rbe_logger_debug("After subscribe callback");
 
-        Py_DecRef(listenerFuncArg);
         Py_DecRef(listenerFunc);
         Py_RETURN_NONE;
     }
