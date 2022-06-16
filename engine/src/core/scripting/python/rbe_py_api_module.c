@@ -474,7 +474,7 @@ PyObject* rbe_py_api_network_is_server(PyObject* self, PyObject* args) {
 PyObject* rbe_py_api_server_start(PyObject* self, PyObject* args, PyObject* kwargs) {
     int port;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", rbePyApiServerStartKWList, &port)) {
-        rbe_udp_server_initialize(port, NULL); // TODO: Add callback func
+        rbe_udp_server_initialize(port, rbe_ec_system_network_callback);
         Py_RETURN_NONE;
     }
     return NULL;
@@ -509,7 +509,7 @@ PyObject* rbe_py_api_client_start(PyObject* self, PyObject* args, PyObject* kwar
     char* host;
     int port;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "si", rbePyApiClientStartKWList, &host, &port)) {
-        rbe_udp_server_initialize(port, NULL); // TODO: Add callback func
+        rbe_udp_server_initialize(port, rbe_ec_system_network_callback);
         Py_RETURN_NONE;
     }
     return NULL;

@@ -4,6 +4,7 @@
 #include "../../utils/logger.h"
 #include "../../utils/rbe_assert.h"
 
+//--- EC System Manager ---//
 #define MAX_ENTITY_SYSTEMS_PER_HOOK 4
 
 typedef struct EntitySystemData {
@@ -65,6 +66,7 @@ EntitySystem* rbe_ec_system_create() {
     newSystem->render_func = NULL;
     newSystem->process_func = NULL;
     newSystem->physics_process_func = NULL;
+    newSystem->network_callback_func = NULL;
     newSystem->component_signature = ComponentType_NONE;
     return newSystem;
 }
@@ -139,6 +141,8 @@ void rbe_ec_system_physics_process_systems(float deltaTime) {
         entitySystemData.physics_process_systems[i]->physics_process_func(deltaTime);
     }
 }
+
+void rbe_ec_system_network_callback(const char* message) {}
 
 // --- Entity Management --- //
 Entity rbe_ec_system_create_entity() {

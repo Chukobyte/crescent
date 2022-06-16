@@ -15,6 +15,7 @@ void script_system_entity_start(Entity entity);
 void script_system_entity_end(Entity entity);
 void script_system_instance_update(float deltaTime);
 void script_system_instance_physics_update(float deltaTime);
+void script_system_network_callback(const char* message);
 
 EntitySystem* scriptSystem = NULL;
 
@@ -79,4 +80,9 @@ void script_system_instance_physics_update(float deltaTime) {
     for (size_t i = 0; i < scriptContextsCount; i++) {
         scriptContexts[i]->on_physics_update_all_instances(deltaTime);
     }
+}
+
+void script_system_network_callback(const char* message) {
+    // Hard coding python for now
+    scriptContexts[ScriptContextType_PYTHON]->on_network_callback(message);
 }

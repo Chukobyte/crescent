@@ -3,8 +3,6 @@
 #include "../memory/rbe_mem.h"
 #include "../utils/rbe_assert.h"
 
-static RBEScriptContext* scriptContext = NULL;
-
 RBEScriptContext* rbe_script_context_create() {
     // Only have one script context for now...
     RBEScriptContext* newScriptContext = RBE_MEM_ALLOCATE(RBEScriptContext);
@@ -13,15 +11,6 @@ RBEScriptContext* rbe_script_context_create() {
     newScriptContext->on_start = NULL;
     newScriptContext->on_update_all_instances = NULL;
     newScriptContext->on_end = NULL;
-    if (scriptContext == NULL) {
-        scriptContext = newScriptContext;
-        return scriptContext;
-    } else {
-        rbe_logger_warn("Adding additional script context, won't be recognized by scene manager!");
-    }
+    newScriptContext->on_network_callback = NULL;
     return newScriptContext;
-}
-
-RBEScriptContext* rbe_script_context_get_current() {
-    return scriptContext;
 }
