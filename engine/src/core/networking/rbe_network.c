@@ -59,7 +59,6 @@ bool rbe_udp_server_initialize(int port, on_network_server_callback user_callbac
 
     // Start Networking Thread
     pthread_t thread;
-    pthread_create(&thread, NULL, rbe_udp_server_poll, NULL);
     if (pthread_create(&thread, NULL, rbe_udp_server_poll, NULL) != 0) {
         rbe_logger_debug("Failed to create server thread!");
         return false;

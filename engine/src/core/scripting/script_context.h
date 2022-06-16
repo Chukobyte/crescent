@@ -10,6 +10,10 @@ typedef void (*OnPhysicsUpdateAllInstances) (float);
 typedef void (*OnEnd) (Entity);
 typedef void (*OnNetworkCallback) (const char*);
 
+// TODO: Make not specific to python
+struct _object; // PyObject
+typedef void (*OnEntitySubscribeToNetworkCallback) (Entity entity, struct _object*);
+
 typedef struct RBEScriptContext {
     OnCreateInstance on_create_instance;
     OnDeleteInstance on_delete_instance;
@@ -18,6 +22,7 @@ typedef struct RBEScriptContext {
     OnPhysicsUpdateAllInstances on_physics_update_all_instances;
     OnEnd on_end;
     OnNetworkCallback on_network_callback;
+    OnEntitySubscribeToNetworkCallback on_entity_subscribe_to_network_callback;
 } RBEScriptContext;
 
 RBEScriptContext* rbe_script_context_create();

@@ -729,7 +729,7 @@ class Server:
         rbe_py_api_internal.server_send(message=message)
 
     @staticmethod
-    def subscribe(signal_id: str, listener_node: Node, listener_func: str) -> None:
+    def subscribe(signal_id: str, listener_node: Node, listener_func) -> None:
         rbe_py_api_internal.server_subscribe(
             signal_id=signal_id,
             listener_node=listener_node.entity_id,

@@ -13,6 +13,11 @@ class Main(Node2D):
         Engine.set_fps_display_enabled(True)
 
         Server.start(port=8888)
+        Server.subscribe(
+            signal_id="data_callback",
+            listener_node=self,
+            listener_func=self._network_callback,
+        )
 
     def _update(self, delta_time: float) -> None:
         if Input.is_action_just_pressed(name="exit"):
@@ -44,3 +49,6 @@ class Main(Node2D):
     def _end(self) -> None:
         print(f"entity {self.entity_id} end was called!")
         pass
+
+    def _network_callback(self, message: str) -> None:
+        print(f"[PYTHON SCRIPT] _network_callback - message: {message}")
