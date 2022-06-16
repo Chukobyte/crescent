@@ -11,6 +11,5 @@ int main(int argv, char** args) {
     }
 
     rbe_shutdown();
-
     return EXIT_SUCCESS;
 }
