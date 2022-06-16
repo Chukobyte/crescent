@@ -38,6 +38,19 @@ PyObject* rbe_py_api_node2D_set_position(PyObject* self, PyObject* args, PyObjec
 PyObject* rbe_py_api_node2D_add_to_position(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* rbe_py_api_node2D_get_position(PyObject* self, PyObject* args, PyObject* kwargs);
 
+// Network
+PyObject* rbe_py_api_network_is_server(PyObject* self, PyObject* args);
+
+PyObject* rbe_py_api_server_start(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* rbe_py_api_server_stop(PyObject* self, PyObject* args);
+PyObject* rbe_py_api_server_send(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* rbe_py_api_server_subscribe(PyObject* self, PyObject* args, PyObject* kwargs);
+
+PyObject* rbe_py_api_client_start(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* rbe_py_api_client_stop(PyObject* self, PyObject* args);
+PyObject* rbe_py_api_client_send(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* rbe_py_api_client_subscribe(PyObject* self, PyObject* args, PyObject* kwargs);
+
 
 // --- Module Methods Definitions --- //
 static struct PyMethodDef rbePyApiMethods[] = {
@@ -124,6 +137,45 @@ static struct PyMethodDef rbePyApiMethods[] = {
         "node2D_get_position", (PyCFunction) rbe_py_api_node2D_get_position,
         METH_VARARGS | METH_KEYWORDS, "Get the position of a node."
     },
+    // NETWORK
+    {
+        "network_is_server", rbe_py_api_network_is_server,
+        METH_VARARGS, "Returns if the current network is running a server."
+    },
+    // Server
+    {
+        "server_start", (PyCFunction) rbe_py_api_server_start,
+        METH_VARARGS | METH_KEYWORDS, "Starts a network server."
+    },
+    {
+        "server_stop", rbe_py_api_server_stop,
+        METH_VARARGS, "Stops a network server."
+    },
+    {
+        "server_send", (PyCFunction) rbe_py_api_server_send,
+        METH_VARARGS | METH_KEYWORDS, "Sends a message to a connected client."
+    },
+    {
+        "server_subscribe", (PyCFunction) rbe_py_api_server_subscribe,
+        METH_VARARGS | METH_KEYWORDS, "Subscribe a node's function to one of the server's signals."
+    },
+    // Client
+    {
+        "client_start", (PyCFunction) rbe_py_api_client_start,
+        METH_VARARGS | METH_KEYWORDS, "Starts a network client."
+    },
+    {
+        "client_stop", rbe_py_api_client_stop,
+        METH_VARARGS, "Stops a network client."
+    },
+    {
+        "client_send", (PyCFunction) rbe_py_api_client_send,
+        METH_VARARGS | METH_KEYWORDS, "Sends a message to the server."
+    },
+    {
+        "client_start", (PyCFunction) rbe_py_api_client_subscribe,
+        METH_VARARGS | METH_KEYWORDS, "Subscribe a node's function to one of the client's signals."
+    },
     { NULL, NULL, 0,NULL },
 };
 
@@ -153,6 +205,13 @@ static char *rbePyApiInputActionInputCheckKWList[] = {"name", NULL};
 static char *rbePyApiAudioManagerPlaySoundKWList[] = {"path", "loops", NULL};
 
 static char *rbePyApiNode2DSetPositionKWList[] = {"entity_id", "x", "y", NULL};
+
+static char *rbePyApiNetworkSendMessageKWList[] = {"message", NULL};
+static char *rbePyApiNetworkSubscribeKWList[] = {"signal_id", "listener_node", "listener_func", NULL};
+
+static char *rbePyApiServerStartKWList[] = {"port", NULL};
+
+static char *rbePyApiClientStartKWList[] = {"host", "port", NULL};
 
 // --- Module Init --- //
 PyObject* PyInit_rbe_py_API(void);

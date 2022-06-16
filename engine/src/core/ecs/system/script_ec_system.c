@@ -15,6 +15,7 @@ void script_system_entity_start(Entity entity);
 void script_system_entity_end(Entity entity);
 void script_system_instance_update(float deltaTime);
 void script_system_instance_physics_update(float deltaTime);
+void script_system_network_callback(const char* message);
 
 EntitySystem* scriptSystem = NULL;
 
@@ -31,6 +32,7 @@ EntitySystem* script_ec_system_create() {
     scriptSystem->on_entity_end_func = script_system_entity_end;
     scriptSystem->process_func = script_system_instance_update;
     scriptSystem->physics_process_func = script_system_instance_physics_update;
+    scriptSystem->network_callback_func = script_system_network_callback;
     scriptSystem->component_signature = ComponentType_SCRIPT;
     // Python Context
     scriptContexts[ScriptContextType_PYTHON] = rbe_py_create_script_context();
@@ -79,4 +81,9 @@ void script_system_instance_physics_update(float deltaTime) {
     for (size_t i = 0; i < scriptContextsCount; i++) {
         scriptContexts[i]->on_physics_update_all_instances(deltaTime);
     }
+}
+
+void script_system_network_callback(const char* message) {
+    // Hard coding python for now
+    scriptContexts[ScriptContextType_PYTHON]->on_network_callback(message);
 }

@@ -86,3 +86,39 @@ def node2D_add_to_position(entity_id: int, x: float, y: float) -> None:
 
 def node2D_get_position(entity_id: int) -> tuple:
     return 0.0, 0.0
+
+
+def network_is_server() -> bool:
+    return True
+
+
+def server_start(port: int) -> None:
+    pass
+
+
+def server_stop() -> None:
+    pass
+
+
+def server_send(message: str) -> None:
+    pass
+
+
+def server_subscribe(signal_id: str, listener_node: int, listener_func: str) -> None:
+    pass
+
+
+def client_start(host: str, port: int) -> None:
+    pass
+
+
+def client_stop() -> None:
+    pass
+
+
+def client_send(message: str) -> None:
+    pass
+
+
+def client_subscribe(signal_id: str, listener_node: int, listener_func: str) -> None:
+    pass

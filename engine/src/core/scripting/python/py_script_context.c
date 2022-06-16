@@ -15,6 +15,7 @@ void py_on_start(Entity entity);
 void py_on_update_all_instances(float deltaTime);
 void py_on_physics_update_all_instances(float deltaTime);
 void py_on_end(Entity entity);
+void py_on_network_callback(const char* message);
 
 RBE_STATIC_ARRAY_CREATE(PyObject*, MAX_ENTITIES, entities_to_update);
 RBE_STATIC_ARRAY_CREATE(PyObject*, MAX_ENTITIES, entities_to_physics_update);
@@ -29,6 +30,7 @@ RBEScriptContext* rbe_py_create_script_context() {
     scriptContext->on_update_all_instances = py_on_update_all_instances;
     scriptContext->on_physics_update_all_instances = py_on_physics_update_all_instances;
     scriptContext->on_end = py_on_end;
+    scriptContext->on_network_callback = py_on_network_callback;
 
     pythonInstanceHashMap = rbe_hash_map_create(sizeof(Entity), sizeof(PyObject**), MAX_ENTITIES);
     return scriptContext;
@@ -92,4 +94,8 @@ void py_on_end(Entity entity) {
     if (PyObject_HasAttrString(pScriptInstance, "_end")) {
         PyObject_CallMethod(pScriptInstance, "_end", NULL);
     }
+}
+
+void py_on_network_callback(const char* message) {
+    rbe_logger_debug("py_on_network_callback - message = '%s'", message);
 }

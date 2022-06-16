@@ -8,6 +8,7 @@ typedef void (*OnStart) (Entity);
 typedef void (*OnUpdateAllInstances) (float);
 typedef void (*OnPhysicsUpdateAllInstances) (float);
 typedef void (*OnEnd) (Entity);
+typedef void (*OnNetworkCallback) (const char*);
 
 typedef struct RBEScriptContext {
     OnCreateInstance on_create_instance;
@@ -16,7 +17,7 @@ typedef struct RBEScriptContext {
     OnUpdateAllInstances on_update_all_instances;
     OnPhysicsUpdateAllInstances on_physics_update_all_instances;
     OnEnd on_end;
+    OnNetworkCallback on_network_callback;
 } RBEScriptContext;
 
 RBEScriptContext* rbe_script_context_create();
-RBEScriptContext* rbe_script_context_get_current();
