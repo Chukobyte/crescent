@@ -1,11 +1,11 @@
 ## Roll Back Engine
 
-A work in progress fighting game engine with the core written in C99.  The name is temporary and will very likely change in the near future.
+A work in progress fighting game engine with the core written in C11.  The name is temporary and will very likely change in the near future.
 
 ### Tech Stack
 
 * Engine
-  * [C](https://en.wikipedia.org/wiki/C_(programming_language)) (c99) - Engine Core
+  * [C](https://en.wikipedia.org/wiki/C_(programming_language)) (c11) - Engine Core
   * [SDL2](https://github.com/libsdl-org/SDL) - Windowing, inputs
   * [MiniAudio](https://github.com/mackron/miniaudio) - Audio
   * [Python](https://en.wikipedia.org/wiki/Python_(programming_language)) - Scripting
