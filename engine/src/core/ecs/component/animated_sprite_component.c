@@ -32,8 +32,7 @@ Animation animated_sprite_component_get_animation(AnimatedSpriteComponent* anima
         }
     }
     RBE_ASSERT_FMT(false, "Failed to retrieve animation named '%s'", name);
-    Animation invalidAnimation = {};
-    return invalidAnimation;
+    // FIXME: missing return
 }
 
 Animation* animated_sprite_component_get_animation_ref(AnimatedSpriteComponent* animatedSpriteComponent, const char* name) {

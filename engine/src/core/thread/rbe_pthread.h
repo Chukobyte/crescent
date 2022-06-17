@@ -27,6 +27,7 @@ typedef struct {
 //};
 
 typedef struct {
+    int DUMMY_MEMBER; // FIXME: this is only here because of: 'error C2016: C requires that a struct or union have at least one member'
 } pthread_attr_t;
 
 #endif

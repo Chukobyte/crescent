@@ -15,7 +15,8 @@ void sprite_rendering_system_render();
 EntitySystem* sprite_rendering_ec_system_create() {
     RBE_ASSERT(spriteRenderingSystem == NULL);
     spriteRenderingSystem = rbe_ec_system_create();
-    spriteRenderingSystem->name = strdup("Sprite Rendering");
+    // NOTE(PetrFlajsingr): replaced strdup with _strdup since the former is not part of the standard
+    spriteRenderingSystem->name = _strdup("Sprite Rendering");
     spriteRenderingSystem->render_func = sprite_rendering_system_render;
     spriteRenderingSystem->component_signature = ComponentType_TRANSFORM_2D | ComponentType_SPRITE;
     return spriteRenderingSystem;
