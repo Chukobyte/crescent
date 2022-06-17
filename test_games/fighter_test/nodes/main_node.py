@@ -39,6 +39,39 @@ create_stage_nodes(
                             flip_y=False,
                             modulate=Color(255, 255, 255, 255),
                         ),
+                        AnimatedSpriteComponent(
+                            current_animation_name="walk",
+                            is_playing=False,
+                            animations=[
+                                Animation(
+                                    name="walk",
+                                    speed=100,
+                                    loops=True,
+                                    frames=[
+                                        AnimationFrame(
+                                            frame=0,
+                                            texture_path="test_games/fighter_test/assets/images/melissa_walk_animation.png",
+                                            draw_source=Rect2(x=0, y=0, w=32, h=32),
+                                        ),
+                                        AnimationFrame(
+                                            frame=1,
+                                            texture_path="test_games/fighter_test/assets/images/melissa_walk_animation.png",
+                                            draw_source=Rect2(x=32, y=0, w=32, h=32),
+                                        ),
+                                        AnimationFrame(
+                                            frame=2,
+                                            texture_path="test_games/fighter_test/assets/images/melissa_walk_animation.png",
+                                            draw_source=Rect2(x=64, y=0, w=32, h=32),
+                                        ),
+                                        AnimationFrame(
+                                            frame=3,
+                                            texture_path="test_games/fighter_test/assets/images/melissa_walk_animation.png",
+                                            draw_source=Rect2(x=96, y=0, w=32, h=32),
+                                        ),
+                                    ],
+                                )
+                            ],
+                        ),
                         ScriptComponent(
                             class_path="test_games.fighter_test.src.main",
                             class_name="Main",

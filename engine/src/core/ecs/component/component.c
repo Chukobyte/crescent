@@ -6,7 +6,7 @@
 #include "../../utils/rbe_assert.h"
 #include "../../utils/logger.h"
 
-// --- Component Array --- //
+//--- Component Array ---//
 typedef struct ComponentArray {
     void* components[MAX_COMPONENTS];
 } ComponentArray;
@@ -51,7 +51,7 @@ void component_array_remove_all_components(ComponentArray* componentArray) {
     }
 }
 
-// --- Component Manager --- //
+//--- Component Manager ---//
 typedef struct ComponentManager {
     ComponentArray* entityComponentArrays[MAX_ENTITIES];
     ComponentType entityComponentSignatures[MAX_ENTITIES];
@@ -114,6 +114,8 @@ ComponentType component_manager_translate_index_to_type(ComponentDataIndex index
         return ComponentType_TRANSFORM_2D;
     case ComponentDataIndex_SPRITE:
         return ComponentType_SPRITE;
+    case ComponentDataIndex_ANIMATED_SPRITE:
+        return ComponentType_ANIMATED_SPRITE;
     case ComponentDataIndex_TEXT_LABEL:
         return ComponentType_TEXT_LABEL;
     case ComponentDataIndex_SCRIPT:
