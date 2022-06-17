@@ -320,6 +320,46 @@ void setup_scene_component_node(Entity entity, PyObject* component) {
                          texturePath, drawSourceX, drawSourceY, drawSourceW, drawSourceH, flipX, flipY, modulateR, modulateG, modulateB, modulateA);
         Py_DecRef(pDrawSource);
         Py_DecRef(pModulate);
+    } else if (strcmp(className, "AnimatedSpriteComponent") == 0) {
+        rbe_logger_debug("Building animated sprite component");
+        const char* currentAnimationName = phy_get_string_from_var(component, "current_animation_name");
+        const bool isPlaying = phy_get_bool_from_var(component, "is_playing");
+        const bool flipX = phy_get_bool_from_var(component, "flip_x");
+        const bool flipY = phy_get_bool_from_var(component, "flip_y");
+        rbe_logger_debug("current_animation_name: '%s', is_playing: '%d', flip_x: %d, flip_y: %d", currentAnimationName, isPlaying, flipX, flipY);
+        PyObject* pyAnimationsList = PyObject_GetAttrString(component, "animations");
+        RBE_ASSERT(PyList_Check(pyAnimationsList));
+        for (Py_ssize_t animationIndex = 0; animationIndex < PyList_Size(pyAnimationsList); animationIndex++) {
+            PyObject* pyAnimation = PyList_GetItem(pyAnimationsList, animationIndex);
+            RBE_ASSERT(pyAnimation != NULL);
+            const char* animationName = phy_get_string_from_var(pyAnimation, "name");
+            const int animationSpeed = phy_get_int_from_var(pyAnimation, "speed");
+            const bool animationLoops = phy_get_bool_from_var(pyAnimation, "loops");
+            rbe_logger_debug("building anim - name: '%s', speed: '%d', loops: '%d'", animationName, animationSpeed, animationLoops);
+            PyObject* pyAnimationFramesList = PyObject_GetAttrString(pyAnimation, "frames");
+            RBE_ASSERT(PyList_Check(pyAnimationFramesList));
+            for (Py_ssize_t animationFrameIndex = 0; animationFrameIndex < PyList_Size(pyAnimationFramesList); animationFrameIndex++) {
+                PyObject* pyAnimationFrame = PyList_GetItem(pyAnimationFramesList, animationFrameIndex);
+                const int animationFrameNumber = phy_get_int_from_var(pyAnimationFrame, "frame");
+                const char* animationFrameTexturePath = phy_get_string_from_var(pyAnimationFrame, "texture_path");
+                PyObject* pyDrawSource = PyObject_GetAttrString(pyAnimationFrame, "draw_source");
+                RBE_ASSERT(pyDrawSource != NULL);
+                const float drawSourceX = phy_get_float_from_var(pyDrawSource, "x");
+                const float drawSourceY = phy_get_float_from_var(pyDrawSource, "y");
+                const float drawSourceW = phy_get_float_from_var(pyDrawSource, "w");
+                const float drawSourceH = phy_get_float_from_var(pyDrawSource, "h");
+                rbe_logger_debug("frame: %d, texture_path: %s, draw_source: (%f, %f, %f, %f)",
+                                 animationFrameNumber, animationFrameTexturePath, drawSourceX, drawSourceY, drawSourceW, drawSourceH);
+
+                Py_DecRef(pyDrawSource);
+                Py_DecRef(pyAnimationFrame);
+            }
+
+            Py_DecRef(pyAnimationFramesList);
+            Py_DecRef(pyAnimation);
+        }
+
+        Py_DecRef(pyAnimationsList);
     } else if (strcmp(className, "TextLabelComponent") == 0) {
         rbe_logger_debug("Building text label component");
         const char* textLabelUID = phy_get_string_from_var(component, "uid");
