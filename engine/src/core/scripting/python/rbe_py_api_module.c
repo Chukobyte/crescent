@@ -504,9 +504,7 @@ PyObject* rbe_py_api_server_subscribe(PyObject* self, PyObject* args, PyObject* 
         RBE_ASSERT(PyObject_IsTrue(listenerFunc));
         RBEScriptContext* scriptContext =  rbe_py_get_script_context();
         RBE_ASSERT(scriptContext != NULL && scriptContext->on_entity_subscribe_to_network_callback != NULL);
-        rbe_logger_debug("Before subscribe callback");
         scriptContext->on_entity_subscribe_to_network_callback(listenerNode, listenerFunc);
-        rbe_logger_debug("After subscribe callback");
 
         Py_DecRef(listenerFunc);
         Py_RETURN_NONE;
