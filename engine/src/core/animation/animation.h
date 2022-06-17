@@ -2,7 +2,7 @@
 
 #include <stdbool.h>
 
-#include "texture.h"
+#include "../rendering/texture.h"
 #include "../math/rbe_math.h"
 
 #define RBE_MAX_ANIMATION_FRAMES 8

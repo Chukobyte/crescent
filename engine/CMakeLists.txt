@@ -49,11 +49,13 @@ add_library(${PROJECT_NAME} STATIC
         src/core/data_structures/rbe_hash_map.c
         src/core/data_structures/rbe_hash_map_string.c
         src/core/ecs/ecs_manager.c
+        src/core/ecs/component/animated_sprite_component.c
         src/core/ecs/component/component.c
         src/core/ecs/component/script_component.c
         src/core/ecs/component/sprite_component.c
         src/core/ecs/component/text_label_component.c
         src/core/ecs/component/transform2d_component.c
+        src/core/ecs/system/animated_sprite_rendering_ec_system.c
         src/core/ecs/system/ec_system.c
         src/core/ecs/system/font_rendering_ec_system.c
         src/core/ecs/system/script_ec_system.c
