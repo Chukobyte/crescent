@@ -4,6 +4,7 @@
 #include <stdbool.h>
 
 #include "../../animation/animation.h"
+#include "../../math/rbe_math.h"
 #include "../../data_structures/rbe_hash_map_string.h"
 
 #define ANIMATED_SPRITE_COMPONENT_MAX_ANIMATIONS 16
@@ -12,6 +13,7 @@ typedef struct AnimatedSpriteComponent {
     Animation animations[ANIMATED_SPRITE_COMPONENT_MAX_ANIMATIONS];
     Animation currentAnimation;
     size_t animationCount;
+    Color modulate;
     bool isPlaying;
     bool flipX;
     bool flipY;
