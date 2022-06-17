@@ -1,7 +1,5 @@
 #include "rbe_mem.h"
 
-#include <stdlib.h>
-
 #include "../utils/logger.h"
 
 void* rbe_mem_allocate(size_t size) {
