@@ -328,7 +328,11 @@ void setup_scene_component_node(Entity entity, PyObject* component) {
         const bool isPlaying = phy_get_bool_from_var(component, "is_playing");
         const bool flipX = phy_get_bool_from_var(component, "flip_x");
         const bool flipY = phy_get_bool_from_var(component, "flip_y");
-        rbe_logger_debug("current_animation_name: '%s', is_playing: '%d', flip_x: %d, flip_y: %d", currentAnimationName, isPlaying, flipX, flipY);
+        rbe_logger_debug("current_animation_name: '%s', is_playing: '%d', flip_x: '%d', flip_y: '%d'", currentAnimationName, isPlaying, flipX, flipY);
+        animatedSpriteComponent->isPlaying = isPlaying;
+        animatedSpriteComponent->flipX = flipX;
+        animatedSpriteComponent->flipY = flipY;
+
         PyObject* pyAnimationsList = PyObject_GetAttrString(component, "animations");
         RBE_ASSERT(PyList_Check(pyAnimationsList));
         for (Py_ssize_t animationIndex = 0; animationIndex < PyList_Size(pyAnimationsList); animationIndex++) {
@@ -363,9 +367,10 @@ void setup_scene_component_node(Entity entity, PyObject* component) {
                 animationFrame.texture = rbe_asset_manager_get_texture(animationFrameTexturePath);
                 RBE_ASSERT(animationFrame.texture != NULL);
                 animationFrame.frame = animationFrameNumber;
-                Rect2 frameDrawSource = { drawSourceX, drawSourceY, drawSourceW, drawSourceH };
+                const Rect2 frameDrawSource = { drawSourceX, drawSourceY, drawSourceW, drawSourceH };
                 animationFrame.drawSource = frameDrawSource;
                 animation.animationFrames[animationFrame.frame] = animationFrame;
+                animation.frameCount++;
 
                 Py_DecRef(pyDrawSource);
                 Py_DecRef(pyAnimationFrame);

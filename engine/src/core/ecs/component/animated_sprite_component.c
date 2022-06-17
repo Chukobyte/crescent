@@ -11,10 +11,15 @@
 AnimatedSpriteComponent* animated_sprite_component_create() {
     AnimatedSpriteComponent* animatedSpriteComponent = RBE_MEM_ALLOCATE(AnimatedSpriteComponent);
     animatedSpriteComponent->animationCount = 0;
+    animatedSpriteComponent->modulate.r = 1.0f;
+    animatedSpriteComponent->modulate.g = 1.0f;
+    animatedSpriteComponent->modulate.b = 1.0f;
+    animatedSpriteComponent->modulate.a = 1.0f;
     animatedSpriteComponent->currentAnimation.isValid = false;
     animatedSpriteComponent->isPlaying = false;
     animatedSpriteComponent->flipX = false;
     animatedSpriteComponent->flipY = false;
+    animatedSpriteComponent->startAnimationTickTime = 0;
 
     return animatedSpriteComponent;
 }
