@@ -399,7 +399,7 @@ class AnimationFrame:
 
 
 class Animation:
-    def __init__(self, name: int, speed: int, loops: bool, frames: list):
+    def __init__(self, name: str, speed: int, loops: bool, frames: list):
         self.name = name
         self.speed = speed
         self.loops = loops
@@ -444,13 +444,13 @@ class SpriteComponent:
 class AnimatedSpriteComponent:
     def __init__(
         self,
-        current_animation: Animation,
+        current_animation_name: str,
         is_playing: bool,
         animations: list,
         flip_x=False,
         flip_y=False,
     ):
-        self.current_animation = current_animation
+        self.current_animation_name = current_animation_name
         self.is_playing = is_playing
         self.animations = animations
         self.flip_x = flip_x

@@ -438,7 +438,7 @@
 "\n"\
 "\n"\
 "class Animation:\n"\
-"    def __init__(self, name: int, speed: int, loops: bool, frames: list):\n"\
+"    def __init__(self, name: str, speed: int, loops: bool, frames: list):\n"\
 "        self.name = name\n"\
 "        self.speed = speed\n"\
 "        self.loops = loops\n"\
@@ -483,13 +483,13 @@
 "class AnimatedSpriteComponent:\n"\
 "    def __init__(\n"\
 "        self,\n"\
-"        current_animation: Animation,\n"\
+"        current_animation_name: str,\n"\
 "        is_playing: bool,\n"\
 "        animations: list,\n"\
 "        flip_x=False,\n"\
 "        flip_y=False,\n"\
 "    ):\n"\
-"        self.current_animation = current_animation\n"\
+"        self.current_animation_name = current_animation_name\n"\
 "        self.is_playing = is_playing\n"\
 "        self.animations = animations\n"\
 "        self.flip_x = flip_x\n"\
