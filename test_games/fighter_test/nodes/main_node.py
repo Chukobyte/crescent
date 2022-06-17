@@ -32,16 +32,9 @@ create_stage_nodes(
                             z_index_relative_to_parent=True,
                             ignore_camera=False,
                         ),
-                        SpriteComponent(
-                            texture_path="test_games/fighter_test/assets/images/melissa_walk_animation.png",
-                            draw_source=Rect2(0.0, 0.0, 32.0, 32.0),
-                            flip_x=False,
-                            flip_y=False,
-                            modulate=Color(255, 255, 255, 255),
-                        ),
                         AnimatedSpriteComponent(
                             current_animation_name="walk",
-                            is_playing=False,
+                            is_playing=True,
                             animations=[
                                 Animation(
                                     name="walk",
