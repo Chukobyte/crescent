@@ -39,7 +39,8 @@ void rbe_ecs_manager_enable_fps_display_entity(bool enabled) {
         // Text Label Component
         TextLabelComponent* textLabelComponent = text_label_component_create();
         textLabelComponent->font = rbe_asset_manager_get_font("verdana-32");
-        strcpy(textLabelComponent->text, "FPS: ");
+        // NOTE(PetrFlajsingr): strcpy is deprecated
+        strcpy_s(textLabelComponent->text, TEXT_LABEL_BUFFER_SIZE, "FPS: ");
         component_manager_set_component(currentFpsEntity, ComponentDataIndex_TEXT_LABEL, textLabelComponent);
         // Script Component
         ScriptComponent* scriptComponent = script_component_create();

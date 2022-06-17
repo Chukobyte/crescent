@@ -26,7 +26,7 @@ RBEStringHashMap* rbe_string_hash_map_create(size_t capacity) {
 
 StringHashMapNode* hash_map_create_node_string(RBEStringHashMap* hashMap, const char* key, void* value, size_t valueSize, StringHashMapNode* next) {
     StringHashMapNode* node = (StringHashMapNode*) RBE_MEM_ALLOCATE_SIZE(sizeof(StringHashMapNode));
-    node->key = strdup(key);
+    node->key = _strdup(key);
     node->value = RBE_MEM_ALLOCATE_SIZE(valueSize);
     memcpy(node->value, value, valueSize);
     node->valueSize = valueSize;
@@ -137,7 +137,7 @@ int rbe_string_hash_map_get_int(RBEStringHashMap* hashMap, const char* key) {
 
 // String
 bool rbe_string_hash_map_add_string(RBEStringHashMap* hashMap, const char* key, const char* value) {
-    char* stringVal = strdup(value);
+    char* stringVal = _strdup(value);
     bool result = rbe_string_hash_map_add(hashMap, key, stringVal, strlen(value) + 1);
     RBE_MEM_FREE(stringVal);
     return result;

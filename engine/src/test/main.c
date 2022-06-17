@@ -110,7 +110,7 @@ void rbe_string_hashmap_test() {
 
     rbe_string_hash_map_add(hashMap, "one", fighter, sizeof(struct Fighter));
 
-    char* stringValue = strdup("mike");
+    char* stringValue = _strdup("mike");
     rbe_string_hash_map_add(hashMap, "name", stringValue, strlen(stringValue) + 1);
     TEST_ASSERT_EQUAL(rbe_string_hash_map_has(hashMap, "name"), true);
 

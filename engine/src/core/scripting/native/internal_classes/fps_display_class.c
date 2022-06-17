@@ -50,8 +50,11 @@ void fps_display_on_end(RBENativeScriptClass* nativeScriptClass) {}
 void fps_display_update(RBENativeScriptClass* nativeScriptClass, float deltaTime) {
     // Update Text Label Component's Text
     static char fpsAmountBuffer[6];
+    // FIXME: this is windows specific, needs to be replaced for other OS
     gcvt(rbe_engine_context_get()->averageFPS, 4, fpsAmountBuffer);
     TextLabelComponent* textLabelComponent = (TextLabelComponent*) component_manager_get_component(nativeScriptClass->entity, ComponentDataIndex_TEXT_LABEL);
-    strcpy(textLabelComponent->text, "FPS: ");
-    strcat(textLabelComponent->text, fpsAmountBuffer);
+    // NOTE(PetrFlajsingr): strcpy is deprecated
+    strcpy_s(textLabelComponent->text, TEXT_LABEL_BUFFER_SIZE, "FPS: ");
+    // NOTE(PetrFlajsingr): strcat is deprecated
+    strcat_s(textLabelComponent->text, TEXT_LABEL_BUFFER_SIZE, fpsAmountBuffer);
 }
