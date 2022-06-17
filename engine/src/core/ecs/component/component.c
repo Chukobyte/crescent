@@ -114,6 +114,8 @@ ComponentType component_manager_translate_index_to_type(ComponentDataIndex index
         return ComponentType_TRANSFORM_2D;
     case ComponentDataIndex_SPRITE:
         return ComponentType_SPRITE;
+    case ComponentDataIndex_ANIMATED_SPRITE:
+        return ComponentType_ANIMATED_SPRITE;
     case ComponentDataIndex_TEXT_LABEL:
         return ComponentType_TEXT_LABEL;
     case ComponentDataIndex_SCRIPT:

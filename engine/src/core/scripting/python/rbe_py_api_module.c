@@ -18,6 +18,7 @@
 #include "../../ecs/component/script_component.h"
 #include "../../networking/rbe_network.h"
 #include "../../utils/rbe_assert.h"
+#include "../../ecs/component/animated_sprite_component.h"
 
 // TODO: Clean up strdups
 
@@ -322,6 +323,7 @@ void setup_scene_component_node(Entity entity, PyObject* component) {
         Py_DecRef(pModulate);
     } else if (strcmp(className, "AnimatedSpriteComponent") == 0) {
         rbe_logger_debug("Building animated sprite component");
+        AnimatedSpriteComponent* animatedSpriteComponent = animated_sprite_component_create();
         const char* currentAnimationName = phy_get_string_from_var(component, "current_animation_name");
         const bool isPlaying = phy_get_bool_from_var(component, "is_playing");
         const bool flipX = phy_get_bool_from_var(component, "flip_x");
@@ -330,12 +332,19 @@ void setup_scene_component_node(Entity entity, PyObject* component) {
         PyObject* pyAnimationsList = PyObject_GetAttrString(component, "animations");
         RBE_ASSERT(PyList_Check(pyAnimationsList));
         for (Py_ssize_t animationIndex = 0; animationIndex < PyList_Size(pyAnimationsList); animationIndex++) {
+            Animation animation;
+            animation.frameCount = 0;
+            animation.isValid = true;
             PyObject* pyAnimation = PyList_GetItem(pyAnimationsList, animationIndex);
             RBE_ASSERT(pyAnimation != NULL);
             const char* animationName = phy_get_string_from_var(pyAnimation, "name");
             const int animationSpeed = phy_get_int_from_var(pyAnimation, "speed");
             const bool animationLoops = phy_get_bool_from_var(pyAnimation, "loops");
             rbe_logger_debug("building anim - name: '%s', speed: '%d', loops: '%d'", animationName, animationSpeed, animationLoops);
+            strcpy(animation.name, animationName);
+            animation.speed = animationSpeed;
+            animation.doesLoop = animationLoops;
+
             PyObject* pyAnimationFramesList = PyObject_GetAttrString(pyAnimation, "frames");
             RBE_ASSERT(PyList_Check(pyAnimationFramesList));
             for (Py_ssize_t animationFrameIndex = 0; animationFrameIndex < PyList_Size(pyAnimationFramesList); animationFrameIndex++) {
@@ -350,14 +359,29 @@ void setup_scene_component_node(Entity entity, PyObject* component) {
                 const float drawSourceH = phy_get_float_from_var(pyDrawSource, "h");
                 rbe_logger_debug("frame: %d, texture_path: %s, draw_source: (%f, %f, %f, %f)",
                                  animationFrameNumber, animationFrameTexturePath, drawSourceX, drawSourceY, drawSourceW, drawSourceH);
+                AnimationFrame animationFrame;
+                animationFrame.texture = rbe_asset_manager_get_texture(animationFrameTexturePath);
+                RBE_ASSERT(animationFrame.texture != NULL);
+                animationFrame.frame = animationFrameNumber;
+                Rect2 frameDrawSource = { drawSourceX, drawSourceY, drawSourceW, drawSourceH };
+                animationFrame.drawSource = frameDrawSource;
+                animation.animationFrames[animationFrame.frame] = animationFrame;
 
                 Py_DecRef(pyDrawSource);
                 Py_DecRef(pyAnimationFrame);
             }
 
+            // Set current animation if the name matches
+            animated_sprite_component_add_animation(animatedSpriteComponent, animation);
+            if (strcmp(animation.name, currentAnimationName) == 0) {
+                animatedSpriteComponent->currentAnimation = animation;
+            }
+
             Py_DecRef(pyAnimationFramesList);
             Py_DecRef(pyAnimation);
         }
+
+        component_manager_set_component(entity, ComponentDataIndex_ANIMATED_SPRITE, animatedSpriteComponent);
 
         Py_DecRef(pyAnimationsList);
     } else if (strcmp(className, "TextLabelComponent") == 0) {
