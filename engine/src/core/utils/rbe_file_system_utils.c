@@ -5,7 +5,12 @@
 #endif
 
 #include <stdio.h>
+
+#if defined(_MSC_VER)
+#include <io.h>
+#else
 #include <unistd.h>
+#endif
 
 #include "logger.h"
 #include "../memory/rbe_mem.h"
