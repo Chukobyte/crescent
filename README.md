@@ -70,14 +70,14 @@ configure_inputs(
 
 Only supports MinGW and Windows at the moment. These environment variables are required to be set before building.
 
-|  Environment Variable |                      Description                   | Required | Default Value |
+| Environment Variable  |                      Description                   | Required | Default Value |
 |:---------------------:|:--------------------------------------------------:|:--------:|:-------------:|
-| SDL2_INCLUDE          | The include directory of SDL2.                     |    YES   |      N/A      |
-| SDL2_LIBS             | The libs directory of SDL2.                        |    YES   |      N/A      |
-| PYTHON_INCLUDE_PATH   | The include directory of Python.                   |    YES   |      N/A      |
-| PYTHON_INCLUDE_LIBS   | The libs directory of Python.                      |    YES   |      N/A      |
+|   SDL2_INCLUDE_PATH   | The include directory of SDL2.                     |    YES   |      N/A      |
+|    SDL2_LIBS_PATH     | The libs directory of SDL2.                        |    YES   |      N/A      |
+|  PYTHON_INCLUDE_PATH  | The include directory of Python.                   |    YES   |      N/A      |
+|   PYTHON_LIBS_PATH    | The libs directory of Python.                      |    YES   |      N/A      |
 | FREETYPE_INCLUDE_PATH | The include directory of Freetype.                 |    YES   |      N/A      |
-| FREETYPE_INCLUDE_LIBS | The libs directory of Freetype.                    |    YES   |      N/A      |
+|  FREETYPE_LIBS_PATH   | The libs directory of Freetype.                    |    YES   |      N/A      |
 
 Roll back engine can be either built with make or cmake.  All build command should be executed from the project's root directory.
 
