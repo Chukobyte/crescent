@@ -4,6 +4,13 @@ set(CMAKE_C_STANDARD 99)
 
 project(roll_back_core C)
 
+if (CMAKE_C_COMPILER_ID STREQUAL "MSVC")
+    list(APPEND flags "/W4")
+else ()
+    list(APPEND flags "-std=c99" "-Wfatal-errors" "-Wall" "-Wextra" "-Wno-write-strings" "-Wno-deprecated-declarations"
+            "-Wno-unused-variable" "-Wno-cast-function-type" "-Wno-unused-parameter" "-Wno-missing-field-initializers")
+endif ()
+
 # SDL2
 cmake_path(SET SDL2_INCLUDE_PATH "$ENV{SDL2_INCLUDE_PATH}")
 cmake_path(SET SDL2_LIBS_PATH "$ENV{SDL2_LIBS_PATH}")
@@ -79,4 +86,4 @@ target_link_directories(${PROJECT_NAME} PUBLIC
         )
 
 target_link_libraries(${PROJECT_NAME} PUBLIC -lmingw32 -static-libgcc -lSDL2main -lSDL2 -lpython37 -lfreetype -lws2_32)
-target_compile_options(${PROJECT_NAME} PUBLIC -std=c99 -Wfatal-errors -Wall -Wextra -Wno-write-strings -Wno-deprecated-declarations -Wno-unused-variable -Wno-cast-function-type -Wno-unused-parameter -Wno-missing-field-initializers)
+target_compile_options(${PROJECT_NAME} PUBLIC ${flags})
