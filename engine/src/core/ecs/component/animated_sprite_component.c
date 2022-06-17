@@ -13,7 +13,6 @@ AnimatedSpriteComponent* animated_sprite_component_create() {
     animatedSpriteComponent->animationCount = 0;
     animatedSpriteComponent->currentAnimation.isValid = false;
     animatedSpriteComponent->isPlaying = false;
-    animatedSpriteComponent->doesLoop = true;
     animatedSpriteComponent->flipX = false;
     animatedSpriteComponent->flipY = false;
 

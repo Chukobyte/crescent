@@ -390,6 +390,22 @@ class StageNode:
         self.children = children
 
 
+# ASSETS
+class AnimationFrame:
+    def __init__(self, frame: int, texture_path: str, draw_source: Rect2):
+        self.frame = frame
+        self.texture_path = texture_path
+        self.draw_source = draw_source
+
+
+class Animation:
+    def __init__(self, name: int, speed: int, loops: bool, frames: list):
+        self.name = name
+        self.speed = speed
+        self.loops = loops
+        self.frames = frames
+
+
 # COMPONENTS
 class Transform2DComponent:
     def __init__(
@@ -423,6 +439,22 @@ class SpriteComponent:
         self.flip_x = flip_x
         self.flip_y = flip_y
         self.modulate = modulate
+
+
+class AnimatedSpriteComponent:
+    def __init__(
+        self,
+        current_animation: Animation,
+        is_playing: bool,
+        animations: list,
+        flip_x=False,
+        flip_y=False,
+    ):
+        self.current_animation = current_animation
+        self.is_playing = is_playing
+        self.animations = animations
+        self.flip_x = flip_x
+        self.flip_y = flip_y
 
 
 class TextLabelComponent:

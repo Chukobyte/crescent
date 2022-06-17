@@ -429,6 +429,22 @@
 "        self.children = children\n"\
 "\n"\
 "\n"\
+"# ASSETS\n"\
+"class AnimationFrame:\n"\
+"    def __init__(self, frame: int, texture_path: str, draw_source: Rect2):\n"\
+"        self.frame = frame\n"\
+"        self.texture_path = texture_path\n"\
+"        self.draw_source = draw_source\n"\
+"\n"\
+"\n"\
+"class Animation:\n"\
+"    def __init__(self, name: int, speed: int, loops: bool, frames: list):\n"\
+"        self.name = name\n"\
+"        self.speed = speed\n"\
+"        self.loops = loops\n"\
+"        self.frames = frames\n"\
+"\n"\
+"\n"\
 "# COMPONENTS\n"\
 "class Transform2DComponent:\n"\
 "    def __init__(\n"\
@@ -462,6 +478,22 @@
 "        self.flip_x = flip_x\n"\
 "        self.flip_y = flip_y\n"\
 "        self.modulate = modulate\n"\
+"\n"\
+"\n"\
+"class AnimatedSpriteComponent:\n"\
+"    def __init__(\n"\
+"        self,\n"\
+"        current_animation: Animation,\n"\
+"        is_playing: bool,\n"\
+"        animations: list,\n"\
+"        flip_x=False,\n"\
+"        flip_y=False,\n"\
+"    ):\n"\
+"        self.current_animation = current_animation\n"\
+"        self.is_playing = is_playing\n"\
+"        self.animations = animations\n"\
+"        self.flip_x = flip_x\n"\
+"        self.flip_y = flip_y\n"\
 "\n"\
 "\n"\
 "class TextLabelComponent:\n"\

@@ -5,7 +5,7 @@
 #include "texture.h"
 #include "../math/rbe_math.h"
 
-#define RBE_MAX_ANIMATION_FRAMES 16
+#define RBE_MAX_ANIMATION_FRAMES 8
 
 typedef struct AnimationFrame {
     Texture* texture;
@@ -19,5 +19,6 @@ typedef struct Animation {
     int currentFrame;
     int speed;
     char name[16];
+    bool doesLoop;
     bool isValid;
 } Animation;

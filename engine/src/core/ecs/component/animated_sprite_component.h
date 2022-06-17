@@ -13,7 +13,6 @@ typedef struct AnimatedSpriteComponent {
     Animation currentAnimation;
     size_t animationCount;
     bool isPlaying;
-    bool doesLoop;
     bool flipX;
     bool flipY;
     uint32_t startAnimationTickTime;
