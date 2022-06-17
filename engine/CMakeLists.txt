@@ -4,16 +4,6 @@ set(CMAKE_C_STANDARD 99)
 
 project(roll_back_core C)
 
-# SDL2
-cmake_path(SET SDL2_INCLUDE_PATH "$ENV{SDL2_INCLUDE}")
-cmake_path(SET SDL2_LIBS_PATH "$ENV{SDL2_LIBS}")
-# Python
-cmake_path(SET PYTHON_INCLUDE_PATH "$ENV{PYTHON_INCLUDE}")
-cmake_path(SET PYTHON_LIBS_PATH "$ENV{PYTHON_LIBS}")
-# Freetype
-cmake_path(SET FREETYPE_INCLUDE_PATH "$ENV{FREETYPE_INCLUDE}")
-cmake_path(SET FREETYPE_LIBS_PATH "$ENV{FREETYPE_LIBS}")
-
 add_library(${PROJECT_NAME} STATIC
         src/core/core.c
         src/core/game_properties.c
