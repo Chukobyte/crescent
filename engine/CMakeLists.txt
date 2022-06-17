@@ -1,13 +1,13 @@
 cmake_minimum_required(VERSION 3.20.0)
 
-set(CMAKE_C_STANDARD 99)
+set(CMAKE_C_STANDARD 11)
 
 project(roll_back_core C)
 
 if (CMAKE_C_COMPILER_ID STREQUAL "MSVC")
-    list(APPEND flags "/W3" "/Zc:preprocessor")
+    list(APPEND flags "/std:c11" "/W3" "/Zc:preprocessor")
 else ()
-    list(APPEND flags "-std=c99" "-Wfatal-errors" "-Wall" "-Wextra" "-Wno-write-strings" "-Wno-deprecated-declarations"
+    list(APPEND flags "-std=c11" "-Wfatal-errors" "-Wall" "-Wextra" "-Wno-write-strings" "-Wno-deprecated-declarations"
             "-Wno-unused-variable" "-Wno-cast-function-type" "-Wno-unused-parameter" "-Wno-missing-field-initializers")
 endif ()
 
