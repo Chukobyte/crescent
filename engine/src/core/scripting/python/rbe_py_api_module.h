@@ -212,7 +212,7 @@ static char *rbePyApiInputActionInputCheckKWList[] = {"name", NULL};
 
 static char *rbePyApiAudioManagerPlaySoundKWList[] = {"path", "loops", NULL};
 
-static char *rbePyApiNodeGetChildKWList[] = {"name", NULL};
+static char *rbePyApiNodeGetChildKWList[] = {"entity_id", "name", NULL};
 
 static char *rbePyApiNode2DSetPositionKWList[] = {"entity_id", "x", "y", NULL};
 

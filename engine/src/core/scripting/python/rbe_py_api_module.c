@@ -507,9 +507,14 @@ PyObject* rbe_py_api_audio_manager_stop_sound(PyObject* self, PyObject* args, Py
 
 // Node
 PyObject* rbe_py_api_node_get_child(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity parentEntity;
     char* childName;
-    if (PyArg_ParseTupleAndKeywords(args, kwargs, "s", rbePyApiNodeGetChildKWList, &childName)) {
-        Py_RETURN_NONE;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "is", rbePyApiNodeGetChildKWList, &parentEntity, &childName)) {
+        Entity childEntity = rbe_scene_manager_get_entity_child_by_name(parentEntity, childName);
+        if (childEntity != NULL_ENTITY) {
+            rbe_logger_warn("Failed to get child node from parent entity '%d' with the name '%s'", parentEntity, childName);
+        }
+        return Py_BuildValue("(i)", childEntity);
     }
     return NULL;
 }
