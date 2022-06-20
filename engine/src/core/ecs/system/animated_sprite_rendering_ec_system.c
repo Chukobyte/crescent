@@ -25,7 +25,7 @@ void animated_sprite_rendering_system_render() {
     const int currentTickTime = (int) SDL_GetTicks();
     for (size_t i = 0; i < animatedSpriteRenderingSystem->entity_count; i++) {
         const Entity entity = animatedSpriteRenderingSystem->entities[i];
-        Transform2DComponent* spriteTransformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
+        const Transform2DComponent* spriteTransformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
         AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_ANIMATED_SPRITE);
         AnimationFrame currentFrame = animatedSpriteComponent->currentAnimation.animationFrames[animatedSpriteComponent->currentAnimation.currentFrame];
         if (animatedSpriteComponent->isPlaying) {

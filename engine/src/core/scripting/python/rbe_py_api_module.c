@@ -50,12 +50,12 @@ PyObject* rbe_py_api_engine_set_target_fps(PyObject* self, PyObject* args, PyObj
 }
 
 PyObject* rbe_py_api_engine_get_target_fps(PyObject* self, PyObject* args) {
-    RBEEngineContext* engineContext = rbe_engine_context_get();
+    const RBEEngineContext* engineContext = rbe_engine_context_get();
     return Py_BuildValue("(f)", engineContext->targetFPS);
 }
 
 PyObject* rbe_py_api_engine_get_average_fps(PyObject* self, PyObject* args) {
-    RBEEngineContext* engineContext = rbe_engine_context_get();
+    const RBEEngineContext* engineContext = rbe_engine_context_get();
     return Py_BuildValue("(f)", engineContext->averageFPS);
 }
 
@@ -526,7 +526,7 @@ PyObject* rbe_py_api_node2D_add_to_position(PyObject* self, PyObject* args, PyOb
 PyObject* rbe_py_api_node2D_get_position(PyObject* self, PyObject* args, PyObject* kwargs) {
     Entity entity;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", rbePyApiGenericGetEntityKWList, &entity)) {
-        Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
+        const Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
         return Py_BuildValue("(ff)", transformComp->position.x, transformComp->position.y);
         Py_RETURN_NONE;
     }
@@ -571,7 +571,7 @@ PyObject* rbe_py_api_server_subscribe(PyObject* self, PyObject* args, PyObject* 
     PyObject* listenerFunc;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "siO", rbePyApiNetworkSubscribeKWList, &signalId, &listenerNode, &listenerFunc)) {
         RBE_ASSERT(PyObject_IsTrue(listenerFunc));
-        RBEScriptContext* scriptContext =  rbe_py_get_script_context();
+        const RBEScriptContext* scriptContext =  rbe_py_get_script_context();
         RBE_ASSERT(scriptContext != NULL && scriptContext->on_entity_subscribe_to_network_callback != NULL);
         scriptContext->on_entity_subscribe_to_network_callback(listenerNode, listenerFunc);
 
