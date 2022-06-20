@@ -537,7 +537,9 @@
 "\n"\
 "    # New API\n"\
 "    def get_child(self, name: str) -> int:\n"\
-"        return rbe_py_api_internal.node_get_child(entity_id=self.entity_id, child_name=name)\n"\
+"        return rbe_py_api_internal.node_get_child(\n"\
+"            entity_id=self.entity_id, child_name=name\n"\
+"        )\n"\
 "        # node = rbe_py_api_internal.node_get_child(entity_id=self.entity_id, child_name=name)\n"\
 "        # if node == 0:\n"\
 "        #     return None\n"\

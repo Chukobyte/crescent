@@ -498,7 +498,9 @@ class Node:
 
     # New API
     def get_child(self, name: str) -> int:
-        return rbe_py_api_internal.node_get_child(entity_id=self.entity_id, child_name=name)
+        return rbe_py_api_internal.node_get_child(
+            entity_id=self.entity_id, child_name=name
+        )
         # node = rbe_py_api_internal.node_get_child(entity_id=self.entity_id, child_name=name)
         # if node == 0:
         #     return None

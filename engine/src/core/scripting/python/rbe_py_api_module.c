@@ -514,7 +514,7 @@ PyObject* rbe_py_api_node_get_child(PyObject* self, PyObject* args, PyObject* kw
         if (childEntity != NULL_ENTITY) {
             rbe_logger_warn("Failed to get child node from parent entity '%d' with the name '%s'", parentEntity, childName);
         }
-        return Py_BuildValue("(i)", childEntity);
+        return Py_BuildValue("i", childEntity);
     }
     return NULL;
 }

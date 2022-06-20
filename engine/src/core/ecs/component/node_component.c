@@ -28,18 +28,18 @@ NodeBaseType node_get_base_type(const char* baseName) {
 
 NodeBaseInheritanceType node_get_type_inheritance(NodeBaseType type) {
     switch (type) {
-        case NodeBaseType_NODE:
-            return NodeBaseInheritanceType_NODE;
-        case NodeBaseType_NODE2D:
-            return NodeBaseInheritanceType_NODE2D;
-        case NodeBaseType_SPRITE:
-            return NodeBaseInheritanceType_SPRITE;
-        case NodeBaseType_ANIMATED_SPRITE:
-            return NodeBaseInheritanceType_ANIMATED_SPRITE;
-        case NodeBaseType_TEXT_LABEL:
-            return NodeBaseInheritanceType_TEXT_LABEL;
-        default:
-            break;
+    case NodeBaseType_NODE:
+        return NodeBaseInheritanceType_NODE;
+    case NodeBaseType_NODE2D:
+        return NodeBaseInheritanceType_NODE2D;
+    case NodeBaseType_SPRITE:
+        return NodeBaseInheritanceType_SPRITE;
+    case NodeBaseType_ANIMATED_SPRITE:
+        return NodeBaseInheritanceType_ANIMATED_SPRITE;
+    case NodeBaseType_TEXT_LABEL:
+        return NodeBaseInheritanceType_TEXT_LABEL;
+    default:
+        break;
     }
     return NodeBaseInheritanceType_INVALID;
 }
