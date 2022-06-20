@@ -497,11 +497,12 @@ class Node:
             return False
 
     # New API
-    def get_child(self, name: str):
-        node = rbe_py_api_internal.node_get_child(name=name)
-        if not node:
-            return None
-        return self.parse_scene_node_from_engine(scene_node=node)
+    def get_child(self, name: str) -> int:
+        return rbe_py_api_internal.node_get_child(entity_id=self.entity_id, child_name=name)
+        # node = rbe_py_api_internal.node_get_child(entity_id=self.entity_id, child_name=name)
+        # if node == 0:
+        #     return None
+        # return self.parse_scene_node_from_engine(scene_node=node)
 
     # Old API
 

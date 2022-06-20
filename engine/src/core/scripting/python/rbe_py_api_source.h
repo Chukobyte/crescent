@@ -535,6 +535,16 @@
 "        else:\n"\
 "            return False\n"\
 "\n"\
+"    # New API\n"\
+"    def get_child(self, name: str) -> int:\n"\
+"        return rbe_py_api_internal.node_get_child(entity_id=self.entity_id, child_name=name)\n"\
+"        # node = rbe_py_api_internal.node_get_child(entity_id=self.entity_id, child_name=name)\n"\
+"        # if node == 0:\n"\
+"        #     return None\n"\
+"        # return self.parse_scene_node_from_engine(scene_node=node)\n"\
+"\n"\
+"    # Old API\n"\
+"\n"\
 "    @classmethod\n"\
 "    def extract_valid_inheritance_node(cls) -> str:\n"\
 "        valid_node_type_list = [e.value for e in NodeType]\n"\
@@ -811,11 +821,7 @@
 "class Client:\n"\
 "    @staticmethod\n"\
 "    def start(host: str, port: int) -> None:\n"\
-"        # rbe_py_api_internal.client_start(host=host, port=port)\n"\
-"        try:\n"\
-"            rbe_py_api_internal.client_start(host=host, port=port)\n"\
-"        except Exception as e:\n"\
-"            print(f\"Exception = {e}\")\n"\
+"        rbe_py_api_internal.client_start(host=host, port=port)\n"\
 "\n"\
 "    @staticmethod\n"\
 "    def stop() -> None:\n"\
