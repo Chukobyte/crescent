@@ -8,7 +8,6 @@
 #include "../../rendering/renderer.h"
 #include "../../utils/rbe_string_util.h"
 #include "../../utils/rbe_assert.h"
-#include "../component/transform2d_component.h"
 
 
 EntitySystem* fontRenderingSystem = NULL;

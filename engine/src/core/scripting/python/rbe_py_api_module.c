@@ -610,8 +610,14 @@ PyObject* rbe_py_api_client_send(PyObject* self, PyObject* args, PyObject* kwarg
 PyObject* rbe_py_api_client_subscribe(PyObject* self, PyObject* args, PyObject* kwargs) {
     char* signalId;
     Entity listenerNode;
-    char* listenerFunc;
-    if (PyArg_ParseTupleAndKeywords(args, kwargs, "sis", rbePyApiNetworkSubscribeKWList, &signalId, &listenerNode, &listenerFunc)) {
+    PyObject* listenerFunc;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "siO", rbePyApiNetworkSubscribeKWList, &signalId, &listenerNode, &listenerFunc)) {
+        RBE_ASSERT(PyObject_IsTrue(listenerFunc));
+        const RBEScriptContext* scriptContext =  rbe_py_get_script_context();
+        RBE_ASSERT(scriptContext != NULL && scriptContext->on_entity_subscribe_to_network_callback != NULL);
+        scriptContext->on_entity_subscribe_to_network_callback(listenerNode, listenerFunc);
+
+        Py_DecRef(listenerFunc);
         Py_RETURN_NONE;
     }
     return NULL;
