@@ -6,6 +6,7 @@
 #include "../component/transform2d_component.h"
 #include "../component/text_label_component.h"
 #include "../../rendering/renderer.h"
+#include "../../utils/rbe_string_util.h"
 #include "../../utils/rbe_assert.h"
 #include "../component/transform2d_component.h"
 
@@ -17,7 +18,7 @@ void font_rendering_system_render();
 EntitySystem* font_rendering_ec_system_create() {
     RBE_ASSERT(fontRenderingSystem == NULL);
     fontRenderingSystem = rbe_ec_system_create();
-    fontRenderingSystem->name = strdup("Font Rendering");
+    fontRenderingSystem->name = rbe_strdup("Font Rendering");
     fontRenderingSystem->render_func = font_rendering_system_render;
     fontRenderingSystem->component_signature = ComponentType_TRANSFORM_2D | ComponentType_TEXT_LABEL;
     return fontRenderingSystem;

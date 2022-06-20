@@ -6,6 +6,7 @@
 
 #include "ec_system.h"
 #include "../../rendering/renderer.h"
+#include "../../utils/rbe_string_util.h"
 #include "../component/transform2d_component.h"
 #include "../component/animated_sprite_component.h"
 
@@ -15,7 +16,7 @@ void animated_sprite_rendering_system_render();
 
 EntitySystem* animated_sprite_rendering_ec_system_create() {
     animatedSpriteRenderingSystem = rbe_ec_system_create();
-    animatedSpriteRenderingSystem->name = strdup("Animated Sprite Rendering");
+    animatedSpriteRenderingSystem->name = rbe_strdup("Animated Sprite Rendering");
     animatedSpriteRenderingSystem->render_func = animated_sprite_rendering_system_render;
     animatedSpriteRenderingSystem->component_signature = ComponentType_TRANSFORM_2D | ComponentType_ANIMATED_SPRITE;
     return animatedSpriteRenderingSystem;

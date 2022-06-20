@@ -7,6 +7,7 @@
 #include "../../scripting/python/py_script_context.h"
 #include "../../scripting/native/native_script_context.h"
 #include "../../scripting/native/internal_classes/fps_display_class.h"
+#include "../../utils/rbe_string_util.h"
 #include "../../utils/rbe_assert.h"
 
 void script_system_on_entity_registered(Entity entity);
@@ -25,7 +26,7 @@ static size_t scriptContextsCount = 0;
 EntitySystem* script_ec_system_create() {
     RBE_ASSERT(scriptSystem == NULL);
     scriptSystem = rbe_ec_system_create();
-    scriptSystem->name = strdup("Script");
+    scriptSystem->name = rbe_strdup("Script");
     scriptSystem->on_entity_registered_func = script_system_on_entity_registered;
     scriptSystem->on_entity_unregistered_func = script_system_on_entity_unregistered;
     scriptSystem->on_entity_start_func = script_system_entity_start;
