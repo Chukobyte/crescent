@@ -63,7 +63,8 @@ class Main(Node2D):
         pass
 
     def _network_server_callback(self, message: str) -> None:
-        print(f"[PYTHON SCRIPT] [SERVER] _network_server_callback - message: {message}")
+        print(f"[PYTHON SCRIPT] [SERVER] _network_server_callback - message: '{message}'")
+        Server.send(message=message)
 
     def _network_client_callback(self, message: str) -> None:
-        print(f"[PYTHON SCRIPT] [CLIENT] _network_client_callback - message: {message}")
+        print(f"[PYTHON SCRIPT] [CLIENT] _network_client_callback - message: '{message}'")
