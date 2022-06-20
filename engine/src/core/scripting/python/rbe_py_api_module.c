@@ -20,6 +20,7 @@
 #include "../../utils/rbe_string_util.h"
 #include "../../utils/rbe_assert.h"
 #include "../../ecs/component/animated_sprite_component.h"
+#include "../../ecs/component/node_component.h"
 
 // TODO: Clean up strdups
 
@@ -219,8 +220,15 @@ void setup_scene_stage_nodes(SceneTreeNode* parent, PyObject* stageNodeList) {
         rbe_scene_manager_queue_entity_for_creation(node); // May move in a different place TODO: Figure out...
 
         PyObject* pStageNode = PyList_GetItem(stageNodeList, i);
+        // Node component is used for all scene nodes
         const char* nodeName = phy_get_string_from_var(pStageNode, "name");
         const char* nodeType = phy_get_string_from_var(pStageNode, "type");
+        NodeComponent* nodeComponent = node_component_create();
+        strcpy(nodeComponent->name, nodeName);
+        nodeComponent->type = node_get_base_type(nodeType);
+        RBE_ASSERT_FMT(nodeComponent->type != NodeBaseType_INVALID, "Node '%s' has an invalid node type '%s'", nodeName, nodeType);
+        component_manager_set_component(node->entity, ComponentDataIndex_NODE, nodeComponent);
+
         // Process tags if tags var is a list
         PyObject* tagsListVar = PyObject_GetAttrString(pStageNode, "tags");
         if (PyList_Check(tagsListVar)) {
@@ -492,6 +500,15 @@ PyObject* rbe_py_api_audio_manager_stop_sound(PyObject* self, PyObject* args, Py
     char* audioPath;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "s", rbePyApiGenericPathKWList, &audioPath)) {
         rbe_audio_manager_stop_sound(audioPath);
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+// Node
+PyObject* rbe_py_api_node_get_child(PyObject* self, PyObject* args, PyObject* kwargs) {
+    char* childName;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "s", rbePyApiNodeGetChildKWList, &childName)) {
         Py_RETURN_NONE;
     }
     return NULL;

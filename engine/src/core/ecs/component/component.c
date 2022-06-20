@@ -110,6 +110,8 @@ ComponentType component_manager_get_component_signature(Entity entity) {
 
 ComponentType component_manager_translate_index_to_type(ComponentDataIndex index) {
     switch (index) {
+    case ComponentDataIndex_NODE:
+        return ComponentType_NODE;
     case ComponentDataIndex_TRANSFORM_2D:
         return ComponentType_TRANSFORM_2D;
     case ComponentDataIndex_SPRITE:

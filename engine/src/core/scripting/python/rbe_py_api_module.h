@@ -33,6 +33,9 @@ PyObject* rbe_py_api_scene_tree_change_scene(PyObject* self, PyObject* args, PyO
 PyObject* rbe_py_api_audio_manager_play_sound(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* rbe_py_api_audio_manager_stop_sound(PyObject* self, PyObject* args, PyObject* kwargs);
 
+// Node
+PyObject* rbe_py_api_node_get_child(PyObject* self, PyObject* args, PyObject* kwargs);
+
 // Node2D
 PyObject* rbe_py_api_node2D_set_position(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* rbe_py_api_node2D_add_to_position(PyObject* self, PyObject* args, PyObject* kwargs);
@@ -124,6 +127,11 @@ static struct PyMethodDef rbePyApiMethods[] = {
         "audio_manager_stop_sound", (PyCFunction) rbe_py_api_audio_manager_stop_sound,
         METH_VARARGS | METH_KEYWORDS, "Stops a sound."
     },
+    // NODE
+    {
+        "node_get_child", (PyCFunction) rbe_py_api_node_get_child,
+        METH_VARARGS | METH_KEYWORDS, "Node get child."
+    },
     // NODE2D
     {
         "node2D_set_position", (PyCFunction) rbe_py_api_node2D_set_position,
@@ -203,6 +211,8 @@ static char *rbePyApiInputAddActionKWList[] = {"name", "value", NULL};
 static char *rbePyApiInputActionInputCheckKWList[] = {"name", NULL};
 
 static char *rbePyApiAudioManagerPlaySoundKWList[] = {"path", "loops", NULL};
+
+static char *rbePyApiNodeGetChildKWList[] = {"name", NULL};
 
 static char *rbePyApiNode2DSetPositionKWList[] = {"entity_id", "x", "y", NULL};
 

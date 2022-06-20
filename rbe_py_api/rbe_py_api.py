@@ -496,6 +496,15 @@ class Node:
         else:
             return False
 
+    # New API
+    def get_child(self, name: str):
+        node = rbe_py_api_internal.node_get_child(name=name)
+        if not node:
+            return None
+        return self.parse_scene_node_from_engine(scene_node=node)
+
+    # Old API
+
     @classmethod
     def extract_valid_inheritance_node(cls) -> str:
         valid_node_type_list = [e.value for e in NodeType]
