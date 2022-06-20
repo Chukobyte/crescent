@@ -587,7 +587,7 @@ PyObject* rbe_py_api_client_start(PyObject* self, PyObject* args, PyObject* kwar
     char* host;
     int port;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "si", rbePyApiClientStartKWList, &host, &port)) {
-        rbe_udp_server_initialize(port, rbe_ec_system_network_callback);
+        rbe_udp_client_initialize(host, port, rbe_ec_system_network_callback);
         Py_RETURN_NONE;
     }
     return NULL;

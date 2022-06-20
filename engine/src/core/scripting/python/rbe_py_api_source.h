@@ -811,7 +811,11 @@
 "class Client:\n"\
 "    @staticmethod\n"\
 "    def start(host: str, port: int) -> None:\n"\
-"        rbe_py_api_internal.client_start(host=host, port=port)\n"\
+"        # rbe_py_api_internal.client_start(host=host, port=port)\n"\
+"        try:\n"\
+"            rbe_py_api_internal.client_start(host=host, port=port)\n"\
+"        except Exception as e:\n"\
+"            print(f\"Exception = {e}\")\n"\
 "\n"\
 "    @staticmethod\n"\
 "    def stop() -> None:\n"\
@@ -822,7 +826,7 @@
 "        rbe_py_api_internal.client_send(message=message)\n"\
 "\n"\
 "    @staticmethod\n"\
-"    def subscribe(signal_id: str, listener_node: Node, listener_func: str) -> None:\n"\
+"    def subscribe(signal_id: str, listener_node: Node, listener_func) -> None:\n"\
 "        rbe_py_api_internal.client_subscribe(\n"\
 "            signal_id=signal_id,\n"\
 "            listener_node=listener_node.entity_id,\n"\

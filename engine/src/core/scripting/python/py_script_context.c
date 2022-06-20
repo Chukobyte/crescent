@@ -88,6 +88,7 @@ void py_on_start(Entity entity) {
     RBE_ASSERT(pScriptInstance != NULL);
     if (PyObject_HasAttrString(pScriptInstance, "_start")) {
         PyObject_CallMethod(pScriptInstance, "_start", NULL);
+        PyErr_Print();
     }
 }
 

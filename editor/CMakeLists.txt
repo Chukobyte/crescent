@@ -37,6 +37,7 @@ add_library(${PROJECT_NAME} STATIC
         ../engine/src/core/math/rbe_math.c
         ../engine/src/core/utils/logger.c
         ../engine/src/core/utils/rbe_file_system_utils.c
+        ../engine/src/core/utils/rbe_string_util.c
         ../engine/src/core/data_structures/rbe_hash_map.c
         ../engine/src/core/data_structures/rbe_hash_map_string.c
         ../engine/src/core/memory/rbe_mem.c

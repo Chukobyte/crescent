@@ -5,19 +5,31 @@ class Main(Node2D):
     def _start(self) -> None:
         self.velocity = Vector2.ZERO()
         self.speed = 50
-        print(f"[PY SCRIPT] Entity entered stage with id = {self.entity_id}")
+        print(f"[PYTHON SCRIPT] Entity entered stage with id = {self.entity_id}")
         Input.add_action(name="test", value=Input.Keyboard.RETURN)
         Input.add_action(name="move_left", value=Input.Keyboard.A)
         Input.add_action(name="move_right", value=Input.Keyboard.D)
-        print(f"[PY SCRIPT] position = {self.get_position()}")
+        print(f"[PYTHON SCRIPT] position = {self.get_position()}")
         Engine.set_fps_display_enabled(True)
 
-        Server.start(port=8888)
-        Server.subscribe(
-            signal_id="data_callback",
-            listener_node=self,
-            listener_func=self._network_callback,
-        )
+        # Network
+        self.is_server = False
+
+        if self.is_server:
+            Server.start(port=8888)
+            Server.subscribe(
+                signal_id="data_callback",
+                listener_node=self,
+                listener_func=self._network_server_callback,
+            )
+        else:
+            Client.start("127.0.0.1", 8888)
+            Client.subscribe(
+                signal_id="data_callback",
+                listener_node=self,
+                listener_func=self._network_client_callback,
+            )
+        print(f"[PYTHON SCRIPT] Is server = {self.is_server}")
 
     def _update(self, delta_time: float) -> None:
         if Input.is_action_just_pressed(name="exit"):
@@ -50,5 +62,8 @@ class Main(Node2D):
         print(f"entity {self.entity_id} end was called!")
         pass
 
-    def _network_callback(self, message: str) -> None:
-        print(f"[PYTHON SCRIPT] _network_callback - message: {message}")
+    def _network_server_callback(self, message: str) -> None:
+        print(f"[PYTHON SCRIPT] [SERVER] _network_server_callback - message: {message}")
+
+    def _network_client_callback(self, message: str) -> None:
+        print(f"[PYTHON SCRIPT] [CLIENT] _network_client_callback - message: {message}")

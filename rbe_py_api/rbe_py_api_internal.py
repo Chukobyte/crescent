@@ -120,5 +120,5 @@ def client_send(message: str) -> None:
     pass
 
 
-def client_subscribe(signal_id: str, listener_node: int, listener_func: str) -> None:
+def client_subscribe(signal_id: str, listener_node: int, listener_func) -> None:
     pass
