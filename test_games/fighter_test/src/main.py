@@ -1,4 +1,6 @@
 from rbe_py_api import *
+# from src.input import InputBuffer
+from test_games.fighter_test.src.input import InputBuffer
 
 
 class Main(Node2D):
@@ -7,10 +9,20 @@ class Main(Node2D):
         self.speed = 50
         print(f"[PYTHON SCRIPT] Entity entered stage with id = {self.entity_id}")
         Input.add_action(name="test", value=Input.Keyboard.RETURN)
-        Input.add_action(name="move_left", value=Input.Keyboard.A)
-        Input.add_action(name="move_right", value=Input.Keyboard.D)
+        Input.add_action(name="p1_move_left", value=Input.Keyboard.A)
+        Input.add_action(name="p1_move_right", value=Input.Keyboard.D)
+        Input.add_action(name="p2_move_left", value=Input.Keyboard.LEFT)
+        Input.add_action(name="p2_move_right", value=Input.Keyboard.RIGHT)
         print(f"[PYTHON SCRIPT] position = {self.get_position()}")
         Engine.set_fps_display_enabled(True)
+
+        # Input Buffer (Will move into server for player 2 soon)
+        self.player_one_input = InputBuffer(
+            move_left_action_name="p1_move_left", move_right_action_name="p1_move_right"
+        )
+        self.player_two_input = InputBuffer(
+            move_left_action_name="p2_move_left", move_right_action_name="p2_move_right"
+        )
 
         # Network
         self.is_server = True
@@ -44,9 +56,12 @@ class Main(Node2D):
                 path="test_games/fighter_test/assets/audio/sfx/rainbow_orb.wav",
                 loops=False,
             )
-        if Input.is_action_pressed(name="move_left"):
+
+        # Player One (for now)
+        self.player_one_input.process_inputs()
+        if self.player_one_input.move_left_pressed:
             self.velocity += Vector2.LEFT()
-        if Input.is_action_pressed(name="move_right"):
+        if self.player_one_input.move_right_pressed:
             self.velocity += Vector2.RIGHT()
 
     # print(f"average fps = {Engine.get_average_fps()}")
@@ -60,11 +75,14 @@ class Main(Node2D):
 
     def _end(self) -> None:
         print(f"entity {self.entity_id} end was called!")
-        pass
 
     def _network_server_callback(self, message: str) -> None:
-        print(f"[PYTHON SCRIPT] [SERVER] _network_server_callback - message: '{message}'")
+        print(
+            f"[PYTHON SCRIPT] [SERVER] _network_server_callback - message: '{message}'"
+        )
         Server.send(message=message)
 
     def _network_client_callback(self, message: str) -> None:
-        print(f"[PYTHON SCRIPT] [CLIENT] _network_client_callback - message: '{message}'")
+        print(
+            f"[PYTHON SCRIPT] [CLIENT] _network_client_callback - message: '{message}'"
+        )
