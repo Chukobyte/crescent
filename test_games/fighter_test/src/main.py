@@ -13,7 +13,7 @@ class Main(Node2D):
         Engine.set_fps_display_enabled(True)
 
         # Network
-        self.is_server = False
+        self.is_server = True
 
         if self.is_server:
             Server.start(port=8888)
