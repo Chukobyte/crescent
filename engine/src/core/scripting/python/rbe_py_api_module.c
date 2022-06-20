@@ -217,8 +217,6 @@ void setup_scene_stage_nodes(SceneTreeNode* parent, PyObject* stageNodeList) {
             parent->children[parent->childCount++] = node;
         }
 
-        rbe_scene_manager_queue_entity_for_creation(node); // May move in a different place TODO: Figure out...
-
         PyObject* pStageNode = PyList_GetItem(stageNodeList, i);
         // Node component is used for all scene nodes
         const char* nodeName = phy_get_string_from_var(pStageNode, "name");
@@ -258,6 +256,8 @@ void setup_scene_stage_nodes(SceneTreeNode* parent, PyObject* stageNodeList) {
             // Recurse through children nodes
             setup_scene_stage_nodes(node, childrenListVar);
         }
+
+        rbe_scene_manager_queue_entity_for_creation(node); // May move in a different place TODO: Figure out...
 
         rbe_logger_debug("node_name = %s, node_type = %s", nodeName, nodeType);
         Py_DecRef(tagsListVar);
@@ -511,7 +511,7 @@ PyObject* rbe_py_api_node_get_child(PyObject* self, PyObject* args, PyObject* kw
     char* childName;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "is", rbePyApiNodeGetChildKWList, &parentEntity, &childName)) {
         Entity childEntity = rbe_scene_manager_get_entity_child_by_name(parentEntity, childName);
-        if (childEntity != NULL_ENTITY) {
+        if (childEntity == NULL_ENTITY) {
             rbe_logger_warn("Failed to get child node from parent entity '%d' with the name '%s'", parentEntity, childName);
         }
         return Py_BuildValue("i", childEntity);
