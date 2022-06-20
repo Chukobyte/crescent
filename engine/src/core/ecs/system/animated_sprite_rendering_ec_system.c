@@ -43,19 +43,19 @@ void animated_sprite_rendering_system_render() {
             }
         }
         const Rect2 destinationRectangle = {
-                spriteTransformComp->position.x,
-                spriteTransformComp->position.y,
-                currentFrame.drawSource.w * spriteTransformComp->scale.x,
-                currentFrame.drawSource.h * spriteTransformComp->scale.y
+            spriteTransformComp->position.x,
+            spriteTransformComp->position.y,
+            currentFrame.drawSource.w * spriteTransformComp->scale.x,
+            currentFrame.drawSource.h * spriteTransformComp->scale.y
         };
         rbe_renderer_queue_sprite_draw_call(
-                currentFrame.texture,
-                currentFrame.drawSource,
-                destinationRectangle,
-                spriteTransformComp->rotation,
-                animatedSpriteComponent->modulate,
-                animatedSpriteComponent->flipX,
-                animatedSpriteComponent->flipY
+            currentFrame.texture,
+            currentFrame.drawSource,
+            destinationRectangle,
+            spriteTransformComp->rotation,
+            animatedSpriteComponent->modulate,
+            animatedSpriteComponent->flipX,
+            animatedSpriteComponent->flipY
         );
     }
 }

@@ -233,18 +233,17 @@ void rbe_process_inputs() {
 }
 
 void rbe_process_game_update() {
-    static int lastFrameTime = 0;
-    const int targetFps = engineContext->targetFPS;
-    const int MILLISECONDS_PER_TICK = 1000;
-    const unsigned int FRAME_TARGET_TIME = MILLISECONDS_PER_TICK / targetFps;
-    unsigned int timeToWait = FRAME_TARGET_TIME - (SDL_GetTicks() - lastFrameTime);
+    static const uint32_t MILLISECONDS_PER_TICK = 1000; // TODO: Put in another place
+    static uint32_t lastFrameTime = 0;
+    const uint32_t targetFps = engineContext->targetFPS;
+    const uint32_t FRAME_TARGET_TIME = MILLISECONDS_PER_TICK / targetFps;
+    const uint32_t timeToWait = FRAME_TARGET_TIME - (SDL_GetTicks() - lastFrameTime);
     if (timeToWait > 0 && timeToWait <= FRAME_TARGET_TIME) {
         SDL_Delay(timeToWait);
     }
-    lastFrameTime = (int) SDL_GetTicks();
 
     // Variable Time Step
-    const float variableDeltaTime = (float ) (SDL_GetTicks() - lastFrameTime) / 1000.0f;
+    const float variableDeltaTime = (float) (SDL_GetTicks() - lastFrameTime) / (float) MILLISECONDS_PER_TICK;
     rbe_ec_system_process_systems(variableDeltaTime);
 
     // Fixed Time Step
@@ -252,7 +251,6 @@ void rbe_process_game_update() {
     static const double PHYSICS_DELTA_TIME = 0.1f;
     static uint32_t fixedCurrentTime = 0;
     static double accumulator = 0.0f;
-
     uint32_t newTime = SDL_GetTicks();
     uint32_t frameTime = newTime - fixedCurrentTime;
     static const uint32_t MAX_FRAME_TIME = 250;
@@ -268,7 +266,9 @@ void rbe_process_game_update() {
         rbe_ec_system_physics_process_systems((float) PHYSICS_DELTA_TIME);
         rbe_input_clean_up_flags();
     }
+
     rbe_input_clean_up_flags();
+    lastFrameTime = SDL_GetTicks();
 }
 
 void rbe_render() {
