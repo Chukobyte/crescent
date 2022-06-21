@@ -25,7 +25,7 @@ typedef struct EntitySystemData {
 } EntitySystemData;
 
 void rbe_ec_system_insert_entity_into_system(Entity entity, EntitySystem* system);
-bool rbe_ec_system_remove_entity_from_system(Entity entity, EntitySystem* system);
+void rbe_ec_system_remove_entity_from_system(Entity entity, EntitySystem* system);
 
 EntitySystemData entitySystemData;
 Entity entityIndex = 1; // 0 is NULL_ENTITY
@@ -175,22 +175,20 @@ bool rbe_ec_system_has_entity(Entity entity, EntitySystem* system) {
 
 void rbe_ec_system_insert_entity_into_system(Entity entity, EntitySystem* system) {
     if (!rbe_ec_system_has_entity(entity, system)) {
-        system->entities[system->entity_count] = entity;
+        system->entities[system->entity_count++] = entity;
         if (system->on_entity_registered_func != NULL) {
             system->on_entity_registered_func(entity);
         }
-        system->entity_count++;
     } else {
         rbe_logger_error("Failed to insert entity into system, entity '%d' already present!", entity);
     }
 }
 
-bool rbe_ec_system_remove_entity_from_system(Entity entity, EntitySystem* system) {
-    const size_t entity_count = system->entity_count;
-    for (size_t i = 0; i < entity_count; i++) {
+void rbe_ec_system_remove_entity_from_system(Entity entity, EntitySystem* system) {
+    for (size_t i = 0; i < system->entity_count; i++) {
         if (entity == system->entities[i]) {
             // Entity found
-            if (i + 1 < system->entity_count) {
+            if (i + 1 < MAX_ENTITIES) {
                 system->entities[i] = system->entities[i + 1];
                 system->entities[i + 1] = NULL_ENTITY;
             } else {
@@ -199,16 +197,22 @@ bool rbe_ec_system_remove_entity_from_system(Entity entity, EntitySystem* system
             if (system->on_entity_unregistered_func != NULL) {
                 system->on_entity_unregistered_func(entity);
             }
-            system->entity_count--;
-            return true;
-        } else if(entity == NULL_ENTITY) {
-            // Early out if two consecutive null entities
-            if (i != system->entity_count - 1 && system->entities[i + 1] == NULL_ENTITY) {
-                break;
+
+            // Condense array
+            for (size_t newIndex = i + 1; i < system->entity_count; i++) {
+                if (system->entities[i] == NULL_ENTITY) {
+                    // Early exit if 2 consecutive nulls
+                    if (system->entities[i + 1] == NULL_ENTITY) {
+                        break;
+                    }
+                    system->entities[i] = system->entities[i + 1];
+                }
             }
+
+            system->entity_count--;
+            break;
         }
     }
-    return false;
 }
 
 void rbe_ec_system_remove_entity_from_all_systems(Entity entity) {

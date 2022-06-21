@@ -28,10 +28,6 @@ EntitySystem* font_rendering_ec_system_create() {
 void font_rendering_system_render() {
     for (size_t i = 0; i < fontRenderingSystem->entity_count; i++) {
         const Entity entity = fontRenderingSystem->entities[i];
-        if (entity == NULL_ENTITY) {
-            continue;
-        }
-        RBE_ASSERT(entity != NULL_ENTITY);
         Transform2DComponent* fontTransformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
         TextLabelComponent* textLabelComponent = (TextLabelComponent*) component_manager_get_component(entity, ComponentDataIndex_TEXT_LABEL);
         rbe_renderer_queue_font_draw_call(
