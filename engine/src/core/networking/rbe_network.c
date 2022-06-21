@@ -161,7 +161,7 @@ void* rbe_udp_client_poll() {
     static char client_input_buffer[CLIENT_BUFFER_SIZE];
     // TODO: Do handshake
     // TODO: Figure out why there is failure if no message is sent at first
-    rbe_udp_client_send_message("Init message from client!");
+    rbe_udp_client_send_message("init");
 
     while (true) {
         fflush(stdout);
