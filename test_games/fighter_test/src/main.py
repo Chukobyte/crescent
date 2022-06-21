@@ -70,8 +70,12 @@ class Main(Node2D):
 
         # Fighter Data
         # Nodes
-        player_one_node = self.get_child(name="PlayerOne")
-        player_two_node = self.get_child(name="PlayerTwo")
+        if self.game_state.mode == GameMode.ONLINE_PVP_CLIENT:
+            player_one_node = self.get_child(name="PlayerTwo")
+            player_two_node = self.get_child(name="PlayerOne")
+        else:
+            player_one_node = self.get_child(name="PlayerOne")
+            player_two_node = self.get_child(name="PlayerTwo")
         print(f"[PYTHON_SCRIPT] p1 = {player_one_node}, p2 = {player_two_node}")
 
         # Input Buffers
@@ -159,6 +163,25 @@ class Main(Node2D):
             if game_mode == GameMode.ONLINE_PVP_CLIENT:
                 player_one_input.send_func = Client.send
             player_two_input = NetworkReceiverInputBuffer(
+                move_left_action_name="p2_move_left",
+                move_right_action_name="p2_move_right",
+            )
+        elif game_mode == GameMode.ONLINE_PVP_HOST:
+            player_one_input = NetworkSenderInputBuffer(
+                move_left_action_name="p1_move_left",
+                move_right_action_name="p1_move_right",
+            )
+            player_two_input = NetworkReceiverInputBuffer(
+                move_left_action_name="p2_move_left",
+                move_right_action_name="p2_move_right",
+            )
+        elif game_mode == GameMode.ONLINE_PVP_CLIENT:
+            player_two_input = NetworkSenderInputBuffer(
+                move_left_action_name="p1_move_left",
+                move_right_action_name="p1_move_right",
+            )
+            player_two_input.send_func = Client.send
+            player_one_input = NetworkReceiverInputBuffer(
                 move_left_action_name="p2_move_left",
                 move_right_action_name="p2_move_right",
             )
