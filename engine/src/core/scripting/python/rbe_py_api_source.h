@@ -777,6 +777,22 @@
 "        )\n"\
 "\n"\
 "\n"\
+"class TextLabel(Node2D):\n"\
+"    @property\n"\
+"    def text(self) -> str:\n"\
+"        return rbe_py_api_internal.text_label_get_text(entity_id=self.entity_id)\n"\
+"\n"\
+"    @text.setter\n"\
+"    def text(self, value: str) -> None:\n"\
+"        rbe_py_api_internal.text_label_set_text(entity_id=self.entity_id, text=value)\n"\
+"\n"\
+"    def get_text(self) -> str:\n"\
+"        return rbe_py_api_internal.text_label_get_text(entity_id=self.entity_id)\n"\
+"\n"\
+"    def set_text(self, text: str) -> None:\n"\
+"        rbe_py_api_internal.text_label_set_text(entity_id=self.entity_id, text=text)\n"\
+"\n"\
+"\n"\
 "# SCENE TREE\n"\
 "class SceneTree:\n"\
 "    @staticmethod\n"\

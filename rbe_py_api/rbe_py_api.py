@@ -738,6 +738,22 @@ class Sprite(Node2D):
         )
 
 
+class TextLabel(Node2D):
+    @property
+    def text(self) -> str:
+        return rbe_py_api_internal.text_label_get_text(entity_id=self.entity_id)
+
+    @text.setter
+    def text(self, value: str) -> None:
+        rbe_py_api_internal.text_label_set_text(entity_id=self.entity_id, text=value)
+
+    def get_text(self) -> str:
+        return rbe_py_api_internal.text_label_get_text(entity_id=self.entity_id)
+
+    def set_text(self, text: str) -> None:
+        rbe_py_api_internal.text_label_set_text(entity_id=self.entity_id, text=text)
+
+
 # SCENE TREE
 class SceneTree:
     @staticmethod
