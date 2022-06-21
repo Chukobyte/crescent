@@ -82,6 +82,12 @@ void py_on_delete_instance(Entity entity) {
 
     Py_DecRef(pScriptInstance);
     rbe_hash_map_erase(pythonInstanceHashMap, &entity);
+
+    // Erase network callback
+    if (current_network_server_client_connected_script_callback != NULL && entity == current_network_server_client_connected_script_callback->entity) {
+        RBE_MEM_FREE(current_network_server_client_connected_script_callback);
+        current_network_server_client_connected_script_callback = NULL;
+    }
 }
 
 void py_on_start(Entity entity) {

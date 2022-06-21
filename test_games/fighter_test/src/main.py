@@ -67,29 +67,17 @@ class Main(Node2D):
         )
         if is_network_enabled:
             if self.game_state.mode == GameMode.ONLINE_PVP_HOST:
-                Server.start(port=8888)
                 Server.subscribe(
                     signal_id="poll",
                     listener_node=self,
                     listener_func=self._network_server_callback,
                 )
-                Server.subscribe(
-                    signal_id="client_connected",
-                    listener_node=self,
-                    listener_func=self._network_server_client_connected_callback,
-                )
                 print("[PYTHON SCRIPT] Server")
             else:
-                Client.start("127.0.0.1", 8888)
                 Client.subscribe(
                     signal_id="poll",
                     listener_node=self,
                     listener_func=self._network_client_callback,
-                )
-                Client.subscribe(
-                    signal_id="client_connected",
-                    listener_node=self,
-                    listener_func=self._network_server_client_connected_callback,
                 )
                 print("[PYTHON SCRIPT] Client")
 
@@ -106,11 +94,6 @@ class Main(Node2D):
     def _network_server_callback(self, message: str) -> None:
         print(
             f"[PYTHON SCRIPT] [SERVER] _network_server_callback - message: '{message}'"
-        )
-
-    def _network_server_client_connected_callback(self) -> None:
-        print(
-            "[PYTHON SCRIPT] _network_server_client_connected_callback"
         )
 
     def _network_client_callback(self, message: str) -> None:
@@ -144,14 +127,16 @@ class Main(Node2D):
             or game_mode == GameMode.ONLINE_PVP_CLIENT
         ):
             # TODO: Uncomment when testing sending inputs and replace with p1
-            # player_one_input = NetworkSenderInputBuffer(
-            #     move_left_action_name="p1_move_left",
-            #     move_right_action_name="p1_move_right",
-            # )
-            player_one_input = InputBuffer(
+            player_one_input = NetworkSenderInputBuffer(
                 move_left_action_name="p1_move_left",
                 move_right_action_name="p1_move_right",
             )
+            if game_mode == GameMode.ONLINE_PVP_CLIENT:
+                player_one_input.send_func = Client.send
+            # player_one_input = InputBuffer(
+            #     move_left_action_name="p1_move_left",
+            #     move_right_action_name="p1_move_right",
+            # )
             player_two_input = NetworkReceiverInputBuffer(
                 move_left_action_name="p2_move_left",
                 move_right_action_name="p2_move_right",

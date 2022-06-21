@@ -187,7 +187,8 @@ void* rbe_udp_client_poll() {
 
         if (recvfrom(client_socket, client_input_buffer, CLIENT_BUFFER_SIZE, 0, (struct sockaddr *) &client_si_other, &client_socket_size) == SOCKET_ERROR) {
             rbe_logger_error("Client: recvfrom() failed with error code : %d", WSAGetLastError());
-            RBE_ASSERT(false);
+//            RBE_ASSERT(false);
+            continue;
         }
         if (strcmp(client_input_buffer, RBE_NETWORK_HANDSHAKE_MESSAGE) == 0) {
             if (server_client_connected_callback != NULL) {
