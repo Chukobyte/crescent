@@ -1,5 +1,6 @@
 from rbe_py_api import *
 from test_games.fighter_test.src.input import *
+from test_games.fighter_test.src.game_state import *
 
 # from src.input import InputBuffer # TODO: Replace once path is overridden...
 
@@ -38,23 +39,9 @@ class FighterSimulation:
                 fighter.velocity = Vector2.ZERO()
 
 
-class GameMode(str, Enum):
-    NONE = "none"
-    LOCAL_AI = "local_ai"
-    LOCAL_PVP = "local_pvp"
-    ONLINE_PVP_HOST = "online_pvp_host"
-    ONLINE_PVP_CLIENT = "online_pvp_client"
-
-
-class GameState:
-    def __init__(self):
-        self.mode = GameMode.NONE
-
-
 class Main(Node2D):
     def _start(self) -> None:
         self.game_state = GameState()
-        self.game_state.mode = GameMode.LOCAL_PVP  # TODO: Get from title screen ui
 
         Engine.set_fps_display_enabled(True)
 
