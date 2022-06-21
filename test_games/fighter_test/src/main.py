@@ -66,13 +66,14 @@ class Main(Node2D):
             or self.game_state.mode == GameMode.ONLINE_PVP_CLIENT
         )
         if is_network_enabled:
-            if GameMode.ONLINE_PVP_HOST:
+            if self.game_state.mode == GameMode.ONLINE_PVP_HOST:
                 Server.start(port=8888)
                 Server.subscribe(
                     signal_id="data_callback",
                     listener_node=self,
                     listener_func=self._network_server_callback,
                 )
+                print("[PYTHON SCRIPT] Server")
             else:
                 Client.start("127.0.0.1", 8888)
                 Client.subscribe(
@@ -80,9 +81,7 @@ class Main(Node2D):
                     listener_node=self,
                     listener_func=self._network_client_callback,
                 )
-            print(
-                f"[PYTHON SCRIPT] Is server = {self.game_state.mode == GameMode.ONLINE_PVP_HOST}"
-            )
+                print("[PYTHON SCRIPT] Client")
 
     def _update(self, delta_time: float) -> None:
         if Input.is_action_just_pressed(name="exit"):
@@ -131,7 +130,12 @@ class Main(Node2D):
             game_mode == GameMode.ONLINE_PVP_HOST
             or game_mode == GameMode.ONLINE_PVP_CLIENT
         ):
-            player_one_input = NetworkSenderInputBuffer(
+            # TODO: Uncomment when testing sending inputs and replace with p1
+            # player_one_input = NetworkSenderInputBuffer(
+            #     move_left_action_name="p1_move_left",
+            #     move_right_action_name="p1_move_right",
+            # )
+            player_one_input = InputBuffer(
                 move_left_action_name="p1_move_left",
                 move_right_action_name="p1_move_right",
             )

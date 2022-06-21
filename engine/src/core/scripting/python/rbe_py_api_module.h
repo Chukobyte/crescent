@@ -151,12 +151,12 @@ static struct PyMethodDef rbePyApiMethods[] = {
     },
     // TEXT LABEL
     {
-            "text_label_set_text", (PyCFunction) rbe_py_api_text_label_set_text,
-            METH_VARARGS | METH_KEYWORDS, "Sets the text label's text."
+        "text_label_set_text", (PyCFunction) rbe_py_api_text_label_set_text,
+        METH_VARARGS | METH_KEYWORDS, "Sets the text label's text."
     },
     {
-            "text_label_get_text", (PyCFunction) rbe_py_api_text_label_get_text,
-            METH_VARARGS | METH_KEYWORDS, "Gets the text label's text."
+        "text_label_get_text", (PyCFunction) rbe_py_api_text_label_get_text,
+        METH_VARARGS | METH_KEYWORDS, "Gets the text label's text."
     },
     // NETWORK
     {
