@@ -189,9 +189,6 @@ void rbe_ec_system_remove_entity_from_system(Entity entity, EntitySystem* system
         if (entity == system->entities[i]) {
             // Entity found
             if (i + 1 < MAX_ENTITIES) {
-                system->entities[i] = system->entities[i + 1];
-                system->entities[i + 1] = NULL_ENTITY;
-            } else {
                 system->entities[i] = NULL_ENTITY;
             }
             if (system->on_entity_unregistered_func != NULL) {
@@ -199,13 +196,14 @@ void rbe_ec_system_remove_entity_from_system(Entity entity, EntitySystem* system
             }
 
             // Condense array
-            for (size_t newIndex = i + 1; i < system->entity_count; i++) {
+            for (size_t newIndex = i; i < system->entity_count; i++) {
                 if (system->entities[i] == NULL_ENTITY) {
                     // Early exit if 2 consecutive nulls
                     if (system->entities[i + 1] == NULL_ENTITY) {
                         break;
                     }
                     system->entities[i] = system->entities[i + 1];
+                    system->entities[i + 1] = NULL_ENTITY;
                 }
             }
 

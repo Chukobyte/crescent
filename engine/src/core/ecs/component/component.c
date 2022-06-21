@@ -30,7 +30,6 @@ bool component_array_has_component(ComponentArray* componentArray, ComponentData
 }
 
 void* component_array_get_component(ComponentArray* componentArray, ComponentDataIndex index) {
-    RBE_ASSERT_FMT(component_array_has_component(componentArray, index), "Doesn't have component with index = %d!", index);
     return componentArray->components[index];
 }
 
@@ -74,7 +73,10 @@ void component_manager_initialize() {
 void component_manager_finalize() {}
 
 void* component_manager_get_component(Entity entity, ComponentDataIndex index) {
-    return component_array_get_component(componentManager->entityComponentArrays[entity], index);
+    void* component = component_array_get_component(componentManager->entityComponentArrays[entity], index);
+    RBE_ASSERT_FMT(component != NULL, "Entity '%d' doesn't have '%s' component!",
+                   entity, component_get_component_data_index_string(index));
+    return component;
 }
 
 void component_manager_set_component(Entity entity, ComponentDataIndex index, void* component) {
@@ -127,4 +129,26 @@ ComponentType component_manager_translate_index_to_type(ComponentDataIndex index
         rbe_logger_error("Not a valid component data index: '%d'", index);
         return ComponentType_NONE;
     }
+}
+
+const char* component_get_component_data_index_string(ComponentDataIndex index) {
+    switch (index) {
+    case ComponentDataIndex_NODE:
+        return "Node";
+    case ComponentDataIndex_TRANSFORM_2D:
+        return "Transform2D";
+    case ComponentDataIndex_SPRITE:
+        return "Sprite";
+    case ComponentDataIndex_ANIMATED_SPRITE:
+        return "Animated Sprite";
+    case ComponentDataIndex_TEXT_LABEL:
+        return "Text Label";
+    case ComponentDataIndex_SCRIPT:
+        return "Script";
+    case ComponentDataIndex_NONE:
+    default:
+        rbe_logger_error("Not a valid component data index: '%d'", index);
+        return "NONE";
+    }
+    return "INVALID";
 }
