@@ -58,7 +58,7 @@ class FighterSimulation:
                     elif input_name == "rm":
                         self.network_receiving_fighters[
                             0
-                        ].input_buffer.move_left_pressed = (input_value == "True")
+                        ].input_buffer.move_right_pressed = (input_value == "True")
                     # print(f"input_name: {input_name}, input_value: {input_value}")
 
 
