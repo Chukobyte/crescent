@@ -101,19 +101,24 @@ void py_on_start(Entity entity) {
 }
 
 void py_on_update_all_instances(float deltaTime) {
+    PyGILState_STATE pyGilStateState = PyGILState_Ensure();
     for (size_t i = 0; i < entities_to_update_count; i++) {
         RBE_ASSERT_FMT(entities_to_update[i] != NULL, "Python instance is null!");
         PyObject_CallMethod(entities_to_update[i], "_update", "(f)", deltaTime);
     }
+    PyGILState_Release(pyGilStateState);
+
     // TODO: More robust error checking
     PyErr_Print();
 }
 
 void py_on_physics_update_all_instances(float deltaTime) {
+    PyGILState_STATE pyGilStateState = PyGILState_Ensure();
     for (size_t i = 0; i < entities_to_physics_update_count; i++) {
         RBE_ASSERT_FMT(entities_to_physics_update[i] != NULL, "Python instance is null!");
         PyObject_CallMethod(entities_to_physics_update[i], "_physics_update", "(f)", deltaTime);
     }
+    PyGILState_Release(pyGilStateState);
 }
 
 void py_on_end(Entity entity) {

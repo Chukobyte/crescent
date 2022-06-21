@@ -18,6 +18,10 @@ class InputBuffer:
         self.move_right_pressed = Input.is_action_pressed(name=self._move_right)
         return self.move_left_pressed or self.move_right_pressed
 
+    def kill_inputs(self) -> None:
+        self.move_left_pressed = False
+        self.move_right_pressed = False
+
 
 class NetworkSenderInputBuffer(InputBuffer):
     def __init__(self, move_left_action_name: str, move_right_action_name: str):
