@@ -622,7 +622,7 @@ PyObject* rbe_py_api_server_subscribe(PyObject* self, PyObject* args, PyObject* 
         RBE_ASSERT(PyObject_IsTrue(listenerFunc));
         const RBEScriptContext* scriptContext =  rbe_py_get_script_context();
         RBE_ASSERT(scriptContext != NULL && scriptContext->on_entity_subscribe_to_network_callback != NULL);
-        scriptContext->on_entity_subscribe_to_network_callback(listenerNode, listenerFunc);
+        scriptContext->on_entity_subscribe_to_network_callback(listenerNode, listenerFunc, signalId);
 
         Py_DecRef(listenerFunc);
         Py_RETURN_NONE;
@@ -663,7 +663,7 @@ PyObject* rbe_py_api_client_subscribe(PyObject* self, PyObject* args, PyObject* 
         RBE_ASSERT(PyObject_IsTrue(listenerFunc));
         const RBEScriptContext* scriptContext =  rbe_py_get_script_context();
         RBE_ASSERT(scriptContext != NULL && scriptContext->on_entity_subscribe_to_network_callback != NULL);
-        scriptContext->on_entity_subscribe_to_network_callback(listenerNode, listenerFunc);
+        scriptContext->on_entity_subscribe_to_network_callback(listenerNode, listenerFunc, signalId);
 
         Py_DecRef(listenerFunc);
         Py_RETURN_NONE;

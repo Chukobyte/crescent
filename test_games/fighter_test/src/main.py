@@ -69,15 +69,20 @@ class Main(Node2D):
             if self.game_state.mode == GameMode.ONLINE_PVP_HOST:
                 Server.start(port=8888)
                 Server.subscribe(
-                    signal_id="data_callback",
+                    signal_id="poll",
                     listener_node=self,
                     listener_func=self._network_server_callback,
+                )
+                Server.subscribe(
+                    signal_id="client_connected",
+                    listener_node=self,
+                    listener_func=self._network_server_client_connected_callback,
                 )
                 print("[PYTHON SCRIPT] Server")
             else:
                 Client.start("127.0.0.1", 8888)
                 Client.subscribe(
-                    signal_id="data_callback",
+                    signal_id="poll",
                     listener_node=self,
                     listener_func=self._network_client_callback,
                 )
@@ -94,10 +99,13 @@ class Main(Node2D):
         self.fight_sim.update(delta_time)
 
     def _network_server_callback(self, message: str) -> None:
-        if message == "init":
-            return
         print(
             f"[PYTHON SCRIPT] [SERVER] _network_server_callback - message: '{message}'"
+        )
+
+    def _network_server_client_connected_callback(self) -> None:
+        print(
+            "[PYTHON SCRIPT] [SERVER] _network_server_client_connected_callback"
         )
 
     def _network_client_callback(self, message: str) -> None:

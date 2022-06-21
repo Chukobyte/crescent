@@ -8,6 +8,7 @@
 #include "../../data_structures/rbe_static_array.h"
 #include "../../utils/rbe_assert.h"
 #include "../../memory/rbe_mem.h"
+#include "../../networking/rbe_network.h"
 
 //--- RBE Script Callback ---//
 // TODO: Figuring out callback to signal structure. Clean up later.
@@ -16,9 +17,10 @@ typedef struct RBEScriptCallback {
     PyObject* callback_func;
 } RBEScriptCallback;
 
-void py_on_entity_subscribe_to_network_callback(Entity entity, PyObject* callback_func);
+void py_on_entity_subscribe_to_network_callback(Entity entity, PyObject* callback_func, const char* id);
 
 static RBEScriptCallback* current_network_script_callback = NULL;
+static RBEScriptCallback* current_network_server_client_connected_script_callback = NULL;
 
 //--- Script Context Interface ---//
 void py_on_create_instance(Entity entity, const char* classPath, const char* className);
@@ -126,13 +128,30 @@ void py_on_network_callback(const char* message) {
 }
 
 // Entity Network Callback
-void py_on_entity_subscribe_to_network_callback(Entity entity, PyObject* callback_func) {
+void py_on_entity_subscribe_to_network_callback(Entity entity, PyObject* callback_func, const char* id) {
     rbe_logger_debug("py_on_entity_subscribe_to_network_callback");
-    if (current_network_script_callback == NULL) {
-        current_network_script_callback = RBE_MEM_ALLOCATE(RBEScriptCallback);
-        current_network_script_callback->entity = entity;
-        current_network_script_callback->callback_func = callback_func;
-        Py_IncRef(current_network_script_callback->callback_func); // Increase ref to hold on to function
-        Py_IncRef(current_network_script_callback->callback_func); // Why twice?
+    if (strcmp(id, "poll") == 0) {
+        if (current_network_script_callback == NULL) {
+            current_network_script_callback = RBE_MEM_ALLOCATE(RBEScriptCallback);
+            current_network_script_callback->entity = entity;
+            current_network_script_callback->callback_func = callback_func;
+            Py_IncRef(current_network_script_callback->callback_func); // Increase ref to hold on to function
+            Py_IncRef(current_network_script_callback->callback_func); // Why twice?
+        }
+    } else if (strcmp(id, "client_connected") == 0) {
+        if (current_network_server_client_connected_script_callback == NULL) {
+            rbe_udp_server_register_client_connected_callback(rbe_py_on_network_udp_server_client_connected);
+            current_network_server_client_connected_script_callback = RBE_MEM_ALLOCATE(RBEScriptCallback);
+            current_network_server_client_connected_script_callback->entity = entity;
+            current_network_server_client_connected_script_callback->callback_func = callback_func;
+            Py_IncRef(current_network_server_client_connected_script_callback->callback_func); // Increase ref to hold on to function
+            Py_IncRef(current_network_server_client_connected_script_callback->callback_func); // Why twice?
+        }
+    }
+}
+
+void rbe_py_on_network_udp_server_client_connected() {
+    if (current_network_server_client_connected_script_callback != NULL) {
+        PyObject_CallObject(current_network_server_client_connected_script_callback->callback_func, NULL);
     }
 }

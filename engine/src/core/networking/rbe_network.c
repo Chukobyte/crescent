@@ -25,6 +25,7 @@ static struct sockaddr_in server_si_other;
 static int server_socket_size = 0;
 static int server_recv_len = 0;
 static on_network_server_callback server_user_callback = NULL;
+static on_network_server_client_connected_callback server_client_connected_callback = NULL;
 
 bool rbe_udp_server_initialize(int port, on_network_server_callback user_callback) {
     server_socket_size = sizeof(server_si_other);
@@ -69,6 +70,10 @@ bool rbe_udp_server_initialize(int port, on_network_server_callback user_callbac
     return true;
 }
 
+void rbe_udp_server_register_client_connected_callback(on_network_server_client_connected_callback client_connected_callback) {
+    server_client_connected_callback = client_connected_callback;
+}
+
 void* rbe_udp_server_poll(void* arg) {
     static char server_input_buffer[SERVER_BUFFER_SIZE];
     //keep listening for data
@@ -82,8 +87,16 @@ void* rbe_udp_server_poll(void* arg) {
             rbe_logger_error("Server: recvfrom() failed with error code : %d", WSAGetLastError());
             return NULL;
         }
-        // Call user callback
-        server_user_callback(server_input_buffer);
+
+        // Process data from client
+        if (strcmp(server_input_buffer, "init") == 0) {
+            if (server_client_connected_callback != NULL) {
+                server_client_connected_callback();
+            }
+        } else {
+            // Call user callback
+            server_user_callback(server_input_buffer);
+        }
 
         //print details of the client/peer and the data received
 //        rbe_logger_debug("Received packet from %s:%d", inet_ntoa(server_si_other.sin_addr), ntohs(server_si_other.sin_port));
