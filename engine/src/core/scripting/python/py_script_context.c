@@ -133,10 +133,10 @@ void py_on_end(Entity entity) {
 void py_on_network_callback(const char* message) {
 //    rbe_logger_debug("py_on_network_callback - message = '%s'", message);
     if (current_network_script_callback != NULL) {
-//        PyGILState_STATE pyGilStateState = PyGILState_Ensure();
+        PyGILState_STATE pyGilStateState = PyGILState_Ensure();
         PyObject* listenerFuncArg = Py_BuildValue("(s)", message);
         PyObject_CallObject(current_network_script_callback->callback_func, listenerFuncArg);
-//        PyGILState_Release(pyGilStateState);
+        PyGILState_Release(pyGilStateState);
     }
 }
 
