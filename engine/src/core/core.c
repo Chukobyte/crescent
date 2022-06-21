@@ -39,7 +39,7 @@ bool rbe_initialize(int argv, char** args) {
     // Set random seed
     srand((int)time(NULL));
 
-    rbe_logger_set_level(LogLevel_DEBUG);
+    rbe_logger_set_level(LogLevel_ERROR);
 
     // TODO: Check for working directory overrides
     CommandLineFlagResult commandLineFlagResult = rbe_command_line_args_parse(argv, args);

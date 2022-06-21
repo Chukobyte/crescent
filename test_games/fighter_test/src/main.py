@@ -56,10 +56,6 @@ class Main(Node2D):
         self.game_state = GameState()
         self.game_state.mode = GameMode.LOCAL_PVP  # TODO: Get from title screen ui
 
-        Input.add_action(name="p1_move_left", value=Input.Keyboard.A)
-        Input.add_action(name="p1_move_right", value=Input.Keyboard.D)
-        Input.add_action(name="p2_move_left", value=Input.Keyboard.LEFT)
-        Input.add_action(name="p2_move_right", value=Input.Keyboard.RIGHT)
         Engine.set_fps_display_enabled(True)
 
         # Fighter Data

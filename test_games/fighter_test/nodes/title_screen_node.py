@@ -1,0 +1,50 @@
+from rbe_py_api import *
+
+create_stage_nodes(
+    stage_nodes=[
+        StageNode(
+            name="TitleScreen",
+            type="Node2D",
+            tags=None,
+            external_node_source=None,
+            components=[
+                Transform2DComponent(
+                    position=Vector2(0.0, 0.0),
+                    scale=Vector2(1.0, 1.0),
+                    rotation=0.0,
+                    z_index=0,
+                    z_index_relative_to_parent=True,
+                    ignore_camera=False,
+                ),
+                ScriptComponent(
+                    class_path="test_games.fighter_test.src.title_screen",
+                    class_name="TitleScreen",
+                ),
+            ],
+            children=[
+                StageNode(
+                    name="TextLabel",
+                    type="TextLabel",
+                    tags=None,
+                    external_node_source=None,
+                    components=[
+                        Transform2DComponent(
+                            position=Vector2(130.0, 200.0),
+                            scale=Vector2(1.0, 1.0),
+                            rotation=0.0,
+                            z_index=0,
+                            z_index_relative_to_parent=True,
+                            ignore_camera=False,
+                        ),
+                        TextLabelComponent(
+                            uid="fight-64",
+                            text="Press Enter to Play!",
+                            color=Color(255, 255, 255),
+                        ),
+                    ],
+                    children=[],
+                ),
+            ],
+        )
+    ]
+)
