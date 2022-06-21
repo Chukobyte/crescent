@@ -69,14 +69,19 @@ class Main(Node2D):
         print(f"[PYTHON_SCRIPT] p1 = {player_one_node}, p2 = {player_two_node}")
 
         # Input Buffers
-        player_one_input, player_two_input = self._get_input_buffers_from_game_mode(self.game_state.mode)
+        player_one_input, player_two_input = self._get_input_buffers_from_game_mode(
+            self.game_state.mode
+        )
         # Fight Sim
         self.fight_sim = FighterSimulation()
         self.fight_sim.add_fighter(Fighter(player_one_node, player_one_input))
         self.fight_sim.add_fighter(Fighter(player_two_node, player_two_input))
 
         # Network
-        is_network_enabled = self.game_state.mode == GameMode.ONLINE_PVP_HOST or self.game_state.mode == GameMode.ONLINE_PVP_CLIENT
+        is_network_enabled = (
+            self.game_state.mode == GameMode.ONLINE_PVP_HOST
+            or self.game_state.mode == GameMode.ONLINE_PVP_CLIENT
+        )
         if is_network_enabled:
             if GameMode.ONLINE_PVP_HOST:
                 Server.start(port=8888)
@@ -92,7 +97,9 @@ class Main(Node2D):
                     listener_node=self,
                     listener_func=self._network_client_callback,
                 )
-            print(f"[PYTHON SCRIPT] Is server = {self.is_server}")
+            print(
+                f"[PYTHON SCRIPT] Is server = {self.game_state.mode == GameMode.ONLINE_PVP_HOST}"
+            )
 
     def _update(self, delta_time: float) -> None:
         if Input.is_action_just_pressed(name="exit"):
@@ -118,23 +125,32 @@ class Main(Node2D):
         player_two_input = None
         if game_mode == GameMode.LOCAL_AI:
             player_one_input = InputBuffer(
-                move_left_action_name="p1_move_left", move_right_action_name="p1_move_right"
+                move_left_action_name="p1_move_left",
+                move_right_action_name="p1_move_right",
             )
             player_two_input = AIInputBuffer(
-                move_left_action_name="p2_move_left", move_right_action_name="p2_move_right"
+                move_left_action_name="p2_move_left",
+                move_right_action_name="p2_move_right",
             )
         elif game_mode == GameMode.LOCAL_PVP:
             player_one_input = InputBuffer(
-                move_left_action_name="p1_move_left", move_right_action_name="p1_move_right"
+                move_left_action_name="p1_move_left",
+                move_right_action_name="p1_move_right",
             )
             player_two_input = InputBuffer(
-                move_left_action_name="p2_move_left", move_right_action_name="p2_move_right"
+                move_left_action_name="p2_move_left",
+                move_right_action_name="p2_move_right",
             )
-        elif game_mode == GameMode.ONLINE_PVP_HOST or game_mode == GameMode.ONLINE_PVP_CLIENT:
+        elif (
+            game_mode == GameMode.ONLINE_PVP_HOST
+            or game_mode == GameMode.ONLINE_PVP_CLIENT
+        ):
             player_one_input = NetworkSenderInputBuffer(
-                move_left_action_name="p1_move_left", move_right_action_name="p1_move_right"
+                move_left_action_name="p1_move_left",
+                move_right_action_name="p1_move_right",
             )
             player_two_input = NetworkReceiverInputBuffer(
-                move_left_action_name="p2_move_left", move_right_action_name="p2_move_right"
+                move_left_action_name="p2_move_left",
+                move_right_action_name="p2_move_right",
             )
         return player_one_input, player_two_input
