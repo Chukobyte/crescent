@@ -87,8 +87,9 @@ class Main(Node2D):
     def _update(self, delta_time: float) -> None:
         if Input.is_action_just_pressed(name="exit"):
             Engine.exit()
-        if Input.is_action_just_pressed(name="play_sfx"):
-            SceneTree.change_scene(path="test_games/fighter_test/nodes/main_node.py")
+        # TODO: Changing scenes has bugs, uncomment to test and fix
+        # if Input.is_action_just_pressed(name="play_sfx"):
+        #     SceneTree.change_scene(path="test_games/fighter_test/nodes/main_node.py")
 
     def _physics_update(self, delta_time: float) -> None:
         self.fight_sim.update(delta_time)
