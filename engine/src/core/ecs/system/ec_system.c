@@ -186,20 +186,26 @@ void rbe_ec_system_insert_entity_into_system(Entity entity, EntitySystem* system
 }
 
 bool rbe_ec_system_remove_entity_from_system(Entity entity, EntitySystem* system) {
-    for (size_t i = 0; i < system->entity_count; i++) {
+    const size_t entity_count = system->entity_count;
+    for (size_t i = 0; i < entity_count; i++) {
         if (entity == system->entities[i]) {
             // Entity found
-            if (system->entity_count <= 1) {
-                system->entities[0] = NULL_ENTITY;
-            } else if (i != system->entity_count - 1) {
-                // Swaps from front to place removed unless at the end
+            if (i + 1 < system->entity_count) {
                 system->entities[i] = system->entities[i + 1];
+                system->entities[i + 1] = NULL_ENTITY;
+            } else {
+                system->entities[i] = NULL_ENTITY;
             }
             if (system->on_entity_unregistered_func != NULL) {
                 system->on_entity_unregistered_func(entity);
             }
             system->entity_count--;
             return true;
+        } else if(entity == NULL_ENTITY) {
+            // Early out if two consecutive null entities
+            if (i != system->entity_count - 1 && system->entities[i + 1] == NULL_ENTITY) {
+                break;
+            }
         }
     }
     return false;
