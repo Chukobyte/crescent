@@ -514,7 +514,12 @@ PyObject* rbe_py_api_node_get_child(PyObject* self, PyObject* args, PyObject* kw
         if (childEntity == NULL_ENTITY) {
             rbe_logger_warn("Failed to get child node from parent entity '%d' with the name '%s'", parentEntity, childName);
         }
-        return Py_BuildValue("i", childEntity);
+        // TODO: Check for script custom classes and return them
+        char typeBuffer[32];
+        NodeComponent* nodeComponent = component_manager_get_component(childEntity, ComponentDataIndex_NODE);
+        strcpy(typeBuffer, node_get_component_type_string(nodeComponent->type));
+
+        return Py_BuildValue("(is)", childEntity, typeBuffer);
     }
     return NULL;
 }

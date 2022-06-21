@@ -5,16 +5,41 @@ from test_games.fighter_test.src.input import InputBuffer
 
 
 class Fighter:
-    def __init__(self, node: Node, input_buffer: InputBuffer):
+    def __init__(self, node: Node2D, input_buffer: InputBuffer):
         self.node = node
         self.input_buffer = input_buffer
+        self.velocity = Vector2.ZERO()
+        self.speed = 50
+
+    def update_input_state(self) -> None:
+        self.input_buffer.process_inputs()
+
+
+class FighterSimulation:
+    def __init__(self):
+        self.fighters = []
+
+    def add_fighter(self, fighter: Fighter):
+        self.fighters.append(fighter)
+
+    def update(self, delta_time: float) -> None:
+        for fighter in self.fighters:
+            fighter.input_buffer.process_inputs()
+            if fighter.input_buffer.move_left_pressed:
+                fighter.velocity += Vector2.LEFT()
+            elif fighter.input_buffer.move_right_pressed:
+                fighter.velocity += Vector2.RIGHT()
+
+            if fighter.velocity != Vector2.ZERO():
+                delta_vector = Vector2(
+                    fighter.speed * delta_time, fighter.speed * delta_time
+                )
+                fighter.node.add_to_position(fighter.velocity * delta_vector)
+                fighter.velocity = Vector2.ZERO()
 
 
 class Main(Node2D):
     def _start(self) -> None:
-        self.velocity = Vector2.ZERO()
-        self.speed = 50
-        print(f"[PYTHON SCRIPT] Entity entered stage with id = {self.entity_id}")
         Input.add_action(name="p1_move_left", value=Input.Keyboard.A)
         Input.add_action(name="p1_move_right", value=Input.Keyboard.D)
         Input.add_action(name="p2_move_left", value=Input.Keyboard.LEFT)
@@ -27,16 +52,17 @@ class Main(Node2D):
         player_two_node = self.get_child(name="PlayerTwo")
         print(f"[PYTHON_SCRIPT] p1 = {player_one_node}, p2 = {player_two_node}")
 
-        # # Input Buffer (Will move into server for player 2 soon)
-        # player_one_input = InputBuffer(
-        #     move_left_action_name="p1_move_left", move_right_action_name="p1_move_right"
-        # )
-        # player_two_input = InputBuffer(
-        #     move_left_action_name="p2_move_left", move_right_action_name="p2_move_right"
-        # )
-        # # Fighters
-        # self.player_one_fighter = Fighter(player_one_node, player_one_input)
-        # self.player_two_fighter = Fighter(player_two_node, player_two_input)
+        # Input Buffer (Will move into server for player 2 soon)
+        player_one_input = InputBuffer(
+            move_left_action_name="p1_move_left", move_right_action_name="p1_move_right"
+        )
+        player_two_input = InputBuffer(
+            move_left_action_name="p2_move_left", move_right_action_name="p2_move_right"
+        )
+        # Fight Sim
+        self.fight_sim = FighterSimulation()
+        self.fight_sim.add_fighter(Fighter(player_one_node, player_one_input))
+        self.fight_sim.add_fighter(Fighter(player_two_node, player_two_input))
 
         # Network
         # self.is_server = True
@@ -62,11 +88,7 @@ class Main(Node2D):
             Engine.exit()
 
     def _physics_update(self, delta_time: float) -> None:
-        if self.velocity != Vector2.ZERO():
-            # print(f"delta time = {delta_time}")
-            delta_vector = Vector2(self.speed * delta_time, self.speed * delta_time)
-            self.add_to_position(self.velocity * delta_vector)
-            self.velocity = Vector2.ZERO()
+        self.fight_sim.update(delta_time)
 
     def _network_server_callback(self, message: str) -> None:
         print(

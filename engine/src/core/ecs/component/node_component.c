@@ -43,3 +43,21 @@ NodeBaseInheritanceType node_get_type_inheritance(NodeBaseType type) {
     }
     return NodeBaseInheritanceType_INVALID;
 }
+
+const char* node_get_component_type_string(NodeBaseType type) {
+    switch (type) {
+        case NodeBaseType_NODE:
+            return "Node";
+        case NodeBaseType_NODE2D:
+            return "Node2D";
+        case NodeBaseType_SPRITE:
+            return "Sprite";
+        case NodeBaseType_ANIMATED_SPRITE:
+            return "AnimatedSprite";
+        case NodeBaseType_TEXT_LABEL:
+            return "TextLabel";
+        default:
+            break;
+    }
+    return NULL;
+}

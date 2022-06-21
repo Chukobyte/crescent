@@ -38,6 +38,7 @@
 
 #define RBE_PY_API_SOURCE ""\
 "from enum import Enum\n"\
+"from typing import Optional\n"\
 "\n"\
 "import rbe_py_api_internal\n"\
 "\n"\
@@ -535,15 +536,18 @@
 "        else:\n"\
 "            return False\n"\
 "\n"\
+"    def __str__(self):\n"\
+"        return f\"Node(entity_id: {self.entity_id}, type: {type(self).__name__})\"\n"\
+"\n"\
+"    def __repr__(self):\n"\
+"        return f\"Node(entity_id: {self.entity_id}, type: {type(self).__name__})\"\n"\
+"\n"\
 "    # New API\n"\
-"    def get_child(self, name: str) -> int:\n"\
-"        return rbe_py_api_internal.node_get_child(\n"\
+"    def get_child(self, name: str):\n"\
+"        node = rbe_py_api_internal.node_get_child(\n"\
 "            entity_id=self.entity_id, child_name=name\n"\
 "        )\n"\
-"        # node = rbe_py_api_internal.node_get_child(entity_id=self.entity_id, child_name=name)\n"\
-"        # if node == 0:\n"\
-"        #     return None\n"\
-"        # return self.parse_scene_node_from_engine(scene_node=node)\n"\
+"        return self.parse_scene_node_from_engine(scene_node=node)\n"\
 "\n"\
 "    # Old API\n"\
 "\n"\
@@ -568,8 +572,8 @@
 "        if not isinstance(scene_node, tuple):\n"\
 "            return scene_node\n"\
 "        elif scene_node:\n"\
-"            node_type = scene_node[0]\n"\
-"            entity_id = scene_node[1]\n"\
+"            entity_id = scene_node[0]\n"\
+"            node_type = scene_node[1]\n"\
 "            node_class = globals()[node_type]\n"\
 "            instance = node_class(entity_id=entity_id)\n"\
 "            return instance\n"\

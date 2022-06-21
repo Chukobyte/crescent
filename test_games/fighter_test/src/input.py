@@ -13,6 +13,7 @@ class InputBuffer:
         self.move_left_pressed = False
         self.move_right_pressed = False
 
-    def process_inputs(self) -> None:
+    def process_inputs(self) -> bool:
         self.move_left_pressed = Input.is_action_pressed(name=self._move_left)
         self.move_right_pressed = Input.is_action_pressed(name=self._move_right)
+        return self.move_left_pressed or self.move_right_pressed

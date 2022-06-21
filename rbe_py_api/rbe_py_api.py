@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import Optional
 
 import rbe_py_api_internal
 
@@ -496,15 +497,18 @@ class Node:
         else:
             return False
 
+    def __str__(self):
+        return f"Node(entity_id: {self.entity_id}, type: {type(self).__name__})"
+
+    def __repr__(self):
+        return f"Node(entity_id: {self.entity_id}, type: {type(self).__name__})"
+
     # New API
-    def get_child(self, name: str) -> int:
-        return rbe_py_api_internal.node_get_child(
+    def get_child(self, name: str):
+        node = rbe_py_api_internal.node_get_child(
             entity_id=self.entity_id, child_name=name
         )
-        # node = rbe_py_api_internal.node_get_child(entity_id=self.entity_id, child_name=name)
-        # if node == 0:
-        #     return None
-        # return self.parse_scene_node_from_engine(scene_node=node)
+        return self.parse_scene_node_from_engine(scene_node=node)
 
     # Old API
 
@@ -529,8 +533,8 @@ class Node:
         if not isinstance(scene_node, tuple):
             return scene_node
         elif scene_node:
-            node_type = scene_node[0]
-            entity_id = scene_node[1]
+            entity_id = scene_node[0]
+            node_type = scene_node[1]
             node_class = globals()[node_type]
             instance = node_class(entity_id=entity_id)
             return instance
