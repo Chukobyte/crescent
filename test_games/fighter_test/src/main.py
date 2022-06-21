@@ -52,9 +52,13 @@ class FighterSimulation:
                 for input_data in input_datum:
                     input_name, input_value = input_data.split(":")
                     if input_name == "lm":
-                        self.network_receiving_fighters[0].input_buffer.move_left_pressed = input_value == "True"
+                        self.network_receiving_fighters[
+                            0
+                        ].input_buffer.move_left_pressed = (input_value == "True")
                     elif input_name == "rm":
-                        self.network_receiving_fighters[0].input_buffer.move_left_pressed = input_value == "True"
+                        self.network_receiving_fighters[
+                            0
+                        ].input_buffer.move_left_pressed = (input_value == "True")
                     # print(f"input_name: {input_name}, input_value: {input_value}")
 
 
@@ -123,39 +127,39 @@ class Main(Node2D):
         self.fight_sim.network_update(message=message)
 
     def _get_input_buffers_from_game_mode(self, game_mode: str) -> tuple:
-            player_one_input = None
-            player_two_input = None
-            if game_mode == GameMode.LOCAL_AI:
-                player_one_input = InputBuffer(
-                    move_left_action_name="p1_move_left",
-                    move_right_action_name="p1_move_right",
-                )
-                player_two_input = AIInputBuffer(
-                    move_left_action_name="p2_move_left",
-                    move_right_action_name="p2_move_right",
-                )
-            elif game_mode == GameMode.LOCAL_PVP:
-                player_one_input = InputBuffer(
-                    move_left_action_name="p1_move_left",
-                    move_right_action_name="p1_move_right",
-                )
-                player_two_input = InputBuffer(
-                    move_left_action_name="p2_move_left",
-                    move_right_action_name="p2_move_right",
-                )
-            elif (
-                game_mode == GameMode.ONLINE_PVP_HOST
-                or game_mode == GameMode.ONLINE_PVP_CLIENT
-            ):
-                # TODO: Uncomment when testing sending inputs and replace with p1
-                player_one_input = NetworkSenderInputBuffer(
-                    move_left_action_name="p1_move_left",
-                    move_right_action_name="p1_move_right",
-                )
-                if game_mode == GameMode.ONLINE_PVP_CLIENT:
-                    player_one_input.send_func = Client.send
-                player_two_input = NetworkReceiverInputBuffer(
-                    move_left_action_name="p2_move_left",
-                    move_right_action_name="p2_move_right",
-                )
-            return player_one_input, player_two_input
+        player_one_input = None
+        player_two_input = None
+        if game_mode == GameMode.LOCAL_AI:
+            player_one_input = InputBuffer(
+                move_left_action_name="p1_move_left",
+                move_right_action_name="p1_move_right",
+            )
+            player_two_input = AIInputBuffer(
+                move_left_action_name="p2_move_left",
+                move_right_action_name="p2_move_right",
+            )
+        elif game_mode == GameMode.LOCAL_PVP:
+            player_one_input = InputBuffer(
+                move_left_action_name="p1_move_left",
+                move_right_action_name="p1_move_right",
+            )
+            player_two_input = InputBuffer(
+                move_left_action_name="p2_move_left",
+                move_right_action_name="p2_move_right",
+            )
+        elif (
+            game_mode == GameMode.ONLINE_PVP_HOST
+            or game_mode == GameMode.ONLINE_PVP_CLIENT
+        ):
+            # TODO: Uncomment when testing sending inputs and replace with p1
+            player_one_input = NetworkSenderInputBuffer(
+                move_left_action_name="p1_move_left",
+                move_right_action_name="p1_move_right",
+            )
+            if game_mode == GameMode.ONLINE_PVP_CLIENT:
+                player_one_input.send_func = Client.send
+            player_two_input = NetworkReceiverInputBuffer(
+                move_left_action_name="p2_move_left",
+                move_right_action_name="p2_move_right",
+            )
+        return player_one_input, player_two_input

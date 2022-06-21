@@ -19,6 +19,7 @@ class TitleScreen(Node2D):
         self.selected_game_mode = GameMode.LOCAL_PVP
         self.selected_game_mode_index = 0
         self.mode_text = self.get_child(name="ModeText")
+        # self.connection_text = self.get_child(name="ConnectText")
         self._update_game_mode_text()
 
     def _update_game_mode_text(self) -> None:
@@ -43,6 +44,7 @@ class TitleScreen(Node2D):
                     listener_func=self._network_server_client_connected_callback,
                 )
                 self.is_waiting_to_connect = True
+                # self.connection_text.color = Color(255, 255, 255, 255)
             elif game_state.mode == GameMode.ONLINE_PVP_CLIENT:
                 Client.start("127.0.0.1", 8888)
                 Client.subscribe(
@@ -51,8 +53,11 @@ class TitleScreen(Node2D):
                     listener_func=self._network_server_client_connected_callback,
                 )
                 self.is_waiting_to_connect = True
+                # self.connection_text.color = Color(255, 255, 255, 255)
             else:
-                SceneTree.change_scene(path="test_games/fighter_test/nodes/main_node.py")
+                SceneTree.change_scene(
+                    path="test_games/fighter_test/nodes/main_node.py"
+                )
 
         if Input.is_action_just_pressed(name="p2_move_left"):
             self.selected_game_mode_index -= 1

@@ -582,6 +582,34 @@ PyObject* rbe_py_api_text_label_get_text(PyObject* self, PyObject* args, PyObjec
     return NULL;
 }
 
+PyObject* rbe_py_api_text_label_set_color(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    int red;
+    int green;
+    int blue;
+    int alpha;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "iffff", rbePyApiTextLabelSetColorKWList, &entity, &red, &green, &blue, &alpha)) {
+        TextLabelComponent* textLabelComponent = component_manager_get_component(entity, ComponentDataIndex_TEXT_LABEL);
+        textLabelComponent->color = rbe_color_get_normalized_color(red, green, blue, alpha);
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* rbe_py_api_text_label_get_color(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", rbePyApiGenericGetEntityKWList, &entity)) {
+        TextLabelComponent* textLabelComponent = component_manager_get_component(entity, ComponentDataIndex_TEXT_LABEL);
+        const int red = (int) (textLabelComponent->color.r * 255.0f);
+        const int green = (int) (textLabelComponent->color.r * 255.0f);
+        const int blue = (int) (textLabelComponent->color.r * 255.0f);
+        const int alpha = (int) (textLabelComponent->color.r * 255.0f);
+        return Py_BuildValue("(iiii)", red, green, blue, alpha);
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
 // Network
 PyObject* rbe_py_api_network_is_server(PyObject* self, PyObject* args) {
     if (rbe_network_is_server()) {

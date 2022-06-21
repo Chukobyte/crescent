@@ -753,6 +753,26 @@ class TextLabel(Node2D):
     def set_text(self, text: str) -> None:
         rbe_py_api_internal.text_label_set_text(entity_id=self.entity_id, text=text)
 
+    @property
+    def color(self) -> Color:
+        r, g, b, a = rbe_py_api_internal.text_label_get_color(entity_id=self.entity_id)
+        return Color(r, g, b, a)
+
+    @color.setter
+    def color(self, value: Color) -> None:
+        rbe_py_api_internal.text_label_set_color(
+            entity_id=self.entity_id, r=value.r, g=value.g, b=value.b, a=value.a
+        )
+
+    def get_color(self) -> Color:
+        r, g, b, a = rbe_py_api_internal.text_label_get_color(entity_id=self.entity_id)
+        return Color(r, g, b, a)
+
+    def set_color(self, color: Color) -> None:
+        rbe_py_api_internal.text_label_set_color(
+            entity_id=self.entity_id, r=color.r, g=color.g, b=color.b, a=color.a
+        )
+
 
 # SCENE TREE
 class SceneTree:

@@ -792,6 +792,26 @@
 "    def set_text(self, text: str) -> None:\n"\
 "        rbe_py_api_internal.text_label_set_text(entity_id=self.entity_id, text=text)\n"\
 "\n"\
+"    @property\n"\
+"    def color(self) -> Color:\n"\
+"        r, g, b, a = rbe_py_api_internal.text_label_get_color(entity_id=self.entity_id)\n"\
+"        return Color(r, g, b, a)\n"\
+"\n"\
+"    @color.setter\n"\
+"    def color(self, value: Color) -> None:\n"\
+"        rbe_py_api_internal.text_label_set_color(\n"\
+"            entity_id=self.entity_id, r=value.r, g=value.g, b=value.b, a=value.a\n"\
+"        )\n"\
+"\n"\
+"    def get_color(self) -> Color:\n"\
+"        r, g, b, a = rbe_py_api_internal.text_label_get_color(entity_id=self.entity_id)\n"\
+"        return Color(r, g, b, a)\n"\
+"\n"\
+"    def set_color(self, color: Color) -> None:\n"\
+"        rbe_py_api_internal.text_label_set_color(\n"\
+"            entity_id=self.entity_id, r=color.r, g=color.g, b=color.b, a=color.a\n"\
+"        )\n"\
+"\n"\
 "\n"\
 "# SCENE TREE\n"\
 "class SceneTree:\n"\

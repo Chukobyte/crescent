@@ -44,6 +44,8 @@ PyObject* rbe_py_api_node2D_get_position(PyObject* self, PyObject* args, PyObjec
 // Text Label
 PyObject* rbe_py_api_text_label_set_text(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* rbe_py_api_text_label_get_text(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* rbe_py_api_text_label_set_color(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* rbe_py_api_text_label_get_color(PyObject* self, PyObject* args, PyObject* kwargs);
 
 // Network
 PyObject* rbe_py_api_network_is_server(PyObject* self, PyObject* args);
@@ -158,6 +160,14 @@ static struct PyMethodDef rbePyApiMethods[] = {
         "text_label_get_text", (PyCFunction) rbe_py_api_text_label_get_text,
         METH_VARARGS | METH_KEYWORDS, "Gets the text label's text."
     },
+    {
+        "text_label_set_color", (PyCFunction) rbe_py_api_text_label_set_color,
+        METH_VARARGS | METH_KEYWORDS, "Sets the text label's color."
+    },
+    {
+        "text_label_get_color", (PyCFunction) rbe_py_api_text_label_get_color,
+        METH_VARARGS | METH_KEYWORDS, "Gets the text label's color."
+    },
     // NETWORK
     {
         "network_is_server", rbe_py_api_network_is_server,
@@ -230,6 +240,7 @@ static char *rbePyApiNodeGetChildKWList[] = {"entity_id", "child_name", NULL};
 static char *rbePyApiNode2DSetPositionKWList[] = {"entity_id", "x", "y", NULL};
 
 static char *rbePyApiTextLabelSetTextKWList[] = {"entity_id", "text", NULL};
+static char *rbePyApiTextLabelSetColorKWList[] = {"entity_id", "r", "g", "b", "a", NULL};
 
 static char *rbePyApiNetworkSendMessageKWList[] = {"message", NULL};
 static char *rbePyApiNetworkSubscribeKWList[] = {"signal_id", "listener_node", "listener_func", NULL};

@@ -92,6 +92,22 @@ def node2D_get_position(entity_id: int) -> tuple:
     return 0.0, 0.0
 
 
+def text_label_set_text(entity_id: int, text: str) -> None:
+    pass
+
+
+def text_label_get_text(entity_id: int) -> str:
+    return ""
+
+
+def text_label_set_color(entity_id: int, r: int, g: int, b: int, a: int) -> None:
+    pass
+
+
+def text_label_get_color(entity_id: int) -> tuple:
+    return 255, 255, 255, 255
+
+
 def network_is_server() -> bool:
     return True
 
