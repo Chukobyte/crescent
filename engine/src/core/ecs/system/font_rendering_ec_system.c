@@ -11,16 +11,12 @@
 EntitySystem* fontRenderingSystem = NULL;
 
 void font_rendering_system_render();
-void font_rendering_system_entity_register(Entity entity);
-void font_rendering_system_entity_unregister(Entity entity);
 
 EntitySystem* font_rendering_ec_system_create() {
     RBE_ASSERT(fontRenderingSystem == NULL);
     fontRenderingSystem = rbe_ec_system_create();
     fontRenderingSystem->name = rbe_strdup("Font Rendering");
     fontRenderingSystem->render_func = font_rendering_system_render;
-    fontRenderingSystem->on_entity_registered_func = font_rendering_system_entity_register;
-    fontRenderingSystem->on_entity_unregistered_func = font_rendering_system_entity_unregister;
     fontRenderingSystem->component_signature = ComponentType_TRANSFORM_2D | ComponentType_TEXT_LABEL;
     return fontRenderingSystem;
 }
@@ -39,12 +35,4 @@ void font_rendering_system_render() {
             textLabelComponent->color
         );
     }
-}
-
-void font_rendering_system_entity_register(Entity entity) {
-    rbe_logger_error("[NOT ERROR] font rendering Entity '%d' registered! Entity count = '%d'", entity, fontRenderingSystem->entity_count + 1);
-}
-
-void font_rendering_system_entity_unregister(Entity entity) {
-    rbe_logger_error("[NOT ERROR] font rendering Entity '%d' unregistered! Entity count = '%d'", entity, fontRenderingSystem->entity_count - 1);
 }
