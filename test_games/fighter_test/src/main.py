@@ -86,6 +86,11 @@ class Main(Node2D):
                     listener_node=self,
                     listener_func=self._network_client_callback,
                 )
+                Client.subscribe(
+                    signal_id="client_connected",
+                    listener_node=self,
+                    listener_func=self._network_server_client_connected_callback,
+                )
                 print("[PYTHON SCRIPT] Client")
 
     def _update(self, delta_time: float) -> None:
@@ -105,7 +110,7 @@ class Main(Node2D):
 
     def _network_server_client_connected_callback(self) -> None:
         print(
-            "[PYTHON SCRIPT] [SERVER] _network_server_client_connected_callback"
+            "[PYTHON SCRIPT] _network_server_client_connected_callback"
         )
 
     def _network_client_callback(self, message: str) -> None:

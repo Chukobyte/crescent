@@ -8,6 +8,8 @@
 #include "../utils/rbe_assert.h"
 
 //--- NETWORK ---//
+#define RBE_NETWORK_HANDSHAKE_MESSAGE "init"
+
 static bool rbe_is_server = false;
 
 bool rbe_network_is_server() {
@@ -89,10 +91,11 @@ void* rbe_udp_server_poll(void* arg) {
         }
 
         // Process data from client
-        if (strcmp(server_input_buffer, "init") == 0) {
+        if (strcmp(server_input_buffer, RBE_NETWORK_HANDSHAKE_MESSAGE) == 0) {
             if (server_client_connected_callback != NULL) {
                 server_client_connected_callback();
             }
+            rbe_udp_server_send_message(RBE_NETWORK_HANDSHAKE_MESSAGE);
         } else {
             // Call user callback
             server_user_callback(server_input_buffer);
@@ -174,7 +177,7 @@ void* rbe_udp_client_poll() {
     static char client_input_buffer[CLIENT_BUFFER_SIZE];
     // TODO: Do handshake
     // TODO: Figure out why there is failure if no message is sent at first
-    rbe_udp_client_send_message("init");
+    rbe_udp_client_send_message(RBE_NETWORK_HANDSHAKE_MESSAGE);
 
     while (true) {
         fflush(stdout);
@@ -186,8 +189,14 @@ void* rbe_udp_client_poll() {
             rbe_logger_error("Client: recvfrom() failed with error code : %d", WSAGetLastError());
             RBE_ASSERT(false);
         }
-        // Call user callback
-        client_user_callback(client_input_buffer);
+        if (strcmp(client_input_buffer, RBE_NETWORK_HANDSHAKE_MESSAGE) == 0) {
+            if (server_client_connected_callback != NULL) {
+                server_client_connected_callback();
+            }
+        } else {
+            // Call user callback
+            client_user_callback(client_input_buffer);
+        }
     }
 
     return NULL;
