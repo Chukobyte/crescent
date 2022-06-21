@@ -556,6 +556,27 @@ PyObject* rbe_py_api_node2D_get_position(PyObject* self, PyObject* args, PyObjec
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", rbePyApiGenericGetEntityKWList, &entity)) {
         const Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
         return Py_BuildValue("(ff)", transformComp->position.x, transformComp->position.y);
+    }
+    return NULL;
+}
+
+// Text Label
+PyObject* rbe_py_api_text_label_set_text(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    char* text;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "is", rbePyApiTextLabelSetTextKWList, &entity, &text)) {
+        TextLabelComponent* textLabelComponent = component_manager_get_component(entity, ComponentDataIndex_TEXT_LABEL);
+        strcpy(textLabelComponent->text, text);
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* rbe_py_api_text_label_get_text(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", rbePyApiGenericGetEntityKWList, &entity)) {
+        TextLabelComponent* textLabelComponent = component_manager_get_component(entity, ComponentDataIndex_TEXT_LABEL);
+        return Py_BuildValue("s", textLabelComponent->text);
         Py_RETURN_NONE;
     }
     return NULL;

@@ -41,6 +41,10 @@ PyObject* rbe_py_api_node2D_set_position(PyObject* self, PyObject* args, PyObjec
 PyObject* rbe_py_api_node2D_add_to_position(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* rbe_py_api_node2D_get_position(PyObject* self, PyObject* args, PyObject* kwargs);
 
+// Text Label
+PyObject* rbe_py_api_text_label_set_text(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* rbe_py_api_text_label_get_text(PyObject* self, PyObject* args, PyObject* kwargs);
+
 // Network
 PyObject* rbe_py_api_network_is_server(PyObject* self, PyObject* args);
 
@@ -145,6 +149,15 @@ static struct PyMethodDef rbePyApiMethods[] = {
         "node2D_get_position", (PyCFunction) rbe_py_api_node2D_get_position,
         METH_VARARGS | METH_KEYWORDS, "Get the position of a node."
     },
+    // TEXT LABEL
+    {
+            "text_label_set_text", (PyCFunction) rbe_py_api_text_label_set_text,
+            METH_VARARGS | METH_KEYWORDS, "Sets the text label's text."
+    },
+    {
+            "text_label_get_text", (PyCFunction) rbe_py_api_text_label_get_text,
+            METH_VARARGS | METH_KEYWORDS, "Gets the text label's text."
+    },
     // NETWORK
     {
         "network_is_server", rbe_py_api_network_is_server,
@@ -215,6 +228,8 @@ static char *rbePyApiAudioManagerPlaySoundKWList[] = {"path", "loops", NULL};
 static char *rbePyApiNodeGetChildKWList[] = {"entity_id", "child_name", NULL};
 
 static char *rbePyApiNode2DSetPositionKWList[] = {"entity_id", "x", "y", NULL};
+
+static char *rbePyApiTextLabelSetTextKWList[] = {"entity_id", "text", NULL};
 
 static char *rbePyApiNetworkSendMessageKWList[] = {"message", NULL};
 static char *rbePyApiNetworkSubscribeKWList[] = {"signal_id", "listener_node", "listener_func", NULL};
