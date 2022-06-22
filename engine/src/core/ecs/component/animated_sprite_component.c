@@ -37,7 +37,7 @@ Animation animated_sprite_component_get_animation(AnimatedSpriteComponent* anima
         }
     }
     RBE_ASSERT_FMT(false, "Failed to retrieve animation named '%s'", name);
-    Animation invalidAnimation = {};
+    Animation invalidAnimation;
     return invalidAnimation;
 }
 
