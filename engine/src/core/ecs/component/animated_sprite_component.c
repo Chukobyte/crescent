@@ -4,7 +4,6 @@
 
 #include "../../memory/rbe_mem.h"
 #include "../../utils/rbe_assert.h"
-#include "../../utils/logger.h"
 
 #define RBE_MAX_ANIMATIONS 16
 
@@ -37,7 +36,8 @@ Animation animated_sprite_component_get_animation(AnimatedSpriteComponent* anima
         }
     }
     RBE_ASSERT_FMT(false, "Failed to retrieve animation named '%s'", name);
-    // FIXME: missing return
+    Animation invalidAnimation;
+    return invalidAnimation;
 }
 
 Animation* animated_sprite_component_get_animation_ref(AnimatedSpriteComponent* animatedSpriteComponent, const char* name) {

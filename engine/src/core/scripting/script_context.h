@@ -12,7 +12,7 @@ typedef void (*OnNetworkCallback) (const char*);
 
 // TODO: Make not specific to python
 struct _object; // PyObject
-typedef void (*OnEntitySubscribeToNetworkCallback) (Entity entity, struct _object*);
+typedef void (*OnEntitySubscribeToNetworkCallback) (Entity, struct _object*, const char*);
 
 typedef struct RBEScriptContext {
     OnCreateInstance on_create_instance;

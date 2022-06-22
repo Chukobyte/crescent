@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import Optional
 
 import rbe_py_api_internal
 
@@ -496,6 +497,21 @@ class Node:
         else:
             return False
 
+    def __str__(self):
+        return f"Node(entity_id: {self.entity_id}, type: {type(self).__name__})"
+
+    def __repr__(self):
+        return f"Node(entity_id: {self.entity_id}, type: {type(self).__name__})"
+
+    # New API
+    def get_child(self, name: str):
+        node = rbe_py_api_internal.node_get_child(
+            entity_id=self.entity_id, child_name=name
+        )
+        return self.parse_scene_node_from_engine(scene_node=node)
+
+    # Old API
+
     @classmethod
     def extract_valid_inheritance_node(cls) -> str:
         valid_node_type_list = [e.value for e in NodeType]
@@ -517,8 +533,8 @@ class Node:
         if not isinstance(scene_node, tuple):
             return scene_node
         elif scene_node:
-            node_type = scene_node[0]
-            entity_id = scene_node[1]
+            entity_id = scene_node[0]
+            node_type = scene_node[1]
             node_class = globals()[node_type]
             instance = node_class(entity_id=entity_id)
             return instance
@@ -722,6 +738,42 @@ class Sprite(Node2D):
         )
 
 
+class TextLabel(Node2D):
+    @property
+    def text(self) -> str:
+        return rbe_py_api_internal.text_label_get_text(entity_id=self.entity_id)
+
+    @text.setter
+    def text(self, value: str) -> None:
+        rbe_py_api_internal.text_label_set_text(entity_id=self.entity_id, text=value)
+
+    def get_text(self) -> str:
+        return rbe_py_api_internal.text_label_get_text(entity_id=self.entity_id)
+
+    def set_text(self, text: str) -> None:
+        rbe_py_api_internal.text_label_set_text(entity_id=self.entity_id, text=text)
+
+    @property
+    def color(self) -> Color:
+        r, g, b, a = rbe_py_api_internal.text_label_get_color(entity_id=self.entity_id)
+        return Color(r, g, b, a)
+
+    @color.setter
+    def color(self, value: Color) -> None:
+        rbe_py_api_internal.text_label_set_color(
+            entity_id=self.entity_id, r=value.r, g=value.g, b=value.b, a=value.a
+        )
+
+    def get_color(self) -> Color:
+        r, g, b, a = rbe_py_api_internal.text_label_get_color(entity_id=self.entity_id)
+        return Color(r, g, b, a)
+
+    def set_color(self, color: Color) -> None:
+        rbe_py_api_internal.text_label_set_color(
+            entity_id=self.entity_id, r=color.r, g=color.g, b=color.b, a=color.a
+        )
+
+
 # SCENE TREE
 class SceneTree:
     @staticmethod
@@ -783,7 +835,7 @@ class Client:
         rbe_py_api_internal.client_send(message=message)
 
     @staticmethod
-    def subscribe(signal_id: str, listener_node: Node, listener_func: str) -> None:
+    def subscribe(signal_id: str, listener_node: Node, listener_func) -> None:
         rbe_py_api_internal.client_subscribe(
             signal_id=signal_id,
             listener_node=listener_node.entity_id,

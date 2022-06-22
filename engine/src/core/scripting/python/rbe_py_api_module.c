@@ -1,5 +1,7 @@
 #include "rbe_py_api_module.h"
 
+#include <string.h>
+
 #include "py_cache.h"
 #include "py_script_context.h"
 #include "../../game_properties.h"
@@ -17,8 +19,10 @@
 #include "../../ecs/component/text_label_component.h"
 #include "../../ecs/component/script_component.h"
 #include "../../networking/rbe_network.h"
+#include "../../utils/rbe_string_util.h"
 #include "../../utils/rbe_assert.h"
 #include "../../ecs/component/animated_sprite_component.h"
+#include "../../ecs/component/node_component.h"
 
 // TODO: Clean up strdups
 
@@ -50,12 +54,12 @@ PyObject* rbe_py_api_engine_set_target_fps(PyObject* self, PyObject* args, PyObj
 }
 
 PyObject* rbe_py_api_engine_get_target_fps(PyObject* self, PyObject* args) {
-    RBEEngineContext* engineContext = rbe_engine_context_get();
+    const RBEEngineContext* engineContext = rbe_engine_context_get();
     return Py_BuildValue("(f)", engineContext->targetFPS);
 }
 
 PyObject* rbe_py_api_engine_get_average_fps(PyObject* self, PyObject* args) {
-    RBEEngineContext* engineContext = rbe_engine_context_get();
+    const RBEEngineContext* engineContext = rbe_engine_context_get();
     return Py_BuildValue("(f)", engineContext->averageFPS);
 }
 
@@ -79,13 +83,13 @@ PyObject* rbe_py_api_configure_game(PyObject* self, PyObject* args, PyObject* kw
     char* initialScenePath;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "siiiiis", rbePyApiProjectConfigureKWList, &gameTitle, &windowWidth, &windowHeight, &resolutionWidth, &resolutionHeight, &targetFPS, &initialScenePath)) {
         RBEGameProperties* gameProperties = rbe_game_props_get();
-        gameProperties->gameTitle = strdup(gameTitle);
+        gameProperties->gameTitle = rbe_strdup(gameTitle);
         gameProperties->windowWidth = windowWidth;
         gameProperties->windowHeight = windowHeight;
         gameProperties->resolutionWidth = resolutionWidth;
         gameProperties->resolutionHeight = resolutionHeight;
         gameProperties->targetFPS = targetFPS;
-        gameProperties->initialScenePath = strdup(initialScenePath);
+        gameProperties->initialScenePath = rbe_strdup(initialScenePath);
         Py_RETURN_NONE;
     }
     return NULL;
@@ -109,7 +113,7 @@ PyObject* rbe_py_api_configure_assets(PyObject* self, PyObject* args, PyObject* 
             RBE_ASSERT(pAudioSourceAsset != NULL);
             const char* filePath = phy_get_string_from_var(pAudioSourceAsset, "file_path");
             rbe_logger_debug("file_path = %s", filePath);
-            RBEAssetAudioSource assetAudioSource = { .file_path = strdup(filePath) };
+            RBEAssetAudioSource assetAudioSource = { .file_path = rbe_strdup(filePath) };
             gameProperties->audioSources[gameProperties->audioSourceCount++] = assetAudioSource;
             Py_DECREF(pAudioSourceAsset);
         }
@@ -127,7 +131,7 @@ PyObject* rbe_py_api_configure_assets(PyObject* self, PyObject* args, PyObject* 
             const char* filterMag = phy_get_string_from_var(pTextureAsset, "filter_mag");
             rbe_logger_debug("file_path = %s, wrap_s = %s, wrap_t = %s, filter_min = %s, filter_mag = %s",
                              filePath, wrapS, wrapT, filterMin, filterMag);
-            RBEAssetTexture assetTexture = { .file_path = strdup(filePath) };
+            RBEAssetTexture assetTexture = { .file_path = rbe_strdup(filePath) };
             gameProperties->textures[gameProperties->textureCount++] = assetTexture;
             Py_DECREF(pTextureAsset);
         }
@@ -142,7 +146,7 @@ PyObject* rbe_py_api_configure_assets(PyObject* self, PyObject* args, PyObject* 
             const char* uid = phy_get_string_from_var(pFontAsset, "uid");
             const int size = phy_get_int_from_var(pFontAsset, "size");
             rbe_logger_debug("file_path = %s, uid = %s, size = %d", filePath, uid, size);
-            RBEAssetFont assetFont = { .file_path = strdup(filePath), .uid = strdup(uid), .size = size };
+            RBEAssetFont assetFont = { .file_path = rbe_strdup(filePath), .uid = rbe_strdup(uid), .size = size };
             gameProperties->fonts[gameProperties->fontCount++] = assetFont;
             Py_DECREF(pFontAsset);
         }
@@ -170,12 +174,12 @@ PyObject* rbe_py_api_configure_inputs(PyObject* self, PyObject* args, PyObject* 
             RBE_ASSERT(valuesList != NULL);
             RBE_ASSERT_FMT(PyList_Check(valuesList), "Input action values for '%s' is not a list!  Check python api implementation.", actionName);
             Py_ssize_t valueListSize = PyList_Size(valuesList);
-            RBEInputAction inputAction = { .name = strdup(actionName), .valueCount = (size_t) valueListSize };
+            RBEInputAction inputAction = { .name = rbe_strdup(actionName), .valueCount = (size_t) valueListSize };
             for (Py_ssize_t actionIndex = 0; actionIndex < valueListSize; actionIndex++) {
                 PyObject* pActionValue = PyList_GetItem(valuesList, actionIndex);
                 const char* actionValue = pyh_get_string_from_obj(pActionValue);
                 rbe_logger_debug("action value = '%s'", actionValue);
-                inputAction.values[actionIndex] = strdup(actionValue);
+                inputAction.values[actionIndex] = rbe_strdup(actionValue);
             }
             gameProperties->inputActions[gameProperties->inputActionCount++] = inputAction;
             Py_DECREF(pInputAction);
@@ -215,11 +219,16 @@ void setup_scene_stage_nodes(SceneTreeNode* parent, PyObject* stageNodeList) {
             parent->children[parent->childCount++] = node;
         }
 
-        rbe_scene_manager_queue_entity_for_creation(node); // May move in a different place TODO: Figure out...
-
         PyObject* pStageNode = PyList_GetItem(stageNodeList, i);
+        // Node component is used for all scene nodes
         const char* nodeName = phy_get_string_from_var(pStageNode, "name");
         const char* nodeType = phy_get_string_from_var(pStageNode, "type");
+        NodeComponent* nodeComponent = node_component_create();
+        strcpy_s(nodeComponent->name, 32, nodeName); // Replace magic number
+        nodeComponent->type = node_get_base_type(nodeType);
+        RBE_ASSERT_FMT(nodeComponent->type != NodeBaseType_INVALID, "Node '%s' has an invalid node type '%s'", nodeName, nodeType);
+        component_manager_set_component(node->entity, ComponentDataIndex_NODE, nodeComponent);
+
         // Process tags if tags var is a list
         PyObject* tagsListVar = PyObject_GetAttrString(pStageNode, "tags");
         if (PyList_Check(tagsListVar)) {
@@ -249,6 +258,8 @@ void setup_scene_stage_nodes(SceneTreeNode* parent, PyObject* stageNodeList) {
             // Recurse through children nodes
             setup_scene_stage_nodes(node, childrenListVar);
         }
+
+        rbe_scene_manager_queue_entity_for_creation(node); // May move in a different place TODO: Figure out...
 
         rbe_logger_debug("node_name = %s, node_type = %s", nodeName, nodeType);
         Py_DecRef(tagsListVar);
@@ -345,7 +356,7 @@ void setup_scene_component_node(Entity entity, PyObject* component) {
             const int animationSpeed = phy_get_int_from_var(pyAnimation, "speed");
             const bool animationLoops = phy_get_bool_from_var(pyAnimation, "loops");
             rbe_logger_debug("building anim - name: '%s', speed: '%d', loops: '%d'", animationName, animationSpeed, animationLoops);
-            strcpy(animation.name, animationName);
+            strcpy_s(animation.name, 16, animationName); // TODO: Replace magic number
             animation.speed = animationSpeed;
             animation.doesLoop = animationLoops;
 
@@ -402,7 +413,7 @@ void setup_scene_component_node(Entity entity, PyObject* component) {
         TextLabelComponent* textLabelComponent = text_label_component_create();
         textLabelComponent->font = rbe_asset_manager_get_font(textLabelUID);
         RBE_ASSERT(textLabelComponent->font != NULL);
-        strcpy(textLabelComponent->text, textLabelText);
+        strcpy_s(textLabelComponent->text, 64, textLabelText); // TODO: Replace magic number
         textLabelComponent->color = textLabelColor;
         component_manager_set_component(entity, ComponentDataIndex_TEXT_LABEL, textLabelComponent);
         rbe_logger_debug("uid: %s, text: %s, color(%d, %d, %d, %d)", textLabelUID, textLabelText, colorR, colorG, colorB, colorA);
@@ -496,6 +507,26 @@ PyObject* rbe_py_api_audio_manager_stop_sound(PyObject* self, PyObject* args, Py
     return NULL;
 }
 
+// Node
+PyObject* rbe_py_api_node_get_child(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity parentEntity;
+    char* childName;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "is", rbePyApiNodeGetChildKWList, &parentEntity, &childName)) {
+        Entity childEntity = rbe_scene_manager_get_entity_child_by_name(parentEntity, childName);
+        if (childEntity == NULL_ENTITY) {
+            rbe_logger_warn("Failed to get child node from parent entity '%d' with the name '%s'", parentEntity, childName);
+        }
+        // TODO: Check for script custom classes and return them
+        const size_t typeBufferSize = 32;
+        char typeBuffer[typeBufferSize];
+        NodeComponent* nodeComponent = component_manager_get_component(childEntity, ComponentDataIndex_NODE);
+        strcpy_s(typeBuffer, typeBufferSize, node_get_component_type_string(nodeComponent->type));
+
+        return Py_BuildValue("(is)", childEntity, typeBuffer);
+    }
+    return NULL;
+}
+
 // Node2D
 PyObject* rbe_py_api_node2D_set_position(PyObject* self, PyObject* args, PyObject* kwargs) {
     Entity entity;
@@ -526,8 +557,57 @@ PyObject* rbe_py_api_node2D_add_to_position(PyObject* self, PyObject* args, PyOb
 PyObject* rbe_py_api_node2D_get_position(PyObject* self, PyObject* args, PyObject* kwargs) {
     Entity entity;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", rbePyApiGenericGetEntityKWList, &entity)) {
-        Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
+        const Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
         return Py_BuildValue("(ff)", transformComp->position.x, transformComp->position.y);
+    }
+    return NULL;
+}
+
+// Text Label
+PyObject* rbe_py_api_text_label_set_text(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    char* text;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "is", rbePyApiTextLabelSetTextKWList, &entity, &text)) {
+        TextLabelComponent* textLabelComponent = component_manager_get_component(entity, ComponentDataIndex_TEXT_LABEL);
+        strcpy_s(textLabelComponent->text, 64, text); // TODO: Replace magic number
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* rbe_py_api_text_label_get_text(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", rbePyApiGenericGetEntityKWList, &entity)) {
+        TextLabelComponent* textLabelComponent = component_manager_get_component(entity, ComponentDataIndex_TEXT_LABEL);
+        return Py_BuildValue("s", textLabelComponent->text);
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* rbe_py_api_text_label_set_color(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    int red;
+    int green;
+    int blue;
+    int alpha;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "iffff", rbePyApiTextLabelSetColorKWList, &entity, &red, &green, &blue, &alpha)) {
+        TextLabelComponent* textLabelComponent = component_manager_get_component(entity, ComponentDataIndex_TEXT_LABEL);
+        textLabelComponent->color = rbe_color_get_normalized_color(red, green, blue, alpha);
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* rbe_py_api_text_label_get_color(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", rbePyApiGenericGetEntityKWList, &entity)) {
+        TextLabelComponent* textLabelComponent = component_manager_get_component(entity, ComponentDataIndex_TEXT_LABEL);
+        const int red = (int) (textLabelComponent->color.r * 255.0f);
+        const int green = (int) (textLabelComponent->color.r * 255.0f);
+        const int blue = (int) (textLabelComponent->color.r * 255.0f);
+        const int alpha = (int) (textLabelComponent->color.r * 255.0f);
+        return Py_BuildValue("(iiii)", red, green, blue, alpha);
         Py_RETURN_NONE;
     }
     return NULL;
@@ -571,9 +651,9 @@ PyObject* rbe_py_api_server_subscribe(PyObject* self, PyObject* args, PyObject* 
     PyObject* listenerFunc;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "siO", rbePyApiNetworkSubscribeKWList, &signalId, &listenerNode, &listenerFunc)) {
         RBE_ASSERT(PyObject_IsTrue(listenerFunc));
-        RBEScriptContext* scriptContext =  rbe_py_get_script_context();
+        const RBEScriptContext* scriptContext =  rbe_py_get_script_context();
         RBE_ASSERT(scriptContext != NULL && scriptContext->on_entity_subscribe_to_network_callback != NULL);
-        scriptContext->on_entity_subscribe_to_network_callback(listenerNode, listenerFunc);
+        scriptContext->on_entity_subscribe_to_network_callback(listenerNode, listenerFunc, signalId);
 
         Py_DecRef(listenerFunc);
         Py_RETURN_NONE;
@@ -586,7 +666,7 @@ PyObject* rbe_py_api_client_start(PyObject* self, PyObject* args, PyObject* kwar
     char* host;
     int port;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "si", rbePyApiClientStartKWList, &host, &port)) {
-        rbe_udp_server_initialize(port, rbe_ec_system_network_callback);
+        rbe_udp_client_initialize(host, port, rbe_ec_system_network_callback);
         Py_RETURN_NONE;
     }
     return NULL;
@@ -609,8 +689,14 @@ PyObject* rbe_py_api_client_send(PyObject* self, PyObject* args, PyObject* kwarg
 PyObject* rbe_py_api_client_subscribe(PyObject* self, PyObject* args, PyObject* kwargs) {
     char* signalId;
     Entity listenerNode;
-    char* listenerFunc;
-    if (PyArg_ParseTupleAndKeywords(args, kwargs, "sis", rbePyApiNetworkSubscribeKWList, &signalId, &listenerNode, &listenerFunc)) {
+    PyObject* listenerFunc;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "siO", rbePyApiNetworkSubscribeKWList, &signalId, &listenerNode, &listenerFunc)) {
+        RBE_ASSERT(PyObject_IsTrue(listenerFunc));
+        const RBEScriptContext* scriptContext =  rbe_py_get_script_context();
+        RBE_ASSERT(scriptContext != NULL && scriptContext->on_entity_subscribe_to_network_callback != NULL);
+        scriptContext->on_entity_subscribe_to_network_callback(listenerNode, listenerFunc, signalId);
+
+        Py_DecRef(listenerFunc);
         Py_RETURN_NONE;
     }
     return NULL;

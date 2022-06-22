@@ -76,6 +76,10 @@ def audio_manager_stop_sound(path: str) -> None:
     pass
 
 
+def node_get_child(entity_id: int, child_name: str) -> tuple:
+    return 2, "Node"
+
+
 def node2D_set_position(entity_id: int, x: float, y: float) -> None:
     pass
 
@@ -86,6 +90,22 @@ def node2D_add_to_position(entity_id: int, x: float, y: float) -> None:
 
 def node2D_get_position(entity_id: int) -> tuple:
     return 0.0, 0.0
+
+
+def text_label_set_text(entity_id: int, text: str) -> None:
+    pass
+
+
+def text_label_get_text(entity_id: int) -> str:
+    return ""
+
+
+def text_label_set_color(entity_id: int, r: int, g: int, b: int, a: int) -> None:
+    pass
+
+
+def text_label_get_color(entity_id: int) -> tuple:
+    return 255, 255, 255, 255
 
 
 def network_is_server() -> bool:
@@ -120,5 +140,5 @@ def client_send(message: str) -> None:
     pass
 
 
-def client_subscribe(signal_id: str, listener_node: int, listener_func: str) -> None:
+def client_subscribe(signal_id: str, listener_node: int, listener_func) -> None:
     pass
