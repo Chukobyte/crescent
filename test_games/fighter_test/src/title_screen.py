@@ -1,6 +1,9 @@
 from rbe_py_api import *
 from test_games.fighter_test.src.game_state import *
 
+SERVER_HOST = "127.0.0.1"
+SERVER_PORT = 6510
+
 GAME_MODES = [
     GameMode.LOCAL_PVP,
     GameMode.LOCAL_AI,
@@ -37,7 +40,7 @@ class TitleScreen(Node2D):
             game_state = GameState()
             game_state.mode = self.selected_game_mode
             if game_state.mode == GameMode.ONLINE_PVP_HOST:
-                Server.start(port=8888)
+                Server.start(SERVER_PORT)
                 Server.subscribe(
                     signal_id="client_connected",
                     listener_node=self,
@@ -46,7 +49,7 @@ class TitleScreen(Node2D):
                 self.is_waiting_to_connect = True
                 self.connection_text.color = Color(255, 255, 255, 255)
             elif game_state.mode == GameMode.ONLINE_PVP_CLIENT:
-                Client.start("127.0.0.1", 8888)
+                Client.start(SERVER_HOST, SERVER_PORT)
                 Client.subscribe(
                     signal_id="client_connected",
                     listener_node=self,
