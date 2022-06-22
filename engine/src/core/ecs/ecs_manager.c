@@ -5,11 +5,12 @@
 #include "component/component.h"
 #include "component/transform2d_component.h"
 #include "component/text_label_component.h"
-#include "system/ec_system.h"
-#include "system/sprite_rendering_ec_system.h"
 #include "system/animated_sprite_rendering_ec_system.h"
+#include "system/collision_ec_system.h"
+#include "system/ec_system.h"
 #include "system/font_rendering_ec_system.h"
 #include "system/script_ec_system.h"
+#include "system/sprite_rendering_ec_system.h"
 #include "../scene/scene_manager.h"
 #include "../utils/rbe_assert.h"
 #include "../asset_manager.h"
@@ -22,6 +23,7 @@ void rbe_ecs_manager_initialize() {
     rbe_ec_system_register(animated_sprite_rendering_ec_system_create());
     rbe_ec_system_register(font_rendering_ec_system_create());
     rbe_ec_system_register(script_ec_system_create());
+    rbe_ec_system_register(collision_ec_system_create());
 }
 
 void rbe_ecs_manager_enable_fps_display_entity(bool enabled) {

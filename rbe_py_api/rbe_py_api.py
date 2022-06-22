@@ -476,6 +476,12 @@ class ScriptComponent:
         self.class_name = class_name
 
 
+class Collider2DComponent:
+    def __init__(self, rect: Rect2, color: Color):
+        self.rect = rect
+        self.color = color
+
+
 # NODE
 class NodeType(str, Enum):
     NODE = "Node"
@@ -484,7 +490,7 @@ class NodeType(str, Enum):
     SPRITE = "Sprite"
     ANIMATED_SPRITE = "AnimatedSprite"
     TEXT_LABEL = "TextLabel"
-    COLLISION_SHAPE2D = "CollisionShape2D"
+    COLLIDER2D = "Collider2D"
 
 
 class Node:
@@ -771,6 +777,17 @@ class TextLabel(Node2D):
     def set_color(self, color: Color) -> None:
         rbe_py_api_internal.text_label_set_color(
             entity_id=self.entity_id, r=color.r, g=color.g, b=color.b, a=color.a
+        )
+
+
+class Collider2D(Node2D):
+    def get_rect(self) -> Rect2:
+        x, y, w, h = rbe_py_api_internal.collider2d_get_rect(entity_id=self.entity_id)
+        return Rect2(x=x, y=y, w=w, h=h)
+
+    def set_rect(self, value: Rect2) -> None:
+        rbe_py_api_internal.collider2d_set_rect(
+            entity_id=self.entity_id, x=value.x, y=value.y, w=value.w, h=value.h
         )
 
 

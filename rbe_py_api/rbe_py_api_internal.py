@@ -108,6 +108,14 @@ def text_label_get_color(entity_id: int) -> tuple:
     return 255, 255, 255, 255
 
 
+def collider2d_set_rect(entity_id: int, x: float, y: float, w: float, h: float) -> None:
+    pass
+
+
+def collider2d_get_rect(entity_id: int) -> tuple:
+    return 0.0, 0.0, 0.0, 0.0
+
+
 def network_is_server() -> bool:
     return True
 
