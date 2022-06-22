@@ -6,6 +6,7 @@
 #include "../component/transform2d_component.h"
 #include "../component/sprite_component.h"
 #include "../../rendering/renderer.h"
+#include "../../utils/rbe_string_util.h"
 #include "../../utils/rbe_assert.h"
 
 EntitySystem* spriteRenderingSystem = NULL;
@@ -15,8 +16,7 @@ void sprite_rendering_system_render();
 EntitySystem* sprite_rendering_ec_system_create() {
     RBE_ASSERT(spriteRenderingSystem == NULL);
     spriteRenderingSystem = rbe_ec_system_create();
-    // NOTE(PetrFlajsingr): replaced strdup with _strdup since the former is not part of the standard
-    spriteRenderingSystem->name = _strdup("Sprite Rendering");
+    spriteRenderingSystem->name = rbe_strdup("Sprite Rendering");
     spriteRenderingSystem->render_func = sprite_rendering_system_render;
     spriteRenderingSystem->component_signature = ComponentType_TRANSFORM_2D | ComponentType_SPRITE;
     return spriteRenderingSystem;
@@ -25,8 +25,8 @@ EntitySystem* sprite_rendering_ec_system_create() {
 void sprite_rendering_system_render() {
     for (size_t i = 0; i < spriteRenderingSystem->entity_count; i++) {
         const Entity entity = spriteRenderingSystem->entities[i];
-        Transform2DComponent* spriteTransformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
-        SpriteComponent* spriteComponent = (SpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_SPRITE);
+        const Transform2DComponent* spriteTransformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
+        const SpriteComponent* spriteComponent = (SpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_SPRITE);
         const Rect2 destinationRectangle = {
             spriteTransformComp->position.x,
             spriteTransformComp->position.y,

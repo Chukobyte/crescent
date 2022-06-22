@@ -5,6 +5,7 @@
 #include "input_action.h"
 #include "../data_structures/rbe_hash_map_string.h"
 #include "../utils/logger.h"
+#include "../utils/rbe_string_util.h"
 
 RBEStringHashMap* inputActionMap = NULL;
 const char* inputActionNames[24];
@@ -128,13 +129,13 @@ void rbe_input_add_action_value(const char* actionName, const char* actionValue)
         inputActionNamesCount++;
     }
     InputAction* inputAction = (InputAction*) rbe_string_hash_map_get(inputActionMap, actionName);
-    // TODO: Remember to properly delete char* from strdup, also not managed under MEM_UTILS
+    // TODO: Remember to properly delete char* from rbe_strdup
     if (rbe_string_hash_map_has(keyboardStringValuesMap, actionValue)) {
         inputAction->keyboardValues[inputAction->keyboardValueCount] = rbe_string_hash_map_get_int(keyboardStringValuesMap, actionValue);
         inputAction->keyboardValueCount++;
         rbe_logger_debug("Added keyboard action | name: '%s', value: '%s', scancode: '%d'", actionName, actionValue, inputAction->keyboardValues[inputAction->keyboardValueCount - 1]);
     } else if (rbe_string_hash_map_has(gamepadStringValuesMap, actionValue)) {
-        inputAction->gamepadValues[inputAction->gamepadValueCount] = strdup(actionValue);
+        inputAction->gamepadValues[inputAction->gamepadValueCount] = rbe_strdup(actionValue);
         inputAction->gamepadValueCount++;
         rbe_logger_debug("Added gamepad value '%s'", actionValue);
     } else if (strcmp(actionValue, "mb_left") == 0 || strcmp(actionValue, "mb_right") == 0 || strcmp(actionValue, "mb_middle") == 0) {

@@ -33,10 +33,19 @@ PyObject* rbe_py_api_scene_tree_change_scene(PyObject* self, PyObject* args, PyO
 PyObject* rbe_py_api_audio_manager_play_sound(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* rbe_py_api_audio_manager_stop_sound(PyObject* self, PyObject* args, PyObject* kwargs);
 
+// Node
+PyObject* rbe_py_api_node_get_child(PyObject* self, PyObject* args, PyObject* kwargs);
+
 // Node2D
 PyObject* rbe_py_api_node2D_set_position(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* rbe_py_api_node2D_add_to_position(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* rbe_py_api_node2D_get_position(PyObject* self, PyObject* args, PyObject* kwargs);
+
+// Text Label
+PyObject* rbe_py_api_text_label_set_text(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* rbe_py_api_text_label_get_text(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* rbe_py_api_text_label_set_color(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* rbe_py_api_text_label_get_color(PyObject* self, PyObject* args, PyObject* kwargs);
 
 // Network
 PyObject* rbe_py_api_network_is_server(PyObject* self, PyObject* args);
@@ -124,6 +133,11 @@ static struct PyMethodDef rbePyApiMethods[] = {
         "audio_manager_stop_sound", (PyCFunction) rbe_py_api_audio_manager_stop_sound,
         METH_VARARGS | METH_KEYWORDS, "Stops a sound."
     },
+    // NODE
+    {
+        "node_get_child", (PyCFunction) rbe_py_api_node_get_child,
+        METH_VARARGS | METH_KEYWORDS, "Node get child."
+    },
     // NODE2D
     {
         "node2D_set_position", (PyCFunction) rbe_py_api_node2D_set_position,
@@ -136,6 +150,23 @@ static struct PyMethodDef rbePyApiMethods[] = {
     {
         "node2D_get_position", (PyCFunction) rbe_py_api_node2D_get_position,
         METH_VARARGS | METH_KEYWORDS, "Get the position of a node."
+    },
+    // TEXT LABEL
+    {
+        "text_label_set_text", (PyCFunction) rbe_py_api_text_label_set_text,
+        METH_VARARGS | METH_KEYWORDS, "Sets the text label's text."
+    },
+    {
+        "text_label_get_text", (PyCFunction) rbe_py_api_text_label_get_text,
+        METH_VARARGS | METH_KEYWORDS, "Gets the text label's text."
+    },
+    {
+        "text_label_set_color", (PyCFunction) rbe_py_api_text_label_set_color,
+        METH_VARARGS | METH_KEYWORDS, "Sets the text label's color."
+    },
+    {
+        "text_label_get_color", (PyCFunction) rbe_py_api_text_label_get_color,
+        METH_VARARGS | METH_KEYWORDS, "Gets the text label's color."
     },
     // NETWORK
     {
@@ -173,7 +204,7 @@ static struct PyMethodDef rbePyApiMethods[] = {
         METH_VARARGS | METH_KEYWORDS, "Sends a message to the server."
     },
     {
-        "client_start", (PyCFunction) rbe_py_api_client_subscribe,
+        "client_subscribe", (PyCFunction) rbe_py_api_client_subscribe,
         METH_VARARGS | METH_KEYWORDS, "Subscribe a node's function to one of the client's signals."
     },
     { NULL, NULL, 0,NULL },
@@ -204,7 +235,12 @@ static char *rbePyApiInputActionInputCheckKWList[] = {"name", NULL};
 
 static char *rbePyApiAudioManagerPlaySoundKWList[] = {"path", "loops", NULL};
 
+static char *rbePyApiNodeGetChildKWList[] = {"entity_id", "child_name", NULL};
+
 static char *rbePyApiNode2DSetPositionKWList[] = {"entity_id", "x", "y", NULL};
+
+static char *rbePyApiTextLabelSetTextKWList[] = {"entity_id", "text", NULL};
+static char *rbePyApiTextLabelSetColorKWList[] = {"entity_id", "r", "g", "b", "a", NULL};
 
 static char *rbePyApiNetworkSendMessageKWList[] = {"message", NULL};
 static char *rbePyApiNetworkSubscribeKWList[] = {"signal_id", "listener_node", "listener_func", NULL};

@@ -36,7 +36,6 @@ RBENativeScriptClass* fps_display_create_new_instance(Entity entity) {
     classData->value = 10;
     fpsClassInstance->instance_data = classData;
     fpsClassInstance->class_instance_size = (sizeof(RBENativeScriptClass*) + sizeof(FpsDisplayClassData*)) * 4;
-    printf("[C SCRIPT] New instance!\n");
     return fpsClassInstance;
 }
 

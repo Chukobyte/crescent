@@ -39,6 +39,7 @@ add_library(${PROJECT_NAME} STATIC
         ../engine/src/core/math/rbe_math.c
         ../engine/src/core/utils/logger.c
         ../engine/src/core/utils/rbe_file_system_utils.c
+        ../engine/src/core/utils/rbe_string_util.c
         ../engine/src/core/data_structures/rbe_hash_map.c
         ../engine/src/core/data_structures/rbe_hash_map_string.c
         ../engine/src/core/memory/rbe_mem.c
@@ -61,6 +62,7 @@ add_library(${PROJECT_NAME} STATIC
         ../engine/src/core/ecs/system/script_ec_system.c
         ../engine/src/core/ecs/system/sprite_rendering_ec_system.c
         ../engine/src/core/ecs/component/animated_sprite_component.c
+        ../engine/src/core/ecs/component/node_component.c
         ../engine/src/core/ecs/component/text_label_component.c
         ../engine/src/core/ecs/component/transform2d_component.c
         ../engine/src/core/ecs/component/script_component.c
