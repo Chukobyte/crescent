@@ -1,5 +1,7 @@
 #include "rbe_py_api_module.h"
 
+#include <string.h>
+
 #include "py_cache.h"
 #include "py_script_context.h"
 #include "../../game_properties.h"
@@ -222,7 +224,7 @@ void setup_scene_stage_nodes(SceneTreeNode* parent, PyObject* stageNodeList) {
         const char* nodeName = phy_get_string_from_var(pStageNode, "name");
         const char* nodeType = phy_get_string_from_var(pStageNode, "type");
         NodeComponent* nodeComponent = node_component_create();
-        strcpy(nodeComponent->name, nodeName);
+        strcpy_s(nodeComponent->name, 32, nodeName); // Replace magic number
         nodeComponent->type = node_get_base_type(nodeType);
         RBE_ASSERT_FMT(nodeComponent->type != NodeBaseType_INVALID, "Node '%s' has an invalid node type '%s'", nodeName, nodeType);
         component_manager_set_component(node->entity, ComponentDataIndex_NODE, nodeComponent);
@@ -354,7 +356,7 @@ void setup_scene_component_node(Entity entity, PyObject* component) {
             const int animationSpeed = phy_get_int_from_var(pyAnimation, "speed");
             const bool animationLoops = phy_get_bool_from_var(pyAnimation, "loops");
             rbe_logger_debug("building anim - name: '%s', speed: '%d', loops: '%d'", animationName, animationSpeed, animationLoops);
-            strcpy(animation.name, animationName);
+            strcpy_s(animation.name, 16, animationName); // TODO: Replace magic number
             animation.speed = animationSpeed;
             animation.doesLoop = animationLoops;
 
@@ -411,7 +413,7 @@ void setup_scene_component_node(Entity entity, PyObject* component) {
         TextLabelComponent* textLabelComponent = text_label_component_create();
         textLabelComponent->font = rbe_asset_manager_get_font(textLabelUID);
         RBE_ASSERT(textLabelComponent->font != NULL);
-        strcpy(textLabelComponent->text, textLabelText);
+        strcpy_s(textLabelComponent->text, 64, textLabelText); // TODO: Replace magic number
         textLabelComponent->color = textLabelColor;
         component_manager_set_component(entity, ComponentDataIndex_TEXT_LABEL, textLabelComponent);
         rbe_logger_debug("uid: %s, text: %s, color(%d, %d, %d, %d)", textLabelUID, textLabelText, colorR, colorG, colorB, colorA);
@@ -515,9 +517,10 @@ PyObject* rbe_py_api_node_get_child(PyObject* self, PyObject* args, PyObject* kw
             rbe_logger_warn("Failed to get child node from parent entity '%d' with the name '%s'", parentEntity, childName);
         }
         // TODO: Check for script custom classes and return them
-        char typeBuffer[32];
+        const size_t typeBufferSize = 32;
+        char typeBuffer[typeBufferSize];
         NodeComponent* nodeComponent = component_manager_get_component(childEntity, ComponentDataIndex_NODE);
-        strcpy(typeBuffer, node_get_component_type_string(nodeComponent->type));
+        strcpy_s(typeBuffer, typeBufferSize, node_get_component_type_string(nodeComponent->type));
 
         return Py_BuildValue("(is)", childEntity, typeBuffer);
     }
@@ -566,7 +569,7 @@ PyObject* rbe_py_api_text_label_set_text(PyObject* self, PyObject* args, PyObjec
     char* text;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "is", rbePyApiTextLabelSetTextKWList, &entity, &text)) {
         TextLabelComponent* textLabelComponent = component_manager_get_component(entity, ComponentDataIndex_TEXT_LABEL);
-        strcpy(textLabelComponent->text, text);
+        strcpy_s(textLabelComponent->text, 64, text); // TODO: Replace magic number
         Py_RETURN_NONE;
     }
     return NULL;

@@ -155,7 +155,6 @@ class Main(Node2D):
             game_mode == GameMode.ONLINE_PVP_HOST
             or game_mode == GameMode.ONLINE_PVP_CLIENT
         ):
-            # TODO: Uncomment when testing sending inputs and replace with p1
             player_one_input = NetworkSenderInputBuffer(
                 move_left_action_name="p1_move_left",
                 move_right_action_name="p1_move_right",

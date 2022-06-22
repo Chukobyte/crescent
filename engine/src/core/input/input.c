@@ -139,7 +139,7 @@ void rbe_input_add_action_value(const char* actionName, const char* actionValue)
         inputAction->gamepadValueCount++;
         rbe_logger_debug("Added gamepad value '%s'", actionValue);
     } else if (strcmp(actionValue, "mb_left") == 0 || strcmp(actionValue, "mb_right") == 0 || strcmp(actionValue, "mb_middle") == 0) {
-        strcpy(inputAction->mouseValues[inputAction->mouseValueCount], actionValue);
+        strcpy_s(&inputAction->mouseValues[inputAction->mouseValueCount], 32, actionValue); // TODO: Fix magic number
         rbe_logger_debug("Added mouse action | name: '%s', value: '%s'", actionName, inputAction->mouseValues[inputAction->mouseValueCount]);
         inputAction->mouseValueCount++;
     } else {
@@ -204,8 +204,8 @@ void input_process_mouse(SDL_Event event) {
         for (size_t i = 0; i < inputActionNamesCount; i++) {
             InputAction* inputAction = (InputAction*) rbe_string_hash_map_get(inputActionMap, inputActionNames[i]);
             for (size_t j = 0; j < inputAction->mouseValueCount; j++) {
-                bool isLeftMouseButton = strcmp(inputAction->mouseValues[j], "mb_left") == 0 && mouseButton == SDL_BUTTON_LEFT;
-                bool isRightMouseButton = strcmp(inputAction->mouseValues[j], "mb_right") == 0 && mouseButton == SDL_BUTTON_RIGHT;
+                bool isLeftMouseButton = strcmp(&inputAction->mouseValues[j], "mb_left") == 0 && mouseButton == SDL_BUTTON_LEFT;
+                bool isRightMouseButton = strcmp(&inputAction->mouseValues[j], "mb_right") == 0 && mouseButton == SDL_BUTTON_RIGHT;
                 if (isLeftMouseButton || isRightMouseButton) {
                     // Event yes
                     if (mousePressed) {

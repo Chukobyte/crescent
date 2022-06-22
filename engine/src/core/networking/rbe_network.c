@@ -172,7 +172,7 @@ bool rbe_udp_client_initialize(const char* serverAddr, int serverPort, on_networ
     client_si_other.sin_addr.S_un.S_addr = inet_addr(serverAddr);
 
 #ifndef _WIN32
-    if (inet_aton(serverAddr , &client_si_other.sin_addr) == 0) {
+    if (inet_aton(serverAddr, &client_si_other.sin_addr) == 0) {
         rbe_logger_error("inet_aton() failed!");
         return false;
     }

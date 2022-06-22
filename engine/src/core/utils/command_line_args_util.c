@@ -23,7 +23,6 @@ CommandLineFlagResult rbe_command_line_args_parse(int argv, char** args) {
         }
         if (strcmp(argument, RBE_COMMAND_LINE_FLAG_WORK_DIR) == 0) {
             const char* workingDirectoryOverride = args[nextArgumentIndex];
-            // NOTE(PetrFlajsingr): strcpy is deprecated
             strcpy_s(flagResult.workingDirOverride, WORKING_DIR_OVERRIDE_CAPACITY, workingDirectoryOverride);
             rbe_logger_debug("working directory override = '%s'", flagResult.workingDirOverride);
             argumentIndex++;

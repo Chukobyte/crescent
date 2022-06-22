@@ -49,8 +49,8 @@ Font* font_create_font(const char* fileName, int size) {
             // Create character struct
             Character character = {
                 .textureId = textTexture,
-                .size = { (float)face->glyph->bitmap.width, (float)face->glyph->bitmap.rows },
-                .bearing = { (float)face->glyph->bitmap_left, (float)face->glyph->bitmap_top },
+                .size = { (float) face->glyph->bitmap.width, (float) face->glyph->bitmap.rows },
+                .bearing = { (float) face->glyph->bitmap_left, (float) face->glyph->bitmap_top },
                 .advance = (GLuint) face->glyph->advance.x
             };
             font->characters[c] = character;
