@@ -224,7 +224,7 @@ void setup_scene_stage_nodes(SceneTreeNode* parent, PyObject* stageNodeList) {
         const char* nodeName = phy_get_string_from_var(pStageNode, "name");
         const char* nodeType = phy_get_string_from_var(pStageNode, "type");
         NodeComponent* nodeComponent = node_component_create();
-        strcpy_s(nodeComponent->name, 32, nodeName); // Replace magic number
+        strcpy_s(nodeComponent->name, 32, nodeName); // TODO: Replace magic number
         nodeComponent->type = node_get_base_type(nodeType);
         RBE_ASSERT_FMT(nodeComponent->type != NodeBaseType_INVALID, "Node '%s' has an invalid node type '%s'", nodeName, nodeType);
         component_manager_set_component(node->entity, ComponentDataIndex_NODE, nodeComponent);
