@@ -8,6 +8,7 @@
 #include "../../data_structures/rbe_static_array.h"
 #include "../../utils/rbe_assert.h"
 #include "../../memory/rbe_mem.h"
+#include "../../networking/rbe_network.h"
 
 //--- RBE Script Callback ---//
 // TODO: Figuring out callback to signal structure. Clean up later.
@@ -16,9 +17,10 @@ typedef struct RBEScriptCallback {
     PyObject* callback_func;
 } RBEScriptCallback;
 
-void py_on_entity_subscribe_to_network_callback(Entity entity, PyObject* callback_func);
+void py_on_entity_subscribe_to_network_callback(Entity entity, PyObject* callback_func, const char* id);
 
 static RBEScriptCallback* current_network_script_callback = NULL;
+static RBEScriptCallback* current_network_server_client_connected_script_callback = NULL;
 
 //--- Script Context Interface ---//
 void py_on_create_instance(Entity entity, const char* classPath, const char* className);
@@ -80,6 +82,12 @@ void py_on_delete_instance(Entity entity) {
 
     Py_DecRef(pScriptInstance);
     rbe_hash_map_erase(pythonInstanceHashMap, &entity);
+
+    // Erase network callback
+    if (current_network_server_client_connected_script_callback != NULL && entity == current_network_server_client_connected_script_callback->entity) {
+        RBE_MEM_FREE(current_network_server_client_connected_script_callback);
+        current_network_server_client_connected_script_callback = NULL;
+    }
 }
 
 void py_on_start(Entity entity) {
@@ -88,23 +96,29 @@ void py_on_start(Entity entity) {
     RBE_ASSERT(pScriptInstance != NULL);
     if (PyObject_HasAttrString(pScriptInstance, "_start")) {
         PyObject_CallMethod(pScriptInstance, "_start", NULL);
+        PyErr_Print();
     }
 }
 
 void py_on_update_all_instances(float deltaTime) {
+    PyGILState_STATE pyGilStateState = PyGILState_Ensure();
     for (size_t i = 0; i < entities_to_update_count; i++) {
         RBE_ASSERT_FMT(entities_to_update[i] != NULL, "Python instance is null!");
         PyObject_CallMethod(entities_to_update[i], "_update", "(f)", deltaTime);
     }
+    PyGILState_Release(pyGilStateState);
+
     // TODO: More robust error checking
     PyErr_Print();
 }
 
 void py_on_physics_update_all_instances(float deltaTime) {
+    PyGILState_STATE pyGilStateState = PyGILState_Ensure();
     for (size_t i = 0; i < entities_to_physics_update_count; i++) {
         RBE_ASSERT_FMT(entities_to_physics_update[i] != NULL, "Python instance is null!");
         PyObject_CallMethod(entities_to_physics_update[i], "_physics_update", "(f)", deltaTime);
     }
+    PyGILState_Release(pyGilStateState);
 }
 
 void py_on_end(Entity entity) {
@@ -119,19 +133,38 @@ void py_on_end(Entity entity) {
 void py_on_network_callback(const char* message) {
 //    rbe_logger_debug("py_on_network_callback - message = '%s'", message);
     if (current_network_script_callback != NULL) {
+        PyGILState_STATE pyGilStateState = PyGILState_Ensure();
         PyObject* listenerFuncArg = Py_BuildValue("(s)", message);
         PyObject_CallObject(current_network_script_callback->callback_func, listenerFuncArg);
+        PyGILState_Release(pyGilStateState);
     }
 }
 
 // Entity Network Callback
-void py_on_entity_subscribe_to_network_callback(Entity entity, PyObject* callback_func) {
+void py_on_entity_subscribe_to_network_callback(Entity entity, PyObject* callback_func, const char* id) {
     rbe_logger_debug("py_on_entity_subscribe_to_network_callback");
-    if (current_network_script_callback == NULL) {
-        current_network_script_callback = RBE_MEM_ALLOCATE(RBEScriptCallback);
-        current_network_script_callback->entity = entity;
-        current_network_script_callback->callback_func = callback_func;
-        Py_IncRef(current_network_script_callback->callback_func); // Increase ref to hold on to function
-        Py_IncRef(current_network_script_callback->callback_func); // Why twice?
+    if (strcmp(id, "poll") == 0) {
+        if (current_network_script_callback == NULL) {
+            current_network_script_callback = RBE_MEM_ALLOCATE(RBEScriptCallback);
+            current_network_script_callback->entity = entity;
+            current_network_script_callback->callback_func = callback_func;
+            Py_IncRef(current_network_script_callback->callback_func); // Increase ref to hold on to function
+            Py_IncRef(current_network_script_callback->callback_func); // Why twice?
+        }
+    } else if (strcmp(id, "client_connected") == 0) {
+        if (current_network_server_client_connected_script_callback == NULL) {
+            rbe_udp_server_register_client_connected_callback(rbe_py_on_network_udp_server_client_connected);
+            current_network_server_client_connected_script_callback = RBE_MEM_ALLOCATE(RBEScriptCallback);
+            current_network_server_client_connected_script_callback->entity = entity;
+            current_network_server_client_connected_script_callback->callback_func = callback_func;
+            Py_IncRef(current_network_server_client_connected_script_callback->callback_func); // Increase ref to hold on to function
+            Py_IncRef(current_network_server_client_connected_script_callback->callback_func); // Why twice?
+        }
+    }
+}
+
+void rbe_py_on_network_udp_server_client_connected() {
+    if (current_network_server_client_connected_script_callback != NULL) {
+        PyObject_CallObject(current_network_server_client_connected_script_callback->callback_func, NULL);
     }
 }

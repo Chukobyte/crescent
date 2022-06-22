@@ -23,3 +23,5 @@ void rbe_scene_manager_process_queued_deletion_entities();
 void rbe_scene_manager_queue_scene_change(const char* scenePath);
 void rbe_scene_manager_process_queued_scene_change();
 void rbe_scene_manager_set_active_scene_root(SceneTreeNode* root);
+
+Entity rbe_scene_manager_get_entity_child_by_name(Entity parent, const char* childName);

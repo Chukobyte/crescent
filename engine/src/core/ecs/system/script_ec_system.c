@@ -7,6 +7,7 @@
 #include "../../scripting/python/py_script_context.h"
 #include "../../scripting/native/native_script_context.h"
 #include "../../scripting/native/internal_classes/fps_display_class.h"
+#include "../../utils/rbe_string_util.h"
 #include "../../utils/rbe_assert.h"
 
 void script_system_on_entity_registered(Entity entity);
@@ -25,7 +26,7 @@ static size_t scriptContextsCount = 0;
 EntitySystem* script_ec_system_create() {
     RBE_ASSERT(scriptSystem == NULL);
     scriptSystem = rbe_ec_system_create();
-    scriptSystem->name = strdup("Script");
+    scriptSystem->name = rbe_strdup("Script");
     scriptSystem->on_entity_registered_func = script_system_on_entity_registered;
     scriptSystem->on_entity_unregistered_func = script_system_on_entity_unregistered;
     scriptSystem->on_entity_start_func = script_system_entity_start;
@@ -47,19 +48,19 @@ EntitySystem* script_ec_system_create() {
 }
 
 void script_system_on_entity_registered(Entity entity) {
-    ScriptComponent* scriptComponent = (ScriptComponent*) component_manager_get_component(entity, ComponentDataIndex_SCRIPT);
+    const ScriptComponent* scriptComponent = (ScriptComponent*) component_manager_get_component(entity, ComponentDataIndex_SCRIPT);
     RBE_ASSERT(scriptContexts[scriptComponent->contextType] != NULL);
     RBE_ASSERT(scriptContexts[scriptComponent->contextType]->on_create_instance != NULL);
     scriptContexts[scriptComponent->contextType]->on_create_instance(entity, scriptComponent->classPath, scriptComponent->className);
 }
 
 void script_system_on_entity_unregistered(Entity entity) {
-    ScriptComponent* scriptComponent = (ScriptComponent*) component_manager_get_component(entity, ComponentDataIndex_SCRIPT);
+    const ScriptComponent* scriptComponent = (ScriptComponent*) component_manager_get_component(entity, ComponentDataIndex_SCRIPT);
     scriptContexts[scriptComponent->contextType]->on_delete_instance(entity);
 }
 
 void script_system_entity_start(Entity entity) {
-    ScriptComponent* scriptComponent = (ScriptComponent*) component_manager_get_component(entity, ComponentDataIndex_SCRIPT);
+    const ScriptComponent* scriptComponent = (ScriptComponent*) component_manager_get_component(entity, ComponentDataIndex_SCRIPT);
     RBE_ASSERT(scriptComponent != NULL);
     RBE_ASSERT_FMT(scriptComponent->contextType == ScriptContextType_PYTHON || scriptComponent->contextType == ScriptContextType_NATIVE,
                    "Invalid context type '%d' for entity '%d'", scriptComponent->contextType, entity);
@@ -67,7 +68,7 @@ void script_system_entity_start(Entity entity) {
 }
 
 void script_system_entity_end(Entity entity) {
-    ScriptComponent* scriptComponent = (ScriptComponent*) component_manager_get_component(entity, ComponentDataIndex_SCRIPT);
+    const ScriptComponent* scriptComponent = (ScriptComponent*) component_manager_get_component(entity, ComponentDataIndex_SCRIPT);
     scriptContexts[scriptComponent->contextType]->on_end(entity);
 }
 

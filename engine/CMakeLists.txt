@@ -46,11 +46,13 @@ add_library(${PROJECT_NAME} STATIC
         src/core/utils/command_line_args_util.c
         src/core/utils/logger.c
         src/core/utils/rbe_file_system_utils.c
+        src/core/utils/rbe_string_util.c
         src/core/data_structures/rbe_hash_map.c
         src/core/data_structures/rbe_hash_map_string.c
         src/core/ecs/ecs_manager.c
         src/core/ecs/component/animated_sprite_component.c
         src/core/ecs/component/component.c
+        src/core/ecs/component/node_component.c
         src/core/ecs/component/script_component.c
         src/core/ecs/component/sprite_component.c
         src/core/ecs/component/text_label_component.c
