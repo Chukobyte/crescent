@@ -4,6 +4,10 @@
 
 #include "logger.h"
 
+#ifdef _MSC_VER
+#pragma warning(disable : 4996) // for strcpy
+#endif
+
 CommandLineFlagResult rbe_command_line_args_parse(int argv, char** args) {
     const int WORKING_DIR_OVERRIDE_CAPACITY = 128;
     CommandLineFlagResult flagResult;
@@ -23,8 +27,7 @@ CommandLineFlagResult rbe_command_line_args_parse(int argv, char** args) {
         }
         if (strcmp(argument, RBE_COMMAND_LINE_FLAG_WORK_DIR) == 0) {
             const char* workingDirectoryOverride = args[nextArgumentIndex];
-            // NOTE(PetrFlajsingr): strcpy is deprecated
-            strcpy_s(flagResult.workingDirOverride, WORKING_DIR_OVERRIDE_CAPACITY, workingDirectoryOverride);
+            strcpy(flagResult.workingDirOverride, workingDirectoryOverride);
             rbe_logger_debug("working directory override = '%s'", flagResult.workingDirOverride);
             argumentIndex++;
         }

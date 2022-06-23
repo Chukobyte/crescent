@@ -3,6 +3,10 @@
 #include <stdio.h>
 #include <string.h>
 
+#ifdef _MSC_VER
+#pragma warning(disable : 4996) // for strcpy and strncat
+#endif
+
 static enum LogLevel currentLogLevel = LogLevel_ERROR;
 
 void rbe_logger_set_level(enum LogLevel level) {
@@ -15,9 +19,9 @@ void rbe_logger_error(const char* fmt, ...) {
     if (currentLogLevel <= LogLevel_ERROR) {
         char str[RBE_LOG_BUFFER_SIZE];
         const char* logLevelText = "[ERROR] ";
-        strcpy_s(str, RBE_LOG_BUFFER_SIZE, logLevelText);
-        strncat_s(str, RBE_LOG_BUFFER_SIZE, fmt, (sizeof(str) - strlen(str) - 1) );
-        strncat_s(str, RBE_LOG_BUFFER_SIZE, "\n", (sizeof(str) - strlen(str) - 1) );
+        strcpy(str, logLevelText);
+        strncat(str, fmt, (sizeof(str) - strlen(str) - 1) );
+        strncat(str, "\n", (sizeof(str) - strlen(str) - 1) );
         vfprintf(stderr, str, args);
     }
     va_end(args);
@@ -29,9 +33,9 @@ void rbe_logger_warn(const char* fmt, ...) {
     if (currentLogLevel <= LogLevel_WARN) {
         char str[RBE_LOG_BUFFER_SIZE];
         const char* logLevelText = "[WARN] ";
-        strcpy_s(str, RBE_LOG_BUFFER_SIZE, logLevelText);
-        strncat_s(str, RBE_LOG_BUFFER_SIZE, fmt, (sizeof(str) - strlen(str) - 1) );
-        strncat_s(str, RBE_LOG_BUFFER_SIZE, "\n", (sizeof(str) - strlen(str) - 1) );
+        strcpy(str, logLevelText);
+        strncat(str, fmt, (sizeof(str) - strlen(str) - 1) );
+        strncat(str, "\n", (sizeof(str) - strlen(str) - 1) );
         vprintf(str, args);
     }
     va_end(args);
@@ -43,9 +47,9 @@ void rbe_logger_info(const char* fmt, ...) {
     if (currentLogLevel <= LogLevel_INFO) {
         char str[RBE_LOG_BUFFER_SIZE];
         const char* logLevelText = "[INFO] ";
-        strcpy_s(str, RBE_LOG_BUFFER_SIZE, logLevelText);
-        strncat_s(str, RBE_LOG_BUFFER_SIZE, fmt, (sizeof(str) - strlen(str) - 1) );
-        strncat_s(str, RBE_LOG_BUFFER_SIZE, "\n", (sizeof(str) - strlen(str) - 1) );
+        strcpy(str, logLevelText);
+        strncat(str, fmt, (sizeof(str) - strlen(str) - 1) );
+        strncat(str, "\n", (sizeof(str) - strlen(str) - 1) );
         vprintf(str, args);
     }
     va_end(args);
@@ -57,9 +61,9 @@ void rbe_logger_debug(const char* fmt, ...) {
     if (currentLogLevel <= LogLevel_DEBUG) {
         char str[RBE_LOG_BUFFER_SIZE];
         const char* logLevelText = "[DEBUG] ";
-        strcpy_s(str, RBE_LOG_BUFFER_SIZE, logLevelText);
-        strncat_s(str, RBE_LOG_BUFFER_SIZE, fmt, (sizeof(str) - strlen(str) - 1) );
-        strncat_s(str, RBE_LOG_BUFFER_SIZE, "\n", (sizeof(str) - strlen(str) - 1) );
+        strcpy(str, logLevelText);
+        strncat(str, fmt, (sizeof(str) - strlen(str) - 1) );
+        strncat(str, "\n", (sizeof(str) - strlen(str) - 1) );
         vprintf(str, args);
     }
     va_end(args);

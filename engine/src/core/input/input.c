@@ -6,6 +6,10 @@
 #include "../data_structures/rbe_hash_map_string.h"
 #include "../utils/logger.h"
 
+#ifdef _MSC_VER
+#pragma warning(disable : 4996) // for strcpy
+#endif
+
 RBEStringHashMap* inputActionMap = NULL;
 const char* inputActionNames[24];
 size_t inputActionNamesCount = 0;
@@ -134,7 +138,7 @@ void rbe_input_add_action_value(const char* actionName, const char* actionValue)
         inputAction->keyboardValueCount++;
         rbe_logger_debug("Added keyboard action | name: '%s', value: '%s', scancode: '%d'", actionName, actionValue, inputAction->keyboardValues[inputAction->keyboardValueCount - 1]);
     } else if (rbe_string_hash_map_has(gamepadStringValuesMap, actionValue)) {
-        inputAction->gamepadValues[inputAction->gamepadValueCount] = strdup(actionValue);
+        inputAction->gamepadValues[inputAction->gamepadValueCount] = _strdup(actionValue);
         inputAction->gamepadValueCount++;
         rbe_logger_debug("Added gamepad value '%s'", actionValue);
     } else if (strcmp(actionValue, "mb_left") == 0 || strcmp(actionValue, "mb_right") == 0 || strcmp(actionValue, "mb_middle") == 0) {

@@ -7,6 +7,10 @@
 #include "../utils/logger.h"
 #include "../utils/rbe_assert.h"
 
+#ifdef _MSC_VER
+#pragma warning(disable : 4996) // for strcpy
+#endif
+
 //--- NETWORK ---//
 static bool rbe_is_server = false;
 
@@ -95,7 +99,7 @@ void* rbe_udp_server_poll(void* arg) {
 
 bool rbe_udp_server_send_message(const char* message) {
     static char server_output_buffer[SERVER_BUFFER_SIZE];
-    strcpy_s(server_output_buffer, SERVER_BUFFER_SIZE, message);
+    strcpy(server_output_buffer, message);
     if (sendto(server_socket, server_output_buffer, server_recv_len, 0, (struct sockaddr*) &server_si_other, server_socket_size) == SOCKET_ERROR) {
         rbe_logger_error("Server: sendto() failed with error code : %d", WSAGetLastError());
         return false;
@@ -111,7 +115,7 @@ void rbe_udp_server_finalize() {
 //--- UDP CLIENT ---//
 #define CLIENT_BUFFER_SIZE 512
 
-void* rbe_udp_client_poll();
+void* rbe_udp_client_poll(void*);
 
 static int client_socket;
 static struct sockaddr_in client_si_other;
@@ -157,7 +161,7 @@ bool rbe_udp_client_initialize(const char* serverAddr, int serverPort, on_networ
     return true;
 }
 
-void* rbe_udp_client_poll() {
+void* rbe_udp_client_poll(void *unused) {
     static char client_input_buffer[CLIENT_BUFFER_SIZE];
     // TODO: Do handshake
     // TODO: Figure out why there is failure if no message is sent at first
@@ -182,7 +186,7 @@ void* rbe_udp_client_poll() {
 
 bool rbe_udp_client_send_message(const char* message) {
     static char client_output_buffer[SERVER_BUFFER_SIZE];
-    strcpy_s(client_output_buffer, SERVER_BUFFER_SIZE, message);
+    strcpy(client_output_buffer, message);
     if (sendto(client_socket, client_output_buffer, (int) strlen(client_output_buffer), 0, (struct sockaddr*) &client_si_other, client_socket_size) == SOCKET_ERROR) {
         rbe_logger_error("sendto() failed with error code : %d", WSAGetLastError());
         return false;
