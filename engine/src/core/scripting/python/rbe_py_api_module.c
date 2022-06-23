@@ -430,34 +430,35 @@ void setup_scene_component_node(Entity entity, PyObject* component) {
         component_manager_set_component(entity, ComponentDataIndex_SCRIPT, scriptComponent);
         rbe_logger_debug("class_path: %s, class_name: %s", scriptClassPath, scriptClassName);
     } else if (strcmp(className, "Collider2DComponent") == 0) {
-//        rbe_logger_debug("Building collider2d component");
-//        PyObject* pyRect = PyObject_GetAttrString(component, "rect");
-//        RBE_ASSERT(pyRect != NULL);
-//        const float rectX = phy_get_float_from_var(pyRect, "x");
-//        const float rectY = phy_get_float_from_var(pyRect, "y");
-//        const float rectW = phy_get_float_from_var(pyRect, "w");
-//        const float rectH = phy_get_float_from_var(pyRect, "h");
-//        PyObject* pColor = PyObject_GetAttrString(component, "color");
-//        RBE_ASSERT(pColor != NULL);
-//        const int colorR = phy_get_int_from_var(pColor, "r");
-//        const int colorG = phy_get_int_from_var(pColor, "g");
-//        const int colorB = phy_get_int_from_var(pColor, "b");
-//        const int colorA = phy_get_int_from_var(pColor, "a");
-//        Collider2DComponent* collider2DComponent = collider2d_component_create();
-//        collider2DComponent->rect.x = rectX;
-//        collider2DComponent->rect.y = rectY;
-//        collider2DComponent->rect.w = rectW;
-//        collider2DComponent->rect.h = rectH;
-//        collider2DComponent->color.r = (float) colorR / 255.0f;
-//        collider2DComponent->color.g = (float) colorG / 255.0f;
-//        collider2DComponent->color.b = (float) colorB / 255.0f;
-//        collider2DComponent->color.a = (float) colorA / 255.0f;
-//        collider2DComponent->collisionExceptionCount = 0;
-//        component_manager_set_component(entity, ComponentDataIndex_COLLIDER_2D, collider2DComponent);
-//        rbe_logger_debug("rect: (%f, %f, %f, %f), color: (%f, %f, %f, %f)",
-//                         rectX, rectY, rectW, rectH, collider2DComponent->color.r, collider2DComponent->color.g, collider2DComponent->color.b, collider2DComponent->color.a);
-//
-//        Py_DecRef(pColor);
+        rbe_logger_debug("Building collider2d component");
+        PyObject* pyRect = PyObject_GetAttrString(component, "rect");
+        RBE_ASSERT(pyRect != NULL);
+        const float rectX = phy_get_float_from_var(pyRect, "x");
+        const float rectY = phy_get_float_from_var(pyRect, "y");
+        const float rectW = phy_get_float_from_var(pyRect, "w");
+        const float rectH = phy_get_float_from_var(pyRect, "h");
+        PyObject* pyColor = PyObject_GetAttrString(component, "color");
+        RBE_ASSERT(pyColor != NULL);
+        const int colorR = phy_get_int_from_var(pyColor, "r");
+        const int colorG = phy_get_int_from_var(pyColor, "g");
+        const int colorB = phy_get_int_from_var(pyColor, "b");
+        const int colorA = phy_get_int_from_var(pyColor, "a");
+        Collider2DComponent* collider2DComponent = collider2d_component_create();
+        collider2DComponent->rect.x = rectX;
+        collider2DComponent->rect.y = rectY;
+        collider2DComponent->rect.w = rectW;
+        collider2DComponent->rect.h = rectH;
+        collider2DComponent->color.r = (float) colorR / 255.0f;
+        collider2DComponent->color.g = (float) colorG / 255.0f;
+        collider2DComponent->color.b = (float) colorB / 255.0f;
+        collider2DComponent->color.a = (float) colorA / 255.0f;
+        collider2DComponent->collisionExceptionCount = 0;
+        component_manager_set_component(entity, ComponentDataIndex_COLLIDER_2D, collider2DComponent);
+        rbe_logger_debug("rect: (%f, %f, %f, %f), color: (%f, %f, %f, %f)",
+                         rectX, rectY, rectW, rectH, collider2DComponent->color.r, collider2DComponent->color.g, collider2DComponent->color.b, collider2DComponent->color.a);
+
+        Py_DecRef(pyRect);
+        Py_DecRef(pyColor);
     } else {
         rbe_logger_error("Invalid component class name: '%s'", className);
     }

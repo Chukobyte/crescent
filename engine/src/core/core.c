@@ -292,12 +292,12 @@ void rbe_shutdown() {
     SDL_GL_DeleteContext(openGlContext);
     SDL_Quit();
     rbe_renderer_finalize();
-    rbe_py_finalize();
     rbe_game_props_finalize();
     rbe_audio_manager_finalize();
     rbe_input_finalize();
     rbe_asset_manager_finalize();
     rbe_scene_manager_finalize();
     rbe_ecs_manager_finalize();
+    rbe_py_finalize();
     rbe_logger_info("RBE Engine shutdown!");
 }
