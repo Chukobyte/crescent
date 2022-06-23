@@ -24,6 +24,10 @@
 #include "../../ecs/component/animated_sprite_component.h"
 #include "../../ecs/component/node_component.h"
 
+#ifdef _MSC_VER
+#pragma warning(disable : 4996) // for strcpy
+#endif
+
 // TODO: Clean up strdups
 
 // --- Node Utils --- //
@@ -224,7 +228,7 @@ void setup_scene_stage_nodes(SceneTreeNode* parent, PyObject* stageNodeList) {
         const char* nodeName = phy_get_string_from_var(pStageNode, "name");
         const char* nodeType = phy_get_string_from_var(pStageNode, "type");
         NodeComponent* nodeComponent = node_component_create();
-        strcpy_s(nodeComponent->name, 32, nodeName); // Replace magic number
+        strcpy(nodeComponent->name, nodeName);
         nodeComponent->type = node_get_base_type(nodeType);
         RBE_ASSERT_FMT(nodeComponent->type != NodeBaseType_INVALID, "Node '%s' has an invalid node type '%s'", nodeName, nodeType);
         component_manager_set_component(node->entity, ComponentDataIndex_NODE, nodeComponent);
@@ -356,7 +360,7 @@ void setup_scene_component_node(Entity entity, PyObject* component) {
             const int animationSpeed = phy_get_int_from_var(pyAnimation, "speed");
             const bool animationLoops = phy_get_bool_from_var(pyAnimation, "loops");
             rbe_logger_debug("building anim - name: '%s', speed: '%d', loops: '%d'", animationName, animationSpeed, animationLoops);
-            strcpy_s(animation.name, 16, animationName); // TODO: Replace magic number
+            strcpy(animation.name, animationName);
             animation.speed = animationSpeed;
             animation.doesLoop = animationLoops;
 
@@ -413,7 +417,7 @@ void setup_scene_component_node(Entity entity, PyObject* component) {
         TextLabelComponent* textLabelComponent = text_label_component_create();
         textLabelComponent->font = rbe_asset_manager_get_font(textLabelUID);
         RBE_ASSERT(textLabelComponent->font != NULL);
-        strcpy_s(textLabelComponent->text, 64, textLabelText); // TODO: Replace magic number
+        strcpy(textLabelComponent->text, textLabelText);
         textLabelComponent->color = textLabelColor;
         component_manager_set_component(entity, ComponentDataIndex_TEXT_LABEL, textLabelComponent);
         rbe_logger_debug("uid: %s, text: %s, color(%d, %d, %d, %d)", textLabelUID, textLabelText, colorR, colorG, colorB, colorA);
@@ -509,6 +513,7 @@ PyObject* rbe_py_api_audio_manager_stop_sound(PyObject* self, PyObject* args, Py
 
 // Node
 PyObject* rbe_py_api_node_get_child(PyObject* self, PyObject* args, PyObject* kwargs) {
+#define TYPE_BUFFER_SIZE 32
     Entity parentEntity;
     char* childName;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "is", rbePyApiNodeGetChildKWList, &parentEntity, &childName)) {
@@ -517,14 +522,14 @@ PyObject* rbe_py_api_node_get_child(PyObject* self, PyObject* args, PyObject* kw
             rbe_logger_warn("Failed to get child node from parent entity '%d' with the name '%s'", parentEntity, childName);
         }
         // TODO: Check for script custom classes and return them
-        const size_t typeBufferSize = 32;
-        char typeBuffer[typeBufferSize];
+        char typeBuffer[TYPE_BUFFER_SIZE];
         NodeComponent* nodeComponent = component_manager_get_component(childEntity, ComponentDataIndex_NODE);
-        strcpy_s(typeBuffer, typeBufferSize, node_get_component_type_string(nodeComponent->type));
+        strcpy(typeBuffer, node_get_component_type_string(nodeComponent->type));
 
         return Py_BuildValue("(is)", childEntity, typeBuffer);
     }
     return NULL;
+#undef TYPE_BUFFER_SIZE
 }
 
 // Node2D
@@ -569,7 +574,7 @@ PyObject* rbe_py_api_text_label_set_text(PyObject* self, PyObject* args, PyObjec
     char* text;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "is", rbePyApiTextLabelSetTextKWList, &entity, &text)) {
         TextLabelComponent* textLabelComponent = component_manager_get_component(entity, ComponentDataIndex_TEXT_LABEL);
-        strcpy_s(textLabelComponent->text, 64, text); // TODO: Replace magic number
+        strcpy(textLabelComponent->text, text);
         Py_RETURN_NONE;
     }
     return NULL;
