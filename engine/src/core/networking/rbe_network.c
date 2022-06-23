@@ -1,7 +1,13 @@
 #include "rbe_network.h"
 
 #include <stdio.h>
+
+#ifdef _WIN32
 #include <winsock2.h>
+#else
+#include<arpa/inet.h>
+#include<sys/socket.h>
+#endif
 
 #include "../thread/rbe_pthread.h"
 #include "../utils/logger.h"
@@ -12,6 +18,8 @@
 #endif
 
 //--- NETWORK ---//
+#define RBE_NETWORK_HANDSHAKE_MESSAGE "init"
+
 static bool rbe_is_server = false;
 
 bool rbe_network_is_server() {
@@ -29,18 +37,21 @@ static struct sockaddr_in server_si_other;
 static int server_socket_size = 0;
 static int server_recv_len = 0;
 static on_network_server_callback server_user_callback = NULL;
+static on_network_server_client_connected_callback server_client_connected_callback = NULL;
 
 bool rbe_udp_server_initialize(int port, on_network_server_callback user_callback) {
     server_socket_size = sizeof(server_si_other);
     server_user_callback = user_callback;
-    WSADATA wsa;
 
+#ifdef _WIN32
     // Initialize Winsock
+    WSADATA wsa;
     if (WSAStartup(MAKEWORD(2,2),&wsa) != 0) {
         rbe_logger_error("Server: Failed to initialize winsock! Error Code : %d", WSAGetLastError());
         return false;
     }
     rbe_logger_debug("Server: winsock initialized!");
+#endif
 
     // Create a socket
     if ((server_socket = socket(AF_INET, SOCK_DGRAM, 0 )) == INVALID_SOCKET) {
@@ -73,6 +84,10 @@ bool rbe_udp_server_initialize(int port, on_network_server_callback user_callbac
     return true;
 }
 
+void rbe_udp_server_register_client_connected_callback(on_network_server_client_connected_callback client_connected_callback) {
+    server_client_connected_callback = client_connected_callback;
+}
+
 void* rbe_udp_server_poll(void* arg) {
     static char server_input_buffer[SERVER_BUFFER_SIZE];
     //keep listening for data
@@ -86,8 +101,17 @@ void* rbe_udp_server_poll(void* arg) {
             rbe_logger_error("Server: recvfrom() failed with error code : %d", WSAGetLastError());
             return NULL;
         }
-        // Call user callback
-        server_user_callback(server_input_buffer);
+
+        // Process data from client
+        if (strcmp(server_input_buffer, RBE_NETWORK_HANDSHAKE_MESSAGE) == 0) {
+            if (server_client_connected_callback != NULL) {
+                server_client_connected_callback();
+            }
+            rbe_udp_server_send_message(RBE_NETWORK_HANDSHAKE_MESSAGE);
+        } else {
+            // Call user callback
+            server_user_callback(server_input_buffer);
+        }
 
         //print details of the client/peer and the data received
 //        rbe_logger_debug("Received packet from %s:%d", inet_ntoa(server_si_other.sin_addr), ntohs(server_si_other.sin_port));
@@ -125,15 +149,17 @@ static on_network_client_callback client_user_callback = NULL;
 bool rbe_udp_client_initialize(const char* serverAddr, int serverPort, on_network_client_callback userCallback) {
     client_socket_size = sizeof(client_si_other);
     client_user_callback = userCallback;
-    WSADATA wsa;
 
+#ifdef _WIN32
     // Initialise winsock
+    WSADATA wsa;
     rbe_logger_debug("Initialising client Winsock...");
     if (WSAStartup(MAKEWORD(2,2), &wsa) != 0) {
         rbe_logger_error("Client: Failed. Error Code : %d", WSAGetLastError());
         return false;
     }
     rbe_logger_debug("Client: Initialized Winsock.");
+#endif
 
     //create socket
     rbe_logger_debug("Client: Creating socket....");
@@ -148,6 +174,14 @@ bool rbe_udp_client_initialize(const char* serverAddr, int serverPort, on_networ
     client_si_other.sin_family = AF_INET;
     client_si_other.sin_port = htons(serverPort);
     client_si_other.sin_addr.S_un.S_addr = inet_addr(serverAddr);
+
+#ifndef _WIN32
+    if (inet_aton(serverAddr, &client_si_other.sin_addr) == 0) {
+        rbe_logger_error("inet_aton() failed!");
+        return false;
+    }
+#endif
+
 
     // Start Networking Thread
     pthread_t thread;
@@ -165,7 +199,7 @@ void* rbe_udp_client_poll(void *unused) {
     static char client_input_buffer[CLIENT_BUFFER_SIZE];
     // TODO: Do handshake
     // TODO: Figure out why there is failure if no message is sent at first
-    rbe_udp_client_send_message("Init message from client!");
+    rbe_udp_client_send_message(RBE_NETWORK_HANDSHAKE_MESSAGE);
 
     while (true) {
         fflush(stdout);
@@ -175,10 +209,17 @@ void* rbe_udp_client_poll(void *unused) {
 
         if (recvfrom(client_socket, client_input_buffer, CLIENT_BUFFER_SIZE, 0, (struct sockaddr *) &client_si_other, &client_socket_size) == SOCKET_ERROR) {
             rbe_logger_error("Client: recvfrom() failed with error code : %d", WSAGetLastError());
-            RBE_ASSERT(false);
+//            RBE_ASSERT(false);
+            continue;
         }
-        // Call user callback
-        client_user_callback(client_input_buffer);
+        if (strcmp(client_input_buffer, RBE_NETWORK_HANDSHAKE_MESSAGE) == 0) {
+            if (server_client_connected_callback != NULL) {
+                server_client_connected_callback();
+            }
+        } else {
+            // Call user callback
+            client_user_callback(client_input_buffer);
+        }
     }
 
     return NULL;

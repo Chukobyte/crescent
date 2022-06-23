@@ -1,11 +1,14 @@
+#include <string.h>
 #include "scene_manager.h"
 
 #include "../scripting/python/py_helper.h"
 #include "../memory/rbe_mem.h"
 #include "../ecs/component/component.h"
 #include "../ecs/system/ec_system.h"
+#include "../data_structures/rbe_hash_map.h"
 #include "../utils/logger.h"
 #include "../utils/rbe_assert.h"
+#include "../ecs/component/node_component.h"
 
 // --- Scene Tree --- //
 typedef void (*ExecuteOnAllTreeNodesFunc) (SceneTreeNode*);
@@ -53,12 +56,22 @@ size_t entitiesQueuedForDeletionSize = 0;
 Scene* activeScene = NULL;
 Scene* queuedSceneToChangeTo = NULL;
 
-void rbe_scene_manager_initialize() {}
+static RBEHashMap* entityToTreeNodeMap = NULL;
 
-void rbe_scene_manager_finalize() {}
+void rbe_scene_manager_initialize() {
+    RBE_ASSERT(entityToTreeNodeMap == NULL);
+    entityToTreeNodeMap = rbe_hash_map_create(sizeof(Entity), sizeof(SceneTreeNode), 16); // TODO: Update capacity
+}
+
+void rbe_scene_manager_finalize() {
+    RBE_ASSERT(entityToTreeNodeMap != NULL);
+    rbe_hash_map_destroy(entityToTreeNodeMap);
+}
 
 void rbe_scene_manager_queue_entity_for_creation(SceneTreeNode* treeNode) {
     entitiesQueuedForCreation[entitiesQueuedForCreationSize++] = treeNode->entity;
+    RBE_ASSERT_FMT(!rbe_hash_map_has(entityToTreeNodeMap, &treeNode->entity), "Entity '%d' already in entity to tree map!", treeNode->entity);
+    rbe_hash_map_add(entityToTreeNodeMap, &treeNode->entity, treeNode);
 }
 
 void rbe_scene_manager_process_queued_creation_entities() {
@@ -84,10 +97,16 @@ void rbe_scene_manager_queue_entity_for_deletion(Entity entity) {
 
 void rbe_scene_manager_process_queued_deletion_entities() {
     for (size_t i = 0; i < entitiesQueuedForDeletionSize; i++) {
+        // Remove entity from entity to tree node map
+        Entity entityToDelete = entitiesQueuedForDeletion[i];
+        RBE_ASSERT_FMT(rbe_hash_map_has(entityToTreeNodeMap, &entityToDelete), "Entity '%d' not in tree node map!?", entityToDelete);
+        SceneTreeNode* treeNode = rbe_hash_map_get(entityToTreeNodeMap, &entityToDelete);
+        RBE_MEM_FREE(treeNode);
+        rbe_hash_map_erase(entityToTreeNodeMap, &entityToDelete);
         // Remove entity from systems
-        rbe_ec_system_remove_entity_from_all_systems(entitiesQueuedForDeletion[i]);
+        rbe_ec_system_remove_entity_from_all_systems(entityToDelete);
         // Remove all components
-        component_manager_remove_all_components(entitiesQueuedForDeletion[i]);
+        component_manager_remove_all_components(entityToDelete);
     }
     entitiesQueuedForDeletionSize = 0;
 }
@@ -103,10 +122,6 @@ void rbe_scene_manager_queue_scene_change(const char* scenePath) {
 void rbe_queue_destroy_tree_node_entity(SceneTreeNode* treeNode) {
     rbe_scene_manager_queue_entity_for_deletion(treeNode->entity);
     RBE_MEM_FREE(treeNode);
-}
-
-void rbe_queue_destroy_tree_node_entity_by_int(Entity entity) {
-
 }
 
 void rbe_scene_manager_process_queued_scene_change() {
@@ -129,4 +144,26 @@ void rbe_scene_manager_set_active_scene_root(SceneTreeNode* root) {
     RBE_ASSERT(activeScene != NULL);
     RBE_ASSERT_FMT(activeScene->sceneTree->root == NULL, "Trying to overwrite an already existing scene root!");
     activeScene->sceneTree->root = root;
+}
+
+SceneTreeNode* rbe_scene_manager_get_entity_tree_node(Entity entity) {
+    RBE_ASSERT(rbe_hash_map_has(entityToTreeNodeMap, &entity));
+    SceneTreeNode* treeNode = (SceneTreeNode*) rbe_hash_map_get(entityToTreeNodeMap, &entity);
+    RBE_ASSERT(treeNode != NULL);
+    return treeNode;
+}
+
+Entity rbe_scene_manager_get_entity_child_by_name(Entity parent, const char* childName) {
+    SceneTreeNode* parentNode = rbe_scene_manager_get_entity_tree_node(parent);
+    RBE_ASSERT(parentNode != NULL);
+    for (size_t childIndex = 0; childIndex < parentNode->childCount; childIndex++) {
+        const Entity childEntity = parentNode->children[childIndex]->entity;
+        if (component_manager_has_component(childEntity, ComponentDataIndex_NODE)) {
+            NodeComponent* childNodeComponent = component_manager_get_component(childEntity, ComponentDataIndex_NODE);
+            if (strcmp(childNodeComponent->name, childName) == 0) {
+                return childEntity;
+            }
+        }
+    }
+    return NULL_ENTITY;
 }

@@ -16,16 +16,20 @@ create_stage_nodes(
                     z_index_relative_to_parent=True,
                     ignore_camera=False,
                 ),
+                ScriptComponent(
+                    class_path="test_games.fighter_test.src.main",
+                    class_name="Main",
+                ),
             ],
             children=[
                 StageNode(
-                    name="Player",
+                    name="PlayerOne",
                     type="Sprite",
                     tags=None,
                     external_node_source=None,
                     components=[
                         Transform2DComponent(
-                            position=Vector2(350.0, 300.0),
+                            position=Vector2(250.0, 300.0),
                             scale=Vector2(2.0, 2.0),
                             rotation=0.0,
                             z_index=0,
@@ -65,9 +69,56 @@ create_stage_nodes(
                                 )
                             ],
                         ),
-                        ScriptComponent(
-                            class_path="test_games.fighter_test.src.main",
-                            class_name="Main",
+                    ],
+                    children=[],
+                ),
+                StageNode(
+                    name="PlayerTwo",
+                    type="Sprite",
+                    tags=None,
+                    external_node_source=None,
+                    components=[
+                        Transform2DComponent(
+                            position=Vector2(450.0, 300.0),
+                            scale=Vector2(2.0, 2.0),
+                            rotation=0.0,
+                            z_index=0,
+                            z_index_relative_to_parent=True,
+                            ignore_camera=False,
+                        ),
+                        AnimatedSpriteComponent(
+                            current_animation_name="walk",
+                            is_playing=True,
+                            flip_x=True,
+                            animations=[
+                                Animation(
+                                    name="walk",
+                                    speed=100,
+                                    loops=True,
+                                    frames=[
+                                        AnimationFrame(
+                                            frame=0,
+                                            texture_path="test_games/fighter_test/assets/images/melissa_walk_animation.png",
+                                            draw_source=Rect2(x=0, y=0, w=32, h=32),
+                                        ),
+                                        AnimationFrame(
+                                            frame=1,
+                                            texture_path="test_games/fighter_test/assets/images/melissa_walk_animation.png",
+                                            draw_source=Rect2(x=32, y=0, w=32, h=32),
+                                        ),
+                                        AnimationFrame(
+                                            frame=2,
+                                            texture_path="test_games/fighter_test/assets/images/melissa_walk_animation.png",
+                                            draw_source=Rect2(x=64, y=0, w=32, h=32),
+                                        ),
+                                        AnimationFrame(
+                                            frame=3,
+                                            texture_path="test_games/fighter_test/assets/images/melissa_walk_animation.png",
+                                            draw_source=Rect2(x=96, y=0, w=32, h=32),
+                                        ),
+                                    ],
+                                )
+                            ],
                         ),
                     ],
                     children=[],

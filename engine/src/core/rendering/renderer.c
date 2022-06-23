@@ -9,6 +9,7 @@
 #include "shader_source.h"
 #include "../game_properties.h"
 #include "../data_structures/rbe_static_array.h"
+#include "../memory/rbe_mem.h"
 #include "../utils/rbe_assert.h"
 
 typedef struct TextureCoordinates {
@@ -205,13 +206,11 @@ void sprite_renderer_draw_sprite(Texture* texture, Rect2 sourceRect, Rect2 destR
     const float SPRITE_ID = 0.0f;
     TextureCoordinates textureCoords = renderer_get_texture_coordinates(texture, sourceRect, flipX, flipY);
 
-    // NOTE(PetrFlajsingr): VLAs are not necessarily supported on every compiler
-    // GLfloat verts[VERTEX_ITEM_COUNT * NUMBER_OF_VERTICES][9];
-    const int vertsStride = VERTEX_ITEM_COUNT * NUMBER_OF_VERTICES;
-    GLfloat *verts = malloc(vertsStride * 9 * sizeof(GLfloat));
+    const int vertsStride = 9;
+    GLfloat verts[54]; // TODO: fix magic number
     for (int i = 0; i < VERTEX_ITEM_COUNT * NUMBER_OF_VERTICES; i++) {
-        bool isSMin = i == 0 || i == 2 || i == 3 ? true : false;
-        bool isTMin = i == 1 || i == 2 || i == 5 ? true : false;
+        const bool isSMin = i == 0 || i == 2 || i == 3 ? true : false;
+        const bool isTMin = i == 1 || i == 2 || i == 5 ? true : false;
         const int row = i * vertsStride;
         verts[row + 0] = SPRITE_ID;
         verts[row + 1] = isSMin ? 0.0f : 1.0f;
@@ -229,8 +228,6 @@ void sprite_renderer_draw_sprite(Texture* texture, Rect2 sourceRect, Rect2 destR
 
     glBufferData(GL_ARRAY_BUFFER, (GLsizeiptr) sizeof(verts), verts, GL_DYNAMIC_DRAW);
     glDrawArrays(GL_TRIANGLES, 0, VERTEX_ITEM_COUNT * NUMBER_OF_VERTICES);
-
-    free(verts);
 
     renderer_print_opengl_errors();
 

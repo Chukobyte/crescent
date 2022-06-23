@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "../memory/rbe_mem.h"
+#include "../utils/rbe_string_util.h"
 #include "../utils/rbe_assert.h"
 
 size_t rbe_default_hash_string(const char* raw_key);
@@ -26,7 +27,7 @@ RBEStringHashMap* rbe_string_hash_map_create(size_t capacity) {
 
 StringHashMapNode* hash_map_create_node_string(RBEStringHashMap* hashMap, const char* key, void* value, size_t valueSize, StringHashMapNode* next) {
     StringHashMapNode* node = (StringHashMapNode*) RBE_MEM_ALLOCATE_SIZE(sizeof(StringHashMapNode));
-    node->key = _strdup(key);
+    node->key = rbe_strdup(key);
     node->value = RBE_MEM_ALLOCATE_SIZE(valueSize);
     memcpy(node->value, value, valueSize);
     node->valueSize = valueSize;
@@ -137,7 +138,7 @@ int rbe_string_hash_map_get_int(RBEStringHashMap* hashMap, const char* key) {
 
 // String
 bool rbe_string_hash_map_add_string(RBEStringHashMap* hashMap, const char* key, const char* value) {
-    char* stringVal = _strdup(value);
+    char* stringVal = rbe_strdup(value);
     bool result = rbe_string_hash_map_add(hashMap, key, stringVal, strlen(value) + 1);
     RBE_MEM_FREE(stringVal);
     return result;

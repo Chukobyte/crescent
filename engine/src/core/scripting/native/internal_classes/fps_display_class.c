@@ -40,7 +40,6 @@ RBENativeScriptClass* fps_display_create_new_instance(Entity entity) {
     classData->value = 10;
     fpsClassInstance->instance_data = classData;
     fpsClassInstance->class_instance_size = (sizeof(RBENativeScriptClass*) + sizeof(FpsDisplayClassData*)) * 4;
-    printf("[C SCRIPT] New instance!\n");
     return fpsClassInstance;
 }
 
@@ -54,8 +53,8 @@ void fps_display_on_end(RBENativeScriptClass* nativeScriptClass) {}
 void fps_display_update(RBENativeScriptClass* nativeScriptClass, float deltaTime) {
     // Update Text Label Component's Text
     static char fpsAmountBuffer[6];
-    // FIXME: this is windows specific, needs to be replaced for other OS
-    _gcvt(rbe_engine_context_get()->averageFPS, 4, fpsAmountBuffer);
+    // TODO: (FIXME) this is windows specific, needs to be replaced for other OS
+    gcvt(rbe_engine_context_get()->averageFPS, 4, fpsAmountBuffer);
     TextLabelComponent* textLabelComponent = (TextLabelComponent*) component_manager_get_component(nativeScriptClass->entity, ComponentDataIndex_TEXT_LABEL);
     strcpy(textLabelComponent->text, "FPS: ");
     strcat(textLabelComponent->text, fpsAmountBuffer);
