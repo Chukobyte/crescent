@@ -63,6 +63,8 @@ add_library(${PROJECT_NAME} STATIC
         src/core/ecs/system/font_rendering_ec_system.c
         src/core/ecs/system/script_ec_system.c
         src/core/ecs/system/sprite_rendering_ec_system.c
+        src/core/ecs/system/collision_ec_system.c
+        src/core/ecs/component/collider2d_component.c
         ../include/stb_image/stb_image.c
         ../include/glad/glad.c
         )

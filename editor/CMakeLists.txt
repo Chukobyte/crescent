@@ -61,6 +61,7 @@ add_library(${PROJECT_NAME} STATIC
         ../engine/src/core/ecs/system/font_rendering_ec_system.c
         ../engine/src/core/ecs/system/script_ec_system.c
         ../engine/src/core/ecs/system/sprite_rendering_ec_system.c
+        ../engine/src/core/ecs/system/collision_ec_system.c
         ../engine/src/core/ecs/component/animated_sprite_component.c
         ../engine/src/core/ecs/component/node_component.c
         ../engine/src/core/ecs/component/text_label_component.c
