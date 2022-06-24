@@ -301,9 +301,10 @@
 "\n"\
 "\n"\
 "class InputAction:\n"\
-"    def __init__(self, name: str, values: list):\n"\
+"    def __init__(self, name: str, values: list, device_id=0):\n"\
 "        self.name = name\n"\
 "        self.values = values\n"\
+"        self.device_id = device_id\n"\
 "\n"\
 "\n"\
 "# ENGINE\n"\
@@ -332,8 +333,10 @@
 "# INPUT\n"\
 "class Input:\n"\
 "    @staticmethod\n"\
-"    def add_action(name: str, value: str) -> None:\n"\
-"        rbe_py_api_internal.input_add_action(name=name, value=value)\n"\
+"    def add_action(name: str, value: str, device_id=0) -> None:\n"\
+"        rbe_py_api_internal.input_add_action(\n"\
+"            name=name, value=value, device_id=device_id\n"\
+"        )\n"\
 "\n"\
 "    @staticmethod\n"\
 "    def is_action_pressed(name: str) -> bool:\n"\
@@ -415,6 +418,16 @@
 "        F10 = \"f10\"\n"\
 "        F11 = \"f11\"\n"\
 "        F12 = \"f12\"\n"\
+"\n"\
+"    class Gamepad:\n"\
+"        BUTTON_A = \"joystick_button_a\"\n"\
+"        BUTTON_B = \"joystick_button_b\"\n"\
+"        BUTTON_X = \"joystick_button_x\"\n"\
+"        BUTTON_Y = \"joystick_button_y\"\n"\
+"        BUTTON_DPAD_LEFT = \"joystick_dpad_left\"\n"\
+"        BUTTON_DPAD_RIGHT = \"joystick_dpad_right\"\n"\
+"        BUTTON_DPAD_UP = \"joystick_dpad_up\"\n"\
+"        BUTTON_DPAD_DOWN = \"joystick_dpad_down\"\n"\
 "\n"\
 "\n"\
 "# STAGE SETUP\n"\
@@ -515,6 +528,12 @@
 "        self.class_name = class_name\n"\
 "\n"\
 "\n"\
+"class Collider2DComponent:\n"\
+"    def __init__(self, rect: Rect2, color: Color):\n"\
+"        self.rect = rect\n"\
+"        self.color = color\n"\
+"\n"\
+"\n"\
 "# NODE\n"\
 "class NodeType(str, Enum):\n"\
 "    NODE = \"Node\"\n"\
@@ -523,7 +542,7 @@
 "    SPRITE = \"Sprite\"\n"\
 "    ANIMATED_SPRITE = \"AnimatedSprite\"\n"\
 "    TEXT_LABEL = \"TextLabel\"\n"\
-"    COLLISION_SHAPE2D = \"CollisionShape2D\"\n"\
+"    COLLIDER2D = \"Collider2D\"\n"\
 "\n"\
 "\n"\
 "class Node:\n"\
@@ -810,6 +829,17 @@
 "    def set_color(self, color: Color) -> None:\n"\
 "        rbe_py_api_internal.text_label_set_color(\n"\
 "            entity_id=self.entity_id, r=color.r, g=color.g, b=color.b, a=color.a\n"\
+"        )\n"\
+"\n"\
+"\n"\
+"class Collider2D(Node2D):\n"\
+"    def get_rect(self) -> Rect2:\n"\
+"        x, y, w, h = rbe_py_api_internal.collider2d_get_rect(entity_id=self.entity_id)\n"\
+"        return Rect2(x=x, y=y, w=w, h=h)\n"\
+"\n"\
+"    def set_rect(self, value: Rect2) -> None:\n"\
+"        rbe_py_api_internal.collider2d_set_rect(\n"\
+"            entity_id=self.entity_id, x=value.x, y=value.y, w=value.w, h=value.h\n"\
 "        )\n"\
 "\n"\
 "\n"\

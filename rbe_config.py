@@ -48,5 +48,6 @@ configure_inputs(
         InputAction(name="p1_move_right", values=[Input.Keyboard.D]),
         InputAction(name="p2_move_left", values=[Input.Keyboard.LEFT]),
         InputAction(name="p2_move_right", values=[Input.Keyboard.RIGHT]),
+        InputAction(name="button_a", values=[Input.Gamepad.BUTTON_A]),
     ]
 )

@@ -5,7 +5,7 @@
 #include "../../utils/rbe_assert.h"
 
 //--- EC System Manager ---//
-#define MAX_ENTITY_SYSTEMS_PER_HOOK 4
+#define MAX_ENTITY_SYSTEMS_PER_HOOK 6
 
 typedef struct EntitySystemData {
     size_t entity_systems_count;

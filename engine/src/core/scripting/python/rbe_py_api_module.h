@@ -230,7 +230,7 @@ static char *rbePyApiConfigureInputsKWList[] = {"input_actions", NULL};
 
 static char *rbePyApiCreateStageNodesKWList[] = {"stage_nodes", NULL};
 
-static char *rbePyApiInputAddActionKWList[] = {"name", "value", NULL};
+static char *rbePyApiInputAddActionKWList[] = {"name", "value", "device_id", NULL};
 static char *rbePyApiInputActionInputCheckKWList[] = {"name", NULL};
 
 static char *rbePyApiAudioManagerPlaySoundKWList[] = {"path", "loops", NULL};

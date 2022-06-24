@@ -4,7 +4,7 @@
 
 #include "../entity/entity.h"
 
-#define MAX_COMPONENTS 4
+#define MAX_COMPONENTS 7
 
 typedef enum ComponentDataIndex {
     ComponentDataIndex_NONE = -1,
@@ -13,7 +13,8 @@ typedef enum ComponentDataIndex {
     ComponentDataIndex_SPRITE = 2,
     ComponentDataIndex_ANIMATED_SPRITE = 3,
     ComponentDataIndex_TEXT_LABEL = 4,
-    ComponentDataIndex_SCRIPT = 5
+    ComponentDataIndex_SCRIPT = 5,
+    ComponentDataIndex_COLLIDER_2D = 6
 } ComponentDataIndex;
 
 typedef enum ComponentType {
@@ -24,6 +25,7 @@ typedef enum ComponentType {
     ComponentType_ANIMATED_SPRITE = 1 << 3,
     ComponentType_TEXT_LABEL = 1 << 4,
     ComponentType_SCRIPT = 1 << 5,
+    ComponentType_COLLIDER_2D = 1 << 6,
 } ComponentType;
 
 // --- Component Manager --- //
