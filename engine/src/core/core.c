@@ -185,7 +185,7 @@ bool rbe_load_assets_from_configuration() {
         for (size_t valueIndex = 0; valueIndex < inputAction.valueCount; valueIndex++) {
             const char* actionValue = inputAction.values[valueIndex];
             rbe_logger_debug("action_name = %s, action_value = %s", inputAction.name, actionValue);
-            rbe_input_add_action_value(inputAction.name, actionValue);
+            rbe_input_add_action_value(inputAction.name, actionValue, 0);
         }
     }
 

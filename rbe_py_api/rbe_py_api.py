@@ -293,8 +293,10 @@ class Engine:
 # INPUT
 class Input:
     @staticmethod
-    def add_action(name: str, value: str) -> None:
-        rbe_py_api_internal.input_add_action(name=name, value=value)
+    def add_action(name: str, value: str, device_id=0) -> None:
+        rbe_py_api_internal.input_add_action(
+            name=name, value=value, device_id=device_id
+        )
 
     @staticmethod
     def is_action_pressed(name: str) -> bool:

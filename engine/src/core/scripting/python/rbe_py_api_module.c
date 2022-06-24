@@ -468,8 +468,9 @@ void setup_scene_component_node(Entity entity, PyObject* component) {
 PyObject* rbe_py_api_input_add_action(PyObject* self, PyObject* args, PyObject* kwargs) {
     char* actionName;
     char* actionValue;
-    if (PyArg_ParseTupleAndKeywords(args, kwargs, "ss", rbePyApiInputAddActionKWList, &actionName, &actionValue)) {
-        rbe_input_add_action_value(actionName, actionValue);
+    int deviceId;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "ssi", rbePyApiInputAddActionKWList, &actionName, &actionValue, &deviceId)) {
+        rbe_input_add_action_value(actionName, actionValue, deviceId);
         Py_RETURN_NONE;
     }
     return NULL;

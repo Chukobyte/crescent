@@ -122,9 +122,9 @@ bool rbe_input_initialize() {
 
 void rbe_input_finalize() {}
 
-void rbe_input_add_action_value(const char* actionName, const char* actionValue) {
+void rbe_input_add_action_value(const char* actionName, const char* actionValue, int deviceId) {
     if (!rbe_string_hash_map_has(inputActionMap, actionName)) {
-        rbe_string_hash_map_add(inputActionMap, actionName, rbe_input_action_create_new_input_action(actionName), sizeof(InputAction));
+        rbe_string_hash_map_add(inputActionMap, actionName, rbe_input_action_create_new_input_action(actionName, deviceId), sizeof(InputAction));
         inputActionNames[inputActionNamesCount] = actionName;
         inputActionNamesCount++;
     }

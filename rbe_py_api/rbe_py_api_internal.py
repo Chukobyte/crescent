@@ -48,7 +48,7 @@ def create_stage_nodes(stage_nodes: list) -> None:
     pass
 
 
-def input_add_action(name: str, value: str) -> None:
+def input_add_action(name: str, value: str, device_id: int) -> None:
     pass
 
 

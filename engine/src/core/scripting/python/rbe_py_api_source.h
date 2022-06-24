@@ -332,8 +332,10 @@
 "# INPUT\n"\
 "class Input:\n"\
 "    @staticmethod\n"\
-"    def add_action(name: str, value: str) -> None:\n"\
-"        rbe_py_api_internal.input_add_action(name=name, value=value)\n"\
+"    def add_action(name: str, value: str, device_id=0) -> None:\n"\
+"        rbe_py_api_internal.input_add_action(\n"\
+"            name=name, value=value, device_id=device_id\n"\
+"        )\n"\
 "\n"\
 "    @staticmethod\n"\
 "    def is_action_pressed(name: str) -> bool:\n"\
