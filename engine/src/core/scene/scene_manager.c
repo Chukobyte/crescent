@@ -101,7 +101,7 @@ void rbe_scene_manager_process_queued_deletion_entities() {
         Entity entityToDelete = entitiesQueuedForDeletion[i];
         RBE_ASSERT_FMT(rbe_hash_map_has(entityToTreeNodeMap, &entityToDelete), "Entity '%d' not in tree node map!?", entityToDelete);
         SceneTreeNode* treeNode = rbe_hash_map_get(entityToTreeNodeMap, &entityToDelete);
-        RBE_MEM_FREE(treeNode);
+//        RBE_MEM_FREE(treeNode); // TODO: Crashes rbe_hash_map_erase, investigate...
         rbe_hash_map_erase(entityToTreeNodeMap, &entityToDelete);
         // Remove entity from systems
         rbe_ec_system_remove_entity_from_all_systems(entityToDelete);

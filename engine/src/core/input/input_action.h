@@ -22,6 +22,7 @@ typedef struct InputAction {
     bool isActionPressed;
     bool isActionJustPressed;
     bool isActionJustReleased;
+    int deviceId;
 } InputAction;
 
-InputAction* rbe_input_action_create_new_input_action(const char* actionName);
+InputAction* rbe_input_action_create_new_input_action(const char* actionName, int deviceId);

@@ -148,6 +148,51 @@ char* rbe_string_hash_map_get_string(RBEStringHashMap* hashMap, const char* key)
     return (char*) rbe_string_hash_map_get(hashMap, key);
 }
 
+//--- Iterator ---//
+RBEStringHashMapIterator rbe_string_hash_map_iter_create(RBEStringHashMap* hashMap) {
+    // Get initial node if exists
+    StringHashMapNode* initialNode = NULL;
+    size_t initialIndex = 0;
+    for (size_t chain = 0; chain < hashMap->capacity; chain++) {
+        StringHashMapNode* node = hashMap->nodes[chain];
+        if (node != NULL) {
+            initialNode = node;
+            initialIndex = chain + 1;
+            break;
+        }
+    }
+    size_t iteratorCount = initialNode != NULL ? 1 : 0;
+    RBEStringHashMapIterator iterator = { .count = iteratorCount, .end = hashMap->capacity, .index = initialIndex, .pair = initialNode };
+    return iterator;
+}
+
+bool rbe_string_hash_map_iter_is_valid(RBEStringHashMap* hashMap, RBEStringHashMapIterator* iterator) {
+    return iterator->pair != NULL && iterator->count <= hashMap->size;
+}
+
+void rbe_string_hash_map_iter_advance(RBEStringHashMap* hashMap, RBEStringHashMapIterator* iterator) {
+    if (rbe_string_hash_map_iter_is_valid(hashMap, iterator)) {
+        if (iterator->pair->next != NULL) {
+            iterator->pair = iterator->pair->next;
+            iterator->count++;
+            return;
+        }
+
+        // Search nodes array if there are no more linked pairs
+        for (size_t chain = iterator->index; chain < hashMap->capacity; chain++) {
+            StringHashMapNode* node = hashMap->nodes[chain];
+            if (node != NULL) {
+                iterator->pair = node;
+                iterator->index = chain + 1;
+                iterator->count++;
+                return;
+            }
+        }
+    }
+    // Invalidate iterator since we've reached the end
+    iterator->pair = NULL;
+}
+
 // Misc
 size_t rbe_default_hash_string(const char* raw_key) {
     // djb2 string hashing algorithm

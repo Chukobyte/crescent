@@ -12,16 +12,18 @@ NodeComponent* node_component_create() {
 }
 
 NodeBaseType node_get_base_type(const char* baseName) {
-    if (strcmp(baseName, "Node") == 0) {
+    if (strcmp(baseName, RBE_NODE_NODE_STRING) == 0) {
         return NodeBaseType_NODE;
-    } else if (strcmp(baseName, "Node2D") == 0) {
+    } else if (strcmp(baseName, RBE_NODE_NODE2D_STRING) == 0) {
         return NodeBaseType_NODE2D;
-    } else if (strcmp(baseName, "Sprite") == 0) {
+    } else if (strcmp(baseName, RBE_NODE_SPRITE_STRING) == 0) {
         return NodeBaseType_SPRITE;
-    } else if (strcmp(baseName, "AnimatedSprite") == 0) {
+    } else if (strcmp(baseName, RBE_NODE_ANIMATED_SPRITE_STRING) == 0) {
         return NodeBaseType_ANIMATED_SPRITE;
-    } else if (strcmp(baseName, "TextLabel") == 0) {
+    } else if (strcmp(baseName, RBE_NODE_TEXT_LABEL_STRING) == 0) {
         return NodeBaseType_TEXT_LABEL;
+    } else if (strcmp(baseName, RBE_NODE_COLLIDER2D_STRING) == 0) {
+        return NodeBaseType_COLLIDER2D;
     }
     return NodeBaseType_INVALID;
 }
@@ -38,6 +40,8 @@ NodeBaseInheritanceType node_get_type_inheritance(NodeBaseType type) {
         return NodeBaseInheritanceType_ANIMATED_SPRITE;
     case NodeBaseType_TEXT_LABEL:
         return NodeBaseInheritanceType_TEXT_LABEL;
+    case NodeBaseType_COLLIDER2D:
+        return NodeBaseInheritanceType_COLLIDER2D;
     default:
         break;
     }
@@ -47,15 +51,17 @@ NodeBaseInheritanceType node_get_type_inheritance(NodeBaseType type) {
 const char* node_get_component_type_string(NodeBaseType type) {
     switch (type) {
     case NodeBaseType_NODE:
-        return "Node";
+        return RBE_NODE_NODE_STRING;
     case NodeBaseType_NODE2D:
-        return "Node2D";
+        return RBE_NODE_NODE2D_STRING;
     case NodeBaseType_SPRITE:
-        return "Sprite";
+        return RBE_NODE_SPRITE_STRING;
     case NodeBaseType_ANIMATED_SPRITE:
-        return "AnimatedSprite";
+        return RBE_NODE_ANIMATED_SPRITE_STRING;
     case NodeBaseType_TEXT_LABEL:
-        return "TextLabel";
+        return RBE_NODE_TEXT_LABEL_STRING;
+    case NodeBaseType_COLLIDER2D:
+        return RBE_NODE_COLLIDER2D_STRING;
     default:
         break;
     }
