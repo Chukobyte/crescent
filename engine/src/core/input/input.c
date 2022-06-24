@@ -360,14 +360,13 @@ void input_process_gamepad(SDL_Event event) {
     }
 //    ProcessAxisMotion();
 
-    if (hasGamepadInput) {
-        for (size_t i = 0; i < inputActionNamesCount; i++) {
-            InputAction *inputAction = (InputAction *) rbe_string_hash_map_get(inputActionMap, inputActionNames[i]);
-            for (size_t j = 0; j < inputAction->gamepadValueCount; j++) {
-                const char* gamepadValue = inputAction->gamepadValues[j];
-                const uint8_t buttonScancode = rbe_string_hash_map_get_int(gamepadStringValuesMap, gamepadValue);
-                if (false) {} // TODO: For breakpoint testing
-            }
-        }
-    }
+//    if (hasGamepadInput) {
+//        for (size_t i = 0; i < inputActionNamesCount; i++) {
+//            InputAction *inputAction = (InputAction *) rbe_string_hash_map_get(inputActionMap, inputActionNames[i]);
+//            for (size_t j = 0; j < inputAction->gamepadValueCount; j++) {
+//                const char* gamepadValue = inputAction->gamepadValues[j];
+//                const uint8_t buttonScancode = rbe_string_hash_map_get_int(gamepadStringValuesMap, gamepadValue);
+//            }
+//        }
+//    }
 }

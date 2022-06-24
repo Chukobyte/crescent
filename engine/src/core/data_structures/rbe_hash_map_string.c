@@ -149,7 +149,6 @@ char* rbe_string_hash_map_get_string(RBEStringHashMap* hashMap, const char* key)
 }
 
 //--- Iterator ---//
-// Iterator
 RBEStringHashMapIterator rbe_string_hash_map_iter_create(RBEStringHashMap* hashMap) {
     // Get initial node if exists
     StringHashMapNode* initialNode = NULL;
