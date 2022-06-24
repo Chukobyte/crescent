@@ -419,6 +419,16 @@
 "        F11 = \"f11\"\n"\
 "        F12 = \"f12\"\n"\
 "\n"\
+"    class Gamepad:\n"\
+"        BUTTON_A = \"joystick_button_a\"\n"\
+"        BUTTON_B = \"joystick_button_b\"\n"\
+"        BUTTON_X = \"joystick_button_x\"\n"\
+"        BUTTON_Y = \"joystick_button_y\"\n"\
+"        BUTTON_DPAD_LEFT = \"joystick_dpad_left\"\n"\
+"        BUTTON_DPAD_RIGHT = \"joystick_dpad_right\"\n"\
+"        BUTTON_DPAD_UP = \"joystick_dpad_up\"\n"\
+"        BUTTON_DPAD_DOWN = \"joystick_dpad_down\"\n"\
+"\n"\
 "\n"\
 "# STAGE SETUP\n"\
 "class StageNode:\n"\

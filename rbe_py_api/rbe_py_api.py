@@ -380,6 +380,16 @@ class Input:
         F11 = "f11"
         F12 = "f12"
 
+    class Gamepad:
+        BUTTON_A = "joystick_button_a"
+        BUTTON_B = "joystick_button_b"
+        BUTTON_X = "joystick_button_x"
+        BUTTON_Y = "joystick_button_y"
+        BUTTON_DPAD_LEFT = "joystick_dpad_left"
+        BUTTON_DPAD_RIGHT = "joystick_dpad_right"
+        BUTTON_DPAD_UP = "joystick_dpad_up"
+        BUTTON_DPAD_DOWN = "joystick_dpad_down"
+
 
 # STAGE SETUP
 class StageNode:

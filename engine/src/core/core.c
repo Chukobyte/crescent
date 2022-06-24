@@ -228,8 +228,8 @@ void rbe_process_inputs() {
         default:
             break;
         }
+        rbe_input_process(event);
     }
-    rbe_input_process(event);
 }
 
 void rbe_process_game_update() {

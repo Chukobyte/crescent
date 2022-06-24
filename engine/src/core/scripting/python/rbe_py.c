@@ -24,7 +24,7 @@ void rbe_py_initialize() {
 
 void rbe_py_finalize() {
     rbe_py_cache_finalize();
-    Py_Finalize();
+//    Py_Finalize(); // FIXME: Figure out why this crashes...
 }
 
 bool rbe_py_load_project_config() {
