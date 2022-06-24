@@ -13,6 +13,10 @@
 #include "../utils/logger.h"
 #include "../utils/rbe_assert.h"
 
+#ifdef _MSC_VER
+#pragma warning(disable : 4996) // for strcpy
+#endif
+
 //--- NETWORK ---//
 #define RBE_NETWORK_HANDSHAKE_MESSAGE "init"
 
@@ -135,7 +139,7 @@ void rbe_udp_server_finalize() {
 //--- UDP CLIENT ---//
 #define CLIENT_BUFFER_SIZE 512
 
-void* rbe_udp_client_poll();
+void* rbe_udp_client_poll(void*);
 
 static int client_socket;
 static struct sockaddr_in client_si_other;
@@ -172,7 +176,7 @@ bool rbe_udp_client_initialize(const char* serverAddr, int serverPort, on_networ
     client_si_other.sin_addr.S_un.S_addr = inet_addr(serverAddr);
 
 #ifndef _WIN32
-    if (inet_aton(serverAddr , &client_si_other.sin_addr) == 0) {
+    if (inet_aton(serverAddr, &client_si_other.sin_addr) == 0) {
         rbe_logger_error("inet_aton() failed!");
         return false;
     }
@@ -191,7 +195,7 @@ bool rbe_udp_client_initialize(const char* serverAddr, int serverPort, on_networ
     return true;
 }
 
-void* rbe_udp_client_poll() {
+void* rbe_udp_client_poll(void *unused) {
     static char client_input_buffer[CLIENT_BUFFER_SIZE];
     // TODO: Do handshake
     // TODO: Figure out why there is failure if no message is sent at first

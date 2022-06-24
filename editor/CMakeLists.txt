@@ -4,15 +4,17 @@ set(CMAKE_CXX_STANDARD 20)
 
 project(roll_back_editor)
 
-# SDL2
-cmake_path(SET SDL2_INCLUDE_PATH "$ENV{SDL2_INCLUDE}")
-cmake_path(SET SDL2_LIBS_PATH "$ENV{SDL2_LIBS}")
-# Python
-cmake_path(SET PYTHON_INCLUDE_PATH "$ENV{PYTHON_INCLUDE}")
-cmake_path(SET PYTHON_LIBS_PATH "$ENV{PYTHON_LIBS}")
-# Freetype
-cmake_path(SET FREETYPE_INCLUDE_PATH "$ENV{FREETYPE_INCLUDE}")
-cmake_path(SET FREETYPE_LIBS_PATH "$ENV{FREETYPE_LIBS}")
+if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    list(APPEND flags "/W3" "/Zc:preprocessor")
+else ()
+    list(APPEND flags "-w" "-std=c++20" "-Wfatal-errors" "-Wall" "-Wextra" "-Wno-write-strings"
+            "-Wno-deprecated-declarations" "-Wno-unused-variable" "-Wno-cast-function-type" "-Wno-unused-parameter"
+            "-Wno-missing-field-initializers")
+endif ()
+
+find_package(SDL2 CONFIG REQUIRED)
+find_package(freetype CONFIG REQUIRED)
+find_package (Python3 COMPONENTS Interpreter Development REQUIRED)
 
 add_library(${PROJECT_NAME} STATIC
         # C++
@@ -59,6 +61,7 @@ add_library(${PROJECT_NAME} STATIC
         ../engine/src/core/ecs/system/font_rendering_ec_system.c
         ../engine/src/core/ecs/system/script_ec_system.c
         ../engine/src/core/ecs/system/sprite_rendering_ec_system.c
+        ../engine/src/core/ecs/system/collision_ec_system.c
         ../engine/src/core/ecs/component/animated_sprite_component.c
         ../engine/src/core/ecs/component/node_component.c
         ../engine/src/core/ecs/component/text_label_component.c
@@ -81,16 +84,12 @@ add_library(${PROJECT_NAME} STATIC
 target_include_directories(${PROJECT_NAME} PUBLIC
         "${PROJECT_BINARY_DIR}"
         "../include"
-        "${SDL2_INCLUDE_PATH}"
-        "${PYTHON_INCLUDE_PATH}"
-        "${FREETYPE_INCLUDE_PATH}"
         )
 
-target_link_directories(${PROJECT_NAME} PUBLIC
-        ${SDL2_LIBS_PATH}
-        ${PYTHON_LIBS_PATH}
-        ${FREETYPE_LIBS_PATH}
-        )
+if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    target_link_libraries(${PROJECT_NAME} PUBLIC SDL2::SDL2 SDL2::SDL2main freetype Python3::Python Ws2_32)
+else ()
+    target_link_libraries(${PROJECT_NAME} PUBLIC -lmingw32 -static-libgcc SDL2::SDL2 SDL2::SDL2main freetype Python3::Python -lws2_32)
+endif ()
 
-target_link_libraries(${PROJECT_NAME} PUBLIC -lmingw32 -static-libgcc -lSDL2main -lSDL2 -lpython37 -lfreetype -lws2_32)
-target_compile_options(${PROJECT_NAME} PUBLIC -w -std=c++20 -Wfatal-errors -Wall -Wextra -Wno-write-strings -Wno-deprecated-declarations -Wno-unused-variable -Wno-cast-function-type -Wno-unused-parameter -Wno-missing-field-initializers)
+target_compile_options(${PROJECT_NAME} PUBLIC ${flags})

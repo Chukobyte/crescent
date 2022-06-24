@@ -4,7 +4,6 @@
 
 #include "../../memory/rbe_mem.h"
 #include "../../utils/rbe_assert.h"
-#include "../../utils/logger.h"
 
 //--- Component Array ---//
 typedef struct ComponentArray {
@@ -124,6 +123,8 @@ ComponentType component_manager_translate_index_to_type(ComponentDataIndex index
         return ComponentType_TEXT_LABEL;
     case ComponentDataIndex_SCRIPT:
         return ComponentType_SCRIPT;
+    case ComponentDataIndex_COLLIDER_2D:
+        return ComponentType_COLLIDER_2D;
     case ComponentDataIndex_NONE:
     default:
         rbe_logger_error("Not a valid component data index: '%d'", index);
@@ -145,6 +146,8 @@ const char* component_get_component_data_index_string(ComponentDataIndex index) 
         return "Text Label";
     case ComponentDataIndex_SCRIPT:
         return "Script";
+    case ComponentDataIndex_COLLIDER_2D:
+        return "Collider2D";
     case ComponentDataIndex_NONE:
     default:
         rbe_logger_error("Not a valid component data index: '%d'", index);

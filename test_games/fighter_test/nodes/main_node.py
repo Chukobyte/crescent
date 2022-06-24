@@ -70,7 +70,29 @@ create_stage_nodes(
                             ],
                         ),
                     ],
-                    children=[],
+                    children=[
+                        StageNode(
+                            name="P1Collider",
+                            type="Collider2D",
+                            tags=None,
+                            external_node_source=None,
+                            components=[
+                                Transform2DComponent(
+                                    position=Vector2(0.0, 0.0),
+                                    scale=Vector2(1.0, 1.0),
+                                    rotation=0.0,
+                                    z_index=0,
+                                    z_index_relative_to_parent=True,
+                                    ignore_camera=False,
+                                ),
+                                Collider2DComponent(
+                                    rect=Rect2(0, 0, 32, 32),
+                                    color=Color(200, 200, 255, 200),
+                                ),
+                            ],
+                            children=[],
+                        ),
+                    ],
                 ),
                 StageNode(
                     name="PlayerTwo",
@@ -121,7 +143,29 @@ create_stage_nodes(
                             ],
                         ),
                     ],
-                    children=[],
+                    children=[
+                        StageNode(
+                            name="P2Collider",
+                            type="Collider2D",
+                            tags=None,
+                            external_node_source=None,
+                            components=[
+                                Transform2DComponent(
+                                    position=Vector2(0.0, 0.0),
+                                    scale=Vector2(1.0, 1.0),
+                                    rotation=0.0,
+                                    z_index=0,
+                                    z_index_relative_to_parent=True,
+                                    ignore_camera=False,
+                                ),
+                                Collider2DComponent(
+                                    rect=Rect2(0, 0, 32, 32),
+                                    color=Color(200, 200, 255, 200),
+                                ),
+                            ],
+                            children=[],
+                        ),
+                    ],
                 ),
                 StageNode(
                     name="TextLabel",

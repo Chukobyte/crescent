@@ -12,6 +12,10 @@
 #include "../../../ecs/component/text_label_component.h"
 #include "../../../ecs/component/component.h"
 
+#ifdef _MSC_VER
+#pragma warning(disable : 4996) // for strcpy and strcat
+#endif
+
 typedef struct FpsDisplayClassData {
     int value;
 } FpsDisplayClassData;
@@ -49,6 +53,7 @@ void fps_display_on_end(RBENativeScriptClass* nativeScriptClass) {}
 void fps_display_update(RBENativeScriptClass* nativeScriptClass, float deltaTime) {
     // Update Text Label Component's Text
     static char fpsAmountBuffer[6];
+    // TODO: (FIXME) this is windows specific, needs to be replaced for other OS
     gcvt(rbe_engine_context_get()->averageFPS, 4, fpsAmountBuffer);
     TextLabelComponent* textLabelComponent = (TextLabelComponent*) component_manager_get_component(nativeScriptClass->entity, ComponentDataIndex_TEXT_LABEL);
     strcpy(textLabelComponent->text, "FPS: ");

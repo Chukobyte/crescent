@@ -23,6 +23,7 @@ typedef struct RBEAssetFont {
 
 typedef struct RBEInputAction {
     char* name;
+    int deviceId;
     size_t valueCount;
     char* values[4];
 } RBEInputAction;

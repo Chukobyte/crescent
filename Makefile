@@ -26,10 +26,10 @@ CXX := g++ # C++ compiler
 C_FLAGS := # Overridden by builds
 
 # Engine
-CORE_C_FLAGS := -std=c99 -Wfatal-errors -Wall -Wextra -Wno-write-strings -Wno-deprecated-declarations -Wno-unused-variable -Wno-cast-function-type -Wno-unused-parameter -Wno-missing-field-initializers
-CORE_SRC = $(wildcard engine/src/main.c engine/src/core/*.c engine/src/core/math/*.c engine/src/core/utils/*.c engine/src/core/data_structures/*.c engine/src/core/memory/*.c engine/src/core/input/*.c engine/src/core/rendering/*.c engine/src/core/audio/*.c engine/src/core/ecs/*.c engine/src/core/ecs/component/*.c engine/src/core/ecs/entity/*.c engine/src/core/ecs/system/*.c engine/src/core/scene/*.c engine/src/core/scripting/*.c engine/src/core/scripting/python/*.c engine/src/core/scripting/native/*.c engine/src/core/scripting/native/internal_classes/*.c engine/src/core/networking/*.c engine/src/core/thread/*.c include/stb_image/stb_image.c include/glad/glad.c)
+CORE_C_FLAGS := -std=c11 -Wfatal-errors -Wall -Wextra -Wno-write-strings -Wno-deprecated-declarations -Wno-unused-variable -Wno-cast-function-type -Wno-unused-parameter -Wno-missing-field-initializers
+CORE_SRC = $(wildcard engine/src/main.c engine/src/core/*.c engine/src/core/math/*.c engine/src/core/utils/*.c engine/src/core/data_structures/*.c engine/src/core/memory/*.c engine/src/core/input/*.c engine/src/core/rendering/*.c engine/src/core/audio/*.c engine/src/core/physics/collision/*.c engine/src/core/ecs/*.c engine/src/core/ecs/component/*.c engine/src/core/ecs/entity/*.c engine/src/core/ecs/system/*.c engine/src/core/scene/*.c engine/src/core/scripting/*.c engine/src/core/scripting/python/*.c engine/src/core/scripting/native/*.c engine/src/core/scripting/native/internal_classes/*.c engine/src/core/networking/*.c engine/src/core/thread/*.c include/stb_image/stb_image.c include/glad/glad.c)
 CORE_OBJ_C = $(CORE_SRC:.c=.o)
-CORE_SRC_TEST = $(wildcard engine/src/test/main.c include/unity.c engine/src/core/*.c engine/src/core/math/*.c engine/src/core/utils/*.c engine/src/core/data_structures/*.c engine/src/core/memory/*.c engine/src/core/input/*.c engine/src/core/rendering/*.c engine/src/core/audio/*.c engine/src/core/ecs/component/*.c engine/src/core/ecs/*.c engine/src/core/ecs/entity/*.c engine/src/core/ecs/system/*.c engine/src/core/scene/*.c engine/src/core/scripting/*.c engine/src/core/scripting/python/*.c engine/src/core/scripting/native/*.c engine/src/core/scripting/native/internal_classes/*.c engine/src/core/networking/*.c engine/src/core/thread/*.c include/stb_image/stb_image.c include/glad/glad.c)
+CORE_SRC_TEST = $(wildcard engine/src/test/main.c include/unity.c engine/src/core/*.c engine/src/core/math/*.c engine/src/core/utils/*.c engine/src/core/data_structures/*.c engine/src/core/memory/*.c engine/src/core/input/*.c engine/src/core/rendering/*.c engine/src/core/audio/*.c engine/src/core/physics/collision/*.c engine/src/core/ecs/component/*.c engine/src/core/ecs/*.c engine/src/core/ecs/entity/*.c engine/src/core/ecs/system/*.c engine/src/core/scene/*.c engine/src/core/scripting/*.c engine/src/core/scripting/python/*.c engine/src/core/scripting/native/*.c engine/src/core/scripting/native/internal_classes/*.c engine/src/core/networking/*.c engine/src/core/thread/*.c include/stb_image/stb_image.c include/glad/glad.c)
 CORE_OBJ_C_TEST = $(CORE_SRC_TEST:.c=.o)
 
 # Editor
@@ -42,8 +42,8 @@ EDITOR_OBJ_CPP_TEST = $(EDITOR_SRC_TEST:.cpp=.o)
 EDITOR_OBJ_C = $(EDITOR_SRC_C:.c=.o)
 
 
-I_FLAGS := -I"./include" -I"${SDL2_INCLUDE}" -I"${PYTHON_INCLUDE}" -I"${FREETYPE_INCLUDE}"
-LIBRARIES := -L"${SDL2_LIBS}" -L"${PYTHON_LIBS}" -L"${FREETYPE_LIBS}"
+I_FLAGS := -I./include -I${SDL2_INCLUDE_PATH} -I${PYTHON_INCLUDE_PATH} -I${FREETYPE_INCLUDE_PATH}
+LIBRARIES := -L${SDL2_LIBS_PATH} -L${PYTHON_LIBS_PATH} -L${FREETYPE_LIBS_PATH}
 RELEASE_FLAGS = -DHAVE_SNPRINTF=1
 
 ### ALL ###

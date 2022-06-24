@@ -4,9 +4,14 @@
 
 #include "logger.h"
 
+#ifdef _MSC_VER
+#pragma warning(disable : 4996) // for strcpy
+#endif
+
 CommandLineFlagResult rbe_command_line_args_parse(int argv, char** args) {
+    const int WORKING_DIR_OVERRIDE_CAPACITY = 128;
     CommandLineFlagResult flagResult;
-    memset(flagResult.workingDirOverride, 0, 128);
+    memset(flagResult.workingDirOverride, 0, WORKING_DIR_OVERRIDE_CAPACITY);
     flagResult.flagCount = 0;
     if (argv <= 1) {
         return flagResult;

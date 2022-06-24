@@ -4,7 +4,6 @@
 
 #include "../../memory/rbe_mem.h"
 #include "../../utils/rbe_assert.h"
-#include "../../utils/logger.h"
 
 #define RBE_MAX_ANIMATIONS 16
 

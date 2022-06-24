@@ -1,11 +1,11 @@
 ## Roll Back Engine
 
-A work in progress fighting game engine with the core written in C99.  The name is temporary and will very likely change in the near future.
+A work in progress fighting game engine with the core written in C11.  The name is temporary and will very likely change in the near future.
 
 ### Tech Stack
 
 * Engine
-  * [C](https://en.wikipedia.org/wiki/C_(programming_language)) (c99) - Engine Core
+  * [C](https://en.wikipedia.org/wiki/C_(programming_language)) (c11) - Engine Core
   * [SDL2](https://github.com/libsdl-org/SDL) - Windowing, inputs
   * [MiniAudio](https://github.com/mackron/miniaudio) - Audio
   * [Python](https://en.wikipedia.org/wiki/Python_(programming_language)) - Scripting
@@ -70,14 +70,14 @@ configure_inputs(
 
 Only supports MinGW and Windows at the moment. These environment variables are required to be set before building.
 
-|  Environment Variable |                      Description                   | Required | Default Value |
+| Environment Variable  |                      Description                   | Required | Default Value |
 |:---------------------:|:--------------------------------------------------:|:--------:|:-------------:|
-| SDL2_INCLUDE          | The include directory of SDL2.                     |    YES   |      N/A      |
-| SDL2_LIBS             | The libs directory of SDL2.                        |    YES   |      N/A      |
-| PYTHON_INCLUDE_PATH   | The include directory of Python.                   |    YES   |      N/A      |
-| PYTHON_INCLUDE_LIBS   | The libs directory of Python.                      |    YES   |      N/A      |
+|   SDL2_INCLUDE_PATH   | The include directory of SDL2.                     |    YES   |      N/A      |
+|    SDL2_LIBS_PATH     | The libs directory of SDL2.                        |    YES   |      N/A      |
+|  PYTHON_INCLUDE_PATH  | The include directory of Python.                   |    YES   |      N/A      |
+|   PYTHON_LIBS_PATH    | The libs directory of Python.                      |    YES   |      N/A      |
 | FREETYPE_INCLUDE_PATH | The include directory of Freetype.                 |    YES   |      N/A      |
-| FREETYPE_INCLUDE_LIBS | The libs directory of Freetype.                    |    YES   |      N/A      |
+|  FREETYPE_LIBS_PATH   | The libs directory of Freetype.                    |    YES   |      N/A      |
 
 Roll back engine can be either built with make or cmake.  All build command should be executed from the project's root directory.
 
@@ -106,6 +106,8 @@ make clean-editor
 ```
 
 #### CMake
+
+*Note: CMake build currently doesn't work temporarily*
 
 Run cmake command from top level directory
 

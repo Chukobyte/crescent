@@ -7,18 +7,19 @@ static const char* OPENGL_SHADER_SOURCE_VERTEX_SPRITE =
     "layout (location = 2) in vec2 textureCoordinates;\n"
     "layout (location = 3) in vec4 textureColor;\n"
     "\n"
-    "out int spriteId;\n"
+    "out float spriteId;\n"
     "out vec2 texCoord;\n"
     "out vec4 spriteColor;\n"
     "\n"
-    "uniform mat4 models[1000];\n"
+    "uniform mat4 models[100];\n"
     "uniform mat4 projection;\n"
     "\n"
     "void main() {\n"
-    "    spriteId = int(id);\n"
+    "    spriteId = id;\n"
+    "    int spriteIntId = int(id);\n"
     "    texCoord = textureCoordinates;\n"
     "    spriteColor = textureColor;\n"
-    "    gl_Position = projection * models[spriteId] * vec4(position, 0.0f, 1.0f);\n"
+    "    gl_Position = projection * models[spriteIntId] * vec4(position, 0.0f, 1.0f);\n"
     "}\n";
 
 static const char* OPENGL_SHADER_SOURCE_FRAGMENT_SPRITE =

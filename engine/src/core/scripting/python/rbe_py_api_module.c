@@ -1,5 +1,7 @@
 #include "rbe_py_api_module.h"
 
+#include <string.h>
+
 #include "py_cache.h"
 #include "py_script_context.h"
 #include "../../game_properties.h"
@@ -12,15 +14,20 @@
 #include "../../scene/scene_manager.h"
 #include "../../ecs/ecs_manager.h"
 #include "../../ecs/system/ec_system.h"
-#include "../../ecs/component/transform2d_component.h"
+#include "../../ecs/component/animated_sprite_component.h"
+#include "../../ecs/component/collider2d_component.h"
+#include "../../ecs/component/node_component.h"
+#include "../../ecs/component/script_component.h"
 #include "../../ecs/component/sprite_component.h"
 #include "../../ecs/component/text_label_component.h"
-#include "../../ecs/component/script_component.h"
+#include "../../ecs/component/transform2d_component.h"
 #include "../../networking/rbe_network.h"
 #include "../../utils/rbe_string_util.h"
 #include "../../utils/rbe_assert.h"
-#include "../../ecs/component/animated_sprite_component.h"
-#include "../../ecs/component/node_component.h"
+
+#ifdef _MSC_VER
+#pragma warning(disable : 4996) // for strcpy
+#endif
 
 // TODO: Clean up strdups
 
@@ -167,12 +174,13 @@ PyObject* rbe_py_api_configure_inputs(PyObject* self, PyObject* args, PyObject* 
             PyObject* pInputAction = PyList_GetItem(inputActionsList, i);
             RBE_ASSERT(pInputAction != NULL);
             const char* actionName = phy_get_string_from_var(pInputAction, "name");
-            rbe_logger_debug("name = %s", actionName);
+            const int actionDeviceId = phy_get_int_from_var(pInputAction, "device_id");
+            rbe_logger_debug("name = '%s', device_id = '%d'", actionName, actionDeviceId);
             PyObject* valuesList = PyObject_GetAttrString(pInputAction, "values");
             RBE_ASSERT(valuesList != NULL);
             RBE_ASSERT_FMT(PyList_Check(valuesList), "Input action values for '%s' is not a list!  Check python api implementation.", actionName);
             Py_ssize_t valueListSize = PyList_Size(valuesList);
-            RBEInputAction inputAction = { .name = rbe_strdup(actionName), .valueCount = (size_t) valueListSize };
+            RBEInputAction inputAction = { .name = rbe_strdup(actionName), .deviceId = actionDeviceId, .valueCount = (size_t) valueListSize };
             for (Py_ssize_t actionIndex = 0; actionIndex < valueListSize; actionIndex++) {
                 PyObject* pActionValue = PyList_GetItem(valuesList, actionIndex);
                 const char* actionValue = pyh_get_string_from_obj(pActionValue);
@@ -426,6 +434,36 @@ void setup_scene_component_node(Entity entity, PyObject* component) {
         scriptComponent->contextType = ScriptContextType_PYTHON;
         component_manager_set_component(entity, ComponentDataIndex_SCRIPT, scriptComponent);
         rbe_logger_debug("class_path: %s, class_name: %s", scriptClassPath, scriptClassName);
+    } else if (strcmp(className, "Collider2DComponent") == 0) {
+        rbe_logger_debug("Building collider2d component");
+        PyObject* pyRect = PyObject_GetAttrString(component, "rect");
+        RBE_ASSERT(pyRect != NULL);
+        const float rectX = phy_get_float_from_var(pyRect, "x");
+        const float rectY = phy_get_float_from_var(pyRect, "y");
+        const float rectW = phy_get_float_from_var(pyRect, "w");
+        const float rectH = phy_get_float_from_var(pyRect, "h");
+        PyObject* pyColor = PyObject_GetAttrString(component, "color");
+        RBE_ASSERT(pyColor != NULL);
+        const int colorR = phy_get_int_from_var(pyColor, "r");
+        const int colorG = phy_get_int_from_var(pyColor, "g");
+        const int colorB = phy_get_int_from_var(pyColor, "b");
+        const int colorA = phy_get_int_from_var(pyColor, "a");
+        Collider2DComponent* collider2DComponent = collider2d_component_create();
+        collider2DComponent->rect.x = rectX;
+        collider2DComponent->rect.y = rectY;
+        collider2DComponent->rect.w = rectW;
+        collider2DComponent->rect.h = rectH;
+        collider2DComponent->color.r = (float) colorR / 255.0f;
+        collider2DComponent->color.g = (float) colorG / 255.0f;
+        collider2DComponent->color.b = (float) colorB / 255.0f;
+        collider2DComponent->color.a = (float) colorA / 255.0f;
+        collider2DComponent->collisionExceptionCount = 0;
+        component_manager_set_component(entity, ComponentDataIndex_COLLIDER_2D, collider2DComponent);
+        rbe_logger_debug("rect: (%f, %f, %f, %f), color: (%f, %f, %f, %f)",
+                         rectX, rectY, rectW, rectH, collider2DComponent->color.r, collider2DComponent->color.g, collider2DComponent->color.b, collider2DComponent->color.a);
+
+        Py_DecRef(pyRect);
+        Py_DecRef(pyColor);
     } else {
         rbe_logger_error("Invalid component class name: '%s'", className);
     }
@@ -435,8 +473,9 @@ void setup_scene_component_node(Entity entity, PyObject* component) {
 PyObject* rbe_py_api_input_add_action(PyObject* self, PyObject* args, PyObject* kwargs) {
     char* actionName;
     char* actionValue;
-    if (PyArg_ParseTupleAndKeywords(args, kwargs, "ss", rbePyApiInputAddActionKWList, &actionName, &actionValue)) {
-        rbe_input_add_action_value(actionName, actionValue);
+    int deviceId;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "ssi", rbePyApiInputAddActionKWList, &actionName, &actionValue, &deviceId)) {
+        rbe_input_add_action_value(actionName, actionValue, deviceId);
         Py_RETURN_NONE;
     }
     return NULL;
@@ -507,6 +546,7 @@ PyObject* rbe_py_api_audio_manager_stop_sound(PyObject* self, PyObject* args, Py
 
 // Node
 PyObject* rbe_py_api_node_get_child(PyObject* self, PyObject* args, PyObject* kwargs) {
+#define TYPE_BUFFER_SIZE 32
     Entity parentEntity;
     char* childName;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "is", rbePyApiNodeGetChildKWList, &parentEntity, &childName)) {
@@ -515,13 +555,14 @@ PyObject* rbe_py_api_node_get_child(PyObject* self, PyObject* args, PyObject* kw
             rbe_logger_warn("Failed to get child node from parent entity '%d' with the name '%s'", parentEntity, childName);
         }
         // TODO: Check for script custom classes and return them
-        char typeBuffer[32];
+        char typeBuffer[TYPE_BUFFER_SIZE];
         NodeComponent* nodeComponent = component_manager_get_component(childEntity, ComponentDataIndex_NODE);
         strcpy(typeBuffer, node_get_component_type_string(nodeComponent->type));
 
         return Py_BuildValue("(is)", childEntity, typeBuffer);
     }
     return NULL;
+#undef TYPE_BUFFER_SIZE
 }
 
 // Node2D

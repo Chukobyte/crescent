@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <stdlib.h>
 
 #include "rbe_macro_util.h"
 #include "logger.h"

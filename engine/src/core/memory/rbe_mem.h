@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdlib.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -13,7 +15,7 @@ rbe_mem_allocate(Size)
 #define RBE_MEM_FREE(Memory)             \
 rbe_mem_free(Memory)
 
-void* rbe_mem_allocate(unsigned int size);
+void* rbe_mem_allocate(size_t size);
 void rbe_mem_free(void* memory);
 
 #ifdef __cplusplus

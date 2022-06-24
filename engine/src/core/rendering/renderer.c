@@ -1,5 +1,7 @@
 #include "renderer.h"
 
+#include <stdlib.h>
+
 #include <cglm/cglm.h>
 
 #include "render_context.h"
@@ -7,6 +9,7 @@
 #include "shader_source.h"
 #include "../game_properties.h"
 #include "../data_structures/rbe_static_array.h"
+#include "../memory/rbe_mem.h"
 #include "../utils/rbe_assert.h"
 
 typedef struct TextureCoordinates {
@@ -203,19 +206,21 @@ void sprite_renderer_draw_sprite(Texture* texture, Rect2 sourceRect, Rect2 destR
     const float SPRITE_ID = 0.0f;
     TextureCoordinates textureCoords = renderer_get_texture_coordinates(texture, sourceRect, flipX, flipY);
 
-    GLfloat verts[VERTEX_ITEM_COUNT * NUMBER_OF_VERTICES][9];
+    const int vertsStride = 9;
+    GLfloat verts[54]; // TODO: fix magic number
     for (int i = 0; i < VERTEX_ITEM_COUNT * NUMBER_OF_VERTICES; i++) {
-        bool isSMin = i == 0 || i == 2 || i == 3 ? true : false;
-        bool isTMin = i == 1 || i == 2 || i == 5 ? true : false;
-        verts[i][0] = SPRITE_ID;
-        verts[i][1] = isSMin ? 0.0f : 1.0f;
-        verts[i][2] = isTMin ? 0.0f : 1.0f;
-        verts[i][3] = isSMin ? textureCoords.sMin : textureCoords.sMax;
-        verts[i][4] = isTMin ? textureCoords.tMin : textureCoords.tMax;
-        verts[i][5] = color.r;
-        verts[i][6] = color.g;
-        verts[i][7] = color.b;
-        verts[i][8] = color.a;
+        const bool isSMin = i == 0 || i == 2 || i == 3 ? true : false;
+        const bool isTMin = i == 1 || i == 2 || i == 5 ? true : false;
+        const int row = i * vertsStride;
+        verts[row + 0] = SPRITE_ID;
+        verts[row + 1] = isSMin ? 0.0f : 1.0f;
+        verts[row + 2] = isTMin ? 0.0f : 1.0f;
+        verts[row + 3] = isSMin ? textureCoords.sMin : textureCoords.sMax;
+        verts[row + 4] = isTMin ? textureCoords.tMin : textureCoords.tMax;
+        verts[row + 5] = color.r;
+        verts[row + 6] = color.g;
+        verts[row + 7] = color.b;
+        verts[row + 8] = color.a;
     }
 
     glActiveTexture(GL_TEXTURE0);

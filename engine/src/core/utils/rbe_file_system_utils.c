@@ -5,10 +5,19 @@
 #endif
 
 #include <stdio.h>
+
+#if defined(_MSC_VER)
+#include <io.h>
+#else
 #include <unistd.h>
+#endif
 
 #include "logger.h"
 #include "../memory/rbe_mem.h"
+
+#ifdef _MSC_VER
+#pragma warning(disable : 4996) // for fopen
+#endif
 
 bool rbe_fs_chdir(const char* dirPath) {
     if (chdir(dirPath) == 0) {

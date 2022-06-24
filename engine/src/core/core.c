@@ -39,7 +39,7 @@ bool rbe_initialize(int argv, char** args) {
     // Set random seed
     srand((int)time(NULL));
 
-    rbe_logger_set_level(LogLevel_ERROR);
+    rbe_logger_set_level(LogLevel_DEBUG);
 
     // TODO: Check for working directory overrides
     CommandLineFlagResult commandLineFlagResult = rbe_command_line_args_parse(argv, args);
@@ -185,7 +185,7 @@ bool rbe_load_assets_from_configuration() {
         for (size_t valueIndex = 0; valueIndex < inputAction.valueCount; valueIndex++) {
             const char* actionValue = inputAction.values[valueIndex];
             rbe_logger_debug("action_name = %s, action_value = %s", inputAction.name, actionValue);
-            rbe_input_add_action_value(inputAction.name, actionValue);
+            rbe_input_add_action_value(inputAction.name, actionValue, inputAction.deviceId);
         }
     }
 
@@ -228,8 +228,8 @@ void rbe_process_inputs() {
         default:
             break;
         }
+        rbe_input_process(event);
     }
-    rbe_input_process(event);
 }
 
 void rbe_process_game_update() {
@@ -292,12 +292,12 @@ void rbe_shutdown() {
     SDL_GL_DeleteContext(openGlContext);
     SDL_Quit();
     rbe_renderer_finalize();
-    rbe_py_finalize();
     rbe_game_props_finalize();
     rbe_audio_manager_finalize();
     rbe_input_finalize();
     rbe_asset_manager_finalize();
     rbe_scene_manager_finalize();
     rbe_ecs_manager_finalize();
+    rbe_py_finalize();
     rbe_logger_info("RBE Engine shutdown!");
 }
