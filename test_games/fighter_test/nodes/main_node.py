@@ -85,10 +85,10 @@ create_stage_nodes(
                                     z_index_relative_to_parent=True,
                                     ignore_camera=False,
                                 ),
-                                # Collider2DComponent(
-                                #     rect=Rect2(0, 0, 32, 32),
-                                #     color=Color(200, 200, 255, 200),
-                                # ),
+                                Collider2DComponent(
+                                    rect=Rect2(0, 0, 32, 32),
+                                    color=Color(200, 200, 255, 200),
+                                ),
                             ],
                             children=[],
                         ),
@@ -158,10 +158,10 @@ create_stage_nodes(
                                     z_index_relative_to_parent=True,
                                     ignore_camera=False,
                                 ),
-                                # Collider2DComponent(
-                                #     rect=Rect2(0, 0, 32, 32),
-                                #     color=Color(200, 200, 255, 200),
-                                # ),
+                                Collider2DComponent(
+                                    rect=Rect2(0, 0, 32, 32),
+                                    color=Color(200, 200, 255, 200),
+                                ),
                             ],
                             children=[],
                         ),

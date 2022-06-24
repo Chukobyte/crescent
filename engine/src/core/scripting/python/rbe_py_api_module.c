@@ -170,12 +170,13 @@ PyObject* rbe_py_api_configure_inputs(PyObject* self, PyObject* args, PyObject* 
             PyObject* pInputAction = PyList_GetItem(inputActionsList, i);
             RBE_ASSERT(pInputAction != NULL);
             const char* actionName = phy_get_string_from_var(pInputAction, "name");
-            rbe_logger_debug("name = %s", actionName);
+            const int actionDeviceId = phy_get_int_from_var(pInputAction, "device_id");
+            rbe_logger_debug("name = '%s', device_id = '%d'", actionName, actionDeviceId);
             PyObject* valuesList = PyObject_GetAttrString(pInputAction, "values");
             RBE_ASSERT(valuesList != NULL);
             RBE_ASSERT_FMT(PyList_Check(valuesList), "Input action values for '%s' is not a list!  Check python api implementation.", actionName);
             Py_ssize_t valueListSize = PyList_Size(valuesList);
-            RBEInputAction inputAction = { .name = rbe_strdup(actionName), .valueCount = (size_t) valueListSize };
+            RBEInputAction inputAction = { .name = rbe_strdup(actionName), .deviceId = actionDeviceId, .valueCount = (size_t) valueListSize };
             for (Py_ssize_t actionIndex = 0; actionIndex < valueListSize; actionIndex++) {
                 PyObject* pActionValue = PyList_GetItem(valuesList, actionIndex);
                 const char* actionValue = pyh_get_string_from_obj(pActionValue);

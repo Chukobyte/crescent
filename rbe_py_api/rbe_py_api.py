@@ -262,9 +262,10 @@ class Font:
 
 
 class InputAction:
-    def __init__(self, name: str, values: list):
+    def __init__(self, name: str, values: list, device_id=0):
         self.name = name
         self.values = values
+        self.device_id = device_id
 
 
 # ENGINE

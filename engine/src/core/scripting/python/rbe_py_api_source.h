@@ -301,9 +301,10 @@
 "\n"\
 "\n"\
 "class InputAction:\n"\
-"    def __init__(self, name: str, values: list):\n"\
+"    def __init__(self, name: str, values: list, device_id=0):\n"\
 "        self.name = name\n"\
 "        self.values = values\n"\
+"        self.device_id = device_id\n"\
 "\n"\
 "\n"\
 "# ENGINE\n"\
