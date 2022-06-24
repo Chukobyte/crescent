@@ -85,7 +85,6 @@ const char* phy_get_string_from_var(struct _object* obj, const char* variableNam
 
 int phy_get_int_from_var(struct _object* obj, const char* variableName) {
     RBE_ASSERT(obj != NULL);
-    Py_IncRef(obj);
     PyObject* objVar = PyObject_GetAttrString(obj, variableName);
     RBE_ASSERT(objVar != NULL);
     const int varInt = (int) PyLong_AsLong(objVar);
@@ -95,7 +94,6 @@ int phy_get_int_from_var(struct _object* obj, const char* variableName) {
 
 float phy_get_float_from_var(struct _object* obj, const char* variableName) {
     RBE_ASSERT(obj != NULL);
-    Py_IncRef(obj);
     PyObject* objVar = PyObject_GetAttrString(obj, variableName);
     RBE_ASSERT(objVar != NULL);
     const float varFloat = (float) PyLong_AsLong(objVar);
@@ -105,7 +103,6 @@ float phy_get_float_from_var(struct _object* obj, const char* variableName) {
 
 bool phy_get_bool_from_var(struct _object* obj, const char* variableName) {
     RBE_ASSERT(obj != NULL);
-    Py_IncRef(obj);
     PyObject* objVar = PyObject_GetAttrString(obj, variableName);
     RBE_ASSERT(objVar != NULL);
     RBE_ASSERT_FMT(PyBool_Check(objVar), "variable '%s' is not of a bool type!", variableName);
