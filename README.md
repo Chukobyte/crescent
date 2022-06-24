@@ -107,6 +107,8 @@ make clean-editor
 
 #### CMake
 
+*Note: CMake build currently doesn't work temporarily*
+
 Run cmake command from top level directory
 
 ```shell

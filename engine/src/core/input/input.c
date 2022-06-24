@@ -153,7 +153,7 @@ void rbe_input_add_action_value(const char* actionName, const char* actionValue,
         inputAction->gamepadValueCount++;
         rbe_logger_debug("Added gamepad value '%s'", actionValue);
     } else if (strcmp(actionValue, "mb_left") == 0 || strcmp(actionValue, "mb_right") == 0 || strcmp(actionValue, "mb_middle") == 0) {
-        strcpy(inputAction->mouseValues[inputAction->mouseValueCount], actionValue);
+        strcpy(&inputAction->mouseValues[inputAction->mouseValueCount], actionValue);
         rbe_logger_debug("Added mouse action | name: '%s', value: '%s'", actionName, inputAction->mouseValues[inputAction->mouseValueCount]);
         inputAction->mouseValueCount++;
     } else {
