@@ -17,6 +17,8 @@ void input_process_mouse(SDL_Event event);
 void input_load_gamepads();
 void input_process_gamepad(SDL_Event event);
 
+void input_gamepad_cleanup_flags();
+
 //--- Input ---//
 RBEStringHashMap* inputActionMap = NULL;
 const char* inputActionNames[24];
@@ -184,6 +186,7 @@ void rbe_input_clean_up_flags() {
         actionJustReleasedClean.inputActions[i] = NULL;
     }
     actionJustReleasedClean.count = 0;
+    input_gamepad_cleanup_flags();
 }
 
 // Queries
@@ -289,7 +292,7 @@ void input_process_mouse(SDL_Event event) {
 }
 
 //--- Gamepad ---//
-#define RBE_MAX_GAMEPAD_INTERNAL_INPUT_ACTIONS 15 // SDL_CONTROLLER_BUTTON_MAX
+#define RBE_MAX_GAMEPAD_INTERNAL_INPUT_ACTIONS 19 // SDL_CONTROLLER_BUTTON_MAX
 
 typedef struct GamepadInputButtonAction {
     bool isPressed;
@@ -297,6 +300,14 @@ typedef struct GamepadInputButtonAction {
     bool isJustReleased;
 } GamepadInputButtonAction;
 
+typedef enum GamepadInputButtonType {
+    GamepadInputButtonType_DPAD_LEFT = 15,
+    GamepadInputButtonType_DPAD_RIGHT = 16,
+    GamepadInputButtonType_DPAD_UP = 17,
+    GamepadInputButtonType_DPAD_DOWN = 18,
+} GamepadInputButtonType;
+
+// 0 - 14 Reserved for SDL_GameControllerButton enum values
 GamepadInputButtonAction gamepadInputButtonActions[RBE_MAX_GAMEPAD_INTERNAL_INPUT_ACTIONS];
 
 SDL_Joystick* joystickController = NULL;
@@ -334,13 +345,15 @@ void input_process_gamepad(SDL_Event event) {
         const int controllerId = event.jbutton.which;
         const bool isButtonPressed = event.jbutton.state == SDL_PRESSED;
         const uint8_t buttonValue = event.jbutton.button;
+        RBE_ASSERT(buttonValue < RBE_MAX_GAMEPAD_INTERNAL_INPUT_ACTIONS);
         if (controllerId == 0) {
             if (isButtonPressed) {
-                // Button Pressed
-//                ProcessButtonPress(inputEvent);
+                gamepadInputButtonActions[buttonValue].isPressed = true;
+                gamepadInputButtonActions[buttonValue].isJustPressed = true;
             } else {
-                // Button Released
-//                ProcessButtonRelease(inputEvent);
+                gamepadInputButtonActions[buttonValue].isPressed = false;
+                gamepadInputButtonActions[buttonValue].isJustPressed = false;
+                gamepadInputButtonActions[buttonValue].isJustReleased = true;
             }
         }
         break;
@@ -351,22 +364,42 @@ void input_process_gamepad(SDL_Event event) {
         const uint8_t hat = event.jhat.hat;
         const uint8_t hatValue = event.jhat.value;
         if (controllerId == 0) {
-//            ProcessJoyhatMotion(inputEvent);
+            // Process Joyhat Motion (dpad)
         }
         break;
     }
     default:
         break;
     }
-//    ProcessAxisMotion();
 
-//    if (hasGamepadInput) {
-//        for (size_t i = 0; i < inputActionNamesCount; i++) {
-//            InputAction *inputAction = (InputAction *) rbe_string_hash_map_get(inputActionMap, inputActionNames[i]);
-//            for (size_t j = 0; j < inputAction->gamepadValueCount; j++) {
-//                const char* gamepadValue = inputAction->gamepadValues[j];
-//                const uint8_t buttonScancode = rbe_string_hash_map_get_int(gamepadStringValuesMap, gamepadValue);
-//            }
-//        }
-//    }
+    // Process Axis Motion
+
+    if (hasGamepadInput) {
+        // TODO: Don't do another loop, consolidate
+        for (size_t i = 0; i < inputActionNamesCount; i++) {
+            InputAction* inputAction = (InputAction*) rbe_string_hash_map_get(inputActionMap, inputActionNames[i]);
+            for (size_t j = 0; j < inputAction->gamepadValueCount; j++) {
+                const char* gamepadValue = inputAction->gamepadValues[j];
+                const uint8_t buttonScancode = rbe_string_hash_map_get_int(gamepadStringValuesMap, gamepadValue);
+                inputAction->isActionPressed = gamepadInputButtonActions[buttonScancode].isPressed;
+                inputAction->isActionJustPressed = gamepadInputButtonActions[buttonScancode].isJustPressed;
+                inputAction->isActionJustReleased = gamepadInputButtonActions[buttonScancode].isJustReleased;
+                // Set flags
+                if (inputAction->isActionJustPressed) {
+                    actionJustPressedClean.inputActions[actionJustPressedClean.count++] = inputAction;
+                }
+                if (inputAction->isActionJustReleased) {
+                    actionJustReleasedClean.inputActions[actionJustReleasedClean.count++] = inputAction;
+                }
+            }
+        }
+    }
+}
+
+void input_gamepad_cleanup_flags() {
+    // Gamepad action clean up references
+    for (size_t i = 0; i < RBE_MAX_GAMEPAD_INTERNAL_INPUT_ACTIONS; i++) {
+        gamepadInputButtonActions[i].isJustPressed = false;
+        gamepadInputButtonActions[i].isJustReleased = false;
+    }
 }
