@@ -5,10 +5,11 @@
 #include <SDL2/SDL.h>
 
 #include "ec_system.h"
-#include "../../rendering/renderer.h"
-#include "../../utils/rbe_string_util.h"
 #include "../component/transform2d_component.h"
 #include "../component/animated_sprite_component.h"
+#include "../../rendering/renderer.h"
+#include "../../utils/rbe_string_util.h"
+#include "../../utils/rbe_assert.h"
 
 EntitySystem* animatedSpriteRenderingSystem = NULL;
 

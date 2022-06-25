@@ -341,6 +341,7 @@ void setup_scene_component_node(Entity entity, PyObject* component) {
         for (Py_ssize_t animationIndex = 0; animationIndex < PyList_Size(pyAnimationsList); animationIndex++) {
             Animation animation;
             animation.frameCount = 0;
+            animation.currentFrame = 0;
             animation.isValid = true;
             PyObject* pyAnimation = PyList_GetItem(pyAnimationsList, animationIndex);
             RBE_ASSERT(pyAnimation != NULL);
