@@ -17,6 +17,7 @@ void input_process_mouse(SDL_Event event);
 void input_load_gamepads();
 void input_process_gamepad(SDL_Event event);
 
+void input_initialize_gamepad_system();
 void input_gamepad_cleanup_flags();
 
 //--- Input ---//
@@ -101,37 +102,7 @@ bool rbe_input_initialize() {
     rbe_string_hash_map_add_int(keyboardStringValuesMap, "f12", SDL_SCANCODE_F12);
 
     // Gamepad
-    gamepadStringValuesMap = rbe_string_hash_map_create(30);
-    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_button_a", SDL_CONTROLLER_BUTTON_A);
-    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_button_b", SDL_CONTROLLER_BUTTON_B);
-    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_button_x", SDL_CONTROLLER_BUTTON_X);
-    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_button_y", SDL_CONTROLLER_BUTTON_Y);
-    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_dpad_left", SDL_CONTROLLER_BUTTON_DPAD_LEFT);
-    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_dpad_right", SDL_CONTROLLER_BUTTON_DPAD_RIGHT);
-    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_dpad_up", SDL_CONTROLLER_BUTTON_DPAD_UP);
-    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_dpad_down", SDL_CONTROLLER_BUTTON_DPAD_DOWN);
-    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_start", SDL_CONTROLLER_BUTTON_START);
-    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_back", SDL_CONTROLLER_BUTTON_BACK);
-    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_left_shoulder", SDL_CONTROLLER_BUTTON_LEFTSHOULDER);
-    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_right_shoulder", SDL_CONTROLLER_BUTTON_RIGHTSHOULDER);
-    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_left_analog", SDL_CONTROLLER_BUTTON_LEFTSTICK);
-    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_right_analog", SDL_CONTROLLER_BUTTON_RIGHTSTICK);
-
-    // Non Game Controller Button Action
-    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_left_trigger", SDL_CONTROLLER_BUTTON_INVALID);
-    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_right_trigger", SDL_CONTROLLER_BUTTON_INVALID);
-    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_left_analog_left", SDL_CONTROLLER_BUTTON_INVALID);
-    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_left_analog_right", SDL_CONTROLLER_BUTTON_INVALID);
-    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_left_analog_up", SDL_CONTROLLER_BUTTON_INVALID);
-    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_left_analog_down", SDL_CONTROLLER_BUTTON_INVALID);
-    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_right_analog_left", SDL_CONTROLLER_BUTTON_INVALID);
-    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_right_analog_right", SDL_CONTROLLER_BUTTON_INVALID);
-    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_right_analog_up", SDL_CONTROLLER_BUTTON_INVALID);
-    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_left_trigger", SDL_CONTROLLER_BUTTON_INVALID);
-    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_right_analog_down", SDL_CONTROLLER_BUTTON_INVALID);
-
-    // Initialize game pads
-    input_load_gamepads();
+    input_initialize_gamepad_system();
 
     return true;
 }
@@ -313,6 +284,40 @@ GamepadInputButtonAction gamepadInputButtonActions[RBE_MAX_GAMEPAD_INTERNAL_INPU
 SDL_Joystick* joystickController = NULL;
 SDL_GameController* gameController = NULL;
 
+void input_initialize_gamepad_system() {
+    gamepadStringValuesMap = rbe_string_hash_map_create(30);
+    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_button_a", SDL_CONTROLLER_BUTTON_A);
+    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_button_b", SDL_CONTROLLER_BUTTON_B);
+    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_button_x", SDL_CONTROLLER_BUTTON_X);
+    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_button_y", SDL_CONTROLLER_BUTTON_Y);
+    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_dpad_left", GamepadInputButtonType_DPAD_LEFT);
+    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_dpad_right", GamepadInputButtonType_DPAD_RIGHT);
+    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_dpad_up", GamepadInputButtonType_DPAD_UP);
+    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_dpad_down", GamepadInputButtonType_DPAD_DOWN);
+    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_start", SDL_CONTROLLER_BUTTON_START);
+    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_back", SDL_CONTROLLER_BUTTON_BACK);
+    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_left_shoulder", SDL_CONTROLLER_BUTTON_LEFTSHOULDER);
+    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_right_shoulder", SDL_CONTROLLER_BUTTON_RIGHTSHOULDER);
+    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_left_analog", SDL_CONTROLLER_BUTTON_LEFTSTICK);
+    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_right_analog", SDL_CONTROLLER_BUTTON_RIGHTSTICK);
+
+    // Non Game Controller Button Action
+    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_left_trigger", SDL_CONTROLLER_BUTTON_INVALID);
+    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_right_trigger", SDL_CONTROLLER_BUTTON_INVALID);
+    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_left_analog_left", SDL_CONTROLLER_BUTTON_INVALID);
+    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_left_analog_right", SDL_CONTROLLER_BUTTON_INVALID);
+    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_left_analog_up", SDL_CONTROLLER_BUTTON_INVALID);
+    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_left_analog_down", SDL_CONTROLLER_BUTTON_INVALID);
+    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_right_analog_left", SDL_CONTROLLER_BUTTON_INVALID);
+    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_right_analog_right", SDL_CONTROLLER_BUTTON_INVALID);
+    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_right_analog_up", SDL_CONTROLLER_BUTTON_INVALID);
+    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_left_trigger", SDL_CONTROLLER_BUTTON_INVALID);
+    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_right_analog_down", SDL_CONTROLLER_BUTTON_INVALID);
+
+    // Initialize game pads
+    input_load_gamepads();
+}
+
 // TODO: Make better (e.g. loading more than one controller and checking for connects/disconnects)...
 void input_load_gamepads() {
     // Initialize gamepad input action array
@@ -365,6 +370,38 @@ void input_process_gamepad(SDL_Event event) {
         const uint8_t hatValue = event.jhat.value;
         if (controllerId == 0) {
             // Process Joyhat Motion (dpad)
+            if (hatValue & SDL_HAT_LEFT) {
+                gamepadInputButtonActions[GamepadInputButtonType_DPAD_LEFT].isPressed = true;
+                gamepadInputButtonActions[GamepadInputButtonType_DPAD_LEFT].isJustPressed = true;
+            } else {
+                gamepadInputButtonActions[GamepadInputButtonType_DPAD_LEFT].isPressed = false;
+                gamepadInputButtonActions[GamepadInputButtonType_DPAD_LEFT].isJustPressed = false;
+                gamepadInputButtonActions[GamepadInputButtonType_DPAD_LEFT].isJustReleased = true;
+            }
+            if (hatValue & SDL_HAT_RIGHT) {
+                gamepadInputButtonActions[GamepadInputButtonType_DPAD_RIGHT].isPressed = true;
+                gamepadInputButtonActions[GamepadInputButtonType_DPAD_RIGHT].isJustPressed = true;
+            } else {
+                gamepadInputButtonActions[GamepadInputButtonType_DPAD_RIGHT].isPressed = false;
+                gamepadInputButtonActions[GamepadInputButtonType_DPAD_RIGHT].isJustPressed = false;
+                gamepadInputButtonActions[GamepadInputButtonType_DPAD_RIGHT].isJustReleased = true;
+            }
+            if (hatValue & SDL_HAT_UP) {
+                gamepadInputButtonActions[GamepadInputButtonType_DPAD_UP].isPressed = true;
+                gamepadInputButtonActions[GamepadInputButtonType_DPAD_UP].isJustPressed = true;
+            } else {
+                gamepadInputButtonActions[GamepadInputButtonType_DPAD_UP].isPressed = false;
+                gamepadInputButtonActions[GamepadInputButtonType_DPAD_UP].isJustPressed = false;
+                gamepadInputButtonActions[GamepadInputButtonType_DPAD_UP].isJustReleased = true;
+            }
+            if (hatValue & SDL_HAT_DOWN) {
+                gamepadInputButtonActions[GamepadInputButtonType_DPAD_DOWN].isPressed = true;
+                gamepadInputButtonActions[GamepadInputButtonType_DPAD_DOWN].isJustPressed = true;
+            } else {
+                gamepadInputButtonActions[GamepadInputButtonType_DPAD_DOWN].isPressed = false;
+                gamepadInputButtonActions[GamepadInputButtonType_DPAD_DOWN].isJustPressed = false;
+                gamepadInputButtonActions[GamepadInputButtonType_DPAD_DOWN].isJustReleased = true;
+            }
         }
         break;
     }
