@@ -8,13 +8,7 @@
 // Helper functions
 const char* pyh_get_string_from_obj(PyObject* obj) {
     RBE_ASSERT_FMT(PyUnicode_Check(obj), "Not a valid string!");
-    PyObject* pRepr = PyObject_Str(obj);
-    RBE_ASSERT(pRepr != NULL);
-    PyObject* pStr = PyUnicode_AsEncodedString(pRepr, "utf-8", "~E~");
-    RBE_ASSERT(pStr != NULL);
-    const char* str = PyBytes_AsString(pStr);
-    Py_DecRef(pRepr);
-    Py_DecRef(pStr);
+    const char* str = PyUnicode_AsUTF8(obj);
     return str;
 }
 
