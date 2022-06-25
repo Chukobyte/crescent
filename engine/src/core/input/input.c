@@ -12,6 +12,8 @@
 #pragma warning(disable : 4996) // for strcpy
 #endif
 
+// TODO: Rough inplementation of input, will refactor later...
+
 void input_process_keyboard();
 void input_process_mouse(SDL_Event event);
 void input_load_gamepads();
@@ -264,6 +266,7 @@ void input_process_mouse(SDL_Event event) {
 
 //--- Gamepad ---//
 #define RBE_MAX_GAMEPAD_INTERNAL_INPUT_ACTIONS 29
+// TODO: Make dead zones configurable per action
 #define GAMEPAD_AXIS_DEAD_ZONE 10000
 #define GAMEPAD_TRIGGER_DEAD_ZONE 8000
 
@@ -308,7 +311,7 @@ typedef enum GamepadInputAxisMotionType {
     GamepadInputAxisMotionType_RIGHT_TRIGGER = 5,
 } GamepadInputAxisMotionType;
 
-// 0 - 14 Reserved for SDL_GameControllerButton enum values
+// Some indices from 0 - 14 use SDL_GameControllerButton enum values
 GamepadInputButtonAction gamepadInputButtonActions[RBE_MAX_GAMEPAD_INTERNAL_INPUT_ACTIONS];
 
 SDL_Joystick* joystickController = NULL;
@@ -447,7 +450,6 @@ void input_process_gamepad(SDL_Event event) {
 
 
     // Update actions
-    // TODO: Don't do another loop, consolidate
     if (buttonInputUpdated) {
         for (size_t i = 0; i < inputActionNamesCount; i++) {
             InputAction* inputAction = (InputAction*) rbe_string_hash_map_get(inputActionMap, inputActionNames[i]);
