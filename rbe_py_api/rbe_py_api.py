@@ -385,10 +385,27 @@ class Input:
         BUTTON_B = "joystick_button_b"
         BUTTON_X = "joystick_button_x"
         BUTTON_Y = "joystick_button_y"
+        BUTTON_START = "joystick_start"
+        BUTTON_BACK = "joystick_back"
         BUTTON_DPAD_LEFT = "joystick_dpad_left"
         BUTTON_DPAD_RIGHT = "joystick_dpad_right"
         BUTTON_DPAD_UP = "joystick_dpad_up"
         BUTTON_DPAD_DOWN = "joystick_dpad_down"
+        BUTTON_LEFT_SHOULDER = "joystick_left_shoulder"
+        BUTTON_RIGHT_SHOULDER = "joystick_right_shoulder"
+        BUTTON_LEFT_ANALOG = "joystick_left_analog"
+        BUTTON_RIGHT_ANALOG = "joystick_right_analog"
+
+        AXIS_LEFT_TRIGGER = "joystick_left_trigger"
+        AXIS_RIGHT_TRIGGER = "joystick_right_trigger"
+        AXIS_LEFT_ANALOG_LEFT = "joystick_left_analog_left"
+        AXIS_LEFT_ANALOG_RIGHT = "joystick_left_analog_right"
+        AXIS_LEFT_ANALOG_UP = "joystick_left_analog_up"
+        AXIS_LEFT_ANALOG_DOWN = "joystick_left_analog_down"
+        AXIS_RIGHT_ANALOG_LEFT = "joystick_right_analog_left"
+        AXIS_RIGHT_ANALOG_RIGHT = "joystick_right_analog_right"
+        AXIS_RIGHT_ANALOG_UP = "joystick_right_analog_up"
+        AXIS_RIGHT_ANALOG_DOWN = "joystick_right_analog_down"
 
 
 # STAGE SETUP
