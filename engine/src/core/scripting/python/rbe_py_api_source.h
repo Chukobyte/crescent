@@ -424,10 +424,27 @@
 "        BUTTON_B = \"joystick_button_b\"\n"\
 "        BUTTON_X = \"joystick_button_x\"\n"\
 "        BUTTON_Y = \"joystick_button_y\"\n"\
+"        BUTTON_START = \"joystick_start\"\n"\
+"        BUTTON_BACK = \"joystick_back\"\n"\
 "        BUTTON_DPAD_LEFT = \"joystick_dpad_left\"\n"\
 "        BUTTON_DPAD_RIGHT = \"joystick_dpad_right\"\n"\
 "        BUTTON_DPAD_UP = \"joystick_dpad_up\"\n"\
 "        BUTTON_DPAD_DOWN = \"joystick_dpad_down\"\n"\
+"        BUTTON_LEFT_SHOULDER = \"joystick_left_shoulder\"\n"\
+"        BUTTON_RIGHT_SHOULDER = \"joystick_right_shoulder\"\n"\
+"        BUTTON_LEFT_ANALOG = \"joystick_left_analog\"\n"\
+"        BUTTON_RIGHT_ANALOG = \"joystick_right_analog\"\n"\
+"\n"\
+"        AXIS_LEFT_TRIGGER = \"joystick_left_trigger\"\n"\
+"        AXIS_RIGHT_TRIGGER = \"joystick_right_trigger\"\n"\
+"        AXIS_LEFT_ANALOG_LEFT = \"joystick_left_analog_left\"\n"\
+"        AXIS_LEFT_ANALOG_RIGHT = \"joystick_left_analog_right\"\n"\
+"        AXIS_LEFT_ANALOG_UP = \"joystick_left_analog_up\"\n"\
+"        AXIS_LEFT_ANALOG_DOWN = \"joystick_left_analog_down\"\n"\
+"        AXIS_RIGHT_ANALOG_LEFT = \"joystick_right_analog_left\"\n"\
+"        AXIS_RIGHT_ANALOG_RIGHT = \"joystick_right_analog_right\"\n"\
+"        AXIS_RIGHT_ANALOG_UP = \"joystick_right_analog_up\"\n"\
+"        AXIS_RIGHT_ANALOG_DOWN = \"joystick_right_analog_down\"\n"\
 "\n"\
 "\n"\
 "# STAGE SETUP\n"\
