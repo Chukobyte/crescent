@@ -245,7 +245,6 @@ void setup_scene_stage_nodes(SceneTreeNode* parent, PyObject* stageNodeList) {
                 PyObject* pComponent = PyList_GetItem(componentsListVar, componentIndex);
                 RBE_ASSERT(pComponent != NULL);
                 setup_scene_component_node(node->entity, pComponent);
-                Py_DECREF(pComponent);
             }
         }
         // TODO: Do in a different step or having different functionality to add node to scene tree
@@ -260,13 +259,8 @@ void setup_scene_stage_nodes(SceneTreeNode* parent, PyObject* stageNodeList) {
         rbe_scene_manager_queue_entity_for_creation(node); // May move in a different place TODO: Figure out...
 
         rbe_logger_debug("node_name = %s, node_type = %s", nodeName, nodeType);
-        Py_DECREF(tagsListVar);
         Py_DECREF(externalNodeSourceVar);
-        Py_DECREF(componentsListVar);
-        Py_DECREF(childrenListVar);
-        Py_DECREF(pStageNode);
     }
-    Py_DECREF(stageNodeList);
 }
 
 void setup_scene_component_node(Entity entity, PyObject* component) {
@@ -382,7 +376,6 @@ void setup_scene_component_node(Entity entity, PyObject* component) {
                 animation.frameCount++;
 
                 Py_DECREF(pyDrawSource);
-                Py_DECREF(pyAnimationFrame);
             }
 
             // Set current animation if the name matches
@@ -390,14 +383,9 @@ void setup_scene_component_node(Entity entity, PyObject* component) {
             if (strcmp(animation.name, currentAnimationName) == 0) {
                 animatedSpriteComponent->currentAnimation = animation;
             }
-
-            Py_DECREF(pyAnimationFramesList);
-            Py_DECREF(pyAnimation);
         }
 
         component_manager_set_component(entity, ComponentDataIndex_ANIMATED_SPRITE, animatedSpriteComponent);
-
-        Py_DECREF(pyAnimationsList);
     } else if (strcmp(className, "TextLabelComponent") == 0) {
         rbe_logger_debug("Building text label component");
         const char* textLabelUID = phy_get_string_from_var(component, "uid");
