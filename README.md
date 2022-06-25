@@ -8,7 +8,7 @@ A work in progress fighting game engine with the core written in C11.  The name 
   * [C](https://en.wikipedia.org/wiki/C_(programming_language)) (c11) - Engine Core
   * [SDL2](https://github.com/libsdl-org/SDL) - Windowing, inputs
   * [MiniAudio](https://github.com/mackron/miniaudio) - Audio
-  * [Python](https://en.wikipedia.org/wiki/Python_(programming_language)) - Scripting
+  * [Python](https://en.wikipedia.org/wiki/Python_(programming_language)) (3.10) - Scripting
   * [Unity](https://github.com/ThrowTheSwitch/Unity) - Testing
 * Editor
     * [C++](https://en.wikipedia.org/wiki/C%2B%2B) (c++20) - Editor Core

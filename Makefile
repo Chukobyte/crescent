@@ -8,7 +8,7 @@ ifeq ($(OS),Windows_NT)
     CORE_BUILD_OBJECT_TEST := $(CORE_PROJECT_NAME)_test.exe
     EDITOR_BUILD_OBJECT := $(EDITOR_PROJECT_NAME).exe
     EDITOR_BUILD_OBJECT_TEST := $(EDITOR_PROJECT_NAME)_test.exe
-    L_FLAGS := -lmingw32 -static-libgcc -lSDL2main -lSDL2 -lpython37 -lfreetype -lws2_32
+    L_FLAGS := -lmingw32 -static-libgcc -lSDL2main -lSDL2 -lpython310 -lfreetype -lws2_32
     DELETE_CMD := del
 else
     OS_TYPE := linux

@@ -96,7 +96,7 @@ float phy_get_float_from_var(struct _object* obj, const char* variableName) {
     RBE_ASSERT(obj != NULL);
     PyObject* objVar = PyObject_GetAttrString(obj, variableName);
     RBE_ASSERT(objVar != NULL);
-    const float varFloat = (float) PyLong_AsLong(objVar);
+    const float varFloat = (float) PyFloat_AsDouble(objVar);
     Py_DecRef(objVar);
     return varFloat;
 }
