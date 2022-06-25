@@ -12,7 +12,7 @@
 #pragma warning(disable : 4996) // for strcpy
 #endif
 
-// TODO: Rough inplementation of input, will refactor later...
+// TODO: Rough implementation of input, will refactor later...
 
 void input_process_keyboard();
 void input_process_mouse(SDL_Event event);

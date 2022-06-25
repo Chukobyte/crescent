@@ -65,6 +65,7 @@ debug-build: debug-build-engine
 format: format-engine
 clean: clean-engine
 run: run-engine
+build-and-run: build-engine run
 
 build-all: build-engine build-editor
 format-all: format-engine format-editor

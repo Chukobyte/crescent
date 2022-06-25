@@ -120,9 +120,7 @@ PyObject* rbe_py_api_configure_assets(PyObject* self, PyObject* args, PyObject* 
             rbe_logger_debug("file_path = %s", filePath);
             RBEAssetAudioSource assetAudioSource = { .file_path = rbe_strdup(filePath) };
             gameProperties->audioSources[gameProperties->audioSourceCount++] = assetAudioSource;
-            Py_DECREF(pAudioSourceAsset);
         }
-        Py_DECREF(audioSourcesList);
 
         // Textures
         rbe_logger_debug("textures:");
@@ -138,9 +136,7 @@ PyObject* rbe_py_api_configure_assets(PyObject* self, PyObject* args, PyObject* 
                              filePath, wrapS, wrapT, filterMin, filterMag);
             RBEAssetTexture assetTexture = { .file_path = rbe_strdup(filePath) };
             gameProperties->textures[gameProperties->textureCount++] = assetTexture;
-            Py_DECREF(pTextureAsset);
         }
-        Py_DECREF(texturesList);
 
         // Fonts
         rbe_logger_debug("fonts:");
@@ -153,9 +149,7 @@ PyObject* rbe_py_api_configure_assets(PyObject* self, PyObject* args, PyObject* 
             rbe_logger_debug("file_path = %s, uid = %s, size = %d", filePath, uid, size);
             RBEAssetFont assetFont = { .file_path = rbe_strdup(filePath), .uid = rbe_strdup(uid), .size = size };
             gameProperties->fonts[gameProperties->fontCount++] = assetFont;
-            Py_DECREF(pFontAsset);
         }
-        Py_DECREF(fontsList);
 
         Py_RETURN_NONE;
     }
@@ -188,9 +182,7 @@ PyObject* rbe_py_api_configure_inputs(PyObject* self, PyObject* args, PyObject* 
                 inputAction.values[actionIndex] = rbe_strdup(actionValue);
             }
             gameProperties->inputActions[gameProperties->inputActionCount++] = inputAction;
-            Py_DECREF(pInputAction);
         }
-        Py_DECREF(inputActionsList);
         Py_RETURN_NONE;
     }
     return NULL;
@@ -253,7 +245,7 @@ void setup_scene_stage_nodes(SceneTreeNode* parent, PyObject* stageNodeList) {
                 PyObject* pComponent = PyList_GetItem(componentsListVar, componentIndex);
                 RBE_ASSERT(pComponent != NULL);
                 setup_scene_component_node(node->entity, pComponent);
-                Py_DecRef(pComponent);
+                Py_DECREF(pComponent);
             }
         }
         // TODO: Do in a different step or having different functionality to add node to scene tree
@@ -268,13 +260,13 @@ void setup_scene_stage_nodes(SceneTreeNode* parent, PyObject* stageNodeList) {
         rbe_scene_manager_queue_entity_for_creation(node); // May move in a different place TODO: Figure out...
 
         rbe_logger_debug("node_name = %s, node_type = %s", nodeName, nodeType);
-        Py_DecRef(tagsListVar);
-        Py_DecRef(externalNodeSourceVar);
-        Py_DecRef(componentsListVar);
-        Py_DecRef(childrenListVar);
-        Py_DecRef(pStageNode);
+        Py_DECREF(tagsListVar);
+        Py_DECREF(externalNodeSourceVar);
+        Py_DECREF(componentsListVar);
+        Py_DECREF(childrenListVar);
+        Py_DECREF(pStageNode);
     }
-    Py_DecRef(stageNodeList);
+    Py_DECREF(stageNodeList);
 }
 
 void setup_scene_component_node(Entity entity, PyObject* component) {
@@ -302,8 +294,8 @@ void setup_scene_component_node(Entity entity, PyObject* component) {
         component_manager_set_component(entity, ComponentDataIndex_TRANSFORM_2D, transform2DComponent);
         rbe_logger_debug("position: (%f, %f), scale: (%f, %f), rotation: %f, z_index: %d, z_index_relative: %d, ignore_camera: %d",
                          positionX, positionY, scaleX, scaleY, rotation, zIndex, zIndexRelativeToParent, ignoreCamera);
-        Py_DecRef(pPosition);
-        Py_DecRef(pScale);
+        Py_DECREF(pPosition);
+        Py_DECREF(pScale);
     } else if (strcmp(className, "SpriteComponent") == 0) {
         rbe_logger_debug("Building sprite component");
         const char* texturePath = phy_get_string_from_var(component, "texture_path");
@@ -336,8 +328,8 @@ void setup_scene_component_node(Entity entity, PyObject* component) {
         component_manager_set_component(entity, ComponentDataIndex_SPRITE, spriteComponent);
         rbe_logger_debug("texture_path = %s, draw_source = (%f, %f, %f, %f), flip_x: %d, flip_y: %d, modulate: (%d, %d, %d, %d)",
                          texturePath, drawSourceX, drawSourceY, drawSourceW, drawSourceH, flipX, flipY, modulateR, modulateG, modulateB, modulateA);
-        Py_DecRef(pDrawSource);
-        Py_DecRef(pModulate);
+        Py_DECREF(pDrawSource);
+        Py_DECREF(pModulate);
     } else if (strcmp(className, "AnimatedSpriteComponent") == 0) {
         rbe_logger_debug("Building animated sprite component");
         AnimatedSpriteComponent* animatedSpriteComponent = animated_sprite_component_create();
@@ -389,8 +381,8 @@ void setup_scene_component_node(Entity entity, PyObject* component) {
                 animation.animationFrames[animationFrame.frame] = animationFrame;
                 animation.frameCount++;
 
-                Py_DecRef(pyDrawSource);
-                Py_DecRef(pyAnimationFrame);
+                Py_DECREF(pyDrawSource);
+                Py_DECREF(pyAnimationFrame);
             }
 
             // Set current animation if the name matches
@@ -399,13 +391,13 @@ void setup_scene_component_node(Entity entity, PyObject* component) {
                 animatedSpriteComponent->currentAnimation = animation;
             }
 
-            Py_DecRef(pyAnimationFramesList);
-            Py_DecRef(pyAnimation);
+            Py_DECREF(pyAnimationFramesList);
+            Py_DECREF(pyAnimation);
         }
 
         component_manager_set_component(entity, ComponentDataIndex_ANIMATED_SPRITE, animatedSpriteComponent);
 
-        Py_DecRef(pyAnimationsList);
+        Py_DECREF(pyAnimationsList);
     } else if (strcmp(className, "TextLabelComponent") == 0) {
         rbe_logger_debug("Building text label component");
         const char* textLabelUID = phy_get_string_from_var(component, "uid");
@@ -423,7 +415,7 @@ void setup_scene_component_node(Entity entity, PyObject* component) {
         textLabelComponent->color = textLabelColor;
         component_manager_set_component(entity, ComponentDataIndex_TEXT_LABEL, textLabelComponent);
         rbe_logger_debug("uid: %s, text: %s, color(%d, %d, %d, %d)", textLabelUID, textLabelText, colorR, colorG, colorB, colorA);
-        Py_DecRef(pColor);
+        Py_DECREF(pColor);
     } else if (strcmp(className, "ScriptComponent") == 0) {
         rbe_logger_debug("Building script component");
         const char* scriptClassPath = phy_get_string_from_var(component, "class_path");
@@ -462,8 +454,8 @@ void setup_scene_component_node(Entity entity, PyObject* component) {
         rbe_logger_debug("rect: (%f, %f, %f, %f), color: (%f, %f, %f, %f)",
                          rectX, rectY, rectW, rectH, collider2DComponent->color.r, collider2DComponent->color.g, collider2DComponent->color.b, collider2DComponent->color.a);
 
-        Py_DecRef(pyRect);
-        Py_DecRef(pyColor);
+        Py_DECREF(pyRect);
+        Py_DECREF(pyColor);
     } else {
         rbe_logger_error("Invalid component class name: '%s'", className);
     }
@@ -693,7 +685,7 @@ PyObject* rbe_py_api_server_subscribe(PyObject* self, PyObject* args, PyObject* 
         RBE_ASSERT(scriptContext != NULL && scriptContext->on_entity_subscribe_to_network_callback != NULL);
         scriptContext->on_entity_subscribe_to_network_callback(listenerNode, listenerFunc, signalId);
 
-        Py_DecRef(listenerFunc);
+        Py_DECREF(listenerFunc);
         Py_RETURN_NONE;
     }
     return NULL;
@@ -734,7 +726,7 @@ PyObject* rbe_py_api_client_subscribe(PyObject* self, PyObject* args, PyObject* 
         RBE_ASSERT(scriptContext != NULL && scriptContext->on_entity_subscribe_to_network_callback != NULL);
         scriptContext->on_entity_subscribe_to_network_callback(listenerNode, listenerFunc, signalId);
 
-        Py_DecRef(listenerFunc);
+        Py_DECREF(listenerFunc);
         Py_RETURN_NONE;
     }
     return NULL;
