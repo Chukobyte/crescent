@@ -33,14 +33,6 @@ class TitleScreen(Node2D):
         if Input.is_action_just_pressed(name="exit"):
             Engine.exit()
 
-        # Test gamepad
-        if Input.is_action_pressed(name="dpad_left"):
-            print("button a pressed!")
-        if Input.is_action_just_pressed(name="dpad_left"):
-            print("button a just pressed!")
-        if Input.is_action_just_released(name="dpad_left"):
-            print("button a just released!")
-
         if self.is_waiting_to_connect:
             return None
 

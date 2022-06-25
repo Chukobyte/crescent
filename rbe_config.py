@@ -41,14 +41,14 @@ configure_assets(
 
 configure_inputs(
     input_actions=[
-        InputAction(name="exit", values=[Input.Keyboard.ESC]),
+        InputAction(
+            name="exit", values=[Input.Keyboard.ESC, Input.Gamepad.BUTTON_BACK]
+        ),
         InputAction(name="play_sfx", values=[Input.Keyboard.SPACE]),
         InputAction(name="ui_confirm", values=[Input.Keyboard.RETURN]),
         InputAction(name="p1_move_left", values=[Input.Keyboard.A]),
         InputAction(name="p1_move_right", values=[Input.Keyboard.D]),
         InputAction(name="p2_move_left", values=[Input.Keyboard.LEFT]),
         InputAction(name="p2_move_right", values=[Input.Keyboard.RIGHT]),
-        InputAction(name="button_a", values=[Input.Gamepad.BUTTON_A]),
-        InputAction(name="dpad_left", values=[Input.Gamepad.BUTTON_DPAD_LEFT]),
     ]
 )
