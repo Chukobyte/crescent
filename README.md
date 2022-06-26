@@ -107,11 +107,4 @@ make clean-editor
 
 #### CMake
 
-*Note: CMake build currently doesn't work temporarily*
-
-Run cmake command from top level directory
-
-```shell
-cmake -G "MinGW Makefiles" -B cmake-build-dev -S .
-cmake --build cmake-build-dev
-```
+*Note: Instructions coming soon*
