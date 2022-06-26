@@ -899,6 +899,7 @@ def configure_game(
     resolution_height=600,
     target_fps=66,
     initial_node_path="",
+    colliders_visible=False,
 ) -> None:
     rbe_py_api_internal.configure_game(
         game_tile=game_tile,
@@ -908,6 +909,7 @@ def configure_game(
         resolution_height=resolution_height,
         target_fps=target_fps,
         initial_node_path=initial_node_path,
+        colliders_visible=colliders_visible,
     )
 
 

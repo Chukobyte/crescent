@@ -1,7 +1,6 @@
 #include "game_properties.h"
 
 #include <stdlib.h>
-#include <string.h>
 
 #include "utils/logger.h"
 #include "memory/rbe_mem.h"
@@ -19,6 +18,7 @@ void rbe_game_props_initialize(bool loadConfig) {
     properties->resolutionHeight = properties->windowHeight;
     properties->targetFPS = 66;
     properties->initialScenePath = NULL;
+    properties->areCollidersVisible = false;
     properties->audioSourceCount = 0;
     properties->textureCount = 0;
     properties->fontCount = 0;

@@ -224,7 +224,7 @@ static char *rbePyApiGenericEnabledKWList[] = {"enabled", NULL};
 static char *rbePyApiEngineExitKWList[] = {"code", NULL};
 static char *rbePyApiEngineSetTargetFPSKWList[] = {"fps", NULL};
 
-static char *rbePyApiProjectConfigureKWList[] = {"game_tile", "window_width", "window_height", "resolution_width", "resolution_height", "target_fps", "initial_node_path", NULL};
+static char *rbePyApiProjectConfigureKWList[] = {"game_tile", "window_width", "window_height", "resolution_width", "resolution_height", "target_fps", "initial_node_path", "colliders_visible", NULL};
 static char *rbePyApiConfigureAssetsKWList[] = {"audio_sources", "textures", "fonts", NULL};
 static char *rbePyApiConfigureInputsKWList[] = {"input_actions", NULL};
 

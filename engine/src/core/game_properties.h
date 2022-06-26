@@ -36,6 +36,7 @@ typedef struct RBEGameProperties {
     int windowHeight;
     int targetFPS;
     char* initialScenePath;
+    bool areCollidersVisible;
     RBEAssetAudioSource audioSources[20];
     size_t audioSourceCount;
     RBEAssetTexture textures[20];
