@@ -44,10 +44,11 @@ PyObject* rbe_py_cache_get_module(const char* modulePath) {
 }
 
 PyObject* rbe_py_cache_get_class(const char* modulePath, const char* classPath) {
-    RBE_ASSERT_FMT(rbe_py_cache_get_module(modulePath) != NULL, "Unable to load module cache item '%s' for class '%s'", modulePath, classPath);
+    PyObject* pyModule = rbe_py_cache_get_module(modulePath);
+    RBE_ASSERT_FMT(pyModule != NULL, "Unable to load module cache item '%s' for class '%s'", modulePath, classPath);
     PyModuleCacheItem* moduleCacheItem = (PyModuleCacheItem*) rbe_string_hash_map_get(pyModuleCacheHashMap, modulePath);
     if (!rbe_string_hash_map_has(moduleCacheItem->classHashMap, classPath)) {
-        PyObject* pModuleDict = PyModule_GetDict(*moduleCacheItem->module);
+        PyObject* pModuleDict = PyModule_GetDict(pyModule);
         RBE_ASSERT(pModuleDict != NULL);
         PyObject* pNewClass = PyDict_GetItemString(pModuleDict, classPath);
         RBE_ASSERT(pNewClass != NULL);
