@@ -4,6 +4,7 @@
 #include "../scripting/python/py_helper.h"
 #include "../memory/rbe_mem.h"
 #include "../ecs/component/component.h"
+#include "../ecs/component/transform2d_component.h"
 #include "../ecs/system/ec_system.h"
 #include "../data_structures/rbe_hash_map.h"
 #include "../utils/logger.h"
@@ -144,6 +145,31 @@ void rbe_scene_manager_set_active_scene_root(SceneTreeNode* root) {
     RBE_ASSERT(activeScene != NULL);
     RBE_ASSERT_FMT(activeScene->sceneTree->root == NULL, "Trying to overwrite an already existing scene root!");
     activeScene->sceneTree->root = root;
+}
+
+Transform2DComponent rbe_scene_manager_get_combined_parent_transform(Entity entity) {
+    SceneTreeNode* sceneTreeNode = rbe_scene_manager_get_entity_tree_node(entity);
+    Transform2DComponent* parentTransform2DComponent = sceneTreeNode->parent != NULL ? component_manager_get_component_unsafe(sceneTreeNode->parent->entity, ComponentDataIndex_TRANSFORM_2D) : NULL;
+    if (parentTransform2DComponent == NULL) {
+        static Transform2DComponent emptyTransform = {
+            .position={ .x=0.0f, .y=0.0f },
+            .scale={ .x=1.0f, .y=1.0f },
+            .rotation=0.0f,
+            .zIndex=0,
+            .ignoreCamera=false,
+            .isZIndexRelativeToParent=true,
+        };
+        return emptyTransform;
+    }
+    Transform2DComponent transform2DComponent = {
+        .position = parentTransform2DComponent->position,
+        .scale = parentTransform2DComponent->scale,
+        .rotation = parentTransform2DComponent->rotation,
+        .zIndex = parentTransform2DComponent->zIndex,
+        .ignoreCamera = parentTransform2DComponent->ignoreCamera,
+        .isZIndexRelativeToParent = parentTransform2DComponent->isZIndexRelativeToParent
+    };
+    return transform2DComponent;
 }
 
 SceneTreeNode* rbe_scene_manager_get_entity_tree_node(Entity entity) {

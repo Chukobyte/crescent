@@ -24,4 +24,6 @@ void rbe_scene_manager_queue_scene_change(const char* scenePath);
 void rbe_scene_manager_process_queued_scene_change();
 void rbe_scene_manager_set_active_scene_root(SceneTreeNode* root);
 
+struct Transform2DComponent rbe_scene_manager_get_combined_parent_transform(Entity entity);
+SceneTreeNode* rbe_scene_manager_get_entity_tree_node(Entity entity);
 Entity rbe_scene_manager_get_entity_child_by_name(Entity parent, const char* childName);

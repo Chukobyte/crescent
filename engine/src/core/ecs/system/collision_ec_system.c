@@ -2,11 +2,12 @@
 
 #include "ec_system.h"
 #include "../component/transform2d_component.h"
+#include "../component/collider2d_component.h"
+#include "../../scene/scene_manager.h"
 #include "../../game_properties.h"
 #include "../../rendering/renderer.h"
 #include "../../utils/rbe_string_util.h"
 #include "../../utils/rbe_assert.h"
-#include "../component/collider2d_component.h"
 
 EntitySystem* collisionSystem = NULL;
 Texture* collisionOutlineTexture = NULL;
@@ -42,13 +43,14 @@ EntitySystem* collision_ec_system_get() {
 void collision_system_render() {
     for (size_t i = 0; i < collisionSystem->entity_count; i++) {
         const Entity entity = collisionSystem->entities[i];
+        const Transform2DComponent parentTransform = rbe_scene_manager_get_combined_parent_transform(entity);
         const Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
         const Collider2DComponent* colliderComp = (Collider2DComponent*) component_manager_get_component(entity, ComponentDataIndex_COLLIDER_2D);
         const Rect2 colliderDrawDestination = {
-            transformComp->position.x + colliderComp->rect.x,
-            transformComp->position.y + colliderComp->rect.y,
-            transformComp->scale.x * colliderComp->rect.w,
-            transformComp->scale.y * colliderComp->rect.h
+            parentTransform.position.x + transformComp->position.x + colliderComp->rect.x,
+            parentTransform.position.y + transformComp->position.y + colliderComp->rect.y,
+            parentTransform.scale.x * transformComp->scale.x * colliderComp->rect.w,
+            parentTransform.scale.y * transformComp->scale.y * colliderComp->rect.h
         };
         rbe_renderer_queue_sprite_draw_call(
             collisionOutlineTexture,
