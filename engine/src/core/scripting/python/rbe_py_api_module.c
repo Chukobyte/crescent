@@ -86,7 +86,8 @@ PyObject* rbe_py_api_configure_game(PyObject* self, PyObject* args, PyObject* kw
     int resolutionHeight;
     int targetFPS;
     char* initialScenePath;
-    if (PyArg_ParseTupleAndKeywords(args, kwargs, "siiiiis", rbePyApiProjectConfigureKWList, &gameTitle, &windowWidth, &windowHeight, &resolutionWidth, &resolutionHeight, &targetFPS, &initialScenePath)) {
+    bool collidersVisible = false;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "siiiiisb", rbePyApiProjectConfigureKWList, &gameTitle, &windowWidth, &windowHeight, &resolutionWidth, &resolutionHeight, &targetFPS, &initialScenePath, &collidersVisible)) {
         RBEGameProperties* gameProperties = rbe_game_props_get();
         gameProperties->gameTitle = rbe_strdup(gameTitle);
         gameProperties->windowWidth = windowWidth;
@@ -95,6 +96,7 @@ PyObject* rbe_py_api_configure_game(PyObject* self, PyObject* args, PyObject* kw
         gameProperties->resolutionHeight = resolutionHeight;
         gameProperties->targetFPS = targetFPS;
         gameProperties->initialScenePath = rbe_strdup(initialScenePath);
+        gameProperties->areCollidersVisible = collidersVisible;
         Py_RETURN_NONE;
     }
     return NULL;

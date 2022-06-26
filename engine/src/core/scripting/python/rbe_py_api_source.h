@@ -938,6 +938,7 @@
 "    resolution_height=600,\n"\
 "    target_fps=66,\n"\
 "    initial_node_path=\"\",\n"\
+"    colliders_visible=False,\n"\
 ") -> None:\n"\
 "    rbe_py_api_internal.configure_game(\n"\
 "        game_tile=game_tile,\n"\
@@ -947,6 +948,7 @@
 "        resolution_height=resolution_height,\n"\
 "        target_fps=target_fps,\n"\
 "        initial_node_path=initial_node_path,\n"\
+"        colliders_visible=colliders_visible,\n"\
 "    )\n"\
 "\n"\
 "\n"\

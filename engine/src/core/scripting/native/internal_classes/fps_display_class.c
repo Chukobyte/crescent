@@ -34,7 +34,7 @@ RBENativeScriptClass* fps_display_native_class_create_new() {
 RBENativeScriptClass* fps_display_create_new_instance(Entity entity) {
     RBENativeScriptClass* fpsClassInstance = rbe_native_class_create_new(entity, "main", "FpsDisplay");
     fpsClassInstance->on_start_func = fps_display_on_start;
-    fpsClassInstance->on_start_func = fps_display_on_end;
+    fpsClassInstance->on_end_func = fps_display_on_end;
     fpsClassInstance->update_func = fps_display_update;
     FpsDisplayClassData* classData = RBE_MEM_ALLOCATE(FpsDisplayClassData);
     classData->value = 10;

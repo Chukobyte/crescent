@@ -21,12 +21,12 @@ typedef struct TextureCoordinates {
 
 void sprite_renderer_initialize();
 void sprite_renderer_finalize();
-void sprite_renderer_draw_sprite(Texture* texture, Rect2 sourceRect, Rect2 destRect, float rotation, Color color, bool flipX, bool flipY);
+void sprite_renderer_draw_sprite(const Texture* texture, const Rect2* sourceRect, const Rect2* destRect, float rotation, const Color *color, bool flipX, bool flipY);
 void font_renderer_initialize();
-void font_renderer_draw_text(Font* font, const char* text, float x, float y, float scale, Color color);
+void font_renderer_draw_text(const Font* font, const char* text, float x, float y, float scale, const Color* color);
 void font_renderer_finalize();
 
-TextureCoordinates renderer_get_texture_coordinates(Texture* texture, Rect2 drawSource, bool flipX, bool flipY);
+TextureCoordinates renderer_get_texture_coordinates(const Texture* texture, const Rect2* drawSource, bool flipX, bool flipY);
 void renderer_print_opengl_errors();
 
 static GLuint spriteQuadVAO;
@@ -91,10 +91,10 @@ void rbe_renderer_flush_batches() {
     for (size_t i = 0; i < sprite_batch_items_count; i++) {
         sprite_renderer_draw_sprite(
             sprite_batch_items[i].texture,
-            sprite_batch_items[i].sourceRect,
-            sprite_batch_items[i].destRect,
+            &sprite_batch_items[i].sourceRect,
+            &sprite_batch_items[i].destRect,
             sprite_batch_items[i].rotation,
-            sprite_batch_items[i].color,
+            &sprite_batch_items[i].color,
             sprite_batch_items[i].flipX,
             sprite_batch_items[i].flipY
         );
@@ -108,7 +108,7 @@ void rbe_renderer_flush_batches() {
             font_batch_items[i].x,
             font_batch_items[i].y,
             font_batch_items[i].scale,
-            font_batch_items[i].color
+            &font_batch_items[i].color
         );
     }
     RBE_STATIC_ARRAY_EMPTY(font_batch_items);
@@ -168,7 +168,7 @@ void sprite_renderer_initialize() {
 
 void sprite_renderer_finalize() {}
 
-void sprite_renderer_draw_sprite(Texture* texture, Rect2 sourceRect, Rect2 destRect, float rotation, Color color, bool flipX, bool flipY) {
+void sprite_renderer_draw_sprite(const Texture* texture, const Rect2* sourceRect, const Rect2* destRect, float rotation, const Color* color, bool flipX, bool flipY) {
     glDepthMask(false);
     // 1. Translation
     mat4 model = {
@@ -178,22 +178,22 @@ void sprite_renderer_draw_sprite(Texture* texture, Rect2 sourceRect, Rect2 destR
         {0.0f, 0.0f, 0.0f, 1.0f}
     };
     glm_translate(model, (vec3) {
-        destRect.x, destRect.y, 0.0f
+        destRect->x, destRect->y, 0.0f
     });
     // 2. Rotation
     glm_translate(model, (vec3) {
-        0.5f * destRect.w, 0.5f * destRect.h, 0.0f
+        0.5f * destRect->w, 0.5f * destRect->h, 0.0f
     });
     glm_make_rad(&rotation);
     glm_rotate(model, rotation, (vec3) {
         0.0f, 0.0f, 1.0f
     });
     glm_translate(model, (vec3) {
-        -0.5f * destRect.w, -0.5f * destRect.h, 0.0f
+        -0.5f * destRect->w, -0.5f * destRect->h, 0.0f
         });
     // 3. Scaling
     glm_scale(model, (vec3) {
-        destRect.w, destRect.h, 1.0f
+        destRect->w, destRect->h, 1.0f
     });
 
     glBindVertexArray(spriteQuadVAO);
@@ -217,10 +217,10 @@ void sprite_renderer_draw_sprite(Texture* texture, Rect2 sourceRect, Rect2 destR
         verts[row + 2] = isTMin ? 0.0f : 1.0f;
         verts[row + 3] = isSMin ? textureCoords.sMin : textureCoords.sMax;
         verts[row + 4] = isTMin ? textureCoords.tMin : textureCoords.tMax;
-        verts[row + 5] = color.r;
-        verts[row + 6] = color.g;
-        verts[row + 7] = color.b;
-        verts[row + 8] = color.a;
+        verts[row + 5] = color->r;
+        verts[row + 6] = color->g;
+        verts[row + 7] = color->b;
+        verts[row + 8] = color->a;
     }
 
     glActiveTexture(GL_TEXTURE0);
@@ -257,16 +257,17 @@ void font_renderer_finalize() {
     FT_Done_FreeType(rbe_render_context_get()->freeTypeLibrary);
 }
 
-void font_renderer_draw_text(Font* font, const char* text, float x, float y, float scale, Color color) {
+void font_renderer_draw_text(const Font* font, const char* text, float x, float y, float scale, const Color* color) {
     Vector2 currentScale = { scale, scale };
     shader_use(fontShader);
-    shader_set_vec4_float(fontShader, "textColor", color.r, color.g, color.b, color.a);
+    shader_set_vec4_float(fontShader, "textColor", color->r, color->g, color->b, color->a);
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(font->VAO);
 
     // Iterate through all characters
     char* c = (char*) &text[0];
-    for (size_t i = 0; i < strlen(text); i++) {
+    const size_t textLength = strlen(text);
+    for (size_t i = 0; i < textLength; i++) {
         Character ch = font->characters[(int) *c];
         const float xPos = x + (ch.bearing.x * currentScale.x);
         const float yPos = -y - (ch.size.y - ch.bearing.y) * currentScale.x; // Invert Y because othographic projection is flipped
@@ -299,24 +300,24 @@ void font_renderer_draw_text(Font* font, const char* text, float x, float y, flo
 }
 
 // --- Misc --- //
-TextureCoordinates renderer_get_texture_coordinates(Texture* texture, Rect2 drawSource, bool flipX, bool flipY) {
+TextureCoordinates renderer_get_texture_coordinates(const Texture* texture, const Rect2* drawSource, bool flipX, bool flipY) {
     // S
     GLfloat sMin, sMax;
     if (flipX) {
-        sMax = (drawSource.x + 0.5f) / (float) texture->width;
-        sMin = (drawSource.x + drawSource.w - 0.5f) / (float) texture->width;
+        sMax = (drawSource->x + 0.5f) / (float) texture->width;
+        sMin = (drawSource->x + drawSource->w - 0.5f) / (float) texture->width;
     } else {
-        sMin = (drawSource.x + 0.5f) / (float) texture->width;
-        sMax = (drawSource.x + drawSource.w - 0.5f) / (float) texture->width;
+        sMin = (drawSource->x + 0.5f) / (float) texture->width;
+        sMax = (drawSource->x + drawSource->w - 0.5f) / (float) texture->width;
     }
     // T
     GLfloat tMin, tMax;
     if (flipY) {
-        tMax = (drawSource.y + 0.5f) / (float) texture->height;
-        tMin = (drawSource.y + drawSource.h - 0.5f) / (float) texture->height;
+        tMax = (drawSource->y + 0.5f) / (float) texture->height;
+        tMin = (drawSource->y + drawSource->h - 0.5f) / (float) texture->height;
     } else {
-        tMin = (drawSource.y + 0.5f) / (float) texture->height;
-        tMax = (drawSource.y + drawSource.h - 0.5f) / (float) texture->height;
+        tMin = (drawSource->y + 0.5f) / (float) texture->height;
+        tMax = (drawSource->y + drawSource->h - 0.5f) / (float) texture->height;
     }
     TextureCoordinates textureCoords = { sMin, sMax, tMin, tMax };
     return textureCoords;
