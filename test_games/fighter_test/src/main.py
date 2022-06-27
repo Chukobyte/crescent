@@ -50,7 +50,7 @@ class FighterSimulation:
             self.fighters[0].collider
         )
         for entity in collided_entities:
-            print(f"Entities collided - entity '{entity}'!")
+            print(f"Entities collided!")
             break
 
     def network_update(self, message: str) -> None:
