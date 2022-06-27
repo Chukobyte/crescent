@@ -63,7 +63,7 @@ Font* font_create_font(const char* fileName, int size) {
         glCreateBuffers(1, &font->VBO);
         glNamedBufferData(font->VBO, sizeof(GLfloat) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
         glEnableVertexArrayAttrib(font->VAO, 0);
-        glVertexArrayAttribFormat(font->VAO, 0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat));
+        glVertexArrayAttribFormat(font->VAO, 0, 4, GL_FLOAT, GL_FALSE, 0); // TODO: if there is an issue it might be here
         glVertexArrayAttribBinding(font->VAO, 0, 0);
 
         font->isValid = true;
