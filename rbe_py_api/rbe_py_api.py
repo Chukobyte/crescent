@@ -839,6 +839,21 @@ class AudioManager:
         rbe_py_api_internal.audio_manager_stop_sound(path=path)
 
 
+# PHYSICS
+
+
+class CollisionHandler:
+    # A temp (ish) class used to brute force collision checks for now
+
+    @staticmethod
+    def process_collisions(collider: Collider2D):
+        collided_entities = rbe_py_api_internal.collision_handler_process_collisions(
+            entity_id=collider.entity_id
+        )
+        for index, node in enumerate(collided_entities):
+            yield Node.parse_scene_node_from_engine(scene_node=node)
+
+
 # NETWORK
 class Network:
     @staticmethod

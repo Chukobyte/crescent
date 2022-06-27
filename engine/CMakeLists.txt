@@ -50,6 +50,7 @@ add_library(${PROJECT_NAME} STATIC
         src/core/utils/rbe_string_util.c
         src/core/data_structures/rbe_hash_map.c
         src/core/data_structures/rbe_hash_map_string.c
+        src/core/physics/collision/collision.c
         src/core/ecs/ecs_manager.c
         src/core/ecs/component/animated_sprite_component.c
         src/core/ecs/component/component.c

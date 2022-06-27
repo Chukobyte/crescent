@@ -151,3 +151,7 @@ def client_send(message: str) -> None:
 
 def client_subscribe(signal_id: str, listener_node: int, listener_func) -> None:
     pass
+
+
+def collision_handler_process_collisions(entity_id: int) -> list:
+    return []

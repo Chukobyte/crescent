@@ -60,6 +60,8 @@ PyObject* rbe_py_api_client_stop(PyObject* self, PyObject* args);
 PyObject* rbe_py_api_client_send(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* rbe_py_api_client_subscribe(PyObject* self, PyObject* args, PyObject* kwargs);
 
+// Collision Handler
+PyObject* rbe_py_api_collision_handler_process_collisions(PyObject* self, PyObject* args, PyObject* kwargs);
 
 // --- Module Methods Definitions --- //
 static struct PyMethodDef rbePyApiMethods[] = {
@@ -207,6 +209,11 @@ static struct PyMethodDef rbePyApiMethods[] = {
         "client_subscribe", (PyCFunction) rbe_py_api_client_subscribe,
         METH_VARARGS | METH_KEYWORDS, "Subscribe a node's function to one of the client's signals."
     },
+    {
+            "collision_handler_process_collisions", (PyCFunction) rbe_py_api_collision_handler_process_collisions,
+            METH_VARARGS | METH_KEYWORDS, "Returns collided entities."
+    },
+    // COLLISION HANDLER
     { NULL, NULL, 0,NULL },
 };
 
