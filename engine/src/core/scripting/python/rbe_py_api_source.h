@@ -878,6 +878,21 @@
 "        rbe_py_api_internal.audio_manager_stop_sound(path=path)\n"\
 "\n"\
 "\n"\
+"# PHYSICS\n"\
+"\n"\
+"\n"\
+"class CollisionHandler:\n"\
+"    # A temp (ish) class used to brute force collision checks for now\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def process_collisions(collider: Collider2D):\n"\
+"        collided_entities = rbe_py_api_internal.collision_handler_process_collisions(\n"\
+"            entity_id=collider.entity_id\n"\
+"        )\n"\
+"        for index, node in enumerate(collided_entities):\n"\
+"            yield Node.parse_scene_node_from_engine(scene_node=node)\n"\
+"\n"\
+"\n"\
 "# NETWORK\n"\
 "class Network:\n"\
 "    @staticmethod\n"\

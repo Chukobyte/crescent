@@ -24,6 +24,7 @@
 #include "../../networking/rbe_network.h"
 #include "../../utils/rbe_string_util.h"
 #include "../../utils/rbe_assert.h"
+#include "../../physics/collision/collision.h"
 
 #ifdef _MSC_VER
 #pragma warning(disable : 4996) // for strcpy
@@ -213,7 +214,7 @@ void setup_scene_stage_nodes(SceneTreeNode* parent, PyObject* stageNodeList) {
     for (Py_ssize_t i = 0; i < PyList_Size(stageNodeList); i++) {
         SceneTreeNode* node = rbe_scene_tree_create_tree_node(rbe_ec_system_create_entity(), parent);
         // Set tree root if parent is absent
-        if (node->parent == NULL) {
+        if (parent == NULL) {
             rbe_scene_manager_set_active_scene_root(node);
         } else {
             parent->children[parent->childCount++] = node;
@@ -536,6 +537,7 @@ PyObject* rbe_py_api_node_get_child(PyObject* self, PyObject* args, PyObject* kw
         Entity childEntity = rbe_scene_manager_get_entity_child_by_name(parentEntity, childName);
         if (childEntity == NULL_ENTITY) {
             rbe_logger_warn("Failed to get child node from parent entity '%d' with the name '%s'", parentEntity, childName);
+            Py_RETURN_NONE;
         }
         // TODO: Check for script custom classes and return them
         char typeBuffer[TYPE_BUFFER_SIZE];
@@ -721,4 +723,26 @@ PyObject* rbe_py_api_client_subscribe(PyObject* self, PyObject* args, PyObject* 
         Py_RETURN_NONE;
     }
     return NULL;
+}
+
+// Collision Handler
+PyObject* rbe_py_api_collision_handler_process_collisions(PyObject* self, PyObject* args, PyObject* kwargs) {
+#define TYPE_BUFFER_SIZE 32
+    Entity entity;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", rbePyApiGenericGetEntityKWList, &entity)) {
+        char typeBuffer[TYPE_BUFFER_SIZE];
+        PyObject* pyCollidedEntityList = PyList_New(0);
+        CollisionResult collisionResult = rbe_collision_process_entity_collisions(entity);
+        for (size_t i = 0; i < collisionResult.collidedEntityCount; i++) {
+            const Entity collidedEntity = collisionResult.collidedEntities[i];
+            NodeComponent* nodeComponent = component_manager_get_component(collidedEntity, ComponentDataIndex_NODE);
+            strcpy(typeBuffer, node_get_component_type_string(nodeComponent->type));
+            if (PyList_Append(pyCollidedEntityList, Py_BuildValue("(is)", collidedEntity, typeBuffer)) == -1) {
+                PyErr_Print();
+            }
+        }
+        return Py_BuildValue("O", pyCollidedEntityList);
+    }
+    return NULL;
+#undef TYPE_BUFFER_SIZE
 }

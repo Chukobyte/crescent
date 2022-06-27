@@ -78,6 +78,10 @@ void* component_manager_get_component(Entity entity, ComponentDataIndex index) {
     return component;
 }
 
+void* component_manager_get_component_unsafe(Entity entity, ComponentDataIndex index) {
+    return component_array_get_component(componentManager->entityComponentArrays[entity], index);
+}
+
 void component_manager_set_component(Entity entity, ComponentDataIndex index, void* component) {
     component_array_set_component(componentManager->entityComponentArrays[entity], index, component);
     // Update signature

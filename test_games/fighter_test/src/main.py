@@ -6,8 +6,9 @@ from test_games.fighter_test.src.game_state import *
 
 
 class Fighter:
-    def __init__(self, node: Node2D, input_buffer: InputBuffer):
+    def __init__(self, node: Node2D, collider: Collider2D, input_buffer: InputBuffer):
         self.node = node
+        self.collider = collider
         self.input_buffer = input_buffer
         self.velocity = Vector2.ZERO()
         self.speed = 50
@@ -44,6 +45,14 @@ class FighterSimulation:
         for receiver_fighter in self.network_receiving_fighters:
             receiver_fighter.input_buffer.kill_inputs()
 
+        # Collision test, assumes two fighters for now.  TODO: Clean up later
+        collided_entities = CollisionHandler.process_collisions(
+            self.fighters[0].collider
+        )
+        for entity in collided_entities:
+            print(f"Entities collided!")
+            break
+
     def network_update(self, message: str) -> None:
         # print(f"net update! message: '{message}'")
         if self.network_receiving_fighters:
@@ -76,6 +85,8 @@ class Main(Node2D):
         else:
             player_one_node = self.get_child(name="PlayerOne")
             player_two_node = self.get_child(name="PlayerTwo")
+        player_one_collider = player_one_node.get_child(name="Collider")
+        player_two_collider = player_two_node.get_child(name="Collider")
         print(f"[PYTHON_SCRIPT] p1 = {player_one_node}, p2 = {player_two_node}")
 
         # Input Buffers
@@ -84,8 +95,12 @@ class Main(Node2D):
         )
         # Fight Sim
         self.fight_sim = FighterSimulation()
-        self.fight_sim.add_fighter(Fighter(player_one_node, player_one_input))
-        self.fight_sim.add_fighter(Fighter(player_two_node, player_two_input))
+        self.fight_sim.add_fighter(
+            Fighter(player_one_node, player_one_collider, player_one_input)
+        )
+        self.fight_sim.add_fighter(
+            Fighter(player_two_node, player_two_collider, player_two_input)
+        )
 
         # Network
         is_network_enabled = (

@@ -6,6 +6,7 @@
 #include "../component/transform2d_component.h"
 #include "../component/sprite_component.h"
 #include "../../rendering/renderer.h"
+#include "../../scene/scene_manager.h"
 #include "../../utils/rbe_string_util.h"
 #include "../../utils/rbe_assert.h"
 
@@ -25,13 +26,14 @@ EntitySystem* sprite_rendering_ec_system_create() {
 void sprite_rendering_system_render() {
     for (size_t i = 0; i < spriteRenderingSystem->entity_count; i++) {
         const Entity entity = spriteRenderingSystem->entities[i];
+        const Transform2DComponent parentTransform = rbe_scene_manager_get_combined_parent_transform(entity);
         const Transform2DComponent* spriteTransformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
         const SpriteComponent* spriteComponent = (SpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_SPRITE);
         const Rect2 destinationRectangle = {
-            spriteTransformComp->position.x,
-            spriteTransformComp->position.y,
-            spriteComponent->drawSource.w * spriteTransformComp->scale.x,
-            spriteComponent->drawSource.h * spriteTransformComp->scale.y
+            spriteTransformComp->position.x + parentTransform.position.x,
+            spriteTransformComp->position.y + parentTransform.position.y,
+            spriteComponent->drawSource.w * spriteTransformComp->scale.x * parentTransform.scale.x,
+            spriteComponent->drawSource.h * spriteTransformComp->scale.y * parentTransform.scale.y
         };
         rbe_renderer_queue_sprite_draw_call(
             spriteComponent->texture,

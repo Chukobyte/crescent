@@ -72,7 +72,7 @@ create_stage_nodes(
                     ],
                     children=[
                         StageNode(
-                            name="P1Collider",
+                            name="Collider",
                             type="Collider2D",
                             tags=None,
                             external_node_source=None,
@@ -145,7 +145,7 @@ create_stage_nodes(
                     ],
                     children=[
                         StageNode(
-                            name="P2Collider",
+                            name="Collider",
                             type="Collider2D",
                             tags=None,
                             external_node_source=None,

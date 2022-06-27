@@ -23,22 +23,53 @@ static const struct Texture DEFAULT_TEXTURE_REF = {
 
 bool rbe_texture_is_texture_valid(Texture* texture);
 
-Texture* rbe_texture_create_texture(const char* filePath) {
+Texture* rbe_texture_create_default_texture() {
     Texture* texture = RBE_MEM_ALLOCATE(Texture);
-    texture->fileName = filePath;
-    stbi_set_flip_vertically_on_load(false);
-    unsigned char* imageData = stbi_load(filePath, &texture->width, &texture->height, &texture->nrChannels, 0);
-    RBE_ASSERT_FMT(imageData != NULL, "Failed to load texture image at file path '%s'", filePath);
+    texture->fileName = NULL;
     texture->internalFormat = DEFAULT_TEXTURE_REF.internalFormat;
     texture->imageFormat = DEFAULT_TEXTURE_REF.imageFormat;
     texture->wrapS = DEFAULT_TEXTURE_REF.wrapS;
     texture->wrapT = DEFAULT_TEXTURE_REF.wrapT;
     texture->filterMin = DEFAULT_TEXTURE_REF.filterMin;
     texture->filterMag = DEFAULT_TEXTURE_REF.filterMag;
+    return texture;
+}
+
+void rbe_texture_generate(Texture* texture);
+
+Texture* rbe_texture_create_texture(const char* filePath) {
+    Texture* texture = rbe_texture_create_default_texture();
+    texture->fileName = filePath;
+    stbi_set_flip_vertically_on_load(false);
+    unsigned char* imageData = stbi_load(filePath, &texture->width, &texture->height, &texture->nrChannels, 0);
+    RBE_ASSERT_FMT(imageData != NULL, "Failed to load texture image at file path '%s'", filePath);
     texture->data = (unsigned char*) RBE_MEM_ALLOCATE_SIZE(sizeof(&imageData));
     memcpy(texture->data, imageData, sizeof(&imageData));
     texture->data = imageData;
 
+    rbe_texture_generate(texture);
+
+    return texture;
+}
+
+Texture* rbe_texture_create_solid_colored_texture(GLsizei width, GLsizei height, GLuint colorValue) {
+    Texture* texture = rbe_texture_create_default_texture();
+    texture->nrChannels = 4;
+    texture->width = width;
+    texture->height = height;
+
+    const GLsizei dataSize = width * height * 4;
+    texture->data = (unsigned char*) RBE_MEM_ALLOCATE_SIZE(dataSize);
+    for (GLsizei i = 0; i < dataSize; i++) {
+        texture->data[i] = colorValue;
+    }
+
+    rbe_texture_generate(texture);
+
+    return texture;
+}
+
+void rbe_texture_generate(Texture* texture) {
     // OpenGL Stuff
     if (texture->nrChannels == 1) {
         texture->imageFormat = GL_RED;
@@ -61,9 +92,7 @@ Texture* rbe_texture_create_texture(const char* filePath) {
     // Unbind texture
     glBindTexture(GL_TEXTURE_2D, 0);
 
-    RBE_ASSERT_FMT(rbe_texture_is_texture_valid(texture), "Texture at file path '%s' is not valid!", filePath);
-
-    return texture;
+    RBE_ASSERT_FMT(rbe_texture_is_texture_valid(texture), "Texture at file path '%s' is not valid!", texture->fileName);
 }
 
 bool rbe_texture_is_texture_valid(Texture* texture) {
