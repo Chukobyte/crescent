@@ -13,7 +13,7 @@ static const struct Texture DEFAULT_TEXTURE_REF = {
     .width = 0,
     .height = 0,
     .nrChannels = 0,
-    .internalFormat = GL_RGBA,
+    .internalFormat = GL_RGBA8,
     .imageFormat = GL_RGBA,
     .wrapS = GL_CLAMP_TO_BORDER,
     .wrapT = GL_CLAMP_TO_BORDER,
@@ -81,11 +81,9 @@ void rbe_texture_generate(Texture* texture) {
 
     // Create texture
     glCreateTextures(GL_TEXTURE_2D, 1, &texture->id);
-
-
     glTextureStorage2D(texture->id,
-                       0, // level
-                       GL_RED,
+                       1, // levels
+                       texture->internalFormat,
                        texture->width,
                        texture->height);
     glTextureSubImage2D(texture->id,

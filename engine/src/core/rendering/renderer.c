@@ -133,23 +133,23 @@ void sprite_renderer_initialize() {
 
     glNamedBufferData(spriteQuadVBO, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
 
-    glVertexArrayVertexBuffer(spriteQuadVAO, 0, spriteQuadVAO, 0, sizeof(vertices));
+    glVertexArrayVertexBuffer(spriteQuadVAO, 0, spriteQuadVAO, 0, 9 * sizeof(GLfloat));
 
     // id attribute
     glEnableVertexArrayAttrib(spriteQuadVAO, 0);
-    glVertexArrayAttribFormat(spriteQuadVAO, 0, 1, GL_FLOAT, GL_FALSE, 0); // TODO: if there is an issue it might be here
+    glVertexArrayAttribFormat(spriteQuadVAO, 0, 1, GL_FLOAT, GL_FALSE, 0);
     glVertexArrayAttribBinding(spriteQuadVAO, 0, 0);
     // position attribute
     glEnableVertexArrayAttrib(spriteQuadVAO, 1);
-    glVertexArrayAttribFormat(spriteQuadVAO, 1, 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat)); // TODO: if there is an issue it might be here
+    glVertexArrayAttribFormat(spriteQuadVAO, 1, 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat));
     glVertexArrayAttribBinding(spriteQuadVAO, 1, 0);
     // texture coords attribute
     glEnableVertexArrayAttrib(spriteQuadVAO, 2);
-    glVertexArrayAttribFormat(spriteQuadVAO, 2, 2, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat)); // TODO: if there is an issue it might be here
+    glVertexArrayAttribFormat(spriteQuadVAO, 2, 2, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat));
     glVertexArrayAttribBinding(spriteQuadVAO, 2, 0);
     // color attribute
     glEnableVertexArrayAttrib(spriteQuadVAO, 3);
-    glVertexArrayAttribFormat(spriteQuadVAO, 3, 4, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat)); // TODO: if there is an issue it might be here
+    glVertexArrayAttribFormat(spriteQuadVAO, 3, 4, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat));
     glVertexArrayAttribBinding(spriteQuadVAO, 3, 0);
 
     // compile shaders
@@ -225,7 +225,6 @@ void sprite_renderer_draw_sprite(const Texture* texture, const Rect2* sourceRect
 
     glNamedBufferData(spriteQuadVBO, (GLsizeiptr) sizeof(verts), verts, GL_DYNAMIC_DRAW);
 
-    // TODO: is this correct?
     glBindVertexArray(spriteQuadVAO);
     glBindBuffer(GL_ARRAY_BUFFER, spriteQuadVBO);
 
