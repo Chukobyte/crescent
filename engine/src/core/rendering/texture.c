@@ -80,17 +80,30 @@ void rbe_texture_generate(Texture* texture) {
     }
 
     // Create texture
-    glGenTextures(1, &texture->id);
-    glBindTexture(GL_TEXTURE_2D, texture->id);
-    glTexImage2D(GL_TEXTURE_2D, 0, texture->internalFormat, texture->width, texture->height, 0, texture->imageFormat, GL_UNSIGNED_BYTE, texture->data);
-    glGenerateMipmap(GL_TEXTURE_2D);
+    glCreateTextures(GL_TEXTURE_2D, 1, &texture->id);
+
+
+    glTextureStorage2D(texture->id,
+                       0, // level
+                       GL_RED,
+                       texture->width,
+                       texture->height);
+    glTextureSubImage2D(texture->id,
+                        0, // level
+                        0, // offset x
+                        0, // offset y
+                        texture->width,
+                        texture->height,
+                        texture->imageFormat,
+                        GL_UNSIGNED_BYTE,
+                        texture->data);
+
+    glGenerateTextureMipmap(texture->id);
     // Wrap and filter modes
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, texture->wrapS);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, texture->wrapT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texture->filterMin);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, texture->filterMag);
-    // Unbind texture
-    glBindTexture(GL_TEXTURE_2D, 0);
+    glTextureParameteri(texture->id, GL_TEXTURE_WRAP_S, texture->wrapS);
+    glTextureParameteri(texture->id, GL_TEXTURE_WRAP_T, texture->wrapT);
+    glTextureParameteri(texture->id, GL_TEXTURE_MIN_FILTER, texture->filterMin);
+    glTextureParameteri(texture->id, GL_TEXTURE_MAG_FILTER, texture->filterMag);
 
     RBE_ASSERT_FMT(rbe_texture_is_texture_valid(texture), "Texture at file path '%s' is not valid!", texture->fileName);
 }
