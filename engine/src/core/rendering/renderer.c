@@ -133,6 +133,8 @@ void sprite_renderer_initialize() {
 
     glNamedBufferData(spriteQuadVBO, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
 
+    glVertexArrayVertexBuffer(spriteQuadVAO, 0, spriteQuadVAO, 0, sizeof(vertices));
+
     // id attribute
     glEnableVertexArrayAttrib(spriteQuadVAO, 0);
     glVertexArrayAttribFormat(spriteQuadVAO, 0, 1, GL_FLOAT, GL_FALSE, 0); // TODO: if there is an issue it might be here

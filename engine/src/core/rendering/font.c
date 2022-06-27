@@ -30,8 +30,8 @@ Font* font_create_font(const char* fileName, int size) {
             GLuint textTexture;
             glCreateTextures(GL_TEXTURE_2D, 1, &textTexture);
             glTextureStorage2D(textTexture,
-                               0, // level
-                               GL_RED,
+                               1, // levels
+                               GL_R8,
                                (GLsizei) face->glyph->bitmap.width,
                                (GLsizei) face->glyph->bitmap.rows);
             glTextureSubImage2D(textTexture,
@@ -61,9 +61,12 @@ Font* font_create_font(const char* fileName, int size) {
         // configure VAO & VBO texture quads
         glCreateVertexArrays(1, &font->VAO);
         glCreateBuffers(1, &font->VBO);
+
         glNamedBufferData(font->VBO, sizeof(GLfloat) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
+
         glEnableVertexArrayAttrib(font->VAO, 0);
-        glVertexArrayAttribFormat(font->VAO, 0, 4, GL_FLOAT, GL_FALSE, 0); // TODO: if there is an issue it might be here
+        glVertexArrayVertexBuffer(font->VAO, 0, font->VBO, 0, 4 * sizeof(GLfloat));
+        glVertexArrayAttribFormat(font->VAO, 0, 4, GL_FLOAT, GL_FALSE, 0);
         glVertexArrayAttribBinding(font->VAO, 0, 0);
 
         font->isValid = true;
