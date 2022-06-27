@@ -149,26 +149,30 @@ void rbe_scene_manager_set_active_scene_root(SceneTreeNode* root) {
 
 Transform2DComponent rbe_scene_manager_get_combined_parent_transform(Entity entity) {
     SceneTreeNode* sceneTreeNode = rbe_scene_manager_get_entity_tree_node(entity);
-    Transform2DComponent* parentTransform2DComponent = sceneTreeNode->parent != NULL ? component_manager_get_component_unsafe(sceneTreeNode->parent->entity, ComponentDataIndex_TRANSFORM_2D) : NULL;
-    if (parentTransform2DComponent == NULL) {
-        static Transform2DComponent emptyTransform = {
+    Transform2DComponent transform2DComponent = {
             .position={ .x=0.0f, .y=0.0f },
             .scale={ .x=1.0f, .y=1.0f },
             .rotation=0.0f,
             .zIndex=0,
             .ignoreCamera=false,
             .isZIndexRelativeToParent=true,
-        };
-        return emptyTransform;
-    }
-    Transform2DComponent transform2DComponent = {
-        .position = parentTransform2DComponent->position,
-        .scale = parentTransform2DComponent->scale,
-        .rotation = parentTransform2DComponent->rotation,
-        .zIndex = parentTransform2DComponent->zIndex,
-        .ignoreCamera = parentTransform2DComponent->ignoreCamera,
-        .isZIndexRelativeToParent = parentTransform2DComponent->isZIndexRelativeToParent
     };
+    SceneTreeNode* parentTreeNode = sceneTreeNode->parent;
+    while (parentTreeNode != NULL) {
+        Transform2DComponent* parentTransform2DComponent = component_manager_get_component_unsafe(parentTreeNode->entity, ComponentDataIndex_TRANSFORM_2D);
+        // If transform 2D is missing, will continue walk up the tree.  This is to allow some flexibility in case
+        // non node2d parent child relationships are introduced.
+        if (parentTransform2DComponent == NULL) {
+            parentTreeNode = parentTreeNode->parent;
+            continue;
+        }
+        transform2DComponent.position.x += parentTransform2DComponent->position.x;
+        transform2DComponent.position.y += parentTransform2DComponent->position.y;
+        transform2DComponent.scale.x *= parentTransform2DComponent->scale.x;
+        transform2DComponent.scale.y *= parentTransform2DComponent->scale.y;
+        transform2DComponent.zIndex += parentTransform2DComponent->zIndex;
+        parentTreeNode = parentTreeNode->parent;
+    }
     return transform2DComponent;
 }
 
