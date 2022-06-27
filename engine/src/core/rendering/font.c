@@ -28,24 +28,26 @@ Font* font_create_font(const char* fileName, int size) {
             }
             // Generate texture
             GLuint textTexture;
-            glGenTextures(1, &textTexture);
-            glBindTexture(GL_TEXTURE_2D, textTexture);
-            glTexImage2D(
-                GL_TEXTURE_2D,
-                0,
-                GL_RED,
-                face->glyph->bitmap.width,
-                face->glyph->bitmap.rows,
-                0,
-                GL_RED,
-                GL_UNSIGNED_BYTE,
-                face->glyph->bitmap.buffer
-            );
+            glCreateTextures(GL_TEXTURE_2D, 1, &textTexture);
+            glTextureStorage2D(textTexture,
+                               0, // level
+                               GL_RED,
+                               (GLsizei) face->glyph->bitmap.width,
+                               (GLsizei) face->glyph->bitmap.rows);
+            glTextureSubImage2D(textTexture,
+                                0, // level
+                                0, // offset x
+                                0, // offset y
+                                (GLsizei) face->glyph->bitmap.width,
+                                (GLsizei) face->glyph->bitmap.rows,
+                                GL_RED,
+                                GL_UNSIGNED_BYTE,
+                                face->glyph->bitmap.buffer);
             // Texture wrap and filter options
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glTextureParameteri(textTexture, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            glTextureParameteri(textTexture, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            glTextureParameteri(textTexture, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTextureParameteri(textTexture, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             // Create character struct
             Character character = {
                 .textureId = textTexture,
@@ -55,18 +57,15 @@ Font* font_create_font(const char* fileName, int size) {
             };
             font->characters[c] = character;
         }
-        glBindTexture(GL_TEXTURE_2D, 0);
 
         // configure VAO & VBO texture quads
-        glGenVertexArrays(1, &font->VAO);
-        glGenBuffers(1, &font->VBO);
-        glBindVertexArray(font->VAO);
-        glBindBuffer(GL_ARRAY_BUFFER, font->VBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), NULL);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindVertexArray(0);
+        glCreateVertexArrays(1, &font->VAO);
+        glCreateBuffers(1, &font->VBO);
+        glNamedBufferData(font->VBO, sizeof(GLfloat) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
+        glEnableVertexArrayAttrib(font->VAO, 0);
+        glVertexArrayAttribFormat(font->VAO, 0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat));
+        glVertexArrayAttribBinding(font->VAO, 0, 0);
+
         font->isValid = true;
     }
     FT_Done_Face(face);
