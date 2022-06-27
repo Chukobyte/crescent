@@ -1,5 +1,7 @@
 ## Roll Back Engine
 
+[![windows-build Actions Status](https://github.com/Chukobyte/roll-back-engine/workflows/windows-msvc-build/badge.svg)](https://github.com/Chukobyte/roll-back-engine/actions)
+
 A work in progress fighting game engine with the core written in C11.  The name is temporary and will very likely change in the near future.
 
 ### Tech Stack

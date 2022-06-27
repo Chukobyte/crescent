@@ -6,7 +6,6 @@ extern "C" {
 
 #include <stdbool.h>
 #include <stdint.h>
-#include <corecrt.h>
 
 // Change directory
 bool rbe_fs_chdir(const char* dirPath);
