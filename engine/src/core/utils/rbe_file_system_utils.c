@@ -2,6 +2,7 @@
 
 #ifdef _WIN32
 #include "windows.h"
+#include <corecrt.h>
 #endif
 
 #include <stdio.h>
@@ -11,6 +12,7 @@
 #else
 #include <unistd.h>
 #endif
+
 
 #include "logger.h"
 #include "../memory/rbe_mem.h"

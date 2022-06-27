@@ -1,0 +1,62 @@
+name: pvs-studio
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  PVS-Studio:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: install updates
+        run: |
+          sudo apt install g++-11
+          wget -O cmake.sh https://cmake.org/files/v3.20/cmake-3.20.1-linux-x86_64.sh
+          sudo sh cmake.sh --skip-license --exclude-subdir --prefix=/usr/local
+          export PATH=/usr/local/bin:$PATH
+          cmake --version
+
+      - name: Installing vcpkg
+        run: |
+          cd ..
+          git clone https://github.com/Microsoft/vcpkg.git
+          cd vcpkg
+          ./bootstrap-vcpkg.sh
+
+      - name: Installing PVS-Studio
+        env:
+          # The Secret variable setup in GitHub must be in format: "name_or_email key", on a single line
+          PVS_STUDIO_LICENSE: ${{ secrets.PVS_STUDIO_LICENSE }}
+        run: |
+          wget -q -O - https://files.pvs-studio.com/etc/pubkey.txt \
+            | sudo apt-key add -
+          sudo wget -O /etc/apt/sources.list.d/viva64.list \
+            https://files.pvs-studio.com/etc/viva64.list
+          sudo apt update
+          sudo apt install pvs-studio
+          pvs-studio-analyzer credentials ${{ secrets.PVS_STUDIO_CREDENTIALS }}   
+
+      - name: Running build
+        run: |
+          cd ${{ github.workspace }}
+          cmake -DCMAKE_CXX_COMPILER=g++-11 -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/../vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=On .
+          cmake --build .
+
+      - name: Running PVS-Studio
+        run: |
+          pvs-studio-analyzer  analyze -f compile_commands.json -j -e include -e docs -e assets -e test_games
+
+      - name: Convert PVS-Studio report
+        run: |
+          plog-converter -t sarif -o pvs-report.sarif PVS-Studio.log
+
+      - name: Publish PVS-studio report
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: pvs-report.sarif
+          category: PVS-Studio
