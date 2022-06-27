@@ -2,9 +2,9 @@ name: pvs-studio
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
   PVS-Studio:
