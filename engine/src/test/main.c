@@ -4,23 +4,27 @@
 
 #include <unity.h>
 
-#include "../core/memory/rbe_mem.h"
+#include "../core/data_structures/rbe_array_list.h"
 #include "../core/data_structures/rbe_hash_map.h"
 #include "../core/data_structures/rbe_hash_map_string.h"
-#include "../core/data_structures/rbe_array_list.h"
 #include "../core/data_structures/rbe_static_array.h"
+#include "../core/memory/rbe_mem.h"
 #include "../core/thread/rbe_pthread.h"
 #include "../core/thread/rbe_thread_pool.h"
 #include "../core/utils/rbe_string_util.h"
 
 void rbe_hash_main_test();
+
 void rbe_string_hashmap_test();
+
 void rbe_static_array_test();
+
 void rbe_array_list_test();
 
 void rbe_thread_main_test();
 
 void setUp() {}
+
 void tearDown() {}
 
 int main(int argv, char** args) {
@@ -44,10 +48,10 @@ void rbe_hash_main_test() {
     RBEHashMap* map = rbe_hash_map_create(sizeof(char*), sizeof(struct User), 32);
     TEST_ASSERT_TRUE(map != NULL);
     struct User* user = RBE_MEM_ALLOCATE(struct User);
-    user->name = "Hey";
-    user->age = 32;
-    char* hashMapKey = RBE_MEM_ALLOCATE_SIZE(sizeof(char*));
-    hashMapKey = "test";
+    user->name        = "Hey";
+    user->age         = 32;
+    char* hashMapKey  = RBE_MEM_ALLOCATE_SIZE(sizeof(char*));
+    hashMapKey        = "test";
     // Adding a value to the map
     rbe_hash_map_add(map, hashMapKey, user);
     // Checking if key exists in map
@@ -69,7 +73,7 @@ void rbe_hash_main_test() {
     // Int keys and values
     RBEHashMap* map2 = rbe_hash_map_create(sizeof(int), sizeof(int), 32);
     TEST_ASSERT_TRUE(map2);
-    int key1 = 1;
+    int key1   = 1;
     int value1 = 10;
     rbe_hash_map_add(map2, &key1, &value1);
     TEST_ASSERT_TRUE(rbe_hash_map_has(map2, &key1));
@@ -77,9 +81,9 @@ void rbe_hash_main_test() {
     TEST_ASSERT_EQUAL_INT(returnedValue1, value1);
 
     // Iterator test
-    int key2 = 2;
+    int key2   = 2;
     int value2 = 20;
-    int key3 = 3;
+    int key3   = 3;
     int value3 = 30;
     rbe_hash_map_add(map2, &key2, &value2);
     rbe_hash_map_add(map2, &key3, &value3);
@@ -87,7 +91,8 @@ void rbe_hash_main_test() {
     TEST_ASSERT_EQUAL_INT(returnedValue2, value2);
 
     int iteratorIterationCount = 0;
-    for (RBEHashMapIterator it = rbe_hash_map_iter_create(map2); rbe_hash_map_iter_is_valid(map2, &it); rbe_hash_map_iter_advance(map2, &it)) {
+    for (RBEHashMapIterator it = rbe_hash_map_iter_create(map2); rbe_hash_map_iter_is_valid(map2, &it);
+         rbe_hash_map_iter_advance(map2, &it)) {
         const HashMapNode* pair = it.pair;
         printf("pair->key: '%d', pair->value: '%d'\n", *(int*) pair->key, *(int*) pair->value);
         iteratorIterationCount++;
@@ -106,8 +111,8 @@ void rbe_string_hashmap_test() {
     };
 
     struct Fighter* fighter = RBE_MEM_ALLOCATE(struct Fighter);
-    fighter->hp = 10;
-    fighter->attack = 20;
+    fighter->hp             = 10;
+    fighter->attack         = 20;
 
     rbe_string_hash_map_add(hashMap, "one", fighter, sizeof(struct Fighter));
 
@@ -155,8 +160,8 @@ void* print_message_func(void* ptr) {
 }
 
 void thread_worker(void* arg) {
-    int *val = arg;
-    int old = *val;
+    int* val = arg;
+    int old  = *val;
 
     *val += 1000;
     printf("tip = %d, old = %d, val = %d\n", pthread_self(), old, *val);
@@ -187,7 +192,7 @@ void rbe_thread_main_test() {
     int* vals;
     const size_t numberOfElements = 100;
     printf("Number of cores = %d\n", pcthread_get_num_procs());
-    tp = tpool_create(pcthread_get_num_procs() / 2);
+    tp   = tpool_create(pcthread_get_num_procs() / 2);
     vals = calloc(numberOfElements, sizeof(*vals));
 
     for (size_t i = 0; i < numberOfElements; i++) {

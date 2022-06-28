@@ -2,9 +2,7 @@
 
 static ImGuiHelper::Context* context = ImGuiHelper::Context::Get();
 
-void ImGuiHelper::Context::OpenPopup(const char *popupId) {
-    popupIds.emplace_back(popupId);
-}
+void ImGuiHelper::Context::OpenPopup(const char* popupId) { popupIds.emplace_back(popupId); }
 
 void ImGuiHelper::Context::FlushPopups() {
     for (const char* id : popupIds) {

@@ -1,18 +1,18 @@
-#include <string.h>
 #include "scene_manager.h"
+#include <string.h>
 
-#include "../scripting/python/py_helper.h"
-#include "../memory/rbe_mem.h"
+#include "../data_structures/rbe_hash_map.h"
 #include "../ecs/component/component.h"
+#include "../ecs/component/node_component.h"
 #include "../ecs/component/transform2d_component.h"
 #include "../ecs/system/ec_system.h"
-#include "../data_structures/rbe_hash_map.h"
+#include "../memory/rbe_mem.h"
+#include "../scripting/python/py_helper.h"
 #include "../utils/logger.h"
 #include "../utils/rbe_assert.h"
-#include "../ecs/component/node_component.h"
 
 // --- Scene Tree --- //
-typedef void (*ExecuteOnAllTreeNodesFunc) (SceneTreeNode*);
+typedef void (*ExecuteOnAllTreeNodesFunc)(SceneTreeNode*);
 
 // Executes function on passed in tree node and all child tree nodes
 void rbe_scene_execute_on_all_tree_nodes(SceneTreeNode* treeNode, ExecuteOnAllTreeNodesFunc func) {
@@ -28,9 +28,9 @@ typedef struct SceneTree {
 
 SceneTreeNode* rbe_scene_tree_create_tree_node(Entity entity, SceneTreeNode* parent) {
     SceneTreeNode* treeNode = RBE_MEM_ALLOCATE(SceneTreeNode);
-    treeNode->entity = entity;
-    treeNode->parent = parent;
-    treeNode->childCount = 0;
+    treeNode->entity        = entity;
+    treeNode->parent        = parent;
+    treeNode->childCount    = 0;
     return treeNode;
 }
 
@@ -41,9 +41,9 @@ typedef struct Scene {
 } Scene;
 
 Scene* rbe_scene_create_scene(const char* scenePath) {
-    Scene* scene = RBE_MEM_ALLOCATE(Scene);
-    scene->scenePath = scenePath;
-    scene->sceneTree = RBE_MEM_ALLOCATE(SceneTree);
+    Scene* scene           = RBE_MEM_ALLOCATE(Scene);
+    scene->scenePath       = scenePath;
+    scene->sceneTree       = RBE_MEM_ALLOCATE(SceneTree);
     scene->sceneTree->root = NULL;
     return scene;
 }
@@ -54,7 +54,7 @@ size_t entitiesQueuedForCreationSize = 0;
 Entity entitiesQueuedForDeletion[MAX_ENTITIES];
 size_t entitiesQueuedForDeletionSize = 0;
 
-Scene* activeScene = NULL;
+Scene* activeScene           = NULL;
 Scene* queuedSceneToChangeTo = NULL;
 
 static RBEHashMap* entityToTreeNodeMap = NULL;
@@ -71,7 +71,8 @@ void rbe_scene_manager_finalize() {
 
 void rbe_scene_manager_queue_entity_for_creation(SceneTreeNode* treeNode) {
     entitiesQueuedForCreation[entitiesQueuedForCreationSize++] = treeNode->entity;
-    RBE_ASSERT_FMT(!rbe_hash_map_has(entityToTreeNodeMap, &treeNode->entity), "Entity '%d' already in entity to tree map!", treeNode->entity);
+    RBE_ASSERT_FMT(!rbe_hash_map_has(entityToTreeNodeMap, &treeNode->entity),
+                   "Entity '%d' already in entity to tree map!", treeNode->entity);
     rbe_hash_map_add(entityToTreeNodeMap, &treeNode->entity, treeNode);
 }
 
@@ -100,9 +101,10 @@ void rbe_scene_manager_process_queued_deletion_entities() {
     for (size_t i = 0; i < entitiesQueuedForDeletionSize; i++) {
         // Remove entity from entity to tree node map
         Entity entityToDelete = entitiesQueuedForDeletion[i];
-        RBE_ASSERT_FMT(rbe_hash_map_has(entityToTreeNodeMap, &entityToDelete), "Entity '%d' not in tree node map!?", entityToDelete);
+        RBE_ASSERT_FMT(rbe_hash_map_has(entityToTreeNodeMap, &entityToDelete), "Entity '%d' not in tree node map!?",
+                       entityToDelete);
         SceneTreeNode* treeNode = rbe_hash_map_get(entityToTreeNodeMap, &entityToDelete);
-//        RBE_MEM_FREE(treeNode); // TODO: Crashes rbe_hash_map_erase, investigate...
+        //        RBE_MEM_FREE(treeNode); // TODO: Crashes rbe_hash_map_erase, investigate...
         rbe_hash_map_erase(entityToTreeNodeMap, &entityToDelete);
         // Remove entity from systems
         rbe_ec_system_remove_entity_from_all_systems(entityToDelete);
@@ -133,7 +135,7 @@ void rbe_scene_manager_process_queued_scene_change() {
             RBE_MEM_FREE(activeScene);
         }
         // Setup new scene
-        activeScene = queuedSceneToChangeTo;
+        activeScene           = queuedSceneToChangeTo;
         queuedSceneToChangeTo = NULL;
         RBE_ASSERT(activeScene->scenePath != NULL);
         // Queues entities for creation
@@ -148,18 +150,19 @@ void rbe_scene_manager_set_active_scene_root(SceneTreeNode* root) {
 }
 
 Transform2DComponent rbe_scene_manager_get_combined_parent_transform(Entity entity) {
-    SceneTreeNode* sceneTreeNode = rbe_scene_manager_get_entity_tree_node(entity);
+    SceneTreeNode* sceneTreeNode              = rbe_scene_manager_get_entity_tree_node(entity);
     Transform2DComponent transform2DComponent = {
-            .position={ .x=0.0f, .y=0.0f },
-            .scale={ .x=1.0f, .y=1.0f },
-            .rotation=0.0f,
-            .zIndex=0,
-            .ignoreCamera=false,
-            .isZIndexRelativeToParent=true,
+        .position                 = {.x = 0.0f, .y = 0.0f},
+        .scale                    = {.x = 1.0f, .y = 1.0f},
+        .rotation                 = 0.0f,
+        .zIndex                   = 0,
+        .ignoreCamera             = false,
+        .isZIndexRelativeToParent = true,
     };
     SceneTreeNode* parentTreeNode = sceneTreeNode->parent;
     while (parentTreeNode != NULL) {
-        Transform2DComponent* parentTransform2DComponent = component_manager_get_component_unsafe(parentTreeNode->entity, ComponentDataIndex_TRANSFORM_2D);
+        Transform2DComponent* parentTransform2DComponent =
+            component_manager_get_component_unsafe(parentTreeNode->entity, ComponentDataIndex_TRANSFORM_2D);
         // If transform 2D is missing, will continue walk up the tree.  This is to allow some flexibility in case
         // non node2d parent child relationships are introduced.
         if (parentTransform2DComponent == NULL) {

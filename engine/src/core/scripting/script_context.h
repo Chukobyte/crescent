@@ -2,17 +2,23 @@
 
 #include "../ecs/entity/entity.h"
 
-typedef void (*OnCreateInstance) (Entity, const char*, const char*);
-typedef void (*OnDeleteInstance) (Entity);
-typedef void (*OnStart) (Entity);
-typedef void (*OnUpdateAllInstances) (float);
-typedef void (*OnPhysicsUpdateAllInstances) (float);
-typedef void (*OnEnd) (Entity);
-typedef void (*OnNetworkCallback) (const char*);
+typedef void (*OnCreateInstance)(Entity, const char*, const char*);
+
+typedef void (*OnDeleteInstance)(Entity);
+
+typedef void (*OnStart)(Entity);
+
+typedef void (*OnUpdateAllInstances)(float);
+
+typedef void (*OnPhysicsUpdateAllInstances)(float);
+
+typedef void (*OnEnd)(Entity);
+
+typedef void (*OnNetworkCallback)(const char*);
 
 // TODO: Make not specific to python
 struct _object; // PyObject
-typedef void (*OnEntitySubscribeToNetworkCallback) (Entity, struct _object*, const char*);
+typedef void (*OnEntitySubscribeToNetworkCallback)(Entity, struct _object*, const char*);
 
 typedef struct RBEScriptContext {
     OnCreateInstance on_create_instance;

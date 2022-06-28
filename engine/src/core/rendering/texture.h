@@ -20,4 +20,5 @@ typedef struct Texture {
 } Texture;
 
 Texture* rbe_texture_create_texture(const char* filePath);
+
 Texture* rbe_texture_create_solid_colored_texture(GLsizei width, GLsizei height, GLuint colorValue);

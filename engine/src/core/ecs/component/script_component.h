@@ -1,7 +1,7 @@
 #pragma once
 
 typedef enum ScriptContextType {
-    ScriptContextType_NONE = -1, // INVALID
+    ScriptContextType_NONE   = -1, // INVALID
     ScriptContextType_PYTHON = 0,
     ScriptContextType_NATIVE = 1, // C/C++
 

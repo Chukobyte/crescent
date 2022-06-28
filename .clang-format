@@ -1,0 +1,14 @@
+﻿---
+AlignAfterOpenBracket: Align
+AlignConsecutiveMacros: Consecutive
+AlignConsecutiveAssignments: Consecutive
+AllowShortBlocksOnASingleLine: Empty
+AllowShortCaseLabelsOnASingleLine: true
+ColumnLimit: 120
+IndentWidth: 4
+Language: Cpp
+PointerAlignment: Left
+SpaceAfterCStyleCast: true
+TabWidth: 4
+
+...

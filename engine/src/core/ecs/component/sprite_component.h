@@ -2,8 +2,8 @@
 
 #include <stdbool.h>
 
-#include "../../rendering/texture.h"
 #include "../../math/rbe_math.h"
+#include "../../rendering/texture.h"
 
 typedef struct SpriteComponent {
     Texture* texture;

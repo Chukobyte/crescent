@@ -4,4 +4,4 @@ namespace ProjectManagerUI {
 void ProcessMenuBar();
 void ProcessModalPopups();
 void ProcessWindows();
-}
+} // namespace ProjectManagerUI

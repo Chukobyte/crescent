@@ -2,27 +2,17 @@
 
 // --- Color --- //
 Color rbe_color_get_normalized_color_default_alpha(unsigned int r, unsigned int g, unsigned int b) {
-    Color color = {
-        .r = (float) r / 255.0f,
-        .g = (float) g / 255.0f,
-        .b = (float) b / 255.0f,
-        .a = 1.0f
-    };
+    Color color = {.r = (float) r / 255.0f, .g = (float) g / 255.0f, .b = (float) b / 255.0f, .a = 1.0f};
     return color;
 }
 
 Color rbe_color_get_normalized_color(unsigned int r, unsigned int g, unsigned int b, unsigned int a) {
-    Color color = {
-        .r = (float) r / 255.0f,
-        .g = (float) g / 255.0f,
-        .b = (float) b / 255.0f,
-        .a = (float) a / 255.0f
-    };
+    Color color = {.r = (float) r / 255.0f, .g = (float) g / 255.0f, .b = (float) b / 255.0f, .a = (float) a / 255.0f};
     return color;
 }
 
 Color rbe_color_get_white() {
-    Color white = { 1.0f, 1.0f, 1.0f, 1.0f};
+    Color white = {1.0f, 1.0f, 1.0f, 1.0f};
     return white;
 }
 

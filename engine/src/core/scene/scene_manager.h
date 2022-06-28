@@ -15,16 +15,26 @@ SceneTreeNode* rbe_scene_tree_create_tree_node(Entity entity, SceneTreeNode* par
 
 // --- Scene Manager --- //
 void rbe_scene_manager_initialize();
+
 void rbe_scene_manager_finalize();
+
 void rbe_scene_manager_queue_entity_for_creation(SceneTreeNode* treeNode);
+
 void rbe_scene_manager_process_queued_creation_entities();
+
 void rbe_scene_manager_queue_entity_for_deletion(Entity entity);
+
 void rbe_scene_manager_process_queued_deletion_entities();
+
 void rbe_scene_manager_queue_scene_change(const char* scenePath);
+
 void rbe_scene_manager_process_queued_scene_change();
 
 // Scene Tree related stuff, may separate into separate functionality later.
 void rbe_scene_manager_set_active_scene_root(SceneTreeNode* root);
+
 struct Transform2DComponent rbe_scene_manager_get_combined_parent_transform(Entity entity);
+
 SceneTreeNode* rbe_scene_manager_get_entity_tree_node(Entity entity);
+
 Entity rbe_scene_manager_get_entity_child_by_name(Entity parent, const char* childName);

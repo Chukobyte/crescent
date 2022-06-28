@@ -1,16 +1,16 @@
 #include "rbe_thread_pool.h"
 
 // --- Thread Pool Worker --- //
-static ThreadPoolWork* tpool_work_create(ThreadFunc func, void *arg) {
+static ThreadPoolWork* tpool_work_create(ThreadFunc func, void* arg) {
     ThreadPoolWork* work;
 
     if (func == NULL) {
         return NULL;
     }
 
-    work = malloc(sizeof(*work));
+    work       = malloc(sizeof(*work));
     work->func = func;
-    work->arg = arg;
+    work->arg  = arg;
     work->next = NULL;
     return work;
 }
@@ -21,7 +21,6 @@ static void tpool_work_destroy(ThreadPoolWork* work) {
     }
     free(work);
 }
-
 
 static ThreadPoolWork* tpool_work_get(ThreadPool* tp) {
     ThreadPoolWork* work;
@@ -45,7 +44,7 @@ static ThreadPoolWork* tpool_work_get(ThreadPool* tp) {
     return work;
 }
 
-static void* tpool_worker(void *arg) {
+static void* tpool_worker(void* arg) {
     ThreadPool* tp = arg;
     ThreadPoolWork* work;
 
@@ -83,7 +82,6 @@ static void* tpool_worker(void *arg) {
     return NULL;
 }
 
-
 // --- Thread Pool --- //
 ThreadPool* tpool_create(size_t num) {
     ThreadPool* tp;
@@ -93,7 +91,7 @@ ThreadPool* tpool_create(size_t num) {
         num = 2;
     }
 
-    tp = calloc(1, sizeof(*tp));
+    tp              = calloc(1, sizeof(*tp));
     tp->threadCount = num;
 
     pthread_mutex_init(&(tp->workMutex), NULL);

@@ -3,9 +3,9 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
-#include "render_context.h"
 #include "../memory/rbe_mem.h"
 #include "../utils/logger.h"
+#include "render_context.h"
 
 Font* font_create_font(const char* fileName, int size) {
     FT_Face face;
@@ -30,29 +30,18 @@ Font* font_create_font(const char* fileName, int size) {
             GLuint textTexture;
             glGenTextures(1, &textTexture);
             glBindTexture(GL_TEXTURE_2D, textTexture);
-            glTexImage2D(
-                GL_TEXTURE_2D,
-                0,
-                GL_RED,
-                face->glyph->bitmap.width,
-                face->glyph->bitmap.rows,
-                0,
-                GL_RED,
-                GL_UNSIGNED_BYTE,
-                face->glyph->bitmap.buffer
-            );
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, face->glyph->bitmap.width, face->glyph->bitmap.rows, 0, GL_RED,
+                         GL_UNSIGNED_BYTE, face->glyph->bitmap.buffer);
             // Texture wrap and filter options
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             // Create character struct
-            Character character = {
-                .textureId = textTexture,
-                .size = { (float) face->glyph->bitmap.width, (float) face->glyph->bitmap.rows },
-                .bearing = { (float) face->glyph->bitmap_left, (float) face->glyph->bitmap_top },
-                .advance = (GLuint) face->glyph->advance.x
-            };
+            Character character = {.textureId = textTexture,
+                                   .size      = {(float) face->glyph->bitmap.width, (float) face->glyph->bitmap.rows},
+                                   .bearing   = {(float) face->glyph->bitmap_left, (float) face->glyph->bitmap_top},
+                                   .advance   = (GLuint) face->glyph->advance.x};
             font->characters[c] = character;
         }
         glBindTexture(GL_TEXTURE_2D, 0);

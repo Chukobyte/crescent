@@ -5,39 +5,47 @@
 #include <SDL2/SDL.h>
 #include <glad/glad.h>
 
-#include "game_properties.h"
-#include "engine_context.h"
 #include "asset_manager.h"
-#include "input/input.h"
-#include "utils/logger.h"
-#include "utils/command_line_args_util.h"
-#include "utils/rbe_file_system_utils.h"
-#include "utils/rbe_assert.h"
-#include "scripting/python/rbe_py.h"
-#include "rendering/renderer.h"
 #include "audio/audio_manager.h"
 #include "ecs/ecs_manager.h"
 #include "ecs/system/ec_system.h"
+#include "engine_context.h"
+#include "game_properties.h"
+#include "input/input.h"
+#include "rendering/renderer.h"
 #include "scene/scene_manager.h"
+#include "scripting/python/rbe_py.h"
+#include "utils/command_line_args_util.h"
+#include "utils/logger.h"
+#include "utils/rbe_assert.h"
+#include "utils/rbe_file_system_utils.h"
 
 bool rbe_initialize_sdl();
+
 bool rbe_initialize_rendering();
+
 bool rbe_initialize_audio();
+
 bool rbe_initialize_input();
+
 bool rbe_initialize_ecs();
+
 bool rbe_load_assets_from_configuration();
+
 void rbe_process_inputs();
+
 void rbe_process_game_update();
+
 void rbe_render();
 
 static SDL_Window* window = NULL;
 static SDL_GLContext openGlContext;
 RBEGameProperties* gameProperties = NULL;
-RBEEngineContext* engineContext = NULL;
+RBEEngineContext* engineContext   = NULL;
 
 bool rbe_initialize(int argv, char** args) {
     // Set random seed
-    srand((int)time(NULL));
+    srand((int) time(NULL));
 
     rbe_logger_set_level(LogLevel_DEBUG);
 
@@ -83,7 +91,7 @@ bool rbe_initialize(int argv, char** args) {
     rbe_load_assets_from_configuration();
 
     rbe_logger_info("RBE Engine v%s initialized!", RBE_CORE_VERSION);
-    engineContext = rbe_engine_context_initialize();
+    engineContext            = rbe_engine_context_initialize();
     engineContext->targetFPS = gameProperties->targetFPS;
     engineContext->isRunning = true;
 
@@ -112,20 +120,11 @@ bool rbe_initialize_rendering() {
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
     // Create window
-    SDL_WindowFlags windowFlags = (SDL_WindowFlags)(
-                                      SDL_WINDOW_OPENGL
-                                      | SDL_WINDOW_RESIZABLE
-                                      | SDL_WINDOW_ALLOW_HIGHDPI
-                                  );
+    SDL_WindowFlags windowFlags =
+        (SDL_WindowFlags) (SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
     RBEGameProperties* props = rbe_game_props_get();
-    window = SDL_CreateWindow(
-                 props->gameTitle,
-                 SDL_WINDOWPOS_CENTERED,
-                 SDL_WINDOWPOS_CENTERED,
-                 props->windowWidth,
-                 props->windowHeight,
-                 windowFlags
-             );
+    window = SDL_CreateWindow(props->gameTitle, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, props->windowWidth,
+                              props->windowHeight, windowFlags);
     if (!window) {
         rbe_logger_error("Failed to create window!");
         return false;
@@ -135,7 +134,7 @@ bool rbe_initialize_rendering() {
     openGlContext = SDL_GL_CreateContext(window);
 
     // Initialize Glad
-    if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
+    if (!gladLoadGLLoader((GLADloadproc) SDL_GL_GetProcAddress)) {
         rbe_logger_error("Couldn't initialize glad!");
         return false;
     }
@@ -144,9 +143,7 @@ bool rbe_initialize_rendering() {
     return true;
 }
 
-bool rbe_initialize_audio() {
-    return rbe_audio_manager_init();
-}
+bool rbe_initialize_audio() { return rbe_audio_manager_init(); }
 
 bool rbe_initialize_input() {
     if (!rbe_input_initialize()) {
@@ -214,19 +211,16 @@ void rbe_update() {
     } else {
         countedFrames++;
     }
-    float averageFPS = (float) countedFrames / ((float) SDL_GetTicks() / 1000.f);
+    float averageFPS          = (float) countedFrames / ((float) SDL_GetTicks() / 1000.f);
     engineContext->averageFPS = averageFPS;
 }
 
 void rbe_process_inputs() {
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
-        switch(event.type) {
-        case SDL_QUIT:
-            engineContext->isRunning = false;
-            break;
-        default:
-            break;
+        switch (event.type) {
+        case SDL_QUIT: engineContext->isRunning = false; break;
+        default: break;
         }
         rbe_input_process(event);
     }
@@ -234,10 +228,10 @@ void rbe_process_inputs() {
 
 void rbe_process_game_update() {
     static const uint32_t MILLISECONDS_PER_TICK = 1000; // TODO: Put in another place
-    static uint32_t lastFrameTime = 0;
-    const uint32_t targetFps = engineContext->targetFPS;
-    const uint32_t FRAME_TARGET_TIME = MILLISECONDS_PER_TICK / targetFps;
-    const uint32_t timeToWait = FRAME_TARGET_TIME - (SDL_GetTicks() - lastFrameTime);
+    static uint32_t lastFrameTime               = 0;
+    const uint32_t targetFps                    = engineContext->targetFPS;
+    const uint32_t FRAME_TARGET_TIME            = MILLISECONDS_PER_TICK / targetFps;
+    const uint32_t timeToWait                   = FRAME_TARGET_TIME - (SDL_GetTicks() - lastFrameTime);
     if (timeToWait > 0 && timeToWait <= FRAME_TARGET_TIME) {
         SDL_Delay(timeToWait);
     }
@@ -247,13 +241,13 @@ void rbe_process_game_update() {
     rbe_ec_system_process_systems(variableDeltaTime);
 
     // Fixed Time Step
-    static double fixedTime = 0.0f;
+    static double fixedTime                = 0.0f;
     static const double PHYSICS_DELTA_TIME = 0.1f;
-    static uint32_t fixedCurrentTime = 0;
-    static double accumulator = 0.0f;
-    uint32_t newTime = SDL_GetTicks();
-    uint32_t frameTime = newTime - fixedCurrentTime;
-    static const uint32_t MAX_FRAME_TIME = 250;
+    static uint32_t fixedCurrentTime       = 0;
+    static double accumulator              = 0.0f;
+    uint32_t newTime                       = SDL_GetTicks();
+    uint32_t frameTime                     = newTime - fixedCurrentTime;
+    static const uint32_t MAX_FRAME_TIME   = 250;
     if (frameTime > MAX_FRAME_TIME) {
         frameTime = MAX_FRAME_TIME;
     }
@@ -272,7 +266,7 @@ void rbe_process_game_update() {
 }
 
 void rbe_render() {
-    static Color backgroundColor = { 33.0f / 255.0f, 33.0f / 255.0f, 33.0f / 255.0f, 1.0f };
+    static Color backgroundColor = {33.0f / 255.0f, 33.0f / 255.0f, 33.0f / 255.0f, 1.0f};
     glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
@@ -283,9 +277,7 @@ void rbe_render() {
     SDL_GL_SwapWindow(window);
 }
 
-bool rbe_is_running() {
-    return engineContext->isRunning;
-}
+bool rbe_is_running() { return engineContext->isRunning; }
 
 void rbe_shutdown() {
     SDL_DestroyWindow(window);

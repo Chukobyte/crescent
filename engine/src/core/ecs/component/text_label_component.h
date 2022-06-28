@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../../rendering/font.h"
 #include "../../math/rbe_math.h"
+#include "../../rendering/font.h"
 
 #define TEXT_LABEL_BUFFER_SIZE 64
 

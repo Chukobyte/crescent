@@ -1,14 +1,14 @@
 #include "editor.h"
 
-#include <imgui/imgui_impl_sdl.h>
 #include <imgui/imgui_impl_opengl3.h>
+#include <imgui/imgui_impl_sdl.h>
 
-#include "../engine/src/core/utils/logger.h"
 #include "../engine/src/core/scripting/python/rbe_py.h"
+#include "../engine/src/core/utils/logger.h"
 
+#include "color.h"
 #include "editor_context.h"
 #include "project_properties.h"
-#include "color.h"
 #include "ui/imgui/imgui_handler.h"
 #include "utils/file_system_helper.h"
 
@@ -28,7 +28,7 @@ bool Editor::Initialize() {
     rbe_py_initialize();
 
     editorContext->initialDir = FileSystemHelper::GetCurrentDirectory();
-    editorContext->isRunning = true;
+    editorContext->isRunning  = true;
     rbe_logger_info("Roll Back Engine Editor has started!");
 
     // Temp load props, should place in project loading logic
@@ -59,14 +59,8 @@ bool Editor::InitializeSDL() {
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
-    editorContext->window = SDL_CreateWindow(
-                                "Roll Back Engine Editor",
-                                SDL_WINDOWPOS_CENTERED,
-                                SDL_WINDOWPOS_CENTERED,
-                                windowWidth,
-                                windowHeight,
-                                editorContext->windowFlags
-                            );
+    editorContext->window = SDL_CreateWindow("Roll Back Engine Editor", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+                                             windowWidth, windowHeight, editorContext->windowFlags);
 
     SDL_SetWindowMinimumSize(editorContext->window, windowWidth, windowHeight);
 
@@ -76,7 +70,7 @@ bool Editor::InitializeSDL() {
     // enable VSync
     SDL_GL_SetSwapInterval(1);
 
-    if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
+    if (!gladLoadGLLoader((GLADloadproc) SDL_GL_GetProcAddress)) {
         rbe_logger_error("Couldn't initialize glad!");
         return false;
     }
@@ -88,8 +82,8 @@ bool Editor::InitializeSDL() {
 bool Editor::InitializeImGui() {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    ImGuiIO &io = ImGui::GetIO();
-    (void)io;
+    ImGuiIO& io = ImGui::GetIO();
+    (void) io;
     io.IniFilename = nullptr;
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
@@ -102,19 +96,14 @@ void Editor::ProcessInput() {
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
         ImGui_ImplSDL2_ProcessEvent(&event);
-        switch(event.type) {
-        case SDL_QUIT:
-            editorContext->isRunning = false;
-            break;
-        default:
-            break;
+        switch (event.type) {
+        case SDL_QUIT: editorContext->isRunning = false; break;
+        default: break;
         }
     }
 }
 
-void Editor::ProcessWindows() {
-    ImGuiHandler::Process();
-}
+void Editor::ProcessWindows() { ImGuiHandler::Process(); }
 
 void Editor::Render() {
     static Color backgroundColor = Color::CreateNormalizedColor(22.0f, 22.0f, 22.0f);
@@ -135,9 +124,7 @@ void Editor::Render() {
     SDL_GL_SwapWindow(editorContext->window);
 }
 
-bool Editor::IsRunning() const {
-    return editorContext->isRunning;
-}
+bool Editor::IsRunning() const { return editorContext->isRunning; }
 
 void Editor::Shutdown() {
     // IMGUI

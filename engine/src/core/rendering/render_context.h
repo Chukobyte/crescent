@@ -8,5 +8,7 @@ typedef struct RenderContext {
 } RenderContext;
 
 void rbe_render_context_initialize();
+
 void rbe_render_context_finalize();
+
 RenderContext* rbe_render_context_get();

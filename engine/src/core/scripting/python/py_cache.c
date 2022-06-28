@@ -13,24 +13,20 @@ typedef struct PyModuleCacheItem {
 
 static RBEStringHashMap* pyModuleCacheHashMap = NULL;
 
-void rbe_py_cache_initialize() {
-    pyModuleCacheHashMap = rbe_string_hash_map_create(128);
-}
+void rbe_py_cache_initialize() { pyModuleCacheHashMap = rbe_string_hash_map_create(128); }
 
-void rbe_py_cache_finalize() {
-    rbe_string_hash_map_destroy(pyModuleCacheHashMap);
-}
+void rbe_py_cache_finalize() { rbe_string_hash_map_destroy(pyModuleCacheHashMap); }
 
 PyObject* rbe_py_cache_get_module(const char* modulePath) {
     if (!rbe_string_hash_map_has(pyModuleCacheHashMap, modulePath)) {
-        PyObject* pName = PyUnicode_FromString(modulePath);
+        PyObject* pName      = PyUnicode_FromString(modulePath);
         PyObject* pNewModule = PyImport_Import(pName);
         RBE_ASSERT(pNewModule != NULL);
 
-        size_t cacheItemSize = sizeof(PyModuleCacheItem*) + sizeof(PyObject**);
+        size_t cacheItemSize         = sizeof(PyModuleCacheItem*) + sizeof(PyObject**);
         PyModuleCacheItem* cacheItem = RBE_MEM_ALLOCATE_SIZE(cacheItemSize);
-        cacheItem->module = &pNewModule;
-        cacheItem->classHashMap = rbe_string_hash_map_create(16);
+        cacheItem->module            = &pNewModule;
+        cacheItem->classHashMap      = rbe_string_hash_map_create(16);
 
         rbe_string_hash_map_add(pyModuleCacheHashMap, modulePath, cacheItem, cacheItemSize);
         // Increase ref to store in cache and to return to caller
@@ -64,7 +60,7 @@ PyObject* rbe_py_cache_get_class(const char* modulePath, const char* classPath) 
 PyObject* rbe_py_cache_create_instance(const char* modulePath, const char* classPath, Entity entity) {
     PyObject* argsList = Py_BuildValue("(i)", entity);
     RBE_ASSERT(argsList != NULL);
-    PyObject* classRef = rbe_py_cache_get_class(modulePath, classPath);
+    PyObject* classRef      = rbe_py_cache_get_class(modulePath, classPath);
     PyObject* classInstance = PyObject_CallObject(classRef, argsList);
     RBE_ASSERT(classInstance != NULL);
     RBE_ASSERT(PyObject_IsInstance(classInstance, classRef));
