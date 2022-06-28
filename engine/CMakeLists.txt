@@ -80,7 +80,7 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 elseif(WIN32)
     target_link_libraries(${PROJECT_NAME} PUBLIC -lmingw32 -static-libgcc SDL2::SDL2 SDL2::SDL2main freetype Python3::Python -lws2_32)
 else ()
-    target_link_libraries(${PROJECT_NAME} PUBLIC -static-libgcc SDL2::SDL2 SDL2::SDL2main freetype Python3::Python)
+    target_link_libraries(${PROJECT_NAME} PUBLIC -static-libgcc -Xlinker -export-dynamic SDL2::SDL2 SDL2::SDL2main freetype Python3::Python)
 endif ()
 
 target_compile_options(${PROJECT_NAME} PUBLIC ${flags})
