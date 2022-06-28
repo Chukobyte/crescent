@@ -35,6 +35,7 @@ void* rbe_udp_server_poll(void* arg);
 
 #ifdef _WIN32
 static SOCKET server_socket;
+typedef size_t socklen_t;
 #else
 #define SOCKET_ERROR (-1)
 #define INVALID_SOCKET (-1)
