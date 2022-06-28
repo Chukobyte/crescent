@@ -68,7 +68,7 @@ add_library(${PROJECT_NAME} STATIC
         src/core/ecs/component/collider2d_component.c
         ../include/stb_image/stb_image.c
         ../include/glad/glad.c
-        src/core/networking/rbe_network_socket.c src/core/networking/rbe_network_socket.h)
+        src/core/networking/rbe_network_socket.c)
 
 target_include_directories(${PROJECT_NAME} PUBLIC
         "${PROJECT_BINARY_DIR}"
