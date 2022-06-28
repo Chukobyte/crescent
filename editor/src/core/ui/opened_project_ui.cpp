@@ -26,7 +26,7 @@ void OpenedProjectUI::ProcessMenuBar() {
                     {
                         .name = "Go To Project Manager",
                         .keyboardShortcut = "Ctrl+Shift+Q",
-                        .callbackFunc = [editorContext] (ImGuiHelper::Context* context) {
+                        .callbackFunc = [] (ImGuiHelper::Context* context) {
                             context->OpenPopup("Confirm Go To Project Manager");
                             rbe_fs_chdir(editorContext->initialDir.c_str());
                             editorContext->projectState = EditorProjectState::ProjectManager;
@@ -37,7 +37,7 @@ void OpenedProjectUI::ProcessMenuBar() {
                     {
                         .name = "Exit",
                         .keyboardShortcut = "Alt+F4",
-                        .callbackFunc = [editorContext] (ImGuiHelper::Context* context) {
+                        .callbackFunc = [] (ImGuiHelper::Context* context) {
                             editorContext->isRunning = false;
                         },
                     },
