@@ -2,8 +2,5 @@
 
 TEST_CASE("Test Case", "[test]") {
 
-    SECTION("Section 1") {
-        REQUIRE(true);
-    }
-
+    SECTION("Section 1") { REQUIRE(true); }
 }

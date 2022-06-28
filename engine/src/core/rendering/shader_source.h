@@ -22,32 +22,30 @@ static const char* OPENGL_SHADER_SOURCE_VERTEX_SPRITE =
     "    gl_Position = projection * models[spriteIntId] * vec4(position, 0.0f, 1.0f);\n"
     "}\n";
 
-static const char* OPENGL_SHADER_SOURCE_FRAGMENT_SPRITE =
-    "#version 330 core\n"
-    "\n"
-    "in float spriteId;\n"
-    "in vec2 texCoord;\n"
-    "in vec4 spriteColor;\n"
-    "out vec4 color;\n"
-    "\n"
-    "uniform sampler2D sprite;\n"
-    "\n"
-    "void main() {\n"
-    "    color = spriteColor * texture(sprite, texCoord);\n"
-    "}\n";
+static const char* OPENGL_SHADER_SOURCE_FRAGMENT_SPRITE = "#version 330 core\n"
+                                                          "\n"
+                                                          "in float spriteId;\n"
+                                                          "in vec2 texCoord;\n"
+                                                          "in vec4 spriteColor;\n"
+                                                          "out vec4 color;\n"
+                                                          "\n"
+                                                          "uniform sampler2D sprite;\n"
+                                                          "\n"
+                                                          "void main() {\n"
+                                                          "    color = spriteColor * texture(sprite, texCoord);\n"
+                                                          "}\n";
 
-static const char* OPENGL_SHADER_SOURCE_VERTEX_FONT =
-    "#version 330 core\n"
-    "layout (location = 0) in vec4 vertex; // (pos, tex)\n"
-    "\n"
-    "out vec2 texCoords;\n"
-    "\n"
-    "uniform mat4 projection;\n"
-    "\n"
-    "void main() {\n"
-    "    gl_Position = projection * vec4(vertex.xy, 0.0f, 1.0f);\n"
-    "    texCoords = vertex.zw;\n"
-    "}\n";
+static const char* OPENGL_SHADER_SOURCE_VERTEX_FONT = "#version 330 core\n"
+                                                      "layout (location = 0) in vec4 vertex; // (pos, tex)\n"
+                                                      "\n"
+                                                      "out vec2 texCoords;\n"
+                                                      "\n"
+                                                      "uniform mat4 projection;\n"
+                                                      "\n"
+                                                      "void main() {\n"
+                                                      "    gl_Position = projection * vec4(vertex.xy, 0.0f, 1.0f);\n"
+                                                      "    texCoords = vertex.zw;\n"
+                                                      "}\n";
 
 static const char* OPENGL_SHADER_SOURCE_FRAGMENT_FONT =
     "#version 330 core\n"

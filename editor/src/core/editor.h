@@ -11,7 +11,7 @@ class Editor {
     void Shutdown();
 
   private:
-    int windowWidth = 800;
+    int windowWidth  = 800;
     int windowHeight = 600;
 
     bool InitializeSDL();

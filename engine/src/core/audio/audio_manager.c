@@ -1,21 +1,22 @@
 #include "audio_manager.h"
+
 #define MINIAUDIO_IMPLEMENTATION
 
 #include <miniaudio/miniaudio.h>
 #include <stdint.h>
 
-#include "audio.h"
 #include "../asset_manager.h"
 #include "../memory/rbe_mem.h"
 #include "../thread/rbe_pthread.h"
 #include "../utils/logger.h"
 #include "../utils/rbe_file_system_utils.h"
+#include "audio.h"
 
 #define MAX_AUDIO_INSTANCES 32
 
 void audio_data_callback(ma_device* device, void* output, const void* input, ma_uint32 frame_count);
 
-static ma_device* audio_device = NULL;
+static ma_device* audio_device      = NULL;
 static pthread_mutex_t* audio_mutex = NULL;
 
 // An instance of an RBE audio source
@@ -39,17 +40,17 @@ bool rbe_audio_manager_init() {
     audio_instances = RBE_MEM_ALLOCATE(struct AudioInstances);
     pthread_mutex_init(audio_mutex, NULL);
     // Device
-    ma_device_config config = ma_device_config_init(ma_device_type_playback);
+    ma_device_config config   = ma_device_config_init(ma_device_type_playback);
     config.playback.pDeviceID = NULL;
-    config.playback.format = ma_format_s16;
-    config.playback.channels = 2;
-    config.capture.pDeviceID = NULL;
-    config.capture.format = ma_format_s16;
-    config.capture.channels = 1;
-    config.sampleRate = 44100;
-    config.dataCallback = audio_data_callback;
-    config.pUserData = NULL;
-    audio_device = RBE_MEM_ALLOCATE(ma_device);
+    config.playback.format    = ma_format_s16;
+    config.playback.channels  = 2;
+    config.capture.pDeviceID  = NULL;
+    config.capture.format     = ma_format_s16;
+    config.capture.channels   = 1;
+    config.sampleRate         = 44100;
+    config.dataCallback       = audio_data_callback;
+    config.pUserData          = NULL;
+    audio_device              = RBE_MEM_ALLOCATE(ma_device);
     if (ma_device_init(NULL, &config, audio_device) != MA_SUCCESS) {
         rbe_logger_error("Failed to initialize miniaudio device!");
         return false;
@@ -85,13 +86,14 @@ void rbe_audio_manager_play_sound(const char* filePath, bool loops) {
     }
 
     // Create audio instance and add to instances array
-    static unsigned int audioInstanceId = 0;  // TODO: temp id for now in case we need to grab a hold of an audio instance for roll back later...
+    static unsigned int audioInstanceId =
+        0; // TODO: temp id for now in case we need to grab a hold of an audio instance for roll back later...
     RBEAudioInstance* audioInstance = RBE_MEM_ALLOCATE(RBEAudioInstance);
-    audioInstance->source = rbe_asset_manager_get_audio_source(filePath);
-    audioInstance->id = audioInstanceId++;
-    audioInstance->does_loop = loops;
-    audioInstance->sample_position = 0.0f;
-    audioInstance->is_playing = true; // Sets sound instance to be played
+    audioInstance->source           = rbe_asset_manager_get_audio_source(filePath);
+    audioInstance->id               = audioInstanceId++;
+    audioInstance->does_loop        = loops;
+    audioInstance->sample_position  = 0.0f;
+    audioInstance->is_playing       = true; // Sets sound instance to be played
 
     audio_instances->instances[audio_instances->count++] = audioInstance;
     rbe_logger_debug("Added audio instance from file path '%s' to play!", filePath);
@@ -124,9 +126,9 @@ void audio_data_callback(ma_device* device, void* output, const void* input, ma_
             continue;
         }
 
-        const int32_t channels = audioInst->source->channels;
-        int16_t* sampleOut = (int16_t*) output;
-        int16_t* samples = (int16_t*) audioInst->source->samples;
+        const int32_t channels  = audioInst->source->channels;
+        int16_t* sampleOut      = (int16_t*) output;
+        int16_t* samples        = (int16_t*) audioInst->source->samples;
         uint64_t samplesToWrite = (uint64_t) frame_count;
 
         // Write to output
@@ -143,20 +145,20 @@ void audio_data_callback(ma_device* device, void* output, const void* input, ma_
             {
                 uint64_t leftId = (uint64_t) startSamplePosition;
                 if (channels > 1) {
-                    leftId &= ~((uint64_t)(0x01));
+                    leftId &= ~((uint64_t) (0x01));
                 }
                 uint64_t rightId = leftId + (uint64_t) (channels - 1);
 
-                int16_t firstLeftSample = samples[leftId];
-                int16_t firstRightSample = samples[rightId];
-                int16_t secondLeftSample = samples[leftId + channels];
+                int16_t firstLeftSample   = samples[leftId];
+                int16_t firstRightSample  = samples[rightId];
+                int16_t secondLeftSample  = samples[leftId + channels];
                 int16_t secondRightSample = samples[rightId + channels];
 
-                startLeftSample = (int16_t) (firstLeftSample + secondLeftSample - firstLeftSample);
+                startLeftSample  = (int16_t) (firstLeftSample + secondLeftSample - firstLeftSample);
                 startRightSample = (int16_t) (firstRightSample + secondRightSample - firstRightSample);
             }
 
-            int16_t leftSample = (int16_t) (startLeftSample / channels);
+            int16_t leftSample  = (int16_t) (startLeftSample / channels);
             int16_t rightSample = (int16_t) (startRightSample / channels);
 
             *sampleOut++ += leftSample;  // Left
@@ -170,7 +172,7 @@ void audio_data_callback(ma_device* device, void* output, const void* input, ma_
                 audioInst->sample_position = 0;
                 if (!audioInst->does_loop) {
                     rbe_logger_debug("Audio instance with id '%u' is queued for deletion!", audioInst->id);
-                    audioInst->is_playing = false;
+                    audioInst->is_playing         = false;
                     audio_instances->instances[i] = NULL;
                     removedInstances++;
                     RBE_MEM_FREE(audioInst);
@@ -184,7 +186,7 @@ void audio_data_callback(ma_device* device, void* output, const void* input, ma_
     if (removedInstances > 0) {
         for (size_t i = 0; i < audio_instances->count; i++) {
             if (audio_instances->instances[i] == NULL && i + 1 < audio_instances->count) {
-                audio_instances->instances[i] = audio_instances->instances[i + 1];
+                audio_instances->instances[i]     = audio_instances->instances[i + 1];
                 audio_instances->instances[i + 1] = NULL;
             }
         }
@@ -194,13 +196,15 @@ void audio_data_callback(ma_device* device, void* output, const void* input, ma_
 }
 
 // --- RBE Audio --- //
-bool rbe_audio_load_wav_data_from_file(const char* file_path, int32_t* sample_count, int32_t* channels, int32_t* sample_rate, void** samples) {
-    size_t len = 0;
+bool rbe_audio_load_wav_data_from_file(const char* file_path, int32_t* sample_count, int32_t* channels,
+                                       int32_t* sample_rate, void** samples) {
+    size_t len      = 0;
     char* file_data = rbe_fs_read_file_contents(file_path, &len);
     rbe_logger_debug("file '%s' size '%u' bytes", file_path, len);
 
     uint64_t totalPcmFrameCount = 0;
-    *samples =  drwav_open_memory_and_read_pcm_frames_s16(file_data, len, (uint32_t*)channels, (uint32_t*)sample_rate, &totalPcmFrameCount, NULL);
+    *samples = drwav_open_memory_and_read_pcm_frames_s16(file_data, len, (uint32_t*) channels, (uint32_t*) sample_rate,
+                                                         &totalPcmFrameCount, NULL);
     RBE_MEM_FREE(file_data);
 
     if (!*samples) {

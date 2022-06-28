@@ -25,6 +25,7 @@ typedef struct EntitySystemData {
 } EntitySystemData;
 
 void rbe_ec_system_insert_entity_into_system(Entity entity, EntitySystem* system);
+
 void rbe_ec_system_remove_entity_from_system(Entity entity, EntitySystem* system);
 
 EntitySystemData entitySystemData;
@@ -35,19 +36,19 @@ void rbe_ec_system_initialize() {
         entitySystemData.entity_systems[i] = NULL;
     }
     for (size_t i = 0; i < MAX_ENTITY_SYSTEMS_PER_HOOK; i++) {
-        entitySystemData.on_entity_start_systems[i] = NULL;
-        entitySystemData.on_entity_end_systems[i] = NULL;
-        entitySystemData.render_systems[i] = NULL;
-        entitySystemData.process_systems[i] = NULL;
-        entitySystemData.physics_process_systems[i] = NULL;
+        entitySystemData.on_entity_start_systems[i]  = NULL;
+        entitySystemData.on_entity_end_systems[i]    = NULL;
+        entitySystemData.render_systems[i]           = NULL;
+        entitySystemData.process_systems[i]          = NULL;
+        entitySystemData.physics_process_systems[i]  = NULL;
         entitySystemData.network_callback_systems[i] = NULL;
     }
-    entitySystemData.entity_systems_count = 0;
-    entitySystemData.on_entity_start_systems_count = 0;
-    entitySystemData.on_entity_end_systems_count = 0;
-    entitySystemData.render_systems_count = 0;
-    entitySystemData.process_systems_count = 0;
-    entitySystemData.physics_process_systems_count = 0;
+    entitySystemData.entity_systems_count           = 0;
+    entitySystemData.on_entity_start_systems_count  = 0;
+    entitySystemData.on_entity_end_systems_count    = 0;
+    entitySystemData.render_systems_count           = 0;
+    entitySystemData.process_systems_count          = 0;
+    entitySystemData.physics_process_systems_count  = 0;
     entitySystemData.network_callback_systems_count = 0;
 }
 
@@ -59,24 +60,22 @@ void rbe_ec_system_finalize() {
 }
 
 EntitySystem* rbe_ec_system_create() {
-    EntitySystem* newSystem = RBE_MEM_ALLOCATE(EntitySystem);
-    newSystem->name = NULL;
-    newSystem->entity_count = 0;
-    newSystem->on_entity_registered_func = NULL;
-    newSystem->on_entity_start_func = NULL;
-    newSystem->on_entity_end_func = NULL;
+    EntitySystem* newSystem                = RBE_MEM_ALLOCATE(EntitySystem);
+    newSystem->name                        = NULL;
+    newSystem->entity_count                = 0;
+    newSystem->on_entity_registered_func   = NULL;
+    newSystem->on_entity_start_func        = NULL;
+    newSystem->on_entity_end_func          = NULL;
     newSystem->on_entity_unregistered_func = NULL;
-    newSystem->render_func = NULL;
-    newSystem->process_func = NULL;
-    newSystem->physics_process_func = NULL;
-    newSystem->network_callback_func = NULL;
-    newSystem->component_signature = ComponentType_NONE;
+    newSystem->render_func                 = NULL;
+    newSystem->process_func                = NULL;
+    newSystem->physics_process_func        = NULL;
+    newSystem->network_callback_func       = NULL;
+    newSystem->component_signature         = ComponentType_NONE;
     return newSystem;
 }
 
-void rbe_ec_system_destroy(EntitySystem* entitySystem) {
-    RBE_MEM_FREE(entitySystem);
-}
+void rbe_ec_system_destroy(EntitySystem* entitySystem) { RBE_MEM_FREE(entitySystem); }
 
 void rbe_ec_system_register(EntitySystem* system) {
     RBE_ASSERT_FMT(system != NULL, "Passed in system is NULL!");
@@ -104,7 +103,8 @@ void rbe_ec_system_register(EntitySystem* system) {
 void rbe_ec_system_update_entity_signature_with_systems(Entity entity) {
     ComponentType entityComponentSignature = component_manager_get_component_signature(entity);
     for (size_t i = 0; i < entitySystemData.entity_systems_count; i++) {
-        if ((entityComponentSignature & entitySystemData.entity_systems[i]->component_signature) == entitySystemData.entity_systems[i]->component_signature) {
+        if ((entityComponentSignature & entitySystemData.entity_systems[i]->component_signature) ==
+            entitySystemData.entity_systems[i]->component_signature) {
             rbe_ec_system_insert_entity_into_system(entity, entitySystemData.entity_systems[i]);
         } else {
             rbe_ec_system_remove_entity_from_system(entity, entitySystemData.entity_systems[i]);
@@ -115,7 +115,8 @@ void rbe_ec_system_update_entity_signature_with_systems(Entity entity) {
 void rbe_ec_system_entity_start(Entity entity) {
     ComponentType entityComponentSignature = component_manager_get_component_signature(entity);
     for (size_t i = 0; i < entitySystemData.on_entity_start_systems_count; i++) {
-        if ((entityComponentSignature & entitySystemData.on_entity_start_systems[i]->component_signature) == entitySystemData.on_entity_start_systems[i]->component_signature) {
+        if ((entityComponentSignature & entitySystemData.on_entity_start_systems[i]->component_signature) ==
+            entitySystemData.on_entity_start_systems[i]->component_signature) {
             entitySystemData.on_entity_start_systems[i]->on_entity_start_func(entity);
         }
     }
@@ -124,7 +125,8 @@ void rbe_ec_system_entity_start(Entity entity) {
 void rbe_ec_system_entity_end(Entity entity) {
     ComponentType entityComponentSignature = component_manager_get_component_signature(entity);
     for (size_t i = 0; i < entitySystemData.on_entity_end_systems_count; i++) {
-        if ((entityComponentSignature & entitySystemData.on_entity_end_systems[i]->component_signature) == entitySystemData.on_entity_end_systems[i]->component_signature) {
+        if ((entityComponentSignature & entitySystemData.on_entity_end_systems[i]->component_signature) ==
+            entitySystemData.on_entity_end_systems[i]->component_signature) {
             entitySystemData.on_entity_end_systems[i]->on_entity_end_func(entity);
         }
     }
@@ -202,7 +204,7 @@ void rbe_ec_system_remove_entity_from_system(Entity entity, EntitySystem* system
                     if (system->entities[i + 1] == NULL_ENTITY) {
                         break;
                     }
-                    system->entities[i] = system->entities[i + 1];
+                    system->entities[i]     = system->entities[i + 1];
                     system->entities[i + 1] = NULL_ENTITY;
                 }
             }

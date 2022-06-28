@@ -7,7 +7,7 @@
 
 char* rbe_strdup(const char* string) {
     size_t string_length = strlen(string) + 1;
-    void* new_string = RBE_MEM_ALLOCATE_SIZE(string_length);
+    void* new_string     = RBE_MEM_ALLOCATE_SIZE(string_length);
 
     if (new_string == NULL) {
         return NULL;

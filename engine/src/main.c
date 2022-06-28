@@ -1,5 +1,5 @@
-#include <stdlib.h>
 #include "core/core.h"
+#include <stdlib.h>
 
 int main(int argv, char** args) {
     if (!rbe_initialize(argv, args)) {

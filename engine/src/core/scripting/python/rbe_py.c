@@ -2,12 +2,12 @@
 
 #include <Python.h>
 
-#include "py_helper.h"
+#include "../../game_properties.h"
+#include "../../utils/rbe_assert.h"
 #include "py_cache.h"
+#include "py_helper.h"
 #include "rbe_py_api_module.h"
 #include "rbe_py_api_source.h"
-#include "../../utils/rbe_assert.h"
-#include "../../game_properties.h"
 
 void rbe_py_initialize() {
     rbe_py_cache_initialize();
@@ -24,25 +24,21 @@ void rbe_py_initialize() {
 
 void rbe_py_finalize() {
     rbe_py_cache_finalize();
-//    Py_Finalize(); // FIXME: Figure out why this crashes...
+    //    Py_Finalize(); // FIXME: Figure out why this crashes...
 }
 
-bool rbe_py_load_project_config() {
-    return pyh_run_python_file("rbe_config.py");
-}
+bool rbe_py_load_project_config() { return pyh_run_python_file("rbe_config.py"); }
 
 RBEGameProperties rbe_py_read_config_path(const char* filePath) {
     bool load_success = pyh_run_python_file(filePath);
     RBE_ASSERT_FMT(load_success == true, "Failed to load config at '%s'", filePath);
     RBEGameProperties* gameProps = rbe_game_props_get();
-    RBEGameProperties props = {
-        .gameTitle = gameProps->gameTitle,
-        .resolutionWidth = gameProps->resolutionWidth,
-        .resolutionHeight = gameProps->resolutionHeight,
-        .windowWidth = gameProps->windowWidth,
-        .windowHeight = gameProps->windowHeight,
-        .targetFPS = gameProps->targetFPS,
-        .initialScenePath = gameProps->initialScenePath
-    };
+    RBEGameProperties props      = {.gameTitle        = gameProps->gameTitle,
+                                    .resolutionWidth  = gameProps->resolutionWidth,
+                                    .resolutionHeight = gameProps->resolutionHeight,
+                                    .windowWidth      = gameProps->windowWidth,
+                                    .windowHeight     = gameProps->windowHeight,
+                                    .targetFPS        = gameProps->targetFPS,
+                                    .initialScenePath = gameProps->initialScenePath};
     return props;
 }

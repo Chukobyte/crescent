@@ -4,11 +4,12 @@
 extern "C" {
 #endif
 
-#include <stddef.h>
 #include <stdbool.h>
+#include <stddef.h>
 
-typedef size_t (*RBEHashFunc) (void*, size_t);
-typedef int (*RBECompareFunc) (void*, void*, size_t);
+typedef size_t (*RBEHashFunc)(void*, size_t);
+
+typedef int (*RBECompareFunc)(void*, void*, size_t);
 
 typedef struct HashMapNode {
     struct HashMapNode* next;
@@ -35,15 +36,22 @@ typedef struct RBEHashMapIterator {
 
 // Generic hash map methods
 RBEHashMap* rbe_hash_map_create(size_t keySize, size_t valueSize, size_t capacity);
+
 bool rbe_hash_map_destroy(RBEHashMap* hashMap);
+
 bool rbe_hash_map_add(RBEHashMap* hashMap, void* key, void* value);
+
 void* rbe_hash_map_get(RBEHashMap* hashMap, void* key);
+
 bool rbe_hash_map_has(RBEHashMap* hashMap, void* key);
+
 bool rbe_hash_map_erase(RBEHashMap* hashMap, void* key);
 
 // Iterator
 RBEHashMapIterator rbe_hash_map_iter_create(RBEHashMap* hashMap);
+
 bool rbe_hash_map_iter_is_valid(RBEHashMap* hashMap, RBEHashMapIterator* iterator);
+
 void rbe_hash_map_iter_advance(RBEHashMap* hashMap, RBEHashMapIterator* iterator);
 
 #ifdef __cplusplus

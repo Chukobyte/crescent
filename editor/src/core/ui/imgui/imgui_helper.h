@@ -1,8 +1,8 @@
 #pragma once
 
 #include <functional>
-#include <vector>
 #include <optional>
+#include <vector>
 
 #include "imgui.h"
 
@@ -39,7 +39,7 @@ struct MenuBar {
 
 struct PopupModal {
     const char* name;
-    bool* open = nullptr;
+    bool* open                   = nullptr;
     ImGuiWindowFlags windowFlags = 0;
     ImGuiHelperCallbackFunc callbackFunc;
     std::optional<ImVec2> position;
@@ -48,7 +48,7 @@ struct PopupModal {
 
 struct Window {
     const char* name;
-    bool* open = nullptr;
+    bool* open                   = nullptr;
     ImGuiWindowFlags windowFlags = 0;
     ImGuiHelperCallbackFunc callbackFunc;
     std::optional<ImVec2> position;
@@ -58,4 +58,4 @@ struct Window {
 void BeginMainMenuBar(const MenuBar& menuBar);
 void BeginPopupModal(const PopupModal& popupModal);
 void BeginWindow(const Window& window);
-}
+} // namespace ImGuiHelper

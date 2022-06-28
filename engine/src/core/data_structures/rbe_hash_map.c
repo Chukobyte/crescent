@@ -6,30 +6,32 @@
 #include "../utils/rbe_assert.h"
 
 size_t rbe_default_hash(void* raw_key, size_t key_size);
+
 int rbe_default_compare(void* first_key, void* second_key, size_t key_size);
 
 HashMapNode* hash_map_create_node(RBEHashMap* hashMap, void* key, void* value, HashMapNode* next);
+
 void hash_map_destroy_node(HashMapNode* node);
 
 bool hash_map_push_front(RBEHashMap* hashMap, size_t index, void* key, void* value);
 
 RBEHashMap* rbe_hash_map_create(size_t keySize, size_t valueSize, size_t capacity) {
-    RBEHashMap* map = (RBEHashMap*) RBE_MEM_ALLOCATE_SIZE(sizeof(RBEHashMap));
-    map->keySize = keySize;
-    map->valueSize = valueSize;
-    map->capacity = capacity;
-    map->size = 0;
-    map->hashFunc = rbe_default_hash;
+    RBEHashMap* map  = (RBEHashMap*) RBE_MEM_ALLOCATE_SIZE(sizeof(RBEHashMap));
+    map->keySize     = keySize;
+    map->valueSize   = valueSize;
+    map->capacity    = capacity;
+    map->size        = 0;
+    map->hashFunc    = rbe_default_hash;
     map->compareFunc = rbe_default_compare;
-    map->nodes = (HashMapNode**) RBE_MEM_ALLOCATE_SIZE(capacity * sizeof(HashMapNode*));
+    map->nodes       = (HashMapNode**) RBE_MEM_ALLOCATE_SIZE(capacity * sizeof(HashMapNode*));
     memset(map->nodes, 0, capacity * sizeof(HashMapNode*)); // TODO: fix
     return map;
 }
 
 HashMapNode* hash_map_create_node(RBEHashMap* hashMap, void* key, void* value, HashMapNode* next) {
     HashMapNode* node = (HashMapNode*) RBE_MEM_ALLOCATE_SIZE(sizeof(HashMapNode));
-    node->key = RBE_MEM_ALLOCATE_SIZE(hashMap->keySize);
-    node->value = RBE_MEM_ALLOCATE_SIZE(hashMap->valueSize);
+    node->key         = RBE_MEM_ALLOCATE_SIZE(hashMap->keySize);
+    node->value       = RBE_MEM_ALLOCATE_SIZE(hashMap->valueSize);
     memcpy(node->key, key, hashMap->keySize);
     memcpy(node->value, value, hashMap->valueSize);
     node->next = next;
@@ -107,7 +109,7 @@ bool rbe_hash_map_erase(RBEHashMap* hashMap, void* key) {
     RBE_ASSERT(hashMap != NULL);
     RBE_ASSERT(key != NULL);
 
-    size_t index = hashMap->hashFunc(key, hashMap->keySize) % hashMap->capacity;
+    size_t index      = hashMap->hashFunc(key, hashMap->keySize) % hashMap->capacity;
     HashMapNode* node = hashMap->nodes[index];
     for (HashMapNode* previous = NULL; node; previous = node, node = node->next) {
         if (hashMap->compareFunc(key, node->key, hashMap->keySize) == 0) {
@@ -132,17 +134,18 @@ bool rbe_hash_map_erase(RBEHashMap* hashMap, void* key) {
 RBEHashMapIterator rbe_hash_map_iter_create(RBEHashMap* hashMap) {
     // Get initial node if exists
     HashMapNode* initialNode = NULL;
-    size_t initialIndex = 0;
+    size_t initialIndex      = 0;
     for (size_t chain = 0; chain < hashMap->capacity; chain++) {
         HashMapNode* node = hashMap->nodes[chain];
         if (node != NULL) {
-            initialNode = node;
+            initialNode  = node;
             initialIndex = chain + 1;
             break;
         }
     }
-    size_t iteratorCount = initialNode != NULL ? 1 : 0;
-    RBEHashMapIterator iterator = { .count = iteratorCount, .end = hashMap->capacity, .index = initialIndex, .pair = initialNode };
+    size_t iteratorCount        = initialNode != NULL ? 1 : 0;
+    RBEHashMapIterator iterator = {
+        .count = iteratorCount, .end = hashMap->capacity, .index = initialIndex, .pair = initialNode};
     return iterator;
 }
 
@@ -162,7 +165,7 @@ void rbe_hash_map_iter_advance(RBEHashMap* hashMap, RBEHashMapIterator* iterator
         for (size_t chain = iterator->index; chain < hashMap->capacity; chain++) {
             HashMapNode* node = hashMap->nodes[chain];
             if (node != NULL) {
-                iterator->pair = node;
+                iterator->pair  = node;
                 iterator->index = chain + 1;
                 iterator->count++;
                 return;
@@ -179,7 +182,7 @@ size_t rbe_default_hash(void* raw_key, size_t key_size) {
     // sstp://www.cse.yorku.ca/~oz/hash.ssml
     size_t byte;
     size_t hash = 5381;
-    char* key = (char*) raw_key;
+    char* key   = (char*) raw_key;
 
     for (byte = 0; byte < key_size; ++byte) {
         // (hash << 5) + hash = hash * 33

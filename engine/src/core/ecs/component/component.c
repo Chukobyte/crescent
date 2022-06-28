@@ -73,8 +73,8 @@ void component_manager_finalize() {}
 
 void* component_manager_get_component(Entity entity, ComponentDataIndex index) {
     void* component = component_array_get_component(componentManager->entityComponentArrays[entity], index);
-    RBE_ASSERT_FMT(component != NULL, "Entity '%d' doesn't have '%s' component!",
-                   entity, component_get_component_data_index_string(index));
+    RBE_ASSERT_FMT(component != NULL, "Entity '%d' doesn't have '%s' component!", entity,
+                   component_get_component_data_index_string(index));
     return component;
 }
 
@@ -115,47 +115,29 @@ ComponentType component_manager_get_component_signature(Entity entity) {
 
 ComponentType component_manager_translate_index_to_type(ComponentDataIndex index) {
     switch (index) {
-    case ComponentDataIndex_NODE:
-        return ComponentType_NODE;
-    case ComponentDataIndex_TRANSFORM_2D:
-        return ComponentType_TRANSFORM_2D;
-    case ComponentDataIndex_SPRITE:
-        return ComponentType_SPRITE;
-    case ComponentDataIndex_ANIMATED_SPRITE:
-        return ComponentType_ANIMATED_SPRITE;
-    case ComponentDataIndex_TEXT_LABEL:
-        return ComponentType_TEXT_LABEL;
-    case ComponentDataIndex_SCRIPT:
-        return ComponentType_SCRIPT;
-    case ComponentDataIndex_COLLIDER_2D:
-        return ComponentType_COLLIDER_2D;
+    case ComponentDataIndex_NODE: return ComponentType_NODE;
+    case ComponentDataIndex_TRANSFORM_2D: return ComponentType_TRANSFORM_2D;
+    case ComponentDataIndex_SPRITE: return ComponentType_SPRITE;
+    case ComponentDataIndex_ANIMATED_SPRITE: return ComponentType_ANIMATED_SPRITE;
+    case ComponentDataIndex_TEXT_LABEL: return ComponentType_TEXT_LABEL;
+    case ComponentDataIndex_SCRIPT: return ComponentType_SCRIPT;
+    case ComponentDataIndex_COLLIDER_2D: return ComponentType_COLLIDER_2D;
     case ComponentDataIndex_NONE:
-    default:
-        rbe_logger_error("Not a valid component data index: '%d'", index);
-        return ComponentType_NONE;
+    default: rbe_logger_error("Not a valid component data index: '%d'", index); return ComponentType_NONE;
     }
 }
 
 const char* component_get_component_data_index_string(ComponentDataIndex index) {
     switch (index) {
-    case ComponentDataIndex_NODE:
-        return "Node";
-    case ComponentDataIndex_TRANSFORM_2D:
-        return "Transform2D";
-    case ComponentDataIndex_SPRITE:
-        return "Sprite";
-    case ComponentDataIndex_ANIMATED_SPRITE:
-        return "Animated Sprite";
-    case ComponentDataIndex_TEXT_LABEL:
-        return "Text Label";
-    case ComponentDataIndex_SCRIPT:
-        return "Script";
-    case ComponentDataIndex_COLLIDER_2D:
-        return "Collider2D";
+    case ComponentDataIndex_NODE: return "Node";
+    case ComponentDataIndex_TRANSFORM_2D: return "Transform2D";
+    case ComponentDataIndex_SPRITE: return "Sprite";
+    case ComponentDataIndex_ANIMATED_SPRITE: return "Animated Sprite";
+    case ComponentDataIndex_TEXT_LABEL: return "Text Label";
+    case ComponentDataIndex_SCRIPT: return "Script";
+    case ComponentDataIndex_COLLIDER_2D: return "Collider2D";
     case ComponentDataIndex_NONE:
-    default:
-        rbe_logger_error("Not a valid component data index: '%d'", index);
-        return "NONE";
+    default: rbe_logger_error("Not a valid component data index: '%d'", index); return "NONE";
     }
     return "INVALID";
 }

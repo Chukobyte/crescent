@@ -5,8 +5,8 @@
 #include "imgui.h"
 
 // UIs
-#include "../project_manager_ui.h"
 #include "../opened_project_ui.h"
+#include "../project_manager_ui.h"
 
 #include "../../editor_context.h"
 
@@ -25,8 +25,7 @@ void ImGuiHandler::Process() {
         OpenedProjectUI::ProcessModalPopups();
         OpenedProjectUI::ProcessWindows();
         break;
-    default:
-        break;
+    default: break;
     }
     // standard demo window
     if (isImGuiDemoEnabled) {

@@ -2,8 +2,8 @@
 
 #include <Python.h>
 
-#include "../../utils/rbe_assert.h"
 #include "../../data_structures/rbe_hash_map_string.h"
+#include "../../utils/rbe_assert.h"
 
 // Helper functions
 const char* pyh_get_string_from_obj(PyObject* obj) {
@@ -21,7 +21,7 @@ const char* pyh_get_string_from_dict(PyObject* pyDict, const char* key) {
 }
 
 const char* pyh_get_string_from_dict_default(PyObject* pyDict, const char* key, const char* defaultValue) {
-    PyObject* pKey = PyUnicode_FromString(key);
+    PyObject* pKey          = PyUnicode_FromString(key);
     PyObject* pDefaultValue = PyUnicode_FromString(defaultValue);
 
     PyObject* pStr = PyDict_SetDefault(pyDict, pKey, pDefaultValue);
@@ -43,9 +43,9 @@ int pyh_get_int_from_dict(PyObject* pyDict, const char* key) {
 }
 
 int pyh_get_int_from_dict_default(PyObject* pyDict, const char* key, int defaultValue) {
-    PyObject* pKey = PyUnicode_FromString(key);
+    PyObject* pKey          = PyUnicode_FromString(key);
     PyObject* pDefaultValue = PyLong_FromLong(defaultValue);
-    PyObject* pInt = PyDict_SetDefault(pyDict, pKey, pDefaultValue);
+    PyObject* pInt          = PyDict_SetDefault(pyDict, pKey, pDefaultValue);
     RBE_ASSERT(pInt != NULL);
     RBE_ASSERT(PyLong_Check(pInt));
     const int intResult = PyLong_AsLong(pInt);
@@ -57,7 +57,7 @@ int pyh_get_int_from_dict_default(PyObject* pyDict, const char* key, int default
 
 bool pyh_run_python_file(const char* filePath) {
     PyObject* pFilePath = Py_BuildValue("s", filePath);
-    FILE* configFile = _Py_fopen_obj(pFilePath, "r+");
+    FILE* configFile    = _Py_fopen_obj(pFilePath, "r+");
     if (configFile != NULL) {
         int result = PyRun_SimpleFile(configFile, filePath);
         Py_DECREF(pFilePath);

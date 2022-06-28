@@ -9,5 +9,7 @@ typedef struct RBEEngineContext {
 } RBEEngineContext;
 
 RBEEngineContext* rbe_engine_context_initialize();
+
 void rbe_engine_context_finalize();
+
 RBEEngineContext* rbe_engine_context_get();

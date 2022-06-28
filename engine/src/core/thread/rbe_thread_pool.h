@@ -25,8 +25,10 @@ typedef struct ThreadPool {
 } ThreadPool;
 
 ThreadPool* tpool_create(size_t num);
+
 void tpool_destroy(ThreadPool* tp);
 // Adds worker (or job) to the thread pool.
 bool tpool_add_work(ThreadPool* tp, ThreadFunc func, void* arg);
+
 // Blocking function that finishes once all work is completed.
 void tpool_wait(ThreadPool* tp);
