@@ -5,7 +5,7 @@ extern "C" {
 #endif
 
 #include <stdbool.h>
-#include <stdint.h>
+#include <stddef.h>
 
 // Change directory
 bool rbe_fs_chdir(const char* dirPath);

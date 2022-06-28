@@ -17,12 +17,16 @@ else
     EDITOR_BUILD_OBJECT := $(EDITOR_PROJECT_NAME)
     EDITOR_BUILD_OBJECT_TEST := $(EDITOR_PROJECT_NAME)_test
     # TODO: Need to validate linux flags
-    L_FLAGS := -lSDL2 -lGL -lpython3.7m -lfreetype -lcrypt -lpthread -ldl  -lutil -lm -static-libgcc
-    DELETE_CMD := rm
+    L_FLAGS := -lSDL2 -lGL -lpython3.10m -lfreetype -lcrypt -lpthread -ldl  -lutil -lm -static-libgcc
+    DELETE_CMD := rm -f
 endif
 
-CC := gcc # C Compiler
-CXX := g++ # C++ compiler
+#CC := gcc # C Compiler
+CC := /usr/bin/x86_64-w64-mingw32-gcc # C Compiler
+#CC := /usr/bin/i686-w64-mingw32-gcc # C Compiler
+#CXX := g++ # C++ compiler
+#CXX := /usr/bin/x86_64-w64-mingw32-cpp # C++ compiler
+CXX := /usr/bin/i686-w64-mingw32-cpp # C++ compiler
 C_FLAGS := # Overridden by builds
 
 # Engine
@@ -42,7 +46,8 @@ EDITOR_OBJ_CPP_TEST = $(EDITOR_SRC_TEST:.cpp=.o)
 EDITOR_OBJ_C = $(EDITOR_SRC_C:.c=.o)
 
 
-I_FLAGS := -I./include -I${SDL2_INCLUDE_PATH} -I${PYTHON_INCLUDE_PATH} -I${FREETYPE_INCLUDE_PATH}
+#I_FLAGS := -I./include -I${SDL2_INCLUDE_PATH} -I${PYTHON_INCLUDE_PATH} -I${FREETYPE_INCLUDE_PATH} -I/usr/include/x86_64-linux-gnu/SDL2/
+I_FLAGS := -I./include -I/opt/dev/sdl2/include/ -I/opt/dev/python3.10/include/ -I/opt/dev/freetype2/include/ -I/usr/include/x86_64-linux-gnu/SDL2/
 LIBRARIES := -L${SDL2_LIBS_PATH} -L${PYTHON_LIBS_PATH} -L${FREETYPE_LIBS_PATH}
 RELEASE_FLAGS = -DHAVE_SNPRINTF=1
 
@@ -53,7 +58,7 @@ all: clean format build
 
 %.o: %.c
 	@echo "Compiling " $< " into " $@
-	@$(CC) -c $(C_FLAGS) $< -o $@ $(I_FLAGS) $(RELEASE_FLAGS)
+	$(CC) -c $(C_FLAGS) $< -o $@ $(I_FLAGS) $(RELEASE_FLAGS)
 
 %.o: %.cpp
 	@echo "Compiling " $< " into " $@
@@ -167,3 +172,10 @@ endif
 
 run-editor-test:
 	./$(EDITOR_BUILD_OBJECT_TEST) --success
+
+export SDL2_INCLUDE_PATH="/usr/include/"
+export SDL2_LIBS_PATH="/usr/lib/x86_64-linux-gnu/"
+export PYTHON_INCLUDE_PATH=""
+export PYTHON_LIBS_PATH=""
+export FREETYPE_INCLUDE_PATH=""
+export FREETYPE_LIBS_PATH=""

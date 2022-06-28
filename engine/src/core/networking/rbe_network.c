@@ -7,6 +7,8 @@
 #else
 #include<arpa/inet.h>
 #include<sys/socket.h>
+#include <string.h>
+
 #endif
 
 #include "../thread/rbe_pthread.h"
@@ -31,10 +33,27 @@ bool rbe_network_is_server() {
 
 void* rbe_udp_server_poll(void* arg);
 
+#ifdef _WIN32
 static SOCKET server_socket;
+#else
+#define SOCKET_ERROR (-1)
+#define INVALID_SOCKET (-1)
+static int server_socket;
+
+int WSAGetLastError() {
+    return -1;
+}
+
+void WSACleanup() {}
+
+void closesocket(int socket) {
+//    close(socket);
+}
+
+#endif
 static struct sockaddr_in server;
 static struct sockaddr_in server_si_other;
-static int server_socket_size = 0;
+static socklen_t server_socket_size = 0;
 static int server_recv_len = 0;
 static on_network_server_callback server_user_callback = NULL;
 static on_network_server_client_connected_callback server_client_connected_callback = NULL;
@@ -173,7 +192,11 @@ bool rbe_udp_client_initialize(const char* serverAddr, int serverPort, on_networ
     memset((char*) &client_si_other, 0, sizeof(client_si_other));
     client_si_other.sin_family = AF_INET;
     client_si_other.sin_port = htons(serverPort);
+#ifdef _WIN32
     client_si_other.sin_addr.S_un.S_addr = inet_addr(serverAddr);
+#else
+
+#endif
 
 #ifndef _WIN32
     if (inet_aton(serverAddr, &client_si_other.sin_addr) == 0) {

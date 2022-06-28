@@ -1,5 +1,6 @@
 #pragma once
 
+#include <stddef.h>
 #include "../../ecs/entity/entity.h"
 
 #define RBE_MAX_ENTITY_COLLISION 4
