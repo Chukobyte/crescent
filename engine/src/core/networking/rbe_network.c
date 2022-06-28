@@ -2,6 +2,8 @@
 
 #include <stdio.h>
 
+//#include "rbe_network_socket.h" // TODO: Use socket header once finished
+
 #ifdef _WIN32
 #include <winsock2.h>
 #else

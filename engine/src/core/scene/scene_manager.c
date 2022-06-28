@@ -150,12 +150,12 @@ void rbe_scene_manager_set_active_scene_root(SceneTreeNode* root) {
 Transform2DComponent rbe_scene_manager_get_combined_parent_transform(Entity entity) {
     SceneTreeNode* sceneTreeNode = rbe_scene_manager_get_entity_tree_node(entity);
     Transform2DComponent transform2DComponent = {
-            .position={ .x=0.0f, .y=0.0f },
-            .scale={ .x=1.0f, .y=1.0f },
-            .rotation=0.0f,
-            .zIndex=0,
-            .ignoreCamera=false,
-            .isZIndexRelativeToParent=true,
+        .position={ .x=0.0f, .y=0.0f },
+        .scale={ .x=1.0f, .y=1.0f },
+        .rotation=0.0f,
+        .zIndex=0,
+        .ignoreCamera=false,
+        .isZIndexRelativeToParent=true,
     };
     SceneTreeNode* parentTreeNode = sceneTreeNode->parent;
     while (parentTreeNode != NULL) {
