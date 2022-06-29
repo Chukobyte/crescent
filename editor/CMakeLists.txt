@@ -13,8 +13,6 @@ else ()
 endif ()
 
 find_package(SDL2 CONFIG REQUIRED)
-find_package(freetype CONFIG REQUIRED)
-find_package (Python3 COMPONENTS Interpreter Development REQUIRED)
 
 add_library(${PROJECT_NAME} STATIC
         # C++

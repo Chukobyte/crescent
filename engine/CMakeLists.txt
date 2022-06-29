@@ -77,6 +77,14 @@ target_include_directories(${PROJECT_NAME} PUBLIC
         "${PROJECT_BINARY_DIR}"
         "../include"
         )
+target_include_directories(glad PUBLIC
+        "${PROJECT_BINARY_DIR}"
+        "../include"
+        )
+target_include_directories(stb_image PUBLIC
+        "${PROJECT_BINARY_DIR}"
+        "../include"
+        )
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image SDL2::SDL2 SDL2::SDL2main freetype Python3::Python Ws2_32)
