@@ -11,8 +11,10 @@ typedef SOCKET rbe_socket;
 #include<arpa/inet.h>
 #include<sys/socket.h>
 
+#define SOCKET_ERROR (-1)
+#define INVALID_SOCKET (-1)
+
 typedef socklen_t rbe_socket_size;
-typedef rbe_socket int;
 typedef int rbe_socket;
 #endif
 

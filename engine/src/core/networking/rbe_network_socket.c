@@ -40,7 +40,7 @@ bool rbe_socket_send_message(RBESocket* sock, const char* message) {
     static char socket_output_buffer[RBE_SOCKET_SEND_BUFFER_SIZE];
     strcpy(socket_output_buffer, message);
     if (sendto(sock->sock, socket_output_buffer, (int) strlen(socket_output_buffer), 0, (struct sockaddr*) &sock->si_other, sock->size) == SOCKET_ERROR) {
-        rbe_logger_error("sendto() failed with error code : %d", WSAGetLastError());
+        rbe_logger_error("sendto() failed with error code : %d", rbe_socket_get_last_error());
         return false;
     }
     return true;
@@ -110,8 +110,7 @@ RBESocket rbe_socket_create_client(const char* serverAddr, int serverPort, on_rb
     sock.si_other.sin_addr.S_un.S_addr = inet_addr(serverAddr);
 #else
     if (inet_aton(serverAddr, &sock.si_other.sin_addr) == 0) {
-        rbe_logger_error("inet_aton() failed!");
-        return false;
+        RBE_ASSERT_FMT(false, "inet_aton() failed!");
     }
 #endif
 
