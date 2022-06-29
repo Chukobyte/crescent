@@ -1,0 +1,26 @@
+name: windows-mingw-build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+
+    steps:
+      - uses: actions/checkout@v1
+      - uses: msys2/setup-msys2@v2
+      with:
+        install: gcc g++ make SDL2 freetype python
+
+      - name: run build
+        run: |
+          cd ${{ github.workspace }}
+          cmake . -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++
+          cmake --build .
