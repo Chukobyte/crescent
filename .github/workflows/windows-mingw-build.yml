@@ -22,5 +22,9 @@ jobs:
       - name: run build
         run: |
           cd ${{ github.workspace }}
+          pacmans -S mingw-w64-x86_64-cmake
+          pacmans -S mingw-w64-x86_64-SDL2
+          pacmans -S mingw-w64-x86_64-freetype
+          pacmans -S mingw-w64-x86_64-python
           cmake . -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++
           cmake --build .
