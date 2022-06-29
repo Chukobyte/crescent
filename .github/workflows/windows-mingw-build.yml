@@ -16,8 +16,8 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - uses: msys2/setup-msys2@v2
-      with:
-        install: gcc g++ make SDL2 freetype python
+        with:
+          install: gcc g++ make SDL2 freetype python
 
       - name: run build
         run: |
