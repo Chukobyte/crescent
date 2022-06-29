@@ -13,8 +13,6 @@ else ()
 endif ()
 
 find_package(SDL2 CONFIG REQUIRED)
-find_package(freetype CONFIG REQUIRED)
-find_package (Python3 COMPONENTS Interpreter Development REQUIRED)
 
 add_library(${PROJECT_NAME} STATIC
         # C++
@@ -32,9 +30,6 @@ add_library(${PROJECT_NAME} STATIC
         ../include/imgui_widgets.cpp
         ../include/imgui/imgui_impl_opengl3.cpp
         ../include/imgui/imgui_impl_sdl.cpp
-        # C
-        ../include/stb_image/stb_image.c
-        ../include/glad/glad.c
         )
 
 target_include_directories(${PROJECT_NAME} PUBLIC
@@ -43,9 +38,11 @@ target_include_directories(${PROJECT_NAME} PUBLIC
         )
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    target_link_libraries(${PROJECT_NAME} PUBLIC SDL2::SDL2 SDL2::SDL2main)
+    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image SDL2::SDL2 SDL2::SDL2main)
+elseif(WIN32)
+    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image -lmingw32 -static-libgcc SDL2::SDL2 SDL2::SDL2main)
 else ()
-    target_link_libraries(${PROJECT_NAME} PUBLIC -lmingw32 -static-libgcc SDL2::SDL2 SDL2::SDL2main)
+    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image -static-libgcc -Xlinker -export-dynamic SDL2::SDL2 SDL2::SDL2main)
 endif ()
 
 target_compile_options(${PROJECT_NAME} PUBLIC ${flags})

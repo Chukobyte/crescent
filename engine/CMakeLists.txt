@@ -66,22 +66,32 @@ add_library(${PROJECT_NAME} STATIC
         src/core/ecs/system/sprite_rendering_ec_system.c
         src/core/ecs/system/collision_ec_system.c
         src/core/ecs/component/collider2d_component.c
-        ../include/stb_image/stb_image.c
-        ../include/glad/glad.c
         src/core/networking/rbe_network_socket.c
         )
+
+
+add_library(glad ../include/glad/glad.c)
+add_library(stb_image ../include/stb_image/stb_image.c)
 
 target_include_directories(${PROJECT_NAME} PUBLIC
         "${PROJECT_BINARY_DIR}"
         "../include"
         )
+target_include_directories(glad PUBLIC
+        "${PROJECT_BINARY_DIR}"
+        "../include"
+        )
+target_include_directories(stb_image PUBLIC
+        "${PROJECT_BINARY_DIR}"
+        "../include"
+        )
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    target_link_libraries(${PROJECT_NAME} PUBLIC SDL2::SDL2 SDL2::SDL2main freetype Python3::Python Ws2_32)
+    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image SDL2::SDL2 SDL2::SDL2main freetype Python3::Python Ws2_32)
 elseif(WIN32)
-    target_link_libraries(${PROJECT_NAME} PUBLIC -lmingw32 -static-libgcc SDL2::SDL2 SDL2::SDL2main freetype Python3::Python -lws2_32)
+    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image -lmingw32 -static-libgcc SDL2::SDL2 SDL2::SDL2main freetype Python3::Python -lws2_32)
 else ()
-    target_link_libraries(${PROJECT_NAME} PUBLIC -static-libgcc -Xlinker -export-dynamic SDL2::SDL2 SDL2::SDL2main freetype Python3::Python)
+    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image -static-libgcc -Xlinker -export-dynamic SDL2::SDL2 SDL2::SDL2main freetype Python3::Python)
 endif ()
 
 target_compile_options(${PROJECT_NAME} PUBLIC ${flags})
