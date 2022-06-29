@@ -2,7 +2,7 @@
 
 #include <stdio.h>
 
-//#include "rbe_network_socket.h" // TODO: Use socket header once finished
+#include "rbe_network_socket.h" // TODO: Use socket header once finished
 
 #ifdef _WIN32
 #include <winsock2.h>
@@ -60,6 +60,8 @@ static socklen_t server_socket_size = 0;
 static int server_recv_len = 0;
 static on_network_server_callback server_user_callback = NULL;
 static on_network_server_client_connected_callback server_client_connected_callback = NULL;
+
+
 
 bool rbe_udp_server_initialize(int port, on_network_server_callback user_callback) {
     server_socket_size = sizeof(server_si_other);

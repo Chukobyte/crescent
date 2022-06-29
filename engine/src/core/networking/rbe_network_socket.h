@@ -27,6 +27,7 @@ typedef struct RBESocket {
 
 bool rbe_socket_system_initialize();
 void rbe_socket_system_finalize();
+bool rbe_socket_send_message(RBESocket* sock, const char* message);
 bool rbe_socket_receive_data(RBESocket* sock, char* buffer, int buffer_size);
 void rbe_socket_close(RBESocket* sock);
 

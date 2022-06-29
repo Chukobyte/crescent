@@ -29,6 +29,17 @@ bool rbe_socket_system_initialize() {
 
 void rbe_socket_system_finalize() {}
 
+bool rbe_socket_send_message(RBESocket* sock, const char* message) {
+#define RBE_SOCKET_SEND_BUFFER_SIZE 512
+    static char socket_output_buffer[RBE_SOCKET_SEND_BUFFER_SIZE];
+    strcpy(socket_output_buffer, message);
+    if (sendto(sock->sock, socket_output_buffer, (int) strlen(socket_output_buffer), 0, (struct sockaddr*) &sock->si_other, sock->size) == SOCKET_ERROR) {
+        rbe_logger_error("sendto() failed with error code : %d", WSAGetLastError());
+        return false;
+    }
+    return true;
+}
+
 bool rbe_socket_receive_data(RBESocket* sock, char* buffer, int buffer_size) {
     if (recvfrom(sock->sock, buffer, buffer_size, 0, (struct sockaddr *) &sock->si_other, &sock->size) == SOCKET_ERROR) {
         rbe_logger_error("Server: recvfrom() failed with error code : %d", rbe_socket_get_last_error());
