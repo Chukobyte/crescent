@@ -21,7 +21,6 @@ jobs:
 
       - name: run build
         run: |
-          cd ${{ github.workspace }}
           pacman -S mingw-w64-x86_64-cmake
           pacman -S mingw-w64-x86_64-SDL2
           pacman -S mingw-w64-x86_64-freetype
