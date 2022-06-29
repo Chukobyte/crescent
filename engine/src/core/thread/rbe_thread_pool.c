@@ -1,5 +1,7 @@
 #include "rbe_thread_pool.h"
 
+#include "../memory/rbe_mem.h"
+
 // --- Thread Pool Worker --- //
 static ThreadPoolWork* tpool_work_create(ThreadFunc func, void *arg) {
     ThreadPoolWork* work;
@@ -8,7 +10,7 @@ static ThreadPoolWork* tpool_work_create(ThreadFunc func, void *arg) {
         return NULL;
     }
 
-    work = malloc(sizeof(*work));
+    work = RBE_MEM_ALLOCATE_SIZE(sizeof(*work));
     work->func = func;
     work->arg = arg;
     work->next = NULL;
@@ -19,7 +21,7 @@ static void tpool_work_destroy(ThreadPoolWork* work) {
     if (work == NULL) {
         return;
     }
-    free(work);
+    RBE_MEM_FREE(work);
 }
 
 
@@ -93,7 +95,7 @@ ThreadPool* tpool_create(size_t num) {
         num = 2;
     }
 
-    tp = calloc(1, sizeof(*tp));
+    tp = RBE_MEM_ALLOCATE_SIZE_ZERO(1, sizeof(*tp));
     tp->threadCount = num;
 
     pthread_mutex_init(&(tp->workMutex), NULL);
@@ -135,7 +137,7 @@ void tpool_destroy(ThreadPool* tp) {
     pthread_cond_destroy(&(tp->workCond));
     pthread_cond_destroy(&(tp->workingCond));
 
-    free(tp);
+    RBE_MEM_FREE(tp);
 }
 
 bool tpool_add_work(ThreadPool* tp, ThreadFunc func, void* arg) {

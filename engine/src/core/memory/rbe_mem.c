@@ -10,6 +10,14 @@ void* rbe_mem_allocate(size_t size) {
     return memory;
 }
 
+void* rbe_mem_allocate_c(int blocks, size_t size){
+    void* memory = calloc(blocks, size);
+    if (memory == NULL) {
+        rbe_logger_error("Out of memory or malloc failed!, size = %d", size);
+    }
+    return memory;
+}
+
 void rbe_mem_free(void* memory) {
     free(memory);
     memory = NULL;

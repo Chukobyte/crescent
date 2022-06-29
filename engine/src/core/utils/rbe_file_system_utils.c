@@ -74,8 +74,8 @@ char* rbe_fs_read_file_contents(const char* filePath, size_t* fileSize) {
         buffer = (char*) RBE_MEM_ALLOCATE_SIZE(readSize + 1);
         if (buffer != NULL) {
             fread(buffer, 1, readSize, fp);
+            buffer[readSize] = '\0';
         }
-        buffer[readSize] = '\0';
         fclose(fp);
     }
     if (fileSize != NULL) {

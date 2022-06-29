@@ -43,8 +43,9 @@ Texture* rbe_texture_create_texture(const char* filePath) {
     stbi_set_flip_vertically_on_load(false);
     unsigned char* imageData = stbi_load(filePath, &texture->width, &texture->height, &texture->nrChannels, 0);
     RBE_ASSERT_FMT(imageData != NULL, "Failed to load texture image at file path '%s'", filePath);
-    texture->data = (unsigned char*) RBE_MEM_ALLOCATE_SIZE(sizeof(&imageData));
-    memcpy(texture->data, imageData, sizeof(&imageData));
+    const size_t imageDataSize = sizeof(Texture*);
+    texture->data = (unsigned char*) RBE_MEM_ALLOCATE_SIZE(imageDataSize);
+    memcpy(texture->data, imageData, imageDataSize);
     texture->data = imageData;
 
     rbe_texture_generate(texture);
