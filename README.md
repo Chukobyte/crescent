@@ -111,4 +111,13 @@ make clean-editor
 
 #### CMake
 
+# MinGW build
+1. Install MinGW through MSYS2
+2. Install the following packages:
+   * `pacman -S mingw-w64-x86_64-SDL2`
+   * `pacman -S mingw-w64-x86_64-freetype`
+   * `pacman -S mingw-w64-x86_64-python`
+3. Run cmake
+
+
 *Note: Instructions coming soon*
