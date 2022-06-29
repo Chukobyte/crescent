@@ -21,7 +21,7 @@ jobs:
 
       - name: run build
         run: |
-          echo "y" | pacman -S mingw-w64-x86_64-toolchain
+          (echo "all"; echo "y") | pacman -S mingw-w64-x86_64-toolchain
           echo "y" | pacman -S mingw-w64-x86_64-cmake
           echo "y" | pacman -S mingw-w64-x86_64-SDL2
           echo "y" | pacman -S mingw-w64-x86_64-freetype
