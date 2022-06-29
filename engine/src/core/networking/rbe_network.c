@@ -168,9 +168,9 @@ static struct sockaddr_in client_si_other;
 static int client_socket_size = 0;
 static on_network_client_callback client_user_callback = NULL;
 
-bool rbe_udp_client_initialize(const char* serverAddr, int serverPort, on_network_client_callback userCallback) {
+bool rbe_udp_client_initialize(const char* serverAddr, int serverPort, on_network_client_callback user_callback) {
     client_socket_size = sizeof(client_si_other);
-    client_user_callback = userCallback;
+    client_user_callback = user_callback;
 
 #ifdef _WIN32
     // Initialise winsock

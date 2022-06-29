@@ -4,13 +4,22 @@
 #include "../utils/logger.h"
 #include "../utils/rbe_assert.h"
 
+//--- RBE Socket ---//
+int rbe_socket_get_last_error() {
+#ifdef _WIN32
+    return WSAGetLastError();
+#else
+    return -1;
+#endif
+}
+
 bool rbe_socket_system_initialize() {
 #ifdef _WIN32
     // Initialise winsock
     WSADATA wsa;
     rbe_logger_debug("Initialising client Winsock...");
-    if (WSAStartup(MAKEWORD(2,2), &wsa) != 0) {
-        rbe_logger_error("Client: Failed. Error Code : %d", WSAGetLastError());
+    if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) {
+        rbe_logger_error("Client: Failed. Error Code : %d", rbe_socket_get_last_error());
         return false;
     }
     rbe_logger_debug("Client: Initialized Winsock.");
@@ -18,65 +27,79 @@ bool rbe_socket_system_initialize() {
     return true;
 }
 
-rbe_socket rbe_socket_create_server(int port) {
-    rbe_socket sock;
-    // Create a socket
-    if ((sock = socket(AF_INET, SOCK_DGRAM, 0 )) == INVALID_SOCKET) {
-        rbe_logger_debug("Server: could not create socket : %d", WSAGetLastError());
+void rbe_socket_system_finalize() {}
+
+bool rbe_socket_receive_data(RBESocket* sock, char* buffer, int buffer_size) {
+    if (recvfrom(sock->sock, buffer, buffer_size, 0, (struct sockaddr *) &sock->si_other, &sock->size) == SOCKET_ERROR) {
+        rbe_logger_error("Server: recvfrom() failed with error code : %d", rbe_socket_get_last_error());
         return false;
+    }
+    return true;
+}
+
+void rbe_socket_close(RBESocket* sock) {}
+
+//--- Server Socker ---//
+static pthread_t server_thread;
+
+RBESocket rbe_socket_create_server(int port, on_rbe_socket_receive_data callback_func) {
+    RBE_ASSERT_FMT(callback_func, "Callback func is NULL");
+    RBESocket sock;
+    // Create a socket
+    if ((sock.sock = socket(AF_INET, SOCK_DGRAM, 0 )) == INVALID_SOCKET) {
+        RBE_ASSERT_FMT(false, "Server: could not create socket : %d", rbe_socket_get_last_error());
     }
     rbe_logger_debug("Server: socket created!");
 
     // Prepare the sockaddr_in structure
-    server.sin_family = AF_INET;
-    server.sin_addr.s_addr = INADDR_ANY;
-    server.sin_port = htons(port);
+    sock.si.sin_family = AF_INET;
+    sock.si.sin_addr.s_addr = INADDR_ANY;
+    sock.si.sin_port = htons(port);
 
     // Bind
-    if (bind(sock, (struct sockaddr *) &server, sizeof(server)) == SOCKET_ERROR) {
-        RBE_ASSERT_FMT(false, "Server: Bind failed with error code : %d", WSAGetLastError());
+    if (bind(sock.sock, (struct sockaddr *) &sock.si, sizeof(sock.si)) == SOCKET_ERROR) {
+        RBE_ASSERT_FMT(false, "Server: Bind failed with error code : %d", rbe_socket_get_last_error());
     }
     rbe_logger_debug("Server: Bind done!");
 
     // Start Networking Thread
-    pthread_t thread;
-    if (pthread_create(&thread, NULL, rbe_udp_server_poll, NULL) != 0) {
+    if (pthread_create(&server_thread, NULL, callback_func, NULL) != 0) {
         RBE_ASSERT_FMT(false, "Failed to create server thread!");
     }
     rbe_logger_debug("Server: Initialized thread.");
+    return sock;
 }
 
-rbe_socket rbe_socket_create_client(const char* serverAddr, int serverPort) {
+//--- Client Socket ---//
+static pthread_t client_thread;
+
+RBESocket rbe_socket_create_client(const char* serverAddr, int serverPort, on_rbe_socket_receive_data callback_func) {
     //create socket
-    rbe_socket sock;
+    RBESocket sock;
     rbe_logger_debug("Client: Creating socket....");
-    if ((sock = (int) socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == SOCKET_ERROR) {
-        RBE_ASSERT_FMT(false, "Client: socket() failed with error code : %d", WSAGetLastError());
+    if ((sock.sock = (int) socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == SOCKET_ERROR) {
+        RBE_ASSERT_FMT(false, "Client: socket() failed with error code : %d", rbe_socket_get_last_error());
     }
     rbe_logger_debug("Client: socket created.");
 
     // setup address structure
-    memset((char*) &client_si_other, 0, sizeof(client_si_other));
-    client_si_other.sin_family = AF_INET;
-    client_si_other.sin_port = htons(serverPort);
+    memset((char*) &sock.si_other, 0, sizeof(sock.si_other));
+    sock.si_other.sin_family = AF_INET;
+    sock.si_other.sin_port = htons(serverPort);
 #ifdef _WIN32
-    client_si_other.sin_addr.S_un.S_addr = inet_addr(serverAddr);
+    sock.si_other.sin_addr.S_un.S_addr = inet_addr(serverAddr);
 #else
-    if (inet_aton(serverAddr, &client_si_other.sin_addr) == 0) {
+    if (inet_aton(serverAddr, &sock.si_other.sin_addr) == 0) {
         rbe_logger_error("inet_aton() failed!");
         return false;
     }
 #endif
 
     // Start Networking Thread
-    pthread_t thread;
-    if (pthread_create(&thread, NULL, rbe_udp_client_poll, NULL) != 0) {
-        rbe_logger_debug("Failed to create server thread!");
-        return false;
+    if (pthread_create(&client_thread, NULL, callback_func, NULL) != 0) {
+        RBE_ASSERT_FMT(false, "Failed to create server thread!");
     }
 
     rbe_logger_debug("Client: Initialized thread.");
-}
-
-rbe_socket rbe_socket_create() {
+    return sock;
 }

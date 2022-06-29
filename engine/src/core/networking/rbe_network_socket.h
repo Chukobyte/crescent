@@ -15,9 +15,23 @@ typedef rbe_socket int;
 typedef int rbe_socket;
 #endif
 
+//--- RBE Socket---//
+typedef void* (*on_rbe_socket_receive_data) (void*);
+
+typedef struct RBESocket {
+    rbe_socket sock;
+    int size;
+    struct sockaddr_in si;
+    struct sockaddr_in si_other;
+} RBESocket;
+
 bool rbe_socket_system_initialize();
 void rbe_socket_system_finalize();
+bool rbe_socket_receive_data(RBESocket* sock, char* buffer, int buffer_size);
+void rbe_socket_close(RBESocket* sock);
 
-rbe_socket rbe_socket_create();
-void rbe_socket_bind();
-void rbe_socket_close();
+//--- Server Socket ---//
+RBESocket rbe_socket_create_server(int port, on_rbe_socket_receive_data callback_func);
+
+//--- Client Socket ---//
+RBESocket rbe_socket_create_client(const char* serverAddr, int serverPort, on_rbe_socket_receive_data callback_func);
