@@ -74,8 +74,8 @@ void rbe_logger_print_err(const char* fmt, ...) {
     va_start(args, fmt);
     char str[RBE_LOG_BUFFER_SIZE];
     memset(str, 0, RBE_LOG_BUFFER_SIZE);
-    strncat_s(str, RBE_LOG_BUFFER_SIZE, fmt, (sizeof(str) - strlen(str) - 1) );
-    strncat_s(str, RBE_LOG_BUFFER_SIZE, "\n", (sizeof(str) - strlen(str) - 1) );
+    strncat(str,  fmt, (sizeof(str) - strlen(str) - 1) );
+    strncat(str, "\n", (sizeof(str) - strlen(str) - 1) );
     vfprintf(stderr, str, args);
     va_end(args);
 }

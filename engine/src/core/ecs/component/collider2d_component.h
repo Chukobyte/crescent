@@ -1,5 +1,6 @@
 #pragma once
 
+#include <stddef.h>
 #include "../entity/entity.h"
 #include "../../math/rbe_math.h"
 

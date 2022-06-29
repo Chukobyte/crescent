@@ -210,8 +210,8 @@ static struct PyMethodDef rbePyApiMethods[] = {
         METH_VARARGS | METH_KEYWORDS, "Subscribe a node's function to one of the client's signals."
     },
     {
-            "collision_handler_process_collisions", (PyCFunction) rbe_py_api_collision_handler_process_collisions,
-            METH_VARARGS | METH_KEYWORDS, "Returns collided entities."
+        "collision_handler_process_collisions", (PyCFunction) rbe_py_api_collision_handler_process_collisions,
+        METH_VARARGS | METH_KEYWORDS, "Returns collided entities."
     },
     // COLLISION HANDLER
     { NULL, NULL, 0,NULL },

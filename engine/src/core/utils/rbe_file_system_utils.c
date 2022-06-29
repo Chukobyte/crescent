@@ -11,6 +11,8 @@
 #include <io.h>
 #else
 #include <unistd.h>
+#include <sys/stat.h>
+
 #endif
 
 
@@ -57,7 +59,7 @@ size_t rbe_fs_get_file_size(const char* filePath) {
     return (size_t) size.QuadPart;
 #else
     struct stat st;
-    stat(file_path, &st);
+    stat(filePath, &st);
     return (size_t) st.st_size;
 #endif
 }
@@ -72,8 +74,8 @@ char* rbe_fs_read_file_contents(const char* filePath, size_t* fileSize) {
         buffer = (char*) RBE_MEM_ALLOCATE_SIZE(readSize + 1);
         if (buffer != NULL) {
             fread(buffer, 1, readSize, fp);
+            buffer[readSize] = '\0';
         }
-        buffer[readSize] = '\0';
         fclose(fp);
     }
     if (fileSize != NULL) {

@@ -1,5 +1,6 @@
 #include "rbe_pthread.h"
 
+#ifdef _WIN32
 #include "../memory/rbe_mem.h"
 
 typedef struct {
@@ -229,7 +230,7 @@ static DWORD timespec_to_ms(const struct timespec *abstime) {
     return t;
 }
 
-#ifdef _WIN32
+//#ifdef _WIN32
 unsigned int pcthread_get_num_procs() {
     SYSTEM_INFO sysinfo;
 

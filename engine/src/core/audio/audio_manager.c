@@ -16,7 +16,7 @@
 void audio_data_callback(ma_device* device, void* output, const void* input, ma_uint32 frame_count);
 
 static ma_device* audio_device = NULL;
-static pthread_mutex_t* audio_mutex = NULL;
+static pthread_mutex_t audio_mutex;
 
 // An instance of an RBE audio source
 typedef struct RBEAudioInstance {
@@ -37,7 +37,7 @@ static struct AudioInstances* audio_instances = NULL;
 // --- Audio Manager --- //
 bool rbe_audio_manager_init() {
     audio_instances = RBE_MEM_ALLOCATE(struct AudioInstances);
-    pthread_mutex_init(audio_mutex, NULL);
+    pthread_mutex_init(&audio_mutex, NULL);
     // Device
     ma_device_config config = ma_device_config_init(ma_device_type_playback);
     config.playback.pDeviceID = NULL;
@@ -71,7 +71,7 @@ void rbe_audio_manager_finalize() {
     RBE_MEM_FREE(audio_instances); // TODO: Properly free up all instances
     audio_instances = NULL;
 
-    pthread_mutex_destroy(audio_mutex);
+    pthread_mutex_destroy(&audio_mutex);
 }
 
 void rbe_audio_manager_play_sound(const char* filePath, bool loops) {
@@ -113,7 +113,7 @@ void audio_data_callback(ma_device* device, void* output, const void* input, ma_
         return;
     }
 
-    pthread_mutex_lock(audio_mutex);
+    pthread_mutex_lock(&audio_mutex);
     memset(output, 0, frame_count * device->playback.channels * ma_get_bytes_per_sample(device->playback.format));
     size_t removedInstances = 0;
     for (size_t i = 0; i < audio_instances->count; i++) {
@@ -190,7 +190,7 @@ void audio_data_callback(ma_device* device, void* output, const void* input, ma_
         }
         audio_instances->count -= removedInstances;
     }
-    pthread_mutex_unlock(audio_mutex);
+    pthread_mutex_unlock(&audio_mutex);
 }
 
 // --- RBE Audio --- //
