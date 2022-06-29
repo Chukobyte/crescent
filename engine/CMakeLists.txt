@@ -14,11 +14,11 @@ endif ()
 find_package(SDL2 CONFIG REQUIRED)
 
 find_package(freetype CONFIG)
-set(freetype_from_find_package FALSE)
+set(freetype_from_find_package TRUE)
 if (NOT freetype_FOUND)
     find_package(PkgConfig REQUIRED)
     pkg_check_modules(freetype REQUIRED freetype2)
-    set(freetype_from_find_package TRUE)
+    set(freetype_from_find_package FALSE)
 endif()
 
 
@@ -96,7 +96,7 @@ target_include_directories(stb_image PUBLIC
         )
 
 
-if (freetype_from_find_package)
+if (NOT freetype_from_find_package)
     target_include_directories(${PROJECT_NAME} PUBLIC ${freetype2_INCLUDEDIR}/freetype2)
 endif()
 
