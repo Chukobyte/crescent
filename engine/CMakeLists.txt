@@ -12,7 +12,16 @@ else ()
 endif ()
 
 find_package(SDL2 CONFIG REQUIRED)
-find_package(freetype CONFIG REQUIRED)
+
+find_package(freetype CONFIG)
+set(freetype_from_find_package FALSE)
+if (NOT freetype_FOUND)
+    find_package(PkgConfig REQUIRED)
+    pkg_check_modules(freetype REQUIRED freetype2)
+    set(freetype_from_find_package TRUE)
+endif()
+
+
 find_package (Python3 COMPONENTS Interpreter Development REQUIRED)
 
 add_library(${PROJECT_NAME} STATIC
@@ -85,6 +94,11 @@ target_include_directories(stb_image PUBLIC
         "${PROJECT_BINARY_DIR}"
         "../include"
         )
+
+
+if (freetype_from_find_package)
+    target_include_directories(${PROJECT_NAME} PUBLIC ${freetype2_INCLUDEDIR}/freetype2)
+endif()
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image SDL2::SDL2 SDL2::SDL2main freetype Python3::Python Ws2_32)
