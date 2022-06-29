@@ -21,9 +21,9 @@ jobs:
 
       - name: run build
         run: |
-          pacman -S mingw-w64-x86_64-cmake
-          pacman -S mingw-w64-x86_64-SDL2
-          pacman -S mingw-w64-x86_64-freetype
-          pacman -S mingw-w64-x86_64-python
+          echo "y" | pacman -S mingw-w64-x86_64-cmake
+          echo "y" | pacman -S mingw-w64-x86_64-SDL2
+          echo "y" | pacman -S mingw-w64-x86_64-freetype
+          echo "y" | pacman -S mingw-w64-x86_64-python
           cmake . -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++
           cmake --build .
