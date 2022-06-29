@@ -39,8 +39,10 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image SDL2::SDL2 SDL2::SDL2main)
-else ()
+elseif(WIN32)
     target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image -lmingw32 -static-libgcc SDL2::SDL2 SDL2::SDL2main)
+else ()
+    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image -static-libgcc -Xlinker -export-dynamic SDL2::SDL2 SDL2::SDL2main)
 endif ()
 
 target_compile_options(${PROJECT_NAME} PUBLIC ${flags})
