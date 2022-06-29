@@ -97,7 +97,7 @@ target_include_directories(stb_image PUBLIC
 
 
 if (NOT freetype_from_find_package)
-    target_include_directories(${PROJECT_NAME} PUBLIC ${freetype2_INCLUDEDIR}/freetype2)
+    target_include_directories(${PROJECT_NAME} PUBLIC ${freetype_INCLUDE_DIRS})
 endif()
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
