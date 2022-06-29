@@ -13,6 +13,11 @@ StringHashMapNode* hash_map_create_node_string(RBEStringHashMap* hashMap, const 
 void hash_map_destroy_node_string(StringHashMapNode* node);
 
 bool hash_map_push_front_string(RBEStringHashMap* hashMap, size_t index, const char* key, void* value, size_t valueSize);
+void string_hash_map_grow_if_needed(RBEStringHashMap* hashMap);
+void string_hash_map_shrink_if_needed(RBEStringHashMap* hashMap);
+void string_hash_map_allocate(RBEStringHashMap* hashMap, size_t capacity);
+void string_hash_map_rehash(RBEStringHashMap* hashMap, StringHashMapNode** oldNode, size_t oldCapacity);
+void string_hash_map_resize(RBEStringHashMap* hashMap, size_t newCapacity);
 
 RBEStringHashMap* rbe_string_hash_map_create(size_t capacity) {
     RBEStringHashMap* map = (RBEStringHashMap*) RBE_MEM_ALLOCATE_SIZE(sizeof(RBEStringHashMap));
@@ -62,7 +67,7 @@ bool rbe_string_hash_map_add(RBEStringHashMap* hashMap, const char* key, void* v
     RBE_ASSERT(key != NULL);
     RBE_ASSERT(value != NULL);
 
-    // TODO: Check if resize is needed
+    string_hash_map_grow_if_needed(hashMap);
 
     size_t index = hashMap->hashFunc(key) % hashMap->capacity;
     if (rbe_string_hash_map_has(hashMap, key)) {
@@ -119,12 +124,69 @@ bool rbe_string_hash_map_erase(RBEStringHashMap* hashMap, const char* key) {
             hash_map_destroy_node_string(node);
             hashMap->size--;
 
-            // TODO: Check if shrinking is needed
+            string_hash_map_shrink_if_needed(hashMap);
+
             return true;
         }
     }
 
     return false;
+}
+
+void string_hash_map_grow_if_needed(RBEStringHashMap* hashMap) {
+    RBE_ASSERT_FMT(hashMap->size <= hashMap->capacity, "Hashmap size '%d' is bigger than its capacity '%d'!", hashMap->size, hashMap->capacity);
+    if (hashMap->size == hashMap->capacity) {
+        string_hash_map_resize(hashMap, hashMap->size * 2);
+    }
+}
+
+void string_hash_map_shrink_if_needed(RBEStringHashMap* hashMap) {
+    RBE_ASSERT_FMT(hashMap->size <= hashMap->capacity, "Hashmap size '%d' is bigger than its capacity '%d'!", hashMap->size, hashMap->capacity);
+    size_t shrinkCapacity = (size_t) ((float) hashMap->capacity * RBE_STRING_HASH_MAP_SHRINK_THRESHOLD);
+    if (hashMap->size == shrinkCapacity) {
+        string_hash_map_resize(hashMap, shrinkCapacity);
+    }
+}
+
+void string_hash_map_allocate(RBEStringHashMap* hashMap, size_t capacity) {
+    hashMap->nodes = RBE_MEM_ALLOCATE_SIZE(capacity * sizeof(StringHashMapNode*));
+    memset(hashMap->nodes, 0, capacity * sizeof(StringHashMapNode*));
+
+    hashMap->capacity = capacity;
+}
+
+void string_hash_map_rehash(RBEStringHashMap* hashMap, StringHashMapNode** oldNode, size_t oldCapacity) {
+    for (size_t chain = 0; chain < oldCapacity; chain++) {
+        for (StringHashMapNode* node = oldNode[chain]; node != NULL;) {
+            StringHashMapNode* next = node->next;
+
+            RBE_ASSERT(node != NULL);
+            size_t newIndex = hashMap->hashFunc(node->key) % hashMap->capacity;
+            node->next = hashMap->nodes[newIndex];
+            hashMap->nodes[newIndex] = node;
+
+            node = next;
+        }
+    }
+}
+
+void string_hash_map_resize(RBEStringHashMap* hashMap, size_t newCapacity) {
+    if (newCapacity < RBE_STRING_HASH_MAP_MIN_CAPACITY) {
+        if (hashMap->capacity > RBE_STRING_HASH_MAP_MIN_CAPACITY) {
+            newCapacity = RBE_STRING_HASH_MAP_MIN_CAPACITY;
+        } else {
+            // Do nothing since the passed in capacity is too low and the current map's capacity is already at min limit
+            return;
+        }
+    }
+
+    StringHashMapNode** oldNode = hashMap->nodes;
+    size_t oldCapacity = hashMap->capacity;
+    string_hash_map_allocate(hashMap, newCapacity);
+
+    string_hash_map_rehash(hashMap, oldNode, oldCapacity);
+
+    RBE_MEM_FREE(oldNode);
 }
 
 // Int
@@ -202,8 +264,6 @@ size_t rbe_default_hash_string(const char* raw_key) {
     size_t key_size = strlen(raw_key);
 
     for (byte = 0; byte < key_size; ++byte) {
-        // (hash << 5) + hash = hash * 33
-//        hash = ((hash << 5) + hash) ^ key[byte];
         hash = ((hash << 5) + hash) ^ raw_key[byte];
     }
 
@@ -211,7 +271,6 @@ size_t rbe_default_hash_string(const char* raw_key) {
 }
 
 int rbe_default_compare_string(const char* first_key, const char* second_key) {
-//    return memcmp(first_key, second_key, key_size);
     return strcmp(first_key, second_key);
 }
 

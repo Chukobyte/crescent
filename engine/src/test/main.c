@@ -95,6 +95,27 @@ void rbe_hash_main_test() {
     TEST_ASSERT_EQUAL_INT(iteratorIterationCount, 3);
 
     rbe_hash_map_destroy(map2);
+
+    // Resizing test
+    const size_t MIN_HASH_MAP_SIZE = 8;
+    int numbers[64];
+    for (int i = 0; i < 64; i++) {
+        numbers[i] = i;
+    }
+    RBEHashMap* map3 = rbe_hash_map_create(sizeof(int), sizeof(int), MIN_HASH_MAP_SIZE);
+    for (size_t i = 0; i < MIN_HASH_MAP_SIZE; i++) {
+        rbe_hash_map_add(map3, &numbers[i], &i);
+    }
+
+    TEST_ASSERT_EQUAL_INT(map3->size, MIN_HASH_MAP_SIZE);
+
+    for (size_t i = 8; i < MIN_HASH_MAP_SIZE + 8; i++) {
+        rbe_hash_map_add(map3, &numbers[i], &i);
+    }
+
+    TEST_ASSERT_EQUAL_INT(map3->size, MIN_HASH_MAP_SIZE + 8);
+
+    rbe_hash_map_destroy(map3);
 }
 
 void rbe_string_hashmap_test() {
@@ -126,6 +147,30 @@ void rbe_string_hashmap_test() {
     TEST_ASSERT_EQUAL(rbe_string_hash_map_has(hashMap2, "one"), true);
     TEST_ASSERT_EQUAL_INT(rbe_string_hash_map_get_int(hashMap2, "one"), 1);
     rbe_string_hash_map_destroy(hashMap2);
+
+    // Resizing test
+    const size_t MIN_HASH_MAP_SIZE = 8;
+    int numbers[64];
+    for (int i = 0; i < 64; i++) {
+        numbers[i] = i;
+    }
+    RBEStringHashMap* map = rbe_string_hash_map_create(MIN_HASH_MAP_SIZE);
+    char numberBuffer[4];
+    for (size_t i = 0; i < MIN_HASH_MAP_SIZE; i++) {
+        sprintf(numberBuffer, "%d", numbers[i]);
+        rbe_string_hash_map_add(map, numberBuffer, &i, sizeof(size_t));
+    }
+
+    TEST_ASSERT_EQUAL_INT(map->size, MIN_HASH_MAP_SIZE);
+
+    for (size_t i = 8; i < MIN_HASH_MAP_SIZE + 8; i++) {
+        sprintf(numberBuffer, "%d", numbers[i]);
+        rbe_string_hash_map_add(map, numberBuffer, &i, sizeof(size_t));
+    }
+
+    TEST_ASSERT_EQUAL_INT(map->size, MIN_HASH_MAP_SIZE + 8);
+
+    rbe_string_hash_map_destroy(map);
 }
 
 void rbe_array_list_test() {

@@ -7,6 +7,9 @@ extern "C" {
 #include <stddef.h>
 #include <stdbool.h>
 
+#define RBE_STRING_HASH_MAP_SHRINK_THRESHOLD 0.25f
+#define RBE_STRING_HASH_MAP_MIN_CAPACITY 8
+
 typedef size_t (*RBEStringHashFunc) (const char*);
 typedef int (*RBEStringCompareFunc) (const char*, const char*);
 
