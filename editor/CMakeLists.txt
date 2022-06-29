@@ -32,9 +32,6 @@ add_library(${PROJECT_NAME} STATIC
         ../include/imgui_widgets.cpp
         ../include/imgui/imgui_impl_opengl3.cpp
         ../include/imgui/imgui_impl_sdl.cpp
-        # C
-        ../include/stb_image/stb_image.c
-        ../include/glad/glad.c
         )
 
 target_include_directories(${PROJECT_NAME} PUBLIC
