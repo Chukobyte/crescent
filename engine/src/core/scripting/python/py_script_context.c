@@ -165,6 +165,8 @@ void py_on_entity_subscribe_to_network_callback(Entity entity, PyObject* callbac
 
 void rbe_py_on_network_udp_server_client_connected() {
     if (current_network_server_client_connected_script_callback != NULL) {
+        PyGILState_STATE pyGilStateState = PyGILState_Ensure();
         PyObject_CallObject(current_network_server_client_connected_script_callback->callback_func, NULL);
+        PyGILState_Release(pyGilStateState);
     }
 }

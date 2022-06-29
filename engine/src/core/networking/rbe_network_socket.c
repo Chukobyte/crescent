@@ -1,5 +1,7 @@
 #include "rbe_network_socket.h"
 
+#include <string.h>
+
 #include "../thread/rbe_pthread.h"
 #include "../utils/logger.h"
 #include "../utils/rbe_assert.h"
@@ -27,7 +29,11 @@ bool rbe_socket_system_initialize() {
     return true;
 }
 
-void rbe_socket_system_finalize() {}
+void rbe_socket_system_finalize() {
+#ifdef _WIN32
+    WSACleanup();
+#endif
+}
 
 bool rbe_socket_send_message(RBESocket* sock, const char* message) {
 #define RBE_SOCKET_SEND_BUFFER_SIZE 512
@@ -41,8 +47,8 @@ bool rbe_socket_send_message(RBESocket* sock, const char* message) {
 }
 
 bool rbe_socket_receive_data(RBESocket* sock, char* buffer, int buffer_size) {
-    if (recvfrom(sock->sock, buffer, buffer_size, 0, (struct sockaddr *) &sock->si_other, &sock->size) == SOCKET_ERROR) {
-        rbe_logger_error("Server: recvfrom() failed with error code : %d", rbe_socket_get_last_error());
+    if ((recvfrom(sock->sock, buffer, buffer_size, 0, (struct sockaddr*) &sock->si_other, &sock->size)) == SOCKET_ERROR) {
+        rbe_logger_error("recvfrom() failed with error code : %d", rbe_socket_get_last_error());
         return false;
     }
     return true;
@@ -56,6 +62,8 @@ static pthread_t server_thread;
 RBESocket rbe_socket_create_server(int port, on_rbe_socket_receive_data callback_func) {
     RBE_ASSERT_FMT(callback_func, "Callback func is NULL");
     RBESocket sock;
+    sock.size = sizeof(sock.si_other);
+
     // Create a socket
     if ((sock.sock = socket(AF_INET, SOCK_DGRAM, 0 )) == INVALID_SOCKET) {
         RBE_ASSERT_FMT(false, "Server: could not create socket : %d", rbe_socket_get_last_error());
@@ -87,6 +95,7 @@ static pthread_t client_thread;
 RBESocket rbe_socket_create_client(const char* serverAddr, int serverPort, on_rbe_socket_receive_data callback_func) {
     //create socket
     RBESocket sock;
+    sock.size = sizeof(sock.si_other);
     rbe_logger_debug("Client: Creating socket....");
     if ((sock.sock = (int) socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == SOCKET_ERROR) {
         RBE_ASSERT_FMT(false, "Client: socket() failed with error code : %d", rbe_socket_get_last_error());

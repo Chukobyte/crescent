@@ -5,12 +5,13 @@
 #ifdef _WIN32
 #include <WinSock2.h>
 
-typedef size_t socklen_t;
+typedef int rbe_socket_size;
 typedef SOCKET rbe_socket;
 #else
 #include<arpa/inet.h>
 #include<sys/socket.h>
 
+typedef socklen_t rbe_socket_size;
 typedef rbe_socket int;
 typedef int rbe_socket;
 #endif
@@ -20,7 +21,7 @@ typedef void* (*on_rbe_socket_receive_data) (void*);
 
 typedef struct RBESocket {
     rbe_socket sock;
-    int size;
+    rbe_socket_size size;
     struct sockaddr_in si;
     struct sockaddr_in si_other;
 } RBESocket;
