@@ -7,6 +7,9 @@ extern "C" {
 #include <stddef.h>
 #include <stdbool.h>
 
+#define RBE_HASH_MAP_SHRINK_THRESHOLD 0.25f
+#define RBE_HASH_MAP_MIN_CAPACITY 8
+
 typedef size_t (*RBEHashFunc) (void*, size_t);
 typedef int (*RBECompareFunc) (void*, void*, size_t);
 
