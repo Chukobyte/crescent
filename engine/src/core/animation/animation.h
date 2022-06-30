@@ -5,7 +5,7 @@
 #include "../rendering/texture.h"
 #include "../math/rbe_math.h"
 
-#define RBE_MAX_ANIMATION_FRAMES 8
+#define RBE_MAX_ANIMATION_FRAMES 16
 
 typedef struct AnimationFrame {
     Texture* texture;
