@@ -5,7 +5,7 @@
 [![windows-mingw-build Actions Status](https://github.com/Chukobyte/roll-back-engine/workflows/windows-mingw-build/badge.svg)](https://github.com/Chukobyte/roll-back-engine/actions)
 [![pvs-studio Actions Status](https://github.com/Chukobyte/roll-back-engine/workflows/pvs-studio/badge.svg)](https://github.com/Chukobyte/roll-back-engine/actions)
 
-A work in progress fighting game engine for Windows and Linux with the core written in C11.  The name is temporary and will very likely change in the near future.
+A work in progress fighting game engine for Windows and Linux with the core written in C11.  The name is temporary and will very likely change in the near future.  Road map for the project coming soon.
 
 ### Tech Stack
 
@@ -73,7 +73,7 @@ configure_inputs(
 
 ### Building
 
-Only supports MinGW and Windows at the moment. These environment variables are required to be set before building.
+Supports Windows and linux builds at the moment. These environment variables are required to be set before building with make.
 
 | Environment Variable  |                      Description                   | Required | Default Value |
 |:---------------------:|:--------------------------------------------------:|:--------:|:-------------:|
@@ -112,13 +112,10 @@ make clean-editor
 
 #### CMake
 
-# MinGW build
+**MinGW build**
 1. Install MinGW through MSYS2
 2. Install the following packages:
    * `pacman -S mingw-w64-x86_64-SDL2`
    * `pacman -S mingw-w64-x86_64-freetype`
    * `pacman -S mingw-w64-x86_64-python`
 3. Run cmake
-
-
-*Note: Instructions coming soon*
