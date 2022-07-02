@@ -29,8 +29,8 @@ create_stage_nodes(
                     external_node_source=None,
                     components=[
                         Transform2DComponent(
-                            position=Vector2(250.0, 300.0),
-                            scale=Vector2(2.0, 2.0),
+                            position=Vector2(200.0, 260.0),
+                            scale=Vector2(4.0, 4.0),
                             rotation=0.0,
                             z_index=0,
                             z_index_relative_to_parent=True,
@@ -47,23 +47,58 @@ create_stage_nodes(
                                     frames=[
                                         AnimationFrame(
                                             frame=0,
-                                            texture_path="test_games/fighter_test/assets/images/melissa_walk_animation.png",
-                                            draw_source=Rect2(x=0, y=0, w=32, h=32),
+                                            texture_path="test_games/fighter_test/assets/images/characters/mor/mor_idle_sheet.png",
+                                            draw_source=Rect2(x=0, y=0, w=62, h=37),
                                         ),
                                         AnimationFrame(
                                             frame=1,
-                                            texture_path="test_games/fighter_test/assets/images/melissa_walk_animation.png",
-                                            draw_source=Rect2(x=32, y=0, w=32, h=32),
+                                            texture_path="test_games/fighter_test/assets/images/characters/mor/mor_idle_sheet.png",
+                                            draw_source=Rect2(x=62, y=0, w=62, h=37),
                                         ),
                                         AnimationFrame(
                                             frame=2,
-                                            texture_path="test_games/fighter_test/assets/images/melissa_walk_animation.png",
-                                            draw_source=Rect2(x=64, y=0, w=32, h=32),
+                                            texture_path="test_games/fighter_test/assets/images/characters/mor/mor_idle_sheet.png",
+                                            draw_source=Rect2(x=124, y=0, w=62, h=37),
                                         ),
                                         AnimationFrame(
                                             frame=3,
-                                            texture_path="test_games/fighter_test/assets/images/melissa_walk_animation.png",
-                                            draw_source=Rect2(x=96, y=0, w=32, h=32),
+                                            texture_path="test_games/fighter_test/assets/images/characters/mor/mor_idle_sheet.png",
+                                            draw_source=Rect2(x=186, y=0, w=62, h=37),
+                                        ),
+                                        AnimationFrame(
+                                            frame=4,
+                                            texture_path="test_games/fighter_test/assets/images/characters/mor/mor_idle_sheet.png",
+                                            draw_source=Rect2(x=248, y=0, w=62, h=37),
+                                        ),
+                                        AnimationFrame(
+                                            frame=5,
+                                            texture_path="test_games/fighter_test/assets/images/characters/mor/mor_idle_sheet.png",
+                                            draw_source=Rect2(x=310, y=0, w=62, h=37),
+                                        ),
+                                        AnimationFrame(
+                                            frame=6,
+                                            texture_path="test_games/fighter_test/assets/images/characters/mor/mor_idle_sheet.png",
+                                            draw_source=Rect2(x=372, y=0, w=62, h=37),
+                                        ),
+                                        AnimationFrame(
+                                            frame=7,
+                                            texture_path="test_games/fighter_test/assets/images/characters/mor/mor_idle_sheet.png",
+                                            draw_source=Rect2(x=434, y=0, w=62, h=37),
+                                        ),
+                                        AnimationFrame(
+                                            frame=8,
+                                            texture_path="test_games/fighter_test/assets/images/characters/mor/mor_idle_sheet.png",
+                                            draw_source=Rect2(x=496, y=0, w=62, h=37),
+                                        ),
+                                        AnimationFrame(
+                                            frame=9,
+                                            texture_path="test_games/fighter_test/assets/images/characters/mor/mor_idle_sheet.png",
+                                            draw_source=Rect2(x=558, y=0, w=62, h=37),
+                                        ),
+                                        AnimationFrame(
+                                            frame=10,
+                                            texture_path="test_games/fighter_test/assets/images/characters/mor/mor_idle_sheet.png",
+                                            draw_source=Rect2(x=620, y=0, w=62, h=37),
                                         ),
                                     ],
                                 )
@@ -78,7 +113,7 @@ create_stage_nodes(
                             external_node_source=None,
                             components=[
                                 Transform2DComponent(
-                                    position=Vector2(0.0, 0.0),
+                                    position=Vector2(64.0, 80.0),
                                     scale=Vector2(1.0, 1.0),
                                     rotation=0.0,
                                     z_index=0,
@@ -86,7 +121,7 @@ create_stage_nodes(
                                     ignore_camera=False,
                                 ),
                                 Collider2DComponent(
-                                    rect=Rect2(0, 0, 32, 32),
+                                    rect=Rect2(0, 0, 16, 16),
                                     color=Color(200, 200, 255, 200),
                                 ),
                             ],
@@ -101,8 +136,8 @@ create_stage_nodes(
                     external_node_source=None,
                     components=[
                         Transform2DComponent(
-                            position=Vector2(450.0, 300.0),
-                            scale=Vector2(2.0, 2.0),
+                            position=Vector2(340.0, 260.0),
+                            scale=Vector2(4.0, 4.0),
                             rotation=0.0,
                             z_index=0,
                             z_index_relative_to_parent=True,
@@ -120,23 +155,58 @@ create_stage_nodes(
                                     frames=[
                                         AnimationFrame(
                                             frame=0,
-                                            texture_path="test_games/fighter_test/assets/images/melissa_walk_animation.png",
-                                            draw_source=Rect2(x=0, y=0, w=32, h=32),
+                                            texture_path="test_games/fighter_test/assets/images/characters/mor/mor_idle_sheet.png",
+                                            draw_source=Rect2(x=0, y=0, w=62, h=37),
                                         ),
                                         AnimationFrame(
                                             frame=1,
-                                            texture_path="test_games/fighter_test/assets/images/melissa_walk_animation.png",
-                                            draw_source=Rect2(x=32, y=0, w=32, h=32),
+                                            texture_path="test_games/fighter_test/assets/images/characters/mor/mor_idle_sheet.png",
+                                            draw_source=Rect2(x=62, y=0, w=62, h=37),
                                         ),
                                         AnimationFrame(
                                             frame=2,
-                                            texture_path="test_games/fighter_test/assets/images/melissa_walk_animation.png",
-                                            draw_source=Rect2(x=64, y=0, w=32, h=32),
+                                            texture_path="test_games/fighter_test/assets/images/characters/mor/mor_idle_sheet.png",
+                                            draw_source=Rect2(x=124, y=0, w=62, h=37),
                                         ),
                                         AnimationFrame(
                                             frame=3,
-                                            texture_path="test_games/fighter_test/assets/images/melissa_walk_animation.png",
-                                            draw_source=Rect2(x=96, y=0, w=32, h=32),
+                                            texture_path="test_games/fighter_test/assets/images/characters/mor/mor_idle_sheet.png",
+                                            draw_source=Rect2(x=186, y=0, w=62, h=37),
+                                        ),
+                                        AnimationFrame(
+                                            frame=4,
+                                            texture_path="test_games/fighter_test/assets/images/characters/mor/mor_idle_sheet.png",
+                                            draw_source=Rect2(x=248, y=0, w=62, h=37),
+                                        ),
+                                        AnimationFrame(
+                                            frame=5,
+                                            texture_path="test_games/fighter_test/assets/images/characters/mor/mor_idle_sheet.png",
+                                            draw_source=Rect2(x=310, y=0, w=62, h=37),
+                                        ),
+                                        AnimationFrame(
+                                            frame=6,
+                                            texture_path="test_games/fighter_test/assets/images/characters/mor/mor_idle_sheet.png",
+                                            draw_source=Rect2(x=372, y=0, w=62, h=37),
+                                        ),
+                                        AnimationFrame(
+                                            frame=7,
+                                            texture_path="test_games/fighter_test/assets/images/characters/mor/mor_idle_sheet.png",
+                                            draw_source=Rect2(x=434, y=0, w=62, h=37),
+                                        ),
+                                        AnimationFrame(
+                                            frame=8,
+                                            texture_path="test_games/fighter_test/assets/images/characters/mor/mor_idle_sheet.png",
+                                            draw_source=Rect2(x=496, y=0, w=62, h=37),
+                                        ),
+                                        AnimationFrame(
+                                            frame=9,
+                                            texture_path="test_games/fighter_test/assets/images/characters/mor/mor_idle_sheet.png",
+                                            draw_source=Rect2(x=558, y=0, w=62, h=37),
+                                        ),
+                                        AnimationFrame(
+                                            frame=10,
+                                            texture_path="test_games/fighter_test/assets/images/characters/mor/mor_idle_sheet.png",
+                                            draw_source=Rect2(x=620, y=0, w=62, h=37),
                                         ),
                                     ],
                                 )
@@ -151,7 +221,7 @@ create_stage_nodes(
                             external_node_source=None,
                             components=[
                                 Transform2DComponent(
-                                    position=Vector2(0.0, 0.0),
+                                    position=Vector2(122.0, 80.0),
                                     scale=Vector2(1.0, 1.0),
                                     rotation=0.0,
                                     z_index=0,
@@ -159,7 +229,7 @@ create_stage_nodes(
                                     ignore_camera=False,
                                 ),
                                 Collider2DComponent(
-                                    rect=Rect2(0, 0, 32, 32),
+                                    rect=Rect2(0, 0, 16, 16),
                                     color=Color(200, 200, 255, 200),
                                 ),
                             ],

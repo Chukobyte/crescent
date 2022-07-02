@@ -47,7 +47,7 @@ configure_assets(
   ],
   textures=[
     Texture(
-      file_path="assets/images/melissa_walk_animation.png",
+      file_path="assets/images/characters/mor/mor_idle_sheet.png",
       wrap_s="clamp_to_border",
       wrap_t="clamp_to_border",
       filter_min="nearest",

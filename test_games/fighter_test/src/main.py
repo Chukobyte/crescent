@@ -71,8 +71,13 @@ class FighterSimulation:
                     # print(f"input_name: {input_name}, input_value: {input_value}")
 
 
+class TestNode(Node2D):
+    pass
+
+
 class Main(Node2D):
     def _start(self) -> None:
+        # TestNode.new() // TODO: Uncomment to test
         self.game_state = GameState()
 
         Engine.set_fps_display_enabled(True)

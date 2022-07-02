@@ -77,6 +77,10 @@ def audio_manager_stop_sound(path: str) -> None:
     pass
 
 
+def node_new(class_path: str, class_name: str, node_type: str):
+    return None
+
+
 def node_get_child(entity_id: int, child_name: str) -> tuple:
     return 2, "Node"
 

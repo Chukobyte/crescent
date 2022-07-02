@@ -840,8 +840,6 @@ class AudioManager:
 
 
 # PHYSICS
-
-
 class CollisionHandler:
     # A temp (ish) class used to brute force collision checks for now
 
