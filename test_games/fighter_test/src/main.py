@@ -77,7 +77,7 @@ class TestNode(Node2D):
 
 class Main(Node2D):
     def _start(self) -> None:
-        TestNode.new()
+        # TestNode.new() // TODO: Uncomment to test
         self.game_state = GameState()
 
         Engine.set_fps_display_enabled(True)

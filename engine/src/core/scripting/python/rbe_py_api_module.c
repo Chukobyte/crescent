@@ -529,6 +529,7 @@ PyObject* rbe_py_api_audio_manager_stop_sound(PyObject* self, PyObject* args, Py
 }
 
 // Node
+// TODO: Finish implementing...
 PyObject* rbe_py_api_node_new(PyObject* self, PyObject* args, PyObject* kwargs) {
     char* classPath;
     char* className;
@@ -542,6 +543,39 @@ PyObject* rbe_py_api_node_new(PyObject* self, PyObject* args, PyObject* kwargs) 
         nodeComponent->type = node_get_base_type(nodeType);
         RBE_ASSERT_FMT(nodeComponent->type != NodeBaseType_INVALID, "Node '%s' has an invalid node type '%s'", nodeType, nodeType);
         component_manager_set_component(node->entity, ComponentDataIndex_NODE, nodeComponent);
+
+        const NodeBaseInheritanceType inheritanceType = node_get_type_inheritance(nodeComponent->type);
+
+        if ((NodeBaseInheritanceType_NODE2D & inheritanceType) == NodeBaseInheritanceType_NODE2D) {
+            Transform2DComponent* transform2DComponent = transform2d_component_create();
+            component_manager_set_component(node->entity, ComponentDataIndex_TRANSFORM_2D, transform2DComponent);
+        }
+
+        if ((NodeBaseInheritanceType_SPRITE & inheritanceType) == NodeBaseInheritanceType_SPRITE) {
+            SpriteComponent* spriteComponent = sprite_component_create();
+            component_manager_set_component(node->entity, ComponentDataIndex_SPRITE, spriteComponent);
+        }
+
+        if ((NodeBaseInheritanceType_ANIMATED_SPRITE & inheritanceType) == NodeBaseInheritanceType_ANIMATED_SPRITE) {
+            AnimatedSpriteComponent* animatedSpriteComponent = animated_sprite_component_create();
+            component_manager_set_component(node->entity, ComponentDataIndex_ANIMATED_SPRITE, animatedSpriteComponent);
+        }
+
+        if ((NodeBaseInheritanceType_TEXT_LABEL & inheritanceType) == NodeBaseInheritanceType_TEXT_LABEL) {
+            TextLabelComponent* textLabelComponent = text_label_component_create();
+            component_manager_set_component(node->entity, ComponentDataIndex_TEXT_LABEL, textLabelComponent);
+        }
+
+        if ((NodeBaseInheritanceType_COLLIDER2D & inheritanceType) == NodeBaseInheritanceType_COLLIDER2D) {
+            Collider2DComponent* collider2DComponent = collider2d_component_create();
+            component_manager_set_component(node->entity, ComponentDataIndex_COLLIDER_2D, collider2DComponent);
+        }
+
+        if (node_get_base_type(className) == NodeBaseType_INVALID) {
+            // Create new script component if not base classes
+        } else {
+            // Just create a base class instance from python cache
+        }
 
         Py_RETURN_NONE;
     }
