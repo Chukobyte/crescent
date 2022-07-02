@@ -529,6 +529,25 @@ PyObject* rbe_py_api_audio_manager_stop_sound(PyObject* self, PyObject* args, Py
 }
 
 // Node
+PyObject* rbe_py_api_node_new(PyObject* self, PyObject* args, PyObject* kwargs) {
+    char* classPath;
+    char* className;
+    char* nodeType;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "sss", rbePyApiNodeNewKWList, &classPath, &className, &nodeType)) {
+        rbe_logger_print_err("[TEST] class_path: '%s', class_name: '%s', node_type: '%s'", classPath, className, nodeType);
+
+        SceneTreeNode* node = rbe_scene_tree_create_tree_node(rbe_ec_system_create_entity(), NULL);
+        NodeComponent* nodeComponent = node_component_create();
+        strcpy(nodeComponent->name, nodeType);
+        nodeComponent->type = node_get_base_type(nodeType);
+        RBE_ASSERT_FMT(nodeComponent->type != NodeBaseType_INVALID, "Node '%s' has an invalid node type '%s'", nodeType, nodeType);
+        component_manager_set_component(node->entity, ComponentDataIndex_NODE, nodeComponent);
+
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
 PyObject* rbe_py_api_node_get_child(PyObject* self, PyObject* args, PyObject* kwargs) {
 #define TYPE_BUFFER_SIZE 32
     Entity parentEntity;
