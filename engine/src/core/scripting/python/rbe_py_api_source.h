@@ -879,8 +879,6 @@
 "\n"\
 "\n"\
 "# PHYSICS\n"\
-"\n"\
-"\n"\
 "class CollisionHandler:\n"\
 "    # A temp (ish) class used to brute force collision checks for now\n"\
 "\n"\

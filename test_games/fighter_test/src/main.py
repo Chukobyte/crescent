@@ -77,7 +77,7 @@ class TestNode(Node2D):
 
 class Main(Node2D):
     def _start(self) -> None:
-        # TestNode.new() // TODO: Uncomment to test
+        # TestNode.new() # TODO: uncomment to test...
         self.game_state = GameState()
 
         Engine.set_fps_display_enabled(True)
@@ -131,9 +131,11 @@ class Main(Node2D):
     def _update(self, delta_time: float) -> None:
         if Input.is_action_just_pressed(name="exit"):
             Engine.exit()
-        # TODO: Changing scenes has bugs, uncomment to test and fix
-        # if Input.is_action_just_pressed(name="play_sfx"):
-        #     SceneTree.change_scene(path="test_games/fighter_test/nodes/main_node.py")
+
+        if Input.is_action_just_pressed(name="ui_confirm"):
+            SceneTree.change_scene(
+                path="test_games/fighter_test/nodes/main_node.py"
+            )
 
     def _physics_update(self, delta_time: float) -> None:
         self.fight_sim.update(delta_time)

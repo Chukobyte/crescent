@@ -31,7 +31,7 @@ RBEHashMap* rbe_hash_map_create(size_t keySize, size_t valueSize, size_t capacit
 }
 
 HashMapNode* hash_map_create_node(RBEHashMap* hashMap, void* key, void* value, HashMapNode* next) {
-    HashMapNode* node = (HashMapNode*) RBE_MEM_ALLOCATE_SIZE(sizeof(HashMapNode));
+    HashMapNode* node = (HashMapNode*) RBE_MEM_ALLOCATE(HashMapNode);
     node->key = RBE_MEM_ALLOCATE_SIZE(hashMap->keySize);
     node->value = RBE_MEM_ALLOCATE_SIZE(hashMap->valueSize);
     memcpy(node->key, key, hashMap->keySize);
@@ -156,16 +156,13 @@ void hash_map_allocate(RBEHashMap* hashMap, size_t capacity) {
 }
 
 void hash_map_rehash(RBEHashMap* hashMap, HashMapNode** oldNode, size_t oldCapacity) {
-    rbe_logger_print_err("[TEST] - Rehash!");
     for (size_t chain = 0; chain < oldCapacity; chain++) {
         for (HashMapNode* node = oldNode[chain]; node != NULL;) {
             HashMapNode* next = node->next;
 
             RBE_ASSERT(node != NULL);
             size_t newIndex = hashMap->hashFunc(node->key, hashMap->keySize) % hashMap->capacity;
-            rbe_logger_print_err("[TEST] - chain = '%d', newIndex = '%d'", chain, newIndex);
             node->next = hashMap->nodes[newIndex];
-            rbe_logger_print_err("[TEST] - after next", chain);
             hashMap->nodes[newIndex] = node;
 
             node = next;

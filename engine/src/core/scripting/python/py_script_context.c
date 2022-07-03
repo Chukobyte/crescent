@@ -11,7 +11,6 @@
 #include "../../networking/rbe_network.h"
 
 //--- RBE Script Callback ---//
-// TODO: Figuring out callback to signal structure. Clean up later.
 typedef struct RBEScriptCallback {
     Entity entity;
     PyObject* callback_func;
@@ -59,6 +58,10 @@ RBEScriptContext* rbe_py_get_script_context() {
 }
 
 void py_on_create_instance(Entity entity, const char* classPath, const char* className) {
+    if (rbe_hash_map_has(pythonInstanceHashMap, &entity)) {
+        rbe_logger_warn("Entity '%d' already has an instance, skipping creation (calling _init())...", entity);
+        return;
+    }
     PyObject* pScriptInstance = rbe_py_cache_create_instance(classPath, className, entity);
     if (PyObject_HasAttrString(pScriptInstance, "_update")) {
         RBE_STATIC_ARRAY_ADD(entities_to_update, pScriptInstance);
@@ -131,7 +134,6 @@ void py_on_end(Entity entity) {
 }
 
 void py_on_network_callback(const char* message) {
-//    rbe_logger_debug("py_on_network_callback - message = '%s'", message);
     if (current_network_script_callback != NULL) {
         PyGILState_STATE pyGilStateState = PyGILState_Ensure();
         PyObject* listenerFuncArg = Py_BuildValue("(s)", message);
@@ -142,7 +144,6 @@ void py_on_network_callback(const char* message) {
 
 // Entity Network Callback
 void py_on_entity_subscribe_to_network_callback(Entity entity, PyObject* callback_func, const char* id) {
-    rbe_logger_debug("py_on_entity_subscribe_to_network_callback");
     if (strcmp(id, "poll") == 0) {
         if (current_network_script_callback == NULL) {
             current_network_script_callback = RBE_MEM_ALLOCATE(RBEScriptCallback);
@@ -169,4 +170,11 @@ void rbe_py_on_network_udp_server_client_connected() {
         PyObject_CallObject(current_network_server_client_connected_script_callback->callback_func, NULL);
         PyGILState_Release(pyGilStateState);
     }
+}
+
+PyObject* rbe_py_get_script_instance(Entity entity) {
+    if (rbe_hash_map_has(pythonInstanceHashMap, &entity)) {
+        return (PyObject*) rbe_hash_map_get(pythonInstanceHashMap, &entity);
+    }
+    return NULL;
 }
