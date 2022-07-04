@@ -7,7 +7,7 @@
 #include "../../utils/rbe_assert.h"
 
 typedef struct PyModuleCacheItem {
-    PyObject** module;
+    PyObject* module;
     RBEStringHashMap* classHashMap;
 } PyModuleCacheItem;
 
@@ -27,9 +27,9 @@ PyObject* rbe_py_cache_get_module(const char* modulePath) {
         PyObject* pNewModule = PyImport_Import(pName);
         RBE_ASSERT(pNewModule != NULL);
 
-        size_t cacheItemSize = sizeof(PyModuleCacheItem*) + sizeof(PyObject**);
+        const size_t cacheItemSize = sizeof(PyModuleCacheItem*) + sizeof(PyObject*);
         PyModuleCacheItem* cacheItem = RBE_MEM_ALLOCATE_SIZE(cacheItemSize);
-        cacheItem->module = &pNewModule;
+        cacheItem->module = pNewModule;
         cacheItem->classHashMap = rbe_string_hash_map_create(16);
 
         rbe_string_hash_map_add(pyModuleCacheHashMap, modulePath, cacheItem, cacheItemSize);
@@ -39,13 +39,12 @@ PyObject* rbe_py_cache_get_module(const char* modulePath) {
     }
     PyModuleCacheItem* moduleCacheItem = (PyModuleCacheItem*) rbe_string_hash_map_get(pyModuleCacheHashMap, modulePath);
     RBE_ASSERT(moduleCacheItem != NULL);
-    RBE_ASSERT(moduleCacheItem->module != NULL);
-    return *moduleCacheItem->module;
+    RBE_ASSERT_FMT(moduleCacheItem->module != NULL, "Unable to get module at path '%s'", modulePath);
+    return moduleCacheItem->module;
 }
 
 PyObject* rbe_py_cache_get_class(const char* modulePath, const char* classPath) {
     PyObject* pyModule = rbe_py_cache_get_module(modulePath);
-    RBE_ASSERT_FMT(pyModule != NULL, "Unable to load module cache item '%s' for class '%s'", modulePath, classPath);
     PyModuleCacheItem* moduleCacheItem = (PyModuleCacheItem*) rbe_string_hash_map_get(pyModuleCacheHashMap, modulePath);
     if (!rbe_string_hash_map_has(moduleCacheItem->classHashMap, classPath)) {
         PyObject* pModuleDict = PyModule_GetDict(pyModule);

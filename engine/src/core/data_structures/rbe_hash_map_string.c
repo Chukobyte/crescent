@@ -20,7 +20,7 @@ void string_hash_map_rehash(RBEStringHashMap* hashMap, StringHashMapNode** oldNo
 void string_hash_map_resize(RBEStringHashMap* hashMap, size_t newCapacity);
 
 RBEStringHashMap* rbe_string_hash_map_create(size_t capacity) {
-    RBEStringHashMap* map = (RBEStringHashMap*) RBE_MEM_ALLOCATE_SIZE(sizeof(RBEStringHashMap));
+    RBEStringHashMap* map = (RBEStringHashMap*) RBE_MEM_ALLOCATE(RBEStringHashMap);
     map->capacity = capacity;
     map->size = 0;
     map->hashFunc = rbe_default_hash_string;

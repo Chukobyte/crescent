@@ -180,7 +180,7 @@ void rbe_ec_system_insert_entity_into_system(Entity entity, EntitySystem* system
             system->on_entity_registered_func(entity);
         }
     } else {
-        rbe_logger_error("Failed to insert entity into system, entity '%d' already present!", entity);
+        rbe_logger_warn("Entity '%d' already in system '%s'", entity, system->name);
     }
 }
 

@@ -284,13 +284,24 @@
 "\n"\
 "class Texture:\n"\
 "    def __init__(\n"\
-"        self, file_path: str, wrap_s: str, wrap_t: str, filter_min: str, filter_mag: str\n"\
+"        self,\n"\
+"        file_path: str,\n"\
+"        wrap_s=\"clamp_to_border\",\n"\
+"        wrap_t=\"clamp_to_border\",\n"\
+"        filter_min=\"nearest\",\n"\
+"        filter_mag=\"nearest\",\n"\
 "    ):\n"\
 "        self.file_path = file_path\n"\
 "        self.wrap_s = wrap_s\n"\
 "        self.wrap_t = wrap_t\n"\
 "        self.filter_min = filter_min\n"\
 "        self.filter_mag = filter_mag\n"\
+"\n"\
+"    def __str__(self):\n"\
+"        return f\"Texture(file_path: {self.file_path}, wrap_s: {self.wrap_s}, wrap_s: {self.wrap_t}, filter_min: {self.filter_min}, filter_mag: {self.filter_mag})\"\n"\
+"\n"\
+"    def __repr__(self):\n"\
+"        return f\"Texture(file_path: {self.file_path}, wrap_s: {self.wrap_s}, wrap_s: {self.wrap_t}, filter_min: {self.filter_min}, filter_mag: {self.filter_mag})\"\n"\
 "\n"\
 "\n"\
 "class Font:\n"\
@@ -879,8 +890,6 @@
 "\n"\
 "\n"\
 "# PHYSICS\n"\
-"\n"\
-"\n"\
 "class CollisionHandler:\n"\
 "    # A temp (ish) class used to brute force collision checks for now\n"\
 "\n"\

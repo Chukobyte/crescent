@@ -71,13 +71,22 @@ class FighterSimulation:
                     # print(f"input_name: {input_name}, input_value: {input_value}")
 
 
-class TestNode(Node2D):
+class TestNode(Sprite):
     pass
 
 
 class Main(Node2D):
     def _start(self) -> None:
-        # TestNode.new() // TODO: Uncomment to test
+        # TODO: Remove once testing is completed.  Uncomment to test.
+        # test_node = TestNode.new()
+        # print(f"[PY SCRIPT] TestNode.new() created as {test_node}")
+        # test_node.position = Vector2(400, 200)
+        # test_node.texture = Texture(
+        #     file_path="test_games/fighter_test/assets/images/characters/mor/mor_idle_sheet.png"
+        # )
+        # test_node.draw_source = Rect2(0, 0, 32, 32)
+        # self.add_child(child_node=test_node)
+
         self.game_state = GameState()
 
         Engine.set_fps_display_enabled(True)
@@ -131,9 +140,9 @@ class Main(Node2D):
     def _update(self, delta_time: float) -> None:
         if Input.is_action_just_pressed(name="exit"):
             Engine.exit()
-        # TODO: Changing scenes has bugs, uncomment to test and fix
-        # if Input.is_action_just_pressed(name="play_sfx"):
-        #     SceneTree.change_scene(path="test_games/fighter_test/nodes/main_node.py")
+
+        if Input.is_action_just_pressed(name="ui_confirm"):
+            SceneTree.change_scene(path="test_games/fighter_test/nodes/main_node.py")
 
     def _physics_update(self, delta_time: float) -> None:
         self.fight_sim.update(delta_time)

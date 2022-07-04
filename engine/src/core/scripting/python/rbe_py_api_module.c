@@ -529,54 +529,73 @@ PyObject* rbe_py_api_audio_manager_stop_sound(PyObject* self, PyObject* args, Py
 }
 
 // Node
-// TODO: Finish implementing...
 PyObject* rbe_py_api_node_new(PyObject* self, PyObject* args, PyObject* kwargs) {
     char* classPath;
     char* className;
     char* nodeType;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "sss", rbePyApiNodeNewKWList, &classPath, &className, &nodeType)) {
-        rbe_logger_print_err("[TEST] class_path: '%s', class_name: '%s', node_type: '%s'", classPath, className, nodeType);
+        const Entity newEntity = rbe_ec_system_create_entity();
 
-        SceneTreeNode* node = rbe_scene_tree_create_tree_node(rbe_ec_system_create_entity(), NULL);
+        // Setup script component first
+        ScriptComponent* scriptComponent = script_component_create();
+        scriptComponent->classPath = classPath;
+        scriptComponent->className = className;
+        scriptComponent->contextType = ScriptContextType_PYTHON;
+        component_manager_set_component(newEntity, ComponentDataIndex_SCRIPT, scriptComponent);
+        // Call create instance on script context
+        // TODO: Not a big fan of updating the scripting system signature this way, but I guess it will suffice for now...
+        rbe_ec_system_update_entity_signature_with_systems(newEntity);
+        PyObject* entityInstance = rbe_py_get_script_instance(newEntity);
+        RBE_ASSERT_FMT(entityInstance != NULL, "Entity instance '%d' is NULL!", newEntity);
+
         NodeComponent* nodeComponent = node_component_create();
         strcpy(nodeComponent->name, nodeType);
         nodeComponent->type = node_get_base_type(nodeType);
         RBE_ASSERT_FMT(nodeComponent->type != NodeBaseType_INVALID, "Node '%s' has an invalid node type '%s'", nodeType, nodeType);
-        component_manager_set_component(node->entity, ComponentDataIndex_NODE, nodeComponent);
+        component_manager_set_component(newEntity, ComponentDataIndex_NODE, nodeComponent);
 
         const NodeBaseInheritanceType inheritanceType = node_get_type_inheritance(nodeComponent->type);
 
         if ((NodeBaseInheritanceType_NODE2D & inheritanceType) == NodeBaseInheritanceType_NODE2D) {
             Transform2DComponent* transform2DComponent = transform2d_component_create();
-            component_manager_set_component(node->entity, ComponentDataIndex_TRANSFORM_2D, transform2DComponent);
+            component_manager_set_component(newEntity, ComponentDataIndex_TRANSFORM_2D, transform2DComponent);
         }
 
         if ((NodeBaseInheritanceType_SPRITE & inheritanceType) == NodeBaseInheritanceType_SPRITE) {
             SpriteComponent* spriteComponent = sprite_component_create();
-            component_manager_set_component(node->entity, ComponentDataIndex_SPRITE, spriteComponent);
+            component_manager_set_component(newEntity, ComponentDataIndex_SPRITE, spriteComponent);
         }
 
         if ((NodeBaseInheritanceType_ANIMATED_SPRITE & inheritanceType) == NodeBaseInheritanceType_ANIMATED_SPRITE) {
             AnimatedSpriteComponent* animatedSpriteComponent = animated_sprite_component_create();
-            component_manager_set_component(node->entity, ComponentDataIndex_ANIMATED_SPRITE, animatedSpriteComponent);
+            component_manager_set_component(newEntity, ComponentDataIndex_ANIMATED_SPRITE, animatedSpriteComponent);
         }
 
         if ((NodeBaseInheritanceType_TEXT_LABEL & inheritanceType) == NodeBaseInheritanceType_TEXT_LABEL) {
             TextLabelComponent* textLabelComponent = text_label_component_create();
-            component_manager_set_component(node->entity, ComponentDataIndex_TEXT_LABEL, textLabelComponent);
+            component_manager_set_component(newEntity, ComponentDataIndex_TEXT_LABEL, textLabelComponent);
         }
 
         if ((NodeBaseInheritanceType_COLLIDER2D & inheritanceType) == NodeBaseInheritanceType_COLLIDER2D) {
             Collider2DComponent* collider2DComponent = collider2d_component_create();
-            component_manager_set_component(node->entity, ComponentDataIndex_COLLIDER_2D, collider2DComponent);
+            component_manager_set_component(newEntity, ComponentDataIndex_COLLIDER_2D, collider2DComponent);
         }
 
-        if (node_get_base_type(className) == NodeBaseType_INVALID) {
-            // Create new script component if not base classes
-        } else {
-            // Just create a base class instance from python cache
-        }
+        Py_IncRef(entityInstance);
+        return Py_BuildValue("O", entityInstance);
+    }
+    return NULL;
+}
 
+PyObject* rbe_py_api_node_add_child(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity parentEntity;
+    Entity entity;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "ii", rbePyApiNodeAddChildKWList, &parentEntity, &entity)) {
+        SceneTreeNode* parentNode = rbe_scene_manager_get_entity_tree_node(parentEntity);
+        SceneTreeNode* node = rbe_scene_tree_create_tree_node(entity, parentNode);
+
+        rbe_ec_system_update_entity_signature_with_systems(entity);
+        rbe_scene_manager_queue_entity_for_creation(node);
         Py_RETURN_NONE;
     }
     return NULL;
@@ -635,6 +654,54 @@ PyObject* rbe_py_api_node2D_get_position(PyObject* self, PyObject* args, PyObjec
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", rbePyApiGenericGetEntityKWList, &entity)) {
         const Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
         return Py_BuildValue("(ff)", transformComp->position.x, transformComp->position.y);
+    }
+    return NULL;
+}
+
+// Sprite
+PyObject* rbe_py_api_sprite_set_texture(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    char* filePath;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "is", rbePyApiSpriteSetTextureKWList, &entity, &filePath)) {
+        SpriteComponent* spriteComponent = (SpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_SPRITE);
+        RBE_ASSERT_FMT(rbe_asset_manager_has_texture(filePath), "Doesn't have texture with file path '%s'", filePath);
+        spriteComponent->texture = rbe_asset_manager_get_texture(filePath);
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* rbe_py_api_sprite_get_texture(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", rbePyApiGenericGetEntityKWList, &entity)) {
+        const SpriteComponent* spriteComponent = (SpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_SPRITE);
+        return Py_BuildValue("(sssss)", spriteComponent->texture->fileName, "clamp_to_border", "clamp_to_border", "nearest", "nearest");
+    }
+    return NULL;
+}
+
+PyObject* rbe_py_api_sprite_set_draw_source(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    float x;
+    float y;
+    float w;
+    float h;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "iffff", rbePyApiSpriteSetDrawSourceKWList, &entity, &x, &y, &w, &h)) {
+        SpriteComponent* spriteComponent = (SpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_SPRITE);
+        spriteComponent->drawSource.x = x;
+        spriteComponent->drawSource.y = y;
+        spriteComponent->drawSource.w = w;
+        spriteComponent->drawSource.h = h;
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* rbe_py_api_sprite_get_draw_source(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", rbePyApiGenericGetEntityKWList, &entity)) {
+        const SpriteComponent* spriteComponent = (SpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_SPRITE);
+        return Py_BuildValue("(ffff)", spriteComponent->drawSource.x, spriteComponent->drawSource.y, spriteComponent->drawSource.w, spriteComponent->drawSource.h);
     }
     return NULL;
 }

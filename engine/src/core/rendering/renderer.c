@@ -75,15 +75,17 @@ RBE_STATIC_ARRAY_CREATE(SpriteBatchItem, 100, sprite_batch_items);
 RBE_STATIC_ARRAY_CREATE(FontBatchItem, 100, font_batch_items);
 
 void rbe_renderer_queue_sprite_draw_call(Texture* texture, Rect2 sourceRect, Rect2 destRect, float rotation, Color color, bool flipX, bool flipY) {
+    if (texture == NULL) {
+        rbe_logger_error("NULL texture, not submitting draw call!");
+        return;
+    }
     SpriteBatchItem item = { .texture = texture, .sourceRect = sourceRect, .destRect = destRect, .rotation = rotation, .color = color, .flipX = flipX, .flipY = flipY };
     RBE_STATIC_ARRAY_ADD(sprite_batch_items, item);
-//    sprite_renderer_draw_sprite(texture, sourceRect, destRect, rotation, color, flipX, flipY);
 }
 
 void rbe_renderer_queue_font_draw_call(Font* font, const char* text, float x, float y, float scale, Color color) {
     FontBatchItem item = { .font = font, .text = text, .x = x, .y = y, .scale = scale, .color = color };
     RBE_STATIC_ARRAY_ADD(font_batch_items, item);
-//    font_renderer_draw_text(font, text, x, y, scale, color);
 }
 
 void rbe_renderer_flush_batches() {
