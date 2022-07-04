@@ -48,7 +48,7 @@ RBEScriptContext* rbe_py_create_script_context() {
     scriptContext->on_network_callback = py_on_network_callback;
     scriptContext->on_entity_subscribe_to_network_callback = py_on_entity_subscribe_to_network_callback;
 
-    pythonInstanceHashMap = rbe_hash_map_create(sizeof(Entity), sizeof(PyObject**), MAX_ENTITIES);
+    pythonInstanceHashMap = rbe_hash_map_create(sizeof(Entity), sizeof(PyObject**), 16);
     python_script_context = scriptContext;
     return scriptContext;
 }

@@ -35,6 +35,7 @@ PyObject* rbe_py_api_audio_manager_stop_sound(PyObject* self, PyObject* args, Py
 
 // Node
 PyObject* rbe_py_api_node_new(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* rbe_py_api_node_add_child(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* rbe_py_api_node_get_child(PyObject* self, PyObject* args, PyObject* kwargs);
 
 // Node2D
@@ -140,6 +141,10 @@ static struct PyMethodDef rbePyApiMethods[] = {
     {
         "node_new", (PyCFunction) rbe_py_api_node_new,
         METH_VARARGS | METH_KEYWORDS, "Creates a new node."
+    },
+    {
+        "node_add_child", (PyCFunction) rbe_py_api_node_add_child,
+        METH_VARARGS | METH_KEYWORDS, "Adds a node to the scene."
     },
     {
         "node_get_child", (PyCFunction) rbe_py_api_node_get_child,
@@ -248,7 +253,7 @@ static char *rbePyApiInputActionInputCheckKWList[] = {"name", NULL};
 static char *rbePyApiAudioManagerPlaySoundKWList[] = {"path", "loops", NULL};
 
 static char *rbePyApiNodeNewKWList[] = {"class_path", "class_name", "node_type", NULL};
-static char *rbePyApiNodeAddChildKWList[] = {"entity_id", "parent_entity_id", NULL};
+static char *rbePyApiNodeAddChildKWList[] = {"parent_entity_id", "child_entity_id", NULL};
 static char *rbePyApiNodeGetChildKWList[] = {"entity_id", "child_name", NULL};
 
 static char *rbePyApiNode2DSetPositionKWList[] = {"entity_id", "x", "y", NULL};

@@ -77,7 +77,10 @@ class TestNode(Node2D):
 
 class Main(Node2D):
     def _start(self) -> None:
-        # TestNode.new() # TODO: uncomment to test...
+        # print(f"[PY SCRIPT] Begin")
+        # test_node = TestNode.new()
+        # print(f"[PY SCRIPT] TestNode.new() created as {test_node}")
+
         self.game_state = GameState()
 
         Engine.set_fps_display_enabled(True)
@@ -133,9 +136,7 @@ class Main(Node2D):
             Engine.exit()
 
         if Input.is_action_just_pressed(name="ui_confirm"):
-            SceneTree.change_scene(
-                path="test_games/fighter_test/nodes/main_node.py"
-            )
+            SceneTree.change_scene(path="test_games/fighter_test/nodes/main_node.py")
 
     def _physics_update(self, delta_time: float) -> None:
         self.fight_sim.update(delta_time)

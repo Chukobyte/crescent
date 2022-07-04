@@ -581,12 +581,6 @@ PyObject* rbe_py_api_node_new(PyObject* self, PyObject* args, PyObject* kwargs) 
             component_manager_set_component(newEntity, ComponentDataIndex_COLLIDER_2D, collider2DComponent);
         }
 
-        if (node_get_base_type(className) == NodeBaseType_INVALID) {
-            // Create new script component if not base classes
-        } else {
-            // Just create a base class instance from python cache
-        }
-
         Py_IncRef(entityInstance);
         return Py_BuildValue("O", entityInstance);
     }
