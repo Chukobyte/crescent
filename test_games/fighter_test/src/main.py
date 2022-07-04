@@ -79,6 +79,7 @@ class Main(Node2D):
     def _start(self) -> None:
         test_node = TestNode.new()
         print(f"[PY SCRIPT] TestNode.new() created as {test_node}")
+        self.add_child(child_node=test_node)
 
         self.game_state = GameState()
 

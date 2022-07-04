@@ -177,7 +177,7 @@ Transform2DComponent rbe_scene_manager_get_combined_parent_transform(Entity enti
 }
 
 SceneTreeNode* rbe_scene_manager_get_entity_tree_node(Entity entity) {
-    RBE_ASSERT(rbe_hash_map_has(entityToTreeNodeMap, &entity));
+    RBE_ASSERT_FMT(rbe_hash_map_has(entityToTreeNodeMap, &entity), "Doesn't have entity '%d' in scene tree!", entity);
     SceneTreeNode* treeNode = (SceneTreeNode*) rbe_hash_map_get(entityToTreeNodeMap, &entity);
     RBE_ASSERT(treeNode != NULL);
     return treeNode;
