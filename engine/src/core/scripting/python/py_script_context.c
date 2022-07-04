@@ -58,10 +58,6 @@ RBEScriptContext* rbe_py_get_script_context() {
 }
 
 void py_on_create_instance(Entity entity, const char* classPath, const char* className) {
-    if (rbe_hash_map_has(pythonInstanceHashMap, &entity)) {
-        rbe_logger_warn("Entity '%d' already has an instance, skipping creation (calling _init())...", entity);
-        return;
-    }
     PyObject* pScriptInstance = rbe_py_cache_create_instance(classPath, className, entity);
     if (PyObject_HasAttrString(pScriptInstance, "_update")) {
         RBE_STATIC_ARRAY_ADD(entities_to_update, pScriptInstance);

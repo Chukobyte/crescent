@@ -588,9 +588,9 @@ PyObject* rbe_py_api_node_new(PyObject* self, PyObject* args, PyObject* kwargs) 
 }
 
 PyObject* rbe_py_api_node_add_child(PyObject* self, PyObject* args, PyObject* kwargs) {
-    Entity entity;
     Entity parentEntity;
-    if (PyArg_ParseTupleAndKeywords(args, kwargs, "ii", rbePyApiNodeAddChildKWList, &entity, &parentEntity)) {
+    Entity entity;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "ii", rbePyApiNodeAddChildKWList, &parentEntity, &entity)) {
         SceneTreeNode* parentNode = rbe_scene_manager_get_entity_tree_node(parentEntity);
         SceneTreeNode* node = rbe_scene_tree_create_tree_node(entity, parentNode);
 
