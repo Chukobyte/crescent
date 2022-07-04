@@ -43,6 +43,12 @@ PyObject* rbe_py_api_node2D_set_position(PyObject* self, PyObject* args, PyObjec
 PyObject* rbe_py_api_node2D_add_to_position(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* rbe_py_api_node2D_get_position(PyObject* self, PyObject* args, PyObject* kwargs);
 
+// Sprite
+PyObject* rbe_py_api_sprite_set_texture(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* rbe_py_api_sprite_get_texture(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* rbe_py_api_sprite_set_draw_source(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* rbe_py_api_sprite_get_draw_source(PyObject* self, PyObject* args, PyObject* kwargs);
+
 // Text Label
 PyObject* rbe_py_api_text_label_set_text(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* rbe_py_api_text_label_get_text(PyObject* self, PyObject* args, PyObject* kwargs);
@@ -163,6 +169,23 @@ static struct PyMethodDef rbePyApiMethods[] = {
         "node2D_get_position", (PyCFunction) rbe_py_api_node2D_get_position,
         METH_VARARGS | METH_KEYWORDS, "Get the position of a node."
     },
+    // SPRITE
+    {
+        "sprite_set_texture", (PyCFunction) rbe_py_api_sprite_set_texture,
+        METH_VARARGS | METH_KEYWORDS, "Sets the texture for a sprite."
+    },
+    {
+        "sprite_get_texture", (PyCFunction) rbe_py_api_sprite_get_texture,
+        METH_VARARGS | METH_KEYWORDS, "Gets the texture for a sprite."
+    },
+    {
+        "sprite_set_draw_source", (PyCFunction) rbe_py_api_sprite_set_draw_source,
+        METH_VARARGS | METH_KEYWORDS, "Sets the draw source for a sprite."
+    },
+    {
+        "sprite_get_draw_source", (PyCFunction) rbe_py_api_sprite_get_draw_source,
+        METH_VARARGS | METH_KEYWORDS, "Gets the draw source for a sprite."
+    },
     // TEXT LABEL
     {
         "text_label_set_text", (PyCFunction) rbe_py_api_text_label_set_text,
@@ -257,6 +280,9 @@ static char *rbePyApiNodeAddChildKWList[] = {"parent_entity_id", "child_entity_i
 static char *rbePyApiNodeGetChildKWList[] = {"entity_id", "child_name", NULL};
 
 static char *rbePyApiNode2DSetPositionKWList[] = {"entity_id", "x", "y", NULL};
+
+static char *rbePyApiSpriteSetTextureKWList[] = {"entity_id", "file_path", NULL};
+static char *rbePyApiSpriteSetDrawSourceKWList[] = {"entity_id", "x", "y", "w", "h", NULL};
 
 static char *rbePyApiTextLabelSetTextKWList[] = {"entity_id", "text", NULL};
 static char *rbePyApiTextLabelSetColorKWList[] = {"entity_id", "r", "g", "b", "a", NULL};

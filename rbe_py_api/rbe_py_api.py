@@ -245,7 +245,12 @@ class AudioSource:
 
 class Texture:
     def __init__(
-        self, file_path: str, wrap_s: str, wrap_t: str, filter_min: str, filter_mag: str
+        self,
+        file_path: str,
+        wrap_s="clamp_to_border",
+        wrap_t="clamp_to_border",
+        filter_min="nearest",
+        filter_mag="nearest",
     ):
         self.file_path = file_path
         self.wrap_s = wrap_s

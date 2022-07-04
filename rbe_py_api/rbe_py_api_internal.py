@@ -101,6 +101,28 @@ def node2D_get_position(entity_id: int) -> tuple:
     return 0.0, 0.0
 
 
+def sprite_set_texture(entity_id: int, file_path: str) -> None:
+    pass
+
+
+def sprite_get_texture(entity_id: int) -> tuple:
+    return (
+        "assets/texture.png",
+        "clamp_to_border",
+        "clamp_to_border",
+        "nearest",
+        "nearest",
+    )
+
+
+def sprite_set_draw_source(entity_id: int, x: float, y: float, w: float, h: float) -> None:
+    pass
+
+
+def sprite_get_draw_source(entity_id: int) -> tuple:
+    return 0.0, 0.0, 32.0, 32.0
+
+
 def text_label_set_text(entity_id: int, text: str) -> None:
     pass
 

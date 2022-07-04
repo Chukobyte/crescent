@@ -658,6 +658,54 @@ PyObject* rbe_py_api_node2D_get_position(PyObject* self, PyObject* args, PyObjec
     return NULL;
 }
 
+// Sprite
+PyObject* rbe_py_api_sprite_set_texture(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    char* filePath;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "is", rbePyApiSpriteSetTextureKWList, &entity, &filePath)) {
+        SpriteComponent* spriteComponent = (SpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_SPRITE);
+        RBE_ASSERT_FMT(rbe_asset_manager_has_texture(filePath), "Doesn't have texture with file path '%s'", filePath);
+        spriteComponent->texture = rbe_asset_manager_get_texture(filePath);
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* rbe_py_api_sprite_get_texture(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", rbePyApiGenericGetEntityKWList, &entity)) {
+        const SpriteComponent* spriteComponent = (SpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_SPRITE);
+        return Py_BuildValue("(sssss)", spriteComponent->texture->fileName, "clamp_to_border", "clamp_to_border", "nearest", "nearest");
+    }
+    return NULL;
+}
+
+PyObject* rbe_py_api_sprite_set_draw_source(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    float x;
+    float y;
+    float w;
+    float h;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "iffff", rbePyApiSpriteSetDrawSourceKWList, &entity, &x, &y, &w, &h)) {
+        SpriteComponent* spriteComponent = (SpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_SPRITE);
+        spriteComponent->drawSource.x = x;
+        spriteComponent->drawSource.y = y;
+        spriteComponent->drawSource.w = w;
+        spriteComponent->drawSource.h = h;
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* rbe_py_api_sprite_get_draw_source(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", rbePyApiGenericGetEntityKWList, &entity)) {
+        const SpriteComponent* spriteComponent = (SpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_SPRITE);
+        return Py_BuildValue("(ffff)", spriteComponent->drawSource.x, spriteComponent->drawSource.y, spriteComponent->drawSource.w, spriteComponent->drawSource.h);
+    }
+    return NULL;
+}
+
 // Text Label
 PyObject* rbe_py_api_text_label_set_text(PyObject* self, PyObject* args, PyObject* kwargs) {
     Entity entity;

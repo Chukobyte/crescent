@@ -284,7 +284,12 @@
 "\n"\
 "class Texture:\n"\
 "    def __init__(\n"\
-"        self, file_path: str, wrap_s: str, wrap_t: str, filter_min: str, filter_mag: str\n"\
+"        self,\n"\
+"        file_path: str,\n"\
+"        wrap_s=\"clamp_to_border\",\n"\
+"        wrap_t=\"clamp_to_border\",\n"\
+"        filter_min=\"nearest\",\n"\
+"        filter_mag=\"nearest\",\n"\
 "    ):\n"\
 "        self.file_path = file_path\n"\
 "        self.wrap_s = wrap_s\n"\
