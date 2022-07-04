@@ -9,12 +9,12 @@
 
 typedef enum NodeBaseType {
     NodeBaseType_INVALID = -1,
-    NodeBaseType_NODE = 0,
-    NodeBaseType_NODE2D = 1,
-    NodeBaseType_SPRITE = 2,
-    NodeBaseType_ANIMATED_SPRITE = 3,
-    NodeBaseType_TEXT_LABEL = 4,
-    NodeBaseType_COLLIDER2D = 5,
+    NodeBaseType_NODE = 1 << 0,
+    NodeBaseType_NODE2D = 1 << 1,
+    NodeBaseType_SPRITE = 1 << 2,
+    NodeBaseType_ANIMATED_SPRITE = 1 << 3,
+    NodeBaseType_TEXT_LABEL = 1 << 4,
+    NodeBaseType_COLLIDER2D = 1 << 5,
 } NodeBaseType;
 
 typedef enum NodeBaseInheritanceType {

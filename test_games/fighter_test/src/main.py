@@ -71,19 +71,21 @@ class FighterSimulation:
                     # print(f"input_name: {input_name}, input_value: {input_value}")
 
 
-class TestNode(Node2D):
+class TestNode(Sprite):
     pass
 
 
 class Main(Node2D):
     def _start(self) -> None:
-        test_node = TestNode.new()
-        print(f"[PY SCRIPT] TestNode.new() created as {test_node}")
-        # test_node.texture = Texture(file_path="test_games/fighter_test/assets/images/characters/mor/mor_idle_sheet.png")
+        # TODO: Remove once testing is completed.  Uncomment to test.
+        # test_node = TestNode.new()
+        # print(f"[PY SCRIPT] TestNode.new() created as {test_node}")
+        # test_node.position = Vector2(400, 200)
+        # test_node.texture = Texture(
+        #     file_path="test_games/fighter_test/assets/images/characters/mor/mor_idle_sheet.png"
+        # )
         # test_node.draw_source = Rect2(0, 0, 32, 32)
-        self.add_child(child_node=test_node)
-        # print(f"texture = {test_node.texture}")
-        # print(f"draw_source = {test_node.draw_source}")
+        # self.add_child(child_node=test_node)
 
         self.game_state = GameState()
 

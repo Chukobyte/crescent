@@ -297,6 +297,12 @@
 "        self.filter_min = filter_min\n"\
 "        self.filter_mag = filter_mag\n"\
 "\n"\
+"    def __str__(self):\n"\
+"        return f\"Texture(file_path: {self.file_path}, wrap_s: {self.wrap_s}, wrap_s: {self.wrap_t}, filter_min: {self.filter_min}, filter_mag: {self.filter_mag})\"\n"\
+"\n"\
+"    def __repr__(self):\n"\
+"        return f\"Texture(file_path: {self.file_path}, wrap_s: {self.wrap_s}, wrap_s: {self.wrap_t}, filter_min: {self.filter_min}, filter_mag: {self.filter_mag})\"\n"\
+"\n"\
 "\n"\
 "class Font:\n"\
 "    def __init__(self, file_path: str, uid: str, size: int):\n"\

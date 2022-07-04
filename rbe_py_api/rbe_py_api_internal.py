@@ -115,7 +115,9 @@ def sprite_get_texture(entity_id: int) -> tuple:
     )
 
 
-def sprite_set_draw_source(entity_id: int, x: float, y: float, w: float, h: float) -> None:
+def sprite_set_draw_source(
+    entity_id: int, x: float, y: float, w: float, h: float
+) -> None:
     pass
 
 
