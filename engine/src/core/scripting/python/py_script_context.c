@@ -174,7 +174,7 @@ void rbe_py_on_network_udp_server_client_connected() {
 
 PyObject* rbe_py_get_script_instance(Entity entity) {
     if (rbe_hash_map_has(pythonInstanceHashMap, &entity)) {
-        return (PyObject*) rbe_hash_map_get(pythonInstanceHashMap, &entity);
+        return (PyObject*) *(PyObject**) rbe_hash_map_get(pythonInstanceHashMap, &entity);
     }
     return NULL;
 }

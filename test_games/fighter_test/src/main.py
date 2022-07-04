@@ -77,9 +77,8 @@ class TestNode(Node2D):
 
 class Main(Node2D):
     def _start(self) -> None:
-        # print(f"[PY SCRIPT] Begin")
-        # test_node = TestNode.new()
-        # print(f"[PY SCRIPT] TestNode.new() created as {test_node}")
+        test_node = TestNode.new()
+        print(f"[PY SCRIPT] TestNode.new() created as {test_node}")
 
         self.game_state = GameState()
 
