@@ -543,7 +543,7 @@ PyObject* rbe_py_api_node_new(PyObject* self, PyObject* args, PyObject* kwargs) 
         scriptComponent->contextType = ScriptContextType_PYTHON;
         component_manager_set_component(newEntity, ComponentDataIndex_SCRIPT, scriptComponent);
         // Call create instance on script context
-        // TODO: Figure out if I want to do this differently?
+        // TODO: Not a big fan of updating the scripting system signature this way, but I guess it will suffice for now...
         rbe_ec_system_update_entity_signature_with_systems(newEntity);
         PyObject* entityInstance = rbe_py_get_script_instance(newEntity);
         RBE_ASSERT_FMT(entityInstance != NULL, "Entity instance '%d' is NULL!", newEntity);
