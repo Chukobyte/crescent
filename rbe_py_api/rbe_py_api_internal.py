@@ -77,6 +77,42 @@ def audio_manager_stop_sound(path: str) -> None:
     pass
 
 
+def camera2D_set_position(x: float, y: float) -> None:
+    pass
+
+
+def camera2D_add_to_position(x: float, y: float) -> None:
+    pass
+
+
+def camera2D_get_position() -> tuple:
+    return 0.0, 0.0
+
+
+def camera2D_set_offset(x: float, y: float) -> None:
+    pass
+
+
+def camera2D_add_to_offset(x: float, y: float) -> None:
+    pass
+
+
+def camera2D_get_offset() -> tuple:
+    return 0.0, 0.0
+
+
+def camera2D_set_zoom(x: float, y: float) -> None:
+    pass
+
+
+def camera2D_add_to_zoom(x: float, y: float) -> None:
+    pass
+
+
+def camera2D_get_zoom() -> tuple:
+    return 0.0, 0.0
+
+
 def node_new(class_path: str, class_name: str, node_type: str):
     return None
 

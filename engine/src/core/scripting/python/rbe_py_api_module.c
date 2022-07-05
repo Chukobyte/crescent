@@ -498,6 +498,43 @@ PyObject* rbe_py_api_input_is_action_just_released(PyObject* self, PyObject* arg
     return NULL;
 }
 
+// Camera
+PyObject* rbe_py_api_camera2D_set_position(PyObject* self, PyObject* args, PyObject* kwargs) {
+    return NULL;
+}
+
+PyObject* rbe_py_api_camera2D_add_to_position(PyObject* self, PyObject* args, PyObject* kwargs) {
+    return NULL;
+}
+
+PyObject* rbe_py_api_camera2D_get_position(PyObject* self, PyObject* args) {
+    return NULL;
+}
+
+PyObject* rbe_py_api_camera2D_set_offset(PyObject* self, PyObject* args, PyObject* kwargs) {
+    return NULL;
+}
+
+PyObject* rbe_py_api_camera2D_add_to_offset(PyObject* self, PyObject* args, PyObject* kwargs) {
+    return NULL;
+}
+
+PyObject* rbe_py_api_camera2D_get_offset(PyObject* self, PyObject* args) {
+    return NULL;
+}
+
+PyObject* rbe_py_api_camera2D_set_zoom(PyObject* self, PyObject* args, PyObject* kwargs) {
+    return NULL;
+}
+
+PyObject* rbe_py_api_camera2D_add_to_zoom(PyObject* self, PyObject* args, PyObject* kwargs) {
+    return NULL;
+}
+
+PyObject* rbe_py_api_camera2D_get_zoom(PyObject* self, PyObject* args) {
+    return NULL;
+}
+
 // Scene Tree
 PyObject* rbe_py_api_scene_tree_change_scene(PyObject* self, PyObject* args, PyObject* kwargs) {
     char* scenePath;

@@ -419,6 +419,45 @@ class Input:
         AXIS_RIGHT_ANALOG_DOWN = "joystick_right_analog_down"
 
 
+# CAMERA
+class Camera2D:
+    @staticmethod
+    def set_position(position: Vector2) -> None:
+        rbe_py_api_internal.camera2D_set_position(x=position.x, y=position.y)
+
+    @staticmethod
+    def add_to_position(position: Vector2) -> None:
+        rbe_py_api_internal.camera2D_add_to_position(x=position.x, y=position.y)
+
+    @staticmethod
+    def get_position() -> Vector2:
+        x, y = rbe_py_api_internal.camera2D_get_position()
+
+    @staticmethod
+    def set_offset(offset: Vector2) -> None:
+        rbe_py_api_internal.camera2D_set_offset(x=offset.x, y=offset.y)
+
+    @staticmethod
+    def add_to_offset(offset: Vector2) -> None:
+        rbe_py_api_internal.camera2D_add_to_offset(x=offset.x, y=offset.y)
+
+    @staticmethod
+    def get_offset() -> Vector2:
+        x, y = rbe_py_api_internal.camera2D_get_offset()
+
+    @staticmethod
+    def set_zoom(zoom: Vector2) -> None:
+        rbe_py_api_internal.camera2D_set_zoom(x=zoom.x, y=zoom.y)
+
+    @staticmethod
+    def add_to_zoom(zoom: Vector2) -> None:
+        rbe_py_api_internal.camera2D_add_to_zoom(x=zoom.x, y=zoom.y)
+
+    @staticmethod
+    def get_zoom() -> Vector2:
+        x, y = rbe_py_api_internal.camera2D_get_zoom()
+
+
 # STAGE SETUP
 class StageNode:
     def __init__(
