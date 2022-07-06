@@ -149,6 +149,17 @@ class Main(Node2D):
             SceneTree.change_scene(path="test_games/fighter_test/nodes/main_node.py")
 
     def _physics_update(self, delta_time: float) -> None:
+        # Temp camera test
+        camera_speed = Vector2(5.0, 5.0)
+        if Input.is_action_pressed("camera_left"):
+            Camera2D.add_to_position(Vector2.LEFT() * camera_speed)
+        if Input.is_action_pressed("camera_right"):
+            Camera2D.add_to_position(Vector2.RIGHT() * camera_speed)
+        if Input.is_action_pressed("camera_up"):
+            Camera2D.add_to_position(Vector2.UP() * camera_speed)
+        if Input.is_action_pressed("camera_down"):
+            Camera2D.add_to_position(Vector2.DOWN() * camera_speed)
+
         self.fight_sim.update(delta_time)
 
     def _network_server_callback(self, message: str) -> None:
