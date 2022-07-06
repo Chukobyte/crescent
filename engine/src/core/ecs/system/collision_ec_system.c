@@ -6,6 +6,8 @@
 #include "../../scene/scene_manager.h"
 #include "../../game_properties.h"
 #include "../../rendering/renderer.h"
+#include "../../camera/camera.h"
+#include "../../camera/camera_manager.h"
 #include "../../utils/rbe_string_util.h"
 #include "../../utils/rbe_assert.h"
 
@@ -41,17 +43,24 @@ EntitySystem* collision_ec_system_get() {
 }
 
 void collision_system_render() {
+    const RBECamera2D* camera2D = rbe_camera_manager_get_current_camera();
+    const RBECamera2D* defaultCamera = rbe_camera_manager_get_default_camera();
     for (size_t i = 0; i < collisionSystem->entity_count; i++) {
         const Entity entity = collisionSystem->entities[i];
         const Transform2DComponent parentTransform = rbe_scene_manager_get_combined_parent_transform(entity);
         const Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
         const Collider2DComponent* colliderComp = (Collider2DComponent*) component_manager_get_component(entity, ComponentDataIndex_COLLIDER_2D);
+        const RBECamera2D* renderCamera = transformComp->ignoreCamera ? defaultCamera : camera2D;
+        const Vector2 drawPosition = { .x = transformComp->position.x + parentTransform.position.x + colliderComp->rect.x,
+                                       .y = transformComp->position.y + parentTransform.position.y + colliderComp->rect.y
+                                     };
         const Rect2 colliderDrawDestination = {
-            parentTransform.position.x + transformComp->position.x + colliderComp->rect.x,
-            parentTransform.position.y + transformComp->position.y + colliderComp->rect.y,
-            parentTransform.scale.x * transformComp->scale.x * colliderComp->rect.w,
-            parentTransform.scale.y * transformComp->scale.y * colliderComp->rect.h
+            (drawPosition.x - renderCamera->viewport.x + renderCamera->offset.x) * renderCamera->zoom.x,
+            (drawPosition.y - renderCamera->viewport.y + renderCamera->offset.y) * renderCamera->zoom.y,
+            parentTransform.scale.x * transformComp->scale.x * colliderComp->rect.w * renderCamera->zoom.x,
+            parentTransform.scale.y * transformComp->scale.y * colliderComp->rect.h * renderCamera->zoom.y
         };
+
         rbe_renderer_queue_sprite_draw_call(
             collisionOutlineTexture,
             colliderDrawSource,

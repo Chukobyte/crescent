@@ -7,6 +7,8 @@
 #include "../component/sprite_component.h"
 #include "../../rendering/renderer.h"
 #include "../../scene/scene_manager.h"
+#include "../../camera/camera.h"
+#include "../../camera/camera_manager.h"
 #include "../../utils/rbe_string_util.h"
 #include "../../utils/rbe_assert.h"
 
@@ -24,16 +26,22 @@ EntitySystem* sprite_rendering_ec_system_create() {
 }
 
 void sprite_rendering_system_render() {
+    const RBECamera2D* camera2D = rbe_camera_manager_get_current_camera();
+    const RBECamera2D* defaultCamera = rbe_camera_manager_get_default_camera();
+
     for (size_t i = 0; i < spriteRenderingSystem->entity_count; i++) {
         const Entity entity = spriteRenderingSystem->entities[i];
         const Transform2DComponent parentTransform = rbe_scene_manager_get_combined_parent_transform(entity);
         const Transform2DComponent* spriteTransformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
         const SpriteComponent* spriteComponent = (SpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_SPRITE);
+        const RBECamera2D* renderCamera = spriteTransformComp->ignoreCamera ? defaultCamera : camera2D;
+        const Vector2 drawPosition = { .x = spriteTransformComp->position.x + parentTransform.position.x, .y = spriteTransformComp->position.y + parentTransform.position.y };
+
         const Rect2 destinationRectangle = {
-            spriteTransformComp->position.x + parentTransform.position.x,
-            spriteTransformComp->position.y + parentTransform.position.y,
-            spriteComponent->drawSource.w * spriteTransformComp->scale.x * parentTransform.scale.x,
-            spriteComponent->drawSource.h * spriteTransformComp->scale.y * parentTransform.scale.y
+            (drawPosition.x - renderCamera->viewport.x + renderCamera->offset.x) * renderCamera->zoom.x,
+            (drawPosition.y - renderCamera->viewport.y + renderCamera->offset.y) * renderCamera->zoom.y,
+            spriteComponent->drawSource.w * spriteTransformComp->scale.x * parentTransform.scale.x * renderCamera->zoom.x,
+            spriteComponent->drawSource.h * spriteTransformComp->scale.y * parentTransform.scale.y * renderCamera->zoom.y
         };
         rbe_renderer_queue_sprite_draw_call(
             spriteComponent->texture,

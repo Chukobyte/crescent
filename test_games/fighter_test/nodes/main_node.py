@@ -249,7 +249,7 @@ create_stage_nodes(
                             rotation=0.0,
                             z_index=0,
                             z_index_relative_to_parent=True,
-                            ignore_camera=False,
+                            ignore_camera=True,
                         ),
                         TextLabelComponent(
                             uid="fight-64",

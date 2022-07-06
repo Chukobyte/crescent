@@ -26,6 +26,19 @@ PyObject* rbe_py_api_input_is_action_pressed(PyObject* self, PyObject* args, PyO
 PyObject* rbe_py_api_input_is_action_just_pressed(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* rbe_py_api_input_is_action_just_released(PyObject* self, PyObject* args, PyObject* kwargs);
 
+// Camera
+PyObject* rbe_py_api_camera2D_set_position(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* rbe_py_api_camera2D_add_to_position(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* rbe_py_api_camera2D_get_position(PyObject* self, PyObject* args);
+PyObject* rbe_py_api_camera2D_set_offset(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* rbe_py_api_camera2D_add_to_offset(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* rbe_py_api_camera2D_get_offset(PyObject* self, PyObject* args);
+PyObject* rbe_py_api_camera2D_set_zoom(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* rbe_py_api_camera2D_add_to_zoom(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* rbe_py_api_camera2D_get_zoom(PyObject* self, PyObject* args);
+PyObject* rbe_py_api_camera2D_set_boundary(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* rbe_py_api_camera2D_get_boundary(PyObject* self, PyObject* args);
+
 // SceneTree
 PyObject* rbe_py_api_scene_tree_change_scene(PyObject* self, PyObject* args, PyObject* kwargs);
 
@@ -128,6 +141,51 @@ static struct PyMethodDef rbePyApiMethods[] = {
     {
         "input_is_action_just_released", (PyCFunction) rbe_py_api_input_is_action_just_released,
         METH_VARARGS | METH_KEYWORDS, "Checks if an input actions was just released."
+    },
+    // CAMERA
+    {
+        "camera2D_set_position", (PyCFunction) rbe_py_api_camera2D_set_position,
+        METH_VARARGS | METH_KEYWORDS, "Sets the camera's position."
+    },
+    {
+        "camera2D_add_to_position", (PyCFunction) rbe_py_api_camera2D_add_to_position,
+        METH_VARARGS | METH_KEYWORDS, "Adds to the camera's position."
+    },
+    {
+        "camera2D_get_position", (PyCFunction) rbe_py_api_camera2D_get_position,
+        METH_VARARGS | METH_KEYWORDS, "Get the camera's position."
+    },
+    {
+        "camera2D_set_offset", (PyCFunction) rbe_py_api_camera2D_set_offset,
+        METH_VARARGS | METH_KEYWORDS, "Sets the camera's offset."
+    },
+    {
+        "camera2D_add_to_offset", (PyCFunction) rbe_py_api_camera2D_add_to_offset,
+        METH_VARARGS | METH_KEYWORDS, "Adds to the camera's offset."
+    },
+    {
+        "camera2D_get_offset", (PyCFunction) rbe_py_api_camera2D_get_offset,
+        METH_VARARGS | METH_KEYWORDS, "Get the camera's offset."
+    },
+    {
+        "camera2D_set_zoom", (PyCFunction) rbe_py_api_camera2D_set_zoom,
+        METH_VARARGS | METH_KEYWORDS, "Sets the camera's zoom."
+    },
+    {
+        "camera2D_add_to_zoom", (PyCFunction) rbe_py_api_camera2D_add_to_zoom,
+        METH_VARARGS | METH_KEYWORDS, "Adds to the camera's zoom."
+    },
+    {
+        "camera2D_get_zoom", (PyCFunction) rbe_py_api_camera2D_get_zoom,
+        METH_VARARGS | METH_KEYWORDS, "Get the camera's zoom."
+    },
+    {
+        "camera2D_set_boundary", (PyCFunction) rbe_py_api_camera2D_set_boundary,
+        METH_VARARGS | METH_KEYWORDS, "Sets the camera's boundary."
+    },
+    {
+        "camera2D_get_boundary", (PyCFunction) rbe_py_api_camera2D_get_boundary,
+        METH_VARARGS, "Gets the camera's boundary."
     },
     // SCENE TREE
     {
@@ -260,6 +318,8 @@ static struct PyModuleDef rbePyAPIModDef = {
 static char *rbePyApiGenericGetEntityKWList[] = {"entity_id", NULL};
 static char *rbePyApiGenericPathKWList[] = {"path", NULL};
 static char *rbePyApiGenericEnabledKWList[] = {"enabled", NULL};
+static char *rbePyApiGenericXYKWList[] = {"x", "y", NULL};
+static char *rbePyApiGenericXYWHKWList[] = {"x", "y", "w", "h", NULL};
 
 static char *rbePyApiEngineExitKWList[] = {"code", NULL};
 static char *rbePyApiEngineSetTargetFPSKWList[] = {"fps", NULL};

@@ -7,9 +7,10 @@
 #include "../ecs/component/transform2d_component.h"
 #include "../ecs/system/ec_system.h"
 #include "../data_structures/rbe_hash_map.h"
+#include "../camera/camera_manager.h"
+#include "../ecs/component/node_component.h"
 #include "../utils/logger.h"
 #include "../utils/rbe_assert.h"
-#include "../ecs/component/node_component.h"
 
 // --- Scene Tree --- //
 typedef void (*ExecuteOnAllTreeNodesFunc) (SceneTreeNode*);
@@ -132,6 +133,10 @@ void rbe_scene_manager_process_queued_scene_change() {
             rbe_scene_execute_on_all_tree_nodes(activeScene->sceneTree->root, rbe_queue_destroy_tree_node_entity);
             RBE_MEM_FREE(activeScene);
         }
+
+        // Reset Camera
+        rbe_camera_manager_reset_current_camera();
+
         // Setup new scene
         activeScene = queuedSceneToChangeTo;
         queuedSceneToChangeTo = NULL;
