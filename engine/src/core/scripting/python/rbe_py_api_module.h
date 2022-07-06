@@ -319,7 +319,7 @@ static char *rbePyApiGenericGetEntityKWList[] = {"entity_id", NULL};
 static char *rbePyApiGenericPathKWList[] = {"path", NULL};
 static char *rbePyApiGenericEnabledKWList[] = {"enabled", NULL};
 static char *rbePyApiGenericXYKWList[] = {"x", "y", NULL};
-static char *rbePyApiGenericXYWHKWList[] = {"x", "y", "w", "y", NULL};
+static char *rbePyApiGenericXYWHKWList[] = {"x", "y", "w", "h", NULL};
 
 static char *rbePyApiEngineExitKWList[] = {"code", NULL};
 static char *rbePyApiEngineSetTargetFPSKWList[] = {"fps", NULL};

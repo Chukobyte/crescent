@@ -90,6 +90,9 @@ class Main(Node2D):
         # Camera Test
         # Camera2D.set_position(Vector2(200.0, 200.0))
         # Camera2D.set_zoom(Vector2(2.0, 2.0))
+        # Camera2D.set_boundary(Rect2(0.0, 0.0, 100000, 100000))
+        # Camera2D.set_boundary(Rect2(0.0, 0.0, 800, 600))
+        # print(f"boundary = {Camera2D.get_boundary()}")
 
         self.game_state = GameState()
 
