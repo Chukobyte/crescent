@@ -508,6 +508,7 @@ PyObject* rbe_py_api_camera2D_set_position(PyObject* self, PyObject* args, PyObj
         RBECamera2D* camera2D = rbe_camera_manager_get_current_camera();
         camera2D->viewport.x = x;
         camera2D->viewport.y = y;
+        rbe_camera2d_clamp_viewport_to_boundary(camera2D);
         Py_RETURN_NONE;
     }
     return NULL;
@@ -520,6 +521,7 @@ PyObject* rbe_py_api_camera2D_add_to_position(PyObject* self, PyObject* args, Py
         RBECamera2D* camera2D = rbe_camera_manager_get_current_camera();
         camera2D->viewport.x += x;
         camera2D->viewport.y += y;
+        rbe_camera2d_clamp_viewport_to_boundary(camera2D);
         Py_RETURN_NONE;
     }
     return NULL;

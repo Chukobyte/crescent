@@ -8,3 +8,5 @@ typedef struct RBECamera2D {
     Vector2 offset;
     Vector2 zoom;
 } RBECamera2D;
+
+void rbe_camera2d_clamp_viewport_to_boundary(RBECamera2D* camera2D);
