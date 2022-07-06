@@ -496,6 +496,17 @@
 "    def get_zoom() -> Vector2:\n"\
 "        x, y = rbe_py_api_internal.camera2D_get_zoom()\n"\
 "\n"\
+"    @staticmethod\n"\
+"    def set_boundary(boundary: Rect2) -> None:\n"\
+"        rbe_py_api_internal.camera2D_set_boundary(\n"\
+"            x=boundary.x, y=boundary.y, w=boundary.w, h=boundary.h\n"\
+"        )\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def get_boundary() -> Rect2:\n"\
+"        x, y, w, h = rbe_py_api_internal.camera2D_get_boundary()\n"\
+"        return Rect2(x=x, y=y, w=w, h=h)\n"\
+"\n"\
 "\n"\
 "# STAGE SETUP\n"\
 "class StageNode:\n"\

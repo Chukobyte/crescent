@@ -600,6 +600,27 @@ PyObject* rbe_py_api_scene_tree_change_scene(PyObject* self, PyObject* args, PyO
     return NULL;
 }
 
+PyObject* rbe_py_api_camera2D_set_boundary(PyObject* self, PyObject* args, PyObject* kwargs) {
+    float x;
+    float y;
+    float w;
+    float h;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "ffff", rbePyApiGenericXYWHKWList, &x, &y, &w, &h)) {
+        RBECamera2D* camera2D = rbe_camera_manager_get_current_camera();
+        camera2D->boundary.x = x;
+        camera2D->boundary.y = y;
+        camera2D->boundary.w = w;
+        camera2D->boundary.h = h;
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* rbe_py_api_camera2D_get_boundary(PyObject* self, PyObject* args) {
+    RBECamera2D* camera2D = rbe_camera_manager_get_current_camera();
+    return Py_BuildValue("(ffff)", camera2D->boundary.x, camera2D->boundary.y, camera2D->boundary.w, camera2D->boundary.h);
+}
+
 // Audio Manager
 PyObject* rbe_py_api_audio_manager_play_sound(PyObject* self, PyObject* args, PyObject* kwargs) {
     char* audioPath;

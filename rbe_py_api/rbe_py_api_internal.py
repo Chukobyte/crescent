@@ -113,6 +113,14 @@ def camera2D_get_zoom() -> tuple:
     return 0.0, 0.0
 
 
+def camera2D_set_boundary(x: float, y: float, w: float, h: float) -> None:
+    pass
+
+
+def camera2D_get_boundary() -> tuple:
+    return -1000000.0, -1000000.0, 1000000.0, 1000000.0
+
+
 def node_new(class_path: str, class_name: str, node_type: str):
     return None
 

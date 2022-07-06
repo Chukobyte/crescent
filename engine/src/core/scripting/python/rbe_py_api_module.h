@@ -36,7 +36,8 @@ PyObject* rbe_py_api_camera2D_get_offset(PyObject* self, PyObject* args);
 PyObject* rbe_py_api_camera2D_set_zoom(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* rbe_py_api_camera2D_add_to_zoom(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* rbe_py_api_camera2D_get_zoom(PyObject* self, PyObject* args);
-
+PyObject* rbe_py_api_camera2D_set_boundary(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* rbe_py_api_camera2D_get_boundary(PyObject* self, PyObject* args);
 
 // SceneTree
 PyObject* rbe_py_api_scene_tree_change_scene(PyObject* self, PyObject* args, PyObject* kwargs);
@@ -178,6 +179,14 @@ static struct PyMethodDef rbePyApiMethods[] = {
         "camera2D_get_zoom", (PyCFunction) rbe_py_api_camera2D_get_zoom,
         METH_VARARGS | METH_KEYWORDS, "Get the camera's zoom."
     },
+    {
+        "camera2D_set_boundary", (PyCFunction) rbe_py_api_camera2D_set_boundary,
+        METH_VARARGS | METH_KEYWORDS, "Sets the camera's boundary."
+    },
+    {
+        "camera2D_get_boundary", (PyCFunction) rbe_py_api_camera2D_get_boundary,
+        METH_VARARGS, "Gets the camera's boundary."
+    },
     // SCENE TREE
     {
         "scene_tree_change_scene", (PyCFunction) rbe_py_api_scene_tree_change_scene,
@@ -310,6 +319,7 @@ static char *rbePyApiGenericGetEntityKWList[] = {"entity_id", NULL};
 static char *rbePyApiGenericPathKWList[] = {"path", NULL};
 static char *rbePyApiGenericEnabledKWList[] = {"enabled", NULL};
 static char *rbePyApiGenericXYKWList[] = {"x", "y", NULL};
+static char *rbePyApiGenericXYWHKWList[] = {"x", "y", "w", "y", NULL};
 
 static char *rbePyApiEngineExitKWList[] = {"code", NULL};
 static char *rbePyApiEngineSetTargetFPSKWList[] = {"fps", NULL};
