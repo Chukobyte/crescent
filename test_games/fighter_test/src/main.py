@@ -87,6 +87,10 @@ class Main(Node2D):
         # test_node.draw_source = Rect2(0, 0, 32, 32)
         # self.add_child(child_node=test_node)
 
+        # Camera Test
+        # Camera2D.set_position(Vector2(200.0, 200.0))
+        # Camera2D.set_zoom(Vector2(2.0, 2.0))
+
         self.game_state = GameState()
 
         Engine.set_fps_display_enabled(True)
