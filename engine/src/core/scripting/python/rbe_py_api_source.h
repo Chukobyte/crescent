@@ -646,6 +646,10 @@
 "        )\n"\
 "        return self.parse_scene_node_from_engine(scene_node=node)\n"\
 "\n"\
+"    def get_parent(self):\n"\
+"        parent_node = rbe_py_api_internal.node_get_parent(entity_id=self.entity_id)\n"\
+"        return self.parse_scene_node_from_engine(scene_node=parent_node)\n"\
+"\n"\
 "    # Old API\n"\
 "\n"\
 "    @classmethod\n"\
@@ -674,7 +678,7 @@
 "            node_class = globals()[node_type]\n"\
 "            instance = node_class(entity_id=entity_id)\n"\
 "            return instance\n"\
-"        print(\"Error with python api function 'parse_scene_node_from_engine'\")\n"\
+"        # Is not a valid node, return 'None'\n"\
 "        return None\n"\
 "\n"\
 "    def add_child(self, child_node) -> None:\n"\
@@ -737,12 +741,6 @@
 "            self.show()\n"\
 "        else:\n"\
 "            self.hide()\n"\
-"\n"\
-"    def get_parent(self):\n"\
-"        parent_node = rbe_py_api_internal.node_get_parent(entity_id=self.entity_id)\n"\
-"        if parent_node:\n"\
-"            return parent_node\n"\
-"        return self.parse_scene_node_from_engine(scene_node=parent_node)\n"\
 "\n"\
 "    def get_children(self) -> list:\n"\
 "        children_nodes = []\n"\

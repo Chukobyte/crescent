@@ -736,6 +736,31 @@ PyObject* rbe_py_api_node_get_child(PyObject* self, PyObject* args, PyObject* kw
 #undef TYPE_BUFFER_SIZE
 }
 
+PyObject* rbe_py_api_node_get_parent(PyObject* self, PyObject* args, PyObject* kwargs) {
+#define TYPE_BUFFER_SIZE 32
+    Entity entity;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", rbePyApiGenericGetEntityKWList, &entity)) {
+        SceneTreeNode* treeNode = rbe_scene_manager_get_entity_tree_node(entity);
+        if (treeNode->parent == NULL) {
+            Py_RETURN_NONE;
+        }
+//        Entity childEntity = rbe_scene_manager_get_entity_child_by_name(parentEntity, childName);
+//        if (childEntity == NULL_ENTITY) {
+//            rbe_logger_warn("Failed to get child node from parent entity '%d' with the name '%s'", parentEntity, childName);
+//            Py_RETURN_NONE;
+//        }
+        // TODO: Check for script custom classes and return them
+        const Entity parentEntity = treeNode->parent->entity;
+        char typeBuffer[TYPE_BUFFER_SIZE];
+        NodeComponent* nodeComponent = component_manager_get_component(parentEntity, ComponentDataIndex_NODE);
+        strcpy(typeBuffer, node_get_component_type_string(nodeComponent->type));
+
+        return Py_BuildValue("(is)", parentEntity, typeBuffer);
+    }
+    return NULL;
+#undef TYPE_BUFFER_SIZE
+}
+
 // Node2D
 PyObject* rbe_py_api_node2D_set_position(PyObject* self, PyObject* args, PyObject* kwargs) {
     Entity entity;
