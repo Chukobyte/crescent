@@ -611,6 +611,7 @@ PyObject* rbe_py_api_camera2D_set_boundary(PyObject* self, PyObject* args, PyObj
         camera2D->boundary.y = y;
         camera2D->boundary.w = w;
         camera2D->boundary.h = h;
+        rbe_camera2d_clamp_viewport_to_boundary(camera2D);
         Py_RETURN_NONE;
     }
     return NULL;
