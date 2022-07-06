@@ -12,6 +12,9 @@
 #include "../../scripting/script_context.h"
 #include "../../scripting/python/py_helper.h"
 #include "../../scene/scene_manager.h"
+#include "../../physics/collision/collision.h"
+#include "../../camera/camera.h"
+#include "../../camera/camera_manager.h"
 #include "../../ecs/ecs_manager.h"
 #include "../../ecs/system/ec_system.h"
 #include "../../ecs/component/animated_sprite_component.h"
@@ -24,7 +27,6 @@
 #include "../../networking/rbe_network.h"
 #include "../../utils/rbe_string_util.h"
 #include "../../utils/rbe_assert.h"
-#include "../../physics/collision/collision.h"
 
 #ifdef _MSC_VER
 #pragma warning(disable : 4996) // for strcpy
@@ -500,39 +502,90 @@ PyObject* rbe_py_api_input_is_action_just_released(PyObject* self, PyObject* arg
 
 // Camera
 PyObject* rbe_py_api_camera2D_set_position(PyObject* self, PyObject* args, PyObject* kwargs) {
+    float x;
+    float y;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "ff", rbePyApiGenericXYKWList, &x, &y)) {
+        RBECamera2D* camera2D = rbe_camera_manager_get_current_camera();
+        camera2D->viewport.x = x;
+        camera2D->viewport.y = y;
+        Py_RETURN_NONE;
+    }
     return NULL;
 }
 
 PyObject* rbe_py_api_camera2D_add_to_position(PyObject* self, PyObject* args, PyObject* kwargs) {
+    float x;
+    float y;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "ff", rbePyApiGenericXYKWList, &x, &y)) {
+        RBECamera2D* camera2D = rbe_camera_manager_get_current_camera();
+        camera2D->viewport.x += x;
+        camera2D->viewport.y += y;
+        Py_RETURN_NONE;
+    }
     return NULL;
 }
 
 PyObject* rbe_py_api_camera2D_get_position(PyObject* self, PyObject* args) {
-    return NULL;
+    RBECamera2D* camera2D = rbe_camera_manager_get_current_camera();
+    return Py_BuildValue("(ff)", camera2D->viewport.x, camera2D->viewport.y);
 }
 
 PyObject* rbe_py_api_camera2D_set_offset(PyObject* self, PyObject* args, PyObject* kwargs) {
+    float x;
+    float y;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "ff", rbePyApiGenericXYKWList, &x, &y)) {
+        RBECamera2D* camera2D = rbe_camera_manager_get_current_camera();
+        camera2D->offset.x = x;
+        camera2D->offset.y = y;
+        Py_RETURN_NONE;
+    }
     return NULL;
 }
 
 PyObject* rbe_py_api_camera2D_add_to_offset(PyObject* self, PyObject* args, PyObject* kwargs) {
+    float x;
+    float y;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "ff", rbePyApiGenericXYKWList, &x, &y)) {
+        RBECamera2D* camera2D = rbe_camera_manager_get_current_camera();
+        camera2D->offset.x += x;
+        camera2D->offset.y += y;
+        Py_RETURN_NONE;
+    }
     return NULL;
 }
 
 PyObject* rbe_py_api_camera2D_get_offset(PyObject* self, PyObject* args) {
-    return NULL;
+    RBECamera2D* camera2D = rbe_camera_manager_get_current_camera();
+    return Py_BuildValue("(ff)", camera2D->offset.x, camera2D->offset.y);
 }
 
 PyObject* rbe_py_api_camera2D_set_zoom(PyObject* self, PyObject* args, PyObject* kwargs) {
+    float x;
+    float y;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "ff", rbePyApiGenericXYKWList, &x, &y)) {
+        RBECamera2D* camera2D = rbe_camera_manager_get_current_camera();
+        camera2D->zoom.x = x;
+        camera2D->zoom.y = y;
+        Py_RETURN_NONE;
+    }
     return NULL;
 }
 
 PyObject* rbe_py_api_camera2D_add_to_zoom(PyObject* self, PyObject* args, PyObject* kwargs) {
+    float x;
+    float y;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "ff", rbePyApiGenericXYKWList, &x, &y)) {
+        RBECamera2D* camera2D = rbe_camera_manager_get_current_camera();
+        camera2D->zoom.x += x;
+        camera2D->zoom.y += y;
+        Py_RETURN_NONE;
+    }
     return NULL;
 }
 
 PyObject* rbe_py_api_camera2D_get_zoom(PyObject* self, PyObject* args) {
-    return NULL;
+    RBECamera2D* camera2D = rbe_camera_manager_get_current_camera();
+    return Py_BuildValue("(ff)", camera2D->zoom.x, camera2D->zoom.y);
 }
 
 // Scene Tree
