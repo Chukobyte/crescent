@@ -1,3 +1,4 @@
+from fighter_test.src.hit_box import Attack
 from rbe_py_api import *
 from test_games.fighter_test.src.input import *
 from test_games.fighter_test.src.game_state import *
@@ -53,6 +54,11 @@ class FighterSimulation:
             print(f"Entities collided!")
             break
 
+    def on_entities_collided(
+        self, collider: Collider2D, collided_entities: list
+    ) -> None:
+        pass
+
     def network_update(self, message: str) -> None:
         # print(f"net update! message: '{message}'")
         if self.network_receiving_fighters:
@@ -96,6 +102,10 @@ class Main(Node2D):
 
         # Test Get Children
         # print(f"[PY_SCRIPT] children = {self.get_children()}")
+
+        # attack = Attack.new()
+        # attack.position = Vector2(200, 200)
+        # self.add_child(attack)
 
         self.game_state = GameState()
 
