@@ -646,6 +646,15 @@
 "        )\n"\
 "        return self.parse_scene_node_from_engine(scene_node=node)\n"\
 "\n"\
+"    def get_children(self) -> list:\n"\
+"        children_nodes = []\n"\
+"        children = rbe_py_api_internal.node_get_children(entity_id=self.entity_id)\n"\
+"        for child_node in children:\n"\
+"            children_nodes.append(\n"\
+"                self.parse_scene_node_from_engine(scene_node=child_node)\n"\
+"            )\n"\
+"        return children_nodes\n"\
+"\n"\
 "    def get_parent(self):\n"\
 "        parent_node = rbe_py_api_internal.node_get_parent(entity_id=self.entity_id)\n"\
 "        return self.parse_scene_node_from_engine(scene_node=parent_node)\n"\
@@ -741,15 +750,6 @@
 "            self.show()\n"\
 "        else:\n"\
 "            self.hide()\n"\
-"\n"\
-"    def get_children(self) -> list:\n"\
-"        children_nodes = []\n"\
-"        children = rbe_py_api_internal.node_get_children(entity_id=self.entity_id)\n"\
-"        for child_node in children:\n"\
-"            children_nodes.append(\n"\
-"                self.parse_scene_node_from_engine(scene_node=child_node)\n"\
-"            )\n"\
-"        return children_nodes\n"\
 "\n"\
 "\n"\
 "# 2D\n"\

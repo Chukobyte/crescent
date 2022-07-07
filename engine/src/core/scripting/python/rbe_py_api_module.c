@@ -745,6 +745,24 @@ PyObject* rbe_py_api_node_get_child(PyObject* self, PyObject* args, PyObject* kw
     return NULL;
 }
 
+PyObject* rbe_py_api_node_get_children(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity parentEntity;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", rbePyApiGenericGetEntityKWList, &parentEntity)) {
+        const SceneTreeNode* parentTreeNode = rbe_scene_manager_get_entity_tree_node(parentEntity);
+        PyObject* pyChildList = PyList_New(0);
+        for (size_t i = 0; i < parentTreeNode->childCount; i++) {
+            const SceneTreeNode* childTreeNode = parentTreeNode->children[i];
+            PyObject* childNode = rbe_py_utils_get_entity_instance(childTreeNode->entity);
+            if (PyList_Append(pyChildList, childNode) == -1) {
+                rbe_logger_error("Failed to append entity '%d' to '%d' children list!", parentEntity, childTreeNode->entity);
+                PyErr_Print();
+            }
+        }
+        return pyChildList;
+    }
+    return NULL;
+}
+
 PyObject* rbe_py_api_node_get_parent(PyObject* self, PyObject* args, PyObject* kwargs) {
     Entity entity;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", rbePyApiGenericGetEntityKWList, &entity)) {
