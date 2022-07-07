@@ -50,6 +50,7 @@ PyObject* rbe_py_api_audio_manager_stop_sound(PyObject* self, PyObject* args, Py
 PyObject* rbe_py_api_node_new(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* rbe_py_api_node_add_child(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* rbe_py_api_node_get_child(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* rbe_py_api_node_get_children(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* rbe_py_api_node_get_parent(PyObject* self, PyObject* args, PyObject* kwargs);
 
 // Node2D
@@ -214,6 +215,10 @@ static struct PyMethodDef rbePyApiMethods[] = {
     {
         "node_get_child", (PyCFunction) rbe_py_api_node_get_child,
         METH_VARARGS | METH_KEYWORDS, "Node get child."
+    },
+    {
+            "node_get_children", (PyCFunction) rbe_py_api_node_get_children,
+            METH_VARARGS | METH_KEYWORDS, "Get all child nodes from a node."
     },
     {
         "node_get_parent", (PyCFunction) rbe_py_api_node_get_parent,

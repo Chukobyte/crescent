@@ -94,6 +94,9 @@ class Main(Node2D):
         # Camera2D.set_boundary(Rect2(0.0, 0.0, 800, 600))
         # print(f"boundary = {Camera2D.get_boundary()}")
 
+        # Test Get Children
+        # print(f"[PY_SCRIPT] children = {self.get_children()}")
+
         self.game_state = GameState()
 
         Engine.set_fps_display_enabled(True)
