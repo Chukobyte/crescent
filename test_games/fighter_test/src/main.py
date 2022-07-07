@@ -94,10 +94,6 @@ class Main(Node2D):
         # Camera2D.set_boundary(Rect2(0.0, 0.0, 800, 600))
         # print(f"boundary = {Camera2D.get_boundary()}")
 
-        # Parent Test
-        # parent = self.get_parent()
-        # print(f"parent = {parent}")
-
         self.game_state = GameState()
 
         Engine.set_fps_display_enabled(True)
@@ -113,6 +109,10 @@ class Main(Node2D):
         player_one_collider = player_one_node.get_child(name="Collider")
         player_two_collider = player_two_node.get_child(name="Collider")
         print(f"[PYTHON_SCRIPT] p1 = {player_one_node}, p2 = {player_two_node}")
+
+        # Test Get Parent
+        # parent = player_one_node.get_parent()
+        # print(f"[PY_SCRIPT] parent = {parent}")
 
         # Input Buffers
         player_one_input, player_two_input = self._get_input_buffers_from_game_mode(

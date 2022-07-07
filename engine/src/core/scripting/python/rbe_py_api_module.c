@@ -34,11 +34,14 @@
 
 // TODO: Clean up strdups
 
-// --- Node Utils --- //
+//--- Node Utils ---//
 void setup_scene_stage_nodes(SceneTreeNode* parent, PyObject* stageNodeList);
 void setup_scene_component_node(Entity entity, PyObject* component);
 
-// --- RBE PY API --- //
+//--- Py Utils ---//
+PyObject* rbe_py_utils_get_entity_instance(Entity entity);
+
+//--- RBE PY API ---//
 
 // Engine
 PyObject* rbe_py_api_engine_exit(PyObject* self, PyObject* args, PyObject* kwargs) {
@@ -209,9 +212,7 @@ PyObject* PyInit_rbe_py_API(void) {
     return PyModule_Create(&rbePyAPIModDef);
 }
 
-// --- Node Utils --- //
-
-// TODO: Pass whatever references the parent node structure
+//--- Node Utils ---//
 void setup_scene_stage_nodes(SceneTreeNode* parent, PyObject* stageNodeList) {
     for (Py_ssize_t i = 0; i < PyList_Size(stageNodeList); i++) {
         SceneTreeNode* node = rbe_scene_tree_create_tree_node(rbe_ec_system_create_entity(), parent);
@@ -715,8 +716,22 @@ PyObject* rbe_py_api_node_add_child(PyObject* self, PyObject* args, PyObject* kw
     return NULL;
 }
 
-PyObject* rbe_py_api_node_get_child(PyObject* self, PyObject* args, PyObject* kwargs) {
+PyObject* rbe_py_utils_get_entity_instance(Entity entity) {
 #define TYPE_BUFFER_SIZE 32
+    PyObject* scriptInstance = rbe_py_get_script_instance(entity);
+    if (scriptInstance != NULL) {
+        Py_IncRef(scriptInstance);
+        return scriptInstance;
+    }
+    char typeBuffer[TYPE_BUFFER_SIZE];
+    NodeComponent* nodeComponent = component_manager_get_component(entity, ComponentDataIndex_NODE);
+    strcpy(typeBuffer, node_get_component_type_string(nodeComponent->type));
+
+    return Py_BuildValue("(is)", entity, typeBuffer);
+#undef TYPE_BUFFER_SIZE
+}
+
+PyObject* rbe_py_api_node_get_child(PyObject* self, PyObject* args, PyObject* kwargs) {
     Entity parentEntity;
     char* childName;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "is", rbePyApiNodeGetChildKWList, &parentEntity, &childName)) {
@@ -725,40 +740,21 @@ PyObject* rbe_py_api_node_get_child(PyObject* self, PyObject* args, PyObject* kw
             rbe_logger_warn("Failed to get child node from parent entity '%d' with the name '%s'", parentEntity, childName);
             Py_RETURN_NONE;
         }
-        // TODO: Check for script custom classes and return them
-        char typeBuffer[TYPE_BUFFER_SIZE];
-        NodeComponent* nodeComponent = component_manager_get_component(childEntity, ComponentDataIndex_NODE);
-        strcpy(typeBuffer, node_get_component_type_string(nodeComponent->type));
-
-        return Py_BuildValue("(is)", childEntity, typeBuffer);
+        return rbe_py_utils_get_entity_instance(childEntity);
     }
     return NULL;
-#undef TYPE_BUFFER_SIZE
 }
 
 PyObject* rbe_py_api_node_get_parent(PyObject* self, PyObject* args, PyObject* kwargs) {
-#define TYPE_BUFFER_SIZE 32
     Entity entity;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", rbePyApiGenericGetEntityKWList, &entity)) {
         SceneTreeNode* treeNode = rbe_scene_manager_get_entity_tree_node(entity);
         if (treeNode->parent == NULL) {
             Py_RETURN_NONE;
         }
-//        Entity childEntity = rbe_scene_manager_get_entity_child_by_name(parentEntity, childName);
-//        if (childEntity == NULL_ENTITY) {
-//            rbe_logger_warn("Failed to get child node from parent entity '%d' with the name '%s'", parentEntity, childName);
-//            Py_RETURN_NONE;
-//        }
-        // TODO: Check for script custom classes and return them
-        const Entity parentEntity = treeNode->parent->entity;
-        char typeBuffer[TYPE_BUFFER_SIZE];
-        NodeComponent* nodeComponent = component_manager_get_component(parentEntity, ComponentDataIndex_NODE);
-        strcpy(typeBuffer, node_get_component_type_string(nodeComponent->type));
-
-        return Py_BuildValue("(is)", parentEntity, typeBuffer);
+        return rbe_py_utils_get_entity_instance(treeNode->parent->entity);
     }
     return NULL;
-#undef TYPE_BUFFER_SIZE
 }
 
 // Node2D
