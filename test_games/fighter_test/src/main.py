@@ -110,6 +110,10 @@ class Main(Node2D):
         player_two_collider = player_two_node.get_child(name="Collider")
         print(f"[PYTHON_SCRIPT] p1 = {player_one_node}, p2 = {player_two_node}")
 
+        # Test Get Parent
+        # parent = player_one_node.get_parent()
+        # print(f"[PY_SCRIPT] parent = {parent}")
+
         # Input Buffers
         player_one_input, player_two_input = self._get_input_buffers_from_game_mode(
             self.game_state.mode

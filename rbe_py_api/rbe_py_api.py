@@ -607,6 +607,10 @@ class Node:
         )
         return self.parse_scene_node_from_engine(scene_node=node)
 
+    def get_parent(self):
+        parent_node = rbe_py_api_internal.node_get_parent(entity_id=self.entity_id)
+        return self.parse_scene_node_from_engine(scene_node=parent_node)
+
     # Old API
 
     @classmethod
@@ -635,7 +639,7 @@ class Node:
             node_class = globals()[node_type]
             instance = node_class(entity_id=entity_id)
             return instance
-        print("Error with python api function 'parse_scene_node_from_engine'")
+        # Is not a valid node, return 'None'
         return None
 
     def add_child(self, child_node) -> None:
@@ -698,12 +702,6 @@ class Node:
             self.show()
         else:
             self.hide()
-
-    def get_parent(self):
-        parent_node = rbe_py_api_internal.node_get_parent(entity_id=self.entity_id)
-        if parent_node:
-            return parent_node
-        return self.parse_scene_node_from_engine(scene_node=parent_node)
 
     def get_children(self) -> list:
         children_nodes = []
