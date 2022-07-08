@@ -871,12 +871,43 @@ class TextLabel(Node2D):
 
 class Collider2D(Node2D):
     def get_rect(self) -> Rect2:
-        x, y, w, h = rbe_py_api_internal.collider2d_get_rect(entity_id=self.entity_id)
+        x, y, w, h = rbe_py_api_internal.collider2D_get_rect(entity_id=self.entity_id)
         return Rect2(x=x, y=y, w=w, h=h)
 
-    def set_rect(self, value: Rect2) -> None:
-        rbe_py_api_internal.collider2d_set_rect(
+    def set_rect(self, rect: Rect2) -> None:
+        rbe_py_api_internal.collider2D_set_rect(
+            entity_id=self.entity_id, x=rect.x, y=rect.y, w=rect.w, h=rect.h
+        )
+
+    @property
+    def rect(self) -> Rect2:
+        x, y, w, h = rbe_py_api_internal.collider2D_get_rect(entity_id=self.entity_id)
+        return Rect2(x=x, y=y, w=w, h=h)
+
+    @rect.setter
+    def rect(self, value: Rect2) -> None:
+        rbe_py_api_internal.collider2D_set_rect(
             entity_id=self.entity_id, x=value.x, y=value.y, w=value.w, h=value.h
+        )
+
+    def get_color(self) -> Color:
+        r, g, b, a = rbe_py_api_internal.collider2D_get_color(entity_id=self.entity_id)
+        return Color(r=r, g=g, b=b, a=a)
+
+    def set_color(self, color: Color) -> None:
+        rbe_py_api_internal.collider2D_set_color(
+            entity_id=self.entity_id, r=color.r, g=color.g, b=color.b, a=color.a
+        )
+
+    @property
+    def color(self) -> Color:
+        r, g, b, a = rbe_py_api_internal.collider2D_get_color(entity_id=self.entity_id)
+        return Color(r=r, g=g, b=b, a=a)
+
+    @color.setter
+    def color(self, value: Color) -> None:
+        rbe_py_api_internal.collider2D_set_color(
+            entity_id=self.entity_id, r=value.r, g=value.g, b=value.b, a=value.a
         )
 
 

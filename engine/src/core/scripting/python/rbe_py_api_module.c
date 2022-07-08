@@ -724,7 +724,7 @@ PyObject* rbe_py_utils_get_entity_instance(Entity entity) {
         return scriptInstance;
     }
     char typeBuffer[TYPE_BUFFER_SIZE];
-    NodeComponent* nodeComponent = component_manager_get_component(entity, ComponentDataIndex_NODE);
+    NodeComponent* nodeComponent = (NodeComponent*) component_manager_get_component(entity, ComponentDataIndex_NODE);
     strcpy(typeBuffer, node_get_component_type_string(nodeComponent->type));
 
     return Py_BuildValue("(is)", entity, typeBuffer);
@@ -839,7 +839,7 @@ PyObject* rbe_py_api_sprite_set_draw_source(PyObject* self, PyObject* args, PyOb
     float y;
     float w;
     float h;
-    if (PyArg_ParseTupleAndKeywords(args, kwargs, "iffff", rbePyApiSpriteSetDrawSourceKWList, &entity, &x, &y, &w, &h)) {
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "iffff", rbePyApiGenericSetEntityRectKWList, &entity, &x, &y, &w, &h)) {
         SpriteComponent* spriteComponent = (SpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_SPRITE);
         spriteComponent->drawSource.x = x;
         spriteComponent->drawSource.y = y;
@@ -864,7 +864,7 @@ PyObject* rbe_py_api_text_label_set_text(PyObject* self, PyObject* args, PyObjec
     Entity entity;
     char* text;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "is", rbePyApiTextLabelSetTextKWList, &entity, &text)) {
-        TextLabelComponent* textLabelComponent = component_manager_get_component(entity, ComponentDataIndex_TEXT_LABEL);
+        TextLabelComponent* textLabelComponent = (TextLabelComponent*) component_manager_get_component(entity, ComponentDataIndex_TEXT_LABEL);
         strcpy(textLabelComponent->text, text);
         Py_RETURN_NONE;
     }
@@ -874,9 +874,8 @@ PyObject* rbe_py_api_text_label_set_text(PyObject* self, PyObject* args, PyObjec
 PyObject* rbe_py_api_text_label_get_text(PyObject* self, PyObject* args, PyObject* kwargs) {
     Entity entity;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", rbePyApiGenericGetEntityKWList, &entity)) {
-        TextLabelComponent* textLabelComponent = component_manager_get_component(entity, ComponentDataIndex_TEXT_LABEL);
+        TextLabelComponent* textLabelComponent = (TextLabelComponent*) component_manager_get_component(entity, ComponentDataIndex_TEXT_LABEL);
         return Py_BuildValue("s", textLabelComponent->text);
-        Py_RETURN_NONE;
     }
     return NULL;
 }
@@ -887,8 +886,8 @@ PyObject* rbe_py_api_text_label_set_color(PyObject* self, PyObject* args, PyObje
     int green;
     int blue;
     int alpha;
-    if (PyArg_ParseTupleAndKeywords(args, kwargs, "iffff", rbePyApiTextLabelSetColorKWList, &entity, &red, &green, &blue, &alpha)) {
-        TextLabelComponent* textLabelComponent = component_manager_get_component(entity, ComponentDataIndex_TEXT_LABEL);
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "iffff", rbePyApiGenericSetEntityColorKWList, &entity, &red, &green, &blue, &alpha)) {
+        TextLabelComponent* textLabelComponent = (TextLabelComponent*) component_manager_get_component(entity, ComponentDataIndex_TEXT_LABEL);
         textLabelComponent->color = rbe_color_get_normalized_color(red, green, blue, alpha);
         Py_RETURN_NONE;
     }
@@ -898,13 +897,66 @@ PyObject* rbe_py_api_text_label_set_color(PyObject* self, PyObject* args, PyObje
 PyObject* rbe_py_api_text_label_get_color(PyObject* self, PyObject* args, PyObject* kwargs) {
     Entity entity;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", rbePyApiGenericGetEntityKWList, &entity)) {
-        TextLabelComponent* textLabelComponent = component_manager_get_component(entity, ComponentDataIndex_TEXT_LABEL);
+        TextLabelComponent* textLabelComponent = (TextLabelComponent*) component_manager_get_component(entity, ComponentDataIndex_TEXT_LABEL);
         const int red = (int) (textLabelComponent->color.r * 255.0f);
         const int green = (int) (textLabelComponent->color.r * 255.0f);
         const int blue = (int) (textLabelComponent->color.r * 255.0f);
         const int alpha = (int) (textLabelComponent->color.r * 255.0f);
         return Py_BuildValue("(iiii)", red, green, blue, alpha);
+    }
+    return NULL;
+}
+
+// Collider2D
+PyObject* rbe_py_api_collider2D_set_rect(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    float x;
+    float y;
+    float w;
+    float h;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "iffff", rbePyApiGenericSetEntityRectKWList, &entity, &x, &y, &w, &h)) {
+        Collider2DComponent* collider2DComponent = (Collider2DComponent *) component_manager_get_component(entity, ComponentDataIndex_COLLIDER_2D);
+        collider2DComponent->rect.x = x;
+        collider2DComponent->rect.y = y;
+        collider2DComponent->rect.w = w;
+        collider2DComponent->rect.h = h;
         Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* rbe_py_api_collider2D_get_rect(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", rbePyApiGenericGetEntityKWList, &entity)) {
+        const Collider2DComponent* collider2DComponent = (Collider2DComponent *) component_manager_get_component(entity, ComponentDataIndex_COLLIDER_2D);
+        return Py_BuildValue("(ffff)", collider2DComponent->rect.x, collider2DComponent->rect.y, collider2DComponent->rect.w, collider2DComponent->rect.h);
+    }
+    return NULL;
+}
+
+PyObject* rbe_py_api_collider2D_set_color(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    int red;
+    int green;
+    int blue;
+    int alpha;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "iffff", rbePyApiGenericSetEntityColorKWList, &entity, &red, &green, &blue, &alpha)) {
+        Collider2DComponent* collider2DComponent = (Collider2DComponent*) component_manager_get_component(entity, ComponentDataIndex_COLLIDER_2D);
+        collider2DComponent->color = rbe_color_get_normalized_color(red, green, blue, alpha);
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* rbe_py_api_collider2D_get_color(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", rbePyApiGenericGetEntityKWList, &entity)) {
+        Collider2DComponent* collider2DComponent = (Collider2DComponent *) component_manager_get_component(entity, ComponentDataIndex_COLLIDER_2D);
+        const int red = (int) (collider2DComponent->color.r * 255.0f);
+        const int green = (int) (collider2DComponent->color.r * 255.0f);
+        const int blue = (int) (collider2DComponent->color.r * 255.0f);
+        const int alpha = (int) (collider2DComponent->color.r * 255.0f);
+        return Py_BuildValue("(iiii)", red, green, blue, alpha);
     }
     return NULL;
 }
@@ -1008,7 +1060,7 @@ PyObject* rbe_py_api_collision_handler_process_collisions(PyObject* self, PyObje
         CollisionResult collisionResult = rbe_collision_process_entity_collisions(entity);
         for (size_t i = 0; i < collisionResult.collidedEntityCount; i++) {
             const Entity collidedEntity = collisionResult.collidedEntities[i];
-            NodeComponent* nodeComponent = component_manager_get_component(collidedEntity, ComponentDataIndex_NODE);
+            NodeComponent* nodeComponent = (NodeComponent*) component_manager_get_component(collidedEntity, ComponentDataIndex_NODE);
             strcpy(typeBuffer, node_get_component_type_string(nodeComponent->type));
             if (PyList_Append(pyCollidedEntityList, Py_BuildValue("(is)", collidedEntity, typeBuffer)) == -1) {
                 PyErr_Print();

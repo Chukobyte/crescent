@@ -910,12 +910,43 @@
 "\n"\
 "class Collider2D(Node2D):\n"\
 "    def get_rect(self) -> Rect2:\n"\
-"        x, y, w, h = rbe_py_api_internal.collider2d_get_rect(entity_id=self.entity_id)\n"\
+"        x, y, w, h = rbe_py_api_internal.collider2D_get_rect(entity_id=self.entity_id)\n"\
 "        return Rect2(x=x, y=y, w=w, h=h)\n"\
 "\n"\
-"    def set_rect(self, value: Rect2) -> None:\n"\
-"        rbe_py_api_internal.collider2d_set_rect(\n"\
+"    def set_rect(self, rect: Rect2) -> None:\n"\
+"        rbe_py_api_internal.collider2D_set_rect(\n"\
+"            entity_id=self.entity_id, x=rect.x, y=rect.y, w=rect.w, h=rect.h\n"\
+"        )\n"\
+"\n"\
+"    @property\n"\
+"    def rect(self) -> Rect2:\n"\
+"        x, y, w, h = rbe_py_api_internal.collider2D_get_rect(entity_id=self.entity_id)\n"\
+"        return Rect2(x=x, y=y, w=w, h=h)\n"\
+"\n"\
+"    @rect.setter\n"\
+"    def rect(self, value: Rect2) -> None:\n"\
+"        rbe_py_api_internal.collider2D_set_rect(\n"\
 "            entity_id=self.entity_id, x=value.x, y=value.y, w=value.w, h=value.h\n"\
+"        )\n"\
+"\n"\
+"    def get_color(self) -> Color:\n"\
+"        r, g, b, a = rbe_py_api_internal.collider2D_get_color(entity_id=self.entity_id)\n"\
+"        return Color(r=r, g=g, b=b, a=a)\n"\
+"\n"\
+"    def set_color(self, color: Color) -> None:\n"\
+"        rbe_py_api_internal.collider2D_set_color(\n"\
+"            entity_id=self.entity_id, r=color.r, g=color.g, b=color.b, a=color.a\n"\
+"        )\n"\
+"\n"\
+"    @property\n"\
+"    def color(self) -> Color:\n"\
+"        r, g, b, a = rbe_py_api_internal.collider2D_get_color(entity_id=self.entity_id)\n"\
+"        return Color(r=r, g=g, b=b, a=a)\n"\
+"\n"\
+"    @color.setter\n"\
+"    def color(self, value: Color) -> None:\n"\
+"        rbe_py_api_internal.collider2D_set_color(\n"\
+"            entity_id=self.entity_id, r=value.r, g=value.g, b=value.b, a=value.a\n"\
 "        )\n"\
 "\n"\
 "\n"\

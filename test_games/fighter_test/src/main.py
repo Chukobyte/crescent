@@ -104,8 +104,13 @@ class Main(Node2D):
         # print(f"[PY_SCRIPT] children = {self.get_children()}")
 
         attack = Attack.new()
-        attack.position = Vector2(200, 200)
+        print(f"[PY_SCRIPT] attack = {attack}")
+        attack.position = Vector2(300, 200)
         self.add_child(attack)
+        # try:
+        #     attack.set_rect(Rect2(0, 0, 32, 32))
+        # except Exception as e:
+        #     print(f"Exception! {e}")
 
         self.game_state = GameState()
 

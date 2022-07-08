@@ -70,6 +70,13 @@ PyObject* rbe_py_api_text_label_get_text(PyObject* self, PyObject* args, PyObjec
 PyObject* rbe_py_api_text_label_set_color(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* rbe_py_api_text_label_get_color(PyObject* self, PyObject* args, PyObject* kwargs);
 
+// Collider2D
+PyObject* rbe_py_api_collider2D_set_rect(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* rbe_py_api_collider2D_get_rect(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* rbe_py_api_collider2D_set_color(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* rbe_py_api_collider2D_get_color(PyObject* self, PyObject* args, PyObject* kwargs);
+
+
 // Network
 PyObject* rbe_py_api_network_is_server(PyObject* self, PyObject* args);
 
@@ -217,8 +224,8 @@ static struct PyMethodDef rbePyApiMethods[] = {
         METH_VARARGS | METH_KEYWORDS, "Node get child."
     },
     {
-            "node_get_children", (PyCFunction) rbe_py_api_node_get_children,
-            METH_VARARGS | METH_KEYWORDS, "Get all child nodes from a node."
+        "node_get_children", (PyCFunction) rbe_py_api_node_get_children,
+        METH_VARARGS | METH_KEYWORDS, "Get all child nodes from a node."
     },
     {
         "node_get_parent", (PyCFunction) rbe_py_api_node_get_parent,
@@ -270,6 +277,23 @@ static struct PyMethodDef rbePyApiMethods[] = {
     {
         "text_label_get_color", (PyCFunction) rbe_py_api_text_label_get_color,
         METH_VARARGS | METH_KEYWORDS, "Gets the text label's color."
+    },
+    // Collider2D
+    {
+        "collider2D_set_rect", (PyCFunction) rbe_py_api_collider2D_set_rect,
+        METH_VARARGS | METH_KEYWORDS, "Sets the collider's collision rectangle."
+    },
+    {
+        "collider2D_get_rect", (PyCFunction) rbe_py_api_collider2D_get_rect,
+        METH_VARARGS | METH_KEYWORDS, "Gets the collider's collision rectangle."
+    },
+    {
+        "collider2D_set_color", (PyCFunction) rbe_py_api_collider2D_set_color,
+        METH_VARARGS | METH_KEYWORDS, "Sets the collider's color."
+    },
+    {
+        "collider2D_get_color", (PyCFunction) rbe_py_api_collider2D_get_color,
+        METH_VARARGS | METH_KEYWORDS, "Gets the collider's color."
     },
     // NETWORK
     {
@@ -330,6 +354,8 @@ static char *rbePyApiGenericPathKWList[] = {"path", NULL};
 static char *rbePyApiGenericEnabledKWList[] = {"enabled", NULL};
 static char *rbePyApiGenericXYKWList[] = {"x", "y", NULL};
 static char *rbePyApiGenericXYWHKWList[] = {"x", "y", "w", "h", NULL};
+static char *rbePyApiGenericSetEntityRectKWList[] = {"entity_id", "x", "y", "w", "h", NULL};
+static char *rbePyApiGenericSetEntityColorKWList[] = {"entity_id", "r", "g", "b", "a", NULL};
 
 static char *rbePyApiEngineExitKWList[] = {"code", NULL};
 static char *rbePyApiEngineSetTargetFPSKWList[] = {"fps", NULL};
@@ -352,10 +378,8 @@ static char *rbePyApiNodeGetChildKWList[] = {"entity_id", "child_name", NULL};
 static char *rbePyApiNode2DSetPositionKWList[] = {"entity_id", "x", "y", NULL};
 
 static char *rbePyApiSpriteSetTextureKWList[] = {"entity_id", "file_path", NULL};
-static char *rbePyApiSpriteSetDrawSourceKWList[] = {"entity_id", "x", "y", "w", "h", NULL};
 
 static char *rbePyApiTextLabelSetTextKWList[] = {"entity_id", "text", NULL};
-static char *rbePyApiTextLabelSetColorKWList[] = {"entity_id", "r", "g", "b", "a", NULL};
 
 static char *rbePyApiNetworkSendMessageKWList[] = {"message", NULL};
 static char *rbePyApiNetworkSubscribeKWList[] = {"signal_id", "listener_node", "listener_func", NULL};
