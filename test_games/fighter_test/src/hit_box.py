@@ -17,5 +17,5 @@ class HitBox(Collider2D):
 
 
 class Attack(HitBox):
-    def start(self) -> None:
+    def _start(self) -> None:
         self.set_rect(Rect2(0, 0, 32, 32))
