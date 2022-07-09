@@ -7,6 +7,8 @@
 #include "../../utils/logger.h"
 #include "../../scene/scene_manager.h"
 
+// Temp collision stuff until a better solution is implemented...
+bool is_entity_in_collision_exceptions(Entity entity, Collider2DComponent* collider2DComponent);
 Rect2 get_collision_rectangle(Entity entity, Transform2DComponent* transform2DComponent, Collider2DComponent* collider2DComponent);
 bool does_rectangles_collide(Rect2* sourceRect, Rect2* targetRect);
 
@@ -18,7 +20,7 @@ CollisionResult rbe_collision_process_entity_collisions(Entity entity) {
     Rect2 sourceCollisionRect = get_collision_rectangle(entity, transformComponent, colliderComponent);
     for (size_t i = 0; i < collisionSystem->entity_count; i++) {
         const Entity otherEntity = collisionSystem->entities[i];
-        if (entity == otherEntity) { // TODO: Also check collision exceptions
+        if (entity == otherEntity || is_entity_in_collision_exceptions(otherEntity, colliderComponent)) {
             continue;
         }
         Transform2DComponent* otherTransformComponent = component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
@@ -33,6 +35,15 @@ CollisionResult rbe_collision_process_entity_collisions(Entity entity) {
         }
     }
     return collisionResult;
+}
+
+bool is_entity_in_collision_exceptions(Entity entity, Collider2DComponent* collider2DComponent) {
+    for (size_t i = 0; i < collider2DComponent->collisionExceptionCount; i++) {
+        if (entity == collider2DComponent->collisionExceptions[i]) {
+            return true;
+        }
+    }
+    return false;
 }
 
 Rect2 get_collision_rectangle(Entity entity, Transform2DComponent* transform2DComponent, Collider2DComponent* collider2DComponent) {

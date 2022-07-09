@@ -133,6 +133,14 @@ def node_get_child(entity_id: int, child_name: str) -> tuple:
     return 2, "Node"
 
 
+def node_get_children(entity_id: int) -> list:
+    return [(2, "Node"), (3, "Node")]
+
+
+def node_get_parent(entity_id: int) -> tuple:
+    return 1, "Node"
+
+
 def node2D_set_position(entity_id: int, x: float, y: float) -> None:
     pass
 
