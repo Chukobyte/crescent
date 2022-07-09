@@ -1,94 +1,169 @@
-# Math
+# Audio Source
 
-Engine representation of color.
+Engine representation of an audio source.
 
 ## Properties
 
 ```python
-PI: float
+file_path: str
 ```
 
-Constant value of `3.14159`.
+File path of the audio source.
 
 ## Methods
 
-```python
-lerp(source: float, destination: float, amount: float) -> float
-```
+None.
 
-Linearly interpolate between two values.
+# Font
 
-# Vector2
-
-Engine representation of a two-dimensional vector.
+Engine representation of a font.
 
 ## Properties
 
 ```python
-x: float
+file_path: str
 ```
-X coordinate.
+File path of the font.
 
 ```python
-y: float
+uid: str
 ```
-Y coordinate.
+Unique identifier for the font.
+
+```python
+size: int
+```
+Size of the font.
 
 ## Methods
 
-```python
-dot_product(value: crescent_api.Vector2) -> float:
-```
+None.
 
-Returns the dot product of two Vector2 items.
+# Texture
 
-```python
-lerp(source: crescent_api.Vector2, destination: crescent_api.Vector2, amount: float) -> crescent_api.Vector2:
-```
-
-Returns the linearly interpolated value of two points.
-
----
-
-**Static functions that return specific values**
-
-```python
-ZERO() -> Vector2(0.0, 0.0):
-LEFT() -> Vector2(-1.0, 0.0):
-RIGHT() -> Vector2(0.0, 1.0):
-UP() -> Vector2(0.0, -1.0):
-DOWN() -> Vector2(0.0, 1.0):
-```
-
-# Rect2
-
-Engine representation of a rectangle.
+Engine representation of a texture.
 
 ## Properties
 
 ```python
-x : float
+file_path: str
 ```
 
-X coordinate.
+The file path of the texture.
 
 ```python
-y : float
+wrap_s: str
 ```
 
-Y coordinate.
+The wrap s of the texture.  Defaults to `clamp_to_border`.
 
 ```python
-w : float
+wrap_t: str
 ```
 
-Rectangle's width.
+The wrap t of the texture.  Defaults to `clamp_to_border`.
 
 ```python
-h : float
+filter_min: str
 ```
 
-Rectangle's height.
+The filter min of the texture.  Defaults to `nearest`.
+
+```python
+filter_mag: str
+```
+
+The filter mag of the texture.  Defaults to `nearest`.
+
+## Methods
+
+None.
+
+# Animation
+
+Engine representation of an animation.
+
+## Properties
+
+```python
+name: str
+```
+
+The name of the animation.
+
+```python
+speed: int
+```
+
+The speed of the animation in milliseconds per frame.
+
+```python
+loops: bool
+```
+
+Whether or not the animation loops automatically when finished.
+
+```python
+frames: List[crescent_api.AnimationFrame]
+```
+
+A list of `AnimationFrame`s.
+
+## Methods
+
+None.
+
+# Animation Frame
+
+Engine representation of an animation frame.
+
+## Properties
+
+```python
+frame: int
+```
+
+Current frame number within an animation.
+
+```python
+texture_path: str
+```
+
+The texture path of the current animation frame.
+
+```python
+draw_source: crescent_api.Rect2
+```
+
+The draw source rectangle of the animation frame.
+
+## Methods
+
+None.
+
+# Input Action
+
+Engine representation of an input action.
+
+## Properties
+
+```python
+name: int
+```
+
+The name of the input action
+
+```python
+values: List[str]
+```
+
+List of input values for an action.
+
+```python
+device_id: int
+```
+
+The device id (e.g. used for multiple controllers).  Defaults to the first device at `0`.
 
 ## Methods
 
