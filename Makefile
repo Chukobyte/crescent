@@ -1,5 +1,5 @@
-CORE_PROJECT_NAME := roll_back_engine
-EDITOR_PROJECT_NAME := roll_back_editor
+CORE_PROJECT_NAME := crescent_engine
+EDITOR_PROJECT_NAME := crescent_editor
 
 # OS Specific
 ifeq ($(OS),Windows_NT)

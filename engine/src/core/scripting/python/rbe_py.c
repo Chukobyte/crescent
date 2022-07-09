@@ -11,7 +11,7 @@
 
 void rbe_py_initialize() {
     rbe_py_cache_initialize();
-    Py_SetProgramName(L"roll_back_engine_python");
+    Py_SetProgramName(L"crescent_engine_python");
     PyImport_AppendInittab("rbe_py_api_internal", &PyInit_rbe_py_API); // Load engine modules
     Py_Initialize();
     PyRun_SimpleString("import sys");

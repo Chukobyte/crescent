@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.20.0)
 
 set(CMAKE_C_STANDARD 11)
 
-project(roll_back_core C)
+project(crescent_core C)
 
 if (CMAKE_C_COMPILER_ID STREQUAL "MSVC")
     list(APPEND flags "/std:c11" "/W3" "/Zc:preprocessor")
