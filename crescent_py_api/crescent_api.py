@@ -279,6 +279,21 @@ class InputAction:
         self.device_id = device_id
 
 
+class AnimationFrame:
+    def __init__(self, frame: int, texture_path: str, draw_source: Rect2):
+        self.frame = frame
+        self.texture_path = texture_path
+        self.draw_source = draw_source
+
+
+class Animation:
+    def __init__(self, name: str, speed: int, loops: bool, frames: list):
+        self.name = name
+        self.speed = speed
+        self.loops = loops
+        self.frames = frames
+
+
 # ENGINE
 class Engine:
     @staticmethod
@@ -480,22 +495,6 @@ class StageNode:
         self.external_node_source = external_node_source
         self.components = components
         self.children = children
-
-
-# ASSETS
-class AnimationFrame:
-    def __init__(self, frame: int, texture_path: str, draw_source: Rect2):
-        self.frame = frame
-        self.texture_path = texture_path
-        self.draw_source = draw_source
-
-
-class Animation:
-    def __init__(self, name: str, speed: int, loops: bool, frames: list):
-        self.name = name
-        self.speed = speed
-        self.loops = loops
-        self.frames = frames
 
 
 # COMPONENTS

@@ -17,4 +17,8 @@ markdown_extensions:
 nav:
   - Introduction: index.md
   - Configuration: configuration/configuration.md
-  - Python-API: python_api/python_api.md
+  - Python-API:
+      - About: python_api/python_api.md
+      - Assets: python_api/assets.md
+      - Color: python_api/color.md
+      - Math: python_api/math.md

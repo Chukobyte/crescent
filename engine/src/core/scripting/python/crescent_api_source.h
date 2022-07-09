@@ -318,6 +318,21 @@
 "        self.device_id = device_id\n"\
 "\n"\
 "\n"\
+"class AnimationFrame:\n"\
+"    def __init__(self, frame: int, texture_path: str, draw_source: Rect2):\n"\
+"        self.frame = frame\n"\
+"        self.texture_path = texture_path\n"\
+"        self.draw_source = draw_source\n"\
+"\n"\
+"\n"\
+"class Animation:\n"\
+"    def __init__(self, name: str, speed: int, loops: bool, frames: list):\n"\
+"        self.name = name\n"\
+"        self.speed = speed\n"\
+"        self.loops = loops\n"\
+"        self.frames = frames\n"\
+"\n"\
+"\n"\
 "# ENGINE\n"\
 "class Engine:\n"\
 "    @staticmethod\n"\
@@ -519,22 +534,6 @@
 "        self.external_node_source = external_node_source\n"\
 "        self.components = components\n"\
 "        self.children = children\n"\
-"\n"\
-"\n"\
-"# ASSETS\n"\
-"class AnimationFrame:\n"\
-"    def __init__(self, frame: int, texture_path: str, draw_source: Rect2):\n"\
-"        self.frame = frame\n"\
-"        self.texture_path = texture_path\n"\
-"        self.draw_source = draw_source\n"\
-"\n"\
-"\n"\
-"class Animation:\n"\
-"    def __init__(self, name: str, speed: int, loops: bool, frames: list):\n"\
-"        self.name = name\n"\
-"        self.speed = speed\n"\
-"        self.loops = loops\n"\
-"        self.frames = frames\n"\
 "\n"\
 "\n"\
 "# COMPONENTS\n"\
