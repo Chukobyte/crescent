@@ -1,7 +1,7 @@
-site_name: Roll Back Engine Docs
-repo_url: https://github.com/Chukobyte/roll-back-engine
+site_name: Crescent Documentation
+repo_url: https://github.com/Chukobyte/crescent
 edit_uri: ""
-site_description: Documentation for the Roll Back Game Engine.
+site_description: Documentation for the Crescent Game Engine.
 site_author: Chukobyte
 copyright: 'Copyright &copy; 2022 Chukobyte'
 
@@ -16,3 +16,9 @@ markdown_extensions:
 
 nav:
   - Introduction: index.md
+  - Configuration: configuration/configuration.md
+  - Python-API:
+      - About: python_api/python_api.md
+      - Assets: python_api/assets.md
+      - Color: python_api/color.md
+      - Math: python_api/math.md

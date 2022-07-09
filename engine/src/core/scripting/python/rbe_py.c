@@ -5,14 +5,14 @@
 #include "py_helper.h"
 #include "py_cache.h"
 #include "rbe_py_api_module.h"
-#include "rbe_py_api_source.h"
+#include "crescent_api_source.h"
 #include "../../utils/rbe_assert.h"
 #include "../../game_properties.h"
 
 void rbe_py_initialize() {
     rbe_py_cache_initialize();
-    Py_SetProgramName(L"roll_back_engine_python");
-    PyImport_AppendInittab("rbe_py_api_internal", &PyInit_rbe_py_API); // Load engine modules
+    Py_SetProgramName(L"crescent_engine_python");
+    PyImport_AppendInittab("crescent_api_internal", &PyInit_rbe_py_API); // Load engine modules
     Py_Initialize();
     PyRun_SimpleString("import sys");
     PyRun_SimpleString("sys.path.insert(0, \".\")");
@@ -33,7 +33,7 @@ void rbe_py_finalize() {
 }
 
 bool rbe_py_load_project_config() {
-    return pyh_run_python_file("rbe_config.py");
+    return pyh_run_python_file("cre_config.py");
 }
 
 RBEGameProperties rbe_py_read_config_path(const char* filePath) {

@@ -33,7 +33,7 @@ bool Editor::Initialize() {
 
     // Temp load props, should place in project loading logic
     ProjectProperties* gameProperties = ProjectProperties::Get();
-    gameProperties->LoadPropertiesFromConfig("rbe_config.py");
+    gameProperties->LoadPropertiesFromConfig("cre_config.py");
     gameProperties->PrintProperties();
     return true;
 }

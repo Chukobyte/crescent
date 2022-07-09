@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.20.0)
 
 set(CMAKE_CXX_STANDARD 20)
 
-project(roll_back_editor)
+project(crescent_editor)
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     list(APPEND flags "/W3" "/Zc:preprocessor")

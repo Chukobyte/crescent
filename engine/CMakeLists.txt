@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.20.0)
 
 set(CMAKE_C_STANDARD 11)
 
-project(roll_back_core C)
+project(crescent_core C)
 
 if (CMAKE_C_COMPILER_ID STREQUAL "MSVC")
     list(APPEND flags "/std:c11" "/W3" "/Zc:preprocessor")
@@ -114,8 +114,8 @@ target_compile_options(${PROJECT_NAME} PUBLIC ${flags})
 
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy
-        ${PROJECT_SOURCE_DIR}/../rbe_config.py
-        $<TARGET_FILE_DIR:${PROJECT_NAME}>/../rbe_config.py
+        ${PROJECT_SOURCE_DIR}/../cre_config.py
+        $<TARGET_FILE_DIR:${PROJECT_NAME}>/../cre_config.py
         )
 
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
@@ -132,6 +132,6 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
 
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${PROJECT_SOURCE_DIR}/../rbe_py_api
-        $<TARGET_FILE_DIR:${PROJECT_NAME}>/../rbe_py_api
+        ${PROJECT_SOURCE_DIR}/../crescent_py_api
+        $<TARGET_FILE_DIR:${PROJECT_NAME}>/../crescent_py_api
         )

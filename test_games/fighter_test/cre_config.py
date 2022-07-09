@@ -1,4 +1,4 @@
-from rbe_py_api import *
+from crescent_api import *
 
 configure_game(
     game_tile="Test Game",
@@ -51,9 +51,5 @@ configure_inputs(
         InputAction(name="p1_move_right", values=[Input.Keyboard.D]),
         InputAction(name="p2_move_left", values=[Input.Keyboard.LEFT]),
         InputAction(name="p2_move_right", values=[Input.Keyboard.RIGHT]),
-        InputAction(name="camera_left", values=[Input.Keyboard.J]),
-        InputAction(name="camera_right", values=[Input.Keyboard.L]),
-        InputAction(name="camera_up", values=[Input.Keyboard.I]),
-        InputAction(name="camera_down", values=[Input.Keyboard.K]),
     ]
 )

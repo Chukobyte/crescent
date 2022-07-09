@@ -40,7 +40,7 @@
 "from enum import Enum\n"\
 "from typing import Optional\n"\
 "\n"\
-"import rbe_py_api_internal\n"\
+"import crescent_api_internal\n"\
 "\n"\
 "import math\n"\
 "\n"\
@@ -318,48 +318,63 @@
 "        self.device_id = device_id\n"\
 "\n"\
 "\n"\
+"class AnimationFrame:\n"\
+"    def __init__(self, frame: int, texture_path: str, draw_source: Rect2):\n"\
+"        self.frame = frame\n"\
+"        self.texture_path = texture_path\n"\
+"        self.draw_source = draw_source\n"\
+"\n"\
+"\n"\
+"class Animation:\n"\
+"    def __init__(self, name: str, speed: int, loops: bool, frames: list):\n"\
+"        self.name = name\n"\
+"        self.speed = speed\n"\
+"        self.loops = loops\n"\
+"        self.frames = frames\n"\
+"\n"\
+"\n"\
 "# ENGINE\n"\
 "class Engine:\n"\
 "    @staticmethod\n"\
 "    def exit(code=0) -> None:\n"\
-"        rbe_py_api_internal.engine_exit(code=code)\n"\
+"        crescent_api_internal.engine_exit(code=code)\n"\
 "\n"\
 "    @staticmethod\n"\
 "    def set_target_fps(fps: int) -> None:\n"\
-"        rbe_py_api_internal.engine_set_target_fps(fps=fps)\n"\
+"        crescent_api_internal.engine_set_target_fps(fps=fps)\n"\
 "\n"\
 "    @staticmethod\n"\
 "    def get_target_fps() -> int:\n"\
-"        return rbe_py_api_internal.engine_get_target_fps()\n"\
+"        return crescent_api_internal.engine_get_target_fps()\n"\
 "\n"\
 "    @staticmethod\n"\
 "    def get_average_fps() -> float:\n"\
-"        return rbe_py_api_internal.engine_get_average_fps()\n"\
+"        return crescent_api_internal.engine_get_average_fps()\n"\
 "\n"\
 "    @staticmethod\n"\
 "    def set_fps_display_enabled(enabled: bool) -> None:\n"\
-"        rbe_py_api_internal.engine_set_fps_display_enabled(enabled=enabled)\n"\
+"        crescent_api_internal.engine_set_fps_display_enabled(enabled=enabled)\n"\
 "\n"\
 "\n"\
 "# INPUT\n"\
 "class Input:\n"\
 "    @staticmethod\n"\
 "    def add_action(name: str, value: str, device_id=0) -> None:\n"\
-"        rbe_py_api_internal.input_add_action(\n"\
+"        crescent_api_internal.input_add_action(\n"\
 "            name=name, value=value, device_id=device_id\n"\
 "        )\n"\
 "\n"\
 "    @staticmethod\n"\
 "    def is_action_pressed(name: str) -> bool:\n"\
-"        return rbe_py_api_internal.input_is_action_pressed(name=name)\n"\
+"        return crescent_api_internal.input_is_action_pressed(name=name)\n"\
 "\n"\
 "    @staticmethod\n"\
 "    def is_action_just_pressed(name: str) -> bool:\n"\
-"        return rbe_py_api_internal.input_is_action_just_pressed(name=name)\n"\
+"        return crescent_api_internal.input_is_action_just_pressed(name=name)\n"\
 "\n"\
 "    @staticmethod\n"\
 "    def is_action_just_released(name: str) -> bool:\n"\
-"        return rbe_py_api_internal.input_is_action_just_released(name=name)\n"\
+"        return crescent_api_internal.input_is_action_just_released(name=name)\n"\
 "\n"\
 "    class Mouse:\n"\
 "        LEFT_BUTTON = \"mb_left\"\n"\
@@ -367,7 +382,7 @@
 "\n"\
 "        @staticmethod\n"\
 "        def get_position() -> Vector2:\n"\
-"            mouse_x, mouse_y = rbe_py_api_internal.mouse_get_position()\n"\
+"            mouse_x, mouse_y = crescent_api_internal.mouse_get_position()\n"\
 "            return Vector2(mouse_x, mouse_y)\n"\
 "\n"\
 "    class Keyboard:\n"\
@@ -462,49 +477,49 @@
 "class Camera2D:\n"\
 "    @staticmethod\n"\
 "    def set_position(position: Vector2) -> None:\n"\
-"        rbe_py_api_internal.camera2D_set_position(x=position.x, y=position.y)\n"\
+"        crescent_api_internal.camera2D_set_position(x=position.x, y=position.y)\n"\
 "\n"\
 "    @staticmethod\n"\
 "    def add_to_position(position: Vector2) -> None:\n"\
-"        rbe_py_api_internal.camera2D_add_to_position(x=position.x, y=position.y)\n"\
+"        crescent_api_internal.camera2D_add_to_position(x=position.x, y=position.y)\n"\
 "\n"\
 "    @staticmethod\n"\
 "    def get_position() -> Vector2:\n"\
-"        x, y = rbe_py_api_internal.camera2D_get_position()\n"\
+"        x, y = crescent_api_internal.camera2D_get_position()\n"\
 "\n"\
 "    @staticmethod\n"\
 "    def set_offset(offset: Vector2) -> None:\n"\
-"        rbe_py_api_internal.camera2D_set_offset(x=offset.x, y=offset.y)\n"\
+"        crescent_api_internal.camera2D_set_offset(x=offset.x, y=offset.y)\n"\
 "\n"\
 "    @staticmethod\n"\
 "    def add_to_offset(offset: Vector2) -> None:\n"\
-"        rbe_py_api_internal.camera2D_add_to_offset(x=offset.x, y=offset.y)\n"\
+"        crescent_api_internal.camera2D_add_to_offset(x=offset.x, y=offset.y)\n"\
 "\n"\
 "    @staticmethod\n"\
 "    def get_offset() -> Vector2:\n"\
-"        x, y = rbe_py_api_internal.camera2D_get_offset()\n"\
+"        x, y = crescent_api_internal.camera2D_get_offset()\n"\
 "\n"\
 "    @staticmethod\n"\
 "    def set_zoom(zoom: Vector2) -> None:\n"\
-"        rbe_py_api_internal.camera2D_set_zoom(x=zoom.x, y=zoom.y)\n"\
+"        crescent_api_internal.camera2D_set_zoom(x=zoom.x, y=zoom.y)\n"\
 "\n"\
 "    @staticmethod\n"\
 "    def add_to_zoom(zoom: Vector2) -> None:\n"\
-"        rbe_py_api_internal.camera2D_add_to_zoom(x=zoom.x, y=zoom.y)\n"\
+"        crescent_api_internal.camera2D_add_to_zoom(x=zoom.x, y=zoom.y)\n"\
 "\n"\
 "    @staticmethod\n"\
 "    def get_zoom() -> Vector2:\n"\
-"        x, y = rbe_py_api_internal.camera2D_get_zoom()\n"\
+"        x, y = crescent_api_internal.camera2D_get_zoom()\n"\
 "\n"\
 "    @staticmethod\n"\
 "    def set_boundary(boundary: Rect2) -> None:\n"\
-"        rbe_py_api_internal.camera2D_set_boundary(\n"\
+"        crescent_api_internal.camera2D_set_boundary(\n"\
 "            x=boundary.x, y=boundary.y, w=boundary.w, h=boundary.h\n"\
 "        )\n"\
 "\n"\
 "    @staticmethod\n"\
 "    def get_boundary() -> Rect2:\n"\
-"        x, y, w, h = rbe_py_api_internal.camera2D_get_boundary()\n"\
+"        x, y, w, h = crescent_api_internal.camera2D_get_boundary()\n"\
 "        return Rect2(x=x, y=y, w=w, h=h)\n"\
 "\n"\
 "\n"\
@@ -519,22 +534,6 @@
 "        self.external_node_source = external_node_source\n"\
 "        self.components = components\n"\
 "        self.children = children\n"\
-"\n"\
-"\n"\
-"# ASSETS\n"\
-"class AnimationFrame:\n"\
-"    def __init__(self, frame: int, texture_path: str, draw_source: Rect2):\n"\
-"        self.frame = frame\n"\
-"        self.texture_path = texture_path\n"\
-"        self.draw_source = draw_source\n"\
-"\n"\
-"\n"\
-"class Animation:\n"\
-"    def __init__(self, name: str, speed: int, loops: bool, frames: list):\n"\
-"        self.name = name\n"\
-"        self.speed = speed\n"\
-"        self.loops = loops\n"\
-"        self.frames = frames\n"\
 "\n"\
 "\n"\
 "# COMPONENTS\n"\
@@ -641,14 +640,14 @@
 "\n"\
 "    # New API\n"\
 "    def get_child(self, name: str):\n"\
-"        node = rbe_py_api_internal.node_get_child(\n"\
+"        node = crescent_api_internal.node_get_child(\n"\
 "            entity_id=self.entity_id, child_name=name\n"\
 "        )\n"\
 "        return self.parse_scene_node_from_engine(scene_node=node)\n"\
 "\n"\
 "    def get_children(self) -> list:\n"\
 "        children_nodes = []\n"\
-"        children = rbe_py_api_internal.node_get_children(entity_id=self.entity_id)\n"\
+"        children = crescent_api_internal.node_get_children(entity_id=self.entity_id)\n"\
 "        for child_node in children:\n"\
 "            children_nodes.append(\n"\
 "                self.parse_scene_node_from_engine(scene_node=child_node)\n"\
@@ -656,7 +655,7 @@
 "        return children_nodes\n"\
 "\n"\
 "    def get_parent(self):\n"\
-"        parent_node = rbe_py_api_internal.node_get_parent(entity_id=self.entity_id)\n"\
+"        parent_node = crescent_api_internal.node_get_parent(entity_id=self.entity_id)\n"\
 "        return self.parse_scene_node_from_engine(scene_node=parent_node)\n"\
 "\n"\
 "    # Old API\n"\
@@ -671,7 +670,7 @@
 "\n"\
 "    @classmethod\n"\
 "    def new(cls):\n"\
-"        return rbe_py_api_internal.node_new(\n"\
+"        return crescent_api_internal.node_new(\n"\
 "            class_path=f\"{cls.__module__}\",\n"\
 "            class_name=f\"{cls.__name__}\",\n"\
 "            node_type=f\"{cls.extract_valid_inheritance_node()}\",\n"\
@@ -691,26 +690,26 @@
 "        return None\n"\
 "\n"\
 "    def add_child(self, child_node) -> None:\n"\
-"        rbe_py_api_internal.node_add_child(\n"\
+"        crescent_api_internal.node_add_child(\n"\
 "            parent_entity_id=self.entity_id, child_entity_id=child_node.entity_id\n"\
 "        )\n"\
 "\n"\
 "    def get_node(self, name: str):\n"\
-"        node = rbe_py_api_internal.node_get_node(name=name)\n"\
+"        node = crescent_api_internal.node_get_node(name=name)\n"\
 "        if not node:\n"\
 "            return None\n"\
 "        return self.parse_scene_node_from_engine(scene_node=node)\n"\
 "\n"\
 "    def queue_deletion(self) -> None:\n"\
-"        rbe_py_api_internal.node_queue_deletion(entity_id=self.entity_id)\n"\
+"        crescent_api_internal.node_queue_deletion(entity_id=self.entity_id)\n"\
 "\n"\
 "    def create_signal(self, signal_id: str) -> None:\n"\
-"        rbe_py_api_internal.node_signal_create(\n"\
+"        crescent_api_internal.node_signal_create(\n"\
 "            entity_id=self.entity_id, signal_id=signal_id\n"\
 "        )\n"\
 "\n"\
 "    def connect_signal(self, signal_id: str, listener_node, function_name: str) -> None:\n"\
-"        rbe_py_api_internal.node_signal_connect(\n"\
+"        crescent_api_internal.node_signal_connect(\n"\
 "            entity_id=self.entity_id,\n"\
 "            signal_id=signal_id,\n"\
 "            listener_entity_id=listener_node.entity_id,\n"\
@@ -718,31 +717,31 @@
 "        )\n"\
 "\n"\
 "    def emit_signal(self, signal_id: str, args=[]) -> None:\n"\
-"        rbe_py_api_internal.node_signal_emit(\n"\
+"        crescent_api_internal.node_signal_emit(\n"\
 "            entity_id=self.entity_id, signal_id=signal_id, args=args\n"\
 "        )\n"\
 "\n"\
 "    @property\n"\
 "    def name(self) -> str:\n"\
-"        return rbe_py_api_internal.node_get_name(entity_id=self.entity_id)\n"\
+"        return crescent_api_internal.node_get_name(entity_id=self.entity_id)\n"\
 "\n"\
 "    @property\n"\
 "    def tags(self) -> list:\n"\
-"        return rbe_py_api_internal.node_get_tags(entity_id=self.entity_id)\n"\
+"        return crescent_api_internal.node_get_tags(entity_id=self.entity_id)\n"\
 "\n"\
 "    @tags.setter\n"\
 "    def tags(self, value: list) -> None:\n"\
-"        rbe_py_api_internal.node_set_tags(entity_id=self.entity_id, tags=value)\n"\
+"        crescent_api_internal.node_set_tags(entity_id=self.entity_id, tags=value)\n"\
 "\n"\
 "    def show(self) -> None:\n"\
-"        rbe_py_api_internal.node_show(entity_id=self.entity_id)\n"\
+"        crescent_api_internal.node_show(entity_id=self.entity_id)\n"\
 "\n"\
 "    def hide(self) -> None:\n"\
-"        rbe_py_api_internal.node_hide(entity_id=self.entity_id)\n"\
+"        crescent_api_internal.node_hide(entity_id=self.entity_id)\n"\
 "\n"\
 "    @property\n"\
 "    def visibility(self) -> bool:\n"\
-"        return rbe_py_api_internal.node_is_visible(entity_id=self.entity_id)\n"\
+"        return crescent_api_internal.node_is_visible(entity_id=self.entity_id)\n"\
 "\n"\
 "    @visibility.setter\n"\
 "    def visibility(self, value: bool) -> None:\n"\
@@ -755,76 +754,78 @@
 "# 2D\n"\
 "class Node2D(Node):\n"\
 "    def set_position(self, value: Vector2) -> None:\n"\
-"        rbe_py_api_internal.node2D_set_position(\n"\
+"        crescent_api_internal.node2D_set_position(\n"\
 "            entity_id=self.entity_id, x=value.x, y=value.y\n"\
 "        )\n"\
 "\n"\
 "    def add_to_position(self, value: Vector2) -> None:\n"\
-"        rbe_py_api_internal.node2D_add_to_position(\n"\
+"        crescent_api_internal.node2D_add_to_position(\n"\
 "            entity_id=self.entity_id, x=value.x, y=value.y\n"\
 "        )\n"\
 "\n"\
 "    def get_position(self) -> Vector2:\n"\
-"        px, py = rbe_py_api_internal.node2D_get_position(entity_id=self.entity_id)\n"\
+"        px, py = crescent_api_internal.node2D_get_position(entity_id=self.entity_id)\n"\
 "        return Vector2(px, py)\n"\
 "\n"\
 "    @property\n"\
 "    def position(self) -> Vector2:\n"\
-"        px, py = rbe_py_api_internal.node2D_get_position(entity_id=self.entity_id)\n"\
+"        px, py = crescent_api_internal.node2D_get_position(entity_id=self.entity_id)\n"\
 "        return Vector2(px, py)\n"\
 "\n"\
 "    @position.setter\n"\
 "    def position(self, value: Vector2) -> None:\n"\
-"        rbe_py_api_internal.node2D_set_position(\n"\
+"        crescent_api_internal.node2D_set_position(\n"\
 "            entity_id=self.entity_id, x=value.x, y=value.y\n"\
 "        )\n"\
 "\n"\
 "    @property\n"\
 "    def rotation(self) -> float:\n"\
-"        return rbe_py_api_internal.node2D_get_rotation(entity_id=self.entity_id)\n"\
+"        return crescent_api_internal.node2D_get_rotation(entity_id=self.entity_id)\n"\
 "\n"\
 "    @rotation.setter\n"\
 "    def rotation(self, value: float) -> None:\n"\
-"        rbe_py_api_internal.node2D_set_rotation(\n"\
+"        crescent_api_internal.node2D_set_rotation(\n"\
 "            entity_id=self.entity_id, rotation=value\n"\
 "        )\n"\
 "\n"\
 "    @property\n"\
 "    def z_index(self) -> int:\n"\
-"        return rbe_py_api_internal.node2D_get_z_index(entity_id=self.entity_id)\n"\
+"        return crescent_api_internal.node2D_get_z_index(entity_id=self.entity_id)\n"\
 "\n"\
 "    @z_index.setter\n"\
 "    def z_index(self, value: int) -> None:\n"\
-"        rbe_py_api_internal.node2D_set_z_index(entity_id=self.entity_id, z_index=value)\n"\
+"        crescent_api_internal.node2D_set_z_index(\n"\
+"            entity_id=self.entity_id, z_index=value\n"\
+"        )\n"\
 "\n"\
 "\n"\
 "class Sprite(Node2D):\n"\
 "    @property\n"\
 "    def flip_h(self) -> bool:\n"\
-"        return rbe_py_api_internal.sprite_get_flip_h(entity_id=self.entity_id)\n"\
+"        return crescent_api_internal.sprite_get_flip_h(entity_id=self.entity_id)\n"\
 "\n"\
 "    @flip_h.setter\n"\
 "    def flip_h(self, value: bool) -> None:\n"\
-"        rbe_py_api_internal.sprite_set_flip_h(entity_id=self.entity_id, flip_h=value)\n"\
+"        crescent_api_internal.sprite_set_flip_h(entity_id=self.entity_id, flip_h=value)\n"\
 "\n"\
 "    @property\n"\
 "    def flip_v(self) -> bool:\n"\
-"        return rbe_py_api_internal.sprite_get_flip_v(entity_id=self.entity_id)\n"\
+"        return crescent_api_internal.sprite_get_flip_v(entity_id=self.entity_id)\n"\
 "\n"\
 "    @flip_v.setter\n"\
 "    def flip_v(self, value: bool) -> None:\n"\
-"        rbe_py_api_internal.sprite_set_flip_v(entity_id=self.entity_id, flip_h=value)\n"\
+"        crescent_api_internal.sprite_set_flip_v(entity_id=self.entity_id, flip_h=value)\n"\
 "\n"\
 "    @property\n"\
 "    def modulate(self) -> Color:\n"\
-"        red, green, blue, alpha = rbe_py_api_internal.sprite_get_modulate(\n"\
+"        red, green, blue, alpha = crescent_api_internal.sprite_get_modulate(\n"\
 "            entity_id=self.entity_id\n"\
 "        )\n"\
 "        return Color(r=red, g=green, b=blue, a=alpha)\n"\
 "\n"\
 "    @modulate.setter\n"\
 "    def modulate(self, color: Color) -> None:\n"\
-"        rbe_py_api_internal.sprite_set_modulate(\n"\
+"        crescent_api_internal.sprite_set_modulate(\n"\
 "            entity_id=self.entity_id,\n"\
 "            red=color.r,\n"\
 "            green=color.g,\n"\
@@ -840,7 +841,7 @@
 "            wrap_t,\n"\
 "            filter_min,\n"\
 "            filter_mag,\n"\
-"        ) = rbe_py_api_internal.sprite_get_texture(entity_id=self.entity_id)\n"\
+"        ) = crescent_api_internal.sprite_get_texture(entity_id=self.entity_id)\n"\
 "        return Texture(\n"\
 "            file_path=file_path,\n"\
 "            wrap_s=wrap_s,\n"\
@@ -851,7 +852,7 @@
 "\n"\
 "    @texture.setter\n"\
 "    def texture(self, value: Texture) -> None:\n"\
-"        rbe_py_api_internal.sprite_set_texture(\n"\
+"        crescent_api_internal.sprite_set_texture(\n"\
 "            entity_id=self.entity_id, file_path=value.file_path\n"\
 "        )\n"\
 "\n"\
@@ -862,12 +863,12 @@
 "            y,\n"\
 "            w,\n"\
 "            h,\n"\
-"        ) = rbe_py_api_internal.sprite_get_draw_source(entity_id=self.entity_id)\n"\
+"        ) = crescent_api_internal.sprite_get_draw_source(entity_id=self.entity_id)\n"\
 "        return Rect2(x=x, y=y, w=w, h=h)\n"\
 "\n"\
 "    @draw_source.setter\n"\
 "    def draw_source(self, value: Rect2) -> None:\n"\
-"        rbe_py_api_internal.sprite_set_draw_source(\n"\
+"        crescent_api_internal.sprite_set_draw_source(\n"\
 "            entity_id=self.entity_id, x=value.x, y=value.y, w=value.w, h=value.h\n"\
 "        )\n"\
 "\n"\
@@ -875,77 +876,85 @@
 "class TextLabel(Node2D):\n"\
 "    @property\n"\
 "    def text(self) -> str:\n"\
-"        return rbe_py_api_internal.text_label_get_text(entity_id=self.entity_id)\n"\
+"        return crescent_api_internal.text_label_get_text(entity_id=self.entity_id)\n"\
 "\n"\
 "    @text.setter\n"\
 "    def text(self, value: str) -> None:\n"\
-"        rbe_py_api_internal.text_label_set_text(entity_id=self.entity_id, text=value)\n"\
+"        crescent_api_internal.text_label_set_text(entity_id=self.entity_id, text=value)\n"\
 "\n"\
 "    def get_text(self) -> str:\n"\
-"        return rbe_py_api_internal.text_label_get_text(entity_id=self.entity_id)\n"\
+"        return crescent_api_internal.text_label_get_text(entity_id=self.entity_id)\n"\
 "\n"\
 "    def set_text(self, text: str) -> None:\n"\
-"        rbe_py_api_internal.text_label_set_text(entity_id=self.entity_id, text=text)\n"\
+"        crescent_api_internal.text_label_set_text(entity_id=self.entity_id, text=text)\n"\
 "\n"\
 "    @property\n"\
 "    def color(self) -> Color:\n"\
-"        r, g, b, a = rbe_py_api_internal.text_label_get_color(entity_id=self.entity_id)\n"\
+"        r, g, b, a = crescent_api_internal.text_label_get_color(\n"\
+"            entity_id=self.entity_id\n"\
+"        )\n"\
 "        return Color(r, g, b, a)\n"\
 "\n"\
 "    @color.setter\n"\
 "    def color(self, value: Color) -> None:\n"\
-"        rbe_py_api_internal.text_label_set_color(\n"\
+"        crescent_api_internal.text_label_set_color(\n"\
 "            entity_id=self.entity_id, r=value.r, g=value.g, b=value.b, a=value.a\n"\
 "        )\n"\
 "\n"\
 "    def get_color(self) -> Color:\n"\
-"        r, g, b, a = rbe_py_api_internal.text_label_get_color(entity_id=self.entity_id)\n"\
+"        r, g, b, a = crescent_api_internal.text_label_get_color(\n"\
+"            entity_id=self.entity_id\n"\
+"        )\n"\
 "        return Color(r, g, b, a)\n"\
 "\n"\
 "    def set_color(self, color: Color) -> None:\n"\
-"        rbe_py_api_internal.text_label_set_color(\n"\
+"        crescent_api_internal.text_label_set_color(\n"\
 "            entity_id=self.entity_id, r=color.r, g=color.g, b=color.b, a=color.a\n"\
 "        )\n"\
 "\n"\
 "\n"\
 "class Collider2D(Node2D):\n"\
 "    def get_rect(self) -> Rect2:\n"\
-"        x, y, w, h = rbe_py_api_internal.collider2D_get_rect(entity_id=self.entity_id)\n"\
+"        x, y, w, h = crescent_api_internal.collider2D_get_rect(entity_id=self.entity_id)\n"\
 "        return Rect2(x=x, y=y, w=w, h=h)\n"\
 "\n"\
 "    def set_rect(self, rect: Rect2) -> None:\n"\
-"        rbe_py_api_internal.collider2D_set_rect(\n"\
+"        crescent_api_internal.collider2D_set_rect(\n"\
 "            entity_id=self.entity_id, x=rect.x, y=rect.y, w=rect.w, h=rect.h\n"\
 "        )\n"\
 "\n"\
 "    @property\n"\
 "    def rect(self) -> Rect2:\n"\
-"        x, y, w, h = rbe_py_api_internal.collider2D_get_rect(entity_id=self.entity_id)\n"\
+"        x, y, w, h = crescent_api_internal.collider2D_get_rect(entity_id=self.entity_id)\n"\
 "        return Rect2(x=x, y=y, w=w, h=h)\n"\
 "\n"\
 "    @rect.setter\n"\
 "    def rect(self, value: Rect2) -> None:\n"\
-"        rbe_py_api_internal.collider2D_set_rect(\n"\
+"        crescent_api_internal.collider2D_set_rect(\n"\
 "            entity_id=self.entity_id, x=value.x, y=value.y, w=value.w, h=value.h\n"\
 "        )\n"\
 "\n"\
 "    def get_color(self) -> Color:\n"\
-"        r, g, b, a = rbe_py_api_internal.collider2D_get_color(entity_id=self.entity_id)\n"\
+"        r, g, b, a = crescent_api_internal.collider2D_get_color(\n"\
+"            entity_id=self.entity_id\n"\
+"        )\n"\
 "        return Color(r=r, g=g, b=b, a=a)\n"\
 "\n"\
 "    def set_color(self, color: Color) -> None:\n"\
-"        rbe_py_api_internal.collider2D_set_color(\n"\
+"        crescent_api_internal.collider2D_set_color(\n"\
 "            entity_id=self.entity_id, r=color.r, g=color.g, b=color.b, a=color.a\n"\
 "        )\n"\
 "\n"\
 "    @property\n"\
 "    def color(self) -> Color:\n"\
-"        r, g, b, a = rbe_py_api_internal.collider2D_get_color(entity_id=self.entity_id)\n"\
+"        r, g, b, a = crescent_api_internal.collider2D_get_color(\n"\
+"            entity_id=self.entity_id\n"\
+"        )\n"\
 "        return Color(r=r, g=g, b=b, a=a)\n"\
 "\n"\
 "    @color.setter\n"\
 "    def color(self, value: Color) -> None:\n"\
-"        rbe_py_api_internal.collider2D_set_color(\n"\
+"        crescent_api_internal.collider2D_set_color(\n"\
 "            entity_id=self.entity_id, r=value.r, g=value.g, b=value.b, a=value.a\n"\
 "        )\n"\
 "\n"\
@@ -954,18 +963,18 @@
 "class SceneTree:\n"\
 "    @staticmethod\n"\
 "    def change_scene(path: str) -> None:\n"\
-"        rbe_py_api_internal.scene_tree_change_scene(path=path)\n"\
+"        crescent_api_internal.scene_tree_change_scene(path=path)\n"\
 "\n"\
 "\n"\
 "# AUDIO MANAGER\n"\
 "class AudioManager:\n"\
 "    @staticmethod\n"\
 "    def play_sound(path: str, loops=False):\n"\
-"        rbe_py_api_internal.audio_manager_play_sound(path=path, loops=loops)\n"\
+"        crescent_api_internal.audio_manager_play_sound(path=path, loops=loops)\n"\
 "\n"\
 "    @staticmethod\n"\
 "    def stop_sound(path: str):\n"\
-"        rbe_py_api_internal.audio_manager_stop_sound(path=path)\n"\
+"        crescent_api_internal.audio_manager_stop_sound(path=path)\n"\
 "\n"\
 "\n"\
 "# PHYSICS\n"\
@@ -974,7 +983,7 @@
 "\n"\
 "    @staticmethod\n"\
 "    def process_collisions(collider: Collider2D):\n"\
-"        collided_entities = rbe_py_api_internal.collision_handler_process_collisions(\n"\
+"        collided_entities = crescent_api_internal.collision_handler_process_collisions(\n"\
 "            entity_id=collider.entity_id\n"\
 "        )\n"\
 "        for index, node in enumerate(collided_entities):\n"\
@@ -985,25 +994,25 @@
 "class Network:\n"\
 "    @staticmethod\n"\
 "    def is_server() -> bool:\n"\
-"        return rbe_py_api_internal.network_is_server()\n"\
+"        return crescent_api_internal.network_is_server()\n"\
 "\n"\
 "\n"\
 "class Server:\n"\
 "    @staticmethod\n"\
 "    def start(port: int) -> None:\n"\
-"        rbe_py_api_internal.server_start(port=port)\n"\
+"        crescent_api_internal.server_start(port=port)\n"\
 "\n"\
 "    @staticmethod\n"\
 "    def stop() -> None:\n"\
-"        rbe_py_api_internal.server_stop()\n"\
+"        crescent_api_internal.server_stop()\n"\
 "\n"\
 "    @staticmethod\n"\
 "    def send(message: str) -> None:\n"\
-"        rbe_py_api_internal.server_send(message=message)\n"\
+"        crescent_api_internal.server_send(message=message)\n"\
 "\n"\
 "    @staticmethod\n"\
 "    def subscribe(signal_id: str, listener_node: Node, listener_func) -> None:\n"\
-"        rbe_py_api_internal.server_subscribe(\n"\
+"        crescent_api_internal.server_subscribe(\n"\
 "            signal_id=signal_id,\n"\
 "            listener_node=listener_node.entity_id,\n"\
 "            listener_func=listener_func,\n"\
@@ -1013,19 +1022,19 @@
 "class Client:\n"\
 "    @staticmethod\n"\
 "    def start(host: str, port: int) -> None:\n"\
-"        rbe_py_api_internal.client_start(host=host, port=port)\n"\
+"        crescent_api_internal.client_start(host=host, port=port)\n"\
 "\n"\
 "    @staticmethod\n"\
 "    def stop() -> None:\n"\
-"        rbe_py_api_internal.client_stop()\n"\
+"        crescent_api_internal.client_stop()\n"\
 "\n"\
 "    @staticmethod\n"\
 "    def send(message: str) -> None:\n"\
-"        rbe_py_api_internal.client_send(message=message)\n"\
+"        crescent_api_internal.client_send(message=message)\n"\
 "\n"\
 "    @staticmethod\n"\
 "    def subscribe(signal_id: str, listener_node: Node, listener_func) -> None:\n"\
-"        rbe_py_api_internal.client_subscribe(\n"\
+"        crescent_api_internal.client_subscribe(\n"\
 "            signal_id=signal_id,\n"\
 "            listener_node=listener_node.entity_id,\n"\
 "            listener_func=listener_func,\n"\
@@ -1043,7 +1052,7 @@
 "    initial_node_path=\"\",\n"\
 "    colliders_visible=False,\n"\
 ") -> None:\n"\
-"    rbe_py_api_internal.configure_game(\n"\
+"    crescent_api_internal.configure_game(\n"\
 "        game_tile=game_tile,\n"\
 "        window_width=window_width,\n"\
 "        window_height=window_height,\n"\
@@ -1062,7 +1071,7 @@
 "        textures = []\n"\
 "    if audio_sources is None:\n"\
 "        audio_sources = []\n"\
-"    rbe_py_api_internal.configure_assets(\n"\
+"    crescent_api_internal.configure_assets(\n"\
 "        audio_sources=audio_sources, textures=textures, fonts=fonts\n"\
 "    )\n"\
 "\n"\
@@ -1070,22 +1079,22 @@
 "def configure_inputs(input_actions=None) -> None:\n"\
 "    if input_actions is None:\n"\
 "        input_actions = []\n"\
-"    rbe_py_api_internal.configure_inputs(input_actions=input_actions)\n"\
+"    crescent_api_internal.configure_inputs(input_actions=input_actions)\n"\
 "\n"\
 "\n"\
 "# STAGE\n"\
 "def create_stage_nodes(stage_nodes: list) -> None:\n"\
-"    rbe_py_api_internal.create_stage_nodes(stage_nodes=stage_nodes)\n"\
+"    crescent_api_internal.create_stage_nodes(stage_nodes=stage_nodes)\n"\
 "\n"
 
 #define RBE_PY_API_SOURCE_IMPORTER_MODULE_IMPORTS ""\
 "from source_importer import SourceImporter\n"\
 "\n"\
-"rbe_py_api_source_code = \"\"\"\n"\
+"crescent_api_source_code = \"\"\"\n"\
 RBE_PY_API_SOURCE\
 "\"\"\"\n"\
 "modules_to_import = {\n"\
-"\"rbe_py_api\": rbe_py_api_source_code,\n"\
+"\"crescent_api\": crescent_api_source_code,\n"\
 "}\n"\
 "\n"\
 "game_source_importer = SourceImporter(modules=modules_to_import)\n"\

@@ -1,13 +1,13 @@
-## Roll Back Engine
+# Crescent
 
-[![windows-msvc-build Actions Status](https://github.com/Chukobyte/roll-back-engine/workflows/windows-msvc-build/badge.svg)](https://github.com/Chukobyte/roll-back-engine/actions)
-[![ubuntu-gcc-build Actions Status](https://github.com/Chukobyte/roll-back-engine/workflows/ubuntu-gcc-build/badge.svg)](https://github.com/Chukobyte/roll-back-engine/actions)
-[![windows-mingw-build Actions Status](https://github.com/Chukobyte/roll-back-engine/workflows/windows-mingw-build/badge.svg)](https://github.com/Chukobyte/roll-back-engine/actions)
-[![pvs-studio Actions Status](https://github.com/Chukobyte/roll-back-engine/workflows/pvs-studio/badge.svg)](https://github.com/Chukobyte/roll-back-engine/actions)
+[![windows-msvc-build Actions Status](https://github.com/Chukobyte/crescent/workflows/windows-msvc-build/badge.svg)](https://github.com/Chukobyte/crescent/actions)
+[![ubuntu-gcc-build Actions Status](https://github.com/Chukobyte/crescent/workflows/ubuntu-gcc-build/badge.svg)](https://github.com/Chukobyte/crescent/actions)
+[![windows-mingw-build Actions Status](https://github.com/Chukobyte/crescent/workflows/windows-mingw-build/badge.svg)](https://github.com/Chukobyte/crescent/actions)
+[![pvs-studio Actions Status](https://github.com/Chukobyte/crescent/workflows/pvs-studio/badge.svg)](https://github.com/Chukobyte/crescent/actions)
 
 A work in progress fighting game engine for Windows and Linux with the core written in C11.  The name is temporary and will very likely change in the near future.  Road map for the project coming soon.
 
-### Tech Stack
+## Tech Stack
 
 * Engine
   * [C](https://en.wikipedia.org/wiki/C_(programming_language)) (c11) - Engine Core
@@ -22,12 +22,12 @@ A work in progress fighting game engine for Windows and Linux with the core writ
     * [MiniAudio](https://github.com/mackron/miniaudio) - Audio
     * [Catch2](https://github.com/catchorg/Catch2) - Testing
 
-### Project Configuration
+## Project Configuration
 
-Configuration is configured in the project's root directory with the `rbe_config.py`.  It should look like the following:
+Configuration is configured in the project's root directory with the `cre_config.py`.  It should look like the following:
 
 ```python
-from rbe_py_api import *
+from crescent_api import *
 
 configure_game(
   game_tile="Test Game",
@@ -37,6 +37,7 @@ configure_game(
   resolution_height=600,
   target_fps=66,
   initial_node_path="nodes/main_node.py",
+  colliders_visible=False,
 )
 
 configure_assets(
@@ -71,7 +72,7 @@ configure_inputs(
 )
 ```
 
-### Building
+## Building
 
 Supports Windows and linux builds at the moment. These environment variables are required to be set before building with make.
 
@@ -84,9 +85,9 @@ Supports Windows and linux builds at the moment. These environment variables are
 | FREETYPE_INCLUDE_PATH | The include directory of Freetype.                 |    YES   |      N/A      |
 |  FREETYPE_LIBS_PATH   | The libs directory of Freetype.                    |    YES   |      N/A      |
 
-Roll back engine can be either built with make or cmake.  All build command should be executed from the project's root directory.
+Crescent engine can be either built with make or cmake.  All build command should be executed from the project's root directory.
 
-#### Make
+### Make
 
 Engine:
 
@@ -110,7 +111,7 @@ make run-editor
 make clean-editor
 ```
 
-#### CMake
+### CMake
 
 **MinGW build**
 1. Install MinGW through MSYS2

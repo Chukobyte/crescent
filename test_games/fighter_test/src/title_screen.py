@@ -1,4 +1,4 @@
-from rbe_py_api import *
+from crescent_api import *
 from test_games.fighter_test.src.game_state import *
 
 SERVER_HOST = "127.0.0.1"
