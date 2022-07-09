@@ -344,7 +344,7 @@ static struct PyMethodDef rbePyApiMethods[] = {
 
 // --- Module Definition --- //
 static struct PyModuleDef rbePyAPIModDef = {
-    PyModuleDef_HEAD_INIT, "rbe_py_api_internal", NULL, -1, rbePyApiMethods,
+    PyModuleDef_HEAD_INIT, "crescent_api_internal", NULL, -1, rbePyApiMethods,
     NULL, NULL, NULL, NULL
 };
 

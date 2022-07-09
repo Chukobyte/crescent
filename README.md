@@ -24,7 +24,7 @@ A work in progress fighting game engine for Windows and Linux with the core writ
 
 ## Project Configuration
 
-Configuration is configured in the project's root directory with the `rbe_config.py`.  It should look like the following:
+Configuration is configured in the project's root directory with the `cre_config.py`.  It should look like the following:
 
 ```python
 from rbe_py_api import *

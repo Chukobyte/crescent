@@ -41,7 +41,7 @@ void ProjectManagerUI::ProcessWindows() {
                 rbe_fs_chdir(fighterTestPath);
                 editorContext->projectState = EditorProjectState::OpenedProject;
                 rbe_logger_debug("Opening test project at directory = %s", fighterTestPath);
-                gameProperties->LoadPropertiesFromConfig("rbe_config.py");
+                gameProperties->LoadPropertiesFromConfig("cre_config.py");
                 gameProperties->PrintProperties();
             }
         },

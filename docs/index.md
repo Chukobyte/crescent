@@ -1,4 +1,4 @@
-# Crescent Engine Docs
+# Crescent
 
 ## About
 

@@ -1,6 +1,6 @@
-RBE_PY_API_SOURCE_PATH = "../rbe_py_api.py"
+RBE_PY_API_SOURCE_PATH = "../crescent_api.py"
 RBE_PY_API_SOURCE_OUTPUT_PATH = (
-    "../../engine/src/core/scripting/python/rbe_py_api_source.h"
+    "../../engine/src/core/scripting/python/crescent_api_source.h"
 )
 
 
@@ -59,11 +59,11 @@ rbe_py_source_text = f"""#pragma once
 #define RBE_PY_API_SOURCE_IMPORTER_MODULE_IMPORTS ""\\
 "from source_importer import SourceImporter\\n"\\
 "\\n"\\
-"rbe_py_api_source_code = \\"\\"\\"\\n"\\
+"crescent_api_source_code = \\"\\"\\"\\n"\\
 RBE_PY_API_SOURCE\\
 "\\"\\"\\"\\n"\\
 "modules_to_import = {{\\n"\\
-"\\"rbe_py_api\\": rbe_py_api_source_code,\\n"\\
+"\\"crescent_api\\": crescent_api_source_code,\\n"\\
 "}}\\n"\\
 "\\n"\\
 "game_source_importer = SourceImporter(modules=modules_to_import)\\n"\\
