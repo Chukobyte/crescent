@@ -27,7 +27,7 @@ A work in progress fighting game engine for Windows and Linux with the core writ
 Configuration is configured in the project's root directory with the `cre_config.py`.  It should look like the following:
 
 ```python
-from rbe_py_api import *
+from crescent_api import *
 
 configure_game(
   game_tile="Test Game",
@@ -37,6 +37,7 @@ configure_game(
   resolution_height=600,
   target_fps=66,
   initial_node_path="nodes/main_node.py",
+  colliders_visible=False,
 )
 
 configure_assets(

@@ -795,7 +795,9 @@
 "\n"\
 "    @z_index.setter\n"\
 "    def z_index(self, value: int) -> None:\n"\
-"        crescent_api_internal.node2D_set_z_index(entity_id=self.entity_id, z_index=value)\n"\
+"        crescent_api_internal.node2D_set_z_index(\n"\
+"            entity_id=self.entity_id, z_index=value\n"\
+"        )\n"\
 "\n"\
 "\n"\
 "class Sprite(Node2D):\n"\
@@ -889,7 +891,9 @@
 "\n"\
 "    @property\n"\
 "    def color(self) -> Color:\n"\
-"        r, g, b, a = crescent_api_internal.text_label_get_color(entity_id=self.entity_id)\n"\
+"        r, g, b, a = crescent_api_internal.text_label_get_color(\n"\
+"            entity_id=self.entity_id\n"\
+"        )\n"\
 "        return Color(r, g, b, a)\n"\
 "\n"\
 "    @color.setter\n"\
@@ -899,7 +903,9 @@
 "        )\n"\
 "\n"\
 "    def get_color(self) -> Color:\n"\
-"        r, g, b, a = crescent_api_internal.text_label_get_color(entity_id=self.entity_id)\n"\
+"        r, g, b, a = crescent_api_internal.text_label_get_color(\n"\
+"            entity_id=self.entity_id\n"\
+"        )\n"\
 "        return Color(r, g, b, a)\n"\
 "\n"\
 "    def set_color(self, color: Color) -> None:\n"\
@@ -930,7 +936,9 @@
 "        )\n"\
 "\n"\
 "    def get_color(self) -> Color:\n"\
-"        r, g, b, a = crescent_api_internal.collider2D_get_color(entity_id=self.entity_id)\n"\
+"        r, g, b, a = crescent_api_internal.collider2D_get_color(\n"\
+"            entity_id=self.entity_id\n"\
+"        )\n"\
 "        return Color(r=r, g=g, b=b, a=a)\n"\
 "\n"\
 "    def set_color(self, color: Color) -> None:\n"\
@@ -940,7 +948,9 @@
 "\n"\
 "    @property\n"\
 "    def color(self) -> Color:\n"\
-"        r, g, b, a = crescent_api_internal.collider2D_get_color(entity_id=self.entity_id)\n"\
+"        r, g, b, a = crescent_api_internal.collider2D_get_color(\n"\
+"            entity_id=self.entity_id\n"\
+"        )\n"\
 "        return Color(r=r, g=g, b=b, a=a)\n"\
 "\n"\
 "    @color.setter\n"\
