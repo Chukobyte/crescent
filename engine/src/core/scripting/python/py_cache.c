@@ -25,7 +25,14 @@ PyObject* rbe_py_cache_get_module(const char* modulePath) {
     if (!rbe_string_hash_map_has(pyModuleCacheHashMap, modulePath)) {
         PyObject* pName = PyUnicode_FromString(modulePath);
         PyObject* pNewModule = PyImport_Import(pName);
-        RBE_ASSERT(pNewModule != NULL);
+        // Fail over import
+        if (pNewModule == NULL) {
+            rbe_logger_debug("Using fail over import for module at path '%s'", modulePath);
+            PyObject* fromListObject = PyUnicode_FromString("[*]");
+            pNewModule = PyImport_ImportModuleEx(modulePath, NULL, NULL, fromListObject);
+            PyErr_Print();
+        }
+        RBE_ASSERT_FMT(pNewModule != NULL, "Failed to import python module at path '%s'", modulePath);
 
         const size_t cacheItemSize = sizeof(PyModuleCacheItem*) + sizeof(PyObject*);
         PyModuleCacheItem* cacheItem = RBE_MEM_ALLOCATE_SIZE(cacheItemSize);
