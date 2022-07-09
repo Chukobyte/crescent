@@ -1,9 +1,9 @@
 # Crescent
 
-[![windows-msvc-build Actions Status](https://github.com/Chukobyte/roll-back-engine/workflows/windows-msvc-build/badge.svg)](https://github.com/Chukobyte/roll-back-engine/actions)
-[![ubuntu-gcc-build Actions Status](https://github.com/Chukobyte/roll-back-engine/workflows/ubuntu-gcc-build/badge.svg)](https://github.com/Chukobyte/roll-back-engine/actions)
-[![windows-mingw-build Actions Status](https://github.com/Chukobyte/roll-back-engine/workflows/windows-mingw-build/badge.svg)](https://github.com/Chukobyte/roll-back-engine/actions)
-[![pvs-studio Actions Status](https://github.com/Chukobyte/roll-back-engine/workflows/pvs-studio/badge.svg)](https://github.com/Chukobyte/roll-back-engine/actions)
+[![windows-msvc-build Actions Status](https://github.com/Chukobyte/crescent/workflows/windows-msvc-build/badge.svg)](https://github.com/Chukobyte/crescent/actions)
+[![ubuntu-gcc-build Actions Status](https://github.com/Chukobyte/crescent/workflows/ubuntu-gcc-build/badge.svg)](https://github.com/Chukobyte/crescent/actions)
+[![windows-mingw-build Actions Status](https://github.com/Chukobyte/crescent/workflows/windows-mingw-build/badge.svg)](https://github.com/Chukobyte/crescent/actions)
+[![pvs-studio Actions Status](https://github.com/Chukobyte/crescent/workflows/pvs-studio/badge.svg)](https://github.com/Chukobyte/crescent/actions)
 
 A work in progress fighting game engine for Windows and Linux with the core written in C11.  The name is temporary and will very likely change in the near future.  Road map for the project coming soon.
 
