@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="author" content="Chukobyte">
+        
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>Configuration - Crescent Documentation</title>
+        <link href="../../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css">
+
+        <script src="../../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../../js/bootstrap.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="../..">Crescent Documentation</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar-collapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="navitem">
+                                <a href="../.." class="nav-link">Introduction</a>
+                            </li>
+                            <li class="navitem active">
+                                <a href="./" class="nav-link">Configuration</a>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Python-API <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../python_api/python_api/" class="dropdown-item">About</a>
+</li>
+                                    
+<li>
+    <a href="../../python_api/assets/" class="dropdown-item">Assets</a>
+</li>
+                                    
+<li>
+    <a href="../../python_api/color/" class="dropdown-item">Color</a>
+</li>
+                                    
+<li>
+    <a href="../../python_api/math/" class="dropdown-item">Math</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../.." class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../../python_api/python_api/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="https://github.com/Chukobyte/crescent" class="nav-link"><i class="fa fa-github"></i> GitHub</a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-light navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-level="1"><a href="#configuration" class="nav-link">Configuration</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-level="2"><a href="#project-configuration" class="nav-link">Project Configuration</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#node-configuration" class="nav-link">Node Configuration</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="configuration">Configuration</h1>
+<h2 id="project-configuration">Project Configuration</h2>
+<p>Configuration is configured in the project's root directory with the <code>cre_config.py</code>.  It should look like the following:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">crescent_api</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="n">configure_game</span><span class="p">(</span>
+  <span class="n">game_tile</span><span class="o">=</span><span class="s2">&quot;Test Game&quot;</span><span class="p">,</span>
+  <span class="n">window_width</span><span class="o">=</span><span class="mi">800</span><span class="p">,</span>
+  <span class="n">window_height</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span>
+  <span class="n">resolution_width</span><span class="o">=</span><span class="mi">800</span><span class="p">,</span>
+  <span class="n">resolution_height</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span>
+  <span class="n">target_fps</span><span class="o">=</span><span class="mi">66</span><span class="p">,</span>
+  <span class="n">initial_node_path</span><span class="o">=</span><span class="s2">&quot;nodes/main_node.py&quot;</span><span class="p">,</span>
+  <span class="n">colliders_visible</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">configure_assets</span><span class="p">(</span>
+  <span class="n">audio_sources</span><span class="o">=</span><span class="p">[</span>
+    <span class="n">AudioSource</span><span class="p">(</span>
+      <span class="n">file_path</span><span class="o">=</span><span class="s2">&quot;assets/audio/sfx/rainbow_orb.wav&quot;</span>
+    <span class="p">),</span>
+  <span class="p">],</span>
+  <span class="n">textures</span><span class="o">=</span><span class="p">[</span>
+    <span class="n">Texture</span><span class="p">(</span>
+      <span class="n">file_path</span><span class="o">=</span><span class="s2">&quot;assets/images/characters/mor/mor_idle_sheet.png&quot;</span><span class="p">,</span>
+      <span class="n">wrap_s</span><span class="o">=</span><span class="s2">&quot;clamp_to_border&quot;</span><span class="p">,</span>
+      <span class="n">wrap_t</span><span class="o">=</span><span class="s2">&quot;clamp_to_border&quot;</span><span class="p">,</span>
+      <span class="n">filter_min</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">,</span>
+      <span class="n">filter_mag</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">,</span>
+    <span class="p">),</span>
+  <span class="p">],</span>
+  <span class="n">fonts</span><span class="o">=</span><span class="p">[</span>
+    <span class="n">Font</span><span class="p">(</span>
+      <span class="n">file_path</span><span class="o">=</span><span class="s2">&quot;assets/fonts/verdana.ttf&quot;</span><span class="p">,</span>
+      <span class="n">uid</span><span class="o">=</span><span class="s2">&quot;verdana-32&quot;</span><span class="p">,</span>
+      <span class="n">size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span>
+    <span class="p">)</span>
+  <span class="p">],</span>
+<span class="p">)</span>
+
+<span class="n">configure_inputs</span><span class="p">(</span>
+  <span class="n">input_actions</span><span class="o">=</span><span class="p">[</span>
+    <span class="n">InputAction</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;exit&quot;</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="n">Input</span><span class="o">.</span><span class="n">Keyboard</span><span class="o">.</span><span class="n">ESC</span><span class="p">]),</span>
+    <span class="n">InputAction</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;play_sfx&quot;</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="n">Input</span><span class="o">.</span><span class="n">Keyboard</span><span class="o">.</span><span class="n">SPACE</span><span class="p">]),</span>
+  <span class="p">]</span>
+<span class="p">)</span>
+</code></pre></div>
+<h2 id="node-configuration">Node Configuration</h2>
+<p>A scene is built from a tree of nodes.  These nodes can be configured in node configuration files like the one below:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">crescent_api</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="n">create_stage_nodes</span><span class="p">(</span>
+    <span class="n">stage_nodes</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">StageNode</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;TitleScreen&quot;</span><span class="p">,</span>
+            <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;Node2D&quot;</span><span class="p">,</span>
+            <span class="n">tags</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">external_node_source</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">components</span><span class="o">=</span><span class="p">[</span>
+                <span class="n">Transform2DComponent</span><span class="p">(</span>
+                    <span class="n">position</span><span class="o">=</span><span class="n">Vector2</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+                    <span class="n">scale</span><span class="o">=</span><span class="n">Vector2</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>
+                    <span class="n">rotation</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                    <span class="n">z_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                    <span class="n">z_index_relative_to_parent</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">ignore_camera</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="p">),</span>
+                <span class="n">ScriptComponent</span><span class="p">(</span>
+                    <span class="n">class_path</span><span class="o">=</span><span class="s2">&quot;test_games.fighter_test.src.title_screen&quot;</span><span class="p">,</span>
+                    <span class="n">class_name</span><span class="o">=</span><span class="s2">&quot;TitleScreen&quot;</span><span class="p">,</span>
+                <span class="p">),</span>
+            <span class="p">],</span>
+            <span class="n">children</span><span class="o">=</span><span class="p">[</span>
+                <span class="n">StageNode</span><span class="p">(</span>
+                    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;InstructionsText&quot;</span><span class="p">,</span>
+                    <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;TextLabel&quot;</span><span class="p">,</span>
+                    <span class="n">tags</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">external_node_source</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">components</span><span class="o">=</span><span class="p">[</span>
+                        <span class="n">Transform2DComponent</span><span class="p">(</span>
+                            <span class="n">position</span><span class="o">=</span><span class="n">Vector2</span><span class="p">(</span><span class="mf">130.0</span><span class="p">,</span> <span class="mf">200.0</span><span class="p">),</span>
+                            <span class="n">scale</span><span class="o">=</span><span class="n">Vector2</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>
+                            <span class="n">rotation</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                            <span class="n">z_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                            <span class="n">z_index_relative_to_parent</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                            <span class="n">ignore_camera</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                        <span class="p">),</span>
+                        <span class="n">TextLabelComponent</span><span class="p">(</span>
+                            <span class="n">uid</span><span class="o">=</span><span class="s2">&quot;fight-64&quot;</span><span class="p">,</span>
+                            <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Press Enter to Play!&quot;</span><span class="p">,</span>
+                            <span class="n">color</span><span class="o">=</span><span class="n">Color</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+                        <span class="p">),</span>
+                    <span class="p">],</span>
+                    <span class="n">children</span><span class="o">=</span><span class="p">[],</span>
+                <span class="p">),</span>
+                <span class="n">StageNode</span><span class="p">(</span>
+                    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;ModeText&quot;</span><span class="p">,</span>
+                    <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;TextLabel&quot;</span><span class="p">,</span>
+                    <span class="n">tags</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">external_node_source</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">components</span><span class="o">=</span><span class="p">[</span>
+                        <span class="n">Transform2DComponent</span><span class="p">(</span>
+                            <span class="n">position</span><span class="o">=</span><span class="n">Vector2</span><span class="p">(</span><span class="mf">80.0</span><span class="p">,</span> <span class="mf">300.0</span><span class="p">),</span>
+                            <span class="n">scale</span><span class="o">=</span><span class="n">Vector2</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>
+                            <span class="n">rotation</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                            <span class="n">z_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                            <span class="n">z_index_relative_to_parent</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                            <span class="n">ignore_camera</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                        <span class="p">),</span>
+                        <span class="n">TextLabelComponent</span><span class="p">(</span>
+                            <span class="n">uid</span><span class="o">=</span><span class="s2">&quot;fight-64&quot;</span><span class="p">,</span>
+                            <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Mode:&quot;</span><span class="p">,</span>
+                            <span class="n">color</span><span class="o">=</span><span class="n">Color</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+                        <span class="p">),</span>
+                    <span class="p">],</span>
+                    <span class="n">children</span><span class="o">=</span><span class="p">[],</span>
+                <span class="p">),</span>
+                <span class="n">StageNode</span><span class="p">(</span>
+                    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;ConnectText&quot;</span><span class="p">,</span>
+                    <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;TextLabel&quot;</span><span class="p">,</span>
+                    <span class="n">tags</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">external_node_source</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">components</span><span class="o">=</span><span class="p">[</span>
+                        <span class="n">Transform2DComponent</span><span class="p">(</span>
+                            <span class="n">position</span><span class="o">=</span><span class="n">Vector2</span><span class="p">(</span><span class="mf">60.0</span><span class="p">,</span> <span class="mf">390.0</span><span class="p">),</span>
+                            <span class="n">scale</span><span class="o">=</span><span class="n">Vector2</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>
+                            <span class="n">rotation</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                            <span class="n">z_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                            <span class="n">z_index_relative_to_parent</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                            <span class="n">ignore_camera</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                        <span class="p">),</span>
+                        <span class="n">TextLabelComponent</span><span class="p">(</span>
+                            <span class="n">uid</span><span class="o">=</span><span class="s2">&quot;fight-64&quot;</span><span class="p">,</span>
+                            <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Waiting for connection...&quot;</span><span class="p">,</span>
+                            <span class="n">color</span><span class="o">=</span><span class="n">Color</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                        <span class="p">),</span>
+                    <span class="p">],</span>
+                    <span class="n">children</span><span class="o">=</span><span class="p">[],</span>
+                <span class="p">),</span>
+            <span class="p">],</span>
+        <span class="p">)</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+</code></pre></div></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+                <p>Copyright &copy; 2022 Chukobyte</p>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js" defer></script>
+        <script src="../../search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>
