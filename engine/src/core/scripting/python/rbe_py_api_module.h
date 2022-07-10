@@ -48,6 +48,7 @@ PyObject* rbe_py_api_audio_manager_stop_sound(PyObject* self, PyObject* args, Py
 
 // Node
 PyObject* rbe_py_api_node_new(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* rbe_py_api_node_queue_deletion(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* rbe_py_api_node_add_child(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* rbe_py_api_node_get_child(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* rbe_py_api_node_get_children(PyObject* self, PyObject* args, PyObject* kwargs);
@@ -214,6 +215,10 @@ static struct PyMethodDef rbePyApiMethods[] = {
     {
         "node_new", (PyCFunction) rbe_py_api_node_new,
         METH_VARARGS | METH_KEYWORDS, "Creates a new node."
+    },
+    {
+        "node_queue_deletion", (PyCFunction) rbe_py_api_node_queue_deletion,
+        METH_VARARGS | METH_KEYWORDS, "Queues a node for deletion."
     },
     {
         "node_add_child", (PyCFunction) rbe_py_api_node_add_child,

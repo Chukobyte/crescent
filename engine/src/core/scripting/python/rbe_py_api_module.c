@@ -702,6 +702,15 @@ PyObject* rbe_py_api_node_new(PyObject* self, PyObject* args, PyObject* kwargs) 
     return NULL;
 }
 
+PyObject* rbe_py_api_node_queue_deletion(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", rbePyApiGenericGetEntityKWList, &entity)) {
+        rbe_scene_manager_queue_entity_for_deletion(entity);
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
 PyObject* rbe_py_api_node_add_child(PyObject* self, PyObject* args, PyObject* kwargs) {
     Entity parentEntity;
     Entity entity;
