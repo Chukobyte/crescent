@@ -1,2 +1,0 @@
-from now on all the animations are going to be in separate folders you can remove the spritesheet animations once you implement the animations from folders in
-its just so stuff doesnt break:)
