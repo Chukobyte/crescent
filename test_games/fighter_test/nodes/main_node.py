@@ -24,7 +24,7 @@ create_stage_nodes(
             children=[
                 StageNode(
                     name="PlayerOne",
-                    type="Sprite",
+                    type="AnimatedSprite",
                     tags=None,
                     external_node_source=None,
                     components=[
@@ -131,7 +131,7 @@ create_stage_nodes(
                 ),
                 StageNode(
                     name="PlayerTwo",
-                    type="Sprite",
+                    type="AnimatedSprite",
                     tags=None,
                     external_node_source=None,
                     components=[

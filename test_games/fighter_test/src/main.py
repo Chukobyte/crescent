@@ -104,10 +104,10 @@ class Main(Node2D):
         # print(f"[PY_SCRIPT] children = {self.get_children()}")
 
         # Attack spawning test
-        # attack = Attack.new()
-        # print(f"[PY_SCRIPT] attack = {attack}")
-        # attack.position = Vector2(300, 200)
-        # self.add_child(attack)
+        attack = Attack.new()
+        print(f"[PY_SCRIPT] attack = {attack}")
+        attack.position = Vector2(300, 200)
+        self.add_child(attack)
 
         self.game_state = GameState()
 
