@@ -1,4 +1,7 @@
+from typing import Coroutine
+
 from crescent_api import *
+from test_games.fighter_test.src.task import *
 from test_games.fighter_test.src.hit_box import Attack
 from test_games.fighter_test.src.input import *
 from test_games.fighter_test.src.game_state import *
@@ -18,17 +21,30 @@ class Fighter:
         self.input_buffer.process_inputs()
 
 
+class AttackRef:
+    def __init__(self, attack: Attack, update_task: Coroutine):
+        self.attack = attack
+        self.update_task = update_task
+
+
 class FighterSimulation:
     def __init__(self):
         self.fighters = []
         self.network_receiving_fighters = []
+        self.active_attacks = []
 
-    def add_fighter(self, fighter: Fighter):
+    def add_fighter(self, fighter: Fighter) -> None:
         self.fighters.append(fighter)
         if isinstance(fighter.input_buffer, NetworkReceiverInputBuffer):
             self.network_receiving_fighters.append(fighter)
 
+    def add_attack(self, attack: Attack) -> None:
+        self.active_attacks.append(
+            AttackRef(attack=attack, update_task=attack.update_task(0.1))
+        )
+
     def update(self, delta_time: float) -> None:
+        # Move fighters
         for fighter in self.fighters:
             fighter.input_buffer.process_inputs()
             if fighter.input_buffer.move_left_pressed:
@@ -43,6 +59,7 @@ class FighterSimulation:
                 fighter.node.add_to_position(fighter.velocity * delta_vector)
                 fighter.velocity = Vector2.ZERO()
 
+        # Kill inputs on network input buffers
         for receiver_fighter in self.network_receiving_fighters:
             receiver_fighter.input_buffer.kill_inputs()
 
@@ -53,6 +70,17 @@ class FighterSimulation:
         for entity in collided_entities:
             print(f"Entities collided!")
             break
+
+        # Attack test
+        for attack in self.active_attacks:
+            try:
+                awaitable = attack.update_task.send(None)
+                if awaitable.state == Awaitable.State.FINISHED:
+                    raise StopIteration
+            except StopIteration:
+                attack.attack.queue_deletion()
+                self.active_attacks.remove(attack)
+                continue
 
     def on_entities_collided(
         self, collider: Collider2D, collided_entities: list
@@ -104,10 +132,10 @@ class Main(Node2D):
         # print(f"[PY_SCRIPT] children = {self.get_children()}")
 
         # Attack spawning test
-        # attack = Attack.new()
-        # print(f"[PY_SCRIPT] attack = {attack}")
-        # attack.position = Vector2(300, 200)
-        # self.add_child(attack)
+        attack = Attack.new()
+        print(f"[PY_SCRIPT] attack = {attack}")
+        attack.position = Vector2(300, 200)
+        self.add_child(attack)
 
         self.game_state = GameState()
 
@@ -141,6 +169,8 @@ class Main(Node2D):
         self.fight_sim.add_fighter(
             Fighter(player_two_node, player_two_collider, player_two_input)
         )
+
+        self.fight_sim.add_attack(attack)
 
         # Network
         is_network_enabled = (

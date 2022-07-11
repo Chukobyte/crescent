@@ -834,6 +834,10 @@ class Sprite(Node2D):
         )
 
 
+class AnimatedSprite(Node2D):
+    pass
+
+
 class TextLabel(Node2D):
     @property
     def text(self) -> str:

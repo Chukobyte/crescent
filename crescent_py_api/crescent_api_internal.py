@@ -125,6 +125,10 @@ def node_new(class_path: str, class_name: str, node_type: str):
     return None
 
 
+def node_queue_deletion(entity_id: int) -> None:
+    pass
+
+
 def node_add_child(parent_entity_id: int, child_entity_id: int) -> None:
     pass
 

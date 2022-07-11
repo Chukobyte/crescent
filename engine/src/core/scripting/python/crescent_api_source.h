@@ -873,6 +873,10 @@
 "        )\n"\
 "\n"\
 "\n"\
+"class AnimatedSprite(Node2D):\n"\
+"    pass\n"\
+"\n"\
+"\n"\
 "class TextLabel(Node2D):\n"\
 "    @property\n"\
 "    def text(self) -> str:\n"\

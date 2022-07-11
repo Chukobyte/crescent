@@ -23,8 +23,8 @@ CollisionResult rbe_collision_process_entity_collisions(Entity entity) {
         if (entity == otherEntity || is_entity_in_collision_exceptions(otherEntity, colliderComponent)) {
             continue;
         }
-        Transform2DComponent* otherTransformComponent = component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
-        Collider2DComponent* otherColliderComponent = component_manager_get_component(entity, ComponentDataIndex_COLLIDER_2D);
+        Transform2DComponent* otherTransformComponent = component_manager_get_component(otherEntity, ComponentDataIndex_TRANSFORM_2D);
+        Collider2DComponent* otherColliderComponent = component_manager_get_component(otherEntity, ComponentDataIndex_COLLIDER_2D);
         Rect2 otherCollisionRect = get_collision_rectangle(otherEntity, otherTransformComponent, otherColliderComponent);
         if (does_rectangles_collide(&sourceCollisionRect, &otherCollisionRect)) {
             collisionResult.collidedEntities[collisionResult.collidedEntityCount++] = otherEntity;
