@@ -1,6 +1,7 @@
-from typing import Awaitable
+from typing import Coroutine
 
 from crescent_api import *
+from test_games.fighter_test.src.task import *
 from test_games.fighter_test.src.hit_box import Attack
 from test_games.fighter_test.src.input import *
 from test_games.fighter_test.src.game_state import *
@@ -21,7 +22,7 @@ class Fighter:
 
 
 class AttackRef:
-    def __init__(self, attack: Attack, update_task: Awaitable):
+    def __init__(self, attack: Attack, update_task: Coroutine):
         self.attack = attack
         self.update_task = update_task
 
@@ -73,7 +74,9 @@ class FighterSimulation:
         # Attack test
         for attack in self.active_attacks:
             try:
-                has_completed = attack.update_task.__next__()
+                awaitable = attack.update_task.send(None)
+                if awaitable.state == Awaitable.State.FINISHED:
+                    raise StopIteration
             except StopIteration:
                 attack.attack.queue_deletion()
                 self.active_attacks.remove(attack)

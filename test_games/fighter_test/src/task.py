@@ -42,7 +42,9 @@ async def co_wait_until(predicate: [Callable, Coroutine]):
         except StopIteration:
             pass
     else:
-        raise Exception(f"Didn't pass in a Callable or Coroutine into co_wait_until! predicate = {str(predicate)}")
+        raise Exception(
+            f"Didn't pass in a Callable or Coroutine into co_wait_until! predicate = {str(predicate)}"
+        )
 
 
 async def co_wait_seconds(seconds: float):
