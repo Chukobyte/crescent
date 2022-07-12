@@ -35,7 +35,12 @@ void sprite_rendering_system_render() {
         const Transform2DComponent* spriteTransformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
         const SpriteComponent* spriteComponent = (SpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_SPRITE);
         const RBECamera2D* renderCamera = spriteTransformComp->ignoreCamera ? defaultCamera : camera2D;
-        const Vector2 drawPosition = { .x = spriteTransformComp->position.x + parentTransform.position.x, .y = spriteTransformComp->position.y + parentTransform.position.y };
+        const Vector2 spriteOrigin = { .x = spriteComponent->origin.x * spriteTransformComp->scale.x * parentTransform.scale.x,
+                                       .y = spriteComponent->origin.y * spriteTransformComp->scale.y * parentTransform.scale.y
+                                     };
+        const Vector2 drawPosition = { .x = spriteTransformComp->position.x - spriteOrigin.x + parentTransform.position.x,
+                                       .y = spriteTransformComp->position.y - spriteOrigin.y + parentTransform.position.y
+                                     };
 
         const Rect2 destinationRectangle = {
             (drawPosition.x - renderCamera->viewport.x + renderCamera->offset.x) * renderCamera->zoom.x,

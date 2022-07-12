@@ -560,12 +560,14 @@
 "        self,\n"\
 "        texture_path: str,\n"\
 "        draw_source: Rect2,\n"\
-"        flip_x: bool,\n"\
-"        flip_y: bool,\n"\
-"        modulate: Color,\n"\
+"        origin=Vector2.ZERO(),\n"\
+"        flip_x=False,\n"\
+"        flip_y=False,\n"\
+"        modulate=Color(255, 255, 255),\n"\
 "    ):\n"\
 "        self.texture_path = texture_path\n"\
 "        self.draw_source = draw_source\n"\
+"        self.origin = origin\n"\
 "        self.flip_x = flip_x\n"\
 "        self.flip_y = flip_y\n"\
 "        self.modulate = modulate\n"\
@@ -577,12 +579,14 @@
 "        current_animation_name: str,\n"\
 "        is_playing: bool,\n"\
 "        animations: list,\n"\
+"        origin=Vector2.ZERO(),\n"\
 "        flip_x=False,\n"\
 "        flip_y=False,\n"\
 "    ):\n"\
 "        self.current_animation_name = current_animation_name\n"\
 "        self.is_playing = is_playing\n"\
 "        self.animations = animations\n"\
+"        self.origin = origin\n"\
 "        self.flip_x = flip_x\n"\
 "        self.flip_y = flip_y\n"\
 "\n"\

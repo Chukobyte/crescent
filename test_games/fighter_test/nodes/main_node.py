@@ -29,7 +29,7 @@ create_stage_nodes(
                     external_node_source=None,
                     components=[
                         Transform2DComponent(
-                            position=Vector2(200.0, 260.0),
+                            position=Vector2(200.0, 368.0),
                             scale=Vector2(4.0, 4.0),
                             rotation=0.0,
                             z_index=0,
@@ -39,6 +39,7 @@ create_stage_nodes(
                         AnimatedSpriteComponent(
                             current_animation_name="walk",
                             is_playing=True,
+                            origin=Vector2(24, 27),
                             animations=[
                                 Animation(
                                     name="walk",
@@ -113,7 +114,7 @@ create_stage_nodes(
                             external_node_source=None,
                             components=[
                                 Transform2DComponent(
-                                    position=Vector2(64.0, 80.0),
+                                    position=Vector2(-24.0, -27.0),
                                     scale=Vector2(1.0, 1.0),
                                     rotation=0.0,
                                     z_index=0,

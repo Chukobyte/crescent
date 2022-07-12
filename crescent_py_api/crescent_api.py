@@ -521,12 +521,14 @@ class SpriteComponent:
         self,
         texture_path: str,
         draw_source: Rect2,
-        flip_x: bool,
-        flip_y: bool,
-        modulate: Color,
+        origin=Vector2.ZERO(),
+        flip_x=False,
+        flip_y=False,
+        modulate=Color(255, 255, 255),
     ):
         self.texture_path = texture_path
         self.draw_source = draw_source
+        self.origin = origin
         self.flip_x = flip_x
         self.flip_y = flip_y
         self.modulate = modulate
@@ -538,12 +540,14 @@ class AnimatedSpriteComponent:
         current_animation_name: str,
         is_playing: bool,
         animations: list,
+        origin=Vector2.ZERO(),
         flip_x=False,
         flip_y=False,
     ):
         self.current_animation_name = current_animation_name
         self.is_playing = is_playing
         self.animations = animations
+        self.origin = origin
         self.flip_x = flip_x
         self.flip_y = flip_y
 

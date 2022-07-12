@@ -15,6 +15,8 @@ AnimatedSpriteComponent* animated_sprite_component_create() {
     animatedSpriteComponent->modulate.b = 1.0f;
     animatedSpriteComponent->modulate.a = 1.0f;
     animatedSpriteComponent->currentAnimation.isValid = false;
+    animatedSpriteComponent->origin.x = 0.0f;
+    animatedSpriteComponent->origin.y = 0.0f;
     animatedSpriteComponent->isPlaying = false;
     animatedSpriteComponent->flipX = false;
     animatedSpriteComponent->flipY = false;

@@ -15,6 +15,7 @@ typedef struct AnimatedSpriteComponent {
     size_t animationCount;
     Color modulate;
     bool isPlaying;
+    Vector2 origin;
     bool flipX;
     bool flipY;
     uint32_t startAnimationTickTime;

@@ -8,6 +8,7 @@
 typedef struct SpriteComponent {
     Texture* texture;
     Rect2 drawSource;
+    Vector2 origin;
     bool flipX;
     bool flipY;
     Color modulate;
