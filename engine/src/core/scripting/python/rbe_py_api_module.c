@@ -304,6 +304,9 @@ void setup_scene_component_node(Entity entity, PyObject* component) {
         const float drawSourceY = phy_get_float_from_var(pDrawSource, "y");
         const float drawSourceW = phy_get_float_from_var(pDrawSource, "w");
         const float drawSourceH = phy_get_float_from_var(pDrawSource, "h");
+        PyObject* pOrigin = PyObject_GetAttrString(component, "origin");
+        const float originX = phy_get_float_from_var(pOrigin, "x");
+        const float originY = phy_get_float_from_var(pOrigin, "y");
         const bool flipX = phy_get_bool_from_var(component, "flip_x");
         const bool flipY = phy_get_bool_from_var(component, "flip_y");
         PyObject* pModulate = PyObject_GetAttrString(component, "modulate");
@@ -318,6 +321,8 @@ void setup_scene_component_node(Entity entity, PyObject* component) {
         spriteComponent->drawSource.y = drawSourceY;
         spriteComponent->drawSource.w = drawSourceW;
         spriteComponent->drawSource.h = drawSourceH;
+        spriteComponent->origin.x = originX;
+        spriteComponent->origin.y = originY;
         spriteComponent->flipX = flipX;
         spriteComponent->flipY = flipY;
         const Color modulateColor = rbe_color_get_normalized_color(modulateR, modulateG, modulateB, modulateA);
@@ -326,19 +331,26 @@ void setup_scene_component_node(Entity entity, PyObject* component) {
         spriteComponent->modulate.b = modulateColor.b;
         spriteComponent->modulate.a = modulateColor.a;
         component_manager_set_component(entity, ComponentDataIndex_SPRITE, spriteComponent);
-        rbe_logger_debug("texture_path = %s, draw_source = (%f, %f, %f, %f), flip_x: %d, flip_y: %d, modulate: (%d, %d, %d, %d)",
-                         texturePath, drawSourceX, drawSourceY, drawSourceW, drawSourceH, flipX, flipY, modulateR, modulateG, modulateB, modulateA);
+        rbe_logger_debug("texture_path = %s, draw_source = (%f, %f, %f, %f), origin: (%f, %f), flip_x: %d, flip_y: %d, modulate: (%d, %d, %d, %d)",
+                         texturePath, drawSourceX, drawSourceY, drawSourceW, drawSourceH, originX, originY, flipX, flipY, modulateR, modulateG, modulateB, modulateA);
         Py_DECREF(pDrawSource);
+        Py_DECREF(pOrigin);
         Py_DECREF(pModulate);
     } else if (strcmp(className, "AnimatedSpriteComponent") == 0) {
         rbe_logger_debug("Building animated sprite component");
         AnimatedSpriteComponent* animatedSpriteComponent = animated_sprite_component_create();
         const char* currentAnimationName = phy_get_string_from_var(component, "current_animation_name");
         const bool isPlaying = phy_get_bool_from_var(component, "is_playing");
+        PyObject* pOrigin = PyObject_GetAttrString(component, "origin");
+        const float originX = phy_get_float_from_var(pOrigin, "x");
+        const float originY = phy_get_float_from_var(pOrigin, "y");
         const bool flipX = phy_get_bool_from_var(component, "flip_x");
         const bool flipY = phy_get_bool_from_var(component, "flip_y");
-        rbe_logger_debug("current_animation_name: '%s', is_playing: '%d', flip_x: '%d', flip_y: '%d'", currentAnimationName, isPlaying, flipX, flipY);
+        rbe_logger_debug("current_animation_name: '%s', is_playing: '%d', origin: (%f, %f), flip_x: '%d', flip_y: '%d'",
+                         currentAnimationName, isPlaying, originX, originY, flipX, flipY);
         animatedSpriteComponent->isPlaying = isPlaying;
+        animatedSpriteComponent->origin.x = originX;
+        animatedSpriteComponent->origin.y = originY;
         animatedSpriteComponent->flipX = flipX;
         animatedSpriteComponent->flipY = flipY;
 
@@ -393,6 +405,8 @@ void setup_scene_component_node(Entity entity, PyObject* component) {
         }
 
         component_manager_set_component(entity, ComponentDataIndex_ANIMATED_SPRITE, animatedSpriteComponent);
+
+        Py_DECREF(pOrigin);
     } else if (strcmp(className, "TextLabelComponent") == 0) {
         rbe_logger_debug("Building text label component");
         const char* textLabelUID = phy_get_string_from_var(component, "uid");
