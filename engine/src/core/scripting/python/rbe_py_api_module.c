@@ -334,6 +334,7 @@ void setup_scene_component_node(Entity entity, PyObject* component) {
         rbe_logger_debug("texture_path = %s, draw_source = (%f, %f, %f, %f), origin: (%f, %f), flip_x: %d, flip_y: %d, modulate: (%d, %d, %d, %d)",
                          texturePath, drawSourceX, drawSourceY, drawSourceW, drawSourceH, originX, originY, flipX, flipY, modulateR, modulateG, modulateB, modulateA);
         Py_DECREF(pDrawSource);
+        Py_DECREF(pOrigin);
         Py_DECREF(pModulate);
     } else if (strcmp(className, "AnimatedSpriteComponent") == 0) {
         rbe_logger_debug("Building animated sprite component");
