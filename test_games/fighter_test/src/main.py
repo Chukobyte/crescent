@@ -16,19 +16,25 @@ class Fighter:
         self.input_buffer = input_buffer
         self.velocity = Vector2.ZERO()
         self.speed = 50
+        self.is_attacking = False  # Temp
 
     def update_input_state(self) -> None:
         self.input_buffer.process_inputs()
 
+    def set_is_attacking(self, value: bool) -> None:
+        self.is_attacking = value
+
 
 class AttackRef:
-    def __init__(self, attack: Attack, update_task: Coroutine):
+    def __init__(self, attack: Attack, update_task: Coroutine, on_finished_func: Callable):
         self.attack = attack
         self.update_task = update_task
+        self.on_finished_func = on_finished_func
 
 
 class FighterSimulation:
-    def __init__(self):
+    def __init__(self, main_node: Node2D):
+        self.main_node = main_node
         self.fighters = []
         self.network_receiving_fighters = []
         self.active_attacks = []
@@ -38,9 +44,9 @@ class FighterSimulation:
         if isinstance(fighter.input_buffer, NetworkReceiverInputBuffer):
             self.network_receiving_fighters.append(fighter)
 
-    def add_attack(self, attack: Attack) -> None:
+    def add_attack(self, attack: Attack, on_finished_func: Callable) -> None:
         self.active_attacks.append(
-            AttackRef(attack=attack, update_task=attack.update_task(0.1))
+            AttackRef(attack=attack, update_task=attack.update_task(0.1), on_finished_func=on_finished_func)
         )
 
     def update(self, delta_time: float) -> None:
@@ -59,7 +65,16 @@ class FighterSimulation:
                 fighter.node.add_to_position(fighter.velocity * delta_vector)
                 fighter.velocity = Vector2.ZERO()
 
-        # Kill inputs on network input buffers
+            # Attack
+            if fighter.input_buffer.light_punch_pressed and not fighter.is_attacking:
+                attack = Attack.new()
+                print(f"[PY_SCRIPT] attack = {attack}")
+                attack.position = fighter.node.position + Vector2(150, 60)
+                self.main_node.add_child(attack)
+                self.add_attack(attack, lambda: fighter.set_is_attacking(False))
+                fighter.is_attacking = True
+
+    # Kill inputs on network input buffers
         for receiver_fighter in self.network_receiving_fighters:
             receiver_fighter.input_buffer.kill_inputs()
 
@@ -78,6 +93,7 @@ class FighterSimulation:
                 if awaitable.state == Awaitable.State.FINISHED:
                     raise StopIteration
             except StopIteration:
+                attack.on_finished_func()
                 attack.attack.queue_deletion()
                 self.active_attacks.remove(attack)
                 continue
@@ -132,10 +148,10 @@ class Main(Node2D):
         # print(f"[PY_SCRIPT] children = {self.get_children()}")
 
         # Attack spawning test
-        attack = Attack.new()
-        print(f"[PY_SCRIPT] attack = {attack}")
-        attack.position = Vector2(300, 200)
-        self.add_child(attack)
+        # attack = Attack.new()
+        # print(f"[PY_SCRIPT] attack = {attack}")
+        # attack.position = Vector2(300, 200)
+        # self.add_child(attack)
 
         self.game_state = GameState()
 
@@ -162,7 +178,7 @@ class Main(Node2D):
             self.game_state.mode
         )
         # Fight Sim
-        self.fight_sim = FighterSimulation()
+        self.fight_sim = FighterSimulation(self)
         self.fight_sim.add_fighter(
             Fighter(player_one_node, player_one_collider, player_one_input)
         )
@@ -170,7 +186,7 @@ class Main(Node2D):
             Fighter(player_two_node, player_two_collider, player_two_input)
         )
 
-        self.fight_sim.add_attack(attack)
+        # self.fight_sim.add_attack(attack)
 
         # Network
         is_network_enabled = (
@@ -233,19 +249,23 @@ class Main(Node2D):
             player_one_input = InputBuffer(
                 move_left_action_name="p1_move_left",
                 move_right_action_name="p1_move_right",
+                light_punch_action_name="p1_light_punch",
             )
             player_two_input = AIInputBuffer(
                 move_left_action_name="p2_move_left",
                 move_right_action_name="p2_move_right",
+                light_punch_action_name="p2_light_punch",
             )
         elif game_mode == GameMode.LOCAL_PVP:
             player_one_input = InputBuffer(
                 move_left_action_name="p1_move_left",
                 move_right_action_name="p1_move_right",
+                light_punch_action_name="p1_light_punch",
             )
             player_two_input = InputBuffer(
                 move_left_action_name="p2_move_left",
                 move_right_action_name="p2_move_right",
+                light_punch_action_name="p2_light_punch",
             )
         elif (
             game_mode == GameMode.ONLINE_PVP_HOST
@@ -254,30 +274,36 @@ class Main(Node2D):
             player_one_input = NetworkSenderInputBuffer(
                 move_left_action_name="p1_move_left",
                 move_right_action_name="p1_move_right",
+                light_punch_action_name="p1_light_punch",
             )
             if game_mode == GameMode.ONLINE_PVP_CLIENT:
                 player_one_input.send_func = Client.send
             player_two_input = NetworkReceiverInputBuffer(
                 move_left_action_name="p2_move_left",
                 move_right_action_name="p2_move_right",
+                light_punch_action_name="p2_light_punch",
             )
         elif game_mode == GameMode.ONLINE_PVP_HOST:
             player_one_input = NetworkSenderInputBuffer(
                 move_left_action_name="p1_move_left",
                 move_right_action_name="p1_move_right",
+                light_punch_action_name="p1_light_punch",
             )
             player_two_input = NetworkReceiverInputBuffer(
                 move_left_action_name="p2_move_left",
                 move_right_action_name="p2_move_right",
+                light_punch_action_name="p2_light_punch",
             )
         elif game_mode == GameMode.ONLINE_PVP_CLIENT:
             player_two_input = NetworkSenderInputBuffer(
                 move_left_action_name="p1_move_left",
                 move_right_action_name="p1_move_right",
+                light_punch_action_name="p1_light_punch",
             )
             player_two_input.send_func = Client.send
             player_one_input = NetworkReceiverInputBuffer(
                 move_left_action_name="p2_move_left",
                 move_right_action_name="p2_move_right",
+                light_punch_action_name="p2_light_punch",
             )
         return player_one_input, player_two_input
