@@ -1,3 +1,4 @@
+RBE_PY_API_VERSION = "0.0.1"
 RBE_PY_API_SOURCE_PATH = "../crescent_api.py"
 RBE_PY_API_SOURCE_OUTPUT_PATH = (
     "../../engine/src/core/scripting/python/crescent_api_source.h"
@@ -16,7 +17,7 @@ def get_py_source_text() -> str:
 
 rbe_py_source_text = f"""#pragma once
 
-#define RBE_PY_API_SOURCE_VERSION "0.0.1"
+#define RBE_PY_API_SOURCE_VERSION "{RBE_PY_API_VERSION}"
 
 #define RBE_PY_API_SOURCE_IMPORTER ""\\
 "import sys\\n"\\
