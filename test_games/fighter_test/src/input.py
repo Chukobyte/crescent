@@ -6,7 +6,12 @@ class InputBuffer:
     Takes action names as parameters to query for input
     """
 
-    def __init__(self, move_left_action_name: str, move_right_action_name: str, light_punch_action_name: str):
+    def __init__(
+        self,
+        move_left_action_name: str,
+        move_right_action_name: str,
+        light_punch_action_name: str,
+    ):
         self._move_left = move_left_action_name
         self._move_right = move_right_action_name
         self._light_punch = light_punch_action_name
@@ -19,7 +24,11 @@ class InputBuffer:
         self.move_left_pressed = Input.is_action_pressed(name=self._move_left)
         self.move_right_pressed = Input.is_action_pressed(name=self._move_right)
         self.light_punch_pressed = Input.is_action_pressed(name=self._light_punch)
-        return self.move_left_pressed or self.move_right_pressed or self.light_punch_pressed
+        return (
+            self.move_left_pressed
+            or self.move_right_pressed
+            or self.light_punch_pressed
+        )
 
     def kill_inputs(self) -> None:
         self.move_left_pressed = False
@@ -28,8 +37,15 @@ class InputBuffer:
 
 
 class NetworkSenderInputBuffer(InputBuffer):
-    def __init__(self, move_left_action_name: str, move_right_action_name: str, light_punch_action_name: str):
-        super().__init__(move_left_action_name, move_right_action_name, light_punch_action_name)
+    def __init__(
+        self,
+        move_left_action_name: str,
+        move_right_action_name: str,
+        light_punch_action_name: str,
+    ):
+        super().__init__(
+            move_left_action_name, move_right_action_name, light_punch_action_name
+        )
         self.is_server = True
         self.send_func = Server.send
 

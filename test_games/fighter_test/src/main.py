@@ -26,10 +26,10 @@ class Fighter:
 
 
 class AttackRef:
-    def __init__(self, attack: Attack, update_task: Coroutine, on_finished_func: Callable):
+    def __init__(self, attack: Attack, update_task: Coroutine, fighter_index: int):
         self.attack = attack
         self.update_task = update_task
-        self.on_finished_func = on_finished_func
+        self.fighter_index = fighter_index
 
 
 class FighterSimulation:
@@ -44,14 +44,18 @@ class FighterSimulation:
         if isinstance(fighter.input_buffer, NetworkReceiverInputBuffer):
             self.network_receiving_fighters.append(fighter)
 
-    def add_attack(self, attack: Attack, on_finished_func: Callable) -> None:
+    def add_attack(self, attack: Attack, fighter_index: int) -> None:
         self.active_attacks.append(
-            AttackRef(attack=attack, update_task=attack.update_task(0.1), on_finished_func=on_finished_func)
+            AttackRef(
+                attack=attack,
+                update_task=attack.update_task(0.1),
+                fighter_index=fighter_index,
+            )
         )
 
     def update(self, delta_time: float) -> None:
         # Move fighters
-        for fighter in self.fighters:
+        for i, fighter in enumerate(self.fighters):
             fighter.input_buffer.process_inputs()
             if fighter.input_buffer.move_left_pressed:
                 fighter.velocity += Vector2.LEFT()
@@ -71,10 +75,10 @@ class FighterSimulation:
                 print(f"[PY_SCRIPT] attack = {attack}")
                 attack.position = fighter.node.position + Vector2(150, 60)
                 self.main_node.add_child(attack)
-                self.add_attack(attack, lambda: fighter.set_is_attacking(False))
+                self.add_attack(attack=attack, fighter_index=i)
                 fighter.is_attacking = True
 
-    # Kill inputs on network input buffers
+        # Kill inputs on network input buffers
         for receiver_fighter in self.network_receiving_fighters:
             receiver_fighter.input_buffer.kill_inputs()
 
@@ -87,15 +91,15 @@ class FighterSimulation:
             break
 
         # Attack test
-        for attack in self.active_attacks:
+        for attack_ref in self.active_attacks:
             try:
-                awaitable = attack.update_task.send(None)
+                awaitable = attack_ref.update_task.send(None)
                 if awaitable.state == Awaitable.State.FINISHED:
                     raise StopIteration
             except StopIteration:
-                attack.on_finished_func()
-                attack.attack.queue_deletion()
-                self.active_attacks.remove(attack)
+                self.fighters[attack_ref.fighter_index].is_attacking = False
+                attack_ref.attack.queue_deletion()
+                self.active_attacks.remove(attack_ref)
                 continue
 
     def on_entities_collided(
