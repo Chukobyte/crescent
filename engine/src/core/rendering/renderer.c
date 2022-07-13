@@ -119,7 +119,7 @@ void rbe_renderer_flush_batches() {
 // --- Sprite Renderer --- //
 void sprite_renderer_initialize() {
     GLfloat vertices[] = {
-        //id  // positions // texture coordinates // color
+        //id          // positions       // texture coordinates // color
         0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
         0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f,
         0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f,
@@ -172,6 +172,7 @@ void sprite_renderer_finalize() {}
 
 void sprite_renderer_draw_sprite(const Texture* texture, const Rect2* sourceRect, const Rect2* destRect, float rotation, const Color* color, bool flipX, bool flipY) {
     glDepthMask(false);
+    const Vector2 absScale = {fabs(destRect->w), fabs(destRect->h) };
     // 1. Translation
     mat4 model = {
         {1.0f, 0.0f, 0.0f, 0.0f},
@@ -184,14 +185,14 @@ void sprite_renderer_draw_sprite(const Texture* texture, const Rect2* sourceRect
     });
     // 2. Rotation
     glm_translate(model, (vec3) {
-        0.5f * destRect->w, 0.5f * destRect->h, 0.0f
+        0.5f * absScale.x, 0.5f * absScale.y, 0.0f
     });
     glm_make_rad(&rotation);
     glm_rotate(model, rotation, (vec3) {
         0.0f, 0.0f, 1.0f
     });
     glm_translate(model, (vec3) {
-        -0.5f * destRect->w, -0.5f * destRect->h, 0.0f
+        -0.5f * absScale.x, -0.5f * absScale.y, 0.0f
         });
     // 3. Scaling
     glm_scale(model, (vec3) {
@@ -211,8 +212,15 @@ void sprite_renderer_draw_sprite(const Texture* texture, const Rect2* sourceRect
     const int vertsStride = 9;
     GLfloat verts[54]; // TODO: fix magic number
     for (int i = 0; i < VERTEX_ITEM_COUNT * NUMBER_OF_VERTICES; i++) {
-        const bool isSMin = i == 0 || i == 2 || i == 3 ? true : false;
-        const bool isTMin = i == 1 || i == 2 || i == 5 ? true : false;
+        bool isSMin;
+        bool isTMin;
+        if ((destRect->w > 0.0f && destRect->h > 0.0f) || (destRect->w < 0.0f && destRect->h < 0.0f)) {
+            isSMin = i == 0 || i == 2 || i == 3 ? true : false;
+            isTMin = i == 1 || i == 2 || i == 5 ? true : false;
+        } else {
+            isSMin = i == 1 || i == 2 || i == 5 ? true : false;
+            isTMin = i == 0 || i == 2 || i == 3 ? true : false;
+        }
         const int row = i * vertsStride;
         verts[row + 0] = SPRITE_ID;
         verts[row + 1] = isSMin ? 0.0f : 1.0f;
