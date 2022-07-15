@@ -305,6 +305,9 @@ void rbe_scene_graph_test() {
     TEST_ASSERT_EQUAL_FLOAT(childOneScale.x, 4.0f);
     TEST_ASSERT_EQUAL_FLOAT(childOneScale.y, 4.0f);
 
+    Transform2DComponent childOneCombinedTransform = rbe_scene_manager_get_scene_graph_transform(childOneEntity);
+    transform2d_component_print(&childOneCombinedTransform);
+
     component_manager_finalize();
     rbe_scene_manager_finalize();
 }

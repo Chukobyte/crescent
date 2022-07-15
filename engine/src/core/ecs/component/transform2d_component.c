@@ -1,5 +1,6 @@
 #include "transform2d_component.h"
 
+#include "../../utils/logger.h"
 #include "../../memory/rbe_mem.h"
 
 Transform2DComponent* transform2d_component_create() {
@@ -52,3 +53,10 @@ float transform2d_component_get_rotation_deg_from_model(mat4 model) {
     const float axisY = RBE_RAD_2_DEG * atan2f(-model[0][2], sqrtf(model[1][2] * model[1][2] + model[2][2] * model[2][2]));
     return (atan2f(axisY, axisX) / RBE_PI) * 180.0f;
 }
+
+void transform2d_component_print(Transform2DComponent* transform2DComponent) {
+    rbe_logger_print_err("{ position: (%f, %f), scale: (%f, %f), rotation: %f }",
+                         transform2DComponent->position.x, transform2DComponent->position.y,
+                         transform2DComponent->scale.x, transform2DComponent->scale.y, transform2DComponent->rotation);
+}
+
