@@ -288,6 +288,7 @@ void setup_scene_component_node(Entity entity, PyObject* component) {
         transform2DComponent->position.y = positionY;
         transform2DComponent->scale.x = scaleX;
         transform2DComponent->scale.y = scaleY;
+        transform2DComponent->rotation = rotation;
         transform2DComponent->zIndex = zIndex;
         transform2DComponent->isZIndexRelativeToParent = zIndexRelativeToParent;
         transform2DComponent->ignoreCamera = ignoreCamera;
