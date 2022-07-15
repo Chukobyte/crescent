@@ -25,7 +25,7 @@ void transform2d_component_get_local_model_matrix(mat4 model, Transform2DCompone
     float rotation = transform2DComponent->rotation;
     glm_make_rad(&rotation);
     glm_rotate(model, rotation, (vec3) {
-            0.0f, 0.0f, 1.0f
+        0.0f, 0.0f, 1.0f
     });
     // 3. Scaling
     glm_scale(model, (vec3) {
@@ -37,4 +37,12 @@ void transform2d_component_get_local_model_matrix(mat4 model, Transform2DCompone
 Vector2 transform2d_component_get_position_from_model(mat4 model) {
     Vector2 position = { .x=model[3][0], .y=model[3][1] };
     return position;
+}
+
+Vector2 transform2d_component_get_scale_from_model(mat4 model) {
+    Vector2 magnitude = {
+        .x = sqrt(model[0][0] * model[0][0] + model[0][1] * model[0][1] + model[0][2] * model[0][2] + model[0][3] * model[0][3]),
+        .y = sqrt(model[1][0] * model[1][0] + model[1][1] * model[1][1] + model[1][2] * model[1][2] + model[1][3] * model[1][3])
+    };
+    return magnitude;
 }

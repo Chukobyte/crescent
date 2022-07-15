@@ -208,6 +208,20 @@ void rbe_scene_manager_get_combined_model(Entity entity, mat4 model) {
     }
 }
 
+Transform2DComponent rbe_scene_manager_get_scene_graph_transform(Entity entity) {
+    mat4 model;
+    rbe_scene_manager_get_combined_model(entity, model);
+    Transform2DComponent transform2DComponent = {
+            .position = transform2d_component_get_position_from_model(model),
+            .scale = transform2d_component_get_scale_from_model(model),
+            .rotation = 0.0f,
+            .zIndex = 0,
+            .isZIndexRelativeToParent = true,
+            .ignoreCamera = false
+    };
+    return transform2DComponent;
+}
+
 SceneTreeNode* rbe_scene_manager_get_entity_tree_node(Entity entity) {
     RBE_ASSERT_FMT(rbe_hash_map_has(entityToTreeNodeMap, &entity), "Doesn't have entity '%d' in scene tree!", entity);
     SceneTreeNode* treeNode = (SceneTreeNode*) rbe_hash_map_get(entityToTreeNodeMap, &entity);

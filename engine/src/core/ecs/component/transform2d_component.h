@@ -19,3 +19,4 @@ typedef struct Transform2DComponent {
 Transform2DComponent* transform2d_component_create();
 void transform2d_component_get_local_model_matrix(mat4 model, Transform2DComponent* transform2DComponent);
 Vector2 transform2d_component_get_position_from_model(mat4 model);
+Vector2 transform2d_component_get_scale_from_model(mat4 model);

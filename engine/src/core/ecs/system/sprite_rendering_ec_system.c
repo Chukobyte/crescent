@@ -31,7 +31,7 @@ void sprite_rendering_system_render() {
 
     for (size_t i = 0; i < spriteRenderingSystem->entity_count; i++) {
         const Entity entity = spriteRenderingSystem->entities[i];
-        const Transform2DComponent parentTransform = rbe_scene_manager_get_combined_parent_transform(entity);
+//        const Transform2DComponent parentTransform = rbe_scene_manager_get_combined_parent_transform(entity);
         const Transform2DComponent* spriteTransformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
         const SpriteComponent* spriteComponent = (SpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_SPRITE);
         const RBECamera2D* renderCamera = spriteTransformComp->ignoreCamera ? defaultCamera : camera2D;
@@ -42,16 +42,19 @@ void sprite_rendering_system_render() {
 //                                       .y = spriteTransformComp->position.y - spriteOrigin.y + parentTransform.position.y
 //                                     };
 
-        mat4 model;
-        rbe_scene_manager_get_combined_model(entity, model);
-        const Vector2 drawPosition = transform2d_component_get_position_from_model(model);
-
+        const Transform2DComponent combinedTransform = rbe_scene_manager_get_scene_graph_transform(entity);
         const Rect2 destinationRectangle = {
-            (drawPosition.x - renderCamera->viewport.x + renderCamera->offset.x) * renderCamera->zoom.x,
-            (drawPosition.y - renderCamera->viewport.y + renderCamera->offset.y) * renderCamera->zoom.y,
-            spriteComponent->drawSource.w * spriteTransformComp->scale.x * parentTransform.scale.x * renderCamera->zoom.x,
-            spriteComponent->drawSource.h * spriteTransformComp->scale.y * parentTransform.scale.y * renderCamera->zoom.y
+            (combinedTransform.position.x - renderCamera->viewport.x + renderCamera->offset.x) * renderCamera->zoom.x,
+            (combinedTransform.position.y - renderCamera->viewport.y + renderCamera->offset.y) * renderCamera->zoom.y,
+            spriteComponent->drawSource.w * combinedTransform.scale.x * renderCamera->zoom.x,
+            spriteComponent->drawSource.h * combinedTransform.scale.y * renderCamera->zoom.y
         };
+//        const Rect2 destinationRectangle = {
+//                (drawPosition.x - renderCamera->viewport.x + renderCamera->offset.x) * renderCamera->zoom.x,
+//                (drawPosition.y - renderCamera->viewport.y + renderCamera->offset.y) * renderCamera->zoom.y,
+//                spriteComponent->drawSource.w * spriteTransformComp->scale.x * parentTransform.scale.x * renderCamera->zoom.x,
+//                spriteComponent->drawSource.h * spriteTransformComp->scale.y * parentTransform.scale.y * renderCamera->zoom.y
+//        };
         rbe_renderer_queue_sprite_draw_call(
             spriteComponent->texture,
             spriteComponent->drawSource,
