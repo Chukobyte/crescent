@@ -5,6 +5,9 @@
 #include <unity.h>
 
 #include "../core/memory/rbe_mem.h"
+#include "../core/scene/scene_manager.h"
+#include "../core/ecs/component/component.h"
+#include "../core/ecs/component/transform2d_component.h"
 #include "../core/data_structures/rbe_hash_map.h"
 #include "../core/data_structures/rbe_hash_map_string.h"
 #include "../core/data_structures/rbe_array_list.h"
@@ -17,19 +20,20 @@ void rbe_hash_main_test();
 void rbe_string_hashmap_test();
 void rbe_static_array_test();
 void rbe_array_list_test();
-
 void rbe_thread_main_test();
+void rbe_scene_graph_test();
 
 void setUp() {}
 void tearDown() {}
 
 int main(int argv, char** args) {
     UNITY_BEGIN();
-    RUN_TEST(rbe_hash_main_test);
-    RUN_TEST(rbe_string_hashmap_test);
-    RUN_TEST(rbe_array_list_test);
-    RUN_TEST(rbe_static_array_test);
-    RUN_TEST(rbe_thread_main_test);
+//    RUN_TEST(rbe_hash_main_test);
+//    RUN_TEST(rbe_string_hashmap_test);
+//    RUN_TEST(rbe_array_list_test);
+//    RUN_TEST(rbe_static_array_test);
+//    RUN_TEST(rbe_thread_main_test);
+    RUN_TEST(rbe_scene_graph_test);
     return UNITY_END();
 }
 
@@ -248,4 +252,53 @@ void rbe_thread_main_test() {
 
     free(vals);
     tpool_destroy(tp);
+}
+
+void rbe_scene_graph_test() {
+    rbe_scene_manager_initialize();
+    component_manager_initialize();
+
+    // Parent
+    Entity parentEntity = 1;
+    Transform2DComponent* parentTransform = transform2d_component_create();
+    parentTransform->position.x = 220.0f;
+    parentTransform->position.y = 300.0f;
+    parentTransform->rotation = 180.0f;
+    component_manager_set_component(parentEntity, ComponentDataIndex_TRANSFORM_2D, parentTransform);
+    SceneTreeNode* parentNode = rbe_scene_tree_create_tree_node(parentEntity, NULL);
+    rbe_scene_manager_queue_entity_for_creation(parentNode);
+
+    mat4 parentModel;
+    transform2d_component_get_local_model_matrix(parentModel, parentTransform);
+    glm_mat4_print(parentModel, stdout);
+    // Child 1
+    Entity childOneEntity = 2;
+    Transform2DComponent* childOneTransform = transform2d_component_create();
+    childOneTransform->position.x = 100.0f;
+    childOneTransform->position.y = 20.0f;
+    component_manager_set_component(childOneEntity, ComponentDataIndex_TRANSFORM_2D, childOneTransform);
+    SceneTreeNode* childOneNode = rbe_scene_tree_create_tree_node(childOneEntity, parentNode);
+    rbe_scene_manager_queue_entity_for_creation(childOneNode);
+
+    mat4 childOneModel;
+    transform2d_component_get_local_model_matrix(childOneModel, childOneTransform);
+    // Multiply with parent to get world space
+//    glm_mat4_mul(childOneModel, parentModel, childOneModel);
+    glm_mat4_mul(parentModel, childOneModel, childOneModel);
+    glm_mat4_print(childOneModel, stdout);
+
+    Vector2 childTranslatedPos = transform2d_component_get_position_from_model(childOneModel);
+    TEST_ASSERT_EQUAL_FLOAT(childTranslatedPos.x, 120.0f);
+    TEST_ASSERT_EQUAL_FLOAT(childTranslatedPos.y, 280.0f);
+
+    // Scene graph model getting
+    mat4 childOneCombinedModel;
+    rbe_scene_manager_get_combined_model(childOneEntity, childOneCombinedModel);
+    glm_mat4_print(childOneCombinedModel, stdout);
+    childTranslatedPos = transform2d_component_get_position_from_model(childOneCombinedModel);
+    TEST_ASSERT_EQUAL_FLOAT(childTranslatedPos.x, 120.0f);
+    TEST_ASSERT_EQUAL_FLOAT(childTranslatedPos.y, 280.0f);
+
+    component_manager_finalize();
+    rbe_scene_manager_finalize();
 }

@@ -181,6 +181,33 @@ Transform2DComponent rbe_scene_manager_get_combined_parent_transform(Entity enti
     return transform2DComponent;
 }
 
+void rbe_scene_manager_get_combined_model(Entity entity, mat4 model) {
+    glm_mat4_identity(model);
+    SceneTreeNode* sceneTreeNode = rbe_scene_manager_get_entity_tree_node(entity);
+    SceneTreeNode* parentTreeNode = sceneTreeNode->parent;
+    while (parentTreeNode != NULL) {
+        Transform2DComponent* parentTransform2DComponent = component_manager_get_component_unsafe(parentTreeNode->entity, ComponentDataIndex_TRANSFORM_2D);
+        // If transform 2D is missing, will continue walk up the tree.  This is to allow some flexibility in case
+        // non node2d parent child relationships are introduced.
+        if (parentTransform2DComponent == NULL) {
+            parentTreeNode = parentTreeNode->parent;
+            continue;
+        }
+        mat4 newModel;
+        transform2d_component_get_local_model_matrix(newModel, parentTransform2DComponent);
+//        glm_mat4_mul(model, newModel, model);
+        glm_mat4_mul(model, newModel, model);
+
+        parentTreeNode = parentTreeNode->parent;
+    }
+    Transform2DComponent* transform2DComponent = component_manager_get_component_unsafe(entity, ComponentDataIndex_TRANSFORM_2D);
+    if (transform2DComponent != NULL) {
+        mat4 entityModel;
+        transform2d_component_get_local_model_matrix(entityModel, transform2DComponent);
+        glm_mat4_mul(model, entityModel, model);
+    }
+}
+
 SceneTreeNode* rbe_scene_manager_get_entity_tree_node(Entity entity) {
     RBE_ASSERT_FMT(rbe_hash_map_has(entityToTreeNodeMap, &entity), "Doesn't have entity '%d' in scene tree!", entity);
     SceneTreeNode* treeNode = (SceneTreeNode*) rbe_hash_map_get(entityToTreeNodeMap, &entity);
