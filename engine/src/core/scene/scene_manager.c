@@ -195,8 +195,8 @@ void rbe_scene_manager_get_combined_model(Entity entity, mat4 model) {
         }
         mat4 newModel;
         transform2d_component_get_local_model_matrix(newModel, parentTransform2DComponent);
-//        glm_mat4_mul(model, newModel, model);
         glm_mat4_mul(model, newModel, model);
+//        glm_mat4_mul(newModel, model, model);
 
         parentTreeNode = parentTreeNode->parent;
     }
@@ -205,6 +205,7 @@ void rbe_scene_manager_get_combined_model(Entity entity, mat4 model) {
         mat4 entityModel;
         transform2d_component_get_local_model_matrix(entityModel, transform2DComponent);
         glm_mat4_mul(model, entityModel, model);
+//        glm_mat4_mul(entityModel, model, model);
     }
 }
 
@@ -212,12 +213,12 @@ Transform2DComponent rbe_scene_manager_get_scene_graph_transform(Entity entity) 
     mat4 model;
     rbe_scene_manager_get_combined_model(entity, model);
     Transform2DComponent transform2DComponent = {
-            .position = transform2d_component_get_position_from_model(model),
-            .scale = transform2d_component_get_scale_from_model(model),
-            .rotation = 0.0f,
-            .zIndex = 0,
-            .isZIndexRelativeToParent = true,
-            .ignoreCamera = false
+        .position = transform2d_component_get_position_from_model(model),
+        .scale = transform2d_component_get_scale_from_model(model),
+        .rotation = transform2d_component_get_rotation_deg_from_model(model),
+        .zIndex = 0,
+        .isZIndexRelativeToParent = true,
+        .ignoreCamera = false
     };
     return transform2DComponent;
 }

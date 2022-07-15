@@ -46,3 +46,9 @@ Vector2 transform2d_component_get_scale_from_model(mat4 model) {
     };
     return magnitude;
 }
+
+float transform2d_component_get_rotation_deg_from_model(mat4 model) {
+    const float axisX = RBE_RAD_2_DEG * atan2f(model[1][2], model[2][2]);
+    const float axisY = RBE_RAD_2_DEG * atan2f(-model[0][2], sqrtf(model[1][2] * model[1][2] + model[2][2] * model[2][2]));
+    return (atan2f(axisY, axisX) / RBE_PI) * 180.0f;
+}

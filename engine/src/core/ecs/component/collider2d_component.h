@@ -5,7 +5,7 @@
 #include "../../math/rbe_math.h"
 
 typedef struct Collider2DComponent {
-    Rect2 rect; // TODO: Default to a box, implement other colliders later...
+    Rect2 rect; // TODO: Default to a box, implement other colliders later.  Also should use extents instead of rect!
     Entity collisionExceptions[4];
     size_t collisionExceptionCount;
     Color color; // For debug purposes

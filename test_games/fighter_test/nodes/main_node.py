@@ -114,7 +114,7 @@ create_stage_nodes(
                             external_node_source=None,
                             components=[
                                 Transform2DComponent(
-                                    position=Vector2(-24.0, -27.0),
+                                    position=Vector2(0.0, 0.0),
                                     scale=Vector2(1.0, 1.0),
                                     rotation=0.0,
                                     z_index=0,
@@ -223,7 +223,7 @@ create_stage_nodes(
                             external_node_source=None,
                             components=[
                                 Transform2DComponent(
-                                    position=Vector2(24.0 * 9, -27.0),
+                                    position=Vector2(0.0, 0.0),
                                     scale=Vector2(1.0, 1.0),
                                     rotation=0.0,
                                     z_index=0,
@@ -262,49 +262,49 @@ create_stage_nodes(
                     children=[],
                 ),
                 # Negative scale testing
-                StageNode(
-                    name="TestSprite",
-                    type="Sprite",
-                    tags=None,
-                    external_node_source=None,
-                    components=[
-                        Transform2DComponent(
-                            position=Vector2(350.0, 350.0),
-                            scale=Vector2(4.0, 4.0),
-                            rotation=0.0,
-                            z_index=0,
-                            z_index_relative_to_parent=True,
-                            ignore_camera=True,
-                        ),
-                        SpriteComponent(
-                            texture_path="test_games/fighter_test/assets/images/characters/mor/mor_still.png",
-                            draw_source=Rect2(0, 0, 14, 18),
-                        ),
-                    ],
-                    children=[
-                        StageNode(
-                            name="TestSprite2",
-                            type="Sprite",
-                            tags=None,
-                            external_node_source=None,
-                            components=[
-                                Transform2DComponent(
-                                    position=Vector2(25.0, 0.0),
-                                    scale=Vector2(1.0, 1.0),
-                                    rotation=0.0,
-                                    z_index=0,
-                                    z_index_relative_to_parent=True,
-                                    ignore_camera=True,
-                                ),
-                                SpriteComponent(
-                                    texture_path="test_games/fighter_test/assets/images/characters/mor/mor_still.png",
-                                    draw_source=Rect2(0, 0, 14, 18),
-                                ),
-                            ],
-                            children=[],
-                        ),
-                    ],
-                ),
+                # StageNode(
+                #     name="TestSprite",
+                #     type="Sprite",
+                #     tags=None,
+                #     external_node_source=None,
+                #     components=[
+                #         Transform2DComponent(
+                #             position=Vector2(350.0, 350.0),
+                #             scale=Vector2(4.0, 4.0),
+                #             rotation=90.0,
+                #             z_index=0,
+                #             z_index_relative_to_parent=True,
+                #             ignore_camera=True,
+                #         ),
+                #         SpriteComponent(
+                #             texture_path="test_games/fighter_test/assets/images/characters/mor/mor_still.png",
+                #             draw_source=Rect2(0, 0, 14, 18),
+                #         ),
+                #     ],
+                #     children=[
+                #         StageNode(
+                #             name="TestSprite2",
+                #             type="Sprite",
+                #             tags=None,
+                #             external_node_source=None,
+                #             components=[
+                #                 Transform2DComponent(
+                #                     position=Vector2(25.0, 0.0),
+                #                     scale=Vector2(1.0, 1.0),
+                #                     rotation=0.0,
+                #                     z_index=0,
+                #                     z_index_relative_to_parent=True,
+                #                     ignore_camera=True,
+                #                 ),
+                #                 SpriteComponent(
+                #                     texture_path="test_games/fighter_test/assets/images/characters/mor/mor_still.png",
+                #                     draw_source=Rect2(0, 0, 14, 18),
+                #                 ),
+                #             ],
+                #             children=[],
+                #         ),
+                #     ],
+                # ),
             ],
         )
     ]

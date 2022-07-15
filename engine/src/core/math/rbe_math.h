@@ -1,10 +1,19 @@
 #pragma once
 
+#define RBE_PI 3.14159265358979323846f
+#define RBE_RAD_2_DEG (180.0f / RBE_PI)
+
 // --- Vector2 --- //
 typedef struct Vector2 {
     float x;
     float y;
 } Vector2;
+
+// --- Size2D --- //
+typedef struct Size2D {
+    float w;
+    float h;
+} Size2D;
 
 // --- Rect2 --- //
 typedef struct Rect2 {

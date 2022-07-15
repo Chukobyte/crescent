@@ -47,18 +47,15 @@ void collision_system_render() {
     const RBECamera2D* defaultCamera = rbe_camera_manager_get_default_camera();
     for (size_t i = 0; i < collisionSystem->entity_count; i++) {
         const Entity entity = collisionSystem->entities[i];
-        const Transform2DComponent parentTransform = rbe_scene_manager_get_combined_parent_transform(entity);
         const Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
         const Collider2DComponent* colliderComp = (Collider2DComponent*) component_manager_get_component(entity, ComponentDataIndex_COLLIDER_2D);
         const RBECamera2D* renderCamera = transformComp->ignoreCamera ? defaultCamera : camera2D;
-        const Vector2 drawPosition = { .x = transformComp->position.x + parentTransform.position.x + colliderComp->rect.x,
-                                       .y = transformComp->position.y + parentTransform.position.y + colliderComp->rect.y
-                                     };
+        const Transform2DComponent combinedTransform = rbe_scene_manager_get_scene_graph_transform(entity);
         const Rect2 colliderDrawDestination = {
-            (drawPosition.x - renderCamera->viewport.x + renderCamera->offset.x) * renderCamera->zoom.x,
-            (drawPosition.y - renderCamera->viewport.y + renderCamera->offset.y) * renderCamera->zoom.y,
-            parentTransform.scale.x * transformComp->scale.x * colliderComp->rect.w * renderCamera->zoom.x,
-            parentTransform.scale.y * transformComp->scale.y * colliderComp->rect.h * renderCamera->zoom.y
+            (combinedTransform.position.x - renderCamera->viewport.x + renderCamera->offset.x) * renderCamera->zoom.x,
+            (combinedTransform.position.y - renderCamera->viewport.y + renderCamera->offset.y) * renderCamera->zoom.y,
+            combinedTransform.scale.x * colliderComp->rect.w * renderCamera->zoom.x,
+            combinedTransform.scale.y * colliderComp->rect.h * renderCamera->zoom.y
         };
 
         rbe_renderer_queue_sprite_draw_call(

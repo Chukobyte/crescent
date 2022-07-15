@@ -32,7 +32,6 @@ void animated_sprite_rendering_system_render() {
     const int currentTickTime = (int) SDL_GetTicks();
     for (size_t i = 0; i < animatedSpriteRenderingSystem->entity_count; i++) {
         const Entity entity = animatedSpriteRenderingSystem->entities[i];
-        const Transform2DComponent parentTransform = rbe_scene_manager_get_combined_parent_transform(entity);
         const Transform2DComponent* spriteTransformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
         AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_ANIMATED_SPRITE);
         AnimationFrame currentFrame = animatedSpriteComponent->currentAnimation.animationFrames[animatedSpriteComponent->currentAnimation.currentFrame];
@@ -51,18 +50,12 @@ void animated_sprite_rendering_system_render() {
             }
         }
         const RBECamera2D* renderCamera = spriteTransformComp->ignoreCamera ? defaultCamera : camera2D;
-        const Vector2 spriteOrigin = { .x = animatedSpriteComponent->origin.x * spriteTransformComp->scale.x * parentTransform.scale.x,
-                                       .y = animatedSpriteComponent->origin.y * spriteTransformComp->scale.y * parentTransform.scale.y
-                                     };
-        const Vector2 drawPosition = {
-            .x = spriteTransformComp->position.x - spriteOrigin.x + parentTransform.position.x,
-            .y = spriteTransformComp->position.y - spriteOrigin.y + parentTransform.position.y
-        };
+        const Transform2DComponent combinedTransform = rbe_scene_manager_get_scene_graph_transform(entity);
         const Rect2 destinationRectangle = {
-            (drawPosition.x - renderCamera->viewport.x + renderCamera->offset.x) * renderCamera->zoom.x,
-            (drawPosition.y - renderCamera->viewport.y + renderCamera->offset.y) * renderCamera->zoom.y,
-            currentFrame.drawSource.w * spriteTransformComp->scale.x * parentTransform.scale.x * renderCamera->zoom.x,
-            currentFrame.drawSource.h * spriteTransformComp->scale.y * parentTransform.scale.y * renderCamera->zoom.y
+            (combinedTransform.position.x - renderCamera->viewport.x + renderCamera->offset.x) * renderCamera->zoom.x,
+            (combinedTransform.position.y - renderCamera->viewport.y + renderCamera->offset.y) * renderCamera->zoom.y,
+            currentFrame.drawSource.w * combinedTransform.scale.x * renderCamera->zoom.x,
+            currentFrame.drawSource.h * combinedTransform.scale.y * renderCamera->zoom.y
         };
         rbe_renderer_queue_sprite_draw_call(
             currentFrame.texture,
