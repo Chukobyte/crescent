@@ -61,7 +61,7 @@ void animated_sprite_rendering_system_render() {
             currentFrame.texture,
             currentFrame.drawSource,
             destinationRectangle,
-            spriteTransformComp->rotation,
+            combinedTransform.rotation,
             animatedSpriteComponent->modulate,
             animatedSpriteComponent->flipX,
             animatedSpriteComponent->flipY

@@ -233,6 +233,11 @@ class Main(Node2D):
         if Input.is_action_pressed("camera_down"):
             Camera2D.add_to_position(Vector2.DOWN() * camera_speed)
 
+        if Input.is_action_pressed("rotate_pos"):
+            self.fight_sim.fighters[0].node.add_to_rotation(1)
+        if Input.is_action_pressed("rotate_neg"):
+            self.fight_sim.fighters[0].node.add_to_rotation(-1)
+
         self.fight_sim.update(delta_time)
 
     def _network_server_callback(self, message: str) -> None:

@@ -45,7 +45,7 @@ void sprite_rendering_system_render() {
             spriteComponent->texture,
             spriteComponent->drawSource,
             destinationRectangle,
-            spriteTransformComp->rotation,
+            combinedTransform.rotation,
             spriteComponent->modulate,
             spriteComponent->flipX,
             spriteComponent->flipY

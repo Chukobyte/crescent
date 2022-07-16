@@ -62,7 +62,7 @@ void collision_system_render() {
             collisionOutlineTexture,
             colliderDrawSource,
             colliderDrawDestination,
-            transformComp->rotation,
+            combinedTransform.rotation,
             colliderComp->color,
             false,
             false

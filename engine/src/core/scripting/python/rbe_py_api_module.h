@@ -58,6 +58,9 @@ PyObject* rbe_py_api_node_get_parent(PyObject* self, PyObject* args, PyObject* k
 PyObject* rbe_py_api_node2D_set_position(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* rbe_py_api_node2D_add_to_position(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* rbe_py_api_node2D_get_position(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* rbe_py_api_node2D_set_rotation(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* rbe_py_api_node2D_add_to_rotation(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* rbe_py_api_node2D_get_rotation(PyObject* self, PyObject* args, PyObject* kwargs);
 
 // Sprite
 PyObject* rbe_py_api_sprite_set_texture(PyObject* self, PyObject* args, PyObject* kwargs);
@@ -249,6 +252,18 @@ static struct PyMethodDef rbePyApiMethods[] = {
         "node2D_get_position", (PyCFunction) rbe_py_api_node2D_get_position,
         METH_VARARGS | METH_KEYWORDS, "Get the position of a node."
     },
+    {
+        "node2D_set_rotation", (PyCFunction) rbe_py_api_node2D_set_rotation,
+        METH_VARARGS | METH_KEYWORDS, "Set the rotation of a node."
+    },
+    {
+        "node2D_add_to_rotation", (PyCFunction) rbe_py_api_node2D_add_to_rotation,
+        METH_VARARGS | METH_KEYWORDS, "Adds to the rotation of a node."
+    },
+    {
+        "node2D_get_rotation", (PyCFunction) rbe_py_api_node2D_get_rotation,
+        METH_VARARGS | METH_KEYWORDS, "Get the rotation of a node."
+    },
     // SPRITE
     {
         "sprite_set_texture", (PyCFunction) rbe_py_api_sprite_set_texture,
@@ -381,6 +396,7 @@ static char *rbePyApiNodeAddChildKWList[] = {"parent_entity_id", "child_entity_i
 static char *rbePyApiNodeGetChildKWList[] = {"entity_id", "child_name", NULL};
 
 static char *rbePyApiNode2DSetPositionKWList[] = {"entity_id", "x", "y", NULL};
+static char *rbePyApiNode2DSetRotationKWList[] = {"entity_id", "rotation", NULL};
 
 static char *rbePyApiSpriteSetTextureKWList[] = {"entity_id", "file_path", NULL};
 

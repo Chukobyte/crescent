@@ -64,5 +64,7 @@ configure_inputs(
         InputAction(name="camera_right", values=[Input.Keyboard.L]),
         InputAction(name="camera_up", values=[Input.Keyboard.I]),
         InputAction(name="camera_down", values=[Input.Keyboard.K]),
+        InputAction(name="rotate_pos", values=[Input.Keyboard.M]),
+        InputAction(name="rotate_neg", values=[Input.Keyboard.N]),
     ]
 )

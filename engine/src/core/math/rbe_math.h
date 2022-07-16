@@ -23,6 +23,13 @@ typedef struct Rect2 {
     float h;
 } Rect2;
 
+// --- Vector3 --- //
+typedef struct Vector3 {
+    float x;
+    float y;
+    float z;
+} Vector3;
+
 // --- Color --- //
 typedef struct Color {
     float r;

@@ -34,7 +34,6 @@ void transform2d_component_get_local_model_matrix(mat4 model, Transform2DCompone
     });
 }
 
-// Tests
 Vector2 transform2d_component_get_position_from_model(mat4 model) {
     Vector2 position = { .x=model[3][0], .y=model[3][1] };
     return position;
@@ -49,9 +48,25 @@ Vector2 transform2d_component_get_scale_from_model(mat4 model) {
 }
 
 float transform2d_component_get_rotation_deg_from_model(mat4 model) {
-    const float axisX = RBE_RAD_2_DEG * atan2f(model[1][2], model[2][2]);
-    const float axisY = RBE_RAD_2_DEG * atan2f(-model[0][2], sqrtf(model[1][2] * model[1][2] + model[2][2] * model[2][2]));
-    return (atan2f(axisY, axisX) / RBE_PI) * 180.0f;
+    versor quat;
+    glm_mat4_quat(model, quat);
+    const float angleRadians = glm_quat_angle(quat);
+    return glm_deg(angleRadians);
+//    return angleRadians;
+
+//    const float axisX = RBE_RAD_2_DEG * atan2f(model[1][2], model[2][2]);
+//    const float axisY = RBE_RAD_2_DEG * atan2f(-model[0][2], sqrtf(model[1][2] * model[1][2] + model[2][2] * model[2][2]));
+//    return (atan2f(axisY, axisX) / RBE_PI) * 180.0f;
+}
+
+Transform2DComponent transform2d_component_decompose_trs_matrix(mat4 model) {
+    Vector2 position = transform2d_component_get_position_from_model(model);
+    Vector2 scale = transform2d_component_get_scale_from_model(model);
+
+    Transform2DComponent transform2DComponent = {
+        .position = position
+    };
+    return transform2DComponent;
 }
 
 void transform2d_component_print(Transform2DComponent* transform2DComponent) {

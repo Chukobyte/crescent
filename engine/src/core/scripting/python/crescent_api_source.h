@@ -782,6 +782,19 @@
 "            entity_id=self.entity_id, x=value.x, y=value.y\n"\
 "        )\n"\
 "\n"\
+"    def set_rotation(self, value: float) -> None:\n"\
+"        crescent_api_internal.node2D_set_rotation(\n"\
+"            entity_id=self.entity_id, rotation=value\n"\
+"        )\n"\
+"\n"\
+"    def add_to_rotation(self, value: float) -> None:\n"\
+"        crescent_api_internal.node2D_add_to_rotation(\n"\
+"            entity_id=self.entity_id, rotation=value\n"\
+"        )\n"\
+"\n"\
+"    def get_rotation(self) -> float:\n"\
+"        return crescent_api_internal.node2D_get_rotation(entity_id=self.entity_id)\n"\
+"\n"\
 "    @property\n"\
 "    def rotation(self) -> float:\n"\
 "        return crescent_api_internal.node2D_get_rotation(entity_id=self.entity_id)\n"\

@@ -181,7 +181,7 @@ Transform2DComponent rbe_scene_manager_get_combined_parent_transform(Entity enti
     return transform2DComponent;
 }
 
-// Temp
+// TODO: Clean up temp stuff for CombineModelResult
 typedef struct CombineModelResult {
     int entityCount;
     Entity entities[10];
@@ -212,7 +212,6 @@ void rbe_scene_manager_get_combined_model(Entity entity, mat4 model) {
         }
         mat4 newModel;
         transform2d_component_get_local_model_matrix(newModel, transform2DComponent);
-//        glm_mat4_mul(newModel, model, model);
         glm_mat4_mul(model, newModel, model);
     }
 }
