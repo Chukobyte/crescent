@@ -827,6 +827,31 @@
 "            entity_id=self.entity_id, x=value.x, y=value.y\n"\
 "        )\n"\
 "\n"\
+"    def set_scale(self, value: Vector2) -> None:\n"\
+"        crescent_api_internal.node2D_set_scale(\n"\
+"            entity_id=self.entity_id, x=value.x, y=value.y\n"\
+"        )\n"\
+"\n"\
+"    def add_to_scale(self, value: Vector2) -> None:\n"\
+"        crescent_api_internal.node2D_add_to_scale(\n"\
+"            entity_id=self.entity_id, x=value.x, y=value.y\n"\
+"        )\n"\
+"\n"\
+"    def get_scale(self) -> Vector2:\n"\
+"        sx, sy = crescent_api_internal.node2D_get_scale(entity_id=self.entity_id)\n"\
+"        return Vector2(sx, sy)\n"\
+"\n"\
+"    @property\n"\
+"    def scale(self) -> Vector2:\n"\
+"        sx, sy = crescent_api_internal.node2D_get_scale(entity_id=self.entity_id)\n"\
+"        return Vector2(sx, sy)\n"\
+"\n"\
+"    @scale.setter\n"\
+"    def scale(self, value: Vector2) -> None:\n"\
+"        crescent_api_internal.node2D_set_scale(\n"\
+"            entity_id=self.entity_id, x=value.x, y=value.y\n"\
+"        )\n"\
+"\n"\
 "    def set_rotation(self, value: float) -> None:\n"\
 "        crescent_api_internal.node2D_set_rotation(\n"\
 "            entity_id=self.entity_id, rotation=value\n"\
@@ -980,24 +1005,24 @@
 "\n"\
 "\n"\
 "class Collider2D(Node2D):\n"\
-"    def get_rect(self) -> Rect2:\n"\
-"        x, y, w, h = crescent_api_internal.collider2D_get_rect(entity_id=self.entity_id)\n"\
-"        return Rect2(x=x, y=y, w=w, h=h)\n"\
+"    def get_extents(self) -> Size2D:\n"\
+"        w, h = crescent_api_internal.collider2D_get_extents(entity_id=self.entity_id)\n"\
+"        return Size2D(w=w, h=h)\n"\
 "\n"\
-"    def set_rect(self, rect: Rect2) -> None:\n"\
-"        crescent_api_internal.collider2D_set_rect(\n"\
-"            entity_id=self.entity_id, x=rect.x, y=rect.y, w=rect.w, h=rect.h\n"\
+"    def set_extents(self, extents: Rect2) -> None:\n"\
+"        crescent_api_internal.collider2D_set_extents(\n"\
+"            entity_id=self.entity_id, w=extents.w, h=extents.h\n"\
 "        )\n"\
 "\n"\
 "    @property\n"\
-"    def rect(self) -> Rect2:\n"\
-"        x, y, w, h = crescent_api_internal.collider2D_get_rect(entity_id=self.entity_id)\n"\
-"        return Rect2(x=x, y=y, w=w, h=h)\n"\
+"    def extents(self) -> Size2D:\n"\
+"        w, h = crescent_api_internal.collider2D_get_extents(entity_id=self.entity_id)\n"\
+"        return Size2D(w=w, h=h)\n"\
 "\n"\
-"    @rect.setter\n"\
-"    def rect(self, value: Rect2) -> None:\n"\
-"        crescent_api_internal.collider2D_set_rect(\n"\
-"            entity_id=self.entity_id, x=value.x, y=value.y, w=value.w, h=value.h\n"\
+"    @extents.setter\n"\
+"    def extents(self, value: Size2D) -> None:\n"\
+"        crescent_api_internal.collider2D_set_extents(\n"\
+"            entity_id=self.entity_id, w=value.w, h=value.h\n"\
 "        )\n"\
 "\n"\
 "    def get_color(self) -> Color:\n"\

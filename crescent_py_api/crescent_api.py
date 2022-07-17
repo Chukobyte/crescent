@@ -788,6 +788,31 @@ class Node2D(Node):
             entity_id=self.entity_id, x=value.x, y=value.y
         )
 
+    def set_scale(self, value: Vector2) -> None:
+        crescent_api_internal.node2D_set_scale(
+            entity_id=self.entity_id, x=value.x, y=value.y
+        )
+
+    def add_to_scale(self, value: Vector2) -> None:
+        crescent_api_internal.node2D_add_to_scale(
+            entity_id=self.entity_id, x=value.x, y=value.y
+        )
+
+    def get_scale(self) -> Vector2:
+        sx, sy = crescent_api_internal.node2D_get_scale(entity_id=self.entity_id)
+        return Vector2(sx, sy)
+
+    @property
+    def scale(self) -> Vector2:
+        sx, sy = crescent_api_internal.node2D_get_scale(entity_id=self.entity_id)
+        return Vector2(sx, sy)
+
+    @scale.setter
+    def scale(self, value: Vector2) -> None:
+        crescent_api_internal.node2D_set_scale(
+            entity_id=self.entity_id, x=value.x, y=value.y
+        )
+
     def set_rotation(self, value: float) -> None:
         crescent_api_internal.node2D_set_rotation(
             entity_id=self.entity_id, rotation=value
@@ -941,24 +966,24 @@ class TextLabel(Node2D):
 
 
 class Collider2D(Node2D):
-    def get_rect(self) -> Rect2:
-        x, y, w, h = crescent_api_internal.collider2D_get_rect(entity_id=self.entity_id)
-        return Rect2(x=x, y=y, w=w, h=h)
+    def get_extents(self) -> Size2D:
+        w, h = crescent_api_internal.collider2D_get_extents(entity_id=self.entity_id)
+        return Size2D(w=w, h=h)
 
-    def set_rect(self, rect: Rect2) -> None:
-        crescent_api_internal.collider2D_set_rect(
-            entity_id=self.entity_id, x=rect.x, y=rect.y, w=rect.w, h=rect.h
+    def set_extents(self, extents: Rect2) -> None:
+        crescent_api_internal.collider2D_set_extents(
+            entity_id=self.entity_id, w=extents.w, h=extents.h
         )
 
     @property
-    def rect(self) -> Rect2:
-        x, y, w, h = crescent_api_internal.collider2D_get_rect(entity_id=self.entity_id)
-        return Rect2(x=x, y=y, w=w, h=h)
+    def extents(self) -> Size2D:
+        w, h = crescent_api_internal.collider2D_get_extents(entity_id=self.entity_id)
+        return Size2D(w=w, h=h)
 
-    @rect.setter
-    def rect(self, value: Rect2) -> None:
-        crescent_api_internal.collider2D_set_rect(
-            entity_id=self.entity_id, x=value.x, y=value.y, w=value.w, h=value.h
+    @extents.setter
+    def extents(self, value: Size2D) -> None:
+        crescent_api_internal.collider2D_set_extents(
+            entity_id=self.entity_id, w=value.w, h=value.h
         )
 
     def get_color(self) -> Color:
