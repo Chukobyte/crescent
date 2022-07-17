@@ -47,10 +47,11 @@ void collision_system_render() {
     const RBECamera2D* defaultCamera = rbe_camera_manager_get_default_camera();
     for (size_t i = 0; i < collisionSystem->entity_count; i++) {
         const Entity entity = collisionSystem->entities[i];
-        const Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
+        Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
         const Collider2DComponent* colliderComp = (Collider2DComponent*) component_manager_get_component(entity, ComponentDataIndex_COLLIDER_2D);
         const RBECamera2D* renderCamera = transformComp->ignoreCamera ? defaultCamera : camera2D;
-        TransformModel2D* globalTransform = rbe_scene_manager_get_scene_node_global_transform(entity);
+        TransformModel2D* globalTransform = rbe_scene_manager_get_scene_node_global_transform(entity, transformComp);
+        transformComp->isGlobalTransformDirty = true; // TODO: Make global transform const
         const Rect2 colliderDrawDestination = {
             (globalTransform->position.x - renderCamera->viewport.x + renderCamera->offset.x) * renderCamera->zoom.x,
             (globalTransform->position.y - renderCamera->viewport.y + renderCamera->offset.y) * renderCamera->zoom.y,

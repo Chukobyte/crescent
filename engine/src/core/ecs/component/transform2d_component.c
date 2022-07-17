@@ -28,6 +28,7 @@ Transform2DComponent* transform2d_component_create() {
     transform2DComponent->zIndex = 0;
     transform2DComponent->isZIndexRelativeToParent = true;
     transform2DComponent->ignoreCamera = false;
+    transform2DComponent->isGlobalTransformDirty = true; // Starts dirty to calculate on first pull
     return transform2DComponent;
 }
 

@@ -13,6 +13,7 @@ typedef struct Transform2DComponent {
     int zIndex;
     bool isZIndexRelativeToParent;
     bool ignoreCamera;
+    bool isGlobalTransformDirty;
 } Transform2DComponent;
 
 Transform2DComponent* transform2d_component_create();

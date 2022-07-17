@@ -31,10 +31,11 @@ void sprite_rendering_system_render() {
 
     for (size_t i = 0; i < spriteRenderingSystem->entity_count; i++) {
         const Entity entity = spriteRenderingSystem->entities[i];
-        const Transform2DComponent* spriteTransformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
+        Transform2DComponent* spriteTransformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
         const SpriteComponent* spriteComponent = (SpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_SPRITE);
         const RBECamera2D* renderCamera = spriteTransformComp->ignoreCamera ? defaultCamera : camera2D;
-        TransformModel2D* globalTransform = rbe_scene_manager_get_scene_node_global_transform(entity);
+        TransformModel2D* globalTransform = rbe_scene_manager_get_scene_node_global_transform(entity, spriteTransformComp);
+        spriteTransformComp->isGlobalTransformDirty = true; // TODO: Make global transform const
         const Rect2 destinationRectangle = {
             (globalTransform->position.x - renderCamera->viewport.x + renderCamera->offset.x) * renderCamera->zoom.x,
             (globalTransform->position.y - renderCamera->viewport.y + renderCamera->offset.y) * renderCamera->zoom.y,

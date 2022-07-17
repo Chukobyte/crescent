@@ -808,6 +808,7 @@ PyObject* rbe_py_api_node2D_set_position(PyObject* self, PyObject* args, PyObjec
         Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
         transformComp->localTransform.position.x = x;
         transformComp->localTransform.position.y = y;
+        transformComp->isGlobalTransformDirty = true;
         Py_RETURN_NONE;
     }
     return NULL;
@@ -821,6 +822,7 @@ PyObject* rbe_py_api_node2D_add_to_position(PyObject* self, PyObject* args, PyOb
         Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
         transformComp->localTransform.position.x += x;
         transformComp->localTransform.position.y += y;
+        transformComp->isGlobalTransformDirty = true;
         Py_RETURN_NONE;
     }
     return NULL;
@@ -841,6 +843,7 @@ PyObject* rbe_py_api_node2D_set_rotation(PyObject* self, PyObject* args, PyObjec
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "if", rbePyApiNode2DSetRotationKWList, &entity, &rotation)) {
         Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
         transformComp->localTransform.rotation = rotation;
+        transformComp->isGlobalTransformDirty = true;
         Py_RETURN_NONE;
     }
     return NULL;
@@ -852,6 +855,7 @@ PyObject* rbe_py_api_node2D_add_to_rotation(PyObject* self, PyObject* args, PyOb
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "if", rbePyApiNode2DSetRotationKWList, &entity, &rotation)) {
         Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
         transformComp->localTransform.rotation += rotation;
+        transformComp->isGlobalTransformDirty = true;
         Py_RETURN_NONE;
     }
     return NULL;

@@ -32,7 +32,7 @@ void animated_sprite_rendering_system_render() {
     const int currentTickTime = (int) SDL_GetTicks();
     for (size_t i = 0; i < animatedSpriteRenderingSystem->entity_count; i++) {
         const Entity entity = animatedSpriteRenderingSystem->entities[i];
-        const Transform2DComponent* spriteTransformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
+        Transform2DComponent* spriteTransformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
         AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_ANIMATED_SPRITE);
         AnimationFrame currentFrame = animatedSpriteComponent->currentAnimation.animationFrames[animatedSpriteComponent->currentAnimation.currentFrame];
         if (animatedSpriteComponent->isPlaying) {
@@ -50,7 +50,8 @@ void animated_sprite_rendering_system_render() {
             }
         }
         const RBECamera2D* renderCamera = spriteTransformComp->ignoreCamera ? defaultCamera : camera2D;
-        TransformModel2D* globalTransform = rbe_scene_manager_get_scene_node_global_transform(entity);
+        TransformModel2D* globalTransform = rbe_scene_manager_get_scene_node_global_transform(entity, spriteTransformComp);
+        spriteTransformComp->isGlobalTransformDirty = true; // TODO: Make global transform const
         glm_translate(globalTransform->model, (vec3) {
             (renderCamera->offset.x - renderCamera->viewport.x) * renderCamera->zoom.x,
             (renderCamera->offset.y - renderCamera->viewport.y) * renderCamera->zoom.y,
