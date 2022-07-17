@@ -57,16 +57,14 @@ void animated_sprite_rendering_system_render() {
             (renderCamera->offset.y - renderCamera->viewport.y - animatedSpriteComponent->origin.y) * renderCamera->zoom.y,
             0.0f
         });
-        const Rect2 destinationRectangle = {
-            (globalTransform->position.x - renderCamera->viewport.x + renderCamera->offset.x) * renderCamera->zoom.x, // TODO: Clean up not in use...
-            (globalTransform->position.y - renderCamera->viewport.y + renderCamera->offset.y) * renderCamera->zoom.y, // TODO: Clean up not in use...
+        const Size2D destinationSize = {
             currentFrame.drawSource.w * renderCamera->zoom.x,
             currentFrame.drawSource.h * renderCamera->zoom.y
         };
         rbe_renderer_queue_sprite_draw_call(
             currentFrame.texture,
             currentFrame.drawSource,
-            destinationRectangle,
+            destinationSize,
             animatedSpriteComponent->modulate,
             animatedSpriteComponent->flipX,
             animatedSpriteComponent->flipY,

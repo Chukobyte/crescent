@@ -36,9 +36,7 @@ void sprite_rendering_system_render() {
         const RBECamera2D* renderCamera = spriteTransformComp->ignoreCamera ? defaultCamera : camera2D;
         TransformModel2D* globalTransform = rbe_scene_manager_get_scene_node_global_transform(entity, spriteTransformComp);
         spriteTransformComp->isGlobalTransformDirty = true; // TODO: Make global transform const
-        const Rect2 destinationRectangle = {
-            (globalTransform->position.x - renderCamera->viewport.x + renderCamera->offset.x) * renderCamera->zoom.x,
-            (globalTransform->position.y - renderCamera->viewport.y + renderCamera->offset.y) * renderCamera->zoom.y,
+        const Size2D destinationSize = {
             spriteComponent->drawSource.w * renderCamera->zoom.x,
             spriteComponent->drawSource.h * renderCamera->zoom.y
         };
@@ -51,7 +49,7 @@ void sprite_rendering_system_render() {
         rbe_renderer_queue_sprite_draw_call(
             spriteComponent->texture,
             spriteComponent->drawSource,
-            destinationRectangle,
+            destinationSize,
             spriteComponent->modulate,
             spriteComponent->flipX,
             spriteComponent->flipY,

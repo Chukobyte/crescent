@@ -52,9 +52,7 @@ void collision_system_render() {
         const RBECamera2D* renderCamera = transformComp->ignoreCamera ? defaultCamera : camera2D;
         TransformModel2D* globalTransform = rbe_scene_manager_get_scene_node_global_transform(entity, transformComp);
         transformComp->isGlobalTransformDirty = true; // TODO: Make global transform const
-        const Rect2 colliderDrawDestination = {
-            (globalTransform->position.x - renderCamera->viewport.x + renderCamera->offset.x) * renderCamera->zoom.x,
-            (globalTransform->position.y - renderCamera->viewport.y + renderCamera->offset.y) * renderCamera->zoom.y,
+        const Size2D colliderDrawSize = {
             colliderComp->rect.w * renderCamera->zoom.x,
             colliderComp->rect.h * renderCamera->zoom.y
         };
@@ -66,7 +64,7 @@ void collision_system_render() {
         rbe_renderer_queue_sprite_draw_call(
             collisionOutlineTexture,
             colliderDrawSource,
-            colliderDrawDestination,
+            colliderDrawSize,
             colliderComp->color,
             false,
             false,

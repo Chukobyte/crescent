@@ -21,7 +21,7 @@ typedef struct TextureCoordinates {
 
 void sprite_renderer_initialize();
 void sprite_renderer_finalize();
-void sprite_renderer_draw_sprite(const Texture* texture, const Rect2* sourceRect, const Rect2* destRect, const Color *color, bool flipX, bool flipY, TransformModel2D* globalTransform);
+void sprite_renderer_draw_sprite(const Texture* texture, const Rect2* sourceRect, const Size2D* destSize, const Color *color, bool flipX, bool flipY, TransformModel2D* globalTransform);
 void font_renderer_initialize();
 void font_renderer_draw_text(const Font* font, const char* text, float x, float y, float scale, const Color* color);
 void font_renderer_finalize();
@@ -55,7 +55,7 @@ void rbe_renderer_finalize() {
 typedef struct SpriteBatchItem {
     Texture* texture;
     Rect2 sourceRect;
-    Rect2 destRect;
+    Size2D destSize;
     Color color;
     bool flipX;
     bool flipY;
@@ -75,12 +75,12 @@ typedef struct FontBatchItem {
 RBE_STATIC_ARRAY_CREATE(SpriteBatchItem, 100, sprite_batch_items);
 RBE_STATIC_ARRAY_CREATE(FontBatchItem, 100, font_batch_items);
 
-void rbe_renderer_queue_sprite_draw_call(Texture* texture, Rect2 sourceRect, Rect2 destRect, Color color, bool flipX, bool flipY, TransformModel2D* globalTransform) {
+void rbe_renderer_queue_sprite_draw_call(Texture* texture, Rect2 sourceRect, const Size2D destSize, Color color, bool flipX, bool flipY, TransformModel2D* globalTransform) {
     if (texture == NULL) {
         rbe_logger_error("NULL texture, not submitting draw call!");
         return;
     }
-    SpriteBatchItem item = { .texture = texture, .sourceRect = sourceRect, .destRect = destRect, .color = color, .flipX = flipX, .flipY = flipY, .globalTransform = globalTransform };
+    SpriteBatchItem item = { .texture = texture, .sourceRect = sourceRect, .destSize = destSize, .color = color, .flipX = flipX, .flipY = flipY, .globalTransform = globalTransform };
     RBE_STATIC_ARRAY_ADD(sprite_batch_items, item);
 }
 
@@ -95,7 +95,7 @@ void rbe_renderer_flush_batches() {
         sprite_renderer_draw_sprite(
             sprite_batch_items[i].texture,
             &sprite_batch_items[i].sourceRect,
-            &sprite_batch_items[i].destRect,
+            &sprite_batch_items[i].destSize,
             &sprite_batch_items[i].color,
             sprite_batch_items[i].flipX,
             sprite_batch_items[i].flipY,
@@ -172,7 +172,7 @@ void sprite_renderer_initialize() {
 void sprite_renderer_finalize() {}
 
 // TODO: Just need to pass in destination size instead of rect2
-void sprite_renderer_draw_sprite(const Texture* texture, const Rect2* sourceRect, const Rect2* destRect, const Color* color, bool flipX, bool flipY, TransformModel2D* globalTransform) {
+void sprite_renderer_draw_sprite(const Texture* texture, const Rect2* sourceRect, const Size2D* destSize, const Color* color, bool flipX, bool flipY, TransformModel2D* globalTransform) {
     glDepthMask(false);
 //    const Vector2 absScale = {fabs(destRect->w), fabs(destRect->h) };
 //    // 1. Translation
@@ -203,7 +203,7 @@ void sprite_renderer_draw_sprite(const Texture* texture, const Rect2* sourceRect
 
 
     glm_scale(globalTransform->model, (vec3) {
-        destRect->w, destRect->h, 1.0f
+        destSize->w, destSize->h, 1.0f
     });
 
     glBindVertexArray(spriteQuadVAO);
