@@ -217,7 +217,7 @@ void rbe_scene_manager_get_combined_model(Entity entity, mat4 model) {
     }
 }
 
-TransformModel2D* rbe_scene_manager_get_scene_graph_transform(Entity entity) {
+TransformModel2D* rbe_scene_manager_get_scene_node_global_transform(Entity entity) {
     Transform2DComponent* transform2DComponent = component_manager_get_component_unsafe(entity, ComponentDataIndex_TRANSFORM_2D);
     RBE_ASSERT_FMT(transform2DComponent != NULL, "Transform Model is NULL for entity '%d'", entity);
 
