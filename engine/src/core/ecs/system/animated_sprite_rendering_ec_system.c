@@ -53,13 +53,13 @@ void animated_sprite_rendering_system_render() {
         TransformModel2D* globalTransform = rbe_scene_manager_get_scene_node_global_transform(entity, spriteTransformComp);
         spriteTransformComp->isGlobalTransformDirty = true; // TODO: Make global transform const
         glm_translate(globalTransform->model, (vec3) {
-            (renderCamera->offset.x - renderCamera->viewport.x) * renderCamera->zoom.x,
-            (renderCamera->offset.y - renderCamera->viewport.y) * renderCamera->zoom.y,
+            (renderCamera->offset.x - renderCamera->viewport.x - animatedSpriteComponent->origin.x) * renderCamera->zoom.x,
+            (renderCamera->offset.y - renderCamera->viewport.y - animatedSpriteComponent->origin.y) * renderCamera->zoom.y,
             0.0f
         });
         const Rect2 destinationRectangle = {
-            (globalTransform->position.x - renderCamera->viewport.x + renderCamera->offset.x) * renderCamera->zoom.x,
-            (globalTransform->position.y - renderCamera->viewport.y + renderCamera->offset.y) * renderCamera->zoom.y,
+            (globalTransform->position.x - renderCamera->viewport.x + renderCamera->offset.x) * renderCamera->zoom.x, // TODO: Clean up not in use...
+            (globalTransform->position.y - renderCamera->viewport.y + renderCamera->offset.y) * renderCamera->zoom.y, // TODO: Clean up not in use...
             currentFrame.drawSource.w * renderCamera->zoom.x,
             currentFrame.drawSource.h * renderCamera->zoom.y
         };

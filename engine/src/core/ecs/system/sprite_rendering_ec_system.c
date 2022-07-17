@@ -42,6 +42,12 @@ void sprite_rendering_system_render() {
             spriteComponent->drawSource.w * renderCamera->zoom.x,
             spriteComponent->drawSource.h * renderCamera->zoom.y
         };
+        glm_translate(globalTransform->model, (vec3) {
+            (renderCamera->offset.x - renderCamera->viewport.x - spriteComponent->origin.x) * renderCamera->zoom.x,
+            (renderCamera->offset.y - renderCamera->viewport.y - spriteComponent->origin.y) * renderCamera->zoom.y,
+            0.0f
+        });
+
         rbe_renderer_queue_sprite_draw_call(
             spriteComponent->texture,
             spriteComponent->drawSource,

@@ -171,6 +171,7 @@ void sprite_renderer_initialize() {
 
 void sprite_renderer_finalize() {}
 
+// TODO: Just need to pass in destination size instead of rect2
 void sprite_renderer_draw_sprite(const Texture* texture, const Rect2* sourceRect, const Rect2* destRect, const Color* color, bool flipX, bool flipY, TransformModel2D* globalTransform) {
     glDepthMask(false);
 //    const Vector2 absScale = {fabs(destRect->w), fabs(destRect->h) };
