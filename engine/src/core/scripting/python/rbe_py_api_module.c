@@ -284,11 +284,11 @@ void setup_scene_component_node(Entity entity, PyObject* component) {
         const bool zIndexRelativeToParent = phy_get_bool_from_var(component, "z_index_relative_to_parent");
         const bool ignoreCamera = phy_get_bool_from_var(component, "ignore_camera");
         Transform2DComponent* transform2DComponent = transform2d_component_create();
-        transform2DComponent->position.x = positionX;
-        transform2DComponent->position.y = positionY;
-        transform2DComponent->scale.x = scaleX;
-        transform2DComponent->scale.y = scaleY;
-        transform2DComponent->rotation = rotation;
+        transform2DComponent->localTransform.position.x = positionX;
+        transform2DComponent->localTransform.position.y = positionY;
+        transform2DComponent->localTransform.scale.x = scaleX;
+        transform2DComponent->localTransform.scale.y = scaleY;
+        transform2DComponent->localTransform.rotation = rotation;
         transform2DComponent->zIndex = zIndex;
         transform2DComponent->isZIndexRelativeToParent = zIndexRelativeToParent;
         transform2DComponent->ignoreCamera = ignoreCamera;
@@ -806,8 +806,8 @@ PyObject* rbe_py_api_node2D_set_position(PyObject* self, PyObject* args, PyObjec
     float y;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "iff", rbePyApiNode2DSetPositionKWList, &entity, &x, &y)) {
         Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
-        transformComp->position.x = x;
-        transformComp->position.y = y;
+        transformComp->localTransform.position.x = x;
+        transformComp->localTransform.position.y = y;
         Py_RETURN_NONE;
     }
     return NULL;
@@ -819,8 +819,8 @@ PyObject* rbe_py_api_node2D_add_to_position(PyObject* self, PyObject* args, PyOb
     float y;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "iff", rbePyApiNode2DSetPositionKWList, &entity, &x, &y)) {
         Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
-        transformComp->position.x += x;
-        transformComp->position.y += y;
+        transformComp->localTransform.position.x += x;
+        transformComp->localTransform.position.y += y;
         Py_RETURN_NONE;
     }
     return NULL;
@@ -830,7 +830,7 @@ PyObject* rbe_py_api_node2D_get_position(PyObject* self, PyObject* args, PyObjec
     Entity entity;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", rbePyApiGenericGetEntityKWList, &entity)) {
         const Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
-        return Py_BuildValue("(ff)", transformComp->position.x, transformComp->position.y);
+        return Py_BuildValue("(ff)", transformComp->localTransform.position.x, transformComp->localTransform.position.y);
     }
     return NULL;
 }
@@ -840,7 +840,7 @@ PyObject* rbe_py_api_node2D_set_rotation(PyObject* self, PyObject* args, PyObjec
     float rotation;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "if", rbePyApiNode2DSetRotationKWList, &entity, &rotation)) {
         Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
-        transformComp->rotation = rotation;
+        transformComp->localTransform.rotation = rotation;
         Py_RETURN_NONE;
     }
     return NULL;
@@ -851,7 +851,7 @@ PyObject* rbe_py_api_node2D_add_to_rotation(PyObject* self, PyObject* args, PyOb
     float rotation;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "if", rbePyApiNode2DSetRotationKWList, &entity, &rotation)) {
         Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
-        transformComp->rotation += rotation;
+        transformComp->localTransform.rotation += rotation;
         Py_RETURN_NONE;
     }
     return NULL;
@@ -861,7 +861,7 @@ PyObject* rbe_py_api_node2D_get_rotation(PyObject* self, PyObject* args, PyObjec
     Entity entity;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", rbePyApiGenericGetEntityKWList, &entity)) {
         const Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
-        return Py_BuildValue("f", transformComp->rotation);
+        return Py_BuildValue("f", transformComp->localTransform.rotation);
     }
     return NULL;
 }

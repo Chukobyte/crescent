@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cglm/cglm.h>
+
 #define RBE_PI 3.14159265358979323846f
 #define RBE_RAD_2_DEG (180.0f / RBE_PI)
 
@@ -22,6 +24,20 @@ typedef struct Rect2 {
     float w;
     float h;
 } Rect2;
+
+//--- Transform2D ---//
+typedef struct Transform2D {
+    Vector2 position;
+    Vector2 scale;
+    float rotation; // degrees
+} Transform2D;
+
+typedef struct TransformModel2D {
+    Vector2 position;
+    Vector2 scale;
+    float rotation; // degrees
+    mat4 model;
+} TransformModel2D;
 
 // --- Vector3 --- //
 typedef struct Vector3 {

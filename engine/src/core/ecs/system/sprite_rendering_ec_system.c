@@ -34,22 +34,21 @@ void sprite_rendering_system_render() {
         const Transform2DComponent* spriteTransformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
         const SpriteComponent* spriteComponent = (SpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_SPRITE);
         const RBECamera2D* renderCamera = spriteTransformComp->ignoreCamera ? defaultCamera : camera2D;
-        const Transform2DComponent combinedTransform = rbe_scene_manager_get_scene_graph_transform(entity);
+        TransformModel2D* globalTransform = rbe_scene_manager_get_scene_graph_transform(entity);
         const Rect2 destinationRectangle = {
-            (combinedTransform.position.x - renderCamera->viewport.x + renderCamera->offset.x) * renderCamera->zoom.x,
-            (combinedTransform.position.y - renderCamera->viewport.y + renderCamera->offset.y) * renderCamera->zoom.y,
-            spriteComponent->drawSource.w * combinedTransform.scale.x * renderCamera->zoom.x,
-            spriteComponent->drawSource.h * combinedTransform.scale.y * renderCamera->zoom.y
+            (globalTransform->position.x - renderCamera->viewport.x + renderCamera->offset.x) * renderCamera->zoom.x,
+            (globalTransform->position.y - renderCamera->viewport.y + renderCamera->offset.y) * renderCamera->zoom.y,
+            spriteComponent->drawSource.w * globalTransform->scale.x * renderCamera->zoom.x,
+            spriteComponent->drawSource.h * globalTransform->scale.y * renderCamera->zoom.y
         };
         rbe_renderer_queue_sprite_draw_call(
             spriteComponent->texture,
             spriteComponent->drawSource,
             destinationRectangle,
-            combinedTransform.rotation,
             spriteComponent->modulate,
             spriteComponent->flipX,
             spriteComponent->flipY,
-            combinedTransform
+            globalTransform
         );
     }
 }

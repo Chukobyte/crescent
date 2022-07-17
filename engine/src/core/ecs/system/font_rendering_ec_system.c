@@ -32,14 +32,14 @@ void font_rendering_system_render() {
         Transform2DComponent* fontTransformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
         TextLabelComponent* textLabelComponent = (TextLabelComponent*) component_manager_get_component(entity, ComponentDataIndex_TEXT_LABEL);
         const RBECamera2D* renderCamera = fontTransformComp->ignoreCamera ? defaultCamera : camera2D;
-        const Transform2DComponent combinedTransform = rbe_scene_manager_get_scene_graph_transform(entity);
+        const TransformModel2D* globalTransform = rbe_scene_manager_get_scene_graph_transform(entity);
 
         rbe_renderer_queue_font_draw_call(
             textLabelComponent->font,
             textLabelComponent->text,
-            (combinedTransform.position.x - renderCamera->viewport.x + renderCamera->offset.x) * renderCamera->zoom.x,
-            (combinedTransform.position.y - renderCamera->viewport.y + renderCamera->offset.y) * renderCamera->zoom.y,
-            fontTransformComp->scale.x * combinedTransform.scale.x * renderCamera->zoom.x,
+            (globalTransform->position.x - renderCamera->viewport.x + renderCamera->offset.x) * renderCamera->zoom.x,
+            (globalTransform->position.y - renderCamera->viewport.y + renderCamera->offset.y) * renderCamera->zoom.y,
+            fontTransformComp->localTransform.scale.x * globalTransform->scale.x * renderCamera->zoom.x,
             textLabelComponent->color
         );
     }

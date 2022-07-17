@@ -8,13 +8,11 @@
 #include "../../math/rbe_math.h"
 
 typedef struct Transform2DComponent {
-    Vector2 position;
-    Vector2 scale;
-    float rotation; // Degrees
+    Transform2D localTransform;
+    TransformModel2D globalTransform;
     int zIndex;
     bool isZIndexRelativeToParent;
     bool ignoreCamera;
-    mat4 model;
 } Transform2DComponent;
 
 Transform2DComponent* transform2d_component_create();

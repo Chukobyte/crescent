@@ -21,7 +21,7 @@ typedef struct TextureCoordinates {
 
 void sprite_renderer_initialize();
 void sprite_renderer_finalize();
-void sprite_renderer_draw_sprite(const Texture* texture, const Rect2* sourceRect, const Rect2* destRect, float rotation, const Color *color, bool flipX, bool flipY, Transform2DComponent* transform2DComponent);
+void sprite_renderer_draw_sprite(const Texture* texture, const Rect2* sourceRect, const Rect2* destRect, const Color *color, bool flipX, bool flipY, TransformModel2D* globalTransform);
 void font_renderer_initialize();
 void font_renderer_draw_text(const Font* font, const char* text, float x, float y, float scale, const Color* color);
 void font_renderer_finalize();
@@ -56,11 +56,10 @@ typedef struct SpriteBatchItem {
     Texture* texture;
     Rect2 sourceRect;
     Rect2 destRect;
-    float rotation;
     Color color;
     bool flipX;
     bool flipY;
-    Transform2DComponent transform2DComponent;
+    TransformModel2D* globalTransform;
 } SpriteBatchItem;
 
 typedef struct FontBatchItem {
@@ -76,12 +75,12 @@ typedef struct FontBatchItem {
 RBE_STATIC_ARRAY_CREATE(SpriteBatchItem, 100, sprite_batch_items);
 RBE_STATIC_ARRAY_CREATE(FontBatchItem, 100, font_batch_items);
 
-void rbe_renderer_queue_sprite_draw_call(Texture* texture, Rect2 sourceRect, Rect2 destRect, float rotation, Color color, bool flipX, bool flipY, Transform2DComponent transform2DComponent) {
+void rbe_renderer_queue_sprite_draw_call(Texture* texture, Rect2 sourceRect, Rect2 destRect, Color color, bool flipX, bool flipY, TransformModel2D* globalTransform) {
     if (texture == NULL) {
         rbe_logger_error("NULL texture, not submitting draw call!");
         return;
     }
-    SpriteBatchItem item = { .texture = texture, .sourceRect = sourceRect, .destRect = destRect, .rotation = rotation, .color = color, .flipX = flipX, .flipY = flipY, .transform2DComponent = transform2DComponent };
+    SpriteBatchItem item = { .texture = texture, .sourceRect = sourceRect, .destRect = destRect, .color = color, .flipX = flipX, .flipY = flipY, .globalTransform = globalTransform };
     RBE_STATIC_ARRAY_ADD(sprite_batch_items, item);
 }
 
@@ -97,11 +96,10 @@ void rbe_renderer_flush_batches() {
             sprite_batch_items[i].texture,
             &sprite_batch_items[i].sourceRect,
             &sprite_batch_items[i].destRect,
-            sprite_batch_items[i].rotation,
             &sprite_batch_items[i].color,
             sprite_batch_items[i].flipX,
             sprite_batch_items[i].flipY,
-            &sprite_batch_items[i].transform2DComponent
+            sprite_batch_items[i].globalTransform
         );
     }
     RBE_STATIC_ARRAY_EMPTY(sprite_batch_items);
@@ -173,38 +171,38 @@ void sprite_renderer_initialize() {
 
 void sprite_renderer_finalize() {}
 
-void sprite_renderer_draw_sprite(const Texture* texture, const Rect2* sourceRect, const Rect2* destRect, float rotation, const Color* color, bool flipX, bool flipY, Transform2DComponent* transform2DComponent) {
+void sprite_renderer_draw_sprite(const Texture* texture, const Rect2* sourceRect, const Rect2* destRect, const Color* color, bool flipX, bool flipY, TransformModel2D* globalTransform) {
     glDepthMask(false);
-    const Vector2 absScale = {fabs(destRect->w), fabs(destRect->h) };
-    // 1. Translation
-    mat4 model = {
-        {1.0f, 0.0f, 0.0f, 0.0f},
-        {0.0f, 1.0f, 0.0f, 0.0f},
-        {0.0f, 0.0f, 1.0f, 0.0f},
-        {0.0f, 0.0f, 0.0f, 1.0f}
-    };
-    glm_translate(model, (vec3) {
-        destRect->x, destRect->y, 0.0f
-    });
-    // 2. Rotation
-    glm_translate(model, (vec3) {
-        0.5f * absScale.x, 0.5f * absScale.y, 0.0f
-    });
-    glm_make_rad(&rotation);
-    glm_rotate(model, rotation, (vec3) {
-        0.0f, 0.0f, 1.0f
-    });
-    glm_translate(model, (vec3) {
-        -0.5f * absScale.x, -0.5f * absScale.y, 0.0f
-        });
-    // 3. Scaling
-    glm_scale(model, (vec3) {
+//    const Vector2 absScale = {fabs(destRect->w), fabs(destRect->h) };
+//    // 1. Translation
+//    mat4 model = {
+//        {1.0f, 0.0f, 0.0f, 0.0f},
+//        {0.0f, 1.0f, 0.0f, 0.0f},
+//        {0.0f, 0.0f, 1.0f, 0.0f},
+//        {0.0f, 0.0f, 0.0f, 1.0f}
+//    };
+//    glm_translate(model, (vec3) {
+//        destRect->x, destRect->y, 0.0f
+//    });
+//    // 2. Rotation
+//    glm_translate(model, (vec3) {
+//        0.5f * absScale.x, 0.5f * absScale.y, 0.0f
+//    });
+//    glm_make_rad(&rotation);
+//    glm_rotate(model, rotation, (vec3) {
+//        0.0f, 0.0f, 1.0f
+//    });
+//    glm_translate(model, (vec3) {
+//        -0.5f * absScale.x, -0.5f * absScale.y, 0.0f
+//        });
+//    // 3. Scaling
+//    glm_scale(model, (vec3) {
+//        destRect->w, destRect->h, 1.0f
+//    });
+
+
+    glm_scale(globalTransform->model, (vec3) {
         destRect->w, destRect->h, 1.0f
-    });
-
-
-    glm_scale(transform2DComponent->model, (vec3) {
-            destRect->w, destRect->h, 1.0f
     });
 
     glBindVertexArray(spriteQuadVAO);
@@ -212,7 +210,7 @@ void sprite_renderer_draw_sprite(const Texture* texture, const Rect2* sourceRect
 
     shader_use(spriteShader);
 //    shader_set_mat4_float(spriteShader, "models[0]", &model);
-    shader_set_mat4_float(spriteShader, "models[0]", &transform2DComponent->model);
+    shader_set_mat4_float(spriteShader, "models[0]", &globalTransform->model);
     const int VERTEX_ITEM_COUNT = 1;
     const int NUMBER_OF_VERTICES = 6;
     const float SPRITE_ID = 0.0f;

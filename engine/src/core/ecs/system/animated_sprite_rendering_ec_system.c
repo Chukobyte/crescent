@@ -50,29 +50,27 @@ void animated_sprite_rendering_system_render() {
             }
         }
         const RBECamera2D* renderCamera = spriteTransformComp->ignoreCamera ? defaultCamera : camera2D;
-        Transform2DComponent combinedTransform = rbe_scene_manager_get_scene_graph_transform(entity);
-        glm_translate(combinedTransform.model, (vec3) {
-                (renderCamera->offset.x - renderCamera->viewport.x) * renderCamera->zoom.x,
-                        (renderCamera->offset.y - renderCamera->viewport.y) * renderCamera->zoom.y,
-                0.0f
+        TransformModel2D* globalTransform = rbe_scene_manager_get_scene_graph_transform(entity);
+//        Transform2D combinedTransform = rbe_scene_manager_get_scene_graph_transform(entity);
+        glm_translate(globalTransform->model, (vec3) {
+            (renderCamera->offset.x - renderCamera->viewport.x) * renderCamera->zoom.x,
+            (renderCamera->offset.y - renderCamera->viewport.y) * renderCamera->zoom.y,
+            0.0f
         });
         const Rect2 destinationRectangle = {
-            (combinedTransform.position.x - renderCamera->viewport.x + renderCamera->offset.x) * renderCamera->zoom.x,
-            (combinedTransform.position.y - renderCamera->viewport.y + renderCamera->offset.y) * renderCamera->zoom.y,
-//            currentFrame.drawSource.w * combinedTransform.scale.x * renderCamera->zoom.x,
+            (globalTransform->position.x - renderCamera->viewport.x + renderCamera->offset.x) * renderCamera->zoom.x,
+            (globalTransform->position.y - renderCamera->viewport.y + renderCamera->offset.y) * renderCamera->zoom.y,
             currentFrame.drawSource.w * renderCamera->zoom.x,
-//            currentFrame.drawSource.h * combinedTransform.scale.y * renderCamera->zoom.y
             currentFrame.drawSource.h * renderCamera->zoom.y
         };
         rbe_renderer_queue_sprite_draw_call(
             currentFrame.texture,
             currentFrame.drawSource,
             destinationRectangle,
-            combinedTransform.rotation,
             animatedSpriteComponent->modulate,
             animatedSpriteComponent->flipX,
             animatedSpriteComponent->flipY,
-            combinedTransform
+            globalTransform
         );
     }
 }
