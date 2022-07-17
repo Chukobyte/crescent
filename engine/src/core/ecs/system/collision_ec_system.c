@@ -50,14 +50,18 @@ void collision_system_render() {
         const Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
         const Collider2DComponent* colliderComp = (Collider2DComponent*) component_manager_get_component(entity, ComponentDataIndex_COLLIDER_2D);
         const RBECamera2D* renderCamera = transformComp->ignoreCamera ? defaultCamera : camera2D;
-        const Transform2DComponent combinedTransform = rbe_scene_manager_get_scene_graph_transform(entity);
+        Transform2DComponent combinedTransform = rbe_scene_manager_get_scene_graph_transform(entity);
         const Rect2 colliderDrawDestination = {
             (combinedTransform.position.x - renderCamera->viewport.x + renderCamera->offset.x) * renderCamera->zoom.x,
             (combinedTransform.position.y - renderCamera->viewport.y + renderCamera->offset.y) * renderCamera->zoom.y,
-            combinedTransform.scale.x * colliderComp->rect.w * renderCamera->zoom.x,
-            combinedTransform.scale.y * colliderComp->rect.h * renderCamera->zoom.y
+            colliderComp->rect.w * renderCamera->zoom.x,
+            colliderComp->rect.h * renderCamera->zoom.y
         };
-
+        glm_translate(combinedTransform.model, (vec3) {
+                (renderCamera->offset.x - renderCamera->viewport.x) * renderCamera->zoom.x,
+                (renderCamera->offset.y - renderCamera->viewport.y) * renderCamera->zoom.y,
+                0.0f
+        });
         rbe_renderer_queue_sprite_draw_call(
             collisionOutlineTexture,
             colliderDrawSource,
@@ -65,7 +69,8 @@ void collision_system_render() {
             combinedTransform.rotation,
             colliderComp->color,
             false,
-            false
+            false,
+            combinedTransform
         );
     }
 }

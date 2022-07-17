@@ -31,7 +31,7 @@ create_stage_nodes(
                         Transform2DComponent(
                             position=Vector2(200.0, 368.0),
                             scale=Vector2(4.0, 4.0),
-                            rotation=90.0,
+                            rotation=0.0,
                             z_index=0,
                             z_index_relative_to_parent=True,
                             ignore_camera=False,
@@ -114,7 +114,7 @@ create_stage_nodes(
                             external_node_source=None,
                             components=[
                                 Transform2DComponent(
-                                    position=Vector2(0.0, 0.0),
+                                    position=Vector2(17.0, 20.0),
                                     scale=Vector2(1.0, 1.0),
                                     rotation=0.0,
                                     z_index=0,
@@ -122,7 +122,7 @@ create_stage_nodes(
                                     ignore_camera=False,
                                 ),
                                 Collider2DComponent(
-                                    rect=Rect2(0, 0, 16, 16),
+                                    rect=Rect2(0, 0, 16, 17),
                                     color=Color(200, 200, 255, 200),
                                 ),
                             ],

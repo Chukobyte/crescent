@@ -217,16 +217,18 @@ void rbe_scene_manager_get_combined_model(Entity entity, mat4 model) {
 }
 
 Transform2DComponent rbe_scene_manager_get_scene_graph_transform(Entity entity) {
-    mat4 model;
-    rbe_scene_manager_get_combined_model(entity, model);
     Transform2DComponent transform2DComponent = {
-        .position = transform2d_component_get_position_from_model(model),
-        .scale = transform2d_component_get_scale_from_model(model),
-        .rotation = transform2d_component_get_rotation_deg_from_model(model),
+        .position = { 0.0f, 0.0f },
+        .scale = { 1.0f, 1.0f },
+        .rotation = 0.0f,
         .zIndex = 0,
         .isZIndexRelativeToParent = true,
-        .ignoreCamera = false
+        .ignoreCamera = false,
     };
+    rbe_scene_manager_get_combined_model(entity, transform2DComponent.model);
+    transform2DComponent.position = transform2d_component_get_position_from_model(transform2DComponent.model);
+    transform2DComponent.scale = transform2d_component_get_scale_from_model(transform2DComponent.model);
+    transform2DComponent.rotation = transform2d_component_get_rotation_deg_from_model(transform2DComponent.model);
     return transform2DComponent;
 }
 

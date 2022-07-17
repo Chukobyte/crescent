@@ -48,7 +48,8 @@ void sprite_rendering_system_render() {
             combinedTransform.rotation,
             spriteComponent->modulate,
             spriteComponent->flipX,
-            spriteComponent->flipY
+            spriteComponent->flipY,
+            combinedTransform
         );
     }
 }

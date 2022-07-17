@@ -21,7 +21,7 @@ typedef struct TextureCoordinates {
 
 void sprite_renderer_initialize();
 void sprite_renderer_finalize();
-void sprite_renderer_draw_sprite(const Texture* texture, const Rect2* sourceRect, const Rect2* destRect, float rotation, const Color *color, bool flipX, bool flipY);
+void sprite_renderer_draw_sprite(const Texture* texture, const Rect2* sourceRect, const Rect2* destRect, float rotation, const Color *color, bool flipX, bool flipY, Transform2DComponent* transform2DComponent);
 void font_renderer_initialize();
 void font_renderer_draw_text(const Font* font, const char* text, float x, float y, float scale, const Color* color);
 void font_renderer_finalize();
@@ -60,6 +60,7 @@ typedef struct SpriteBatchItem {
     Color color;
     bool flipX;
     bool flipY;
+    Transform2DComponent transform2DComponent;
 } SpriteBatchItem;
 
 typedef struct FontBatchItem {
@@ -69,17 +70,18 @@ typedef struct FontBatchItem {
     float y;
     float scale;
     Color color;
+    Transform2DComponent* transform2DComponent;
 } FontBatchItem;
 
 RBE_STATIC_ARRAY_CREATE(SpriteBatchItem, 100, sprite_batch_items);
 RBE_STATIC_ARRAY_CREATE(FontBatchItem, 100, font_batch_items);
 
-void rbe_renderer_queue_sprite_draw_call(Texture* texture, Rect2 sourceRect, Rect2 destRect, float rotation, Color color, bool flipX, bool flipY) {
+void rbe_renderer_queue_sprite_draw_call(Texture* texture, Rect2 sourceRect, Rect2 destRect, float rotation, Color color, bool flipX, bool flipY, Transform2DComponent transform2DComponent) {
     if (texture == NULL) {
         rbe_logger_error("NULL texture, not submitting draw call!");
         return;
     }
-    SpriteBatchItem item = { .texture = texture, .sourceRect = sourceRect, .destRect = destRect, .rotation = rotation, .color = color, .flipX = flipX, .flipY = flipY };
+    SpriteBatchItem item = { .texture = texture, .sourceRect = sourceRect, .destRect = destRect, .rotation = rotation, .color = color, .flipX = flipX, .flipY = flipY, .transform2DComponent = transform2DComponent };
     RBE_STATIC_ARRAY_ADD(sprite_batch_items, item);
 }
 
@@ -98,7 +100,8 @@ void rbe_renderer_flush_batches() {
             sprite_batch_items[i].rotation,
             &sprite_batch_items[i].color,
             sprite_batch_items[i].flipX,
-            sprite_batch_items[i].flipY
+            sprite_batch_items[i].flipY,
+            &sprite_batch_items[i].transform2DComponent
         );
     }
     RBE_STATIC_ARRAY_EMPTY(sprite_batch_items);
@@ -170,7 +173,7 @@ void sprite_renderer_initialize() {
 
 void sprite_renderer_finalize() {}
 
-void sprite_renderer_draw_sprite(const Texture* texture, const Rect2* sourceRect, const Rect2* destRect, float rotation, const Color* color, bool flipX, bool flipY) {
+void sprite_renderer_draw_sprite(const Texture* texture, const Rect2* sourceRect, const Rect2* destRect, float rotation, const Color* color, bool flipX, bool flipY, Transform2DComponent* transform2DComponent) {
     glDepthMask(false);
     const Vector2 absScale = {fabs(destRect->w), fabs(destRect->h) };
     // 1. Translation
@@ -199,11 +202,17 @@ void sprite_renderer_draw_sprite(const Texture* texture, const Rect2* sourceRect
         destRect->w, destRect->h, 1.0f
     });
 
+
+    glm_scale(transform2DComponent->model, (vec3) {
+            destRect->w, destRect->h, 1.0f
+    });
+
     glBindVertexArray(spriteQuadVAO);
     glBindBuffer(GL_ARRAY_BUFFER, spriteQuadVBO);
 
     shader_use(spriteShader);
-    shader_set_mat4_float(spriteShader, "models[0]", &model);
+//    shader_set_mat4_float(spriteShader, "models[0]", &model);
+    shader_set_mat4_float(spriteShader, "models[0]", &transform2DComponent->model);
     const int VERTEX_ITEM_COUNT = 1;
     const int NUMBER_OF_VERTICES = 6;
     const float SPRITE_ID = 0.0f;
