@@ -38,8 +38,8 @@ void sprite_rendering_system_render() {
         const Rect2 destinationRectangle = {
             (globalTransform->position.x - renderCamera->viewport.x + renderCamera->offset.x) * renderCamera->zoom.x,
             (globalTransform->position.y - renderCamera->viewport.y + renderCamera->offset.y) * renderCamera->zoom.y,
-            spriteComponent->drawSource.w * globalTransform->scale.x * renderCamera->zoom.x,
-            spriteComponent->drawSource.h * globalTransform->scale.y * renderCamera->zoom.y
+            spriteComponent->drawSource.w * renderCamera->zoom.x,
+            spriteComponent->drawSource.h * renderCamera->zoom.y
         };
         rbe_renderer_queue_sprite_draw_call(
             spriteComponent->texture,
