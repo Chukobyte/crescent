@@ -174,33 +174,6 @@ void sprite_renderer_finalize() {}
 // TODO: Just need to pass in destination size instead of rect2
 void sprite_renderer_draw_sprite(const Texture* texture, const Rect2* sourceRect, const Size2D* destSize, const Color* color, bool flipX, bool flipY, TransformModel2D* globalTransform) {
     glDepthMask(false);
-//    const Vector2 absScale = {fabs(destRect->w), fabs(destRect->h) };
-//    // 1. Translation
-//    mat4 model = {
-//        {1.0f, 0.0f, 0.0f, 0.0f},
-//        {0.0f, 1.0f, 0.0f, 0.0f},
-//        {0.0f, 0.0f, 1.0f, 0.0f},
-//        {0.0f, 0.0f, 0.0f, 1.0f}
-//    };
-//    glm_translate(model, (vec3) {
-//        destRect->x, destRect->y, 0.0f
-//    });
-//    // 2. Rotation
-//    glm_translate(model, (vec3) {
-//        0.5f * absScale.x, 0.5f * absScale.y, 0.0f
-//    });
-//    glm_make_rad(&rotation);
-//    glm_rotate(model, rotation, (vec3) {
-//        0.0f, 0.0f, 1.0f
-//    });
-//    glm_translate(model, (vec3) {
-//        -0.5f * absScale.x, -0.5f * absScale.y, 0.0f
-//        });
-//    // 3. Scaling
-//    glm_scale(model, (vec3) {
-//        destRect->w, destRect->h, 1.0f
-//    });
-
 
     glm_scale(globalTransform->model, (vec3) {
         destSize->w, destSize->h, 1.0f
@@ -210,7 +183,6 @@ void sprite_renderer_draw_sprite(const Texture* texture, const Rect2* sourceRect
     glBindBuffer(GL_ARRAY_BUFFER, spriteQuadVBO);
 
     shader_use(spriteShader);
-//    shader_set_mat4_float(spriteShader, "models[0]", &model);
     shader_set_mat4_float(spriteShader, "models[0]", &globalTransform->model);
     const int VERTEX_ITEM_COUNT = 1;
     const int NUMBER_OF_VERTICES = 6;
