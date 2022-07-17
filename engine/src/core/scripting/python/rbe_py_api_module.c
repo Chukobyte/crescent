@@ -440,8 +440,8 @@ void setup_scene_component_node(Entity entity, PyObject* component) {
         rbe_logger_debug("Building collider2d component");
         PyObject* pyRect = PyObject_GetAttrString(component, "rect");
         RBE_ASSERT(pyRect != NULL);
-        const float rectX = phy_get_float_from_var(pyRect, "x");
-        const float rectY = phy_get_float_from_var(pyRect, "y");
+//        const float rectX = phy_get_float_from_var(pyRect, "x");
+//        const float rectY = phy_get_float_from_var(pyRect, "y");
         const float rectW = phy_get_float_from_var(pyRect, "w");
         const float rectH = phy_get_float_from_var(pyRect, "h");
         PyObject* pyColor = PyObject_GetAttrString(component, "color");
@@ -451,18 +451,16 @@ void setup_scene_component_node(Entity entity, PyObject* component) {
         const int colorB = phy_get_int_from_var(pyColor, "b");
         const int colorA = phy_get_int_from_var(pyColor, "a");
         Collider2DComponent* collider2DComponent = collider2d_component_create();
-        collider2DComponent->rect.x = rectX;
-        collider2DComponent->rect.y = rectY;
-        collider2DComponent->rect.w = rectW;
-        collider2DComponent->rect.h = rectH;
+        collider2DComponent->extents.w = rectW;
+        collider2DComponent->extents.h = rectH;
         collider2DComponent->color.r = (float) colorR / 255.0f;
         collider2DComponent->color.g = (float) colorG / 255.0f;
         collider2DComponent->color.b = (float) colorB / 255.0f;
         collider2DComponent->color.a = (float) colorA / 255.0f;
         collider2DComponent->collisionExceptionCount = 0;
         component_manager_set_component(entity, ComponentDataIndex_COLLIDER_2D, collider2DComponent);
-        rbe_logger_debug("rect: (%f, %f, %f, %f), color: (%f, %f, %f, %f)",
-                         rectX, rectY, rectW, rectH, collider2DComponent->color.r, collider2DComponent->color.g, collider2DComponent->color.b, collider2DComponent->color.a);
+        rbe_logger_debug("extents: (%f, %f), color: (%f, %f, %f, %f)",
+                         rectW, rectH, collider2DComponent->color.r, collider2DComponent->color.g, collider2DComponent->color.b, collider2DComponent->color.a);
 
         Py_DECREF(pyRect);
         Py_DECREF(pyColor);
@@ -975,10 +973,8 @@ PyObject* rbe_py_api_collider2D_set_rect(PyObject* self, PyObject* args, PyObjec
     float h;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "iffff", rbePyApiGenericSetEntityRectKWList, &entity, &x, &y, &w, &h)) {
         Collider2DComponent* collider2DComponent = (Collider2DComponent *) component_manager_get_component(entity, ComponentDataIndex_COLLIDER_2D);
-        collider2DComponent->rect.x = x;
-        collider2DComponent->rect.y = y;
-        collider2DComponent->rect.w = w;
-        collider2DComponent->rect.h = h;
+        collider2DComponent->extents.w = w;
+        collider2DComponent->extents.h = h;
         Py_RETURN_NONE;
     }
     return NULL;
@@ -988,7 +984,7 @@ PyObject* rbe_py_api_collider2D_get_rect(PyObject* self, PyObject* args, PyObjec
     Entity entity;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", rbePyApiGenericGetEntityKWList, &entity)) {
         const Collider2DComponent* collider2DComponent = (Collider2DComponent *) component_manager_get_component(entity, ComponentDataIndex_COLLIDER_2D);
-        return Py_BuildValue("(ffff)", collider2DComponent->rect.x, collider2DComponent->rect.y, collider2DComponent->rect.w, collider2DComponent->rect.h);
+        return Py_BuildValue("(ffff)", 0.0f, 0.0f, collider2DComponent->extents.w, collider2DComponent->extents.h);
     }
     return NULL;
 }
