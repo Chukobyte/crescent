@@ -53,8 +53,8 @@ void collision_system_render() {
         TransformModel2D* globalTransform = rbe_scene_manager_get_scene_node_global_transform(entity, transformComp);
         transformComp->isGlobalTransformDirty = true; // TODO: Make global transform const
         const Size2D colliderDrawSize = {
-                colliderComp->extents.w * renderCamera->zoom.x,
-                colliderComp->extents.h * renderCamera->zoom.y
+            colliderComp->extents.w * renderCamera->zoom.x,
+            colliderComp->extents.h * renderCamera->zoom.y
         };
         glm_translate(globalTransform->model, (vec3) {
             (renderCamera->offset.x - renderCamera->viewport.x) * renderCamera->zoom.x,

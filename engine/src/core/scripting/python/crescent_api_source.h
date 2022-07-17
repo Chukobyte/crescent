@@ -198,6 +198,51 @@
 "        return f\"({self.x}, {self.y}, {self.z})\"\n"\
 "\n"\
 "\n"\
+"class Size2D:\n"\
+"    def __init__(self, w=0.0, h=0.0):\n"\
+"        self.w = w\n"\
+"        self.h = h\n"\
+"\n"\
+"    def __eq__(self, other) -> bool:\n"\
+"        if self.w == other.w and self.h == other.h:\n"\
+"            return True\n"\
+"        else:\n"\
+"            return False\n"\
+"\n"\
+"    def __gt__(self, other) -> bool:\n"\
+"        if self.total_length() > other.total_length():\n"\
+"            return True\n"\
+"        else:\n"\
+"            return False\n"\
+"\n"\
+"    def __lt__(self, other) -> bool:\n"\
+"        if self.total_length() < other.total_length():\n"\
+"            return True\n"\
+"        else:\n"\
+"            return False\n"\
+"\n"\
+"    def __sub__(self, other):\n"\
+"        return Size2D(self.w - other.w, self.h - other.h)\n"\
+"\n"\
+"    def __add__(self, other):\n"\
+"        return Size2D(self.w + other.w, self.h + other.h)\n"\
+"\n"\
+"    def __mul__(self, other):\n"\
+"        return Size2D(self.w * other.w, self.h * other.h)\n"\
+"\n"\
+"    def __truediv__(self, other):\n"\
+"        return Size2D(self.w / other.w, self.h / other.h)\n"\
+"\n"\
+"    def __str__(self):\n"\
+"        return f\"({self.w}, {self.h})\"\n"\
+"\n"\
+"    def __repr__(self):\n"\
+"        return f\"({self.w}, {self.h})\"\n"\
+"\n"\
+"    def total_length(self) -> float:\n"\
+"        return self.w + self.h\n"\
+"\n"\
+"\n"\
 "class Rect2:\n"\
 "    def __init__(self, x=0.0, y=0.0, w=0.0, h=0.0):\n"\
 "        self.x = x\n"\
@@ -610,8 +655,8 @@
 "\n"\
 "\n"\
 "class Collider2DComponent:\n"\
-"    def __init__(self, rect: Rect2, color: Color):\n"\
-"        self.rect = rect\n"\
+"    def __init__(self, extents: Size2D, color: Color):\n"\
+"        self.extents = extents\n"\
 "        self.color = color\n"\
 "\n"\
 "\n"\

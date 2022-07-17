@@ -438,12 +438,10 @@ void setup_scene_component_node(Entity entity, PyObject* component) {
         rbe_logger_debug("class_path: %s, class_name: %s", scriptClassPath, scriptClassName);
     } else if (strcmp(className, "Collider2DComponent") == 0) {
         rbe_logger_debug("Building collider2d component");
-        PyObject* pyRect = PyObject_GetAttrString(component, "rect");
-        RBE_ASSERT(pyRect != NULL);
-//        const float rectX = phy_get_float_from_var(pyRect, "x");
-//        const float rectY = phy_get_float_from_var(pyRect, "y");
-        const float rectW = phy_get_float_from_var(pyRect, "w");
-        const float rectH = phy_get_float_from_var(pyRect, "h");
+        PyObject* pyExtents = PyObject_GetAttrString(component, "extents");
+        RBE_ASSERT(pyExtents != NULL);
+        const float rectW = phy_get_float_from_var(pyExtents, "w");
+        const float rectH = phy_get_float_from_var(pyExtents, "h");
         PyObject* pyColor = PyObject_GetAttrString(component, "color");
         RBE_ASSERT(pyColor != NULL);
         const int colorR = phy_get_int_from_var(pyColor, "r");
@@ -462,7 +460,7 @@ void setup_scene_component_node(Entity entity, PyObject* component) {
         rbe_logger_debug("extents: (%f, %f), color: (%f, %f, %f, %f)",
                          rectW, rectH, collider2DComponent->color.r, collider2DComponent->color.g, collider2DComponent->color.b, collider2DComponent->color.a);
 
-        Py_DECREF(pyRect);
+        Py_DECREF(pyExtents);
         Py_DECREF(pyColor);
     } else {
         rbe_logger_error("Invalid component class name: '%s'", className);

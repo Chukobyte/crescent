@@ -159,6 +159,51 @@ class Vector3:
         return f"({self.x}, {self.y}, {self.z})"
 
 
+class Size2D:
+    def __init__(self, w=0.0, h=0.0):
+        self.w = w
+        self.h = h
+
+    def __eq__(self, other) -> bool:
+        if self.w == other.w and self.h == other.h:
+            return True
+        else:
+            return False
+
+    def __gt__(self, other) -> bool:
+        if self.total_length() > other.total_length():
+            return True
+        else:
+            return False
+
+    def __lt__(self, other) -> bool:
+        if self.total_length() < other.total_length():
+            return True
+        else:
+            return False
+
+    def __sub__(self, other):
+        return Size2D(self.w - other.w, self.h - other.h)
+
+    def __add__(self, other):
+        return Size2D(self.w + other.w, self.h + other.h)
+
+    def __mul__(self, other):
+        return Size2D(self.w * other.w, self.h * other.h)
+
+    def __truediv__(self, other):
+        return Size2D(self.w / other.w, self.h / other.h)
+
+    def __str__(self):
+        return f"({self.w}, {self.h})"
+
+    def __repr__(self):
+        return f"({self.w}, {self.h})"
+
+    def total_length(self) -> float:
+        return self.w + self.h
+
+
 class Rect2:
     def __init__(self, x=0.0, y=0.0, w=0.0, h=0.0):
         self.x = x
@@ -571,8 +616,8 @@ class ScriptComponent:
 
 
 class Collider2DComponent:
-    def __init__(self, rect: Rect2, color: Color):
-        self.rect = rect
+    def __init__(self, extents: Size2D, color: Color):
+        self.extents = extents
         self.color = color
 
 

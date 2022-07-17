@@ -122,7 +122,7 @@ create_stage_nodes(
                                     ignore_camera=False,
                                 ),
                                 Collider2DComponent(
-                                    rect=Rect2(0, 0, 16, 17),
+                                    extents=Size2D(16, 17),
                                     color=Color(200, 200, 255, 200),
                                 ),
                             ],
@@ -231,7 +231,7 @@ create_stage_nodes(
                                     ignore_camera=False,
                                 ),
                                 Collider2DComponent(
-                                    rect=Rect2(0, 0, 16, 17),
+                                    extents=Size2D(16, 17),
                                     color=Color(200, 200, 255, 200),
                                 ),
                             ],
