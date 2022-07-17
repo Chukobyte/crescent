@@ -261,11 +261,11 @@ void rbe_scene_graph_test() {
     // Parent
     Entity parentEntity = 1;
     Transform2DComponent* parentTransform = transform2d_component_create();
-    parentTransform->position.x = 220.0f;
-    parentTransform->position.y = 300.0f;
-    parentTransform->rotation = 180.0f;
-    parentTransform->scale.x = 4.0f;
-    parentTransform->scale.y = 4.0f;
+    parentTransform->localTransform.position.x = 220.0f;
+    parentTransform->localTransform.position.y = 300.0f;
+    parentTransform->localTransform.rotation = 180.0f;
+    parentTransform->localTransform.scale.x = 4.0f;
+    parentTransform->localTransform.scale.y = 4.0f;
     component_manager_set_component(parentEntity, ComponentDataIndex_TRANSFORM_2D, parentTransform);
     SceneTreeNode* parentNode = rbe_scene_tree_create_tree_node(parentEntity, NULL);
     rbe_scene_manager_queue_entity_for_creation(parentNode);
@@ -276,8 +276,8 @@ void rbe_scene_graph_test() {
     // Child 1
     Entity childOneEntity = 2;
     Transform2DComponent* childOneTransform = transform2d_component_create();
-    childOneTransform->position.x = 100.0f;
-    childOneTransform->position.y = 20.0f;
+    childOneTransform->localTransform.position.x = 100.0f;
+    childOneTransform->localTransform.position.y = 20.0f;
     component_manager_set_component(childOneEntity, ComponentDataIndex_TRANSFORM_2D, childOneTransform);
     SceneTreeNode* childOneNode = rbe_scene_tree_create_tree_node(childOneEntity, parentNode);
     rbe_scene_manager_queue_entity_for_creation(childOneNode);
@@ -305,8 +305,8 @@ void rbe_scene_graph_test() {
     TEST_ASSERT_EQUAL_FLOAT(childOneScale.x, 4.0f);
     TEST_ASSERT_EQUAL_FLOAT(childOneScale.y, 4.0f);
 
-    Transform2DComponent childOneCombinedTransform = rbe_scene_manager_get_scene_graph_transform(childOneEntity);
-    transform2d_component_print(&childOneCombinedTransform);
+    TransformModel2D* globalTransform = rbe_scene_manager_get_scene_graph_transform(childOneEntity);
+//    transform2d_component_print(&childOneCombinedTransform);
 
     component_manager_finalize();
     rbe_scene_manager_finalize();
