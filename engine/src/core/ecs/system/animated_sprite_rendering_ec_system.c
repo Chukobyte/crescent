@@ -51,7 +51,6 @@ void animated_sprite_rendering_system_render() {
         }
         const RBECamera2D* renderCamera = spriteTransformComp->ignoreCamera ? defaultCamera : camera2D;
         TransformModel2D* globalTransform = rbe_scene_manager_get_scene_node_global_transform(entity);
-//        Transform2D combinedTransform = rbe_scene_manager_get_scene_graph_transform(entity);
         glm_translate(globalTransform->model, (vec3) {
             (renderCamera->offset.x - renderCamera->viewport.x) * renderCamera->zoom.x,
             (renderCamera->offset.y - renderCamera->viewport.y) * renderCamera->zoom.y,
