@@ -28,11 +28,11 @@ void tearDown() {}
 
 int main(int argv, char** args) {
     UNITY_BEGIN();
-//    RUN_TEST(rbe_hash_main_test);
-//    RUN_TEST(rbe_string_hashmap_test);
-//    RUN_TEST(rbe_array_list_test);
-//    RUN_TEST(rbe_static_array_test);
-//    RUN_TEST(rbe_thread_main_test);
+    RUN_TEST(rbe_hash_main_test);
+    RUN_TEST(rbe_string_hashmap_test);
+    RUN_TEST(rbe_array_list_test);
+    RUN_TEST(rbe_static_array_test);
+    RUN_TEST(rbe_thread_main_test);
     RUN_TEST(rbe_scene_graph_test);
     return UNITY_END();
 }
@@ -305,7 +305,7 @@ void rbe_scene_graph_test() {
     TEST_ASSERT_EQUAL_FLOAT(childOneScale.x, 4.0f);
     TEST_ASSERT_EQUAL_FLOAT(childOneScale.y, 4.0f);
 
-    TransformModel2D* globalTransform = rbe_scene_manager_get_scene_node_global_transform(childOneEntity);
+    TransformModel2D* globalTransform = rbe_scene_manager_get_scene_node_global_transform(childOneEntity, childOneTransform);
 //    transform2d_component_print(&childOneCombinedTransform);
 
     component_manager_finalize();
