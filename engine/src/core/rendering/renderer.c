@@ -216,12 +216,13 @@ void sprite_renderer_draw_sprite(const Texture* texture, const Rect2* sourceRect
     const float SPRITE_ID = 0.0f;
     TextureCoordinates textureCoords = renderer_get_texture_coordinates(texture, sourceRect, flipX, flipY);
 
+    const float determinate = glm_mat4_det(globalTransform->model);
     const int vertsStride = 9;
     GLfloat verts[54]; // TODO: fix magic number
     for (int i = 0; i < VERTEX_ITEM_COUNT * NUMBER_OF_VERTICES; i++) {
         bool isSMin;
         bool isTMin;
-        if ((destRect->w > 0.0f && destRect->h > 0.0f) || (destRect->w < 0.0f && destRect->h < 0.0f)) {
+        if (determinate >= 0.0f) {
             isSMin = i == 0 || i == 2 || i == 3 ? true : false;
             isTMin = i == 1 || i == 2 || i == 5 ? true : false;
         } else {

@@ -270,7 +270,7 @@ create_stage_nodes(
                     components=[
                         Transform2DComponent(
                             position=Vector2(350.0, 250.0),
-                            scale=Vector2(4.0, 4.0),
+                            scale=Vector2(-4.0, 4.0),
                             rotation=45.0,
                             z_index=0,
                             z_index_relative_to_parent=True,
