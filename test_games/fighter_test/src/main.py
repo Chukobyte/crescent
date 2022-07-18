@@ -73,8 +73,8 @@ class FighterSimulation:
             if fighter.input_buffer.light_punch_pressed and not fighter.is_attacking:
                 attack = Attack.new()
                 print(f"[PY_SCRIPT] attack = {attack}")
-                # attack.position = fighter.node.position + Vector2(150, 60)
-                attack.position = fighter.node.position
+                x_scale_vec = Vector2(math.copysign(1.0, fighter.node.scale.x), 1.0)
+                attack.position = fighter.node.position + (Vector2(48, 0) * x_scale_vec)
                 self.main_node.add_child(attack)
                 self.add_attack(attack=attack, fighter_index=i)
                 fighter.is_attacking = True
