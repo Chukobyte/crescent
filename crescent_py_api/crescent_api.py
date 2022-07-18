@@ -788,6 +788,19 @@ class Node2D(Node):
             entity_id=self.entity_id, x=value.x, y=value.y
         )
 
+    def get_global_position(self) -> Vector2:
+        px, py = crescent_api_internal.node2D_get_global_position(
+            entity_id=self.entity_id
+        )
+        return Vector2(px, py)
+
+    @property
+    def global_position(self) -> Vector2:
+        px, py = crescent_api_internal.node2D_get_global_position(
+            entity_id=self.entity_id
+        )
+        return Vector2(px, py)
+
     def set_scale(self, value: Vector2) -> None:
         crescent_api_internal.node2D_set_scale(
             entity_id=self.entity_id, x=value.x, y=value.y

@@ -58,6 +58,7 @@ PyObject* rbe_py_api_node_get_parent(PyObject* self, PyObject* args, PyObject* k
 PyObject* rbe_py_api_node2D_set_position(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* rbe_py_api_node2D_add_to_position(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* rbe_py_api_node2D_get_position(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* rbe_py_api_node2D_get_global_position(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* rbe_py_api_node2D_set_scale(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* rbe_py_api_node2D_add_to_scale(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* rbe_py_api_node2D_get_scale(PyObject* self, PyObject* args, PyObject* kwargs);
@@ -254,6 +255,10 @@ static struct PyMethodDef rbePyApiMethods[] = {
     {
         "node2D_get_position", (PyCFunction) rbe_py_api_node2D_get_position,
         METH_VARARGS | METH_KEYWORDS, "Get the position of a node."
+    },
+    {
+        "node2D_get_global_position", (PyCFunction) rbe_py_api_node2D_get_global_position,
+        METH_VARARGS | METH_KEYWORDS, "Get the global position of a node."
     },
     {
         "node2D_set_scale", (PyCFunction) rbe_py_api_node2D_set_scale,

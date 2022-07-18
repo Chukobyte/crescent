@@ -157,6 +157,10 @@ def node2D_get_position(entity_id: int) -> tuple:
     return 0.0, 0.0
 
 
+def node2D_get_global_position(entity_id: int) -> tuple:
+    return 0.0, 0.0
+
+
 def node2D_set_scale(entity_id: int, x: float, y: float) -> None:
     pass
 
