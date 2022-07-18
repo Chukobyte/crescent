@@ -5,6 +5,12 @@
 [![windows-mingw-build Actions Status](https://github.com/Chukobyte/crescent/workflows/windows-mingw-build/badge.svg)](https://github.com/Chukobyte/crescent/actions)
 [![pvs-studio Actions Status](https://github.com/Chukobyte/crescent/workflows/pvs-studio/badge.svg)](https://github.com/Chukobyte/crescent/actions)
 
+<p align="center">
+  <a href="https://chukobyte.github.io/crescent">
+    <img src="assets/images/logo_2.png" width="167" alt="Crescent Engine logo">
+  </a>
+</p>
+
 A work in progress fighting game engine for Windows and Linux with the core written in C11.  The name is temporary and will very likely change in the near future.  Road map for the project coming soon.
 
 ## Tech Stack
