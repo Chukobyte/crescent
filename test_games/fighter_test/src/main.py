@@ -57,24 +57,32 @@ class FighterSimulation:
         # Move fighters
         for i, fighter in enumerate(self.fighters):
             fighter.input_buffer.process_inputs()
-            if fighter.input_buffer.move_left_pressed:
-                fighter.velocity += Vector2.LEFT()
-            elif fighter.input_buffer.move_right_pressed:
-                fighter.velocity += Vector2.RIGHT()
+            if not fighter.is_attacking:
+                if fighter.input_buffer.move_left_pressed:
+                    fighter.velocity += Vector2.LEFT()
+                elif fighter.input_buffer.move_right_pressed:
+                    fighter.velocity += Vector2.RIGHT()
 
-            if fighter.velocity != Vector2.ZERO():
-                delta_vector = Vector2(
-                    fighter.speed * delta_time, fighter.speed * delta_time
-                )
-                fighter.node.add_to_position(fighter.velocity * delta_vector)
-                fighter.velocity = Vector2.ZERO()
+                if fighter.velocity != Vector2.ZERO():
+                    delta_vector = Vector2(
+                        fighter.speed * delta_time, fighter.speed * delta_time
+                    )
+                    fighter.node.add_to_position(fighter.velocity * delta_vector)
+                    fighter.velocity = Vector2.ZERO()
 
             # Attack
             if fighter.input_buffer.light_punch_pressed and not fighter.is_attacking:
                 attack = Attack.new()
                 print(f"[PY_SCRIPT] attack = {attack}")
+                # TODO: Clean up attack stuff by calculating the sprite with the width and origin x
                 x_scale_vec = Vector2(math.copysign(1.0, fighter.node.scale.x), 1.0)
-                attack.position = fighter.node.position + (Vector2(48, 0) * x_scale_vec)
+                # Facing right
+                if x_scale_vec.x > 0.0:
+                    attack_offset = Vector2(48, 0) * x_scale_vec
+                # Facing left
+                else:
+                    attack_offset = Vector2(80, 0) * x_scale_vec
+                attack.position = fighter.node.position + attack_offset
                 self.main_node.add_child(attack)
                 self.add_attack(attack=attack, fighter_index=i)
                 fighter.is_attacking = True
