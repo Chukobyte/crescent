@@ -47,28 +47,28 @@ void collision_system_render() {
     const RBECamera2D* defaultCamera = rbe_camera_manager_get_default_camera();
     for (size_t i = 0; i < collisionSystem->entity_count; i++) {
         const Entity entity = collisionSystem->entities[i];
-        const Transform2DComponent parentTransform = rbe_scene_manager_get_combined_parent_transform(entity);
-        const Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
+        Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
         const Collider2DComponent* colliderComp = (Collider2DComponent*) component_manager_get_component(entity, ComponentDataIndex_COLLIDER_2D);
         const RBECamera2D* renderCamera = transformComp->ignoreCamera ? defaultCamera : camera2D;
-        const Vector2 drawPosition = { .x = transformComp->position.x + parentTransform.position.x + colliderComp->rect.x,
-                                       .y = transformComp->position.y + parentTransform.position.y + colliderComp->rect.y
-                                     };
-        const Rect2 colliderDrawDestination = {
-            (drawPosition.x - renderCamera->viewport.x + renderCamera->offset.x) * renderCamera->zoom.x,
-            (drawPosition.y - renderCamera->viewport.y + renderCamera->offset.y) * renderCamera->zoom.y,
-            parentTransform.scale.x * transformComp->scale.x * colliderComp->rect.w * renderCamera->zoom.x,
-            parentTransform.scale.y * transformComp->scale.y * colliderComp->rect.h * renderCamera->zoom.y
+        TransformModel2D* globalTransform = rbe_scene_manager_get_scene_node_global_transform(entity, transformComp);
+        transformComp->isGlobalTransformDirty = true; // TODO: Make global transform const
+        const Size2D colliderDrawSize = {
+            colliderComp->extents.w * renderCamera->zoom.x,
+            colliderComp->extents.h * renderCamera->zoom.y
         };
-
+        glm_translate(globalTransform->model, (vec3) {
+            (renderCamera->offset.x - renderCamera->viewport.x) * renderCamera->zoom.x,
+            (renderCamera->offset.y - renderCamera->viewport.y) * renderCamera->zoom.y,
+            0.0f
+        });
         rbe_renderer_queue_sprite_draw_call(
             collisionOutlineTexture,
             colliderDrawSource,
-            colliderDrawDestination,
-            transformComp->rotation,
+            colliderDrawSize,
             colliderComp->color,
             false,
-            false
+            false,
+            globalTransform
         );
     }
 }

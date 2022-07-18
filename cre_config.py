@@ -25,6 +25,13 @@ configure_assets(
             filter_min="nearest",
             filter_mag="nearest",
         ),
+        Texture(
+            file_path="test_games/fighter_test/assets/images/characters/mor/mor_still.png",
+            wrap_s="clamp_to_border",
+            wrap_t="clamp_to_border",
+            filter_min="nearest",
+            filter_mag="nearest",
+        ),
     ],
     fonts=[
         Font(
@@ -57,5 +64,7 @@ configure_inputs(
         InputAction(name="camera_right", values=[Input.Keyboard.L]),
         InputAction(name="camera_up", values=[Input.Keyboard.I]),
         InputAction(name="camera_down", values=[Input.Keyboard.K]),
+        InputAction(name="rotate_pos", values=[Input.Keyboard.M]),
+        InputAction(name="rotate_neg", values=[Input.Keyboard.N]),
     ]
 )

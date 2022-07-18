@@ -58,6 +58,12 @@ PyObject* rbe_py_api_node_get_parent(PyObject* self, PyObject* args, PyObject* k
 PyObject* rbe_py_api_node2D_set_position(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* rbe_py_api_node2D_add_to_position(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* rbe_py_api_node2D_get_position(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* rbe_py_api_node2D_set_scale(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* rbe_py_api_node2D_add_to_scale(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* rbe_py_api_node2D_get_scale(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* rbe_py_api_node2D_set_rotation(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* rbe_py_api_node2D_add_to_rotation(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* rbe_py_api_node2D_get_rotation(PyObject* self, PyObject* args, PyObject* kwargs);
 
 // Sprite
 PyObject* rbe_py_api_sprite_set_texture(PyObject* self, PyObject* args, PyObject* kwargs);
@@ -72,8 +78,8 @@ PyObject* rbe_py_api_text_label_set_color(PyObject* self, PyObject* args, PyObje
 PyObject* rbe_py_api_text_label_get_color(PyObject* self, PyObject* args, PyObject* kwargs);
 
 // Collider2D
-PyObject* rbe_py_api_collider2D_set_rect(PyObject* self, PyObject* args, PyObject* kwargs);
-PyObject* rbe_py_api_collider2D_get_rect(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* rbe_py_api_collider2D_set_extents(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* rbe_py_api_collider2D_get_extents(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* rbe_py_api_collider2D_set_color(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* rbe_py_api_collider2D_get_color(PyObject* self, PyObject* args, PyObject* kwargs);
 
@@ -249,6 +255,30 @@ static struct PyMethodDef rbePyApiMethods[] = {
         "node2D_get_position", (PyCFunction) rbe_py_api_node2D_get_position,
         METH_VARARGS | METH_KEYWORDS, "Get the position of a node."
     },
+    {
+        "node2D_set_scale", (PyCFunction) rbe_py_api_node2D_set_scale,
+        METH_VARARGS | METH_KEYWORDS, "Set the scale of a node."
+    },
+    {
+        "node2D_add_to_scale", (PyCFunction) rbe_py_api_node2D_add_to_scale,
+        METH_VARARGS | METH_KEYWORDS, "Adds to the scale of a node."
+    },
+    {
+        "node2D_get_scale", (PyCFunction) rbe_py_api_node2D_get_scale,
+        METH_VARARGS | METH_KEYWORDS, "Get the scale of a node."
+    },
+    {
+        "node2D_set_rotation", (PyCFunction) rbe_py_api_node2D_set_rotation,
+        METH_VARARGS | METH_KEYWORDS, "Set the rotation of a node."
+    },
+    {
+        "node2D_add_to_rotation", (PyCFunction) rbe_py_api_node2D_add_to_rotation,
+        METH_VARARGS | METH_KEYWORDS, "Adds to the rotation of a node."
+    },
+    {
+        "node2D_get_rotation", (PyCFunction) rbe_py_api_node2D_get_rotation,
+        METH_VARARGS | METH_KEYWORDS, "Get the rotation of a node."
+    },
     // SPRITE
     {
         "sprite_set_texture", (PyCFunction) rbe_py_api_sprite_set_texture,
@@ -285,12 +315,12 @@ static struct PyMethodDef rbePyApiMethods[] = {
     },
     // Collider2D
     {
-        "collider2D_set_rect", (PyCFunction) rbe_py_api_collider2D_set_rect,
-        METH_VARARGS | METH_KEYWORDS, "Sets the collider's collision rectangle."
+        "collider2D_set_extents", (PyCFunction) rbe_py_api_collider2D_set_extents,
+        METH_VARARGS | METH_KEYWORDS, "Sets the collider's collision extents."
     },
     {
-        "collider2D_get_rect", (PyCFunction) rbe_py_api_collider2D_get_rect,
-        METH_VARARGS | METH_KEYWORDS, "Gets the collider's collision rectangle."
+        "collider2D_get_extents", (PyCFunction) rbe_py_api_collider2D_get_extents,
+        METH_VARARGS | METH_KEYWORDS, "Gets the collider's collision extents."
     },
     {
         "collider2D_set_color", (PyCFunction) rbe_py_api_collider2D_set_color,
@@ -359,6 +389,7 @@ static char *rbePyApiGenericPathKWList[] = {"path", NULL};
 static char *rbePyApiGenericEnabledKWList[] = {"enabled", NULL};
 static char *rbePyApiGenericXYKWList[] = {"x", "y", NULL};
 static char *rbePyApiGenericXYWHKWList[] = {"x", "y", "w", "h", NULL};
+static char *rbePyApiGenericSetEntitySize2DKWList[] = {"entity_id", "w", "h", NULL};
 static char *rbePyApiGenericSetEntityRectKWList[] = {"entity_id", "x", "y", "w", "h", NULL};
 static char *rbePyApiGenericSetEntityColorKWList[] = {"entity_id", "r", "g", "b", "a", NULL};
 
@@ -380,7 +411,8 @@ static char *rbePyApiNodeNewKWList[] = {"class_path", "class_name", "node_type",
 static char *rbePyApiNodeAddChildKWList[] = {"parent_entity_id", "child_entity_id", NULL};
 static char *rbePyApiNodeGetChildKWList[] = {"entity_id", "child_name", NULL};
 
-static char *rbePyApiNode2DSetPositionKWList[] = {"entity_id", "x", "y", NULL};
+static char *rbePyApiNode2DSetXYKWList[] = {"entity_id", "x", "y", NULL};
+static char *rbePyApiNode2DSetRotationKWList[] = {"entity_id", "rotation", NULL};
 
 static char *rbePyApiSpriteSetTextureKWList[] = {"entity_id", "file_path", NULL};
 

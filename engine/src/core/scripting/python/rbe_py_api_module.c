@@ -284,10 +284,11 @@ void setup_scene_component_node(Entity entity, PyObject* component) {
         const bool zIndexRelativeToParent = phy_get_bool_from_var(component, "z_index_relative_to_parent");
         const bool ignoreCamera = phy_get_bool_from_var(component, "ignore_camera");
         Transform2DComponent* transform2DComponent = transform2d_component_create();
-        transform2DComponent->position.x = positionX;
-        transform2DComponent->position.y = positionY;
-        transform2DComponent->scale.x = scaleX;
-        transform2DComponent->scale.y = scaleY;
+        transform2DComponent->localTransform.position.x = positionX;
+        transform2DComponent->localTransform.position.y = positionY;
+        transform2DComponent->localTransform.scale.x = scaleX;
+        transform2DComponent->localTransform.scale.y = scaleY;
+        transform2DComponent->localTransform.rotation = rotation;
         transform2DComponent->zIndex = zIndex;
         transform2DComponent->isZIndexRelativeToParent = zIndexRelativeToParent;
         transform2DComponent->ignoreCamera = ignoreCamera;
@@ -437,12 +438,10 @@ void setup_scene_component_node(Entity entity, PyObject* component) {
         rbe_logger_debug("class_path: %s, class_name: %s", scriptClassPath, scriptClassName);
     } else if (strcmp(className, "Collider2DComponent") == 0) {
         rbe_logger_debug("Building collider2d component");
-        PyObject* pyRect = PyObject_GetAttrString(component, "rect");
-        RBE_ASSERT(pyRect != NULL);
-        const float rectX = phy_get_float_from_var(pyRect, "x");
-        const float rectY = phy_get_float_from_var(pyRect, "y");
-        const float rectW = phy_get_float_from_var(pyRect, "w");
-        const float rectH = phy_get_float_from_var(pyRect, "h");
+        PyObject* pyExtents = PyObject_GetAttrString(component, "extents");
+        RBE_ASSERT(pyExtents != NULL);
+        const float rectW = phy_get_float_from_var(pyExtents, "w");
+        const float rectH = phy_get_float_from_var(pyExtents, "h");
         PyObject* pyColor = PyObject_GetAttrString(component, "color");
         RBE_ASSERT(pyColor != NULL);
         const int colorR = phy_get_int_from_var(pyColor, "r");
@@ -450,20 +449,18 @@ void setup_scene_component_node(Entity entity, PyObject* component) {
         const int colorB = phy_get_int_from_var(pyColor, "b");
         const int colorA = phy_get_int_from_var(pyColor, "a");
         Collider2DComponent* collider2DComponent = collider2d_component_create();
-        collider2DComponent->rect.x = rectX;
-        collider2DComponent->rect.y = rectY;
-        collider2DComponent->rect.w = rectW;
-        collider2DComponent->rect.h = rectH;
+        collider2DComponent->extents.w = rectW;
+        collider2DComponent->extents.h = rectH;
         collider2DComponent->color.r = (float) colorR / 255.0f;
         collider2DComponent->color.g = (float) colorG / 255.0f;
         collider2DComponent->color.b = (float) colorB / 255.0f;
         collider2DComponent->color.a = (float) colorA / 255.0f;
         collider2DComponent->collisionExceptionCount = 0;
         component_manager_set_component(entity, ComponentDataIndex_COLLIDER_2D, collider2DComponent);
-        rbe_logger_debug("rect: (%f, %f, %f, %f), color: (%f, %f, %f, %f)",
-                         rectX, rectY, rectW, rectH, collider2DComponent->color.r, collider2DComponent->color.g, collider2DComponent->color.b, collider2DComponent->color.a);
+        rbe_logger_debug("extents: (%f, %f), color: (%f, %f, %f, %f)",
+                         rectW, rectH, collider2DComponent->color.r, collider2DComponent->color.g, collider2DComponent->color.b, collider2DComponent->color.a);
 
-        Py_DECREF(pyRect);
+        Py_DECREF(pyExtents);
         Py_DECREF(pyColor);
     } else {
         rbe_logger_error("Invalid component class name: '%s'", className);
@@ -803,10 +800,11 @@ PyObject* rbe_py_api_node2D_set_position(PyObject* self, PyObject* args, PyObjec
     Entity entity;
     float x;
     float y;
-    if (PyArg_ParseTupleAndKeywords(args, kwargs, "iff", rbePyApiNode2DSetPositionKWList, &entity, &x, &y)) {
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "iff", rbePyApiNode2DSetXYKWList, &entity, &x, &y)) {
         Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
-        transformComp->position.x = x;
-        transformComp->position.y = y;
+        transformComp->localTransform.position.x = x;
+        transformComp->localTransform.position.y = y;
+        transformComp->isGlobalTransformDirty = true;
         Py_RETURN_NONE;
     }
     return NULL;
@@ -816,10 +814,11 @@ PyObject* rbe_py_api_node2D_add_to_position(PyObject* self, PyObject* args, PyOb
     Entity entity;
     float x;
     float y;
-    if (PyArg_ParseTupleAndKeywords(args, kwargs, "iff", rbePyApiNode2DSetPositionKWList, &entity, &x, &y)) {
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "iff", rbePyApiNode2DSetXYKWList, &entity, &x, &y)) {
         Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
-        transformComp->position.x += x;
-        transformComp->position.y += y;
+        transformComp->localTransform.position.x += x;
+        transformComp->localTransform.position.y += y;
+        transformComp->isGlobalTransformDirty = true;
         Py_RETURN_NONE;
     }
     return NULL;
@@ -829,7 +828,77 @@ PyObject* rbe_py_api_node2D_get_position(PyObject* self, PyObject* args, PyObjec
     Entity entity;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", rbePyApiGenericGetEntityKWList, &entity)) {
         const Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
-        return Py_BuildValue("(ff)", transformComp->position.x, transformComp->position.y);
+        return Py_BuildValue("(ff)", transformComp->localTransform.position.x, transformComp->localTransform.position.y);
+    }
+    return NULL;
+}
+
+PyObject* rbe_py_api_node2D_set_scale(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    float x;
+    float y;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "iff", rbePyApiNode2DSetXYKWList, &entity, &x, &y)) {
+        Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
+        transformComp->localTransform.scale.x = x;
+        transformComp->localTransform.scale.y = y;
+        transformComp->isGlobalTransformDirty = true;
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* rbe_py_api_node2D_add_to_scale(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    float x;
+    float y;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "iff", rbePyApiNode2DSetXYKWList, &entity, &x, &y)) {
+        Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
+        transformComp->localTransform.scale.x += x;
+        transformComp->localTransform.scale.y += y;
+        transformComp->isGlobalTransformDirty = true;
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* rbe_py_api_node2D_get_scale(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", rbePyApiGenericGetEntityKWList, &entity)) {
+        const Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
+        return Py_BuildValue("(ff)", transformComp->localTransform.scale.x, transformComp->localTransform.scale.y);
+    }
+    return NULL;
+}
+
+PyObject* rbe_py_api_node2D_set_rotation(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    float rotation;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "if", rbePyApiNode2DSetRotationKWList, &entity, &rotation)) {
+        Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
+        transformComp->localTransform.rotation = rotation;
+        transformComp->isGlobalTransformDirty = true;
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* rbe_py_api_node2D_add_to_rotation(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    float rotation;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "if", rbePyApiNode2DSetRotationKWList, &entity, &rotation)) {
+        Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
+        transformComp->localTransform.rotation += rotation;
+        transformComp->isGlobalTransformDirty = true;
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* rbe_py_api_node2D_get_rotation(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", rbePyApiGenericGetEntityKWList, &entity)) {
+        const Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
+        return Py_BuildValue("f", transformComp->localTransform.rotation);
     }
     return NULL;
 }
@@ -931,28 +1000,24 @@ PyObject* rbe_py_api_text_label_get_color(PyObject* self, PyObject* args, PyObje
 }
 
 // Collider2D
-PyObject* rbe_py_api_collider2D_set_rect(PyObject* self, PyObject* args, PyObject* kwargs) {
+PyObject* rbe_py_api_collider2D_set_extents(PyObject* self, PyObject* args, PyObject* kwargs) {
     Entity entity;
-    float x;
-    float y;
     float w;
     float h;
-    if (PyArg_ParseTupleAndKeywords(args, kwargs, "iffff", rbePyApiGenericSetEntityRectKWList, &entity, &x, &y, &w, &h)) {
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "iff", rbePyApiGenericSetEntitySize2DKWList, &entity, &w, &h)) {
         Collider2DComponent* collider2DComponent = (Collider2DComponent *) component_manager_get_component(entity, ComponentDataIndex_COLLIDER_2D);
-        collider2DComponent->rect.x = x;
-        collider2DComponent->rect.y = y;
-        collider2DComponent->rect.w = w;
-        collider2DComponent->rect.h = h;
+        collider2DComponent->extents.w = w;
+        collider2DComponent->extents.h = h;
         Py_RETURN_NONE;
     }
     return NULL;
 }
 
-PyObject* rbe_py_api_collider2D_get_rect(PyObject* self, PyObject* args, PyObject* kwargs) {
+PyObject* rbe_py_api_collider2D_get_extents(PyObject* self, PyObject* args, PyObject* kwargs) {
     Entity entity;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", rbePyApiGenericGetEntityKWList, &entity)) {
         const Collider2DComponent* collider2DComponent = (Collider2DComponent *) component_manager_get_component(entity, ComponentDataIndex_COLLIDER_2D);
-        return Py_BuildValue("(ffff)", collider2DComponent->rect.x, collider2DComponent->rect.y, collider2DComponent->rect.w, collider2DComponent->rect.h);
+        return Py_BuildValue("(ff)", collider2DComponent->extents.w, collider2DComponent->extents.h);
     }
     return NULL;
 }

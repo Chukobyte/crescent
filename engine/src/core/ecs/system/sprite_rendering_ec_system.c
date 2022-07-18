@@ -31,31 +31,29 @@ void sprite_rendering_system_render() {
 
     for (size_t i = 0; i < spriteRenderingSystem->entity_count; i++) {
         const Entity entity = spriteRenderingSystem->entities[i];
-        const Transform2DComponent parentTransform = rbe_scene_manager_get_combined_parent_transform(entity);
-        const Transform2DComponent* spriteTransformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
+        Transform2DComponent* spriteTransformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
         const SpriteComponent* spriteComponent = (SpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_SPRITE);
         const RBECamera2D* renderCamera = spriteTransformComp->ignoreCamera ? defaultCamera : camera2D;
-        const Vector2 spriteOrigin = { .x = spriteComponent->origin.x * spriteTransformComp->scale.x * parentTransform.scale.x,
-                                       .y = spriteComponent->origin.y * spriteTransformComp->scale.y * parentTransform.scale.y
-                                     };
-        const Vector2 drawPosition = { .x = spriteTransformComp->position.x - spriteOrigin.x + parentTransform.position.x,
-                                       .y = spriteTransformComp->position.y - spriteOrigin.y + parentTransform.position.y
-                                     };
-
-        const Rect2 destinationRectangle = {
-            (drawPosition.x - renderCamera->viewport.x + renderCamera->offset.x) * renderCamera->zoom.x,
-            (drawPosition.y - renderCamera->viewport.y + renderCamera->offset.y) * renderCamera->zoom.y,
-            spriteComponent->drawSource.w * spriteTransformComp->scale.x * parentTransform.scale.x * renderCamera->zoom.x,
-            spriteComponent->drawSource.h * spriteTransformComp->scale.y * parentTransform.scale.y * renderCamera->zoom.y
+        TransformModel2D* globalTransform = rbe_scene_manager_get_scene_node_global_transform(entity, spriteTransformComp);
+        spriteTransformComp->isGlobalTransformDirty = true; // TODO: Make global transform const
+        const Size2D destinationSize = {
+            spriteComponent->drawSource.w * renderCamera->zoom.x,
+            spriteComponent->drawSource.h * renderCamera->zoom.y
         };
+        glm_translate(globalTransform->model, (vec3) {
+            (renderCamera->offset.x - renderCamera->viewport.x - spriteComponent->origin.x) * renderCamera->zoom.x,
+            (renderCamera->offset.y - renderCamera->viewport.y - spriteComponent->origin.y) * renderCamera->zoom.y,
+            0.0f
+        });
+
         rbe_renderer_queue_sprite_draw_call(
             spriteComponent->texture,
             spriteComponent->drawSource,
-            destinationRectangle,
-            spriteTransformComp->rotation,
+            destinationSize,
             spriteComponent->modulate,
             spriteComponent->flipX,
-            spriteComponent->flipY
+            spriteComponent->flipY,
+            globalTransform
         );
     }
 }

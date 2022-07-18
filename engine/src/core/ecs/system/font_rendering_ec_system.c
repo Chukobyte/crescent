@@ -29,18 +29,17 @@ void font_rendering_system_render() {
     const RBECamera2D* defaultCamera = rbe_camera_manager_get_default_camera();
     for (size_t i = 0; i < fontRenderingSystem->entity_count; i++) {
         const Entity entity = fontRenderingSystem->entities[i];
-        const Transform2DComponent parentTransform = rbe_scene_manager_get_combined_parent_transform(entity);
         Transform2DComponent* fontTransformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
         TextLabelComponent* textLabelComponent = (TextLabelComponent*) component_manager_get_component(entity, ComponentDataIndex_TEXT_LABEL);
         const RBECamera2D* renderCamera = fontTransformComp->ignoreCamera ? defaultCamera : camera2D;
-        const Vector2 drawPosition = { .x = fontTransformComp->position.x + parentTransform.position.x, .y = fontTransformComp->position.y + parentTransform.position.y };
+        const TransformModel2D* globalTransform = rbe_scene_manager_get_scene_node_global_transform(entity, fontTransformComp);
 
         rbe_renderer_queue_font_draw_call(
             textLabelComponent->font,
             textLabelComponent->text,
-            (drawPosition.x - renderCamera->viewport.x + renderCamera->offset.x) * renderCamera->zoom.x,
-            (drawPosition.y - renderCamera->viewport.y + renderCamera->offset.y) * renderCamera->zoom.y,
-            fontTransformComp->scale.x * parentTransform.scale.x * renderCamera->zoom.x,
+            (globalTransform->position.x - renderCamera->viewport.x + renderCamera->offset.x) * renderCamera->zoom.x,
+            (globalTransform->position.y - renderCamera->viewport.y + renderCamera->offset.y) * renderCamera->zoom.y,
+            fontTransformComp->localTransform.scale.x * globalTransform->scale.x * renderCamera->zoom.x,
             textLabelComponent->color
         );
     }

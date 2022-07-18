@@ -1,14 +1,15 @@
 #include <string.h>
 #include "scene_manager.h"
 
+#include "../math/rbe_math.h"
 #include "../scripting/python/py_helper.h"
-#include "../memory/rbe_mem.h"
 #include "../ecs/component/component.h"
 #include "../ecs/component/transform2d_component.h"
 #include "../ecs/system/ec_system.h"
-#include "../data_structures/rbe_hash_map.h"
 #include "../camera/camera_manager.h"
 #include "../ecs/component/node_component.h"
+#include "../memory/rbe_mem.h"
+#include "../data_structures/rbe_hash_map.h"
 #include "../utils/logger.h"
 #include "../utils/rbe_assert.h"
 
@@ -152,33 +153,52 @@ void rbe_scene_manager_set_active_scene_root(SceneTreeNode* root) {
     activeScene->sceneTree->root = root;
 }
 
-Transform2DComponent rbe_scene_manager_get_combined_parent_transform(Entity entity) {
+// TODO: Clean up temp stuff for CombineModelResult
+typedef struct CombineModelResult {
+    int entityCount;
+    Entity entities[10];
+} CombineModelResult;
+
+// First index is the child
+CombineModelResult rbe_scene_manager_get_scene_graph_entity_hierarchy(Entity entity) {
+    CombineModelResult combineModelResult = { .entityCount = 0 };
+    combineModelResult.entities[combineModelResult.entityCount++] = entity;
+
     SceneTreeNode* sceneTreeNode = rbe_scene_manager_get_entity_tree_node(entity);
-    Transform2DComponent transform2DComponent = {
-        .position={ .x=0.0f, .y=0.0f },
-        .scale={ .x=1.0f, .y=1.0f },
-        .rotation=0.0f,
-        .zIndex=0,
-        .ignoreCamera=false,
-        .isZIndexRelativeToParent=true,
-    };
     SceneTreeNode* parentTreeNode = sceneTreeNode->parent;
     while (parentTreeNode != NULL) {
-        Transform2DComponent* parentTransform2DComponent = component_manager_get_component_unsafe(parentTreeNode->entity, ComponentDataIndex_TRANSFORM_2D);
-        // If transform 2D is missing, will continue walk up the tree.  This is to allow some flexibility in case
-        // non node2d parent child relationships are introduced.
-        if (parentTransform2DComponent == NULL) {
-            parentTreeNode = parentTreeNode->parent;
-            continue;
-        }
-        transform2DComponent.position.x += parentTransform2DComponent->position.x;
-        transform2DComponent.position.y += parentTransform2DComponent->position.y;
-        transform2DComponent.scale.x *= parentTransform2DComponent->scale.x;
-        transform2DComponent.scale.y *= parentTransform2DComponent->scale.y;
-        transform2DComponent.zIndex += parentTransform2DComponent->zIndex;
+        combineModelResult.entities[combineModelResult.entityCount++] = parentTreeNode->entity;
         parentTreeNode = parentTreeNode->parent;
     }
-    return transform2DComponent;
+    return combineModelResult;
+}
+
+void rbe_scene_manager_get_combined_model(Entity entity, mat4 model) {
+    glm_mat4_identity(model);
+    CombineModelResult combineModelResult = rbe_scene_manager_get_scene_graph_entity_hierarchy(entity);
+    for (int i = combineModelResult.entityCount - 1; i >= 0; i--) {
+        Entity currentEntity = combineModelResult.entities[i];
+        Transform2DComponent* transform2DComponent = component_manager_get_component_unsafe(currentEntity, ComponentDataIndex_TRANSFORM_2D);
+        if (transform2DComponent == NULL) {
+            continue;
+        }
+        mat4 newModel;
+        transform2d_component_get_local_model_matrix(newModel, transform2DComponent);
+        glm_mat4_mul(model, newModel, model);
+    }
+}
+
+// TODO: Make function to update flags for all children
+TransformModel2D* rbe_scene_manager_get_scene_node_global_transform(Entity entity, Transform2DComponent* transform2DComponent) {
+    RBE_ASSERT_FMT(transform2DComponent != NULL, "Transform Model is NULL for entity '%d'", entity);
+    if (transform2DComponent->isGlobalTransformDirty) {
+        rbe_scene_manager_get_combined_model(entity, transform2DComponent->globalTransform.model);
+        transform2DComponent->globalTransform.position = transform2d_component_get_position_from_model(transform2DComponent->globalTransform.model);
+        transform2DComponent->globalTransform.scale = transform2d_component_get_scale_from_model(transform2DComponent->globalTransform.model);
+        transform2DComponent->globalTransform.rotation = transform2d_component_get_rotation_deg_from_model(transform2DComponent->globalTransform.model);
+        transform2DComponent->isGlobalTransformDirty = false;
+    }
+    return &transform2DComponent->globalTransform;
 }
 
 SceneTreeNode* rbe_scene_manager_get_entity_tree_node(Entity entity) {

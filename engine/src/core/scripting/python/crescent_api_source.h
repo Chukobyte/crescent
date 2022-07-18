@@ -198,6 +198,51 @@
 "        return f\"({self.x}, {self.y}, {self.z})\"\n"\
 "\n"\
 "\n"\
+"class Size2D:\n"\
+"    def __init__(self, w=0.0, h=0.0):\n"\
+"        self.w = w\n"\
+"        self.h = h\n"\
+"\n"\
+"    def __eq__(self, other) -> bool:\n"\
+"        if self.w == other.w and self.h == other.h:\n"\
+"            return True\n"\
+"        else:\n"\
+"            return False\n"\
+"\n"\
+"    def __gt__(self, other) -> bool:\n"\
+"        if self.total_length() > other.total_length():\n"\
+"            return True\n"\
+"        else:\n"\
+"            return False\n"\
+"\n"\
+"    def __lt__(self, other) -> bool:\n"\
+"        if self.total_length() < other.total_length():\n"\
+"            return True\n"\
+"        else:\n"\
+"            return False\n"\
+"\n"\
+"    def __sub__(self, other):\n"\
+"        return Size2D(self.w - other.w, self.h - other.h)\n"\
+"\n"\
+"    def __add__(self, other):\n"\
+"        return Size2D(self.w + other.w, self.h + other.h)\n"\
+"\n"\
+"    def __mul__(self, other):\n"\
+"        return Size2D(self.w * other.w, self.h * other.h)\n"\
+"\n"\
+"    def __truediv__(self, other):\n"\
+"        return Size2D(self.w / other.w, self.h / other.h)\n"\
+"\n"\
+"    def __str__(self):\n"\
+"        return f\"({self.w}, {self.h})\"\n"\
+"\n"\
+"    def __repr__(self):\n"\
+"        return f\"({self.w}, {self.h})\"\n"\
+"\n"\
+"    def total_length(self) -> float:\n"\
+"        return self.w + self.h\n"\
+"\n"\
+"\n"\
 "class Rect2:\n"\
 "    def __init__(self, x=0.0, y=0.0, w=0.0, h=0.0):\n"\
 "        self.x = x\n"\
@@ -610,8 +655,8 @@
 "\n"\
 "\n"\
 "class Collider2DComponent:\n"\
-"    def __init__(self, rect: Rect2, color: Color):\n"\
-"        self.rect = rect\n"\
+"    def __init__(self, extents: Size2D, color: Color):\n"\
+"        self.extents = extents\n"\
 "        self.color = color\n"\
 "\n"\
 "\n"\
@@ -782,6 +827,44 @@
 "            entity_id=self.entity_id, x=value.x, y=value.y\n"\
 "        )\n"\
 "\n"\
+"    def set_scale(self, value: Vector2) -> None:\n"\
+"        crescent_api_internal.node2D_set_scale(\n"\
+"            entity_id=self.entity_id, x=value.x, y=value.y\n"\
+"        )\n"\
+"\n"\
+"    def add_to_scale(self, value: Vector2) -> None:\n"\
+"        crescent_api_internal.node2D_add_to_scale(\n"\
+"            entity_id=self.entity_id, x=value.x, y=value.y\n"\
+"        )\n"\
+"\n"\
+"    def get_scale(self) -> Vector2:\n"\
+"        sx, sy = crescent_api_internal.node2D_get_scale(entity_id=self.entity_id)\n"\
+"        return Vector2(sx, sy)\n"\
+"\n"\
+"    @property\n"\
+"    def scale(self) -> Vector2:\n"\
+"        sx, sy = crescent_api_internal.node2D_get_scale(entity_id=self.entity_id)\n"\
+"        return Vector2(sx, sy)\n"\
+"\n"\
+"    @scale.setter\n"\
+"    def scale(self, value: Vector2) -> None:\n"\
+"        crescent_api_internal.node2D_set_scale(\n"\
+"            entity_id=self.entity_id, x=value.x, y=value.y\n"\
+"        )\n"\
+"\n"\
+"    def set_rotation(self, value: float) -> None:\n"\
+"        crescent_api_internal.node2D_set_rotation(\n"\
+"            entity_id=self.entity_id, rotation=value\n"\
+"        )\n"\
+"\n"\
+"    def add_to_rotation(self, value: float) -> None:\n"\
+"        crescent_api_internal.node2D_add_to_rotation(\n"\
+"            entity_id=self.entity_id, rotation=value\n"\
+"        )\n"\
+"\n"\
+"    def get_rotation(self) -> float:\n"\
+"        return crescent_api_internal.node2D_get_rotation(entity_id=self.entity_id)\n"\
+"\n"\
 "    @property\n"\
 "    def rotation(self) -> float:\n"\
 "        return crescent_api_internal.node2D_get_rotation(entity_id=self.entity_id)\n"\
@@ -922,24 +1005,24 @@
 "\n"\
 "\n"\
 "class Collider2D(Node2D):\n"\
-"    def get_rect(self) -> Rect2:\n"\
-"        x, y, w, h = crescent_api_internal.collider2D_get_rect(entity_id=self.entity_id)\n"\
-"        return Rect2(x=x, y=y, w=w, h=h)\n"\
+"    def get_extents(self) -> Size2D:\n"\
+"        w, h = crescent_api_internal.collider2D_get_extents(entity_id=self.entity_id)\n"\
+"        return Size2D(w=w, h=h)\n"\
 "\n"\
-"    def set_rect(self, rect: Rect2) -> None:\n"\
-"        crescent_api_internal.collider2D_set_rect(\n"\
-"            entity_id=self.entity_id, x=rect.x, y=rect.y, w=rect.w, h=rect.h\n"\
+"    def set_extents(self, extents: Rect2) -> None:\n"\
+"        crescent_api_internal.collider2D_set_extents(\n"\
+"            entity_id=self.entity_id, w=extents.w, h=extents.h\n"\
 "        )\n"\
 "\n"\
 "    @property\n"\
-"    def rect(self) -> Rect2:\n"\
-"        x, y, w, h = crescent_api_internal.collider2D_get_rect(entity_id=self.entity_id)\n"\
-"        return Rect2(x=x, y=y, w=w, h=h)\n"\
+"    def extents(self) -> Size2D:\n"\
+"        w, h = crescent_api_internal.collider2D_get_extents(entity_id=self.entity_id)\n"\
+"        return Size2D(w=w, h=h)\n"\
 "\n"\
-"    @rect.setter\n"\
-"    def rect(self, value: Rect2) -> None:\n"\
-"        crescent_api_internal.collider2D_set_rect(\n"\
-"            entity_id=self.entity_id, x=value.x, y=value.y, w=value.w, h=value.h\n"\
+"    @extents.setter\n"\
+"    def extents(self, value: Size2D) -> None:\n"\
+"        crescent_api_internal.collider2D_set_extents(\n"\
+"            entity_id=self.entity_id, w=value.w, h=value.h\n"\
 "        )\n"\
 "\n"\
 "    def get_color(self) -> Color:\n"\

@@ -47,12 +47,13 @@ bool is_entity_in_collision_exceptions(Entity entity, Collider2DComponent* colli
 }
 
 Rect2 get_collision_rectangle(Entity entity, Transform2DComponent* transform2DComponent, Collider2DComponent* collider2DComponent) {
-    const Transform2DComponent parentTransform = rbe_scene_manager_get_combined_parent_transform(entity);
+    const TransformModel2D* globalTransform = rbe_scene_manager_get_scene_node_global_transform(entity, transform2DComponent);
+    // TODO: Get position from global transform
     Rect2 collisionRect = {
-        .x = transform2DComponent->position.x + parentTransform.position.x + collider2DComponent->rect.x,
-        .y = transform2DComponent->position.y + parentTransform.position.y + collider2DComponent->rect.y,
-        .w = transform2DComponent->scale.x * parentTransform.scale.x * collider2DComponent->rect.w,
-        .h = transform2DComponent->scale.y * parentTransform.scale.y * collider2DComponent->rect.h,
+        .x = globalTransform->position.x,
+        .y = globalTransform->position.y,
+        .w = globalTransform->scale.x * collider2DComponent->extents.w,
+        .h = globalTransform->scale.y * collider2DComponent->extents.h,
     };
     return collisionRect;
 }
