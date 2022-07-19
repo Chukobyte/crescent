@@ -16,7 +16,8 @@ TransformModel2D transform2d_component_create_blank_global_transform2d() {
     TransformModel2D transform2D = {
         .position = { .x = 0.0f, .y = 0.0f },
         .scale = { .x = 1.0f, .y = 1.0f },
-        .rotation = 0.0f
+        .rotation = 0.0f,
+        .scaleSign = { .x = 1.0f, .y = 1.0f }
     };
     return transform2D;
 }
@@ -50,18 +51,18 @@ void transform2d_component_get_local_model_matrix(mat4 model, Transform2DCompone
     });
 }
 
-Vector2 transform2d_component_get_position_from_model(mat4 model) {
-    Vector2 position = { .x=model[3][0], .y=model[3][1] };
-    return position;
-}
+//Vector2 transform2d_component_get_position_from_model(mat4 model) {
+//    Vector2 position = { .x=model[3][0], .y=model[3][1] };
+//    return position;
+//}
 
-Vector2 transform2d_component_get_scale_from_model(mat4 model) {
-    Vector2 magnitude = {
-        .x = sqrt(model[0][0] * model[0][0] + model[0][1] * model[0][1] + model[0][2] * model[0][2] + model[0][3] * model[0][3]),
-        .y = sqrt(model[1][0] * model[1][0] + model[1][1] * model[1][1] + model[1][2] * model[1][2] + model[1][3] * model[1][3])
-    };
-    return magnitude;
-}
+//Vector2 transform2d_component_get_scale_from_model(mat4 model) {
+//    Vector2 magnitude = {
+//        .x = sqrt(model[0][0] * model[0][0] + model[0][1] * model[0][1] + model[0][2] * model[0][2] + model[0][3] * model[0][3]),
+//        .y = sqrt(model[1][0] * model[1][0] + model[1][1] * model[1][1] + model[1][2] * model[1][2] + model[1][3] * model[1][3])
+//    };
+//    return magnitude;
+//}
 
 float transform2d_component_get_rotation_deg_from_model(mat4 model) {
     versor quat;
@@ -70,15 +71,15 @@ float transform2d_component_get_rotation_deg_from_model(mat4 model) {
     return glm_deg(angleRadians);
 }
 
-Transform2DComponent transform2d_component_decompose_trs_matrix(mat4 model) {
-    Vector2 position = transform2d_component_get_position_from_model(model);
-    Vector2 scale = transform2d_component_get_scale_from_model(model);
-
-    Transform2DComponent transform2DComponent = {
-        .localTransform.position = position
-    };
-    return transform2DComponent;
-}
+//Transform2DComponent transform2d_component_decompose_trs_matrix(mat4 model) {
+//    Vector2 position = transform2d_component_get_position_from_model(model);
+//    Vector2 scale = transform2d_component_get_scale_from_model(model);
+//
+//    Transform2DComponent transform2DComponent = {
+//        .localTransform.position = position
+//    };
+//    return transform2DComponent;
+//}
 
 void transform2d_component_print(Transform2DComponent* transform2DComponent) {
     rbe_logger_print_err("{ position: (%f, %f), scale: (%f, %f), rotation: %f }",

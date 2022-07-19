@@ -40,10 +40,9 @@ void sprite_rendering_system_render() {
             spriteComponent->drawSource.w * renderCamera->zoom.x,
             spriteComponent->drawSource.h * renderCamera->zoom.y
         };
-        const Vector2 signVec = rbe_math_signvec2(&globalTransform->scale);
         glm_translate(globalTransform->model, (vec3) {
-            (renderCamera->offset.x - (renderCamera->viewport.x * signVec.x) - spriteComponent->origin.x) * renderCamera->zoom.x,
-            (renderCamera->offset.y - (renderCamera->viewport.y * signVec.y) - spriteComponent->origin.y) * renderCamera->zoom.y,
+            (renderCamera->offset.x - (renderCamera->viewport.x * globalTransform->scaleSign.x) - spriteComponent->origin.x) * renderCamera->zoom.x,
+            (renderCamera->offset.y - (renderCamera->viewport.y * globalTransform->scaleSign.y) - spriteComponent->origin.y) * renderCamera->zoom.y,
             0.0f
         });
 

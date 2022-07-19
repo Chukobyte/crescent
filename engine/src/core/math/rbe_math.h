@@ -36,6 +36,7 @@ typedef struct TransformModel2D {
     Vector2 position;
     Vector2 scale;
     float rotation; // degrees
+    Vector2 scaleSign;
     mat4 model;
 } TransformModel2D;
 
