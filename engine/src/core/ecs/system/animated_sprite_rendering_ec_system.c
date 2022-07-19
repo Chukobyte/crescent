@@ -52,9 +52,10 @@ void animated_sprite_rendering_system_render() {
         const RBECamera2D* renderCamera = spriteTransformComp->ignoreCamera ? defaultCamera : camera2D;
         TransformModel2D* globalTransform = rbe_scene_manager_get_scene_node_global_transform(entity, spriteTransformComp);
         spriteTransformComp->isGlobalTransformDirty = true; // TODO: Make global transform const
+        const Vector2 signVec = rbe_math_signvec2(&globalTransform->scale);
         glm_translate(globalTransform->model, (vec3) {
-            (renderCamera->offset.x - renderCamera->viewport.x - animatedSpriteComponent->origin.x) * renderCamera->zoom.x,
-            (renderCamera->offset.y - renderCamera->viewport.y - animatedSpriteComponent->origin.y) * renderCamera->zoom.y,
+            (renderCamera->offset.x - (renderCamera->viewport.x * signVec.x) - animatedSpriteComponent->origin.x) * renderCamera->zoom.x,
+            (renderCamera->offset.y - (renderCamera->viewport.y * signVec.y) - animatedSpriteComponent->origin.y) * renderCamera->zoom.y,
             0.0f
         });
         const Size2D destinationSize = {

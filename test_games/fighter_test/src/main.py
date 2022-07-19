@@ -82,7 +82,7 @@ class FighterSimulation:
                 # Facing left
                 else:
                     attack_offset = Vector2(80, 0) * x_scale_vec
-                attack.position = fighter.node.position + attack_offset
+                attack.position = fighter.node.global_position + attack_offset
                 self.main_node.add_child(attack)
                 self.add_attack(attack=attack, fighter_index=i)
                 fighter.is_attacking = True

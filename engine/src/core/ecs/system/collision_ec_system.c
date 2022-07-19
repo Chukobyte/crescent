@@ -56,9 +56,10 @@ void collision_system_render() {
             colliderComp->extents.w * renderCamera->zoom.x,
             colliderComp->extents.h * renderCamera->zoom.y
         };
+        const Vector2 signVec = rbe_math_signvec2(&globalTransform->scale);
         glm_translate(globalTransform->model, (vec3) {
-            (renderCamera->offset.x - renderCamera->viewport.x) * renderCamera->zoom.x,
-            (renderCamera->offset.y - renderCamera->viewport.y) * renderCamera->zoom.y,
+            (renderCamera->offset.x - (renderCamera->viewport.x * signVec.x)) * renderCamera->zoom.x,
+            (renderCamera->offset.y - (renderCamera->viewport.y * signVec.y)) * renderCamera->zoom.y,
             0.0f
         });
         rbe_renderer_queue_sprite_draw_call(
