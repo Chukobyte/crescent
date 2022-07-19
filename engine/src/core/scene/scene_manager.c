@@ -193,9 +193,21 @@ TransformModel2D* rbe_scene_manager_get_scene_node_global_transform(Entity entit
     RBE_ASSERT_FMT(transform2DComponent != NULL, "Transform Model is NULL for entity '%d'", entity);
     if (transform2DComponent->isGlobalTransformDirty) {
         rbe_scene_manager_get_combined_model(entity, transform2DComponent->globalTransform.model);
-        transform2DComponent->globalTransform.position = transform2d_component_get_position_from_model(transform2DComponent->globalTransform.model);
-        transform2DComponent->globalTransform.scale = transform2d_component_get_scale_from_model(transform2DComponent->globalTransform.model);
-        transform2DComponent->globalTransform.rotation = transform2d_component_get_rotation_deg_from_model(transform2DComponent->globalTransform.model);
+
+        vec4 translation;
+        mat4 rotation;
+        vec3 scale;
+        glm_decompose(transform2DComponent->globalTransform.model, translation, rotation, scale);
+
+        transform2DComponent->globalTransform.position.x = translation[0];
+        transform2DComponent->globalTransform.position.y = translation[1];
+        transform2DComponent->globalTransform.scale.x = scale[0];
+        transform2DComponent->globalTransform.scale.y = scale[1];
+        transform2DComponent->globalTransform.rotation = transform2d_component_get_rotation_deg_from_model(rotation);
+
+//        transform2DComponent->globalTransform.position = transform2d_component_get_position_from_model(transform2DComponent->globalTransform.model);
+//        transform2DComponent->globalTransform.scale = transform2d_component_get_scale_from_model(transform2DComponent->globalTransform.model);
+//        transform2DComponent->globalTransform.rotation = transform2d_component_get_rotation_deg_from_model(transform2DComponent->globalTransform.model);
         transform2DComponent->isGlobalTransformDirty = false;
     }
     return &transform2DComponent->globalTransform;
