@@ -12,7 +12,7 @@ class Attack(HitBox):
         self.life_time = 1.0
 
     def _start(self) -> None:
-        self.set_rect(Rect2(0, 0, 32, 32))
+        self.set_extents(Size2D(32, 32))
         self.set_color(Color(200, 0, 0, 150))
 
     async def update_task(self, delta_time: float):

@@ -41,8 +41,8 @@ void sprite_rendering_system_render() {
             spriteComponent->drawSource.h * renderCamera->zoom.y
         };
         glm_translate(globalTransform->model, (vec3) {
-            (renderCamera->offset.x - renderCamera->viewport.x - spriteComponent->origin.x) * renderCamera->zoom.x,
-            (renderCamera->offset.y - renderCamera->viewport.y - spriteComponent->origin.y) * renderCamera->zoom.y,
+            (renderCamera->offset.x - (renderCamera->viewport.x * globalTransform->scaleSign.x) - spriteComponent->origin.x) * renderCamera->zoom.x,
+            (renderCamera->offset.y - (renderCamera->viewport.y * globalTransform->scaleSign.y) - spriteComponent->origin.y) * renderCamera->zoom.y,
             0.0f
         });
 

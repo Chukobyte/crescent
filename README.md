@@ -7,7 +7,7 @@
 
 <p align="center">
   <a href="https://chukobyte.github.io/crescent">
-    <img src="assets/images/logo_2.png" width="167" alt="Crescent Engine logo">
+    <img src="assets/images/logo_2_enlarged.png" width="334" alt="Crescent Engine logo">
   </a>
 </p>
 

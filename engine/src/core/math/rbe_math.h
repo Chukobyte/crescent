@@ -36,6 +36,7 @@ typedef struct TransformModel2D {
     Vector2 position;
     Vector2 scale;
     float rotation; // degrees
+    Vector2 scaleSign;
     mat4 model;
 } TransformModel2D;
 
@@ -61,3 +62,5 @@ Color rbe_color_get_white();
 // --- Misc --- //
 float rbe_math_map_to_range(float input, float inputLow, float inputHigh, float outputLow, float outputHigh);
 float rbe_math_map_to_unit(float input, float inputLow, float inputHigh);
+float rbe_math_signf(float value);
+Vector2 rbe_math_signvec2(Vector2* value);

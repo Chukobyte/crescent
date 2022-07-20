@@ -173,29 +173,44 @@ CombineModelResult rbe_scene_manager_get_scene_graph_entity_hierarchy(Entity ent
     return combineModelResult;
 }
 
-void rbe_scene_manager_get_combined_model(Entity entity, mat4 model) {
-    glm_mat4_identity(model);
+void rbe_scene_manager_update_global_tranform_model(Entity entity, TransformModel2D* globalTransform) {
+    glm_mat4_identity(globalTransform->model);
     CombineModelResult combineModelResult = rbe_scene_manager_get_scene_graph_entity_hierarchy(entity);
+    Vector2 scaleTotal = { 1.0f, 1.0f };
     for (int i = combineModelResult.entityCount - 1; i >= 0; i--) {
         Entity currentEntity = combineModelResult.entities[i];
         Transform2DComponent* transform2DComponent = component_manager_get_component_unsafe(currentEntity, ComponentDataIndex_TRANSFORM_2D);
         if (transform2DComponent == NULL) {
             continue;
         }
+        scaleTotal.x *= transform2DComponent->localTransform.scale.x;
+        scaleTotal.y *= transform2DComponent->localTransform.scale.y;
         mat4 newModel;
         transform2d_component_get_local_model_matrix(newModel, transform2DComponent);
-        glm_mat4_mul(model, newModel, model);
+        glm_mat4_mul(globalTransform->model, newModel, globalTransform->model);
     }
+    globalTransform->scaleSign = rbe_math_signvec2(&scaleTotal);
 }
 
 // TODO: Make function to update flags for all children
 TransformModel2D* rbe_scene_manager_get_scene_node_global_transform(Entity entity, Transform2DComponent* transform2DComponent) {
     RBE_ASSERT_FMT(transform2DComponent != NULL, "Transform Model is NULL for entity '%d'", entity);
     if (transform2DComponent->isGlobalTransformDirty) {
-        rbe_scene_manager_get_combined_model(entity, transform2DComponent->globalTransform.model);
-        transform2DComponent->globalTransform.position = transform2d_component_get_position_from_model(transform2DComponent->globalTransform.model);
-        transform2DComponent->globalTransform.scale = transform2d_component_get_scale_from_model(transform2DComponent->globalTransform.model);
-        transform2DComponent->globalTransform.rotation = transform2d_component_get_rotation_deg_from_model(transform2DComponent->globalTransform.model);
+        // Walk up scene to root node and calculate global transform
+        rbe_scene_manager_update_global_tranform_model(entity, &transform2DComponent->globalTransform);
+        // Decompose trs matrix
+        vec4 translation;
+        mat4 rotation;
+        vec3 scale;
+        glm_decompose(transform2DComponent->globalTransform.model, translation, rotation, scale);
+        // Update global transform
+        transform2DComponent->globalTransform.position.x = translation[0];
+        transform2DComponent->globalTransform.position.y = translation[1];
+        // Scale sign is used to fix sign of scale not being properly decomposed in trs matrix
+        transform2DComponent->globalTransform.scale.x = scale[0] * transform2DComponent->globalTransform.scaleSign.x;
+        transform2DComponent->globalTransform.scale.y = scale[1] * transform2DComponent->globalTransform.scaleSign.y;
+        transform2DComponent->globalTransform.rotation = transform2d_component_get_rotation_deg_from_model(rotation);
+        // Flag is no longer dirty since the global transform is up to date
         transform2DComponent->isGlobalTransformDirty = false;
     }
     return &transform2DComponent->globalTransform;
