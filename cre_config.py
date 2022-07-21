@@ -26,6 +26,13 @@ configure_assets(
             filter_mag="nearest",
         ),
         Texture(
+            file_path="test_games/fighter_test/assets/images/characters/mor/mor_crouch_idle_sheet.png",
+            wrap_s="clamp_to_border",
+            wrap_t="clamp_to_border",
+            filter_min="nearest",
+            filter_mag="nearest",
+        ),
+        Texture(
             file_path="test_games/fighter_test/assets/images/characters/mor/mor_still.png",
             wrap_s="clamp_to_border",
             wrap_t="clamp_to_border",
