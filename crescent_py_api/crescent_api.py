@@ -983,7 +983,7 @@ class Collider2D(Node2D):
         w, h = crescent_api_internal.collider2D_get_extents(entity_id=self.entity_id)
         return Size2D(w=w, h=h)
 
-    def set_extents(self, extents: Rect2) -> None:
+    def set_extents(self, extents: Size2D) -> None:
         crescent_api_internal.collider2D_set_extents(
             entity_id=self.entity_id, w=extents.w, h=extents.h
         )

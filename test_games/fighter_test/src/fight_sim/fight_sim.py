@@ -3,6 +3,12 @@ from test_games.fighter_test.src.hit_box import Attack
 from test_games.fighter_test.src.task import *
 
 
+class FighterStance:
+    STANDING = 0
+    CROUCHING = 1
+    JUMPING = 2
+
+
 class Fighter:
     def __init__(self, node: Node2D, collider: Collider2D, input_buffer: InputBuffer):
         self.node = node
@@ -11,12 +17,26 @@ class Fighter:
         self.velocity = Vector2.ZERO()
         self.speed = 50
         self.is_attacking = False  # Temp
+        self.stance = FighterStance.STANDING
 
     def update_input_state(self) -> None:
         self.input_buffer.process_inputs()
 
     def set_is_attacking(self, value: bool) -> None:
         self.is_attacking = value
+
+    def spawn_basic_attack_from_stance(self) -> Attack:
+        attack = Attack.new()
+        # TODO: Clean up attack stuff by calculating the sprite with the width and origin x
+        x_scale_vec = Vector2(math.copysign(1.0, self.node.scale.x), 1.0)
+        # Facing right
+        if x_scale_vec.x > 0.0:
+            attack_offset = Vector2(48, 0) * x_scale_vec
+        # Facing left
+        else:
+            attack_offset = Vector2(80, 0) * x_scale_vec
+        attack.position = self.node.global_position + attack_offset
+        return attack
 
 
 class AttackRef:
@@ -66,17 +86,8 @@ class FighterSimulation:
 
             # Attack
             if fighter.input_buffer.light_punch_pressed and not fighter.is_attacking:
-                attack = Attack.new()
+                attack = fighter.spawn_basic_attack_from_stance()
                 print(f"[PY_SCRIPT] attack = {attack}")
-                # TODO: Clean up attack stuff by calculating the sprite with the width and origin x
-                x_scale_vec = Vector2(math.copysign(1.0, fighter.node.scale.x), 1.0)
-                # Facing right
-                if x_scale_vec.x > 0.0:
-                    attack_offset = Vector2(48, 0) * x_scale_vec
-                # Facing left
-                else:
-                    attack_offset = Vector2(80, 0) * x_scale_vec
-                attack.position = fighter.node.global_position + attack_offset
                 self.main_node.add_child(attack)
                 self.add_attack(attack=attack, fighter_index=i)
                 fighter.is_attacking = True

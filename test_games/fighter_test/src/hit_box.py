@@ -6,6 +6,12 @@ class HitBox(Collider2D):
     pass
 
 
+class AttackType:
+    HIGH = 0
+    LOW = 1
+    AIR = 2
+
+
 class Attack(HitBox):
     def __init__(self, entity_id: int):
         super().__init__(entity_id=entity_id)
