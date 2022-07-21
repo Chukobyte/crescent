@@ -102,7 +102,54 @@ create_stage_nodes(
                                             draw_source=Rect2(x=620, y=0, w=62, h=37),
                                         ),
                                     ],
-                                )
+                                ),
+                                Animation(
+                                    name="crouch",
+                                    speed=100,
+                                    loops=True,
+                                    frames=[
+                                        AnimationFrame(
+                                            frame=0,
+                                            texture_path="test_games/fighter_test/assets/images/characters/mor/mor_crouch_idle_sheet.png",
+                                            draw_source=Rect2(x=0, y=0, w=62, h=37),
+                                        ),
+                                        AnimationFrame(
+                                            frame=1,
+                                            texture_path="test_games/fighter_test/assets/images/characters/mor/mor_crouch_idle_sheet.png",
+                                            draw_source=Rect2(x=62, y=0, w=62, h=37),
+                                        ),
+                                        AnimationFrame(
+                                            frame=2,
+                                            texture_path="test_games/fighter_test/assets/images/characters/mor/mor_crouch_idle_sheet.png",
+                                            draw_source=Rect2(x=124, y=0, w=62, h=37),
+                                        ),
+                                        AnimationFrame(
+                                            frame=3,
+                                            texture_path="test_games/fighter_test/assets/images/characters/mor/mor_crouch_idle_sheet.png",
+                                            draw_source=Rect2(x=186, y=0, w=62, h=37),
+                                        ),
+                                        AnimationFrame(
+                                            frame=4,
+                                            texture_path="test_games/fighter_test/assets/images/characters/mor/mor_crouch_idle_sheet.png",
+                                            draw_source=Rect2(x=248, y=0, w=62, h=37),
+                                        ),
+                                        AnimationFrame(
+                                            frame=5,
+                                            texture_path="test_games/fighter_test/assets/images/characters/mor/mor_crouch_idle_sheet.png",
+                                            draw_source=Rect2(x=310, y=0, w=62, h=37),
+                                        ),
+                                        AnimationFrame(
+                                            frame=6,
+                                            texture_path="test_games/fighter_test/assets/images/characters/mor/mor_crouch_idle_sheet.png",
+                                            draw_source=Rect2(x=372, y=0, w=62, h=37),
+                                        ),
+                                        AnimationFrame(
+                                            frame=7,
+                                            texture_path="test_games/fighter_test/assets/images/characters/mor/mor_crouch_idle_sheet.png",
+                                            draw_source=Rect2(x=434, y=0, w=62, h=37),
+                                        ),
+                                    ],
+                                ),
                             ],
                         ),
                     ],
