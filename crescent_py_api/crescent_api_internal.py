@@ -209,6 +209,14 @@ def sprite_get_draw_source(entity_id: int) -> tuple:
     return 0.0, 0.0, 32.0, 32.0
 
 
+def animated_sprite_play(entity_id: int, animation_name: str) -> bool:
+    return True
+
+
+def animated_sprite_stop(entity_id: int) -> None:
+    pass
+
+
 def text_label_set_text(entity_id: int, text: str) -> None:
     pass
 

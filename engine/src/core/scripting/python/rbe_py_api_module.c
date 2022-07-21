@@ -961,6 +961,31 @@ PyObject* rbe_py_api_sprite_get_draw_source(PyObject* self, PyObject* args, PyOb
     return NULL;
 }
 
+// Animated Sprite
+PyObject* rbe_py_api_animated_sprite_play(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    char* animationName;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "is", rbePyApiAnimatedSpriteSetAnimationKWList, &entity, &animationName)) {
+        AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent *) component_manager_get_component(entity, ComponentDataIndex_ANIMATED_SPRITE);
+        const bool success = animated_sprite_component_set_animation(animatedSpriteComponent, animationName);
+        animatedSpriteComponent->isPlaying = true;
+        if (success) {
+            Py_RETURN_TRUE;
+        }
+        Py_RETURN_FALSE;
+    }
+    return NULL;
+}
+
+PyObject* rbe_py_api_animated_sprite_stop(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "is", rbePyApiGenericGetEntityKWList, &entity)) {
+        AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent *) component_manager_get_component(entity, ComponentDataIndex_ANIMATED_SPRITE);
+        animatedSpriteComponent->isPlaying = false;
+    }
+    return NULL;
+}
+
 // Text Label
 PyObject* rbe_py_api_text_label_set_text(PyObject* self, PyObject* args, PyObject* kwargs) {
     Entity entity;

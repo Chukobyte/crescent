@@ -50,6 +50,8 @@ class Main(Node2D):
         player_two_collider = player_two_node.get_child(name="Collider")
         print(f"[PYTHON_SCRIPT] p1 = {player_one_node}, p2 = {player_two_node}")
 
+        player_one_node.play(animation_name="crouch")
+
         # Test Get Parent
         # parent = player_one_node.get_parent()
         # print(f"[PY_SCRIPT] parent = {parent}")
@@ -71,8 +73,8 @@ class Main(Node2D):
 
         # Network
         is_network_enabled = (
-            self.game_state.mode == GameMode.ONLINE_PVP_HOST
-            or self.game_state.mode == GameMode.ONLINE_PVP_CLIENT
+                self.game_state.mode == GameMode.ONLINE_PVP_HOST
+                or self.game_state.mode == GameMode.ONLINE_PVP_CLIENT
         )
         if is_network_enabled:
             if self.game_state.mode == GameMode.ONLINE_PVP_HOST:

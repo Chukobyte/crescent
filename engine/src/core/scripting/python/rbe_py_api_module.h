@@ -72,6 +72,10 @@ PyObject* rbe_py_api_sprite_get_texture(PyObject* self, PyObject* args, PyObject
 PyObject* rbe_py_api_sprite_set_draw_source(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* rbe_py_api_sprite_get_draw_source(PyObject* self, PyObject* args, PyObject* kwargs);
 
+// Animated Sprite
+PyObject* rbe_py_api_animated_sprite_play(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* rbe_py_api_animated_sprite_stop(PyObject* self, PyObject* args, PyObject* kwargs);
+
 // Text Label
 PyObject* rbe_py_api_text_label_set_text(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* rbe_py_api_text_label_get_text(PyObject* self, PyObject* args, PyObject* kwargs);
@@ -301,6 +305,15 @@ static struct PyMethodDef rbePyApiMethods[] = {
         "sprite_get_draw_source", (PyCFunction) rbe_py_api_sprite_get_draw_source,
         METH_VARARGS | METH_KEYWORDS, "Gets the draw source for a sprite."
     },
+    // ANIMATED SPRITE
+    {
+        "animated_sprite_play", (PyCFunction) rbe_py_api_animated_sprite_play,
+        METH_VARARGS | METH_KEYWORDS, "Will play the animation."
+    },
+    {
+        "animated_sprite_stop", (PyCFunction) rbe_py_api_animated_sprite_stop,
+        METH_VARARGS | METH_KEYWORDS, "Will stop the currently playing animation."
+    },
     // TEXT LABEL
     {
         "text_label_set_text", (PyCFunction) rbe_py_api_text_label_set_text,
@@ -420,6 +433,8 @@ static char *rbePyApiNode2DSetXYKWList[] = {"entity_id", "x", "y", NULL};
 static char *rbePyApiNode2DSetRotationKWList[] = {"entity_id", "rotation", NULL};
 
 static char *rbePyApiSpriteSetTextureKWList[] = {"entity_id", "file_path", NULL};
+
+static char *rbePyApiAnimatedSpriteSetAnimationKWList[] = {"entity_id", "animation_name", NULL};
 
 static char *rbePyApiTextLabelSetTextKWList[] = {"entity_id", "text", NULL};
 

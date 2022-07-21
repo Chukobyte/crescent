@@ -21,7 +21,13 @@ typedef struct AnimatedSpriteComponent {
     uint32_t startAnimationTickTime;
 } AnimatedSpriteComponent;
 
+typedef struct AnimationQueryResult {
+    Animation animation;
+    bool success;
+} AnimationQueryResult;
+
 AnimatedSpriteComponent* animated_sprite_component_create();
 void animated_sprite_component_add_animation(AnimatedSpriteComponent* animatedSpriteComponent, Animation animation);
-Animation animated_sprite_component_get_animation(AnimatedSpriteComponent* animatedSpriteComponent, const char* name);
-Animation* animated_sprite_component_get_animation_ref(AnimatedSpriteComponent* animatedSpriteComponent, const char* name);
+AnimationQueryResult animated_sprite_component_get_animation(AnimatedSpriteComponent* animatedSpriteComponent, const char* name);
+bool animated_sprite_component_set_animation(AnimatedSpriteComponent* animatedSpriteComponent, const char* name);
+//Animation* animated_sprite_component_get_animation_ref(AnimatedSpriteComponent* animatedSpriteComponent, const char* name);

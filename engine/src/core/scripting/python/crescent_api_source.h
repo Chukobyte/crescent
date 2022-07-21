@@ -974,7 +974,13 @@
 "\n"\
 "\n"\
 "class AnimatedSprite(Node2D):\n"\
-"    pass\n"\
+"    def play(self, animation_name: str) -> bool:\n"\
+"        return crescent_api_internal.animated_sprite_play(\n"\
+"            entity_id=self.entity_id, animation_name=animation_name\n"\
+"        )\n"\
+"\n"\
+"    def stop(self) -> None:\n"\
+"        crescent_api_internal.animated_sprite_stop(entity_id=self.entity_id)\n"\
 "\n"\
 "\n"\
 "class TextLabel(Node2D):\n"\
@@ -1022,7 +1028,7 @@
 "        w, h = crescent_api_internal.collider2D_get_extents(entity_id=self.entity_id)\n"\
 "        return Size2D(w=w, h=h)\n"\
 "\n"\
-"    def set_extents(self, extents: Rect2) -> None:\n"\
+"    def set_extents(self, extents: Size2D) -> None:\n"\
 "        crescent_api_internal.collider2D_set_extents(\n"\
 "            entity_id=self.entity_id, w=extents.w, h=extents.h\n"\
 "        )\n"\

@@ -258,7 +258,7 @@ create_stage_nodes(
                                             draw_source=Rect2(x=434, y=0, w=62, h=37),
                                         ),
                                     ],
-                                )
+                                ),
                             ],
                         ),
                     ],
