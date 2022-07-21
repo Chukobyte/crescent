@@ -6,6 +6,7 @@ from test_games.fighter_test.src.task import *
 
 
 class FighterStance:
+    NONE = -1
     STANDING = 0
     CROUCHING = 1
     IN_AIR = 2
@@ -20,6 +21,7 @@ class Fighter:
         self.speed = 50
         self.is_attacking = False  # Temp
         self.stance = FighterStance.STANDING
+        self._previous_stance = FighterStance.NONE
 
     def update_input_state(self) -> None:
         self.input_buffer.process_inputs()
@@ -47,6 +49,11 @@ class Fighter:
         attack = Attack.new()
         attack.position = self.node.global_position + attack_offset
         return attack
+
+    def set_stance(self, stance: str) -> bool:
+        self._previous_stance = self.stance
+        self.stance = stance
+        return self._previous_stance == self.stance
 
 
 class AttackRef:
@@ -96,9 +103,11 @@ class FighterSimulation:
 
             # Stance logic, super basic now as there are no hit reactions or down states
             if fighter.input_buffer.crouch_pressed:
-                fighter.stance = FighterStance.CROUCHING
+                if fighter.set_stance(FighterStance.CROUCHING):
+                    fighter.node.play("crouch")
             else:
-                fighter.stance = FighterStance.STANDING
+                if fighter.set_stance(FighterStance.STANDING):
+                    fighter.node.play("walk")
 
             # Attack
             if fighter.input_buffer.light_punch_pressed and not fighter.is_attacking:

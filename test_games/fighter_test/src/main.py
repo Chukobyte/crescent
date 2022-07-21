@@ -73,8 +73,8 @@ class Main(Node2D):
 
         # Network
         is_network_enabled = (
-                self.game_state.mode == GameMode.ONLINE_PVP_HOST
-                or self.game_state.mode == GameMode.ONLINE_PVP_CLIENT
+            self.game_state.mode == GameMode.ONLINE_PVP_HOST
+            or self.game_state.mode == GameMode.ONLINE_PVP_CLIENT
         )
         if is_network_enabled:
             if self.game_state.mode == GameMode.ONLINE_PVP_HOST:
