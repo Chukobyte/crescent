@@ -1,3 +1,5 @@
+from typing import Tuple
+
 from test_games.fighter_test.src.input import *
 from test_games.fighter_test.src.hit_box import Attack
 from test_games.fighter_test.src.task import *
@@ -6,7 +8,7 @@ from test_games.fighter_test.src.task import *
 class FighterStance:
     STANDING = 0
     CROUCHING = 1
-    JUMPING = 2
+    IN_AIR = 2
 
 
 class Fighter:
@@ -25,16 +27,24 @@ class Fighter:
     def set_is_attacking(self, value: bool) -> None:
         self.is_attacking = value
 
-    def spawn_basic_attack_from_stance(self) -> Attack:
-        attack = Attack.new()
+    def _get_base_attack_offset_and_xscale(self) -> Tuple[Vector2, Vector2]:
         # TODO: Clean up attack stuff by calculating the sprite with the width and origin x
         x_scale_vec = Vector2(math.copysign(1.0, self.node.scale.x), 1.0)
-        # Facing right
-        if x_scale_vec.x > 0.0:
-            attack_offset = Vector2(48, 0) * x_scale_vec
         # Facing left
-        else:
-            attack_offset = Vector2(80, 0) * x_scale_vec
+        if x_scale_vec.x < 0.0:
+            return Vector2(80, -10) * x_scale_vec, x_scale_vec
+        # Facing right
+        return Vector2(48, -10) * x_scale_vec, x_scale_vec
+
+    def spawn_basic_attack_from_stance(self) -> Attack:
+        attack_offset, x_scale_vec2 = self._get_base_attack_offset_and_xscale()
+        if self.stance == FighterStance.STANDING:
+            pass
+        elif self.stance == FighterStance.CROUCHING:
+            attack_offset += Vector2(0.0, 20) * x_scale_vec2
+        elif self.stance == FighterStance.IN_AIR:
+            pass
+        attack = Attack.new()
         attack.position = self.node.global_position + attack_offset
         return attack
 
@@ -83,6 +93,12 @@ class FighterSimulation:
                     )
                     fighter.node.add_to_position(fighter.velocity * delta_vector)
                     fighter.velocity = Vector2.ZERO()
+
+            # Stance logic, super basic now as there are no hit reactions or down states
+            if fighter.input_buffer.crouch_pressed:
+                fighter.stance = FighterStance.CROUCHING
+            else:
+                fighter.stance = FighterStance.STANDING
 
             # Attack
             if fighter.input_buffer.light_punch_pressed and not fighter.is_attacking:
