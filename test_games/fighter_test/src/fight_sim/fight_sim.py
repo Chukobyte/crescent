@@ -55,6 +55,23 @@ class Fighter:
         self.stance = stance
         return self._previous_stance != self.stance
 
+    async def manage_jump_state(self, delta_time: float):
+        jump_height = 10
+        floor_y = self.node.position.y
+        try:
+            while True:
+                if jump_height > 0:
+                    jump_height -= 1
+                    self.node.add_to_position(Vector2.UP())
+                else:
+                    if self.node.position.y >= floor_y:
+                        raise GeneratorExit
+                    self.node.add_to_position(Vector2.DOWN())
+                await co_suspend()
+        except GeneratorExit:
+            self.set_stance(FighterStance.STANDING)
+            self.node.play("walk")
+
 
 class AttackRef:
     def __init__(self, attack: Attack, update_task: Coroutine, fighter_index: int):
@@ -92,6 +109,7 @@ class FighterSimulation:
         self.network_receiving_fighters = []
         self.active_attacks = []
         self.timed_funcs = []
+        self.fighter_coroutines = []  # temp for now
 
     def add_fighter(self, fighter: Fighter) -> None:
         self.fighters.append(fighter)
@@ -137,14 +155,8 @@ class FighterSimulation:
             if fighter.input_buffer.jump_pressed and not fighter.is_attacking:
                 if fighter.set_stance(FighterStance.IN_AIR):
                     fighter.node.play("jump")
-                    copy_i = i  # TODO: find cleaner mechanism for copy
-                    self.add_timed_func(
-                        TimedFunction(
-                            exec_time=2.0,
-                            func=lambda: self.set_fighter_stance(
-                                FighterStance.STANDING, copy_i, "walk"
-                            ),
-                        )
+                    self.fighter_coroutines.append(
+                        fighter.manage_jump_state(delta_time)
                     )
 
             # Stance logic, super basic now as there are no hit reactions, down states, etc...
@@ -177,7 +189,7 @@ class FighterSimulation:
             break
 
         # Attack test
-        for attack_ref in self.active_attacks:
+        for attack_ref in self.active_attacks[:]:
             try:
                 awaitable = attack_ref.update_task.send(None)
                 if awaitable.state == Awaitable.State.FINISHED:
@@ -192,6 +204,16 @@ class FighterSimulation:
         for timed_func in self.timed_funcs[:]:
             if timed_func.tick(delta_time):
                 self.timed_funcs.remove(timed_func)
+
+        # Coroutines
+        for coroutine in self.fighter_coroutines:
+            try:
+                awaitable = coroutine.send(None)
+                if awaitable.state == Awaitable.State.FINISHED:
+                    raise StopIteration
+            except StopIteration:
+                self.fighter_coroutines.remove(coroutine)
+                continue
 
     def on_entities_collided(
         self, collider: Collider2D, collided_entities: list

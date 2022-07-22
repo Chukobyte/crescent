@@ -8,7 +8,7 @@ configure_game(
     resolution_height=600,
     target_fps=66,
     initial_node_path="test_games/fighter_test/nodes/title_screen_node.py",
-    colliders_visible=True,
+    colliders_visible=False,
 )
 
 configure_assets(
