@@ -138,12 +138,14 @@ class Main(Node2D):
                 move_left_action_name="p1_move_left",
                 move_right_action_name="p1_move_right",
                 crouch_action_name="p1_crouch",
+                jump_action_name="p1_jump",
                 light_punch_action_name="p1_light_punch",
             )
             player_two_input = AIInputBuffer(
                 move_left_action_name="p2_move_left",
                 move_right_action_name="p2_move_right",
                 crouch_action_name="p2_crouch",
+                jump_action_name="p2_jump",
                 light_punch_action_name="p2_light_punch",
             )
         elif game_mode == GameMode.LOCAL_PVP:
@@ -151,12 +153,14 @@ class Main(Node2D):
                 move_left_action_name="p1_move_left",
                 move_right_action_name="p1_move_right",
                 crouch_action_name="p1_crouch",
+                jump_action_name="p1_jump",
                 light_punch_action_name="p1_light_punch",
             )
             player_two_input = InputBuffer(
                 move_left_action_name="p2_move_left",
                 move_right_action_name="p2_move_right",
                 crouch_action_name="p2_crouch",
+                jump_action_name="p2_jump",
                 light_punch_action_name="p2_light_punch",
             )
         elif (
@@ -167,6 +171,7 @@ class Main(Node2D):
                 move_left_action_name="p1_move_left",
                 move_right_action_name="p1_move_right",
                 crouch_action_name="p1_crouch",
+                jump_action_name="p1_jump",
                 light_punch_action_name="p1_light_punch",
             )
             if game_mode == GameMode.ONLINE_PVP_CLIENT:
@@ -175,6 +180,7 @@ class Main(Node2D):
                 move_left_action_name="p2_move_left",
                 move_right_action_name="p2_move_right",
                 crouch_action_name="p2_crouch",
+                jump_action_name="p2_jump",
                 light_punch_action_name="p2_light_punch",
             )
         elif game_mode == GameMode.ONLINE_PVP_HOST:
@@ -182,12 +188,14 @@ class Main(Node2D):
                 move_left_action_name="p1_move_left",
                 move_right_action_name="p1_move_right",
                 crouch_action_name="p1_crouch",
+                jump_action_name="p1_jump",
                 light_punch_action_name="p1_light_punch",
             )
             player_two_input = NetworkReceiverInputBuffer(
                 move_left_action_name="p2_move_left",
                 move_right_action_name="p2_move_right",
                 crouch_action_name="p2_crouch",
+                jump_action_name="p2_jump",
                 light_punch_action_name="p2_light_punch",
             )
         elif game_mode == GameMode.ONLINE_PVP_CLIENT:
@@ -195,6 +203,7 @@ class Main(Node2D):
                 move_left_action_name="p1_move_left",
                 move_right_action_name="p1_move_right",
                 crouch_action_name="p1_crouch",
+                jump_action_name="p1_jump",
                 light_punch_action_name="p1_light_punch",
             )
             player_two_input.send_func = Client.send
@@ -202,6 +211,7 @@ class Main(Node2D):
                 move_left_action_name="p2_move_left",
                 move_right_action_name="p2_move_right",
                 crouch_action_name="p2_crouch",
+                jump_action_name="p2_jump",
                 light_punch_action_name="p2_light_punch",
             )
         return player_one_input, player_two_input

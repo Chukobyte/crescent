@@ -20,7 +20,7 @@ class Fighter:
         self.velocity = Vector2.ZERO()
         self.speed = 50
         self.is_attacking = False  # Temp
-        self.stance = FighterStance.STANDING
+        self.stance = FighterStance.NONE
         self._previous_stance = FighterStance.NONE
 
     def update_input_state(self) -> None:
@@ -53,7 +53,7 @@ class Fighter:
     def set_stance(self, stance: str) -> bool:
         self._previous_stance = self.stance
         self.stance = stance
-        return self._previous_stance == self.stance
+        return self._previous_stance != self.stance
 
 
 class AttackRef:
@@ -63,12 +63,35 @@ class AttackRef:
         self.fighter_index = fighter_index
 
 
+class TimedFunction:
+    def __init__(self, exec_time: float, func: Callable):
+        self.time = exec_time
+        self.func = func
+        self.current_time = exec_time
+        self.has_been_stopped = False
+
+    def reset(self) -> None:
+        self.current_time = self.time
+        self.has_been_stopped = False
+
+    def tick(self, delta_time: float) -> bool:
+        if self.has_been_stopped:
+            return False
+        self.current_time -= delta_time
+        if self.current_time <= 0.0:
+            self.func()
+            self.has_been_stopped = True
+            return True
+        return False
+
+
 class FighterSimulation:
     def __init__(self, main_node: Node2D):
         self.main_node = main_node
         self.fighters = []
         self.network_receiving_fighters = []
         self.active_attacks = []
+        self.timed_funcs = []
 
     def add_fighter(self, fighter: Fighter) -> None:
         self.fighters.append(fighter)
@@ -83,6 +106,12 @@ class FighterSimulation:
                 fighter_index=fighter_index,
             )
         )
+
+    def add_timed_func(self, timed_func: TimedFunction) -> None:
+        self.timed_funcs.append(timed_func)
+
+    def set_fighter_stance(self, stance: int, fighter_index: int) -> None:
+        self.fighters[fighter_index].set_stance(stance)
 
     def update(self, delta_time: float) -> None:
         # Move fighters
@@ -101,13 +130,28 @@ class FighterSimulation:
                     fighter.node.add_to_position(fighter.velocity * delta_vector)
                     fighter.velocity = Vector2.ZERO()
 
-            # Stance logic, super basic now as there are no hit reactions or down states
-            if fighter.input_buffer.crouch_pressed:
-                if fighter.set_stance(FighterStance.CROUCHING):
-                    fighter.node.play("crouch")
-            else:
-                if fighter.set_stance(FighterStance.STANDING):
-                    fighter.node.play("walk")
+            # Jump
+            if fighter.input_buffer.jump_pressed and not fighter.is_attacking:
+                if fighter.set_stance(FighterStance.IN_AIR):
+                    fighter.node.play("jump")
+                    copy_i = i  # TODO: find cleaner mechanism for copy
+                    self.add_timed_func(
+                        TimedFunction(
+                            exec_time=2.0,
+                            func=lambda: self.set_fighter_stance(
+                                FighterStance.STANDING, copy_i
+                            ),
+                        )
+                    )
+
+            # Stance logic, super basic now as there are no hit reactions, down states, etc...
+            if fighter.stance != FighterStance.IN_AIR:
+                if fighter.input_buffer.crouch_pressed:
+                    if fighter.set_stance(FighterStance.CROUCHING):
+                        fighter.node.play("crouch")
+                else:
+                    if fighter.set_stance(FighterStance.STANDING):
+                        fighter.node.play("walk")
 
             # Attack
             if fighter.input_buffer.light_punch_pressed and not fighter.is_attacking:
@@ -140,6 +184,11 @@ class FighterSimulation:
                 attack_ref.attack.queue_deletion()
                 self.active_attacks.remove(attack_ref)
                 continue
+
+        # Handle Timed Funcs with copied list
+        for timed_func in self.timed_funcs[:]:
+            if timed_func.tick(delta_time):
+                self.timed_funcs.remove(timed_func)
 
     def on_entities_collided(
         self, collider: Collider2D, collided_entities: list
