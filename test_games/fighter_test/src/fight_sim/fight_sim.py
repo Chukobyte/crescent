@@ -110,8 +110,11 @@ class FighterSimulation:
     def add_timed_func(self, timed_func: TimedFunction) -> None:
         self.timed_funcs.append(timed_func)
 
-    def set_fighter_stance(self, stance: int, fighter_index: int) -> None:
+    def set_fighter_stance(
+        self, stance: int, fighter_index: int, anim_name: str
+    ) -> None:
         self.fighters[fighter_index].set_stance(stance)
+        self.fighters[fighter_index].node.play(anim_name)
 
     def update(self, delta_time: float) -> None:
         # Move fighters
@@ -139,7 +142,7 @@ class FighterSimulation:
                         TimedFunction(
                             exec_time=2.0,
                             func=lambda: self.set_fighter_stance(
-                                FighterStance.STANDING, copy_i
+                                FighterStance.STANDING, copy_i, "walk"
                             ),
                         )
                     )

@@ -150,6 +150,18 @@ create_stage_nodes(
                                         ),
                                     ],
                                 ),
+                                Animation(
+                                    name="jump",
+                                    speed=100,
+                                    loops=True,
+                                    frames=[
+                                        AnimationFrame(
+                                            frame=0,
+                                            texture_path="test_games/fighter_test/assets/images/characters/mor/mor_jump_up_sheet.png",
+                                            draw_source=Rect2(x=0, y=0, w=62, h=37),
+                                        ),
+                                    ],
+                                ),
                             ],
                         ),
                     ],
@@ -303,6 +315,18 @@ create_stage_nodes(
                                             frame=7,
                                             texture_path="test_games/fighter_test/assets/images/characters/mor/mor_crouch_idle_sheet.png",
                                             draw_source=Rect2(x=434, y=0, w=62, h=37),
+                                        ),
+                                    ],
+                                ),
+                                Animation(
+                                    name="jump",
+                                    speed=100,
+                                    loops=True,
+                                    frames=[
+                                        AnimationFrame(
+                                            frame=0,
+                                            texture_path="test_games/fighter_test/assets/images/characters/mor/mor_jump_up_sheet.png",
+                                            draw_source=Rect2(x=0, y=0, w=62, h=37),
                                         ),
                                     ],
                                 ),
