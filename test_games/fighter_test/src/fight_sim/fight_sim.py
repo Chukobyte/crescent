@@ -13,7 +13,7 @@ class FighterStance:
 
 
 class Fighter:
-    def __init__(self, node: Node2D, collider: Collider2D, input_buffer: InputBuffer):
+    def __init__(self, node: AnimatedSprite, collider: Collider2D, input_buffer: InputBuffer):
         self.node = node
         self.collider = collider
         self.input_buffer = input_buffer
@@ -50,7 +50,7 @@ class Fighter:
         attack.position = self.node.global_position + attack_offset
         return attack
 
-    def set_stance(self, stance: str) -> bool:
+    def set_stance(self, stance: int) -> bool:
         self._previous_stance = self.stance
         self.stance = stance
         return self._previous_stance != self.stance
