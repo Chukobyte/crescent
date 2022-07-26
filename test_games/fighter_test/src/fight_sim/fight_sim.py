@@ -45,9 +45,10 @@ class Fighter:
         elif self.stance == FighterStance.CROUCHING:
             attack_offset += Vector2(0.0, 20) * x_scale_vec2
         elif self.stance == FighterStance.IN_AIR:
-            pass
+            attack_offset += Vector2(0.0, 20) * x_scale_vec2
         attack = Attack.new()
         attack.position = self.node.global_position + attack_offset
+        attack.life_time = 0.2
         return attack
 
     def set_stance(self, stance: int) -> bool:
