@@ -1069,6 +1069,52 @@
 "        )\n"\
 "\n"\
 "\n"\
+"class ColorSquare(Node2D):\n"\
+"    def get_size(self) -> Size2D:\n"\
+"        w, h = crescent_api_internal.collider2D_get_extents(entity_id=self.entity_id)\n"\
+"        return Size2D(w=w, h=h)\n"\
+"\n"\
+"    def set_size(self, extents: Size2D) -> None:\n"\
+"        crescent_api_internal.collider2D_set_extents(\n"\
+"            entity_id=self.entity_id, w=extents.w, h=extents.h\n"\
+"        )\n"\
+"\n"\
+"    @property\n"\
+"    def size(self) -> Size2D:\n"\
+"        w, h = crescent_api_internal.collider2D_get_extents(entity_id=self.entity_id)\n"\
+"        return Size2D(w=w, h=h)\n"\
+"\n"\
+"    @size.setter\n"\
+"    def size(self, value: Size2D) -> None:\n"\
+"        crescent_api_internal.collider2D_set_extents(\n"\
+"            entity_id=self.entity_id, w=value.w, h=value.h\n"\
+"        )\n"\
+"\n"\
+"    def get_color(self) -> Color:\n"\
+"        r, g, b, a = crescent_api_internal.collider2D_get_color(\n"\
+"            entity_id=self.entity_id\n"\
+"        )\n"\
+"        return Color(r=r, g=g, b=b, a=a)\n"\
+"\n"\
+"    def set_color(self, color: Color) -> None:\n"\
+"        crescent_api_internal.collider2D_set_color(\n"\
+"            entity_id=self.entity_id, r=color.r, g=color.g, b=color.b, a=color.a\n"\
+"        )\n"\
+"\n"\
+"    @property\n"\
+"    def color(self) -> Color:\n"\
+"        r, g, b, a = crescent_api_internal.collider2D_get_color(\n"\
+"            entity_id=self.entity_id\n"\
+"        )\n"\
+"        return Color(r=r, g=g, b=b, a=a)\n"\
+"\n"\
+"    @color.setter\n"\
+"    def color(self, value: Color) -> None:\n"\
+"        crescent_api_internal.collider2D_set_color(\n"\
+"            entity_id=self.entity_id, r=value.r, g=value.g, b=value.b, a=value.a\n"\
+"        )\n"\
+"\n"\
+"\n"\
 "# SCENE TREE\n"\
 "class SceneTree:\n"\
 "    @staticmethod\n"\

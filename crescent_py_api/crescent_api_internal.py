@@ -251,6 +251,24 @@ def collider2D_get_color(entity_id: int) -> tuple:
     return 0.2, 0.2, 0.2, 1.0
 
 
+def color_square_set_size(entity_id: int, w: float, h: float) -> None:
+    pass
+
+
+def color_square_get_size(entity_id: int) -> tuple:
+    return 32.0, 32.0
+
+
+def color_square_set_color(
+    entity_id: int, r: float, g: float, b: float, a: float
+) -> None:
+    pass
+
+
+def color_square_get_color(entity_id: int) -> tuple:
+    return 0.2, 0.2, 0.2, 1.0
+
+
 def network_is_server() -> bool:
     return True
 

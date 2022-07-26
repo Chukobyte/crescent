@@ -13,7 +13,9 @@ class FighterStance:
 
 
 class Fighter:
-    def __init__(self, node: AnimatedSprite, collider: Collider2D, input_buffer: InputBuffer):
+    def __init__(
+        self, node: AnimatedSprite, collider: Collider2D, input_buffer: InputBuffer
+    ):
         self.node = node
         self.collider = collider
         self.input_buffer = input_buffer
@@ -191,7 +193,7 @@ class FighterSimulation:
             # Zero out vel for now...
             fighter.velocity = Vector2.ZERO()
 
-    # Kill inputs on network input buffers
+        # Kill inputs on network input buffers
         for receiver_fighter in self.network_receiving_fighters:
             receiver_fighter.input_buffer.kill_inputs()
 

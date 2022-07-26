@@ -88,6 +88,11 @@ PyObject* rbe_py_api_collider2D_get_extents(PyObject* self, PyObject* args, PyOb
 PyObject* rbe_py_api_collider2D_set_color(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* rbe_py_api_collider2D_get_color(PyObject* self, PyObject* args, PyObject* kwargs);
 
+// ColorSquare
+PyObject* rbe_py_api_color_square_set_size(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* rbe_py_api_color_square_get_size(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* rbe_py_api_color_square_set_color(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* rbe_py_api_color_square_get_color(PyObject* self, PyObject* args, PyObject* kwargs);
 
 // Network
 PyObject* rbe_py_api_network_is_server(PyObject* self, PyObject* args);
@@ -347,6 +352,23 @@ static struct PyMethodDef rbePyApiMethods[] = {
     {
         "collider2D_get_color", (PyCFunction) rbe_py_api_collider2D_get_color,
         METH_VARARGS | METH_KEYWORDS, "Gets the collider's color."
+    },
+    // ColorSquare
+    {
+        "color_square_set_size", (PyCFunction) rbe_py_api_color_square_set_size,
+        METH_VARARGS | METH_KEYWORDS, "Sets the color square's size."
+    },
+    {
+        "color_square_get_size", (PyCFunction) rbe_py_api_color_square_get_size,
+        METH_VARARGS | METH_KEYWORDS, "Gets the color square's size."
+    },
+    {
+        "color_square_set_color", (PyCFunction) rbe_py_api_color_square_set_color,
+        METH_VARARGS | METH_KEYWORDS, "Sets the color square's color."
+    },
+    {
+        "color_square_get_color", (PyCFunction) rbe_py_api_color_square_get_color,
+        METH_VARARGS | METH_KEYWORDS, "Gets the color square's color."
     },
     // NETWORK
     {
