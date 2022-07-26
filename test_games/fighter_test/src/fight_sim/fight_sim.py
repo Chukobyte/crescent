@@ -71,7 +71,7 @@ class Fighter:
                 await co_suspend()
         except GeneratorExit:
             self.set_stance(FighterStance.STANDING)
-            self.node.play("walk")
+            self.node.play("idle")
 
 
 class AttackRef:
@@ -150,7 +150,6 @@ class FighterSimulation:
                         fighter.speed * delta_time, fighter.speed * delta_time
                     )
                     fighter.node.add_to_position(fighter.velocity * delta_vector)
-                    fighter.velocity = Vector2.ZERO()
 
             # Jump
             if fighter.input_buffer.jump_pressed and not fighter.is_attacking:
@@ -166,8 +165,20 @@ class FighterSimulation:
                     if fighter.set_stance(FighterStance.CROUCHING):
                         fighter.node.play("crouch")
                 else:
-                    if fighter.set_stance(FighterStance.STANDING):
-                        fighter.node.play("walk")
+                    fighter.set_stance(FighterStance.STANDING)
+                    x_scale = fighter.node.scale.x
+                    if fighter.velocity.x > 0:
+                        if x_scale > 0:
+                            fighter.node.play("walk-forward")
+                        else:
+                            fighter.node.play("walk-backward")
+                    elif fighter.velocity.x < 0:
+                        if x_scale > 0:
+                            fighter.node.play("walk-backward")
+                        else:
+                            fighter.node.play("walk-forward")
+                    else:
+                        fighter.node.play("idle")
 
             # Attack
             if fighter.input_buffer.light_punch_pressed and not fighter.is_attacking:
@@ -177,7 +188,10 @@ class FighterSimulation:
                 self.add_attack(attack=attack, fighter_index=i)
                 fighter.is_attacking = True
 
-        # Kill inputs on network input buffers
+            # Zero out vel for now...
+            fighter.velocity = Vector2.ZERO()
+
+    # Kill inputs on network input buffers
         for receiver_fighter in self.network_receiving_fighters:
             receiver_fighter.input_buffer.kill_inputs()
 

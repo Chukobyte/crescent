@@ -46,6 +46,20 @@ configure_assets(
             filter_min="nearest",
             filter_mag="nearest",
         ),
+        Texture(
+            file_path="test_games/fighter_test/assets/images/characters/mor/mor_walk_forward_sheet.png",
+            wrap_s="clamp_to_border",
+            wrap_t="clamp_to_border",
+            filter_min="nearest",
+            filter_mag="nearest",
+        ),
+        Texture(
+            file_path="test_games/fighter_test/assets/images/characters/mor/mor_walk_backward_sheet.png",
+            wrap_s="clamp_to_border",
+            wrap_t="clamp_to_border",
+            filter_min="nearest",
+            filter_mag="nearest",
+        ),
     ],
     fonts=[
         Font(
