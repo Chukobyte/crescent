@@ -124,7 +124,10 @@ void rbe_scene_manager_queue_scene_change(const char* scenePath) {
 
 void rbe_queue_destroy_tree_node_entity(SceneTreeNode* treeNode) {
     rbe_scene_manager_queue_entity_for_deletion(treeNode->entity);
-    RBE_MEM_FREE(treeNode);
+}
+
+void rbe_queue_destroy_tree_node_entity_all(SceneTreeNode* treeNode) {
+    rbe_scene_execute_on_all_tree_nodes(treeNode, rbe_queue_destroy_tree_node_entity);
 }
 
 void rbe_scene_manager_process_queued_scene_change() {

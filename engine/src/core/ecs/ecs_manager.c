@@ -37,7 +37,7 @@ void rbe_ecs_manager_enable_fps_display_entity(bool enabled) {
     static Entity currentFpsEntity = NULL_ENTITY;
     // Create temp entity
     if (!isEnabled && enabled) {
-        SceneTreeNode* node = rbe_scene_tree_create_tree_node(rbe_ec_system_create_entity(), NULL_ENTITY);
+        SceneTreeNode* node = rbe_scene_tree_create_tree_node(rbe_ec_system_create_entity(), NULL);
         currentFpsEntity = node->entity;
         // Transform 2D
         Transform2DComponent* transform2DComponent = transform2d_component_create();
