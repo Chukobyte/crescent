@@ -630,6 +630,7 @@ class NodeType(str, Enum):
     ANIMATED_SPRITE = "AnimatedSprite"
     TEXT_LABEL = "TextLabel"
     COLLIDER2D = "Collider2D"
+    COLOR_SQUARE = "ColorSquare"
 
 
 class Node:

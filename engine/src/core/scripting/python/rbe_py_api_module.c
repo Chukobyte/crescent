@@ -27,6 +27,7 @@
 #include "../../networking/rbe_network.h"
 #include "../../utils/rbe_string_util.h"
 #include "../../utils/rbe_assert.h"
+#include "../../ecs/component/color_square_component.h"
 
 #ifdef _MSC_VER
 #pragma warning(disable : 4996) // for strcpy
@@ -1090,9 +1091,9 @@ PyObject* rbe_py_api_color_square_set_size(PyObject* self, PyObject* args, PyObj
     float w;
     float h;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "iff", rbePyApiGenericSetEntitySize2DKWList, &entity, &w, &h)) {
-        Collider2DComponent* collider2DComponent = (Collider2DComponent *) component_manager_get_component(entity, ComponentDataIndex_COLLIDER_2D);
-        collider2DComponent->extents.w = w;
-        collider2DComponent->extents.h = h;
+        ColorSquareComponent* colorSquareComponent = (ColorSquareComponent*) component_manager_get_component(entity, ComponentDataIndex_COLOR_SQUARE);
+        colorSquareComponent->size.w = w;
+        colorSquareComponent->size.h = h;
         Py_RETURN_NONE;
     }
     return NULL;
@@ -1101,8 +1102,8 @@ PyObject* rbe_py_api_color_square_set_size(PyObject* self, PyObject* args, PyObj
 PyObject* rbe_py_api_color_square_get_size(PyObject* self, PyObject* args, PyObject* kwargs) {
     Entity entity;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", rbePyApiGenericGetEntityKWList, &entity)) {
-        const Collider2DComponent* collider2DComponent = (Collider2DComponent *) component_manager_get_component(entity, ComponentDataIndex_COLLIDER_2D);
-        return Py_BuildValue("(ff)", collider2DComponent->extents.w, collider2DComponent->extents.h);
+        const ColorSquareComponent* colorSquareComponent = (ColorSquareComponent*) component_manager_get_component(entity, ComponentDataIndex_COLOR_SQUARE);
+        return Py_BuildValue("(ff)", colorSquareComponent->size.w, colorSquareComponent->size.h);
     }
     return NULL;
 }
@@ -1114,8 +1115,8 @@ PyObject* rbe_py_api_color_square_set_color(PyObject* self, PyObject* args, PyOb
     int blue;
     int alpha;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "iffff", rbePyApiGenericSetEntityColorKWList, &entity, &red, &green, &blue, &alpha)) {
-        Collider2DComponent* collider2DComponent = (Collider2DComponent*) component_manager_get_component(entity, ComponentDataIndex_COLLIDER_2D);
-        collider2DComponent->color = rbe_color_get_normalized_color(red, green, blue, alpha);
+        ColorSquareComponent * colorSquareComponent = (ColorSquareComponent *) component_manager_get_component(entity, ComponentDataIndex_COLOR_SQUARE);
+        colorSquareComponent->color = rbe_color_get_normalized_color(red, green, blue, alpha);
         Py_RETURN_NONE;
     }
     return NULL;
@@ -1124,11 +1125,11 @@ PyObject* rbe_py_api_color_square_set_color(PyObject* self, PyObject* args, PyOb
 PyObject* rbe_py_api_color_square_get_color(PyObject* self, PyObject* args, PyObject* kwargs) {
     Entity entity;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", rbePyApiGenericGetEntityKWList, &entity)) {
-        Collider2DComponent* collider2DComponent = (Collider2DComponent *) component_manager_get_component(entity, ComponentDataIndex_COLLIDER_2D);
-        const int red = (int) (collider2DComponent->color.r * 255.0f);
-        const int green = (int) (collider2DComponent->color.r * 255.0f);
-        const int blue = (int) (collider2DComponent->color.r * 255.0f);
-        const int alpha = (int) (collider2DComponent->color.r * 255.0f);
+        ColorSquareComponent* colorSquareComponent = (ColorSquareComponent*) component_manager_get_component(entity, ComponentDataIndex_COLOR_SQUARE);
+        const int red = (int) (colorSquareComponent->color.r * 255.0f);
+        const int green = (int) (colorSquareComponent->color.r * 255.0f);
+        const int blue = (int) (colorSquareComponent->color.r * 255.0f);
+        const int alpha = (int) (colorSquareComponent->color.r * 255.0f);
         return Py_BuildValue("(iiii)", red, green, blue, alpha);
     }
     return NULL;

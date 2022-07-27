@@ -669,6 +669,7 @@
 "    ANIMATED_SPRITE = \"AnimatedSprite\"\n"\
 "    TEXT_LABEL = \"TextLabel\"\n"\
 "    COLLIDER2D = \"Collider2D\"\n"\
+"    COLOR_SQUARE = \"ColorSquare\"\n"\
 "\n"\
 "\n"\
 "class Node:\n"\
