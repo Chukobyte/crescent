@@ -131,28 +131,29 @@ void sprite_renderer_initialize() {
     };
 
     // Initialize render data
-    glGenVertexArrays(1, &spriteQuadVAO);
-    glGenBuffers(1, &spriteQuadVBO);
+    glCreateVertexArrays(1, &spriteQuadVAO);
+    glCreateBuffers(1, &spriteQuadVBO);
 
-    glBindBuffer(GL_ARRAY_BUFFER, spriteQuadVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
+    glNamedBufferData(spriteQuadVBO, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
 
-    glBindVertexArray(spriteQuadVAO);
+    glVertexArrayVertexBuffer(spriteQuadVAO, 0, spriteQuadVAO, 0, 9 * sizeof(GLfloat));
+
     // id attribute
-    glVertexAttribPointer(0, 1, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), (void*) NULL);
-    glEnableVertexAttribArray(0);
+    glEnableVertexArrayAttrib(spriteQuadVAO, 0);
+    glVertexArrayAttribFormat(spriteQuadVAO, 0, 1, GL_FLOAT, GL_FALSE, 0);
+    glVertexArrayAttribBinding(spriteQuadVAO, 0, 0);
     // position attribute
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), (GLvoid*)(sizeof(GLfloat)));
-    glEnableVertexAttribArray(1);
+    glEnableVertexArrayAttrib(spriteQuadVAO, 1);
+    glVertexArrayAttribFormat(spriteQuadVAO, 1, 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat));
+    glVertexArrayAttribBinding(spriteQuadVAO, 1, 0);
     // texture coords attribute
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
-    glEnableVertexAttribArray(2);
+    glEnableVertexArrayAttrib(spriteQuadVAO, 2);
+    glVertexArrayAttribFormat(spriteQuadVAO, 2, 2, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat));
+    glVertexArrayAttribBinding(spriteQuadVAO, 2, 0);
     // color attribute
-    glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), (GLvoid*)(5 * sizeof(GLfloat)));
-    glEnableVertexAttribArray(3);
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
+    glEnableVertexArrayAttrib(spriteQuadVAO, 3);
+    glVertexArrayAttribFormat(spriteQuadVAO, 3, 4, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat));
+    glVertexArrayAttribBinding(spriteQuadVAO, 3, 0);
 
     // compile shaders
     spriteShader = shader_compile_new_shader(OPENGL_SHADER_SOURCE_VERTEX_SPRITE, OPENGL_SHADER_SOURCE_FRAGMENT_SPRITE);
@@ -178,9 +179,6 @@ void sprite_renderer_draw_sprite(const Texture* texture, const Rect2* sourceRect
     glm_scale(globalTransform->model, (vec3) {
         destSize->w, destSize->h, 1.0f
     });
-
-    glBindVertexArray(spriteQuadVAO);
-    glBindBuffer(GL_ARRAY_BUFFER, spriteQuadVBO);
 
     shader_use(spriteShader);
     shader_set_mat4_float(spriteShader, "models[0]", &globalTransform->model);
@@ -214,10 +212,13 @@ void sprite_renderer_draw_sprite(const Texture* texture, const Rect2* sourceRect
         verts[row + 8] = color->a;
     }
 
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texture->id);
+    glBindTextureUnit(0, texture->id);
 
-    glBufferData(GL_ARRAY_BUFFER, (GLsizeiptr) sizeof(verts), verts, GL_DYNAMIC_DRAW);
+    glNamedBufferData(spriteQuadVBO, (GLsizeiptr) sizeof(verts), verts, GL_DYNAMIC_DRAW);
+
+    glBindVertexArray(spriteQuadVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, spriteQuadVBO);
+
     glDrawArrays(GL_TRIANGLES, 0, VERTEX_ITEM_COUNT * NUMBER_OF_VERTICES);
 
     renderer_print_opengl_errors();
@@ -252,7 +253,6 @@ void font_renderer_draw_text(const Font* font, const char* text, float x, float 
     Vector2 currentScale = { scale, scale };
     shader_use(fontShader);
     shader_set_vec4_float(fontShader, "textColor", color->r, color->g, color->b, color->a);
-    glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(font->VAO);
 
     // Iterate through all characters
@@ -275,7 +275,7 @@ void font_renderer_draw_text(const Font* font, const char* text, float x, float 
             {xPos + w, yPos + h, 1.0f, 0.0f}
         };
         // Render glyph texture over quad
-        glBindTexture(GL_TEXTURE_2D, ch.textureId);
+        glBindTextureUnit(0, ch.textureId);
         // Update content of VBO memory
         glBindBuffer(GL_ARRAY_BUFFER, font->VBO);
         glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(verts), verts);

@@ -12,7 +12,7 @@ static const char* SHADER_PROGRAM_TYPE = "PROGRAM";
 typedef struct Shader {
     GLuint id;
 } Shader;
-
+// TODO: proposal - maybe cache uniform locations instead of querying them every time?
 Shader* shader_compile_new_shader(const char* vertexSource, const char* fragmentSource);
 void shader_check_compile_errors(unsigned int shaderId, const char* type);
 void shader_use(Shader* shader);
