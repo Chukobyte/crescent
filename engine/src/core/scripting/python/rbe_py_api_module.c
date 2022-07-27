@@ -19,15 +19,14 @@
 #include "../../ecs/system/ec_system.h"
 #include "../../ecs/component/animated_sprite_component.h"
 #include "../../ecs/component/collider2d_component.h"
+#include "../../ecs/component/color_square_component.h"
 #include "../../ecs/component/node_component.h"
 #include "../../ecs/component/script_component.h"
 #include "../../ecs/component/sprite_component.h"
 #include "../../ecs/component/text_label_component.h"
-#include "../../ecs/component/transform2d_component.h"
 #include "../../networking/rbe_network.h"
 #include "../../utils/rbe_string_util.h"
 #include "../../utils/rbe_assert.h"
-#include "../../ecs/component/color_square_component.h"
 
 #ifdef _MSC_VER
 #pragma warning(disable : 4996) // for strcpy
@@ -706,6 +705,11 @@ PyObject* rbe_py_api_node_new(PyObject* self, PyObject* args, PyObject* kwargs) 
         if ((NodeBaseInheritanceType_COLLIDER2D & inheritanceType) == NodeBaseInheritanceType_COLLIDER2D) {
             Collider2DComponent* collider2DComponent = collider2d_component_create();
             component_manager_set_component(newEntity, ComponentDataIndex_COLLIDER_2D, collider2DComponent);
+        }
+
+        if ((NodeBaseInheritanceType_COLOR_SQUARE & inheritanceType) == NodeBaseInheritanceType_COLOR_SQUARE) {
+            ColorSquareComponent* colorSquareComponent = color_square_component_create();
+            component_manager_set_component(newEntity, ComponentDataIndex_COLOR_SQUARE, colorSquareComponent);
         }
 
         Py_IncRef(entityInstance);

@@ -18,8 +18,14 @@ class Attack(HitBox):
         self.life_time = 1.0
 
     def _start(self) -> None:
-        self.set_extents(Size2D(32, 32))
-        self.set_color(Color(200, 0, 0, 150))
+        collider_size = Size2D(32, 32)
+        collider_color = Color(200, 0, 0, 150)
+        self.set_extents(collider_size)
+        self.set_color(collider_color)
+        color_square = ColorSquare.new()
+        color_square.size = collider_size
+        color_square.color = collider_color
+        self.add_child(color_square)
 
     async def update_task(self, delta_time: float):
         current_time = 0.0
