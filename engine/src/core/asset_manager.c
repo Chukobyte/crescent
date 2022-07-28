@@ -8,7 +8,7 @@
 #include "memory/rbe_mem.h"
 #include "utils/rbe_assert.h"
 
-#define INITIAL_ASSET_HASHMAP_SIZE 64
+#define INITIAL_ASSET_HASHMAP_SIZE 8
 
 RBEStringHashMap* texturesMap = NULL;
 RBEStringHashMap* fontMap = NULL;

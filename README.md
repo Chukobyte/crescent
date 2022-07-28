@@ -11,7 +11,7 @@
   </a>
 </p>
 
-A work in progress fighting game engine for Windows and Linux with the core written in C11.  The name is temporary and will very likely change in the near future.  Road map for the project coming soon.
+A work in progress fighting game engine for Windows and Linux with the core written in C11.
 
 ## Tech Stack
 

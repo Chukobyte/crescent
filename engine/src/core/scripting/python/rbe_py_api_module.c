@@ -19,11 +19,11 @@
 #include "../../ecs/system/ec_system.h"
 #include "../../ecs/component/animated_sprite_component.h"
 #include "../../ecs/component/collider2d_component.h"
+#include "../../ecs/component/color_square_component.h"
 #include "../../ecs/component/node_component.h"
 #include "../../ecs/component/script_component.h"
 #include "../../ecs/component/sprite_component.h"
 #include "../../ecs/component/text_label_component.h"
-#include "../../ecs/component/transform2d_component.h"
 #include "../../networking/rbe_network.h"
 #include "../../utils/rbe_string_util.h"
 #include "../../utils/rbe_assert.h"
@@ -707,6 +707,11 @@ PyObject* rbe_py_api_node_new(PyObject* self, PyObject* args, PyObject* kwargs) 
             component_manager_set_component(newEntity, ComponentDataIndex_COLLIDER_2D, collider2DComponent);
         }
 
+        if ((NodeBaseInheritanceType_COLOR_SQUARE & inheritanceType) == NodeBaseInheritanceType_COLOR_SQUARE) {
+            ColorSquareComponent* colorSquareComponent = color_square_component_create();
+            component_manager_set_component(newEntity, ComponentDataIndex_COLOR_SQUARE, colorSquareComponent);
+        }
+
         Py_IncRef(entityInstance);
         return Py_BuildValue("O", entityInstance);
     }
@@ -716,7 +721,8 @@ PyObject* rbe_py_api_node_new(PyObject* self, PyObject* args, PyObject* kwargs) 
 PyObject* rbe_py_api_node_queue_deletion(PyObject* self, PyObject* args, PyObject* kwargs) {
     Entity entity;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", rbePyApiGenericGetEntityKWList, &entity)) {
-        rbe_scene_manager_queue_entity_for_deletion(entity);
+        SceneTreeNode* node = rbe_scene_manager_get_entity_tree_node(entity);
+        rbe_queue_destroy_tree_node_entity_all(node);
         Py_RETURN_NONE;
     }
     return NULL;
@@ -728,6 +734,9 @@ PyObject* rbe_py_api_node_add_child(PyObject* self, PyObject* args, PyObject* kw
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "ii", rbePyApiNodeAddChildKWList, &parentEntity, &entity)) {
         SceneTreeNode* parentNode = rbe_scene_manager_get_entity_tree_node(parentEntity);
         SceneTreeNode* node = rbe_scene_tree_create_tree_node(entity, parentNode);
+        if (parentNode != NULL) {
+            parentNode->children[parentNode->childCount++] = node;
+        }
 
         rbe_ec_system_update_entity_signature_with_systems(entity);
         rbe_scene_manager_queue_entity_for_creation(node);
@@ -961,6 +970,31 @@ PyObject* rbe_py_api_sprite_get_draw_source(PyObject* self, PyObject* args, PyOb
     return NULL;
 }
 
+// Animated Sprite
+PyObject* rbe_py_api_animated_sprite_play(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    char* animationName;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "is", rbePyApiAnimatedSpriteSetAnimationKWList, &entity, &animationName)) {
+        AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent *) component_manager_get_component(entity, ComponentDataIndex_ANIMATED_SPRITE);
+        const bool success = animated_sprite_component_set_animation(animatedSpriteComponent, animationName);
+        animatedSpriteComponent->isPlaying = true;
+        if (success) {
+            Py_RETURN_TRUE;
+        }
+        Py_RETURN_FALSE;
+    }
+    return NULL;
+}
+
+PyObject* rbe_py_api_animated_sprite_stop(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "is", rbePyApiGenericGetEntityKWList, &entity)) {
+        AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent *) component_manager_get_component(entity, ComponentDataIndex_ANIMATED_SPRITE);
+        animatedSpriteComponent->isPlaying = false;
+    }
+    return NULL;
+}
+
 // Text Label
 PyObject* rbe_py_api_text_label_set_text(PyObject* self, PyObject* args, PyObject* kwargs) {
     Entity entity;
@@ -1054,6 +1088,56 @@ PyObject* rbe_py_api_collider2D_get_color(PyObject* self, PyObject* args, PyObje
         const int green = (int) (collider2DComponent->color.r * 255.0f);
         const int blue = (int) (collider2DComponent->color.r * 255.0f);
         const int alpha = (int) (collider2DComponent->color.r * 255.0f);
+        return Py_BuildValue("(iiii)", red, green, blue, alpha);
+    }
+    return NULL;
+}
+
+// ColorSquare
+PyObject* rbe_py_api_color_square_set_size(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    float w;
+    float h;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "iff", rbePyApiGenericSetEntitySize2DKWList, &entity, &w, &h)) {
+        ColorSquareComponent* colorSquareComponent = (ColorSquareComponent*) component_manager_get_component(entity, ComponentDataIndex_COLOR_SQUARE);
+        colorSquareComponent->size.w = w;
+        colorSquareComponent->size.h = h;
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* rbe_py_api_color_square_get_size(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", rbePyApiGenericGetEntityKWList, &entity)) {
+        const ColorSquareComponent* colorSquareComponent = (ColorSquareComponent*) component_manager_get_component(entity, ComponentDataIndex_COLOR_SQUARE);
+        return Py_BuildValue("(ff)", colorSquareComponent->size.w, colorSquareComponent->size.h);
+    }
+    return NULL;
+}
+
+PyObject* rbe_py_api_color_square_set_color(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    int red;
+    int green;
+    int blue;
+    int alpha;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "iffff", rbePyApiGenericSetEntityColorKWList, &entity, &red, &green, &blue, &alpha)) {
+        ColorSquareComponent * colorSquareComponent = (ColorSquareComponent *) component_manager_get_component(entity, ComponentDataIndex_COLOR_SQUARE);
+        colorSquareComponent->color = rbe_color_get_normalized_color(red, green, blue, alpha);
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* rbe_py_api_color_square_get_color(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", rbePyApiGenericGetEntityKWList, &entity)) {
+        ColorSquareComponent* colorSquareComponent = (ColorSquareComponent*) component_manager_get_component(entity, ComponentDataIndex_COLOR_SQUARE);
+        const int red = (int) (colorSquareComponent->color.r * 255.0f);
+        const int green = (int) (colorSquareComponent->color.r * 255.0f);
+        const int blue = (int) (colorSquareComponent->color.r * 255.0f);
+        const int alpha = (int) (colorSquareComponent->color.r * 255.0f);
         return Py_BuildValue("(iiii)", red, green, blue, alpha);
     }
     return NULL;

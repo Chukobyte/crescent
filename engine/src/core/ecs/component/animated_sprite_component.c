@@ -31,23 +31,25 @@ void animated_sprite_component_add_animation(AnimatedSpriteComponent* animatedSp
     animatedSpriteComponent->animations[animatedSpriteComponent->animationCount++] = animation;
 }
 
-Animation animated_sprite_component_get_animation(AnimatedSpriteComponent* animatedSpriteComponent, const char* name) {
+bool animated_sprite_component_set_animation(AnimatedSpriteComponent* animatedSpriteComponent, const char* name) {
     for (size_t i = 0; i < animatedSpriteComponent->animationCount; i++) {
         if (strcmp(animatedSpriteComponent->animations[i].name, name) == 0) {
-            return animatedSpriteComponent->animations[i];
+            animatedSpriteComponent->currentAnimation = animatedSpriteComponent->animations[i];
+            return true;
         }
     }
-    RBE_ASSERT_FMT(false, "Failed to retrieve animation named '%s'", name);
-    Animation invalidAnimation;
-    return invalidAnimation;
+    return false;
 }
 
-Animation* animated_sprite_component_get_animation_ref(AnimatedSpriteComponent* animatedSpriteComponent, const char* name) {
+AnimationQueryResult animated_sprite_component_get_animation(AnimatedSpriteComponent* animatedSpriteComponent, const char* name) {
+    AnimationQueryResult animationQueryResult;
     for (size_t i = 0; i < animatedSpriteComponent->animationCount; i++) {
         if (strcmp(animatedSpriteComponent->animations[i].name, name) == 0) {
-            return &animatedSpriteComponent->animations[i];
+            animationQueryResult.animation = animatedSpriteComponent->animations[i];
+            animationQueryResult.success = true;
+            return  animationQueryResult;
         }
     }
-    RBE_ASSERT_FMT(false, "Failed to retrieve animation named '%s'", name);
-    return NULL;
+    animationQueryResult.success = false;
+    return animationQueryResult;
 }

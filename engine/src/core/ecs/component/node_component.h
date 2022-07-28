@@ -6,6 +6,7 @@
 #define RBE_NODE_ANIMATED_SPRITE_STRING "AnimatedSprite"
 #define RBE_NODE_TEXT_LABEL_STRING "TextLabel"
 #define RBE_NODE_COLLIDER2D_STRING "Collider2D"
+#define RBE_NODE_COLOR_SQUARE_STRING "ColorSquare"
 
 typedef enum NodeBaseType {
     NodeBaseType_INVALID = -1,
@@ -15,6 +16,7 @@ typedef enum NodeBaseType {
     NodeBaseType_ANIMATED_SPRITE = 1 << 3,
     NodeBaseType_TEXT_LABEL = 1 << 4,
     NodeBaseType_COLLIDER2D = 1 << 5,
+    NodeBaseType_COLOR_SQUARE = 1 << 6,
 } NodeBaseType;
 
 typedef enum NodeBaseInheritanceType {
@@ -25,6 +27,7 @@ typedef enum NodeBaseInheritanceType {
     NodeBaseInheritanceType_ANIMATED_SPRITE = NodeBaseType_NODE | NodeBaseType_NODE2D | NodeBaseType_ANIMATED_SPRITE,
     NodeBaseInheritanceType_TEXT_LABEL = NodeBaseType_NODE | NodeBaseType_NODE2D | NodeBaseType_TEXT_LABEL,
     NodeBaseInheritanceType_COLLIDER2D = NodeBaseType_NODE | NodeBaseType_NODE2D | NodeBaseType_COLLIDER2D,
+    NodeBaseInheritanceType_COLOR_SQUARE = NodeBaseType_NODE | NodeBaseType_NODE2D | NodeBaseType_COLOR_SQUARE,
 } NodeBaseInheritanceType;
 
 typedef struct NodeComponent {

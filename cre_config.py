@@ -8,7 +8,7 @@ configure_game(
     resolution_height=600,
     target_fps=66,
     initial_node_path="test_games/fighter_test/nodes/title_screen_node.py",
-    colliders_visible=True,
+    colliders_visible=False,
 )
 
 configure_assets(
@@ -26,7 +26,35 @@ configure_assets(
             filter_mag="nearest",
         ),
         Texture(
+            file_path="test_games/fighter_test/assets/images/characters/mor/mor_crouch_idle_sheet.png",
+            wrap_s="clamp_to_border",
+            wrap_t="clamp_to_border",
+            filter_min="nearest",
+            filter_mag="nearest",
+        ),
+        Texture(
+            file_path="test_games/fighter_test/assets/images/characters/mor/mor_jump_up_sheet.png",
+            wrap_s="clamp_to_border",
+            wrap_t="clamp_to_border",
+            filter_min="nearest",
+            filter_mag="nearest",
+        ),
+        Texture(
             file_path="test_games/fighter_test/assets/images/characters/mor/mor_still.png",
+            wrap_s="clamp_to_border",
+            wrap_t="clamp_to_border",
+            filter_min="nearest",
+            filter_mag="nearest",
+        ),
+        Texture(
+            file_path="test_games/fighter_test/assets/images/characters/mor/mor_walk_forward_sheet.png",
+            wrap_s="clamp_to_border",
+            wrap_t="clamp_to_border",
+            filter_min="nearest",
+            filter_mag="nearest",
+        ),
+        Texture(
+            file_path="test_games/fighter_test/assets/images/characters/mor/mor_walk_backward_sheet.png",
             wrap_s="clamp_to_border",
             wrap_t="clamp_to_border",
             filter_min="nearest",
@@ -56,9 +84,13 @@ configure_inputs(
         InputAction(name="ui_confirm", values=[Input.Keyboard.RETURN]),
         InputAction(name="p1_move_left", values=[Input.Keyboard.A]),
         InputAction(name="p1_move_right", values=[Input.Keyboard.D]),
+        InputAction(name="p1_crouch", values=[Input.Keyboard.S]),
+        InputAction(name="p1_jump", values=[Input.Keyboard.W]),
         InputAction(name="p1_light_punch", values=[Input.Keyboard.Q]),
         InputAction(name="p2_move_left", values=[Input.Keyboard.LEFT]),
         InputAction(name="p2_move_right", values=[Input.Keyboard.RIGHT]),
+        InputAction(name="p2_crouch", values=[Input.Keyboard.DOWN]),
+        InputAction(name="p2_jump", values=[Input.Keyboard.UP]),
         InputAction(name="p2_light_punch", values=[Input.Keyboard.NUM_0]),
         InputAction(name="camera_left", values=[Input.Keyboard.J]),
         InputAction(name="camera_right", values=[Input.Keyboard.L]),
