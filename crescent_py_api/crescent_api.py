@@ -621,6 +621,12 @@ class Collider2DComponent:
         self.color = color
 
 
+class ColorSquareComponent:
+    def __init__(self, size: Size2D, color: Color):
+        self.size = size
+        self.color = color
+
+
 # NODE
 class NodeType(str, Enum):
     NODE = "Node"

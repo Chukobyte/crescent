@@ -660,6 +660,12 @@
 "        self.color = color\n"\
 "\n"\
 "\n"\
+"class ColorSquareComponent:\n"\
+"    def __init__(self, size: Size2D, color: Color):\n"\
+"        self.size = size\n"\
+"        self.color = color\n"\
+"\n"\
+"\n"\
 "# NODE\n"\
 "class NodeType(str, Enum):\n"\
 "    NODE = \"Node\"\n"\

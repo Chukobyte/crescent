@@ -462,6 +462,32 @@ void setup_scene_component_node(Entity entity, PyObject* component) {
 
         Py_DECREF(pyExtents);
         Py_DECREF(pyColor);
+    } else if (strcmp(className, "ColorSquareComponent") == 0) {
+        rbe_logger_debug("Building collider2d component");
+        PyObject* pySize = PyObject_GetAttrString(component, "size");
+        RBE_ASSERT(pySize != NULL);
+        const float rectW = phy_get_float_from_var(pySize, "w");
+        const float rectH = phy_get_float_from_var(pySize, "h");
+        PyObject* pyColor = PyObject_GetAttrString(component, "color");
+        RBE_ASSERT(pyColor != NULL);
+        const int colorR = phy_get_int_from_var(pyColor, "r");
+        const int colorG = phy_get_int_from_var(pyColor, "g");
+        const int colorB = phy_get_int_from_var(pyColor, "b");
+        const int colorA = phy_get_int_from_var(pyColor, "a");
+        ColorSquareComponent* colorSquareComponent = color_square_component_create();
+        colorSquareComponent->size.w = rectW;
+        colorSquareComponent->size.h = rectH;
+        colorSquareComponent->color.r = (float) colorR / 255.0f;
+        colorSquareComponent->color.g = (float) colorG / 255.0f;
+        colorSquareComponent->color.b = (float) colorB / 255.0f;
+        colorSquareComponent->color.a = (float) colorA / 255.0f;
+        component_manager_set_component(entity, ComponentDataIndex_COLOR_SQUARE, colorSquareComponent);
+        rbe_logger_debug("size: (%f, %f), color: (%f, %f, %f, %f)",
+                         rectW, rectH, colorSquareComponent->color.r, colorSquareComponent->color.g,
+                         colorSquareComponent->color.b, colorSquareComponent->color.a);
+
+        Py_DECREF(pySize);
+        Py_DECREF(pyColor);
     } else {
         rbe_logger_error("Invalid component class name: '%s'", className);
     }
