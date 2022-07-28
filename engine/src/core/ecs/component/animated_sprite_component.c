@@ -53,13 +53,3 @@ AnimationQueryResult animated_sprite_component_get_animation(AnimatedSpriteCompo
     animationQueryResult.success = false;
     return animationQueryResult;
 }
-
-//Animation* animated_sprite_component_get_animation_ref(AnimatedSpriteComponent* animatedSpriteComponent, const char* name) {
-//    for (size_t i = 0; i < animatedSpriteComponent->animationCount; i++) {
-//        if (strcmp(animatedSpriteComponent->animations[i].name, name) == 0) {
-//            return &animatedSpriteComponent->animations[i];
-//        }
-//    }
-//    RBE_ASSERT_FMT(false, "Failed to retrieve animation named '%s'", name);
-//    return NULL;
-//}
