@@ -1,9 +1,8 @@
 from test_games.fighter_test.src.fight_sim.fight_sim import *
 from test_games.fighter_test.src.game_state import *
+from test_games.fighter_test.src.timer import Timer
 
-
-# class TestNode(Sprite):
-#     pass
+fighting_round_timer = Timer(99.0)
 
 
 class Main(Node2D):
@@ -13,6 +12,7 @@ class Main(Node2D):
         Engine.set_fps_display_enabled(True)
 
         # Fighter Data
+        self.time_display = self.get_child("TimeDisplay")
         # Nodes
         if self.game_state.mode == GameMode.ONLINE_PVP_CLIENT:
             player_one_node = self.get_child(name="PlayerTwo")
@@ -97,6 +97,8 @@ class Main(Node2D):
             self.fight_sim.fighters[0].node.add_to_rotation(-1)
 
         self.fight_sim.update(delta_time)
+
+        self.time_display.text = f"{int(fighting_round_timer.tick(delta_time))}"
 
     def _network_server_callback(self, message: str) -> None:
         # print(
