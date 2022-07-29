@@ -74,6 +74,11 @@ class Main(Node2D):
         if Input.is_action_just_pressed(name="ui_confirm"):
             SceneTree.change_scene(path="test_games/fighter_test/nodes/main_node.py")
 
+        if Input.is_action_just_pressed(name="play_sfx"):
+            self.fight_sim.p1_health_bar.print_debug_info()
+            self.fight_sim.p1_health_bar.set_health_percentage(50)
+            self.fight_sim.p1_health_bar.print_debug_info()
+
     def _physics_update(self, delta_time: float) -> None:
         # Temp camera test
         camera_speed = Vector2(5.0, 5.0)
