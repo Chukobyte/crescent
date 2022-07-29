@@ -3,6 +3,7 @@ from typing import Tuple
 from test_games.fighter_test.src.input import *
 from test_games.fighter_test.src.hit_box import Attack
 from test_games.fighter_test.src.task import *
+from test_games.fighter_test.src.health_bar import HealthBar
 
 
 class FighterStance:
@@ -113,11 +114,21 @@ class FighterSimulation:
         self.active_attacks = []
         self.timed_funcs = []
         self.fighter_coroutines = []  # temp for now
+        self.fight_match_time = 99
+        self.p1_health_bar = HealthBar.new()
+        self.p2_health_bar = HealthBar.new()
 
     def add_fighter(self, fighter: Fighter) -> None:
         self.fighters.append(fighter)
         if isinstance(fighter.input_buffer, NetworkReceiverInputBuffer):
             self.network_receiving_fighters.append(fighter)
+
+    def add_health_bars(self) -> None:
+        self.p1_health_bar.position = Vector2(100, 80)
+        self.main_node.add_child(self.p1_health_bar)
+
+        self.p2_health_bar.position = Vector2(600, 80)
+        self.main_node.add_child(self.p2_health_bar)
 
     def add_attack(self, attack: Attack, fighter_index: int) -> None:
         self.active_attacks.append(

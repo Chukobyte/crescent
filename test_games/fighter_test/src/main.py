@@ -8,32 +8,6 @@ from test_games.fighter_test.src.game_state import *
 
 class Main(Node2D):
     def _start(self) -> None:
-        # TODO: Move test stuff in a separate project once starting projects from a specific folder is implemented...
-        # test_node = TestNode.new()
-        # print(f"[PY SCRIPT] TestNode.new() created as {test_node}")
-        # test_node.position = Vector2(400, 200)
-        # test_node.texture = Texture(
-        #     file_path="test_games/fighter_test/assets/images/characters/mor/mor_idle_sheet.png"
-        # )
-        # test_node.draw_source = Rect2(0, 0, 32, 32)
-        # self.add_child(child_node=test_node)
-
-        # Camera Test
-        # Camera2D.set_position(Vector2(200.0, 200.0))
-        # Camera2D.set_zoom(Vector2(2.0, 2.0))
-        # Camera2D.set_boundary(Rect2(0.0, 0.0, 100000, 100000))
-        # Camera2D.set_boundary(Rect2(0.0, 0.0, 800, 600))
-        # print(f"boundary = {Camera2D.get_boundary()}")
-
-        # Test Get Children
-        # print(f"[PY_SCRIPT] children = {self.get_children()}")
-
-        # Attack spawning test
-        # attack = Attack.new()
-        # print(f"[PY_SCRIPT] attack = {attack}")
-        # attack.position = Vector2(300, 200)
-        # self.add_child(attack)
-
         self.game_state = GameState()
 
         Engine.set_fps_display_enabled(True)
@@ -69,6 +43,7 @@ class Main(Node2D):
             Fighter(player_two_node, player_two_collider, player_two_input)
         )
 
+        self.fight_sim.add_health_bars()
         # self.fight_sim.add_attack(attack)
 
         # Network

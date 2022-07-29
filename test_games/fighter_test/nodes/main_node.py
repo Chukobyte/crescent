@@ -659,48 +659,6 @@ create_stage_nodes(
                     ],
                     children=[],
                 ),
-                StageNode(
-                    name="P1HealthBar",
-                    type="ColorSquare",
-                    tags=None,
-                    external_node_source=None,
-                    components=[
-                        Transform2DComponent(
-                            position=Vector2(100.0, 80.0),
-                            scale=Vector2(1.0, 1.0),
-                            rotation=0.0,
-                            z_index=0,
-                            z_index_relative_to_parent=True,
-                            ignore_camera=True,
-                        ),
-                        ColorSquareComponent(
-                            size=Size2D(100, 20),
-                            color=Color(255, 0, 0),
-                        ),
-                    ],
-                    children=[],
-                ),
-                StageNode(
-                    name="P2HealthBar",
-                    type="ColorSquare",
-                    tags=None,
-                    external_node_source=None,
-                    components=[
-                        Transform2DComponent(
-                            position=Vector2(600.0, 80.0),
-                            scale=Vector2(1.0, 1.0),
-                            rotation=0.0,
-                            z_index=0,
-                            z_index_relative_to_parent=True,
-                            ignore_camera=True,
-                        ),
-                        ColorSquareComponent(
-                            size=Size2D(100, 20),
-                            color=Color(255, 0, 0),
-                        ),
-                    ],
-                    children=[],
-                ),
             ],
         )
     ]
