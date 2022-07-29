@@ -1098,7 +1098,7 @@ PyObject* rbe_py_api_collider2D_set_color(PyObject* self, PyObject* args, PyObje
     int green;
     int blue;
     int alpha;
-    if (PyArg_ParseTupleAndKeywords(args, kwargs, "iffff", rbePyApiGenericSetEntityColorKWList, &entity, &red, &green, &blue, &alpha)) {
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "iiiii", rbePyApiGenericSetEntityColorKWList, &entity, &red, &green, &blue, &alpha)) {
         Collider2DComponent* collider2DComponent = (Collider2DComponent*) component_manager_get_component(entity, ComponentDataIndex_COLLIDER_2D);
         collider2DComponent->color = rbe_color_get_normalized_color(red, green, blue, alpha);
         Py_RETURN_NONE;
@@ -1111,9 +1111,9 @@ PyObject* rbe_py_api_collider2D_get_color(PyObject* self, PyObject* args, PyObje
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", rbePyApiGenericGetEntityKWList, &entity)) {
         Collider2DComponent* collider2DComponent = (Collider2DComponent *) component_manager_get_component(entity, ComponentDataIndex_COLLIDER_2D);
         const int red = (int) (collider2DComponent->color.r * 255.0f);
-        const int green = (int) (collider2DComponent->color.r * 255.0f);
-        const int blue = (int) (collider2DComponent->color.r * 255.0f);
-        const int alpha = (int) (collider2DComponent->color.r * 255.0f);
+        const int green = (int) (collider2DComponent->color.g * 255.0f);
+        const int blue = (int) (collider2DComponent->color.b * 255.0f);
+        const int alpha = (int) (collider2DComponent->color.a * 255.0f);
         return Py_BuildValue("(iiii)", red, green, blue, alpha);
     }
     return NULL;
@@ -1148,8 +1148,8 @@ PyObject* rbe_py_api_color_square_set_color(PyObject* self, PyObject* args, PyOb
     int green;
     int blue;
     int alpha;
-    if (PyArg_ParseTupleAndKeywords(args, kwargs, "iffff", rbePyApiGenericSetEntityColorKWList, &entity, &red, &green, &blue, &alpha)) {
-        ColorSquareComponent * colorSquareComponent = (ColorSquareComponent *) component_manager_get_component(entity, ComponentDataIndex_COLOR_SQUARE);
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "iiiii", rbePyApiGenericSetEntityColorKWList, &entity, &red, &green, &blue, &alpha)) {
+        ColorSquareComponent* colorSquareComponent = (ColorSquareComponent *) component_manager_get_component(entity, ComponentDataIndex_COLOR_SQUARE);
         colorSquareComponent->color = rbe_color_get_normalized_color(red, green, blue, alpha);
         Py_RETURN_NONE;
     }
@@ -1161,9 +1161,9 @@ PyObject* rbe_py_api_color_square_get_color(PyObject* self, PyObject* args, PyOb
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", rbePyApiGenericGetEntityKWList, &entity)) {
         ColorSquareComponent* colorSquareComponent = (ColorSquareComponent*) component_manager_get_component(entity, ComponentDataIndex_COLOR_SQUARE);
         const int red = (int) (colorSquareComponent->color.r * 255.0f);
-        const int green = (int) (colorSquareComponent->color.r * 255.0f);
-        const int blue = (int) (colorSquareComponent->color.r * 255.0f);
-        const int alpha = (int) (colorSquareComponent->color.r * 255.0f);
+        const int green = (int) (colorSquareComponent->color.g * 255.0f);
+        const int blue = (int) (colorSquareComponent->color.b * 255.0f);
+        const int alpha = (int) (colorSquareComponent->color.a * 255.0f);
         return Py_BuildValue("(iiii)", red, green, blue, alpha);
     }
     return NULL;

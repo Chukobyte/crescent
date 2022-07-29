@@ -12,11 +12,11 @@ class HealthBar(ColorSquare):
 
     def _start(self) -> None:
         self.size = HEALTH_BAR_SIZE
-        self.color = Color(0, 0, 0)
+        self.color = Color.BLACK()
 
         self.inner_hp_bar.position = Vector2(1, 1)
         self.inner_hp_bar.size = INNER_HEALTH_BAR_SIZE
-        self.inner_hp_bar.color = Color(255, 0, 0)
+        self.inner_hp_bar.color = Color.RED()
         self.add_child(self.inner_hp_bar)
 
     def set_health_percentage(self, hp_percent: int) -> None:

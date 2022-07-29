@@ -60,6 +60,26 @@
 "    def __repr__(self):\n"\
 "        return f\"({self.r}, {self.g}, {self.b}, {self.a})\"\n"\
 "\n"\
+"    @staticmethod\n"\
+"    def BLACK():\n"\
+"        return Color(0, 0, 0)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def WHITE():\n"\
+"        return Color(255, 255, 255)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def RED():\n"\
+"        return Color(255, 0, 0)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def GREEN():\n"\
+"        return Color(0, 255, 0)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def BLUE():\n"\
+"        return Color(0, 0, 255)\n"\
+"\n"\
 "\n"\
 "# MATH\n"\
 "class Math:\n"\
