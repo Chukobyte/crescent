@@ -109,7 +109,7 @@ void rbe_scene_manager_process_queued_deletion_entities() {
         rbe_ec_system_remove_entity_from_all_systems(entityToDelete);
         // Remove all components
         component_manager_remove_all_components(entityToDelete);
-        RBE_MEM_FREE(treeNode);
+//        RBE_MEM_FREE(treeNode);  // FIXME: Crashes
     }
     entitiesQueuedForDeletionSize = 0;
 }

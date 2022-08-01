@@ -52,8 +52,9 @@ Rect2 get_collision_rectangle(Entity entity, Transform2DComponent* transform2DCo
     Rect2 collisionRect = {
         .x = globalTransform->position.x,
         .y = globalTransform->position.y,
-        .w = globalTransform->scale.x * collider2DComponent->extents.w,
-        .h = globalTransform->scale.y * collider2DComponent->extents.h,
+        // FIXME: Fix negative scaling collisions
+        .w = fabsf(globalTransform->scale.x * collider2DComponent->extents.w),
+        .h = fabsf(globalTransform->scale.y * collider2DComponent->extents.h),
     };
     return collisionRect;
 }

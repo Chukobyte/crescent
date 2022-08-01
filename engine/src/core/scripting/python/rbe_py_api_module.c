@@ -1075,7 +1075,7 @@ PyObject* rbe_py_api_collider2D_set_extents(PyObject* self, PyObject* args, PyOb
     float w;
     float h;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "iff", rbePyApiGenericSetEntitySize2DKWList, &entity, &w, &h)) {
-        Collider2DComponent* collider2DComponent = (Collider2DComponent *) component_manager_get_component(entity, ComponentDataIndex_COLLIDER_2D);
+        Collider2DComponent* collider2DComponent = (Collider2DComponent*) component_manager_get_component(entity, ComponentDataIndex_COLLIDER_2D);
         collider2DComponent->extents.w = w;
         collider2DComponent->extents.h = h;
         Py_RETURN_NONE;

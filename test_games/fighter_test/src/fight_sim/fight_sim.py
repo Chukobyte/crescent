@@ -113,6 +113,11 @@ class FighterSimulation:
             # Attack
             if fighter.input_buffer.light_punch_pressed and not fighter.is_attacking:
                 attack = fighter.spawn_basic_attack_from_stance()
+                if i == 0:
+                    attack_target = self.fighters[1]
+                else:
+                    attack_target = self.fighters[0]
+                attack.add_fighter_target(attack_target)
                 print(f"[PY_SCRIPT] attack = {attack}")
                 self.main_node.add_child(attack)
                 self.add_attack(attack=attack, fighter_index=i)
@@ -126,12 +131,12 @@ class FighterSimulation:
             receiver_fighter.input_buffer.kill_inputs()
 
         # Collision test, assumes two fighters for now.  TODO: Clean up later
-        collided_entities = CollisionHandler.process_collisions(
-            self.fighters[0].collider
-        )
-        for entity in collided_entities:
-            print(f"Entities collided!")
-            break
+        # collided_entities = CollisionHandler.process_collisions(
+        #     self.fighters[0].collider
+        # )
+        # for entity in collided_entities:
+        #     print(f"Entities collided!")
+        #     break
 
         # Attack test
         for attack_ref in self.active_attacks[:]:

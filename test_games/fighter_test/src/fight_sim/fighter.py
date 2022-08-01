@@ -27,6 +27,7 @@ class Fighter:
         self.input_buffer = input_buffer
         self.health_bar = health_bar
         self.velocity = Vector2.ZERO()
+        self.hp = 100
         self.speed = 50
         self.is_attacking = False  # Temp
         self.stance = FighterStance.NONE
@@ -59,6 +60,13 @@ class Fighter:
         attack.position = self.node.global_position + attack_offset
         attack.life_time = 0.2
         return attack
+
+    def on_attack_connect(self, attack: Attack) -> None:
+        print(
+            f"Attack Node '{attack}' connected to '{self.node}' with collider '{self.collider}'"
+        )
+        self.hp = max(self.hp - 10, 0)
+        self.health_bar.set_health_percentage(self.hp)
 
     def set_stance(self, stance: int) -> bool:
         self._previous_stance = self.stance
