@@ -36,15 +36,26 @@ class Main(Node2D):
         )
         # Fight Sim
         self.fight_sim = FighterSimulation(self)
+        # Spawn Health Bars
+        p1_health_bar = HealthBar.new()
+        p1_health_bar.position = Vector2(100, 80)
+        self.add_child(p1_health_bar)
+        p2_health_bar = HealthBar.new()
+        p2_health_bar.position = Vector2(600, 80)
+        self.add_child(p2_health_bar)
+        # Add fighters
         self.fight_sim.add_fighter(
-            Fighter(player_one_node, player_one_collider, player_one_input)
+            Fighter(
+                player_one_node, player_one_collider, player_one_input, p1_health_bar
+            )
         )
         self.fight_sim.add_fighter(
-            Fighter(player_two_node, player_two_collider, player_two_input)
+            Fighter(
+                player_two_node, player_two_collider, player_two_input, p2_health_bar
+            )
         )
 
-        self.fight_sim.add_health_bars()
-        # self.fight_sim.add_attack(attack)
+        # self.fight_sim.add_health_bars()
 
         # Network
         is_network_enabled = (
@@ -75,9 +86,9 @@ class Main(Node2D):
             SceneTree.change_scene(path="test_games/fighter_test/nodes/main_node.py")
 
         if Input.is_action_just_pressed(name="play_sfx"):
-            self.fight_sim.p1_health_bar.print_debug_info()
-            self.fight_sim.p1_health_bar.set_health_percentage(50)
-            self.fight_sim.p1_health_bar.print_debug_info()
+            self.fight_sim.fighters[0].health_bar.print_debug_info()
+            self.fight_sim.fighters[0].health_bar.set_health_percentage(50)
+            self.fight_sim.fighters[0].health_bar.print_debug_info()
 
     def _physics_update(self, delta_time: float) -> None:
         # Temp camera test

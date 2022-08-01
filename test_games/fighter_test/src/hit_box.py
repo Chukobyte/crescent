@@ -1,4 +1,6 @@
 from crescent_api import *
+
+# from test_games.fighter_test.src.fight_sim.fighter import Fighter # TODO: Clean
 from test_games.fighter_test.src.task import *
 
 
@@ -16,6 +18,7 @@ class Attack(HitBox):
     def __init__(self, entity_id: int):
         super().__init__(entity_id=entity_id)
         self.life_time = 1.0
+        self.target = []
 
     def _start(self) -> None:
         collider_size = Size2D(32, 32)
@@ -26,6 +29,9 @@ class Attack(HitBox):
         color_square.size = collider_size
         color_square.color = collider_color
         self.add_child(color_square)
+
+    def add_fighter_target(self, target) -> None:
+        self.target.append(target)
 
     async def update_task(self, delta_time: float):
         current_time = 0.0
