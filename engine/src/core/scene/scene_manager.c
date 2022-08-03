@@ -210,8 +210,8 @@ TransformModel2D* rbe_scene_manager_get_scene_node_global_transform(Entity entit
         transform2DComponent->globalTransform.position.x = translation[0];
         transform2DComponent->globalTransform.position.y = translation[1];
         // Scale sign is used to fix sign of scale not being properly decomposed in trs matrix
-        transform2DComponent->globalTransform.scale.x = scale[0] * transform2DComponent->globalTransform.scaleSign.x;
-        transform2DComponent->globalTransform.scale.y = scale[1] * transform2DComponent->globalTransform.scaleSign.y;
+        transform2DComponent->globalTransform.scale.x = fabsf(scale[0]) * transform2DComponent->globalTransform.scaleSign.x;
+        transform2DComponent->globalTransform.scale.y = fabsf(scale[1]) * transform2DComponent->globalTransform.scaleSign.y;
         transform2DComponent->globalTransform.rotation = transform2d_component_get_rotation_deg_from_model(rotation);
         // Flag is no longer dirty since the global transform is up to date
         transform2DComponent->isGlobalTransformDirty = false;
