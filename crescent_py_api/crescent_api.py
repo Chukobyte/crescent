@@ -21,6 +21,26 @@ class Color:
     def __repr__(self):
         return f"({self.r}, {self.g}, {self.b}, {self.a})"
 
+    @staticmethod
+    def BLACK():
+        return Color(0, 0, 0)
+
+    @staticmethod
+    def WHITE():
+        return Color(255, 255, 255)
+
+    @staticmethod
+    def RED():
+        return Color(255, 0, 0)
+
+    @staticmethod
+    def GREEN():
+        return Color(0, 255, 0)
+
+    @staticmethod
+    def BLUE():
+        return Color(0, 0, 255)
+
 
 # MATH
 class Math:
@@ -618,6 +638,12 @@ class ScriptComponent:
 class Collider2DComponent:
     def __init__(self, extents: Size2D, color: Color):
         self.extents = extents
+        self.color = color
+
+
+class ColorSquareComponent:
+    def __init__(self, size: Size2D, color: Color):
+        self.size = size
         self.color = color
 
 

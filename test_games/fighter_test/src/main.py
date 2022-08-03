@@ -1,44 +1,18 @@
 from test_games.fighter_test.src.fight_sim.fight_sim import *
 from test_games.fighter_test.src.game_state import *
+from test_games.fighter_test.src.timer import Timer
 
-
-# class TestNode(Sprite):
-#     pass
+fighting_round_timer = Timer(99.0)
 
 
 class Main(Node2D):
     def _start(self) -> None:
-        # TODO: Move test stuff in a separate project once starting projects from a specific folder is implemented...
-        # test_node = TestNode.new()
-        # print(f"[PY SCRIPT] TestNode.new() created as {test_node}")
-        # test_node.position = Vector2(400, 200)
-        # test_node.texture = Texture(
-        #     file_path="test_games/fighter_test/assets/images/characters/mor/mor_idle_sheet.png"
-        # )
-        # test_node.draw_source = Rect2(0, 0, 32, 32)
-        # self.add_child(child_node=test_node)
-
-        # Camera Test
-        # Camera2D.set_position(Vector2(200.0, 200.0))
-        # Camera2D.set_zoom(Vector2(2.0, 2.0))
-        # Camera2D.set_boundary(Rect2(0.0, 0.0, 100000, 100000))
-        # Camera2D.set_boundary(Rect2(0.0, 0.0, 800, 600))
-        # print(f"boundary = {Camera2D.get_boundary()}")
-
-        # Test Get Children
-        # print(f"[PY_SCRIPT] children = {self.get_children()}")
-
-        # Attack spawning test
-        # attack = Attack.new()
-        # print(f"[PY_SCRIPT] attack = {attack}")
-        # attack.position = Vector2(300, 200)
-        # self.add_child(attack)
-
         self.game_state = GameState()
 
         Engine.set_fps_display_enabled(True)
 
         # Fighter Data
+        self.time_display = self.get_child("TimeDisplay")
         # Nodes
         if self.game_state.mode == GameMode.ONLINE_PVP_CLIENT:
             player_one_node = self.get_child(name="PlayerTwo")
@@ -62,14 +36,26 @@ class Main(Node2D):
         )
         # Fight Sim
         self.fight_sim = FighterSimulation(self)
+        # Spawn Health Bars
+        p1_health_bar = HealthBar.new()
+        p1_health_bar.position = Vector2(100, 80)
+        self.add_child(p1_health_bar)
+        p2_health_bar = HealthBar.new()
+        p2_health_bar.position = Vector2(600, 80)
+        self.add_child(p2_health_bar)
+        # Add fighters
         self.fight_sim.add_fighter(
-            Fighter(player_one_node, player_one_collider, player_one_input)
+            Fighter(
+                player_one_node, player_one_collider, player_one_input, p1_health_bar
+            )
         )
         self.fight_sim.add_fighter(
-            Fighter(player_two_node, player_two_collider, player_two_input)
+            Fighter(
+                player_two_node, player_two_collider, player_two_input, p2_health_bar
+            )
         )
 
-        # self.fight_sim.add_attack(attack)
+        # self.fight_sim.add_health_bars()
 
         # Network
         is_network_enabled = (
@@ -99,6 +85,11 @@ class Main(Node2D):
         if Input.is_action_just_pressed(name="ui_confirm"):
             SceneTree.change_scene(path="test_games/fighter_test/nodes/main_node.py")
 
+        if Input.is_action_just_pressed(name="play_sfx"):
+            self.fight_sim.fighters[0].health_bar.print_debug_info()
+            self.fight_sim.fighters[0].health_bar.set_health_percentage(50)
+            self.fight_sim.fighters[0].health_bar.print_debug_info()
+
     def _physics_update(self, delta_time: float) -> None:
         # Temp camera test
         camera_speed = Vector2(5.0, 5.0)
@@ -117,6 +108,8 @@ class Main(Node2D):
             self.fight_sim.fighters[0].node.add_to_rotation(-1)
 
         self.fight_sim.update(delta_time)
+
+        self.time_display.text = f"{int(fighting_round_timer.tick(delta_time))}"
 
     def _network_server_callback(self, message: str) -> None:
         # print(
