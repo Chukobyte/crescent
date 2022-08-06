@@ -109,7 +109,7 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 elseif(WIN32)
     target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image -lmingw32 -static-libgcc SDL2::SDL2main SDL2::SDL2 freetype Python3::Python -lws2_32)
 else ()
-    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image -static-libgcc -Xlinker -export-dynamic SDL2::SDL2main SDL2::SDL2 freetype Python3::Python)
+    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image -static-libgcc -Xlinker -export-dynamic SDL2::SDL2main SDL2::SDL2 freetype Python3::Python m)
 endif ()
 
 target_compile_options(${PROJECT_NAME} PUBLIC ${flags})
