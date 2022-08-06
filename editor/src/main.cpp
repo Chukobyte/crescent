@@ -11,7 +11,7 @@ Task<> TestTask() {
     int number = 0;
 
     while (true) {
-        rbe_logger_info("number = %d", number++);
+//        rbe_logger_info("number = %d", number++);
         co_await Suspend();
     }
 }
