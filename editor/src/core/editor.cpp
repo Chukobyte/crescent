@@ -14,6 +14,22 @@
 
 static EditorContext* editorContext = EditorContext::Get();
 
+using namespace Squid;
+
+namespace {
+Task<> TestTask() {
+    TASK_NAME(__FUNCTION__ );
+
+    const float startTime = (float) SDL_GetTicks();
+    while (true) {
+//            co_await WaitSeconds(5.0, &SDL_GetTicks);
+        co_await WaitSeconds(5.0, Editor::GetCurrentTime);
+        rbe_logger_info("Hey");
+        co_await Suspend();
+    }
+}
+} // namespace
+
 bool Editor::Initialize() {
     rbe_logger_set_level(LogLevel_DEBUG);
 
@@ -35,12 +51,16 @@ bool Editor::Initialize() {
     ProjectProperties* gameProperties = ProjectProperties::Get();
     gameProperties->LoadPropertiesFromConfig("cre_config.py");
     gameProperties->PrintProperties();
+
+    // Test task
+    mainTasks.RunManaged(TestTask());
     return true;
 }
 
 void Editor::Update() {
     ProcessInput();
     Render();
+    mainTasks.Update();
 }
 
 bool Editor::InitializeSDL() {
@@ -152,4 +172,8 @@ void Editor::Shutdown() {
     rbe_py_finalize();
 
     rbe_logger_info("Roll Back Engine Editor has been shutdown!");
+}
+
+float Editor::GetCurrentTime() {
+    return SDL_GetTicks() / 1000.0f;
 }
