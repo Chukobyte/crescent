@@ -363,7 +363,7 @@ void input_load_gamepads() {
     }
 
     // Load gamepads
-    // Get engine roo directory and concatenate with game controller db file.
+    // Get engine root directory and concatenate with game controller db file.
     RBEEngineContext* engineContext = rbe_engine_context_get();
     char engineRootDir[256];
     strcpy(engineRootDir, engineContext->engineRootDir);
