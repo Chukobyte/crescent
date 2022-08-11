@@ -17,7 +17,7 @@ create_stage_nodes(
                     ignore_camera=False,
                 ),
                 ScriptComponent(
-                    class_path="test_games.fighter_test.src.title_screen",
+                    class_path="src.title_screen",
                     class_name="TitleScreen",
                 ),
             ],

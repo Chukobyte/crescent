@@ -1,6 +1,6 @@
-from test_games.fighter_test.src.fight_sim.fight_sim import *
-from test_games.fighter_test.src.game_state import *
-from test_games.fighter_test.src.timer import Timer
+from src.fight_sim.fight_sim import *
+from src.game_state import *
+from src.timer import Timer
 
 fighting_round_timer = Timer(99.0)
 

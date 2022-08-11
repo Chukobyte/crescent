@@ -13,9 +13,7 @@ configure_game(
 
 configure_assets(
     audio_sources=[
-        AudioSource(
-            file_path="assets/audio/sfx/rainbow_orb.wav"
-        ),
+        AudioSource(file_path="assets/audio/sfx/rainbow_orb.wav"),
     ],
     textures=[
         Texture(
