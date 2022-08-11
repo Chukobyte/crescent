@@ -1,60 +1,58 @@
 from crescent_api import *
 
 configure_game(
-    game_tile="Test Game",
+    game_tile="Fighter Proto",
     window_width=800,
     window_height=600,
     resolution_width=800,
     resolution_height=600,
     target_fps=66,
-    initial_node_path="test_games/fighter_test/nodes/title_screen_node.py",
+    initial_node_path="nodes/title_screen_node.py",
     colliders_visible=False,
 )
 
 configure_assets(
     audio_sources=[
-        AudioSource(
-            file_path="test_games/fighter_test/assets/audio/sfx/rainbow_orb.wav"
-        ),
+        AudioSource(file_path="assets/audio/sfx/rainbow_orb.wav"),
     ],
     textures=[
         Texture(
-            file_path="test_games/fighter_test/assets/images/characters/mor/mor_idle_sheet.png",
+            file_path="assets/images/characters/mor/mor_idle_sheet.png",
             wrap_s="clamp_to_border",
             wrap_t="clamp_to_border",
             filter_min="nearest",
             filter_mag="nearest",
         ),
         Texture(
-            file_path="test_games/fighter_test/assets/images/characters/mor/mor_crouch_idle_sheet.png",
+            file_path="assets/images/characters/mor/mor_crouch_idle_sheet.png",
             wrap_s="clamp_to_border",
             wrap_t="clamp_to_border",
             filter_min="nearest",
             filter_mag="nearest",
         ),
         Texture(
-            file_path="test_games/fighter_test/assets/images/characters/mor/mor_jump_up_sheet.png",
+            file_path="assets/images/characters/mor/mor_jump_up_sheet.png",
             wrap_s="clamp_to_border",
             wrap_t="clamp_to_border",
             filter_min="nearest",
             filter_mag="nearest",
         ),
         Texture(
-            file_path="test_games/fighter_test/assets/images/characters/mor/mor_still.png",
+            file_path="assets/images/characters/mor/mor_still.png",
             wrap_s="clamp_to_border",
             wrap_t="clamp_to_border",
             filter_min="nearest",
             filter_mag="nearest",
         ),
         Texture(
-            file_path="test_games/fighter_test/assets/images/characters/mor/mor_walk_forward_sheet.png",
+            file_path="assets/images/characters/mor/mor_walk_forward_sheet.png",
             wrap_s="clamp_to_border",
             wrap_t="clamp_to_border",
             filter_min="nearest",
             filter_mag="nearest",
         ),
         Texture(
-            file_path="test_games/fighter_test/assets/images/characters/mor/mor_walk_backward_sheet.png",
+            file_path="assets/images/characters/mor/mor_walk_backward_sheet.png",
             wrap_s="clamp_to_border",
             wrap_t="clamp_to_border",
             filter_min="nearest",
@@ -63,12 +61,12 @@ configure_assets(
     ],
     fonts=[
         Font(
-            file_path="test_games/fighter_test/assets/fonts/verdana.ttf",
+            file_path="assets/fonts/verdana.ttf",
             uid="verdana-32",
             size=32,
         ),
         Font(
-            file_path="test_games/fighter_test/assets/fonts/fight_font.ttf",
+            file_path="assets/fonts/fight_font.ttf",
             uid="fight-64",
             size=64,
         ),

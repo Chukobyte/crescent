@@ -1,7 +1,6 @@
 from crescent_api import *
 
-# from test_games.fighter_test.src.fight_sim.fighter import Fighter # TODO: Clean
-from test_games.fighter_test.src.task import *
+from src.task import *
 
 
 class HitBox(Collider2D):

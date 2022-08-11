@@ -27,6 +27,7 @@ A work in progress fighting game engine for Windows and Linux with the core writ
     * [ImGui](https://github.com/ocornut/imgui) - GUI Library
     * [MiniAudio](https://github.com/mackron/miniaudio) - Audio
     * [Catch2](https://github.com/catchorg/Catch2) - Testing
+    * [SquidTasks](https://github.com/westquote/SquidTasks) - Coroutine library
 
 ## Project Configuration
 
