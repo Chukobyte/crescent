@@ -20,6 +20,9 @@
 #include "ecs/system/ec_system.h"
 #include "scene/scene_manager.h"
 
+// The default project path if no directory override is provided
+#define DEFAULT_START_PROJECT_PATH "test_games/fighter_test"
+
 bool rbe_initialize_sdl();
 bool rbe_initialize_rendering();
 bool rbe_initialize_audio();
@@ -49,6 +52,10 @@ bool rbe_initialize(int argv, char** args) {
     if (strcmp(commandLineFlagResult.workingDirOverride, "") != 0) {
         rbe_logger_debug("Changing working directory from override to '%s'.", commandLineFlagResult.workingDirOverride);
         rbe_fs_chdir(commandLineFlagResult.workingDirOverride);
+        rbe_fs_print_cwd();
+    } else {
+        rbe_logger_debug("No directory override given, starting default project at '%s'", DEFAULT_START_PROJECT_PATH);
+        rbe_fs_chdir(DEFAULT_START_PROJECT_PATH);
         rbe_fs_print_cwd();
     }
 
