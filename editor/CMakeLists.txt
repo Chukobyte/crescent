@@ -2,12 +2,10 @@ cmake_minimum_required(VERSION 3.20.0)
 
 set(CMAKE_CXX_STANDARD 20)
 
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
 project(crescent_editor)
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    list(APPEND flags "/W3" "/Zc:preprocessor" "/await")
+    list(APPEND flags "/W3" "/Zc:preprocessor")
 else ()
     list(APPEND flags "-w" "-std=c++20" "-Wfatal-errors" "-Wall" "-Wextra" "-Wno-write-strings"
             "-Wno-deprecated-declarations" "-Wno-unused-variable" "-Wno-cast-function-type" "-Wno-unused-parameter"
