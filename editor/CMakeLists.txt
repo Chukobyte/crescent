@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 20)
 project(crescent_editor)
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    list(APPEND flags "/W3" "/Zc:preprocessor")
+    list(APPEND flags "/std:c++20" "/W3" "/Zc:preprocessor")
 else ()
     list(APPEND flags "-w" "-std=c++20" "-Wfatal-errors" "-Wall" "-Wextra" "-Wno-write-strings"
             "-Wno-deprecated-declarations" "-Wno-unused-variable" "-Wno-cast-function-type" "-Wno-unused-parameter"
@@ -46,3 +46,10 @@ else ()
 endif ()
 
 target_compile_options(${PROJECT_NAME} PUBLIC ${flags})
+
+# Temp copy of cre_config, will clean up later
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${PROJECT_SOURCE_DIR}/cre_config.py
+        $<TARGET_FILE_DIR:${PROJECT_NAME}>/../cre_config.py
+        )

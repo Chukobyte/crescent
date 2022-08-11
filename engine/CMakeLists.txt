@@ -5,7 +5,8 @@ set(CMAKE_C_STANDARD 11)
 project(crescent_core C)
 
 if (CMAKE_C_COMPILER_ID STREQUAL "MSVC")
-    list(APPEND flags "/std:c11" "/W3" "/Zc:preprocessor")
+#    list(APPEND flags "/std:c11" "/W3" "/Zc:preprocessor") # TODO: Adding "/std:c11" breaks editor, fix later...
+    list(APPEND flags "/W3" "/Zc:preprocessor")
 else ()
     list(APPEND flags "-std=c11" "-Wfatal-errors" "-Wall" "-Wextra" "-Wno-write-strings" "-Wno-deprecated-declarations"
             "-Wno-unused-variable" "-Wno-cast-function-type" "-Wno-unused-parameter" "-Wno-missing-field-initializers")
