@@ -41,6 +41,9 @@ bool rbe_initialize(int argv, char** args) {
 
     rbe_logger_set_level(LogLevel_DEBUG);
 
+    engineContext = rbe_engine_context_initialize();
+    engineContext->engineRootDir = rbe_fs_get_cwd();
+
     // TODO: Check for working directory overrides
     CommandLineFlagResult commandLineFlagResult = rbe_command_line_args_parse(argv, args);
     if (strcmp(commandLineFlagResult.workingDirOverride, "") != 0) {
@@ -83,7 +86,6 @@ bool rbe_initialize(int argv, char** args) {
     rbe_load_assets_from_configuration();
 
     rbe_logger_info("RBE Engine v%s initialized!", RBE_CORE_VERSION);
-    engineContext = rbe_engine_context_initialize();
     engineContext->targetFPS = gameProperties->targetFPS;
     engineContext->isRunning = true;
 

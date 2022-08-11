@@ -7,6 +7,7 @@
 #include "../utils/logger.h"
 #include "../utils/rbe_string_util.h"
 #include "../utils/rbe_assert.h"
+#include "../engine_context.h"
 
 #ifdef _MSC_VER
 #pragma warning(disable : 4996) // for strcpy
@@ -362,7 +363,12 @@ void input_load_gamepads() {
     }
 
     // Load gamepads
-    int result = SDL_GameControllerAddMappingsFromFile("assets/resources/game_controller_db.txt");
+    // Get engine roo directory and concatenate with game controller db file.
+    RBEEngineContext* engineContext = rbe_engine_context_get();
+    char engineRootDir[256];
+    strcpy(engineRootDir, engineContext->engineRootDir);
+    strcat(engineRootDir, "/assets/resources/game_controller_db.txt");
+    int result = SDL_GameControllerAddMappingsFromFile(engineRootDir);
     RBE_ASSERT_FMT(result >= 0, "Couldn't load sdl controller mapping file!");
     if (SDL_NumJoysticks() > 0) {
         joystickController = SDL_JoystickOpen(0);

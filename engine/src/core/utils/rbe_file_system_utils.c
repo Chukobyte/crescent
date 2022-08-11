@@ -31,6 +31,14 @@ bool rbe_fs_chdir(const char* dirPath) {
     return false;
 }
 
+char* rbe_fs_get_cwd() {
+    char cwd[256];
+    if (getcwd(cwd, sizeof(cwd)) != NULL) {
+        return strdup(cwd);
+    }
+    return NULL;
+}
+
 void rbe_fs_print_cwd() {
     char cwd[256];
     if (getcwd(cwd, sizeof(cwd)) != NULL) {

@@ -13,6 +13,7 @@ RBEEngineContext* rbe_engine_context_initialize() {
     rbeEngineContext->isRunning = false;
     rbeEngineContext->targetFPS = 66;
     rbeEngineContext->averageFPS = 0.0f;
+    rbeEngineContext->engineRootDir = NULL;
     return rbeEngineContext;
 }
 
