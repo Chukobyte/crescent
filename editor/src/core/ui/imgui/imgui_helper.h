@@ -46,6 +46,47 @@ struct PopupModal {
     std::optional<ImVec2> size;
 };
 
+struct InputText {
+    InputText();
+    InputText(const std::string& label, const std::string& value = "");
+    void SetValue(std::string value);
+    std::string GetValue() const;
+    const char* GetInternalLabel() const;
+
+    std::string label;
+    ImGuiInputTextFlags flags = ImGuiInputTextFlags_None;
+    size_t bufferSize = 256;
+    std::unique_ptr<char[]> buffer;
+
+  private:
+    std::string internalLabel;
+};
+
+struct DragInt {
+    DragInt(std::string label, int& value);
+    const char* GetInternalLabel() const;
+
+    std::string label;
+    int& value;
+    float valueSpeed = 1.0f;
+    int valueMin = 1;
+    int valueMax = 10000;
+
+  private:
+    std::string internalLabel;
+};
+
+struct CheckBox {
+    CheckBox(std::string  label, bool& value);
+    const char* GetInternalLabel() const;
+
+    std::string label;
+    bool& value;
+
+  private:
+    std::string internalLabel;
+};
+
 struct Window {
     const char* name;
     bool* open = nullptr;
@@ -57,5 +98,8 @@ struct Window {
 
 void BeginMainMenuBar(const MenuBar& menuBar);
 void BeginPopupModal(const PopupModal& popupModal);
+void BeginInputText(const InputText& inputText);
+void BeginDragInt(const DragInt& dragInt);
+void BeginCheckBox(const CheckBox& checkBox);
 void BeginWindow(const Window& window);
 }

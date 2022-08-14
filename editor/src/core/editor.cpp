@@ -7,7 +7,6 @@
 #include "../engine/src/core/scripting/python/rbe_py.h"
 
 #include "editor_context.h"
-#include "project_properties.h"
 #include "color.h"
 #include "ui/imgui/imgui_handler.h"
 #include "utils/file_system_helper.h"
@@ -20,11 +19,8 @@ namespace {
 Task<> TestTask() {
     TASK_NAME(__FUNCTION__ );
 
-    const float startTime = (float) SDL_GetTicks();
     while (true) {
-//            co_await WaitSeconds(5.0, &SDL_GetTicks);
         co_await WaitSeconds(5.0, Editor::GetCurrentTime);
-        rbe_logger_info("Hey");
         co_await Suspend();
     }
 }
@@ -46,11 +42,6 @@ bool Editor::Initialize() {
     editorContext->initialDir = FileSystemHelper::GetCurrentDirectory();
     editorContext->isRunning = true;
     rbe_logger_info("Roll Back Engine Editor has started!");
-
-    // Temp load props, should place in project loading logic
-    ProjectProperties* gameProperties = ProjectProperties::Get();
-    gameProperties->LoadPropertiesFromConfig("cre_config.py");
-    gameProperties->PrintProperties();
 
     // Test task
     mainTasks.RunManaged(TestTask());

@@ -36,18 +36,8 @@ bool rbe_py_load_project_config() {
     return pyh_run_python_file("cre_config.py");
 }
 
-RBEGameProperties rbe_py_read_config_path(const char* filePath) {
+RBEGameProperties* rbe_py_read_config_path(const char* filePath) {
     bool load_success = pyh_run_python_file(filePath);
     RBE_ASSERT_FMT(load_success == true, "Failed to load config at '%s'", filePath);
-    RBEGameProperties* gameProps = rbe_game_props_get();
-    RBEGameProperties props = {
-        .gameTitle = gameProps->gameTitle,
-        .resolutionWidth = gameProps->resolutionWidth,
-        .resolutionHeight = gameProps->resolutionHeight,
-        .windowWidth = gameProps->windowWidth,
-        .windowHeight = gameProps->windowHeight,
-        .targetFPS = gameProps->targetFPS,
-        .initialScenePath = gameProps->initialScenePath
-    };
-    return props;
+    return rbe_game_props_get();
 }
