@@ -52,12 +52,10 @@ void ImGuiHelper::BeginPopupModal(const ImGuiHelper::PopupModal& popupModal) {
 }
 
 //--- Input Text ---//
-ImGuiHelper::InputText::InputText()
-    : buffer(std::make_unique<char[]>(bufferSize + 1)) {}
-
-ImGuiHelper::InputText::InputText(const std::string &label, const std::string &value)
+ImGuiHelper::InputText::InputText(const std::string &label, std::string &value)
     : buffer(std::make_unique<char[]>(bufferSize + 1)),
-      label(label) {
+      label(label),
+      value(value) {
     internalLabel = "###" + label;
     SetValue(value);
 }
@@ -83,7 +81,9 @@ void ImGuiHelper::BeginInputText(const InputText& inputText) {
         ImGui::Text("%s", inputText.label.c_str());
         ImGui::SameLine();
     }
-    ImGui::InputText(inputText.GetInternalLabel(), inputText.buffer.get(), inputText.bufferSize, inputText.flags);
+    if (ImGui::InputText(inputText.GetInternalLabel(), inputText.buffer.get(), inputText.bufferSize, inputText.flags)) {
+        inputText.value = inputText.GetValue();
+    }
 }
 
 //--- Drag Int ---//

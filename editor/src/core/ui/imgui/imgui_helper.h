@@ -49,13 +49,13 @@ struct PopupModal {
 };
 
 struct InputText {
-    InputText();
-    InputText(const std::string& label, const std::string& value = "");
+    InputText(const std::string& label, std::string& value);
     void SetValue(std::string value);
     std::string GetValue() const;
     const char* GetInternalLabel() const;
 
     std::string label;
+    std::string &value;
     ImGuiInputTextFlags flags = ImGuiInputTextFlags_None;
     size_t bufferSize = 256;
     std::unique_ptr<char[]> buffer;
