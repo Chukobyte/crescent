@@ -1,6 +1,6 @@
 #include "config_file_creator.h"
 #include "../utils/helper.h"
-//#include "../utils/file_system_helper.h"
+#include "../utils/file_system_helper.h"
 
 void ConfigFileCreator::GenerateConfigFile(const char *filePath, ProjectProperties* properties) {
     std::string fileContents = "from crescent_api import *\n";
@@ -17,5 +17,5 @@ void ConfigFileCreator::GenerateConfigFile(const char *filePath, ProjectProperti
     fileContents += ")\n";
     fileContents += "\n";
 
-//    FileSystemHelper::WriteFile(filePath, fileContents);
+    FileSystemHelper::WriteFile(filePath, fileContents);
 }
