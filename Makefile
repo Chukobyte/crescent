@@ -34,7 +34,7 @@ CORE_OBJ_C_TEST = $(CORE_SRC_TEST:.c=.o)
 
 # Editor
 EDITOR_C_FLAGS := -w -std=c++20 -fcoroutines -Wfatal-errors -Wall -Wextra -Wno-write-strings -Wno-deprecated-declarations -Wno-unused-variable -Wno-cast-function-type -Wno-unused-parameter -Wno-missing-field-initializers
-EDITOR_SRC = $(wildcard editor/src/main.cpp editor/src/core/*.cpp editor/src/core/ui/*.cpp editor/src/core/ui/imgui/*.cpp editor/src/core/utils/*.cpp include/*.cpp include/imgui/*.cpp)
+EDITOR_SRC = $(wildcard editor/src/main.cpp editor/src/core/*.cpp editor/src/core/ui/*.cpp editor/src/core/ui/imgui/*.cpp editor/src/core/utils/*.cpp editor/src/core/config_file_creation/*.cpp include/*.cpp include/imgui/*.cpp)
 EDITOR_SRC_C = $(wildcard engine/src/core/*.c engine/src/core/math/*.c engine/src/core/utils/*.c engine/src/core/data_structures/*.c engine/src/core/memory/*.c engine/src/core/input/*.c engine/src/core/rendering/*.c engine/src/core/audio/*.c engine/src/core/physics/collision/*.c engine/src/core/camera/*.c engine/src/core/ecs/*.c engine/src/core/ecs/component/*.c engine/src/core/ecs/entity/*.c engine/src/core/ecs/system/*.c engine/src/core/scene/*.c engine/src/core/scripting/*.c engine/src/core/scripting/python/*.c engine/src/core/scripting/native/*.c engine/src/core/scripting/native/internal_classes/*.c engine/src/core/networking/*.c engine/src/core/thread/*.c include/stb_image/stb_image.c include/glad/glad.c)
 EDITOR_SRC_TEST = $(wildcard editor/src/test/main.cpp editor/src/test/unit/*.cpp editor/src/core/*.cpp editor/src/core/ui/*.cpp editor/src/core/ui/imgui/*.cpp editor/src/core/utils/*.cpp include/*.cpp include/imgui/*.cpp)
 EDITOR_OBJ_CPP = $(EDITOR_SRC:.cpp=.o)

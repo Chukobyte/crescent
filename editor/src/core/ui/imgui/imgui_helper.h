@@ -1,8 +1,10 @@
 #pragma once
 
+#include <string>
 #include <functional>
 #include <vector>
 #include <optional>
+#include <memory>
 
 #include "imgui.h"
 

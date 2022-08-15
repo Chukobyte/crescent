@@ -33,6 +33,8 @@ void ProjectProperties::LoadPropertiesFromConfig(const char* modulePath) {
     initialScenePath = std::string(gameProps->initialScenePath);
     windowWidth = gameProps->windowWidth;
     windowHeight = gameProps->windowHeight;
+    resolutionWidth = gameProps->resolutionWidth;
+    resolutionHeight = gameProps->resolutionHeight;
     targetFPS = gameProps->targetFPS;
     areCollidersVisible = gameProps->areCollidersVisible;
     assets.SetAssets(gameProps);

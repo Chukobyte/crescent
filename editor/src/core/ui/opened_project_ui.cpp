@@ -7,6 +7,7 @@
 #include "../editor_context.h"
 #include "../project_properties.h"
 #include "../utils/helper.h"
+#include "../config_file_creation/config_file_creator.h"
 
 static EditorContext* editorContext = EditorContext::Get();
 
@@ -68,6 +69,7 @@ void OpenedProjectUI::ProcessModalPopups() {
         .windowFlags = 0,
         .callbackFunc = [gameProperties = ProjectProperties::Get()] (ImGuiHelper::Context* context) {
             if (ImGui::Button("Close")) {
+                ConfigFileCreator::GenerateConfigFile("test_cre_config.py", gameProperties);
                 ImGui::CloseCurrentPopup();
             }
 

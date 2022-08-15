@@ -21,6 +21,8 @@ class ProjectProperties : public Singleton<ProjectProperties> {
     std::string initialScenePath;
     int windowWidth;
     int windowHeight;
+    int resolutionWidth;
+    int resolutionHeight;
     int targetFPS;
     bool areCollidersVisible = false;
     ProjectAssets assets;
