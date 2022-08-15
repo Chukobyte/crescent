@@ -74,7 +74,7 @@ void OpenedProjectUI::ProcessModalPopups() {
             }
 
             static ImGuiHelper::InputText titleText("Title", gameProperties->gameTitle);
-            static ImGuiHelper::InputText initialScenePathText("Initial Scene Path", gameProperties->initialScenePath);
+            static ImGuiHelper::InputText initialScenePathText("Initial Node Path", gameProperties->initialNodePath);
             static ImGuiHelper::DragInt windowWidthInt("Window Width", gameProperties->windowWidth);
             static ImGuiHelper::DragInt windowHeightInt("Window Height", gameProperties->windowHeight);
             static ImGuiHelper::DragInt targetFPSInt("Target FPS", gameProperties->targetFPS);

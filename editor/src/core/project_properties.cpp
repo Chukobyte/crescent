@@ -30,7 +30,7 @@ void ProjectProperties::LoadPropertiesFromConfig(const char* modulePath) {
     rbe_game_props_initialize(false);
     RBEGameProperties* gameProps = rbe_py_read_config_path(modulePath);
     gameTitle = std::string(gameProps->gameTitle);
-    initialScenePath = std::string(gameProps->initialScenePath);
+    initialNodePath = std::string(gameProps->initialScenePath);
     windowWidth = gameProps->windowWidth;
     windowHeight = gameProps->windowHeight;
     resolutionWidth = gameProps->resolutionWidth;

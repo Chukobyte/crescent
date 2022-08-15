@@ -18,7 +18,7 @@ struct ProjectAssets {
 class ProjectProperties : public Singleton<ProjectProperties> {
   public:
     std::string gameTitle;
-    std::string initialScenePath;
+    std::string initialNodePath;
     int windowWidth;
     int windowHeight;
     int resolutionWidth;

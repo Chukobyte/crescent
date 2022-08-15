@@ -15,5 +15,6 @@ inline void WriteFile(const std::string &filePath, const std::string& fileText) 
     std::stringstream textStream;
     textStream.str(fileText);
     myFile << textStream.rdbuf();
+    myFile.close();
 }
 }
