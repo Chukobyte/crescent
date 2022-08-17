@@ -13,6 +13,10 @@ typedef struct RBEAssetAudioSource {
 
 typedef struct RBEAssetTexture {
     char* file_path;
+    char* wrap_s;
+    char* wrap_t;
+    char* filter_min;
+    char* filter_mag;
 } RBEAssetTexture;
 
 typedef struct RBEAssetFont {
