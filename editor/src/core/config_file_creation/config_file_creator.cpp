@@ -2,6 +2,13 @@
 #include "../utils/helper.h"
 #include "../utils/file_system_helper.h"
 
+namespace {
+// TODO: Implement
+std::string GetInputValueConstant(const std::string& inputValue) {
+    return inputValue;
+}
+} // namespace
+
 void ConfigFileCreator::GenerateConfigFile(const char *filePath, ProjectProperties* properties) {
     std::string fileContents = "from crescent_api import *\n";
     // Configure Game
@@ -49,6 +56,21 @@ void ConfigFileCreator::GenerateConfigFile(const char *filePath, ProjectProperti
     }
     fileContents += "   ],\n";
     // Closing parentheses for configure assets
+    fileContents += ")\n";
+    fileContents += "\n";
+
+    // Inputs
+    fileContents += "configure_inputs(\n";
+    fileContents += "   input_actions=[\n";
+    for (const auto& pair : properties->inputs.actions) {
+        const ProjectInputAction& inputAction = pair.second;
+        std::string valuesArrayText;
+        for (const std::string& value : inputAction.values) {
+            valuesArrayText += "\"" + GetInputValueConstant(value) + "\",";
+        }
+        fileContents += "       InputAction(name=\"" + std::string(inputAction.name) + "\", values=[" + valuesArrayText + "]),\n";
+    }
+    fileContents += "   ],\n";
     fileContents += ")\n";
 
     FileSystemHelper::WriteFile(filePath, fileContents);
