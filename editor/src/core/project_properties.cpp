@@ -4,6 +4,7 @@
 #include "../engine/src/core/scripting/python/rbe_py.h"
 #include "../engine/src/core/utils/logger.h"
 
+//--- Project Assets ---//
 void ProjectAssets::SetAssets(RBEGameProperties* gameProperties) {
     for (size_t i = 0; i < gameProperties->textureCount; i++) {
         textures.emplace_back(gameProperties->textures[i]);
@@ -16,6 +17,22 @@ void ProjectAssets::SetAssets(RBEGameProperties* gameProperties) {
     }
 }
 
+//--- Project Inputs ---//
+void ProjectInputs::SetInputs(RBEGameProperties *gameProperties) {
+    for (size_t i = 0; i < gameProperties->inputActionCount; i++) {
+        const RBEInputAction& propertyInputAction = gameProperties->inputActions[i];
+        ProjectInputAction inputAction = {
+            .name = std::string(propertyInputAction.name),
+            .deviceId = propertyInputAction.deviceId
+        };
+        for (size_t j = 0; j < propertyInputAction.valueCount; j++) {
+            inputAction.values.emplace_back(propertyInputAction.values[j]);
+        }
+        actions.emplace(inputAction.name, inputAction);
+    }
+}
+
+//--- Project Properties ---//
 ProjectProperties::ProjectProperties(singleton) {
     rbe_game_props_initialize(false);
 }
@@ -38,6 +55,7 @@ void ProjectProperties::LoadPropertiesFromConfig(const char* modulePath) {
     targetFPS = gameProps->targetFPS;
     areCollidersVisible = gameProps->areCollidersVisible;
     assets.SetAssets(gameProps);
+    inputs.SetInputs(gameProps);
     rbe_logger_debug("Loading game properties finished");
 }
 

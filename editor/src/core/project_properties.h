@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <unordered_map>
 
 #include "../engine/src/core/game_properties.h"
 
@@ -15,6 +16,18 @@ struct ProjectAssets {
     void SetAssets(RBEGameProperties* gameProperties);
 };
 
+struct ProjectInputAction {
+    std::string name;
+    int deviceId = 0;
+    std::vector<std::string> values;
+};
+
+struct ProjectInputs {
+    std::unordered_map<std::string, ProjectInputAction> actions;
+
+    void SetInputs(RBEGameProperties* gameProperties);
+};
+
 class ProjectProperties : public Singleton<ProjectProperties> {
   public:
     std::string gameTitle;
@@ -26,6 +39,7 @@ class ProjectProperties : public Singleton<ProjectProperties> {
     int targetFPS;
     bool areCollidersVisible = false;
     ProjectAssets assets;
+    ProjectInputs inputs;
 
     ProjectProperties(singleton);
     ~ProjectProperties();
