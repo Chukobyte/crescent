@@ -1,5 +1,6 @@
 #pragma once
 
+// Keyboard
 #define INPUT_VALUE_ZERO "0"
 #define INPUT_VALUE_ONE "1"
 #define INPUT_VALUE_TWO "2"
@@ -43,7 +44,7 @@
 #define INPUT_VALUE_UP "up"
 #define INPUT_VALUE_DOWN "down"
 
-#define INPUT_VALUE_RETURN "down"
+#define INPUT_VALUE_RETURN "return"
 #define INPUT_VALUE_SPACE "space"
 #define INPUT_VALUE_ESCAPE "esc"
 
@@ -59,3 +60,29 @@
 #define INPUT_VALUE_F10 "f10"
 #define INPUT_VALUE_F11 "f11"
 #define INPUT_VALUE_F12 "f12"
+
+// Joystick
+#define INPUT_VALUE_JOYSTICK_BUTTON_A "joystick_button_a"
+#define INPUT_VALUE_JOYSTICK_BUTTON_B "joystick_button_b"
+#define INPUT_VALUE_JOYSTICK_BUTTON_X "joystick_button_x"
+#define INPUT_VALUE_JOYSTICK_BUTTON_Y "joystick_button_y"
+#define INPUT_VALUE_JOYSTICK_DPAD_LEFT "joystick_dpad_left"
+#define INPUT_VALUE_JOYSTICK_DPAD_RIGHT "joystick_dpad_right"
+#define INPUT_VALUE_JOYSTICK_DPAD_UP "joystick_dpad_up"
+#define INPUT_VALUE_JOYSTICK_DPAD_DOWN "joystick_dpad_down"
+#define INPUT_VALUE_JOYSTICK_START "joystick_start"
+#define INPUT_VALUE_JOYSTICK_BACK "joystick_back"
+#define INPUT_VALUE_JOYSTICK_LEFT_SHOULDER "joystick_left_shoulder"
+#define INPUT_VALUE_JOYSTICK_RIGHT_SHOULDER "joystick_right_shoulder"
+#define INPUT_VALUE_JOYSTICK_LEFT_ANALOG "joystick_left_analog"
+#define INPUT_VALUE_JOYSTICK_RIGHT_ANALOG "joystick_right_analog"
+#define INPUT_VALUE_JOYSTICK_LEFT_TRIGGER "joystick_left_trigger"
+#define INPUT_VALUE_JOYSTICK_RIGHT_TRIGGER "joystick_right_trigger"
+#define INPUT_VALUE_JOYSTICK_LEFT_ANALOG_LEFT "joystick_left_analog_left"
+#define INPUT_VALUE_JOYSTICK_LEFT_ANALOG_RIGHT "joystick_left_analog_right"
+#define INPUT_VALUE_JOYSTICK_LEFT_ANALOG_UP "joystick_left_analog_up"
+#define INPUT_VALUE_JOYSTICK_LEFT_ANALOG_DOWN "joystick_left_analog_down"
+#define INPUT_VALUE_JOYSTICK_RIGHT_ANALOG_LEFT "joystick_right_analog_left"
+#define INPUT_VALUE_JOYSTICK_RIGHT_ANALOG_RIGHT "joystick_right_analog_right"
+#define INPUT_VALUE_JOYSTICK_RIGHT_ANALOG_UP "joystick_right_analog_up"
+#define INPUT_VALUE_JOYSTICK_RIGHT_ANALOG_DOWN "joystick_right_analog_down"
