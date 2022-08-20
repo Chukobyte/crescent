@@ -21,6 +21,26 @@ class Color:
     def __repr__(self):
         return f"({self.r}, {self.g}, {self.b}, {self.a})"
 
+    @staticmethod
+    def BLACK():
+        return Color(0, 0, 0)
+
+    @staticmethod
+    def WHITE():
+        return Color(255, 255, 255)
+
+    @staticmethod
+    def RED():
+        return Color(255, 0, 0)
+
+    @staticmethod
+    def GREEN():
+        return Color(0, 255, 0)
+
+    @staticmethod
+    def BLUE():
+        return Color(0, 0, 255)
+
 
 # MATH
 class Math:
@@ -621,6 +641,12 @@ class Collider2DComponent:
         self.color = color
 
 
+class ColorSquareComponent:
+    def __init__(self, size: Size2D, color: Color):
+        self.size = size
+        self.color = color
+
+
 # NODE
 class NodeType(str, Enum):
     NODE = "Node"
@@ -630,6 +656,7 @@ class NodeType(str, Enum):
     ANIMATED_SPRITE = "AnimatedSprite"
     TEXT_LABEL = "TextLabel"
     COLLIDER2D = "Collider2D"
+    COLOR_SQUARE = "ColorSquare"
 
 
 class Node:
@@ -935,7 +962,13 @@ class Sprite(Node2D):
 
 
 class AnimatedSprite(Node2D):
-    pass
+    def play(self, animation_name: str) -> bool:
+        return crescent_api_internal.animated_sprite_play(
+            entity_id=self.entity_id, animation_name=animation_name
+        )
+
+    def stop(self) -> None:
+        crescent_api_internal.animated_sprite_stop(entity_id=self.entity_id)
 
 
 class TextLabel(Node2D):
@@ -983,7 +1016,7 @@ class Collider2D(Node2D):
         w, h = crescent_api_internal.collider2D_get_extents(entity_id=self.entity_id)
         return Size2D(w=w, h=h)
 
-    def set_extents(self, extents: Rect2) -> None:
+    def set_extents(self, extents: Size2D) -> None:
         crescent_api_internal.collider2D_set_extents(
             entity_id=self.entity_id, w=extents.w, h=extents.h
         )
@@ -1020,6 +1053,52 @@ class Collider2D(Node2D):
     @color.setter
     def color(self, value: Color) -> None:
         crescent_api_internal.collider2D_set_color(
+            entity_id=self.entity_id, r=value.r, g=value.g, b=value.b, a=value.a
+        )
+
+
+class ColorSquare(Node2D):
+    def get_size(self) -> Size2D:
+        w, h = crescent_api_internal.color_square_get_size(entity_id=self.entity_id)
+        return Size2D(w=w, h=h)
+
+    def set_size(self, extents: Size2D) -> None:
+        crescent_api_internal.color_square_set_size(
+            entity_id=self.entity_id, w=extents.w, h=extents.h
+        )
+
+    @property
+    def size(self) -> Size2D:
+        w, h = crescent_api_internal.color_square_get_size(entity_id=self.entity_id)
+        return Size2D(w=w, h=h)
+
+    @size.setter
+    def size(self, value: Size2D) -> None:
+        crescent_api_internal.color_square_set_size(
+            entity_id=self.entity_id, w=value.w, h=value.h
+        )
+
+    def get_color(self) -> Color:
+        r, g, b, a = crescent_api_internal.color_square_get_color(
+            entity_id=self.entity_id
+        )
+        return Color(r=r, g=g, b=b, a=a)
+
+    def set_color(self, color: Color) -> None:
+        crescent_api_internal.color_square_set_color(
+            entity_id=self.entity_id, r=color.r, g=color.g, b=color.b, a=color.a
+        )
+
+    @property
+    def color(self) -> Color:
+        r, g, b, a = crescent_api_internal.color_square_get_color(
+            entity_id=self.entity_id
+        )
+        return Color(r=r, g=g, b=b, a=a)
+
+    @color.setter
+    def color(self, value: Color) -> None:
+        crescent_api_internal.color_square_set_color(
             entity_id=self.entity_id, r=value.r, g=value.g, b=value.b, a=value.a
         )
 

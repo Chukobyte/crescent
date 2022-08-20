@@ -24,6 +24,8 @@ NodeBaseType node_get_base_type(const char* baseName) {
         return NodeBaseType_TEXT_LABEL;
     } else if (strcmp(baseName, RBE_NODE_COLLIDER2D_STRING) == 0) {
         return NodeBaseType_COLLIDER2D;
+    } else if (strcmp(baseName, RBE_NODE_COLOR_SQUARE_STRING) == 0) {
+        return NodeBaseType_COLOR_SQUARE;
     }
     return NodeBaseType_INVALID;
 }
@@ -42,6 +44,8 @@ NodeBaseInheritanceType node_get_type_inheritance(NodeBaseType type) {
         return NodeBaseInheritanceType_TEXT_LABEL;
     case NodeBaseType_COLLIDER2D:
         return NodeBaseInheritanceType_COLLIDER2D;
+    case NodeBaseType_COLOR_SQUARE:
+        return NodeBaseInheritanceType_COLOR_SQUARE;
     default:
         break;
     }
@@ -62,6 +66,8 @@ const char* node_get_component_type_string(NodeBaseType type) {
         return RBE_NODE_TEXT_LABEL_STRING;
     case NodeBaseType_COLLIDER2D:
         return RBE_NODE_COLLIDER2D_STRING;
+    case NodeBaseType_COLOR_SQUARE:
+        return RBE_NODE_COLOR_SQUARE_STRING;
     default:
         break;
     }

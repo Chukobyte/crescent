@@ -29,7 +29,7 @@ EntitySystem* collision_ec_system_create() {
     if (gameProps->areCollidersVisible) {
         collisionSystem->render_func = collision_system_render;
         collisionOutlineTexture = rbe_texture_create_solid_colored_texture(1, 1, 255);
-        RBE_ASSERT(collisionOutlineTexture);
+        RBE_ASSERT(collisionOutlineTexture != NULL);
         collisionDrawColor.r = 1.0f;
         collisionDrawColor.g = 1.0f;
         collisionDrawColor.b = 1.0f;

@@ -5,7 +5,8 @@ set(CMAKE_C_STANDARD 11)
 project(crescent_core C)
 
 if (CMAKE_C_COMPILER_ID STREQUAL "MSVC")
-    list(APPEND flags "/std:c11" "/W3" "/Zc:preprocessor")
+#    list(APPEND flags "/std:c11" "/W3" "/Zc:preprocessor") # TODO: Adding "/std:c11" breaks editor, fix later...
+    list(APPEND flags "/W3" "/Zc:preprocessor")
 else ()
     list(APPEND flags "-std=c11" "-Wfatal-errors" "-Wall" "-Wextra" "-Wno-write-strings" "-Wno-deprecated-declarations"
             "-Wno-unused-variable" "-Wno-cast-function-type" "-Wno-unused-parameter" "-Wno-missing-field-initializers")
@@ -64,6 +65,8 @@ add_library(${PROJECT_NAME} STATIC
         src/core/camera/camera_manager.c
         src/core/ecs/ecs_manager.c
         src/core/ecs/component/animated_sprite_component.c
+        src/core/ecs/component/collider2d_component.c
+        src/core/ecs/component/color_square_component.c
         src/core/ecs/component/component.c
         src/core/ecs/component/node_component.c
         src/core/ecs/component/script_component.c
@@ -71,12 +74,12 @@ add_library(${PROJECT_NAME} STATIC
         src/core/ecs/component/text_label_component.c
         src/core/ecs/component/transform2d_component.c
         src/core/ecs/system/animated_sprite_rendering_ec_system.c
+        src/core/ecs/system/color_square_ec_system.c
         src/core/ecs/system/ec_system.c
         src/core/ecs/system/font_rendering_ec_system.c
         src/core/ecs/system/script_ec_system.c
         src/core/ecs/system/sprite_rendering_ec_system.c
         src/core/ecs/system/collision_ec_system.c
-        src/core/ecs/component/collider2d_component.c
         src/core/networking/rbe_network_socket.c
         )
 
@@ -107,16 +110,10 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 elseif(WIN32)
     target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image -lmingw32 -static-libgcc SDL2::SDL2main SDL2::SDL2 freetype Python3::Python -lws2_32)
 else ()
-    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image -static-libgcc -Xlinker -export-dynamic SDL2::SDL2main SDL2::SDL2 freetype Python3::Python)
+    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image -static-libgcc -Xlinker -export-dynamic SDL2::SDL2main SDL2::SDL2 freetype Python3::Python m)
 endif ()
 
 target_compile_options(${PROJECT_NAME} PUBLIC ${flags})
-
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy
-        ${PROJECT_SOURCE_DIR}/../cre_config.py
-        $<TARGET_FILE_DIR:${PROJECT_NAME}>/../cre_config.py
-        )
 
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory

@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 20)
 project(crescent_editor)
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    list(APPEND flags "/W3" "/Zc:preprocessor")
+    list(APPEND flags "/std:c++20" "/W3" "/Zc:preprocessor")
 else ()
     list(APPEND flags "-w" "-std=c++20" "-Wfatal-errors" "-Wall" "-Wextra" "-Wno-write-strings"
             "-Wno-deprecated-declarations" "-Wno-unused-variable" "-Wno-cast-function-type" "-Wno-unused-parameter"
@@ -40,9 +40,16 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image SDL2::SDL2main SDL2::SDL2)
 elseif(WIN32)
-    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image -lmingw32 -static-libgcc SDL2::SDL2main SDL2::SDL2)
+    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image -lmingw32 -static-libgcc -fcoroutines SDL2::SDL2main SDL2::SDL2)
 else ()
     target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image -static-libgcc -Xlinker -export-dynamic SDL2::SDL2main SDL2::SDL2)
 endif ()
 
 target_compile_options(${PROJECT_NAME} PUBLIC ${flags})
+
+# Temp copy of cre_config, will clean up later
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${PROJECT_SOURCE_DIR}/cre_config.py
+        $<TARGET_FILE_DIR:${PROJECT_NAME}>/../cre_config.py
+        )

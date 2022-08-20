@@ -6,6 +6,7 @@ typedef struct RBEEngineContext {
     bool isRunning;
     int targetFPS;
     float averageFPS;
+    char* engineRootDir;
 } RBEEngineContext;
 
 RBEEngineContext* rbe_engine_context_initialize();

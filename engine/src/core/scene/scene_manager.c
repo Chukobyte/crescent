@@ -103,8 +103,9 @@ void rbe_scene_manager_process_queued_deletion_entities() {
         // Remove entity from entity to tree node map
         Entity entityToDelete = entitiesQueuedForDeletion[i];
         RBE_ASSERT_FMT(rbe_hash_map_has(entityToTreeNodeMap, &entityToDelete), "Entity '%d' not in tree node map!?", entityToDelete);
-        SceneTreeNode* treeNode = rbe_hash_map_get(entityToTreeNodeMap, &entityToDelete);
-//        RBE_MEM_FREE(treeNode); // TODO: Crashes rbe_hash_map_erase, investigate...
+        // FIXME: Check if hashmap erase deletes treeNode and fix issue
+//        SceneTreeNode* treeNode = rbe_hash_map_get(entityToTreeNodeMap, &entityToDelete);
+//        RBE_MEM_FREE(treeNode);
         rbe_hash_map_erase(entityToTreeNodeMap, &entityToDelete);
         // Remove entity from systems
         rbe_ec_system_remove_entity_from_all_systems(entityToDelete);
@@ -124,7 +125,10 @@ void rbe_scene_manager_queue_scene_change(const char* scenePath) {
 
 void rbe_queue_destroy_tree_node_entity(SceneTreeNode* treeNode) {
     rbe_scene_manager_queue_entity_for_deletion(treeNode->entity);
-    RBE_MEM_FREE(treeNode);
+}
+
+void rbe_queue_destroy_tree_node_entity_all(SceneTreeNode* treeNode) {
+    rbe_scene_execute_on_all_tree_nodes(treeNode, rbe_queue_destroy_tree_node_entity);
 }
 
 void rbe_scene_manager_process_queued_scene_change() {
@@ -207,8 +211,8 @@ TransformModel2D* rbe_scene_manager_get_scene_node_global_transform(Entity entit
         transform2DComponent->globalTransform.position.x = translation[0];
         transform2DComponent->globalTransform.position.y = translation[1];
         // Scale sign is used to fix sign of scale not being properly decomposed in trs matrix
-        transform2DComponent->globalTransform.scale.x = scale[0] * transform2DComponent->globalTransform.scaleSign.x;
-        transform2DComponent->globalTransform.scale.y = scale[1] * transform2DComponent->globalTransform.scaleSign.y;
+        transform2DComponent->globalTransform.scale.x = fabsf(scale[0]) * transform2DComponent->globalTransform.scaleSign.x;
+        transform2DComponent->globalTransform.scale.y = fabsf(scale[1]) * transform2DComponent->globalTransform.scaleSign.y;
         transform2DComponent->globalTransform.rotation = transform2d_component_get_rotation_deg_from_model(rotation);
         // Flag is no longer dirty since the global transform is up to date
         transform2DComponent->isGlobalTransformDirty = false;

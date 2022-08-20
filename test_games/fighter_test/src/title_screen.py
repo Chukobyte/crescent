@@ -1,5 +1,5 @@
 from crescent_api import *
-from test_games.fighter_test.src.game_state import *
+from src.game_state import *
 
 SERVER_HOST = "127.0.0.1"
 SERVER_PORT = 6510
@@ -58,9 +58,7 @@ class TitleScreen(Node2D):
                 self.is_waiting_to_connect = True
                 self.connection_text.color = Color(255, 255, 255, 255)
             else:
-                SceneTree.change_scene(
-                    path="test_games/fighter_test/nodes/main_node.py"
-                )
+                SceneTree.change_scene(path="nodes/main_node.py")
 
         if Input.is_action_just_pressed(name="p2_move_left"):
             self.selected_game_mode_index -= 1

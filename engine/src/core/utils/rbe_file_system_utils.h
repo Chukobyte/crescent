@@ -9,6 +9,8 @@ extern "C" {
 
 // Change directory
 bool rbe_fs_chdir(const char* dirPath);
+// Get current working directory
+char* rbe_fs_get_cwd();
 // Print current working directory
 void rbe_fs_print_cwd();
 

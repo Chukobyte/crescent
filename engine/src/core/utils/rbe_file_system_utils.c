@@ -6,6 +6,7 @@
 #endif
 
 #include <stdio.h>
+#include <string.h>
 
 #if defined(_MSC_VER)
 #include <io.h>
@@ -29,6 +30,14 @@ bool rbe_fs_chdir(const char* dirPath) {
     }
     rbe_logger_error("Failed to change directory to path '%s'", dirPath);
     return false;
+}
+
+char* rbe_fs_get_cwd() {
+    char cwd[256];
+    if (getcwd(cwd, sizeof(cwd)) != NULL) {
+        return strdup(cwd);
+    }
+    return NULL;
 }
 
 void rbe_fs_print_cwd() {

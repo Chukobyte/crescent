@@ -72,6 +72,10 @@ PyObject* rbe_py_api_sprite_get_texture(PyObject* self, PyObject* args, PyObject
 PyObject* rbe_py_api_sprite_set_draw_source(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* rbe_py_api_sprite_get_draw_source(PyObject* self, PyObject* args, PyObject* kwargs);
 
+// Animated Sprite
+PyObject* rbe_py_api_animated_sprite_play(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* rbe_py_api_animated_sprite_stop(PyObject* self, PyObject* args, PyObject* kwargs);
+
 // Text Label
 PyObject* rbe_py_api_text_label_set_text(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* rbe_py_api_text_label_get_text(PyObject* self, PyObject* args, PyObject* kwargs);
@@ -84,6 +88,11 @@ PyObject* rbe_py_api_collider2D_get_extents(PyObject* self, PyObject* args, PyOb
 PyObject* rbe_py_api_collider2D_set_color(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* rbe_py_api_collider2D_get_color(PyObject* self, PyObject* args, PyObject* kwargs);
 
+// ColorSquare
+PyObject* rbe_py_api_color_square_set_size(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* rbe_py_api_color_square_get_size(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* rbe_py_api_color_square_set_color(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* rbe_py_api_color_square_get_color(PyObject* self, PyObject* args, PyObject* kwargs);
 
 // Network
 PyObject* rbe_py_api_network_is_server(PyObject* self, PyObject* args);
@@ -301,6 +310,15 @@ static struct PyMethodDef rbePyApiMethods[] = {
         "sprite_get_draw_source", (PyCFunction) rbe_py_api_sprite_get_draw_source,
         METH_VARARGS | METH_KEYWORDS, "Gets the draw source for a sprite."
     },
+    // ANIMATED SPRITE
+    {
+        "animated_sprite_play", (PyCFunction) rbe_py_api_animated_sprite_play,
+        METH_VARARGS | METH_KEYWORDS, "Will play the animation."
+    },
+    {
+        "animated_sprite_stop", (PyCFunction) rbe_py_api_animated_sprite_stop,
+        METH_VARARGS | METH_KEYWORDS, "Will stop the currently playing animation."
+    },
     // TEXT LABEL
     {
         "text_label_set_text", (PyCFunction) rbe_py_api_text_label_set_text,
@@ -334,6 +352,23 @@ static struct PyMethodDef rbePyApiMethods[] = {
     {
         "collider2D_get_color", (PyCFunction) rbe_py_api_collider2D_get_color,
         METH_VARARGS | METH_KEYWORDS, "Gets the collider's color."
+    },
+    // ColorSquare
+    {
+        "color_square_set_size", (PyCFunction) rbe_py_api_color_square_set_size,
+        METH_VARARGS | METH_KEYWORDS, "Sets the color square's size."
+    },
+    {
+        "color_square_get_size", (PyCFunction) rbe_py_api_color_square_get_size,
+        METH_VARARGS | METH_KEYWORDS, "Gets the color square's size."
+    },
+    {
+        "color_square_set_color", (PyCFunction) rbe_py_api_color_square_set_color,
+        METH_VARARGS | METH_KEYWORDS, "Sets the color square's color."
+    },
+    {
+        "color_square_get_color", (PyCFunction) rbe_py_api_color_square_get_color,
+        METH_VARARGS | METH_KEYWORDS, "Gets the color square's color."
     },
     // NETWORK
     {
@@ -420,6 +455,8 @@ static char *rbePyApiNode2DSetXYKWList[] = {"entity_id", "x", "y", NULL};
 static char *rbePyApiNode2DSetRotationKWList[] = {"entity_id", "rotation", NULL};
 
 static char *rbePyApiSpriteSetTextureKWList[] = {"entity_id", "file_path", NULL};
+
+static char *rbePyApiAnimatedSpriteSetAnimationKWList[] = {"entity_id", "animation_name", NULL};
 
 static char *rbePyApiTextLabelSetTextKWList[] = {"entity_id", "text", NULL};
 
