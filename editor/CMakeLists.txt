@@ -19,7 +19,7 @@ add_library(${PROJECT_NAME} STATIC
         src/core/editor.cpp
         src/core/editor_context.cpp
         src/core/project_properties.cpp
-        src/core/config_file_creation/config_file_creator.cpp
+        src/core/file_creation/config_file_creator.cpp
         src/core/ui/opened_project_ui.cpp
         src/core/ui/project_manager_ui.cpp
         src/core/ui/imgui/imgui_handler.cpp

@@ -7,7 +7,7 @@
 #include "../editor_context.h"
 #include "../project_properties.h"
 #include "../utils/helper.h"
-#include "../config_file_creation/config_file_creator.h"
+#include "../file_creation/config_file_creator.h"
 
 const char* CONFIG_FILE_NAME = "test_cre_config.py";
 
