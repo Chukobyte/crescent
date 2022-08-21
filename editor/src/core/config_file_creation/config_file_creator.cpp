@@ -153,8 +153,10 @@ void ConfigFileCreator::GenerateConfigFile(const char *filePath, ProjectProperti
     for (const auto& pair : properties->inputs.actions) {
         const ProjectInputAction& inputAction = pair.second;
         std::string valuesArrayText;
-        for (const std::string& value : inputAction.values) {
-            valuesArrayText += "" + GetInputValueConstant(value) + ",";
+        for (size_t i = 0; i < inputAction.values.size(); i++) {
+            const std::string& value = inputAction.values[i];
+            const std::string endText = i != inputAction.values.size() - 1 ? ", " : "";
+            valuesArrayText += "" + GetInputValueConstant(value) + endText;
         }
         fileContents += "       InputAction(name=\"" + std::string(inputAction.name) + "\", values=[" + valuesArrayText + "]),\n";
     }
