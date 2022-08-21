@@ -9,6 +9,8 @@
 #include "../utils/helper.h"
 #include "../config_file_creation/config_file_creator.h"
 
+const char* CONFIG_FILE_NAME = "test_cre_config.py";
+
 static EditorContext* editorContext = EditorContext::Get();
 
 void OpenedProjectUI::ProcessMenuBar() {
@@ -76,7 +78,7 @@ void OpenedProjectUI::ProcessModalPopups() {
         .windowFlags = 0,
         .callbackFunc = [gameProperties = ProjectProperties::Get()] (ImGuiHelper::Context* context) {
             if (ImGui::Button("Close")) {
-                ConfigFileCreator::GenerateConfigFile("test_cre_config.py", gameProperties);
+                ConfigFileCreator::GenerateConfigFile(CONFIG_FILE_NAME, gameProperties);
                 ImGui::CloseCurrentPopup();
             }
 
@@ -105,13 +107,22 @@ void OpenedProjectUI::ProcessModalPopups() {
         .windowFlags = 0,
         .callbackFunc = [gameProperties = ProjectProperties::Get()] (ImGuiHelper::Context* context) {
             if (ImGui::Button("Close")) {
+                ConfigFileCreator::GenerateConfigFile(CONFIG_FILE_NAME, gameProperties);
                 ImGui::CloseCurrentPopup();
             }
             ImGui::Separator();
-            for (const auto& pair : gameProperties->inputs.actions) {
-                const ProjectInputAction& inputAction = pair.second;
-                ImGui::Text(std::string("Name: " + std::string(inputAction.name)).c_str());
-                ImGui::Text(std::string("Device Id: " + std::to_string(inputAction.deviceId)).c_str());
+            int actionIndex = 0;
+            for (auto& pair : gameProperties->inputs.actions) {
+                ProjectInputAction& inputAction = pair.second;
+
+                ImGuiHelper::InputText nameText("Name", inputAction.name, actionIndex);
+                ImGuiHelper::BeginInputText(nameText);
+
+                ImGuiHelper::DragInt deviceId("Device Id", inputAction.deviceId, actionIndex);
+                deviceId.valueMin = 0;
+                deviceId.valueMax = 16;
+                ImGuiHelper::BeginDragInt(deviceId);
+
                 std::string valuesText = "";
                 for (size_t i = 0; i < inputAction.values.size(); i++) {
                     std::string value = inputAction.values[i];
@@ -120,6 +131,7 @@ void OpenedProjectUI::ProcessModalPopups() {
                 }
                 ImGui::Text(std::string("Values: " + valuesText).c_str());
                 ImGui::Separator();
+                actionIndex++;
             }
         },
         .position = ImVec2{ 100.0f, 100.0f },
@@ -133,14 +145,22 @@ void OpenedProjectUI::ProcessModalPopups() {
         .windowFlags = 0,
         .callbackFunc = [gameProperties = ProjectProperties::Get()] (ImGuiHelper::Context* context) {
             if (ImGui::Button("Close")) {
+                ConfigFileCreator::GenerateConfigFile(CONFIG_FILE_NAME, gameProperties);
                 ImGui::CloseCurrentPopup();
             }
             ImGui::Separator();
-            for (const RBEAssetFont& fontAsset : gameProperties->assets.fonts) {
-                ImGui::Text(std::string("File Path: " + std::string(fontAsset.file_path)).c_str());
-                ImGui::Text(std::string("UID: " + std::string(fontAsset.uid)).c_str());
-                ImGui::Text(std::string("Size: " + std::to_string(fontAsset.size)).c_str());
+            int fontIndex = 0;
+            for (auto& fontAsset : gameProperties->assets.fonts) {
+                ImGuiHelper::InputText filePath("File Path", fontAsset.file_path, fontIndex);
+                ImGuiHelper::BeginInputText(filePath);
+
+                ImGuiHelper::InputText uid("UID", fontAsset.uid, fontIndex);
+                ImGuiHelper::BeginInputText(uid);
+
+                ImGuiHelper::DragInt size("Size", fontAsset.size, fontIndex);
+                ImGuiHelper::BeginDragInt(size);
                 ImGui::Separator();
+                fontIndex++;
             }
         },
         .position = ImVec2{ 100.0f, 100.0f },

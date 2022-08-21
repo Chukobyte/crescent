@@ -52,11 +52,11 @@ void ImGuiHelper::BeginPopupModal(const ImGuiHelper::PopupModal& popupModal) {
 }
 
 //--- Input Text ---//
-ImGuiHelper::InputText::InputText(const std::string &label, std::string &value)
+ImGuiHelper::InputText::InputText(const std::string &label, std::string &value, int labelIndex)
     : buffer(std::make_unique<char[]>(bufferSize + 1)),
       label(label),
       value(value) {
-    internalLabel = "###" + label;
+    internalLabel = "###" + std::to_string(labelIndex) + label;
     SetValue(value);
 }
 
@@ -87,10 +87,10 @@ void ImGuiHelper::BeginInputText(const InputText& inputText) {
 }
 
 //--- Drag Int ---//
-ImGuiHelper::DragInt::DragInt(std::string label, int& value)
+ImGuiHelper::DragInt::DragInt(std::string label, int& value, int labelIndex)
     : label(std::move(label)),
       value(value) {
-    internalLabel = "##" + this->label;
+    internalLabel = "##" + std::to_string(labelIndex) + this->label;
 }
 
 const char* ImGuiHelper::DragInt::GetInternalLabel() const {

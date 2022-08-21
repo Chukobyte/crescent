@@ -49,7 +49,7 @@ struct PopupModal {
 };
 
 struct InputText {
-    InputText(const std::string& label, std::string& value);
+    InputText(const std::string& label, std::string& value, int labelIndex = 0);
     void SetValue(std::string value);
     std::string GetValue() const;
     const char* GetInternalLabel() const;
@@ -65,7 +65,7 @@ struct InputText {
 };
 
 struct DragInt {
-    DragInt(std::string label, int& value);
+    DragInt(std::string label, int& value, int labelIndex = 0);
     const char* GetInternalLabel() const;
 
     std::string label;

@@ -7,13 +7,13 @@
 //--- Project Assets ---//
 void ProjectAssets::SetAssets(RBEGameProperties* gameProperties) {
     for (size_t i = 0; i < gameProperties->textureCount; i++) {
-        textures.emplace_back(gameProperties->textures[i]);
+        textures.emplace_back(TextureAsset(gameProperties->textures[i]));
     }
     for (size_t i = 0; i < gameProperties->audioSourceCount; i++) {
-        audioSources.emplace_back(gameProperties->audioSources[i]);
+        audioSources.emplace_back(AudioSourceAsset(gameProperties->audioSources[i]));
     }
     for (size_t i = 0; i < gameProperties->fontCount; i++) {
-        fonts.emplace_back(gameProperties->fonts[i]);
+        fonts.emplace_back(FontAsset(gameProperties->fonts[i]));
     }
 }
 
