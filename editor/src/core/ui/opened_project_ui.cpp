@@ -110,6 +110,12 @@ void OpenedProjectUI::ProcessModalPopups() {
                 ConfigFileCreator::GenerateConfigFile(CONFIG_FILE_NAME, gameProperties);
                 ImGui::CloseCurrentPopup();
             }
+            ImGui::SameLine();
+            if (ImGui::Button("Add")) {
+                ProjectInputAction defaultInputAction;
+                gameProperties->inputs.actions.emplace_back(defaultInputAction);
+            }
+
             ImGui::Separator();
             int actionIndexToDelete = -1;
             for (int i = 0; i < gameProperties->inputs.actions.size(); i++) {
@@ -157,6 +163,7 @@ void OpenedProjectUI::ProcessModalPopups() {
                 ConfigFileCreator::GenerateConfigFile(CONFIG_FILE_NAME, gameProperties);
                 ImGui::CloseCurrentPopup();
             }
+            ImGui::SameLine();
             if (ImGui::Button("Add")) {
                 FontAsset defaultFontAsset = FontAsset();
                 defaultFontAsset.file_path = "";
