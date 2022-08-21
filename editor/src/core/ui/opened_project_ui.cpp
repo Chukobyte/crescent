@@ -49,6 +49,13 @@ void OpenedProjectUI::ProcessMenuBar() {
                         },
                     },
                     {
+                        .name = "Input",
+                        .keyboardShortcut = "",
+                        .callbackFunc = [] (ImGuiHelper::Context* context) {
+                            context->OpenPopup("Input Configurations");
+                        },
+                    },
+                    {
                         .name = "Fonts",
                         .keyboardShortcut = "",
                         .callbackFunc = [] (ImGuiHelper::Context* context) {
@@ -91,6 +98,34 @@ void OpenedProjectUI::ProcessModalPopups() {
         .size = ImVec2{ 200.0f, 200.0f },
     };
     ImGuiHelper::BeginPopupModal(projectSettingsPopup);
+
+    static ImGuiHelper::PopupModal InputConfigurationPopup = {
+        .name = "Input Configurations",
+        .open = nullptr,
+        .windowFlags = 0,
+        .callbackFunc = [gameProperties = ProjectProperties::Get()] (ImGuiHelper::Context* context) {
+            if (ImGui::Button("Close")) {
+                ImGui::CloseCurrentPopup();
+            }
+            ImGui::Separator();
+            for (const auto& pair : gameProperties->inputs.actions) {
+                const ProjectInputAction& inputAction = pair.second;
+                ImGui::Text(std::string("Name: " + std::string(inputAction.name)).c_str());
+                ImGui::Text(std::string("Device Id: " + std::to_string(inputAction.deviceId)).c_str());
+                std::string valuesText = "";
+                for (size_t i = 0; i < inputAction.values.size(); i++) {
+                    std::string value = inputAction.values[i];
+                    value += (i != inputAction.values.size() - 1) ? ", " : "";
+                    valuesText += value;
+                }
+                ImGui::Text(std::string("Values: " + valuesText).c_str());
+                ImGui::Separator();
+            }
+        },
+        .position = ImVec2{ 100.0f, 100.0f },
+        .size = ImVec2{ 200.0f, 200.0f },
+    };
+    ImGuiHelper::BeginPopupModal(InputConfigurationPopup);
 
     static ImGuiHelper::PopupModal FontConfigurationPopup = {
         .name = "Font Configurations",
