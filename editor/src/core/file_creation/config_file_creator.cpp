@@ -150,8 +150,7 @@ void ConfigFileCreator::GenerateConfigFile(const char *filePath, ProjectProperti
     // Inputs
     fileContents += "configure_inputs(\n";
     fileContents += "   input_actions=[\n";
-    for (const auto& pair : properties->inputs.actions) {
-        const ProjectInputAction& inputAction = pair.second;
+    for (const auto& inputAction : properties->inputs.actions) {
         std::string valuesArrayText;
         for (size_t i = 0; i < inputAction.values.size(); i++) {
             const std::string& value = inputAction.values[i];

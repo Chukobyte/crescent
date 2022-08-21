@@ -28,7 +28,7 @@ void ProjectInputs::SetInputs(RBEGameProperties *gameProperties) {
         for (size_t j = 0; j < propertyInputAction.valueCount; j++) {
             inputAction.values.emplace_back(propertyInputAction.values[j]);
         }
-        actions.emplace(inputAction.name, inputAction);
+        actions.emplace_back(inputAction);
     }
 }
 

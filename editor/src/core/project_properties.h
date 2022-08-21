@@ -2,7 +2,6 @@
 
 #include <string>
 #include <vector>
-#include <unordered_map>
 
 #include "../engine/src/core/game_properties.h"
 
@@ -48,10 +47,6 @@ struct FontAsset {
 };
 
 struct ProjectAssets {
-//    std::vector<RBEAssetTexture> textures;
-//    std::vector<RBEAssetAudioSource> audioSources;
-//    std::vector<RBEAssetFont> fonts;
-
     std::vector<TextureAsset> textures;
     std::vector<AudioSourceAsset> audioSources;
     std::vector<FontAsset> fonts;
@@ -66,7 +61,7 @@ struct ProjectInputAction {
 };
 
 struct ProjectInputs {
-    std::unordered_map<std::string, ProjectInputAction> actions;
+    std::vector<ProjectInputAction> actions;
 
     void SetInputs(RBEGameProperties* gameProperties);
 };

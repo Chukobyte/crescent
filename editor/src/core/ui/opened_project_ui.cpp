@@ -111,27 +111,36 @@ void OpenedProjectUI::ProcessModalPopups() {
                 ImGui::CloseCurrentPopup();
             }
             ImGui::Separator();
-            int actionIndex = 0;
-            for (auto& pair : gameProperties->inputs.actions) {
-                ProjectInputAction& inputAction = pair.second;
+            int actionIndexToDelete = -1;
+            for (int i = 0; i < gameProperties->inputs.actions.size(); i++) {
+                ProjectInputAction& inputAction = gameProperties->inputs.actions[i];
 
-                ImGuiHelper::InputText nameText("Name", inputAction.name, actionIndex);
+                ImGuiHelper::InputText nameText("Name", inputAction.name, i);
                 ImGuiHelper::BeginInputText(nameText);
 
-                ImGuiHelper::DragInt deviceId("Device Id", inputAction.deviceId, actionIndex);
+                ImGuiHelper::DragInt deviceId("Device Id", inputAction.deviceId, i);
                 deviceId.valueMin = 0;
                 deviceId.valueMax = 16;
                 ImGuiHelper::BeginDragInt(deviceId);
 
-                std::string valuesText = "";
+                std::string valuesText;
                 for (size_t i = 0; i < inputAction.values.size(); i++) {
                     std::string value = inputAction.values[i];
                     value += (i != inputAction.values.size() - 1) ? ", " : "";
                     valuesText += value;
                 }
                 ImGui::Text(std::string("Values: " + valuesText).c_str());
+
+                const std::string deleteText = "Delete##" + std::to_string(i);
+                if (ImGui::Button(deleteText.c_str())) {
+                    actionIndexToDelete = i;
+                }
+
                 ImGui::Separator();
-                actionIndex++;
+            }
+
+            if (actionIndexToDelete >= 0) {
+                gameProperties->inputs.actions.erase(gameProperties->inputs.actions.begin() + actionIndexToDelete);
             }
         },
         .position = ImVec2{ 100.0f, 100.0f },
@@ -148,19 +157,34 @@ void OpenedProjectUI::ProcessModalPopups() {
                 ConfigFileCreator::GenerateConfigFile(CONFIG_FILE_NAME, gameProperties);
                 ImGui::CloseCurrentPopup();
             }
+            if (ImGui::Button("Add")) {
+                FontAsset defaultFontAsset = FontAsset();
+                defaultFontAsset.file_path = "";
+                defaultFontAsset.uid = "";
+                defaultFontAsset.size = 16;
+                gameProperties->assets.fonts.emplace_back(defaultFontAsset);
+            }
             ImGui::Separator();
-            int fontIndex = 0;
-            for (auto& fontAsset : gameProperties->assets.fonts) {
-                ImGuiHelper::InputText filePath("File Path", fontAsset.file_path, fontIndex);
+            int fontIndexToDelete = -1;
+            for (int i = 0; i < gameProperties->assets.fonts.size(); i++) {
+                auto& fontAsset = gameProperties->assets.fonts[i];
+                ImGuiHelper::InputText filePath("File Path", fontAsset.file_path, i);
                 ImGuiHelper::BeginInputText(filePath);
 
-                ImGuiHelper::InputText uid("UID", fontAsset.uid, fontIndex);
+                ImGuiHelper::InputText uid("UID", fontAsset.uid, i);
                 ImGuiHelper::BeginInputText(uid);
 
-                ImGuiHelper::DragInt size("Size", fontAsset.size, fontIndex);
+                ImGuiHelper::DragInt size("Size", fontAsset.size, i);
                 ImGuiHelper::BeginDragInt(size);
+
+                const std::string deleteText = "Delete##" + std::to_string(i);
+                if (ImGui::Button(deleteText.c_str())) {
+                    fontIndexToDelete = i;
+                }
                 ImGui::Separator();
-                fontIndex++;
+            }
+            if (fontIndexToDelete >= 0) {
+                gameProperties->assets.fonts.erase(gameProperties->assets.fonts.begin() + fontIndexToDelete);
             }
         },
         .position = ImVec2{ 100.0f, 100.0f },
