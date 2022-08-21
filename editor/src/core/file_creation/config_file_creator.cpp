@@ -4,7 +4,7 @@
 
 #include "../utils/helper.h"
 #include "../utils/file_system_helper.h"
-#include "../../engine/src/core/input/input_value_constants.h"
+#include "../engine/src/core/input/input_value_constants.h"
 
 static std::unordered_map<std::string, std::string> INPUT_TO_SCRIPT_CONSTANT_MAP = {
     { INPUT_VALUE_ZERO, "Input.Keyboard.NUM_0" },
