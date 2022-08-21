@@ -118,7 +118,7 @@ void OpenedProjectUI::ProcessModalPopups() {
 
             ImGui::Separator();
             int actionIndexToDelete = -1;
-            for (int i = 0; i < gameProperties->inputs.actions.size(); i++) {
+            for (size_t i = 0; i < gameProperties->inputs.actions.size(); i++) {
                 ProjectInputAction& inputAction = gameProperties->inputs.actions[i];
 
                 ImGuiHelper::InputText nameText("Name", inputAction.name, i);
@@ -129,13 +129,26 @@ void OpenedProjectUI::ProcessModalPopups() {
                 deviceId.valueMax = 16;
                 ImGuiHelper::BeginDragInt(deviceId);
 
-                std::string valuesText;
-                for (size_t i = 0; i < inputAction.values.size(); i++) {
-                    std::string value = inputAction.values[i];
-                    value += (i != inputAction.values.size() - 1) ? ", " : "";
-                    valuesText += value;
+                // Values
+                ImGui::Text("Values:");
+                ImGui::SameLine();
+                if (ImGui::Button("+")) {
+                    inputAction.values.emplace_back("");
                 }
-                ImGui::Text(std::string("Values: " + valuesText).c_str());
+                int deletedValueIndex = -1;
+                for (size_t valueIndex = 0; valueIndex < inputAction.values.size(); valueIndex++) {
+                    std::string& value = inputAction.values[valueIndex];
+                    ImGuiHelper::InputText valueText("", value, valueIndex);
+                    ImGuiHelper::BeginInputText(valueText);
+                    ImGui::SameLine();
+                    const std::string buttonText = "-##" + std::to_string(valueIndex);
+                    if (ImGui::Button(buttonText.c_str())) {
+                        deletedValueIndex = valueIndex;
+                    }
+                }
+                if (deletedValueIndex >= 0) {
+                    inputAction.values.erase(inputAction.values.begin() + deletedValueIndex);
+                }
 
                 const std::string deleteText = "Delete##" + std::to_string(i);
                 if (ImGui::Button(deleteText.c_str())) {
