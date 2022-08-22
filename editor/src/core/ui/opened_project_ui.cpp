@@ -186,7 +186,7 @@ void OpenedProjectUI::ProcessModalPopups() {
             }
             ImGui::Separator();
             int fontIndexToDelete = -1;
-            for (int i = 0; i < gameProperties->assets.fonts.size(); i++) {
+            for (size_t i = 0; i < gameProperties->assets.fonts.size(); i++) {
                 auto& fontAsset = gameProperties->assets.fonts[i];
                 ImGuiHelper::InputText filePath("File Path", fontAsset.file_path, i);
                 ImGuiHelper::BeginInputText(filePath);
@@ -217,13 +217,53 @@ void OpenedProjectUI::ProcessWindows() {
     int windowWidth = 0;
     int windowHeight = 0;
     SDL_GetWindowSize(editorContext->window, &windowWidth, &windowHeight);
-    static ImGuiHelper::Window window = {
-        .name = "Project",
+    static ImGuiHelper::Window sceneOutlinerWindow = {
+        .name = "Scene Outliner",
         .open = nullptr,
         .windowFlags = 0,
         .callbackFunc = [] (ImGuiHelper::Context* context) {},
         .position = ImVec2{ 150.0f, 100.0f },
         .size = ImVec2{ 400.0f, 300.0f },
     };
-    ImGuiHelper::BeginWindow(window);
+    ImGuiHelper::BeginWindow(sceneOutlinerWindow);
+
+    static ImGuiHelper::Window sceneViewWindow = {
+        .name = "Scene View",
+        .open = nullptr,
+        .windowFlags = 0,
+        .callbackFunc = [] (ImGuiHelper::Context* context) {},
+        .position = ImVec2{ 300.0f, 100.0f },
+        .size = ImVec2{ 400.0f, 300.0f },
+    };
+    ImGuiHelper::BeginWindow(sceneViewWindow);
+
+    static ImGuiHelper::Window detailsWindow = {
+        .name = "Details",
+        .open = nullptr,
+        .windowFlags = 0,
+        .callbackFunc = [] (ImGuiHelper::Context* context) {},
+        .position = ImVec2{ 400.0f, 100.0f },
+        .size = ImVec2{ 400.0f, 300.0f },
+    };
+    ImGuiHelper::BeginWindow(detailsWindow);
+
+    static ImGuiHelper::Window assetBrowserWindow = {
+        .name = "Asset Browser",
+        .open = nullptr,
+        .windowFlags = 0,
+        .callbackFunc = [] (ImGuiHelper::Context* context) {},
+        .position = ImVec2{ 100.0f, 200.0f },
+        .size = ImVec2{ 400.0f, 300.0f },
+    };
+    ImGuiHelper::BeginWindow(assetBrowserWindow);
+
+    static ImGuiHelper::Window consoleWindow = {
+        .name = "Console",
+        .open = nullptr,
+        .windowFlags = 0,
+        .callbackFunc = [] (ImGuiHelper::Context* context) {},
+        .position = ImVec2{ 200.0f, 200.0f },
+        .size = ImVec2{ 400.0f, 300.0f },
+    };
+    ImGuiHelper::BeginWindow(consoleWindow);
 }
