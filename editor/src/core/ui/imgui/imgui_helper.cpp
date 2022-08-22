@@ -1,5 +1,7 @@
 #include "imgui_helper.h"
 
+#include <utility>
+
 static ImGuiHelper::Context* context = ImGuiHelper::Context::Get();
 
 void ImGuiHelper::Context::OpenPopup(const char *popupId) {
@@ -13,6 +15,7 @@ void ImGuiHelper::Context::FlushPopups() {
     popupIds.clear();
 }
 
+//--- MenuBar ---//
 void ImGuiHelper::BeginMainMenuBar(const ImGuiHelper::MenuBar& menuBar) {
     // Create Menu Bar
     if (ImGui::BeginMainMenuBar()) {
@@ -33,6 +36,7 @@ void ImGuiHelper::BeginMainMenuBar(const ImGuiHelper::MenuBar& menuBar) {
     }
 }
 
+//--- Popup Modal ---//
 void ImGuiHelper::BeginPopupModal(const ImGuiHelper::PopupModal& popupModal) {
     if (popupModal.position.has_value()) {
         ImGui::SetNextWindowPos(*popupModal.position, ImGuiCond_Once);
@@ -47,6 +51,80 @@ void ImGuiHelper::BeginPopupModal(const ImGuiHelper::PopupModal& popupModal) {
     }
 }
 
+//--- Input Text ---//
+ImGuiHelper::InputText::InputText(const std::string &label, std::string &value, int labelIndex)
+    : buffer(std::make_unique<char[]>(bufferSize + 1)),
+      label(label),
+      value(value) {
+    internalLabel = "###" + std::to_string(labelIndex) + label;
+    SetValue(value);
+}
+
+void ImGuiHelper::InputText::SetValue(std::string value) {
+    if (value.size() > bufferSize) {
+        value = value.substr(bufferSize);
+    }
+    std::ranges::copy(value, buffer.get());
+    buffer[value.size()] = '\0';
+}
+
+std::string ImGuiHelper::InputText::GetValue() const {
+    return { buffer.get() };
+}
+
+const char* ImGuiHelper::InputText::GetInternalLabel() const {
+    return internalLabel.c_str();
+}
+
+void ImGuiHelper::BeginInputText(const InputText& inputText) {
+    if (!inputText.label.empty()) {
+        ImGui::Text("%s", inputText.label.c_str());
+        ImGui::SameLine();
+    }
+    if (ImGui::InputText(inputText.GetInternalLabel(), inputText.buffer.get(), inputText.bufferSize, inputText.flags)) {
+        inputText.value = inputText.GetValue();
+    }
+}
+
+//--- Drag Int ---//
+ImGuiHelper::DragInt::DragInt(std::string label, int& value, int labelIndex)
+    : label(std::move(label)),
+      value(value) {
+    internalLabel = "##" + std::to_string(labelIndex) + this->label;
+}
+
+const char* ImGuiHelper::DragInt::GetInternalLabel() const {
+    return internalLabel.c_str();
+}
+
+void ImGuiHelper::BeginDragInt(const DragInt& dragInt) {
+    if (!dragInt.label.empty()) {
+        ImGui::Text("%s", dragInt.label.c_str());
+        ImGui::SameLine();
+    }
+    ImGui::DragInt(dragInt.GetInternalLabel(), &dragInt.value, dragInt.valueSpeed, dragInt.valueMin, dragInt.valueMax);
+}
+
+//--- CheckBox ---//
+ImGuiHelper::CheckBox::CheckBox(std::string label, bool &value)
+    : label(std::move(label)),
+      value(value) {
+    internalLabel = "##" + this->label;
+}
+
+const char* ImGuiHelper::CheckBox::GetInternalLabel() const {
+    return internalLabel.c_str();
+}
+
+void ImGuiHelper::BeginCheckBox(const CheckBox& checkBox) {
+    if (!checkBox.label.empty()) {
+        ImGui::Text("%s", checkBox.label.c_str());
+        ImGui::SameLine();
+    }
+    ImGui::Checkbox(checkBox.GetInternalLabel(), &checkBox.value);
+}
+
+//--- Window ---//
 void ImGuiHelper::BeginWindow(const ImGuiHelper::Window& window) {
     if (window.position.has_value()) {
         ImGui::SetNextWindowPos(*window.position, ImGuiCond_Once);

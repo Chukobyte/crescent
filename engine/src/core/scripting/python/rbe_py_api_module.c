@@ -142,7 +142,13 @@ PyObject* rbe_py_api_configure_assets(PyObject* self, PyObject* args, PyObject* 
             const char* filterMag = phy_get_string_from_var(pTextureAsset, "filter_mag");
             rbe_logger_debug("file_path = %s, wrap_s = %s, wrap_t = %s, filter_min = %s, filter_mag = %s",
                              filePath, wrapS, wrapT, filterMin, filterMag);
-            RBEAssetTexture assetTexture = { .file_path = rbe_strdup(filePath) };
+            RBEAssetTexture assetTexture = {
+                .file_path = rbe_strdup(filePath),
+                .wrap_s = rbe_strdup(wrapS),
+                .wrap_t = rbe_strdup(wrapT),
+                .filter_min = rbe_strdup(filterMin),
+                .filter_mag = rbe_strdup(filterMag)
+            };
             gameProperties->textures[gameProperties->textureCount++] = assetTexture;
         }
 

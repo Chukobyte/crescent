@@ -6,6 +6,10 @@
 #include "imgui/imgui_helper.h"
 #include "../editor_context.h"
 #include "../project_properties.h"
+#include "../utils/helper.h"
+#include "../file_creation/config_file_creator.h"
+
+const char* CONFIG_FILE_NAME = "test_cre_config.py";
 
 static EditorContext* editorContext = EditorContext::Get();
 
@@ -16,13 +20,6 @@ void OpenedProjectUI::ProcessMenuBar() {
             {
                 .name = "File",
                 .menuItems = {
-                    {
-                        .name = "Project Settings",
-                        .keyboardShortcut = "",
-                        .callbackFunc = [] (ImGuiHelper::Context* context) {
-                            context->OpenPopup("Project Settings Menu");
-                        },
-                    },
                     {
                         .name = "Go To Project Manager",
                         .keyboardShortcut = "Ctrl+Shift+Q",
@@ -43,38 +40,177 @@ void OpenedProjectUI::ProcessMenuBar() {
                     },
                 },
             },
+            {
+                .name = "Project",
+                .menuItems = {
+                    {
+                        .name = "Settings",
+                        .keyboardShortcut = "",
+                        .callbackFunc = [] (ImGuiHelper::Context* context) {
+                            context->OpenPopup("Project Settings Menu");
+                        },
+                    },
+                    {
+                        .name = "Input",
+                        .keyboardShortcut = "",
+                        .callbackFunc = [] (ImGuiHelper::Context* context) {
+                            context->OpenPopup("Input Configurations");
+                        },
+                    },
+                    {
+                        .name = "Fonts",
+                        .keyboardShortcut = "",
+                        .callbackFunc = [] (ImGuiHelper::Context* context) {
+                            context->OpenPopup("Font Configurations");
+                        },
+                    },
+                },
+            },
         }
     };
     ImGuiHelper::BeginMainMenuBar(menuBar);
 }
 
 void OpenedProjectUI::ProcessModalPopups() {
-    static ImGuiHelper::PopupModal popupModal = {
+    static ImGuiHelper::PopupModal projectSettingsPopup = {
         .name = "Project Settings Menu",
         .open = nullptr,
         .windowFlags = 0,
         .callbackFunc = [gameProperties = ProjectProperties::Get()] (ImGuiHelper::Context* context) {
             if (ImGui::Button("Close")) {
+                ConfigFileCreator::GenerateConfigFile(CONFIG_FILE_NAME, gameProperties);
                 ImGui::CloseCurrentPopup();
             }
-            ImGui::Text(std::string("Game Title: " + gameProperties->gameTitle).c_str());
-            ImGui::Text(std::string("Window Width: " + std::to_string(gameProperties->windowWidth)).c_str());
-            ImGui::Text(std::string("Window Height: " + std::to_string(gameProperties->windowHeight)).c_str());
-            ImGui::Text(std::string("Target FPS: " + std::to_string(gameProperties->targetFPS)).c_str());
+
+            static ImGuiHelper::InputText titleText("Title", gameProperties->gameTitle);
+            static ImGuiHelper::InputText initialScenePathText("Initial Node Path", gameProperties->initialNodePath);
+            static ImGuiHelper::DragInt windowWidthInt("Window Width", gameProperties->windowWidth);
+            static ImGuiHelper::DragInt windowHeightInt("Window Height", gameProperties->windowHeight);
+            static ImGuiHelper::DragInt targetFPSInt("Target FPS", gameProperties->targetFPS);
+            static ImGuiHelper::CheckBox areCollidersVisibleCheckBox("Are Colliders Visible", gameProperties->areCollidersVisible);
+
+            ImGuiHelper::BeginInputText(titleText);
+            ImGuiHelper::BeginInputText(initialScenePathText);
+            ImGuiHelper::BeginDragInt(windowWidthInt);
+            ImGuiHelper::BeginDragInt(windowHeightInt);
+            ImGuiHelper::BeginDragInt(targetFPSInt);
+            ImGuiHelper::BeginCheckBox(areCollidersVisibleCheckBox);
         },
         .position = ImVec2{ 100.0f, 100.0f },
         .size = ImVec2{ 200.0f, 200.0f },
     };
-//    popupModal.callbackFunc = [gameProperties = EditorGameProperties::Get()] (ImGuiHelper::Context* context) {
-//        if (ImGui::Button("Close")) {
-//            ImGui::CloseCurrentPopup();
-//        }
-//        ImGui::Text(std::string("Game Title: " + gameProperties->gameTitle).c_str());
-//        ImGui::Text(std::string("Window Width: " + std::to_string(gameProperties->windowWidth)).c_str());
-//        ImGui::Text(std::string("Window Height: " + std::to_string(gameProperties->windowHeight)).c_str());
-//        ImGui::Text(std::string("Target FPS: " + std::to_string(gameProperties->targetFPS)).c_str());
-//    };
-    ImGuiHelper::BeginPopupModal(popupModal);
+    ImGuiHelper::BeginPopupModal(projectSettingsPopup);
+
+    static ImGuiHelper::PopupModal InputConfigurationPopup = {
+        .name = "Input Configurations",
+        .open = nullptr,
+        .windowFlags = 0,
+        .callbackFunc = [gameProperties = ProjectProperties::Get()] (ImGuiHelper::Context* context) {
+            if (ImGui::Button("Close")) {
+                ConfigFileCreator::GenerateConfigFile(CONFIG_FILE_NAME, gameProperties);
+                ImGui::CloseCurrentPopup();
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("Add")) {
+                ProjectInputAction defaultInputAction;
+                gameProperties->inputs.actions.emplace_back(defaultInputAction);
+            }
+
+            ImGui::Separator();
+            int actionIndexToDelete = -1;
+            for (size_t i = 0; i < gameProperties->inputs.actions.size(); i++) {
+                ProjectInputAction& inputAction = gameProperties->inputs.actions[i];
+
+                ImGuiHelper::InputText nameText("Name", inputAction.name, i);
+                ImGuiHelper::BeginInputText(nameText);
+
+                ImGuiHelper::DragInt deviceId("Device Id", inputAction.deviceId, i);
+                deviceId.valueMin = 0;
+                deviceId.valueMax = 16;
+                ImGuiHelper::BeginDragInt(deviceId);
+
+                // Values
+                ImGui::Text("Values:");
+                ImGui::SameLine();
+                if (ImGui::Button("+")) {
+                    inputAction.values.emplace_back("");
+                }
+                int deletedValueIndex = -1;
+                for (size_t valueIndex = 0; valueIndex < inputAction.values.size(); valueIndex++) {
+                    std::string& value = inputAction.values[valueIndex];
+                    ImGuiHelper::InputText valueText("", value, valueIndex);
+                    ImGuiHelper::BeginInputText(valueText);
+                    ImGui::SameLine();
+                    const std::string buttonText = "-##" + std::to_string(valueIndex);
+                    if (ImGui::Button(buttonText.c_str())) {
+                        deletedValueIndex = valueIndex;
+                    }
+                }
+                if (deletedValueIndex >= 0) {
+                    inputAction.values.erase(inputAction.values.begin() + deletedValueIndex);
+                }
+
+                const std::string deleteText = "Delete##" + std::to_string(i);
+                if (ImGui::Button(deleteText.c_str())) {
+                    actionIndexToDelete = i;
+                }
+
+                ImGui::Separator();
+            }
+
+            if (actionIndexToDelete >= 0) {
+                gameProperties->inputs.actions.erase(gameProperties->inputs.actions.begin() + actionIndexToDelete);
+            }
+        },
+        .position = ImVec2{ 100.0f, 100.0f },
+        .size = ImVec2{ 200.0f, 200.0f },
+    };
+    ImGuiHelper::BeginPopupModal(InputConfigurationPopup);
+
+    static ImGuiHelper::PopupModal FontConfigurationPopup = {
+        .name = "Font Configurations",
+        .open = nullptr,
+        .windowFlags = 0,
+        .callbackFunc = [gameProperties = ProjectProperties::Get()] (ImGuiHelper::Context* context) {
+            if (ImGui::Button("Close")) {
+                ConfigFileCreator::GenerateConfigFile(CONFIG_FILE_NAME, gameProperties);
+                ImGui::CloseCurrentPopup();
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("Add")) {
+                FontAsset defaultFontAsset = FontAsset();
+                defaultFontAsset.file_path = "";
+                defaultFontAsset.uid = "";
+                defaultFontAsset.size = 16;
+                gameProperties->assets.fonts.emplace_back(defaultFontAsset);
+            }
+            ImGui::Separator();
+            int fontIndexToDelete = -1;
+            for (int i = 0; i < gameProperties->assets.fonts.size(); i++) {
+                auto& fontAsset = gameProperties->assets.fonts[i];
+                ImGuiHelper::InputText filePath("File Path", fontAsset.file_path, i);
+                ImGuiHelper::BeginInputText(filePath);
+
+                ImGuiHelper::InputText uid("UID", fontAsset.uid, i);
+                ImGuiHelper::BeginInputText(uid);
+
+                ImGuiHelper::DragInt size("Size", fontAsset.size, i);
+                ImGuiHelper::BeginDragInt(size);
+
+                const std::string deleteText = "Delete##" + std::to_string(i);
+                if (ImGui::Button(deleteText.c_str())) {
+                    fontIndexToDelete = i;
+                }
+                ImGui::Separator();
+            }
+            if (fontIndexToDelete >= 0) {
+                gameProperties->assets.fonts.erase(gameProperties->assets.fonts.begin() + fontIndexToDelete);
+            }
+        },
+        .position = ImVec2{ 100.0f, 100.0f },
+        .size = ImVec2{ 200.0f, 200.0f },
+    };
+    ImGuiHelper::BeginPopupModal(FontConfigurationPopup);
 }
 
 void OpenedProjectUI::ProcessWindows() {
@@ -82,7 +218,7 @@ void OpenedProjectUI::ProcessWindows() {
     int windowHeight = 0;
     SDL_GetWindowSize(editorContext->window, &windowWidth, &windowHeight);
     static ImGuiHelper::Window window = {
-        .name = "Project Selection",
+        .name = "Project",
         .open = nullptr,
         .windowFlags = 0,
         .callbackFunc = [] (ImGuiHelper::Context* context) {},

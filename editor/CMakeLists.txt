@@ -19,6 +19,7 @@ add_library(${PROJECT_NAME} STATIC
         src/core/editor.cpp
         src/core/editor_context.cpp
         src/core/project_properties.cpp
+        src/core/file_creation/config_file_creator.cpp
         src/core/ui/opened_project_ui.cpp
         src/core/ui/project_manager_ui.cpp
         src/core/ui/imgui/imgui_handler.cpp
@@ -46,10 +47,3 @@ else ()
 endif ()
 
 target_compile_options(${PROJECT_NAME} PUBLIC ${flags})
-
-# Temp copy of cre_config, will clean up later
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy
-        ${PROJECT_SOURCE_DIR}/cre_config.py
-        $<TARGET_FILE_DIR:${PROJECT_NAME}>/../cre_config.py
-        )
