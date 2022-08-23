@@ -80,7 +80,7 @@ struct DragInt {
 
 struct CheckBox {
     CheckBox(std::string  label, bool& value);
-    const char* GetInternalLabel() const;
+    [[nodiscard]] const char* GetInternalLabel() const;
 
     std::string label;
     bool& value;
@@ -98,10 +98,36 @@ struct Window {
     std::optional<ImVec2> size;
 };
 
+enum class DockSpacePosition {
+    Main,
+    Left,
+    Right,
+    Down,
+    LeftDown,
+};
+
+struct DockSpaceWindow {
+    Window window;
+    DockSpacePosition position;
+};
+
+struct DockSpace {
+    std::string id = "";
+    ImVec2 size = ImVec2(800, 600);
+    std::vector<DockSpaceWindow> windows;
+    ImGuiDockNodeFlags dockSpaceFlags = ImGuiDockNodeFlags_None;
+    ImGuiDockNodeFlags dockNodeFlags = ImGuiDockNodeFlags_PassthruCentralNode | ImGuiDockNodeFlags_NoDockingInCentralNode;
+    ImGuiID dockSpaceId;
+    bool hasBuilt = false;
+
+    void Build();
+};
+
 void BeginMainMenuBar(const MenuBar& menuBar);
 void BeginPopupModal(const PopupModal& popupModal);
 void BeginInputText(const InputText& inputText);
 void BeginDragInt(const DragInt& dragInt);
 void BeginCheckBox(const CheckBox& checkBox);
 void BeginWindow(const Window& window);
+void BeginWindowWithEnd(const Window& window);
 }

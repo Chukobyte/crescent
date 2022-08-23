@@ -217,6 +217,17 @@ void OpenedProjectUI::ProcessWindows() {
     int windowWidth = 0;
     int windowHeight = 0;
     SDL_GetWindowSize(editorContext->window, &windowWidth, &windowHeight);
+
+    static ImGuiHelper::Window mainWindow = {
+        .name = "Main",
+        .open = nullptr,
+        .windowFlags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar,
+        .callbackFunc = [] (ImGuiHelper::Context* context) {},
+        .position = ImVec2{ 0.0f, 0.0f },
+        .size = ImVec2{ (float) windowWidth, (float) windowHeight },
+    };
+    mainWindow.size = ImVec2{ (float) windowWidth, (float) windowHeight };
+
     static ImGuiHelper::Window sceneOutlinerWindow = {
         .name = "Scene Outliner",
         .open = nullptr,
@@ -225,7 +236,6 @@ void OpenedProjectUI::ProcessWindows() {
         .position = ImVec2{ 150.0f, 100.0f },
         .size = ImVec2{ 400.0f, 300.0f },
     };
-    ImGuiHelper::BeginWindow(sceneOutlinerWindow);
 
     static ImGuiHelper::Window sceneViewWindow = {
         .name = "Scene View",
@@ -235,7 +245,6 @@ void OpenedProjectUI::ProcessWindows() {
         .position = ImVec2{ 300.0f, 100.0f },
         .size = ImVec2{ 400.0f, 300.0f },
     };
-    ImGuiHelper::BeginWindow(sceneViewWindow);
 
     static ImGuiHelper::Window detailsWindow = {
         .name = "Details",
@@ -245,7 +254,6 @@ void OpenedProjectUI::ProcessWindows() {
         .position = ImVec2{ 400.0f, 100.0f },
         .size = ImVec2{ 400.0f, 300.0f },
     };
-    ImGuiHelper::BeginWindow(detailsWindow);
 
     static ImGuiHelper::Window assetBrowserWindow = {
         .name = "Asset Browser",
@@ -255,7 +263,6 @@ void OpenedProjectUI::ProcessWindows() {
         .position = ImVec2{ 100.0f, 200.0f },
         .size = ImVec2{ 400.0f, 300.0f },
     };
-    ImGuiHelper::BeginWindow(assetBrowserWindow);
 
     static ImGuiHelper::Window consoleWindow = {
         .name = "Console",
@@ -265,5 +272,28 @@ void OpenedProjectUI::ProcessWindows() {
         .position = ImVec2{ 200.0f, 200.0f },
         .size = ImVec2{ 400.0f, 300.0f },
     };
-    ImGuiHelper::BeginWindow(consoleWindow);
+
+    static ImGuiHelper::DockSpace dockSpace = {
+        .id = "DockSpace",
+        .size = ImVec2(windowWidth, windowHeight),
+        .windows = {
+            { .window = mainWindow, .position = ImGuiHelper::DockSpacePosition::Main },
+            { .window = sceneOutlinerWindow, .position = ImGuiHelper::DockSpacePosition::Left },
+            { .window = sceneViewWindow, .position = ImGuiHelper::DockSpacePosition::Left },
+            { .window = detailsWindow, .position = ImGuiHelper::DockSpacePosition::Right },
+            { .window = assetBrowserWindow, .position = ImGuiHelper::DockSpacePosition::LeftDown },
+            { .window = consoleWindow, .position = ImGuiHelper::DockSpacePosition::Down }
+        }
+    };
+    dockSpace.Build();
+
+    ImGuiHelper::BeginWindow(mainWindow);
+
+    ImGuiHelper::BeginWindowWithEnd(sceneViewWindow);
+    ImGuiHelper::BeginWindowWithEnd(sceneOutlinerWindow);
+    ImGuiHelper::BeginWindowWithEnd(detailsWindow);
+    ImGuiHelper::BeginWindowWithEnd(assetBrowserWindow);
+    ImGuiHelper::BeginWindowWithEnd(consoleWindow);
+
+    ImGui::End();
 }

@@ -48,5 +48,5 @@ void ProjectManagerUI::ProcessWindows() {
         .position = ImVec2{ 150.0f, 100.0f },
         .size = ImVec2{ 400.0f, 300.0f },
     };
-    ImGuiHelper::BeginWindow(window);
+    ImGuiHelper::BeginWindowWithEnd(window);
 }
