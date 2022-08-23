@@ -144,9 +144,10 @@ void ImGuiHelper::BeginWindowWithEnd(const ImGuiHelper::Window& window) {
 }
 
 //--- DockSpace ---//
-void ImGuiHelper::DockSpace::Build() {
+void ImGuiHelper::DockSpace::Build(int windowWidth, int windowHeight) {
     dockSpaceId = ImGui::GetID(id.c_str());
     ImGui::DockSpace(dockSpaceId, ImVec2(0.0f, 0.0f), dockSpaceFlags);
+    ImGui::SetNextWindowSize(ImVec2(windowWidth, windowHeight), ImGuiCond_Always);
     ImGui::Begin("DockSpaceWindow", nullptr,
                  ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove |
                  ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoBackground
@@ -191,5 +192,5 @@ void ImGuiHelper::DockSpace::Build() {
         hasBuilt = true;
     }
 
-    ImGui::End();
+//    ImGui::End();
 }

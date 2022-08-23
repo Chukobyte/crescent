@@ -120,7 +120,7 @@ struct DockSpace {
     ImGuiID dockSpaceId;
     bool hasBuilt = false;
 
-    void Build();
+    void Build(int windowWidth, int windowHeight);
 };
 
 void BeginMainMenuBar(const MenuBar& menuBar);
