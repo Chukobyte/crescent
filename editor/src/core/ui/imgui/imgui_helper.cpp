@@ -3,6 +3,8 @@
 
 #include <utility>
 
+#include "../engine/src/core/utils/logger.h"
+
 static ImGuiHelper::Context* context = ImGuiHelper::Context::Get();
 
 void ImGuiHelper::Context::OpenPopup(const char *popupId) {
@@ -128,10 +130,10 @@ void ImGuiHelper::BeginCheckBox(const CheckBox& checkBox) {
 //--- Window ---//
 void ImGuiHelper::BeginWindow(const ImGuiHelper::Window &window) {
     if (window.position.has_value()) {
-        ImGui::SetNextWindowPos(*window.position, ImGuiCond_Once);
+        ImGui::SetNextWindowPos(*window.position, window.windowCond);
     }
     if (window.size.has_value()) {
-        ImGui::SetNextWindowSize(*window.size, ImGuiCond_Once);
+        ImGui::SetNextWindowSize(*window.size, window.windowCond);
     }
     ImGui::Begin(window.name, window.open, window.windowFlags);
     window.callbackFunc(context);
@@ -144,18 +146,26 @@ void ImGuiHelper::BeginWindowWithEnd(const ImGuiHelper::Window& window) {
 }
 
 //--- DockSpace ---//
-void ImGuiHelper::DockSpace::Build(int windowWidth, int windowHeight) {
+void ImGuiHelper::DockSpace::Build() {
+    ImGuiViewport* viewport = ImGui::GetMainViewport();
     dockSpaceId = ImGui::GetID(id.c_str());
-    ImGui::DockSpace(dockSpaceId, ImVec2(0.0f, 0.0f), dockSpaceFlags);
-    ImGui::SetNextWindowSize(ImVec2(windowWidth, windowHeight), ImGuiCond_Always);
+    ImVec2 dockPosition = viewport->Pos;
+    ImVec2 dockSize = viewport->Size;
+    dockPosition.y += 10.0f;
+    dockSize.y -= dockPosition.y;
+
+    ImGui::SetNextWindowPos(dockPosition, ImGuiCond_Always);
+    ImGui::SetNextWindowSize(dockSize, ImGuiCond_Always);
     ImGui::Begin("DockSpaceWindow", nullptr,
-                 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove |
-                 ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoBackground
+                 ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
+                 ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoDocking
                 );
+    ImGui::DockSpace(dockSpaceId, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
     if (!hasBuilt) {
         ImGui::DockBuilderRemoveNode(dockSpaceId); // clear any previous layout
-        ImGui::DockBuilderAddNode(dockSpaceId, dockNodeFlags);
-        ImGui::DockBuilderSetNodeSize(dockSpaceId, size);
+        ImGui::DockBuilderAddNode(dockSpaceId, ImGuiDockNodeFlags_DockSpace | ImGuiDockNodeFlags_PassthruCentralNode);
+        ImGui::DockBuilderSetNodeSize(dockSpaceId, dockSize);
+        ImGui::DockBuilderSetNodePos(dockSpaceId, dockPosition);
 
         ImGuiID dockRightId = ImGui::DockBuilderSplitNode(dockSpaceId, ImGuiDir_Right, 0.2f, nullptr, &dockSpaceId);
         ImGuiID dockLeftId = ImGui::DockBuilderSplitNode(dockSpaceId, ImGuiDir_Left, 0.2f, nullptr, &dockSpaceId);
@@ -186,6 +196,7 @@ void ImGuiHelper::DockSpace::Build(int windowWidth, int windowHeight) {
                 break;
             }
             }
+            rbe_logger_debug("window name = %s, dockId = %d", dockSpaceWindow.window.name, dockId);
             ImGui::DockBuilderDockWindow(dockSpaceWindow.window.name, dockId);
         }
         ImGui::DockBuilderFinish(dockSpaceId);

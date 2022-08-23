@@ -274,7 +274,7 @@ void OpenedProjectUI::ProcessWindows() {
             { .window = consoleWindow, .position = ImGuiHelper::DockSpacePosition::Down }
         }
     };
-    dockSpace.Build(windowWidth, windowHeight);
+    dockSpace.Build();
 
     ImGuiHelper::BeginWindowWithEnd(sceneViewWindow);
     ImGuiHelper::BeginWindowWithEnd(sceneOutlinerWindow);

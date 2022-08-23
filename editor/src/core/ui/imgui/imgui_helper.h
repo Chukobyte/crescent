@@ -96,6 +96,7 @@ struct Window {
     ImGuiHelperCallbackFunc callbackFunc;
     std::optional<ImVec2> position;
     std::optional<ImVec2> size;
+    ImGuiCond_ windowCond = ImGuiCond_Once;
 };
 
 enum class DockSpacePosition {
@@ -115,12 +116,10 @@ struct DockSpace {
     std::string id = "";
     ImVec2 size = ImVec2(800, 600);
     std::vector<DockSpaceWindow> windows;
-    ImGuiDockNodeFlags dockSpaceFlags = ImGuiDockNodeFlags_None;
-    ImGuiDockNodeFlags dockNodeFlags = ImGuiDockNodeFlags_PassthruCentralNode;
     ImGuiID dockSpaceId;
     bool hasBuilt = false;
 
-    void Build(int windowWidth, int windowHeight);
+    void Build();
 };
 
 void BeginMainMenuBar(const MenuBar& menuBar);
