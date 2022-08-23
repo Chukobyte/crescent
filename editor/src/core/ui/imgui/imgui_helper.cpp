@@ -147,50 +147,49 @@ void ImGuiHelper::BeginWindowWithEnd(const ImGuiHelper::Window& window) {
 void ImGuiHelper::DockSpace::Build() {
     dockSpaceId = ImGui::GetID(id.c_str());
     ImGui::DockSpace(dockSpaceId, ImVec2(0.0f, 0.0f), dockSpaceFlags);
-    if (hasBuilt) {
-        return;
+    ImGui::Begin("DockSpaceWindow", nullptr,
+                 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove |
+                 ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoBackground
+                );
+    if (!hasBuilt) {
+        ImGui::DockBuilderRemoveNode(dockSpaceId); // clear any previous layout
+        ImGui::DockBuilderAddNode(dockSpaceId, dockNodeFlags);
+        ImGui::DockBuilderSetNodeSize(dockSpaceId, size);
+
+        ImGuiID dockRightId = ImGui::DockBuilderSplitNode(dockSpaceId, ImGuiDir_Right, 0.2f, nullptr, &dockSpaceId);
+        ImGuiID dockLeftId = ImGui::DockBuilderSplitNode(dockSpaceId, ImGuiDir_Left, 0.2f, nullptr, &dockSpaceId);
+        ImGuiID dockLeftDownId = ImGui::DockBuilderSplitNode(dockLeftId, ImGuiDir_Down, 0.3f, nullptr, &dockLeftId);
+        ImGuiID dockDownId = ImGui::DockBuilderSplitNode(dockSpaceId, ImGuiDir_Down, 0.3f, nullptr, &dockSpaceId);
+
+        for (auto& dockSpaceWindow : windows) {
+            ImGuiID dockId;
+            switch (dockSpaceWindow.position) {
+            case DockSpacePosition::Main: {
+                dockId = dockSpaceId;
+                break;
+            }
+            case DockSpacePosition::Left: {
+                dockId = dockLeftId;
+                break;
+            }
+            case DockSpacePosition::Right: {
+                dockId = dockRightId;
+                break;
+            }
+            case DockSpacePosition::LeftDown: {
+                dockId = dockLeftDownId;
+                break;
+            }
+            case DockSpacePosition::Down: {
+                dockId = dockDownId;
+                break;
+            }
+            }
+            ImGui::DockBuilderDockWindow(dockSpaceWindow.window.name, dockId);
+        }
+        ImGui::DockBuilderFinish(dockSpaceId);
+        hasBuilt = true;
     }
 
-    ImGui::DockBuilderRemoveNode(dockSpaceId); // clear any previous layout
-    ImGui::DockBuilderAddNode(dockSpaceId, dockNodeFlags);
-    ImGui::DockBuilderSetNodeSize(dockSpaceId, size);
-
-    ImGuiID dockRightId = ImGui::DockBuilderSplitNode(dockSpaceId, ImGuiDir_Right, 0.2f, nullptr, &dockSpaceId);
-    ImGuiID dockLeftId = ImGui::DockBuilderSplitNode(dockSpaceId, ImGuiDir_Left, 0.2f, nullptr, &dockSpaceId);
-    ImGuiID dockLeftDownId = ImGui::DockBuilderSplitNode(dockLeftId, ImGuiDir_Down, 0.3f, nullptr, &dockLeftId);
-    ImGuiID dockDownId = ImGui::DockBuilderSplitNode(dockSpaceId, ImGuiDir_Down, 0.3f, nullptr, &dockSpaceId);
-
-    for (auto& dockSpaceWindow : windows) {
-        ImGuiID dockId;
-        switch (dockSpaceWindow.position) {
-        case DockSpacePosition::Main: {
-            dockId = dockSpaceId;
-            break;
-        }
-        case DockSpacePosition::Left: {
-            dockId = dockLeftId;
-            break;
-        }
-        case DockSpacePosition::Right: {
-            dockId = dockRightId;
-            break;
-        }
-        case DockSpacePosition::LeftDown: {
-            dockId = dockLeftDownId;
-            break;
-        }
-        case DockSpacePosition::Down: {
-            dockId = dockDownId;
-            break;
-        }
-        }
-        ImGui::DockBuilderDockWindow(dockSpaceWindow.window.name, dockId);
-    }
-//    ImGui::DockBuilderDockWindow("Scene View", dockSpaceId);
-//    ImGui::DockBuilderDockWindow("Scene Tree", dockLeftId);
-//    ImGui::DockBuilderDockWindow("Asset Browser", dockLeftDownId);
-//    ImGui::DockBuilderDockWindow("Scene Inspector", dockRightId);
-//    ImGui::DockBuilderDockWindow("Console", dockDownId);
-    ImGui::DockBuilderFinish(dockSpaceId);
-    hasBuilt = true;
+    ImGui::End();
 }

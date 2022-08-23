@@ -221,7 +221,7 @@ void OpenedProjectUI::ProcessWindows() {
     static ImGuiHelper::Window mainWindow = {
         .name = "Main",
         .open = nullptr,
-        .windowFlags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar,
+        .windowFlags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoBackground,
         .callbackFunc = [] (ImGuiHelper::Context* context) {},
         .position = ImVec2{ 0.0f, 0.0f },
         .size = ImVec2{ (float) windowWidth, (float) windowHeight },
@@ -231,7 +231,7 @@ void OpenedProjectUI::ProcessWindows() {
     static ImGuiHelper::Window sceneOutlinerWindow = {
         .name = "Scene Outliner",
         .open = nullptr,
-        .windowFlags = 0,
+        .windowFlags = ImGuiWindowFlags_NoDocking,
         .callbackFunc = [] (ImGuiHelper::Context* context) {},
         .position = ImVec2{ 150.0f, 100.0f },
         .size = ImVec2{ 400.0f, 300.0f },
@@ -240,7 +240,7 @@ void OpenedProjectUI::ProcessWindows() {
     static ImGuiHelper::Window sceneViewWindow = {
         .name = "Scene View",
         .open = nullptr,
-        .windowFlags = 0,
+        .windowFlags = ImGuiWindowFlags_NoDocking,
         .callbackFunc = [] (ImGuiHelper::Context* context) {},
         .position = ImVec2{ 300.0f, 100.0f },
         .size = ImVec2{ 400.0f, 300.0f },
@@ -249,7 +249,7 @@ void OpenedProjectUI::ProcessWindows() {
     static ImGuiHelper::Window detailsWindow = {
         .name = "Details",
         .open = nullptr,
-        .windowFlags = 0,
+        .windowFlags = ImGuiWindowFlags_NoDocking,
         .callbackFunc = [] (ImGuiHelper::Context* context) {},
         .position = ImVec2{ 400.0f, 100.0f },
         .size = ImVec2{ 400.0f, 300.0f },
@@ -258,7 +258,7 @@ void OpenedProjectUI::ProcessWindows() {
     static ImGuiHelper::Window assetBrowserWindow = {
         .name = "Asset Browser",
         .open = nullptr,
-        .windowFlags = 0,
+        .windowFlags = ImGuiWindowFlags_NoDocking,
         .callbackFunc = [] (ImGuiHelper::Context* context) {},
         .position = ImVec2{ 100.0f, 200.0f },
         .size = ImVec2{ 400.0f, 300.0f },
@@ -267,7 +267,7 @@ void OpenedProjectUI::ProcessWindows() {
     static ImGuiHelper::Window consoleWindow = {
         .name = "Console",
         .open = nullptr,
-        .windowFlags = 0,
+        .windowFlags = ImGuiWindowFlags_NoDocking,
         .callbackFunc = [] (ImGuiHelper::Context* context) {},
         .position = ImVec2{ 200.0f, 200.0f },
         .size = ImVec2{ 400.0f, 300.0f },

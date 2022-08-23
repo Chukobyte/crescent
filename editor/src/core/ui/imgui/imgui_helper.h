@@ -116,7 +116,7 @@ struct DockSpace {
     ImVec2 size = ImVec2(800, 600);
     std::vector<DockSpaceWindow> windows;
     ImGuiDockNodeFlags dockSpaceFlags = ImGuiDockNodeFlags_None;
-    ImGuiDockNodeFlags dockNodeFlags = ImGuiDockNodeFlags_PassthruCentralNode | ImGuiDockNodeFlags_NoDockingInCentralNode;
+    ImGuiDockNodeFlags dockNodeFlags = ImGuiDockNodeFlags_PassthruCentralNode;
     ImGuiID dockSpaceId;
     bool hasBuilt = false;
 
