@@ -156,8 +156,8 @@ void ImGuiHelper::DockSpace::Build() {
 
     ImGui::SetNextWindowPos(dockPosition, ImGuiCond_Always);
     ImGui::SetNextWindowSize(dockSize, ImGuiCond_Always);
-    ImGui::Begin("DockSpaceWindow", nullptr,
-                 ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
+    ImGui::Begin("DockSpace Windows", nullptr,
+                 ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_MenuBar |
                  ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoDocking
                 );
     ImGui::DockSpace(dockSpaceId, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
@@ -196,7 +196,6 @@ void ImGuiHelper::DockSpace::Build() {
                 break;
             }
             }
-            rbe_logger_debug("window name = %s, dockId = %d", dockSpaceWindow.window.name, dockId);
             ImGui::DockBuilderDockWindow(dockSpaceWindow.window.name, dockId);
         }
         ImGui::DockBuilderFinish(dockSpaceId);
