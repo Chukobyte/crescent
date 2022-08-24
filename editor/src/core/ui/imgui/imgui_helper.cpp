@@ -162,6 +162,11 @@ void ImGuiHelper::DockSpace::Run(bool runWindows) {
                 );
     ImGui::DockSpace(dockSpaceId, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
     if (!hasBuilt) {
+        // Run windows to have them defined...
+        for (auto dockSpaceWindow : windows) {
+            ImGuiHelper::BeginWindowWithEnd(dockSpaceWindow.window);
+        }
+
         ImGui::DockBuilderRemoveNode(dockSpaceId); // clear any previous layout
         ImGui::DockBuilderAddNode(dockSpaceId, ImGuiDockNodeFlags_DockSpace | ImGuiDockNodeFlags_PassthruCentralNode);
         ImGui::DockBuilderSetNodeSize(dockSpaceId, dockSize);
