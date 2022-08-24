@@ -146,7 +146,7 @@ void ImGuiHelper::BeginWindowWithEnd(const ImGuiHelper::Window& window) {
 }
 
 //--- DockSpace ---//
-void ImGuiHelper::DockSpace::Build() {
+void ImGuiHelper::DockSpace::Run(bool runWindows) {
     ImGuiViewport* viewport = ImGui::GetMainViewport();
     dockSpaceId = ImGui::GetID(id.c_str());
     ImVec2 dockPosition = viewport->Pos;
@@ -202,5 +202,10 @@ void ImGuiHelper::DockSpace::Build() {
         hasBuilt = true;
     }
 
-//    ImGui::End();
+    if (runWindows) {
+        for (auto dockSpaceWindow : windows) {
+            ImGuiHelper::BeginWindowWithEnd(dockSpaceWindow.window);
+        }
+        ImGui::End();
+    }
 }

@@ -119,7 +119,7 @@ struct DockSpace {
     ImGuiID dockSpaceId;
     bool hasBuilt = false;
 
-    void Build();
+    void Run(bool runWindows);
 };
 
 void BeginMainMenuBar(const MenuBar& menuBar);

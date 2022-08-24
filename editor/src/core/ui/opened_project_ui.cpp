@@ -267,20 +267,12 @@ void OpenedProjectUI::ProcessWindows() {
         .id = "DockSpace",
         .size = ImVec2((float) windowWidth, (float) windowHeight),
         .windows = {
-            { .window = sceneOutlinerWindow, .position = ImGuiHelper::DockSpacePosition::Left },
             { .window = sceneViewWindow, .position = ImGuiHelper::DockSpacePosition::Main },
+            { .window = sceneOutlinerWindow, .position = ImGuiHelper::DockSpacePosition::Left },
             { .window = detailsWindow, .position = ImGuiHelper::DockSpacePosition::Right },
             { .window = assetBrowserWindow, .position = ImGuiHelper::DockSpacePosition::LeftDown },
             { .window = consoleWindow, .position = ImGuiHelper::DockSpacePosition::Down }
         }
     };
-    dockSpace.Build();
-
-    ImGuiHelper::BeginWindowWithEnd(sceneViewWindow);
-    ImGuiHelper::BeginWindowWithEnd(sceneOutlinerWindow);
-    ImGuiHelper::BeginWindowWithEnd(detailsWindow);
-    ImGuiHelper::BeginWindowWithEnd(assetBrowserWindow);
-    ImGuiHelper::BeginWindowWithEnd(consoleWindow);
-
-    ImGui::End();
+    dockSpace.Run(true);
 }
