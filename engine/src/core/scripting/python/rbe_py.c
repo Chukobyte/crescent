@@ -34,9 +34,3 @@ void rbe_py_finalize() {
 bool rbe_py_load_project_config() {
     return pyh_run_python_file("cre_config.py");
 }
-
-RBEGameProperties* rbe_py_load_game_properties2(const char* filePath) {
-    bool load_success = pyh_run_python_file(filePath);
-    RBE_ASSERT_FMT(load_success == true, "Failed to load config at '%s'", filePath);
-    return rbe_game_props_get();
-}

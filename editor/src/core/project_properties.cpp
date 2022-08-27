@@ -1,6 +1,5 @@
 #include "project_properties.h"
 
-#include "../engine/src/core/scripting/python/rbe_py.h"
 #include "../engine/src/core/scripting/python/rbe_py_file_loader.h"
 #include "../engine/src/core/utils/logger.h"
 
@@ -45,7 +44,7 @@ void ProjectProperties::LoadPropertiesFromConfig(const char* modulePath) {
     rbe_logger_debug("Loading game properties");
     rbe_game_props_finalize();
     rbe_game_props_initialize(false);
-    RBEGameProperties* gameProps = rbe_py_load_game_properties2(modulePath);
+    RBEGameProperties* gameProps = rbe_py_load_game_properties(modulePath);
     gameTitle = std::string(gameProps->gameTitle);
     initialNodePath = std::string(gameProps->initialScenePath);
     windowWidth = gameProps->windowWidth;
