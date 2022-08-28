@@ -152,9 +152,16 @@ void rbe_scene_manager_process_queued_scene_change() {
 }
 
 void rbe_scene_manager_set_active_scene_root(SceneTreeNode* root) {
-    RBE_ASSERT(activeScene != NULL);
+    RBE_ASSERT_FMT(activeScene != NULL, "There is no active scene!");
     RBE_ASSERT_FMT(activeScene->sceneTree->root == NULL, "Trying to overwrite an already existing scene root!");
     activeScene->sceneTree->root = root;
+}
+
+SceneTreeNode* rbe_scene_manager_get_active_scene_root() {
+    if (activeScene != NULL && activeScene->sceneTree != NULL) {
+        return activeScene->sceneTree->root;
+    }
+    return NULL;
 }
 
 // TODO: Clean up temp stuff for CombineModelResult

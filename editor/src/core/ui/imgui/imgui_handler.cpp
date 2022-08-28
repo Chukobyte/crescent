@@ -19,8 +19,6 @@ void ImGuiHandler::Process() {
         ProjectManagerUI::ProcessMenuBar();
         ProjectManagerUI::ProcessModalPopups();
         ProjectManagerUI::ProcessWindows();
-//        static bool demoEnabled = true;
-//        ImGui::ShowDemoWindow(&demoEnabled);
         break;
     }
     case EditorProjectState::OpenedProject: {
