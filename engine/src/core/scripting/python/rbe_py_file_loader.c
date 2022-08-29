@@ -1,5 +1,7 @@
 #include "rbe_py_file_loader.h"
 
+#include <Python.h>
+
 #include "py_helper.h"
 #include "../../scene/scene_manager.h"
 #include "../../asset_manager.h"

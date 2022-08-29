@@ -14,6 +14,7 @@ struct SceneNode {
 
     std::string name;
     NodeBaseType type = NodeBaseType_INVALID;
+    void* components[MAX_COMPONENTS];
     SceneNode* parent = nullptr;
     std::vector<SceneNode*> children;
 };
@@ -31,8 +32,8 @@ class SceneManager : public Singleton<SceneManager> {
     std::vector<SceneNodeFile*> loadedSceneFiles;
 
   private:
-    static SceneNodeFile* GenerateSceneNodeFile(SceneTreeNode* rootTreeNode, const char* sceneFilePath);
+    static SceneNodeFile* GenerateSceneNodeFile(FileSceneNode* rootTreeNode, const char* sceneFilePath);
 
     // Recursive function to load SceneTreeNode into SceneNode for usability purposes
-    static SceneNode* LoadSceneTreeNode(SceneTreeNode* node, SceneNode* parent = nullptr);
+    static SceneNode* LoadSceneTreeNode(FileSceneNode* node, SceneNode* parent = nullptr);
 };

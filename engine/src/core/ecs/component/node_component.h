@@ -1,5 +1,9 @@
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define RBE_NODE_NODE_STRING "Node"
 #define RBE_NODE_NODE2D_STRING "Node2D"
 #define RBE_NODE_SPRITE_STRING "Sprite"
@@ -41,3 +45,7 @@ NodeComponent* node_component_copy(const NodeComponent* nodeComponent);
 NodeBaseType node_get_base_type(const char* baseName);
 NodeBaseInheritanceType node_get_type_inheritance(NodeBaseType type);
 const char* node_get_component_type_string(NodeBaseType type);
+
+#ifdef __cplusplus
+}
+#endif

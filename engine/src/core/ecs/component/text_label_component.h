@@ -1,5 +1,9 @@
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "../../rendering/font.h"
 #include "../../math/rbe_math.h"
 
@@ -14,3 +18,7 @@ typedef struct TextLabelComponent {
 TextLabelComponent* text_label_component_create();
 void text_label_component_delete(TextLabelComponent* textLabelComponent);
 TextLabelComponent* text_label_component_copy(const TextLabelComponent* textLabelComponent);
+
+#ifdef __cplusplus
+}
+#endif
