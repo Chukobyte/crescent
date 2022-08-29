@@ -15,3 +15,5 @@ typedef struct SpriteComponent {
 } SpriteComponent;
 
 SpriteComponent* sprite_component_create();
+void sprite_component_delete(SpriteComponent* spriteComponent);
+SpriteComponent* sprite_component_copy(const SpriteComponent* spriteComponent);

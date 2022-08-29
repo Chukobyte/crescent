@@ -12,3 +12,5 @@ typedef struct TextLabelComponent {
 } TextLabelComponent;
 
 TextLabelComponent* text_label_component_create();
+void text_label_component_delete(TextLabelComponent* textLabelComponent);
+TextLabelComponent* text_label_component_copy(const TextLabelComponent* textLabelComponent);

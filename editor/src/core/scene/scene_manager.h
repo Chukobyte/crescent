@@ -8,7 +8,9 @@
 #include "../engine/src/core/scripting/python/rbe_py_file_loader.h"
 
 struct SceneNode {
-    [[nodiscard]] NodeBaseInheritanceType GetInheritanceType() const { return node_get_type_inheritance(type); }
+    [[nodiscard]] NodeBaseInheritanceType GetInheritanceType() const {
+        return node_get_type_inheritance(type);
+    }
 
     std::string name;
     NodeBaseType type = NodeBaseType_INVALID;
@@ -22,13 +24,13 @@ struct SceneNodeFile {
 };
 
 class SceneManager : public Singleton<SceneManager> {
-public:
+  public:
     SceneManager(singleton) {}
     bool LoadSceneFromFile(const char* sceneFilePath);
 
     std::vector<SceneNodeFile*> loadedSceneFiles;
 
-private:
+  private:
     static SceneNodeFile* GenerateSceneNodeFile(SceneTreeNode* rootTreeNode, const char* sceneFilePath);
 
     // Recursive function to load SceneTreeNode into SceneNode for usability purposes

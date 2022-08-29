@@ -25,6 +25,16 @@ AnimatedSpriteComponent* animated_sprite_component_create() {
     return animatedSpriteComponent;
 }
 
+void animated_sprite_component_delete(AnimatedSpriteComponent* animatedSpriteComponent) {
+    RBE_MEM_FREE(animatedSpriteComponent);
+}
+
+AnimatedSpriteComponent* animated_sprite_component_copy(const AnimatedSpriteComponent* animatedSpriteComponent) {
+    AnimatedSpriteComponent* copiedNode = RBE_MEM_ALLOCATE(AnimatedSpriteComponent);
+    memcpy(copiedNode, animatedSpriteComponent, sizeof(AnimatedSpriteComponent));
+    return copiedNode;
+}
+
 void animated_sprite_component_add_animation(AnimatedSpriteComponent* animatedSpriteComponent, Animation animation) {
     RBE_ASSERT_FMT(animatedSpriteComponent->animationCount + 1 < RBE_MAX_ANIMATIONS,
                    "Adding animation '%s' exceeds the max limit of animations which is '%d'", animation.name, RBE_MAX_ANIMATIONS);

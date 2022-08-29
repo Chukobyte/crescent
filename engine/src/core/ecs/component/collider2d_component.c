@@ -1,5 +1,7 @@
 #include "collider2d_component.h"
 
+#include <string.h>
+
 #include "../../memory/rbe_mem.h"
 
 Collider2DComponent* collider2d_component_create() {
@@ -12,4 +14,14 @@ Collider2DComponent* collider2d_component_create() {
     collider2DComponent->color.b = 228.0f / 255.0f;
     collider2DComponent->color.a = 0.75f;
     return collider2DComponent;
+}
+
+void collider2d_component_delete(Collider2DComponent* collider2DComponent) {
+    RBE_MEM_FREE(collider2DComponent);
+}
+
+Collider2DComponent* collider2d_component_copy(const Collider2DComponent* collider2DComponent) {
+    Collider2DComponent* copiedNode = RBE_MEM_ALLOCATE(Collider2DComponent);
+    memcpy(copiedNode, collider2DComponent, sizeof(Collider2DComponent));
+    return copiedNode;
 }

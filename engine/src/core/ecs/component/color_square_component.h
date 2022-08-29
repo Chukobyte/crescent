@@ -8,3 +8,5 @@ typedef struct ColorSquareComponent {
 } ColorSquareComponent;
 
 ColorSquareComponent* color_square_component_create();
+void color_square_component_delete(ColorSquareComponent* colorSquareComponent);
+ColorSquareComponent* color_square_component_copy(const ColorSquareComponent* colorSquareComponent);
