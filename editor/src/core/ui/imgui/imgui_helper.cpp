@@ -128,7 +128,7 @@ void ImGuiHelper::BeginCheckBox(const CheckBox& checkBox) {
 }
 
 //--- Window ---//
-void ImGuiHelper::BeginWindow(const ImGuiHelper::Window &window) {
+void ImGuiHelper::BeginWindow(const ImGuiHelper::Window& window) {
     if (window.position.has_value()) {
         ImGui::SetNextWindowPos(*window.position, window.windowCond);
     }
