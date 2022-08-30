@@ -67,7 +67,8 @@ void file_scene_node_load_component(FileSceneNode* node, PyObject* pComponent) {
         const int modulateB = phy_get_int_from_var(pModulate, "b");
         const int modulateA = phy_get_int_from_var(pModulate, "a");
         SpriteComponent* spriteComponent = sprite_component_create();
-        spriteComponent->texture = rbe_asset_manager_get_texture(texturePath);
+//        spriteComponent->texture = rbe_asset_manager_get_texture(texturePath);
+        node->spriteTexturePath = strdup(texturePath);
         RBE_ASSERT_FMT(spriteComponent->texture != NULL, "Unable to read texture path '%s'", texturePath);
         spriteComponent->drawSource.x = drawSourceX;
         spriteComponent->drawSource.y = drawSourceY;
@@ -91,7 +92,7 @@ void file_scene_node_load_component(FileSceneNode* node, PyObject* pComponent) {
         Py_DECREF(pModulate);
     } else if (strcmp(className, "AnimatedSpriteComponent") == 0) {
         rbe_logger_debug("Building animated sprite component");
-        AnimatedSpriteComponent* animatedSpriteComponent = animated_sprite_component_create();
+        AnimatedSpriteComponentData* animatedSpriteComponent = animated_sprite_component_data_create();
         const char* currentAnimationName = phy_get_string_from_var(pComponent, "current_animation_name");
         const bool isPlaying = phy_get_bool_from_var(pComponent, "is_playing");
         PyObject* pOrigin = PyObject_GetAttrString(pComponent, "origin");
@@ -110,7 +111,7 @@ void file_scene_node_load_component(FileSceneNode* node, PyObject* pComponent) {
         PyObject* pyAnimationsList = PyObject_GetAttrString(pComponent, "animations");
         RBE_ASSERT(PyList_Check(pyAnimationsList));
         for (Py_ssize_t animationIndex = 0; animationIndex < PyList_Size(pyAnimationsList); animationIndex++) {
-            Animation animation;
+            AnimationData animation;
             animation.frameCount = 0;
             animation.currentFrame = 0;
             animation.isValid = true;
@@ -138,9 +139,10 @@ void file_scene_node_load_component(FileSceneNode* node, PyObject* pComponent) {
                 const float drawSourceH = phy_get_float_from_var(pyDrawSource, "h");
                 rbe_logger_debug("frame: %d, texture_path: %s, draw_source: (%f, %f, %f, %f)",
                                  animationFrameNumber, animationFrameTexturePath, drawSourceX, drawSourceY, drawSourceW, drawSourceH);
-                AnimationFrame animationFrame;
-                animationFrame.texture = rbe_asset_manager_get_texture(animationFrameTexturePath);
-                RBE_ASSERT(animationFrame.texture != NULL);
+                AnimationFrameData animationFrame;
+                strcpy(animationFrame.texturePath, animationFrameTexturePath);
+//                animationFrame.texture = rbe_asset_manager_get_texture(animationFrameTexturePath);
+//                RBE_ASSERT(animationFrame.texture != NULL);
                 animationFrame.frame = animationFrameNumber;
                 const Rect2 frameDrawSource = { drawSourceX, drawSourceY, drawSourceW, drawSourceH };
                 animationFrame.drawSource = frameDrawSource;
@@ -151,7 +153,7 @@ void file_scene_node_load_component(FileSceneNode* node, PyObject* pComponent) {
             }
 
             // Set current animation if the name matches
-            animated_sprite_component_add_animation(animatedSpriteComponent, animation);
+            animated_sprite_component_data_add_animation(animatedSpriteComponent, animation);
             if (strcmp(animation.name, currentAnimationName) == 0) {
                 animatedSpriteComponent->currentAnimation = animation;
             }
@@ -171,8 +173,9 @@ void file_scene_node_load_component(FileSceneNode* node, PyObject* pComponent) {
         const int colorA = phy_get_int_from_var(pColor, "a");
         const Color textLabelColor = rbe_color_get_normalized_color(colorR, colorG, colorB, colorA);
         TextLabelComponent* textLabelComponent = text_label_component_create();
-        textLabelComponent->font = rbe_asset_manager_get_font(textLabelUID);
-        RBE_ASSERT(textLabelComponent->font != NULL);
+//        textLabelComponent->font = rbe_asset_manager_get_font(textLabelUID);
+        node->fontUID = strdup(textLabelUID);
+//        RBE_ASSERT(textLabelComponent->font != NULL);
         strcpy(textLabelComponent->text, textLabelText);
         textLabelComponent->color = textLabelColor;
 
@@ -275,6 +278,8 @@ FileSceneNode* file_scene_node_load_stage_node(FileSceneNode* parent, PyObject* 
     FileSceneNode* node = RBE_MEM_ALLOCATE(FileSceneNode);
     node->parent = parent;
     node->childrenCount = 0;
+    node->spriteTexturePath = NULL;
+    node->fontUID = NULL;
 
     // Node component is used for all scene nodes
     const char* nodeName = phy_get_string_from_var(pStageNode, "name");
@@ -338,6 +343,8 @@ void file_scene_node_erase_scene_node(FileSceneNode* node) {
     }
     file_scene_node_delete_components(node);
     RBE_MEM_FREE(node->name);
+    RBE_MEM_FREE(node->spriteTexturePath);
+    RBE_MEM_FREE(node->fontUID);
     RBE_MEM_FREE(node);
 }
 

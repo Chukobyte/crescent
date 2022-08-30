@@ -1,6 +1,8 @@
-#include <string.h>
 #include "scene_manager.h"
 
+#include <string.h>
+
+#include "../asset_manager.h"
 #include "../scripting/python/py_helper.h"
 #include "../scripting/python/rbe_py_file_loader.h"
 #include "../ecs/system/ec_system.h"
@@ -288,14 +290,16 @@ void rbe_scene_manager_setup_scene_node(FileSceneNode* fileSceneNode, SceneTreeN
     }
     if (fileSceneNode->components[ComponentDataIndex_SPRITE] != NULL) {
         SpriteComponent* spriteComponent = sprite_component_copy((SpriteComponent*) fileSceneNode->components[ComponentDataIndex_SPRITE]);
+        spriteComponent->texture = rbe_asset_manager_get_texture(fileSceneNode->spriteTexturePath);
         component_manager_set_component(node->entity, ComponentDataIndex_SPRITE, spriteComponent);
     }
     if (fileSceneNode->components[ComponentDataIndex_ANIMATED_SPRITE] != NULL) {
-        AnimatedSpriteComponent* animatedSpriteComponent = animated_sprite_component_copy((AnimatedSpriteComponent*) fileSceneNode->components[ComponentDataIndex_ANIMATED_SPRITE]);
+        AnimatedSpriteComponent* animatedSpriteComponent = animated_sprite_component_data_copy_to_animated_sprite((AnimatedSpriteComponentData*) fileSceneNode->components[ComponentDataIndex_ANIMATED_SPRITE]);
         component_manager_set_component(node->entity, ComponentDataIndex_ANIMATED_SPRITE, animatedSpriteComponent);
     }
     if (fileSceneNode->components[ComponentDataIndex_TEXT_LABEL] != NULL) {
         TextLabelComponent* textLabelComponent = text_label_component_copy((TextLabelComponent*) fileSceneNode->components[ComponentDataIndex_TEXT_LABEL]);
+        textLabelComponent->font = rbe_asset_manager_get_font(fileSceneNode->fontUID);
         component_manager_set_component(node->entity, ComponentDataIndex_TEXT_LABEL, textLabelComponent);
     }
     if (fileSceneNode->components[ComponentDataIndex_SCRIPT] != NULL) {
