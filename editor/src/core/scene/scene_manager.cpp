@@ -49,7 +49,7 @@ SceneNode* SceneManager::LoadSceneTreeNode(FileSceneNode* node, SceneNode* paren
         sceneNode->components[ComponentDataIndex_SPRITE] = spriteComponent;
     }
     if (node->components[ComponentDataIndex_ANIMATED_SPRITE] != nullptr) {
-        AnimatedSpriteComponent* animatedSpriteComponent = animated_sprite_component_copy((AnimatedSpriteComponent*) node->components[ComponentDataIndex_ANIMATED_SPRITE]);
+        AnimatedSpriteComponent* animatedSpriteComponent = animated_sprite_component_data_copy_to_animated_sprite((AnimatedSpriteComponentData*) node->components[ComponentDataIndex_ANIMATED_SPRITE]);
         sceneNode->components[ComponentDataIndex_ANIMATED_SPRITE] = animatedSpriteComponent;
     }
     if (node->components[ComponentDataIndex_TEXT_LABEL] != nullptr) {
