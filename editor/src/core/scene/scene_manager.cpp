@@ -14,7 +14,8 @@
 bool SceneManager::LoadSceneFromFile(const char *sceneFilePath) {
     pyh_run_python_file(sceneFilePath);
     if (FileSceneNode* rootFileSceneNode = file_scene_node_get_cached_file_scene_node()) {
-//        SceneNodeFile* nodeFile = GenerateSceneNodeFile(rootFileSceneNode, sceneFilePath);
+        SceneNodeFile* nodeFile = GenerateSceneNodeFile(rootFileSceneNode, sceneFilePath);
+        loadedSceneFiles.emplace_back(nodeFile);
         file_scene_node_delete_cached_file_scene_node();
         return true;
     }
