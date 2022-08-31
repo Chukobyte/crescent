@@ -9,6 +9,12 @@ bool SceneManager::LoadSceneFromFile(const char *sceneFilePath) {
     if (FileSceneNode* rootFileSceneNode = file_scene_node_get_cached_file_scene_node()) {
         SceneNodeFile* nodeFile = GenerateSceneNodeFile(rootFileSceneNode, sceneFilePath);
         loadedSceneFiles.emplace_back(nodeFile);
+        if (selectedSceneFile == nullptr) {
+            selectedSceneFile = nodeFile;
+        }
+        if (selectedSceneNode == nullptr) {
+            selectedSceneNode = nodeFile->rootNode;
+        }
         file_scene_node_delete_cached_file_scene_node();
         return true;
     }

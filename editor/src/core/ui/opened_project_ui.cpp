@@ -8,6 +8,7 @@
 #include "../project_properties.h"
 #include "../utils/helper.h"
 #include "../file_creation/config_file_creator.h"
+#include "../scene/scene_manager.h"
 
 const char* CONFIG_FILE_NAME = "test_cre_config.py";
 
@@ -28,6 +29,7 @@ void OpenedProjectUI::ProcessMenuBar() {
                             rbe_fs_chdir(editorContext->initialDir.c_str());
                             editorContext->projectState = EditorProjectState::ProjectManager;
                             rbe_logger_debug("Going back to project manager at path = %s", editorContext->initialDir.c_str());
+                            // TODO: Clean up scene manager and stuff...
                         },
                     },
 
@@ -222,7 +224,15 @@ void OpenedProjectUI::ProcessWindows() {
         .name = "Scene Outliner",
         .open = nullptr,
         .windowFlags = ImGuiWindowFlags_NoResize,
-        .callbackFunc = [] (ImGuiHelper::Context* context) {},
+        .callbackFunc = [] (ImGuiHelper::Context* context) {
+            static SceneManager* sceneManager = SceneManager::Get();
+            // Only looks at the first loaded scene file for now... TODO: Clean up
+            if (auto sceneNodeFile = sceneManager->selectedSceneFile) {
+                if (auto rootNode = sceneNodeFile->rootNode) {
+                    ImGui::Text("%s", rootNode->name.c_str());
+                }
+            }
+        },
         .position = ImVec2{ 150.0f, 100.0f },
         .size = ImVec2{ 400.0f, 300.0f },
     };
@@ -240,7 +250,23 @@ void OpenedProjectUI::ProcessWindows() {
         .name = "Details",
         .open = nullptr,
         .windowFlags = ImGuiWindowFlags_NoResize,
-        .callbackFunc = [] (ImGuiHelper::Context* context) {},
+        .callbackFunc = [] (ImGuiHelper::Context* context) {
+            static SceneManager* sceneManager = SceneManager::Get();
+            if (SceneNode* selectedNode = sceneManager->selectedSceneNode) {
+                ImGui::Text("Name: %s", selectedNode->name.c_str());
+                ImGui::Text("Type: %s", selectedNode->GetTypeString());
+                // Transform2D
+                if (Transform2DComp* transform2DComp = selectedNode->GetComponentSafe<Transform2DComp>()) {
+                    ImGui::Text("Transform 2D Component");
+                    ImGui::Text("Position: (%f, %f)", transform2DComp->transform2D.position.x, transform2DComp->transform2D.position.y);
+                    ImGui::Text("Scale: (%f, %f)", transform2DComp->transform2D.scale.x, transform2DComp->transform2D.scale.y);
+                    ImGui::Text("Rotation: %f", transform2DComp->transform2D.rotation);
+                    ImGui::Text("Z Index: %d", transform2DComp->zIndex);
+                    ImGui::Text("Z Is Relative To Parent: %s", Helper::BoolToString(transform2DComp->isZIndexRelativeToParent).c_str());
+                    ImGui::Text("Ignore Camera: %s", Helper::BoolToString(transform2DComp->ignoreCamera).c_str());
+                }
+            }
+        },
         .position = ImVec2{ 400.0f, 100.0f },
         .size = ImVec2{ 400.0f, 300.0f },
     };

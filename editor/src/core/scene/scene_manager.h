@@ -11,8 +11,20 @@
 #include "../engine/src/core/scripting/python/rbe_py_file_loader.h"
 
 struct SceneNode {
+    SceneNode() {
+        uid = GenerateUID();
+    }
+
     [[nodiscard]] NodeBaseInheritanceType GetInheritanceType() const {
         return node_get_type_inheritance(type);
+    }
+
+    [[nodiscard]] const char* GetTypeString() const {
+        return node_get_component_type_string(type);
+    }
+
+    [[nodiscard]] unsigned int GetUID() const {
+        return uid;
     }
 
     template <typename T, typename... TArgs>
@@ -28,6 +40,14 @@ struct SceneNode {
     }
 
     template <typename T>
+    [[nodiscard]] T* GetComponentSafe() {
+        if (HasComponent<T>()) {
+            return static_cast<T*>(components[&typeid(T)]);
+        }
+        return nullptr;
+    }
+
+    template <typename T>
     bool HasComponent() const {
         return components.count(&typeid(T));
     }
@@ -37,6 +57,14 @@ struct SceneNode {
     SceneNode* parent = nullptr;
     std::vector<SceneNode*> children;
     std::map<const std::type_info*, EditorComponent*> components;
+
+  private:
+    unsigned int uid;
+
+    unsigned int GenerateUID() {
+        static unsigned int uidCounter = 0;
+        return uidCounter++;
+    }
 };
 
 struct SceneNodeFile {
@@ -50,6 +78,9 @@ class SceneManager : public Singleton<SceneManager> {
     bool LoadSceneFromFile(const char* sceneFilePath);
 
     std::vector<SceneNodeFile*> loadedSceneFiles;
+
+    SceneNodeFile* selectedSceneFile = nullptr;
+    SceneNode* selectedSceneNode = nullptr;
 
   private:
     static SceneNodeFile* GenerateSceneNodeFile(FileSceneNode* rootTreeNode, const char* sceneFilePath);
