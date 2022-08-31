@@ -15,16 +15,18 @@ static bool isImGuiDemoEnabled = false;
 void ImGuiHandler::Process() {
     static EditorContext* editorContext = EditorContext::Get();
     switch (editorContext->projectState) {
-    case EditorProjectState::ProjectManager:
+    case EditorProjectState::ProjectManager: {
         ProjectManagerUI::ProcessMenuBar();
         ProjectManagerUI::ProcessModalPopups();
         ProjectManagerUI::ProcessWindows();
         break;
-    case EditorProjectState::OpenedProject:
+    }
+    case EditorProjectState::OpenedProject: {
         OpenedProjectUI::ProcessMenuBar();
         OpenedProjectUI::ProcessModalPopups();
         OpenedProjectUI::ProcessWindows();
         break;
+    }
     default:
         break;
     }

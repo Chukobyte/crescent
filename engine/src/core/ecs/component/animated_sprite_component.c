@@ -2,6 +2,7 @@
 
 #include <string.h>
 
+#include "../../asset_manager.h"
 #include "../../memory/rbe_mem.h"
 #include "../../utils/rbe_assert.h"
 
@@ -23,6 +24,16 @@ AnimatedSpriteComponent* animated_sprite_component_create() {
     animatedSpriteComponent->startAnimationTickTime = 0;
 
     return animatedSpriteComponent;
+}
+
+void animated_sprite_component_delete(AnimatedSpriteComponent* animatedSpriteComponent) {
+    RBE_MEM_FREE(animatedSpriteComponent);
+}
+
+AnimatedSpriteComponent* animated_sprite_component_copy(const AnimatedSpriteComponent* animatedSpriteComponent) {
+    AnimatedSpriteComponent* copiedNode = RBE_MEM_ALLOCATE(AnimatedSpriteComponent);
+    memcpy(copiedNode, animatedSpriteComponent, sizeof(AnimatedSpriteComponent));
+    return copiedNode;
 }
 
 void animated_sprite_component_add_animation(AnimatedSpriteComponent* animatedSpriteComponent, Animation animation) {
@@ -52,4 +63,69 @@ AnimationQueryResult animated_sprite_component_get_animation(AnimatedSpriteCompo
     }
     animationQueryResult.success = false;
     return animationQueryResult;
+}
+
+//--- Animated Sprite Component Data ---//
+AnimatedSpriteComponentData* animated_sprite_component_data_create() {
+    AnimatedSpriteComponentData* animatedSpriteComponent = RBE_MEM_ALLOCATE(AnimatedSpriteComponentData);
+    animatedSpriteComponent->animationCount = 0;
+    animatedSpriteComponent->modulate.r = 1.0f;
+    animatedSpriteComponent->modulate.g = 1.0f;
+    animatedSpriteComponent->modulate.b = 1.0f;
+    animatedSpriteComponent->modulate.a = 1.0f;
+    animatedSpriteComponent->currentAnimation.isValid = false;
+    animatedSpriteComponent->origin.x = 0.0f;
+    animatedSpriteComponent->origin.y = 0.0f;
+    animatedSpriteComponent->isPlaying = false;
+    animatedSpriteComponent->flipX = false;
+    animatedSpriteComponent->flipY = false;
+    animatedSpriteComponent->startAnimationTickTime = 0;
+
+    return animatedSpriteComponent;
+}
+
+void animated_sprite_component_data_delete(AnimatedSpriteComponentData* animatedSpriteComponent) {
+    RBE_MEM_FREE(animatedSpriteComponent);
+}
+
+AnimatedSpriteComponent* animated_sprite_component_data_copy_to_animated_sprite(const AnimatedSpriteComponentData* animatedSpriteComponentData) {
+    AnimatedSpriteComponent* copiedNode = RBE_MEM_ALLOCATE(AnimatedSpriteComponent);
+    copiedNode->animationCount = animatedSpriteComponentData->animationCount;
+    copiedNode->modulate = animatedSpriteComponentData->modulate;
+    copiedNode->origin = animatedSpriteComponentData->origin;
+    copiedNode->isPlaying = animatedSpriteComponentData->isPlaying;
+    copiedNode->flipX = animatedSpriteComponentData->flipX;
+    copiedNode->flipY = animatedSpriteComponentData->flipY;
+    copiedNode->startAnimationTickTime = 0;
+    strcpy(copiedNode->currentAnimation.name, animatedSpriteComponentData->currentAnimation.name);
+    for (size_t animationIndex = 0; animationIndex < animatedSpriteComponentData->animationCount; animationIndex++) {
+        AnimationData* animationData = &animatedSpriteComponentData->animations[animationIndex];
+        Animation animation;
+        strcpy(animation.name, animationData->name);
+        animation.doesLoop = animationData->doesLoop;
+        animation.speed = animationData->speed;
+        animation.isValid = true;
+        animation.currentFrame = 0;
+        animation.frameCount = animationData->frameCount;
+        for (size_t frameIndex = 0; frameIndex < animationData->frameCount; frameIndex++) {
+            AnimationFrameData* animationFrameData = &animationData->animationFrames[frameIndex];
+            AnimationFrame animationFrame;
+            animationFrame.texture = rbe_asset_manager_get_texture(animationFrameData->texturePath);
+            animationFrame.drawSource = animationFrameData->drawSource;
+            animationFrame.frame = animationFrameData->frame;
+            animation.animationFrames[frameIndex] = animationFrame;
+        }
+        copiedNode->animations[animationIndex] = animation;
+        if (strcmp(animatedSpriteComponentData->currentAnimation.name, animation.name) == 0) {
+            copiedNode->currentAnimation = animation;
+        }
+    }
+
+    return copiedNode;
+}
+
+void animated_sprite_component_data_add_animation(AnimatedSpriteComponentData* animatedSpriteComponent, AnimationData animation) {
+    RBE_ASSERT_FMT(animatedSpriteComponent->animationCount + 1 < RBE_MAX_ANIMATIONS,
+                   "Adding animation '%s' exceeds the max limit of animations which is '%d'", animation.name, RBE_MAX_ANIMATIONS);
+    animatedSpriteComponent->animations[animatedSpriteComponent->animationCount++] = animation;
 }

@@ -11,6 +11,16 @@ NodeComponent* node_component_create() {
     return nodeComponent;
 }
 
+void node_component_delete(NodeComponent* nodeComponent) {
+    RBE_MEM_FREE(nodeComponent);
+}
+
+NodeComponent* node_component_copy(const NodeComponent* nodeComponent) {
+    NodeComponent* copiedNode = RBE_MEM_ALLOCATE(NodeComponent);
+    memcpy(copiedNode, nodeComponent, sizeof(NodeComponent));
+    return copiedNode;
+}
+
 NodeBaseType node_get_base_type(const char* baseName) {
     if (strcmp(baseName, RBE_NODE_NODE_STRING) == 0) {
         return NodeBaseType_NODE;

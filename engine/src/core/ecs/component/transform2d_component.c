@@ -1,5 +1,7 @@
 #include "transform2d_component.h"
 
+#include <string.h>
+
 #include "../../utils/logger.h"
 #include "../../memory/rbe_mem.h"
 
@@ -31,6 +33,16 @@ Transform2DComponent* transform2d_component_create() {
     transform2DComponent->ignoreCamera = false;
     transform2DComponent->isGlobalTransformDirty = true; // Starts dirty to calculate on first pull
     return transform2DComponent;
+}
+
+void transform2d_component_delete(Transform2DComponent* transform2DComponent) {
+    RBE_MEM_FREE(transform2DComponent);
+}
+
+Transform2DComponent* transform2d_component_copy(const Transform2DComponent* transform2DComponent) {
+    Transform2DComponent* copiedNode = RBE_MEM_ALLOCATE(Transform2DComponent);
+    memcpy(copiedNode, transform2DComponent, sizeof(Transform2DComponent));
+    return copiedNode;
 }
 
 void transform2d_component_get_local_model_matrix(mat4 model, Transform2DComponent* transform2DComponent) {

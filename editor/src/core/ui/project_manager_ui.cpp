@@ -6,6 +6,7 @@
 #include "imgui/imgui_helper.h"
 #include "../editor_context.h"
 #include "../project_properties.h"
+#include "../scene/scene_manager.h"
 
 static EditorContext* editorContext = EditorContext::Get();
 
@@ -43,10 +44,16 @@ void ProjectManagerUI::ProcessWindows() {
                 rbe_logger_debug("Opening test project at directory = %s", fighterTestPath);
                 gameProperties->LoadPropertiesFromConfig("cre_config.py");
                 gameProperties->PrintProperties();
+                if (!gameProperties->initialNodePath.empty()) {
+                    static SceneManager* sceneManager = SceneManager::Get();
+                    if (!sceneManager->LoadSceneFromFile(gameProperties->initialNodePath.c_str())) {
+                        rbe_logger_error("Failed to load scene from file at path '%s'", gameProperties->initialNodePath.c_str());
+                    }
+                }
             }
         },
         .position = ImVec2{ 150.0f, 100.0f },
         .size = ImVec2{ 400.0f, 300.0f },
     };
-    ImGuiHelper::BeginWindow(window);
+    ImGuiHelper::BeginWindowWithEnd(window);
 }

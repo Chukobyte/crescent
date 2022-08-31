@@ -1,5 +1,9 @@
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stddef.h>
 #include "../entity/entity.h"
 #include "../../math/rbe_math.h"
@@ -12,3 +16,9 @@ typedef struct Collider2DComponent {
 } Collider2DComponent;
 
 Collider2DComponent* collider2d_component_create();
+void collider2d_component_delete(Collider2DComponent* collider2DComponent);
+Collider2DComponent* collider2d_component_copy(const Collider2DComponent* collider2DComponent);
+
+#ifdef __cplusplus
+}
+#endif

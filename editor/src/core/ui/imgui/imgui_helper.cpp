@@ -1,6 +1,9 @@
 #include "imgui_helper.h"
+#include "imgui_internal.h"
 
 #include <utility>
+
+#include "../engine/src/core/utils/logger.h"
 
 static ImGuiHelper::Context* context = ImGuiHelper::Context::Get();
 
@@ -127,13 +130,87 @@ void ImGuiHelper::BeginCheckBox(const CheckBox& checkBox) {
 //--- Window ---//
 void ImGuiHelper::BeginWindow(const ImGuiHelper::Window& window) {
     if (window.position.has_value()) {
-        ImGui::SetNextWindowPos(*window.position, ImGuiCond_Once);
+        ImGui::SetNextWindowPos(*window.position, window.windowCond);
     }
     if (window.size.has_value()) {
-        ImGui::SetNextWindowSize(*window.size, ImGuiCond_Once);
+        ImGui::SetNextWindowSize(*window.size, window.windowCond);
     }
-    ImGui::Begin(window.name, window.open, window.windowFlags);
+    ImGui::Begin(window.name.c_str(), window.open, window.windowFlags);
     window.callbackFunc(context);
+}
+
+void ImGuiHelper::BeginWindowWithEnd(const ImGuiHelper::Window& window) {
+    BeginWindow(window);
     ImGui::End();
     context->FlushPopups();
+}
+
+//--- DockSpace ---//
+void ImGuiHelper::DockSpace::Run(bool runWindows) {
+    ImGuiViewport* viewport = ImGui::GetMainViewport();
+    dockSpaceId = ImGui::GetID(id.c_str());
+    ImVec2 dockPosition = viewport->Pos;
+    ImVec2 dockSize = viewport->Size;
+    dockPosition.y += 10.0f;
+    dockSize.y -= dockPosition.y;
+
+    ImGui::SetNextWindowPos(dockPosition, ImGuiCond_Always);
+    ImGui::SetNextWindowSize(dockSize, ImGuiCond_Always);
+    ImGui::Begin("DockSpace Windows", nullptr,
+                 ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_MenuBar |
+                 ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoDocking
+                );
+    ImGui::DockSpace(dockSpaceId, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
+    if (!hasBuilt) {
+        // Run windows to have them defined...
+        for (auto dockSpaceWindow : windows) {
+            ImGuiHelper::BeginWindowWithEnd(dockSpaceWindow.window);
+        }
+
+        ImGui::DockBuilderRemoveNode(dockSpaceId); // clear any previous layout
+        ImGui::DockBuilderAddNode(dockSpaceId, ImGuiDockNodeFlags_DockSpace | ImGuiDockNodeFlags_PassthruCentralNode);
+        ImGui::DockBuilderSetNodeSize(dockSpaceId, dockSize);
+        ImGui::DockBuilderSetNodePos(dockSpaceId, dockPosition);
+
+        ImGuiID dockRightId = ImGui::DockBuilderSplitNode(dockSpaceId, ImGuiDir_Right, 0.2f, nullptr, &dockSpaceId);
+        ImGuiID dockLeftId = ImGui::DockBuilderSplitNode(dockSpaceId, ImGuiDir_Left, 0.2f, nullptr, &dockSpaceId);
+        ImGuiID dockLeftDownId = ImGui::DockBuilderSplitNode(dockLeftId, ImGuiDir_Down, 0.3f, nullptr, &dockLeftId);
+        ImGuiID dockDownId = ImGui::DockBuilderSplitNode(dockSpaceId, ImGuiDir_Down, 0.3f, nullptr, &dockSpaceId);
+
+        for (auto& dockSpaceWindow : windows) {
+            ImGuiID dockId = dockSpaceId;
+            switch (dockSpaceWindow.position) {
+            case DockSpacePosition::Main: {
+                dockId = dockSpaceId;
+                break;
+            }
+            case DockSpacePosition::Left: {
+                dockId = dockLeftId;
+                break;
+            }
+            case DockSpacePosition::Right: {
+                dockId = dockRightId;
+                break;
+            }
+            case DockSpacePosition::LeftDown: {
+                dockId = dockLeftDownId;
+                break;
+            }
+            case DockSpacePosition::Down: {
+                dockId = dockDownId;
+                break;
+            }
+            }
+            ImGui::DockBuilderDockWindow(dockSpaceWindow.window.name.c_str(), dockId);
+        }
+        ImGui::DockBuilderFinish(dockSpaceId);
+        hasBuilt = true;
+    }
+
+    if (runWindows) {
+        for (auto dockSpaceWindow : windows) {
+            ImGuiHelper::BeginWindowWithEnd(dockSpaceWindow.window);
+        }
+        ImGui::End();
+    }
 }

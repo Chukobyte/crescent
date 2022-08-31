@@ -8,6 +8,7 @@
 #include "../project_properties.h"
 #include "../utils/helper.h"
 #include "../file_creation/config_file_creator.h"
+#include "../scene/scene_manager.h"
 
 const char* CONFIG_FILE_NAME = "test_cre_config.py";
 
@@ -28,6 +29,7 @@ void OpenedProjectUI::ProcessMenuBar() {
                             rbe_fs_chdir(editorContext->initialDir.c_str());
                             editorContext->projectState = EditorProjectState::ProjectManager;
                             rbe_logger_debug("Going back to project manager at path = %s", editorContext->initialDir.c_str());
+                            // TODO: Clean up scene manager and stuff...
                         },
                     },
 
@@ -186,7 +188,7 @@ void OpenedProjectUI::ProcessModalPopups() {
             }
             ImGui::Separator();
             int fontIndexToDelete = -1;
-            for (int i = 0; i < gameProperties->assets.fonts.size(); i++) {
+            for (size_t i = 0; i < gameProperties->assets.fonts.size(); i++) {
                 auto& fontAsset = gameProperties->assets.fonts[i];
                 ImGuiHelper::InputText filePath("File Path", fontAsset.file_path, i);
                 ImGuiHelper::BeginInputText(filePath);
@@ -217,13 +219,86 @@ void OpenedProjectUI::ProcessWindows() {
     int windowWidth = 0;
     int windowHeight = 0;
     SDL_GetWindowSize(editorContext->window, &windowWidth, &windowHeight);
-    static ImGuiHelper::Window window = {
-        .name = "Project",
+
+    static ImGuiHelper::Window sceneOutlinerWindow = {
+        .name = "Scene Outliner",
         .open = nullptr,
-        .windowFlags = 0,
-        .callbackFunc = [] (ImGuiHelper::Context* context) {},
+        .windowFlags = ImGuiWindowFlags_NoResize,
+        .callbackFunc = [] (ImGuiHelper::Context* context) {
+            static SceneManager* sceneManager = SceneManager::Get();
+            // Only looks at the first loaded scene file for now... TODO: Clean up
+            if (auto sceneNodeFile = sceneManager->selectedSceneFile) {
+                if (auto rootNode = sceneNodeFile->rootNode) {
+                    ImGui::Text("%s", rootNode->name.c_str());
+                }
+            }
+        },
         .position = ImVec2{ 150.0f, 100.0f },
         .size = ImVec2{ 400.0f, 300.0f },
     };
-    ImGuiHelper::BeginWindow(window);
+
+    static ImGuiHelper::Window sceneViewWindow = {
+        .name = "Scene View",
+        .open = nullptr,
+        .windowFlags = ImGuiWindowFlags_NoResize,
+        .callbackFunc = [] (ImGuiHelper::Context* context) {},
+        .position = ImVec2{ 300.0f, 100.0f },
+        .size = ImVec2{ 400.0f, 300.0f },
+    };
+
+    static ImGuiHelper::Window detailsWindow = {
+        .name = "Details",
+        .open = nullptr,
+        .windowFlags = ImGuiWindowFlags_NoResize,
+        .callbackFunc = [] (ImGuiHelper::Context* context) {
+            static SceneManager* sceneManager = SceneManager::Get();
+            if (SceneNode* selectedNode = sceneManager->selectedSceneNode) {
+                ImGui::Text("Name: %s", selectedNode->name.c_str());
+                ImGui::Text("Type: %s", selectedNode->GetTypeString());
+                // Transform2D
+                if (Transform2DComp* transform2DComp = selectedNode->GetComponentSafe<Transform2DComp>()) {
+                    ImGui::Text("Transform 2D Component");
+                    ImGui::Text("Position: (%f, %f)", transform2DComp->transform2D.position.x, transform2DComp->transform2D.position.y);
+                    ImGui::Text("Scale: (%f, %f)", transform2DComp->transform2D.scale.x, transform2DComp->transform2D.scale.y);
+                    ImGui::Text("Rotation: %f", transform2DComp->transform2D.rotation);
+                    ImGui::Text("Z Index: %d", transform2DComp->zIndex);
+                    ImGui::Text("Z Is Relative To Parent: %s", Helper::BoolToString(transform2DComp->isZIndexRelativeToParent).c_str());
+                    ImGui::Text("Ignore Camera: %s", Helper::BoolToString(transform2DComp->ignoreCamera).c_str());
+                }
+            }
+        },
+        .position = ImVec2{ 400.0f, 100.0f },
+        .size = ImVec2{ 400.0f, 300.0f },
+    };
+
+    static ImGuiHelper::Window assetBrowserWindow = {
+        .name = "Asset Browser",
+        .open = nullptr,
+        .windowFlags = ImGuiWindowFlags_NoResize,
+        .callbackFunc = [] (ImGuiHelper::Context* context) {},
+        .position = ImVec2{ 100.0f, 200.0f },
+        .size = ImVec2{ 400.0f, 300.0f },
+    };
+
+    static ImGuiHelper::Window consoleWindow = {
+        .name = "Console",
+        .open = nullptr,
+        .windowFlags = ImGuiWindowFlags_NoResize,
+        .callbackFunc = [] (ImGuiHelper::Context* context) {},
+        .position = ImVec2{ 200.0f, 200.0f },
+        .size = ImVec2{ 400.0f, 300.0f },
+    };
+
+    static ImGuiHelper::DockSpace dockSpace = {
+        .id = "DockSpace",
+        .size = ImVec2((float) windowWidth, (float) windowHeight),
+        .windows = {
+            { .window = sceneViewWindow, .position = ImGuiHelper::DockSpacePosition::Main },
+            { .window = sceneOutlinerWindow, .position = ImGuiHelper::DockSpacePosition::Left },
+            { .window = detailsWindow, .position = ImGuiHelper::DockSpacePosition::Right },
+            { .window = assetBrowserWindow, .position = ImGuiHelper::DockSpacePosition::LeftDown },
+            { .window = consoleWindow, .position = ImGuiHelper::DockSpacePosition::Down }
+        }
+    };
+    dockSpace.Run(true);
 }

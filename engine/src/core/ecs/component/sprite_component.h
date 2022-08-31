@@ -1,5 +1,9 @@
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdbool.h>
 
 #include "../../rendering/texture.h"
@@ -15,3 +19,9 @@ typedef struct SpriteComponent {
 } SpriteComponent;
 
 SpriteComponent* sprite_component_create();
+void sprite_component_delete(SpriteComponent* spriteComponent);
+SpriteComponent* sprite_component_copy(const SpriteComponent* spriteComponent);
+
+#ifdef __cplusplus
+}
+#endif

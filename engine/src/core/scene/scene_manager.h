@@ -1,6 +1,10 @@
 #pragma once
 
-#include "../ecs/entity/entity.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#include "scene_tree.h"
 #include "../ecs/component/transform2d_component.h"
 
 #define CGLM_DEFINE_PRINTS
@@ -8,14 +12,6 @@
 #include <cglm/cglm.h>
 
 // --- Scene Tree --- //
-// Maintains parent child relationship between nodes
-typedef struct SceneTreeNode {
-    Entity entity;
-    struct SceneTreeNode* parent;
-    struct SceneTreeNode* children[MAX_ENTITIES / 2]; // TODO: Clean up temp
-    size_t childCount;
-} SceneTreeNode;
-
 SceneTreeNode* rbe_scene_tree_create_tree_node(Entity entity, SceneTreeNode* parent);
 
 // --- Scene Manager --- //
@@ -31,6 +27,11 @@ void rbe_scene_manager_process_queued_scene_change();
 
 // Scene Tree related stuff, may separate into separate functionality later.
 void rbe_scene_manager_set_active_scene_root(SceneTreeNode* root);
+SceneTreeNode* rbe_scene_manager_get_active_scene_root();
 TransformModel2D* rbe_scene_manager_get_scene_node_global_transform(Entity entity, Transform2DComponent* transform2DComponent);
 Entity rbe_scene_manager_get_entity_child_by_name(Entity parent, const char* childName);
 SceneTreeNode* rbe_scene_manager_get_entity_tree_node(Entity entity);
+
+#ifdef __cplusplus
+}
+#endif

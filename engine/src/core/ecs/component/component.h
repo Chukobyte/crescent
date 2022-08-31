@@ -1,5 +1,9 @@
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdbool.h>
 
 #include "../entity/entity.h"
@@ -43,3 +47,7 @@ void component_manager_set_component_signature(Entity entity, ComponentType comp
 ComponentType component_manager_get_component_signature(Entity entity);
 
 const char* component_get_component_data_index_string(ComponentDataIndex index);
+
+#ifdef __cplusplus
+}
+#endif

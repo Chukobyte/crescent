@@ -4,14 +4,13 @@
 
 #include "py_cache.h"
 #include "py_script_context.h"
-#include "../../game_properties.h"
+#include "rbe_py_file_loader.h"
 #include "../../engine_context.h"
 #include "../../asset_manager.h"
 #include "../../input/input.h"
 #include "../../audio/audio_manager.h"
 #include "../../scripting/script_context.h"
 #include "../../scripting/python/py_helper.h"
-#include "../../scene/scene_manager.h"
 #include "../../physics/collision/collision.h"
 #include "../../camera/camera.h"
 #include "../../camera/camera_manager.h"
@@ -20,10 +19,10 @@
 #include "../../ecs/component/animated_sprite_component.h"
 #include "../../ecs/component/collider2d_component.h"
 #include "../../ecs/component/color_square_component.h"
-#include "../../ecs/component/node_component.h"
 #include "../../ecs/component/script_component.h"
 #include "../../ecs/component/sprite_component.h"
 #include "../../ecs/component/text_label_component.h"
+#include "../../scene/scene_manager.h"
 #include "../../networking/rbe_network.h"
 #include "../../utils/rbe_string_util.h"
 #include "../../utils/rbe_assert.h"
@@ -208,7 +207,8 @@ PyObject* rbe_py_api_create_stage_nodes(PyObject* self, PyObject* args, PyObject
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "O", rbePyApiCreateStageNodesKWList, &stageNodeList)) {
         RBE_ASSERT_FMT(PyList_Check(stageNodeList), "Passed in stage nodes are not a python list, check python api implementation...");
         rbe_logger_debug("setup stage nodes:");
-        setup_scene_stage_nodes(NULL_ENTITY, stageNodeList); // Assumes this is the root entity node for the scene
+        file_scene_node_create_cached_file_scene_nodes_from_list(stageNodeList);
+//        setup_scene_stage_nodes(NULL, stageNodeList); // Assumes this is the root entity node for the scene
         Py_RETURN_NONE;
     }
     return NULL;
@@ -216,287 +216,6 @@ PyObject* rbe_py_api_create_stage_nodes(PyObject* self, PyObject* args, PyObject
 
 PyObject* PyInit_rbe_py_API(void) {
     return PyModule_Create(&rbePyAPIModDef);
-}
-
-//--- Node Utils ---//
-void setup_scene_stage_nodes(SceneTreeNode* parent, PyObject* stageNodeList) {
-    for (Py_ssize_t i = 0; i < PyList_Size(stageNodeList); i++) {
-        SceneTreeNode* node = rbe_scene_tree_create_tree_node(rbe_ec_system_create_entity(), parent);
-        // Set tree root if parent is absent
-        if (parent == NULL) {
-            rbe_scene_manager_set_active_scene_root(node);
-        } else {
-            parent->children[parent->childCount++] = node;
-        }
-
-        PyObject* pStageNode = PyList_GetItem(stageNodeList, i);
-        // Node component is used for all scene nodes
-        const char* nodeName = phy_get_string_from_var(pStageNode, "name");
-        const char* nodeType = phy_get_string_from_var(pStageNode, "type");
-        NodeComponent* nodeComponent = node_component_create();
-        strcpy(nodeComponent->name, nodeName);
-        nodeComponent->type = node_get_base_type(nodeType);
-        RBE_ASSERT_FMT(nodeComponent->type != NodeBaseType_INVALID, "Node '%s' has an invalid node type '%s'", nodeName, nodeType);
-        component_manager_set_component(node->entity, ComponentDataIndex_NODE, nodeComponent);
-
-        // Process tags if tags var is a list
-        PyObject* tagsListVar = PyObject_GetAttrString(pStageNode, "tags");
-        if (PyList_Check(tagsListVar)) {
-            for (Py_ssize_t tagIndex = 0; tagIndex < PyList_Size(tagsListVar); tagIndex++) {}
-        }
-        // TODO: Actually load external scene file here and updated variables
-        PyObject* externalNodeSourceVar = PyObject_GetAttrString(pStageNode, "external_node_source");
-        if (externalNodeSourceVar != Py_None) {
-            const char* externalNodeSourcePath = phy_get_string_from_var(externalNodeSourceVar, "external_node_source");
-        }
-        // Components
-        // Testing module getting stuff to store component classes
-        PyObject* componentsListVar = PyObject_GetAttrString(pStageNode, "components");
-        if (PyList_Check(componentsListVar)) {
-            for (Py_ssize_t componentIndex = 0; componentIndex < PyList_Size(componentsListVar); componentIndex++) {
-                PyObject* pComponent = PyList_GetItem(componentsListVar, componentIndex);
-                RBE_ASSERT(pComponent != NULL);
-                setup_scene_component_node(node->entity, pComponent);
-            }
-        }
-        // TODO: Do in a different step or having different functionality to add node to scene tree
-        rbe_ec_system_update_entity_signature_with_systems(node->entity);
-        // Children Nodes
-        PyObject* childrenListVar = PyObject_GetAttrString(pStageNode, "children");
-        if (PyList_Check(childrenListVar)) {
-            // Recurse through children nodes
-            setup_scene_stage_nodes(node, childrenListVar);
-        }
-
-        rbe_scene_manager_queue_entity_for_creation(node); // May move in a different place TODO: Figure out...
-
-        rbe_logger_debug("node_name = %s, node_type = %s", nodeName, nodeType);
-        Py_DECREF(externalNodeSourceVar);
-    }
-}
-
-void setup_scene_component_node(Entity entity, PyObject* component) {
-    const char* className = Py_TYPE(component)->tp_name; // TODO: Should probably Py_DecRed()?
-    if (strcmp(className, "Transform2DComponent") == 0) {
-        rbe_logger_debug("Building transform 2d component");
-        PyObject* pPosition = PyObject_GetAttrString(component, "position");
-        const float positionX = phy_get_float_from_var(pPosition, "x");
-        const float positionY = phy_get_float_from_var(pPosition, "y");
-        PyObject* pScale = PyObject_GetAttrString(component, "scale");
-        const float scaleX = phy_get_float_from_var(pScale, "x");
-        const float scaleY = phy_get_float_from_var(pScale, "y");
-        const float rotation = phy_get_float_from_var(component, "rotation");
-        const int zIndex = phy_get_int_from_var(component, "z_index");
-        const bool zIndexRelativeToParent = phy_get_bool_from_var(component, "z_index_relative_to_parent");
-        const bool ignoreCamera = phy_get_bool_from_var(component, "ignore_camera");
-        Transform2DComponent* transform2DComponent = transform2d_component_create();
-        transform2DComponent->localTransform.position.x = positionX;
-        transform2DComponent->localTransform.position.y = positionY;
-        transform2DComponent->localTransform.scale.x = scaleX;
-        transform2DComponent->localTransform.scale.y = scaleY;
-        transform2DComponent->localTransform.rotation = rotation;
-        transform2DComponent->zIndex = zIndex;
-        transform2DComponent->isZIndexRelativeToParent = zIndexRelativeToParent;
-        transform2DComponent->ignoreCamera = ignoreCamera;
-        component_manager_set_component(entity, ComponentDataIndex_TRANSFORM_2D, transform2DComponent);
-        rbe_logger_debug("position: (%f, %f), scale: (%f, %f), rotation: %f, z_index: %d, z_index_relative: %d, ignore_camera: %d",
-                         positionX, positionY, scaleX, scaleY, rotation, zIndex, zIndexRelativeToParent, ignoreCamera);
-        Py_DECREF(pPosition);
-        Py_DECREF(pScale);
-    } else if (strcmp(className, "SpriteComponent") == 0) {
-        rbe_logger_debug("Building sprite component");
-        const char* texturePath = phy_get_string_from_var(component, "texture_path");
-        PyObject* pDrawSource = PyObject_GetAttrString(component, "draw_source");
-        const float drawSourceX = phy_get_float_from_var(pDrawSource, "x");
-        const float drawSourceY = phy_get_float_from_var(pDrawSource, "y");
-        const float drawSourceW = phy_get_float_from_var(pDrawSource, "w");
-        const float drawSourceH = phy_get_float_from_var(pDrawSource, "h");
-        PyObject* pOrigin = PyObject_GetAttrString(component, "origin");
-        const float originX = phy_get_float_from_var(pOrigin, "x");
-        const float originY = phy_get_float_from_var(pOrigin, "y");
-        const bool flipX = phy_get_bool_from_var(component, "flip_x");
-        const bool flipY = phy_get_bool_from_var(component, "flip_y");
-        PyObject* pModulate = PyObject_GetAttrString(component, "modulate");
-        const int modulateR = phy_get_int_from_var(pModulate, "r");
-        const int modulateG = phy_get_int_from_var(pModulate, "g");
-        const int modulateB = phy_get_int_from_var(pModulate, "b");
-        const int modulateA = phy_get_int_from_var(pModulate, "a");
-        SpriteComponent* spriteComponent = sprite_component_create();
-        spriteComponent->texture = rbe_asset_manager_get_texture(texturePath);
-        RBE_ASSERT_FMT(spriteComponent->texture != NULL, "Unable to read texture path '%s'", texturePath);
-        spriteComponent->drawSource.x = drawSourceX;
-        spriteComponent->drawSource.y = drawSourceY;
-        spriteComponent->drawSource.w = drawSourceW;
-        spriteComponent->drawSource.h = drawSourceH;
-        spriteComponent->origin.x = originX;
-        spriteComponent->origin.y = originY;
-        spriteComponent->flipX = flipX;
-        spriteComponent->flipY = flipY;
-        const Color modulateColor = rbe_color_get_normalized_color(modulateR, modulateG, modulateB, modulateA);
-        spriteComponent->modulate.r = modulateColor.r;
-        spriteComponent->modulate.g = modulateColor.g;
-        spriteComponent->modulate.b = modulateColor.b;
-        spriteComponent->modulate.a = modulateColor.a;
-        component_manager_set_component(entity, ComponentDataIndex_SPRITE, spriteComponent);
-        rbe_logger_debug("texture_path = %s, draw_source = (%f, %f, %f, %f), origin: (%f, %f), flip_x: %d, flip_y: %d, modulate: (%d, %d, %d, %d)",
-                         texturePath, drawSourceX, drawSourceY, drawSourceW, drawSourceH, originX, originY, flipX, flipY, modulateR, modulateG, modulateB, modulateA);
-        Py_DECREF(pDrawSource);
-        Py_DECREF(pOrigin);
-        Py_DECREF(pModulate);
-    } else if (strcmp(className, "AnimatedSpriteComponent") == 0) {
-        rbe_logger_debug("Building animated sprite component");
-        AnimatedSpriteComponent* animatedSpriteComponent = animated_sprite_component_create();
-        const char* currentAnimationName = phy_get_string_from_var(component, "current_animation_name");
-        const bool isPlaying = phy_get_bool_from_var(component, "is_playing");
-        PyObject* pOrigin = PyObject_GetAttrString(component, "origin");
-        const float originX = phy_get_float_from_var(pOrigin, "x");
-        const float originY = phy_get_float_from_var(pOrigin, "y");
-        const bool flipX = phy_get_bool_from_var(component, "flip_x");
-        const bool flipY = phy_get_bool_from_var(component, "flip_y");
-        rbe_logger_debug("current_animation_name: '%s', is_playing: '%d', origin: (%f, %f), flip_x: '%d', flip_y: '%d'",
-                         currentAnimationName, isPlaying, originX, originY, flipX, flipY);
-        animatedSpriteComponent->isPlaying = isPlaying;
-        animatedSpriteComponent->origin.x = originX;
-        animatedSpriteComponent->origin.y = originY;
-        animatedSpriteComponent->flipX = flipX;
-        animatedSpriteComponent->flipY = flipY;
-
-        PyObject* pyAnimationsList = PyObject_GetAttrString(component, "animations");
-        RBE_ASSERT(PyList_Check(pyAnimationsList));
-        for (Py_ssize_t animationIndex = 0; animationIndex < PyList_Size(pyAnimationsList); animationIndex++) {
-            Animation animation;
-            animation.frameCount = 0;
-            animation.currentFrame = 0;
-            animation.isValid = true;
-            PyObject* pyAnimation = PyList_GetItem(pyAnimationsList, animationIndex);
-            RBE_ASSERT(pyAnimation != NULL);
-            const char* animationName = phy_get_string_from_var(pyAnimation, "name");
-            const int animationSpeed = phy_get_int_from_var(pyAnimation, "speed");
-            const bool animationLoops = phy_get_bool_from_var(pyAnimation, "loops");
-            rbe_logger_debug("building anim - name: '%s', speed: '%d', loops: '%d'", animationName, animationSpeed, animationLoops);
-            strcpy(animation.name, animationName);
-            animation.speed = animationSpeed;
-            animation.doesLoop = animationLoops;
-
-            PyObject* pyAnimationFramesList = PyObject_GetAttrString(pyAnimation, "frames");
-            RBE_ASSERT(PyList_Check(pyAnimationFramesList));
-            for (Py_ssize_t animationFrameIndex = 0; animationFrameIndex < PyList_Size(pyAnimationFramesList); animationFrameIndex++) {
-                PyObject* pyAnimationFrame = PyList_GetItem(pyAnimationFramesList, animationFrameIndex);
-                const int animationFrameNumber = phy_get_int_from_var(pyAnimationFrame, "frame");
-                const char* animationFrameTexturePath = phy_get_string_from_var(pyAnimationFrame, "texture_path");
-                PyObject* pyDrawSource = PyObject_GetAttrString(pyAnimationFrame, "draw_source");
-                RBE_ASSERT(pyDrawSource != NULL);
-                const float drawSourceX = phy_get_float_from_var(pyDrawSource, "x");
-                const float drawSourceY = phy_get_float_from_var(pyDrawSource, "y");
-                const float drawSourceW = phy_get_float_from_var(pyDrawSource, "w");
-                const float drawSourceH = phy_get_float_from_var(pyDrawSource, "h");
-                rbe_logger_debug("frame: %d, texture_path: %s, draw_source: (%f, %f, %f, %f)",
-                                 animationFrameNumber, animationFrameTexturePath, drawSourceX, drawSourceY, drawSourceW, drawSourceH);
-                AnimationFrame animationFrame;
-                animationFrame.texture = rbe_asset_manager_get_texture(animationFrameTexturePath);
-                RBE_ASSERT(animationFrame.texture != NULL);
-                animationFrame.frame = animationFrameNumber;
-                const Rect2 frameDrawSource = { drawSourceX, drawSourceY, drawSourceW, drawSourceH };
-                animationFrame.drawSource = frameDrawSource;
-                animation.animationFrames[animationFrame.frame] = animationFrame;
-                animation.frameCount++;
-
-                Py_DECREF(pyDrawSource);
-            }
-
-            // Set current animation if the name matches
-            animated_sprite_component_add_animation(animatedSpriteComponent, animation);
-            if (strcmp(animation.name, currentAnimationName) == 0) {
-                animatedSpriteComponent->currentAnimation = animation;
-            }
-        }
-
-        component_manager_set_component(entity, ComponentDataIndex_ANIMATED_SPRITE, animatedSpriteComponent);
-
-        Py_DECREF(pOrigin);
-    } else if (strcmp(className, "TextLabelComponent") == 0) {
-        rbe_logger_debug("Building text label component");
-        const char* textLabelUID = phy_get_string_from_var(component, "uid");
-        const char* textLabelText = phy_get_string_from_var(component, "text");
-        PyObject* pColor = PyObject_GetAttrString(component, "color");
-        const int colorR = phy_get_int_from_var(pColor, "r");
-        const int colorG = phy_get_int_from_var(pColor, "g");
-        const int colorB = phy_get_int_from_var(pColor, "b");
-        const int colorA = phy_get_int_from_var(pColor, "a");
-        const Color textLabelColor = rbe_color_get_normalized_color(colorR, colorG, colorB, colorA);
-        TextLabelComponent* textLabelComponent = text_label_component_create();
-        textLabelComponent->font = rbe_asset_manager_get_font(textLabelUID);
-        RBE_ASSERT(textLabelComponent->font != NULL);
-        strcpy(textLabelComponent->text, textLabelText);
-        textLabelComponent->color = textLabelColor;
-        component_manager_set_component(entity, ComponentDataIndex_TEXT_LABEL, textLabelComponent);
-        rbe_logger_debug("uid: %s, text: %s, color(%d, %d, %d, %d)", textLabelUID, textLabelText, colorR, colorG, colorB, colorA);
-        Py_DECREF(pColor);
-    } else if (strcmp(className, "ScriptComponent") == 0) {
-        rbe_logger_debug("Building script component");
-        const char* scriptClassPath = phy_get_string_from_var(component, "class_path");
-        const char* scriptClassName = phy_get_string_from_var(component, "class_name");
-        ScriptComponent* scriptComponent = script_component_create();
-        scriptComponent->classPath = scriptClassPath;
-        scriptComponent->className = scriptClassName;
-        scriptComponent->contextType = ScriptContextType_PYTHON;
-        component_manager_set_component(entity, ComponentDataIndex_SCRIPT, scriptComponent);
-        rbe_logger_debug("class_path: %s, class_name: %s", scriptClassPath, scriptClassName);
-    } else if (strcmp(className, "Collider2DComponent") == 0) {
-        rbe_logger_debug("Building collider2d component");
-        PyObject* pyExtents = PyObject_GetAttrString(component, "extents");
-        RBE_ASSERT(pyExtents != NULL);
-        const float rectW = phy_get_float_from_var(pyExtents, "w");
-        const float rectH = phy_get_float_from_var(pyExtents, "h");
-        PyObject* pyColor = PyObject_GetAttrString(component, "color");
-        RBE_ASSERT(pyColor != NULL);
-        const int colorR = phy_get_int_from_var(pyColor, "r");
-        const int colorG = phy_get_int_from_var(pyColor, "g");
-        const int colorB = phy_get_int_from_var(pyColor, "b");
-        const int colorA = phy_get_int_from_var(pyColor, "a");
-        Collider2DComponent* collider2DComponent = collider2d_component_create();
-        collider2DComponent->extents.w = rectW;
-        collider2DComponent->extents.h = rectH;
-        collider2DComponent->color.r = (float) colorR / 255.0f;
-        collider2DComponent->color.g = (float) colorG / 255.0f;
-        collider2DComponent->color.b = (float) colorB / 255.0f;
-        collider2DComponent->color.a = (float) colorA / 255.0f;
-        collider2DComponent->collisionExceptionCount = 0;
-        component_manager_set_component(entity, ComponentDataIndex_COLLIDER_2D, collider2DComponent);
-        rbe_logger_debug("extents: (%f, %f), color: (%f, %f, %f, %f)",
-                         rectW, rectH, collider2DComponent->color.r, collider2DComponent->color.g, collider2DComponent->color.b, collider2DComponent->color.a);
-
-        Py_DECREF(pyExtents);
-        Py_DECREF(pyColor);
-    } else if (strcmp(className, "ColorSquareComponent") == 0) {
-        rbe_logger_debug("Building collider2d component");
-        PyObject* pySize = PyObject_GetAttrString(component, "size");
-        RBE_ASSERT(pySize != NULL);
-        const float rectW = phy_get_float_from_var(pySize, "w");
-        const float rectH = phy_get_float_from_var(pySize, "h");
-        PyObject* pyColor = PyObject_GetAttrString(component, "color");
-        RBE_ASSERT(pyColor != NULL);
-        const int colorR = phy_get_int_from_var(pyColor, "r");
-        const int colorG = phy_get_int_from_var(pyColor, "g");
-        const int colorB = phy_get_int_from_var(pyColor, "b");
-        const int colorA = phy_get_int_from_var(pyColor, "a");
-        ColorSquareComponent* colorSquareComponent = color_square_component_create();
-        colorSquareComponent->size.w = rectW;
-        colorSquareComponent->size.h = rectH;
-        colorSquareComponent->color.r = (float) colorR / 255.0f;
-        colorSquareComponent->color.g = (float) colorG / 255.0f;
-        colorSquareComponent->color.b = (float) colorB / 255.0f;
-        colorSquareComponent->color.a = (float) colorA / 255.0f;
-        component_manager_set_component(entity, ComponentDataIndex_COLOR_SQUARE, colorSquareComponent);
-        rbe_logger_debug("size: (%f, %f), color: (%f, %f, %f, %f)",
-                         rectW, rectH, colorSquareComponent->color.r, colorSquareComponent->color.g,
-                         colorSquareComponent->color.b, colorSquareComponent->color.a);
-
-        Py_DECREF(pySize);
-        Py_DECREF(pyColor);
-    } else {
-        rbe_logger_error("Invalid component class name: '%s'", className);
-    }
 }
 
 // Input

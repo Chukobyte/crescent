@@ -1,6 +1,7 @@
 #include "text_label_component.h"
 
 #include <stddef.h>
+#include <string.h>
 
 #include "../../memory/rbe_mem.h"
 
@@ -10,4 +11,14 @@ TextLabelComponent* text_label_component_create() {
     textLabelComponent->color = rbe_color_get_white();
     textLabelComponent->text[0] = '\0';
     return textLabelComponent;
+}
+
+void text_label_component_delete(TextLabelComponent* textLabelComponent) {
+    RBE_MEM_FREE(textLabelComponent);
+}
+
+TextLabelComponent* text_label_component_copy(const TextLabelComponent* textLabelComponent) {
+    TextLabelComponent* copiedNode = RBE_MEM_ALLOCATE(TextLabelComponent);
+    memcpy(copiedNode, textLabelComponent, sizeof(TextLabelComponent));
+    return copiedNode;
 }
