@@ -35,38 +35,34 @@ SceneNode* SceneManager::LoadSceneTreeNode(FileSceneNode* node, SceneNode* paren
     sceneNode->name = node->name;
     sceneNode->type = node->type;
 
-    // Component
-    for (size_t i = 0; i < MAX_COMPONENTS; i++) {
-        sceneNode->components[i] = nullptr;
-    }
-
+    // Components
     if (node->components[ComponentDataIndex_TRANSFORM_2D] != nullptr) {
         Transform2DComponent* transform2DComponent = transform2d_component_copy((Transform2DComponent*) node->components[ComponentDataIndex_TRANSFORM_2D]);
-        sceneNode->components[ComponentDataIndex_TRANSFORM_2D] = transform2DComponent;
+        sceneNode->AddComponent(new Transform2DComp(transform2DComponent));
     }
     if (node->components[ComponentDataIndex_SPRITE] != nullptr) {
         SpriteComponent* spriteComponent = sprite_component_copy((SpriteComponent*) node->components[ComponentDataIndex_SPRITE]);
-        sceneNode->components[ComponentDataIndex_SPRITE] = spriteComponent;
+        sceneNode->AddComponent(new SpriteComp(spriteComponent, node->spriteTexturePath));
     }
     if (node->components[ComponentDataIndex_ANIMATED_SPRITE] != nullptr) {
-        AnimatedSpriteComponent* animatedSpriteComponent = animated_sprite_component_data_copy_to_animated_sprite((AnimatedSpriteComponentData*) node->components[ComponentDataIndex_ANIMATED_SPRITE]);
-        sceneNode->components[ComponentDataIndex_ANIMATED_SPRITE] = animatedSpriteComponent;
+        AnimatedSpriteComponentData* animatedSpriteComponentData = (AnimatedSpriteComponentData*) node->components[ComponentDataIndex_ANIMATED_SPRITE];
+        sceneNode->AddComponent(new AnimatedSpriteComp(animatedSpriteComponentData));
     }
     if (node->components[ComponentDataIndex_TEXT_LABEL] != nullptr) {
         TextLabelComponent* textLabelComponent = text_label_component_copy((TextLabelComponent*) node->components[ComponentDataIndex_TEXT_LABEL]);
-        sceneNode->components[ComponentDataIndex_TEXT_LABEL] = textLabelComponent;
+        sceneNode->AddComponent(new TextLabelComp(textLabelComponent, node->fontUID));
     }
     if (node->components[ComponentDataIndex_SCRIPT] != nullptr) {
         ScriptComponent* scriptComponent = script_component_copy((ScriptComponent*) node->components[ComponentDataIndex_SCRIPT]);
-        sceneNode->components[ComponentDataIndex_SCRIPT] = scriptComponent;
+        sceneNode->AddComponent(new ScriptComp(scriptComponent));
     }
     if (node->components[ComponentDataIndex_COLLIDER_2D] != nullptr) {
         Collider2DComponent* collider2DComponent = collider2d_component_copy((Collider2DComponent*) node->components[ComponentDataIndex_COLLIDER_2D]);
-        sceneNode->components[ComponentDataIndex_COLLIDER_2D] = collider2DComponent;
+        sceneNode->AddComponent(new Collider2DComp(collider2DComponent));
     }
     if (node->components[ComponentDataIndex_COLOR_SQUARE] != nullptr) {
         ColorSquareComponent* colorSquareComponent = color_square_component_copy((ColorSquareComponent*) node->components[ComponentDataIndex_COLOR_SQUARE]);
-        sceneNode->components[ComponentDataIndex_COLOR_SQUARE] = colorSquareComponent;
+        sceneNode->AddComponent(new ColorSquareComp(colorSquareComponent));
     }
 
     // Load children
