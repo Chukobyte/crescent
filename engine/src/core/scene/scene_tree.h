@@ -4,6 +4,8 @@
 extern "C" {
 #endif
 
+#include <stddef.h>
+
 #include "../ecs/entity/entity.h"
 
 // Maintains parent child relationship between nodes
