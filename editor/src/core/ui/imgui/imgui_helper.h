@@ -116,7 +116,7 @@ struct DockSpace {
     std::string id = "";
     ImVec2 size = ImVec2(800, 600);
     std::vector<DockSpaceWindow> windows;
-    ImGuiID dockSpaceId;
+    ImGuiID dockSpaceId = 0;
     bool hasBuilt = false;
 
     void Run(bool runWindows);
