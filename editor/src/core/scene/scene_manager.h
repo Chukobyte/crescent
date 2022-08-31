@@ -23,7 +23,7 @@ struct SceneNode {
     }
 
     template <typename T>
-    T* GetComponent() {
+    [[nodiscard]] T* GetComponent() {
         return static_cast<T*>(components[&typeid(T)]);
     }
 
