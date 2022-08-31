@@ -16,27 +16,27 @@ struct SceneNode {
     }
 
     template <typename T, typename... TArgs>
-    T& AddComponent(T* newComponent) {
-        componentTypeMap[&typeid(*newComponent)] = newComponent;
+    T& AddComponent(TArgs&&... args) {
+        T* newComponent(new T(std::forward<TArgs>(args)...));
+        components[&typeid(*newComponent)] = newComponent;
         return *newComponent;
     }
 
     template <typename T>
     T* GetComponent() {
-        return static_cast<T*>(componentTypeMap[&typeid(T)]);
+        return static_cast<T*>(components[&typeid(T)]);
     }
 
     template <typename T>
     bool HasComponent() const {
-        return componentTypeMap.count(&typeid(T));
+        return components.count(&typeid(T));
     }
 
     std::string name;
     NodeBaseType type = NodeBaseType_INVALID;
-//    void* components[MAX_COMPONENTS];
     SceneNode* parent = nullptr;
     std::vector<SceneNode*> children;
-    std::map<const std::type_info*, EditorComponent*> componentTypeMap;
+    std::map<const std::type_info*, EditorComponent*> components;
 };
 
 struct SceneNodeFile {

@@ -1,13 +1,6 @@
 #include "scene_manager.h"
 
 #include "../engine/src/core/scripting/python/py_helper.h"
-#include "../engine/src/core/ecs/component/transform2d_component.h"
-#include "../engine/src/core/ecs/component/sprite_component.h"
-#include "../engine/src/core/ecs/component/animated_sprite_component.h"
-#include "../engine/src/core/ecs/component/text_label_component.h"
-#include "../engine/src/core/ecs/component/script_component.h"
-#include "../engine/src/core/ecs/component/collider2d_component.h"
-#include "../engine/src/core/ecs/component/color_square_component.h"
 #include "../engine/src/core/utils/logger.h"
 #include "../engine/src/core/utils/rbe_assert.h"
 
@@ -38,31 +31,31 @@ SceneNode* SceneManager::LoadSceneTreeNode(FileSceneNode* node, SceneNode* paren
     // Components
     if (node->components[ComponentDataIndex_TRANSFORM_2D] != nullptr) {
         Transform2DComponent* transform2DComponent = transform2d_component_copy((Transform2DComponent*) node->components[ComponentDataIndex_TRANSFORM_2D]);
-        sceneNode->AddComponent(new Transform2DComp(transform2DComponent));
+        sceneNode->AddComponent<Transform2DComp>(transform2DComponent);
     }
     if (node->components[ComponentDataIndex_SPRITE] != nullptr) {
         SpriteComponent* spriteComponent = sprite_component_copy((SpriteComponent*) node->components[ComponentDataIndex_SPRITE]);
-        sceneNode->AddComponent(new SpriteComp(spriteComponent, node->spriteTexturePath));
+        sceneNode->AddComponent<SpriteComp>(spriteComponent, node->spriteTexturePath);
     }
     if (node->components[ComponentDataIndex_ANIMATED_SPRITE] != nullptr) {
         AnimatedSpriteComponentData* animatedSpriteComponentData = (AnimatedSpriteComponentData*) node->components[ComponentDataIndex_ANIMATED_SPRITE];
-        sceneNode->AddComponent(new AnimatedSpriteComp(animatedSpriteComponentData));
+        sceneNode->AddComponent<AnimatedSpriteComp>(animatedSpriteComponentData);
     }
     if (node->components[ComponentDataIndex_TEXT_LABEL] != nullptr) {
         TextLabelComponent* textLabelComponent = text_label_component_copy((TextLabelComponent*) node->components[ComponentDataIndex_TEXT_LABEL]);
-        sceneNode->AddComponent(new TextLabelComp(textLabelComponent, node->fontUID));
+        sceneNode->AddComponent<TextLabelComp>(textLabelComponent, node->fontUID);
     }
     if (node->components[ComponentDataIndex_SCRIPT] != nullptr) {
         ScriptComponent* scriptComponent = script_component_copy((ScriptComponent*) node->components[ComponentDataIndex_SCRIPT]);
-        sceneNode->AddComponent(new ScriptComp(scriptComponent));
+        sceneNode->AddComponent<ScriptComp>(scriptComponent);
     }
     if (node->components[ComponentDataIndex_COLLIDER_2D] != nullptr) {
         Collider2DComponent* collider2DComponent = collider2d_component_copy((Collider2DComponent*) node->components[ComponentDataIndex_COLLIDER_2D]);
-        sceneNode->AddComponent(new Collider2DComp(collider2DComponent));
+        sceneNode->AddComponent<Collider2DComp>(collider2DComponent);
     }
     if (node->components[ComponentDataIndex_COLOR_SQUARE] != nullptr) {
         ColorSquareComponent* colorSquareComponent = color_square_component_copy((ColorSquareComponent*) node->components[ComponentDataIndex_COLOR_SQUARE]);
-        sceneNode->AddComponent(new ColorSquareComp(colorSquareComponent));
+        sceneNode->AddComponent<ColorSquareComp>(colorSquareComponent);
     }
 
     // Load children
