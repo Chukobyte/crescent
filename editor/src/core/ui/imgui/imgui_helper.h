@@ -90,10 +90,10 @@ struct CheckBox {
 };
 
 struct Window {
-    const char* name;
+    std::string name;
     bool* open = nullptr;
     ImGuiWindowFlags windowFlags = 0;
-    ImGuiHelperCallbackFunc callbackFunc;
+    ImGuiHelperCallbackFunc callbackFunc = nullptr;
     std::optional<ImVec2> position;
     std::optional<ImVec2> size;
     ImGuiCond_ windowCond = ImGuiCond_Once;

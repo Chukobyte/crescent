@@ -135,7 +135,7 @@ void ImGuiHelper::BeginWindow(const ImGuiHelper::Window& window) {
     if (window.size.has_value()) {
         ImGui::SetNextWindowSize(*window.size, window.windowCond);
     }
-    ImGui::Begin(window.name, window.open, window.windowFlags);
+    ImGui::Begin(window.name.c_str(), window.open, window.windowFlags);
     window.callbackFunc(context);
 }
 
@@ -201,7 +201,7 @@ void ImGuiHelper::DockSpace::Run(bool runWindows) {
                 break;
             }
             }
-            ImGui::DockBuilderDockWindow(dockSpaceWindow.window.name, dockId);
+            ImGui::DockBuilderDockWindow(dockSpaceWindow.window.name.c_str(), dockId);
         }
         ImGui::DockBuilderFinish(dockSpaceId);
         hasBuilt = true;
