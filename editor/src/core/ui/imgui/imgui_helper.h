@@ -109,7 +109,7 @@ enum class DockSpacePosition {
 
 struct DockSpaceWindow {
     Window window;
-    DockSpacePosition position;
+    DockSpacePosition position = DockSpacePosition::Main;
 };
 
 struct DockSpace {

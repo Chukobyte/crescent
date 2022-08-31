@@ -178,7 +178,7 @@ void ImGuiHelper::DockSpace::Run(bool runWindows) {
         ImGuiID dockDownId = ImGui::DockBuilderSplitNode(dockSpaceId, ImGuiDir_Down, 0.3f, nullptr, &dockSpaceId);
 
         for (auto& dockSpaceWindow : windows) {
-            ImGuiID dockId;
+            ImGuiID dockId = dockSpaceId;
             switch (dockSpaceWindow.position) {
             case DockSpacePosition::Main: {
                 dockId = dockSpaceId;
