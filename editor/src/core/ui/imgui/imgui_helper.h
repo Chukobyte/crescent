@@ -2,6 +2,7 @@
 
 #include <string>
 #include <functional>
+#include <utility>
 #include <vector>
 #include <optional>
 #include <memory>
@@ -51,8 +52,8 @@ struct PopupModal {
 struct InputText {
     InputText(const std::string& label, std::string& value, int labelIndex = 0);
     void SetValue(std::string value);
-    std::string GetValue() const;
-    const char* GetInternalLabel() const;
+    [[nodiscard]] std::string GetValue() const;
+    [[nodiscard]] const char* GetInternalLabel() const;
 
     std::string label;
     std::string &value;
@@ -66,7 +67,7 @@ struct InputText {
 
 struct DragInt {
     DragInt(std::string label, int& value, int labelIndex = 0);
-    const char* GetInternalLabel() const;
+    [[nodiscard]] const char* GetInternalLabel() const;
 
     std::string label;
     int& value;
@@ -87,6 +88,12 @@ struct CheckBox {
 
   private:
     std::string internalLabel;
+};
+
+struct TreeNode {
+    std::string label;
+    ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_None;
+    ImGuiHelperCallbackFunc callbackFunc = nullptr;
 };
 
 struct Window {
@@ -127,6 +134,7 @@ void BeginPopupModal(const PopupModal& popupModal);
 void BeginInputText(const InputText& inputText);
 void BeginDragInt(const DragInt& dragInt);
 void BeginCheckBox(const CheckBox& checkBox);
+void BeginTreeNode(const TreeNode& treeNode);
 void BeginWindow(const Window& window);
 void BeginWindowWithEnd(const Window& window);
 }

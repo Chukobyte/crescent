@@ -127,6 +127,16 @@ void ImGuiHelper::BeginCheckBox(const CheckBox& checkBox) {
     ImGui::Checkbox(checkBox.GetInternalLabel(), &checkBox.value);
 }
 
+//--- TreeNode ---//
+void ImGuiHelper::BeginTreeNode(const ImGuiHelper::TreeNode &treeNode) {
+    if (ImGui::TreeNodeEx(treeNode.label.c_str(), treeNode.flags)) {
+        if (treeNode.callbackFunc) {
+            treeNode.callbackFunc(context);
+        }
+        ImGui::TreePop();
+    }
+}
+
 //--- Window ---//
 void ImGuiHelper::BeginWindow(const ImGuiHelper::Window& window) {
     if (window.position.has_value()) {
@@ -136,7 +146,9 @@ void ImGuiHelper::BeginWindow(const ImGuiHelper::Window& window) {
         ImGui::SetNextWindowSize(*window.size, window.windowCond);
     }
     ImGui::Begin(window.name.c_str(), window.open, window.windowFlags);
-    window.callbackFunc(context);
+    if (window.callbackFunc) {
+        window.callbackFunc(context);
+    }
 }
 
 void ImGuiHelper::BeginWindowWithEnd(const ImGuiHelper::Window& window) {
@@ -163,7 +175,7 @@ void ImGuiHelper::DockSpace::Run(bool runWindows) {
     ImGui::DockSpace(dockSpaceId, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
     if (!hasBuilt) {
         // Run windows to have them defined...
-        for (auto dockSpaceWindow : windows) {
+        for (const auto& dockSpaceWindow : windows) {
             ImGuiHelper::BeginWindowWithEnd(dockSpaceWindow.window);
         }
 
@@ -177,7 +189,7 @@ void ImGuiHelper::DockSpace::Run(bool runWindows) {
         ImGuiID dockLeftDownId = ImGui::DockBuilderSplitNode(dockLeftId, ImGuiDir_Down, 0.3f, nullptr, &dockLeftId);
         ImGuiID dockDownId = ImGui::DockBuilderSplitNode(dockSpaceId, ImGuiDir_Down, 0.3f, nullptr, &dockSpaceId);
 
-        for (auto& dockSpaceWindow : windows) {
+        for (const auto& dockSpaceWindow : windows) {
             ImGuiID dockId = dockSpaceId;
             switch (dockSpaceWindow.position) {
             case DockSpacePosition::Main: {
@@ -208,7 +220,7 @@ void ImGuiHelper::DockSpace::Run(bool runWindows) {
     }
 
     if (runWindows) {
-        for (auto dockSpaceWindow : windows) {
+        for (const auto& dockSpaceWindow : windows) {
             ImGuiHelper::BeginWindowWithEnd(dockSpaceWindow.window);
         }
         ImGui::End();

@@ -3,7 +3,23 @@
 #include "../engine/src/core/scripting/python/py_helper.h"
 #include "../engine/src/core/utils/logger.h"
 #include "../engine/src/core/utils/rbe_assert.h"
+#include "../ui/imgui/imgui_helper.h"
 
+//--- Scene Node Utils ---//
+void SceneNodeUtils::DisplayTreeNodeLeaf(SceneNode *sceneNode) {
+    ImGuiHelper::TreeNode treeNode = {
+        .label = sceneNode->name,
+        .flags = ImGuiTreeNodeFlags_None,
+        .callbackFunc = [sceneNode] (ImGuiHelper::Context* context) {
+            for (auto* sceneNodeChild : sceneNode->children) {
+                DisplayTreeNodeLeaf(sceneNodeChild);
+            }
+        }
+    };
+    ImGuiHelper::BeginTreeNode(treeNode);
+}
+
+//--- Scene Manager ---//
 bool SceneManager::LoadSceneFromFile(const char *sceneFilePath) {
     pyh_run_python_file(sceneFilePath);
     if (FileSceneNode* rootFileSceneNode = file_scene_node_get_cached_file_scene_node()) {
@@ -71,3 +87,4 @@ SceneNode* SceneManager::LoadSceneTreeNode(FileSceneNode* node, SceneNode* paren
     }
     return sceneNode;
 }
+

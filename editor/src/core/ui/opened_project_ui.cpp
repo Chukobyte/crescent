@@ -201,7 +201,7 @@ void OpenedProjectUI::ProcessModalPopups() {
 
                 const std::string deleteText = "Delete##" + std::to_string(i);
                 if (ImGui::Button(deleteText.c_str())) {
-                    fontIndexToDelete = i;
+                    fontIndexToDelete = (int) i;
                 }
                 ImGui::Separator();
             }
@@ -226,10 +226,9 @@ void OpenedProjectUI::ProcessWindows() {
         .windowFlags = ImGuiWindowFlags_NoResize,
         .callbackFunc = [] (ImGuiHelper::Context* context) {
             static SceneManager* sceneManager = SceneManager::Get();
-            // Only looks at the first loaded scene file for now... TODO: Clean up
             if (auto sceneNodeFile = sceneManager->selectedSceneFile) {
                 if (auto rootNode = sceneNodeFile->rootNode) {
-                    ImGui::Text("%s", rootNode->name.c_str());
+                    SceneNodeUtils::DisplayTreeNodeLeaf(rootNode);
                 }
             }
         },

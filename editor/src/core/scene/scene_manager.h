@@ -10,7 +10,8 @@
 #include "../engine/src/core/ecs/component/node_component.h"
 #include "../engine/src/core/scripting/python/rbe_py_file_loader.h"
 
-struct SceneNode {
+class SceneNode {
+  public:
     SceneNode() {
         uid = GenerateUID();
     }
@@ -71,6 +72,10 @@ struct SceneNodeFile {
     std::string filePath;
     SceneNode* rootNode = nullptr;
 };
+
+namespace SceneNodeUtils {
+void DisplayTreeNodeLeaf(SceneNode* sceneNode);
+}
 
 class SceneManager : public Singleton<SceneManager> {
   public:
