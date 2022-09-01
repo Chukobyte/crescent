@@ -7,10 +7,17 @@
 
 //--- Scene Node Utils ---//
 void SceneNodeUtils::DisplayTreeNodeLeaf(SceneNode *sceneNode) {
+    static SceneManager* sceneManager = SceneManager::Get();
+    static ImGuiTreeNodeFlags defaultFlags = ImGuiTreeNodeFlags_DefaultOpen;
     ImGuiHelper::TreeNode treeNode = {
         .label = sceneNode->name,
-        .flags = ImGuiTreeNodeFlags_None,
+        .flags = sceneManager->selectedSceneNode == sceneNode ? ImGuiTreeNodeFlags_Selected | defaultFlags : defaultFlags,
         .callbackFunc = [sceneNode] (ImGuiHelper::Context* context) {
+            // Left Click
+            if (ImGui::IsItemClicked()) {
+                sceneManager->selectedSceneNode = sceneNode;
+            }
+
             for (auto* sceneNodeChild : sceneNode->children) {
                 DisplayTreeNodeLeaf(sceneNodeChild);
             }
