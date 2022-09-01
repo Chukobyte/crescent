@@ -258,13 +258,11 @@ void OpenedProjectUI::ProcessWindows() {
                 if (Transform2DComp* transform2DComp = selectedNode->GetComponentSafe<Transform2DComp>()) {
                     ImGui::Text("Transform 2D Component");
 
-                    ImGui::Text("Position");
-                    ImGui::SameLine();
-                    if (ImGui::DragFloat2("##position", (float*) &transform2DComp->transform2D.position, 1.0f, -999999.0f, 999999.0f, "%.2f")) {}
+                    ImGuiHelper::DragFloat2 positionDragFloat2("Position", (float*) &transform2DComp->transform2D.position);
+                    ImGuiHelper::BeginDragFloat2(positionDragFloat2);
 
-                    ImGui::Text("Scale");
-                    ImGui::SameLine();
-                    if (ImGui::DragFloat2("##scale", (float*) &transform2DComp->transform2D.scale, 1.0f, -999999.0f, 999999.0f, "%.2f")) {}
+                    ImGuiHelper::DragFloat2 scaleDragFloat2("Scale", (float*) &transform2DComp->transform2D.scale);
+                    ImGuiHelper::BeginDragFloat2(scaleDragFloat2);
 
                     ImGuiHelper::DragFloat rotationDragFloat("Rotation", transform2DComp->transform2D.rotation);
                     ImGuiHelper::BeginDragFloat(rotationDragFloat);

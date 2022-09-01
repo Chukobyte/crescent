@@ -127,6 +127,25 @@ void ImGuiHelper::BeginDragFloat(const DragFloat& dragFloat) {
     ImGui::DragFloat(dragFloat.GetInternalLabel(), &dragFloat.value, dragFloat.valueSpeed, dragFloat.valueMin, dragFloat.valueMax, dragFloat.format);
 }
 
+//--- Drag Float 2 ---//
+ImGuiHelper::DragFloat2::DragFloat2(std::string label, float* value, int labelIndex)
+    : label(std::move(label)),
+      value(value) {
+    internalLabel = "##" + std::to_string(labelIndex) + this->label;
+}
+
+const char* ImGuiHelper::DragFloat2::GetInternalLabel() const {
+    return internalLabel.c_str();
+}
+
+void ImGuiHelper::BeginDragFloat2(const DragFloat2& dragFloat2) {
+    if (!dragFloat2.label.empty()) {
+        ImGui::Text("%s", dragFloat2.label.c_str());
+        ImGui::SameLine();
+    }
+    ImGui::DragFloat2(dragFloat2.GetInternalLabel(), dragFloat2.value, dragFloat2.valueSpeed, dragFloat2.valueMin, dragFloat2.valueMax, dragFloat2.format);
+}
+
 //--- CheckBox ---//
 ImGuiHelper::CheckBox::CheckBox(std::string label, bool &value)
     : label(std::move(label)),
@@ -245,3 +264,4 @@ void ImGuiHelper::DockSpace::Run(bool runWindows) {
         ImGui::End();
     }
 }
+
