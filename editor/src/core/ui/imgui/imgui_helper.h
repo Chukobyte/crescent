@@ -79,6 +79,21 @@ struct DragInt {
     std::string internalLabel;
 };
 
+struct DragFloat {
+    DragFloat(std::string label, float& value, int labelIndex = 0);
+    [[nodiscard]] const char* GetInternalLabel() const;
+
+    std::string label;
+    float& value;
+    float valueSpeed = 1.0f;
+    float valueMin = -999999.0f;
+    float valueMax = 999999.0f;
+    char format[8] = "%.2f";
+
+  private:
+    std::string internalLabel;
+};
+
 struct CheckBox {
     CheckBox(std::string  label, bool& value);
     [[nodiscard]] const char* GetInternalLabel() const;
@@ -133,6 +148,7 @@ void BeginMainMenuBar(const MenuBar& menuBar);
 void BeginPopupModal(const PopupModal& popupModal);
 void BeginInputText(const InputText& inputText);
 void BeginDragInt(const DragInt& dragInt);
+void BeginDragFloat(const DragFloat& dragFloat);
 void BeginCheckBox(const CheckBox& checkBox);
 void BeginTreeNode(const TreeNode& treeNode);
 void BeginWindow(const Window& window);

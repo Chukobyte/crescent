@@ -257,12 +257,28 @@ void OpenedProjectUI::ProcessWindows() {
                 // Transform2D
                 if (Transform2DComp* transform2DComp = selectedNode->GetComponentSafe<Transform2DComp>()) {
                     ImGui::Text("Transform 2D Component");
-                    ImGui::Text("Position: (%f, %f)", transform2DComp->transform2D.position.x, transform2DComp->transform2D.position.y);
-                    ImGui::Text("Scale: (%f, %f)", transform2DComp->transform2D.scale.x, transform2DComp->transform2D.scale.y);
-                    ImGui::Text("Rotation: %f", transform2DComp->transform2D.rotation);
-                    ImGui::Text("Z Index: %d", transform2DComp->zIndex);
-                    ImGui::Text("Z Is Relative To Parent: %s", Helper::BoolToString(transform2DComp->isZIndexRelativeToParent).c_str());
-                    ImGui::Text("Ignore Camera: %s", Helper::BoolToString(transform2DComp->ignoreCamera).c_str());
+
+                    ImGui::Text("Position");
+                    ImGui::SameLine();
+                    if (ImGui::DragFloat2("##position", (float*) &transform2DComp->transform2D.position, 1.0f, -999999.0f, 999999.0f, "%.2f")) {}
+
+                    ImGui::Text("Scale");
+                    ImGui::SameLine();
+                    if (ImGui::DragFloat2("##scale", (float*) &transform2DComp->transform2D.scale, 1.0f, -999999.0f, 999999.0f, "%.2f")) {}
+
+                    ImGuiHelper::DragFloat rotationDragFloat("Rotation", transform2DComp->transform2D.rotation);
+                    ImGuiHelper::BeginDragFloat(rotationDragFloat);
+
+                    ImGuiHelper::DragInt zIndexDragInt("Z Index", transform2DComp->zIndex);
+                    zIndexDragInt.valueMin = -1000;
+                    zIndexDragInt.valueMax = 1000;
+                    ImGuiHelper::BeginDragInt(zIndexDragInt);
+
+                    ImGuiHelper::CheckBox zIsRelativeToParentCheckBox("Z Is Relative To Parent", transform2DComp->isZIndexRelativeToParent);
+                    ImGuiHelper::BeginCheckBox(zIsRelativeToParentCheckBox);
+
+                    ImGuiHelper::CheckBox ignoreCameraCheckBox("Ignore Camera", transform2DComp->ignoreCamera);
+                    ImGuiHelper::BeginCheckBox(ignoreCameraCheckBox);
                 }
             }
         },
