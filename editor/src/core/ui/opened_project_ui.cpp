@@ -249,6 +249,7 @@ void DrawSprite(SceneNode* node) {
     if (SpriteComp* spriteComp = node->GetComponentSafe<SpriteComp>()) {
         ImGui::Text("Sprite Component");
 
+        // TODO: Configured textures should have there paths loaded into a combo box
         ImGui::Text("Texture Path: %s", spriteComp->texturePath.c_str());
 
         ImGuiHelper::DragFloat4 drawSourceDragFloat4("Draw Source", (float*) &spriteComp->drawSource);
@@ -273,6 +274,8 @@ void DrawSprite(SceneNode* node) {
 void DrawAnimatedSprite(SceneNode* node) {
     if (AnimatedSpriteComp* animatedSpriteComp = node->GetComponentSafe<AnimatedSpriteComp>()) {
         ImGui::Text("Animated Sprite Component");
+
+        // TODO: Add animations panel
 
         ImGui::Text("Current Animation: %s", animatedSpriteComp->currentAnimationName.c_str());
 
@@ -305,6 +308,7 @@ void DrawTextLabel(SceneNode* node) {
         ImGuiHelper::ColorEdit4 colorColorEdit4("Color", (float*) &textLabelComp->color);
         ImGuiHelper::BeginColorEdit4(colorColorEdit4);
 
+        // TODO: Make FontUID combo boxed which is populated with configured font UIDs
         ImGui::Text("FontUID: %s", textLabelComp->fontUID.c_str());
 
         ImGui::Separator();
