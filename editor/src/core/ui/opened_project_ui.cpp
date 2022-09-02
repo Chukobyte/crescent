@@ -312,10 +312,16 @@ void DrawTextLabel(SceneNode* node) {
         static ImGuiHelper::ComboBox fontUIDComboBox("FontUID", { "default", "fight-64" });
         if (textLabelComp != lastTextLabelComp) {
             lastTextLabelComp = textLabelComp;
+            fontUIDComboBox.items.clear();
+            fontUIDComboBox.items.emplace_back("default");
+            ProjectProperties* projectProperties = ProjectProperties::Get();
+            for (const auto& fontAsset : projectProperties->assets.fonts) {
+                fontUIDComboBox.items.emplace_back(fontAsset.uid);
+            }
+            fontUIDComboBox.SetSelected(textLabelComp->fontUID);
             fontUIDComboBox.onSelectionChangeCallback = [textLabelComp] (const char* newItem) {
                 textLabelComp->fontUID = newItem;
             };
-            fontUIDComboBox.SetSelected(textLabelComp->fontUID);
         }
         ImGuiHelper::BeginComboBox(fontUIDComboBox);
 
