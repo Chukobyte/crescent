@@ -150,15 +150,17 @@ struct CheckBox {
 };
 
 struct ComboBox {
-    ComboBox(std::string label, const std::vector<std::string>& items, int labelIndex = 0);
+    ComboBox(std::string label, const std::vector<std::string>& items, std::function<void(const char* newItem)> onSelectionChangeCallback = nullptr, int labelIndex = 0);
     [[nodiscard]] const char* GetInternalLabel() const;
     [[nodiscard]] const char* GetSelectedItem() const;
+    void SetSelected(const std::string& itemToSelect);
 
     std::string label;
     std::vector<std::string> items;
     int selectedIndex = 0;
+    std::function<void(const char* newItem)> onSelectionChangeCallback = nullptr;
 
-private:
+  private:
     std::string internalLabel;
 };
 

@@ -308,10 +308,15 @@ void DrawTextLabel(SceneNode* node) {
         ImGuiHelper::ColorEdit4 colorColorEdit4("Color", (float*) &textLabelComp->color);
         ImGuiHelper::BeginColorEdit4(colorColorEdit4);
 
-        // TODO: Make FontUID combo boxed which is populated with configured font UIDs
-        ImGui::Text("FontUID: %s", textLabelComp->fontUID.c_str());
-
+        static TextLabelComp* lastTextLabelComp = nullptr;
         static ImGuiHelper::ComboBox fontUIDComboBox("FontUID", { "default", "fight-64" });
+        if (textLabelComp != lastTextLabelComp) {
+            lastTextLabelComp = textLabelComp;
+            fontUIDComboBox.onSelectionChangeCallback = [textLabelComp] (const char* newItem) {
+                textLabelComp->fontUID = newItem;
+            };
+            fontUIDComboBox.SetSelected(textLabelComp->fontUID);
+        }
         ImGuiHelper::BeginComboBox(fontUIDComboBox);
 
         ImGui::Separator();

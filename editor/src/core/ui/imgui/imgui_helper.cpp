@@ -204,10 +204,11 @@ void ImGuiHelper::BeginCheckBox(const CheckBox& checkBox) {
 }
 
 //--- ComboBox ---//
-ImGuiHelper::ComboBox::ComboBox(std::string label, const std::vector<std::string> &items, int labelIndex)
-        : label(std::move(label)),
-          items(items) {
-    internalLabel = "##" + this->label;
+ImGuiHelper::ComboBox::ComboBox(std::string label, const std::vector<std::string> &items, std::function<void(const char* newItem)> onSelectionChangeCallback, int labelIndex)
+    : label(std::move(label)),
+      items(items),
+      onSelectionChangeCallback(std::move(onSelectionChangeCallback)) {
+    internalLabel = "##" + std::to_string(labelIndex) + this->label;
 }
 
 const char* ImGuiHelper::ComboBox::GetInternalLabel() const {
@@ -221,6 +222,14 @@ const char* ImGuiHelper::ComboBox::GetSelectedItem() const {
     return nullptr;
 }
 
+void ImGuiHelper::ComboBox::SetSelected(const std::string& itemToSelect) {
+    for (int i = 0; i < items.size(); i++) {
+        if (items[i] == itemToSelect) {
+            selectedIndex = i;
+        }
+    }
+}
+
 void ImGuiHelper::BeginComboBox(ImGuiHelper::ComboBox &comboBox) {
     if (!comboBox.label.empty()) {
         ImGui::Text("%s", comboBox.label.c_str());
@@ -232,6 +241,9 @@ void ImGuiHelper::BeginComboBox(ImGuiHelper::ComboBox &comboBox) {
             const bool is_selected = (comboBox.selectedIndex == i);
             if (ImGui::Selectable(comboBox.items[i].c_str(), is_selected)) {
                 comboBox.selectedIndex = i;
+                if (comboBox.onSelectionChangeCallback) {
+                    comboBox.onSelectionChangeCallback(comboBox.GetSelectedItem());
+                }
             }
 
             // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
