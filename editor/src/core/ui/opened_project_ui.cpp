@@ -260,7 +260,10 @@ void DrawSprite(SceneNode* node) {
         ImGui::Separator();
     }
 }
-void DrawAnimatedSprite(SceneNode* node) {}
+
+void DrawAnimatedSprite(SceneNode* node) {
+
+}
 
 void DrawTextLabel(SceneNode* node) {
     if (TextLabelComp* textLabelComp = node->GetComponentSafe<TextLabelComp>()) {
@@ -278,9 +281,17 @@ void DrawTextLabel(SceneNode* node) {
     }
 }
 
-void DrawScript(SceneNode* node) {}
-void DrawCollider2D(SceneNode* node) {}
-void DrawColorSquare(SceneNode* node) {}
+void DrawScript(SceneNode* node) {
+
+}
+
+void DrawCollider2D(SceneNode* node) {
+
+}
+
+void DrawColorSquare(SceneNode* node) {
+
+}
 } // namespace ComponentDetailsDrawUtils
 
 void OpenedProjectUI::ProcessWindows() {
