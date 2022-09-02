@@ -274,6 +274,11 @@ void DrawAnimatedSprite(SceneNode* node) {
     if (AnimatedSpriteComp* animatedSpriteComp = node->GetComponentSafe<AnimatedSpriteComp>()) {
         ImGui::Text("Animated Sprite Component");
 
+        ImGui::Text("Current Animation: %s", animatedSpriteComp->currentAnimationName.c_str());
+
+        ImGuiHelper::CheckBox ignoreCameraCheckBox("Is Playing", animatedSpriteComp->isPlaying);
+        ImGuiHelper::BeginCheckBox(ignoreCameraCheckBox);
+
         ImGuiHelper::DragFloat2 originDragFloat2("Origin", (float*) &animatedSpriteComp->origin);
         ImGuiHelper::BeginDragFloat2(originDragFloat2);
 
@@ -285,9 +290,6 @@ void DrawAnimatedSprite(SceneNode* node) {
 
         ImGuiHelper::CheckBox flipYCheckBox("Flix Y", animatedSpriteComp->flipY);
         ImGuiHelper::BeginCheckBox(flipYCheckBox);
-
-        ImGuiHelper::CheckBox ignoreCameraCheckBox("Is Playing", animatedSpriteComp->isPlaying);
-        ImGuiHelper::BeginCheckBox(ignoreCameraCheckBox);
 
         ImGui::Separator();
     }
@@ -339,7 +341,15 @@ void DrawCollider2D(SceneNode* node) {
 
 void DrawColorRect(SceneNode* node) {
     if (ColorRectComp* colorRectComp = node->GetComponentSafe<ColorRectComp>()) {
+        ImGui::Text("Color Rect Component");
 
+        ImGuiHelper::DragFloat2 sizeDragFloat2("Size", (float*) &colorRectComp->size);
+        ImGuiHelper::BeginDragFloat2(sizeDragFloat2);
+
+        ImGuiHelper::ColorEdit4 colorColorEdit4("Color", (float*) &colorRectComp->color);
+        ImGuiHelper::BeginColorEdit4(colorColorEdit4);
+
+        ImGui::Separator();
     }
 }
 } // namespace ComponentDetailsDrawUtils

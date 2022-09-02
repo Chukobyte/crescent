@@ -54,13 +54,15 @@ struct AnimatedSpriteComp : public EditorComponent {
     AnimatedSpriteComp() = default;
 
     explicit AnimatedSpriteComp(const AnimatedSpriteComponentData* animatedSpriteComponentData)
-        : modulate(animatedSpriteComponentData->modulate),
+        : currentAnimationName(animatedSpriteComponentData->currentAnimation.name),
+          modulate(animatedSpriteComponentData->modulate),
           isPlaying(animatedSpriteComponentData->isPlaying),
           origin(animatedSpriteComponentData->origin),
           flipX(animatedSpriteComponentData->flipX),
           flipY(animatedSpriteComponentData->flipY) {}
 
 //    std::vector<Animation> animations;
+    std::string currentAnimationName;
     Color modulate = { .r = 1.0f, .g = 1.0f, .b = 1.0f, .a = 1.0f };
     bool isPlaying = false;
     Vector2 origin = { .x = 0.0f, .y = 0.0f };
