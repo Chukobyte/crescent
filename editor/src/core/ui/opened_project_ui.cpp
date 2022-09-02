@@ -311,6 +311,9 @@ void DrawTextLabel(SceneNode* node) {
         // TODO: Make FontUID combo boxed which is populated with configured font UIDs
         ImGui::Text("FontUID: %s", textLabelComp->fontUID.c_str());
 
+        static ImGuiHelper::ComboBox fontUIDComboBox("FontUID", { "default", "fight-64" });
+        ImGuiHelper::BeginComboBox(fontUIDComboBox);
+
         ImGui::Separator();
     }
 }

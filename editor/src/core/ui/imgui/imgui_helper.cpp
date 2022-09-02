@@ -203,6 +203,46 @@ void ImGuiHelper::BeginCheckBox(const CheckBox& checkBox) {
     ImGui::Checkbox(checkBox.GetInternalLabel(), &checkBox.value);
 }
 
+//--- ComboBox ---//
+ImGuiHelper::ComboBox::ComboBox(std::string label, const std::vector<std::string> &items, int labelIndex)
+        : label(std::move(label)),
+          items(items) {
+    internalLabel = "##" + this->label;
+}
+
+const char* ImGuiHelper::ComboBox::GetInternalLabel() const {
+    return internalLabel.c_str();
+}
+
+const char* ImGuiHelper::ComboBox::GetSelectedItem() const {
+    if (selectedIndex < items.size()) {
+        return items[selectedIndex].c_str();
+    }
+    return nullptr;
+}
+
+void ImGuiHelper::BeginComboBox(ImGuiHelper::ComboBox &comboBox) {
+    if (!comboBox.label.empty()) {
+        ImGui::Text("%s", comboBox.label.c_str());
+        ImGui::SameLine();
+    }
+    const char* selectedItemText = comboBox.GetSelectedItem();
+    if (ImGui::BeginCombo(comboBox.GetInternalLabel(), selectedItemText, 0)) {
+        for (int i = 0; i < comboBox.items.size(); i++) {
+            const bool is_selected = (comboBox.selectedIndex == i);
+            if (ImGui::Selectable(comboBox.items[i].c_str(), is_selected)) {
+                comboBox.selectedIndex = i;
+            }
+
+            // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+            if (is_selected) {
+                ImGui::SetItemDefaultFocus();
+            }
+        }
+        ImGui::EndCombo();
+    }
+}
+
 //--- TreeNode ---//
 void ImGuiHelper::BeginTreeNode(const ImGuiHelper::TreeNode &treeNode) {
     if (ImGui::TreeNodeEx(treeNode.label.c_str(), treeNode.flags)) {

@@ -149,6 +149,19 @@ struct CheckBox {
     std::string internalLabel;
 };
 
+struct ComboBox {
+    ComboBox(std::string label, const std::vector<std::string>& items, int labelIndex = 0);
+    [[nodiscard]] const char* GetInternalLabel() const;
+    [[nodiscard]] const char* GetSelectedItem() const;
+
+    std::string label;
+    std::vector<std::string> items;
+    int selectedIndex = 0;
+
+private:
+    std::string internalLabel;
+};
+
 struct TreeNode {
     std::string label;
     ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_None;
@@ -197,6 +210,7 @@ void BeginDragFloat2(const DragFloat2& dragFloat2);
 void BeginDragFloat4(const DragFloat4& dragFloat4);
 void BeginColorEdit4(const ColorEdit4& colorEdit4);
 void BeginCheckBox(const CheckBox& checkBox);
+void BeginComboBox(ComboBox& comboBox);
 void BeginTreeNode(const TreeNode& treeNode);
 void BeginWindow(const Window& window);
 void BeginWindowWithEnd(const Window& window);
