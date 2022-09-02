@@ -254,15 +254,43 @@ void DrawSprite(SceneNode* node) {
         ImGuiHelper::DragFloat4 drawSourceDragFloat4("Draw Source", (float*) &spriteComp->drawSource);
         ImGuiHelper::BeginDragFloat4(drawSourceDragFloat4);
 
+        ImGuiHelper::DragFloat2 originDragFloat2("Origin", (float*) &spriteComp->origin);
+        ImGuiHelper::BeginDragFloat2(originDragFloat2);
+
         ImGuiHelper::ColorEdit4 modulateColorEdit4("Modulate", (float*) &spriteComp->modulate);
         ImGuiHelper::BeginColorEdit4(modulateColorEdit4);
+
+        ImGuiHelper::CheckBox flipXCheckBox("Flix X", spriteComp->flipX);
+        ImGuiHelper::BeginCheckBox(flipXCheckBox);
+
+        ImGuiHelper::CheckBox flipYCheckBox("Flix Y", spriteComp->flipY);
+        ImGuiHelper::BeginCheckBox(flipYCheckBox);
 
         ImGui::Separator();
     }
 }
 
 void DrawAnimatedSprite(SceneNode* node) {
+    if (AnimatedSpriteComp* animatedSpriteComp = node->GetComponentSafe<AnimatedSpriteComp>()) {
+        ImGui::Text("Animated Sprite Component");
 
+        ImGuiHelper::DragFloat2 originDragFloat2("Origin", (float*) &animatedSpriteComp->origin);
+        ImGuiHelper::BeginDragFloat2(originDragFloat2);
+
+        ImGuiHelper::ColorEdit4 modulateColorEdit4("Modulate", (float*) &animatedSpriteComp->modulate);
+        ImGuiHelper::BeginColorEdit4(modulateColorEdit4);
+
+        ImGuiHelper::CheckBox flipXCheckBox("Flix X", animatedSpriteComp->flipX);
+        ImGuiHelper::BeginCheckBox(flipXCheckBox);
+
+        ImGuiHelper::CheckBox flipYCheckBox("Flix Y", animatedSpriteComp->flipY);
+        ImGuiHelper::BeginCheckBox(flipYCheckBox);
+
+        ImGuiHelper::CheckBox ignoreCameraCheckBox("Is Playing", animatedSpriteComp->isPlaying);
+        ImGuiHelper::BeginCheckBox(ignoreCameraCheckBox);
+
+        ImGui::Separator();
+    }
 }
 
 void DrawTextLabel(SceneNode* node) {
@@ -282,15 +310,37 @@ void DrawTextLabel(SceneNode* node) {
 }
 
 void DrawScript(SceneNode* node) {
+    if (ScriptComp* scriptComp = node->GetComponentSafe<ScriptComp>()) {
+        ImGui::Text("Script Component");
 
+        ImGuiHelper::InputText classPathInputText("Class Path", scriptComp->classPath);
+        ImGuiHelper::BeginInputText(classPathInputText);
+
+        ImGuiHelper::InputText classNameInputText("Class Name", scriptComp->className);
+        ImGuiHelper::BeginInputText(classNameInputText);
+
+        ImGui::Separator();
+    }
 }
 
 void DrawCollider2D(SceneNode* node) {
+    if (Collider2DComp* collider2DComp = node->GetComponentSafe<Collider2DComp>()) {
+        ImGui::Text("Collider2D Component");
 
+        ImGuiHelper::DragFloat2 extentsDragFloat2("Extents", (float*) &collider2DComp->extents);
+        ImGuiHelper::BeginDragFloat2(extentsDragFloat2);
+
+        ImGuiHelper::ColorEdit4 colorColorEdit4("Color", (float*) &collider2DComp->color);
+        ImGuiHelper::BeginColorEdit4(colorColorEdit4);
+
+        ImGui::Separator();
+    }
 }
 
-void DrawColorSquare(SceneNode* node) {
+void DrawColorRect(SceneNode* node) {
+    if (ColorRectComp* colorRectComp = node->GetComponentSafe<ColorRectComp>()) {
 
+    }
 }
 } // namespace ComponentDetailsDrawUtils
 
@@ -340,7 +390,7 @@ void OpenedProjectUI::ProcessWindows() {
                 ComponentDetailsDrawUtils::DrawTextLabel(selectedNode);
                 ComponentDetailsDrawUtils::DrawScript(selectedNode);
                 ComponentDetailsDrawUtils::DrawCollider2D(selectedNode);
-                ComponentDetailsDrawUtils::DrawColorSquare(selectedNode);
+                ComponentDetailsDrawUtils::DrawColorRect(selectedNode);
             }
         },
         .position = ImVec2{ 400.0f, 100.0f },

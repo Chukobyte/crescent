@@ -82,9 +82,10 @@ SceneNode* SceneManager::LoadSceneTreeNode(FileSceneNode* node, SceneNode* paren
         Collider2DComponent* collider2DComponent = collider2d_component_copy((Collider2DComponent*) node->components[ComponentDataIndex_COLLIDER_2D]);
         sceneNode->AddComponent<Collider2DComp>(collider2DComponent);
     }
-    if (node->components[ComponentDataIndex_COLOR_SQUARE] != nullptr) {
-        ColorSquareComponent* colorSquareComponent = color_square_component_copy((ColorSquareComponent*) node->components[ComponentDataIndex_COLOR_SQUARE]);
-        sceneNode->AddComponent<ColorSquareComp>(colorSquareComponent);
+    if (node->components[ComponentDataIndex_COLOR_RECT] != nullptr) {
+        ColorRectComponent* colorSquareComponent = color_rect_component_copy(
+                    (ColorRectComponent *) node->components[ComponentDataIndex_COLOR_RECT]);
+        sceneNode->AddComponent<ColorRectComp>(colorSquareComponent);
     }
 
     // Load children

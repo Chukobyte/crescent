@@ -4,7 +4,7 @@
 
 #include "../engine/src/core/ecs/component/animated_sprite_component.h"
 #include "../engine/src/core/ecs/component/collider2d_component.h"
-#include "../engine/src/core/ecs/component/color_square_component.h"
+#include "../engine/src/core/ecs/component/color_rect_component.h"
 #include "../engine/src/core/ecs/component/script_component.h"
 #include "../engine/src/core/ecs/component/sprite_component.h"
 #include "../engine/src/core/ecs/component/text_label_component.h"
@@ -103,10 +103,10 @@ struct Collider2DComp : public EditorComponent {
     Color color = { .r = 0.0f, .g = 0.0f, .b = 0.8f, .a = 1.0f };
 };
 
-struct ColorSquareComp : public EditorComponent {
-    ColorSquareComp() = default;
+struct ColorRectComp : public EditorComponent {
+    ColorRectComp() = default;
 
-    explicit ColorSquareComp(const ColorSquareComponent* colorSquareComp)
+    explicit ColorRectComp(const ColorRectComponent* colorSquareComp)
         : size(colorSquareComp->size),
           color(colorSquareComp->color) {}
 

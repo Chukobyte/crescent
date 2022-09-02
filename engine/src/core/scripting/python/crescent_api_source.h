@@ -680,7 +680,7 @@
 "        self.color = color\n"\
 "\n"\
 "\n"\
-"class ColorSquareComponent:\n"\
+"class ColorRectComponent:\n"\
 "    def __init__(self, size: Size2D, color: Color):\n"\
 "        self.size = size\n"\
 "        self.color = color\n"\
@@ -695,7 +695,7 @@
 "    ANIMATED_SPRITE = \"AnimatedSprite\"\n"\
 "    TEXT_LABEL = \"TextLabel\"\n"\
 "    COLLIDER2D = \"Collider2D\"\n"\
-"    COLOR_SQUARE = \"ColorSquare\"\n"\
+"    COLOR_RECT = \"ColorRect\"\n"\
 "\n"\
 "\n"\
 "class Node:\n"\
@@ -1096,7 +1096,7 @@
 "        )\n"\
 "\n"\
 "\n"\
-"class ColorSquare(Node2D):\n"\
+"class ColorRect(Node2D):\n"\
 "    def get_size(self) -> Size2D:\n"\
 "        w, h = crescent_api_internal.color_square_get_size(entity_id=self.entity_id)\n"\
 "        return Size2D(w=w, h=h)\n"\

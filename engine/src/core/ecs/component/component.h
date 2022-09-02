@@ -19,7 +19,7 @@ typedef enum ComponentDataIndex {
     ComponentDataIndex_TEXT_LABEL = 4,
     ComponentDataIndex_SCRIPT = 5,
     ComponentDataIndex_COLLIDER_2D = 6,
-    ComponentDataIndex_COLOR_SQUARE = 7,
+    ComponentDataIndex_COLOR_RECT = 7,
 } ComponentDataIndex;
 
 typedef enum ComponentType {
@@ -31,7 +31,7 @@ typedef enum ComponentType {
     ComponentType_TEXT_LABEL = 1 << 4,
     ComponentType_SCRIPT = 1 << 5,
     ComponentType_COLLIDER_2D = 1 << 6,
-    ComponentType_COLOR_SQUARE = 1 << 7,
+    ComponentType_COLOR_RECT = 1 << 7,
 } ComponentType;
 
 // --- Component Manager --- //

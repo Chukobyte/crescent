@@ -24,7 +24,7 @@ class Attack(HitBox):
         collider_color = Color(200, 0, 0, 150)
         self.set_extents(collider_size)
         self.set_color(collider_color)
-        color_square = ColorSquare.new()
+        color_square = ColorRect.new()
         color_square.size = collider_size
         color_square.color = collider_color
         self.add_child(color_square)
