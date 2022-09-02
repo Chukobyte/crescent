@@ -215,6 +215,74 @@ void OpenedProjectUI::ProcessModalPopups() {
     ImGuiHelper::BeginPopupModal(FontConfigurationPopup);
 }
 
+// Temp
+namespace ComponentDetailsDrawUtils {
+void DrawTransform2D(SceneNode* node) {
+    if (Transform2DComp* transform2DComp = node->GetComponentSafe<Transform2DComp>()) {
+        ImGui::Text("Transform 2D Component");
+
+        ImGuiHelper::DragFloat2 positionDragFloat2("Position", (float*) &transform2DComp->transform2D.position);
+        ImGuiHelper::BeginDragFloat2(positionDragFloat2);
+
+        ImGuiHelper::DragFloat2 scaleDragFloat2("Scale", (float*) &transform2DComp->transform2D.scale);
+        ImGuiHelper::BeginDragFloat2(scaleDragFloat2);
+
+        ImGuiHelper::DragFloat rotationDragFloat("Rotation", transform2DComp->transform2D.rotation);
+        ImGuiHelper::BeginDragFloat(rotationDragFloat);
+
+        ImGuiHelper::DragInt zIndexDragInt("Z Index", transform2DComp->zIndex);
+        zIndexDragInt.valueMin = -1000;
+        zIndexDragInt.valueMax = 1000;
+        ImGuiHelper::BeginDragInt(zIndexDragInt);
+
+        ImGuiHelper::CheckBox zIsRelativeToParentCheckBox("Z Is Relative To Parent", transform2DComp->isZIndexRelativeToParent);
+        ImGuiHelper::BeginCheckBox(zIsRelativeToParentCheckBox);
+
+        ImGuiHelper::CheckBox ignoreCameraCheckBox("Ignore Camera", transform2DComp->ignoreCamera);
+        ImGuiHelper::BeginCheckBox(ignoreCameraCheckBox);
+
+        ImGui::Separator();
+    }
+}
+
+void DrawSprite(SceneNode* node) {
+    if (SpriteComp* spriteComp = node->GetComponentSafe<SpriteComp>()) {
+        ImGui::Text("Sprite Component");
+
+        ImGui::Text("Texture Path: %s", spriteComp->texturePath.c_str());
+
+        ImGuiHelper::DragFloat4 drawSourceDragFloat4("Draw Source", (float*) &spriteComp->drawSource);
+        ImGuiHelper::BeginDragFloat4(drawSourceDragFloat4);
+
+        ImGuiHelper::ColorEdit4 modulateColorEdit4("Modulate", (float*) &spriteComp->modulate);
+        ImGuiHelper::BeginColorEdit4(modulateColorEdit4);
+
+        ImGui::Separator();
+    }
+}
+void DrawAnimatedSprite(SceneNode* node) {}
+
+void DrawTextLabel(SceneNode* node) {
+    if (TextLabelComp* textLabelComp = node->GetComponentSafe<TextLabelComp>()) {
+        ImGui::Text("Text Label Component");
+
+        ImGuiHelper::InputText textInputText("Text", textLabelComp->text);
+        ImGuiHelper::BeginInputText(textInputText);
+
+        ImGuiHelper::ColorEdit4 colorColorEdit4("Color", (float*) &textLabelComp->color);
+        ImGuiHelper::BeginColorEdit4(colorColorEdit4);
+
+        ImGui::Text("FontUID: %s", textLabelComp->fontUID.c_str());
+
+        ImGui::Separator();
+    }
+}
+
+void DrawScript(SceneNode* node) {}
+void DrawCollider2D(SceneNode* node) {}
+void DrawColorSquare(SceneNode* node) {}
+} // namespace ComponentDetailsDrawUtils
+
 void OpenedProjectUI::ProcessWindows() {
     int windowWidth = 0;
     int windowHeight = 0;
@@ -254,30 +322,14 @@ void OpenedProjectUI::ProcessWindows() {
             if (SceneNode* selectedNode = sceneManager->selectedSceneNode) {
                 ImGui::Text("Name: %s", selectedNode->name.c_str());
                 ImGui::Text("Type: %s", selectedNode->GetTypeString());
-                // Transform2D
-                if (Transform2DComp* transform2DComp = selectedNode->GetComponentSafe<Transform2DComp>()) {
-                    ImGui::Text("Transform 2D Component");
-
-                    ImGuiHelper::DragFloat2 positionDragFloat2("Position", (float*) &transform2DComp->transform2D.position);
-                    ImGuiHelper::BeginDragFloat2(positionDragFloat2);
-
-                    ImGuiHelper::DragFloat2 scaleDragFloat2("Scale", (float*) &transform2DComp->transform2D.scale);
-                    ImGuiHelper::BeginDragFloat2(scaleDragFloat2);
-
-                    ImGuiHelper::DragFloat rotationDragFloat("Rotation", transform2DComp->transform2D.rotation);
-                    ImGuiHelper::BeginDragFloat(rotationDragFloat);
-
-                    ImGuiHelper::DragInt zIndexDragInt("Z Index", transform2DComp->zIndex);
-                    zIndexDragInt.valueMin = -1000;
-                    zIndexDragInt.valueMax = 1000;
-                    ImGuiHelper::BeginDragInt(zIndexDragInt);
-
-                    ImGuiHelper::CheckBox zIsRelativeToParentCheckBox("Z Is Relative To Parent", transform2DComp->isZIndexRelativeToParent);
-                    ImGuiHelper::BeginCheckBox(zIsRelativeToParentCheckBox);
-
-                    ImGuiHelper::CheckBox ignoreCameraCheckBox("Ignore Camera", transform2DComp->ignoreCamera);
-                    ImGuiHelper::BeginCheckBox(ignoreCameraCheckBox);
-                }
+                ImGui::Separator();
+                ComponentDetailsDrawUtils::DrawTransform2D(selectedNode);
+                ComponentDetailsDrawUtils::DrawSprite(selectedNode);
+                ComponentDetailsDrawUtils::DrawAnimatedSprite(selectedNode);
+                ComponentDetailsDrawUtils::DrawTextLabel(selectedNode);
+                ComponentDetailsDrawUtils::DrawScript(selectedNode);
+                ComponentDetailsDrawUtils::DrawCollider2D(selectedNode);
+                ComponentDetailsDrawUtils::DrawColorSquare(selectedNode);
             }
         },
         .position = ImVec2{ 400.0f, 100.0f },

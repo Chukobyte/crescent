@@ -41,7 +41,7 @@ bool Editor::Initialize() {
 
     editorContext->initialDir = FileSystemHelper::GetCurrentDirectory();
     editorContext->isRunning = true;
-    rbe_logger_info("Roll Back Engine Editor has started!");
+    rbe_logger_info("Crescent Engine Editor has started!");
 
     // Test task
     mainTasks.RunManaged(TestTask());
@@ -71,7 +71,7 @@ bool Editor::InitializeSDL() {
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
     editorContext->window = SDL_CreateWindow(
-                                "Roll Back Engine Editor",
+                                "Crescent Engine Editor",
                                 SDL_WINDOWPOS_CENTERED,
                                 SDL_WINDOWPOS_CENTERED,
                                 windowWidth,
@@ -162,7 +162,7 @@ void Editor::Shutdown() {
 
     rbe_py_finalize();
 
-    rbe_logger_info("Roll Back Engine Editor has been shutdown!");
+    rbe_logger_info("Crescent Engine Editor has been shutdown!");
 }
 
 float Editor::GetCurrentTime() {
