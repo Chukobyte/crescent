@@ -4,11 +4,13 @@
 
 #include "SquidTasks/Task.h"
 
+
+
 class AssetBrowser : public Singleton<AssetBrowser> {
   public:
     AssetBrowser(singleton) {}
 
-    Task<> UpdateFileAndDirectoryCache();
+    Task<> UpdateFileSystemCache();
 
   private:
     void RefreshCache();

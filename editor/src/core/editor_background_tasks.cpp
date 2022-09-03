@@ -31,7 +31,7 @@ Task<> EditorBackgroundTasks::Main(TaskManager* taskManager) {
             break;
         }
         case EditorProjectState::OpenedProject: {
-            projectStateTask = taskManager->Run(AssetBrowser::Get()->UpdateFileAndDirectoryCache());
+            projectStateTask = taskManager->Run(AssetBrowser::Get()->UpdateFileSystemCache());
             break;
         }
         }
