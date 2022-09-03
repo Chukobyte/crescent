@@ -7,24 +7,12 @@
 #include "../engine/src/core/scripting/python/rbe_py.h"
 
 #include "editor_context.h"
+#include "editor_background_tasks.h"
 #include "color.h"
 #include "ui/imgui/imgui_handler.h"
 #include "utils/file_system_helper.h"
 
 static EditorContext* editorContext = EditorContext::Get();
-
-using namespace Squid;
-
-namespace {
-Task<> TestTask() {
-    TASK_NAME(__FUNCTION__ );
-
-    while (true) {
-        co_await WaitSeconds(5.0, Editor::GetCurrentTime);
-        co_await Suspend();
-    }
-}
-} // namespace
 
 bool Editor::Initialize() {
     rbe_logger_set_level(LogLevel_DEBUG);
@@ -43,8 +31,7 @@ bool Editor::Initialize() {
     editorContext->isRunning = true;
     rbe_logger_info("Crescent Engine Editor has started!");
 
-    // Test task
-    mainTasks.RunManaged(TestTask());
+    mainTasks.RunManaged(EditorBackgroundTasks::Main(&mainTasks));
     return true;
 }
 
@@ -151,6 +138,7 @@ bool Editor::IsRunning() const {
 }
 
 void Editor::Shutdown() {
+    mainTasks.KillAllTasks();
     // IMGUI
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplSDL2_Shutdown();
@@ -163,8 +151,4 @@ void Editor::Shutdown() {
     rbe_py_finalize();
 
     rbe_logger_info("Crescent Engine Editor has been shutdown!");
-}
-
-float Editor::GetCurrentTime() {
-    return SDL_GetTicks() / 1000.0f;
 }

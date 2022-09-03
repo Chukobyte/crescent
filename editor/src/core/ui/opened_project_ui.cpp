@@ -456,3 +456,17 @@ void OpenedProjectUI::ProcessWindows() {
     };
     dockSpace.Run(true);
 }
+
+Task<> OpenedProjectUI::ManageOpenedProject() {
+    EditorContext* edContext = EditorContext::Get();
+    while (true) {
+
+        co_await WaitUntil([edContext] { return editorContext->projectState == EditorProjectState::OpenedProject; });
+
+        while (editorContext->projectState == EditorProjectState::OpenedProject) {
+            co_await Suspend();
+        }
+
+        co_await Suspend();
+    }
+}

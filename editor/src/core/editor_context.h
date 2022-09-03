@@ -16,6 +16,9 @@ enum class EditorProjectState : int {
 class EditorContext : public Singleton<EditorContext> {
   public:
     EditorContext(singleton);
+
+    static float Time();
+
     bool isRunning = false;
     EditorProjectState projectState = EditorProjectState::ProjectManager;
     // Rendering
