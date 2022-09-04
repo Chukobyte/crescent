@@ -379,7 +379,7 @@ void OpenedProjectUI::ProcessWindows() {
     SDL_GetWindowSize(editorContext->window, &windowWidth, &windowHeight);
 
     static ImGuiHelper::Window sceneOutlinerWindow = {
-        .name = "Scene Outliner",
+        .name = "Scene Tree",
         .open = nullptr,
         .windowFlags = ImGuiWindowFlags_NoResize,
         .callbackFunc = [] (ImGuiHelper::Context* context) {
@@ -392,6 +392,25 @@ void OpenedProjectUI::ProcessWindows() {
         },
         .position = ImVec2{ 150.0f, 100.0f },
         .size = ImVec2{ 400.0f, 300.0f },
+    };
+
+    static ImGuiHelper::Window assetImportWindow = {
+            .name = "Import",
+            .open = nullptr,
+            .windowFlags = ImGuiWindowFlags_NoResize,
+            .callbackFunc = [] (ImGuiHelper::Context* context) {
+                static AssetBrowser* assetBrowser = AssetBrowser::Get();
+                if (assetBrowser->selectedFileNode.has_value() && assetBrowser->selectedFileNode->type == FileNodeType::File) {
+                    ImGui::Text("file: %s", assetBrowser->selectedFileNode->path.filename().string().c_str());
+                    ImGui::Separator();
+                    if (ImGui::Button("Reimport")) {
+                        ProjectProperties* projectProperties = ProjectProperties::Get();
+                        // Update project properties
+                    }
+                }
+            },
+            .position = ImVec2{ 150.0f, 100.0f },
+            .size = ImVec2{ 400.0f, 300.0f },
     };
 
     static ImGuiHelper::Window sceneViewWindow = {
@@ -453,6 +472,7 @@ void OpenedProjectUI::ProcessWindows() {
         .windows = {
             { .window = sceneViewWindow, .position = ImGuiHelper::DockSpacePosition::Main },
             { .window = sceneOutlinerWindow, .position = ImGuiHelper::DockSpacePosition::Left },
+            { .window = assetImportWindow, .position = ImGuiHelper::DockSpacePosition::Left },
             { .window = detailsWindow, .position = ImGuiHelper::DockSpacePosition::Right },
             { .window = assetBrowserWindow, .position = ImGuiHelper::DockSpacePosition::LeftDown },
             { .window = consoleWindow, .position = ImGuiHelper::DockSpacePosition::Down }
