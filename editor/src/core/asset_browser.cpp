@@ -8,7 +8,7 @@
 using namespace Squid;
 
 //--- FileNodeUtils ---//
-void FileNodeUtils::LoadFileNodeDirEntries(FileNode& fileNode) {
+void FileNodeUtils::LoadFileNodeDirEntries(FileNode& fileNode, unsigned int& nodeIndex) {
     for (auto const& dir_entry : std::filesystem::directory_iterator{fileNode.path}) {
 //        rbe_logger_debug("dir entry path: '%s'", dir_entry.path().string().c_str());
 //        rbe_logger_debug("dir entry relative path: '%s'", std::filesystem::relative(dir_entry.path(), fileNode.path).string().c_str());
@@ -17,36 +17,40 @@ void FileNodeUtils::LoadFileNodeDirEntries(FileNode& fileNode) {
             continue;
         }
         if (std::filesystem::is_directory(dir_entry)) {
-            FileNode dirNode = { dir_entry.path(), FileNodeType::Directory };
-            LoadFileNodeDirEntries(dirNode);
+            FileNode dirNode = { dir_entry.path(), FileNodeType::Directory, nodeIndex++ };
+            LoadFileNodeDirEntries(dirNode, nodeIndex);
             fileNode.directories.emplace_back(dirNode);
         } else if (std::filesystem::is_regular_file(dir_entry)) {
-            FileNode regularFileNode = { dir_entry.path(), FileNodeType::File };
+            FileNode regularFileNode = { dir_entry.path(), FileNodeType::File, nodeIndex++ };
             fileNode.files.emplace_back(regularFileNode);
         }
     }
 }
 
 void FileNodeUtils::DisplayFileNodeTree(FileNode &fileNode, const bool isRoot) {
+    static AssetBrowser* assetBrowser = AssetBrowser::Get();
     const ImGuiTreeNodeFlags dirFlags = isRoot ? ImGuiTreeNodeFlags_DefaultOpen : ImGuiTreeNodeFlags_None;
-    const ImGuiTreeNodeFlags defaultFlags = fileNode.type == FileNodeType::Directory ? dirFlags : ImGuiTreeNodeFlags_Leaf;
+    ImGuiTreeNodeFlags defaultFlags = fileNode.type == FileNodeType::Directory ? dirFlags : ImGuiTreeNodeFlags_Leaf;
+    if (assetBrowser->selectedFileNode.has_value() && assetBrowser->selectedFileNode->index == fileNode.index) {
+        defaultFlags |= ImGuiTreeNodeFlags_Selected;
+    }
     ImGuiHelper::TreeNode treeNode = {
-            .label = isRoot ? "res://" : fileNode.path.filename().string(),
-            .flags = defaultFlags,
-            .callbackFunc = [fileNode] (ImGuiHelper::Context* context) {
-                // Left Click
-                if (ImGui::IsItemClicked()) {
-//                  sceneManager->selectedSceneNode = sceneNode;
-                }
-                // Files
-                for (FileNode dirFileNode : fileNode.directories) {
-                    DisplayFileNodeTree(dirFileNode);
-                }
-                // Directories
-                for (FileNode regularFileNode : fileNode.files) {
-                    DisplayFileNodeTree(regularFileNode);
-                }
+        .label = isRoot ? "res://" : fileNode.path.filename().string(),
+        .flags = defaultFlags,
+        .callbackFunc = [fileNode] (ImGuiHelper::Context* context) {
+            // Left Click
+            if (ImGui::IsItemClicked()) {
+                assetBrowser->selectedFileNode = fileNode;
             }
+            // Files
+            for (FileNode dirFileNode : fileNode.directories) {
+                DisplayFileNodeTree(dirFileNode);
+            }
+            // Directories
+            for (FileNode regularFileNode : fileNode.files) {
+                DisplayFileNodeTree(regularFileNode);
+            }
+        }
     };
     ImGuiHelper::BeginTreeNode(treeNode);
 }
@@ -68,5 +72,9 @@ void AssetBrowser::RefreshCache() {
 
     rootNode.path = projectRootDir;
     rootNode.type = FileNodeType::Directory;
-    FileNodeUtils::LoadFileNodeDirEntries(rootNode);
+    unsigned int startingIndex = rootNode.index + 1;
+    if (!selectedFileNode.has_value()) {
+        selectedFileNode = rootNode;
+    }
+    FileNodeUtils::LoadFileNodeDirEntries(rootNode, startingIndex);
 }
