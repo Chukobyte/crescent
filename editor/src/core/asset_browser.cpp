@@ -1,15 +1,21 @@
 #include "asset_browser.h"
 
 #include "editor_context.h"
+#include "ui/imgui/imgui_helper.h"
 #include "utils/file_system_helper.h"
 #include "../../../engine/src/core/utils/logger.h"
 
 using namespace Squid;
 
+//--- FileNodeUtils ---//
 void FileNodeUtils::LoadFileNodeDirEntries(FileNode& fileNode) {
     for (auto const& dir_entry : std::filesystem::directory_iterator{fileNode.path}) {
 //        rbe_logger_debug("dir entry path: '%s'", dir_entry.path().string().c_str());
-        rbe_logger_debug("dir entry relative path: '%s'", std::filesystem::relative(dir_entry.path(), fileNode.path).string().c_str());
+//        rbe_logger_debug("dir entry relative path: '%s'", std::filesystem::relative(dir_entry.path(), fileNode.path).string().c_str());
+        const std::string& fileName = dir_entry.path().filename().string();
+        if (fileName == "__pycache__" || fileName[0] == '.') {
+            continue;
+        }
         if (std::filesystem::is_directory(dir_entry)) {
             FileNode dirNode = { dir_entry.path(), FileNodeType::Directory };
             LoadFileNodeDirEntries(dirNode);
@@ -21,19 +27,44 @@ void FileNodeUtils::LoadFileNodeDirEntries(FileNode& fileNode) {
     }
 }
 
-Task<> AssetBrowser::UpdateFileSystemCache() {
-    while (true) {
-//        co_await WaitSeconds(10.0f, EditorContext::Time);
-        co_await WaitSeconds(3.0f, EditorContext::Time);
+void FileNodeUtils::DisplayFileNodeTree(FileNode &fileNode, const bool isRoot) {
+    const ImGuiTreeNodeFlags dirFlags = isRoot ? ImGuiTreeNodeFlags_DefaultOpen : ImGuiTreeNodeFlags_None;
+    const ImGuiTreeNodeFlags defaultFlags = fileNode.type == FileNodeType::Directory ? dirFlags : ImGuiTreeNodeFlags_Leaf;
+    ImGuiHelper::TreeNode treeNode = {
+            .label = isRoot ? "res://" : fileNode.path.filename().string(),
+            .flags = defaultFlags,
+            .callbackFunc = [fileNode] (ImGuiHelper::Context* context) {
+                // Left Click
+                if (ImGui::IsItemClicked()) {
+//                  sceneManager->selectedSceneNode = sceneNode;
+                }
+                // Files
+                for (FileNode dirFileNode : fileNode.directories) {
+                    DisplayFileNodeTree(dirFileNode);
+                }
+                // Directories
+                for (FileNode regularFileNode : fileNode.files) {
+                    DisplayFileNodeTree(regularFileNode);
+                }
+            }
+    };
+    ImGuiHelper::BeginTreeNode(treeNode);
+}
 
-        RefreshCache();
+//--- AssetBrowser ---//
+Task<> AssetBrowser::UpdateFileSystemCache() {
+    RefreshCache();
+    while (true) {
+        co_await WaitSeconds(10.0f, EditorContext::Time);
+        // TODO: Uncomment once implementation of asset browser is finished
+//        RefreshCache();
     }
 }
 
 void AssetBrowser::RefreshCache() {
     std::filesystem::path projectRootDir(FileSystemHelper::GetCurrentDirectory());
-    rbe_logger_debug("root name: %s", projectRootDir.root_name().c_str());
-    rbe_logger_debug("root path: %s", projectRootDir.string().c_str());
+//    rbe_logger_debug("root name: %s", projectRootDir.root_name().c_str());
+//    rbe_logger_debug("root path: %s", projectRootDir.string().c_str());
 
     rootNode.path = projectRootDir;
     rootNode.type = FileNodeType::Directory;

@@ -9,6 +9,7 @@
 #include "../utils/helper.h"
 #include "../file_creation/config_file_creator.h"
 #include "../scene/scene_manager.h"
+#include "../asset_browser.h"
 
 const char* CONFIG_FILE_NAME = "test_cre_config.py";
 
@@ -429,7 +430,10 @@ void OpenedProjectUI::ProcessWindows() {
         .name = "Asset Browser",
         .open = nullptr,
         .windowFlags = ImGuiWindowFlags_NoResize,
-        .callbackFunc = [] (ImGuiHelper::Context* context) {},
+        .callbackFunc = [] (ImGuiHelper::Context* context) {
+            static AssetBrowser* assetBrowser = AssetBrowser::Get();
+            FileNodeUtils::DisplayFileNodeTree(assetBrowser->rootNode, true);
+        },
         .position = ImVec2{ 100.0f, 200.0f },
         .size = ImVec2{ 400.0f, 300.0f },
     };

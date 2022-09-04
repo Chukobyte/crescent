@@ -23,6 +23,7 @@ struct FileNode {
 
 namespace FileNodeUtils {
 void LoadFileNodeDirEntries(FileNode& fileNode);
+void DisplayFileNodeTree(FileNode& fileNode, bool isRoot = false);
 }
 
 class AssetBrowser : public Singleton<AssetBrowser> {
