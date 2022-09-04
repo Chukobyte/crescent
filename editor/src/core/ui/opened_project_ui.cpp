@@ -395,22 +395,28 @@ void OpenedProjectUI::ProcessWindows() {
     };
 
     static ImGuiHelper::Window assetImportWindow = {
-            .name = "Import",
-            .open = nullptr,
-            .windowFlags = ImGuiWindowFlags_NoResize,
-            .callbackFunc = [] (ImGuiHelper::Context* context) {
-                static AssetBrowser* assetBrowser = AssetBrowser::Get();
-                if (assetBrowser->selectedFileNode.has_value() && assetBrowser->selectedFileNode->type == FileNodeType::File) {
-                    ImGui::Text("file: %s", assetBrowser->selectedFileNode->path.filename().string().c_str());
-                    ImGui::Separator();
-                    if (ImGui::Button("Reimport")) {
-                        ProjectProperties* projectProperties = ProjectProperties::Get();
-                        // Update project properties
-                    }
+        .name = "Import",
+        .open = nullptr,
+        .windowFlags = ImGuiWindowFlags_NoResize,
+        .callbackFunc = [] (ImGuiHelper::Context* context) {
+            static AssetBrowser* assetBrowser = AssetBrowser::Get();
+            if (assetBrowser->selectedFileNode.has_value() && assetBrowser->selectedFileNode->regularFileType != FileNodeRegularFileType::Invalid) {
+                const FileNode& selectedFileNode = assetBrowser->selectedFileNode.value();
+                ImGui::Text("file: %s", selectedFileNode.path.filename().string().c_str());
+                if (selectedFileNode.regularFileType == FileNodeRegularFileType::Texture) {
+                    ImGui::Text("Texture");
+                } else if (selectedFileNode.regularFileType == FileNodeRegularFileType::AudioSource) {
+                    ImGui::Text("Audio Source");
                 }
-            },
-            .position = ImVec2{ 150.0f, 100.0f },
-            .size = ImVec2{ 400.0f, 300.0f },
+                ImGui::Separator();
+                if (ImGui::Button("Reimport")) {
+                    ProjectProperties* projectProperties = ProjectProperties::Get();
+                    // Update project properties
+                }
+            }
+        },
+        .position = ImVec2{ 150.0f, 100.0f },
+        .size = ImVec2{ 400.0f, 300.0f },
     };
 
     static ImGuiHelper::Window sceneViewWindow = {

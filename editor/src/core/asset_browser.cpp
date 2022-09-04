@@ -7,6 +7,18 @@
 
 using namespace Squid;
 
+FileNodeRegularFileType FileNodeUtils::GetFileNodeRegularType(const std::string &fileName) {
+    if (fileName.ends_with(".png")) {
+        return FileNodeRegularFileType::Texture;
+    } else if (fileName.ends_with(".wav")) {
+        return FileNodeRegularFileType::AudioSource;
+    }
+//    else if (fileName.ends_with(".py")) {
+//        return FileNodeRegularFileType::PythonScript;
+//    }
+    return FileNodeRegularFileType::Invalid;
+}
+
 //--- FileNodeUtils ---//
 void FileNodeUtils::LoadFileNodeDirEntries(FileNode& fileNode, unsigned int& nodeIndex) {
     for (auto const& dir_entry : std::filesystem::directory_iterator{fileNode.path}) {
@@ -21,7 +33,7 @@ void FileNodeUtils::LoadFileNodeDirEntries(FileNode& fileNode, unsigned int& nod
             LoadFileNodeDirEntries(dirNode, nodeIndex);
             fileNode.directories.emplace_back(dirNode);
         } else if (std::filesystem::is_regular_file(dir_entry)) {
-            FileNode regularFileNode = { dir_entry.path(), FileNodeType::File, nodeIndex++ };
+            FileNode regularFileNode = { dir_entry.path(), FileNodeType::File, nodeIndex++, GetFileNodeRegularType(dir_entry.path().filename().string()) };
             fileNode.files.emplace_back(regularFileNode);
         }
     }

@@ -16,18 +16,27 @@ enum class FileNodeType {
     Directory,
 };
 
+enum class FileNodeRegularFileType {
+    Invalid,
+    Texture,
+    AudioSource,
+//    PythonScript,
+};
+
 struct FileNode {
     std::filesystem::path path;
     FileNodeType type = FileNodeType::Invalid;
     unsigned int index = 0;
+    FileNodeRegularFileType regularFileType = FileNodeRegularFileType::Invalid;
     std::vector<FileNode> directories;
     std::vector<FileNode> files;
 };
 
 namespace FileNodeUtils {
+FileNodeRegularFileType GetFileNodeRegularType(const std::string& fileName);
 void LoadFileNodeDirEntries(FileNode& fileNode, unsigned int& nodeIndex);
 void DisplayFileNodeTree(FileNode& fileNode, bool isRoot = false);
-}
+} // namespace FileNodeUtils
 
 // Asset Browser
 
