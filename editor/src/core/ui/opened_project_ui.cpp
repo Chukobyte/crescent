@@ -17,11 +17,23 @@ static EditorContext* editorContext = EditorContext::Get();
 
 void OpenedProjectUI::ProcessMenuBar() {
     static ImGuiHelper::MenuBar menuBar = {
-        .name = "FileMenuBar",
+        .name = "SceneMenuBar",
         .menus = {
             {
-                .name = "File",
+                .name = "Scene",
                 .menuItems = {
+                    {
+                        .name = "New Scene",
+                        .keyboardShortcut = "Ctrl+N",
+                        .callbackFunc = [] (ImGuiHelper::Context* context) {
+                        },
+                    },
+                    {
+                        .name = "Open Scene",
+                        .keyboardShortcut = "Ctrl+N",
+                        .callbackFunc = [] (ImGuiHelper::Context* context) {
+                        },
+                    },
                     {
                         .name = "Go To Project Manager",
                         .keyboardShortcut = "Ctrl+Shift+Q",
@@ -251,34 +263,34 @@ void OpenedProjectUI::ProcessModalPopups() {
     ImGuiHelper::BeginPopupModal(addNodePopup);
 
     static ImGuiHelper::PopupModal renameNodePopup = {
-            .name = "Rename Node Menu",
-            .open = nullptr,
-            .windowFlags = 0,
-            .callbackFunc = [] (ImGuiHelper::Context* context) {
+        .name = "Rename Node Menu",
+        .open = nullptr,
+        .windowFlags = 0,
+        .callbackFunc = [] (ImGuiHelper::Context* context) {
 
-                static std::string newNameText;
-                ImGuiHelper::InputText newNameInputText("New Name", newNameText);
-                ImGuiHelper::BeginInputText(newNameInputText);
+            static std::string newNameText;
+            ImGuiHelper::InputText newNameInputText("New Name", newNameText);
+            ImGuiHelper::BeginInputText(newNameInputText);
 
-                if (ImGui::Button("Close")) {
-                    newNameText.clear();
-                    ImGui::CloseCurrentPopup();
-                }
-                ImGui::SameLine();
-                if (ImGui::Button("Ok")) {
-                    static SceneManager* sceneManager = SceneManager::Get();
-                    if (!newNameText.empty() && sceneManager->selectedSceneNode != nullptr) {
-                        if (sceneManager->selectedSceneNode->parent != nullptr) {
-                            newNameText = SceneManager::GetUniqueNodeName(newNameText, sceneManager->selectedSceneNode->parent);
-                        }
-                        sceneManager->selectedSceneNode->name = newNameText;
+            if (ImGui::Button("Close")) {
+                newNameText.clear();
+                ImGui::CloseCurrentPopup();
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("Ok")) {
+                static SceneManager* sceneManager = SceneManager::Get();
+                if (!newNameText.empty() && sceneManager->selectedSceneNode != nullptr) {
+                    if (sceneManager->selectedSceneNode->parent != nullptr) {
+                        newNameText = SceneManager::GetUniqueNodeName(newNameText, sceneManager->selectedSceneNode->parent);
                     }
-                    newNameText.clear();
-                    ImGui::CloseCurrentPopup();
+                    sceneManager->selectedSceneNode->name = newNameText;
                 }
-            },
-            .position = ImVec2{ 100.0f, 100.0f },
-            .size = ImVec2{ 200.0f, 200.0f },
+                newNameText.clear();
+                ImGui::CloseCurrentPopup();
+            }
+        },
+        .position = ImVec2{ 100.0f, 100.0f },
+        .size = ImVec2{ 200.0f, 200.0f },
     };
     ImGuiHelper::BeginPopupModal(renameNodePopup);
 }
