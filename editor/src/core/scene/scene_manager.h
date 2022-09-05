@@ -88,7 +88,7 @@ class SceneManager : public Singleton<SceneManager> {
     SceneManager(singleton) {}
     bool LoadSceneFromFile(const char* sceneFilePath);
     void AddDefaultNodeAsChildToSelected(NodeBaseType type);
-    void QueueNodeForDeletion(SceneNode* nodeToDelete);
+    void QueueNodeForDeletion(SceneNode* nodeToDelete, bool recurseChildren = true);
     void FlushQueuedForDeletionNodes();
 
     std::vector<SceneNodeFile*> loadedSceneFiles;

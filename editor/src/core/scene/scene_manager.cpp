@@ -114,7 +114,7 @@ void SceneManager::AddDefaultNodeAsChildToSelected(NodeBaseType type) {
     SceneNode* newNode = new SceneNode();
     newNode->name = GetUniqueNodeName(node_get_base_type_string(type), selectedSceneNode);
     newNode->type = type;
-    if (selectedSceneNode) {
+    if (selectedSceneNode != nullptr) {
         // Establish parent and child relationship
         newNode->parent = selectedSceneNode;
         selectedSceneNode->children.emplace_back(newNode);
@@ -126,19 +126,15 @@ void SceneManager::AddDefaultNodeAsChildToSelected(NodeBaseType type) {
         if ((NodeBaseInheritanceType_SPRITE & inheritanceType) == NodeBaseInheritanceType_SPRITE) {
             newNode->AddComponent<SpriteComp>();
         }
-
         if ((NodeBaseInheritanceType_ANIMATED_SPRITE & inheritanceType) == NodeBaseInheritanceType_ANIMATED_SPRITE) {
             newNode->AddComponent<AnimatedSpriteComp>();
         }
-
         if ((NodeBaseInheritanceType_TEXT_LABEL & inheritanceType) == NodeBaseInheritanceType_TEXT_LABEL) {
             newNode->AddComponent<TextLabelComp>();
         }
-
         if ((NodeBaseInheritanceType_COLLIDER2D & inheritanceType) == NodeBaseInheritanceType_COLLIDER2D) {
             newNode->AddComponent<Collider2DComp>();
         }
-
         if ((NodeBaseInheritanceType_COLOR_RECT & inheritanceType) == NodeBaseInheritanceType_COLOR_RECT) {
             newNode->AddComponent<ColorRectComp>();
         }
@@ -147,7 +143,12 @@ void SceneManager::AddDefaultNodeAsChildToSelected(NodeBaseType type) {
     }
 }
 
-void SceneManager::QueueNodeForDeletion(SceneNode* nodeToDelete) {
+void SceneManager::QueueNodeForDeletion(SceneNode* nodeToDelete, bool recurseChildren) {
+    if (recurseChildren) {
+        for (auto* childToDelete : nodeToDelete->children) {
+            QueueNodeForDeletion(childToDelete, true);
+        }
+    }
     nodesQueuedForDeletion.emplace_back(nodeToDelete);
 }
 
@@ -160,7 +161,6 @@ void SceneManager::FlushQueuedForDeletionNodes() {
         if (SceneNode* parent = nodeToDelete->parent) {
             parent->RemoveChild(nodeToDelete);
         }
-        delete nodeToDelete;
     }
     nodesQueuedForDeletion.clear();
 }
