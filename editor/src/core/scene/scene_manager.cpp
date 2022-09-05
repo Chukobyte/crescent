@@ -22,8 +22,9 @@ void SceneNodeUtils::DisplayTreeNodeLeaf(SceneNode *sceneNode) {
             const std::string nodePopupId = sceneNode->name + "_popup" + std::to_string(sceneNode->GetUID());
             ImGui::OpenPopupOnItemClick(nodePopupId.c_str(), ImGuiPopupFlags_MouseButtonRight);
             if (ImGui::BeginPopup(nodePopupId.c_str())) {
+                sceneManager->selectedSceneNode = sceneNode;
                 if (ImGui::MenuItem("Rename")) {
-
+                    context->OpenPopup("Rename Node Menu");
                 }
                 if (sceneNode->parent != nullptr && ImGui::MenuItem("Delete")) {
                     // TODO: Delete Node

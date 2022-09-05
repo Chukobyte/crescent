@@ -249,6 +249,38 @@ void OpenedProjectUI::ProcessModalPopups() {
         .size = ImVec2{ 200.0f, 200.0f },
     };
     ImGuiHelper::BeginPopupModal(addNodePopup);
+
+    static ImGuiHelper::PopupModal renameNodePopup = {
+            .name = "Rename Node Menu",
+            .open = nullptr,
+            .windowFlags = 0,
+            .callbackFunc = [] (ImGuiHelper::Context* context) {
+
+                static std::string newNameText;
+                ImGuiHelper::InputText newNameInputText("New Name", newNameText);
+                ImGuiHelper::BeginInputText(newNameInputText);
+
+                if (ImGui::Button("Close")) {
+                    newNameText.clear();
+                    ImGui::CloseCurrentPopup();
+                }
+                ImGui::SameLine();
+                if (ImGui::Button("Ok")) {
+                    static SceneManager* sceneManager = SceneManager::Get();
+                    if (!newNameText.empty() && sceneManager->selectedSceneNode != nullptr) {
+                        if (sceneManager->selectedSceneNode->parent != nullptr) {
+                            newNameText = SceneManager::GetUniqueNodeName(newNameText, sceneManager->selectedSceneNode->parent);
+                        }
+                        sceneManager->selectedSceneNode->name = newNameText;
+                    }
+                    newNameText.clear();
+                    ImGui::CloseCurrentPopup();
+                }
+            },
+            .position = ImVec2{ 100.0f, 100.0f },
+            .size = ImVec2{ 200.0f, 200.0f },
+    };
+    ImGuiHelper::BeginPopupModal(renameNodePopup);
 }
 
 // Temp
