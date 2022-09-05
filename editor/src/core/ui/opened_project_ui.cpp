@@ -511,11 +511,13 @@ void OpenedProjectUI::ProcessWindows() {
         .open = nullptr,
         .windowFlags = ImGuiWindowFlags_NoResize,
         .callbackFunc = [] (ImGuiHelper::Context* context) {
+            static SceneManager* sceneManager = SceneManager::Get();
             if (ImGui::Button("+")) {
                 context->OpenPopup("Add Node Menu");
             }
+            ImGui::SameLine();
+            ImGui::Text("%s", sceneManager->selectedSceneFile == nullptr ? "" : sceneManager->selectedSceneFile->filePath.c_str());
 
-            static SceneManager* sceneManager = SceneManager::Get();
             if (auto sceneNodeFile = sceneManager->selectedSceneFile) {
                 if (auto rootNode = sceneNodeFile->rootNode) {
                     SceneNodeUtils::DisplayTreeNodeLeaf(rootNode);
