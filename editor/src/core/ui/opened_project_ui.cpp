@@ -26,12 +26,14 @@ void OpenedProjectUI::ProcessMenuBar() {
                         .name = "New Scene",
                         .keyboardShortcut = "Ctrl+N",
                         .callbackFunc = [] (ImGuiHelper::Context* context) {
+                            context->OpenPopup("New Scene Menu");
                         },
                     },
                     {
                         .name = "Open Scene",
-                        .keyboardShortcut = "Ctrl+N",
+                        .keyboardShortcut = "Ctrl+O",
                         .callbackFunc = [] (ImGuiHelper::Context* context) {
+                            context->OpenPopup("Open Scene Menu");
                         },
                     },
                     {
@@ -89,6 +91,53 @@ void OpenedProjectUI::ProcessMenuBar() {
 void OpenedProjectUI::ProcessModalPopups() {
     static ImGuiHelper::Context* imguiHelperContext = ImGuiHelper::Context::Get();
     imguiHelperContext->FlushPopups();
+
+    // TODO: Add pop modal definition to where they are used and execute them in a vector instead
+    static ImGuiHelper::PopupModal newScenePopup = {
+        .name = "New Scene Menu",
+        .open = nullptr,
+        .windowFlags = 0,
+        .callbackFunc = [gameProperties = ProjectProperties::Get()] (ImGuiHelper::Context* context) {
+            static std::string newSceneFilePath;
+            ImGuiHelper::InputText nameText("File Path", newSceneFilePath);
+            ImGuiHelper::BeginInputText(nameText);
+            if (ImGui::Button("Close")) {
+                newSceneFilePath.clear();
+                ImGui::CloseCurrentPopup();
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("Ok")) {
+                newSceneFilePath.clear();
+                ImGui::CloseCurrentPopup();
+            }
+        },
+        .position = ImVec2{ 100.0f, 100.0f },
+        .size = ImVec2{ 200.0f, 200.0f },
+    };
+    ImGuiHelper::BeginPopupModal(newScenePopup);
+
+    static ImGuiHelper::PopupModal openScenePopup = {
+        .name = "Open Scene Menu",
+        .open = nullptr,
+        .windowFlags = 0,
+        .callbackFunc = [gameProperties = ProjectProperties::Get()] (ImGuiHelper::Context* context) {
+            static std::string openSceneFilePath;
+            ImGuiHelper::InputText nameText("File Path", openSceneFilePath);
+            ImGuiHelper::BeginInputText(nameText);
+            if (ImGui::Button("Close")) {
+                openSceneFilePath.clear();
+                ImGui::CloseCurrentPopup();
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("Ok")) {
+                openSceneFilePath.clear();
+                ImGui::CloseCurrentPopup();
+            }
+        },
+        .position = ImVec2{ 100.0f, 100.0f },
+        .size = ImVec2{ 200.0f, 200.0f },
+    };
+    ImGuiHelper::BeginPopupModal(openScenePopup);
 
     static ImGuiHelper::PopupModal projectSettingsPopup = {
         .name = "Project Settings Menu",
