@@ -95,4 +95,5 @@ class ProjectProperties : public Singleton<ProjectProperties> {
     void PrintProperties() const;
     void UpdateTextureAsset(const TextureAsset& textureAsset);
     void UpdateAudioSourceAsset(const AudioSourceAsset& audioSourceAsset);
+    TextureAsset& GetTextureAsset(const std::string& texturePath);
 };

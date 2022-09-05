@@ -400,32 +400,45 @@ void OpenedProjectUI::ProcessWindows() {
         .windowFlags = ImGuiWindowFlags_NoResize,
         .callbackFunc = [] (ImGuiHelper::Context* context) {
             static AssetBrowser* assetBrowser = AssetBrowser::Get();
+            static unsigned int selectedIndex = 0;
             if (assetBrowser->selectedFileNode.has_value() && assetBrowser->selectedFileNode->regularFileType != FileNodeRegularFileType::Invalid) {
                 const FileNode& selectedFileNode = assetBrowser->selectedFileNode.value();
                 ImGui::Text("file: %s", selectedFileNode.path.filename().string().c_str());
                 if (selectedFileNode.regularFileType == FileNodeRegularFileType::Texture) {
-                    static std::string selectedWrapS = "clamped_to_border";
-                    static ImGuiHelper::ComboBox wrapSComboBox("Wrap S", { "clamped_to_border", "repeat" }, [](const char* newItem) {
+                    static std::string selectedWrapS = "clamp_to_border";
+                    static ImGuiHelper::ComboBox wrapSComboBox("Wrap S", { "clamp_to_border", "repeat" }, [](const char* newItem) {
                         selectedWrapS = newItem;
                     });
-                    ImGuiHelper::BeginComboBox(wrapSComboBox);
 
-                    static std::string selectedWrapT = "clamped_to_border";
-                    static ImGuiHelper::ComboBox wrapTComboBox("Wrap T", { "clamped_to_border", "repeat" }, [](const char* newItem) {
+                    static std::string selectedWrapT = "clamp_to_border";
+                    static ImGuiHelper::ComboBox wrapTComboBox("Wrap T", { "clamp_to_border", "repeat" }, [](const char* newItem) {
                         selectedWrapT = newItem;
                     });
-                    ImGuiHelper::BeginComboBox(wrapTComboBox);
 
                     static std::string selectedFilterMin = "nearest";
                     static ImGuiHelper::ComboBox filterMinComboBox("Filter Min", { "nearest", "linear" }, [](const char* newItem) {
                         selectedFilterMin = newItem;
                     });
-                    ImGuiHelper::BeginComboBox(filterMinComboBox);
 
                     static std::string selectedFilterMag = "nearest";
                     static ImGuiHelper::ComboBox filterMagComboBox("Filter Mag", { "nearest", "linear" }, [](const char* newItem) {
                         selectedFilterMag = newItem;
                     });
+
+                    // TODO: Use something else other than index since things can be thrown off if a file is added, deleted, renamed/replaced
+                    if (selectedIndex != assetBrowser->selectedFileNode->index) {
+                        selectedIndex = assetBrowser->selectedFileNode->index;
+                        ProjectProperties* properties = ProjectProperties::Get();
+                        auto& textureAsset = properties->GetTextureAsset(selectedFileNode.GetRelativePath());
+                        wrapSComboBox.SetSelected(textureAsset.wrap_s);
+                        wrapTComboBox.SetSelected(textureAsset.wrap_t);
+                        filterMinComboBox.SetSelected(textureAsset.filter_min);
+                        filterMagComboBox.SetSelected(textureAsset.filter_mag);
+                    }
+
+                    ImGuiHelper::BeginComboBox(wrapSComboBox);
+                    ImGuiHelper::BeginComboBox(wrapTComboBox);
+                    ImGuiHelper::BeginComboBox(filterMinComboBox);
                     ImGuiHelper::BeginComboBox(filterMagComboBox);
 
                     ImGui::Separator();

@@ -81,3 +81,14 @@ void ProjectProperties::UpdateAudioSourceAsset(const AudioSourceAsset &audioSour
         }
     }
 }
+
+TextureAsset& ProjectProperties::GetTextureAsset(const std::string &texturePath) {
+    for (auto& asset : assets.textures) {
+        if (texturePath == asset.file_path) {
+            return asset;
+        }
+    }
+    rbe_logger_error("Couldn't find texture at path '%s'", texturePath.c_str());
+    static TextureAsset invalid("invalid", "invalid", "invalid", "invalid", "invalid");
+    return invalid;
+}

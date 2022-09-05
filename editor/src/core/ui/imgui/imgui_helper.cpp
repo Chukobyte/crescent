@@ -226,8 +226,11 @@ void ImGuiHelper::ComboBox::SetSelected(const std::string& itemToSelect) {
     for (int i = 0; i < items.size(); i++) {
         if (items[i] == itemToSelect) {
             selectedIndex = i;
+            onSelectionChangeCallback(items[i].c_str());
+            return;
         }
     }
+    rbe_logger_error("Combo Box failed to select item '%s'", itemToSelect.c_str());
 }
 
 void ImGuiHelper::BeginComboBox(ImGuiHelper::ComboBox &comboBox) {
