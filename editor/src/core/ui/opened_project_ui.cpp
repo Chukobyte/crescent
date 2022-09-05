@@ -226,6 +226,21 @@ void OpenedProjectUI::ProcessModalPopups() {
                 if (ImGui::Button("Close")) {
                     ImGui::CloseCurrentPopup();
                 }
+
+                static std::string selectedType = "Node";
+                static ImGuiHelper::ComboBox nodeTypeSelectionComboBox(
+                        "Type",
+                        { "Node", "Node2D", "Sprite", "AnimatedSprite", "TextLabel", "Collider2D", "ColorRect" },
+                        [](const char* newItem) {
+                            selectedType = newItem;
+                        }
+                );
+                ImGuiHelper::BeginComboBox(nodeTypeSelectionComboBox);
+
+                if (ImGui::Button("Add")) {
+                    // TODO: Implement
+                    ImGui::CloseCurrentPopup();
+                }
             },
             .position = ImVec2{ 100.0f, 100.0f },
             .size = ImVec2{ 200.0f, 200.0f },
