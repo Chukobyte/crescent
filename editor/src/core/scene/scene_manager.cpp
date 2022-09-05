@@ -18,6 +18,20 @@ void SceneNodeUtils::DisplayTreeNodeLeaf(SceneNode *sceneNode) {
                 sceneManager->selectedSceneNode = sceneNode;
             }
 
+            // Right Click
+            const std::string nodePopupId = sceneNode->name + "_popup" + std::to_string(sceneNode->GetUID());
+            ImGui::OpenPopupOnItemClick(nodePopupId.c_str(), ImGuiPopupFlags_MouseButtonRight);
+            if (ImGui::BeginPopup(nodePopupId.c_str())) {
+                if (ImGui::MenuItem("Rename")) {
+
+                }
+                if (sceneNode->parent != nullptr && ImGui::MenuItem("Delete")) {
+                    // TODO: Delete Node
+                    sceneManager->QueueNodeForDeletion(sceneNode);
+                }
+                ImGui::EndPopup();
+            }
+
             for (auto* sceneNodeChild : sceneNode->children) {
                 DisplayTreeNodeLeaf(sceneNodeChild);
             }
@@ -131,6 +145,24 @@ void SceneManager::AddDefaultNodeAsChildToSelected(NodeBaseType type) {
     } else {
         // TODO: Create new node for newly created scenes
     }
+}
+
+void SceneManager::QueueNodeForDeletion(SceneNode* nodeToDelete) {
+    nodesQueuedForDeletion.emplace_back(nodeToDelete);
+}
+
+void SceneManager::FlushQueuedForDeletionNodes() {
+    for (auto nodeToDelete : nodesQueuedForDeletion) {
+        // TODO: Use smart pointers...
+        if (nodeToDelete == selectedSceneNode) {
+            selectedSceneNode = nullptr;
+        }
+        if (SceneNode* parent = nodeToDelete->parent) {
+            parent->RemoveChild(nodeToDelete);
+        }
+        delete nodeToDelete;
+    }
+    nodesQueuedForDeletion.clear();
 }
 
 std::string SceneManager::GetUniqueNodeName(const std::string& nameCandidate, SceneNode *parent) {

@@ -1,6 +1,6 @@
 #pragma once
 
-struct Color {
+struct EdColor {
     float r = 0.0f;
     float g = 0.0f;
     float b = 0.0f;
@@ -13,8 +13,8 @@ struct Color {
         a = a / 255.0f;
     }
 
-    static Color CreateNormalizedColor(float red = 0.0f, float green = 0.0f, float blue = 0.0f, float alpha = 1.0f) {
-        Color color = Color{ red, green, blue, alpha };
+    static EdColor CreateNormalizedColor(float red = 0.0f, float green = 0.0f, float blue = 0.0f, float alpha = 1.0f) {
+        EdColor color = EdColor{ red, green, blue, alpha };
         color.Normalize();
         return color;
     }

@@ -23,4 +23,5 @@ class Editor {
     void ProcessInput();
     void ProcessWindows();
     void Render();
+    void Flush();
 };

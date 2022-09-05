@@ -53,6 +53,12 @@ class SceneNode {
         return components.count(&typeid(T));
     }
 
+    void RemoveChild(SceneNode* childNode) {
+        children.erase(std::remove_if(children.begin(), children.end(), [childNode](SceneNode* node) {
+            return node == childNode;
+        }), children.end());
+    }
+
     std::string name;
     NodeBaseType type = NodeBaseType_INVALID;
     SceneNode* parent = nullptr;
@@ -82,6 +88,8 @@ class SceneManager : public Singleton<SceneManager> {
     SceneManager(singleton) {}
     bool LoadSceneFromFile(const char* sceneFilePath);
     void AddDefaultNodeAsChildToSelected(NodeBaseType type);
+    void QueueNodeForDeletion(SceneNode* nodeToDelete);
+    void FlushQueuedForDeletionNodes();
 
     std::vector<SceneNodeFile*> loadedSceneFiles;
     SceneNodeFile* selectedSceneFile = nullptr;
@@ -95,4 +103,6 @@ class SceneManager : public Singleton<SceneManager> {
     static SceneNode* LoadSceneTreeNode(FileSceneNode* node, SceneNode* parent = nullptr);
 
     static std::string GetUniqueNodeName(const std::string& nameCandidate, SceneNode* parent = nullptr);
+
+    std::vector<SceneNode*> nodesQueuedForDeletion;
 };

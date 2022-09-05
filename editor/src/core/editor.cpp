@@ -8,6 +8,7 @@
 
 #include "editor_context.h"
 #include "editor_background_tasks.h"
+#include "scene/scene_manager.h"
 #include "color.h"
 #include "ui/imgui/imgui_handler.h"
 #include "utils/file_system_helper.h"
@@ -39,6 +40,7 @@ void Editor::Update() {
     ProcessInput();
     Render();
     mainTasks.Update();
+    Flush();
 }
 
 bool Editor::InitializeSDL() {
@@ -115,7 +117,7 @@ void Editor::ProcessWindows() {
 }
 
 void Editor::Render() {
-    static Color backgroundColor = Color::CreateNormalizedColor(22.0f, 22.0f, 22.0f);
+    static EdColor backgroundColor = EdColor::CreateNormalizedColor(22.0f, 22.0f, 22.0f);
     glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
@@ -131,6 +133,11 @@ void Editor::Render() {
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
     SDL_GL_SwapWindow(editorContext->window);
+}
+
+void Editor::Flush() {
+    static SceneManager* sceneManager = SceneManager::Get();
+    sceneManager->FlushQueuedForDeletionNodes();
 }
 
 bool Editor::IsRunning() const {
