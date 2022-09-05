@@ -98,7 +98,7 @@ SceneNode* SceneManager::LoadSceneTreeNode(FileSceneNode* node, SceneNode* paren
 
 void SceneManager::AddDefaultNodeAsChildToSelected(NodeBaseType type) {
     SceneNode* newNode = new SceneNode();
-    newNode->name = node_get_base_type_string(type); // TODO: Auto generate based on parent and non nested children's names
+    newNode->name = GetUniqueNodeName(node_get_base_type_string(type), selectedSceneNode);
     newNode->type = type;
     if (selectedSceneNode) {
         // Establish parent and child relationship
@@ -131,4 +131,41 @@ void SceneManager::AddDefaultNodeAsChildToSelected(NodeBaseType type) {
     } else {
         // TODO: Create new node for newly created scenes
     }
+}
+
+std::string SceneManager::GetUniqueNodeName(const std::string& nameCandidate, SceneNode *parent) {
+    std::string currentCandidate = nameCandidate;
+    bool hasDuplicateName = false;
+    // Initial check
+    for (const auto& node : parent->children) {
+        if (node->name == currentCandidate) {
+            hasDuplicateName = true;
+        }
+    }
+
+    if (hasDuplicateName) {
+        size_t endDigitIndex = nameCandidate.find_last_not_of("0123456789");
+        std::string nameWithoutDigits = nameCandidate.substr(0, endDigitIndex + 1);
+        std::string endDigits = nameCandidate.substr(endDigitIndex + 1);
+        int currentIndex = 0;
+        currentCandidate = nameWithoutDigits + std::to_string(currentIndex);
+
+        // TODO: Make a more efficient algo
+        while (true) {
+            hasDuplicateName = false;
+            for (const auto& node : parent->children) {
+                if (node->name == currentCandidate) {
+                    currentCandidate = nameWithoutDigits + std::to_string(currentIndex);
+                    hasDuplicateName = true;
+                    break;
+                }
+            }
+            if (!hasDuplicateName) {
+                break;
+            }
+            currentIndex++;
+        }
+    }
+
+    return currentCandidate;
 }

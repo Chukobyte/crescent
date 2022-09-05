@@ -93,4 +93,6 @@ class SceneManager : public Singleton<SceneManager> {
 
     // Recursive function to load SceneTreeNode into SceneNode for usability purposes
     static SceneNode* LoadSceneTreeNode(FileSceneNode* node, SceneNode* parent = nullptr);
+
+    static std::string GetUniqueNodeName(const std::string& nameCandidate, SceneNode* parent = nullptr);
 };

@@ -219,34 +219,34 @@ void OpenedProjectUI::ProcessModalPopups() {
     ImGuiHelper::BeginPopupModal(fontConfigurationPopup);
 
     static ImGuiHelper::PopupModal addNodePopup = {
-            .name = "Add Node Menu",
-            .open = nullptr,
-            .windowFlags = 0,
-            .callbackFunc = [] (ImGuiHelper::Context* context) {
-                if (ImGui::Button("Close")) {
-                    ImGui::CloseCurrentPopup();
-                }
+        .name = "Add Node Menu",
+        .open = nullptr,
+        .windowFlags = 0,
+        .callbackFunc = [] (ImGuiHelper::Context* context) {
+            if (ImGui::Button("Close")) {
+                ImGui::CloseCurrentPopup();
+            }
 
-                static std::string selectedType = RBE_NODE_NODE_STRING;
-                static ImGuiHelper::ComboBox nodeTypeSelectionComboBox(
-                        "Type",
-                        { RBE_NODE_NODE_STRING, RBE_NODE_NODE2D_STRING, RBE_NODE_SPRITE_STRING, RBE_NODE_ANIMATED_SPRITE_STRING, RBE_NODE_TEXT_LABEL_STRING, RBE_NODE_COLLIDER2D_STRING, RBE_NODE_COLOR_RECT_STRING },
-                        [](const char* newItem) {
-                            selectedType = newItem;
-                        }
-                );
-                ImGuiHelper::BeginComboBox(nodeTypeSelectionComboBox);
+            static std::string selectedType = RBE_NODE_NODE_STRING;
+            static ImGuiHelper::ComboBox nodeTypeSelectionComboBox(
+                "Type",
+            { RBE_NODE_NODE_STRING, RBE_NODE_NODE2D_STRING, RBE_NODE_SPRITE_STRING, RBE_NODE_ANIMATED_SPRITE_STRING, RBE_NODE_TEXT_LABEL_STRING, RBE_NODE_COLLIDER2D_STRING, RBE_NODE_COLOR_RECT_STRING },
+            [](const char* newItem) {
+                selectedType = newItem;
+            }
+            );
+            ImGuiHelper::BeginComboBox(nodeTypeSelectionComboBox);
 
-                if (ImGui::Button("Add")) {
-                    // TODO: Implement
-                    static SceneManager* sceneManager = SceneManager::Get();
-                    const NodeBaseType selectedBaseType = node_get_base_type(selectedType.c_str());
-                    sceneManager->AddDefaultNodeAsChildToSelected(selectedBaseType);
-                    ImGui::CloseCurrentPopup();
-                }
-            },
-            .position = ImVec2{ 100.0f, 100.0f },
-            .size = ImVec2{ 200.0f, 200.0f },
+            if (ImGui::Button("Add")) {
+                // TODO: Implement
+                static SceneManager* sceneManager = SceneManager::Get();
+                const NodeBaseType selectedBaseType = node_get_base_type(selectedType.c_str());
+                sceneManager->AddDefaultNodeAsChildToSelected(selectedBaseType);
+                ImGui::CloseCurrentPopup();
+            }
+        },
+        .position = ImVec2{ 100.0f, 100.0f },
+        .size = ImVec2{ 200.0f, 200.0f },
     };
     ImGuiHelper::BeginPopupModal(addNodePopup);
 }
