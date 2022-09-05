@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "../engine/src/core/game_properties.h"
@@ -9,12 +10,20 @@
 
 struct TextureAsset {
     TextureAsset() = default;
-    explicit TextureAsset(const RBEAssetTexture& texture) :
-        file_path(texture.file_path),
-        wrap_s(texture.wrap_s),
-        wrap_t(texture.wrap_t),
-        filter_min(texture.filter_min),
-        filter_mag(texture.filter_mag)
+    explicit TextureAsset(const RBEAssetTexture& texture)
+        : file_path(texture.file_path),
+          wrap_s(texture.wrap_s),
+          wrap_t(texture.wrap_t),
+          filter_min(texture.filter_min),
+          filter_mag(texture.filter_mag)
+    {}
+
+    TextureAsset(std::string filePath, std::string wrapS, std::string wrapT, std::string filterMin, std::string filterMag)
+        : file_path(std::move(filePath)),
+          wrap_s(std::move(wrapS)),
+          wrap_t(std::move(wrapT)),
+          filter_min(std::move(filterMin)),
+          filter_mag(std::move(filterMag))
     {}
 
     std::string file_path;
@@ -84,4 +93,6 @@ class ProjectProperties : public Singleton<ProjectProperties> {
 
     void LoadPropertiesFromConfig(const char* modulePath);
     void PrintProperties() const;
+    void UpdateTextureAsset(const TextureAsset& textureAsset);
+    void UpdateAudioSourceAsset(const AudioSourceAsset& audioSourceAsset);
 };

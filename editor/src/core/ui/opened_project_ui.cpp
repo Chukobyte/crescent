@@ -404,14 +404,39 @@ void OpenedProjectUI::ProcessWindows() {
                 const FileNode& selectedFileNode = assetBrowser->selectedFileNode.value();
                 ImGui::Text("file: %s", selectedFileNode.path.filename().string().c_str());
                 if (selectedFileNode.regularFileType == FileNodeRegularFileType::Texture) {
-                    ImGui::Text("Texture");
+                    static std::string selectedWrapS = "clamped_to_border";
+                    static ImGuiHelper::ComboBox wrapSComboBox("Wrap S", { "clamped_to_border", "repeat" }, [](const char* newItem) {
+                        selectedWrapS = newItem;
+                    });
+                    ImGuiHelper::BeginComboBox(wrapSComboBox);
+
+                    static std::string selectedWrapT = "clamped_to_border";
+                    static ImGuiHelper::ComboBox wrapTComboBox("Wrap T", { "clamped_to_border", "repeat" }, [](const char* newItem) {
+                        selectedWrapT = newItem;
+                    });
+                    ImGuiHelper::BeginComboBox(wrapTComboBox);
+
+                    static std::string selectedFilterMin = "nearest";
+                    static ImGuiHelper::ComboBox filterMinComboBox("Filter Min", { "nearest", "linear" }, [](const char* newItem) {
+                        selectedFilterMin = newItem;
+                    });
+                    ImGuiHelper::BeginComboBox(filterMinComboBox);
+
+                    static std::string selectedFilterMag = "nearest";
+                    static ImGuiHelper::ComboBox filterMagComboBox("Filter Mag", { "nearest", "linear" }, [](const char* newItem) {
+                        selectedFilterMag = newItem;
+                    });
+                    ImGuiHelper::BeginComboBox(filterMagComboBox);
+
+                    ImGui::Separator();
+                    if (ImGui::Button("Reimport")) {
+                        ProjectProperties* projectProperties = ProjectProperties::Get();
+                        const TextureAsset updatedTextureAsset = TextureAsset(selectedFileNode.GetRelativePath(), selectedWrapS, selectedWrapT, selectedFilterMin, selectedFilterMag);
+                        projectProperties->UpdateTextureAsset(updatedTextureAsset);
+                        ConfigFileCreator::GenerateConfigFile(CONFIG_FILE_NAME, ProjectProperties::Get());
+                    }
                 } else if (selectedFileNode.regularFileType == FileNodeRegularFileType::AudioSource) {
                     ImGui::Text("Audio Source");
-                }
-                ImGui::Separator();
-                if (ImGui::Button("Reimport")) {
-                    ProjectProperties* projectProperties = ProjectProperties::Get();
-                    // Update project properties
                 }
             }
         },

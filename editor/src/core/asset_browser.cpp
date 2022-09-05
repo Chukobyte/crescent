@@ -7,16 +7,11 @@
 
 using namespace Squid;
 
-FileNodeRegularFileType FileNodeUtils::GetFileNodeRegularType(const std::string &fileName) {
-    if (fileName.ends_with(".png")) {
-        return FileNodeRegularFileType::Texture;
-    } else if (fileName.ends_with(".wav")) {
-        return FileNodeRegularFileType::AudioSource;
-    }
-//    else if (fileName.ends_with(".py")) {
-//        return FileNodeRegularFileType::PythonScript;
-//    }
-    return FileNodeRegularFileType::Invalid;
+//--- FileNode ---//
+std::string FileNode::GetRelativePath() const {
+    std::filesystem::path projectRootDir(FileSystemHelper::GetCurrentDirectory());
+    std::filesystem::path relativePath = std::filesystem::relative(path, projectRootDir);
+    return relativePath.generic_string();
 }
 
 //--- FileNodeUtils ---//
@@ -37,6 +32,18 @@ void FileNodeUtils::LoadFileNodeDirEntries(FileNode& fileNode, unsigned int& nod
             fileNode.files.emplace_back(regularFileNode);
         }
     }
+}
+
+FileNodeRegularFileType FileNodeUtils::GetFileNodeRegularType(const std::string &fileName) {
+    if (fileName.ends_with(".png")) {
+        return FileNodeRegularFileType::Texture;
+    } else if (fileName.ends_with(".wav")) {
+        return FileNodeRegularFileType::AudioSource;
+    }
+//    else if (fileName.ends_with(".py")) {
+//        return FileNodeRegularFileType::PythonScript;
+//    }
+    return FileNodeRegularFileType::Invalid;
 }
 
 void FileNodeUtils::DisplayFileNodeTree(FileNode &fileNode, const bool isRoot) {

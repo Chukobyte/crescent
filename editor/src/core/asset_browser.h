@@ -24,6 +24,8 @@ enum class FileNodeRegularFileType {
 };
 
 struct FileNode {
+    std::string GetRelativePath() const;
+
     std::filesystem::path path;
     FileNodeType type = FileNodeType::Invalid;
     unsigned int index = 0;

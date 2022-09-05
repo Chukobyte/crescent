@@ -62,3 +62,26 @@ void ProjectProperties::PrintProperties() const {
     rbe_logger_debug("game_title = %s, window_width = %d, window_height = %d, target_fps = %d",
                      gameTitle.c_str(), windowWidth, windowHeight, targetFPS);
 }
+
+void ProjectProperties::UpdateTextureAsset(const TextureAsset &textureAsset) {
+    for (auto& asset : assets.textures) {
+        if (asset.file_path == textureAsset.file_path) {
+            asset = textureAsset;
+//            asset.file_path = textureAsset.file_path;
+//            asset.wrap_s = textureAsset.wrap_t;
+//            asset.wrap_t = textureAsset.wrap_t;
+//            asset.filter_min = textureAsset.filter_min;
+//            asset.filter_mag = textureAsset.filter_mag;
+            break;
+        }
+    }
+}
+
+void ProjectProperties::UpdateAudioSourceAsset(const AudioSourceAsset &audioSourceAsset) {
+    for (auto& asset : assets.audioSources) {
+        if (asset.file_path == audioSourceAsset.file_path) {
+            asset = audioSourceAsset;
+            break;
+        }
+    }
+}
