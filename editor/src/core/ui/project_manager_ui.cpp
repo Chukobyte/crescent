@@ -37,11 +37,10 @@ void ProjectManagerUI::ProcessWindows() {
         .open = nullptr,
         .windowFlags = 0,
         .callbackFunc = [gameProperties = ProjectProperties::Get()] (ImGuiHelper::Context* context) {
-            if (ImGui::Button("Go To Test Fighter Project")) {
-                const char* fighterTestPath = "test_games/fighter_test";
-                rbe_fs_chdir(fighterTestPath);
-                editorContext->projectState = EditorProjectState::OpenedProject;
-                rbe_logger_debug("Opening test project at directory = %s", fighterTestPath);
+            auto LoadProject = [gameProperties, edContext = EditorContext::Get()](const char* projectPath) {
+                rbe_fs_chdir(projectPath);
+                edContext->projectState = EditorProjectState::OpenedProject;
+                rbe_logger_debug("Opening test project at directory = %s", projectPath);
                 gameProperties->LoadPropertiesFromConfig("cre_config.py");
                 gameProperties->PrintProperties();
                 if (!gameProperties->initialNodePath.empty()) {
@@ -50,7 +49,22 @@ void ProjectManagerUI::ProcessWindows() {
                         rbe_logger_error("Failed to load scene from file at path '%s'", gameProperties->initialNodePath.c_str());
                     }
                 }
+            };
+
+            if (ImGui::Button("Go To Test Fighter Project")) {
+                LoadProject("test_games/fighter_test");
             }
+
+            ImGui::Separator();
+            // Manual project path
+            static std::string projectPath;
+            static ImGuiHelper::InputText projectPathInputText("Project Path", projectPath);
+            ImGuiHelper::BeginInputText(projectPathInputText);
+            // TODO: Validate path
+            if (ImGui::Button("Load Project") && !projectPath.empty()) {
+                LoadProject(projectPath.c_str());
+            }
+
         },
         .position = ImVec2{ 150.0f, 100.0f },
         .size = ImVec2{ 400.0f, 300.0f },
