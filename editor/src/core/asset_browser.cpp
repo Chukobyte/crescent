@@ -96,4 +96,11 @@ void AssetBrowser::RefreshCache() {
         selectedFileNode = rootNode;
     }
     FileNodeUtils::LoadFileNodeDirEntries(rootNode, startingIndex);
+    for (auto& func : registerRefreshFuncs) {
+        func(rootNode);
+    }
+}
+
+void AssetBrowser::RegisterRefreshCallback(const AssetBrowserRefreshFunc& func) {
+    registerRefreshFuncs.emplace_back(func);
 }
