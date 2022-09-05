@@ -435,9 +435,8 @@ void OpenedProjectUI::ProcessWindows() {
                         projectProperties->UpdateTextureAsset(updatedTextureAsset);
                         ConfigFileCreator::GenerateConfigFile(CONFIG_FILE_NAME, ProjectProperties::Get());
                     }
-                } else if (selectedFileNode.regularFileType == FileNodeRegularFileType::AudioSource) {
-                    ImGui::Text("Audio Source");
                 }
+                // TODO: Add audio source properties when they exist...
             }
         },
         .position = ImVec2{ 150.0f, 100.0f },
