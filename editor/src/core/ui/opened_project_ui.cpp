@@ -227,10 +227,10 @@ void OpenedProjectUI::ProcessModalPopups() {
                     ImGui::CloseCurrentPopup();
                 }
 
-                static std::string selectedType = "Node";
+                static std::string selectedType = RBE_NODE_NODE_STRING;
                 static ImGuiHelper::ComboBox nodeTypeSelectionComboBox(
                         "Type",
-                        { "Node", "Node2D", "Sprite", "AnimatedSprite", "TextLabel", "Collider2D", "ColorRect" },
+                        { RBE_NODE_NODE_STRING, RBE_NODE_NODE2D_STRING, RBE_NODE_SPRITE_STRING, RBE_NODE_ANIMATED_SPRITE_STRING, RBE_NODE_TEXT_LABEL_STRING, RBE_NODE_COLLIDER2D_STRING, RBE_NODE_COLOR_RECT_STRING },
                         [](const char* newItem) {
                             selectedType = newItem;
                         }
@@ -239,6 +239,9 @@ void OpenedProjectUI::ProcessModalPopups() {
 
                 if (ImGui::Button("Add")) {
                     // TODO: Implement
+                    static SceneManager* sceneManager = SceneManager::Get();
+                    const NodeBaseType selectedBaseType = node_get_base_type(selectedType.c_str());
+                    sceneManager->AddDefaultNodeAsChildToSelected(selectedBaseType);
                     ImGui::CloseCurrentPopup();
                 }
             },
@@ -351,10 +354,10 @@ void DrawTextLabel(SceneNode* node) {
             for (const auto& fontAsset : projectProperties->assets.fonts) {
                 fontUIDComboBox.items.emplace_back(fontAsset.uid);
             }
-            fontUIDComboBox.SetSelected(textLabelComp->fontUID);
             fontUIDComboBox.onSelectionChangeCallback = [textLabelComp] (const char* newItem) {
                 textLabelComp->fontUID = newItem;
             };
+            fontUIDComboBox.SetSelected(textLabelComp->fontUID);
         }
         ImGuiHelper::BeginComboBox(fontUIDComboBox);
 

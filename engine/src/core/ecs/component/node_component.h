@@ -44,7 +44,7 @@ void node_component_delete(NodeComponent* nodeComponent);
 NodeComponent* node_component_copy(const NodeComponent* nodeComponent);
 NodeBaseType node_get_base_type(const char* baseName);
 NodeBaseInheritanceType node_get_type_inheritance(NodeBaseType type);
-const char* node_get_component_type_string(NodeBaseType type);
+const char* node_get_base_type_string(NodeBaseType type);
 
 #ifdef __cplusplus
 }

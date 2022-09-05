@@ -505,7 +505,7 @@ PyObject* rbe_py_utils_get_entity_instance(Entity entity) {
     }
     char typeBuffer[TYPE_BUFFER_SIZE];
     NodeComponent* nodeComponent = (NodeComponent*) component_manager_get_component(entity, ComponentDataIndex_NODE);
-    strcpy(typeBuffer, node_get_component_type_string(nodeComponent->type));
+    strcpy(typeBuffer, node_get_base_type_string(nodeComponent->type));
 
     return Py_BuildValue("(is)", entity, typeBuffer);
 #undef TYPE_BUFFER_SIZE
@@ -994,7 +994,7 @@ PyObject* rbe_py_api_collision_handler_process_collisions(PyObject* self, PyObje
         for (size_t i = 0; i < collisionResult.collidedEntityCount; i++) {
             const Entity collidedEntity = collisionResult.collidedEntities[i];
             NodeComponent* nodeComponent = (NodeComponent*) component_manager_get_component(collidedEntity, ComponentDataIndex_NODE);
-            strcpy(typeBuffer, node_get_component_type_string(nodeComponent->type));
+            strcpy(typeBuffer, node_get_base_type_string(nodeComponent->type));
             if (PyList_Append(pyCollidedEntityList, Py_BuildValue("(is)", collidedEntity, typeBuffer)) == -1) {
                 PyErr_Print();
             }

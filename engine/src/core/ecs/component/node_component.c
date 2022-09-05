@@ -62,7 +62,7 @@ NodeBaseInheritanceType node_get_type_inheritance(NodeBaseType type) {
     return NodeBaseInheritanceType_INVALID;
 }
 
-const char* node_get_component_type_string(NodeBaseType type) {
+const char* node_get_base_type_string(NodeBaseType type) {
     switch (type) {
     case NodeBaseType_NODE:
         return RBE_NODE_NODE_STRING;

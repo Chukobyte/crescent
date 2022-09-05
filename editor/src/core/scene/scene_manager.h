@@ -21,7 +21,7 @@ class SceneNode {
     }
 
     [[nodiscard]] const char* GetTypeString() const {
-        return node_get_component_type_string(type);
+        return node_get_base_type_string(type);
     }
 
     [[nodiscard]] unsigned int GetUID() const {
@@ -81,10 +81,11 @@ class SceneManager : public Singleton<SceneManager> {
   public:
     SceneManager(singleton) {}
     bool LoadSceneFromFile(const char* sceneFilePath);
+    void AddDefaultNodeAsChildToSelected(NodeBaseType type);
 
     std::vector<SceneNodeFile*> loadedSceneFiles;
-
     SceneNodeFile* selectedSceneFile = nullptr;
+
     SceneNode* selectedSceneNode = nullptr;
 
   private:
