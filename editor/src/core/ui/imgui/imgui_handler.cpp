@@ -17,14 +17,14 @@ void ImGuiHandler::Process() {
     switch (editorContext->projectState) {
     case EditorProjectState::ProjectManager: {
         ProjectManagerUI::ProcessMenuBar();
-        ProjectManagerUI::ProcessModalPopups();
         ProjectManagerUI::ProcessWindows();
+        ProjectManagerUI::ProcessModalPopups();
         break;
     }
     case EditorProjectState::OpenedProject: {
         OpenedProjectUI::ProcessMenuBar();
-        OpenedProjectUI::ProcessModalPopups();
         OpenedProjectUI::ProcessWindows();
+        OpenedProjectUI::ProcessModalPopups();
         break;
     }
     default:

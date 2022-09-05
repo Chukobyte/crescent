@@ -35,7 +35,6 @@ void ImGuiHelper::BeginMainMenuBar(const ImGuiHelper::MenuBar& menuBar) {
             }
         }
         ImGui::EndMainMenuBar();
-        context->FlushPopups();
     }
 }
 
@@ -50,7 +49,6 @@ void ImGuiHelper::BeginPopupModal(const ImGuiHelper::PopupModal& popupModal) {
     if (ImGui::BeginPopupModal(popupModal.name, popupModal.open, popupModal.windowFlags)) {
         popupModal.callbackFunc(context);
         ImGui::EndPopup();
-        context->FlushPopups();
     }
 }
 
@@ -285,7 +283,6 @@ void ImGuiHelper::BeginWindow(const ImGuiHelper::Window& window) {
 void ImGuiHelper::BeginWindowWithEnd(const ImGuiHelper::Window& window) {
     BeginWindow(window);
     ImGui::End();
-    context->FlushPopups();
 }
 
 //--- DockSpace ---//

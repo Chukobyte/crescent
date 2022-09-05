@@ -75,6 +75,9 @@ void OpenedProjectUI::ProcessMenuBar() {
 }
 
 void OpenedProjectUI::ProcessModalPopups() {
+    static ImGuiHelper::Context* imguiHelperContext = ImGuiHelper::Context::Get();
+    imguiHelperContext->FlushPopups();
+
     static ImGuiHelper::PopupModal projectSettingsPopup = {
         .name = "Project Settings Menu",
         .open = nullptr,
@@ -104,7 +107,7 @@ void OpenedProjectUI::ProcessModalPopups() {
     };
     ImGuiHelper::BeginPopupModal(projectSettingsPopup);
 
-    static ImGuiHelper::PopupModal InputConfigurationPopup = {
+    static ImGuiHelper::PopupModal inputConfigurationPopup = {
         .name = "Input Configurations",
         .open = nullptr,
         .windowFlags = 0,
@@ -168,9 +171,9 @@ void OpenedProjectUI::ProcessModalPopups() {
         .position = ImVec2{ 100.0f, 100.0f },
         .size = ImVec2{ 200.0f, 200.0f },
     };
-    ImGuiHelper::BeginPopupModal(InputConfigurationPopup);
+    ImGuiHelper::BeginPopupModal(inputConfigurationPopup);
 
-    static ImGuiHelper::PopupModal FontConfigurationPopup = {
+    static ImGuiHelper::PopupModal fontConfigurationPopup = {
         .name = "Font Configurations",
         .open = nullptr,
         .windowFlags = 0,
@@ -213,7 +216,21 @@ void OpenedProjectUI::ProcessModalPopups() {
         .position = ImVec2{ 100.0f, 100.0f },
         .size = ImVec2{ 200.0f, 200.0f },
     };
-    ImGuiHelper::BeginPopupModal(FontConfigurationPopup);
+    ImGuiHelper::BeginPopupModal(fontConfigurationPopup);
+
+    static ImGuiHelper::PopupModal addNodePopup = {
+            .name = "Add Node Menu",
+            .open = nullptr,
+            .windowFlags = 0,
+            .callbackFunc = [] (ImGuiHelper::Context* context) {
+                if (ImGui::Button("Close")) {
+                    ImGui::CloseCurrentPopup();
+                }
+            },
+            .position = ImVec2{ 100.0f, 100.0f },
+            .size = ImVec2{ 200.0f, 200.0f },
+    };
+    ImGuiHelper::BeginPopupModal(addNodePopup);
 }
 
 // Temp
@@ -383,6 +400,10 @@ void OpenedProjectUI::ProcessWindows() {
         .open = nullptr,
         .windowFlags = ImGuiWindowFlags_NoResize,
         .callbackFunc = [] (ImGuiHelper::Context* context) {
+            if (ImGui::Button("+")) {
+                context->OpenPopup("Add Node Menu");
+            }
+
             static SceneManager* sceneManager = SceneManager::Get();
             if (auto sceneNodeFile = sceneManager->selectedSceneFile) {
                 if (auto rootNode = sceneNodeFile->rootNode) {
