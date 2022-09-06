@@ -37,6 +37,19 @@ void OpenedProjectUI::ProcessMenuBar() {
                         },
                     },
                     {
+                        .name = "Save Scene",
+                        .keyboardShortcut = "Ctrl+S",
+                        .callbackFunc = [sceneManager = SceneManager::Get()] (ImGuiHelper::Context* context) {
+                            if (SceneNodeFile* selectedSceneFile = sceneManager->selectedSceneFile) {
+                                if (selectedSceneFile->hasBeenSaved) {
+
+                                } else {
+                                    context->OpenPopup("Save New Scene Menu");
+                                }
+                            }
+                        },
+                    },
+                    {
                         .name = "Go To Project Manager",
                         .keyboardShortcut = "Ctrl+Shift+Q",
                         .callbackFunc = [] (ImGuiHelper::Context* context) {
@@ -138,6 +151,37 @@ void OpenedProjectUI::ProcessModalPopups() {
         .size = ImVec2{ 200.0f, 200.0f },
     };
     ImGuiHelper::BeginPopupModal(openScenePopup);
+
+    static ImGuiHelper::PopupModal saveNewScenePopup = {
+        .name = "Save New Scene Menu",
+        .open = nullptr,
+        .windowFlags = 0,
+        .callbackFunc = [gameProperties = ProjectProperties::Get()] (ImGuiHelper::Context* context) {
+            static std::string saveSceneFilePath;
+            ImGuiHelper::InputText nameText("File Path", saveSceneFilePath);
+            ImGuiHelper::BeginInputText(nameText);
+            if (ImGui::Button("Close")) {
+                saveSceneFilePath.clear();
+                ImGui::CloseCurrentPopup();
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("Ok") && !saveSceneFilePath.empty()) {
+                size_t lastBackslashIndex = saveSceneFilePath.find_last_of('/');
+                const std::string path = saveSceneFilePath.substr(0, lastBackslashIndex + 1);
+                const std::string fileName = saveSceneFilePath.substr(lastBackslashIndex + 1);
+                size_t fileExtensionIndex = fileName.find_last_of('.');
+                const std::string validFileName = fileName.substr(0, fileExtensionIndex) + ".py";
+                const std::string validFullFilePath = path + validFileName;
+                rbe_logger_debug("path = '%s', fileName = '%s', validFileName = '%s', validFullFilePath = '%s'",
+                                 path.c_str(), fileName.c_str(), validFileName.c_str(), validFullFilePath.c_str());
+                saveSceneFilePath.clear();
+                ImGui::CloseCurrentPopup();
+            }
+        },
+        .position = ImVec2{ 100.0f, 100.0f },
+        .size = ImVec2{ 200.0f, 200.0f },
+    };
+    ImGuiHelper::BeginPopupModal(saveNewScenePopup);
 
     static ImGuiHelper::PopupModal projectSettingsPopup = {
         .name = "Project Settings Menu",
