@@ -77,6 +77,7 @@ class SceneNode {
 struct SceneNodeFile {
     std::string filePath;
     SceneNode* rootNode = nullptr;
+    bool hasBeenSaved = false;
 };
 
 namespace SceneNodeUtils {

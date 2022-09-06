@@ -46,6 +46,7 @@ bool SceneManager::LoadSceneFromFile(const char *sceneFilePath) {
     pyh_run_python_file(sceneFilePath);
     if (FileSceneNode* rootFileSceneNode = file_scene_node_get_cached_file_scene_node()) {
         SceneNodeFile* nodeFile = GenerateSceneNodeFile(rootFileSceneNode, sceneFilePath);
+        nodeFile->hasBeenSaved = true;
         loadedSceneFiles.emplace_back(nodeFile);
         if (selectedSceneFile == nullptr) {
             selectedSceneFile = nodeFile;
@@ -68,6 +69,7 @@ SceneNodeFile *SceneManager::GenerateSceneNodeFile(FileSceneNode *rootTreeNode, 
 
 SceneNodeFile *SceneManager::GenerateDefaultSceneNodeFile() const {
     SceneNodeFile* nodeFile = new SceneNodeFile();
+    nodeFile->filePath = "[unsaved]";
     return nodeFile;
 }
 

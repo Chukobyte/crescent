@@ -40,7 +40,9 @@ void ProjectManagerUI::ProcessWindows() {
         .callbackFunc = [gameProperties = ProjectProperties::Get()] (ImGuiHelper::Context* context) {
             SceneManager* sceneManager = SceneManager::Get();
             auto LoadProject = [sceneManager, gameProperties, edContext = EditorContext::Get()](const char* projectPath) {
-                rbe_fs_chdir(projectPath);
+                if (FileSystemHelper::GetCurrentDirectory() != std::string(projectPath)) {
+                    rbe_fs_chdir(projectPath);
+                }
                 edContext->projectState = EditorProjectState::OpenedProject;
                 rbe_logger_debug("Opening project at directory = %s", projectPath);
                 gameProperties->LoadPropertiesFromConfig("cre_config.py");
@@ -64,8 +66,9 @@ void ProjectManagerUI::ProcessWindows() {
             static ImGuiHelper::InputText openProjectPathInputText("Open Project Path", openProjectPath);
             ImGuiHelper::BeginInputText(openProjectPathInputText);
             // TODO: Validate path
-            if (ImGui::Button("Open Project") && !openProjectPath.empty()) {
-                LoadProject(openProjectPath.c_str());
+            const std::string fullOpenProjectPath = "test_games/" + openProjectPath;
+            if (ImGui::Button("Open Project") && !openProjectPath.empty() && FileSystemHelper::DoesDirectoryExist(fullOpenProjectPath)) {
+                LoadProject(fullOpenProjectPath.c_str());
             }
 
             ImGui::Separator();
