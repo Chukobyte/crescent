@@ -91,6 +91,9 @@ class SceneManager : public Singleton<SceneManager> {
     void QueueNodeForDeletion(SceneNode* nodeToDelete, bool recurseChildren = true);
     void FlushQueuedForDeletionNodes();
 
+    SceneNodeFile* GenerateDefaultSceneNodeFile() const;
+    SceneNodeFile* GenerateDefaultSceneNodeFile(SceneNode* rootSceneNode) const;
+
     static std::string GetUniqueNodeName(const std::string& nameCandidate, SceneNode* parent = nullptr);
 
     std::vector<SceneNodeFile*> loadedSceneFiles;

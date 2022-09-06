@@ -66,6 +66,18 @@ SceneNodeFile *SceneManager::GenerateSceneNodeFile(FileSceneNode *rootTreeNode, 
     return nodeFile;
 }
 
+SceneNodeFile *SceneManager::GenerateDefaultSceneNodeFile() const {
+    SceneNodeFile* nodeFile = new SceneNodeFile();
+    return nodeFile;
+}
+
+SceneNodeFile* SceneManager::GenerateDefaultSceneNodeFile(SceneNode* rootSceneNode) const {
+    RBE_ASSERT_FMT(rootSceneNode->parent == nullptr, "Scene tree root has a parent!?");
+    SceneNodeFile* nodeFile = new SceneNodeFile();
+    nodeFile->rootNode = rootSceneNode;
+    return nodeFile;
+}
+
 SceneNode* SceneManager::LoadSceneTreeNode(FileSceneNode* node, SceneNode* parent) {
     SceneNode* sceneNode = new SceneNode();
     sceneNode->parent = parent;
@@ -115,32 +127,34 @@ void SceneManager::AddDefaultNodeAsChildToSelected(NodeBaseType type) {
     SceneNode* newNode = new SceneNode();
     newNode->name = GetUniqueNodeName(node_get_base_type_string(type), selectedSceneNode);
     newNode->type = type;
+    // Establish parent and child relationship
+    newNode->parent = selectedSceneNode;
     if (selectedSceneNode != nullptr) {
-        // Establish parent and child relationship
-        newNode->parent = selectedSceneNode;
         selectedSceneNode->children.emplace_back(newNode);
-        // Setup components based on type
-        const NodeBaseInheritanceType inheritanceType = node_get_type_inheritance(type);
-        if ((NodeBaseInheritanceType_NODE2D & inheritanceType) == NodeBaseInheritanceType_NODE2D) {
-            newNode->AddComponent<Transform2DComp>();
-        }
-        if ((NodeBaseInheritanceType_SPRITE & inheritanceType) == NodeBaseInheritanceType_SPRITE) {
-            newNode->AddComponent<SpriteComp>();
-        }
-        if ((NodeBaseInheritanceType_ANIMATED_SPRITE & inheritanceType) == NodeBaseInheritanceType_ANIMATED_SPRITE) {
-            newNode->AddComponent<AnimatedSpriteComp>();
-        }
-        if ((NodeBaseInheritanceType_TEXT_LABEL & inheritanceType) == NodeBaseInheritanceType_TEXT_LABEL) {
-            newNode->AddComponent<TextLabelComp>();
-        }
-        if ((NodeBaseInheritanceType_COLLIDER2D & inheritanceType) == NodeBaseInheritanceType_COLLIDER2D) {
-            newNode->AddComponent<Collider2DComp>();
-        }
-        if ((NodeBaseInheritanceType_COLOR_RECT & inheritanceType) == NodeBaseInheritanceType_COLOR_RECT) {
-            newNode->AddComponent<ColorRectComp>();
-        }
-    } else {
-        // TODO: Create new node for newly created scenes
+    }
+    // Setup components based on type
+    const NodeBaseInheritanceType inheritanceType = node_get_type_inheritance(type);
+    if ((NodeBaseInheritanceType_NODE2D & inheritanceType) == NodeBaseInheritanceType_NODE2D) {
+        newNode->AddComponent<Transform2DComp>();
+    }
+    if ((NodeBaseInheritanceType_SPRITE & inheritanceType) == NodeBaseInheritanceType_SPRITE) {
+        newNode->AddComponent<SpriteComp>();
+    }
+    if ((NodeBaseInheritanceType_ANIMATED_SPRITE & inheritanceType) == NodeBaseInheritanceType_ANIMATED_SPRITE) {
+        newNode->AddComponent<AnimatedSpriteComp>();
+    }
+    if ((NodeBaseInheritanceType_TEXT_LABEL & inheritanceType) == NodeBaseInheritanceType_TEXT_LABEL) {
+        newNode->AddComponent<TextLabelComp>();
+    }
+    if ((NodeBaseInheritanceType_COLLIDER2D & inheritanceType) == NodeBaseInheritanceType_COLLIDER2D) {
+        newNode->AddComponent<Collider2DComp>();
+    }
+    if ((NodeBaseInheritanceType_COLOR_RECT & inheritanceType) == NodeBaseInheritanceType_COLOR_RECT) {
+        newNode->AddComponent<ColorRectComp>();
+    }
+
+    if (selectedSceneFile->rootNode == nullptr) {
+        selectedSceneFile->rootNode = newNode;
     }
 }
 
@@ -167,6 +181,9 @@ void SceneManager::FlushQueuedForDeletionNodes() {
 }
 
 std::string SceneManager::GetUniqueNodeName(const std::string& nameCandidate, SceneNode *parent) {
+    if (parent == nullptr) {
+        return nameCandidate;
+    }
     std::string currentCandidate = nameCandidate;
     bool hasDuplicateName = false;
     // Initial check

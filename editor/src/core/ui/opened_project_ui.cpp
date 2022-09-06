@@ -299,7 +299,6 @@ void OpenedProjectUI::ProcessModalPopups() {
             ImGuiHelper::BeginComboBox(nodeTypeSelectionComboBox);
 
             if (ImGui::Button("Add")) {
-                // TODO: Implement
                 static SceneManager* sceneManager = SceneManager::Get();
                 const NodeBaseType selectedBaseType = node_get_base_type(selectedType.c_str());
                 sceneManager->AddDefaultNodeAsChildToSelected(selectedBaseType);

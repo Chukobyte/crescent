@@ -96,6 +96,10 @@ class ProjectProperties : public Singleton<ProjectProperties> {
     ProjectProperties(singleton);
     ~ProjectProperties();
 
+    static std::string GetDefaultProjectPropertyFileContent(const std::string& gameTitle);
+
+    void ResetToDefault();
+
     void LoadPropertiesFromConfig(const char* modulePath);
     void PrintProperties() const;
     void UpdateTextureAsset(const TextureAsset& textureAsset);

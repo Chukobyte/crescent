@@ -64,6 +64,21 @@ ProjectProperties::ProjectProperties(singleton) {
     });
 }
 
+void ProjectProperties::ResetToDefault() {
+    gameTitle.clear();
+    initialNodePath.clear();
+    windowWidth = 800;
+    windowHeight = 600;
+    resolutionWidth = 800;
+    resolutionHeight = 600;
+    targetFPS = 66;
+    areCollidersVisible = false;
+    assets.textures.clear();
+    assets.audioSources.clear();
+    assets.fonts.clear();
+    inputs.actions.clear();
+}
+
 ProjectProperties::~ProjectProperties() {
     rbe_game_props_finalize();
 }
@@ -136,4 +151,30 @@ bool ProjectProperties::HasAudioSourceWithPath(const std::string &path) const {
         }
     }
     return false;
+}
+
+// Default project property file
+std::string ProjectProperties::GetDefaultProjectPropertyFileContent(const std::string& gameTitle) {
+    return "from crescent_api import *\n"
+           "\n"
+           "configure_game(\n"
+           "        game_tile=\"" + gameTitle + "\",\n"
+           "        window_width=800,\n"
+           "        window_height=600,\n"
+           "        resolution_width=800,\n"
+           "        resolution_height=600,\n"
+           "        target_fps=66,\n"
+           "        initial_node_path=\"\",\n"
+           "        colliders_visible=False,\n"
+           ")\n"
+           "\n"
+           "configure_assets(\n"
+           "        audio_sources=[],\n"
+           "        textures=[],\n"
+           "        fonts=[],\n"
+           ")\n"
+           "\n"
+           "configure_inputs(\n"
+           "        input_actions=[]\n"
+           ")\n";
 }
