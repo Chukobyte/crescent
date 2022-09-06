@@ -199,17 +199,23 @@ void OpenedProjectUI::ProcessModalPopups() {
             }
 
             static ImGuiHelper::InputText titleText("Title", gameProperties->gameTitle);
-            static ImGuiHelper::InputText initialScenePathText("Initial Node Path", gameProperties->initialNodePath);
-            static ImGuiHelper::DragInt windowWidthInt("Window Width", gameProperties->windowWidth);
-            static ImGuiHelper::DragInt windowHeightInt("Window Height", gameProperties->windowHeight);
-            static ImGuiHelper::DragInt targetFPSInt("Target FPS", gameProperties->targetFPS);
-            static ImGuiHelper::CheckBox areCollidersVisibleCheckBox("Are Colliders Visible", gameProperties->areCollidersVisible);
-
             ImGuiHelper::BeginInputText(titleText);
+
+            static ImGuiHelper::InputText initialScenePathText("Initial Node Path", gameProperties->initialNodePath);
             ImGuiHelper::BeginInputText(initialScenePathText);
+            // TODO: Setup combo box once scene node files are parsed
+//            static ImGuiHelper::ComboBox initialSceneComboBox("Initial Node Path");
+
+            static ImGuiHelper::DragInt windowWidthInt("Window Width", gameProperties->windowWidth);
             ImGuiHelper::BeginDragInt(windowWidthInt);
+
+            static ImGuiHelper::DragInt windowHeightInt("Window Height", gameProperties->windowHeight);
             ImGuiHelper::BeginDragInt(windowHeightInt);
+
+            static ImGuiHelper::DragInt targetFPSInt("Target FPS", gameProperties->targetFPS);
             ImGuiHelper::BeginDragInt(targetFPSInt);
+
+            static ImGuiHelper::CheckBox areCollidersVisibleCheckBox("Are Colliders Visible", gameProperties->areCollidersVisible);
             ImGuiHelper::BeginCheckBox(areCollidersVisibleCheckBox);
         },
         .position = ImVec2{ 100.0f, 100.0f },
