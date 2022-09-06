@@ -175,7 +175,9 @@ void OpenedProjectUI::ProcessModalPopups() {
                 const std::string validFullFilePath = path + validFileName;
 //                rbe_logger_debug("path = '%s', fileName = '%s', validFileName = '%s', validFullFilePath = '%s'",
 //                                 path.c_str(), fileName.c_str(), validFileName.c_str(), validFullFilePath.c_str());
-                SceneFileCreator::GenerateSceneFile(SceneManager::Get()->selectedSceneFile, validFullFilePath.c_str());
+                auto* selectedSceneFile = SceneManager::Get()->selectedSceneFile;
+                selectedSceneFile->filePath = validFullFilePath;
+                SceneFileCreator::GenerateSceneFile(selectedSceneFile, validFullFilePath.c_str());
                 AssetBrowser::Get()->RefreshCache();
                 saveSceneFilePath.clear();
                 ImGui::CloseCurrentPopup();
