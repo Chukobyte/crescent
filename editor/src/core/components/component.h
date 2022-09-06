@@ -27,7 +27,7 @@ struct Transform2DComp : public EditorComponent {
         .rotation = 0.0f
     };
     int zIndex = 0;
-    bool isZIndexRelativeToParent;
+    bool isZIndexRelativeToParent = true;
     bool ignoreCamera = false;
 };
 

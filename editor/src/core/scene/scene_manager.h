@@ -53,6 +53,14 @@ class SceneNode {
         return components.count(&typeid(T));
     }
 
+    size_t GetComponentCount() const {
+        return components.size();
+    }
+
+    bool HasComponents() const {
+        return GetComponentCount() > 0;
+    }
+
     void RemoveChild(SceneNode* childNode) {
         children.erase(std::remove_if(children.begin(), children.end(), [childNode](SceneNode* node) {
             return node == childNode;
@@ -63,10 +71,10 @@ class SceneNode {
     NodeBaseType type = NodeBaseType_INVALID;
     SceneNode* parent = nullptr;
     std::vector<SceneNode*> children;
-    std::map<const std::type_info*, EditorComponent*> components;
 
   private:
     unsigned int uid;
+    std::map<const std::type_info*, EditorComponent*> components;
 
     unsigned int GenerateUID() {
         static unsigned int uidCounter = 0;

@@ -43,7 +43,7 @@ void OpenedProjectUI::ProcessMenuBar() {
                         .callbackFunc = [sceneManager = SceneManager::Get()] (ImGuiHelper::Context* context) {
                             if (SceneNodeFile* selectedSceneFile = sceneManager->selectedSceneFile) {
                                 if (selectedSceneFile->hasBeenSaved) {
-
+                                    SceneFileCreator::GenerateSceneFile(selectedSceneFile, selectedSceneFile->filePath.c_str());
                                 } else {
                                     if (selectedSceneFile->rootNode != nullptr) {
                                         context->OpenPopup("Save New Scene Menu");
@@ -183,6 +183,7 @@ void OpenedProjectUI::ProcessModalPopups() {
                 auto* selectedSceneFile = SceneManager::Get()->selectedSceneFile;
                 selectedSceneFile->filePath = validFullFilePath;
                 SceneFileCreator::GenerateSceneFile(selectedSceneFile, validFullFilePath.c_str());
+                selectedSceneFile->hasBeenSaved = true;
                 AssetBrowser::Get()->RefreshCache();
                 saveSceneFilePath.clear();
                 ImGui::CloseCurrentPopup();

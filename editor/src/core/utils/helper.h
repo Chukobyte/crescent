@@ -7,7 +7,7 @@ inline std::string BoolToString(bool value) {
     return value == true ? "true" : "false";
 }
 
-inline std::string BoolToStringCaptital(bool value) {
+inline std::string BoolToStringCapital(bool value) {
     return value == true ? "True" : "False";
 }
 } // namespace
