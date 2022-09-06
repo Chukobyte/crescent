@@ -91,6 +91,8 @@ void AssetBrowser::RefreshCache() {
 
     rootNode.path = projectRootDir;
     rootNode.type = FileNodeType::Directory;
+    rootNode.directories.clear();
+    rootNode.files.clear();
     unsigned int startingIndex = rootNode.index + 1;
     if (!selectedFileNode.has_value()) {
         selectedFileNode = rootNode;

@@ -10,6 +10,7 @@
 #include "../file_creation/config_file_creator.h"
 #include "../scene/scene_manager.h"
 #include "../asset_browser.h"
+#include "../file_creation/scene_file_creator.h"
 
 const char* CONFIG_FILE_NAME = "test_cre_config.py";
 
@@ -172,8 +173,10 @@ void OpenedProjectUI::ProcessModalPopups() {
                 size_t fileExtensionIndex = fileName.find_last_of('.');
                 const std::string validFileName = fileName.substr(0, fileExtensionIndex) + ".py";
                 const std::string validFullFilePath = path + validFileName;
-                rbe_logger_debug("path = '%s', fileName = '%s', validFileName = '%s', validFullFilePath = '%s'",
-                                 path.c_str(), fileName.c_str(), validFileName.c_str(), validFullFilePath.c_str());
+//                rbe_logger_debug("path = '%s', fileName = '%s', validFileName = '%s', validFullFilePath = '%s'",
+//                                 path.c_str(), fileName.c_str(), validFileName.c_str(), validFullFilePath.c_str());
+                SceneFileCreator::GenerateSceneFile(SceneManager::Get()->selectedSceneFile, validFullFilePath.c_str());
+                AssetBrowser::Get()->RefreshCache();
                 saveSceneFilePath.clear();
                 ImGui::CloseCurrentPopup();
             }

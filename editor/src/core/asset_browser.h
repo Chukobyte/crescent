@@ -47,16 +47,14 @@ using AssetBrowserRefreshFunc = std::function<void(const FileNode& rootNode)>;
 class AssetBrowser : public Singleton<AssetBrowser> {
   public:
     AssetBrowser(singleton) {}
-
     Task<> UpdateFileSystemCache();
-
     void RegisterRefreshCallback(const AssetBrowserRefreshFunc& func);
+    void RefreshCache();
 
     FileNode rootNode;
     std::optional<FileNode> selectedFileNode;
 
   private:
-    void RefreshCache();
 
     // For now assumes one time subscribe only with no unsubscriptions
     std::vector<AssetBrowserRefreshFunc> registerRefreshFuncs;
