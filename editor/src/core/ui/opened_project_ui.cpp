@@ -45,7 +45,12 @@ void OpenedProjectUI::ProcessMenuBar() {
                                 if (selectedSceneFile->hasBeenSaved) {
 
                                 } else {
-                                    context->OpenPopup("Save New Scene Menu");
+                                    if (selectedSceneFile->rootNode != nullptr) {
+                                        context->OpenPopup("Save New Scene Menu");
+                                    } else {
+                                        // TODO: Make a pop up!
+                                        rbe_logger_error("Scene file doesn't have root file, can't save!");
+                                    }
                                 }
                             }
                         },
