@@ -15,6 +15,10 @@ std::string Vector2ToString(const Vector2& v) {
     return "Vector2(" + ToString(v.x) + ", " + ToString(v.y) + ")";
 }
 
+std::string Size2DToString(const Size2D& s) {
+    return "Size2D(" + ToString(s.w) + ", " + ToString(s.h) + ")";
+}
+
 std::string Rect2ToString(const Rect2& r) {
     return "Rect2(" + ToString(r.x) + ", " + ToString(r.y) + ", " + ToString(r.w) + ", " + ToString(r.h) + ")";
 }
@@ -30,7 +34,6 @@ std::string GetStageNodeComponentsText(SceneNode* sceneNode, int tabSpace) {
     const std::string tabSpaceText = std::string(tabSpace, ' ');
     std::string fileContents;
 
-    // TODO: Finish the rest of the components
     if (const Transform2DComp* transform2DComp = sceneNode->GetComponentSafe<Transform2DComp>()) {
         fileContents += tabSpaceText + "                Transform2DComponent(\n";
         fileContents += tabSpaceText + "                    position=" + Vector2ToString(transform2DComp->transform2D.position) + ",\n";
@@ -49,6 +52,42 @@ std::string GetStageNodeComponentsText(SceneNode* sceneNode, int tabSpace) {
         fileContents += tabSpaceText + "                    flip_x=" + Helper::BoolToStringCapital(spriteComp->flipX) + ",\n";
         fileContents += tabSpaceText + "                    flip_y=" + Helper::BoolToStringCapital(spriteComp->flipY) + ",\n";
         fileContents += tabSpaceText + "                    modulate=" + ColorToString(spriteComp->modulate) + ",\n";
+        fileContents += tabSpaceText + "                ),\n";
+    }
+    if (const AnimatedSpriteComp* animatedSpriteComp = sceneNode->GetComponentSafe<AnimatedSpriteComp>()) {
+        fileContents += tabSpaceText + "                AnimatedSpriteComponent(\n";
+        fileContents += tabSpaceText + "                    current_animation_name=\"" + animatedSpriteComp->currentAnimationName + "\",\n";
+        fileContents += tabSpaceText + "                    is_playing=" + Helper::BoolToStringCapital(animatedSpriteComp->isPlaying) + ",\n";
+        fileContents += tabSpaceText + "                    origin=" + Vector2ToString(animatedSpriteComp->origin) + ",\n";
+        fileContents += tabSpaceText + "                    flip_x=" + Helper::BoolToStringCapital(animatedSpriteComp->flipX) + ",\n";
+        fileContents += tabSpaceText + "                    flip_y=" + Helper::BoolToStringCapital(animatedSpriteComp->flipY) + ",\n";
+        fileContents += tabSpaceText + "                    modulate=" + ColorToString(animatedSpriteComp->modulate) + ",\n";
+        fileContents += tabSpaceText + "                    animations=[],\n"; // TODO: Finish...
+        fileContents += tabSpaceText + "                ),\n";
+    }
+    if (const TextLabelComp* textLabelComp = sceneNode->GetComponentSafe<TextLabelComp>()) {
+        fileContents += tabSpaceText + "                TextLabelComponent(\n";
+        fileContents += tabSpaceText + "                    uid=\"" + textLabelComp->fontUID + "\",\n";
+        fileContents += tabSpaceText + "                    text=\"" + textLabelComp->text + "\",\n";
+        fileContents += tabSpaceText + "                    color=" + ColorToString(textLabelComp->color) + ",\n";
+        fileContents += tabSpaceText + "                ),\n";
+    }
+    if (const ScriptComp* scriptComp = sceneNode->GetComponentSafe<ScriptComp>()) {
+        fileContents += tabSpaceText + "                ScriptComponent(\n";
+        fileContents += tabSpaceText + "                    class_path=\"" + scriptComp->classPath + "\",\n";
+        fileContents += tabSpaceText + "                    class_name=\"" + scriptComp->className + "\",\n";
+        fileContents += tabSpaceText + "                ),\n";
+    }
+    if (const Collider2DComp* collider2DComp = sceneNode->GetComponentSafe<Collider2DComp>()) {
+        fileContents += tabSpaceText + "                Collider2DComponent(\n";
+        fileContents += tabSpaceText + "                    extents=" + Size2DToString(collider2DComp->extents) + ",\n";
+        fileContents += tabSpaceText + "                    color=" + ColorToString(collider2DComp->color) + ",\n";
+        fileContents += tabSpaceText + "                ),\n";
+    }
+    if (const ColorRectComp* colorRectComp = sceneNode->GetComponentSafe<ColorRectComp>()) {
+        fileContents += tabSpaceText + "                ColorRectComponent(\n";
+        fileContents += tabSpaceText + "                    size=" + Size2DToString(colorRectComp->size) + ",\n";
+        fileContents += tabSpaceText + "                    color=" + ColorToString(colorRectComp->color) + ",\n";
         fileContents += tabSpaceText + "                ),\n";
     }
 
