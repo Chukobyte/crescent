@@ -7,17 +7,6 @@
 
 static ImGuiHelper::Context* context = ImGuiHelper::Context::Get();
 
-void ImGuiHelper::Context::OpenPopup(const char *popupId) {
-    popupIds.emplace_back(popupId);
-}
-
-void ImGuiHelper::Context::FlushPopups() {
-    for (const char* id : popupIds) {
-        ImGui::OpenPopup(id);
-    }
-    popupIds.clear();
-}
-
 //--- MenuBar ---//
 void ImGuiHelper::BeginMainMenuBar(const ImGuiHelper::MenuBar& menuBar) {
     // Create Menu Bar
@@ -359,13 +348,19 @@ void ImGuiHelper::DockSpace::Run(bool runWindows) {
 
 //--- StaticPopupModalManager ---//
 void ImGuiHelper::StaticPopupModalManager::QueueOpenPopop(PopupModal* popupModal) {
-    framePopupModals.emplace_back(popupModal);
+    if (!popupModal->hasRegistered) {
+        popupModal->hasRegistered = true;
+        framePopupModals.emplace_back(popupModal);
+    }
+    popupModalsToOpen.emplace_back(popupModal);
 }
 
 void ImGuiHelper::StaticPopupModalManager::Flush() {
-    for (auto* popupModal : framePopupModals) {
+    for (auto* popupModal : popupModalsToOpen) {
         ImGui::OpenPopup(popupModal->name);
+    }
+    popupModalsToOpen.clear();
+    for (auto* popupModal : framePopupModals) {
         ImGuiHelper::BeginPopupModal(*popupModal);
     }
-    framePopupModals.clear();
 }

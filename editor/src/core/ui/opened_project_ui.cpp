@@ -49,15 +49,35 @@ void OpenedProjectUI::ProcessMenuBar() {
                                 .position = ImVec2{ 100.0f, 100.0f },
                                 .size = ImVec2{ 200.0f, 200.0f },
                             };
-//                            ImGuiHelper::StaticPopupModalManager::Get()->QueueOpenPopop(&newScenePopup);
-                            context->OpenPopup("New Scene Menu");
+                            ImGuiHelper::StaticPopupModalManager::Get()->QueueOpenPopop(&newScenePopup);
                         },
                     },
                     {
                         .name = "Open Scene",
                         .keyboardShortcut = "Ctrl+O",
                         .callbackFunc = [] (ImGuiHelper::Context* context) {
-                            context->OpenPopup("Open Scene Menu");
+                            static ImGuiHelper::PopupModal openScenePopup = {
+                                .name = "Open Scene Menu",
+                                .open = nullptr,
+                                .windowFlags = 0,
+                                .callbackFunc = [gameProperties = ProjectProperties::Get()] (ImGuiHelper::Context* context) {
+                                    static std::string openSceneFilePath;
+                                    ImGuiHelper::InputText nameText("File Path", openSceneFilePath);
+                                    ImGuiHelper::BeginInputText(nameText);
+                                    if (ImGui::Button("Close")) {
+                                        openSceneFilePath.clear();
+                                        ImGui::CloseCurrentPopup();
+                                    }
+                                    ImGui::SameLine();
+                                    if (ImGui::Button("Ok")) {
+                                        openSceneFilePath.clear();
+                                        ImGui::CloseCurrentPopup();
+                                    }
+                                },
+                                .position = ImVec2{ 100.0f, 100.0f },
+                                .size = ImVec2{ 200.0f, 200.0f },
+                            };
+                            ImGuiHelper::StaticPopupModalManager::Get()->QueueOpenPopop(&openScenePopup);
                         },
                     },
                     {
@@ -69,7 +89,39 @@ void OpenedProjectUI::ProcessMenuBar() {
                                     SceneFileCreator::GenerateSceneFile(selectedSceneFile, selectedSceneFile->filePath.c_str());
                                 } else {
                                     if (selectedSceneFile->rootNode != nullptr) {
-                                        context->OpenPopup("Save New Scene Menu");
+                                        static ImGuiHelper::PopupModal saveNewScenePopup = {
+                                            .name = "Save New Scene Menu",
+                                            .open = nullptr,
+                                            .windowFlags = 0,
+                                            .callbackFunc = [gameProperties = ProjectProperties::Get()] (ImGuiHelper::Context* context) {
+                                                static std::string saveSceneFilePath;
+                                                ImGuiHelper::InputText nameText("File Path", saveSceneFilePath);
+                                                ImGuiHelper::BeginInputText(nameText);
+                                                if (ImGui::Button("Close")) {
+                                                    saveSceneFilePath.clear();
+                                                    ImGui::CloseCurrentPopup();
+                                                }
+                                                ImGui::SameLine();
+                                                if (ImGui::Button("Ok") && !saveSceneFilePath.empty()) {
+                                                    size_t lastBackslashIndex = saveSceneFilePath.find_last_of('/');
+                                                    const std::string path = saveSceneFilePath.substr(0, lastBackslashIndex + 1);
+                                                    const std::string fileName = saveSceneFilePath.substr(lastBackslashIndex + 1);
+                                                    size_t fileExtensionIndex = fileName.find_last_of('.');
+                                                    const std::string validFileName = fileName.substr(0, fileExtensionIndex) + ".py";
+                                                    const std::string validFullFilePath = path + validFileName;
+                                                    auto* selectedSceneFile = SceneManager::Get()->selectedSceneFile;
+                                                    selectedSceneFile->filePath = validFullFilePath;
+                                                    SceneFileCreator::GenerateSceneFile(selectedSceneFile, validFullFilePath.c_str());
+                                                    selectedSceneFile->hasBeenSaved = true;
+                                                    AssetBrowser::Get()->RefreshCache();
+                                                    saveSceneFilePath.clear();
+                                                    ImGui::CloseCurrentPopup();
+                                                }
+                                            },
+                                            .position = ImVec2{ 100.0f, 100.0f },
+                                            .size = ImVec2{ 200.0f, 200.0f },
+                                        };
+                                        ImGuiHelper::StaticPopupModalManager::Get()->QueueOpenPopop(&saveNewScenePopup);
                                     } else {
                                         // TODO: Make a pop up!
                                         rbe_logger_error("Scene file doesn't have root file, can't save!");
@@ -82,7 +134,6 @@ void OpenedProjectUI::ProcessMenuBar() {
                         .name = "Go To Project Manager",
                         .keyboardShortcut = "Ctrl+Shift+Q",
                         .callbackFunc = [] (ImGuiHelper::Context* context) {
-                            context->OpenPopup("Confirm Go To Project Manager");
                             rbe_fs_chdir(editorContext->initialDir.c_str());
                             editorContext->projectState = EditorProjectState::ProjectManager;
                             rbe_logger_debug("Going back to project manager at path = %s", editorContext->initialDir.c_str());
@@ -106,21 +157,161 @@ void OpenedProjectUI::ProcessMenuBar() {
                         .name = "Settings",
                         .keyboardShortcut = "",
                         .callbackFunc = [] (ImGuiHelper::Context* context) {
-                            context->OpenPopup("Project Settings Menu");
+                            static ImGuiHelper::PopupModal projectSettingsPopup = {
+                                .name = "Project Settings Menu",
+                                .open = nullptr,
+                                .windowFlags = 0,
+                                .callbackFunc = [gameProperties = ProjectProperties::Get()] (ImGuiHelper::Context* context) {
+                                    if (ImGui::Button("Close")) {
+                                        ConfigFileCreator::GenerateConfigFile(CONFIG_FILE_NAME, gameProperties);
+                                        ImGui::CloseCurrentPopup();
+                                    }
+
+                                    static ImGuiHelper::InputText titleText("Title", gameProperties->gameTitle);
+                                    ImGuiHelper::BeginInputText(titleText);
+
+                                    static ImGuiHelper::InputText initialScenePathText("Initial Node Path", gameProperties->initialNodePath);
+                                    ImGuiHelper::BeginInputText(initialScenePathText);
+                                    // TODO: Setup combo box once scene node files are parsed
+//                                        static ImGuiHelper::ComboBox initialSceneComboBox("Initial Node Path");
+
+                                    static ImGuiHelper::DragInt windowWidthInt("Window Width", gameProperties->windowWidth);
+                                    ImGuiHelper::BeginDragInt(windowWidthInt);
+
+                                    static ImGuiHelper::DragInt windowHeightInt("Window Height", gameProperties->windowHeight);
+                                    ImGuiHelper::BeginDragInt(windowHeightInt);
+
+                                    static ImGuiHelper::DragInt targetFPSInt("Target FPS", gameProperties->targetFPS);
+                                    ImGuiHelper::BeginDragInt(targetFPSInt);
+
+                                    static ImGuiHelper::CheckBox areCollidersVisibleCheckBox("Are Colliders Visible", gameProperties->areCollidersVisible);
+                                    ImGuiHelper::BeginCheckBox(areCollidersVisibleCheckBox);
+                                },
+                                .position = ImVec2{ 100.0f, 100.0f },
+                                .size = ImVec2{ 200.0f, 200.0f },
+                            };
+                            ImGuiHelper::StaticPopupModalManager::Get()->QueueOpenPopop(&projectSettingsPopup);
                         },
                     },
                     {
                         .name = "Input",
                         .keyboardShortcut = "",
                         .callbackFunc = [] (ImGuiHelper::Context* context) {
-                            context->OpenPopup("Input Configurations");
+                            static ImGuiHelper::PopupModal inputConfigurationPopup = {
+                                .name = "Input Configurations",
+                                .open = nullptr,
+                                .windowFlags = 0,
+                                .callbackFunc = [gameProperties = ProjectProperties::Get()] (ImGuiHelper::Context* context) {
+                                    if (ImGui::Button("Close")) {
+                                        ConfigFileCreator::GenerateConfigFile(CONFIG_FILE_NAME, gameProperties);
+                                        ImGui::CloseCurrentPopup();
+                                    }
+                                    ImGui::SameLine();
+                                    if (ImGui::Button("Add")) {
+                                        ProjectInputAction defaultInputAction;
+                                        gameProperties->inputs.actions.emplace_back(defaultInputAction);
+                                    }
+
+                                    ImGui::Separator();
+                                    int actionIndexToDelete = -1;
+                                    for (size_t i = 0; i < gameProperties->inputs.actions.size(); i++) {
+                                        ProjectInputAction& inputAction = gameProperties->inputs.actions[i];
+
+                                        ImGuiHelper::InputText nameText("Name", inputAction.name, i);
+                                        ImGuiHelper::BeginInputText(nameText);
+
+                                        ImGuiHelper::DragInt deviceId("Device Id", inputAction.deviceId, i);
+                                        deviceId.valueMin = 0;
+                                        deviceId.valueMax = 16;
+                                        ImGuiHelper::BeginDragInt(deviceId);
+
+                                        // Values
+                                        ImGui::Text("Values:");
+                                        ImGui::SameLine();
+                                        if (ImGui::Button("+")) {
+                                            inputAction.values.emplace_back("");
+                                        }
+                                        int deletedValueIndex = -1;
+                                        for (size_t valueIndex = 0; valueIndex < inputAction.values.size(); valueIndex++) {
+                                            std::string& value = inputAction.values[valueIndex];
+                                            ImGuiHelper::InputText valueText("", value, valueIndex);
+                                            ImGuiHelper::BeginInputText(valueText);
+                                            ImGui::SameLine();
+                                            const std::string buttonText = "-##" + std::to_string(valueIndex);
+                                            if (ImGui::Button(buttonText.c_str())) {
+                                                deletedValueIndex = valueIndex;
+                                            }
+                                        }
+                                        if (deletedValueIndex >= 0) {
+                                            inputAction.values.erase(inputAction.values.begin() + deletedValueIndex);
+                                        }
+
+                                        const std::string deleteText = "Delete##" + std::to_string(i);
+                                        if (ImGui::Button(deleteText.c_str())) {
+                                            actionIndexToDelete = i;
+                                        }
+
+                                        ImGui::Separator();
+                                    }
+
+                                    if (actionIndexToDelete >= 0) {
+                                        gameProperties->inputs.actions.erase(gameProperties->inputs.actions.begin() + actionIndexToDelete);
+                                    }
+                                },
+                                .position = ImVec2{ 100.0f, 100.0f },
+                                .size = ImVec2{ 200.0f, 200.0f },
+                            };
+                            ImGuiHelper::StaticPopupModalManager::Get()->QueueOpenPopop(&inputConfigurationPopup);
                         },
                     },
                     {
                         .name = "Fonts",
                         .keyboardShortcut = "",
                         .callbackFunc = [] (ImGuiHelper::Context* context) {
-                            context->OpenPopup("Font Configurations");
+                            static ImGuiHelper::PopupModal fontConfigurationPopup = {
+                                .name = "Font Configurations",
+                                .open = nullptr,
+                                .windowFlags = 0,
+                                .callbackFunc = [gameProperties = ProjectProperties::Get()] (ImGuiHelper::Context* context) {
+                                    if (ImGui::Button("Close")) {
+                                        ConfigFileCreator::GenerateConfigFile(CONFIG_FILE_NAME, gameProperties);
+                                        ImGui::CloseCurrentPopup();
+                                    }
+                                    ImGui::SameLine();
+                                    if (ImGui::Button("Add")) {
+                                        FontAsset defaultFontAsset = FontAsset();
+                                        defaultFontAsset.file_path = "";
+                                        defaultFontAsset.uid = "";
+                                        defaultFontAsset.size = 16;
+                                        gameProperties->assets.fonts.emplace_back(defaultFontAsset);
+                                    }
+                                    ImGui::Separator();
+                                    int fontIndexToDelete = -1;
+                                    for (size_t i = 0; i < gameProperties->assets.fonts.size(); i++) {
+                                        auto& fontAsset = gameProperties->assets.fonts[i];
+                                        ImGuiHelper::InputText filePath("File Path", fontAsset.file_path, i);
+                                        ImGuiHelper::BeginInputText(filePath);
+
+                                        ImGuiHelper::InputText uid("UID", fontAsset.uid, i);
+                                        ImGuiHelper::BeginInputText(uid);
+
+                                        ImGuiHelper::DragInt size("Size", fontAsset.size, i);
+                                        ImGuiHelper::BeginDragInt(size);
+
+                                        const std::string deleteText = "Delete##" + std::to_string(i);
+                                        if (ImGui::Button(deleteText.c_str())) {
+                                            fontIndexToDelete = (int) i;
+                                        }
+                                        ImGui::Separator();
+                                    }
+                                    if (fontIndexToDelete >= 0) {
+                                        gameProperties->assets.fonts.erase(gameProperties->assets.fonts.begin() + fontIndexToDelete);
+                                    }
+                                },
+                                .position = ImVec2{ 100.0f, 100.0f },
+                                .size = ImVec2{ 200.0f, 200.0f },
+                            };
+                            ImGuiHelper::StaticPopupModalManager::Get()->QueueOpenPopop(&fontConfigurationPopup);
                         },
                     },
                 },
@@ -131,302 +322,8 @@ void OpenedProjectUI::ProcessMenuBar() {
 }
 
 void OpenedProjectUI::ProcessModalPopups() {
-    static ImGuiHelper::Context* imguiHelperContext = ImGuiHelper::Context::Get();
-    imguiHelperContext->FlushPopups();
     static ImGuiHelper::StaticPopupModalManager* staticPopupModalManager = ImGuiHelper::StaticPopupModalManager::Get();
     staticPopupModalManager->Flush();
-
-    // TODO: Add pop modal definition to where they are used and execute them in a vector instead
-    static ImGuiHelper::PopupModal newScenePopup = {
-        .name = "New Scene Menu",
-        .open = nullptr,
-        .windowFlags = 0,
-        .callbackFunc = [gameProperties = ProjectProperties::Get()] (ImGuiHelper::Context* context) {
-            static std::string newSceneFilePath;
-            ImGuiHelper::InputText nameText("File Path", newSceneFilePath);
-            ImGuiHelper::BeginInputText(nameText);
-            if (ImGui::Button("Close")) {
-                newSceneFilePath.clear();
-                ImGui::CloseCurrentPopup();
-            }
-            ImGui::SameLine();
-            if (ImGui::Button("Ok")) {
-                newSceneFilePath.clear();
-                ImGui::CloseCurrentPopup();
-            }
-        },
-        .position = ImVec2{ 100.0f, 100.0f },
-        .size = ImVec2{ 200.0f, 200.0f },
-    };
-    ImGuiHelper::BeginPopupModal(newScenePopup);
-
-    static ImGuiHelper::PopupModal openScenePopup = {
-        .name = "Open Scene Menu",
-        .open = nullptr,
-        .windowFlags = 0,
-        .callbackFunc = [gameProperties = ProjectProperties::Get()] (ImGuiHelper::Context* context) {
-            static std::string openSceneFilePath;
-            ImGuiHelper::InputText nameText("File Path", openSceneFilePath);
-            ImGuiHelper::BeginInputText(nameText);
-            if (ImGui::Button("Close")) {
-                openSceneFilePath.clear();
-                ImGui::CloseCurrentPopup();
-            }
-            ImGui::SameLine();
-            if (ImGui::Button("Ok")) {
-                openSceneFilePath.clear();
-                ImGui::CloseCurrentPopup();
-            }
-        },
-        .position = ImVec2{ 100.0f, 100.0f },
-        .size = ImVec2{ 200.0f, 200.0f },
-    };
-    ImGuiHelper::BeginPopupModal(openScenePopup);
-
-    static ImGuiHelper::PopupModal saveNewScenePopup = {
-        .name = "Save New Scene Menu",
-        .open = nullptr,
-        .windowFlags = 0,
-        .callbackFunc = [gameProperties = ProjectProperties::Get()] (ImGuiHelper::Context* context) {
-            static std::string saveSceneFilePath;
-            ImGuiHelper::InputText nameText("File Path", saveSceneFilePath);
-            ImGuiHelper::BeginInputText(nameText);
-            if (ImGui::Button("Close")) {
-                saveSceneFilePath.clear();
-                ImGui::CloseCurrentPopup();
-            }
-            ImGui::SameLine();
-            if (ImGui::Button("Ok") && !saveSceneFilePath.empty()) {
-                size_t lastBackslashIndex = saveSceneFilePath.find_last_of('/');
-                const std::string path = saveSceneFilePath.substr(0, lastBackslashIndex + 1);
-                const std::string fileName = saveSceneFilePath.substr(lastBackslashIndex + 1);
-                size_t fileExtensionIndex = fileName.find_last_of('.');
-                const std::string validFileName = fileName.substr(0, fileExtensionIndex) + ".py";
-                const std::string validFullFilePath = path + validFileName;
-//                rbe_logger_debug("path = '%s', fileName = '%s', validFileName = '%s', validFullFilePath = '%s'",
-//                                 path.c_str(), fileName.c_str(), validFileName.c_str(), validFullFilePath.c_str());
-                auto* selectedSceneFile = SceneManager::Get()->selectedSceneFile;
-                selectedSceneFile->filePath = validFullFilePath;
-                SceneFileCreator::GenerateSceneFile(selectedSceneFile, validFullFilePath.c_str());
-                selectedSceneFile->hasBeenSaved = true;
-                AssetBrowser::Get()->RefreshCache();
-                saveSceneFilePath.clear();
-                ImGui::CloseCurrentPopup();
-            }
-        },
-        .position = ImVec2{ 100.0f, 100.0f },
-        .size = ImVec2{ 200.0f, 200.0f },
-    };
-    ImGuiHelper::BeginPopupModal(saveNewScenePopup);
-
-    static ImGuiHelper::PopupModal projectSettingsPopup = {
-        .name = "Project Settings Menu",
-        .open = nullptr,
-        .windowFlags = 0,
-        .callbackFunc = [gameProperties = ProjectProperties::Get()] (ImGuiHelper::Context* context) {
-            if (ImGui::Button("Close")) {
-                ConfigFileCreator::GenerateConfigFile(CONFIG_FILE_NAME, gameProperties);
-                ImGui::CloseCurrentPopup();
-            }
-
-            static ImGuiHelper::InputText titleText("Title", gameProperties->gameTitle);
-            ImGuiHelper::BeginInputText(titleText);
-
-            static ImGuiHelper::InputText initialScenePathText("Initial Node Path", gameProperties->initialNodePath);
-            ImGuiHelper::BeginInputText(initialScenePathText);
-            // TODO: Setup combo box once scene node files are parsed
-//            static ImGuiHelper::ComboBox initialSceneComboBox("Initial Node Path");
-
-            static ImGuiHelper::DragInt windowWidthInt("Window Width", gameProperties->windowWidth);
-            ImGuiHelper::BeginDragInt(windowWidthInt);
-
-            static ImGuiHelper::DragInt windowHeightInt("Window Height", gameProperties->windowHeight);
-            ImGuiHelper::BeginDragInt(windowHeightInt);
-
-            static ImGuiHelper::DragInt targetFPSInt("Target FPS", gameProperties->targetFPS);
-            ImGuiHelper::BeginDragInt(targetFPSInt);
-
-            static ImGuiHelper::CheckBox areCollidersVisibleCheckBox("Are Colliders Visible", gameProperties->areCollidersVisible);
-            ImGuiHelper::BeginCheckBox(areCollidersVisibleCheckBox);
-        },
-        .position = ImVec2{ 100.0f, 100.0f },
-        .size = ImVec2{ 200.0f, 200.0f },
-    };
-    ImGuiHelper::BeginPopupModal(projectSettingsPopup);
-
-    static ImGuiHelper::PopupModal inputConfigurationPopup = {
-        .name = "Input Configurations",
-        .open = nullptr,
-        .windowFlags = 0,
-        .callbackFunc = [gameProperties = ProjectProperties::Get()] (ImGuiHelper::Context* context) {
-            if (ImGui::Button("Close")) {
-                ConfigFileCreator::GenerateConfigFile(CONFIG_FILE_NAME, gameProperties);
-                ImGui::CloseCurrentPopup();
-            }
-            ImGui::SameLine();
-            if (ImGui::Button("Add")) {
-                ProjectInputAction defaultInputAction;
-                gameProperties->inputs.actions.emplace_back(defaultInputAction);
-            }
-
-            ImGui::Separator();
-            int actionIndexToDelete = -1;
-            for (size_t i = 0; i < gameProperties->inputs.actions.size(); i++) {
-                ProjectInputAction& inputAction = gameProperties->inputs.actions[i];
-
-                ImGuiHelper::InputText nameText("Name", inputAction.name, i);
-                ImGuiHelper::BeginInputText(nameText);
-
-                ImGuiHelper::DragInt deviceId("Device Id", inputAction.deviceId, i);
-                deviceId.valueMin = 0;
-                deviceId.valueMax = 16;
-                ImGuiHelper::BeginDragInt(deviceId);
-
-                // Values
-                ImGui::Text("Values:");
-                ImGui::SameLine();
-                if (ImGui::Button("+")) {
-                    inputAction.values.emplace_back("");
-                }
-                int deletedValueIndex = -1;
-                for (size_t valueIndex = 0; valueIndex < inputAction.values.size(); valueIndex++) {
-                    std::string& value = inputAction.values[valueIndex];
-                    ImGuiHelper::InputText valueText("", value, valueIndex);
-                    ImGuiHelper::BeginInputText(valueText);
-                    ImGui::SameLine();
-                    const std::string buttonText = "-##" + std::to_string(valueIndex);
-                    if (ImGui::Button(buttonText.c_str())) {
-                        deletedValueIndex = valueIndex;
-                    }
-                }
-                if (deletedValueIndex >= 0) {
-                    inputAction.values.erase(inputAction.values.begin() + deletedValueIndex);
-                }
-
-                const std::string deleteText = "Delete##" + std::to_string(i);
-                if (ImGui::Button(deleteText.c_str())) {
-                    actionIndexToDelete = i;
-                }
-
-                ImGui::Separator();
-            }
-
-            if (actionIndexToDelete >= 0) {
-                gameProperties->inputs.actions.erase(gameProperties->inputs.actions.begin() + actionIndexToDelete);
-            }
-        },
-        .position = ImVec2{ 100.0f, 100.0f },
-        .size = ImVec2{ 200.0f, 200.0f },
-    };
-    ImGuiHelper::BeginPopupModal(inputConfigurationPopup);
-
-    static ImGuiHelper::PopupModal fontConfigurationPopup = {
-        .name = "Font Configurations",
-        .open = nullptr,
-        .windowFlags = 0,
-        .callbackFunc = [gameProperties = ProjectProperties::Get()] (ImGuiHelper::Context* context) {
-            if (ImGui::Button("Close")) {
-                ConfigFileCreator::GenerateConfigFile(CONFIG_FILE_NAME, gameProperties);
-                ImGui::CloseCurrentPopup();
-            }
-            ImGui::SameLine();
-            if (ImGui::Button("Add")) {
-                FontAsset defaultFontAsset = FontAsset();
-                defaultFontAsset.file_path = "";
-                defaultFontAsset.uid = "";
-                defaultFontAsset.size = 16;
-                gameProperties->assets.fonts.emplace_back(defaultFontAsset);
-            }
-            ImGui::Separator();
-            int fontIndexToDelete = -1;
-            for (size_t i = 0; i < gameProperties->assets.fonts.size(); i++) {
-                auto& fontAsset = gameProperties->assets.fonts[i];
-                ImGuiHelper::InputText filePath("File Path", fontAsset.file_path, i);
-                ImGuiHelper::BeginInputText(filePath);
-
-                ImGuiHelper::InputText uid("UID", fontAsset.uid, i);
-                ImGuiHelper::BeginInputText(uid);
-
-                ImGuiHelper::DragInt size("Size", fontAsset.size, i);
-                ImGuiHelper::BeginDragInt(size);
-
-                const std::string deleteText = "Delete##" + std::to_string(i);
-                if (ImGui::Button(deleteText.c_str())) {
-                    fontIndexToDelete = (int) i;
-                }
-                ImGui::Separator();
-            }
-            if (fontIndexToDelete >= 0) {
-                gameProperties->assets.fonts.erase(gameProperties->assets.fonts.begin() + fontIndexToDelete);
-            }
-        },
-        .position = ImVec2{ 100.0f, 100.0f },
-        .size = ImVec2{ 200.0f, 200.0f },
-    };
-    ImGuiHelper::BeginPopupModal(fontConfigurationPopup);
-
-    static ImGuiHelper::PopupModal addNodePopup = {
-        .name = "Add Node Menu",
-        .open = nullptr,
-        .windowFlags = 0,
-        .callbackFunc = [] (ImGuiHelper::Context* context) {
-            if (ImGui::Button("Close")) {
-                ImGui::CloseCurrentPopup();
-            }
-
-            static std::string selectedType = RBE_NODE_NODE_STRING;
-            static ImGuiHelper::ComboBox nodeTypeSelectionComboBox(
-                "Type",
-            { RBE_NODE_NODE_STRING, RBE_NODE_NODE2D_STRING, RBE_NODE_SPRITE_STRING, RBE_NODE_ANIMATED_SPRITE_STRING, RBE_NODE_TEXT_LABEL_STRING, RBE_NODE_COLLIDER2D_STRING, RBE_NODE_COLOR_RECT_STRING },
-            [](const char* newItem) {
-                selectedType = newItem;
-            }
-            );
-            ImGuiHelper::BeginComboBox(nodeTypeSelectionComboBox);
-
-            if (ImGui::Button("Add")) {
-                static SceneManager* sceneManager = SceneManager::Get();
-                const NodeBaseType selectedBaseType = node_get_base_type(selectedType.c_str());
-                sceneManager->AddDefaultNodeAsChildToSelected(selectedBaseType);
-                ImGui::CloseCurrentPopup();
-            }
-        },
-        .position = ImVec2{ 100.0f, 100.0f },
-        .size = ImVec2{ 200.0f, 200.0f },
-    };
-    ImGuiHelper::BeginPopupModal(addNodePopup);
-
-    static ImGuiHelper::PopupModal renameNodePopup = {
-        .name = "Rename Node Menu",
-        .open = nullptr,
-        .windowFlags = 0,
-        .callbackFunc = [] (ImGuiHelper::Context* context) {
-
-            static std::string newNameText;
-            ImGuiHelper::InputText newNameInputText("New Name", newNameText);
-            ImGuiHelper::BeginInputText(newNameInputText);
-
-            if (ImGui::Button("Close")) {
-                newNameText.clear();
-                ImGui::CloseCurrentPopup();
-            }
-            ImGui::SameLine();
-            if (ImGui::Button("Ok")) {
-                static SceneManager* sceneManager = SceneManager::Get();
-                if (!newNameText.empty() && sceneManager->selectedSceneNode != nullptr) {
-                    if (sceneManager->selectedSceneNode->parent != nullptr) {
-                        newNameText = SceneManager::GetUniqueNodeName(newNameText, sceneManager->selectedSceneNode->parent);
-                    }
-                    sceneManager->selectedSceneNode->name = newNameText;
-                }
-                newNameText.clear();
-                ImGui::CloseCurrentPopup();
-            }
-        },
-        .position = ImVec2{ 100.0f, 100.0f },
-        .size = ImVec2{ 200.0f, 200.0f },
-    };
-    ImGuiHelper::BeginPopupModal(renameNodePopup);
 }
 
 // Temp
@@ -645,7 +542,36 @@ void OpenedProjectUI::ProcessWindows() {
         .callbackFunc = [] (ImGuiHelper::Context* context) {
             static SceneManager* sceneManager = SceneManager::Get();
             if (ImGui::Button("+")) {
-                context->OpenPopup("Add Node Menu");
+                static ImGuiHelper::PopupModal addNodePopup = {
+                    .name = "Add Node Menu",
+                    .open = nullptr,
+                    .windowFlags = 0,
+                    .callbackFunc = [] (ImGuiHelper::Context* context) {
+                        if (ImGui::Button("Close")) {
+                            ImGui::CloseCurrentPopup();
+                        }
+
+                        static std::string selectedType = RBE_NODE_NODE_STRING;
+                        static ImGuiHelper::ComboBox nodeTypeSelectionComboBox(
+                            "Type",
+                        { RBE_NODE_NODE_STRING, RBE_NODE_NODE2D_STRING, RBE_NODE_SPRITE_STRING, RBE_NODE_ANIMATED_SPRITE_STRING, RBE_NODE_TEXT_LABEL_STRING, RBE_NODE_COLLIDER2D_STRING, RBE_NODE_COLOR_RECT_STRING },
+                        [](const char* newItem) {
+                            selectedType = newItem;
+                        }
+                        );
+                        ImGuiHelper::BeginComboBox(nodeTypeSelectionComboBox);
+
+                        if (ImGui::Button("Add")) {
+                            static SceneManager* sceneManager = SceneManager::Get();
+                            const NodeBaseType selectedBaseType = node_get_base_type(selectedType.c_str());
+                            sceneManager->AddDefaultNodeAsChildToSelected(selectedBaseType);
+                            ImGui::CloseCurrentPopup();
+                        }
+                    },
+                    .position = ImVec2{ 100.0f, 100.0f },
+                    .size = ImVec2{ 200.0f, 200.0f },
+                };
+                ImGuiHelper::StaticPopupModalManager::Get()->QueueOpenPopop(&addNodePopup);
             }
             ImGui::SameLine();
             ImGui::Text("%s", sceneManager->selectedSceneFile == nullptr ? "" : sceneManager->selectedSceneFile->filePath.c_str());

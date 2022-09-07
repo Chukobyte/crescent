@@ -17,11 +17,6 @@ namespace ImGuiHelper {
 class Context : public Singleton<Context> {
   public:
     Context(singleton) {}
-    void OpenPopup(const char* popupId);
-    void FlushPopups();
-
-  private:
-    std::vector<const char*> popupIds = {};
 };
 
 using ImGuiHelperCallbackFunc = std::function<void(Context*)>;
@@ -49,6 +44,7 @@ struct PopupModal {
     ImGuiHelperCallbackFunc callbackFunc;
     std::optional<ImVec2> position;
     std::optional<ImVec2> size;
+    bool hasRegistered = false;
 };
 
 struct InputText {
@@ -211,6 +207,7 @@ class StaticPopupModalManager : public Singleton<StaticPopupModalManager> {
 
   private:
     std::vector<PopupModal*> framePopupModals;
+    std::vector<PopupModal*> popupModalsToOpen;
 };
 
 void BeginMainMenuBar(const MenuBar& menuBar);

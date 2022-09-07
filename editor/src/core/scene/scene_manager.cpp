@@ -28,7 +28,37 @@ void SceneNodeUtils::DisplayTreeNodeLeaf(SceneNode *sceneNode) {
                 sceneManager->selectedSceneNode = sceneNode;
                 editorCallbacks->BroadcastOnSceneNodeSelected(sceneManager->selectedSceneNode);
                 if (ImGui::MenuItem("Rename")) {
-                    context->OpenPopup("Rename Node Menu");
+                    static ImGuiHelper::PopupModal renameNodePopup = {
+                        .name = "Rename Node Menu",
+                        .open = nullptr,
+                        .windowFlags = 0,
+                        .callbackFunc = [] (ImGuiHelper::Context* context) {
+
+                            static std::string newNameText;
+                            ImGuiHelper::InputText newNameInputText("New Name", newNameText);
+                            ImGuiHelper::BeginInputText(newNameInputText);
+
+                            if (ImGui::Button("Close")) {
+                                newNameText.clear();
+                                ImGui::CloseCurrentPopup();
+                            }
+                            ImGui::SameLine();
+                            if (ImGui::Button("Ok")) {
+                                static SceneManager* sceneManager = SceneManager::Get();
+                                if (!newNameText.empty() && sceneManager->selectedSceneNode != nullptr) {
+                                    if (sceneManager->selectedSceneNode->parent != nullptr) {
+                                        newNameText = SceneManager::GetUniqueNodeName(newNameText, sceneManager->selectedSceneNode->parent);
+                                    }
+                                    sceneManager->selectedSceneNode->name = newNameText;
+                                }
+                                newNameText.clear();
+                                ImGui::CloseCurrentPopup();
+                            }
+                        },
+                        .position = ImVec2{ 100.0f, 100.0f },
+                        .size = ImVec2{ 200.0f, 200.0f },
+                    };
+                    ImGuiHelper::StaticPopupModalManager::Get()->QueueOpenPopop(&renameNodePopup);
                 }
                 if (sceneNode->parent != nullptr && ImGui::MenuItem("Delete")) {
                     // TODO: Delete Node
