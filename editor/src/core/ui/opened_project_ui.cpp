@@ -455,6 +455,8 @@ void DrawAnimatedSprite(SceneNode* node) {
             };
             ImGuiHelper::StaticPopupModalManager::Get()->QueueOpenPopop(&animationsEditPopup);
         }
+        ImGui::SameLine();
+        ImGui::Text("Count: %zu", animatedSpriteComp->animations.size());
 
         ImGuiHelper::CheckBox ignoreCameraCheckBox("Is Playing", animatedSpriteComp->isPlaying);
         ImGuiHelper::BeginCheckBox(ignoreCameraCheckBox);

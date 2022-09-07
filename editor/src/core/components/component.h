@@ -50,6 +50,20 @@ struct SpriteComp : public EditorComponent {
     Color modulate = { .r = 1.0f, .g = 1.0f, .b = 1.0f, .a = 1.0f };
 };
 
+// TODO: Put editor animation stuff in another file...
+struct EditorAnimationFrame {
+    std::string texturePath;
+    Rect2 drawSource = { 0.0f, 0.0f, 0.0f, 0.0f };
+    int frame = -1;
+};
+
+struct EditorAnimation {
+    std::string name;
+    int speed = 100;
+    bool doesLoop = true;
+    std::vector<EditorAnimationFrame> animationFrames;
+};
+
 struct AnimatedSpriteComp : public EditorComponent {
     AnimatedSpriteComp() = default;
 
@@ -59,10 +73,21 @@ struct AnimatedSpriteComp : public EditorComponent {
           isPlaying(animatedSpriteComponentData->isPlaying),
           origin(animatedSpriteComponentData->origin),
           flipX(animatedSpriteComponentData->flipX),
-          flipY(animatedSpriteComponentData->flipY) {}
+          flipY(animatedSpriteComponentData->flipY) {
+        for (size_t animationIndex = 0; animationIndex < animatedSpriteComponentData->animationCount; animationIndex++) {
+            const AnimationData& animData = animatedSpriteComponentData->animations[animatedSpriteComponentData->animationCount];
+            EditorAnimation animation = { animData.name, animData.speed, animData.doesLoop };
+            for (size_t frameIndex = 0; frameIndex < animData.frameCount; frameIndex++) {
+                const AnimationFrameData& frameData = animData.animationFrames[frameIndex];
+                const EditorAnimationFrame animationFrame = { frameData.texturePath, frameData.drawSource, frameData.frame };
+                animation.animationFrames.emplace_back(animationFrame);
+            }
+            animations.emplace_back(animation);
+        }
+    }
 
-//    std::vector<Animation> animations;
     std::string currentAnimationName;
+    std::vector<EditorAnimation> animations;
     Color modulate = { .r = 1.0f, .g = 1.0f, .b = 1.0f, .a = 1.0f };
     bool isPlaying = false;
     Vector2 origin = { .x = 0.0f, .y = 0.0f };
