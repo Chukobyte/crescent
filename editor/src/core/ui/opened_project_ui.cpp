@@ -433,9 +433,28 @@ void DrawAnimatedSprite(SceneNode* node) {
     if (AnimatedSpriteComp* animatedSpriteComp = node->GetComponentSafe<AnimatedSpriteComp>()) {
         ImGui::Text("Animated Sprite Component");
 
-        // TODO: Add animations panel
-
+        // TODO: Make a combo box full of animation names
         ImGui::Text("Current Animation: %s", animatedSpriteComp->currentAnimationName.c_str());
+
+        if (ImGui::Button("Edit Animations")) {
+            static ImGuiHelper::PopupModal animationsEditPopup = {
+                .name = "Animation Edit Menu",
+                .open = nullptr,
+                .windowFlags = 0,
+                .callbackFunc = [] (ImGuiHelper::Context* context) {
+                    if (ImGui::Button("Close")) {
+                        ImGui::CloseCurrentPopup();
+                    }
+                    ImGui::SameLine();
+                    if (ImGui::Button("Ok")) {
+                        ImGui::CloseCurrentPopup();
+                    }
+                },
+                .position = ImVec2{ 100.0f, 100.0f },
+                .size = ImVec2{ 200.0f, 200.0f },
+            };
+            ImGuiHelper::StaticPopupModalManager::Get()->QueueOpenPopop(&animationsEditPopup);
+        }
 
         ImGuiHelper::CheckBox ignoreCameraCheckBox("Is Playing", animatedSpriteComp->isPlaying);
         ImGuiHelper::BeginCheckBox(ignoreCameraCheckBox);
