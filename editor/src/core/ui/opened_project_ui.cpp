@@ -488,6 +488,7 @@ void DrawSprite(SceneNode* node) {
         };
         ImGuiHelper::BeginComboBox(spriteTexturePathComboBox);
 
+        // TODO: Update draw source automatically when a texture is set (can also make it toggleable)
         ImGuiHelper::DragFloat4 drawSourceDragFloat4("Draw Source", (float*) &spriteComp->drawSource);
         ImGuiHelper::BeginDragFloat4(drawSourceDragFloat4);
 
