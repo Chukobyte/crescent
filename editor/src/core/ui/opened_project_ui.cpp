@@ -11,6 +11,7 @@
 #include "../scene/scene_manager.h"
 #include "../asset_browser.h"
 #include "../file_creation/scene_file_creator.h"
+#include "../editor_callbacks.h"
 
 const char* CONFIG_FILE_NAME = "test_cre_config.py";
 
@@ -434,12 +435,58 @@ void DrawTransform2D(SceneNode* node) {
     }
 }
 
+struct FuncObject {
+    FuncObject(std::function<void()> func) {
+        func();
+    }
+};
+
 void DrawSprite(SceneNode* node) {
     if (SpriteComp* spriteComp = node->GetComponentSafe<SpriteComp>()) {
         ImGui::Text("Sprite Component");
 
-        // TODO: Configured textures should have there paths loaded into a combo box
-        ImGui::Text("Texture Path: %s", spriteComp->texturePath.c_str());
+        // Texture Path Combo Box
+        static std::vector<std::string> texturePathList = { "none" };
+        static AssetBrowser* assetBrowser = AssetBrowser::Get();
+        static auto UpdateTexturePathList = [] {
+            texturePathList.clear();
+            texturePathList.emplace_back("none");
+            if (assetBrowser->extensionToFileNodeMap.count(".png") > 0) {
+                for (auto& fileNode : assetBrowser->extensionToFileNodeMap[".png"]) {
+                    texturePathList.emplace_back(fileNode.GetRelativePath());
+                }
+            }
+        };
+        static FuncObject initializeFunc = FuncObject([] {
+            UpdateTexturePathList();
+            assetBrowser->RegisterRefreshCallback([](const FileNode& rootNode) {
+                UpdateTexturePathList();
+            });
+        });
+        static ImGuiHelper::ComboBox spriteTexturePathComboBox("Texture Path", texturePathList);
+        static FuncObject initializeFunc2 = FuncObject([spriteComp] {
+            if (spriteComp->texturePath.empty()) {
+                spriteTexturePathComboBox.SetSelected("none");
+            } else {
+                spriteTexturePathComboBox.SetSelected(spriteComp->texturePath);
+            }
+            EditorCallbacks::Get()->RegisterOnSceneNodeSelected([](SceneNode* sceneNode) {
+                if (auto spriteC = sceneNode->GetComponentSafe<SpriteComp>()) {
+                    if (spriteC->texturePath.empty()) {
+                        spriteTexturePathComboBox.SetSelected("none");
+                    } else {
+                        spriteTexturePathComboBox.SetSelected(spriteC->texturePath);
+                    }
+                }
+            });
+        });
+        spriteTexturePathComboBox.onSelectionChangeCallback = [spriteComp](const char* newItem) {
+            spriteComp->texturePath = newItem;
+            if (spriteComp->texturePath == "none") {
+                spriteComp->texturePath.clear();
+            }
+        };
+        ImGuiHelper::BeginComboBox(spriteTexturePathComboBox);
 
         ImGuiHelper::DragFloat4 drawSourceDragFloat4("Draw Source", (float*) &spriteComp->drawSource);
         ImGuiHelper::BeginDragFloat4(drawSourceDragFloat4);

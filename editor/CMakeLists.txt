@@ -18,6 +18,7 @@ add_library(${PROJECT_NAME} STATIC
         # C++
         src/core/editor.cpp
         src/core/editor_background_tasks.cpp
+        src/core/editor_callbacks.cpp
         src/core/editor_context.cpp
         src/core/project_properties.cpp
         src/core/asset_browser.cpp

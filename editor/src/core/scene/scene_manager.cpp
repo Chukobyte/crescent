@@ -4,11 +4,13 @@
 #include "../engine/src/core/utils/logger.h"
 #include "../engine/src/core/utils/rbe_assert.h"
 #include "../ui/imgui/imgui_helper.h"
+#include "../editor_callbacks.h"
 
 //--- Scene Node Utils ---//
 void SceneNodeUtils::DisplayTreeNodeLeaf(SceneNode *sceneNode) {
     static SceneManager* sceneManager = SceneManager::Get();
     static ImGuiTreeNodeFlags defaultFlags = ImGuiTreeNodeFlags_DefaultOpen;
+    static EditorCallbacks* editorCallbacks = EditorCallbacks::Get();
     ImGuiHelper::TreeNode treeNode = {
         .label = sceneNode->name,
         .flags = sceneManager->selectedSceneNode == sceneNode ? ImGuiTreeNodeFlags_Selected | defaultFlags : defaultFlags,
@@ -16,6 +18,7 @@ void SceneNodeUtils::DisplayTreeNodeLeaf(SceneNode *sceneNode) {
             // Left Click
             if (ImGui::IsItemClicked()) {
                 sceneManager->selectedSceneNode = sceneNode;
+                editorCallbacks->BroadcastOnSceneNodeSelected(sceneManager->selectedSceneNode);
             }
 
             // Right Click
@@ -23,6 +26,7 @@ void SceneNodeUtils::DisplayTreeNodeLeaf(SceneNode *sceneNode) {
             ImGui::OpenPopupOnItemClick(nodePopupId.c_str(), ImGuiPopupFlags_MouseButtonRight);
             if (ImGui::BeginPopup(nodePopupId.c_str())) {
                 sceneManager->selectedSceneNode = sceneNode;
+                editorCallbacks->BroadcastOnSceneNodeSelected(sceneManager->selectedSceneNode);
                 if (ImGui::MenuItem("Rename")) {
                     context->OpenPopup("Rename Node Menu");
                 }

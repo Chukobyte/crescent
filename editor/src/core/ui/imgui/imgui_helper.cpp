@@ -224,7 +224,9 @@ void ImGuiHelper::ComboBox::SetSelected(const std::string& itemToSelect) {
     for (int i = 0; i < items.size(); i++) {
         if (items[i] == itemToSelect) {
             selectedIndex = i;
-            onSelectionChangeCallback(items[i].c_str());
+            if (onSelectionChangeCallback) {
+                onSelectionChangeCallback(items[i].c_str());
+            }
             return;
         }
     }

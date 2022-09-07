@@ -3,6 +3,7 @@
 #include "utils/singleton.h"
 
 #include <vector>
+#include <unordered_map>
 #include <filesystem>
 
 #include "SquidTasks/Task.h"
@@ -36,7 +37,7 @@ struct FileNode {
 
 namespace FileNodeUtils {
 FileNodeRegularFileType GetFileNodeRegularType(const std::string& fileName);
-void LoadFileNodeDirEntries(FileNode& fileNode, unsigned int& nodeIndex);
+void LoadFileNodeDirEntries(FileNode& fileNode, unsigned int& nodeIndex, std::unordered_map<std::string, std::vector<FileNode>>& extensionToFileNodeMap);
 void DisplayFileNodeTree(FileNode& fileNode, bool isRoot = false);
 } // namespace FileNodeUtils
 
@@ -54,8 +55,9 @@ class AssetBrowser : public Singleton<AssetBrowser> {
     FileNode rootNode;
     std::optional<FileNode> selectedFileNode;
 
-  private:
+    std::unordered_map<std::string, std::vector<FileNode>> extensionToFileNodeMap;
 
+  private:
     // For now assumes one time subscribe only with no unsubscriptions
     std::vector<AssetBrowserRefreshFunc> registerRefreshFuncs;
 };

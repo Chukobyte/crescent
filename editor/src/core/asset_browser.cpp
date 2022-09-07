@@ -15,7 +15,7 @@ std::string FileNode::GetRelativePath() const {
 }
 
 //--- FileNodeUtils ---//
-void FileNodeUtils::LoadFileNodeDirEntries(FileNode& fileNode, unsigned int& nodeIndex) {
+void FileNodeUtils::LoadFileNodeDirEntries(FileNode& fileNode, unsigned int& nodeIndex, std::unordered_map<std::string, std::vector<FileNode>>& extensionToFileNodeMap) {
     for (auto const& dir_entry : std::filesystem::directory_iterator{fileNode.path}) {
 //        rbe_logger_debug("dir entry path: '%s'", dir_entry.path().string().c_str());
 //        rbe_logger_debug("dir entry relative path: '%s'", std::filesystem::relative(dir_entry.path(), fileNode.path).string().c_str());
@@ -25,11 +25,16 @@ void FileNodeUtils::LoadFileNodeDirEntries(FileNode& fileNode, unsigned int& nod
         }
         if (std::filesystem::is_directory(dir_entry)) {
             FileNode dirNode = { dir_entry.path(), FileNodeType::Directory, nodeIndex++ };
-            LoadFileNodeDirEntries(dirNode, nodeIndex);
+            LoadFileNodeDirEntries(dirNode, nodeIndex, extensionToFileNodeMap);
             fileNode.directories.emplace_back(dirNode);
         } else if (std::filesystem::is_regular_file(dir_entry)) {
             FileNode regularFileNode = { dir_entry.path(), FileNodeType::File, nodeIndex++, GetFileNodeRegularType(dir_entry.path().filename().string()) };
             fileNode.files.emplace_back(regularFileNode);
+            const std::string extension = regularFileNode.path.extension().string();
+            if (extensionToFileNodeMap.count(extension) <= 0) {
+                extensionToFileNodeMap.emplace(extension, std::vector<FileNode> {});
+            }
+            extensionToFileNodeMap[extension].emplace_back(regularFileNode);
         }
     }
 }
@@ -93,11 +98,12 @@ void AssetBrowser::RefreshCache() {
     rootNode.type = FileNodeType::Directory;
     rootNode.directories.clear();
     rootNode.files.clear();
+    extensionToFileNodeMap.clear();
     unsigned int startingIndex = rootNode.index + 1;
     if (!selectedFileNode.has_value()) {
         selectedFileNode = rootNode;
     }
-    FileNodeUtils::LoadFileNodeDirEntries(rootNode, startingIndex);
+    FileNodeUtils::LoadFileNodeDirEntries(rootNode, startingIndex, extensionToFileNodeMap);
     for (auto& func : registerRefreshFuncs) {
         func(rootNode);
     }

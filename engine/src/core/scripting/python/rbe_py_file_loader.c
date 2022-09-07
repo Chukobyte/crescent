@@ -69,7 +69,7 @@ void file_scene_node_load_component(FileSceneNode* node, PyObject* pComponent) {
         SpriteComponent* spriteComponent = sprite_component_create();
 //        spriteComponent->texture = rbe_asset_manager_get_texture(texturePath);
         node->spriteTexturePath = strdup(texturePath);
-        RBE_ASSERT_FMT(spriteComponent->texture != NULL, "Unable to read texture path '%s'", texturePath);
+//        RBE_ASSERT_FMT(spriteComponent->texture != NULL, "Unable to read texture path '%s'", texturePath);
         spriteComponent->drawSource.x = drawSourceX;
         spriteComponent->drawSource.y = drawSourceY;
         spriteComponent->drawSource.w = drawSourceW;
