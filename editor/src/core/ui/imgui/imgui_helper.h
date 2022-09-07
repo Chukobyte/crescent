@@ -24,7 +24,7 @@ class Context : public Singleton<Context> {
     std::vector<const char*> popupIds = {};
 };
 
-using ImGuiHelperCallbackFunc = std::function<void(Context* context)>;
+using ImGuiHelperCallbackFunc = std::function<void(Context*)>;
 
 struct MenuItem {
     const char* name;
@@ -201,6 +201,16 @@ struct DockSpace {
     bool hasBuilt = false;
 
     void Run(bool runWindows);
+};
+
+class StaticPopupModalManager : public Singleton<StaticPopupModalManager> {
+  public:
+    StaticPopupModalManager(singleton) {}
+    void QueueOpenPopop(PopupModal* popupModal);
+    void Flush();
+
+  private:
+    std::vector<PopupModal*> framePopupModals;
 };
 
 void BeginMainMenuBar(const MenuBar& menuBar);

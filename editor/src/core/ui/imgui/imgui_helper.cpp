@@ -356,3 +356,16 @@ void ImGuiHelper::DockSpace::Run(bool runWindows) {
         ImGui::End();
     }
 }
+
+//--- StaticPopupModalManager ---//
+void ImGuiHelper::StaticPopupModalManager::QueueOpenPopop(PopupModal* popupModal) {
+    framePopupModals.emplace_back(popupModal);
+}
+
+void ImGuiHelper::StaticPopupModalManager::Flush() {
+    for (auto* popupModal : framePopupModals) {
+        ImGui::OpenPopup(popupModal->name);
+        ImGuiHelper::BeginPopupModal(*popupModal);
+    }
+    framePopupModals.clear();
+}
