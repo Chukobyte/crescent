@@ -442,7 +442,7 @@ void DrawAnimatedSprite(SceneNode* node) {
                 .open = nullptr,
                 .windowFlags = 0,
                 .position = ImVec2{ 100.0f, 100.0f },
-                .size = ImVec2{ 200.0f, 200.0f },
+                .size = ImVec2{ 400.0f, 400.0f },
             };
             static int selectedAnimIndex = 0;
             animationsEditPopup.callbackFunc = [animatedSpriteComp] (ImGuiHelper::Context* context) {
@@ -590,6 +590,7 @@ void DrawAnimatedSprite(SceneNode* node) {
                         ImGui::SameLine();
                         if (ImGui::Button("Delete Frame")) {
                             animFrameToDelete = selectedAnimFrameIndex;
+                            selectedAnimFrameIndex = std::max(selectedAnimFrameIndex - 1, 0);
                         }
 
                         auto& selectedAnimFrame = selectedAnim.GetAnimationFrame(selectedAnimFrameIndex);

@@ -60,9 +60,22 @@ struct EditorAnimationFrame {
 
 struct EditorAnimation {
     void RemoveAnimatationFrameByIndex(int frameIndex) {
-        animationFrames.erase(std::remove_if(animationFrames.begin(), animationFrames.end(), [frameIndex](const EditorAnimationFrame& animFrame) {
-            return frameIndex == animFrame.frame;
+        // Erase index from vector
+        bool hasRemoved = false;
+        animationFrames.erase(std::remove_if(animationFrames.begin(), animationFrames.end(), [frameIndex, &hasRemoved](const EditorAnimationFrame& animFrame) {
+            hasRemoved = frameIndex == animFrame.frame;
+            return hasRemoved;
         }), animationFrames.end());
+        if (hasRemoved) {
+            // Shift previous frames that were in front back a frame
+            for (auto& animFrame : animationFrames) {
+                if (animFrame.frame >= frameIndex) {
+                    animFrame.frame--;
+                }
+            }
+        } else {
+            rbe_logger_error("Tried to remove frame nonexistent frame '%d' from animation '%s'", frameIndex, name.c_str());
+        }
     }
 
     bool HasAnimationFrame(int frameIndex) const {
