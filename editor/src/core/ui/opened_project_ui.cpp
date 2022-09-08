@@ -441,17 +441,101 @@ void DrawAnimatedSprite(SceneNode* node) {
                 .name = "Animation Edit Menu",
                 .open = nullptr,
                 .windowFlags = 0,
-                .callbackFunc = [] (ImGuiHelper::Context* context) {
-                    if (ImGui::Button("Close")) {
-                        ImGui::CloseCurrentPopup();
-                    }
-                    ImGui::SameLine();
-                    if (ImGui::Button("Ok")) {
-                        ImGui::CloseCurrentPopup();
-                    }
-                },
                 .position = ImVec2{ 100.0f, 100.0f },
                 .size = ImVec2{ 200.0f, 200.0f },
+            };
+            static int selectedAnimIndex = 0;
+            animationsEditPopup.callbackFunc = [animatedSpriteComp] (ImGuiHelper::Context* context) {
+                if (ImGui::Button("Close")) {
+                    selectedAnimIndex = 0;
+                    ImGui::CloseCurrentPopup();
+                }
+                ImGui::SameLine();
+                if (ImGui::Button("Ok")) {
+                    selectedAnimIndex = 0;
+                    ImGui::CloseCurrentPopup();
+                }
+
+                ImGui::Separator();
+
+                // Animation List
+                ImGui::Text("Animations:");
+                if (ImGui::Button("+")) {
+                    animatedSpriteComp->AddDefaultAnimation();
+                }
+                const ImGuiTreeNodeFlags defaultFlags = ImGuiTreeNodeFlags_Leaf;
+                int animIndex = 0;
+                struct QueuedAnimToRemove {
+                    std::string name;
+                    AnimatedSpriteComp* animSpriteComp = nullptr;
+                };
+                static QueuedAnimToRemove queuedAnimToRemove;
+                for (auto& anim : animatedSpriteComp->animations) {
+                    ImGuiHelper::TreeNode treeNode = {
+                        .label = anim.name,
+                        .flags = animIndex == selectedAnimIndex ? defaultFlags | ImGuiTreeNodeFlags_Selected : defaultFlags,
+                        .callbackFunc = [animatedSpriteComp, &anim, &animIndex] (ImGuiHelper::Context* context) {
+                            // Left Click
+                            if (ImGui::IsItemClicked()) {
+                                selectedAnimIndex = animIndex;
+                            }
+
+                            // Right Click
+                            const std::string animPopupId = anim.name + "_popup";
+                            ImGui::OpenPopupOnItemClick(animPopupId.c_str(), ImGuiPopupFlags_MouseButtonRight);
+                            if (ImGui::BeginPopup(animPopupId.c_str())) {
+                                if (ImGui::MenuItem("Rename")) {
+                                    static ImGuiHelper::PopupModal renameAnimPopup = {
+                                        .name = "Rename Animation Menu",
+                                        .open = nullptr,
+                                        .windowFlags = 0,
+                                        .position = ImVec2{ 100.0f, 100.0f },
+                                        .size = ImVec2{ 200.0f, 200.0f },
+                                    };
+                                    renameAnimPopup.callbackFunc = [animatedSpriteComp, &anim] (ImGuiHelper::Context* context) {
+                                        static std::string newNameText;
+                                        ImGuiHelper::InputText newNameInputText("New Name", newNameText);
+                                        ImGuiHelper::BeginInputText(newNameInputText);
+
+                                        if (ImGui::Button("Close")) {
+                                            newNameText.clear();
+                                            ImGui::CloseCurrentPopup();
+                                        }
+                                        ImGui::SameLine();
+                                        if (ImGui::Button("Ok")) {
+                                            if (!newNameText.empty() && !animatedSpriteComp->HasAnimationWithName(newNameText)) {
+                                                anim.name = newNameText;
+                                            }
+                                            newNameText.clear();
+                                            ImGui::CloseCurrentPopup();
+                                        }
+                                    };
+                                    ImGuiHelper::StaticPopupModalManager::Get()->QueueOpenPopop(&renameAnimPopup);
+                                }
+                                if (ImGui::MenuItem("Delete")) {
+                                    // Queue deletion
+                                    queuedAnimToRemove.name = anim.name;
+                                    queuedAnimToRemove.animSpriteComp = animatedSpriteComp;
+                                }
+                                ImGui::EndPopup();
+                            }
+                        }
+                    };
+                    ImGuiHelper::BeginTreeNode(treeNode);
+                    animIndex++;
+                }
+                ImGui::Separator();
+
+                // Selected animation
+                ImGui::Text("Speed: 100");
+                ImGui::Text("Loops: True");
+
+                // Cleanup
+                if (!queuedAnimToRemove.name.empty() && queuedAnimToRemove.animSpriteComp != nullptr) {
+                    queuedAnimToRemove.animSpriteComp->RemoveAnimationByName(queuedAnimToRemove.name);
+                }
+                queuedAnimToRemove.name.clear();
+                queuedAnimToRemove.animSpriteComp = nullptr;
             };
             ImGuiHelper::StaticPopupModalManager::Get()->QueueOpenPopop(&animationsEditPopup);
         }

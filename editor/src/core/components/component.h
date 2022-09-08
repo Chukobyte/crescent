@@ -86,6 +86,30 @@ struct AnimatedSpriteComp : public EditorComponent {
         }
     }
 
+    void AddDefaultAnimation() {
+        std::string animNameCandidate = "default";
+        int nameIndex = 0;
+        while (HasAnimationWithName(animNameCandidate)) {
+            animNameCandidate = "default" + std::to_string(nameIndex++);
+        }
+        animations.emplace_back(EditorAnimation{ .name = animNameCandidate });
+    }
+
+    bool HasAnimationWithName(const std::string& name) const {
+        for (auto& anim : animations) {
+            if (anim.name == name) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    void RemoveAnimationByName(const std::string& name) {
+        animations.erase(std::remove_if(animations.begin(), animations.end(), [name](const EditorAnimation& anim) {
+            return name == anim.name;
+        }), animations.end());
+    }
+
     std::string currentAnimationName;
     std::vector<EditorAnimation> animations;
     Color modulate = { .r = 1.0f, .g = 1.0f, .b = 1.0f, .a = 1.0f };
