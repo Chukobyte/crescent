@@ -550,7 +550,31 @@ void DrawAnimatedSprite(SceneNode* node) {
                 // If there is a selected anim
                 if (!selectedAnimName.empty() && animatedSpriteComp->HasAnimationWithName(selectedAnimName)) {
                     auto& selectedAnim = animatedSpriteComp->GetAnimationByName(selectedAnimName);
-                    ImGui::Text("Frames");
+                    const size_t frameCount = selectedAnim.animationFrames.size();
+                    ImGui::Text("Frame Count: %zu", frameCount);
+                    if (ImGui::Button("Add Frame")) {
+                        EditorAnimationFrame newAnimFrame;
+                        newAnimFrame.frame = frameCount;
+                        selectedAnim.animationFrames.emplace_back(newAnimFrame);
+                    }
+
+                    if (frameCount > 0) {
+                        static int currentAnimFrame = 0;
+                        ImGui::SameLine();
+                        if (ImGui::Button("Delete Frame")) {
+                            selectedAnim.RemoveAnimatationFrameByIndex(currentAnimFrame);
+                        }
+
+                        if (ImGui::Button("<--")) {
+                            currentAnimFrame = std::max(currentAnimFrame - 1, 0);
+                        }
+                        ImGui::SameLine();
+                        ImGui::Text("Current Frame: %d", currentAnimFrame);
+                        ImGui::SameLine();
+                        if (ImGui::Button("-->")) {
+                            currentAnimFrame = std::min(currentAnimFrame + 1, (int) frameCount - 1);
+                        }
+                    }
 
                     ImGui::Separator();
 

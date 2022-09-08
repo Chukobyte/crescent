@@ -59,6 +59,12 @@ struct EditorAnimationFrame {
 };
 
 struct EditorAnimation {
+    void RemoveAnimatationFrameByIndex(int frameIndex) {
+        animationFrames.erase(std::remove_if(animationFrames.begin(), animationFrames.end(), [frameIndex](const EditorAnimationFrame& animFrame) {
+            return frameIndex == animFrame.frame;
+        }), animationFrames.end());
+    }
+
     std::string name;
     int speed = 100;
     bool doesLoop = true;
