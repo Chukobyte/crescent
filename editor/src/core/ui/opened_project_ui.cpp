@@ -483,15 +483,17 @@ void DrawAnimatedSprite(SceneNode* node) {
                             // Right Click
                             const std::string animPopupId = anim.name + "_popup";
                             ImGui::OpenPopupOnItemClick(animPopupId.c_str(), ImGuiPopupFlags_MouseButtonRight);
+                            static ImGuiHelper::PopupModal renameAnimPopup = {
+                                    .name = "Rename Animation Menu",
+                                    .open = nullptr,
+                                    .windowFlags = 0,
+                                    .position = ImVec2{ 200.0f, 100.0f },
+                                    .size = ImVec2{ 200.0f, 200.0f },
+                            };
+                            bool shouldRenameAnim = false;
                             if (ImGui::BeginPopup(animPopupId.c_str())) {
                                 if (ImGui::MenuItem("Rename")) {
-                                    static ImGuiHelper::PopupModal renameAnimPopup = {
-                                        .name = "Rename Animation Menu",
-                                        .open = nullptr,
-                                        .windowFlags = 0,
-                                        .position = ImVec2{ 100.0f, 100.0f },
-                                        .size = ImVec2{ 200.0f, 200.0f },
-                                    };
+                                    shouldRenameAnim = true;
                                     renameAnimPopup.callbackFunc = [animatedSpriteComp, &anim] (ImGuiHelper::Context* context) {
                                         static std::string newNameText;
                                         ImGuiHelper::InputText newNameInputText("New Name", newNameText);
@@ -510,8 +512,11 @@ void DrawAnimatedSprite(SceneNode* node) {
                                             ImGui::CloseCurrentPopup();
                                         }
                                     };
-                                    ImGuiHelper::StaticPopupModalManager::Get()->QueueOpenPopop(&renameAnimPopup);
+                                    // TODO: Should create a nested popup implementation
+//                                    ImGuiHelper::StaticPopupModalManager::Get()->QueueOpenPopop(&renameAnimPopup);
                                 }
+
+
                                 if (ImGui::MenuItem("Delete")) {
                                     // Queue deletion
                                     queuedAnimToRemove.name = anim.name;
@@ -519,11 +524,19 @@ void DrawAnimatedSprite(SceneNode* node) {
                                 }
                                 ImGui::EndPopup();
                             }
+                            if (shouldRenameAnim) {
+                                ImGui::OpenPopup(renameAnimPopup.name);
+                            }
+                            ImGuiHelper::BeginPopupModal(renameAnimPopup);
                         }
                     };
                     ImGuiHelper::BeginTreeNode(treeNode);
                     animIndex++;
                 }
+                ImGui::Separator();
+
+                ImGui::Text("Frames");
+
                 ImGui::Separator();
 
                 // Selected animation
