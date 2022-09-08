@@ -617,7 +617,7 @@ void DrawAnimatedSprite(SceneNode* node) {
                         ImGuiHelper::BeginDragFloat4(frameDrawSourceDragFloat4);
 
                         // Selection Arrows
-                        int beforeArrowsAnimFrame = selectedAnimFrameIndex;
+                        const int beforeArrowsAnimFrame = selectedAnimFrameIndex;
                         if (ImGui::Button("<--")) {
                             selectedAnimFrameIndex = std::max(selectedAnimFrameIndex - 1, 0);
                         }
@@ -635,7 +635,7 @@ void DrawAnimatedSprite(SceneNode* node) {
                             animFrameTexturePathComboBox.SetSelected(newSelectedAnimFrameTexturePath);
                         }
                     }
-                    if (animFrameToDelete > 0) {
+                    if (animFrameToDelete >= 0) {
                         selectedAnim.RemoveAnimatationFrameByIndex(animFrameToDelete);
                     }
 

@@ -63,8 +63,11 @@ struct EditorAnimation {
         // Erase index from vector
         bool hasRemoved = false;
         animationFrames.erase(std::remove_if(animationFrames.begin(), animationFrames.end(), [frameIndex, &hasRemoved](const EditorAnimationFrame& animFrame) {
-            hasRemoved = frameIndex == animFrame.frame;
-            return hasRemoved;
+            const bool indexMatches = frameIndex == animFrame.frame;
+            if (indexMatches) {
+                hasRemoved = true;
+            }
+            return indexMatches;
         }), animationFrames.end());
         if (hasRemoved) {
             // Shift previous frames that were in front back a frame
