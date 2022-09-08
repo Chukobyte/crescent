@@ -446,13 +446,16 @@ void DrawAnimatedSprite(SceneNode* node) {
             };
             static int selectedAnimIndex = 0;
             animationsEditPopup.callbackFunc = [animatedSpriteComp] (ImGuiHelper::Context* context) {
+                static std::string selectedAnimName;
                 if (ImGui::Button("Close")) {
                     selectedAnimIndex = 0;
+                    selectedAnimName.clear();
                     ImGui::CloseCurrentPopup();
                 }
                 ImGui::SameLine();
                 if (ImGui::Button("Ok")) {
                     selectedAnimIndex = 0;
+                    selectedAnimName.clear();
                     ImGui::CloseCurrentPopup();
                 }
 
@@ -469,29 +472,35 @@ void DrawAnimatedSprite(SceneNode* node) {
                     std::string name;
                     AnimatedSpriteComp* animSpriteComp = nullptr;
                 };
-                static QueuedAnimToRemove queuedAnimToRemove;
+                QueuedAnimToRemove queuedAnimToRemove;
                 for (auto& anim : animatedSpriteComp->animations) {
                     ImGuiHelper::TreeNode treeNode = {
                         .label = anim.name,
                         .flags = animIndex == selectedAnimIndex ? defaultFlags | ImGuiTreeNodeFlags_Selected : defaultFlags,
-                        .callbackFunc = [animatedSpriteComp, &anim, &animIndex] (ImGuiHelper::Context* context) {
+                        .callbackFunc = [animatedSpriteComp, &anim, &animIndex, &queuedAnimToRemove] (ImGuiHelper::Context* context) {
+                            if (animIndex == selectedAnimIndex) {
+                                selectedAnimName = anim.name;
+                            }
                             // Left Click
                             if (ImGui::IsItemClicked()) {
                                 selectedAnimIndex = animIndex;
+                                selectedAnimName = anim.name;
                             }
 
                             // Right Click
                             const std::string animPopupId = anim.name + "_popup";
                             ImGui::OpenPopupOnItemClick(animPopupId.c_str(), ImGuiPopupFlags_MouseButtonRight);
                             static ImGuiHelper::PopupModal renameAnimPopup = {
-                                    .name = "Rename Animation Menu",
-                                    .open = nullptr,
-                                    .windowFlags = 0,
-                                    .position = ImVec2{ 200.0f, 100.0f },
-                                    .size = ImVec2{ 200.0f, 200.0f },
+                                .name = "Rename Animation Menu",
+                                .open = nullptr,
+                                .windowFlags = 0,
+                                .position = ImVec2{ 200.0f, 100.0f },
+                                .size = ImVec2{ 200.0f, 200.0f },
                             };
                             bool shouldRenameAnim = false;
                             if (ImGui::BeginPopup(animPopupId.c_str())) {
+                                selectedAnimIndex = animIndex;
+                                selectedAnimName = anim.name;
                                 if (ImGui::MenuItem("Rename")) {
                                     shouldRenameAnim = true;
                                     renameAnimPopup.callbackFunc = [animatedSpriteComp, &anim] (ImGuiHelper::Context* context) {
@@ -507,6 +516,7 @@ void DrawAnimatedSprite(SceneNode* node) {
                                         if (ImGui::Button("Ok")) {
                                             if (!newNameText.empty() && !animatedSpriteComp->HasAnimationWithName(newNameText)) {
                                                 anim.name = newNameText;
+                                                selectedAnimName = anim.name;
                                             }
                                             newNameText.clear();
                                             ImGui::CloseCurrentPopup();
@@ -519,6 +529,8 @@ void DrawAnimatedSprite(SceneNode* node) {
 
                                 if (ImGui::MenuItem("Delete")) {
                                     // Queue deletion
+                                    selectedAnimIndex--;
+                                    selectedAnimName.clear();
                                     queuedAnimToRemove.name = anim.name;
                                     queuedAnimToRemove.animSpriteComp = animatedSpriteComp;
                                 }
@@ -535,20 +547,24 @@ void DrawAnimatedSprite(SceneNode* node) {
                 }
                 ImGui::Separator();
 
-                ImGui::Text("Frames");
+                // If there is a selected anim
+                if (!selectedAnimName.empty() && animatedSpriteComp->HasAnimationWithName(selectedAnimName)) {
+                    auto& selectedAnim = animatedSpriteComp->GetAnimationByName(selectedAnimName);
+                    ImGui::Text("Frames");
 
-                ImGui::Separator();
+                    ImGui::Separator();
 
-                // Selected animation
-                ImGui::Text("Speed: 100");
-                ImGui::Text("Loops: True");
+                    ImGuiHelper::DragInt speedDragInt("Speed", selectedAnim.speed);
+                    ImGuiHelper::BeginDragInt(speedDragInt);
+
+                    ImGuiHelper::CheckBox loopsCheckBox("Loops", selectedAnim.doesLoop);
+                    ImGuiHelper::BeginCheckBox(loopsCheckBox);
+                }
 
                 // Cleanup
                 if (!queuedAnimToRemove.name.empty() && queuedAnimToRemove.animSpriteComp != nullptr) {
                     queuedAnimToRemove.animSpriteComp->RemoveAnimationByName(queuedAnimToRemove.name);
                 }
-                queuedAnimToRemove.name.clear();
-                queuedAnimToRemove.animSpriteComp = nullptr;
             };
             ImGuiHelper::StaticPopupModalManager::Get()->QueueOpenPopop(&animationsEditPopup);
         }

@@ -9,6 +9,7 @@
 #include "../engine/src/core/ecs/component/sprite_component.h"
 #include "../engine/src/core/ecs/component/text_label_component.h"
 #include "../engine/src/core/ecs/component/transform2d_component.h"
+#include "../engine/src/core/utils/logger.h"
 
 struct EditorComponent {};
 
@@ -95,13 +96,24 @@ struct AnimatedSpriteComp : public EditorComponent {
         animations.emplace_back(EditorAnimation{ .name = animNameCandidate });
     }
 
-    bool HasAnimationWithName(const std::string& name) const {
+    [[nodiscard]] bool HasAnimationWithName(const std::string& name) const {
         for (auto& anim : animations) {
             if (anim.name == name) {
                 return true;
             }
         }
         return false;
+    }
+
+    [[nodiscard]] EditorAnimation& GetAnimationByName(const std::string& name) const {
+        for (auto& anim : animations) {
+            if (anim.name == name) {
+                return const_cast<EditorAnimation &>(anim);
+            }
+        }
+        rbe_logger_error("Failed to get anim at with name '%s'", name.c_str());
+        static EditorAnimation failedAnim;
+        return failedAnim;
     }
 
     void RemoveAnimationByName(const std::string& name) {
