@@ -149,7 +149,7 @@ struct ComboBox {
     ComboBox(std::string label, const std::vector<std::string>& items, std::function<void(const char* newItem)> onSelectionChangeCallback = nullptr, int labelIndex = 0);
     [[nodiscard]] const char* GetInternalLabel() const;
     [[nodiscard]] const char* GetSelectedItem() const;
-    void SetSelected(const std::string& itemToSelect);
+    void SetSelected(const std::string& itemToSelect, bool executeCallbacks = true);
 
     std::string label;
     std::vector<std::string> items;

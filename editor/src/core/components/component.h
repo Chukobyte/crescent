@@ -65,6 +65,26 @@ struct EditorAnimation {
         }), animationFrames.end());
     }
 
+    bool HasAnimationFrame(int frameIndex) const {
+        for (auto& animFrame : animationFrames) {
+            if (animFrame.frame == frameIndex) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    EditorAnimationFrame& GetAnimationFrame(int frameIndex) {
+        for (auto& animFrame : animationFrames) {
+            if (animFrame.frame == frameIndex) {
+                return animFrame;
+            }
+        }
+        rbe_logger_error("Anim '%s' doesn't have frame '%d'", name.c_str(), frameIndex);
+        static EditorAnimationFrame errorAnimFrame;
+        return errorAnimFrame;
+    }
+
     std::string name;
     int speed = 100;
     bool doesLoop = true;

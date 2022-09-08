@@ -194,7 +194,7 @@ void ImGuiHelper::BeginCheckBox(const CheckBox& checkBox) {
 ImGuiHelper::ComboBox::ComboBox(std::string label, const std::vector<std::string> &items, std::function<void(const char* newItem)> onSelectionChangeCallback, int labelIndex)
     : label(std::move(label)),
       items(items),
-      onSelectionChangeCallback(std::move(onSelectionChangeCallback)) {
+      onSelectionChangeCallback(onSelectionChangeCallback ? std::move(onSelectionChangeCallback) : nullptr) {
     internalLabel = "##" + std::to_string(labelIndex) + this->label;
 }
 
@@ -209,11 +209,11 @@ const char* ImGuiHelper::ComboBox::GetSelectedItem() const {
     return nullptr;
 }
 
-void ImGuiHelper::ComboBox::SetSelected(const std::string& itemToSelect) {
+void ImGuiHelper::ComboBox::SetSelected(const std::string& itemToSelect, bool executeCallbacks) {
     for (int i = 0; i < items.size(); i++) {
         if (items[i] == itemToSelect) {
             selectedIndex = i;
-            if (onSelectionChangeCallback) {
+            if (onSelectionChangeCallback && executeCallbacks) {
                 onSelectionChangeCallback(items[i].c_str());
             }
             return;

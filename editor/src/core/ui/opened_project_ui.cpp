@@ -447,15 +447,19 @@ void DrawAnimatedSprite(SceneNode* node) {
             static int selectedAnimIndex = 0;
             animationsEditPopup.callbackFunc = [animatedSpriteComp] (ImGuiHelper::Context* context) {
                 static std::string selectedAnimName;
-                if (ImGui::Button("Close")) {
+                static int selectedAnimFrameIndex = 0;
+                static auto CleanupAnimEditState = [] {
                     selectedAnimIndex = 0;
+                    selectedAnimFrameIndex = 0;
                     selectedAnimName.clear();
+                };
+                if (ImGui::Button("Close")) {
+                    CleanupAnimEditState();
                     ImGui::CloseCurrentPopup();
                 }
                 ImGui::SameLine();
                 if (ImGui::Button("Ok")) {
-                    selectedAnimIndex = 0;
-                    selectedAnimName.clear();
+                    CleanupAnimEditState();
                     ImGui::CloseCurrentPopup();
                 }
 
@@ -552,28 +556,86 @@ void DrawAnimatedSprite(SceneNode* node) {
                     auto& selectedAnim = animatedSpriteComp->GetAnimationByName(selectedAnimName);
                     const size_t frameCount = selectedAnim.animationFrames.size();
                     ImGui::Text("Frame Count: %zu", frameCount);
+
+                    // Have to define anim frame stuff here in order to refresh combo box when adding frame
+                    static std::vector<std::string> animFrameTexturePathList = { "none" };
+                    static AssetBrowser* assetBrowser = AssetBrowser::Get();
+                    static auto UpdateTexturePathList = [] {
+                        animFrameTexturePathList.clear();
+                        animFrameTexturePathList.emplace_back("none");
+                        if (assetBrowser->extensionToFileNodeMap.count(".png") > 0) {
+                            for (auto& fileNode : assetBrowser->extensionToFileNodeMap[".png"]) {
+                                animFrameTexturePathList.emplace_back(fileNode.GetRelativePath());
+                            }
+                        }
+                    };
+                    static FuncObject initializeAnimFrameTexturePathListFunc = FuncObject([] {
+                        UpdateTexturePathList();
+                        assetBrowser->RegisterRefreshCallback([](const FileNode& rootNode) {
+                            UpdateTexturePathList();
+                        });
+                    });
+                    static ImGuiHelper::ComboBox animFrameTexturePathComboBox("Texture Path", animFrameTexturePathList);
+
                     if (ImGui::Button("Add Frame")) {
                         EditorAnimationFrame newAnimFrame;
                         newAnimFrame.frame = frameCount;
                         selectedAnim.animationFrames.emplace_back(newAnimFrame);
+                        selectedAnimFrameIndex = newAnimFrame.frame;
+                        animFrameTexturePathComboBox.SetSelected("none", false);
                     }
 
+                    int animFrameToDelete = -1;
                     if (frameCount > 0) {
-                        static int currentAnimFrame = 0;
                         ImGui::SameLine();
                         if (ImGui::Button("Delete Frame")) {
-                            selectedAnim.RemoveAnimatationFrameByIndex(currentAnimFrame);
+                            animFrameToDelete = selectedAnimFrameIndex;
                         }
 
+                        auto& selectedAnimFrame = selectedAnim.GetAnimationFrame(selectedAnimFrameIndex);
+
+                        // TODO: Wrap asset browser file path lists in a UI Widget
+                        // Anim Frame Texture Path
+                        static FuncObject initializeFunc2 = FuncObject([selectedAnimFrame] {
+                            if (selectedAnimFrame.texturePath.empty()) {
+                                animFrameTexturePathComboBox.SetSelected("none");
+                            } else {
+                                animFrameTexturePathComboBox.SetSelected(selectedAnimFrame.texturePath);
+                            }
+                        });
+                        animFrameTexturePathComboBox.onSelectionChangeCallback = [&selectedAnimFrame](const char* newItem) {
+                            selectedAnimFrame.texturePath = newItem;
+                            if (selectedAnimFrame.texturePath == "none") {
+                                selectedAnimFrame.texturePath.clear();
+                            }
+                        };
+                        ImGuiHelper::BeginComboBox(animFrameTexturePathComboBox);
+
+                        // Draw Source
+                        ImGuiHelper::DragFloat4 frameDrawSourceDragFloat4("Draw Source", (float*) &selectedAnimFrame.drawSource);
+                        ImGuiHelper::BeginDragFloat4(frameDrawSourceDragFloat4);
+
+                        // Selection Arrows
+                        int beforeArrowsAnimFrame = selectedAnimFrameIndex;
                         if (ImGui::Button("<--")) {
-                            currentAnimFrame = std::max(currentAnimFrame - 1, 0);
+                            selectedAnimFrameIndex = std::max(selectedAnimFrameIndex - 1, 0);
                         }
                         ImGui::SameLine();
-                        ImGui::Text("Current Frame: %d", currentAnimFrame);
+                        ImGui::Text("Current Frame: %d", selectedAnimFrameIndex);
                         ImGui::SameLine();
                         if (ImGui::Button("-->")) {
-                            currentAnimFrame = std::min(currentAnimFrame + 1, (int) frameCount - 1);
+                            selectedAnimFrameIndex = std::min(selectedAnimFrameIndex + 1, (int) frameCount - 1);
                         }
+                        if (beforeArrowsAnimFrame != selectedAnimFrameIndex) {
+                            const auto& newSelectedAnimFrame = selectedAnim.GetAnimationFrame(selectedAnimFrameIndex);
+                            const std::string newSelectedAnimFrameTexturePath = !newSelectedAnimFrame.texturePath.empty() ? newSelectedAnimFrame.texturePath : "none";
+                            // Null callback since it's not needed and will be reset next frame
+                            animFrameTexturePathComboBox.onSelectionChangeCallback = nullptr;
+                            animFrameTexturePathComboBox.SetSelected(newSelectedAnimFrameTexturePath);
+                        }
+                    }
+                    if (animFrameToDelete > 0) {
+                        selectedAnim.RemoveAnimatationFrameByIndex(animFrameToDelete);
                     }
 
                     ImGui::Separator();
