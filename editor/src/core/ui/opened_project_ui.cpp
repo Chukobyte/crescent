@@ -424,8 +424,6 @@ void DrawAnimatedSprite(SceneNode* node) {
     if (AnimatedSpriteComp* animatedSpriteComp = node->GetComponentSafe<AnimatedSpriteComp>()) {
         ImGui::Text("Animated Sprite Component");
 
-        // TODO: Make a combo box full of animation names
-        // TODO: comebacky
         static std::vector<std::string> spriteAnimationList = { COMBO_BOX_LIST_NONE };
         static auto UpdateSpriteAnimationList = [] (AnimatedSpriteComp* animSpriteComp) {
             spriteAnimationList.clear();
@@ -940,6 +938,15 @@ void OpenedProjectUI::ProcessWindows() {
     static ImGuiHelper::DockSpace dockSpace = {
         .id = "DockSpace",
         .size = ImVec2((float) windowWidth, (float) windowHeight),
+        .onMainWindowUpdateCallback = [] {
+            if (ImGui::Button(">")) {
+
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("[]")) {
+
+            }
+        },
         .windows = {
             { .window = sceneViewWindow, .position = ImGuiHelper::DockSpacePosition::Main },
             { .window = sceneOutlinerWindow, .position = ImGuiHelper::DockSpacePosition::Left },
