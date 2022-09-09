@@ -27,6 +27,45 @@ std::string ColorToString(const Color& c) {
     return "Color(" + ToString((int) (c.r * 255.0f)) + ", " + ToString((int) (c.g * 255.0f)) + ", " + ToString((int) (c.b * 255.0f)) + ", " + ToString((int) (c.a * 255.0f)) + ")";
 }
 
+std::string GetStageAnimationText(const EditorAnimation& animation, int tabSpace) {
+    const std::string tabSpaceText = std::string(tabSpace, ' ');
+    std::string fileContents;
+
+    for (const auto& animFrame : animation.animationFrames) {
+        fileContents += tabSpaceText + "                    AnimationFrame(\n";
+        fileContents += tabSpaceText + "                        frame=" + ToString(animFrame.frame) + ",\n";
+        fileContents += tabSpaceText + "                        texture_path=\"" + animFrame.texturePath + "\",\n";
+        fileContents += tabSpaceText + "                        draw_source=" + Rect2ToString(animFrame.drawSource) + ",\n";
+        fileContents += tabSpaceText + "                    ),\n";
+    }
+
+    return fileContents;
+}
+
+std::string GetStageAnimatedSpriteComponentText(const AnimatedSpriteComp* animatedSpriteComp, int tabSpace) {
+    const std::string tabSpaceText = std::string(tabSpace, ' ');
+    std::string fileContents;
+
+    for (const auto& anim : animatedSpriteComp->animations) {
+        fileContents += tabSpaceText + "                    Animation(\n";
+        fileContents += tabSpaceText + "                        name=\"" + anim.name + "\",\n";
+        fileContents += tabSpaceText + "                        speed=" + ToString(anim.speed) + ",\n";
+        fileContents += tabSpaceText + "                        loops=" + Helper::BoolToStringCapital(anim.doesLoop) + ",\n";
+
+        if (anim.animationFrames.empty()) {
+            fileContents += tabSpaceText + "                        frames=[],\n";
+        } else {
+            fileContents += tabSpaceText + "                        frames=[\n";
+            fileContents += GetStageAnimationText(anim, tabSpace + 8);
+            fileContents += tabSpaceText + "                        ],\n";
+        }
+
+        fileContents += tabSpaceText + "                    ),\n";
+    }
+
+    return fileContents;
+}
+
 std::string GetStageNodeComponentsText(SceneNode* sceneNode, int tabSpace) {
     if (!sceneNode->HasComponents()) {
         return "[]";
@@ -62,7 +101,15 @@ std::string GetStageNodeComponentsText(SceneNode* sceneNode, int tabSpace) {
         fileContents += tabSpaceText + "                    flip_x=" + Helper::BoolToStringCapital(animatedSpriteComp->flipX) + ",\n";
         fileContents += tabSpaceText + "                    flip_y=" + Helper::BoolToStringCapital(animatedSpriteComp->flipY) + ",\n";
         fileContents += tabSpaceText + "                    modulate=" + ColorToString(animatedSpriteComp->modulate) + ",\n";
-        fileContents += tabSpaceText + "                    animations=[],\n"; // TODO: Finish...
+
+        if (animatedSpriteComp->animations.empty()) {
+            fileContents += tabSpaceText + "                    animations=[],\n";
+        } else {
+            fileContents += tabSpaceText + "                    animations=[\n";
+            fileContents += GetStageAnimatedSpriteComponentText(animatedSpriteComp, tabSpace + 4);
+            fileContents += tabSpaceText + "                    ],\n";
+        }
+
         fileContents += tabSpaceText + "                ),\n";
     }
     if (const TextLabelComp* textLabelComp = sceneNode->GetComponentSafe<TextLabelComp>()) {
