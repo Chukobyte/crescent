@@ -66,7 +66,6 @@ void ProjectManagerUI::ProcessWindows() {
             static std::string openProjectPath;
             static ImGuiHelper::InputText openProjectPathInputText("Open Project Path", openProjectPath);
             ImGuiHelper::BeginInputText(openProjectPathInputText);
-            // TODO: Validate path
             const std::string fullOpenProjectPath = Helper::RemoveExtensionFromFilePath("test_games/" + openProjectPath);
             if (ImGui::Button("Open Project") && !openProjectPath.empty() && FileSystemHelper::DoesDirectoryExist(fullOpenProjectPath)) {
                 LoadProject(fullOpenProjectPath.c_str());
