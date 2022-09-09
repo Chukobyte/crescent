@@ -104,13 +104,8 @@ void OpenedProjectUI::ProcessMenuBar() {
                                                 }
                                                 ImGui::SameLine();
                                                 if (ImGui::Button("Ok") && !saveSceneFilePath.empty()) {
-                                                    size_t lastBackslashIndex = saveSceneFilePath.find_last_of('/');
-                                                    const std::string path = saveSceneFilePath.substr(0, lastBackslashIndex + 1);
-                                                    const std::string fileName = saveSceneFilePath.substr(lastBackslashIndex + 1);
-                                                    size_t fileExtensionIndex = fileName.find_last_of('.');
-                                                    const std::string validFileName = fileName.substr(0, fileExtensionIndex) + ".py";
-                                                    const std::string validFullFilePath = path + validFileName;
                                                     auto* selectedSceneFile = SceneManager::Get()->selectedSceneFile;
+                                                    const std::string validFullFilePath = Helper::ConvertFilePathToFilePathExtension(saveSceneFilePath, ".py");
                                                     selectedSceneFile->filePath = validFullFilePath;
                                                     SceneFileCreator::GenerateSceneFile(selectedSceneFile, validFullFilePath.c_str());
                                                     selectedSceneFile->hasBeenSaved = true;
