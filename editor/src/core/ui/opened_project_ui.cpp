@@ -6,6 +6,7 @@
 #include "imgui/imgui_helper.h"
 #include "../editor_context.h"
 #include "../project_properties.h"
+#include "../utils/file_system_helper.h"
 #include "../utils/helper.h"
 #include "../file_creation/config_file_creator.h"
 #include "../scene/scene_manager.h"
@@ -59,6 +60,12 @@ void OpenedProjectUI::ProcessMenuBar() {
                                     }
                                     ImGui::SameLine();
                                     if (ImGui::Button("Ok")) {
+                                        static SceneManager* sceneManager = SceneManager::Get();
+                                        openSceneFilePath = Helper::ConvertFilePathToFilePathExtension(openSceneFilePath, ".py");
+                                        if (!openSceneFilePath.empty() && FileSystemHelper::DoesFileExist(openSceneFilePath)) {
+                                            sceneManager->selectedSceneFile = sceneManager->LoadSceneFromFile(openSceneFilePath.c_str());
+                                            sceneManager->selectedSceneNode = sceneManager->selectedSceneFile->rootNode;
+                                        }
                                         openSceneFilePath.clear();
                                         ImGui::CloseCurrentPopup();
                                     }

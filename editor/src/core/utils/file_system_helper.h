@@ -19,8 +19,13 @@ inline void WriteFile(const std::string &filePath, const std::string& fileText) 
 }
 
 inline bool DoesDirectoryExist(const std::string &filePath) {
+    return std::filesystem::is_directory(filePath);
+}
+
+inline bool DoesFileExist(const std::string &filePath) {
     return std::filesystem::exists(filePath);
 }
+
 
 inline bool IsDirectoryEmpty(const std::string &filePath) {
     return std::filesystem::is_empty(filePath);

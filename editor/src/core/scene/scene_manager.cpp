@@ -76,12 +76,15 @@ void SceneNodeUtils::DisplayTreeNodeLeaf(SceneNode *sceneNode) {
 }
 
 //--- Scene Manager ---//
-bool SceneManager::LoadSceneFromFile(const char *sceneFilePath) {
+SceneNodeFile* SceneManager::LoadSceneFromFile(const char* sceneFilePath, bool forceLoadFromDisk) {
+    if (!forceLoadFromDisk && loadedSceneFiles.count(sceneFilePath) > 0) {
+        return loadedSceneFiles[sceneFilePath];
+    }
     pyh_run_python_file(sceneFilePath);
     if (FileSceneNode* rootFileSceneNode = file_scene_node_get_cached_file_scene_node()) {
         SceneNodeFile* nodeFile = GenerateSceneNodeFile(rootFileSceneNode, sceneFilePath);
         nodeFile->hasBeenSaved = true;
-        loadedSceneFiles.emplace_back(nodeFile);
+        loadedSceneFiles.emplace(sceneFilePath, nodeFile);
         if (selectedSceneFile == nullptr) {
             selectedSceneFile = nodeFile;
         }
@@ -89,9 +92,9 @@ bool SceneManager::LoadSceneFromFile(const char *sceneFilePath) {
             selectedSceneNode = nodeFile->rootNode;
         }
         file_scene_node_delete_cached_file_scene_node();
-        return true;
+        return nodeFile;
     }
-    return false;
+    return nullptr;
 }
 
 SceneNodeFile *SceneManager::GenerateSceneNodeFile(FileSceneNode *rootTreeNode, const char* sceneFilePath) {

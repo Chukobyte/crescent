@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <map>
+#include <unordered_map>
 #include <typeinfo>
 #include <string>
 
@@ -95,7 +96,7 @@ void DisplayTreeNodeLeaf(SceneNode* sceneNode);
 class SceneManager : public Singleton<SceneManager> {
   public:
     SceneManager(singleton) {}
-    bool LoadSceneFromFile(const char* sceneFilePath);
+    SceneNodeFile* LoadSceneFromFile(const char* sceneFilePath, bool forceLoadFromDisk = false);
     void AddDefaultNodeAsChildToSelected(NodeBaseType type);
     void QueueNodeForDeletion(SceneNode* nodeToDelete, bool recurseChildren = true);
     void FlushQueuedForDeletionNodes();
@@ -106,7 +107,7 @@ class SceneManager : public Singleton<SceneManager> {
 
     static std::string GetUniqueNodeName(const std::string& nameCandidate, SceneNode* parent = nullptr);
 
-    std::vector<SceneNodeFile*> loadedSceneFiles;
+    std::unordered_map<std::string, SceneNodeFile*> loadedSceneFiles;
     SceneNodeFile* selectedSceneFile = nullptr;
 
     SceneNode* selectedSceneNode = nullptr;
