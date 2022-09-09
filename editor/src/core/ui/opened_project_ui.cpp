@@ -29,28 +29,16 @@ void OpenedProjectUI::ProcessMenuBar() {
                         .name = "New Scene",
                         .keyboardShortcut = "Ctrl+N",
                         .callbackFunc = [] (ImGuiHelper::Context* context) {
-                            static ImGuiHelper::PopupModal newScenePopup = {
-                                .name = "New Scene Menu",
-                                .open = nullptr,
-                                .windowFlags = 0,
-                                .callbackFunc = [gameProperties = ProjectProperties::Get()] (ImGuiHelper::Context* context) {
-                                    static std::string newSceneFilePath;
-                                    ImGuiHelper::InputText nameText("File Path", newSceneFilePath);
-                                    ImGuiHelper::BeginInputText(nameText);
-                                    if (ImGui::Button("Close")) {
-                                        newSceneFilePath.clear();
-                                        ImGui::CloseCurrentPopup();
-                                    }
-                                    ImGui::SameLine();
-                                    if (ImGui::Button("Ok")) {
-                                        newSceneFilePath.clear();
-                                        ImGui::CloseCurrentPopup();
-                                    }
-                                },
-                                .position = ImVec2{ 100.0f, 100.0f },
-                                .size = ImVec2{ 200.0f, 200.0f },
-                            };
-                            ImGuiHelper::StaticPopupModalManager::Get()->QueueOpenPopop(&newScenePopup);
+                            static SceneManager* sceneManager = SceneManager::Get();
+                            if (sceneManager->selectedSceneFile) {
+                                if (sceneManager->selectedSceneFile->hasBeenSaved) {
+                                    SceneNodeFile* newSceneNodeFile = sceneManager->GenerateDefaultSceneNodeFile();
+                                    sceneManager->selectedSceneFile = newSceneNodeFile;
+                                } else {
+                                    sceneManager->ResetCurrentSceneNodeFile();
+                                }
+                            }
+                            // TODO: Add popup modal to confirm new scene with unsaved changes
                         },
                     },
                     {

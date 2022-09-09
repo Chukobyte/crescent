@@ -114,6 +114,15 @@ SceneNodeFile* SceneManager::GenerateDefaultSceneNodeFile(SceneNode* rootSceneNo
     return nodeFile;
 }
 
+void SceneManager::ResetCurrentSceneNodeFile() {
+    if (selectedSceneFile) {
+        QueueNodeForDeletion(selectedSceneFile->rootNode);
+        selectedSceneFile->rootNode = nullptr;
+        selectedSceneFile->hasBeenSaved = false;
+        selectedSceneFile->filePath.clear();
+    }
+}
+
 SceneNode* SceneManager::LoadSceneTreeNode(FileSceneNode* node, SceneNode* parent) {
     SceneNode* sceneNode = new SceneNode();
     sceneNode->parent = parent;

@@ -85,7 +85,7 @@ class SceneNode {
 struct SceneNodeFile {
     std::string filePath;
     SceneNode* rootNode = nullptr;
-    bool hasBeenSaved = false;
+    bool hasBeenSaved = false; // New Scene
 };
 
 namespace SceneNodeUtils {
@@ -102,6 +102,7 @@ class SceneManager : public Singleton<SceneManager> {
 
     SceneNodeFile* GenerateDefaultSceneNodeFile() const;
     SceneNodeFile* GenerateDefaultSceneNodeFile(SceneNode* rootSceneNode) const;
+    void ResetCurrentSceneNodeFile();
 
     static std::string GetUniqueNodeName(const std::string& nameCandidate, SceneNode* parent = nullptr);
 
