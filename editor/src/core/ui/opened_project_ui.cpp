@@ -14,6 +14,7 @@
 #include "../editor_callbacks.h"
 
 const char* CONFIG_FILE_NAME = "test_cre_config.py";
+const std::string COMBO_BOX_LIST_NONE = "<none>";
 
 static EditorContext* editorContext = EditorContext::Get();
 
@@ -367,11 +368,11 @@ void DrawSprite(SceneNode* node) {
         ImGui::Text("Sprite Component");
 
         // Texture Path Combo Box
-        static std::vector<std::string> texturePathList = { "none" };
+        static std::vector<std::string> texturePathList = { COMBO_BOX_LIST_NONE };
         static AssetBrowser* assetBrowser = AssetBrowser::Get();
         static auto UpdateTexturePathList = [] {
             texturePathList.clear();
-            texturePathList.emplace_back("none");
+            texturePathList.emplace_back(COMBO_BOX_LIST_NONE);
             if (assetBrowser->extensionToFileNodeMap.count(".png") > 0) {
                 for (auto& fileNode : assetBrowser->extensionToFileNodeMap[".png"]) {
                     texturePathList.emplace_back(fileNode.GetRelativePath());
@@ -387,14 +388,14 @@ void DrawSprite(SceneNode* node) {
         static ImGuiHelper::ComboBox spriteTexturePathComboBox("Texture Path", texturePathList);
         static FuncObject initializeFunc2 = FuncObject([spriteComp] {
             if (spriteComp->texturePath.empty()) {
-                spriteTexturePathComboBox.SetSelected("none");
+                spriteTexturePathComboBox.SetSelected(COMBO_BOX_LIST_NONE);
             } else {
                 spriteTexturePathComboBox.SetSelected(spriteComp->texturePath);
             }
             EditorCallbacks::Get()->RegisterOnSceneNodeSelected([](SceneNode* sceneNode) {
                 if (auto spriteC = sceneNode->GetComponentSafe<SpriteComp>()) {
                     if (spriteC->texturePath.empty()) {
-                        spriteTexturePathComboBox.SetSelected("none");
+                        spriteTexturePathComboBox.SetSelected(COMBO_BOX_LIST_NONE);
                     } else {
                         spriteTexturePathComboBox.SetSelected(spriteC->texturePath);
                     }
@@ -403,7 +404,7 @@ void DrawSprite(SceneNode* node) {
         });
         spriteTexturePathComboBox.onSelectionChangeCallback = [spriteComp](const char* newItem) {
             spriteComp->texturePath = newItem;
-            if (spriteComp->texturePath == "none") {
+            if (spriteComp->texturePath == COMBO_BOX_LIST_NONE) {
                 spriteComp->texturePath.clear();
             }
         };
@@ -434,7 +435,25 @@ void DrawAnimatedSprite(SceneNode* node) {
         ImGui::Text("Animated Sprite Component");
 
         // TODO: Make a combo box full of animation names
-        ImGui::Text("Current Animation: %s", animatedSpriteComp->currentAnimationName.c_str());
+        // TODO: comebacky
+        static std::vector<std::string> spriteAnimationList = { COMBO_BOX_LIST_NONE };
+        static auto UpdateSpriteAnimationList = [] (AnimatedSpriteComp* animSpriteComp) {
+            spriteAnimationList.clear();
+            spriteAnimationList.emplace_back(COMBO_BOX_LIST_NONE);
+            for (const auto& anim : animSpriteComp->animations) {
+                spriteAnimationList.emplace_back(anim.name);
+            }
+        };
+        UpdateSpriteAnimationList(animatedSpriteComp);
+        static ImGuiHelper::ComboBox spriteAnimationSelectionComboBox("Current Animation", spriteAnimationList);
+        spriteAnimationSelectionComboBox.items = spriteAnimationList;
+        spriteAnimationSelectionComboBox.onSelectionChangeCallback = [animatedSpriteComp] (const char* newItem) {
+            animatedSpriteComp->currentAnimationName = newItem;
+            if (animatedSpriteComp->currentAnimationName == COMBO_BOX_LIST_NONE) {
+                animatedSpriteComp->currentAnimationName.clear();
+            }
+        };
+        ImGuiHelper::BeginComboBox(spriteAnimationSelectionComboBox);
 
         if (ImGui::Button("Edit Animations")) {
             static ImGuiHelper::PopupModal animationsEditPopup = {
@@ -558,11 +577,11 @@ void DrawAnimatedSprite(SceneNode* node) {
                     ImGui::Text("Frame Count: %zu", frameCount);
 
                     // Have to define anim frame stuff here in order to refresh combo box when adding frame
-                    static std::vector<std::string> animFrameTexturePathList = { "none" };
+                    static std::vector<std::string> animFrameTexturePathList = { COMBO_BOX_LIST_NONE };
                     static AssetBrowser* assetBrowser = AssetBrowser::Get();
                     static auto UpdateTexturePathList = [] {
                         animFrameTexturePathList.clear();
-                        animFrameTexturePathList.emplace_back("none");
+                        animFrameTexturePathList.emplace_back(COMBO_BOX_LIST_NONE);
                         if (assetBrowser->extensionToFileNodeMap.count(".png") > 0) {
                             for (auto& fileNode : assetBrowser->extensionToFileNodeMap[".png"]) {
                                 animFrameTexturePathList.emplace_back(fileNode.GetRelativePath());
@@ -582,7 +601,7 @@ void DrawAnimatedSprite(SceneNode* node) {
                         newAnimFrame.frame = frameCount;
                         selectedAnim.animationFrames.emplace_back(newAnimFrame);
                         selectedAnimFrameIndex = newAnimFrame.frame;
-                        animFrameTexturePathComboBox.SetSelected("none", false);
+                        animFrameTexturePathComboBox.SetSelected(COMBO_BOX_LIST_NONE, false);
                     }
 
                     int animFrameToDelete = -1;
@@ -599,14 +618,14 @@ void DrawAnimatedSprite(SceneNode* node) {
                         // Anim Frame Texture Path
                         static FuncObject initializeFunc2 = FuncObject([selectedAnimFrame] {
                             if (selectedAnimFrame.texturePath.empty()) {
-                                animFrameTexturePathComboBox.SetSelected("none");
+                                animFrameTexturePathComboBox.SetSelected(COMBO_BOX_LIST_NONE);
                             } else {
                                 animFrameTexturePathComboBox.SetSelected(selectedAnimFrame.texturePath);
                             }
                         });
                         animFrameTexturePathComboBox.onSelectionChangeCallback = [&selectedAnimFrame](const char* newItem) {
                             selectedAnimFrame.texturePath = newItem;
-                            if (selectedAnimFrame.texturePath == "none") {
+                            if (selectedAnimFrame.texturePath == COMBO_BOX_LIST_NONE) {
                                 selectedAnimFrame.texturePath.clear();
                             }
                         };
@@ -629,7 +648,7 @@ void DrawAnimatedSprite(SceneNode* node) {
                         }
                         if (beforeArrowsAnimFrame != selectedAnimFrameIndex) {
                             const auto& newSelectedAnimFrame = selectedAnim.GetAnimationFrame(selectedAnimFrameIndex);
-                            const std::string newSelectedAnimFrameTexturePath = !newSelectedAnimFrame.texturePath.empty() ? newSelectedAnimFrame.texturePath : "none";
+                            const std::string newSelectedAnimFrameTexturePath = !newSelectedAnimFrame.texturePath.empty() ? newSelectedAnimFrame.texturePath : COMBO_BOX_LIST_NONE;
                             // Null callback since it's not needed and will be reset next frame
                             animFrameTexturePathComboBox.onSelectionChangeCallback = nullptr;
                             animFrameTexturePathComboBox.SetSelected(newSelectedAnimFrameTexturePath);
