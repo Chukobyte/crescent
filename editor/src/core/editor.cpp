@@ -117,7 +117,7 @@ void Editor::ProcessWindows() {
 }
 
 void Editor::Render() {
-    static EdColor backgroundColor = EdColor::CreateNormalizedColor(22.0f, 22.0f, 22.0f);
+    static EditorColor backgroundColor = EditorColor::CreateNormalizedColor(22.0f, 22.0f, 22.0f);
     glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
