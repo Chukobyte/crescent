@@ -5,10 +5,10 @@ HEALTH_BAR_SIZE = Size2D(100, 20)
 INNER_HEALTH_BAR_SIZE = HEALTH_BAR_SIZE - Size2D(2, 2)
 
 
-class HealthBar(ColorSquare):
+class HealthBar(ColorRect):
     def __init__(self, entity_id: int):
         super().__init__(entity_id=entity_id)
-        self.inner_hp_bar = ColorSquare.new()
+        self.inner_hp_bar = ColorRect.new()
 
     def _start(self) -> None:
         self.size = HEALTH_BAR_SIZE

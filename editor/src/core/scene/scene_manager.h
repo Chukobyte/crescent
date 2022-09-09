@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <map>
+#include <unordered_map>
 #include <typeinfo>
 #include <string>
 
@@ -10,7 +11,8 @@
 #include "../engine/src/core/ecs/component/node_component.h"
 #include "../engine/src/core/scripting/python/rbe_py_file_loader.h"
 
-struct SceneNode {
+class SceneNode {
+  public:
     SceneNode() {
         uid = GenerateUID();
     }
@@ -20,7 +22,7 @@ struct SceneNode {
     }
 
     [[nodiscard]] const char* GetTypeString() const {
-        return node_get_component_type_string(type);
+        return node_get_base_type_string(type);
     }
 
     [[nodiscard]] unsigned int GetUID() const {
@@ -52,14 +54,28 @@ struct SceneNode {
         return components.count(&typeid(T));
     }
 
+    size_t GetComponentCount() const {
+        return components.size();
+    }
+
+    bool HasComponents() const {
+        return GetComponentCount() > 0;
+    }
+
+    void RemoveChild(SceneNode* childNode) {
+        children.erase(std::remove_if(children.begin(), children.end(), [childNode](SceneNode* node) {
+            return node == childNode;
+        }), children.end());
+    }
+
     std::string name;
     NodeBaseType type = NodeBaseType_INVALID;
     SceneNode* parent = nullptr;
     std::vector<SceneNode*> children;
-    std::map<const std::type_info*, EditorComponent*> components;
 
   private:
     unsigned int uid;
+    std::map<const std::type_info*, EditorComponent*> components;
 
     unsigned int GenerateUID() {
         static unsigned int uidCounter = 0;
@@ -70,16 +86,30 @@ struct SceneNode {
 struct SceneNodeFile {
     std::string filePath;
     SceneNode* rootNode = nullptr;
+    bool hasBeenSaved = false; // New Scene
 };
+
+namespace SceneNodeUtils {
+void DisplayTreeNodeLeaf(SceneNode* sceneNode);
+}
 
 class SceneManager : public Singleton<SceneManager> {
   public:
     SceneManager(singleton) {}
-    bool LoadSceneFromFile(const char* sceneFilePath);
+    SceneNodeFile* LoadSceneFromFile(const char* sceneFilePath, bool forceLoadFromDisk = false);
+    void AddDefaultNodeAsChildToSelected(NodeBaseType type);
+    void QueueNodeForDeletion(SceneNode* nodeToDelete, bool recurseChildren = true);
+    void FlushQueuedForDeletionNodes();
 
-    std::vector<SceneNodeFile*> loadedSceneFiles;
+    SceneNodeFile* GenerateDefaultSceneNodeFile() const;
+    SceneNodeFile* GenerateDefaultSceneNodeFile(SceneNode* rootSceneNode) const;
+    void ResetCurrentSceneNodeFile();
 
+    static std::string GetUniqueNodeName(const std::string& nameCandidate, SceneNode* parent = nullptr);
+
+    std::unordered_map<std::string, SceneNodeFile*> loadedSceneFiles;
     SceneNodeFile* selectedSceneFile = nullptr;
+
     SceneNode* selectedSceneNode = nullptr;
 
   private:
@@ -87,4 +117,6 @@ class SceneManager : public Singleton<SceneManager> {
 
     // Recursive function to load SceneTreeNode into SceneNode for usability purposes
     static SceneNode* LoadSceneTreeNode(FileSceneNode* node, SceneNode* parent = nullptr);
+
+    std::vector<SceneNode*> nodesQueuedForDeletion;
 };

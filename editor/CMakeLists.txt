@@ -17,9 +17,13 @@ find_package(SDL2 CONFIG REQUIRED)
 add_library(${PROJECT_NAME} STATIC
         # C++
         src/core/editor.cpp
+        src/core/editor_background_tasks.cpp
+        src/core/editor_callbacks.cpp
         src/core/editor_context.cpp
         src/core/project_properties.cpp
+        src/core/asset_browser.cpp
         src/core/file_creation/config_file_creator.cpp
+        src/core/file_creation/scene_file_creator.cpp
         src/core/scene/scene_manager.cpp
         src/core/ui/opened_project_ui.cpp
         src/core/ui/project_manager_ui.cpp

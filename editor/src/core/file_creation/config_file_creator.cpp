@@ -109,7 +109,7 @@ void ConfigFileCreator::GenerateConfigFile(const char *filePath, ProjectProperti
     fileContents += "   resolution_height=" + std::to_string(properties->resolutionHeight) + ",\n";
     fileContents += "   target_fps=" + std::to_string(properties->targetFPS) + ",\n";
     fileContents += "   initial_node_path=\"" + properties->initialNodePath + "\",\n";
-    fileContents += "   colliders_visible=" + Helper::BoolToStringCaptital(properties->areCollidersVisible) + ",\n";
+    fileContents += "   colliders_visible=" + Helper::BoolToStringCapital(properties->areCollidersVisible) + ",\n";
     fileContents += ")\n";
     fileContents += "\n";
 

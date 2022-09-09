@@ -11,7 +11,7 @@
 // Components
 #include "../../ecs/component/animated_sprite_component.h"
 #include "../../ecs/component/collider2d_component.h"
-#include "../../ecs/component/color_square_component.h"
+#include "../../ecs/component/color_rect_component.h"
 #include "../../ecs/component/script_component.h"
 #include "../../ecs/component/sprite_component.h"
 #include "../../ecs/component/text_label_component.h"
@@ -69,7 +69,7 @@ void file_scene_node_load_component(FileSceneNode* node, PyObject* pComponent) {
         SpriteComponent* spriteComponent = sprite_component_create();
 //        spriteComponent->texture = rbe_asset_manager_get_texture(texturePath);
         node->spriteTexturePath = strdup(texturePath);
-        RBE_ASSERT_FMT(spriteComponent->texture != NULL, "Unable to read texture path '%s'", texturePath);
+//        RBE_ASSERT_FMT(spriteComponent->texture != NULL, "Unable to read texture path '%s'", texturePath);
         spriteComponent->drawSource.x = drawSourceX;
         spriteComponent->drawSource.y = drawSourceY;
         spriteComponent->drawSource.w = drawSourceW;
@@ -219,8 +219,8 @@ void file_scene_node_load_component(FileSceneNode* node, PyObject* pComponent) {
                          rectW, rectH, collider2DComponent->color.r, collider2DComponent->color.g, collider2DComponent->color.b, collider2DComponent->color.a);
         Py_DECREF(pyExtents);
         Py_DECREF(pyColor);
-    } else if (strcmp(className, "ColorSquareComponent") == 0) {
-        rbe_logger_debug("Building collider2d component");
+    } else if (strcmp(className, "ColorRectComponent") == 0) {
+        rbe_logger_debug("Building color rect component");
         PyObject* pySize = PyObject_GetAttrString(pComponent, "size");
         RBE_ASSERT(pySize != NULL);
         const float rectW = phy_get_float_from_var(pySize, "w");
@@ -231,18 +231,18 @@ void file_scene_node_load_component(FileSceneNode* node, PyObject* pComponent) {
         const int colorG = phy_get_int_from_var(pyColor, "g");
         const int colorB = phy_get_int_from_var(pyColor, "b");
         const int colorA = phy_get_int_from_var(pyColor, "a");
-        ColorSquareComponent* colorSquareComponent = color_square_component_create();
-        colorSquareComponent->size.w = rectW;
-        colorSquareComponent->size.h = rectH;
-        colorSquareComponent->color.r = (float) colorR / 255.0f;
-        colorSquareComponent->color.g = (float) colorG / 255.0f;
-        colorSquareComponent->color.b = (float) colorB / 255.0f;
-        colorSquareComponent->color.a = (float) colorA / 255.0f;
+        ColorRectComponent* colorRectComponent = color_rect_component_create();
+        colorRectComponent->size.w = rectW;
+        colorRectComponent->size.h = rectH;
+        colorRectComponent->color.r = (float) colorR / 255.0f;
+        colorRectComponent->color.g = (float) colorG / 255.0f;
+        colorRectComponent->color.b = (float) colorB / 255.0f;
+        colorRectComponent->color.a = (float) colorA / 255.0f;
 
-        node->components[ComponentDataIndex_COLOR_SQUARE] = colorSquareComponent;
+        node->components[ComponentDataIndex_COLOR_RECT] = colorRectComponent;
         rbe_logger_debug("size: (%f, %f), color: (%f, %f, %f, %f)",
-                         rectW, rectH, colorSquareComponent->color.r, colorSquareComponent->color.g,
-                         colorSquareComponent->color.b, colorSquareComponent->color.a);
+                         rectW, rectH, colorRectComponent->color.r, colorRectComponent->color.g,
+                         colorRectComponent->color.b, colorRectComponent->color.a);
         Py_DECREF(pySize);
         Py_DECREF(pyColor);
     } else {
@@ -269,8 +269,8 @@ void file_scene_node_delete_components(FileSceneNode* node) {
     if (node->components[ComponentDataIndex_COLLIDER_2D] != NULL) {
         collider2d_component_delete(node->components[ComponentDataIndex_COLLIDER_2D]);
     }
-    if (node->components[ComponentDataIndex_COLOR_SQUARE] != NULL) {
-        color_square_component_delete(node->components[ComponentDataIndex_COLOR_SQUARE]);
+    if (node->components[ComponentDataIndex_COLOR_RECT] != NULL) {
+        color_rect_component_delete(node->components[ComponentDataIndex_COLOR_RECT]);
     }
 }
 

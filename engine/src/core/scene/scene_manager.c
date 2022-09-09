@@ -16,7 +16,7 @@
 #include "../ecs/component/text_label_component.h"
 #include "../ecs/component/script_component.h"
 #include "../ecs/component/collider2d_component.h"
-#include "../ecs/component/color_square_component.h"
+#include "../ecs/component/color_rect_component.h"
 
 // --- Scene Tree --- //
 typedef void (*ExecuteOnAllTreeNodesFunc) (SceneTreeNode*);
@@ -310,9 +310,10 @@ void rbe_scene_manager_setup_scene_node(FileSceneNode* fileSceneNode, SceneTreeN
         Collider2DComponent* collider2DComponent = collider2d_component_copy((Collider2DComponent*) fileSceneNode->components[ComponentDataIndex_COLLIDER_2D]);
         component_manager_set_component(node->entity, ComponentDataIndex_COLLIDER_2D, collider2DComponent);
     }
-    if (fileSceneNode->components[ComponentDataIndex_COLOR_SQUARE] != NULL) {
-        ColorSquareComponent* colorSquareComponent = color_square_component_copy((ColorSquareComponent*) fileSceneNode->components[ComponentDataIndex_COLOR_SQUARE]);
-        component_manager_set_component(node->entity, ComponentDataIndex_COLOR_SQUARE, colorSquareComponent);
+    if (fileSceneNode->components[ComponentDataIndex_COLOR_RECT] != NULL) {
+        ColorRectComponent* colorSquareComponent = color_rect_component_copy(
+                    (ColorRectComponent *) fileSceneNode->components[ComponentDataIndex_COLOR_RECT]);
+        component_manager_set_component(node->entity, ComponentDataIndex_COLOR_RECT, colorSquareComponent);
     }
 
     rbe_ec_system_update_entity_signature_with_systems(node->entity);

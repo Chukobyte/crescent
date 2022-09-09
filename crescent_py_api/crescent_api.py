@@ -641,7 +641,7 @@ class Collider2DComponent:
         self.color = color
 
 
-class ColorSquareComponent:
+class ColorRectComponent:
     def __init__(self, size: Size2D, color: Color):
         self.size = size
         self.color = color
@@ -656,7 +656,7 @@ class NodeType(str, Enum):
     ANIMATED_SPRITE = "AnimatedSprite"
     TEXT_LABEL = "TextLabel"
     COLLIDER2D = "Collider2D"
-    COLOR_SQUARE = "ColorSquare"
+    COLOR_RECT = "ColorRect"
 
 
 class Node:
@@ -1057,7 +1057,7 @@ class Collider2D(Node2D):
         )
 
 
-class ColorSquare(Node2D):
+class ColorRect(Node2D):
     def get_size(self) -> Size2D:
         w, h = crescent_api_internal.color_square_get_size(entity_id=self.entity_id)
         return Size2D(w=w, h=h)

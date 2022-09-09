@@ -7,17 +7,6 @@
 
 static ImGuiHelper::Context* context = ImGuiHelper::Context::Get();
 
-void ImGuiHelper::Context::OpenPopup(const char *popupId) {
-    popupIds.emplace_back(popupId);
-}
-
-void ImGuiHelper::Context::FlushPopups() {
-    for (const char* id : popupIds) {
-        ImGui::OpenPopup(id);
-    }
-    popupIds.clear();
-}
-
 //--- MenuBar ---//
 void ImGuiHelper::BeginMainMenuBar(const ImGuiHelper::MenuBar& menuBar) {
     // Create Menu Bar
@@ -35,7 +24,6 @@ void ImGuiHelper::BeginMainMenuBar(const ImGuiHelper::MenuBar& menuBar) {
             }
         }
         ImGui::EndMainMenuBar();
-        context->FlushPopups();
     }
 }
 
@@ -50,7 +38,6 @@ void ImGuiHelper::BeginPopupModal(const ImGuiHelper::PopupModal& popupModal) {
     if (ImGui::BeginPopupModal(popupModal.name, popupModal.open, popupModal.windowFlags)) {
         popupModal.callbackFunc(context);
         ImGui::EndPopup();
-        context->FlushPopups();
     }
 }
 
@@ -108,6 +95,82 @@ void ImGuiHelper::BeginDragInt(const DragInt& dragInt) {
     ImGui::DragInt(dragInt.GetInternalLabel(), &dragInt.value, dragInt.valueSpeed, dragInt.valueMin, dragInt.valueMax);
 }
 
+//--- Drag Float ---//
+ImGuiHelper::DragFloat::DragFloat(std::string label, float &value, int labelIndex)
+    : label(std::move(label)),
+      value(value) {
+    internalLabel = "##" + std::to_string(labelIndex) + this->label;
+}
+
+const char* ImGuiHelper::DragFloat::GetInternalLabel() const {
+    return internalLabel.c_str();
+}
+
+void ImGuiHelper::BeginDragFloat(const DragFloat& dragFloat) {
+    if (!dragFloat.label.empty()) {
+        ImGui::Text("%s", dragFloat.label.c_str());
+        ImGui::SameLine();
+    }
+    ImGui::DragFloat(dragFloat.GetInternalLabel(), &dragFloat.value, dragFloat.valueSpeed, dragFloat.valueMin, dragFloat.valueMax, dragFloat.format);
+}
+
+//--- Drag Float 2 ---//
+ImGuiHelper::DragFloat2::DragFloat2(std::string label, float* value, int labelIndex)
+    : label(std::move(label)),
+      value(value) {
+    internalLabel = "##" + std::to_string(labelIndex) + this->label;
+}
+
+const char* ImGuiHelper::DragFloat2::GetInternalLabel() const {
+    return internalLabel.c_str();
+}
+
+void ImGuiHelper::BeginDragFloat2(const DragFloat2& dragFloat2) {
+    if (!dragFloat2.label.empty()) {
+        ImGui::Text("%s", dragFloat2.label.c_str());
+        ImGui::SameLine();
+    }
+    ImGui::DragFloat2(dragFloat2.GetInternalLabel(), dragFloat2.value, dragFloat2.valueSpeed, dragFloat2.valueMin, dragFloat2.valueMax, dragFloat2.format);
+}
+
+//--- DragFloat4 ---//
+ImGuiHelper::DragFloat4::DragFloat4(std::string label, float *value, int labelIndex)
+    : label(std::move(label)),
+      value(value) {
+    internalLabel = "##" + std::to_string(labelIndex) + this->label;
+}
+
+const char *ImGuiHelper::DragFloat4::GetInternalLabel() const {
+    return internalLabel.c_str();
+}
+
+void ImGuiHelper::BeginDragFloat4(const DragFloat4& dragFloat4) {
+    if (!dragFloat4.label.empty()) {
+        ImGui::Text("%s", dragFloat4.label.c_str());
+        ImGui::SameLine();
+    }
+    ImGui::DragFloat4(dragFloat4.GetInternalLabel(), dragFloat4.value, dragFloat4.valueSpeed, dragFloat4.valueMin, dragFloat4.valueMax, dragFloat4.format);
+}
+
+//--- ColorEdit4 ---//
+ImGuiHelper::ColorEdit4::ColorEdit4(std::string label, float *value, int labelIndex)
+    : label(std::move(label)),
+      value(value) {
+    internalLabel = "##" + std::to_string(labelIndex) + this->label;
+}
+
+const char *ImGuiHelper::ColorEdit4::GetInternalLabel() const {
+    return internalLabel.c_str();
+}
+
+void ImGuiHelper::BeginColorEdit4(const ImGuiHelper::ColorEdit4 &colorEdit4) {
+    if (!colorEdit4.label.empty()) {
+        ImGui::Text("%s", colorEdit4.label.c_str());
+        ImGui::SameLine();
+    }
+    ImGui::ColorEdit4(colorEdit4.GetInternalLabel(), colorEdit4.value, colorEdit4.flags);
+}
+
 //--- CheckBox ---//
 ImGuiHelper::CheckBox::CheckBox(std::string label, bool &value)
     : label(std::move(label)),
@@ -127,6 +190,73 @@ void ImGuiHelper::BeginCheckBox(const CheckBox& checkBox) {
     ImGui::Checkbox(checkBox.GetInternalLabel(), &checkBox.value);
 }
 
+//--- ComboBox ---//
+ImGuiHelper::ComboBox::ComboBox(std::string label, const std::vector<std::string> &items, std::function<void(const char* newItem)> onSelectionChangeCallback, int labelIndex)
+    : label(std::move(label)),
+      items(items),
+      onSelectionChangeCallback(onSelectionChangeCallback ? std::move(onSelectionChangeCallback) : nullptr) {
+    internalLabel = "##" + std::to_string(labelIndex) + this->label;
+}
+
+const char* ImGuiHelper::ComboBox::GetInternalLabel() const {
+    return internalLabel.c_str();
+}
+
+const char* ImGuiHelper::ComboBox::GetSelectedItem() const {
+    if (selectedIndex < items.size()) {
+        return items[selectedIndex].c_str();
+    }
+    return nullptr;
+}
+
+void ImGuiHelper::ComboBox::SetSelected(const std::string& itemToSelect, bool executeCallbacks) {
+    for (int i = 0; i < items.size(); i++) {
+        if (items[i] == itemToSelect) {
+            selectedIndex = i;
+            if (onSelectionChangeCallback && executeCallbacks) {
+                onSelectionChangeCallback(items[i].c_str());
+            }
+            return;
+        }
+    }
+    rbe_logger_error("Combo Box failed to select item '%s'", itemToSelect.c_str());
+}
+
+void ImGuiHelper::BeginComboBox(ImGuiHelper::ComboBox &comboBox) {
+    if (!comboBox.label.empty()) {
+        ImGui::Text("%s", comboBox.label.c_str());
+        ImGui::SameLine();
+    }
+    const char* selectedItemText = comboBox.GetSelectedItem();
+    if (ImGui::BeginCombo(comboBox.GetInternalLabel(), selectedItemText, 0)) {
+        for (int i = 0; i < comboBox.items.size(); i++) {
+            const bool is_selected = (comboBox.selectedIndex == i);
+            if (ImGui::Selectable(comboBox.items[i].c_str(), is_selected)) {
+                comboBox.selectedIndex = i;
+                if (comboBox.onSelectionChangeCallback) {
+                    comboBox.onSelectionChangeCallback(comboBox.GetSelectedItem());
+                }
+            }
+
+            // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+            if (is_selected) {
+                ImGui::SetItemDefaultFocus();
+            }
+        }
+        ImGui::EndCombo();
+    }
+}
+
+//--- TreeNode ---//
+void ImGuiHelper::BeginTreeNode(const ImGuiHelper::TreeNode &treeNode) {
+    if (ImGui::TreeNodeEx(treeNode.label.c_str(), treeNode.flags)) {
+        if (treeNode.callbackFunc) {
+            treeNode.callbackFunc(context);
+        }
+        ImGui::TreePop();
+    }
+}
+
 //--- Window ---//
 void ImGuiHelper::BeginWindow(const ImGuiHelper::Window& window) {
     if (window.position.has_value()) {
@@ -136,13 +266,14 @@ void ImGuiHelper::BeginWindow(const ImGuiHelper::Window& window) {
         ImGui::SetNextWindowSize(*window.size, window.windowCond);
     }
     ImGui::Begin(window.name.c_str(), window.open, window.windowFlags);
-    window.callbackFunc(context);
+    if (window.callbackFunc) {
+        window.callbackFunc(context);
+    }
 }
 
 void ImGuiHelper::BeginWindowWithEnd(const ImGuiHelper::Window& window) {
     BeginWindow(window);
     ImGui::End();
-    context->FlushPopups();
 }
 
 //--- DockSpace ---//
@@ -163,7 +294,7 @@ void ImGuiHelper::DockSpace::Run(bool runWindows) {
     ImGui::DockSpace(dockSpaceId, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
     if (!hasBuilt) {
         // Run windows to have them defined...
-        for (auto dockSpaceWindow : windows) {
+        for (const auto& dockSpaceWindow : windows) {
             ImGuiHelper::BeginWindowWithEnd(dockSpaceWindow.window);
         }
 
@@ -172,12 +303,12 @@ void ImGuiHelper::DockSpace::Run(bool runWindows) {
         ImGui::DockBuilderSetNodeSize(dockSpaceId, dockSize);
         ImGui::DockBuilderSetNodePos(dockSpaceId, dockPosition);
 
-        ImGuiID dockRightId = ImGui::DockBuilderSplitNode(dockSpaceId, ImGuiDir_Right, 0.2f, nullptr, &dockSpaceId);
-        ImGuiID dockLeftId = ImGui::DockBuilderSplitNode(dockSpaceId, ImGuiDir_Left, 0.2f, nullptr, &dockSpaceId);
+        ImGuiID dockRightId = ImGui::DockBuilderSplitNode(dockSpaceId, ImGuiDir_Right, 0.3f, nullptr, &dockSpaceId);
+        ImGuiID dockLeftId = ImGui::DockBuilderSplitNode(dockSpaceId, ImGuiDir_Left, 0.3f, nullptr, &dockSpaceId);
         ImGuiID dockLeftDownId = ImGui::DockBuilderSplitNode(dockLeftId, ImGuiDir_Down, 0.3f, nullptr, &dockLeftId);
         ImGuiID dockDownId = ImGui::DockBuilderSplitNode(dockSpaceId, ImGuiDir_Down, 0.3f, nullptr, &dockSpaceId);
 
-        for (auto& dockSpaceWindow : windows) {
+        for (const auto& dockSpaceWindow : windows) {
             ImGuiID dockId = dockSpaceId;
             switch (dockSpaceWindow.position) {
             case DockSpacePosition::Main: {
@@ -208,9 +339,28 @@ void ImGuiHelper::DockSpace::Run(bool runWindows) {
     }
 
     if (runWindows) {
-        for (auto dockSpaceWindow : windows) {
+        for (const auto& dockSpaceWindow : windows) {
             ImGuiHelper::BeginWindowWithEnd(dockSpaceWindow.window);
         }
         ImGui::End();
+    }
+}
+
+//--- StaticPopupModalManager ---//
+void ImGuiHelper::StaticPopupModalManager::QueueOpenPopop(PopupModal* popupModal) {
+    if (!popupModal->hasRegistered) {
+        popupModal->hasRegistered = true;
+        framePopupModals.emplace_back(popupModal);
+    }
+    popupModalsToOpen.emplace_back(popupModal);
+}
+
+void ImGuiHelper::StaticPopupModalManager::Flush() {
+    for (auto* popupModal : popupModalsToOpen) {
+        ImGui::OpenPopup(popupModal->name);
+    }
+    popupModalsToOpen.clear();
+    for (auto* popupModal : framePopupModals) {
+        ImGuiHelper::BeginPopupModal(*popupModal);
     }
 }
