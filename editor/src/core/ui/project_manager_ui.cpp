@@ -83,9 +83,9 @@ void ProjectManagerUI::ProcessWindows() {
             ImGuiHelper::BeginInputText(newProjectPathInputText);
             // Create new project
             const std::string fullNewProjectPath = Helper::RemoveExtensionFromFilePath("test_games/" + newProjectPath);
-            if (ImGui::Button("Create New Project") && !newProjectName.empty() && !newProjectPath.empty() && !FileSystemHelper::DoesDirectoryExist(newProjectPath)) {
+            if (ImGui::Button("Create New Project") && !newProjectName.empty() && !newProjectPath.empty() && !FileSystemHelper::DoesDirectoryExist(fullNewProjectPath)) {
                 if (!FileSystemHelper::CreateDirectory(fullNewProjectPath)) {
-                    rbe_logger_error("Failed to create directory at '%s'", newProjectPath.c_str());
+                    rbe_logger_error("Failed to create directory at '%s'", fullNewProjectPath.c_str());
                     return;
                 }
                 rbe_fs_chdir(std::filesystem::path(fullNewProjectPath).string().c_str());

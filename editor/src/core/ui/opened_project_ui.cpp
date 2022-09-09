@@ -613,10 +613,16 @@ void DrawAnimatedSprite(SceneNode* node) {
                                 animFrameTexturePathComboBox.SetSelected(selectedAnimFrame.texturePath);
                             }
                         });
-                        animFrameTexturePathComboBox.onSelectionChangeCallback = [&selectedAnimFrame](const char* newItem) {
-                            selectedAnimFrame.texturePath = newItem;
-                            if (selectedAnimFrame.texturePath == COMBO_BOX_LIST_NONE) {
-                                selectedAnimFrame.texturePath.clear();
+                        animFrameTexturePathComboBox.onSelectionChangeCallback = [animatedSpriteComp, animName = selectedAnim.name, animFrameIndex = selectedAnimFrame.frame](const char* newItem) {
+                            if (animatedSpriteComp->HasAnimationWithName(animName)) {
+                                auto& anim = animatedSpriteComp->GetAnimationByName(animName);
+                                if (anim.HasAnimationFrame(animFrameIndex)) {
+                                    auto& animFrame = anim.GetAnimationFrame(animFrameIndex);
+                                    animFrame.texturePath = newItem;
+                                    if (animFrame.texturePath == COMBO_BOX_LIST_NONE) {
+                                        animFrame.texturePath.clear();
+                                    }
+                                }
                             }
                         };
                         ImGuiHelper::BeginComboBox(animFrameTexturePathComboBox);

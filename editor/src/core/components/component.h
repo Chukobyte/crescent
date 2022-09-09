@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <algorithm>
 
 #include "../engine/src/core/ecs/component/animated_sprite_component.h"
 #include "../engine/src/core/ecs/component/collider2d_component.h"
