@@ -97,7 +97,7 @@ RBESocket rbe_socket_create_client(const char* serverAddr, int serverPort, on_rb
     RBESocket sock;
     sock.size = sizeof(sock.si_other);
     rbe_logger_debug("Client: Creating socket....");
-    if ((sock.sock = (int) socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == SOCKET_ERROR) {
+    if ((int) (sock.sock = (int) socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == SOCKET_ERROR) {
         RBE_ASSERT_FMT(false, "Client: socket() failed with error code : %d", rbe_socket_get_last_error());
     }
     rbe_logger_debug("Client: socket created.");
