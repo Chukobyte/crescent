@@ -8,6 +8,7 @@
 #include "../project_properties.h"
 #include "../scene/scene_manager.h"
 #include "../utils/file_system_helper.h"
+#include "../utils/helper.h"
 
 static EditorContext* editorContext = EditorContext::Get();
 
@@ -66,7 +67,7 @@ void ProjectManagerUI::ProcessWindows() {
             static ImGuiHelper::InputText openProjectPathInputText("Open Project Path", openProjectPath);
             ImGuiHelper::BeginInputText(openProjectPathInputText);
             // TODO: Validate path
-            const std::string fullOpenProjectPath = "test_games/" + openProjectPath;
+            const std::string fullOpenProjectPath = Helper::RemoveExtensionFromFilePath("test_games/" + openProjectPath);
             if (ImGui::Button("Open Project") && !openProjectPath.empty() && FileSystemHelper::DoesDirectoryExist(fullOpenProjectPath)) {
                 LoadProject(fullOpenProjectPath.c_str());
             }
@@ -82,7 +83,7 @@ void ProjectManagerUI::ProcessWindows() {
             static ImGuiHelper::InputText newProjectPathInputText("New Project Path", newProjectPath);
             ImGuiHelper::BeginInputText(newProjectPathInputText);
             // Create new project
-            const std::string fullNewProjectPath = "test_games/" + newProjectPath;
+            const std::string fullNewProjectPath = Helper::RemoveExtensionFromFilePath("test_games/" + newProjectPath);
             if (ImGui::Button("Create New Project") && !newProjectName.empty() && !newProjectPath.empty() && !FileSystemHelper::DoesDirectoryExist(newProjectPath)) {
                 if (!FileSystemHelper::CreateDirectory(fullNewProjectPath)) {
                     rbe_logger_error("Failed to create directory at '%s'", newProjectPath.c_str());
