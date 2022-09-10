@@ -723,8 +723,8 @@ void DrawTextLabel(SceneNode* node) {
 }
 
 void DrawScript(SceneNode* node) {
+    ImGui::Text("Script Component");
     if (ScriptComp* scriptComp = node->GetComponentSafe<ScriptComp>()) {
-        ImGui::Text("Script Component");
 
         ImGuiHelper::InputText classPathInputText("Class Path", scriptComp->classPath);
         ImGuiHelper::BeginInputText(classPathInputText);
@@ -732,7 +732,13 @@ void DrawScript(SceneNode* node) {
         ImGuiHelper::InputText classNameInputText("Class Name", scriptComp->className);
         ImGuiHelper::BeginInputText(classNameInputText);
 
+        if (ImGui::Button("Remove Script")) {
+            node->RemoveComponent<ScriptComp>();
+        }
+
         ImGui::Separator();
+    } else if (ImGui::Button("Add Script")) {
+        node->AddComponent<ScriptComp>();
     }
 }
 
