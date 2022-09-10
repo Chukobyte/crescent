@@ -77,6 +77,29 @@ void FileNodeUtils::DisplayFileNodeTree(FileNode &fileNode, const bool isRoot) {
 
                 if (!isRoot) {
                     if (ImGui::MenuItem("Rename")) {
+                        static ImGuiHelper::PopupModal renameFilePopup = {
+                            .name = "Rename File",
+                            .open = nullptr,
+                            .windowFlags = 0,
+                            .position = ImVec2{ 100.0f, 100.0f },
+                            .size = ImVec2{ 250.0f, 100.0f },
+                        };
+                        renameFilePopup.callbackFunc = [fileNode] (ImGuiHelper::Context* context) {
+                            static std::string newFileName;
+                            ImGuiHelper::InputText newFileNameText("File Name", newFileName);
+                            ImGuiHelper::BeginInputText(newFileNameText);
+                            if (ImGui::Button("Close")) {
+                                newFileName.clear();
+                                ImGui::CloseCurrentPopup();
+                            }
+                            ImGui::SameLine();
+                            if (ImGui::Button("Ok") && !newFileName.empty()) {
+                                assetBrowser->RenameFile(fileNode.path, newFileName);
+                                newFileName.clear();
+                                ImGui::CloseCurrentPopup();
+                            }
+                        };
+                        ImGuiHelper::StaticPopupModalManager::Get()->QueueOpenPopop(&renameFilePopup);
                     }
 
                     if (ImGui::MenuItem("Delete")) {
@@ -126,6 +149,57 @@ void AssetBrowser::RefreshCache() {
     FileNodeUtils::LoadFileNodeDirEntries(rootNode, startingIndex, extensionToFileNodeMap);
     for (auto& func : registerRefreshFuncs) {
         func(rootNode);
+    }
+}
+
+void AssetBrowser::RenameFile(const std::filesystem::path oldPath, const std::string &newName) {
+    const std::filesystem::path parentPath = oldPath.parent_path();
+    const std::filesystem::path newFilePath = parentPath / newName;
+    // Replace path
+    RunFuncOnAllNodeFiles(rootNode, [oldPath, newFilePath](FileNode& node) {
+        if (node.path == oldPath) {
+            node.path = newFilePath;
+            return true;
+        }
+        return false;
+    });
+    // Update parent vector
+    RunFuncOnAllNodeDirs(rootNode, [parentPath, newFilePath](FileNode& node) {
+        if (node.path == parentPath) {
+            for (auto& n : node.files) {
+                if (n.path == node.path) {
+                    n.path = newFilePath;
+                    break;
+                }
+            }
+            return true;
+        }
+        return false;
+    });
+    std::filesystem::rename(oldPath, newFilePath);
+}
+
+void AssetBrowser::DeleteFile(const FileNode &fileNode) {
+
+}
+
+void AssetBrowser::RunFuncOnAllNodeFiles(FileNode &node, std::function<bool(FileNode &)> func) {
+    if (!func(node)) {
+        for (auto& dir : node.files) {
+            if (func(dir)) {
+                break;
+            }
+        }
+    }
+}
+
+void AssetBrowser::RunFuncOnAllNodeDirs(FileNode& node, std::function<bool(FileNode &)> func) {
+    if (!func(node)) {
+        for (auto& dir : node.directories) {
+            if (func(dir)) {
+                break;
+            }
+        }
     }
 }
 

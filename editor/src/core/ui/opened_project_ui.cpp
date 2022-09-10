@@ -961,17 +961,17 @@ void OpenedProjectUI::ProcessWindows() {
                                      editorContext->GetEngineBinaryProgramArgs().c_str());
                 } else {
                     static ImGuiHelper::PopupModal playErrorPopup = {
-                            .name = "Play Error",
-                            .open = nullptr,
-                            .windowFlags = 0,
-                            .callbackFunc = [] (ImGuiHelper::Context* context) {
-                                ImGui::Text("Set initial node path first!");
-                                if (ImGui::Button("Close")) {
-                                    ImGui::CloseCurrentPopup();
-                                }
-                            },
-                            .position = ImVec2{ 100.0f, 100.0f },
-                            .size = ImVec2{ 250.0f, 100.0f },
+                        .name = "Play Error",
+                        .open = nullptr,
+                        .windowFlags = 0,
+                        .callbackFunc = [] (ImGuiHelper::Context* context) {
+                            ImGui::Text("Set initial node path first!");
+                            if (ImGui::Button("Close")) {
+                                ImGui::CloseCurrentPopup();
+                            }
+                        },
+                        .position = ImVec2{ 100.0f, 100.0f },
+                        .size = ImVec2{ 250.0f, 100.0f },
                     };
                     ImGuiHelper::StaticPopupModalManager::Get()->QueueOpenPopop(&playErrorPopup);
                 }
