@@ -1,10 +1,10 @@
 from typing import Tuple
 
 from crescent_api import *
-from test_games.fighter_test.src.hit_box import Attack
-from test_games.fighter_test.src.task import co_suspend
-from test_games.fighter_test.src.health_bar import HealthBar
-from test_games.fighter_test.src.input import InputBuffer
+from src.hit_box import Attack
+from src.task import co_suspend
+from src.health_bar import HealthBar
+from src.input import InputBuffer
 
 
 class FighterStance:

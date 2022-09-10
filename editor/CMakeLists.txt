@@ -29,6 +29,8 @@ add_library(${PROJECT_NAME} STATIC
         src/core/ui/project_manager_ui.cpp
         src/core/ui/imgui/imgui_handler.cpp
         src/core/ui/imgui/imgui_helper.cpp
+        src/core/utils/process_runner/process_runner.cpp
+        src/core/utils/process_runner/process_context.cpp
         ../include/imgui.cpp
         ../include/imgui_demo.cpp
         ../include/imgui_draw.cpp
@@ -36,7 +38,7 @@ add_library(${PROJECT_NAME} STATIC
         ../include/imgui_widgets.cpp
         ../include/imgui/imgui_impl_opengl3.cpp
         ../include/imgui/imgui_impl_sdl.cpp
-        src/core/utils/process_runner/process_runner.cpp src/core/utils/process_runner/process_runner.h src/core/utils/process_runner/linux_process_context.h src/core/utils/process_runner/process_context.cpp src/core/utils/process_runner/process_context.h)
+        )
 
 target_include_directories(${PROJECT_NAME} PUBLIC
         "${PROJECT_BINARY_DIR}"

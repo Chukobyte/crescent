@@ -598,7 +598,7 @@ void DrawAnimatedSprite(SceneNode* node) {
                         ImGui::SameLine();
                         if (ImGui::Button("Delete Frame")) {
                             animFrameToDelete = selectedAnimFrameIndex;
-                            selectedAnimFrameIndex = std::max(selectedAnimFrameIndex - 1, 0);
+                            selectedAnimFrameIndex = Helper::Max(selectedAnimFrameIndex - 1, 0);
                         }
 
                         auto& selectedAnimFrame = selectedAnim.GetAnimationFrame(selectedAnimFrameIndex);
@@ -633,13 +633,13 @@ void DrawAnimatedSprite(SceneNode* node) {
                         // Selection Arrows
                         const int beforeArrowsAnimFrame = selectedAnimFrameIndex;
                         if (ImGui::Button("<--")) {
-                            selectedAnimFrameIndex = std::max(selectedAnimFrameIndex - 1, 0);
+                            selectedAnimFrameIndex = Helper::Max(selectedAnimFrameIndex - 1, 0);
                         }
                         ImGui::SameLine();
                         ImGui::Text("Current Frame: %d", selectedAnimFrameIndex);
                         ImGui::SameLine();
                         if (ImGui::Button("-->")) {
-                            selectedAnimFrameIndex = std::min(selectedAnimFrameIndex + 1, (int) frameCount - 1);
+                            selectedAnimFrameIndex = Helper::Min(selectedAnimFrameIndex + 1, (int) frameCount - 1);
                         }
                         if (beforeArrowsAnimFrame != selectedAnimFrameIndex) {
                             const auto& newSelectedAnimFrame = selectedAnim.GetAnimationFrame(selectedAnimFrameIndex);
@@ -949,7 +949,7 @@ void OpenedProjectUI::ProcessWindows() {
             static ProcessRunner engineProcess;
             const bool isProcessRunning = engineProcess.IsRunning();
             if (ImGui::Button(">") && !isProcessRunning) {
-                engineProcess.Start(editorContext->GetEngineBinaryPath());
+                engineProcess.Start(editorContext->GetEngineBinaryPath(), editorContext->GetEngineBinaryProgramArgs());
             }
             ImGui::SameLine();
             if (ImGui::Button("[]") && isProcessRunning) {
