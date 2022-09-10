@@ -8,21 +8,9 @@
 
 class ProcessRunner {
   public:
-    bool StartProccess(const std::string &processPath, const std::string &startArgs = "") {
-        if (FileSystemHelper::DoesFileExist(processPath)) {
-            processContext.Start(processPath, startArgs);
-            return true;
-        }
-        return false;
-    }
-
-    void StopProcess() {
-        processContext.Stop();
-    }
-
-    bool IsProcessRunning() const {
-        return processContext.IsRunning();
-    }
+    bool Start(const std::string& processPath, const std::string& startArgs = "");
+    void Stop();
+    [[nodiscard]] bool IsRunning() const;
 
   private:
     ProcessContext processContext;

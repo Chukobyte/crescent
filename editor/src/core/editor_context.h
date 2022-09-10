@@ -17,6 +17,8 @@ class EditorContext : public Singleton<EditorContext> {
   public:
     EditorContext(singleton);
 
+    std::string GetEngineBinaryPath() const;
+
     static float Time();
 
     bool isRunning = false;

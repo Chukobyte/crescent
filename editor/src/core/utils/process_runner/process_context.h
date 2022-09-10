@@ -30,7 +30,7 @@ class ProcessContext {
     PROCESS_INFORMATION processInformation;
     FILE* stdOutStream = nullptr;
     std::streamoff stdOutInputStreamOffset = 0;
-    std::ifstream stdOutInputStream = nullptr;
+    std::ifstream stdOutInputStream;
 #else
     pid_t pid;
 #endif

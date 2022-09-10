@@ -366,16 +366,16 @@ void input_load_gamepads() {
     // Load gamepads
     // Get engine root directory and concatenate with game controller db file.
     RBEEngineContext* engineContext = rbe_engine_context_get();
-    char engineRootDir[256];
-    strcpy(engineRootDir, engineContext->engineRootDir);
-    strcat(engineRootDir, "/assets/resources/game_controller_db.txt");
-    int result = SDL_GameControllerAddMappingsFromFile(engineRootDir);
-    RBE_ASSERT_FMT(result >= 0, "Couldn't load sdl controller mapping file!");
+    char controllerMappingFilePath[256];
+    strcpy(controllerMappingFilePath, engineContext->engineRootDir);
+    strcat(controllerMappingFilePath, "/assets/resources/game_controller_db.txt");
+    int result = SDL_GameControllerAddMappingsFromFile(controllerMappingFilePath);
+    RBE_ASSERT_FMT(result >= 0, "Couldn't load sdl controller mapping file at path '%s'!", controllerMappingFilePath);
     if (SDL_NumJoysticks() > 0) {
         joystickController = SDL_JoystickOpen(0);
-        RBE_ASSERT_FMT(joystickController != NULL, "SDL 'joystick' object didn't load correctly!");
+        RBE_ASSERT_FMT(joystickController != NULL, "SDL joystick object didn't load correctly at path '%s'!", controllerMappingFilePath);
         gameController = SDL_GameControllerOpen(0);
-        RBE_ASSERT_FMT(gameController != NULL, "SDL 'game controller' object didn't load correctly!");
+        RBE_ASSERT_FMT(gameController != NULL, "SDL 'game controller' object didn't load correctly at path '%s'!", controllerMappingFilePath);
         rbe_logger_debug("Loaded one gamepad!");
     } else {
         rbe_logger_debug("No gamepads detected.");

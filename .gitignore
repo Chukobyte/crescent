@@ -9,6 +9,9 @@ temp
 venv
 site
 
+# Project
+bin
+
 # CMake
 CMakeLists.txt.user
 CMakeCache.txt

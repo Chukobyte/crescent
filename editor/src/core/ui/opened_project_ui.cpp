@@ -12,6 +12,7 @@
 #include "../scene/scene_manager.h"
 #include "../asset_browser.h"
 #include "../file_creation/scene_file_creator.h"
+#include "../utils/process_runner/process_runner.h"
 #include "../editor_callbacks.h"
 
 const char* CONFIG_FILE_NAME = "test_cre_config.py";
@@ -939,13 +940,16 @@ void OpenedProjectUI::ProcessWindows() {
         .id = "DockSpace",
         .size = ImVec2((float) windowWidth, (float) windowHeight),
         .onMainWindowUpdateCallback = [] {
-            if (ImGui::Button(">")) {
-
+            static ProcessRunner engineProcess;
+            const bool isProcessRunning = engineProcess.IsRunning();
+            if (ImGui::Button(">") && !isProcessRunning) {
+                engineProcess.Start(editorContext->GetEngineBinaryPath());
             }
             ImGui::SameLine();
-            if (ImGui::Button("[]")) {
-
+            if (ImGui::Button("[]") && isProcessRunning) {
+                engineProcess.Stop();
             }
+
         },
         .windows = {
             { .window = sceneViewWindow, .position = ImGuiHelper::DockSpacePosition::Main },
