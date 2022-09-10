@@ -84,6 +84,7 @@ add_library(${PROJECT_NAME} STATIC
         src/core/networking/rbe_network_socket.c
         )
 
+set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "PROJECT_EXECUTABLE_NAME")
 
 add_library(glad ../include/glad/glad.c)
 add_library(stb_image ../include/stb_image/stb_image.c)
@@ -116,6 +117,7 @@ endif ()
 
 target_compile_options(${PROJECT_NAME} PUBLIC ${flags})
 
+# Copy directories over that are needed to run the engine and games
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${PROJECT_SOURCE_DIR}/../assets
@@ -132,4 +134,24 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${PROJECT_SOURCE_DIR}/../crescent_py_api
         $<TARGET_FILE_DIR:${PROJECT_NAME}>/../crescent_py_api
+        )
+
+# Create bin directory to be used by the editor
+add_custom_target(build-time-make-directory ALL
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${PROJECT_SOURCE_DIR}/../bin)
+
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${PROJECT_SOURCE_DIR}/../bin
+        $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin
+        )
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${PROJECT_SOURCE_DIR}/../${PROJECT_EXECUTABLE_NAME}
+        $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/${PROJECT_EXECUTABLE_NAME}
+        )
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${PROJECT_SOURCE_DIR}/../assets
+        $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/assets
         )
