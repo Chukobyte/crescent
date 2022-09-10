@@ -19,7 +19,7 @@ def engine_set_fps_display_enabled(enabled: bool) -> None:
 
 
 def configure_game(
-    game_tile="Test Game",
+    game_title="Test Game",
     window_width=800,
     window_height=600,
     resolution_width=800,

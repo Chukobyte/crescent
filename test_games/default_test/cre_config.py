@@ -1,7 +1,7 @@
 from crescent_api import *
 
 configure_game(
-    game_tile="Default Crescent Project",
+    game_title="Default Crescent Project",
     window_width=800,
     window_height=600,
     resolution_width=800,

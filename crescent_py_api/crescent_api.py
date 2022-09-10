@@ -1187,7 +1187,7 @@ class Client:
 
 # CONFIGURATION
 def configure_game(
-    game_tile="Test Game",
+    game_title="Test Game",
     window_width=800,
     window_height=600,
     resolution_width=800,
@@ -1197,7 +1197,7 @@ def configure_game(
     colliders_visible=False,
 ) -> None:
     crescent_api_internal.configure_game(
-        game_tile=game_tile,
+        game_title=game_title,
         window_width=window_width,
         window_height=window_height,
         resolution_width=resolution_width,

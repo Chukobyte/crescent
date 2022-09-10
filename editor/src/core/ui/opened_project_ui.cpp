@@ -15,7 +15,7 @@
 #include "../utils/process_runner/process_runner.h"
 #include "../editor_callbacks.h"
 
-const char* CONFIG_FILE_NAME = "test_cre_config.py";
+const char* CONFIG_FILE_NAME = "cre_config.py";
 const std::string COMBO_BOX_LIST_NONE = "<none>";
 
 static EditorContext* editorContext = EditorContext::Get();
@@ -949,7 +949,12 @@ void OpenedProjectUI::ProcessWindows() {
             static ProcessRunner engineProcess;
             const bool isProcessRunning = engineProcess.IsRunning();
             if (ImGui::Button(">") && !isProcessRunning) {
-                engineProcess.Start(editorContext->GetEngineBinaryPath(), editorContext->GetEngineBinaryProgramArgs());
+                if (!engineProcess.Start(editorContext->GetEngineBinaryPath(), editorContext->GetEngineBinaryProgramArgs())) {
+                    rbe_logger_error("Failed to start engine process at path '%s'", editorContext->GetEngineBinaryPath().c_str());
+                }
+                rbe_logger_debug("Starting engine process at path '%s' with args '%s'",
+                                 editorContext->GetEngineBinaryPath().c_str(),
+                                 editorContext->GetEngineBinaryProgramArgs().c_str());
             }
             ImGui::SameLine();
             if (ImGui::Button("[]") && isProcessRunning) {

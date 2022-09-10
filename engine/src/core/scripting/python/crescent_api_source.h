@@ -1226,7 +1226,7 @@
 "\n"\
 "# CONFIGURATION\n"\
 "def configure_game(\n"\
-"    game_tile=\"Test Game\",\n"\
+"    game_title=\"Test Game\",\n"\
 "    window_width=800,\n"\
 "    window_height=600,\n"\
 "    resolution_width=800,\n"\
@@ -1236,7 +1236,7 @@
 "    colliders_visible=False,\n"\
 ") -> None:\n"\
 "    crescent_api_internal.configure_game(\n"\
-"        game_tile=game_tile,\n"\
+"        game_title=game_title,\n"\
 "        window_width=window_width,\n"\
 "        window_height=window_height,\n"\
 "        resolution_width=resolution_width,\n"\

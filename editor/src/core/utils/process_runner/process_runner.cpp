@@ -2,8 +2,7 @@
 
 bool ProcessRunner::Start(const std::string& processPath, const std::string& startArgs) {
     if (FileSystemHelper::DoesFileExist(processPath)) {
-        processContext.Start(processPath, startArgs);
-        return true;
+        return processContext.Start(processPath, startArgs);
     }
     return false;
 }
