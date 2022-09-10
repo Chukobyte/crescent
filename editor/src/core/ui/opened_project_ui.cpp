@@ -155,6 +155,9 @@ void OpenedProjectUI::ProcessMenuBar() {
                                 .windowFlags = 0,
                                 .callbackFunc = [gameProperties = ProjectProperties::Get()] (ImGuiHelper::Context* context) {
                                     if (ImGui::Button("Close")) {
+                                        if (!gameProperties->gameTitle.empty()) {
+                                            gameProperties->gameTitle = Helper::ConvertFilePathToFilePathExtension(gameProperties->gameTitle, ".py");
+                                        }
                                         ConfigFileCreator::GenerateConfigFile(CONFIG_FILE_NAME, gameProperties);
                                         ImGui::CloseCurrentPopup();
                                     }
@@ -949,12 +952,29 @@ void OpenedProjectUI::ProcessWindows() {
             static ProcessRunner engineProcess;
             const bool isProcessRunning = engineProcess.IsRunning();
             if (ImGui::Button(">") && !isProcessRunning) {
-                if (!engineProcess.Start(editorContext->GetEngineBinaryPath(), editorContext->GetEngineBinaryProgramArgs())) {
-                    rbe_logger_error("Failed to start engine process at path '%s'", editorContext->GetEngineBinaryPath().c_str());
+                if (!ProjectProperties::Get()->initialNodePath.empty()) {
+                    if (!engineProcess.Start(editorContext->GetEngineBinaryPath(), editorContext->GetEngineBinaryProgramArgs())) {
+                        rbe_logger_error("Failed to start engine process at path '%s'", editorContext->GetEngineBinaryPath().c_str());
+                    }
+                    rbe_logger_debug("Starting engine process at path '%s' with args '%s'",
+                                     editorContext->GetEngineBinaryPath().c_str(),
+                                     editorContext->GetEngineBinaryProgramArgs().c_str());
+                } else {
+                    static ImGuiHelper::PopupModal playErrorPopup = {
+                            .name = "Play Error",
+                            .open = nullptr,
+                            .windowFlags = 0,
+                            .callbackFunc = [] (ImGuiHelper::Context* context) {
+                                ImGui::Text("Set initial node path first!");
+                                if (ImGui::Button("Close")) {
+                                    ImGui::CloseCurrentPopup();
+                                }
+                            },
+                            .position = ImVec2{ 100.0f, 100.0f },
+                            .size = ImVec2{ 250.0f, 100.0f },
+                    };
+                    ImGuiHelper::StaticPopupModalManager::Get()->QueueOpenPopop(&playErrorPopup);
                 }
-                rbe_logger_debug("Starting engine process at path '%s' with args '%s'",
-                                 editorContext->GetEngineBinaryPath().c_str(),
-                                 editorContext->GetEngineBinaryProgramArgs().c_str());
             }
             ImGui::SameLine();
             if (ImGui::Button("[]") && isProcessRunning) {
