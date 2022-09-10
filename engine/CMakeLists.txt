@@ -118,40 +118,44 @@ endif ()
 target_compile_options(${PROJECT_NAME} PUBLIC ${flags})
 
 # Copy directories over that are needed to run the engine and games
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${PROJECT_SOURCE_DIR}/../assets
-        $<TARGET_FILE_DIR:${PROJECT_NAME}>/../assets
-        )
+set(IS_CI_BUILD "false")
 
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${PROJECT_SOURCE_DIR}/../test_games
-        $<TARGET_FILE_DIR:${PROJECT_NAME}>/../test_games
-        )
+if (IS_CI_BUILD STREQUAL "false")
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${PROJECT_SOURCE_DIR}/../assets
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/../assets
+            )
 
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${PROJECT_SOURCE_DIR}/../crescent_py_api
-        $<TARGET_FILE_DIR:${PROJECT_NAME}>/../crescent_py_api
-        )
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${PROJECT_SOURCE_DIR}/../test_games
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/../test_games
+            )
 
-# Create bin directory to be used by the editor
-add_custom_target(build-time-make-directory ALL
-        COMMAND ${CMAKE_COMMAND} -E make_directory ${PROJECT_SOURCE_DIR}/../bin)
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${PROJECT_SOURCE_DIR}/../crescent_py_api
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/../crescent_py_api
+            )
 
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${PROJECT_SOURCE_DIR}/../bin
-        $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin
-        )
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy
-        ${PROJECT_SOURCE_DIR}/../${PROJECT_EXECUTABLE_NAME}
-        $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/${PROJECT_EXECUTABLE_NAME}
-        )
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${PROJECT_SOURCE_DIR}/../assets
-        $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/assets
-        )
+    # Create bin directory to be used by the editor
+    add_custom_target(build-time-make-directory ALL
+            COMMAND ${CMAKE_COMMAND} -E make_directory ${PROJECT_SOURCE_DIR}/../bin)
+
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${PROJECT_SOURCE_DIR}/../bin
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin
+            )
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy
+            ${PROJECT_SOURCE_DIR}/../${PROJECT_EXECUTABLE_NAME}
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/${PROJECT_EXECUTABLE_NAME}
+            )
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${PROJECT_SOURCE_DIR}/../assets
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/assets
+            )
+endif()

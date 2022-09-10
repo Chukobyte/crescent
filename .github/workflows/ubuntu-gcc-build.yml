@@ -33,4 +33,4 @@ jobs:
         run: |
           cd ${{ github.workspace }}
           cmake . -DCMAKE_C_COMPILER=gcc-11 -DCMAKE_CXX_COMPILER=g++-11 -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/../vcpkg/scripts/buildsystems/vcpkg.cmake
-          cmake --build .
+          cmake -U IS_CI_BUILD -D IS_CI_BUILD="true" --build .
