@@ -126,9 +126,10 @@ void FileNodeUtils::DisplayFileNodeTree(FileNode &fileNode, const bool isRoot) {
 Task<> AssetBrowser::UpdateFileSystemCache() {
     RefreshCache();
     while (true) {
-        co_await WaitSeconds(10.0f, EditorContext::Time);
-        // TODO: Uncomment once implementation of asset browser is finished
-//        RefreshCache();
+//        co_await WaitSeconds(10.0f, EditorContext::Time);
+        co_await WaitUntil([this] { return refreshCacheQueued; });
+        RefreshCache();
+        refreshCacheQueued = false;
     }
 }
 
@@ -152,31 +153,16 @@ void AssetBrowser::RefreshCache() {
     }
 }
 
+void AssetBrowser::QueueRefreshCache() {
+    refreshCacheQueued = true;
+}
+
 void AssetBrowser::RenameFile(const std::filesystem::path oldPath, const std::string &newName) {
     const std::filesystem::path parentPath = oldPath.parent_path();
     const std::filesystem::path newFilePath = parentPath / newName;
-    // Replace path
-    RunFuncOnAllNodeFiles(rootNode, [oldPath, newFilePath](FileNode& node) {
-        if (node.path == oldPath) {
-            node.path = newFilePath;
-            return true;
-        }
-        return false;
-    });
-    // Update parent vector
-    RunFuncOnAllNodeDirs(rootNode, [parentPath, newFilePath](FileNode& node) {
-        if (node.path == parentPath) {
-            for (auto& n : node.files) {
-                if (n.path == node.path) {
-                    n.path = newFilePath;
-                    break;
-                }
-            }
-            return true;
-        }
-        return false;
-    });
+    rbe_logger_debug("old file path = %s, new file path = %s", oldPath.string().c_str(), newFilePath.string().c_str());
     std::filesystem::rename(oldPath, newFilePath);
+    QueueRefreshCache();
 }
 
 void AssetBrowser::DeleteFile(const FileNode &fileNode) {

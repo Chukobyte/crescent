@@ -51,6 +51,7 @@ class AssetBrowser : public Singleton<AssetBrowser> {
     Task<> UpdateFileSystemCache();
     void RegisterRefreshCallback(const AssetBrowserRefreshFunc& func);
     void RefreshCache();
+    void QueueRefreshCache();
 
     void RenameFile(const std::filesystem::path oldPath, const std::string& newName);
     void DeleteFile(const FileNode& fileNode);
@@ -65,4 +66,5 @@ class AssetBrowser : public Singleton<AssetBrowser> {
   private:
     // For now assumes one time subscribe only with no unsubscriptions
     std::vector<AssetBrowserRefreshFunc> registerRefreshFuncs;
+    bool refreshCacheQueued = false;
 };
