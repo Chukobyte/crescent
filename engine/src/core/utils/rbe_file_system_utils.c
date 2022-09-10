@@ -10,6 +10,7 @@
 
 #if defined(_MSC_VER)
 #include <io.h>
+#include <direct.h>
 #else
 #include <unistd.h>
 #include <sys/stat.h>
@@ -31,9 +32,9 @@ void rbe_fs_get_cwd_array(char* array, size_t size) {
 }
 
 bool rbe_fs_chdir(const char* dirPath) {
-    static const size_t arrSize = 256;
-    char currentWorkingPath[arrSize];
-    rbe_fs_get_cwd_array(currentWorkingPath, arrSize);
+#define CWD_MAX_BUFFER_SIZE 256
+    char currentWorkingPath[CWD_MAX_BUFFER_SIZE];
+    rbe_fs_get_cwd_array(currentWorkingPath, CWD_MAX_BUFFER_SIZE);
     if (strcmp(currentWorkingPath, dirPath) == 0) {
         rbe_logger_warn("Attempting to change to the same directory at path '%s'", currentWorkingPath);
         return false;
