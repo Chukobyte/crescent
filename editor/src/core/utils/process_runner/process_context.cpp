@@ -2,6 +2,8 @@
 
 #ifdef _WIN32
 
+#define MAX_START_PROCESS_ARGS_BUFFER_SIZE 256
+
 bool ProcessContext::Start(const std::string& processPath, const std::string& startArgs) {
     if (IsRunning()) {
         return false;
@@ -12,8 +14,7 @@ bool ProcessContext::Start(const std::string& processPath, const std::string& st
 
     const std::string fullStartProcessArgs = processPath + " " + startArgs;
 
-//    TCHAR startProcessArgs[fullStartProcessArgs.size()];
-    TCHAR startProcessArgs[256]; // TODO: Find a better mechanism
+    TCHAR startProcessArgs[MAX_START_PROCESS_ARGS_BUFFER_SIZE];
     strcpy(startProcessArgs, fullStartProcessArgs.c_str());
 
     CreateProcess(processPath.c_str(),
