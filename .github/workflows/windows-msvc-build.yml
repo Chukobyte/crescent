@@ -23,5 +23,5 @@ jobs:
       - name: run build
         run: |
           cd ${{ github.workspace }}
-          cmake . -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/../vcpkg/scripts/buildsystems/vcpkg.cmake
-          cmake -U IS_CI_BUILD -D IS_CI_BUILD="true" --build .
+          cmake . -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/../vcpkg/scripts/buildsystems/vcpkg.cmake -DIS_CI_BUILD="true"
+          cmake --build .

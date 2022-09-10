@@ -1,7 +1,7 @@
 #include "rbe_file_system_utils.h"
 
 #ifdef _WIN32
-#include "windows.h"
+#include <windows.h>
 #include <corecrt.h>
 #endif
 
@@ -24,7 +24,20 @@
 #pragma warning(disable : 4996) // for fopen
 #endif
 
+void rbe_fs_get_cwd_array(char* array, size_t size) {
+    if (getcwd(array, size) != NULL) {
+        return;
+    }
+}
+
 bool rbe_fs_chdir(const char* dirPath) {
+    static const size_t arrSize = 256;
+    char currentWorkingPath[arrSize];
+    rbe_fs_get_cwd_array(currentWorkingPath, arrSize);
+    if (strcmp(currentWorkingPath, dirPath) == 0) {
+        rbe_logger_warn("Attempting to change to the same directory at path '%s'", currentWorkingPath);
+        return false;
+    }
     if (chdir(dirPath) == 0) {
         return true;
     }
