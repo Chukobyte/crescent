@@ -61,11 +61,31 @@ void FileNodeUtils::DisplayFileNodeTree(FileNode &fileNode, const bool isRoot) {
     ImGuiHelper::TreeNode treeNode = {
         .label = isRoot ? "res://" : fileNode.path.filename().string(),
         .flags = defaultFlags,
-        .callbackFunc = [fileNode] (ImGuiHelper::Context* context) {
+        .callbackFunc = [fileNode, isRoot] (ImGuiHelper::Context* context) {
             // Left Click
             if (ImGui::IsItemClicked()) {
                 assetBrowser->selectedFileNode = fileNode;
             }
+
+            // Right Click
+            const std::string fileNodePopupId = std::to_string(fileNode.index) + "_file_popup";
+            ImGui::OpenPopupOnItemClick(fileNodePopupId.c_str(), ImGuiPopupFlags_MouseButtonRight);
+            if (ImGui::BeginPopup(fileNodePopupId.c_str())) {
+                assetBrowser->selectedFileNode = fileNode;
+                if (fileNode.type == FileNodeType::Directory && ImGui::MenuItem("Create Directory")) {
+                }
+
+                if (!isRoot) {
+                    if (ImGui::MenuItem("Rename")) {
+                    }
+
+                    if (ImGui::MenuItem("Delete")) {
+                    }
+                }
+
+                ImGui::EndPopup();
+            }
+
             // Files
             for (FileNode dirFileNode : fileNode.directories) {
                 DisplayFileNodeTree(dirFileNode);
