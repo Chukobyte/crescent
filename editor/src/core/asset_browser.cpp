@@ -14,6 +14,10 @@ std::string FileNode::GetRelativePath() const {
     return relativePath.generic_string();
 }
 
+bool FileNode::IsEmpty() const {
+    return directories.empty() && files.empty();
+}
+
 //--- FileNodeUtils ---//
 void FileNodeUtils::LoadFileNodeDirEntries(FileNode& fileNode, unsigned int& nodeIndex, std::unordered_map<std::string, std::vector<FileNode>>& extensionToFileNodeMap) {
     for (auto const& dir_entry : std::filesystem::directory_iterator{fileNode.path}) {
@@ -23,11 +27,11 @@ void FileNodeUtils::LoadFileNodeDirEntries(FileNode& fileNode, unsigned int& nod
         if (fileName == "__pycache__" || fileName[0] == '.') {
             continue;
         }
-        if (std::filesystem::is_directory(dir_entry)) {
+        if (std::filesystem::is_directory(dir_entry.path())) {
             FileNode dirNode = { dir_entry.path(), FileNodeType::Directory, nodeIndex++ };
             LoadFileNodeDirEntries(dirNode, nodeIndex, extensionToFileNodeMap);
             fileNode.directories.emplace_back(dirNode);
-        } else if (std::filesystem::is_regular_file(dir_entry)) {
+        } else if (std::filesystem::is_regular_file(dir_entry.path())) {
             FileNode regularFileNode = { dir_entry.path(), FileNodeType::File, nodeIndex++, GetFileNodeRegularType(dir_entry.path().filename().string()) };
             fileNode.files.emplace_back(regularFileNode);
             const std::string extension = regularFileNode.path.extension().string();
@@ -54,21 +58,25 @@ FileNodeRegularFileType FileNodeUtils::GetFileNodeRegularType(const std::string&
 void FileNodeUtils::DisplayFileNodeTree(FileNode &fileNode, const bool isRoot) {
     static AssetBrowser* assetBrowser = AssetBrowser::Get();
     const ImGuiTreeNodeFlags dirFlags = isRoot ? ImGuiTreeNodeFlags_DefaultOpen : ImGuiTreeNodeFlags_None;
-    ImGuiTreeNodeFlags defaultFlags = fileNode.type == FileNodeType::Directory ? dirFlags : ImGuiTreeNodeFlags_Leaf;
+    ImGuiTreeNodeFlags defaultFlags = dirFlags;
+    if ((fileNode.type == FileNodeType::Directory && fileNode.IsEmpty()) || fileNode.type == FileNodeType::File) {
+        defaultFlags |= ImGuiTreeNodeFlags_Leaf;
+    }
     if (assetBrowser->selectedFileNode.has_value() && assetBrowser->selectedFileNode->index == fileNode.index) {
         defaultFlags |= ImGuiTreeNodeFlags_Selected;
     }
+    const std::string treeNodeLabel = isRoot ? "res://" : fileNode.path.filename().string();
     ImGuiHelper::TreeNode treeNode = {
-        .label = isRoot ? "res://" : fileNode.path.filename().string(),
+        .label = treeNodeLabel,
         .flags = defaultFlags,
-        .callbackFunc = [fileNode, isRoot] (ImGuiHelper::Context* context) {
+        .callbackFunc = [fileNode, isRoot, treeNodeLabel] (ImGuiHelper::Context* context) {
             // Left Click
             if (ImGui::IsItemClicked()) {
                 assetBrowser->selectedFileNode = fileNode;
             }
 
             // Right Click
-            const std::string fileNodePopupId = "asset_popup_" + std::to_string(fileNode.index);
+            const std::string fileNodePopupId = "popup_" + treeNodeLabel + std::to_string(fileNode.index);
             ImGui::OpenPopupOnItemClick(fileNodePopupId.c_str(), ImGuiPopupFlags_MouseButtonRight);
             if (ImGui::BeginPopup(fileNodePopupId.c_str())) {
                 assetBrowser->selectedFileNode = fileNode;
