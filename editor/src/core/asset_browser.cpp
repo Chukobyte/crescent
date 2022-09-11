@@ -39,7 +39,7 @@ void FileNodeUtils::LoadFileNodeDirEntries(FileNode& fileNode, unsigned int& nod
     }
 }
 
-FileNodeRegularFileType FileNodeUtils::GetFileNodeRegularType(const std::string &fileName) {
+FileNodeRegularFileType FileNodeUtils::GetFileNodeRegularType(const std::string& fileName) {
     if (fileName.ends_with(".png")) {
         return FileNodeRegularFileType::Texture;
     } else if (fileName.ends_with(".wav")) {
@@ -157,11 +157,16 @@ void AssetBrowser::QueueRefreshCache() {
     refreshCacheQueued = true;
 }
 
-void AssetBrowser::RenameFile(const std::filesystem::path oldPath, const std::string &newName) {
+void AssetBrowser::RenameFile(const std::filesystem::path& oldPath, const std::string& newName) {
     const std::filesystem::path parentPath = oldPath.parent_path();
     const std::filesystem::path newFilePath = parentPath / newName;
     rbe_logger_debug("old file path = %s, new file path = %s", oldPath.string().c_str(), newFilePath.string().c_str());
-    std::filesystem::rename(oldPath, newFilePath);
+    std::error_code ec;
+    std::filesystem::rename(oldPath, newFilePath, ec);
+    if (ec.value() != 0) {
+        rbe_logger_error("ec value = %d, message = %s", ec.value(), ec.message().c_str());
+    }
+
     QueueRefreshCache();
 }
 

@@ -53,7 +53,7 @@ class AssetBrowser : public Singleton<AssetBrowser> {
     void RefreshCache();
     void QueueRefreshCache();
 
-    void RenameFile(const std::filesystem::path oldPath, const std::string& newName);
+    void RenameFile(const std::filesystem::path& oldPath, const std::string& newName);
     void DeleteFile(const FileNode& fileNode);
     void RunFuncOnAllNodeFiles(FileNode& node, std::function<bool(FileNode& currentFileNode)> func);
     void RunFuncOnAllNodeDirs(FileNode& node, std::function<bool(FileNode& currentFileNode)> func);
