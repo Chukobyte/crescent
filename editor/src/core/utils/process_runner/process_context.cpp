@@ -103,19 +103,21 @@ std::vector<char*> GetFullArgs(const std::string& processPath, const std::string
 }
 } // namespace
 
-void ProcessContext::Start(const std::string& processPath, const std::string& startArgs) {
+bool ProcessContext::Start(const std::string& processPath, const std::string& startArgs) {
     if (IsRunning()) {
-        return;
+        return false;
     }
     pid = fork();
     if (pid < 0) {
         std::cerr << "Error creating fork!" << std::endl;
+        return false;
     } else if(pid > 0) {
 //        std::cout << "In parent process!" << std::endl;
     } else {
         std::vector<char*> args = GetFullArgs(processPath, startArgs);
         execv(processPath.c_str(), args.data());
     }
+    return true;
 }
 
 void ProcessContext::Stop() {
