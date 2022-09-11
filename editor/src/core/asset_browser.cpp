@@ -103,6 +103,7 @@ void FileNodeUtils::DisplayFileNodeTree(FileNode &fileNode, const bool isRoot) {
                     }
 
                     if (ImGui::MenuItem("Delete")) {
+                        assetBrowser->DeleteFile(fileNode.path);
                     }
                 }
 
@@ -170,8 +171,20 @@ void AssetBrowser::RenameFile(const std::filesystem::path& oldPath, const std::s
     QueueRefreshCache();
 }
 
-void AssetBrowser::DeleteFile(const FileNode &fileNode) {
-
+// TODO: Add more validation checks
+void AssetBrowser::DeleteFile(const std::filesystem::path& path) {
+    std::error_code ec;
+    if (std::filesystem::is_directory(path)) {
+        std::uintmax_t numberDeleted = std::filesystem::remove_all(path, ec);
+        rbe_logger_debug("Number of files deleted from path '%s' = '%zu'", path.string().c_str(), numberDeleted);
+    } else {
+        std::filesystem::remove(path, ec);
+    }
+    if (ec.value() != 0) {
+        rbe_logger_error("Error deleting from path '%s'!\nec value = %d, message = %s",
+                         path.string().c_str(), ec.value(), ec.message().c_str());
+    }
+    QueueRefreshCache();
 }
 
 void AssetBrowser::RunFuncOnAllNodeFiles(FileNode &node, std::function<bool(FileNode &)> func) {
