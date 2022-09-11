@@ -7,6 +7,7 @@
 #include "../editor_callbacks.h"
 
 //--- Scene Node Utils ---//
+// TODO: Fix issue with not registering 'Right Click' logic because tree node is closed...
 void SceneNodeUtils::DisplayTreeNodeLeaf(SceneNode *sceneNode) {
     static SceneManager* sceneManager = SceneManager::Get();
     static ImGuiTreeNodeFlags defaultFlags = ImGuiTreeNodeFlags_DefaultOpen;
