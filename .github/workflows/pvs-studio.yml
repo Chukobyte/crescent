@@ -48,7 +48,6 @@ jobs:
           cmake . -DCMAKE_C_COMPILER=gcc-11 -DCMAKE_CXX_COMPILER=g++-11 -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/../vcpkg/scripts/buildsystems/vcpkg.cmake -DIS_CI_BUILD="true" -DCMAKE_EXPORT_COMPILE_COMMANDS=On
           cmake --build .
 
-
       - name: Running PVS-Studio
         run: |
           pvs-studio-analyzer  analyze -f compile_commands.json -j -e include -e docs -e assets -e test_games
