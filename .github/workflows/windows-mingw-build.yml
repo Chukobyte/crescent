@@ -23,7 +23,7 @@ jobs:
         run: |
           (echo ""; echo "y") | pacman -S mingw-w64-x86_64-toolchain
           echo "y" | pacman -S mingw-w64-x86_64-cmake
-          echo "y" | pacman -S "mingw-w64-x86_64-SDL2=2.0.22-2"
+          echo "y" | pacman -S "mingw-w64-x86_64-SDL2=2.0.22"
           echo "y" | pacman -S mingw-w64-x86_64-freetype
           echo "y" | pacman -S mingw-w64-x86_64-python
           cmake -G "MinGW Makefiles" . -DIS_CI_BUILD="true"
