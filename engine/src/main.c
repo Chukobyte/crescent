@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include "core/core.h"
 
-int main(int argv, char* args[]) {
+int main(int argv, char** args) {
     if (!rbe_initialize(argv, args)) {
         return EXIT_FAILURE;
     }
