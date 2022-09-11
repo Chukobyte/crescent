@@ -1,6 +1,6 @@
 #include <stdlib.h>
 
-#include <SDL2/SDL.h>
+#include <SDL2/SDL_main.h>
 
 #include "core/core.h"
 
