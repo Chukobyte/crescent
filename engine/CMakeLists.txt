@@ -84,7 +84,13 @@ add_library(${PROJECT_NAME} STATIC
         src/core/networking/rbe_network_socket.c
         )
 
-set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "PROJECT_EXECUTABLE_NAME")
+if (NOT DEFINED IS_CI_BUILD)
+    set(IS_CI_BUILD "false")
+endif()
+
+if (IS_CI_BUILD STREQUAL "false")
+    set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "PROJECT_EXECUTABLE_NAME")
+endif()
 
 add_library(glad ../include/glad/glad.c)
 add_library(stb_image ../include/stb_image/stb_image.c)
@@ -118,10 +124,6 @@ endif ()
 target_compile_options(${PROJECT_NAME} PUBLIC ${flags})
 
 # Copy directories over that are needed to run the engine and games
-if (NOT DEFINED IS_CI_BUILD)
-    set(IS_CI_BUILD "false")
-endif()
-
 if (IS_CI_BUILD STREQUAL "false")
     add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_directory
