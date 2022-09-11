@@ -311,6 +311,41 @@ void OpenedProjectUI::ProcessMenuBar() {
                     },
                 },
             },
+            {
+                .name = "Export",
+                .menuItems = {
+                    {
+                        .name = "Export Game",
+                        .keyboardShortcut = "",
+                        .callbackFunc = [] (ImGuiHelper::Context* context) {
+                            static ImGuiHelper::PopupModal projectSettingsPopup = {
+                                .name = "Export Game Menu",
+                                .open = nullptr,
+                                .windowFlags = 0,
+                                .callbackFunc = [gameProperties = ProjectProperties::Get()] (ImGuiHelper::Context* context) {
+                                    static std::string exportFileName;
+                                    if (ImGui::Button("Cancel")) {
+                                        exportFileName.clear();
+                                        ImGui::CloseCurrentPopup();
+                                    }
+                                    ImGui::SameLine();
+                                    if (ImGui::Button("Export")) {
+                                        exportFileName.clear();
+                                        ImGui::CloseCurrentPopup();
+                                    }
+                                    ImGui::Separator();
+
+                                    ImGuiHelper::InputText filePath("File Path", exportFileName);
+                                    ImGuiHelper::BeginInputText(filePath);
+                                },
+                                .position = ImVec2{ 100.0f, 100.0f },
+                                .size = ImVec2{ 200.0f, 200.0f },
+                            };
+                            ImGuiHelper::StaticPopupModalManager::Get()->QueueOpenPopop(&projectSettingsPopup);
+                        },
+                    },
+                },
+            },
         }
     };
     ImGuiHelper::BeginMainMenuBar(menuBar);
