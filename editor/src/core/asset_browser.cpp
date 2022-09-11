@@ -68,7 +68,7 @@ void FileNodeUtils::DisplayFileNodeTree(FileNode &fileNode, const bool isRoot) {
             }
 
             // Right Click
-            const std::string fileNodePopupId = std::to_string(fileNode.index) + "_file_popup";
+            const std::string fileNodePopupId = "asset_popup_" + std::to_string(fileNode.index);
             ImGui::OpenPopupOnItemClick(fileNodePopupId.c_str(), ImGuiPopupFlags_MouseButtonRight);
             if (ImGui::BeginPopup(fileNodePopupId.c_str())) {
                 assetBrowser->selectedFileNode = fileNode;
@@ -133,11 +133,11 @@ void FileNodeUtils::DisplayFileNodeTree(FileNode &fileNode, const bool isRoot) {
                 ImGui::EndPopup();
             }
 
-            // Files
+            // Directories
             for (FileNode dirFileNode : fileNode.directories) {
                 DisplayFileNodeTree(dirFileNode);
             }
-            // Directories
+            // Files
             for (FileNode regularFileNode : fileNode.files) {
                 DisplayFileNodeTree(regularFileNode);
             }
