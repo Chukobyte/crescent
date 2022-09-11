@@ -55,10 +55,12 @@ FileNodeRegularFileType FileNodeUtils::GetFileNodeRegularType(const std::string&
     return FileNodeRegularFileType::Invalid;
 }
 
+// TODO: Fix issue with not registering 'Right Click' logic because tree node is closed...
 void FileNodeUtils::DisplayFileNodeTree(FileNode &fileNode, const bool isRoot) {
     static AssetBrowser* assetBrowser = AssetBrowser::Get();
     const ImGuiTreeNodeFlags dirFlags = isRoot ? ImGuiTreeNodeFlags_DefaultOpen : ImGuiTreeNodeFlags_None;
     ImGuiTreeNodeFlags defaultFlags = dirFlags;
+    defaultFlags |= ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanFullWidth;
     if ((fileNode.type == FileNodeType::Directory && fileNode.IsEmpty()) || fileNode.type == FileNodeType::File) {
         defaultFlags |= ImGuiTreeNodeFlags_Leaf;
     }
