@@ -73,6 +73,29 @@ void FileNodeUtils::DisplayFileNodeTree(FileNode &fileNode, const bool isRoot) {
             if (ImGui::BeginPopup(fileNodePopupId.c_str())) {
                 assetBrowser->selectedFileNode = fileNode;
                 if (fileNode.type == FileNodeType::Directory && ImGui::MenuItem("Create Directory")) {
+                    static ImGuiHelper::PopupModal createDirPopup = {
+                        .name = "Create Directory Menu",
+                        .open = nullptr,
+                        .windowFlags = 0,
+                        .position = ImVec2{ 100.0f, 100.0f },
+                        .size = ImVec2{ 250.0f, 100.0f },
+                    };
+                    createDirPopup.callbackFunc = [fileNode] (ImGuiHelper::Context* context) {
+                        static std::string newDirName;
+                        ImGuiHelper::InputText newDirNameText("Dir Name", newDirName);
+                        ImGuiHelper::BeginInputText(newDirNameText);
+                        if (ImGui::Button("Close")) {
+                            newDirName.clear();
+                            ImGui::CloseCurrentPopup();
+                        }
+                        ImGui::SameLine();
+                        if (ImGui::Button("Ok") && !newDirName.empty()) {
+                            assetBrowser->CreateDirectory(fileNode.path, newDirName);
+                            newDirName.clear();
+                            ImGui::CloseCurrentPopup();
+                        }
+                    };
+                    ImGuiHelper::StaticPopupModalManager::Get()->QueueOpenPopop(&createDirPopup);
                 }
 
                 if (!isRoot) {
@@ -127,6 +150,7 @@ void FileNodeUtils::DisplayFileNodeTree(FileNode &fileNode, const bool isRoot) {
 Task<> AssetBrowser::UpdateFileSystemCache() {
     RefreshCache();
     while (true) {
+        // TODO: Figure out what the refresh rate should be...
 //        co_await WaitSeconds(10.0f, EditorContext::Time);
         co_await WaitUntil([this] { return refreshCacheQueued; });
         RefreshCache();
@@ -166,9 +190,9 @@ void AssetBrowser::RenameFile(const std::filesystem::path& oldPath, const std::s
     std::filesystem::rename(oldPath, newFilePath, ec);
     if (ec.value() != 0) {
         rbe_logger_error("ec value = %d, message = %s", ec.value(), ec.message().c_str());
+    } else {
+        QueueRefreshCache();
     }
-
-    QueueRefreshCache();
 }
 
 // TODO: Add more validation checks
@@ -183,8 +207,25 @@ void AssetBrowser::DeleteFile(const std::filesystem::path& path) {
     if (ec.value() != 0) {
         rbe_logger_error("Error deleting from path '%s'!\nec value = %d, message = %s",
                          path.string().c_str(), ec.value(), ec.message().c_str());
+    } else {
+        QueueRefreshCache();
     }
-    QueueRefreshCache();
+}
+
+void AssetBrowser::CreateDirectory(const std::filesystem::path& path, const std::string& name) {
+    std::error_code ec;
+    const std::filesystem::path fullDirPath = path / name;
+    if (std::filesystem::is_directory(fullDirPath)) {
+        rbe_logger_warn("Directory '%s' already exists, not creating!", fullDirPath.string().c_str());
+        return;
+    }
+    std::filesystem::create_directory(fullDirPath, ec);
+    if (ec.value() != 0) {
+        rbe_logger_error("Create directory failed for asset path '%s'!\nec value = %d, message = %s",
+                         fullDirPath.string().c_str(), ec.value(), ec.message().c_str());
+    } else {
+        QueueRefreshCache();
+    }
 }
 
 void AssetBrowser::RunFuncOnAllNodeFiles(FileNode &node, std::function<bool(FileNode &)> func) {
