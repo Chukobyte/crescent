@@ -158,7 +158,7 @@ std::string ProjectProperties::GetDefaultProjectPropertyFileContent(const std::s
     return "from crescent_api import *\n"
            "\n"
            "configure_game(\n"
-           "        game_tile=\"" + gameTitle + "\",\n"
+           "        game_title=\"" + gameTitle + "\",\n"
            "        window_width=800,\n"
            "        window_height=600,\n"
            "        resolution_width=800,\n"

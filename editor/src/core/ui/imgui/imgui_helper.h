@@ -192,6 +192,7 @@ struct DockSpaceWindow {
 struct DockSpace {
     std::string id = "";
     ImVec2 size = ImVec2(800, 600);
+    std::function<void()> onMainWindowUpdateCallback = nullptr;
     std::vector<DockSpaceWindow> windows;
     ImGuiID dockSpaceId = 0;
     bool hasBuilt = false;

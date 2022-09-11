@@ -30,4 +30,15 @@ inline std::string ConvertFilePathToFileName(const std::string& filePath, char d
 inline std::string ConvertFilePathToFileNameExtension(const std::string& filePath, const std::string& extension) {
     return ConvertFilePathToFilePathExtension(ConvertFilePathToFileName(filePath), extension);
 }
+
+// TODO: Move into a math header
+template<typename T>
+inline T Min(T a, T b) {
+    return a < b ? a : b;
+}
+
+template<typename T>
+inline T Max(T a, T b) {
+    return a > b ? a : b;
+}
 } // namespace

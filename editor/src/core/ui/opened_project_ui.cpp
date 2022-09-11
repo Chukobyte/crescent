@@ -12,9 +12,10 @@
 #include "../scene/scene_manager.h"
 #include "../asset_browser.h"
 #include "../file_creation/scene_file_creator.h"
+#include "../utils/process_runner/process_runner.h"
 #include "../editor_callbacks.h"
 
-const char* CONFIG_FILE_NAME = "test_cre_config.py";
+const char* CONFIG_FILE_NAME = "cre_config.py";
 const std::string COMBO_BOX_LIST_NONE = "<none>";
 
 static EditorContext* editorContext = EditorContext::Get();
@@ -154,6 +155,9 @@ void OpenedProjectUI::ProcessMenuBar() {
                                 .windowFlags = 0,
                                 .callbackFunc = [gameProperties = ProjectProperties::Get()] (ImGuiHelper::Context* context) {
                                     if (ImGui::Button("Close")) {
+                                        if (!gameProperties->gameTitle.empty()) {
+                                            gameProperties->gameTitle = Helper::ConvertFilePathToFilePathExtension(gameProperties->gameTitle, ".py");
+                                        }
                                         ConfigFileCreator::GenerateConfigFile(CONFIG_FILE_NAME, gameProperties);
                                         ImGui::CloseCurrentPopup();
                                     }
@@ -424,8 +428,6 @@ void DrawAnimatedSprite(SceneNode* node) {
     if (AnimatedSpriteComp* animatedSpriteComp = node->GetComponentSafe<AnimatedSpriteComp>()) {
         ImGui::Text("Animated Sprite Component");
 
-        // TODO: Make a combo box full of animation names
-        // TODO: comebacky
         static std::vector<std::string> spriteAnimationList = { COMBO_BOX_LIST_NONE };
         static auto UpdateSpriteAnimationList = [] (AnimatedSpriteComp* animSpriteComp) {
             spriteAnimationList.clear();
@@ -599,7 +601,7 @@ void DrawAnimatedSprite(SceneNode* node) {
                         ImGui::SameLine();
                         if (ImGui::Button("Delete Frame")) {
                             animFrameToDelete = selectedAnimFrameIndex;
-                            selectedAnimFrameIndex = std::max(selectedAnimFrameIndex - 1, 0);
+                            selectedAnimFrameIndex = Helper::Max(selectedAnimFrameIndex - 1, 0);
                         }
 
                         auto& selectedAnimFrame = selectedAnim.GetAnimationFrame(selectedAnimFrameIndex);
@@ -634,13 +636,13 @@ void DrawAnimatedSprite(SceneNode* node) {
                         // Selection Arrows
                         const int beforeArrowsAnimFrame = selectedAnimFrameIndex;
                         if (ImGui::Button("<--")) {
-                            selectedAnimFrameIndex = std::max(selectedAnimFrameIndex - 1, 0);
+                            selectedAnimFrameIndex = Helper::Max(selectedAnimFrameIndex - 1, 0);
                         }
                         ImGui::SameLine();
                         ImGui::Text("Current Frame: %d", selectedAnimFrameIndex);
                         ImGui::SameLine();
                         if (ImGui::Button("-->")) {
-                            selectedAnimFrameIndex = std::min(selectedAnimFrameIndex + 1, (int) frameCount - 1);
+                            selectedAnimFrameIndex = Helper::Min(selectedAnimFrameIndex + 1, (int) frameCount - 1);
                         }
                         if (beforeArrowsAnimFrame != selectedAnimFrameIndex) {
                             const auto& newSelectedAnimFrame = selectedAnim.GetAnimationFrame(selectedAnimFrameIndex);
@@ -724,8 +726,8 @@ void DrawTextLabel(SceneNode* node) {
 }
 
 void DrawScript(SceneNode* node) {
+    ImGui::Text("Script Component");
     if (ScriptComp* scriptComp = node->GetComponentSafe<ScriptComp>()) {
-        ImGui::Text("Script Component");
 
         ImGuiHelper::InputText classPathInputText("Class Path", scriptComp->classPath);
         ImGuiHelper::BeginInputText(classPathInputText);
@@ -733,7 +735,13 @@ void DrawScript(SceneNode* node) {
         ImGuiHelper::InputText classNameInputText("Class Name", scriptComp->className);
         ImGuiHelper::BeginInputText(classNameInputText);
 
+        if (ImGui::Button("Remove Script")) {
+            node->RemoveComponent<ScriptComp>();
+        }
+
         ImGui::Separator();
+    } else if (ImGui::Button("Add Script")) {
+        node->AddComponent<ScriptComp>();
     }
 }
 
@@ -940,6 +948,40 @@ void OpenedProjectUI::ProcessWindows() {
     static ImGuiHelper::DockSpace dockSpace = {
         .id = "DockSpace",
         .size = ImVec2((float) windowWidth, (float) windowHeight),
+        .onMainWindowUpdateCallback = [] {
+            static ProcessRunner engineProcess;
+            const bool isProcessRunning = engineProcess.IsRunning();
+            if (ImGui::Button(">") && !isProcessRunning) {
+                if (!ProjectProperties::Get()->initialNodePath.empty()) {
+                    if (!engineProcess.Start(editorContext->GetEngineBinaryPath(), editorContext->GetEngineBinaryProgramArgs())) {
+                        rbe_logger_error("Failed to start engine process at path '%s'", editorContext->GetEngineBinaryPath().c_str());
+                    }
+                    rbe_logger_debug("Starting engine process at path '%s' with args '%s'",
+                                     editorContext->GetEngineBinaryPath().c_str(),
+                                     editorContext->GetEngineBinaryProgramArgs().c_str());
+                } else {
+                    static ImGuiHelper::PopupModal playErrorPopup = {
+                        .name = "Play Error",
+                        .open = nullptr,
+                        .windowFlags = 0,
+                        .callbackFunc = [] (ImGuiHelper::Context* context) {
+                            ImGui::Text("Set initial node path first!");
+                            if (ImGui::Button("Close")) {
+                                ImGui::CloseCurrentPopup();
+                            }
+                        },
+                        .position = ImVec2{ 100.0f, 100.0f },
+                        .size = ImVec2{ 250.0f, 100.0f },
+                    };
+                    ImGuiHelper::StaticPopupModalManager::Get()->QueueOpenPopop(&playErrorPopup);
+                }
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("[]") && isProcessRunning) {
+                engineProcess.Stop();
+            }
+
+        },
         .windows = {
             { .window = sceneViewWindow, .position = ImGuiHelper::DockSpacePosition::Main },
             { .window = sceneOutlinerWindow, .position = ImGuiHelper::DockSpacePosition::Left },

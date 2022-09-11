@@ -17,6 +17,9 @@ class EditorContext : public Singleton<EditorContext> {
   public:
     EditorContext(singleton);
 
+    std::string GetEngineBinaryPath() const;
+    std::string GetEngineBinaryProgramArgs() const;
+
     static float Time();
 
     bool isRunning = false;
@@ -28,6 +31,6 @@ class EditorContext : public Singleton<EditorContext> {
                                             | SDL_WINDOW_RESIZABLE
                                             | SDL_WINDOW_ALLOW_HIGHDPI
                                         );
-    SDL_GLContext openGLContext;
+    SDL_GLContext openGLContext = nullptr;
     std::string initialDir;
 };

@@ -37,6 +37,14 @@ class SceneNode {
     }
 
     template <typename T>
+    void RemoveComponent() {
+        if (components.count(&typeid(T)) > 0) {
+            delete components[&typeid(T)];
+            components.erase(&typeid(T));
+        }
+    }
+
+    template <typename T>
     [[nodiscard]] T* GetComponent() {
         return static_cast<T*>(components[&typeid(T)]);
     }

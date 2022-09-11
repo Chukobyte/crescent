@@ -1059,46 +1059,46 @@ class Collider2D(Node2D):
 
 class ColorRect(Node2D):
     def get_size(self) -> Size2D:
-        w, h = crescent_api_internal.color_square_get_size(entity_id=self.entity_id)
+        w, h = crescent_api_internal.color_rect_get_size(entity_id=self.entity_id)
         return Size2D(w=w, h=h)
 
     def set_size(self, extents: Size2D) -> None:
-        crescent_api_internal.color_square_set_size(
+        crescent_api_internal.color_rect_set_size(
             entity_id=self.entity_id, w=extents.w, h=extents.h
         )
 
     @property
     def size(self) -> Size2D:
-        w, h = crescent_api_internal.color_square_get_size(entity_id=self.entity_id)
+        w, h = crescent_api_internal.color_rect_get_size(entity_id=self.entity_id)
         return Size2D(w=w, h=h)
 
     @size.setter
     def size(self, value: Size2D) -> None:
-        crescent_api_internal.color_square_set_size(
+        crescent_api_internal.color_rect_set_size(
             entity_id=self.entity_id, w=value.w, h=value.h
         )
 
     def get_color(self) -> Color:
-        r, g, b, a = crescent_api_internal.color_square_get_color(
+        r, g, b, a = crescent_api_internal.color_rect_get_color(
             entity_id=self.entity_id
         )
         return Color(r=r, g=g, b=b, a=a)
 
     def set_color(self, color: Color) -> None:
-        crescent_api_internal.color_square_set_color(
+        crescent_api_internal.color_rect_set_color(
             entity_id=self.entity_id, r=color.r, g=color.g, b=color.b, a=color.a
         )
 
     @property
     def color(self) -> Color:
-        r, g, b, a = crescent_api_internal.color_square_get_color(
+        r, g, b, a = crescent_api_internal.color_rect_get_color(
             entity_id=self.entity_id
         )
         return Color(r=r, g=g, b=b, a=a)
 
     @color.setter
     def color(self, value: Color) -> None:
-        crescent_api_internal.color_square_set_color(
+        crescent_api_internal.color_rect_set_color(
             entity_id=self.entity_id, r=value.r, g=value.g, b=value.b, a=value.a
         )
 
@@ -1187,7 +1187,7 @@ class Client:
 
 # CONFIGURATION
 def configure_game(
-    game_tile="Test Game",
+    game_title="Test Game",
     window_width=800,
     window_height=600,
     resolution_width=800,
@@ -1197,7 +1197,7 @@ def configure_game(
     colliders_visible=False,
 ) -> None:
     crescent_api_internal.configure_game(
-        game_tile=game_tile,
+        game_title=game_title,
         window_width=window_width,
         window_height=window_height,
         resolution_width=resolution_width,

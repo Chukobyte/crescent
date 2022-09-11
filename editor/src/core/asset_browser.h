@@ -26,6 +26,7 @@ enum class FileNodeRegularFileType {
 
 struct FileNode {
     std::string GetRelativePath() const;
+    bool IsEmpty() const;
 
     std::filesystem::path path;
     FileNodeType type = FileNodeType::Invalid;
@@ -51,6 +52,13 @@ class AssetBrowser : public Singleton<AssetBrowser> {
     Task<> UpdateFileSystemCache();
     void RegisterRefreshCallback(const AssetBrowserRefreshFunc& func);
     void RefreshCache();
+    void QueueRefreshCache();
+
+    void RenameFile(const std::filesystem::path& oldPath, const std::string& newName);
+    void DeleteFile(const std::filesystem::path& path);
+    void CreateDirectory(const std::filesystem::path& path, const std::string& name);
+    void RunFuncOnAllNodeFiles(FileNode& node, std::function<bool(FileNode& currentFileNode)> func);
+    void RunFuncOnAllNodeDirs(FileNode& node, std::function<bool(FileNode& currentFileNode)> func);
 
     FileNode rootNode;
     std::optional<FileNode> selectedFileNode;
@@ -60,4 +68,5 @@ class AssetBrowser : public Singleton<AssetBrowser> {
   private:
     // For now assumes one time subscribe only with no unsubscriptions
     std::vector<AssetBrowserRefreshFunc> registerRefreshFuncs;
+    bool refreshCacheQueued = false;
 };

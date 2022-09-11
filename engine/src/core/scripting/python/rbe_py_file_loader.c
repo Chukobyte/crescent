@@ -284,7 +284,7 @@ FileSceneNode* file_scene_node_load_stage_node(FileSceneNode* parent, PyObject* 
     // Node component is used for all scene nodes
     const char* nodeName = phy_get_string_from_var(pStageNode, "name");
     const char* nodeType = phy_get_string_from_var(pStageNode, "type");
-    node->name = strdup(nodeName);
+    node->name = strdup(nodeName); // TODO: Clean up
     node->type = node_get_base_type(nodeType);
     RBE_ASSERT_FMT(node->type != NodeBaseType_INVALID, "Node '%s' has an invalid node type '%s'", nodeName, nodeType);
 

@@ -7,13 +7,15 @@
 #include "../editor_callbacks.h"
 
 //--- Scene Node Utils ---//
+// TODO: Fix issue with not registering 'Right Click' logic because tree node is closed...
 void SceneNodeUtils::DisplayTreeNodeLeaf(SceneNode *sceneNode) {
     static SceneManager* sceneManager = SceneManager::Get();
     static ImGuiTreeNodeFlags defaultFlags = ImGuiTreeNodeFlags_DefaultOpen;
     static EditorCallbacks* editorCallbacks = EditorCallbacks::Get();
+    const ImGuiTreeNodeFlags currentFlags = sceneNode->children.empty() ? defaultFlags | ImGuiTreeNodeFlags_Leaf : defaultFlags;
     ImGuiHelper::TreeNode treeNode = {
         .label = sceneNode->name,
-        .flags = sceneManager->selectedSceneNode == sceneNode ? ImGuiTreeNodeFlags_Selected | defaultFlags : defaultFlags,
+        .flags = sceneManager->selectedSceneNode == sceneNode ? ImGuiTreeNodeFlags_Selected | currentFlags : currentFlags,
         .callbackFunc = [sceneNode] (ImGuiHelper::Context* context) {
             // Left Click
             if (ImGui::IsItemClicked()) {

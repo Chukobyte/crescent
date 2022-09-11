@@ -26,6 +26,6 @@ jobs:
           echo "y" | pacman -S mingw-w64-x86_64-SDL2
           echo "y" | pacman -S mingw-w64-x86_64-freetype
           echo "y" | pacman -S mingw-w64-x86_64-python
-          cmake -G "MinGW Makefiles" .
+          cmake -G "MinGW Makefiles" . -DIS_CI_BUILD="true"
           cmake --build .
  

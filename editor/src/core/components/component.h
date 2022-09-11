@@ -121,7 +121,7 @@ struct AnimatedSpriteComp : public EditorComponent {
         for (size_t animationIndex = 0; animationIndex < animatedSpriteComponentData->animationCount; animationIndex++) {
             const AnimationData& animData = animatedSpriteComponentData->animations[animatedSpriteComponentData->animationCount];
             EditorAnimation animation = { animData.name, animData.speed, animData.doesLoop };
-            for (size_t frameIndex = 0; frameIndex < animData.frameCount; frameIndex++) {
+            for (size_t frameIndex = 0; (int) frameIndex < animData.frameCount; frameIndex++) {
                 const AnimationFrameData& frameData = animData.animationFrames[frameIndex];
                 const EditorAnimationFrame animationFrame = { frameData.texturePath, frameData.drawSource, frameData.frame };
                 animation.animationFrames.emplace_back(animationFrame);

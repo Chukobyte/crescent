@@ -29,6 +29,8 @@ add_library(${PROJECT_NAME} STATIC
         src/core/ui/project_manager_ui.cpp
         src/core/ui/imgui/imgui_handler.cpp
         src/core/ui/imgui/imgui_helper.cpp
+        src/core/utils/process_runner/process_runner.cpp
+        src/core/utils/process_runner/process_context.cpp
         ../include/imgui.cpp
         ../include/imgui_demo.cpp
         ../include/imgui_draw.cpp

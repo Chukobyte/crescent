@@ -291,6 +291,11 @@ void ImGuiHelper::DockSpace::Run(bool runWindows) {
                  ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_MenuBar |
                  ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoDocking
                 );
+
+    if (onMainWindowUpdateCallback) {
+        onMainWindowUpdateCallback();
+    }
+
     ImGui::DockSpace(dockSpaceId, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
     if (!hasBuilt) {
         // Run windows to have them defined...
@@ -342,8 +347,8 @@ void ImGuiHelper::DockSpace::Run(bool runWindows) {
         for (const auto& dockSpaceWindow : windows) {
             ImGuiHelper::BeginWindowWithEnd(dockSpaceWindow.window);
         }
-        ImGui::End();
     }
+    ImGui::End();
 }
 
 //--- StaticPopupModalManager ---//

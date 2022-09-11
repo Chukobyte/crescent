@@ -84,6 +84,13 @@ add_library(${PROJECT_NAME} STATIC
         src/core/networking/rbe_network_socket.c
         )
 
+if (NOT DEFINED IS_CI_BUILD)
+    set(IS_CI_BUILD "false")
+endif()
+
+if (IS_CI_BUILD STREQUAL "false")
+    set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "PROJECT_EXECUTABLE_NAME")
+endif()
 
 add_library(glad ../include/glad/glad.c)
 add_library(stb_image ../include/stb_image/stb_image.c)
@@ -109,27 +116,50 @@ endif()
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image SDL2::SDL2main SDL2::SDL2 freetype Python3::Python Ws2_32)
 elseif(WIN32)
-    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image -lmingw32 -static-libgcc SDL2::SDL2main SDL2::SDL2 freetype Python3::Python -lws2_32)
+    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image -lmingw32 -static-libgcc -mwindows SDL2::SDL2main SDL2::SDL2 freetype Python3::Python -lws2_32)
 else ()
     target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image -static-libgcc -Xlinker -export-dynamic SDL2::SDL2main SDL2::SDL2 freetype Python3::Python m)
 endif ()
 
 target_compile_options(${PROJECT_NAME} PUBLIC ${flags})
 
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${PROJECT_SOURCE_DIR}/../assets
-        $<TARGET_FILE_DIR:${PROJECT_NAME}>/../assets
-        )
+# Copy directories over that are needed to run the engine and games
+if (IS_CI_BUILD STREQUAL "false")
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${PROJECT_SOURCE_DIR}/../assets
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/../assets
+            )
 
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${PROJECT_SOURCE_DIR}/../test_games
-        $<TARGET_FILE_DIR:${PROJECT_NAME}>/../test_games
-        )
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${PROJECT_SOURCE_DIR}/../test_games
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/../test_games
+            )
 
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${PROJECT_SOURCE_DIR}/../crescent_py_api
-        $<TARGET_FILE_DIR:${PROJECT_NAME}>/../crescent_py_api
-        )
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${PROJECT_SOURCE_DIR}/../crescent_py_api
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/../crescent_py_api
+            )
+
+    # Create bin directory to be used by the editor
+    add_custom_target(build-time-make-directory ALL
+            COMMAND ${CMAKE_COMMAND} -E make_directory ${PROJECT_SOURCE_DIR}/../bin)
+
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${PROJECT_SOURCE_DIR}/../bin
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin
+            )
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy
+            ${PROJECT_SOURCE_DIR}/../${PROJECT_EXECUTABLE_NAME}
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/${PROJECT_EXECUTABLE_NAME}
+            )
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${PROJECT_SOURCE_DIR}/../assets
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/assets
+            )
+endif()
