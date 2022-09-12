@@ -17,8 +17,10 @@ class EditorContext : public Singleton<EditorContext> {
   public:
     EditorContext(singleton);
 
+    std::string GetEngineBinPath() const;
     std::string GetEngineBinaryPath() const;
     std::string GetEngineBinaryProgramArgs() const;
+    std::string GetProjectExportPath() const;
 
     static float Time();
 

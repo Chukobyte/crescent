@@ -41,7 +41,7 @@ void ProjectManagerUI::ProcessWindows() {
         .callbackFunc = [gameProperties = ProjectProperties::Get()] (ImGuiHelper::Context* context) {
             SceneManager* sceneManager = SceneManager::Get();
             auto LoadProject = [sceneManager, gameProperties, edContext = EditorContext::Get()](const char* projectPath) {
-                if (FileSystemHelper::GetCurrentDirectory() != std::string(projectPath)) {
+                if (FileSystemHelper::GetCurrentDir() != std::string(projectPath)) {
                     rbe_fs_chdir(projectPath);
                 }
                 edContext->projectState = EditorProjectState::OpenedProject;

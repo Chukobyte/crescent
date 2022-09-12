@@ -14,6 +14,7 @@
 #include "../file_creation/scene_file_creator.h"
 #include "../utils/process_runner/process_runner.h"
 #include "../editor_callbacks.h"
+#include "../game_exporter.h"
 
 const char* CONFIG_FILE_NAME = "cre_config.py";
 const std::string COMBO_BOX_LIST_NONE = "<none>";
@@ -329,7 +330,15 @@ void OpenedProjectUI::ProcessMenuBar() {
                                         ImGui::CloseCurrentPopup();
                                     }
                                     ImGui::SameLine();
-                                    if (ImGui::Button("Export")) {
+                                    if (ImGui::Button("Export") && !exportFileName.empty()) {
+                                        const GameExporter::ExportProperties exportProps = {
+                                            .gameTitle = gameProperties->gameTitle,
+                                            .exportPath = editorContext->GetProjectExportPath() + "/" + exportFileName,
+                                            .projectPath = FileSystemHelper::GetCurrentDir(),
+                                            .binPath = editorContext->GetEngineBinPath(),
+                                            .tempPath = editorContext->GetProjectExportPath() + "/" + "tmp_cre"
+                                        };
+                                        GameExporter::Export(exportProps);
                                         exportFileName.clear();
                                         ImGui::CloseCurrentPopup();
                                     }

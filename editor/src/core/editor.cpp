@@ -28,7 +28,7 @@ bool Editor::Initialize() {
     // Initialize Python Instance
     rbe_py_initialize();
 
-    editorContext->initialDir = FileSystemHelper::GetCurrentDirectory();
+    editorContext->initialDir = FileSystemHelper::GetCurrentDir();
     editorContext->isRunning = true;
     rbe_logger_info("Crescent Engine Editor has started!");
 

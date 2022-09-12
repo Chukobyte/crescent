@@ -22,6 +22,7 @@ add_library(${PROJECT_NAME} STATIC
         src/core/editor_context.cpp
         src/core/project_properties.cpp
         src/core/asset_browser.cpp
+        src/core/game_exporter.cpp
         src/core/file_creation/config_file_creator.cpp
         src/core/file_creation/scene_file_creator.cpp
         src/core/scene/scene_manager.cpp
