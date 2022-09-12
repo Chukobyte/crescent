@@ -331,10 +331,12 @@ void OpenedProjectUI::ProcessMenuBar() {
                                     }
                                     ImGui::SameLine();
                                     if (ImGui::Button("Export") && !exportFileName.empty()) {
-                                        exportFileName = Helper::ConvertFilePathToFileNameExtension(exportFileName, ".zip");
+//                                        exportFileName = Helper::ConvertFilePathToFileNameExtension(exportFileName, ".zip");
+                                        exportFileName = Helper::RemoveExtensionFromFilePath(exportFileName);
                                         const GameExporter::ExportProperties exportProps = {
                                             .gameTitle = gameProperties->gameTitle,
-                                            .exportPath = editorContext->GetProjectExportPath() + "/" + exportFileName,
+                                            .exportName = exportFileName,
+                                            .exportPath = editorContext->GetProjectExportPath(),
                                             .projectPath = FileSystemHelper::GetCurrentDir(),
                                             .binPath = editorContext->GetEngineBinPath(),
                                             .tempPath = editorContext->GetProjectExportPath() + "/" + "tmp_cre"
@@ -345,7 +347,7 @@ void OpenedProjectUI::ProcessMenuBar() {
                                     }
                                     ImGui::Separator();
 
-                                    ImGuiHelper::InputText filePath("File Path", exportFileName);
+                                    ImGuiHelper::InputText filePath("Folder Path", exportFileName);
                                     ImGuiHelper::BeginInputText(filePath);
                                 },
                                 .position = ImVec2{ 100.0f, 100.0f },
