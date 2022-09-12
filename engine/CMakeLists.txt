@@ -143,9 +143,15 @@ if (IS_CI_BUILD STREQUAL "false")
             $<TARGET_FILE_DIR:${PROJECT_NAME}>/../crescent_py_api
             )
 
-    # Create bin directory to be used by the editor
-    add_custom_target(build-time-make-directory ALL
-            COMMAND ${CMAKE_COMMAND} -E make_directory ${PROJECT_SOURCE_DIR}/../bin)
+    # Create bin and export directories to be used by the editor
+    add_custom_target(TARGET ${PROJECT_NAME} PRE_BUILD
+            COMMAND ${CMAKE_COMMAND} -E make_directory
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin
+            )
+    add_custom_command(TARGET ${PROJECT_NAME} PRE_BUILD
+            COMMAND ${CMAKE_COMMAND} -E make_directory
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/../export
+            )
 
     add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_directory
@@ -162,37 +168,32 @@ if (IS_CI_BUILD STREQUAL "false")
             ${PROJECT_SOURCE_DIR}/../assets
             $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/assets
             )
-#    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-#            COMMAND ${CMAKE_COMMAND} -E copy
-#            ${PROJECT_SOURCE_DIR}/../python310.zip
-#            $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/python310.zip
-#            )
     # Copy DLLs
-    if (WIN32)
-#        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-#                COMMAND ${CMAKE_COMMAND} -E copy
-#                ${PROJECT_SOURCE_DIR}/../python310.dll
-#                $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/python310.dll
-#                )
-#        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-#                COMMAND ${CMAKE_COMMAND} -E copy
-#                ${PROJECT_SOURCE_DIR}/../SDL2.dll
-#                $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/SDL2.dll
-#                )
-#        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-#                COMMAND ${CMAKE_COMMAND} -E copy
-#                ${PROJECT_SOURCE_DIR}/../libfreetype-6.dll
-#                $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/libfreetype-6.dll
-#                )
-#        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-#                COMMAND ${CMAKE_COMMAND} -E copy
-#                ${PROJECT_SOURCE_DIR}/../libpng16d.dll
-#                $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/libpng16d.dll
-#                )
-#        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-#                COMMAND ${CMAKE_COMMAND} -E copy
-#                ${PROJECT_SOURCE_DIR}/../zlibd1.dll
-#                $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/zlibd1.dll
-#                )
+    if (WIN32 AND CMAKE_C_COMPILER_ID STREQUAL "MSVC")
+        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy
+                $<TARGET_FILE_DIR:${PROJECT_NAME}>/../freetyped.dll
+                $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/freetype.dll
+                )
+        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy
+                $<TARGET_FILE_DIR:${PROJECT_NAME}>/../libpng16d.dll
+                $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/libpng16.dll
+                )
+        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy
+                $<TARGET_FILE_DIR:${PROJECT_NAME}>/../python310_d.dll
+                $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/python310.dll
+                )
+        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy
+                $<TARGET_FILE_DIR:${PROJECT_NAME}>/../SDL2d.dll
+                $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/SDL2.dll
+                )
+        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy
+                $<TARGET_FILE_DIR:${PROJECT_NAME}>/../zlibd1.dll
+                $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/zlibd1.dll
+                )
     endif()
 endif()

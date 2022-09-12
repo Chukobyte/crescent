@@ -41,6 +41,7 @@ void GameExporter::Export(const GameExporter::ExportProperties &props) {
         return (char) std::tolower(c);
     });
     const std::filesystem::path exportPath = props.exportPath;
+    const std::filesystem::path exportParentPath = exportPath.parent_path();
     const std::filesystem::path projectPath = props.projectPath;
     const std::filesystem::path binPath = props.binPath;
     const std::filesystem::path tempPath = props.tempPath;
@@ -77,7 +78,7 @@ void GameExporter::Export(const GameExporter::ExportProperties &props) {
         }
     }
 #endif
-    // Copy valid project files.  Using asset brower's file cache for now.
+    // Copy valid project files.  Using asset browser's file cache for now.
     static AssetBrowser* assetBrowser = AssetBrowser::Get();
     CopyAllFilesFromFileNode(assetBrowser->rootNode, tempPath.string(), false);
 }
