@@ -5,6 +5,13 @@
 #include "asset_browser.h"
 #include "utils/file_system_helper.h"
 
+#ifdef _WIN32
+#define EXPORT_BINARY_EXTENSION ".exe"
+#else
+#define EXPORT_BINARY_EXTENSION ""
+
+#endif
+
 namespace {
 void CopyAllFilesFromFileNode(const FileNode& fileNode, const std::string& copyRootPath, bool copyCurrentNode = true) {
     static auto CopyFunc = [] (const FileNode& fn, const std::string& copyPath) {
@@ -53,13 +60,23 @@ void GameExporter::Export(const GameExporter::ExportProperties &props) {
                      exportPath.generic_string().c_str(), projectPath.generic_string().c_str(), binPath.generic_string().c_str(), tempPath.generic_string().c_str());
     std::filesystem::create_directory(tempPath, ec);
     // Copy engine binary
-    const std::filesystem::path binarySourcePath = binPath / "crescent_engine.exe";
-    const std::filesystem::path binaryDestPath = tempPath / std::string(gameTitleFileName + ".exe");
+    const std::filesystem::path binarySourcePath = binPath / std::string(std::string("crescent_engine") + EXPORT_BINARY_EXTENSION);
+    const std::filesystem::path binaryDestPath = tempPath / std::string(gameTitleFileName + EXPORT_BINARY_EXTENSION);
     FileSystemHelper::CopyFile(binarySourcePath, binaryDestPath);
     // Copy internal assets folder
     const std::filesystem::path internalAssetsSourcePath = binPath / "assets";
     const std::filesystem::path internalAssetsDestPath = tempPath / "assets";
     FileSystemHelper::CopyFile(internalAssetsSourcePath, internalAssetsDestPath);
+    // Copy DLLs if windows
+#ifdef _WIN32
+    for (auto const& dir_entry : std::filesystem::directory_iterator {binPath}) {
+        if (dir_entry.is_regular_file() && dir_entry.path().extension().string() == ".dll") {
+            const std::filesystem::path dllDestPath = tempPath / dir_entry.path().filename();
+            FileSystemHelper::CopyFile(dir_entry.path(), dllDestPath);
+            rbe_logger_debug("DLL source = '%s', dest = '%s'", dir_entry.path().generic_string().c_str(), dllDestPath.generic_string().c_str());
+        }
+    }
+#endif
     // Copy valid project files.  Using asset brower's file cache for now.
     static AssetBrowser* assetBrowser = AssetBrowser::Get();
     CopyAllFilesFromFileNode(assetBrowser->rootNode, tempPath.string(), false);

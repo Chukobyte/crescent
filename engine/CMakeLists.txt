@@ -162,4 +162,37 @@ if (IS_CI_BUILD STREQUAL "false")
             ${PROJECT_SOURCE_DIR}/../assets
             $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/assets
             )
+#    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+#            COMMAND ${CMAKE_COMMAND} -E copy
+#            ${PROJECT_SOURCE_DIR}/../python310.zip
+#            $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/python310.zip
+#            )
+    # Copy DLLs
+    if (WIN32)
+#        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+#                COMMAND ${CMAKE_COMMAND} -E copy
+#                ${PROJECT_SOURCE_DIR}/../python310.dll
+#                $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/python310.dll
+#                )
+#        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+#                COMMAND ${CMAKE_COMMAND} -E copy
+#                ${PROJECT_SOURCE_DIR}/../SDL2.dll
+#                $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/SDL2.dll
+#                )
+#        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+#                COMMAND ${CMAKE_COMMAND} -E copy
+#                ${PROJECT_SOURCE_DIR}/../libfreetype-6.dll
+#                $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/libfreetype-6.dll
+#                )
+#        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+#                COMMAND ${CMAKE_COMMAND} -E copy
+#                ${PROJECT_SOURCE_DIR}/../libpng16d.dll
+#                $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/libpng16d.dll
+#                )
+#        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+#                COMMAND ${CMAKE_COMMAND} -E copy
+#                ${PROJECT_SOURCE_DIR}/../zlibd1.dll
+#                $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/zlibd1.dll
+#                )
+    endif()
 endif()
