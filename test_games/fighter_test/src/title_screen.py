@@ -68,4 +68,4 @@ class TitleScreen(Node2D):
             self._update_game_mode_text()
 
     def _network_server_client_connected_callback(self) -> None:
-        SceneTree.change_scene(path="test_games/fighter_test/nodes/main_node.py")
+        SceneTree.change_scene(path="nodes/main_node.py")

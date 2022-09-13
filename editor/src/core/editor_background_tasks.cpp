@@ -35,6 +35,6 @@ Task<> EditorBackgroundTasks::Main(TaskManager* taskManager) {
             break;
         }
         }
-        co_await WaitUntil([editorContext, projectState] { return editorContext->projectState != projectState; });
+        co_await WaitUntil([editorContext, &projectState] { return editorContext->projectState != projectState; });
     }
 }

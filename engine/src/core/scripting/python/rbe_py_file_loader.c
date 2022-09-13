@@ -141,8 +141,6 @@ void file_scene_node_load_component(FileSceneNode* node, PyObject* pComponent) {
                                  animationFrameNumber, animationFrameTexturePath, drawSourceX, drawSourceY, drawSourceW, drawSourceH);
                 AnimationFrameData animationFrame;
                 strcpy(animationFrame.texturePath, animationFrameTexturePath);
-//                animationFrame.texture = rbe_asset_manager_get_texture(animationFrameTexturePath);
-//                RBE_ASSERT(animationFrame.texture != NULL);
                 animationFrame.frame = animationFrameNumber;
                 const Rect2 frameDrawSource = { drawSourceX, drawSourceY, drawSourceW, drawSourceH };
                 animationFrame.drawSource = frameDrawSource;
