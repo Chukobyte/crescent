@@ -160,7 +160,6 @@ void hash_map_rehash(RBEHashMap* hashMap, HashMapNode** oldNode, size_t oldCapac
         for (HashMapNode* node = oldNode[chain]; node != NULL;) {
             HashMapNode* next = node->next;
 
-            RBE_ASSERT(node != NULL);
             size_t newIndex = hashMap->hashFunc(node->key, hashMap->keySize) % hashMap->capacity;
             node->next = hashMap->nodes[newIndex];
             hashMap->nodes[newIndex] = node;

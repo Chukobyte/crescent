@@ -247,7 +247,6 @@ SceneTreeNode* rbe_scene_manager_get_entity_tree_node(Entity entity) {
 
 Entity rbe_scene_manager_get_entity_child_by_name(Entity parent, const char* childName) {
     SceneTreeNode* parentNode = rbe_scene_manager_get_entity_tree_node(parent);
-    RBE_ASSERT(parentNode != NULL);
     for (size_t childIndex = 0; childIndex < parentNode->childCount; childIndex++) {
         const Entity childEntity = parentNode->children[childIndex]->entity;
         if (component_manager_has_component(childEntity, ComponentDataIndex_NODE)) {
