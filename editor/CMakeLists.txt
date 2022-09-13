@@ -57,25 +57,27 @@ endif ()
 target_compile_options(${PROJECT_NAME} PUBLIC ${flags})
 
 # Create bin and export directories to be used by the editor
-add_custom_command(TARGET ${PROJECT_NAME} PRE_BUILD
-        COMMAND ${CMAKE_COMMAND} -E make_directory
-        $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin
-        )
-add_custom_command(TARGET ${PROJECT_NAME} PRE_BUILD
-        COMMAND ${CMAKE_COMMAND} -E make_directory
-        $<TARGET_FILE_DIR:${PROJECT_NAME}>/../export
-        )
-# TODO: Fina a better way to get exectable name..
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy
-        $<TARGET_FILE_DIR:${PROJECT_NAME}>/../crescent_engine${CMAKE_EXECUTABLE_SUFFIX}
-        $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/crescent_engine${CMAKE_EXECUTABLE_SUFFIX}
-        )
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-        $<TARGET_FILE_DIR:${PROJECT_NAME}>/../assets
-        $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/assets
-        )
+if (IS_CI_BUILD STREQUAL "false")
+    add_custom_command(TARGET ${PROJECT_NAME} PRE_BUILD
+            COMMAND ${CMAKE_COMMAND} -E make_directory
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin
+            )
+    add_custom_command(TARGET ${PROJECT_NAME} PRE_BUILD
+            COMMAND ${CMAKE_COMMAND} -E make_directory
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/../export
+            )
+    # TODO: Fina a better way to get exectable name..
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/../crescent_engine${CMAKE_EXECUTABLE_SUFFIX}
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/crescent_engine${CMAKE_EXECUTABLE_SUFFIX}
+            )
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/../assets
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/assets
+            )
+endif()
 
 # Copy DLLs
 if (WIN32 AND CMAKE_C_COMPILER_ID STREQUAL "MSVC")
