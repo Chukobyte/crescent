@@ -183,7 +183,7 @@ void sprite_renderer_draw_sprite(const Texture* texture, const Rect2* sourceRect
     glBindBuffer(GL_ARRAY_BUFFER, spriteQuadVBO);
 
     shader_use(spriteShader);
-    shader_set_mat4_float(spriteShader, "models[0]", &globalTransform->model);
+    shader_set_mat4_float(spriteShader, "models[0]", &globalTransform->model); // TODO: Batch models
     const int VERTEX_ITEM_COUNT = 1;
     const int NUMBER_OF_VERTICES = 6;
     const float SPRITE_ID = 0.0f;

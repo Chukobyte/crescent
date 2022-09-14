@@ -21,7 +21,7 @@ void animated_sprite_rendering_system_render();
 EntitySystem* animated_sprite_rendering_ec_system_create() {
     animatedSpriteRenderingSystem = rbe_ec_system_create();
     animatedSpriteRenderingSystem->name = rbe_strdup("Animated Sprite Rendering");
-    animatedSpriteRenderingSystem->render_func = animated_sprite_rendering_system_render;
+//    animatedSpriteRenderingSystem->render_func = animated_sprite_rendering_system_render;
     animatedSpriteRenderingSystem->component_signature = ComponentType_TRANSFORM_2D | ComponentType_ANIMATED_SPRITE;
     return animatedSpriteRenderingSystem;
 }
