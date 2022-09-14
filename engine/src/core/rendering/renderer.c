@@ -2,11 +2,10 @@
 
 #include <stdlib.h>
 
-#include <cglm/cglm.h>
-
 #include "render_context.h"
 #include "shader.h"
 #include "shader_source.h"
+#include "../math/rbe_math.h"
 #include "../game_properties.h"
 #include "../data_structures/rbe_static_array.h"
 #include "../memory/rbe_mem.h"

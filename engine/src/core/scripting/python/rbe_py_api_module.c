@@ -483,14 +483,14 @@ PyObject* rbe_py_api_node_add_child(PyObject* self, PyObject* args, PyObject* kw
     Entity parentEntity;
     Entity entity;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "ii", rbePyApiNodeAddChildKWList, &parentEntity, &entity)) {
-//        SceneTreeNode* parentNode = rbe_scene_manager_get_entity_tree_node(parentEntity);
-//        SceneTreeNode* node = rbe_scene_tree_create_tree_node(entity, parentNode);
-//        if (parentNode != NULL) {
-//            parentNode->children[parentNode->childCount++] = node;
-//        }
-//
-//        rbe_ec_system_update_entity_signature_with_systems(entity);
-//        rbe_scene_manager_queue_entity_for_creation(node);
+        SceneTreeNode* parentNode = rbe_scene_manager_get_entity_tree_node(parentEntity);
+        SceneTreeNode* node = rbe_scene_tree_create_tree_node(entity, parentNode);
+        if (parentNode != NULL) {
+            parentNode->children[parentNode->childCount++] = node;
+        }
+
+        rbe_ec_system_update_entity_signature_with_systems(entity);
+        rbe_scene_manager_queue_entity_for_creation(node);
         Py_RETURN_NONE;
     }
     return NULL;

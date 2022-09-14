@@ -97,10 +97,10 @@ void file_scene_node_load_component(FileSceneNode* node, PyObject* pComponent) {
         PyObject* pOrigin = PyObject_GetAttrString(pComponent, "origin");
 
         PyObject* pModulate = PyObject_GetAttrString(pComponent, "modulate");
-        const float modulateRed = phy_get_float_from_var(pModulate, "r");
-        const float modulateGreen = phy_get_float_from_var(pModulate, "g");
-        const float modulateBlue = phy_get_float_from_var(pModulate, "b");
-        const float modulateAlpha = phy_get_float_from_var(pModulate, "a");
+        const int modulateRed = phy_get_int_from_var(pModulate, "r");
+        const int modulateGreen = phy_get_int_from_var(pModulate, "g");
+        const int modulateBlue = phy_get_int_from_var(pModulate, "b");
+        const int modulateAlpha = phy_get_int_from_var(pModulate, "a");
 
         const float originX = phy_get_float_from_var(pOrigin, "x");
         const float originY = phy_get_float_from_var(pOrigin, "y");
