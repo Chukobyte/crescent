@@ -179,9 +179,7 @@ void file_scene_node_load_component(FileSceneNode* node, PyObject* pComponent) {
         const int colorA = phy_get_int_from_var(pColor, "a");
         const Color textLabelColor = rbe_color_get_normalized_color(colorR, colorG, colorB, colorA);
         TextLabelComponent* textLabelComponent = text_label_component_create();
-//        textLabelComponent->font = rbe_asset_manager_get_font(textLabelUID);
         node->fontUID = strdup(textLabelUID);
-//        RBE_ASSERT(textLabelComponent->font != NULL);
         strcpy(textLabelComponent->text, textLabelText);
         textLabelComponent->color = textLabelColor;
 
