@@ -20,7 +20,7 @@ EntitySystem* sprite_rendering_ec_system_create() {
     RBE_ASSERT(spriteRenderingSystem == NULL);
     spriteRenderingSystem = rbe_ec_system_create();
     spriteRenderingSystem->name = rbe_strdup("Sprite Rendering");
-//    spriteRenderingSystem->render_func = sprite_rendering_system_render;
+    spriteRenderingSystem->render_func = sprite_rendering_system_render;
     spriteRenderingSystem->component_signature = ComponentType_TRANSFORM_2D | ComponentType_SPRITE;
     return spriteRenderingSystem;
 }
