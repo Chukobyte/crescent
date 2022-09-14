@@ -331,7 +331,6 @@ void OpenedProjectUI::ProcessMenuBar() {
                                     }
                                     ImGui::SameLine();
                                     if (ImGui::Button("Export") && !exportFileName.empty()) {
-//                                        exportFileName = Helper::ConvertFilePathToFileNameExtension(exportFileName, ".zip");
                                         exportFileName = Helper::RemoveExtensionFromFilePath(exportFileName);
                                         const GameExporter::ExportProperties exportProps = {
                                             .gameTitle = gameProperties->gameTitle,
