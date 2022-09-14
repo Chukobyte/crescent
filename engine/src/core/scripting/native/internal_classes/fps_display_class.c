@@ -45,7 +45,7 @@ RBENativeScriptClass* fps_display_create_new_instance(Entity entity) {
 
 void fps_display_on_start(RBENativeScriptClass* nativeScriptClass) {
     FpsDisplayClassData* data = (FpsDisplayClassData*) nativeScriptClass->instance_data;
-    printf("[C SCRIPT] - entity '%zu' on start value = %d\n", nativeScriptClass->entity, data->value);
+    printf("[C SCRIPT] - entity '%u' on start value = %d\n", nativeScriptClass->entity, data->value);
 }
 
 void fps_display_on_end(RBENativeScriptClass* nativeScriptClass) {}
