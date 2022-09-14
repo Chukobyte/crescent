@@ -56,6 +56,10 @@ endif ()
 
 target_compile_options(${PROJECT_NAME} PUBLIC ${flags})
 
+if (NOT DEFINED IS_CI_BUILD)
+    set(IS_CI_BUILD "false")
+endif()
+
 # Create bin and export directories to be used by the editor
 if (IS_CI_BUILD STREQUAL "false")
     add_custom_command(TARGET ${PROJECT_NAME} PRE_BUILD
