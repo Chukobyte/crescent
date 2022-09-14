@@ -67,9 +67,7 @@ void file_scene_node_load_component(FileSceneNode* node, PyObject* pComponent) {
         const int modulateB = phy_get_int_from_var(pModulate, "b");
         const int modulateA = phy_get_int_from_var(pModulate, "a");
         SpriteComponent* spriteComponent = sprite_component_create();
-//        spriteComponent->texture = rbe_asset_manager_get_texture(texturePath);
-        node->spriteTexturePath = strdup(texturePath);
-//        RBE_ASSERT_FMT(spriteComponent->texture != NULL, "Unable to read texture path '%s'", texturePath);
+        node->spriteTexturePath = strdup(texturePath); // TODO: Clean up
         spriteComponent->drawSource.x = drawSourceX;
         spriteComponent->drawSource.y = drawSourceY;
         spriteComponent->drawSource.w = drawSourceW;
@@ -88,6 +86,7 @@ void file_scene_node_load_component(FileSceneNode* node, PyObject* pComponent) {
         rbe_logger_debug("texture_path = %s, draw_source = (%f, %f, %f, %f), origin: (%f, %f), flip_x: %d, flip_y: %d, modulate: (%d, %d, %d, %d)",
                          texturePath, drawSourceX, drawSourceY, drawSourceW, drawSourceH, originX, originY, flipX, flipY, modulateR, modulateG, modulateB, modulateA);
         Py_DECREF(pDrawSource);
+        Py_DECREF(pModulate);
         Py_DECREF(pOrigin);
         Py_DECREF(pModulate);
     } else if (strcmp(className, "AnimatedSpriteComponent") == 0) {
