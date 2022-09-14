@@ -166,6 +166,7 @@ void file_scene_node_load_component(FileSceneNode* node, PyObject* pComponent) {
 
         node->components[ComponentDataIndex_ANIMATED_SPRITE] = animatedSpriteComponent;
 
+        Py_DECREF(pModulate);
         Py_DECREF(pOrigin);
     } else if (strcmp(className, "TextLabelComponent") == 0) {
         rbe_logger_debug("Building text label component");
