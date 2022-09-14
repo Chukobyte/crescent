@@ -644,6 +644,7 @@
 "        current_animation_name: str,\n"\
 "        is_playing: bool,\n"\
 "        animations: list,\n"\
+"        modulate=Color.WHITE(),\n"\
 "        origin=Vector2.ZERO(),\n"\
 "        flip_x=False,\n"\
 "        flip_y=False,\n"\
