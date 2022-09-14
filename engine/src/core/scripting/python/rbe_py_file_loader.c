@@ -96,6 +96,13 @@ void file_scene_node_load_component(FileSceneNode* node, PyObject* pComponent) {
         const char* currentAnimationName = phy_get_string_from_var(pComponent, "current_animation_name");
         const bool isPlaying = phy_get_bool_from_var(pComponent, "is_playing");
         PyObject* pOrigin = PyObject_GetAttrString(pComponent, "origin");
+
+        PyObject* pModulate = PyObject_GetAttrString(pComponent, "modulate");
+        const float modulateRed = phy_get_float_from_var(pModulate, "r");
+        const float modulateGreen = phy_get_float_from_var(pModulate, "g");
+        const float modulateBlue = phy_get_float_from_var(pModulate, "b");
+        const float modulateAlpha = phy_get_float_from_var(pModulate, "a");
+
         const float originX = phy_get_float_from_var(pOrigin, "x");
         const float originY = phy_get_float_from_var(pOrigin, "y");
         const bool flipX = phy_get_bool_from_var(pComponent, "flip_x");
@@ -103,6 +110,7 @@ void file_scene_node_load_component(FileSceneNode* node, PyObject* pComponent) {
         rbe_logger_debug("current_animation_name: '%s', is_playing: '%d', origin: (%f, %f), flip_x: '%d', flip_y: '%d'",
                          currentAnimationName, isPlaying, originX, originY, flipX, flipY);
         animatedSpriteComponent->isPlaying = isPlaying;
+        animatedSpriteComponent->modulate = rbe_color_get_normalized_color(modulateRed, modulateGreen, modulateBlue, modulateAlpha);
         animatedSpriteComponent->origin.x = originX;
         animatedSpriteComponent->origin.y = originY;
         animatedSpriteComponent->flipX = flipX;
