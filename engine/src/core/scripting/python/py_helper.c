@@ -87,7 +87,7 @@ int phy_get_int_from_var(struct _object* obj, const char* variableName) {
 }
 
 float phy_get_float_from_var(struct _object* obj, const char* variableName) {
-    RBE_ASSERT(obj != NULL);
+    RBE_ASSERT_FMT(obj != NULL, "variable name = '%s'", variableName);
     PyObject* objVar = PyObject_GetAttrString(obj, variableName);
     RBE_ASSERT(objVar != NULL);
     const float varFloat = (float) PyFloat_AsDouble(objVar);

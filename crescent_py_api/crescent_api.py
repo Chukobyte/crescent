@@ -613,6 +613,7 @@ class AnimatedSpriteComponent:
         self.current_animation_name = current_animation_name
         self.is_playing = is_playing
         self.animations = animations
+        self.modulate = modulate
         self.origin = origin
         self.flip_x = flip_x
         self.flip_y = flip_y
