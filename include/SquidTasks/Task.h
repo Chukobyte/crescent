@@ -828,7 +828,8 @@ inline Task<> WaitWhile(tTaskReadyFn in_readyFn) {}
 
 inline Task<> _WaitUntil(tTaskReadyFn in_readyFn DEBUG_STR) /// @private
 {
-	TASK_NAME("WaitUntil", [debugStr = FormatDebugString(in_debugStr)]{ return debugStr; });
+    // TODO: Fix because it breaks on linux (tested on ubuntu)
+//	TASK_NAME("WaitUntil", [debugStr = FormatDebugString(in_debugStr)]{ return debugStr; });
 
 	co_await in_readyFn; // Wait until the ready functor returns true
 }

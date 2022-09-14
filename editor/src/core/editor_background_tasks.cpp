@@ -20,6 +20,8 @@ Task<> OpenedProjectTasks() {
 } // namespace
 
 Task<> EditorBackgroundTasks::Main(TaskManager* taskManager) {
+    TASK_NAME("EditorBackgroundTasks::Main");
+
     EditorContext* editorContext = EditorContext::Get();
     EditorProjectState projectState = EditorProjectState::ProjectManager;
     while (true) {
@@ -35,6 +37,6 @@ Task<> EditorBackgroundTasks::Main(TaskManager* taskManager) {
             break;
         }
         }
-        co_await WaitUntil([editorContext, &projectState] { return editorContext->projectState != projectState; });
+        co_await WaitUntil([editorContext, &projectState]() -> bool { return editorContext->projectState != projectState; });
     }
 }
