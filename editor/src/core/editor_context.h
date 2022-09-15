@@ -7,6 +7,16 @@
 #include "utils/singleton.h"
 #include "utils/enum_class_utils.h"
 
+#define EDITOR_ENGINE_NAME "crescent_engine"
+
+#ifdef _WIN32
+#define EDITOR_ENGINE_EXTENSION ".exe"
+#else
+#define EDITOR_ENGINE_EXTENSION ""
+#endif
+
+#define EDITOR_ENGINE_BINARY_NAME EDITOR_ENGINE_NAME EDITOR_ENGINE_EXTENSION
+
 enum class EditorProjectState : int {
     ProjectManager = 0,
     OpenedProject = 1,

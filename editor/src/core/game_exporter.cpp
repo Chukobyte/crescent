@@ -4,13 +4,7 @@
 
 #include "asset_browser.h"
 #include "utils/file_system_helper.h"
-
-#ifdef _WIN32
-#define EXPORT_BINARY_EXTENSION ".exe"
-#else
-#define EXPORT_BINARY_EXTENSION ""
-
-#endif
+#include "editor_context.h"
 
 namespace {
 void CopyAllFilesFromFileNode(const FileNode& fileNode, const std::string& copyRootPath, bool copyCurrentNode = true) {
@@ -64,8 +58,8 @@ void GameExporter::Export(const GameExporter::ExportProperties &props) {
                      exportPath.generic_string().c_str(), projectPath.generic_string().c_str(), binPath.generic_string().c_str(), tempPath.generic_string().c_str());
     std::filesystem::create_directory(fullExportPath, ec);
     // Copy engine binary
-    const std::filesystem::path binarySourcePath = binPath / std::string(std::string("crescent_engine") + EXPORT_BINARY_EXTENSION);
-    const std::filesystem::path binaryDestPath = fullExportPath / std::string(gameTitleFileName + EXPORT_BINARY_EXTENSION);
+    const std::filesystem::path binarySourcePath = binPath / std::string(EDITOR_ENGINE_BINARY_NAME);
+    const std::filesystem::path binaryDestPath = fullExportPath / std::string(gameTitleFileName + EDITOR_ENGINE_EXTENSION);
     FileSystemHelper::CopyFile(binarySourcePath, binaryDestPath);
     // Copy internal assets folder
     const std::filesystem::path internalAssetsSourcePath = binPath / "assets";
