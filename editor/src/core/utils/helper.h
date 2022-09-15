@@ -67,11 +67,9 @@ struct StringSplitter {
 
     void Clear() {
         splitUpStrings.clear();
-        index = 0;
     }
 
     std::vector<std::string> splitUpStrings;
-    size_t index = 0;
 };
 
 // Math
