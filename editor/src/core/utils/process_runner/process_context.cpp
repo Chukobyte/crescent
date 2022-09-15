@@ -75,7 +75,12 @@ bool ProcessContext::Start(const std::string& processPath, const std::string& st
         std::cerr << "Error creating fork!" << std::endl;
         return false;
     } else if (pid > 0) {
-
+        // Parent
+        int status;
+        waitpid(pid, &status, 0);
+    }
+    else {
+        // Child
         auto SplitStartArgsString = [](const std::string& path, const std::string& startArgText) -> std::vector<const char*> {
             static Helper::StringSplitter splitter;
             splitter.Clear();
@@ -92,6 +97,7 @@ void ProcessContext::Stop() {
         return;
     }
     kill(pid, SIGUSR1);
+    pid = 0;
 }
 
 bool ProcessContext::IsRunning() const {
