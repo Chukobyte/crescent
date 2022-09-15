@@ -77,7 +77,7 @@ bool ProcessContext::Start(const std::string& processPath, const std::string& st
     } else if (pid > 0) {
         // Parent
         int status;
-        waitpid(pid, &status, 0);
+        waitpid(pid, &status, WNOHANG);
     }
     else {
         // Child
