@@ -76,19 +76,13 @@ bool ProcessContext::Start(const std::string& processPath, const std::string& st
         return false;
     } else if (pid > 0) {
 
-        auto SplitStartArgsString = [](const std::string& path, const std::string& startArgText) {
+        auto SplitStartArgsString = [](const std::string& path, const std::string& startArgText) -> std::vector<const char*> {
             static Helper::StringSplitter splitter;
             splitter.Clear();
-            splitter.Split(path + " " + startArgText);
-            std::vector<const char*> startArgsVec;
-            for (auto& text : splitter.splitUpStrings) {
-                startArgsVec.push_back(text.c_str());
-            }
-            startArgsVec.push_back(nullptr);
-            return startArgsVec;
+            return splitter.Split(path + " " + startArgText).ToConst();
         };
         auto args = SplitStartArgsString(processPath, startArgs);
-        execvp(processPath.c_str(), const_cast<char* const*>(args.data()));
+        execv(processPath.c_str(), const_cast<char* const*>(args.data()));
     }
     return true;
 }

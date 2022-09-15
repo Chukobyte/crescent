@@ -39,7 +39,7 @@ struct StringSplitter {
         Split(text, delimiter);
     }
 
-    void Split(const std::string& text, char delimiter = ' ') {
+    StringSplitter& Split(const std::string& text, char delimiter = ' ') {
         std::string temp;
         for(char i : text) {
             if(i == delimiter) {
@@ -52,6 +52,16 @@ struct StringSplitter {
         if (!temp.empty()) {
             splitUpStrings.emplace_back(temp);
         }
+        return *this;
+    }
+
+    std::vector<const char*> ToConst() {
+        std::vector<const char*> startArgsVec;
+        for (auto& text : splitUpStrings) {
+            startArgsVec.push_back(text.c_str());
+        }
+        startArgsVec.push_back(nullptr);
+        return startArgsVec;
     }
 
     void Clear() {
