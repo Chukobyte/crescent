@@ -70,39 +70,6 @@ void ProcessContext::Stop() {
 #include <cstring>
 #include <algorithm>
 
-namespace {
-std::vector<std::string> SplitString(const std::string& s) {
-    if (s.empty()) {
-        return {};
-    }
-    std::vector<std::string> splitStrings;
-    std::string temp = "";
-    for(char i : s) {
-        if(i==' ') {
-            splitStrings.push_back(temp);
-            temp = "";
-        } else {
-            temp.push_back(i);
-        }
-    }
-    splitStrings.push_back(temp);
-    return splitStrings;
-}
-
-std::vector<char*> GetFullArgs(const std::string& processPath, const std::string& startArgs) {
-    std::vector<char*> args;
-    const std::string fullStartArgs = startArgs.empty() ? processPath : processPath + " " + startArgs;
-    std::vector<std::string> splitStringArgs = SplitString(fullStartArgs);
-    std::transform(splitStringArgs.begin(), splitStringArgs.end(), std::back_inserter(args),
-    [](std::string &s) {
-        s.push_back(0);
-        return &s[0];
-    });
-    args.push_back(nullptr);
-    return args;
-}
-} // namespace
-
 bool ProcessContext::Start(const std::string& processPath, const std::string& startArgs) {
     if (IsRunning()) {
         return false;
@@ -111,11 +78,28 @@ bool ProcessContext::Start(const std::string& processPath, const std::string& st
     if (pid < 0) {
         std::cerr << "Error creating fork!" << std::endl;
         return false;
-    } else if(pid > 0) {
-//        std::cout << "In parent process!" << std::endl;
-    } else {
-        std::vector<char*> args = GetFullArgs(processPath, startArgs);
-        execv(processPath.c_str(), args.data());
+    } else if (pid > 0) {
+        auto SplitStartArgsString = [](const std::string& path, const std::string& startArgText) {
+            std::vector<const char*> startArgsVec;
+            startArgsVec.push_back(path.c_str());
+            if (!startArgText.empty()) {
+                static std::string temp;
+                for(char i : startArgText) {
+                    if(i == ' ') {
+                        startArgsVec.push_back(temp.c_str());
+                        temp.clear();
+                    } else {
+                        temp.push_back(i);
+                    }
+                }
+                startArgsVec.push_back(temp.c_str());
+                startArgsVec.push_back(nullptr);
+                temp.clear();
+            }
+            return startArgsVec;
+        };
+        auto args = SplitStartArgsString(processPath, startArgs);
+        execvp(processPath.c_str(), const_cast<char* const*>(args.data()));
     }
     return true;
 }

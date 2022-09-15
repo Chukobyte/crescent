@@ -20,7 +20,7 @@
 
 class ProcessContext {
   public:
-    bool Start(const std::string& processPath, const std::string& startArgs = "");
+    bool Start(const std::string& startArgText, const std::string& startArgs = "");
     void Stop();
     bool IsRunning() const;
 
