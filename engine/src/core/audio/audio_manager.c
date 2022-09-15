@@ -199,7 +199,7 @@ bool rbe_audio_load_wav_data_from_file(const char* file_path, int32_t* sample_co
     char* file_data = rbe_fs_read_file_contents(file_path, &len);
     rbe_logger_debug("file '%s' size '%u' bytes", file_path, len);
 
-    uint64_t totalPcmFrameCount = 0;
+    drwav_uint64 totalPcmFrameCount = 0;
     *samples =  drwav_open_memory_and_read_pcm_frames_s16(file_data, len, (uint32_t*)channels, (uint32_t*)sample_rate, &totalPcmFrameCount, NULL);
     RBE_MEM_FREE(file_data);
 

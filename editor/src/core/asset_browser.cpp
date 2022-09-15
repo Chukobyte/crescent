@@ -9,7 +9,7 @@ using namespace Squid;
 
 //--- FileNode ---//
 std::string FileNode::GetRelativePath() const {
-    std::filesystem::path projectRootDir(FileSystemHelper::GetCurrentDirectory());
+    std::filesystem::path projectRootDir(FileSystemHelper::GetCurrentDir());
     std::filesystem::path relativePath = std::filesystem::relative(path, projectRootDir);
     return relativePath.generic_string();
 }
@@ -169,7 +169,7 @@ Task<> AssetBrowser::UpdateFileSystemCache() {
 }
 
 void AssetBrowser::RefreshCache() {
-    std::filesystem::path projectRootDir(FileSystemHelper::GetCurrentDirectory());
+    std::filesystem::path projectRootDir(FileSystemHelper::GetCurrentDir());
 //    rbe_logger_debug("root name: %s", projectRootDir.root_name().c_str());
 //    rbe_logger_debug("root path: %s", projectRootDir.string().c_str());
 

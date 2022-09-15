@@ -160,7 +160,6 @@ void string_hash_map_rehash(RBEStringHashMap* hashMap, StringHashMapNode** oldNo
         for (StringHashMapNode* node = oldNode[chain]; node != NULL;) {
             StringHashMapNode* next = node->next;
 
-            RBE_ASSERT(node != NULL);
             size_t newIndex = hashMap->hashFunc(node->key) % hashMap->capacity;
             node->next = hashMap->nodes[newIndex];
             hashMap->nodes[newIndex] = node;

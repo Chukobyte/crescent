@@ -14,6 +14,7 @@
 #include "../file_creation/scene_file_creator.h"
 #include "../utils/process_runner/process_runner.h"
 #include "../editor_callbacks.h"
+#include "../game_exporter.h"
 
 const char* CONFIG_FILE_NAME = "cre_config.py";
 const std::string COMBO_BOX_LIST_NONE = "<none>";
@@ -307,6 +308,51 @@ void OpenedProjectUI::ProcessMenuBar() {
                                 .size = ImVec2{ 200.0f, 200.0f },
                             };
                             ImGuiHelper::StaticPopupModalManager::Get()->QueueOpenPopop(&fontConfigurationPopup);
+                        },
+                    },
+                },
+            },
+            {
+                .name = "Export",
+                .menuItems = {
+                    {
+                        .name = "Export Game",
+                        .keyboardShortcut = "",
+                        .callbackFunc = [] (ImGuiHelper::Context* context) {
+                            static ImGuiHelper::PopupModal projectSettingsPopup = {
+                                .name = "Export Game Menu",
+                                .open = nullptr,
+                                .windowFlags = 0,
+                                .callbackFunc = [gameProperties = ProjectProperties::Get()] (ImGuiHelper::Context* context) {
+                                    static std::string exportFileName;
+                                    if (ImGui::Button("Cancel")) {
+                                        exportFileName.clear();
+                                        ImGui::CloseCurrentPopup();
+                                    }
+                                    ImGui::SameLine();
+                                    if (ImGui::Button("Export") && !exportFileName.empty()) {
+                                        exportFileName = Helper::RemoveExtensionFromFilePath(exportFileName);
+                                        const GameExporter::ExportProperties exportProps = {
+                                            .gameTitle = gameProperties->gameTitle,
+                                            .exportName = exportFileName,
+                                            .exportPath = editorContext->GetProjectExportPath(),
+                                            .projectPath = FileSystemHelper::GetCurrentDir(),
+                                            .binPath = editorContext->GetEngineBinPath(),
+                                            .tempPath = editorContext->GetProjectExportPath() + "/" + "tmp_cre"
+                                        };
+                                        GameExporter::Export(exportProps);
+                                        exportFileName.clear();
+                                        ImGui::CloseCurrentPopup();
+                                    }
+                                    ImGui::Separator();
+
+                                    ImGuiHelper::InputText filePath("Folder Path", exportFileName);
+                                    ImGuiHelper::BeginInputText(filePath);
+                                },
+                                .position = ImVec2{ 100.0f, 100.0f },
+                                .size = ImVec2{ 200.0f, 200.0f },
+                            };
+                            ImGuiHelper::StaticPopupModalManager::Get()->QueueOpenPopop(&projectSettingsPopup);
                         },
                     },
                 },

@@ -17,10 +17,10 @@ void rbe_py_initialize() {
     PyRun_SimpleString("sys.path.insert(0, \".\")");
     PyRun_SimpleString("sys.dont_write_bytecode = True");
     // TODO: Not sure why it breaks on linux when not enabling tracemalloc
-#ifndef WIN32
+//#ifndef WIN32
     PyRun_SimpleString("import tracemalloc\n");
     PyRun_SimpleString("tracemalloc.start()");
-#endif
+//#endif
 
     PyRun_SimpleString(RBE_PY_API_SOURCE_IMPORTER);
     PyRun_SimpleString(RBE_PY_API_SOURCE_IMPORTER_MODULE_IMPORTS);

@@ -6,9 +6,6 @@ extern "C" {
 
 #include <stdbool.h>
 
-#define CGLM_DEFINE_PRINTS
-#include <cglm/cglm.h>
-
 #include "../../math/rbe_math.h"
 
 typedef struct Transform2DComponent {

@@ -1,5 +1,9 @@
 #pragma once
 
+#ifdef _MSC_VER
+#define CGLM_ALL_UNALIGNED
+#endif
+
 #include <cglm/cglm.h>
 
 #define RBE_PI 3.14159265358979323846f

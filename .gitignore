@@ -9,8 +9,11 @@ temp
 venv
 site
 
+valgrind.xml
+
 # Project
 bin
+export
 
 # CMake
 CMakeLists.txt.user

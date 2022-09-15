@@ -605,6 +605,7 @@ class AnimatedSpriteComponent:
         current_animation_name: str,
         is_playing: bool,
         animations: list,
+        modulate=Color.WHITE(),
         origin=Vector2.ZERO(),
         flip_x=False,
         flip_y=False,
@@ -612,6 +613,7 @@ class AnimatedSpriteComponent:
         self.current_animation_name = current_animation_name
         self.is_playing = is_playing
         self.animations = animations
+        self.modulate = modulate
         self.origin = origin
         self.flip_x = flip_x
         self.flip_y = flip_y

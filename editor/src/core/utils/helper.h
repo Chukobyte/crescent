@@ -1,8 +1,10 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 namespace Helper {
+// String manipulation
 inline std::string BoolToString(bool value) {
     return value == true ? "true" : "false";
 }
@@ -31,6 +33,46 @@ inline std::string ConvertFilePathToFileNameExtension(const std::string& filePat
     return ConvertFilePathToFilePathExtension(ConvertFilePathToFileName(filePath), extension);
 }
 
+struct StringSplitter {
+    StringSplitter() = default;
+
+    StringSplitter(const std::string& text, char delimiter = ' ') {
+        Split(text, delimiter);
+    }
+
+    StringSplitter& Split(const std::string& text, char delimiter = ' ') {
+        std::string temp;
+        for(char i : text) {
+            if(i == delimiter) {
+                splitUpStrings.emplace_back(temp);
+                temp.clear();
+            } else {
+                temp.push_back(i);
+            }
+        }
+        if (!temp.empty()) {
+            splitUpStrings.emplace_back(temp);
+        }
+        return *this;
+    }
+
+    std::vector<const char*> ToConst() {
+        std::vector<const char*> startArgsVec;
+        for (auto& text : splitUpStrings) {
+            startArgsVec.push_back(text.c_str());
+        }
+        startArgsVec.push_back(nullptr);
+        return startArgsVec;
+    }
+
+    void Clear() {
+        splitUpStrings.clear();
+    }
+
+    std::vector<std::string> splitUpStrings;
+};
+
+// Math
 // TODO: Move into a math header
 template<typename T>
 inline T Min(T a, T b) {

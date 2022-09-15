@@ -1,4 +1,5 @@
 #include "process_context.h"
+#include "../helper.h"
 
 #ifdef _WIN32
 
@@ -63,45 +64,7 @@ void ProcessContext::Stop() {
 #include <iostream>
 #include <unistd.h>
 #include <signal.h>
-#include <sys/types.h>
-#include <stdlib.h>
-#include <sys/wait.h>
 #include <vector>
-#include <cstring>
-#include <algorithm>
-
-namespace {
-std::vector<std::string> SplitString(const std::string& s) {
-    if (s.empty()) {
-        return {};
-    }
-    std::vector<std::string> splitStrings;
-    std::string temp = "";
-    for(char i : s) {
-        if(i==' ') {
-            splitStrings.push_back(temp);
-            temp = "";
-        } else {
-            temp.push_back(i);
-        }
-    }
-    splitStrings.push_back(temp);
-    return splitStrings;
-}
-
-std::vector<char*> GetFullArgs(const std::string& processPath, const std::string& startArgs) {
-    std::vector<char*> args;
-    const std::string fullStartArgs = startArgs.empty() ? processPath : processPath + " " + startArgs;
-    std::vector<std::string> splitStringArgs = SplitString(fullStartArgs);
-    std::transform(splitStringArgs.begin(), splitStringArgs.end(), std::back_inserter(args),
-    [](std::string &s) {
-        s.push_back(0);
-        return &s[0];
-    });
-    args.push_back(nullptr);
-    return args;
-}
-} // namespace
 
 bool ProcessContext::Start(const std::string& processPath, const std::string& startArgs) {
     if (IsRunning()) {
@@ -111,11 +74,19 @@ bool ProcessContext::Start(const std::string& processPath, const std::string& st
     if (pid < 0) {
         std::cerr << "Error creating fork!" << std::endl;
         return false;
-    } else if(pid > 0) {
-//        std::cout << "In parent process!" << std::endl;
+    } else if (pid > 0) {
+        // Parent
+        int status;
+        waitpid(pid, &status, WNOHANG);
     } else {
-        std::vector<char*> args = GetFullArgs(processPath, startArgs);
-        execv(processPath.c_str(), args.data());
+        // Child
+        auto SplitStartArgsString = [](const std::string& path, const std::string& startArgText) -> std::vector<const char*> {
+            static Helper::StringSplitter splitter;
+            splitter.Clear();
+            return splitter.Split(path + " " + startArgText).ToConst();
+        };
+        auto args = SplitStartArgsString(processPath, startArgs);
+        execv(processPath.c_str(), const_cast<char* const*>(args.data()));
     }
     return true;
 }
@@ -125,14 +96,12 @@ void ProcessContext::Stop() {
         return;
     }
     kill(pid, SIGUSR1);
+    pid = 0;
 }
 
 bool ProcessContext::IsRunning() const {
-    while(waitpid(-1, 0, WNOHANG) > 0) {
-        // Wait for defunct....
-    }
-    if (kill(pid, 0) == 0) {
-        return true;
+    if (pid != 0) {
+        return kill(pid, 0) == 0;
     }
     return false;
 }

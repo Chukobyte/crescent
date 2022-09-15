@@ -22,6 +22,7 @@ add_library(${PROJECT_NAME} STATIC
         src/core/editor_context.cpp
         src/core/project_properties.cpp
         src/core/asset_browser.cpp
+        src/core/game_exporter.cpp
         src/core/file_creation/config_file_creator.cpp
         src/core/file_creation/scene_file_creator.cpp
         src/core/scene/scene_manager.cpp
@@ -54,3 +55,110 @@ else ()
 endif ()
 
 target_compile_options(${PROJECT_NAME} PUBLIC ${flags})
+
+if (NOT DEFINED IS_CI_BUILD)
+    set(IS_CI_BUILD "false")
+endif()
+
+# Create bin and export directories to be used by the editor
+if (IS_CI_BUILD STREQUAL "false")
+    add_custom_command(TARGET ${PROJECT_NAME} PRE_BUILD
+            COMMAND ${CMAKE_COMMAND} -E make_directory
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin
+            )
+    add_custom_command(TARGET ${PROJECT_NAME} PRE_BUILD
+            COMMAND ${CMAKE_COMMAND} -E make_directory
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/../export
+            )
+    # TODO: Fina a better way to get exectable name..
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/../crescent_engine${CMAKE_EXECUTABLE_SUFFIX}
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/crescent_engine${CMAKE_EXECUTABLE_SUFFIX}
+            )
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/../assets
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/assets
+            )
+endif()
+
+# Copy DLLs
+if (IS_CI_BUILD STREQUAL "false")
+
+    if (WIN32 AND CMAKE_C_COMPILER_ID STREQUAL "MSVC")
+        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy
+                $<TARGET_FILE_DIR:${PROJECT_NAME}>/../brotlicommon.dll
+                $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/brotlicommon.dll
+                )
+        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy
+                $<TARGET_FILE_DIR:${PROJECT_NAME}>/../brotlidec.dll
+                $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/brotlidec.dll
+                )
+        if (CMAKE_BUILD_TYPE EQUAL "DEBUG")
+            add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                    COMMAND ${CMAKE_COMMAND} -E copy
+                    $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bz2d.dll
+                    $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/bz2d.dll
+                    )
+            add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                    COMMAND ${CMAKE_COMMAND} -E copy
+                    $<TARGET_FILE_DIR:${PROJECT_NAME}>/../freetyped.dll
+                    $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/freetyped.dll
+                    )
+            add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                    COMMAND ${CMAKE_COMMAND} -E copy
+                    $<TARGET_FILE_DIR:${PROJECT_NAME}>/../libpng16d.dll
+                    $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/libpng16d.dll
+                    )
+            add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                    COMMAND ${CMAKE_COMMAND} -E copy
+                    $<TARGET_FILE_DIR:${PROJECT_NAME}>/../python310_d.dll
+                    $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/python310_d.dll
+                    )
+            add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                    COMMAND ${CMAKE_COMMAND} -E copy
+                    $<TARGET_FILE_DIR:${PROJECT_NAME}>/../SDL2d.dll
+                    $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/SDL2d.dll
+                    )
+            add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                    COMMAND ${CMAKE_COMMAND} -E copy
+                    $<TARGET_FILE_DIR:${PROJECT_NAME}>/../zlibd1.dll
+                    $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/zlibd1.dll
+                    )
+        else()
+            add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                    COMMAND ${CMAKE_COMMAND} -E copy
+                    $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bz2.dll
+                    $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/bz2.dll
+                    )
+            add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                    COMMAND ${CMAKE_COMMAND} -E copy
+                    $<TARGET_FILE_DIR:${PROJECT_NAME}>/../freetype.dll
+                    $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/freetype.dll
+                    )
+            add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                    COMMAND ${CMAKE_COMMAND} -E copy
+                    $<TARGET_FILE_DIR:${PROJECT_NAME}>/../libpng16.dll
+                    $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/libpng16.dll
+                    )
+            add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                    COMMAND ${CMAKE_COMMAND} -E copy
+                    $<TARGET_FILE_DIR:${PROJECT_NAME}>/../python310.dll
+                    $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/python310.dll
+                    )
+            add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                    COMMAND ${CMAKE_COMMAND} -E copy
+                    $<TARGET_FILE_DIR:${PROJECT_NAME}>/../SDL2.dll
+                    $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/SDL2.dll
+                    )
+            add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                    COMMAND ${CMAKE_COMMAND} -E copy
+                    $<TARGET_FILE_DIR:${PROJECT_NAME}>/../zlib1.dll
+                    $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/zlib1.dll
+                    )
+        endif()
+    endif()
+endif()

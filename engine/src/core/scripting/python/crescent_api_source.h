@@ -644,6 +644,7 @@
 "        current_animation_name: str,\n"\
 "        is_playing: bool,\n"\
 "        animations: list,\n"\
+"        modulate=Color.WHITE(),\n"\
 "        origin=Vector2.ZERO(),\n"\
 "        flip_x=False,\n"\
 "        flip_y=False,\n"\
@@ -651,6 +652,7 @@
 "        self.current_animation_name = current_animation_name\n"\
 "        self.is_playing = is_playing\n"\
 "        self.animations = animations\n"\
+"        self.modulate = modulate\n"\
 "        self.origin = origin\n"\
 "        self.flip_x = flip_x\n"\
 "        self.flip_y = flip_y\n"\

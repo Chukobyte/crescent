@@ -6,10 +6,7 @@ extern "C" {
 
 #include "scene_tree.h"
 #include "../ecs/component/transform2d_component.h"
-
-#define CGLM_DEFINE_PRINTS
-
-#include <cglm/cglm.h>
+#include "../math/rbe_math.h"
 
 // --- Scene Tree --- //
 SceneTreeNode* rbe_scene_tree_create_tree_node(Entity entity, SceneTreeNode* parent);
