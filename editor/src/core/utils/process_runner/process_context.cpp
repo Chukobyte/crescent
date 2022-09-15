@@ -78,8 +78,7 @@ bool ProcessContext::Start(const std::string& processPath, const std::string& st
         // Parent
         int status;
         waitpid(pid, &status, WNOHANG);
-    }
-    else {
+    } else {
         // Child
         auto SplitStartArgsString = [](const std::string& path, const std::string& startArgText) -> std::vector<const char*> {
             static Helper::StringSplitter splitter;
