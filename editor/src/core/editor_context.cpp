@@ -7,7 +7,11 @@ std::string EditorContext::GetEngineBinPath() const {
 }
 
 std::string EditorContext::GetEngineBinaryPath() const {
+#ifdef _WIN32
     return GetEngineBinPath() + "/crescent_engine.exe";
+#else
+    return GetEngineBinPath() + "/crescent_engine";
+#endif
 }
 
 std::string EditorContext::GetEngineBinaryProgramArgs() const {

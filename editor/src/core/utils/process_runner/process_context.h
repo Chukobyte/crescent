@@ -32,6 +32,6 @@ class ProcessContext {
     std::streamoff stdOutInputStreamOffset = 0;
     std::ifstream stdOutInputStream;
 #else
-    pid_t pid;
+    pid_t pid = 0; // 0 assumes pid hasn't been assigned
 #endif
 };

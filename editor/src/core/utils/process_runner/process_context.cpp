@@ -128,11 +128,8 @@ void ProcessContext::Stop() {
 }
 
 bool ProcessContext::IsRunning() const {
-    while(waitpid(-1, 0, WNOHANG) > 0) {
-        // Wait for defunct....
-    }
-    if (kill(pid, 0) == 0) {
-        return true;
+    if (pid != 0) {
+        return kill(pid, 0) == 0;
     }
     return false;
 }
