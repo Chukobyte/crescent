@@ -1,4 +1,5 @@
 #include "process_context.h"
+#include "../helper.h"
 
 #ifdef _WIN32
 
@@ -63,12 +64,7 @@ void ProcessContext::Stop() {
 #include <iostream>
 #include <unistd.h>
 #include <signal.h>
-#include <sys/types.h>
-#include <stdlib.h>
-#include <sys/wait.h>
 #include <vector>
-#include <cstring>
-#include <algorithm>
 
 bool ProcessContext::Start(const std::string& processPath, const std::string& startArgs) {
     if (IsRunning()) {
@@ -79,23 +75,16 @@ bool ProcessContext::Start(const std::string& processPath, const std::string& st
         std::cerr << "Error creating fork!" << std::endl;
         return false;
     } else if (pid > 0) {
+
         auto SplitStartArgsString = [](const std::string& path, const std::string& startArgText) {
+            static Helper::StringSplitter splitter;
+            splitter.Clear();
+            splitter.Split(path + " " + startArgText);
             std::vector<const char*> startArgsVec;
-            startArgsVec.push_back(path.c_str());
-            if (!startArgText.empty()) {
-                static std::string temp;
-                for(char i : startArgText) {
-                    if(i == ' ') {
-                        startArgsVec.push_back(temp.c_str());
-                        temp.clear();
-                    } else {
-                        temp.push_back(i);
-                    }
-                }
-                startArgsVec.push_back(temp.c_str());
-                startArgsVec.push_back(nullptr);
-                temp.clear();
+            for (auto& text : splitter.splitUpStrings) {
+                startArgsVec.push_back(text.c_str());
             }
+            startArgsVec.push_back(nullptr);
             return startArgsVec;
         };
         auto args = SplitStartArgsString(processPath, startArgs);

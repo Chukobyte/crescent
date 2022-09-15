@@ -3,6 +3,7 @@
 #include <string>
 
 namespace Helper {
+// String manipulation
 inline std::string BoolToString(bool value) {
     return value == true ? "true" : "false";
 }
@@ -31,6 +32,38 @@ inline std::string ConvertFilePathToFileNameExtension(const std::string& filePat
     return ConvertFilePathToFilePathExtension(ConvertFilePathToFileName(filePath), extension);
 }
 
+struct StringSplitter {
+    StringSplitter() = default;
+
+    StringSplitter(const std::string& text, char delimiter = ' ') {
+        Split(text, delimiter);
+    }
+
+    void Split(const std::string& text, char delimiter = ' ') {
+        std::string temp;
+        for(char i : text) {
+            if(i == delimiter) {
+                splitUpStrings.emplace_back(temp);
+                temp.clear();
+            } else {
+                temp.push_back(i);
+            }
+        }
+        if (!temp.empty()) {
+            splitUpStrings.emplace_back(temp);
+        }
+    }
+
+    void Clear() {
+        splitUpStrings.clear();
+        index = 0;
+    }
+
+    std::vector<std::string> splitUpStrings;
+    size_t index = 0;
+};
+
+// Math
 // TODO: Move into a math header
 template<typename T>
 inline T Min(T a, T b) {
