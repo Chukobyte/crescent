@@ -48,6 +48,11 @@ void ProjectManagerUI::ProcessWindows() {
                 rbe_logger_debug("Opening project at directory = %s", projectPath);
                 gameProperties->LoadPropertiesFromConfig("cre_config.py");
                 gameProperties->PrintProperties();
+                // Update recently opened projects list
+                edContext->settings.AddToRecentlyLoadedProjectsList(gameProperties->gameTitle, projectPath);
+                edContext->settings.SaveSettings();
+
+                // Load initial scene if it exists, if not create a new one
                 if (gameProperties->initialNodePath.empty()) {
                     sceneManager->selectedSceneFile = sceneManager->GenerateDefaultSceneNodeFile();
                 } else {
@@ -57,12 +62,13 @@ void ProjectManagerUI::ProcessWindows() {
                 }
             };
 
+            // Test Fighter Section
             if (ImGui::Button("Go To Test Fighter Project")) {
                 LoadProject("test_games/fighter_test");
             }
-
             ImGui::Separator();
-            // Manual project path
+
+            // Open Project Section
             static std::string openProjectPath;
             static ImGuiHelper::InputText openProjectPathInputText("Open Project Path", openProjectPath);
             ImGuiHelper::BeginInputText(openProjectPathInputText);
@@ -70,8 +76,25 @@ void ProjectManagerUI::ProcessWindows() {
             if (ImGui::Button("Open Project") && !openProjectPath.empty() && FileSystemHelper::DoesDirectoryExist(fullOpenProjectPath)) {
                 LoadProject(fullOpenProjectPath.c_str());
             }
-
             ImGui::Separator();
+
+            // Recently Opened Projects Section
+            if (!editorContext->settings.recentlyLoadedProjects.empty()) {
+                ImGui::Text("Recently Opened Projects");
+                for (size_t i = 0; i < editorContext->settings.recentlyLoadedProjects.size(); i++) {
+                    const auto& project = editorContext->settings.recentlyLoadedProjects[i];
+                    if (i > 0) {
+                        ImGui::SameLine();
+                    }
+                    if (ImGui::Button(project.name.c_str())) {
+                        LoadProject(project.fullPath.c_str());
+                    }
+                }
+                ImGui::Separator();
+            }
+
+
+            // New Project Section
             ImGui::Text("Creates new project in 'test_games' folder...");
             // Name
             static std::string newProjectName;

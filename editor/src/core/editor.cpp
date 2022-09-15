@@ -32,6 +32,12 @@ bool Editor::Initialize() {
     editorContext->isRunning = true;
     rbe_logger_info("Crescent Engine Editor has started!");
 
+    // Load editor setting or create a new file if it doesn't exist
+    if (!editorContext->settings.LoadSettings()) {
+        // Create new settings file
+        editorContext->settings.SaveSettings();
+    }
+
     mainTasks.RunManaged(EditorBackgroundTasks::Main(&mainTasks));
     return true;
 }

@@ -157,7 +157,7 @@ void OpenedProjectUI::ProcessMenuBar() {
                                 .callbackFunc = [gameProperties = ProjectProperties::Get()] (ImGuiHelper::Context* context) {
                                     if (ImGui::Button("Close")) {
                                         if (!gameProperties->gameTitle.empty()) {
-                                            gameProperties->gameTitle = Helper::ConvertFilePathToFilePathExtension(gameProperties->gameTitle, ".py");
+                                            gameProperties->gameTitle = gameProperties->gameTitle;
                                         }
                                         ConfigFileCreator::GenerateConfigFile(CONFIG_FILE_NAME, gameProperties);
                                         ImGui::CloseCurrentPopup();
