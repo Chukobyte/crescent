@@ -4,7 +4,7 @@
 #include <sstream>
 
 #include <nlohmann/json.hpp>
-#include "../../engine/src/core/utils/rbe_assert.h"
+#include "../engine/src/core/utils/rbe_assert.h"
 
 
 namespace JsonHelper {
