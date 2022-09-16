@@ -20,16 +20,16 @@ enum class FileNodeRegularFileType {
 
 // A wrapper around filesystem path
 struct FileNode {
-    std::string GetRelativePath() const;
+    [[nodiscard]] std::string GetRelativePath() const;
     [[nodiscard]] bool IsEmpty() const;
     static FileNodeRegularFileType GetRegularFileType(const std::string& fileName);
 
-    std::filesystem::path path;
+    std::filesystem::path path{};
     FileNodeType type = FileNodeType::Invalid;
     unsigned int index = 0;
     FileNodeRegularFileType regularFileType = FileNodeRegularFileType::Invalid;
-    std::vector<FileNode> directories;
-    std::vector<FileNode> files;
+    std::vector<FileNode> directories{};
+    std::vector<FileNode> files{};
 };
 
 class FileNodeCache {
@@ -42,15 +42,15 @@ class FileNodeCache {
 
 public:
     [[nodiscard]] bool HasFilesWithExtension(const std::string& extension) const;
-    void AddFile(const std::string& extension, const FileNode& fileNode);
     std::vector<FileNode> GetFilesWithExtension(const std::string& extension);
     void LoadRootNode(const std::string& filePath, LoadFlag loadFlag = LoadFlag::All);
-
     FileNode rootNode;
+
     std::unordered_map<std::string, std::vector<FileNode>> extensionToFileNodeMap;
 
 private:
     void LoadFileNodeEntries(FileNode& fileNode, LoadFlag loadFlag);
+    void AddFile(const std::string& extension, const FileNode& fileNode);
 
     unsigned int nodeIndexCount = 0;
 };
