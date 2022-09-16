@@ -5,6 +5,8 @@
 #include <unordered_map>
 #include <filesystem>
 
+#include "utils/helper.h"
+
 enum class FileNodeType {
     Invalid,
     File,
@@ -15,7 +17,7 @@ enum class FileNodeRegularFileType {
     Invalid,
     Texture,
     AudioSource,
-//    PythonScript,
+    PythonScript,
 };
 
 // A wrapper around filesystem path
@@ -33,6 +35,7 @@ struct FileNode {
 };
 
 class FileNodeCache {
+  public:
     enum class LoadFlag {
         None = 0,
         Recursive = 1 << 0,
@@ -40,17 +43,18 @@ class FileNodeCache {
         All = Recursive | IncludeExtensions,
     };
 
-public:
     [[nodiscard]] bool HasFilesWithExtension(const std::string& extension) const;
     std::vector<FileNode> GetFilesWithExtension(const std::string& extension);
-    void LoadRootNode(const std::string& filePath, LoadFlag loadFlag = LoadFlag::All);
+    void LoadRootNodeDir(const std::string& filePath, LoadFlag loadFlag = LoadFlag::All);
     FileNode rootNode;
 
     std::unordered_map<std::string, std::vector<FileNode>> extensionToFileNodeMap;
 
-private:
+  private:
     void LoadFileNodeEntries(FileNode& fileNode, LoadFlag loadFlag);
     void AddFile(const std::string& extension, const FileNode& fileNode);
 
     unsigned int nodeIndexCount = 0;
 };
+
+GENERATE_ENUM_CLASS_OPERATORS(FileNodeCache::LoadFlag)

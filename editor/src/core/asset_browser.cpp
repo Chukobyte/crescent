@@ -120,7 +120,7 @@ Task<> AssetBrowser::UpdateFileSystemCache() {
 }
 
 void AssetBrowser::RefreshCache() {
-    fileCache.LoadRootNode(FileSystemHelper::GetCurrentDir());
+    fileCache.LoadRootNodeDir(FileSystemHelper::GetCurrentDir());
     for (auto& func : registerRefreshFuncs) {
         func(fileCache.rootNode);
     }

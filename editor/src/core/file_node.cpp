@@ -19,10 +19,9 @@ FileNodeRegularFileType FileNode::GetRegularFileType(const std::string& fileName
         return FileNodeRegularFileType::Texture;
     } else if (fileName.ends_with(".wav")) {
         return FileNodeRegularFileType::AudioSource;
+    } else if (fileName.ends_with(".py")) {
+        return FileNodeRegularFileType::PythonScript;
     }
-//    else if (fileName.ends_with(".py")) {
-//        return FileNodeRegularFileType::PythonScript;
-//    }
     return FileNodeRegularFileType::Invalid;
 }
 
@@ -45,10 +44,10 @@ std::vector<FileNode> FileNodeCache::GetFilesWithExtension(const std::string& ex
     return std::vector<FileNode>();
 }
 
-void FileNodeCache::LoadRootNode(const std::string& filePath, LoadFlag loadFlag) {
+void FileNodeCache::LoadRootNodeDir(const std::string& filePath, LoadFlag loadFlag) {
     rootNode.path = filePath;
     if (!std::filesystem::is_directory(rootNode.path)) {
-        rbe_logger_error("Failed to load root node at file path '%s'", filePath.c_str());
+        rbe_logger_error("Failed to load root dir node at file path '%s'", filePath.c_str());
         return;
     }
     nodeIndexCount = 0;
@@ -75,7 +74,7 @@ void FileNodeCache::LoadFileNodeEntries(FileNode &fileNode, LoadFlag loadFlag) {
             fileNode.files.emplace_back(regularFileNode);
             const std::string extension = regularFileNode.path.extension().string();
             // TODO: Make override '&' operator with macro initialization of enum classes
-            if (((int) LoadFlag::IncludeExtensions & (int) loadFlag) == (int) loadFlag) {
+            if ((loadFlag & LoadFlag::IncludeExtensions) ==  LoadFlag::IncludeExtensions) {
                 AddFile(extension, fileNode);
             }
         }
