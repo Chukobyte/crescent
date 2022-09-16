@@ -41,7 +41,7 @@ std::vector<FileNode> FileNodeCache::GetFilesWithExtension(const std::string& ex
     if (HasFilesWithExtension(extension)) {
         return extensionToFileNodeMap[extension];
     }
-    return std::vector<FileNode>();
+    return {};
 }
 
 void FileNodeCache::LoadRootNodeDir(const std::string& filePath, LoadFlag loadFlag) {
@@ -59,6 +59,8 @@ void FileNodeCache::LoadRootNodeDir(const std::string& filePath, LoadFlag loadFl
 }
 
 void FileNodeCache::LoadFileNodeEntries(FileNode &fileNode, LoadFlag loadFlag) {
+    const bool isRecursive = LoadFlag::Recursive >>= loadFlag;
+    const bool includeExtensions = LoadFlag::IncludeExtensions >>= loadFlag;
     for (auto const& dir_entry : std::filesystem::directory_iterator{fileNode.path}) {
         const std::string& fileName = dir_entry.path().filename().string();
         // TODO: Add exclusion lists
@@ -67,13 +69,15 @@ void FileNodeCache::LoadFileNodeEntries(FileNode &fileNode, LoadFlag loadFlag) {
         }
         if (std::filesystem::is_directory(dir_entry.path())) {
             FileNode dirNode = { dir_entry.path(), FileNodeType::Directory, nodeIndexCount++ };
-            LoadFileNodeEntries(dirNode, loadFlag);
+            if (isRecursive) {
+                LoadFileNodeEntries(dirNode, loadFlag);
+            }
             fileNode.directories.emplace_back(dirNode);
         } else if (std::filesystem::is_regular_file(dir_entry.path())) {
             FileNode regularFileNode = { dir_entry.path(), FileNodeType::File, nodeIndexCount++, FileNode::GetRegularFileType(dir_entry.path().filename().string()) };
             fileNode.files.emplace_back(regularFileNode);
             const std::string extension = regularFileNode.path.extension().string();
-            if (LoadFlag::IncludeExtensions >>= loadFlag) {
+            if (includeExtensions) {
                 AddFile(extension, fileNode);
             }
         }
