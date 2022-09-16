@@ -155,10 +155,8 @@ void OpenedProjectUI::ProcessMenuBar() {
                                 .open = nullptr,
                                 .windowFlags = 0,
                                 .callbackFunc = [gameProperties = ProjectProperties::Get()] (ImGuiHelper::Context* context) {
-                                    if (ImGui::Button("Close")) {
-                                        if (!gameProperties->gameTitle.empty()) {
-                                            gameProperties->gameTitle = gameProperties->gameTitle;
-                                        }
+                                    // TODO: Do more validation
+                                    if (ImGui::Button("Close") && gameProperties->gameTitle.empty()) {
                                         ConfigFileCreator::GenerateConfigFile(CONFIG_FILE_NAME, gameProperties);
                                         ImGui::CloseCurrentPopup();
                                     }
