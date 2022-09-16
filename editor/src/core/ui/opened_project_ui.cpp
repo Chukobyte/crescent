@@ -411,8 +411,8 @@ void DrawSprite(SceneNode* node) {
         static auto UpdateTexturePathList = [] {
             texturePathList.clear();
             texturePathList.emplace_back(COMBO_BOX_LIST_NONE);
-            if (assetBrowser->extensionToFileNodeMap.count(".png") > 0) {
-                for (auto& fileNode : assetBrowser->extensionToFileNodeMap[".png"]) {
+            if (assetBrowser->fileCache.extensionToFileNodeMap.count(".png") > 0) {
+                for (auto& fileNode : assetBrowser->fileCache.extensionToFileNodeMap[".png"]) {
                     texturePathList.emplace_back(fileNode.GetRelativePath());
                 }
             }
@@ -618,8 +618,8 @@ void DrawAnimatedSprite(SceneNode* node) {
                     static auto UpdateTexturePathList = [] {
                         animFrameTexturePathList.clear();
                         animFrameTexturePathList.emplace_back(COMBO_BOX_LIST_NONE);
-                        if (assetBrowser->extensionToFileNodeMap.count(".png") > 0) {
-                            for (auto& fileNode : assetBrowser->extensionToFileNodeMap[".png"]) {
+                        if (assetBrowser->fileCache.extensionToFileNodeMap.count(".png") > 0) {
+                            for (auto& fileNode : assetBrowser->fileCache.extensionToFileNodeMap[".png"]) {
                                 animFrameTexturePathList.emplace_back(fileNode.GetRelativePath());
                             }
                         }
@@ -974,7 +974,7 @@ void OpenedProjectUI::ProcessWindows() {
         .windowFlags = ImGuiWindowFlags_NoResize,
         .callbackFunc = [] (ImGuiHelper::Context* context) {
             static AssetBrowser* assetBrowser = AssetBrowser::Get();
-            FileNodeUtils::DisplayFileNodeTree(assetBrowser->rootNode, true);
+            FileNodeUtils::DisplayFileNodeTree(assetBrowser->fileCache.rootNode, true);
         },
         .position = ImVec2{ 100.0f, 200.0f },
         .size = ImVec2{ 400.0f, 300.0f },

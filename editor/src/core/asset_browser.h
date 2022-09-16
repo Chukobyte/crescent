@@ -8,37 +8,9 @@
 
 #include "SquidTasks/Task.h"
 
-// File Node
-
-// A wrapper around filesystem path
-enum class FileNodeType {
-    Invalid,
-    File,
-    Directory,
-};
-
-enum class FileNodeRegularFileType {
-    Invalid,
-    Texture,
-    AudioSource,
-//    PythonScript,
-};
-
-struct FileNode {
-    std::string GetRelativePath() const;
-    bool IsEmpty() const;
-
-    std::filesystem::path path;
-    FileNodeType type = FileNodeType::Invalid;
-    unsigned int index = 0;
-    FileNodeRegularFileType regularFileType = FileNodeRegularFileType::Invalid;
-    std::vector<FileNode> directories;
-    std::vector<FileNode> files;
-};
+#include "file_node.h"
 
 namespace FileNodeUtils {
-FileNodeRegularFileType GetFileNodeRegularType(const std::string& fileName);
-void LoadFileNodeDirEntries(FileNode& fileNode, unsigned int& nodeIndex, std::unordered_map<std::string, std::vector<FileNode>>& extensionToFileNodeMap);
 void DisplayFileNodeTree(FileNode& fileNode, bool isRoot = false);
 } // namespace FileNodeUtils
 
@@ -57,13 +29,15 @@ class AssetBrowser : public Singleton<AssetBrowser> {
     void RenameFile(const std::filesystem::path& oldPath, const std::string& newName);
     void DeleteFile(const std::filesystem::path& path);
     void CreateDirectory(const std::filesystem::path& path, const std::string& name);
-    void RunFuncOnAllNodeFiles(FileNode& node, std::function<bool(FileNode& currentFileNode)> func);
-    void RunFuncOnAllNodeDirs(FileNode& node, std::function<bool(FileNode& currentFileNode)> func);
+//    void RunFuncOnAllNodeFiles(FileNode& node, std::function<bool(FileNode& currentFileNode)> func);
+//    void RunFuncOnAllNodeDirs(FileNode& node, std::function<bool(FileNode& currentFileNode)> func);
 
-    FileNode rootNode;
+//    FileNode rootNode;
     std::optional<FileNode> selectedFileNode;
 
-    std::unordered_map<std::string, std::vector<FileNode>> extensionToFileNodeMap;
+//    std::unordered_map<std::string, std::vector<FileNode>> extensionToFileNodeMap;
+
+    FileNodeCache fileCache;
 
   private:
     // For now assumes one time subscribe only with no unsubscriptions
