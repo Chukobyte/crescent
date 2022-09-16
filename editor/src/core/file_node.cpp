@@ -73,8 +73,7 @@ void FileNodeCache::LoadFileNodeEntries(FileNode &fileNode, LoadFlag loadFlag) {
             FileNode regularFileNode = { dir_entry.path(), FileNodeType::File, nodeIndexCount++, FileNode::GetRegularFileType(dir_entry.path().filename().string()) };
             fileNode.files.emplace_back(regularFileNode);
             const std::string extension = regularFileNode.path.extension().string();
-            // TODO: Make override '&' operator with macro initialization of enum classes
-            if ((loadFlag & LoadFlag::IncludeExtensions) ==  LoadFlag::IncludeExtensions) {
+            if (LoadFlag::IncludeExtensions >>= loadFlag) {
                 AddFile(extension, fileNode);
             }
         }
