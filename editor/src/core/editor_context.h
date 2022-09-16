@@ -4,6 +4,7 @@
 
 #include <SDL2/SDL.h>
 
+#include "editor_settings.h"
 #include "utils/singleton.h"
 #include "utils/enum_class_utils.h"
 
@@ -35,6 +36,7 @@ class EditorContext : public Singleton<EditorContext> {
     static float Time();
 
     bool isRunning = false;
+    EditorSettings settings;
     EditorProjectState projectState = EditorProjectState::ProjectManager;
     // Rendering
     SDL_Window* window = nullptr;

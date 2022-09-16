@@ -1,4 +1,5 @@
 #include "editor_context.h"
+#include "utils/file_system_helper.h"
 
 EditorContext::EditorContext(singleton) {}
 
