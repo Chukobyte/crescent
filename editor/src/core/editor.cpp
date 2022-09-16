@@ -34,7 +34,6 @@ bool Editor::Initialize() {
 
     // Load editor setting or create a new file if it doesn't exist
     if (!editorContext->settings.LoadSettings()) {
-        // Create new settings file
         editorContext->settings.SaveSettings();
     }
 
