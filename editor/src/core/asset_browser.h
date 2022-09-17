@@ -25,18 +25,12 @@ class AssetBrowser : public Singleton<AssetBrowser> {
     void RegisterRefreshCallback(const AssetBrowserRefreshFunc& func);
     void RefreshCache();
     void QueueRefreshCache();
-
+    // TODO: Consider moving these into a utility, interface, etc...
     void RenameFile(const std::filesystem::path& oldPath, const std::string& newName);
     void DeleteFile(const std::filesystem::path& path);
     void CreateDirectory(const std::filesystem::path& path, const std::string& name);
-//    void RunFuncOnAllNodeFiles(FileNode& node, std::function<bool(FileNode& currentFileNode)> func);
-//    void RunFuncOnAllNodeDirs(FileNode& node, std::function<bool(FileNode& currentFileNode)> func);
 
-//    FileNode rootNode;
     std::optional<FileNode> selectedFileNode;
-
-//    std::unordered_map<std::string, std::vector<FileNode>> extensionToFileNodeMap;
-
     FileNodeCache fileCache;
 
   private:
