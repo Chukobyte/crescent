@@ -41,7 +41,7 @@ struct PopupModal {
     const char* name;
     bool* open = nullptr;
     ImGuiWindowFlags windowFlags = 0;
-    ImGuiHelperCallbackFunc callbackFunc;
+    ImGuiHelperCallbackFunc callbackFunc = nullptr;
     std::optional<ImVec2> position;
     std::optional<ImVec2> size;
     bool hasRegistered = false;

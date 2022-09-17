@@ -4,6 +4,7 @@
 #include "../engine/src/core/utils/logger.h"
 
 #include "imgui/imgui_helper.h"
+#include "imgui/imgui_file_browser.h"
 #include "../editor_context.h"
 #include "../project_properties.h"
 #include "../scene/scene_manager.h"
@@ -14,21 +15,7 @@ static EditorContext* editorContext = EditorContext::Get();
 
 void ProjectManagerUI::ProcessMenuBar() {}
 
-void ProjectManagerUI::ProcessModalPopups() {
-    static ImGuiHelper::PopupModal popupModal = {
-        .name = "Exit To Project Manager Confirmation",
-        .open = nullptr,
-        .windowFlags = 0,
-        .callbackFunc = [] (ImGuiHelper::Context* context) {
-            if (ImGui::Button("Close")) {
-                ImGui::CloseCurrentPopup();
-            }
-        },
-        .position = ImVec2{ 100.0f, 100.0f },
-        .size = ImVec2{ 200.0f, 200.0f },
-    };
-    ImGuiHelper::BeginPopupModal(popupModal);
-}
+void ProjectManagerUI::ProcessModalPopups() {}
 
 void ProjectManagerUI::ProcessWindows() {
     int windowWidth = 0;
@@ -75,6 +62,27 @@ void ProjectManagerUI::ProcessWindows() {
             const std::string fullOpenProjectPath = Helper::RemoveExtensionFromFilePath("test_games/" + openProjectPath);
             if (ImGui::Button("Open Project") && !openProjectPath.empty() && FileSystemHelper::DoesDirectoryExist(fullOpenProjectPath)) {
                 LoadProject(fullOpenProjectPath.c_str());
+            }
+            // Test file dialog
+            static bool openFileBrowser = false;
+            if (ImGui::Button("Open File Browser")) {
+                openFileBrowser = true;
+            }
+            static ImGuiHelper::FileBrowser fileBrowser = {
+                .name = "Open Project Browser",
+                .open = nullptr,
+                .windowFlags = 0,
+                .callbackFunc = nullptr,
+                .position = ImVec2{ 100.0f, 100.0f },
+                .size = ImVec2{ 400.0f, 300.0f },
+                .rootPath = {},
+                .mode = ImGuiHelper::FileBrowser::Mode::OpenFile,
+                .validExtensions = {}
+            };
+            ImGuiHelper::BeginFileBrowser(fileBrowser);
+            if (openFileBrowser) {
+                openFileBrowser = false;
+                ImGui::OpenPopup(fileBrowser.name);
             }
             ImGui::Separator();
 
