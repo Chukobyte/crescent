@@ -19,14 +19,16 @@ struct FileBrowser {
     std::optional<ImVec2> position;
     std::optional<ImVec2> size;
     bool hasRegistered = false;
+    unsigned int id = 0;
 
     std::string rootPath;
     Mode mode = Mode::OpenFile;
     std::vector<std::string> validExtensions;
     std::function<void(const FileNode&)> onModeCompletedFunc = nullptr;
     std::optional<FileNode> selectedNode;
+    bool hasJustOpened = false;
     FileNodeCache pathCache;
 };
 
-void BeginFileBrowser(const FileBrowser& fileBrowser);
+void BeginFileBrowser(FileBrowser& fileBrowser);
 } // ImGuiHelper
