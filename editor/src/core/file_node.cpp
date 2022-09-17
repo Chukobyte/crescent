@@ -62,7 +62,7 @@ void FileNodeCache::LoadFileNodeEntries(FileNode &fileNode, LoadFlag loadFlag) {
     const bool isRecursive = LoadFlag::Recursive >>= loadFlag;
     const bool includeExtensions = LoadFlag::IncludeExtensions >>= loadFlag;
     for (auto const& dir_entry : std::filesystem::directory_iterator{fileNode.path}) {
-        const std::string& fileName = dir_entry.path().filename().string();
+        const std::string fileName = dir_entry.path().filename().string();
         // TODO: Add exclusion lists
         if (fileName == "__pycache__" || fileName[0] == '.') {
             continue;
@@ -76,8 +76,8 @@ void FileNodeCache::LoadFileNodeEntries(FileNode &fileNode, LoadFlag loadFlag) {
         } else if (std::filesystem::is_regular_file(dir_entry.path())) {
             FileNode regularFileNode = { dir_entry.path(), FileNodeType::File, nodeIndexCount++, FileNode::GetRegularFileType(dir_entry.path().filename().string()) };
             fileNode.files.emplace_back(regularFileNode);
-            const std::string extension = regularFileNode.path.extension().string();
             if (includeExtensions) {
+                const std::string extension = regularFileNode.path.extension().string();
                 AddFile(extension, fileNode);
             }
         }
