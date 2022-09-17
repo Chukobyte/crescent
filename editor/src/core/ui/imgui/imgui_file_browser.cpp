@@ -1,9 +1,11 @@
 #include "imgui_file_browser.h"
 
+#include "../../utils/file_system_helper.h"
+
 namespace {
 unsigned int selectedFileBrowserIndex = 0;
 
-void DisplayFileBrowser(const ImGuiHelper::FileBrowser& fileBrowser) {
+void DisplayFileBrowser(ImGuiHelper::FileBrowser& fileBrowser) {
     static std::string pathText;
     static std::string selectedExtensionType;
 
@@ -13,6 +15,22 @@ void DisplayFileBrowser(const ImGuiHelper::FileBrowser& fileBrowser) {
         ImGui::CloseCurrentPopup();
     };
 
+    static std::string lastDirectory = FileSystemHelper::GetCurrentDir();
+
+    // Show Files/Dirs Region
+    if (fileBrowser.hasJustOpened) {
+        fileBrowser.pathCache.LoadRootNodeDir(lastDirectory, FileNodeCache::LoadFlag::IncludeExtensions);
+    }
+
+    for (auto& dir : fileBrowser.pathCache.rootNode.directories) {
+        ImGui::Text("Dir: %s", dir.path.filename().string().c_str());
+    }
+    for (auto& file : fileBrowser.pathCache.rootNode.files) {
+        ImGui::Text("File: %s", file.path.filename().string().c_str());
+    }
+    ImGui::Separator();
+
+    //Bottom Region
     static ImGuiHelper::InputText pathInputText("Path:", pathText);
     ImGuiHelper::BeginInputText(pathInputText);
 
