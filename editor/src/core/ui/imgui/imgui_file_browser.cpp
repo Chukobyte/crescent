@@ -17,17 +17,38 @@ void DisplayFileBrowser(ImGuiHelper::FileBrowser& fileBrowser) {
 
     static std::string lastDirectory = FileSystemHelper::GetCurrentDir();
 
+    const ImVec2 windowSize = ImGui::GetWindowSize();
+
+    ImGui::Text("Path: %s", lastDirectory.c_str());
+
     // Show Files/Dirs Region
+    ImGui::SetNextWindowContentSize(ImVec2(windowSize.x - 20, 0));
+    ImGui::BeginChild("##ScrollingRegion", ImVec2(0, 200), true, ImGuiWindowFlags_None);
+
     if (fileBrowser.hasJustOpened) {
         fileBrowser.pathCache.LoadRootNodeDir(lastDirectory, FileNodeCache::LoadFlag::IncludeExtensions);
     }
 
+    static unsigned int selectionIndex = 0;
+    unsigned int index = 0;
     for (auto& dir : fileBrowser.pathCache.rootNode.directories) {
-        ImGui::Text("Dir: %s", dir.path.filename().string().c_str());
+        if (ImGui::Selectable(dir.path.filename().string().c_str(), selectionIndex == index, ImGuiSelectableFlags_AllowDoubleClick | ImGuiSelectableFlags_DontClosePopups)) {
+            selectionIndex = index;
+
+            if(ImGui::IsMouseDoubleClicked(0)) {}
+        }
+        index++;
     }
     for (auto& file : fileBrowser.pathCache.rootNode.files) {
-        ImGui::Text("File: %s", file.path.filename().string().c_str());
+        if (ImGui::Selectable(file.path.filename().string().c_str(), selectionIndex == index, ImGuiSelectableFlags_AllowDoubleClick | ImGuiSelectableFlags_DontClosePopups)) {
+            selectionIndex = index;
+
+            if(ImGui::IsMouseDoubleClicked(0)) {}
+        }
+        index++;
     }
+
+    ImGui::EndChild();
     ImGui::Separator();
 
     //Bottom Region
