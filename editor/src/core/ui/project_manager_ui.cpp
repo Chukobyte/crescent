@@ -73,7 +73,7 @@ void ProjectManagerUI::ProcessWindows() {
                 .mode = ImGuiHelper::FileBrowser::Mode::OpenFile,
                 .validExtensions = { ".py" },
                 .onModeCompletedFunc = [](const std::filesystem::path& fullPath) {
-                    rbe_logger_debug("Opening project at file path = '%s'", fullPath.generic_string().c_str());
+                    rbe_logger_debug("Opening project at file path = '%s'", fullPath.parent_path().generic_string().c_str());
                     LoadProject(fullPath.parent_path().generic_string().c_str());
                 }
             };
@@ -99,7 +99,6 @@ void ProjectManagerUI::ProcessWindows() {
                 ImGui::Separator();
             }
 
-
             // New Project Section
             ImGui::Text("Creates new project in 'test_games' folder...");
             // Name
@@ -110,13 +109,30 @@ void ProjectManagerUI::ProcessWindows() {
             static std::string newProjectPath;
             static ImGuiHelper::InputText newProjectPathInputText("New Project Path", newProjectPath);
             ImGuiHelper::BeginInputText(newProjectPathInputText);
+            ImGui::SameLine();
+            static ImGuiHelper::FileBrowser newProjectFileBrowser = {
+                    .name = "New Project Browser",
+                    .open = nullptr,
+                    .windowFlags = ImGuiWindowFlags_NoResize,
+                    .callbackFunc = nullptr,
+                    .position = ImVec2{ 100.0f, 100.0f },
+                    .size = ImVec2{ 600.0f, 320.0f },
+                    .rootPath = {},
+                    .mode = ImGuiHelper::FileBrowser::Mode::SelectDir,
+                    .validExtensions = {},
+                    .onModeCompletedFunc = [](const std::filesystem::path& fullPath) {
+                        rbe_logger_debug("New project at file path = '%s'", fullPath.generic_string().c_str());
+                        newProjectPath = fullPath.generic_string();
+                        newProjectPathInputText.SetValue(newProjectPath);
+                    }
+            };
+            ImGuiHelper::BeginFileBrowser(newProjectFileBrowser);
+            if (ImGui::Button("Browse")) {
+                ImGui::OpenPopup(newProjectFileBrowser.name);
+            }
             // Create new project
-            const std::string fullNewProjectPath = Helper::RemoveExtensionFromFilePath("test_games/" + newProjectPath);
-            if (ImGui::Button("Create New Project") && !newProjectName.empty() && !newProjectPath.empty() && !FileSystemHelper::DoesDirectoryExist(fullNewProjectPath)) {
-                if (!FileSystemHelper::CreateDirectory(fullNewProjectPath)) {
-                    rbe_logger_error("Failed to create directory at '%s'", fullNewProjectPath.c_str());
-                    return;
-                }
+            const std::string fullNewProjectPath = Helper::RemoveExtensionFromFilePath(newProjectPath);
+            if (ImGui::Button("Create New Project") && !newProjectName.empty() && !newProjectPath.empty() && FileSystemHelper::DirectoryExistsAndIsEmpty(fullNewProjectPath)) {
                 rbe_fs_chdir(std::filesystem::path(fullNewProjectPath).string().c_str());
                 // Create New Project Stuff
                 gameProperties->ResetToDefault();
