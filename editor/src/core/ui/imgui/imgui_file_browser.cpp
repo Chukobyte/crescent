@@ -38,7 +38,7 @@ void DisplayFileBrowser(ImGuiHelper::FileBrowser& fileBrowser) {
     unsigned int index = 0;
     for (auto& dir : fileBrowser.pathCache.rootNode.directories) {
         const std::string dirPath = dir.path.filename().string();
-        if (ImGui::Selectable(dirPath.c_str(), selectionIndex == index, ImGuiSelectableFlags_AllowDoubleClick | ImGuiSelectableFlags_DontClosePopups)) {
+        if (ImGui::Selectable(std::string(dirPath + "/").c_str(), selectionIndex == index, ImGuiSelectableFlags_AllowDoubleClick | ImGuiSelectableFlags_DontClosePopups)) {
             selectionIndex = index;
             pathInputText.SetValue(dirPath);
 
