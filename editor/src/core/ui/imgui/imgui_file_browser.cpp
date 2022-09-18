@@ -21,13 +21,16 @@ void DisplayFileBrowser(ImGuiHelper::FileBrowser& fileBrowser) {
 
     const ImVec2 windowSize = ImGui::GetWindowSize();
 
-    ImGui::Text("Path: %s", lastDirectory.c_str());
+    static std::string dirText;
+    static ImGuiHelper::InputText dirInputText("Dir:", dirText);
+    ImGuiHelper::BeginInputText(dirInputText);
 
     // Show Files/Dirs Region
     ImGui::SetNextWindowContentSize(ImVec2(windowSize.x - 20, 0));
     ImGui::BeginChild("##ScrollingRegion", ImVec2(0, 200), true, ImGuiWindowFlags_None);
 
     if (fileBrowser.hasJustOpened) {
+        dirInputText.SetValue(lastDirectory);
         fileBrowser.pathCache.LoadRootNodeDir(lastDirectory, FileNodeCache::LoadFlag::IncludeExtensions);
     }
 
