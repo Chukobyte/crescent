@@ -7,10 +7,12 @@ unsigned int selectedFileBrowserIndex = 0;
 
 void DisplayFileBrowser(ImGuiHelper::FileBrowser& fileBrowser) {
     static std::string pathText;
+    static ImGuiHelper::InputText pathInputText("Path:", pathText);
     static std::string selectedExtensionType;
 
     static auto CloseDisplayPopup = [] {
         pathText.clear();
+        pathInputText.SetValue(pathText);
         selectedFileBrowserIndex = 0;
         ImGui::CloseCurrentPopup();
     };
@@ -32,16 +34,20 @@ void DisplayFileBrowser(ImGuiHelper::FileBrowser& fileBrowser) {
     static unsigned int selectionIndex = 0;
     unsigned int index = 0;
     for (auto& dir : fileBrowser.pathCache.rootNode.directories) {
-        if (ImGui::Selectable(dir.path.filename().string().c_str(), selectionIndex == index, ImGuiSelectableFlags_AllowDoubleClick | ImGuiSelectableFlags_DontClosePopups)) {
+        const std::string dirPath = dir.path.filename().string();
+        if (ImGui::Selectable(dirPath.c_str(), selectionIndex == index, ImGuiSelectableFlags_AllowDoubleClick | ImGuiSelectableFlags_DontClosePopups)) {
             selectionIndex = index;
+            pathInputText.SetValue(dirPath);
 
             if(ImGui::IsMouseDoubleClicked(0)) {}
         }
         index++;
     }
     for (auto& file : fileBrowser.pathCache.rootNode.files) {
-        if (ImGui::Selectable(file.path.filename().string().c_str(), selectionIndex == index, ImGuiSelectableFlags_AllowDoubleClick | ImGuiSelectableFlags_DontClosePopups)) {
+        const std::string filePath = file.path.filename().string();
+        if (ImGui::Selectable(filePath.c_str(), selectionIndex == index, ImGuiSelectableFlags_AllowDoubleClick | ImGuiSelectableFlags_DontClosePopups)) {
             selectionIndex = index;
+            pathInputText.SetValue(filePath);
 
             if(ImGui::IsMouseDoubleClicked(0)) {}
         }
@@ -52,7 +58,6 @@ void DisplayFileBrowser(ImGuiHelper::FileBrowser& fileBrowser) {
     ImGui::Separator();
 
     //Bottom Region
-    static ImGuiHelper::InputText pathInputText("Path:", pathText);
     ImGuiHelper::BeginInputText(pathInputText);
 
     if (fileBrowser.mode != ImGuiHelper::FileBrowser::Mode::SelectDir) {

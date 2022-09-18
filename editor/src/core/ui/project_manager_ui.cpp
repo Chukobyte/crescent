@@ -71,10 +71,10 @@ void ProjectManagerUI::ProcessWindows() {
             static ImGuiHelper::FileBrowser fileBrowser = {
                 .name = "Open Project Browser",
                 .open = nullptr,
-                .windowFlags = 0,
+                .windowFlags = ImGuiWindowFlags_NoResize,
                 .callbackFunc = nullptr,
                 .position = ImVec2{ 100.0f, 100.0f },
-                .size = ImVec2{ 400.0f, 300.0f },
+                .size = ImVec2{ 600.0f, 320.0f },
                 .rootPath = {},
                 .mode = ImGuiHelper::FileBrowser::Mode::OpenFile,
                 .validExtensions = {}
