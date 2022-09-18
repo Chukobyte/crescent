@@ -23,6 +23,7 @@ void DisplayFileBrowser(ImGuiHelper::FileBrowser& fileBrowser) {
 
     static std::string dirText;
     static ImGuiHelper::InputText dirInputText("Dir:", dirText);
+    ImGui::PushItemWidth(500);
     ImGuiHelper::BeginInputText(dirInputText);
 
     // Show Files/Dirs Region
