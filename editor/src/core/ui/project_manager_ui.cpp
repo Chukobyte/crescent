@@ -76,11 +76,10 @@ void ProjectManagerUI::ProcessWindows() {
                 .position = ImVec2{ 100.0f, 100.0f },
                 .size = ImVec2{ 600.0f, 320.0f },
                 .rootPath = {},
-                .mode = ImGuiHelper::FileBrowser::Mode::SaveFile,
-                .validExtensions = {},
-//                .validExtensions = { ".exe", ".dll", ".cmake" },
+                .mode = ImGuiHelper::FileBrowser::Mode::OpenFile,
+                .validExtensions = { ".py" },
                 .onModeCompletedFunc = [](const std::filesystem::path& fullPath) {
-                    rbe_logger_debug("On Mode Completion Full Path = '%s'", fullPath.generic_string().c_str());
+                    rbe_logger_debug("Opening project at file path = '%s'", fullPath.generic_string().c_str());
                 }
             };
             ImGuiHelper::BeginFileBrowser(fileBrowser);
