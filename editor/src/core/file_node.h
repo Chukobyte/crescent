@@ -6,6 +6,7 @@
 #include <filesystem>
 
 #include "utils/helper.h"
+#include "utils/enum_class_utils.h"
 
 enum class FileNodeType {
     Invalid,

@@ -55,6 +55,7 @@ void FileNodeCache::LoadRootNodeDir(const std::string& filePath, LoadFlag loadFl
     rootNode.directories.clear();
     rootNode.files.clear();
     rootNode.index = nodeIndexCount;
+    extensionToFileNodeMap.clear();
     LoadFileNodeEntries(rootNode, loadFlag);
 }
 
@@ -78,7 +79,7 @@ void FileNodeCache::LoadFileNodeEntries(FileNode &fileNode, LoadFlag loadFlag) {
             fileNode.files.emplace_back(regularFileNode);
             if (includeExtensions) {
                 const std::string extension = regularFileNode.path.extension().string();
-                AddFile(extension, fileNode);
+                AddFile(extension, regularFileNode);
             }
         }
     }

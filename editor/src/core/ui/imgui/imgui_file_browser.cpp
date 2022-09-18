@@ -37,7 +37,8 @@ void DisplayFileBrowser(ImGuiHelper::FileBrowser& fileBrowser) {
 
     const auto& mode = fileBrowser.mode;
     static unsigned int selectionIndex = 0;
-    unsigned int index = 0;
+    static unsigned int index = 0;
+    index = 0;
     for (auto& dir : fileBrowser.pathCache.rootNode.directories) {
         const std::string dirPath = dir.path.filename().string();
         if (ImGui::Selectable(std::string(dirPath + "/").c_str(), selectionIndex == index, ImGuiSelectableFlags_AllowDoubleClick | ImGuiSelectableFlags_DontClosePopups)) {
@@ -50,8 +51,9 @@ void DisplayFileBrowser(ImGuiHelper::FileBrowser& fileBrowser) {
         }
         index++;
     }
-    for (auto& file : fileBrowser.pathCache.rootNode.files) {
-        const std::string filePath = file.path.filename().string();
+
+    static auto HandleFile = [](const FileNode& fileNode, ImGuiHelper::FileBrowser::Mode mode) {
+        const std::string filePath = fileNode.path.filename().string();
         if (ImGui::Selectable(filePath.c_str(), selectionIndex == index, ImGuiSelectableFlags_AllowDoubleClick | ImGuiSelectableFlags_DontClosePopups)) {
             selectionIndex = index;
             if (mode == ImGuiHelper::FileBrowser::Mode::OpenFile || mode == ImGuiHelper::FileBrowser::Mode::SaveFile) {
@@ -61,6 +63,15 @@ void DisplayFileBrowser(ImGuiHelper::FileBrowser& fileBrowser) {
             if(ImGui::IsMouseDoubleClicked(0)) {}
         }
         index++;
+    };
+    if (mode == ImGuiHelper::FileBrowser::Mode::SelectDir || fileBrowser.validExtensions.empty()) {
+        for (auto& file : fileBrowser.pathCache.rootNode.files) {
+            HandleFile(file, mode);
+        }
+    } else {
+        for (auto& file : fileBrowser.pathCache.extensionToFileNodeMap[selectedExtensionType]) {
+            HandleFile(file, mode);
+        }
     }
 
     ImGui::EndChild();
@@ -86,6 +97,8 @@ void DisplayFileBrowser(ImGuiHelper::FileBrowser& fileBrowser) {
             } else {
                 extensionList = fileBrowser.validExtensions;
             }
+            extensionSelectionComboBox.items = extensionList;
+            selectedExtensionType = extensionList[0];
         }
         ImGuiHelper::BeginComboBox(extensionSelectionComboBox);
     }
@@ -94,13 +107,14 @@ void DisplayFileBrowser(ImGuiHelper::FileBrowser& fileBrowser) {
         CloseDisplayPopup();
     }
     ImGui::SameLine();
-    // TODO: DO validation on completion buttons
+    // TODO: Finish validation on completion buttons
     const std::filesystem::path fullPath = dirInputText.GetValue() + "/" + pathInputText.GetValue();
+    const bool doesPathInputHaveText = !pathInputText.GetValue().empty();
     switch (fileBrowser.mode) {
     case ImGuiHelper::FileBrowser::Mode::SelectDir: {
-        if (ImGui::Button("Open")) {}
+        if (ImGui::Button("Open") && doesPathInputHaveText) {}
         ImGui::SameLine();
-        if (ImGui::Button("Select") && FileSystemHelper::DoesDirectoryExist(fullPath)) {
+        if (ImGui::Button("Select") && doesPathInputHaveText && FileSystemHelper::DoesDirectoryExist(fullPath)) {
             if (fileBrowser.onModeCompletedFunc) {
                 fileBrowser.onModeCompletedFunc(fullPath);
             }
@@ -109,7 +123,7 @@ void DisplayFileBrowser(ImGuiHelper::FileBrowser& fileBrowser) {
         break;
     }
     case ImGuiHelper::FileBrowser::Mode::OpenFile: {
-        if (ImGui::Button("Open") && FileSystemHelper::DoesFileExist(fullPath)) {
+        if (ImGui::Button("Open") && doesPathInputHaveText && FileSystemHelper::DoesFileExist(fullPath)) {
             if (fileBrowser.onModeCompletedFunc) {
                 fileBrowser.onModeCompletedFunc(fullPath);
             }
@@ -118,7 +132,7 @@ void DisplayFileBrowser(ImGuiHelper::FileBrowser& fileBrowser) {
         break;
     }
     case ImGuiHelper::FileBrowser::Mode::SaveFile: {
-        if (ImGui::Button("Save")) {
+        if (ImGui::Button("Save") && doesPathInputHaveText) {
             if (fileBrowser.onModeCompletedFunc) {
                 // TODO: Make override popup if file already exists
                 fileBrowser.onModeCompletedFunc(fullPath);
