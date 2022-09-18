@@ -18,11 +18,11 @@ inline void WriteFile(const std::string& filePath, const std::string& fileText) 
     myFile.close();
 }
 
-inline bool DoesDirectoryExist(const std::string& filePath) {
+inline bool DoesDirectoryExist(const std::filesystem::path& filePath) {
     return std::filesystem::is_directory(filePath);
 }
 
-inline bool DoesFileExist(const std::string& filePath) {
+inline bool DoesFileExist(const std::filesystem::path& filePath) {
     return std::filesystem::exists(filePath);
 }
 

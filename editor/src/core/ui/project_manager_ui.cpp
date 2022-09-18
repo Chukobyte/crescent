@@ -78,8 +78,8 @@ void ProjectManagerUI::ProcessWindows() {
                 .rootPath = {},
                 .mode = ImGuiHelper::FileBrowser::Mode::OpenFile,
                 .validExtensions = {},
-                .onModeCompletedFunc = [](const std::string& fullPath) {
-                    rbe_logger_debug("On Mode Completion Full Path = '%s'", fullPath.c_str());
+                .onModeCompletedFunc = [](const std::filesystem::path& fullPath) {
+                    rbe_logger_debug("On Mode Completion Full Path = '%s'", fullPath.generic_string().c_str());
                 }
             };
             ImGuiHelper::BeginFileBrowser(fileBrowser);

@@ -35,13 +35,16 @@ void DisplayFileBrowser(ImGuiHelper::FileBrowser& fileBrowser) {
         fileBrowser.pathCache.LoadRootNodeDir(lastDirectory, FileNodeCache::LoadFlag::IncludeExtensions);
     }
 
+    const auto& mode = fileBrowser.mode;
     static unsigned int selectionIndex = 0;
     unsigned int index = 0;
     for (auto& dir : fileBrowser.pathCache.rootNode.directories) {
         const std::string dirPath = dir.path.filename().string();
         if (ImGui::Selectable(std::string(dirPath + "/").c_str(), selectionIndex == index, ImGuiSelectableFlags_AllowDoubleClick | ImGuiSelectableFlags_DontClosePopups)) {
             selectionIndex = index;
-            pathInputText.SetValue(dirPath);
+            if (mode == ImGuiHelper::FileBrowser::Mode::SelectDir) {
+                pathInputText.SetValue(dirPath);
+            }
 
             if(ImGui::IsMouseDoubleClicked(0)) {}
         }
@@ -51,7 +54,9 @@ void DisplayFileBrowser(ImGuiHelper::FileBrowser& fileBrowser) {
         const std::string filePath = file.path.filename().string();
         if (ImGui::Selectable(filePath.c_str(), selectionIndex == index, ImGuiSelectableFlags_AllowDoubleClick | ImGuiSelectableFlags_DontClosePopups)) {
             selectionIndex = index;
-            pathInputText.SetValue(filePath);
+            if (mode == ImGuiHelper::FileBrowser::Mode::OpenFile || mode == ImGuiHelper::FileBrowser::Mode::SaveFile) {
+                pathInputText.SetValue(filePath);
+            }
 
             if(ImGui::IsMouseDoubleClicked(0)) {}
         }
@@ -90,10 +95,12 @@ void DisplayFileBrowser(ImGuiHelper::FileBrowser& fileBrowser) {
     }
     ImGui::SameLine();
     // TODO: DO validation on completion buttons
-    const std::string fullPath = dirInputText.GetValue() + "/" + pathInputText.GetValue();
+    const std::filesystem::path fullPath = dirInputText.GetValue() + "/" + pathInputText.GetValue();
     switch (fileBrowser.mode) {
     case ImGuiHelper::FileBrowser::Mode::SelectDir: {
-        if (ImGui::Button("Select")) {
+        if (ImGui::Button("Open")) {}
+        ImGui::SameLine();
+        if (ImGui::Button("Select") && FileSystemHelper::DoesDirectoryExist(fullPath)) {
             if (fileBrowser.onModeCompletedFunc) {
                 fileBrowser.onModeCompletedFunc(fullPath);
             }
@@ -102,7 +109,7 @@ void DisplayFileBrowser(ImGuiHelper::FileBrowser& fileBrowser) {
         break;
     }
     case ImGuiHelper::FileBrowser::Mode::OpenFile: {
-        if (ImGui::Button("Open")) {
+        if (ImGui::Button("Open") && FileSystemHelper::DoesFileExist(fullPath)) {
             if (fileBrowser.onModeCompletedFunc) {
                 fileBrowser.onModeCompletedFunc(fullPath);
             }
@@ -113,6 +120,7 @@ void DisplayFileBrowser(ImGuiHelper::FileBrowser& fileBrowser) {
     case ImGuiHelper::FileBrowser::Mode::SaveFile: {
         if (ImGui::Button("Save")) {
             if (fileBrowser.onModeCompletedFunc) {
+                // TODO: Make override popup if file already exists
                 fileBrowser.onModeCompletedFunc(fullPath);
             }
             CloseDisplayPopup();
