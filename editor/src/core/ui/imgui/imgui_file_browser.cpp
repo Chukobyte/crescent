@@ -9,6 +9,8 @@ void DisplayFileBrowser(ImGuiHelper::FileBrowser& fileBrowser) {
     static std::string pathText;
     static ImGuiHelper::InputText pathInputText("Path:", pathText);
     static std::string selectedExtensionType;
+    static bool reloadDirPathCache = false;
+    static bool reloadExtensionList = false;
 
     static auto CloseDisplayPopup = [] {
         pathText.clear();
@@ -30,9 +32,10 @@ void DisplayFileBrowser(ImGuiHelper::FileBrowser& fileBrowser) {
     ImGui::SetNextWindowContentSize(ImVec2(windowSize.x - 20, 0));
     ImGui::BeginChild("##ScrollingRegion", ImVec2(0, 200), true, ImGuiWindowFlags_None);
 
-    if (fileBrowser.hasJustOpened) {
+    if (fileBrowser.hasJustOpened || reloadDirPathCache) {
         dirInputText.SetValue(lastDirectory);
         fileBrowser.pathCache.LoadRootNodeDir(lastDirectory, FileNodeCache::LoadFlag::IncludeExtensions);
+        reloadDirPathCache = false;
     }
 
     const auto& mode = fileBrowser.mode;
@@ -47,7 +50,11 @@ void DisplayFileBrowser(ImGuiHelper::FileBrowser& fileBrowser) {
                 pathInputText.SetValue(dirPath);
             }
 
-            if(ImGui::IsMouseDoubleClicked(0)) {}
+            if(ImGui::IsMouseDoubleClicked(0)) {
+                lastDirectory = dir.path.generic_string();
+                reloadDirPathCache = true;
+                reloadExtensionList = true;
+            }
         }
         index++;
     }
@@ -64,13 +71,15 @@ void DisplayFileBrowser(ImGuiHelper::FileBrowser& fileBrowser) {
         }
         index++;
     };
-    if (mode == ImGuiHelper::FileBrowser::Mode::SelectDir || fileBrowser.validExtensions.empty()) {
-        for (auto& file : fileBrowser.pathCache.rootNode.files) {
-            HandleFile(file, mode);
-        }
-    } else {
-        for (auto& file : fileBrowser.pathCache.extensionToFileNodeMap[selectedExtensionType]) {
-            HandleFile(file, mode);
+    if (mode != ImGuiHelper::FileBrowser::Mode::SelectDir) {
+        if (fileBrowser.validExtensions.empty()) {
+            for (auto& file : fileBrowser.pathCache.rootNode.files) {
+                HandleFile(file, mode);
+            }
+        } else {
+            for (auto& file : fileBrowser.pathCache.extensionToFileNodeMap[selectedExtensionType]) {
+                HandleFile(file, mode);
+            }
         }
     }
 
@@ -90,7 +99,7 @@ void DisplayFileBrowser(ImGuiHelper::FileBrowser& fileBrowser) {
             selectedExtensionType = newItem;
         }
         );
-        if (fileBrowser.hasJustOpened) {
+        if (fileBrowser.hasJustOpened  || reloadExtensionList) {
             extensionList.clear();
             if (fileBrowser.validExtensions.empty()) {
                 extensionList.emplace_back("*.*");
@@ -99,6 +108,7 @@ void DisplayFileBrowser(ImGuiHelper::FileBrowser& fileBrowser) {
             }
             extensionSelectionComboBox.items = extensionList;
             selectedExtensionType = extensionList[0];
+            reloadExtensionList = false;
         }
         ImGuiHelper::BeginComboBox(extensionSelectionComboBox);
     }
@@ -112,7 +122,11 @@ void DisplayFileBrowser(ImGuiHelper::FileBrowser& fileBrowser) {
     const bool doesPathInputHaveText = !pathInputText.GetValue().empty();
     switch (fileBrowser.mode) {
     case ImGuiHelper::FileBrowser::Mode::SelectDir: {
-        if (ImGui::Button("Open") && doesPathInputHaveText) {}
+        if (ImGui::Button("Open") && doesPathInputHaveText && FileSystemHelper::DoesDirectoryExist(fullPath)) {
+            lastDirectory = fullPath.generic_string();
+            reloadDirPathCache = true;
+            reloadExtensionList = true;
+        }
         ImGui::SameLine();
         if (ImGui::Button("Select") && doesPathInputHaveText && FileSystemHelper::DoesDirectoryExist(fullPath)) {
             if (fileBrowser.onModeCompletedFunc) {
