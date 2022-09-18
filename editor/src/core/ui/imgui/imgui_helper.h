@@ -10,6 +10,7 @@
 #include "imgui.h"
 
 #include "../../utils/singleton.h"
+#include "../../utils/observable_property.h"
 
 // TODO: Templatize and separate classes/structs into separate files
 
@@ -54,10 +55,11 @@ struct InputText {
     [[nodiscard]] const char* GetInternalLabel() const;
 
     std::string label;
-    std::string &value;
+    std::string& value;
     ImGuiInputTextFlags flags = ImGuiInputTextFlags_None;
     size_t bufferSize = 256;
     std::unique_ptr<char[]> buffer;
+    std::weak_ptr<ObservableProperty<std::string>> valueWPtr;
 
   private:
     std::string internalLabel;

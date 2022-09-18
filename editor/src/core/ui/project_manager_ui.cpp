@@ -111,20 +111,20 @@ void ProjectManagerUI::ProcessWindows() {
             ImGuiHelper::BeginInputText(newProjectPathInputText);
             ImGui::SameLine();
             static ImGuiHelper::FileBrowser newProjectFileBrowser = {
-                    .name = "New Project Browser",
-                    .open = nullptr,
-                    .windowFlags = ImGuiWindowFlags_NoResize,
-                    .callbackFunc = nullptr,
-                    .position = ImVec2{ 100.0f, 100.0f },
-                    .size = ImVec2{ 600.0f, 320.0f },
-                    .rootPath = {},
-                    .mode = ImGuiHelper::FileBrowser::Mode::SelectDir,
-                    .validExtensions = {},
-                    .onModeCompletedFunc = [](const std::filesystem::path& fullPath) {
-                        rbe_logger_debug("New project at file path = '%s'", fullPath.generic_string().c_str());
-                        newProjectPath = fullPath.generic_string();
-                        newProjectPathInputText.SetValue(newProjectPath);
-                    }
+                .name = "New Project Browser",
+                .open = nullptr,
+                .windowFlags = ImGuiWindowFlags_NoResize,
+                .callbackFunc = nullptr,
+                .position = ImVec2{ 100.0f, 100.0f },
+                .size = ImVec2{ 600.0f, 320.0f },
+                .rootPath = {},
+                .mode = ImGuiHelper::FileBrowser::Mode::SelectDir,
+                .validExtensions = {},
+                .onModeCompletedFunc = [](const std::filesystem::path& fullPath) {
+                    rbe_logger_debug("New project at file path = '%s'", fullPath.generic_string().c_str());
+                    newProjectPath = fullPath.generic_string();
+                    newProjectPathInputText.SetValue(newProjectPath);
+                }
             };
             ImGuiHelper::BeginFileBrowser(newProjectFileBrowser);
             if (ImGui::Button("Browse")) {
