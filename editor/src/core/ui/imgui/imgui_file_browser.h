@@ -24,7 +24,7 @@ struct FileBrowser {
     std::string rootPath;
     Mode mode = Mode::OpenFile;
     std::vector<std::string> validExtensions;
-    std::function<void(const FileNode&)> onModeCompletedFunc = nullptr;
+    std::function<void(const std::string&)> onModeCompletedFunc = nullptr;
     std::optional<FileNode> selectedNode;
     bool hasJustOpened = false;
     FileNodeCache pathCache;

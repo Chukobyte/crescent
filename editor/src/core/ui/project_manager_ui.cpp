@@ -77,7 +77,10 @@ void ProjectManagerUI::ProcessWindows() {
                 .size = ImVec2{ 600.0f, 320.0f },
                 .rootPath = {},
                 .mode = ImGuiHelper::FileBrowser::Mode::OpenFile,
-                .validExtensions = {}
+                .validExtensions = {},
+                .onModeCompletedFunc = [](const std::string& fullPath) {
+                    rbe_logger_debug("On Mode Completion Full Path = '%s'", fullPath.c_str());
+                }
             };
             ImGuiHelper::BeginFileBrowser(fileBrowser);
             if (openFileBrowser) {

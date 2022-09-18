@@ -89,21 +89,32 @@ void DisplayFileBrowser(ImGuiHelper::FileBrowser& fileBrowser) {
         CloseDisplayPopup();
     }
     ImGui::SameLine();
+    // TODO: DO validation on completion buttons
+    const std::string fullPath = dirInputText.GetValue() + "/" + pathInputText.GetValue();
     switch (fileBrowser.mode) {
     case ImGuiHelper::FileBrowser::Mode::SelectDir: {
         if (ImGui::Button("Select")) {
+            if (fileBrowser.onModeCompletedFunc) {
+                fileBrowser.onModeCompletedFunc(fullPath);
+            }
             CloseDisplayPopup();
         }
         break;
     }
     case ImGuiHelper::FileBrowser::Mode::OpenFile: {
         if (ImGui::Button("Open")) {
+            if (fileBrowser.onModeCompletedFunc) {
+                fileBrowser.onModeCompletedFunc(fullPath);
+            }
             CloseDisplayPopup();
         }
         break;
     }
     case ImGuiHelper::FileBrowser::Mode::SaveFile: {
         if (ImGui::Button("Save")) {
+            if (fileBrowser.onModeCompletedFunc) {
+                fileBrowser.onModeCompletedFunc(fullPath);
+            }
             CloseDisplayPopup();
         }
         break;
