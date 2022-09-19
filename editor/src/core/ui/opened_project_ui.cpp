@@ -113,6 +113,7 @@ void OpenedProjectUI::ProcessMenuBar() {
                                                         filePathText.SetValue(relativePath);
                                                     }
                                                 };
+                                                saveSceneFileBrowser.rootPath = projectProperties->projectPath;
                                                 ImGuiHelper::BeginFileBrowser(saveSceneFileBrowser);
                                                 if (ImGui::Button("Browse")) {
                                                     ImGui::OpenPopup(saveSceneFileBrowser.name);
