@@ -13,8 +13,7 @@ void DisplayFileBrowser(ImGuiHelper::FileBrowser& fileBrowser) {
     static bool reloadExtensionList = false;
 
     static auto CloseDisplayPopup = [] {
-        pathText.clear();
-        pathInputText.SetValue(pathText);
+        pathInputText.SetValue("");
         selectedFileBrowserIndex = 0;
         ImGui::CloseCurrentPopup();
     };

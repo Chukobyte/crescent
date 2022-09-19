@@ -62,7 +62,7 @@ void ProjectManagerUI::ProcessWindows() {
             if (ImGui::Button("Open Project")) {
                 openFileBrowser = true;
             }
-            static ImGuiHelper::FileBrowser fileBrowser = {
+            static ImGuiHelper::FileBrowser openProjectFileBrowser = {
                 .name = "Open Project Browser",
                 .open = nullptr,
                 .windowFlags = ImGuiWindowFlags_NoResize,
@@ -77,10 +77,10 @@ void ProjectManagerUI::ProcessWindows() {
                     LoadProject(fullPath.parent_path().generic_string().c_str());
                 }
             };
-            ImGuiHelper::BeginFileBrowser(fileBrowser);
+            ImGuiHelper::BeginFileBrowser(openProjectFileBrowser);
             if (openFileBrowser) {
                 openFileBrowser = false;
-                ImGui::OpenPopup(fileBrowser.name);
+                ImGui::OpenPopup(openProjectFileBrowser.name);
             }
             ImGui::Separator();
 
@@ -122,8 +122,7 @@ void ProjectManagerUI::ProcessWindows() {
                 .validExtensions = {},
                 .onModeCompletedFunc = [](const std::filesystem::path& fullPath) {
                     rbe_logger_debug("New project at file path = '%s'", fullPath.generic_string().c_str());
-                    newProjectPath = fullPath.generic_string();
-                    newProjectPathInputText.SetValue(newProjectPath);
+                    newProjectPathInputText.SetValue(fullPath.generic_string());
                 }
             };
             ImGuiHelper::BeginFileBrowser(newProjectFileBrowser);
