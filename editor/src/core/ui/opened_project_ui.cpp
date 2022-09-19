@@ -15,6 +15,7 @@
 #include "../utils/process_runner/process_runner.h"
 #include "../editor_callbacks.h"
 #include "../game_exporter.h"
+#include "imgui/imgui_file_browser.h"
 
 const char* CONFIG_FILE_NAME = "cre_config.py";
 const std::string COMBO_BOX_LIST_NONE = "<none>";
@@ -52,7 +53,7 @@ void OpenedProjectUI::ProcessMenuBar() {
                                 .name = "Open Scene Menu",
                                 .open = nullptr,
                                 .windowFlags = 0,
-                                .callbackFunc = [gameProperties = ProjectProperties::Get()] (ImGuiHelper::Context* context) {
+                                .callbackFunc = [] (ImGuiHelper::Context* context) {
                                     static std::string openSceneFilePath;
                                     ImGuiHelper::InputText nameText("File Path", openSceneFilePath);
                                     ImGuiHelper::BeginInputText(nameText);
@@ -91,18 +92,41 @@ void OpenedProjectUI::ProcessMenuBar() {
                                             .name = "Save New Scene Menu",
                                             .open = nullptr,
                                             .windowFlags = 0,
-                                            .callbackFunc = [gameProperties = ProjectProperties::Get()] (ImGuiHelper::Context* context) {
+                                            .callbackFunc = [projectProperties = ProjectProperties::Get()] (ImGuiHelper::Context* context) {
                                                 static std::string saveSceneFilePath;
-                                                ImGuiHelper::InputText nameText("File Path", saveSceneFilePath);
-                                                ImGuiHelper::BeginInputText(nameText);
+                                                static ImGuiHelper::InputText filePathText("File Path", saveSceneFilePath);
+                                                ImGuiHelper::BeginInputText(filePathText);
+                                                ImGui::SameLine();
+                                                static ImGuiHelper::FileBrowser saveSceneFileBrowser = {
+                                                    .name = "Save Scene Browser",
+                                                    .open = nullptr,
+                                                    .windowFlags = ImGuiWindowFlags_NoResize,
+                                                    .callbackFunc = nullptr,
+                                                    .position = ImVec2{ 100.0f, 100.0f },
+                                                    .size = ImVec2{ 600.0f, 320.0f },
+                                                    .rootPath = {},
+                                                    .mode = ImGuiHelper::FileBrowser::Mode::SaveFile,
+                                                    .validExtensions = { ".py" },
+                                                    .onModeCompletedFunc = [projectProperties](const std::filesystem::path& fullPath) {
+                                                        const std::string relativePath = projectProperties->GetPathRelativeToProjectPath(fullPath.generic_string());
+                                                        rbe_logger_debug("New project at file path = '%s'", relativePath.c_str());
+                                                        filePathText.SetValue(relativePath);
+                                                    }
+                                                };
+                                                ImGuiHelper::BeginFileBrowser(saveSceneFileBrowser);
+                                                if (ImGui::Button("Browse")) {
+                                                    ImGui::OpenPopup(saveSceneFileBrowser.name);
+                                                }
+
                                                 if (ImGui::Button("Close")) {
+                                                    filePathText.SetValue("");
                                                     saveSceneFilePath.clear();
                                                     ImGui::CloseCurrentPopup();
                                                 }
                                                 ImGui::SameLine();
-                                                if (ImGui::Button("Ok") && !saveSceneFilePath.empty()) {
+                                                if (ImGui::Button("Ok") && !filePathText.GetValue().empty()) {
                                                     auto* selectedSceneFile = SceneManager::Get()->selectedSceneFile;
-                                                    const std::string validFullFilePath = Helper::ConvertFilePathToFilePathExtension(saveSceneFilePath, ".py");
+                                                    const std::string validFullFilePath = Helper::ConvertFilePathToFilePathExtension(filePathText.GetValue(), ".py");
                                                     selectedSceneFile->filePath = validFullFilePath;
                                                     SceneFileCreator::GenerateSceneFile(selectedSceneFile, validFullFilePath.c_str());
                                                     selectedSceneFile->hasBeenSaved = true;

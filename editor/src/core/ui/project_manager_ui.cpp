@@ -33,6 +33,7 @@ void ProjectManagerUI::ProcessWindows() {
                 if (FileSystemHelper::GetCurrentDir() != std::string(projectPath)) {
                     rbe_fs_chdir(projectPath);
                 }
+                gameProperties->projectPath = projectPath;
                 editorContext->projectState = EditorProjectState::OpenedProject;
                 rbe_logger_debug("Opening project at directory = %s", projectPath);
                 gameProperties->LoadPropertiesFromConfig("cre_config.py");

@@ -116,10 +116,16 @@ void DisplayFileBrowser(ImGuiHelper::FileBrowser& fileBrowser) {
         CloseDisplayPopup();
     }
     ImGui::SameLine();
-    // TODO: Finish validation on completion buttons
-    const std::filesystem::path fullPath = dirInputText.GetValue() + "/" + pathInputText.GetValue();
+    // TODO: Validate better...
+    std::string pathCandidate = dirInputText.GetValue() + "/" + pathInputText.GetValue();
+    if (!selectedExtensionType.empty() && mode != ImGuiHelper::FileBrowser::Mode::SelectDir && selectedExtensionType != "*.*") {
+        pathCandidate = Helper::ConvertFilePathToFilePathExtension(pathCandidate, selectedExtensionType);
+    } else if (mode == ImGuiHelper::FileBrowser::Mode::SelectDir) {
+        pathCandidate = Helper::RemoveExtensionFromFilePath(pathCandidate);
+    }
+    const std::filesystem::path fullPath = pathCandidate;
     const bool doesPathInputHaveText = !pathInputText.GetValue().empty();
-    switch (fileBrowser.mode) {
+    switch (mode) {
     case ImGuiHelper::FileBrowser::Mode::SelectDir: {
         if (ImGui::Button("Open") && doesPathInputHaveText && FileSystemHelper::DoesDirectoryExist(fullPath)) {
             lastDirectory = fullPath.generic_string();
