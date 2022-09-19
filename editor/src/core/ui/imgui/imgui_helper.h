@@ -162,6 +162,24 @@ struct ComboBox {
     std::string internalLabel;
 };
 
+struct AssetBrowserComboBox {
+    AssetBrowserComboBox(std::string label, std::string extension, std::function<void(const char* newItem)> onSelectionChangeCallback = nullptr, int labelIndex = 0);
+    [[nodiscard]] const char* GetInternalLabel() const;
+    [[nodiscard]] const char* GetSelectedItem() const;
+    void SetSelected(const std::string& itemToSelect, bool executeCallbacks = true);
+
+    std::string label;
+    std::string extension;
+    std::vector<std::string> items;
+    int selectedIndex = 0;
+    std::function<void(const char* newItem)> onSelectionChangeCallback = nullptr;
+
+    void RefreshListFromBrowser();
+
+  private:
+    std::string internalLabel;
+};
+
 struct TreeNode {
     std::string label;
     ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_None;
@@ -223,6 +241,7 @@ void BeginDragFloat4(const DragFloat4& dragFloat4);
 void BeginColorEdit4(const ColorEdit4& colorEdit4);
 void BeginCheckBox(const CheckBox& checkBox);
 void BeginComboBox(ComboBox& comboBox);
+void BeginAssetBrowserComboBox(AssetBrowserComboBox& comboBox);
 void BeginTreeNode(const TreeNode& treeNode);
 void BeginWindow(const Window& window);
 void BeginWindowWithEnd(const Window& window);
