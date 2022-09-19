@@ -255,7 +255,10 @@ ImGuiHelper::AssetBrowserComboBox::AssetBrowserComboBox(std::string label, std::
       onSelectionChangeCallback(onSelectionChangeCallback ? std::move(onSelectionChangeCallback) : nullptr) {
     internalLabel = "##" + std::to_string(labelIndex) + this->label;
     AssetBrowser* assetBrowser = AssetBrowser::Get();
-    assetBrowser->RegisterRefreshCallback([this](const FileNode& rootNode) { RefreshListFromBrowser(); });
+    assetBrowser->RegisterRefreshCallback([this](const FileNode& rootNode) {
+        RefreshListFromBrowser();
+    });
+    RefreshListFromBrowser();
 }
 
 const char* ImGuiHelper::AssetBrowserComboBox::GetInternalLabel() const {

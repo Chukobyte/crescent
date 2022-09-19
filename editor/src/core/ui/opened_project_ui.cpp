@@ -179,31 +179,41 @@ void OpenedProjectUI::ProcessMenuBar() {
                                 .name = "Project Settings Menu",
                                 .open = nullptr,
                                 .windowFlags = 0,
-                                .callbackFunc = [gameProperties = ProjectProperties::Get()] (ImGuiHelper::Context* context) {
+                                .callbackFunc = [projectProperties = ProjectProperties::Get()] (ImGuiHelper::Context* context) {
+                                    static bool justOpened = true;
                                     // TODO: Do more validation
-                                    if (ImGui::Button("Close") && !gameProperties->gameTitle.empty()) {
-                                        ConfigFileCreator::GenerateConfigFile(CONFIG_FILE_NAME, gameProperties);
+                                    if (ImGui::Button("Close") && !projectProperties->gameTitle.empty()) {
+                                        ConfigFileCreator::GenerateConfigFile(CONFIG_FILE_NAME, projectProperties);
+                                        justOpened = true;
                                         ImGui::CloseCurrentPopup();
+                                        return;
                                     }
 
-                                    static ImGuiHelper::InputText titleText("Title", gameProperties->gameTitle);
+                                    static ImGuiHelper::InputText titleText("Title", projectProperties->gameTitle);
                                     ImGuiHelper::BeginInputText(titleText);
 
-                                    static ImGuiHelper::InputText initialScenePathText("Initial Node Path", gameProperties->initialNodePath);
-                                    ImGuiHelper::BeginInputText(initialScenePathText);
-                                    // TODO: Setup combo box once scene node files are parsed
-//                                        static ImGuiHelper::ComboBox initialSceneComboBox("Initial Node Path");
+                                    static ImGuiHelper::AssetBrowserComboBox initialSceneComboBox("Initial Node Path", ".py", [projectProperties](const char* newItem) {
+                                        projectProperties->initialNodePath = newItem;
+                                        if (projectProperties->initialNodePath == "<none>") {
+                                            projectProperties->initialNodePath.clear();
+                                        }
+                                    });
+                                    if (justOpened) {
+                                        initialSceneComboBox.SetSelected(!projectProperties->initialNodePath.empty() ? projectProperties->initialNodePath : "<none>");
+                                        justOpened = false;
+                                    }
+                                    ImGuiHelper::BeginAssetBrowserComboBox(initialSceneComboBox);
 
-                                    static ImGuiHelper::DragInt windowWidthInt("Window Width", gameProperties->windowWidth);
+                                    static ImGuiHelper::DragInt windowWidthInt("Window Width", projectProperties->windowWidth);
                                     ImGuiHelper::BeginDragInt(windowWidthInt);
 
-                                    static ImGuiHelper::DragInt windowHeightInt("Window Height", gameProperties->windowHeight);
+                                    static ImGuiHelper::DragInt windowHeightInt("Window Height", projectProperties->windowHeight);
                                     ImGuiHelper::BeginDragInt(windowHeightInt);
 
-                                    static ImGuiHelper::DragInt targetFPSInt("Target FPS", gameProperties->targetFPS);
+                                    static ImGuiHelper::DragInt targetFPSInt("Target FPS", projectProperties->targetFPS);
                                     ImGuiHelper::BeginDragInt(targetFPSInt);
 
-                                    static ImGuiHelper::CheckBox areCollidersVisibleCheckBox("Are Colliders Visible", gameProperties->areCollidersVisible);
+                                    static ImGuiHelper::CheckBox areCollidersVisibleCheckBox("Are Colliders Visible", projectProperties->areCollidersVisible);
                                     ImGuiHelper::BeginCheckBox(areCollidersVisibleCheckBox);
                                 },
                                 .position = ImVec2{ 100.0f, 100.0f },
