@@ -96,6 +96,8 @@ Crescent engine can be either built with make or cmake.  All build command shoul
 
 ### Make
 
+*Note: Currently outdated*
+
 Engine:
 
 ```shell
