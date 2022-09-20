@@ -79,7 +79,7 @@ void OpenedProjectUI::ProcessMenuBar() {
                                     openSceneFileBrowser.rootPath = projectProperties->projectPath;
                                     ImGuiHelper::BeginFileBrowser(openSceneFileBrowser);
                                     if (ImGui::Button("Browse")) {
-                                        ImGui::OpenPopup(openSceneFileBrowser.name);
+                                        ImGui::OpenPopup(openSceneFileBrowser.name.c_str());
                                     }
 
                                     if (ImGui::Button("Close")) {
@@ -142,7 +142,7 @@ void OpenedProjectUI::ProcessMenuBar() {
                                                 saveSceneFileBrowser.rootPath = projectProperties->projectPath;
                                                 ImGuiHelper::BeginFileBrowser(saveSceneFileBrowser);
                                                 if (ImGui::Button("Browse")) {
-                                                    ImGui::OpenPopup(saveSceneFileBrowser.name);
+                                                    ImGui::OpenPopup(saveSceneFileBrowser.name.c_str());
                                                 }
 
                                                 if (ImGui::Button("Close")) {
@@ -348,11 +348,13 @@ void OpenedProjectUI::ProcessMenuBar() {
                                         auto& fontAsset = projectProperties->assets.fonts[i];
                                         if (i >= fontPathComboBoxes.size()) {
                                             fontPathComboBoxes.emplace_back(ImGuiHelper::AssetBrowserComboBox("File Path", ".ttf", nullptr, i));
+                                            fontPathComboBoxes[i].SetSelected(!fontAsset.file_path.empty() ? fontAsset.file_path : COMBO_BOX_LIST_NONE);
                                         }
-                                        fontPathComboBoxes[i].onSelectionChangeCallback = [&fontAsset](const char* newItem) {
-                                            fontAsset.file_path = newItem;
-                                            if (fontAsset.file_path == COMBO_BOX_LIST_NONE) {
-                                                fontAsset.file_path.clear();
+                                        fontPathComboBoxes[i].onSelectionChangeCallback = [i](const char* newItem) {
+                                            auto& font = projectProperties->assets.fonts[i];
+                                            font.file_path = newItem;
+                                            if (font.file_path == COMBO_BOX_LIST_NONE) {
+                                                font.file_path.clear();
                                             }
                                         };
                                         ImGuiHelper::BeginAssetBrowserComboBox(fontPathComboBoxes[i]);
@@ -419,24 +421,24 @@ void OpenedProjectUI::ProcessMenuBar() {
                                     ImGuiHelper::BeginInputText(exportPathInputText);
                                     ImGui::SameLine();
                                     static ImGuiHelper::FileBrowser exportFileBrowser = {
-                                            .name = "Export Project Browser",
-                                            .open = nullptr,
-                                            .windowFlags = ImGuiWindowFlags_NoResize,
-                                            .callbackFunc = nullptr,
-                                            .position = ImVec2{ 100.0f, 100.0f },
-                                            .size = ImVec2{ 600.0f, 320.0f },
-                                            .rootPath = {},
-                                            .mode = ImGuiHelper::FileBrowser::Mode::SelectDir,
-                                            .validExtensions = {},
-                                            .onModeCompletedFunc = [](const std::filesystem::path& fullPath) {
-                                                const std::string exportPath = fullPath.generic_string();
-                                                rbe_logger_debug("Setting project export path to '%s'", exportPath.c_str());
-                                                exportPathInputText.SetValue(exportPath);
-                                            }
+                                        .name = "Export Project Browser",
+                                        .open = nullptr,
+                                        .windowFlags = ImGuiWindowFlags_NoResize,
+                                        .callbackFunc = nullptr,
+                                        .position = ImVec2{ 100.0f, 100.0f },
+                                        .size = ImVec2{ 600.0f, 320.0f },
+                                        .rootPath = {},
+                                        .mode = ImGuiHelper::FileBrowser::Mode::SelectDir,
+                                        .validExtensions = {},
+                                        .onModeCompletedFunc = [](const std::filesystem::path& fullPath) {
+                                            const std::string exportPath = fullPath.generic_string();
+                                            rbe_logger_debug("Setting project export path to '%s'", exportPath.c_str());
+                                            exportPathInputText.SetValue(exportPath);
+                                        }
                                     };
                                     ImGuiHelper::BeginFileBrowser(exportFileBrowser);
                                     if (ImGui::Button("Browse")) {
-                                        ImGui::OpenPopup(exportFileBrowser.name);
+                                        ImGui::OpenPopup(exportFileBrowser.name.c_str());
                                     }
                                 },
                                 .position = ImVec2{ 100.0f, 100.0f },

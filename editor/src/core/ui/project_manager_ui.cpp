@@ -80,7 +80,7 @@ void ProjectManagerUI::ProcessWindows() {
             ImGuiHelper::BeginFileBrowser(openProjectFileBrowser);
             if (openFileBrowser) {
                 openFileBrowser = false;
-                ImGui::OpenPopup(openProjectFileBrowser.name);
+                ImGui::OpenPopup(openProjectFileBrowser.name.c_str());
             }
             ImGui::Separator();
 
@@ -127,7 +127,7 @@ void ProjectManagerUI::ProcessWindows() {
             };
             ImGuiHelper::BeginFileBrowser(newProjectFileBrowser);
             if (ImGui::Button("Browse")) {
-                ImGui::OpenPopup(newProjectFileBrowser.name);
+                ImGui::OpenPopup(newProjectFileBrowser.name.c_str());
             }
             // Create new project
             const std::string fullNewProjectPath = Helper::RemoveExtensionFromFilePath(newProjectPath);

@@ -12,7 +12,7 @@ struct FileBrowser {
         SaveFile,
     };
 
-    const char* name;
+    std::string name;
     bool* open = nullptr;
     ImGuiWindowFlags windowFlags = 0;
     ImGuiHelperCallbackFunc callbackFunc = nullptr;

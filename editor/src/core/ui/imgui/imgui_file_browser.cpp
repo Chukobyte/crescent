@@ -196,7 +196,7 @@ void ImGuiHelper::BeginFileBrowser(ImGuiHelper::FileBrowser& fileBrowser) {
     if (fileBrowser.size.has_value()) {
         ImGui::SetNextWindowSize(*fileBrowser.size, ImGuiCond_Once);
     }
-    if (ImGui::BeginPopupModal(fileBrowser.name, fileBrowser.open, fileBrowser.windowFlags)) {
+    if (ImGui::BeginPopupModal(fileBrowser.name.c_str(), fileBrowser.open, fileBrowser.windowFlags)) {
         if (selectedFileBrowserIndex != fileBrowser.id && !fileBrowser.hasJustOpened) {
             fileBrowser.hasJustOpened = true;
             selectedFileBrowserIndex = fileBrowser.id;
