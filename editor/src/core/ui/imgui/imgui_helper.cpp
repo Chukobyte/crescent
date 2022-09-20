@@ -272,7 +272,7 @@ const char* ImGuiHelper::AssetBrowserComboBox::GetSelectedItem() const {
     return nullptr;
 }
 
-void ImGuiHelper::AssetBrowserComboBox::SetSelected(const std::string &itemToSelect, bool executeCallbacks) {
+void ImGuiHelper::AssetBrowserComboBox::SetSelected(const std::string& itemToSelect, bool executeCallbacks) {
     for (int i = 0; i < items.size(); i++) {
         if (items[i] == itemToSelect) {
             selectedIndex = i;

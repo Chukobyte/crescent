@@ -194,12 +194,12 @@ void OpenedProjectUI::ProcessMenuBar() {
 
                                     static ImGuiHelper::AssetBrowserComboBox initialSceneComboBox("Initial Node Path", ".py", [projectProperties](const char* newItem) {
                                         projectProperties->initialNodePath = newItem;
-                                        if (projectProperties->initialNodePath == "<none>") {
+                                        if (projectProperties->initialNodePath == COMBO_BOX_LIST_NONE) {
                                             projectProperties->initialNodePath.clear();
                                         }
                                     });
                                     if (justOpened) {
-                                        initialSceneComboBox.SetSelected(!projectProperties->initialNodePath.empty() ? projectProperties->initialNodePath : "<none>");
+                                        initialSceneComboBox.SetSelected(!projectProperties->initialNodePath.empty() ? projectProperties->initialNodePath : COMBO_BOX_LIST_NONE);
                                         justOpened = false;
                                     }
                                     ImGuiHelper::BeginAssetBrowserComboBox(initialSceneComboBox);
@@ -441,31 +441,24 @@ void DrawSprite(SceneNode* node) {
         ImGui::Text("Sprite Component");
 
         // Texture Path Combo Box
-        static std::vector<std::string> texturePathList = { COMBO_BOX_LIST_NONE };
         static AssetBrowser* assetBrowser = AssetBrowser::Get();
-        static auto UpdateTexturePathList = [] {
-            texturePathList.clear();
-            texturePathList.emplace_back(COMBO_BOX_LIST_NONE);
-            if (assetBrowser->fileCache.extensionToFileNodeMap.count(".png") > 0) {
-                for (auto& fileNode : assetBrowser->fileCache.extensionToFileNodeMap[".png"]) {
-                    texturePathList.emplace_back(fileNode.GetRelativePath());
-                }
+
+        static ImGuiHelper::AssetBrowserComboBox spriteTexturePathComboBox("Texture Path", ".png");
+        spriteTexturePathComboBox.onSelectionChangeCallback = [spriteComp](const char* newItem) {
+            spriteComp->texturePath = newItem;
+            if (spriteComp->texturePath == COMBO_BOX_LIST_NONE) {
+                spriteComp->texturePath.clear();
             }
         };
-        static FuncObject initializeFunc = FuncObject([] {
-            UpdateTexturePathList();
-            assetBrowser->RegisterRefreshCallback([](const FileNode& rootNode) {
-                UpdateTexturePathList();
-            });
-        });
-        static ImGuiHelper::ComboBox spriteTexturePathComboBox("Texture Path", texturePathList);
-        static FuncObject initializeFunc2 = FuncObject([spriteComp] {
+
+        static FuncObject initializeFunc = FuncObject([spriteComp] {
             if (spriteComp->texturePath.empty()) {
                 spriteTexturePathComboBox.SetSelected(COMBO_BOX_LIST_NONE);
             } else {
                 spriteTexturePathComboBox.SetSelected(spriteComp->texturePath);
             }
             EditorCallbacks::Get()->RegisterOnSceneNodeSelected([](SceneNode* sceneNode) {
+                spriteTexturePathComboBox.onSelectionChangeCallback = nullptr; // Disable on selection call back while switching nodes to prevent previous node from being set
                 if (auto spriteC = sceneNode->GetComponentSafe<SpriteComp>()) {
                     if (spriteC->texturePath.empty()) {
                         spriteTexturePathComboBox.SetSelected(COMBO_BOX_LIST_NONE);
@@ -475,13 +468,8 @@ void DrawSprite(SceneNode* node) {
                 }
             });
         });
-        spriteTexturePathComboBox.onSelectionChangeCallback = [spriteComp](const char* newItem) {
-            spriteComp->texturePath = newItem;
-            if (spriteComp->texturePath == COMBO_BOX_LIST_NONE) {
-                spriteComp->texturePath.clear();
-            }
-        };
-        ImGuiHelper::BeginComboBox(spriteTexturePathComboBox);
+
+        ImGuiHelper::BeginAssetBrowserComboBox(spriteTexturePathComboBox);
 
         // TODO: Update draw source automatically when a texture is set (can also make it toggleable)
         ImGuiHelper::DragFloat4 drawSourceDragFloat4("Draw Source", (float*) &spriteComp->drawSource);

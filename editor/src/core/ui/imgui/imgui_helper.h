@@ -163,7 +163,7 @@ struct ComboBox {
 };
 
 struct AssetBrowserComboBox {
-    AssetBrowserComboBox(std::string label, std::string extension, std::function<void(const char* newItem)> onSelectionChangeCallback = nullptr, int labelIndex = 0);
+    AssetBrowserComboBox(std::string label, std::string inExtension, std::function<void(const char* newItem)> onSelectionChangeCallback = nullptr, int labelIndex = 0);
     [[nodiscard]] const char* GetInternalLabel() const;
     [[nodiscard]] const char* GetSelectedItem() const;
     void SetSelected(const std::string& itemToSelect, bool executeCallbacks = true);
