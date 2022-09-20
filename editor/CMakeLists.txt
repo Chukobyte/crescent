@@ -16,6 +16,7 @@ find_package(SDL2 CONFIG REQUIRED)
 
 add_library(${PROJECT_NAME} STATIC
         # C++
+        src/core/file_node.cpp
         src/core/editor.cpp
         src/core/editor_background_tasks.cpp
         src/core/editor_callbacks.cpp
@@ -29,6 +30,7 @@ add_library(${PROJECT_NAME} STATIC
         src/core/scene/scene_manager.cpp
         src/core/ui/opened_project_ui.cpp
         src/core/ui/project_manager_ui.cpp
+        src/core/ui/imgui/imgui_file_browser.cpp
         src/core/ui/imgui/imgui_handler.cpp
         src/core/ui/imgui/imgui_helper.cpp
         src/core/utils/process_runner/process_runner.cpp

@@ -4,31 +4,17 @@
 #include "../engine/src/core/utils/logger.h"
 
 #include "imgui/imgui_helper.h"
+#include "imgui/imgui_file_browser.h"
 #include "../editor_context.h"
 #include "../project_properties.h"
 #include "../scene/scene_manager.h"
 #include "../utils/file_system_helper.h"
-#include "../utils/helper.h"
 
 static EditorContext* editorContext = EditorContext::Get();
 
 void ProjectManagerUI::ProcessMenuBar() {}
 
-void ProjectManagerUI::ProcessModalPopups() {
-    static ImGuiHelper::PopupModal popupModal = {
-        .name = "Exit To Project Manager Confirmation",
-        .open = nullptr,
-        .windowFlags = 0,
-        .callbackFunc = [] (ImGuiHelper::Context* context) {
-            if (ImGui::Button("Close")) {
-                ImGui::CloseCurrentPopup();
-            }
-        },
-        .position = ImVec2{ 100.0f, 100.0f },
-        .size = ImVec2{ 200.0f, 200.0f },
-    };
-    ImGuiHelper::BeginPopupModal(popupModal);
-}
+void ProjectManagerUI::ProcessModalPopups() {}
 
 void ProjectManagerUI::ProcessWindows() {
     int windowWidth = 0;
@@ -38,19 +24,22 @@ void ProjectManagerUI::ProcessWindows() {
         .name = "Project Manager",
         .open = nullptr,
         .windowFlags = 0,
-        .callbackFunc = [gameProperties = ProjectProperties::Get()] (ImGuiHelper::Context* context) {
-            SceneManager* sceneManager = SceneManager::Get();
-            auto LoadProject = [sceneManager, gameProperties, edContext = EditorContext::Get()](const char* projectPath) {
+        .callbackFunc = [] (ImGuiHelper::Context* context) {
+            static auto sceneManager = SceneManager::Get();
+            static auto gameProperties = ProjectProperties::Get();
+            static auto editorContext = EditorContext::Get();
+            static auto LoadProject = [](const char* projectPath) {
                 if (FileSystemHelper::GetCurrentDir() != std::string(projectPath)) {
                     rbe_fs_chdir(projectPath);
                 }
-                edContext->projectState = EditorProjectState::OpenedProject;
+                gameProperties->projectPath = projectPath;
+                editorContext->projectState = EditorProjectState::OpenedProject;
                 rbe_logger_debug("Opening project at directory = %s", projectPath);
                 gameProperties->LoadPropertiesFromConfig("cre_config.py");
                 gameProperties->PrintProperties();
                 // Update recently opened projects list
-                edContext->settings.AddToRecentlyLoadedProjectsList(gameProperties->gameTitle, projectPath);
-                edContext->settings.SaveSettings();
+                editorContext->settings.AddToRecentlyLoadedProjectsList(gameProperties->gameTitle, projectPath);
+                editorContext->settings.SaveSettings();
 
                 // Load initial scene if it exists, if not create a new one
                 if (gameProperties->initialNodePath.empty()) {
@@ -64,17 +53,34 @@ void ProjectManagerUI::ProcessWindows() {
 
             // Test Fighter Section
             if (ImGui::Button("Go To Test Fighter Project")) {
-                LoadProject("test_games/fighter_test");
+                LoadProject(std::string(editorContext->initialDir + "/test_games/fighter_test").c_str());
             }
             ImGui::Separator();
 
             // Open Project Section
-            static std::string openProjectPath;
-            static ImGuiHelper::InputText openProjectPathInputText("Open Project Path", openProjectPath);
-            ImGuiHelper::BeginInputText(openProjectPathInputText);
-            const std::string fullOpenProjectPath = Helper::RemoveExtensionFromFilePath("test_games/" + openProjectPath);
-            if (ImGui::Button("Open Project") && !openProjectPath.empty() && FileSystemHelper::DoesDirectoryExist(fullOpenProjectPath)) {
-                LoadProject(fullOpenProjectPath.c_str());
+            static bool openFileBrowser = false;
+            if (ImGui::Button("Open Project")) {
+                openFileBrowser = true;
+            }
+            static ImGuiHelper::FileBrowser openProjectFileBrowser = {
+                .name = "Open Project Browser",
+                .open = nullptr,
+                .windowFlags = ImGuiWindowFlags_NoResize,
+                .callbackFunc = nullptr,
+                .position = ImVec2{ 100.0f, 100.0f },
+                .size = ImVec2{ 600.0f, 320.0f },
+                .rootPath = {},
+                .mode = ImGuiHelper::FileBrowser::Mode::OpenFile,
+                .validExtensions = { ".py" },
+                .onModeCompletedFunc = [](const std::filesystem::path& fullPath) {
+                    rbe_logger_debug("Opening project at file path = '%s'", fullPath.parent_path().generic_string().c_str());
+                    LoadProject(fullPath.parent_path().generic_string().c_str());
+                }
+            };
+            ImGuiHelper::BeginFileBrowser(openProjectFileBrowser);
+            if (openFileBrowser) {
+                openFileBrowser = false;
+                ImGui::OpenPopup(openProjectFileBrowser.name.c_str());
             }
             ImGui::Separator();
 
@@ -93,7 +99,6 @@ void ProjectManagerUI::ProcessWindows() {
                 ImGui::Separator();
             }
 
-
             // New Project Section
             ImGui::Text("Creates new project in 'test_games' folder...");
             // Name
@@ -104,13 +109,29 @@ void ProjectManagerUI::ProcessWindows() {
             static std::string newProjectPath;
             static ImGuiHelper::InputText newProjectPathInputText("New Project Path", newProjectPath);
             ImGuiHelper::BeginInputText(newProjectPathInputText);
-            // Create new project
-            const std::string fullNewProjectPath = Helper::RemoveExtensionFromFilePath("test_games/" + newProjectPath);
-            if (ImGui::Button("Create New Project") && !newProjectName.empty() && !newProjectPath.empty() && !FileSystemHelper::DoesDirectoryExist(fullNewProjectPath)) {
-                if (!FileSystemHelper::CreateDirectory(fullNewProjectPath)) {
-                    rbe_logger_error("Failed to create directory at '%s'", fullNewProjectPath.c_str());
-                    return;
+            ImGui::SameLine();
+            static ImGuiHelper::FileBrowser newProjectFileBrowser = {
+                .name = "New Project Browser",
+                .open = nullptr,
+                .windowFlags = ImGuiWindowFlags_NoResize,
+                .callbackFunc = nullptr,
+                .position = ImVec2{ 100.0f, 100.0f },
+                .size = ImVec2{ 600.0f, 320.0f },
+                .rootPath = {},
+                .mode = ImGuiHelper::FileBrowser::Mode::SelectDir,
+                .validExtensions = {},
+                .onModeCompletedFunc = [](const std::filesystem::path& fullPath) {
+                    rbe_logger_debug("New project at file path = '%s'", fullPath.generic_string().c_str());
+                    newProjectPathInputText.SetValue(fullPath.generic_string());
                 }
+            };
+            ImGuiHelper::BeginFileBrowser(newProjectFileBrowser);
+            if (ImGui::Button("Browse")) {
+                ImGui::OpenPopup(newProjectFileBrowser.name.c_str());
+            }
+            // Create new project
+            const std::string fullNewProjectPath = Helper::RemoveExtensionFromFilePath(newProjectPath);
+            if (ImGui::Button("Create New Project") && !newProjectName.empty() && !newProjectPath.empty() && FileSystemHelper::DirectoryExistsAndIsEmpty(fullNewProjectPath)) {
                 rbe_fs_chdir(std::filesystem::path(fullNewProjectPath).string().c_str());
                 // Create New Project Stuff
                 gameProperties->ResetToDefault();

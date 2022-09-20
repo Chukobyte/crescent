@@ -3,6 +3,7 @@
 
 #include <utility>
 
+#include "../../asset_browser.h"
 #include "../engine/src/core/utils/logger.h"
 
 static ImGuiHelper::Context* context = ImGuiHelper::Context::Get();
@@ -223,6 +224,84 @@ void ImGuiHelper::ComboBox::SetSelected(const std::string& itemToSelect, bool ex
 }
 
 void ImGuiHelper::BeginComboBox(ImGuiHelper::ComboBox &comboBox) {
+    if (!comboBox.label.empty()) {
+        ImGui::Text("%s", comboBox.label.c_str());
+        ImGui::SameLine();
+    }
+    const char* selectedItemText = comboBox.GetSelectedItem();
+    if (ImGui::BeginCombo(comboBox.GetInternalLabel(), selectedItemText, 0)) {
+        for (int i = 0; i < comboBox.items.size(); i++) {
+            const bool is_selected = (comboBox.selectedIndex == i);
+            if (ImGui::Selectable(comboBox.items[i].c_str(), is_selected)) {
+                comboBox.selectedIndex = i;
+                if (comboBox.onSelectionChangeCallback) {
+                    comboBox.onSelectionChangeCallback(comboBox.GetSelectedItem());
+                }
+            }
+
+            // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+            if (is_selected) {
+                ImGui::SetItemDefaultFocus();
+            }
+        }
+        ImGui::EndCombo();
+    }
+}
+
+//--- AssetBrowserComboBox ---//
+ImGuiHelper::AssetBrowserComboBox::AssetBrowserComboBox(std::string label, std::string inExtension, std::function<void(const char *)> onSelectionChangeCallback, int labelIndex)
+    : label(std::move(label)),
+      extension(std::move(inExtension)),
+      onSelectionChangeCallback(onSelectionChangeCallback ? std::move(onSelectionChangeCallback) : nullptr) {
+    internalLabel = "##" + std::to_string(labelIndex) + this->label;
+    AssetBrowser* assetBrowser = AssetBrowser::Get();
+    assetBrowserHandle = assetBrowser->RegisterRefreshCallback([this](const FileNode& rootNode) {
+        RefreshListFromBrowser();
+    });
+    RefreshListFromBrowser();
+}
+
+ImGuiHelper::AssetBrowserComboBox::~AssetBrowserComboBox() {
+    AssetBrowser* assetBrowser = AssetBrowser::Get();
+    assetBrowser->UnregisterRefreshCallback(assetBrowserHandle);
+}
+
+const char* ImGuiHelper::AssetBrowserComboBox::GetInternalLabel() const {
+    return internalLabel.c_str();
+}
+
+const char* ImGuiHelper::AssetBrowserComboBox::GetSelectedItem() const {
+    if (selectedIndex < items.size()) {
+        return items[selectedIndex].c_str();
+    }
+    return nullptr;
+}
+
+void ImGuiHelper::AssetBrowserComboBox::SetSelected(const std::string& itemToSelect, bool executeCallbacks) {
+    for (int i = 0; i < items.size(); i++) {
+        if (items[i] == itemToSelect) {
+            selectedIndex = i;
+            if (onSelectionChangeCallback && executeCallbacks) {
+                onSelectionChangeCallback(items[i].c_str());
+            }
+            return;
+        }
+    }
+    rbe_logger_error("Asset Browser Combo Box failed to select item '%s'", itemToSelect.c_str());
+}
+
+void ImGuiHelper::AssetBrowserComboBox::RefreshListFromBrowser() {
+    items.clear();
+    items.emplace_back("<none>");
+    static AssetBrowser* assetBrowser = AssetBrowser::Get();
+    if (assetBrowser->fileCache.extensionToFileNodeMap.count(extension) > 0) {
+        for (auto& fileNode : assetBrowser->fileCache.extensionToFileNodeMap[extension]) {
+            items.emplace_back(fileNode.GetRelativePath());
+        }
+    }
+}
+
+void ImGuiHelper::BeginAssetBrowserComboBox(ImGuiHelper::AssetBrowserComboBox &comboBox) {
     if (!comboBox.label.empty()) {
         ImGui::Text("%s", comboBox.label.c_str());
         ImGui::SameLine();

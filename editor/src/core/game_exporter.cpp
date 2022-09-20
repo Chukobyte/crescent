@@ -77,5 +77,5 @@ void GameExporter::Export(const GameExporter::ExportProperties &props) {
 #endif
     // Copy valid project files.  Using asset browser's file cache for now.
     static AssetBrowser* assetBrowser = AssetBrowser::Get();
-    CopyAllFilesFromFileNode(assetBrowser->rootNode, fullExportPath.string(), false);
+    CopyAllFilesFromFileNode(assetBrowser->fileCache.rootNode, fullExportPath.string(), false);
 }

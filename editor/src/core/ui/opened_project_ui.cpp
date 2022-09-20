@@ -15,6 +15,7 @@
 #include "../utils/process_runner/process_runner.h"
 #include "../editor_callbacks.h"
 #include "../game_exporter.h"
+#include "imgui/imgui_file_browser.h"
 
 const char* CONFIG_FILE_NAME = "cre_config.py";
 const std::string COMBO_BOX_LIST_NONE = "<none>";
@@ -22,6 +23,7 @@ const std::string COMBO_BOX_LIST_NONE = "<none>";
 static EditorContext* editorContext = EditorContext::Get();
 
 void OpenedProjectUI::ProcessMenuBar() {
+    static ProjectProperties* projectProperties = ProjectProperties::Get();
     static ImGuiHelper::MenuBar menuBar = {
         .name = "SceneMenuBar",
         .menus = {
@@ -52,23 +54,48 @@ void OpenedProjectUI::ProcessMenuBar() {
                                 .name = "Open Scene Menu",
                                 .open = nullptr,
                                 .windowFlags = 0,
-                                .callbackFunc = [gameProperties = ProjectProperties::Get()] (ImGuiHelper::Context* context) {
+                                .callbackFunc = [] (ImGuiHelper::Context* context) {
                                     static std::string openSceneFilePath;
-                                    ImGuiHelper::InputText nameText("File Path", openSceneFilePath);
-                                    ImGuiHelper::BeginInputText(nameText);
+                                    static ImGuiHelper::InputText filePathInputText("File Path", openSceneFilePath);
+                                    ImGuiHelper::BeginInputText(filePathInputText);
+                                    ImGui::SameLine();
+                                    static ImGuiHelper::FileBrowser openSceneFileBrowser = {
+                                        .name = "Open Scene Browser",
+                                        .open = nullptr,
+                                        .windowFlags = ImGuiWindowFlags_NoResize,
+                                        .callbackFunc = nullptr,
+                                        .position = ImVec2{ 100.0f, 100.0f },
+                                        .size = ImVec2{ 600.0f, 320.0f },
+                                        .rootPath = {},
+                                        .mode = ImGuiHelper::FileBrowser::Mode::OpenFile,
+                                        .validExtensions = { ".py" },
+                                        .onModeCompletedFunc = [](const std::filesystem::path& fullPath) {
+                                            const std::string pathBeforeTrans = fullPath.generic_string();
+                                            const std::string relativePath = projectProperties->GetPathRelativeToProjectPath(fullPath.generic_string());
+                                            rbe_logger_debug("Open scene at file path = '%s'", relativePath.c_str());
+                                            filePathInputText.SetValue(relativePath);
+                                        }
+                                    };
+                                    openSceneFileBrowser.rootPath = projectProperties->projectPath;
+                                    ImGuiHelper::BeginFileBrowser(openSceneFileBrowser);
+                                    if (ImGui::Button("Browse")) {
+                                        ImGui::OpenPopup(openSceneFileBrowser.name.c_str());
+                                    }
+
                                     if (ImGui::Button("Close")) {
-                                        openSceneFilePath.clear();
+                                        filePathInputText.SetValue("");
                                         ImGui::CloseCurrentPopup();
                                     }
                                     ImGui::SameLine();
                                     if (ImGui::Button("Ok")) {
                                         static SceneManager* sceneManager = SceneManager::Get();
-                                        openSceneFilePath = Helper::ConvertFilePathToFilePathExtension(openSceneFilePath, ".py");
-                                        if (!openSceneFilePath.empty() && FileSystemHelper::DoesFileExist(openSceneFilePath)) {
-                                            sceneManager->selectedSceneFile = sceneManager->LoadSceneFromFile(openSceneFilePath.c_str());
+                                        std::string validSceneFilePath = filePathInputText.GetValue();
+                                        validSceneFilePath = Helper::ConvertFilePathToFilePathExtension(validSceneFilePath, ".py");
+                                        if (!validSceneFilePath.empty() && FileSystemHelper::DoesFileExist(validSceneFilePath)) {
+                                            sceneManager->selectedSceneFile = sceneManager->LoadSceneFromFile(validSceneFilePath.c_str());
                                             sceneManager->selectedSceneNode = sceneManager->selectedSceneFile->rootNode;
                                         }
-                                        openSceneFilePath.clear();
+                                        filePathInputText.SetValue("");
                                         ImGui::CloseCurrentPopup();
                                     }
                                 },
@@ -91,18 +118,42 @@ void OpenedProjectUI::ProcessMenuBar() {
                                             .name = "Save New Scene Menu",
                                             .open = nullptr,
                                             .windowFlags = 0,
-                                            .callbackFunc = [gameProperties = ProjectProperties::Get()] (ImGuiHelper::Context* context) {
+                                            .callbackFunc = [] (ImGuiHelper::Context* context) {
                                                 static std::string saveSceneFilePath;
-                                                ImGuiHelper::InputText nameText("File Path", saveSceneFilePath);
-                                                ImGuiHelper::BeginInputText(nameText);
+                                                static ImGuiHelper::InputText filePathText("File Path", saveSceneFilePath);
+                                                ImGuiHelper::BeginInputText(filePathText);
+                                                ImGui::SameLine();
+                                                static ImGuiHelper::FileBrowser saveSceneFileBrowser = {
+                                                    .name = "Save Scene Browser",
+                                                    .open = nullptr,
+                                                    .windowFlags = ImGuiWindowFlags_NoResize,
+                                                    .callbackFunc = nullptr,
+                                                    .position = ImVec2{ 100.0f, 100.0f },
+                                                    .size = ImVec2{ 600.0f, 320.0f },
+                                                    .rootPath = {},
+                                                    .mode = ImGuiHelper::FileBrowser::Mode::SaveFile,
+                                                    .validExtensions = { ".py" },
+                                                    .onModeCompletedFunc = [](const std::filesystem::path& fullPath) {
+                                                        const std::string relativePath = projectProperties->GetPathRelativeToProjectPath(fullPath.generic_string());
+                                                        rbe_logger_debug("New project at file path = '%s'", relativePath.c_str());
+                                                        filePathText.SetValue(relativePath);
+                                                    }
+                                                };
+                                                saveSceneFileBrowser.rootPath = projectProperties->projectPath;
+                                                ImGuiHelper::BeginFileBrowser(saveSceneFileBrowser);
+                                                if (ImGui::Button("Browse")) {
+                                                    ImGui::OpenPopup(saveSceneFileBrowser.name.c_str());
+                                                }
+
                                                 if (ImGui::Button("Close")) {
+                                                    filePathText.SetValue("");
                                                     saveSceneFilePath.clear();
                                                     ImGui::CloseCurrentPopup();
                                                 }
                                                 ImGui::SameLine();
-                                                if (ImGui::Button("Ok") && !saveSceneFilePath.empty()) {
+                                                if (ImGui::Button("Ok") && !filePathText.GetValue().empty()) {
                                                     auto* selectedSceneFile = SceneManager::Get()->selectedSceneFile;
-                                                    const std::string validFullFilePath = Helper::ConvertFilePathToFilePathExtension(saveSceneFilePath, ".py");
+                                                    const std::string validFullFilePath = Helper::ConvertFilePathToFilePathExtension(filePathText.GetValue(), ".py");
                                                     selectedSceneFile->filePath = validFullFilePath;
                                                     SceneFileCreator::GenerateSceneFile(selectedSceneFile, validFullFilePath.c_str());
                                                     selectedSceneFile->hasBeenSaved = true;
@@ -154,31 +205,41 @@ void OpenedProjectUI::ProcessMenuBar() {
                                 .name = "Project Settings Menu",
                                 .open = nullptr,
                                 .windowFlags = 0,
-                                .callbackFunc = [gameProperties = ProjectProperties::Get()] (ImGuiHelper::Context* context) {
+                                .callbackFunc = [] (ImGuiHelper::Context* context) {
+                                    static bool justOpened = true;
                                     // TODO: Do more validation
-                                    if (ImGui::Button("Close") && gameProperties->gameTitle.empty()) {
-                                        ConfigFileCreator::GenerateConfigFile(CONFIG_FILE_NAME, gameProperties);
+                                    if (ImGui::Button("Close") && !projectProperties->gameTitle.empty()) {
+                                        ConfigFileCreator::GenerateConfigFile(CONFIG_FILE_NAME, projectProperties);
+                                        justOpened = true;
                                         ImGui::CloseCurrentPopup();
+                                        return;
                                     }
 
-                                    static ImGuiHelper::InputText titleText("Title", gameProperties->gameTitle);
+                                    static ImGuiHelper::InputText titleText("Title", projectProperties->gameTitle);
                                     ImGuiHelper::BeginInputText(titleText);
 
-                                    static ImGuiHelper::InputText initialScenePathText("Initial Node Path", gameProperties->initialNodePath);
-                                    ImGuiHelper::BeginInputText(initialScenePathText);
-                                    // TODO: Setup combo box once scene node files are parsed
-//                                        static ImGuiHelper::ComboBox initialSceneComboBox("Initial Node Path");
+                                    static ImGuiHelper::AssetBrowserComboBox initialSceneComboBox("Initial Node Path", ".py", [](const char* newItem) {
+                                        projectProperties->initialNodePath = newItem;
+                                        if (projectProperties->initialNodePath == COMBO_BOX_LIST_NONE) {
+                                            projectProperties->initialNodePath.clear();
+                                        }
+                                    });
+                                    if (justOpened) {
+                                        initialSceneComboBox.SetSelected(!projectProperties->initialNodePath.empty() ? projectProperties->initialNodePath : COMBO_BOX_LIST_NONE);
+                                        justOpened = false;
+                                    }
+                                    ImGuiHelper::BeginAssetBrowserComboBox(initialSceneComboBox);
 
-                                    static ImGuiHelper::DragInt windowWidthInt("Window Width", gameProperties->windowWidth);
+                                    static ImGuiHelper::DragInt windowWidthInt("Window Width", projectProperties->windowWidth);
                                     ImGuiHelper::BeginDragInt(windowWidthInt);
 
-                                    static ImGuiHelper::DragInt windowHeightInt("Window Height", gameProperties->windowHeight);
+                                    static ImGuiHelper::DragInt windowHeightInt("Window Height", projectProperties->windowHeight);
                                     ImGuiHelper::BeginDragInt(windowHeightInt);
 
-                                    static ImGuiHelper::DragInt targetFPSInt("Target FPS", gameProperties->targetFPS);
+                                    static ImGuiHelper::DragInt targetFPSInt("Target FPS", projectProperties->targetFPS);
                                     ImGuiHelper::BeginDragInt(targetFPSInt);
 
-                                    static ImGuiHelper::CheckBox areCollidersVisibleCheckBox("Are Colliders Visible", gameProperties->areCollidersVisible);
+                                    static ImGuiHelper::CheckBox areCollidersVisibleCheckBox("Are Colliders Visible", projectProperties->areCollidersVisible);
                                     ImGuiHelper::BeginCheckBox(areCollidersVisibleCheckBox);
                                 },
                                 .position = ImVec2{ 100.0f, 100.0f },
@@ -195,21 +256,21 @@ void OpenedProjectUI::ProcessMenuBar() {
                                 .name = "Input Configurations",
                                 .open = nullptr,
                                 .windowFlags = 0,
-                                .callbackFunc = [gameProperties = ProjectProperties::Get()] (ImGuiHelper::Context* context) {
+                                .callbackFunc = [] (ImGuiHelper::Context* context) {
                                     if (ImGui::Button("Close")) {
-                                        ConfigFileCreator::GenerateConfigFile(CONFIG_FILE_NAME, gameProperties);
+                                        ConfigFileCreator::GenerateConfigFile(CONFIG_FILE_NAME, projectProperties);
                                         ImGui::CloseCurrentPopup();
                                     }
                                     ImGui::SameLine();
                                     if (ImGui::Button("Add")) {
                                         ProjectInputAction defaultInputAction;
-                                        gameProperties->inputs.actions.emplace_back(defaultInputAction);
+                                        projectProperties->inputs.actions.emplace_back(defaultInputAction);
                                     }
 
                                     ImGui::Separator();
                                     int actionIndexToDelete = -1;
-                                    for (size_t i = 0; i < gameProperties->inputs.actions.size(); i++) {
-                                        ProjectInputAction& inputAction = gameProperties->inputs.actions[i];
+                                    for (size_t i = 0; i < projectProperties->inputs.actions.size(); i++) {
+                                        ProjectInputAction& inputAction = projectProperties->inputs.actions[i];
 
                                         ImGuiHelper::InputText nameText("Name", inputAction.name, i);
                                         ImGuiHelper::BeginInputText(nameText);
@@ -249,7 +310,7 @@ void OpenedProjectUI::ProcessMenuBar() {
                                     }
 
                                     if (actionIndexToDelete >= 0) {
-                                        gameProperties->inputs.actions.erase(gameProperties->inputs.actions.begin() + actionIndexToDelete);
+                                        projectProperties->inputs.actions.erase(projectProperties->inputs.actions.begin() + actionIndexToDelete);
                                     }
                                 },
                                 .position = ImVec2{ 100.0f, 100.0f },
@@ -266,9 +327,9 @@ void OpenedProjectUI::ProcessMenuBar() {
                                 .name = "Font Configurations",
                                 .open = nullptr,
                                 .windowFlags = 0,
-                                .callbackFunc = [gameProperties = ProjectProperties::Get()] (ImGuiHelper::Context* context) {
+                                .callbackFunc = [] (ImGuiHelper::Context* context) {
                                     if (ImGui::Button("Close")) {
-                                        ConfigFileCreator::GenerateConfigFile(CONFIG_FILE_NAME, gameProperties);
+                                        ConfigFileCreator::GenerateConfigFile(CONFIG_FILE_NAME, projectProperties);
                                         ImGui::CloseCurrentPopup();
                                     }
                                     ImGui::SameLine();
@@ -277,14 +338,26 @@ void OpenedProjectUI::ProcessMenuBar() {
                                         defaultFontAsset.file_path = "";
                                         defaultFontAsset.uid = "";
                                         defaultFontAsset.size = 16;
-                                        gameProperties->assets.fonts.emplace_back(defaultFontAsset);
+                                        projectProperties->assets.fonts.emplace_back(defaultFontAsset);
                                     }
                                     ImGui::Separator();
+                                    // Fonts
                                     int fontIndexToDelete = -1;
-                                    for (size_t i = 0; i < gameProperties->assets.fonts.size(); i++) {
-                                        auto& fontAsset = gameProperties->assets.fonts[i];
-                                        ImGuiHelper::InputText filePath("File Path", fontAsset.file_path, i);
-                                        ImGuiHelper::BeginInputText(filePath);
+                                    static std::vector<ImGuiHelper::AssetBrowserComboBox> fontPathComboBoxes;
+                                    for (size_t i = 0; i < projectProperties->assets.fonts.size(); i++) {
+                                        auto& fontAsset = projectProperties->assets.fonts[i];
+                                        if (i >= fontPathComboBoxes.size()) {
+                                            fontPathComboBoxes.emplace_back(ImGuiHelper::AssetBrowserComboBox("File Path", ".ttf", nullptr, i));
+                                            fontPathComboBoxes[i].SetSelected(!fontAsset.file_path.empty() ? fontAsset.file_path : COMBO_BOX_LIST_NONE);
+                                        }
+                                        fontPathComboBoxes[i].onSelectionChangeCallback = [i](const char* newItem) {
+                                            auto& font = projectProperties->assets.fonts[i];
+                                            font.file_path = newItem;
+                                            if (font.file_path == COMBO_BOX_LIST_NONE) {
+                                                font.file_path.clear();
+                                            }
+                                        };
+                                        ImGuiHelper::BeginAssetBrowserComboBox(fontPathComboBoxes[i]);
 
                                         ImGuiHelper::InputText uid("UID", fontAsset.uid, i);
                                         ImGuiHelper::BeginInputText(uid);
@@ -299,7 +372,7 @@ void OpenedProjectUI::ProcessMenuBar() {
                                         ImGui::Separator();
                                     }
                                     if (fontIndexToDelete >= 0) {
-                                        gameProperties->assets.fonts.erase(gameProperties->assets.fonts.begin() + fontIndexToDelete);
+                                        projectProperties->assets.fonts.erase(projectProperties->assets.fonts.begin() + fontIndexToDelete);
                                     }
                                 },
                                 .position = ImVec2{ 100.0f, 100.0f },
@@ -321,17 +394,18 @@ void OpenedProjectUI::ProcessMenuBar() {
                                 .name = "Export Game Menu",
                                 .open = nullptr,
                                 .windowFlags = 0,
-                                .callbackFunc = [gameProperties = ProjectProperties::Get()] (ImGuiHelper::Context* context) {
+                                .callbackFunc = [] (ImGuiHelper::Context* context) {
                                     static std::string exportFileName;
+                                    static ImGuiHelper::InputText exportPathInputText("Folder Path", exportFileName);
                                     if (ImGui::Button("Cancel")) {
-                                        exportFileName.clear();
+                                        exportPathInputText.SetValue("");
                                         ImGui::CloseCurrentPopup();
                                     }
                                     ImGui::SameLine();
                                     if (ImGui::Button("Export") && !exportFileName.empty()) {
-                                        exportFileName = Helper::RemoveExtensionFromFilePath(exportFileName);
+                                        exportFileName = Helper::RemoveExtensionFromFilePath(exportPathInputText.GetValue());
                                         const GameExporter::ExportProperties exportProps = {
-                                            .gameTitle = gameProperties->gameTitle,
+                                            .gameTitle = projectProperties->gameTitle,
                                             .exportName = exportFileName,
                                             .exportPath = editorContext->GetProjectExportPath(),
                                             .projectPath = FileSystemHelper::GetCurrentDir(),
@@ -339,13 +413,33 @@ void OpenedProjectUI::ProcessMenuBar() {
                                             .tempPath = editorContext->GetProjectExportPath() + "/" + "tmp_cre"
                                         };
                                         GameExporter::Export(exportProps);
-                                        exportFileName.clear();
+                                        exportPathInputText.SetValue("");
                                         ImGui::CloseCurrentPopup();
                                     }
                                     ImGui::Separator();
 
-                                    ImGuiHelper::InputText filePath("Folder Path", exportFileName);
-                                    ImGuiHelper::BeginInputText(filePath);
+                                    ImGuiHelper::BeginInputText(exportPathInputText);
+                                    ImGui::SameLine();
+                                    static ImGuiHelper::FileBrowser exportFileBrowser = {
+                                        .name = "Export Project Browser",
+                                        .open = nullptr,
+                                        .windowFlags = ImGuiWindowFlags_NoResize,
+                                        .callbackFunc = nullptr,
+                                        .position = ImVec2{ 100.0f, 100.0f },
+                                        .size = ImVec2{ 600.0f, 320.0f },
+                                        .rootPath = {},
+                                        .mode = ImGuiHelper::FileBrowser::Mode::SelectDir,
+                                        .validExtensions = {},
+                                        .onModeCompletedFunc = [](const std::filesystem::path& fullPath) {
+                                            const std::string exportPath = fullPath.generic_string();
+                                            rbe_logger_debug("Setting project export path to '%s'", exportPath.c_str());
+                                            exportPathInputText.SetValue(exportPath);
+                                        }
+                                    };
+                                    ImGuiHelper::BeginFileBrowser(exportFileBrowser);
+                                    if (ImGui::Button("Browse")) {
+                                        ImGui::OpenPopup(exportFileBrowser.name.c_str());
+                                    }
                                 },
                                 .position = ImVec2{ 100.0f, 100.0f },
                                 .size = ImVec2{ 200.0f, 200.0f },
@@ -406,31 +500,24 @@ void DrawSprite(SceneNode* node) {
         ImGui::Text("Sprite Component");
 
         // Texture Path Combo Box
-        static std::vector<std::string> texturePathList = { COMBO_BOX_LIST_NONE };
         static AssetBrowser* assetBrowser = AssetBrowser::Get();
-        static auto UpdateTexturePathList = [] {
-            texturePathList.clear();
-            texturePathList.emplace_back(COMBO_BOX_LIST_NONE);
-            if (assetBrowser->extensionToFileNodeMap.count(".png") > 0) {
-                for (auto& fileNode : assetBrowser->extensionToFileNodeMap[".png"]) {
-                    texturePathList.emplace_back(fileNode.GetRelativePath());
-                }
+
+        static ImGuiHelper::AssetBrowserComboBox spriteTexturePathComboBox("Texture Path", ".png");
+        spriteTexturePathComboBox.onSelectionChangeCallback = [spriteComp](const char* newItem) {
+            spriteComp->texturePath = newItem;
+            if (spriteComp->texturePath == COMBO_BOX_LIST_NONE) {
+                spriteComp->texturePath.clear();
             }
         };
-        static FuncObject initializeFunc = FuncObject([] {
-            UpdateTexturePathList();
-            assetBrowser->RegisterRefreshCallback([](const FileNode& rootNode) {
-                UpdateTexturePathList();
-            });
-        });
-        static ImGuiHelper::ComboBox spriteTexturePathComboBox("Texture Path", texturePathList);
-        static FuncObject initializeFunc2 = FuncObject([spriteComp] {
+
+        static FuncObject initializeFunc = FuncObject([spriteComp] {
             if (spriteComp->texturePath.empty()) {
                 spriteTexturePathComboBox.SetSelected(COMBO_BOX_LIST_NONE);
             } else {
                 spriteTexturePathComboBox.SetSelected(spriteComp->texturePath);
             }
             EditorCallbacks::Get()->RegisterOnSceneNodeSelected([](SceneNode* sceneNode) {
+                spriteTexturePathComboBox.onSelectionChangeCallback = nullptr; // Disable on selection call back while switching nodes to prevent previous node from being set
                 if (auto spriteC = sceneNode->GetComponentSafe<SpriteComp>()) {
                     if (spriteC->texturePath.empty()) {
                         spriteTexturePathComboBox.SetSelected(COMBO_BOX_LIST_NONE);
@@ -440,13 +527,8 @@ void DrawSprite(SceneNode* node) {
                 }
             });
         });
-        spriteTexturePathComboBox.onSelectionChangeCallback = [spriteComp](const char* newItem) {
-            spriteComp->texturePath = newItem;
-            if (spriteComp->texturePath == COMBO_BOX_LIST_NONE) {
-                spriteComp->texturePath.clear();
-            }
-        };
-        ImGuiHelper::BeginComboBox(spriteTexturePathComboBox);
+
+        ImGuiHelper::BeginAssetBrowserComboBox(spriteTexturePathComboBox);
 
         // TODO: Update draw source automatically when a texture is set (can also make it toggleable)
         ImGuiHelper::DragFloat4 drawSourceDragFloat4("Draw Source", (float*) &spriteComp->drawSource);
@@ -618,8 +700,8 @@ void DrawAnimatedSprite(SceneNode* node) {
                     static auto UpdateTexturePathList = [] {
                         animFrameTexturePathList.clear();
                         animFrameTexturePathList.emplace_back(COMBO_BOX_LIST_NONE);
-                        if (assetBrowser->extensionToFileNodeMap.count(".png") > 0) {
-                            for (auto& fileNode : assetBrowser->extensionToFileNodeMap[".png"]) {
+                        if (assetBrowser->fileCache.extensionToFileNodeMap.count(".png") > 0) {
+                            for (auto& fileNode : assetBrowser->fileCache.extensionToFileNodeMap[".png"]) {
                                 animFrameTexturePathList.emplace_back(fileNode.GetRelativePath());
                             }
                         }
@@ -974,7 +1056,7 @@ void OpenedProjectUI::ProcessWindows() {
         .windowFlags = ImGuiWindowFlags_NoResize,
         .callbackFunc = [] (ImGuiHelper::Context* context) {
             static AssetBrowser* assetBrowser = AssetBrowser::Get();
-            FileNodeUtils::DisplayFileNodeTree(assetBrowser->rootNode, true);
+            FileNodeUtils::DisplayFileNodeTree(assetBrowser->fileCache.rootNode, true);
         },
         .position = ImVec2{ 100.0f, 200.0f },
         .size = ImVec2{ 400.0f, 300.0f },

@@ -92,6 +92,7 @@ class ProjectProperties : public Singleton<ProjectProperties> {
     bool areCollidersVisible = false;
     ProjectAssets assets;
     ProjectInputs inputs;
+    std::string projectPath;
 
     ProjectProperties(singleton);
     ~ProjectProperties();
@@ -107,4 +108,5 @@ class ProjectProperties : public Singleton<ProjectProperties> {
     TextureAsset& GetTextureAsset(const std::string& texturePath);
     bool HasTextureWithPath(const std::string& path) const;
     bool HasAudioSourceWithPath(const std::string& path) const;
+    std::string GetPathRelativeToProjectPath(const std::string& relativePath);
 };

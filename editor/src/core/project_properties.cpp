@@ -178,3 +178,8 @@ std::string ProjectProperties::GetDefaultProjectPropertyFileContent(const std::s
            "        input_actions=[]\n"
            ")\n";
 }
+
+std::string ProjectProperties::GetPathRelativeToProjectPath(const std::string& path) {
+    const std::filesystem::path relativePath = std::filesystem::relative(path, projectPath);
+    return relativePath.generic_string();
+}
