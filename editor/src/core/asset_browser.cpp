@@ -121,8 +121,8 @@ Task<> AssetBrowser::UpdateFileSystemCache() {
 
 void AssetBrowser::RefreshCache() {
     fileCache.LoadRootNodeDir(FileSystemHelper::GetCurrentDir());
-    for (auto& func : registerRefreshFuncs) {
-        func(fileCache.rootNode);
+    for (auto& sub : refreshSubscribers) {
+        sub.func(fileCache.rootNode);
     }
 }
 
@@ -176,6 +176,14 @@ void AssetBrowser::CreateDirectory(const std::filesystem::path& path, const std:
     }
 }
 
-void AssetBrowser::RegisterRefreshCallback(const AssetBrowserRefreshFunc& func) {
-    registerRefreshFuncs.emplace_back(func);
+AssetBrowserRefreshSubscriberHandle AssetBrowser::RegisterRefreshCallback(const AssetBrowserRefreshFunc& func) {
+    const AssetBrowserRefreshSubscriber newSub = { handleIndex++, func };
+    refreshSubscribers.emplace_back(newSub);
+    return newSub.handle;
+}
+
+void AssetBrowser::UnregisterRefreshCallback(AssetBrowserRefreshSubscriberHandle handle) {
+    refreshSubscribers.erase(std::remove_if(refreshSubscribers.begin(), refreshSubscribers.end(), [handle](const AssetBrowserRefreshSubscriber& sub) {
+        return handle == sub.handle;
+    }), refreshSubscribers.end());
 }

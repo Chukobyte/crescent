@@ -162,6 +162,7 @@ struct ComboBox {
 
 struct AssetBrowserComboBox {
     AssetBrowserComboBox(std::string label, std::string inExtension, std::function<void(const char* newItem)> onSelectionChangeCallback = nullptr, int labelIndex = 0);
+    ~AssetBrowserComboBox();
     [[nodiscard]] const char* GetInternalLabel() const;
     [[nodiscard]] const char* GetSelectedItem() const;
     void SetSelected(const std::string& itemToSelect, bool executeCallbacks = true);
@@ -176,6 +177,7 @@ struct AssetBrowserComboBox {
 
   private:
     std::string internalLabel;
+    unsigned int assetBrowserHandle = 0;
 };
 
 struct TreeNode {

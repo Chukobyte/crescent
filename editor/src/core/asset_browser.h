@@ -17,12 +17,19 @@ void DisplayFileNodeTree(FileNode& fileNode, bool isRoot = false);
 // Asset Browser
 
 using AssetBrowserRefreshFunc = std::function<void(const FileNode& rootNode)>;
+using AssetBrowserRefreshSubscriberHandle = unsigned int;
+
+struct AssetBrowserRefreshSubscriber {
+    AssetBrowserRefreshSubscriberHandle handle = 0; // No active handle should have the value of '0'
+    AssetBrowserRefreshFunc func = nullptr;
+};
 
 class AssetBrowser : public Singleton<AssetBrowser> {
   public:
     AssetBrowser(singleton) {}
     Task<> UpdateFileSystemCache();
-    void RegisterRefreshCallback(const AssetBrowserRefreshFunc& func);
+    AssetBrowserRefreshSubscriberHandle RegisterRefreshCallback(const AssetBrowserRefreshFunc& func);
+    void UnregisterRefreshCallback(AssetBrowserRefreshSubscriberHandle handle);
     void RefreshCache();
     void QueueRefreshCache();
     // TODO: Consider moving these into a utility, interface, etc...
@@ -34,7 +41,7 @@ class AssetBrowser : public Singleton<AssetBrowser> {
     FileNodeCache fileCache;
 
   private:
-    // For now assumes one time subscribe only with no unsubscriptions
-    std::vector<AssetBrowserRefreshFunc> registerRefreshFuncs;
+    std::vector<AssetBrowserRefreshSubscriber> refreshSubscribers;
     bool refreshCacheQueued = false;
+    AssetBrowserRefreshSubscriberHandle handleIndex = 1;
 };
