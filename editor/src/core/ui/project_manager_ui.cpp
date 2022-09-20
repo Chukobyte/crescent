@@ -9,7 +9,6 @@
 #include "../project_properties.h"
 #include "../scene/scene_manager.h"
 #include "../utils/file_system_helper.h"
-#include "../utils/helper.h"
 
 static EditorContext* editorContext = EditorContext::Get();
 

@@ -18,7 +18,7 @@ void DisplayFileBrowser(ImGuiHelper::FileBrowser& fileBrowser) {
         ImGui::CloseCurrentPopup();
     };
 
-    static std::string lastDirectory = FileSystemHelper::GetCurrentDir();
+    static std::filesystem::path lastDirectoryPath = FileSystemHelper::GetCurrentDir();
 
     const ImVec2 windowSize = ImGui::GetWindowSize();
 
@@ -32,8 +32,9 @@ void DisplayFileBrowser(ImGuiHelper::FileBrowser& fileBrowser) {
     ImGui::BeginChild("##ScrollingRegion", ImVec2(0, 200), true, ImGuiWindowFlags_None);
 
     if (fileBrowser.hasJustOpened || reloadDirPathCache) {
-        dirInputText.SetValue(lastDirectory);
-        fileBrowser.pathCache.LoadRootNodeDir(lastDirectory, FileNodeCache::LoadFlag::IncludeExtensions);
+        const std::string lastDirPathText = lastDirectoryPath.generic_string();
+        dirInputText.SetValue(lastDirPathText);
+        fileBrowser.pathCache.LoadRootNodeDir(lastDirPathText, FileNodeCache::LoadFlag::IncludeExtensions);
         reloadDirPathCache = false;
     }
 
@@ -41,6 +42,21 @@ void DisplayFileBrowser(ImGuiHelper::FileBrowser& fileBrowser) {
     static unsigned int selectionIndex = 0;
     static unsigned int index = 0;
     index = 0;
+    // Go to parent directory selectable
+    // Skip if at the root
+    if (lastDirectoryPath.has_relative_path()) {
+        if (ImGui::Selectable("..", selectionIndex == index, ImGuiSelectableFlags_AllowDoubleClick | ImGuiSelectableFlags_DontClosePopups)) {
+            selectionIndex = index;
+
+            if(ImGui::IsMouseDoubleClicked(0)) {
+                lastDirectoryPath = lastDirectoryPath.parent_path();
+                reloadDirPathCache = true;
+                reloadExtensionList = true;
+            }
+        }
+        index++;
+    }
+
     for (auto& dir : fileBrowser.pathCache.rootNode.directories) {
         const std::string dirPath = dir.path.filename().string();
         if (ImGui::Selectable(std::string(dirPath + "/").c_str(), selectionIndex == index, ImGuiSelectableFlags_AllowDoubleClick | ImGuiSelectableFlags_DontClosePopups)) {
@@ -50,7 +66,7 @@ void DisplayFileBrowser(ImGuiHelper::FileBrowser& fileBrowser) {
             }
 
             if(ImGui::IsMouseDoubleClicked(0)) {
-                lastDirectory = dir.path.generic_string();
+                lastDirectoryPath = dir.path;
                 reloadDirPathCache = true;
                 reloadExtensionList = true;
             }
@@ -128,7 +144,7 @@ void DisplayFileBrowser(ImGuiHelper::FileBrowser& fileBrowser) {
     switch (mode) {
     case ImGuiHelper::FileBrowser::Mode::SelectDir: {
         if (ImGui::Button("Open") && doesPathInputHaveText && FileSystemHelper::DoesDirectoryExist(fullPath)) {
-            lastDirectory = fullPath.generic_string();
+            lastDirectoryPath = fullPath;
             reloadDirPathCache = true;
             reloadExtensionList = true;
         }
