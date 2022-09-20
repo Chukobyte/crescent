@@ -60,7 +60,7 @@ void OpenedProjectUI::ProcessMenuBar() {
                                     ImGuiHelper::BeginInputText(filePathInputText);
                                     ImGui::SameLine();
                                     static ImGuiHelper::FileBrowser openSceneFileBrowser = {
-                                        .name = "Save Scene Browser",
+                                        .name = "Open Scene Browser",
                                         .open = nullptr,
                                         .windowFlags = ImGuiWindowFlags_NoResize,
                                         .callbackFunc = nullptr,
@@ -394,13 +394,14 @@ void OpenedProjectUI::ProcessMenuBar() {
                                 .windowFlags = 0,
                                 .callbackFunc = [] (ImGuiHelper::Context* context) {
                                     static std::string exportFileName;
+                                    static ImGuiHelper::InputText exportPathInputText("Folder Path", exportFileName);
                                     if (ImGui::Button("Cancel")) {
-                                        exportFileName.clear();
+                                        exportPathInputText.SetValue("");
                                         ImGui::CloseCurrentPopup();
                                     }
                                     ImGui::SameLine();
                                     if (ImGui::Button("Export") && !exportFileName.empty()) {
-                                        exportFileName = Helper::RemoveExtensionFromFilePath(exportFileName);
+                                        exportFileName = Helper::RemoveExtensionFromFilePath(exportPathInputText.GetValue());
                                         const GameExporter::ExportProperties exportProps = {
                                             .gameTitle = projectProperties->gameTitle,
                                             .exportName = exportFileName,
@@ -410,13 +411,33 @@ void OpenedProjectUI::ProcessMenuBar() {
                                             .tempPath = editorContext->GetProjectExportPath() + "/" + "tmp_cre"
                                         };
                                         GameExporter::Export(exportProps);
-                                        exportFileName.clear();
+                                        exportPathInputText.SetValue("");
                                         ImGui::CloseCurrentPopup();
                                     }
                                     ImGui::Separator();
 
-                                    ImGuiHelper::InputText filePath("Folder Path", exportFileName);
-                                    ImGuiHelper::BeginInputText(filePath);
+                                    ImGuiHelper::BeginInputText(exportPathInputText);
+                                    ImGui::SameLine();
+                                    static ImGuiHelper::FileBrowser exportFileBrowser = {
+                                            .name = "Export Project Browser",
+                                            .open = nullptr,
+                                            .windowFlags = ImGuiWindowFlags_NoResize,
+                                            .callbackFunc = nullptr,
+                                            .position = ImVec2{ 100.0f, 100.0f },
+                                            .size = ImVec2{ 600.0f, 320.0f },
+                                            .rootPath = {},
+                                            .mode = ImGuiHelper::FileBrowser::Mode::SelectDir,
+                                            .validExtensions = {},
+                                            .onModeCompletedFunc = [](const std::filesystem::path& fullPath) {
+                                                const std::string exportPath = fullPath.generic_string();
+                                                rbe_logger_debug("Setting project export path to '%s'", exportPath.c_str());
+                                                exportPathInputText.SetValue(exportPath);
+                                            }
+                                    };
+                                    ImGuiHelper::BeginFileBrowser(exportFileBrowser);
+                                    if (ImGui::Button("Browse")) {
+                                        ImGui::OpenPopup(exportFileBrowser.name);
+                                    }
                                 },
                                 .position = ImVec2{ 100.0f, 100.0f },
                                 .size = ImVec2{ 200.0f, 200.0f },
