@@ -11,6 +11,7 @@
 #include "scene/scene_manager.h"
 #include "color.h"
 #include "ui/imgui/imgui_handler.h"
+#include "ui/imgui/imgui_styler.h"
 #include "utils/file_system_helper.h"
 
 static EditorContext* editorContext = EditorContext::Get();
@@ -100,6 +101,9 @@ bool Editor::InitializeImGui() {
 
     ImGui_ImplSDL2_InitForOpenGL(editorContext->window, editorContext->openGLContext);
     ImGui_ImplOpenGL3_Init("#version 130");
+
+    ImGuiStyler::ApplyStyle(ImGuiStyler::Style::Crescent);
+
     return true;
 }
 
