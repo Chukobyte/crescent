@@ -315,11 +315,21 @@ void OpenedProjectUI::ProcessMenuBar() {
                                         gameProperties->assets.fonts.emplace_back(defaultFontAsset);
                                     }
                                     ImGui::Separator();
+                                    // Fonts
                                     int fontIndexToDelete = -1;
+                                    static std::vector<ImGuiHelper::AssetBrowserComboBox> fontPathComboBoxes;
                                     for (size_t i = 0; i < gameProperties->assets.fonts.size(); i++) {
                                         auto& fontAsset = gameProperties->assets.fonts[i];
-                                        ImGuiHelper::InputText filePath("File Path", fontAsset.file_path, i);
-                                        ImGuiHelper::BeginInputText(filePath);
+                                        if (i >= fontPathComboBoxes.size()) {
+                                            fontPathComboBoxes.emplace_back(ImGuiHelper::AssetBrowserComboBox("File Path", ".ttf", nullptr, i));
+                                        }
+                                        fontPathComboBoxes[i].onSelectionChangeCallback = [&fontAsset](const char* newItem) {
+                                            fontAsset.file_path = newItem;
+                                            if (fontAsset.file_path == COMBO_BOX_LIST_NONE) {
+                                                fontAsset.file_path.clear();
+                                            }
+                                        };
+                                        ImGuiHelper::BeginAssetBrowserComboBox(fontPathComboBoxes[i]);
 
                                         ImGuiHelper::InputText uid("UID", fontAsset.uid, i);
                                         ImGuiHelper::BeginInputText(uid);
