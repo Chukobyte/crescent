@@ -53,7 +53,7 @@ void ProjectManagerUI::ProcessWindows() {
 
             // Test Fighter Section
             if (ImGui::Button("Go To Test Fighter Project")) {
-                LoadProject("test_games/fighter_test");
+                LoadProject(std::string(editorContext->initialDir + "/test_games/fighter_test").c_str());
             }
             ImGui::Separator();
 

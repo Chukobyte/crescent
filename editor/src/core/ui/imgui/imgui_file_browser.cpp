@@ -140,7 +140,7 @@ void DisplayFileBrowser(ImGuiHelper::FileBrowser& fileBrowser) {
         pathCandidate = Helper::RemoveExtensionFromFilePath(pathCandidate);
     }
     const std::filesystem::path fullPath = pathCandidate;
-    const bool doesPathInputHaveText = !pathInputText.GetValue().empty();
+    const bool doesPathInputHaveText = !pathCandidate.empty();
     switch (mode) {
     case ImGuiHelper::FileBrowser::Mode::SelectDir: {
         if (ImGui::Button("Open") && doesPathInputHaveText && FileSystemHelper::DoesDirectoryExist(fullPath)) {

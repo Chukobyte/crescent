@@ -180,6 +180,6 @@ std::string ProjectProperties::GetDefaultProjectPropertyFileContent(const std::s
 }
 
 std::string ProjectProperties::GetPathRelativeToProjectPath(const std::string& path) {
-    std::filesystem::path relativePath = std::filesystem::relative(path, projectPath);
+    const std::filesystem::path relativePath = std::filesystem::relative(path, projectPath);
     return relativePath.generic_string();
 }
