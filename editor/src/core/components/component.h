@@ -11,6 +11,7 @@
 #include "../engine/src/core/ecs/component/text_label_component.h"
 #include "../engine/src/core/ecs/component/transform2d_component.h"
 #include "../engine/src/core/utils/logger.h"
+#include "../engine/src/core/utils/rbe_assert.h"
 
 struct EditorComponent {};
 
@@ -119,8 +120,9 @@ struct AnimatedSpriteComp : public EditorComponent {
           flipX(animatedSpriteComponentData->flipX),
           flipY(animatedSpriteComponentData->flipY) {
         for (size_t animationIndex = 0; animationIndex < animatedSpriteComponentData->animationCount; animationIndex++) {
-            const AnimationData& animData = animatedSpriteComponentData->animations[animatedSpriteComponentData->animationCount];
+            const AnimationData& animData = animatedSpriteComponentData->animations[animationIndex];
             EditorAnimation animation = { animData.name, animData.speed, animData.doesLoop };
+            RBE_ASSERT_FMT(!animation.name.empty(), "Animation is empty!");
             for (size_t frameIndex = 0; (int) frameIndex < animData.frameCount; frameIndex++) {
                 const AnimationFrameData& frameData = animData.animationFrames[frameIndex];
                 const EditorAnimationFrame animationFrame = { frameData.texturePath, frameData.drawSource, frameData.frame };
