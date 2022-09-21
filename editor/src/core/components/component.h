@@ -11,7 +11,7 @@
 #include "../engine/src/core/ecs/component/text_label_component.h"
 #include "../engine/src/core/ecs/component/transform2d_component.h"
 #include "../engine/src/core/utils/logger.h"
-#include "../../../../engine/src/core/utils/rbe_assert.h"
+#include "../engine/src/core/utils/rbe_assert.h"
 
 struct EditorComponent {};
 
