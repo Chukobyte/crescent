@@ -1,5 +1,9 @@
 #pragma once
 
+#ifdef _MSC_VER
+#define CGLM_ALL_UNALIGNED
+#endif
+
 #include <cglm/cglm.h>
 
 #define RBE_PI 3.14159265358979323846f
@@ -57,6 +61,7 @@ typedef struct Color {
 
 Color rbe_color_get_normalized_color_default_alpha(unsigned int r, unsigned int g, unsigned int b);
 Color rbe_color_get_normalized_color(unsigned int r, unsigned int g, unsigned int b, unsigned int a);
+Color rbe_color_get_normalized_color_from_color(const Color* color);
 Color rbe_color_get_white();
 
 // --- Misc --- //

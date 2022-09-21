@@ -7,28 +7,14 @@
 #include "../engine/src/core/scripting/python/rbe_py.h"
 
 #include "editor_context.h"
-#include "project_properties.h"
+#include "editor_background_tasks.h"
+#include "scene/scene_manager.h"
 #include "color.h"
 #include "ui/imgui/imgui_handler.h"
+#include "ui/imgui/imgui_styler.h"
 #include "utils/file_system_helper.h"
 
 static EditorContext* editorContext = EditorContext::Get();
-
-using namespace Squid;
-
-namespace {
-Task<> TestTask() {
-    TASK_NAME(__FUNCTION__ );
-
-    const float startTime = (float) SDL_GetTicks();
-    while (true) {
-//            co_await WaitSeconds(5.0, &SDL_GetTicks);
-        co_await WaitSeconds(5.0, Editor::GetCurrentTime);
-        rbe_logger_info("Hey");
-        co_await Suspend();
-    }
-}
-} // namespace
 
 bool Editor::Initialize() {
     rbe_logger_set_level(LogLevel_DEBUG);
@@ -43,17 +29,16 @@ bool Editor::Initialize() {
     // Initialize Python Instance
     rbe_py_initialize();
 
-    editorContext->initialDir = FileSystemHelper::GetCurrentDirectory();
+    editorContext->initialDir = FileSystemHelper::GetCurrentDir();
     editorContext->isRunning = true;
-    rbe_logger_info("Roll Back Engine Editor has started!");
+    rbe_logger_info("Crescent Engine Editor has started!");
 
-    // Temp load props, should place in project loading logic
-    ProjectProperties* gameProperties = ProjectProperties::Get();
-    gameProperties->LoadPropertiesFromConfig("cre_config.py");
-    gameProperties->PrintProperties();
+    // Load editor setting or create a new file if it doesn't exist
+    if (!editorContext->settings.LoadSettings()) {
+        editorContext->settings.SaveSettings();
+    }
 
-    // Test task
-    mainTasks.RunManaged(TestTask());
+    mainTasks.RunManaged(EditorBackgroundTasks::Main(&mainTasks));
     return true;
 }
 
@@ -61,6 +46,7 @@ void Editor::Update() {
     ProcessInput();
     Render();
     mainTasks.Update();
+    Flush();
 }
 
 bool Editor::InitializeSDL() {
@@ -80,7 +66,7 @@ bool Editor::InitializeSDL() {
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
     editorContext->window = SDL_CreateWindow(
-                                "Roll Back Engine Editor",
+                                "Crescent Engine Editor",
                                 SDL_WINDOWPOS_CENTERED,
                                 SDL_WINDOWPOS_CENTERED,
                                 windowWidth,
@@ -115,6 +101,9 @@ bool Editor::InitializeImGui() {
 
     ImGui_ImplSDL2_InitForOpenGL(editorContext->window, editorContext->openGLContext);
     ImGui_ImplOpenGL3_Init("#version 130");
+
+    ImGuiStyler::ApplyStyle(ImGuiStyler::Style::Crescent);
+
     return true;
 }
 
@@ -137,7 +126,7 @@ void Editor::ProcessWindows() {
 }
 
 void Editor::Render() {
-    static Color backgroundColor = Color::CreateNormalizedColor(22.0f, 22.0f, 22.0f);
+    static EditorColor backgroundColor = EditorColor::CreateNormalizedColor(22.0f, 22.0f, 22.0f);
     glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
@@ -155,11 +144,17 @@ void Editor::Render() {
     SDL_GL_SwapWindow(editorContext->window);
 }
 
+void Editor::Flush() {
+    static SceneManager* sceneManager = SceneManager::Get();
+    sceneManager->FlushQueuedForDeletionNodes();
+}
+
 bool Editor::IsRunning() const {
     return editorContext->isRunning;
 }
 
 void Editor::Shutdown() {
+    mainTasks.KillAllTasks();
     // IMGUI
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplSDL2_Shutdown();
@@ -171,9 +166,5 @@ void Editor::Shutdown() {
 
     rbe_py_finalize();
 
-    rbe_logger_info("Roll Back Engine Editor has been shutdown!");
-}
-
-float Editor::GetCurrentTime() {
-    return SDL_GetTicks() / 1000.0f;
+    rbe_logger_info("Crescent Engine Editor has been shutdown!");
 }

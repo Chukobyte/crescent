@@ -4,8 +4,19 @@
 
 #include <SDL2/SDL.h>
 
+#include "editor_settings.h"
 #include "utils/singleton.h"
 #include "utils/enum_class_utils.h"
+
+#define EDITOR_ENGINE_NAME "crescent_engine"
+
+#ifdef _WIN32
+#define EDITOR_ENGINE_EXTENSION ".exe"
+#else
+#define EDITOR_ENGINE_EXTENSION ""
+#endif
+
+#define EDITOR_ENGINE_BINARY_NAME EDITOR_ENGINE_NAME EDITOR_ENGINE_EXTENSION
 
 enum class EditorProjectState : int {
     ProjectManager = 0,
@@ -16,7 +27,16 @@ enum class EditorProjectState : int {
 class EditorContext : public Singleton<EditorContext> {
   public:
     EditorContext(singleton);
+
+    std::string GetEngineBinPath() const;
+    std::string GetEngineBinaryPath() const;
+    std::string GetEngineBinaryProgramArgs() const;
+    std::string GetProjectExportPath() const;
+
+    static float Time();
+
     bool isRunning = false;
+    EditorSettings settings;
     EditorProjectState projectState = EditorProjectState::ProjectManager;
     // Rendering
     SDL_Window* window = nullptr;
@@ -25,6 +45,6 @@ class EditorContext : public Singleton<EditorContext> {
                                             | SDL_WINDOW_RESIZABLE
                                             | SDL_WINDOW_ALLOW_HIGHDPI
                                         );
-    SDL_GLContext openGLContext;
+    SDL_GLContext openGLContext = nullptr;
     std::string initialDir;
 };

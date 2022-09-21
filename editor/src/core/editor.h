@@ -12,8 +12,6 @@ class Editor {
     bool IsRunning() const;
     void Shutdown();
 
-    static float GetCurrentTime();
-
   private:
     int windowWidth = 800;
     int windowHeight = 600;
@@ -25,4 +23,5 @@ class Editor {
     void ProcessInput();
     void ProcessWindows();
     void Render();
+    void Flush();
 };

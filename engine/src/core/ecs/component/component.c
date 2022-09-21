@@ -129,8 +129,8 @@ ComponentType component_manager_translate_index_to_type(ComponentDataIndex index
         return ComponentType_SCRIPT;
     case ComponentDataIndex_COLLIDER_2D:
         return ComponentType_COLLIDER_2D;
-    case ComponentDataIndex_COLOR_SQUARE:
-        return ComponentType_COLOR_SQUARE;
+    case ComponentDataIndex_COLOR_RECT:
+        return ComponentType_COLOR_RECT;
     case ComponentDataIndex_NONE:
     default:
         rbe_logger_error("Not a valid component data index: '%d'", index);
@@ -154,8 +154,8 @@ const char* component_get_component_data_index_string(ComponentDataIndex index) 
         return "Script";
     case ComponentDataIndex_COLLIDER_2D:
         return "Collider2D";
-    case ComponentDataIndex_COLOR_SQUARE:
-        return "ColorSquare";
+    case ComponentDataIndex_COLOR_RECT:
+        return "ColorRect";
     case ComponentDataIndex_NONE:
     default:
         rbe_logger_error("Not a valid component data index: '%d'", index);

@@ -47,7 +47,7 @@ bool rbe_initialize(int argv, char** args) {
     engineContext = rbe_engine_context_initialize();
     engineContext->engineRootDir = rbe_fs_get_cwd();
 
-    // TODO: Check for working directory overrides
+    // Handle command line flags
     CommandLineFlagResult commandLineFlagResult = rbe_command_line_args_parse(argv, args);
     if (strcmp(commandLineFlagResult.workingDirOverride, "") != 0) {
         rbe_logger_debug("Changing working directory from override to '%s'.", commandLineFlagResult.workingDirOverride);
@@ -57,6 +57,13 @@ bool rbe_initialize(int argv, char** args) {
         rbe_logger_debug("No directory override given, starting default project at '%s'", DEFAULT_START_PROJECT_PATH);
         rbe_fs_chdir(DEFAULT_START_PROJECT_PATH);
         rbe_fs_print_cwd();
+    }
+
+    // Internal Assets Override
+    if (strcmp(commandLineFlagResult.internalAssetsDirOverride, "") != 0) {
+        engineContext->internalAssetsDir = strdup(commandLineFlagResult.internalAssetsDirOverride); // TODO: Clean up properly
+    } else {
+        engineContext->internalAssetsDir = strdup(engineContext->engineRootDir); // TODO: Clean up properly
     }
 
     rbe_py_initialize();

@@ -31,16 +31,14 @@ void rbe_game_props_initialize(bool loadConfig) {
 }
 
 void rbe_game_props_finalize() {
-    RBE_MEM_FREE(properties);
-    properties = NULL;
+    if (properties != NULL) {
+        RBE_MEM_FREE(properties);
+        properties = NULL;
+    }
 }
 
 RBEGameProperties* rbe_game_props_get() {
     return properties;
-}
-
-RBEGameProperties rbe_game_props_read_file(const char* filePath) {
-    return rbe_py_read_config_path(filePath);
 }
 
 void rbe_game_props_print() {

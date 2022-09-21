@@ -1,17 +1,22 @@
-#include <string.h>
 #include "scene_manager.h"
 
-#include "../math/rbe_math.h"
+#include <string.h>
+
+#include "../asset_manager.h"
 #include "../scripting/python/py_helper.h"
-#include "../ecs/component/component.h"
-#include "../ecs/component/transform2d_component.h"
+#include "../scripting/python/rbe_py_file_loader.h"
 #include "../ecs/system/ec_system.h"
 #include "../camera/camera_manager.h"
-#include "../ecs/component/node_component.h"
 #include "../memory/rbe_mem.h"
 #include "../data_structures/rbe_hash_map.h"
 #include "../utils/logger.h"
 #include "../utils/rbe_assert.h"
+#include "../ecs/component/sprite_component.h"
+#include "../ecs/component/animated_sprite_component.h"
+#include "../ecs/component/text_label_component.h"
+#include "../ecs/component/script_component.h"
+#include "../ecs/component/collider2d_component.h"
+#include "../ecs/component/color_rect_component.h"
 
 // --- Scene Tree --- //
 typedef void (*ExecuteOnAllTreeNodesFunc) (SceneTreeNode*);
@@ -60,6 +65,8 @@ Scene* activeScene = NULL;
 Scene* queuedSceneToChangeTo = NULL;
 
 static RBEHashMap* entityToTreeNodeMap = NULL;
+
+void rbe_scene_manager_setup_scene_nodes_from_parent(FileSceneNode* fileSceneNode);
 
 void rbe_scene_manager_initialize() {
     RBE_ASSERT(entityToTreeNodeMap == NULL);
@@ -146,15 +153,26 @@ void rbe_scene_manager_process_queued_scene_change() {
         activeScene = queuedSceneToChangeTo;
         queuedSceneToChangeTo = NULL;
         RBE_ASSERT(activeScene->scenePath != NULL);
-        // Queues entities for creation
+        // Load from cached file scene node (calls rbe_py_api_create_stage_nodes)
         pyh_run_python_file(activeScene->scenePath);
+        FileSceneNode* rootFileSceneNode = file_scene_node_get_cached_file_scene_node();
+        RBE_ASSERT_FMT(rootFileSceneNode != NULL, "Root file scene node is NULL!");
+        rbe_scene_manager_setup_scene_nodes_from_parent(rootFileSceneNode);
+        file_scene_node_delete_cached_file_scene_node();
     }
 }
 
 void rbe_scene_manager_set_active_scene_root(SceneTreeNode* root) {
-    RBE_ASSERT(activeScene != NULL);
+    RBE_ASSERT_FMT(activeScene != NULL, "There is no active scene!");
     RBE_ASSERT_FMT(activeScene->sceneTree->root == NULL, "Trying to overwrite an already existing scene root!");
     activeScene->sceneTree->root = root;
+}
+
+SceneTreeNode* rbe_scene_manager_get_active_scene_root() {
+    if (activeScene != NULL && activeScene->sceneTree != NULL) {
+        return activeScene->sceneTree->root;
+    }
+    return NULL;
 }
 
 // TODO: Clean up temp stuff for CombineModelResult
@@ -223,13 +241,12 @@ TransformModel2D* rbe_scene_manager_get_scene_node_global_transform(Entity entit
 SceneTreeNode* rbe_scene_manager_get_entity_tree_node(Entity entity) {
     RBE_ASSERT_FMT(rbe_hash_map_has(entityToTreeNodeMap, &entity), "Doesn't have entity '%d' in scene tree!", entity);
     SceneTreeNode* treeNode = (SceneTreeNode*) rbe_hash_map_get(entityToTreeNodeMap, &entity);
-    RBE_ASSERT(treeNode != NULL);
+    RBE_ASSERT_FMT(treeNode != NULL, "Failed to get tree node for entity '%d'", entity);
     return treeNode;
 }
 
 Entity rbe_scene_manager_get_entity_child_by_name(Entity parent, const char* childName) {
     SceneTreeNode* parentNode = rbe_scene_manager_get_entity_tree_node(parent);
-    RBE_ASSERT(parentNode != NULL);
     for (size_t childIndex = 0; childIndex < parentNode->childCount; childIndex++) {
         const Entity childEntity = parentNode->children[childIndex]->entity;
         if (component_manager_has_component(childEntity, ComponentDataIndex_NODE)) {
@@ -240,4 +257,70 @@ Entity rbe_scene_manager_get_entity_child_by_name(Entity parent, const char* chi
         }
     }
     return NULL_ENTITY;
+}
+
+// Scene node setup
+void rbe_scene_manager_setup_scene_node(FileSceneNode* fileSceneNode, SceneTreeNode* parent);
+
+void rbe_scene_manager_setup_scene_nodes_from_parent(FileSceneNode* fileSceneNode) {
+    rbe_scene_manager_setup_scene_node(fileSceneNode, NULL);
+}
+
+void rbe_scene_manager_setup_scene_node(FileSceneNode* fileSceneNode, SceneTreeNode* parent) {
+    SceneTreeNode* node = rbe_scene_tree_create_tree_node(rbe_ec_system_create_entity(), parent);
+
+    const bool isRoot = parent == NULL;
+    if (isRoot) {
+        rbe_scene_manager_set_active_scene_root(node);
+    }  else {
+        parent->children[parent->childCount++] = node;
+    }
+
+    // Components
+    NodeComponent* nodeComponent = node_component_create();
+    strcpy(nodeComponent->name, fileSceneNode->name);
+    nodeComponent->type = fileSceneNode->type;
+    RBE_ASSERT_FMT(nodeComponent->type != NodeBaseType_INVALID, "Node '%s' has an invalid node type '%d'", nodeComponent->name, nodeComponent->type);
+    component_manager_set_component(node->entity, ComponentDataIndex_NODE, nodeComponent);
+
+    if (fileSceneNode->components[ComponentDataIndex_TRANSFORM_2D] != NULL) {
+        Transform2DComponent* transform2DComponent = transform2d_component_copy((Transform2DComponent*) fileSceneNode->components[ComponentDataIndex_TRANSFORM_2D]);
+        component_manager_set_component(node->entity, ComponentDataIndex_TRANSFORM_2D, transform2DComponent);
+    }
+    if (fileSceneNode->components[ComponentDataIndex_SPRITE] != NULL) {
+        SpriteComponent* spriteComponent = sprite_component_copy((SpriteComponent*) fileSceneNode->components[ComponentDataIndex_SPRITE]);
+        spriteComponent->texture = rbe_asset_manager_get_texture(fileSceneNode->spriteTexturePath);
+        component_manager_set_component(node->entity, ComponentDataIndex_SPRITE, spriteComponent);
+    }
+    if (fileSceneNode->components[ComponentDataIndex_ANIMATED_SPRITE] != NULL) {
+        AnimatedSpriteComponent* animatedSpriteComponent = animated_sprite_component_data_copy_to_animated_sprite((AnimatedSpriteComponentData*) fileSceneNode->components[ComponentDataIndex_ANIMATED_SPRITE]);
+        component_manager_set_component(node->entity, ComponentDataIndex_ANIMATED_SPRITE, animatedSpriteComponent);
+    }
+    if (fileSceneNode->components[ComponentDataIndex_TEXT_LABEL] != NULL) {
+        TextLabelComponent* textLabelComponent = text_label_component_copy((TextLabelComponent*) fileSceneNode->components[ComponentDataIndex_TEXT_LABEL]);
+        textLabelComponent->font = rbe_asset_manager_get_font(fileSceneNode->fontUID);
+        component_manager_set_component(node->entity, ComponentDataIndex_TEXT_LABEL, textLabelComponent);
+    }
+    if (fileSceneNode->components[ComponentDataIndex_SCRIPT] != NULL) {
+        ScriptComponent* scriptComponent = script_component_copy((ScriptComponent*) fileSceneNode->components[ComponentDataIndex_SCRIPT]);
+        component_manager_set_component(node->entity, ComponentDataIndex_SCRIPT, scriptComponent);
+    }
+    if (fileSceneNode->components[ComponentDataIndex_COLLIDER_2D] != NULL) {
+        Collider2DComponent* collider2DComponent = collider2d_component_copy((Collider2DComponent*) fileSceneNode->components[ComponentDataIndex_COLLIDER_2D]);
+        component_manager_set_component(node->entity, ComponentDataIndex_COLLIDER_2D, collider2DComponent);
+    }
+    if (fileSceneNode->components[ComponentDataIndex_COLOR_RECT] != NULL) {
+        ColorRectComponent* colorSquareComponent = color_rect_component_copy(
+                    (ColorRectComponent *) fileSceneNode->components[ComponentDataIndex_COLOR_RECT]);
+        component_manager_set_component(node->entity, ComponentDataIndex_COLOR_RECT, colorSquareComponent);
+    }
+
+    rbe_ec_system_update_entity_signature_with_systems(node->entity);
+
+    // Children
+    for (size_t i = 0; i < fileSceneNode->childrenCount; i++) {
+        rbe_scene_manager_setup_scene_node(fileSceneNode->children[i], node);
+    }
+
+    rbe_scene_manager_queue_entity_for_creation(node);
 }

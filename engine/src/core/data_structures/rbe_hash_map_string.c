@@ -97,7 +97,7 @@ bool rbe_string_hash_map_has(RBEStringHashMap* hashMap, const char* key) {
 }
 
 void* rbe_string_hash_map_get(RBEStringHashMap* hashMap, const char* key) {
-    RBE_ASSERT(hashMap != NULL);
+    RBE_ASSERT_FMT(hashMap != NULL, "Trying to get key '%s' from a NULL hashmap!", key);
     size_t index = hashMap->hashFunc(key) % hashMap->capacity;
     for (StringHashMapNode* node = hashMap->nodes[index]; node; node = node->next) {
         if (hashMap->compareFunc(key, node->key) == 0) {
@@ -160,7 +160,6 @@ void string_hash_map_rehash(RBEStringHashMap* hashMap, StringHashMapNode** oldNo
         for (StringHashMapNode* node = oldNode[chain]; node != NULL;) {
             StringHashMapNode* next = node->next;
 
-            RBE_ASSERT(node != NULL);
             size_t newIndex = hashMap->hashFunc(node->key) % hashMap->capacity;
             node->next = hashMap->nodes[newIndex];
             hashMap->nodes[newIndex] = node;

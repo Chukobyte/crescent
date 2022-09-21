@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "input_action.h"
+#include "input_value_constants.h"
 #include "../data_structures/rbe_hash_map_string.h"
 #include "../utils/logger.h"
 #include "../utils/rbe_string_util.h"
@@ -44,65 +45,65 @@ bool rbe_input_initialize() {
     // SETUP INPUT STRING VALUES
     // Keyboard
     keyboardStringValuesMap = rbe_string_hash_map_create(80);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "0", SDL_SCANCODE_0);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "1", SDL_SCANCODE_1);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "2", SDL_SCANCODE_2);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "3", SDL_SCANCODE_3);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "4", SDL_SCANCODE_4);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "5", SDL_SCANCODE_5);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "6", SDL_SCANCODE_6);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "7", SDL_SCANCODE_7);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "8", SDL_SCANCODE_8);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "9", SDL_SCANCODE_9);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_ZERO, SDL_SCANCODE_0);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_ONE, SDL_SCANCODE_1);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_TWO, SDL_SCANCODE_2);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_THREE, SDL_SCANCODE_3);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_FOUR, SDL_SCANCODE_4);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_FIVE, SDL_SCANCODE_5);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_SIX, SDL_SCANCODE_6);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_SEVEN, SDL_SCANCODE_7);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_EIGHT, SDL_SCANCODE_8);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_NINE, SDL_SCANCODE_9);
 
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "a", SDL_SCANCODE_A);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "b", SDL_SCANCODE_B);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "c", SDL_SCANCODE_C);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "d", SDL_SCANCODE_D);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "e", SDL_SCANCODE_E);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "f", SDL_SCANCODE_F);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "g", SDL_SCANCODE_G);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "h", SDL_SCANCODE_H);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "i", SDL_SCANCODE_I);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "j", SDL_SCANCODE_J);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "k", SDL_SCANCODE_K);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "l", SDL_SCANCODE_L);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "m", SDL_SCANCODE_M);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "n", SDL_SCANCODE_N);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "o", SDL_SCANCODE_O);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "p", SDL_SCANCODE_P);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "q", SDL_SCANCODE_Q);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "r", SDL_SCANCODE_R);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "s", SDL_SCANCODE_S);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "t", SDL_SCANCODE_T);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "u", SDL_SCANCODE_U);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "v", SDL_SCANCODE_V);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "w", SDL_SCANCODE_W);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "x", SDL_SCANCODE_X);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "y", SDL_SCANCODE_Y);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "z", SDL_SCANCODE_Z);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_A, SDL_SCANCODE_A);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_B, SDL_SCANCODE_B);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_C, SDL_SCANCODE_C);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_D, SDL_SCANCODE_D);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_E, SDL_SCANCODE_E);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_F, SDL_SCANCODE_F);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_G, SDL_SCANCODE_G);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_H, SDL_SCANCODE_H);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_I, SDL_SCANCODE_I);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_J, SDL_SCANCODE_J);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_K, SDL_SCANCODE_K);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_L, SDL_SCANCODE_L);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_M, SDL_SCANCODE_M);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_N, SDL_SCANCODE_N);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_O, SDL_SCANCODE_O);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_P, SDL_SCANCODE_P);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_Q, SDL_SCANCODE_Q);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_R, SDL_SCANCODE_R);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_S, SDL_SCANCODE_S);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_T, SDL_SCANCODE_T);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_U, SDL_SCANCODE_U);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_V, SDL_SCANCODE_V);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_W, SDL_SCANCODE_W);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_X, SDL_SCANCODE_X);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_Y, SDL_SCANCODE_Y);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_Z, SDL_SCANCODE_Z);
 
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "left", SDL_SCANCODE_LEFT);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "right", SDL_SCANCODE_RIGHT);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "up", SDL_SCANCODE_UP);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "down", SDL_SCANCODE_DOWN);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_LEFT, SDL_SCANCODE_LEFT);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_RIGHT, SDL_SCANCODE_RIGHT);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_UP, SDL_SCANCODE_UP);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_DOWN, SDL_SCANCODE_DOWN);
 
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "return", SDL_SCANCODE_RETURN);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "space", SDL_SCANCODE_SPACE);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "esc", SDL_SCANCODE_ESCAPE);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_RETURN, SDL_SCANCODE_RETURN);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_SPACE, SDL_SCANCODE_SPACE);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_ESCAPE, SDL_SCANCODE_ESCAPE);
 
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "f1", SDL_SCANCODE_F1);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "f2", SDL_SCANCODE_F2);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "f3", SDL_SCANCODE_F3);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "f4", SDL_SCANCODE_F4);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "f5", SDL_SCANCODE_F5);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "f6", SDL_SCANCODE_F6);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "f7", SDL_SCANCODE_F7);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "f8", SDL_SCANCODE_F8);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "f9", SDL_SCANCODE_F9);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "f10", SDL_SCANCODE_F10);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "f11", SDL_SCANCODE_F11);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, "f12", SDL_SCANCODE_F12);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_F1, SDL_SCANCODE_F1);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_F2, SDL_SCANCODE_F2);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_F3, SDL_SCANCODE_F3);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_F4, SDL_SCANCODE_F4);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_F5, SDL_SCANCODE_F5);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_F6, SDL_SCANCODE_F6);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_F7, SDL_SCANCODE_F7);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_F8, SDL_SCANCODE_F8);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_F9, SDL_SCANCODE_F9);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_F10, SDL_SCANCODE_F10);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_F11, SDL_SCANCODE_F11);
+    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_F12, SDL_SCANCODE_F12);
 
     // Gamepad
     input_initialize_gamepad_system();
@@ -365,16 +366,16 @@ void input_load_gamepads() {
     // Load gamepads
     // Get engine root directory and concatenate with game controller db file.
     RBEEngineContext* engineContext = rbe_engine_context_get();
-    char engineRootDir[256];
-    strcpy(engineRootDir, engineContext->engineRootDir);
-    strcat(engineRootDir, "/assets/resources/game_controller_db.txt");
-    int result = SDL_GameControllerAddMappingsFromFile(engineRootDir);
-    RBE_ASSERT_FMT(result >= 0, "Couldn't load sdl controller mapping file!");
+    char controllerMappingFilePath[256];
+    strcpy(controllerMappingFilePath, engineContext->internalAssetsDir);
+    strcat(controllerMappingFilePath, "/assets/resources/game_controller_db.txt");
+    int result = SDL_GameControllerAddMappingsFromFile(controllerMappingFilePath);
+    RBE_ASSERT_FMT(result >= 0, "Couldn't load sdl controller mapping file at path '%s'!", controllerMappingFilePath);
     if (SDL_NumJoysticks() > 0) {
         joystickController = SDL_JoystickOpen(0);
-        RBE_ASSERT_FMT(joystickController != NULL, "SDL 'joystick' object didn't load correctly!");
+        RBE_ASSERT_FMT(joystickController != NULL, "SDL joystick object didn't load correctly at path '%s'!", controllerMappingFilePath);
         gameController = SDL_GameControllerOpen(0);
-        RBE_ASSERT_FMT(gameController != NULL, "SDL 'game controller' object didn't load correctly!");
+        RBE_ASSERT_FMT(gameController != NULL, "SDL 'game controller' object didn't load correctly at path '%s'!", controllerMappingFilePath);
         rbe_logger_debug("Loaded one gamepad!");
     } else {
         rbe_logger_debug("No gamepads detected.");

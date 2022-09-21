@@ -1,4 +1,7 @@
 #include <stdlib.h>
+
+#include <SDL2/SDL_main.h>
+
 #include "core/core.h"
 
 int main(int argv, char** args) {

@@ -644,6 +644,7 @@
 "        current_animation_name: str,\n"\
 "        is_playing: bool,\n"\
 "        animations: list,\n"\
+"        modulate=Color.WHITE(),\n"\
 "        origin=Vector2.ZERO(),\n"\
 "        flip_x=False,\n"\
 "        flip_y=False,\n"\
@@ -651,6 +652,7 @@
 "        self.current_animation_name = current_animation_name\n"\
 "        self.is_playing = is_playing\n"\
 "        self.animations = animations\n"\
+"        self.modulate = modulate\n"\
 "        self.origin = origin\n"\
 "        self.flip_x = flip_x\n"\
 "        self.flip_y = flip_y\n"\
@@ -680,7 +682,7 @@
 "        self.color = color\n"\
 "\n"\
 "\n"\
-"class ColorSquareComponent:\n"\
+"class ColorRectComponent:\n"\
 "    def __init__(self, size: Size2D, color: Color):\n"\
 "        self.size = size\n"\
 "        self.color = color\n"\
@@ -695,7 +697,7 @@
 "    ANIMATED_SPRITE = \"AnimatedSprite\"\n"\
 "    TEXT_LABEL = \"TextLabel\"\n"\
 "    COLLIDER2D = \"Collider2D\"\n"\
-"    COLOR_SQUARE = \"ColorSquare\"\n"\
+"    COLOR_RECT = \"ColorRect\"\n"\
 "\n"\
 "\n"\
 "class Node:\n"\
@@ -1096,48 +1098,48 @@
 "        )\n"\
 "\n"\
 "\n"\
-"class ColorSquare(Node2D):\n"\
+"class ColorRect(Node2D):\n"\
 "    def get_size(self) -> Size2D:\n"\
-"        w, h = crescent_api_internal.color_square_get_size(entity_id=self.entity_id)\n"\
+"        w, h = crescent_api_internal.color_rect_get_size(entity_id=self.entity_id)\n"\
 "        return Size2D(w=w, h=h)\n"\
 "\n"\
 "    def set_size(self, extents: Size2D) -> None:\n"\
-"        crescent_api_internal.color_square_set_size(\n"\
+"        crescent_api_internal.color_rect_set_size(\n"\
 "            entity_id=self.entity_id, w=extents.w, h=extents.h\n"\
 "        )\n"\
 "\n"\
 "    @property\n"\
 "    def size(self) -> Size2D:\n"\
-"        w, h = crescent_api_internal.color_square_get_size(entity_id=self.entity_id)\n"\
+"        w, h = crescent_api_internal.color_rect_get_size(entity_id=self.entity_id)\n"\
 "        return Size2D(w=w, h=h)\n"\
 "\n"\
 "    @size.setter\n"\
 "    def size(self, value: Size2D) -> None:\n"\
-"        crescent_api_internal.color_square_set_size(\n"\
+"        crescent_api_internal.color_rect_set_size(\n"\
 "            entity_id=self.entity_id, w=value.w, h=value.h\n"\
 "        )\n"\
 "\n"\
 "    def get_color(self) -> Color:\n"\
-"        r, g, b, a = crescent_api_internal.color_square_get_color(\n"\
+"        r, g, b, a = crescent_api_internal.color_rect_get_color(\n"\
 "            entity_id=self.entity_id\n"\
 "        )\n"\
 "        return Color(r=r, g=g, b=b, a=a)\n"\
 "\n"\
 "    def set_color(self, color: Color) -> None:\n"\
-"        crescent_api_internal.color_square_set_color(\n"\
+"        crescent_api_internal.color_rect_set_color(\n"\
 "            entity_id=self.entity_id, r=color.r, g=color.g, b=color.b, a=color.a\n"\
 "        )\n"\
 "\n"\
 "    @property\n"\
 "    def color(self) -> Color:\n"\
-"        r, g, b, a = crescent_api_internal.color_square_get_color(\n"\
+"        r, g, b, a = crescent_api_internal.color_rect_get_color(\n"\
 "            entity_id=self.entity_id\n"\
 "        )\n"\
 "        return Color(r=r, g=g, b=b, a=a)\n"\
 "\n"\
 "    @color.setter\n"\
 "    def color(self, value: Color) -> None:\n"\
-"        crescent_api_internal.color_square_set_color(\n"\
+"        crescent_api_internal.color_rect_set_color(\n"\
 "            entity_id=self.entity_id, r=value.r, g=value.g, b=value.b, a=value.a\n"\
 "        )\n"\
 "\n"\
@@ -1226,7 +1228,7 @@
 "\n"\
 "# CONFIGURATION\n"\
 "def configure_game(\n"\
-"    game_tile=\"Test Game\",\n"\
+"    game_title=\"Test Game\",\n"\
 "    window_width=800,\n"\
 "    window_height=600,\n"\
 "    resolution_width=800,\n"\
@@ -1236,7 +1238,7 @@
 "    colliders_visible=False,\n"\
 ") -> None:\n"\
 "    crescent_api_internal.configure_game(\n"\
-"        game_tile=game_tile,\n"\
+"        game_title=game_title,\n"\
 "        window_width=window_width,\n"\
 "        window_height=window_height,\n"\
 "        resolution_width=resolution_width,\n"\

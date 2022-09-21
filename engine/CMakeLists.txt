@@ -39,6 +39,7 @@ add_library(${PROJECT_NAME} STATIC
         src/core/scripting/python/py_helper.c
         src/core/scripting/python/rbe_py.c
         src/core/scripting/python/rbe_py_api_module.c
+        src/core/scripting/python/rbe_py_file_loader.c
         src/core/scripting/python/py_cache.c
         src/core/scripting/python/py_script_context.c
         src/core/scripting/native/native_script_context.c
@@ -66,7 +67,7 @@ add_library(${PROJECT_NAME} STATIC
         src/core/ecs/ecs_manager.c
         src/core/ecs/component/animated_sprite_component.c
         src/core/ecs/component/collider2d_component.c
-        src/core/ecs/component/color_square_component.c
+        src/core/ecs/component/color_rect_component.c
         src/core/ecs/component/component.c
         src/core/ecs/component/node_component.c
         src/core/ecs/component/script_component.c
@@ -74,7 +75,7 @@ add_library(${PROJECT_NAME} STATIC
         src/core/ecs/component/text_label_component.c
         src/core/ecs/component/transform2d_component.c
         src/core/ecs/system/animated_sprite_rendering_ec_system.c
-        src/core/ecs/system/color_square_ec_system.c
+        src/core/ecs/system/color_rect_ec_system.c
         src/core/ecs/system/ec_system.c
         src/core/ecs/system/font_rendering_ec_system.c
         src/core/ecs/system/script_ec_system.c
@@ -83,6 +84,9 @@ add_library(${PROJECT_NAME} STATIC
         src/core/networking/rbe_network_socket.c
         )
 
+if (NOT DEFINED IS_CI_BUILD)
+    set(IS_CI_BUILD "false")
+endif()
 
 add_library(glad ../include/glad/glad.c)
 add_library(stb_image ../include/stb_image/stb_image.c)
@@ -108,27 +112,30 @@ endif()
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image SDL2::SDL2main SDL2::SDL2 freetype Python3::Python Ws2_32)
 elseif(WIN32)
-    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image -lmingw32 -static-libgcc SDL2::SDL2main SDL2::SDL2 freetype Python3::Python -lws2_32)
+    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image -lmingw32 -static-libgcc -mwindows SDL2::SDL2main SDL2::SDL2 freetype Python3::Python -lws2_32)
 else ()
     target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image -static-libgcc -Xlinker -export-dynamic SDL2::SDL2main SDL2::SDL2 freetype Python3::Python m)
 endif ()
 
 target_compile_options(${PROJECT_NAME} PUBLIC ${flags})
 
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${PROJECT_SOURCE_DIR}/../assets
-        $<TARGET_FILE_DIR:${PROJECT_NAME}>/../assets
-        )
+# Copy directories over that are needed to run the engine and games
+if (IS_CI_BUILD STREQUAL "false")
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${PROJECT_SOURCE_DIR}/../assets
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/../assets
+            )
 
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${PROJECT_SOURCE_DIR}/../test_games
-        $<TARGET_FILE_DIR:${PROJECT_NAME}>/../test_games
-        )
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${PROJECT_SOURCE_DIR}/../test_games
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/../test_games
+            )
 
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${PROJECT_SOURCE_DIR}/../crescent_py_api
-        $<TARGET_FILE_DIR:${PROJECT_NAME}>/../crescent_py_api
-        )
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${PROJECT_SOURCE_DIR}/../crescent_py_api
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/../crescent_py_api
+            )
+endif()

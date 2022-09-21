@@ -21,6 +21,16 @@ Color rbe_color_get_normalized_color(unsigned int r, unsigned int g, unsigned in
     return color;
 }
 
+Color rbe_color_get_normalized_color_from_color(const Color* color) {
+    Color newColor = {
+        .r = color->r / 255.0f,
+        .g = color->g / 255.0f,
+        .b = color->b / 255.0f,
+        .a = color->a / 255.0f
+    };
+    return newColor;
+}
+
 Color rbe_color_get_white() {
     Color white = { 1.0f, 1.0f, 1.0f, 1.0f};
     return white;

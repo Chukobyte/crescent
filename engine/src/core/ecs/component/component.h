@@ -1,5 +1,9 @@
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdbool.h>
 
 #include "../entity/entity.h"
@@ -15,7 +19,7 @@ typedef enum ComponentDataIndex {
     ComponentDataIndex_TEXT_LABEL = 4,
     ComponentDataIndex_SCRIPT = 5,
     ComponentDataIndex_COLLIDER_2D = 6,
-    ComponentDataIndex_COLOR_SQUARE = 7,
+    ComponentDataIndex_COLOR_RECT = 7,
 } ComponentDataIndex;
 
 typedef enum ComponentType {
@@ -27,7 +31,7 @@ typedef enum ComponentType {
     ComponentType_TEXT_LABEL = 1 << 4,
     ComponentType_SCRIPT = 1 << 5,
     ComponentType_COLLIDER_2D = 1 << 6,
-    ComponentType_COLOR_SQUARE = 1 << 7,
+    ComponentType_COLOR_RECT = 1 << 7,
 } ComponentType;
 
 // --- Component Manager --- //
@@ -43,3 +47,7 @@ void component_manager_set_component_signature(Entity entity, ComponentType comp
 ComponentType component_manager_get_component_signature(Entity entity);
 
 const char* component_get_component_data_index_string(ComponentDataIndex index);
+
+#ifdef __cplusplus
+}
+#endif

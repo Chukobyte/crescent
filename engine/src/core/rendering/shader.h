@@ -3,7 +3,8 @@
 #include <stdbool.h>
 
 #include <glad/glad.h>
-#include <cglm/cglm.h>
+
+#include "../math/rbe_math.h"
 
 static const char* SHADER_VERTEX_TYPE = "VERTEX";
 static const char* SHADER_FRAGMENT_TYPE = "FRAGMENT";

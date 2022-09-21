@@ -7,7 +7,6 @@
 #include "rbe_py_api_module.h"
 #include "crescent_api_source.h"
 #include "../../utils/rbe_assert.h"
-#include "../../game_properties.h"
 
 void rbe_py_initialize() {
     rbe_py_cache_initialize();
@@ -18,10 +17,10 @@ void rbe_py_initialize() {
     PyRun_SimpleString("sys.path.insert(0, \".\")");
     PyRun_SimpleString("sys.dont_write_bytecode = True");
     // TODO: Not sure why it breaks on linux when not enabling tracemalloc
-#ifndef WIN32
+//#ifndef WIN32
     PyRun_SimpleString("import tracemalloc\n");
     PyRun_SimpleString("tracemalloc.start()");
-#endif
+//#endif
 
     PyRun_SimpleString(RBE_PY_API_SOURCE_IMPORTER);
     PyRun_SimpleString(RBE_PY_API_SOURCE_IMPORTER_MODULE_IMPORTS);
@@ -34,20 +33,4 @@ void rbe_py_finalize() {
 
 bool rbe_py_load_project_config() {
     return pyh_run_python_file("cre_config.py");
-}
-
-RBEGameProperties rbe_py_read_config_path(const char* filePath) {
-    bool load_success = pyh_run_python_file(filePath);
-    RBE_ASSERT_FMT(load_success == true, "Failed to load config at '%s'", filePath);
-    RBEGameProperties* gameProps = rbe_game_props_get();
-    RBEGameProperties props = {
-        .gameTitle = gameProps->gameTitle,
-        .resolutionWidth = gameProps->resolutionWidth,
-        .resolutionHeight = gameProps->resolutionHeight,
-        .windowWidth = gameProps->windowWidth,
-        .windowHeight = gameProps->windowHeight,
-        .targetFPS = gameProps->targetFPS,
-        .initialScenePath = gameProps->initialScenePath
-    };
-    return props;
 }

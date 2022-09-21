@@ -60,7 +60,7 @@ PyObject* rbe_py_cache_get_class(const char* modulePath, const char* classPath) 
         RBE_ASSERT(pNewClass != NULL);
         // Store a pointer to the PyObject pointer to not worry about PyObject size...
         rbe_string_hash_map_add(moduleCacheItem->classHashMap, classPath, &pNewClass, sizeof(PyObject**));
-        Py_DecRef(pModuleDict);
+//        Py_DecRef(pModuleDict); // TODO: This crashed on linux, find out what the deal is.
     }
     PyObject** pClass = (PyObject**) rbe_string_hash_map_get(moduleCacheItem->classHashMap, classPath);
     RBE_ASSERT(pClass != NULL);

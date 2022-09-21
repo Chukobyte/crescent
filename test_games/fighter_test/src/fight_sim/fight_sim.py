@@ -1,6 +1,6 @@
-from test_games.fighter_test.src.input import *
-from test_games.fighter_test.src.task import *
-from test_games.fighter_test.src.fight_sim.fighter import *
+from src.input import *
+from src.task import *
+from src.fight_sim.fighter import *
 
 
 class AttackRef:

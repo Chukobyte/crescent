@@ -45,7 +45,7 @@ jobs:
       - name: Running build
         run: |
           cd ${{ github.workspace }}
-          cmake -DCMAKE_C_COMPILER=gcc-11 -DCMAKE_CXX_COMPILER=g++-11 -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/../vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=On .
+          cmake . -DCMAKE_C_COMPILER=gcc-11 -DCMAKE_CXX_COMPILER=g++-11 -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/../vcpkg/scripts/buildsystems/vcpkg.cmake -DIS_CI_BUILD="true" -DCMAKE_EXPORT_COMPILE_COMMANDS=On
           cmake --build .
 
       - name: Running PVS-Studio
