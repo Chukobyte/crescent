@@ -19,9 +19,11 @@
 #include "ecs/ecs_manager.h"
 #include "ecs/system/ec_system.h"
 #include "scene/scene_manager.h"
+#include "json/json_file_loader.h"
 
 // The default project path if no directory override is provided
-#define DEFAULT_START_PROJECT_PATH "test_games/fighter_test"
+//#define DEFAULT_START_PROJECT_PATH "test_games/fighter_test"
+#define DEFAULT_START_PROJECT_PATH "test_games/new_fighter"
 
 bool rbe_initialize_sdl();
 bool rbe_initialize_rendering();
@@ -105,6 +107,12 @@ bool rbe_initialize(int argv, char** args) {
 
     // Go to initial scene
     rbe_scene_manager_queue_scene_change(gameProperties->initialScenePath);
+
+    // Temp load json config
+    const char* projectConfigFile = "project.ccfg";
+    if (rbe_fs_does_file_exist(projectConfigFile)) {
+        cre_json_load_config_file(projectConfigFile);
+    }
 
     return true;
 }

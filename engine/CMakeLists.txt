@@ -82,6 +82,7 @@ add_library(${PROJECT_NAME} STATIC
         src/core/ecs/system/sprite_rendering_ec_system.c
         src/core/ecs/system/collision_ec_system.c
         src/core/networking/rbe_network_socket.c
+        src/core/json/json_file_loader.c
         )
 
 if (NOT DEFINED IS_CI_BUILD)
@@ -90,6 +91,7 @@ endif()
 
 add_library(glad ../include/glad/glad.c)
 add_library(stb_image ../include/stb_image/stb_image.c)
+add_library(cJSON ../include/cjson/cJSON.c)
 
 target_include_directories(${PROJECT_NAME} PUBLIC
         "${PROJECT_BINARY_DIR}"
@@ -110,11 +112,11 @@ if (NOT freetype_from_find_package)
 endif()
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image SDL2::SDL2main SDL2::SDL2 freetype Python3::Python Ws2_32)
+    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image cJSON SDL2::SDL2main SDL2::SDL2 freetype Python3::Python Ws2_32)
 elseif(WIN32)
-    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image -lmingw32 -static-libgcc -mwindows SDL2::SDL2main SDL2::SDL2 freetype Python3::Python -lws2_32)
+    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image cJSON -lmingw32 -static-libgcc -mwindows SDL2::SDL2main SDL2::SDL2 freetype Python3::Python -lws2_32)
 else ()
-    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image -static-libgcc -Xlinker -export-dynamic SDL2::SDL2main SDL2::SDL2 freetype Python3::Python m)
+    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image cJSON -static-libgcc -Xlinker -export-dynamic SDL2::SDL2main SDL2::SDL2 freetype Python3::Python m)
 endif ()
 
 target_compile_options(${PROJECT_NAME} PUBLIC ${flags})

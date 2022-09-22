@@ -1,0 +1,14 @@
+{
+    "name": "New Fighter",
+    "window_width": 800,
+    "window_height": 600,
+    "resolution_width": 800,
+    "resolution_height": 600,
+    "target_fps": 66,
+    "initial_node_path": null,
+    "colliders_visible": false,
+
+    "assets": [],
+
+    "inputs": []
+}
