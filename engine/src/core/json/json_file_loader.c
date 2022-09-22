@@ -26,6 +26,31 @@ void cre_json_load_config_file(const char* filePath) {
         if (cJSON_IsNumber(windowHeightJson)) {
             rbe_logger_debug("Printing json project window height '%d'", (int) windowHeightJson->valuedouble);
         }
+        // Window Width
+        cJSON* resolutionWidthJson = cJSON_GetObjectItemCaseSensitive(configJson, "resolution_width");
+        if (cJSON_IsNumber(resolutionWidthJson)) {
+            rbe_logger_debug("Printing json project resolution width '%d'", (int) resolutionWidthJson->valuedouble);
+        }
+        // Window Height
+        cJSON* resolutionHeightJson = cJSON_GetObjectItemCaseSensitive(configJson, "resolution_height");
+        if (cJSON_IsNumber(resolutionHeightJson)) {
+            rbe_logger_debug("Printing json project resolution height '%d'", (int) resolutionHeightJson->valuedouble);
+        }
+        // Target FPS
+        cJSON* targetFPSJson = cJSON_GetObjectItemCaseSensitive(configJson, "target_fps");
+        if (cJSON_IsNumber(targetFPSJson)) {
+            rbe_logger_debug("Printing json project target fps '%d'", (int) targetFPSJson->valuedouble);
+        }
+        // Initial Node Path
+        cJSON* initialNodePathJson = cJSON_GetObjectItemCaseSensitive(configJson, "initial_node_path");
+        if (cJSON_IsString(initialNodePathJson) && (initialNodePathJson->valuestring != NULL)) {
+            rbe_logger_debug("Printing json initial node path '%s'", initialNodePathJson->valuestring);
+        }
+        // Colliders Visible
+        cJSON* collidersVisibleJson = cJSON_GetObjectItemCaseSensitive(configJson, "colliders_visible");
+        if (cJSON_IsBool(collidersVisibleJson)) {
+            rbe_logger_debug("Printing json project colliders visible '%s'", cJSON_IsTrue(collidersVisibleJson) ? "true": "false");
+        }
     }
 
     cJSON_Delete(configJson);
