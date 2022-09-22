@@ -100,7 +100,6 @@ void ProjectManagerUI::ProcessWindows() {
             }
 
             // New Project Section
-            ImGui::Text("Creates new project in 'test_games' folder...");
             // Name
             static std::string newProjectName;
             static ImGuiHelper::InputText newProjectNameInputText("New Project Name", newProjectName);
