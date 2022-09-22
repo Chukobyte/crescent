@@ -48,9 +48,10 @@ inline nlohmann::json LoadFile(const std::string& filePath) {
     return json;
 }
 
-inline void SaveFile(const std::string& filePath, const nlohmann::json& outputJson) {
+inline void SaveFile(const std::string& filePath, const nlohmann::json& outputJson, bool format = true) {
     std::ofstream myFile(filePath);
-    myFile << outputJson;
+    const std::string jsonText = format ? outputJson.dump(4) : outputJson.dump();
+    myFile << jsonText << "\n";
     myFile.close();
 }
 
