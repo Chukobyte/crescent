@@ -49,7 +49,7 @@ static std::unordered_map<std::string, std::string> INPUT_TO_SCRIPT_CONSTANT_MAP
     { INPUT_VALUE_DOWN, "Input.Keyboard.DOWN" },
     { INPUT_VALUE_RETURN, "Input.Keyboard.RETURN" },
     { INPUT_VALUE_SPACE, "Input.Keyboard.SPACE" },
-    { INPUT_VALUE_ESCAPE, "Input.Keyboard.ESCAPE" },
+    { INPUT_VALUE_ESCAPE, "Input.Keyboard.ESC" },
     { INPUT_VALUE_F1, "Input.Keyboard.F1" },
     { INPUT_VALUE_F2, "Input.Keyboard.F2" },
     { INPUT_VALUE_F3, "Input.Keyboard.F3" },

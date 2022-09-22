@@ -54,7 +54,7 @@ void FileNodeCache::LoadRootNodeDir(const std::string& filePath, LoadFlag loadFl
     rootNode.type = FileNodeType::Directory;
     rootNode.directories.clear();
     rootNode.files.clear();
-    rootNode.index = nodeIndexCount;
+    rootNode.index = nodeIndexCount++;
     extensionToFileNodeMap.clear();
     LoadFileNodeEntries(rootNode, loadFlag);
 }

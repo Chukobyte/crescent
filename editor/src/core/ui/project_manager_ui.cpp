@@ -130,8 +130,9 @@ void ProjectManagerUI::ProcessWindows() {
                 ImGui::OpenPopup(newProjectFileBrowser.name.c_str());
             }
             // Create new project
-            const std::string fullNewProjectPath = Helper::RemoveExtensionFromFilePath(newProjectPath);
-            if (ImGui::Button("Create New Project") && !newProjectName.empty() && !newProjectPath.empty() && FileSystemHelper::DirectoryExistsAndIsEmpty(fullNewProjectPath)) {
+            const std::string newProjectPathText = newProjectPathInputText.GetValue();
+            const std::string fullNewProjectPath = Helper::RemoveExtensionFromFilePath(newProjectPathText);
+            if (ImGui::Button("Create New Project") && FileSystemHelper::DirectoryExistsAndIsEmpty(fullNewProjectPath)) {
                 rbe_fs_chdir(std::filesystem::path(fullNewProjectPath).string().c_str());
                 // Create New Project Stuff
                 gameProperties->ResetToDefault();
