@@ -7,9 +7,29 @@
     "target_fps": 66,
     "initial_node_path": "nodes/title_screen.cscn",
     "colliders_visible": false,
-
-    "assets": [],
-
+    "assets": {
+        "audio_sources": [
+            {
+                "file_path": "assets/music/test_song.wav"
+            }
+        ],
+        "textures": [
+            {
+                "file_path": "assets/images/sprite.png",
+                "wrap_s": "clamp_to_border",
+                "wrap_t": "clamp_to_border",
+                "filter_min": "nearest",
+                "filter_mag": "nearest"
+            }
+        ],
+        "fonts": [
+            {
+                "file_path": "assets/fonts/verdana.ttf",
+                "uid": "verdana-16",
+                "size": 16
+            }
+        ]
+    },
     "inputs": [
         {
             "name": "quit",

@@ -9,21 +9,25 @@
 
 static RBEGameProperties* properties = NULL;
 
-void rbe_game_props_initialize(bool loadConfig) {
-    properties = RBE_MEM_ALLOCATE(RBEGameProperties);
-    properties->gameTitle = NULL;
-    properties->windowWidth = 800;
-    properties->windowHeight = 600;
-    properties->resolutionWidth = properties->windowWidth;
-    properties->resolutionHeight = properties->windowHeight;
-    properties->targetFPS = 66;
-    properties->initialScenePath = NULL;
-    properties->areCollidersVisible = false;
-    properties->audioSourceCount = 0;
-    properties->textureCount = 0;
-    properties->fontCount = 0;
-    properties->inputActionCount = 0;
+RBEGameProperties* rbe_game_props_create() {
+    RBEGameProperties* props = RBE_MEM_ALLOCATE(RBEGameProperties);
+    props->gameTitle = NULL;
+    props->windowWidth = 800;
+    props->windowHeight = 600;
+    props->resolutionWidth = props->windowWidth;
+    props->resolutionHeight = props->windowHeight;
+    props->targetFPS = 66;
+    props->initialScenePath = NULL;
+    props->areCollidersVisible = false;
+    props->audioSourceCount = 0;
+    props->textureCount = 0;
+    props->fontCount = 0;
+    props->inputActionCount = 0;
+    return props;
+}
 
+void rbe_game_props_initialize(bool loadConfig) {
+    properties = rbe_game_props_create();
     if (loadConfig) {
         bool readSuccess = rbe_py_load_project_config();
         RBE_ASSERT_FMT(readSuccess, "Failed to read project configuration!");
