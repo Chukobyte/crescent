@@ -219,40 +219,50 @@ RBEGameProperties* cre_json_load_config_file(const char* filePath) {
 }
 
 // Scene Files
+void cre_json_load_scene_node(cJSON* nodeJson, cJSON* parentNode) {
+    const char* name = json_get_string_new(nodeJson, "name");
+    NodeBaseType baseType = node_get_base_type(json_get_string_new(nodeJson, "type"));
+    rbe_logger_debug("Node Name: '%s', Base Type: '%s'", name, node_get_base_type_string(baseType));
+    // TODO: Load tags
+    // TODO: Load external scene file
+
+    // Load Components
+    rbe_logger_debug("Loading components for '%'s", name);
+    cJSON* componentsJsonArray = cJSON_GetObjectItemCaseSensitive(nodeJson, "components");
+    cJSON* componentJson = NULL;
+    cJSON_ArrayForEach(componentJson, componentsJsonArray) {
+        const char* componentType = json_get_string(componentJson, "type");
+        if (strcmp(componentType, "transform_2d") == 0) {
+            const Vector2 position = json_get_vec2_default(componentJson, "position", (Vector2) {.x = 0.0f, .y = 0.0f});
+            const Vector2 scale = json_get_vec2_default(componentJson, "scale", (Vector2) {.x = 1.0f, .y = 1.0f});
+            const float rotation = (float) json_get_double_default(componentJson, "rotation", 0.0);
+            const int zIndex = json_get_int_default(componentJson, "z_index", 0);
+            const bool zIndexRelativeToParent = json_get_bool_default(componentJson, "z_index_relative_to_parent", true);
+            const bool ignoreCamera = json_get_bool_default(componentJson, "ignore_camera", false);
+            rbe_logger_debug("Transform2D\nposition: (%f, %f)\nscale: (%f, %f)\nrotation: %f\nz_index: %d\nz_index_relative_to_parent: %s\nignore_camera: %s",
+                             position.x, position.y, scale.x, scale.y, rotation, zIndex, cre_bool_to_string(zIndexRelativeToParent), cre_bool_to_string(ignoreCamera));
+        } else if (strcmp(componentType, "script") == 0) {
+            const char* classPath = json_get_string(componentJson, "class_path");
+            const char* className = json_get_string(componentJson, "class_name");
+            rbe_logger_debug("Script\nclass path: '%s'\nclass name: '%s'", classPath, className);
+        } else {
+            rbe_logger_error("component type '%s' in invalid!", componentType);
+        }
+    }
+    // Load Children
+    cJSON* childrenJsonArray = cJSON_GetObjectItemCaseSensitive(nodeJson, "children");
+    cJSON* childNodeJson = NULL;
+    cJSON_ArrayForEach(childNodeJson, childrenJsonArray) {
+        cre_json_load_scene_node(childNodeJson, nodeJson);
+    }
+}
+
 void cre_json_load_scene_file(const char* filePath) {
     char* fileContent = rbe_fs_read_file_contents(filePath, NULL);
     rbe_logger_debug("Loading scene from path '%s'", filePath);
 
     cJSON* sceneJson = cJSON_Parse(fileContent);
     if (sceneJson != NULL) {
-        const char* name = json_get_string_new(sceneJson, "name");
-        NodeBaseType baseType = node_get_base_type(json_get_string_new(sceneJson, "type"));
-        // TODO: Load tags
-        // TODO: Load external scene file
-
-        // Load Components
-        cJSON* componentsJsonArray = cJSON_GetObjectItemCaseSensitive(sceneJson, "components");
-        cJSON* componentJson = NULL;
-        cJSON_ArrayForEach(componentJson, componentsJsonArray) {
-            const char* componentType = json_get_string(componentJson, "type");
-            if (strcmp(componentType, "transform_2d") == 0) {
-                const Vector2 position = json_get_vec2_default(componentJson, "position", (Vector2) {.x = 0.0f, .y = 0.0f});
-                const Vector2 scale = json_get_vec2_default(componentJson, "scale", (Vector2) {.x = 1.0f, .y = 1.0f});
-                const float rotation = (float) json_get_double_default(componentJson, "rotation", 0.0);
-                const int zIndex = json_get_int_default(componentJson, "z_index", 0);
-                const bool zIndexRelativeToParent = json_get_bool_default(componentJson, "z_index_relative_to_parent", true);
-                const bool ignoreCamera = json_get_bool_default(componentJson, "ignore_camera", false);
-                rbe_logger_debug("Transform2D\nposition: (%f, %f)\nscale: (%f, %f)\nrotation: %f\nz_index: %d\nz_index_relative_to_parent: %s\nignore_camera: %s",
-                                 position.x, position.y, scale.x, scale.y, rotation, zIndex, cre_bool_to_string(zIndexRelativeToParent), cre_bool_to_string(ignoreCamera));
-            } else if (strcmp(componentType, "script") == 0) {
-                const char* classPath = json_get_string(componentJson, "class_path");
-                const char* className = json_get_string(componentJson, "class_name");
-                rbe_logger_debug("Script\nclass path: '%s'\nclass name: '%s'", classPath, className);
-            } else {
-                rbe_logger_error("component type '%s' in invalid!", componentType);
-            }
-        }
-
-        // Load Children
+        cre_json_load_scene_node(sceneJson, NULL);
     }
 }
