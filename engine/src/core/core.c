@@ -114,6 +114,12 @@ bool rbe_initialize(int argv, char** args) {
         cre_json_load_config_file(projectConfigFile);
     }
 
+    // Temp load scene file
+    const char* sceneFilePath = "nodes/title_screen.cscn";
+    if (rbe_fs_does_file_exist(sceneFilePath)) {
+        cre_json_load_scene_file(sceneFilePath);
+    }
+
     return true;
 }
 

@@ -33,10 +33,6 @@
 
 // TODO: Clean up strdups
 
-//--- Node Utils ---//
-void setup_scene_stage_nodes(SceneTreeNode* parent, PyObject* stageNodeList);
-void setup_scene_component_node(Entity entity, PyObject* component);
-
 //--- Py Utils ---//
 PyObject* rbe_py_utils_get_entity_instance(Entity entity);
 
@@ -208,7 +204,6 @@ PyObject* rbe_py_api_create_stage_nodes(PyObject* self, PyObject* args, PyObject
         RBE_ASSERT_FMT(PyList_Check(stageNodeList), "Passed in stage nodes are not a python list, check python api implementation...");
         rbe_logger_debug("setup stage nodes:");
         file_scene_node_create_cached_file_scene_nodes_from_list(stageNodeList);
-//        setup_scene_stage_nodes(NULL, stageNodeList); // Assumes this is the root entity node for the scene
         Py_RETURN_NONE;
     }
     return NULL;

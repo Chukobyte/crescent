@@ -32,11 +32,9 @@ typedef struct FileSceneNode {
 FileSceneNode* file_scene_node_create_cached_file_scene_nodes_from_list(struct _object* stageNodeList);
 void file_scene_node_delete_cached_file_scene_node();
 FileSceneNode* file_scene_node_get_cached_file_scene_node();
-//void* file_scene_node_get_component(FileSceneNode* node, ComponentDataIndex index);
 
 // Py File Loader
 RBEGameProperties* rbe_py_load_game_properties(const char* filePath);
-//SceneTreeNode* rbe_py_load_scene(const char* filePath);
 
 #ifdef __cplusplus
 }
