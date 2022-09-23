@@ -103,6 +103,71 @@ Vector2 json_get_vec2_default(cJSON* json, const char* key, Vector2 defaultValue
     return defaultValue;
 }
 
+Size2D json_get_size2d(cJSON* json, const char* key) {
+    cJSON* size2dJson = cJSON_GetObjectItemCaseSensitive(json, key);
+    return (Size2D) {
+        .w = (float) json_get_double(size2dJson, "w"),
+        .h = (float) json_get_double(size2dJson, "h")
+    };
+}
+
+Size2D json_get_size2d_default(cJSON* json, const char* key, Size2D defaultValue) {
+    cJSON* size2dJson = cJSON_GetObjectItemCaseSensitive(json, key);
+    if (size2dJson != NULL) {
+        return (Size2D) {
+            .w = (float) json_get_double(size2dJson, "w"),
+            .h = (float) json_get_double(size2dJson, "h")
+        };
+    }
+    return defaultValue;
+}
+
+Rect2 json_get_rect2(cJSON* json, const char* key) {
+    cJSON* rect2Json = cJSON_GetObjectItemCaseSensitive(json, key);
+    return (Rect2) {
+        .x = (float) json_get_double(rect2Json, "x"),
+        .y = (float) json_get_double(rect2Json, "y"),
+        .w = (float) json_get_double(rect2Json, "w"),
+        .h = (float) json_get_double(rect2Json, "h")
+    };
+}
+
+Rect2 json_get_rect2_default(cJSON* json, const char* key, Rect2 defaultValue) {
+    cJSON* rect2Json = cJSON_GetObjectItemCaseSensitive(json, key);
+    if (rect2Json != NULL) {
+        return (Rect2) {
+            .x = (float) json_get_double(rect2Json, "x"),
+            .y = (float) json_get_double(rect2Json, "y"),
+            .w = (float) json_get_double(rect2Json, "w"),
+            .h = (float) json_get_double(rect2Json, "h")
+        };
+    }
+    return defaultValue;
+}
+
+Color json_get_linear_color(cJSON* json, const char* key) {
+    cJSON* colorJson = cJSON_GetObjectItemCaseSensitive(json, key);
+    return (Color) {
+        .r = ((float) json_get_int(colorJson, "r") / 255.0f),
+        .g = ((float) json_get_int(colorJson, "g") / 255.0f),
+        .b = ((float) json_get_int(colorJson, "b") / 255.0f),
+        .a = ((float) json_get_int(colorJson, "a") / 255.0f)
+    };
+}
+
+Color json_get_linear_color_default(cJSON* json, const char* key, Color defaultValue) {
+    cJSON* colorJson = cJSON_GetObjectItemCaseSensitive(json, key);
+    if (colorJson != NULL) {
+        return (Color) {
+            .r = ((float) json_get_int_default(colorJson, "r", 255) / 255.0f),
+            .g = ((float) json_get_int_default(colorJson, "g", 255) / 255.0f),
+            .b = ((float) json_get_int_default(colorJson, "b", 255) / 255.0f),
+            .a = ((float) json_get_int_default(colorJson, "a", 255) / 255.0f)
+        };
+    }
+    return defaultValue;
+}
+
 // Project Configuration Files
 void cre_json_configure_assets(cJSON* configJson, RBEGameProperties* properties) {
     cJSON* assetsJson = cJSON_GetObjectItemCaseSensitive(configJson, "assets");
@@ -233,14 +298,32 @@ void cre_json_load_scene_node(cJSON* nodeJson, cJSON* parentNode) {
     cJSON_ArrayForEach(componentJson, componentsJsonArray) {
         const char* componentType = json_get_string(componentJson, "type");
         if (strcmp(componentType, "transform_2d") == 0) {
-            const Vector2 position = json_get_vec2_default(componentJson, "position", (Vector2) {.x = 0.0f, .y = 0.0f});
-            const Vector2 scale = json_get_vec2_default(componentJson, "scale", (Vector2) {.x = 1.0f, .y = 1.0f});
+            const Vector2 position = json_get_vec2_default(componentJson, "position", (Vector2) {
+                .x = 0.0f, .y = 0.0f
+            });
+            const Vector2 scale = json_get_vec2_default(componentJson, "scale", (Vector2) {
+                .x = 1.0f, .y = 1.0f
+            });
             const float rotation = (float) json_get_double_default(componentJson, "rotation", 0.0);
             const int zIndex = json_get_int_default(componentJson, "z_index", 0);
             const bool zIndexRelativeToParent = json_get_bool_default(componentJson, "z_index_relative_to_parent", true);
             const bool ignoreCamera = json_get_bool_default(componentJson, "ignore_camera", false);
             rbe_logger_debug("Transform2D\nposition: (%f, %f)\nscale: (%f, %f)\nrotation: %f\nz_index: %d\nz_index_relative_to_parent: %s\nignore_camera: %s",
                              position.x, position.y, scale.x, scale.y, rotation, zIndex, cre_bool_to_string(zIndexRelativeToParent), cre_bool_to_string(ignoreCamera));
+        } else if (strcmp(componentType, "sprite") == 0) {
+            const char* texturePath = json_get_string(componentJson, "texture_path");
+            const Rect2 drawSource = json_get_rect2(componentJson, "draw_source");
+            const Vector2 origin = json_get_vec2_default(componentJson, "origin", (Vector2) {
+                .x = 0.0f, .y = 0.0f
+            });
+            const bool flipX = json_get_bool_default(componentJson, "flip_x", false);
+            const bool flipY = json_get_bool_default(componentJson, "flip_y", false);
+            const Color modulate = json_get_linear_color_default(componentJson, "modulate", (Color) {
+                .r = 1.0f, .g = 1.0f, .b = 1.0f, .a = 1.0f
+            });
+            rbe_logger_debug("Sprite\ntexture_path: '%s', draw_source = (%f, %f, %f, %f), origin: (%f, %f), flip_x: %s, flip_y: %s, modulate: (%d, %d, %d, %d)",
+                             texturePath, drawSource.x, drawSource.y, drawSource.w, drawSource.h, origin.x, origin.y,
+                             cre_bool_to_string(flipX), cre_bool_to_string(flipY), modulate.r, modulate.g, modulate.b, modulate.a);
         } else if (strcmp(componentType, "script") == 0) {
             const char* classPath = json_get_string(componentJson, "class_path");
             const char* className = json_get_string(componentJson, "class_name");
