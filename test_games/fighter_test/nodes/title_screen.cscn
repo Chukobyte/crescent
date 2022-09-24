@@ -1,0 +1,135 @@
+{
+  "name": "TitleScreen",
+  "type": "Node2D",
+  "tags": null,
+  "external_node_source": null,
+  "components": [
+    {
+      "type": "transform_2d",
+      "position": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0
+      },
+      "rotation": 0.0,
+      "z_index": 0,
+      "z_index_relative_to_parent": true,
+      "ignore_camera": false
+    },
+    {
+      "type": "script",
+      "class_path": "src.title_screen",
+      "class_name": "TitleScreen"
+    }
+  ],
+  "children": [
+    {
+      "name": "InstructionsText",
+      "type": "TextLabel",
+      "tags": null,
+      "external_node_source": null,
+      "components": [
+        {
+          "type": "transform_2d",
+          "position": {
+            "x": 130.0,
+            "y": 200.0
+          },
+          "scale": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "rotation": 0.0,
+          "z_index": 0,
+          "z_index_relative_to_parent": true,
+          "ignore_camera": false
+        },
+        {
+          "type": "text_label",
+          "uid": "fight-64",
+          "text": "Press Enter to Play!",
+          "color": {
+            "r": 255,
+            "g": 255,
+            "b": 255,
+            "a": 255
+          }
+        }
+      ],
+      "children": []
+    },
+    {
+      "name": "ModeText",
+      "type": "TextLabel",
+      "tags": null,
+      "external_node_source": null,
+      "components": [
+        {
+          "type": "transform_2d",
+          "position": {
+            "x": 80.0,
+            "y": 300.0
+          },
+          "scale": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "rotation": 0.0,
+          "z_index": 0,
+          "z_index_relative_to_parent": true,
+          "ignore_camera": false
+        },
+        {
+          "type": "text_label",
+          "uid": "fight-64",
+          "text": "Mode:",
+          "color": {
+            "r": 255,
+            "g": 255,
+            "b": 255,
+            "a": 255
+          }
+        }
+      ],
+      "children": []
+    },
+    {
+      "name": "ConnectText",
+      "type": "TextLabel",
+      "tags": null,
+      "external_node_source": null,
+      "components": [
+        {
+          "type": "transform_2d",
+          "position": {
+            "x": 60.0,
+            "y": 390.0
+          },
+          "scale": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "rotation": 0.0,
+          "z_index": 0,
+          "z_index_relative_to_parent": true,
+          "ignore_camera": false
+        },
+        {
+          "type": "text_label",
+          "uid": "fight-64",
+          "text": "Waiting for connection...",
+          "color": {
+            "r": 255,
+            "g": 255,
+            "b": 255,
+            "a": 255
+          }
+        }
+      ],
+      "children": []
+    }
+  ]
+}

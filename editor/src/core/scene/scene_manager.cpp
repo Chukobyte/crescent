@@ -93,6 +93,7 @@ SceneNodeFile* SceneManager::LoadSceneFromFile(const char* sceneFilePath, bool f
         if (selectedSceneNode == nullptr) {
             selectedSceneNode = nodeFile->rootNode;
         }
+        return nodeFile;
     }
     return nullptr;
 }
@@ -221,7 +222,6 @@ SceneNodeFile* SceneManager::GenerateSceneNodeFileFromJson(JsonSceneNode *rootTr
     SceneNodeFile* nodeFile = new SceneNodeFile{ sceneFilePath };
     nodeFile->rootNode = LoadSceneTreeJson(rootTreeNode);
     return nodeFile;
-    return nullptr;
 }
 
 SceneNode* SceneManager::LoadSceneTreeJson(JsonSceneNode* node, SceneNode* parent) {

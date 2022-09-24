@@ -149,6 +149,11 @@ JsonSceneNode* cre_json_load_scene_node(cJSON* nodeJson, JsonSceneNode* parentNo
     node->name = json_get_string_new(nodeJson, "name");
     node->type = node_get_base_type(json_get_string_new(nodeJson, "type"));
     rbe_logger_debug("Node Name: '%s', Base Type: '%s'", node->name, node_get_base_type_string(node->type));
+
+    // Checking if not root
+    if (parentNode) {
+        parentNode->children[parentNode->childrenCount++] = node;
+    }
     // TODO: Load tags
     // TODO: Load external scene file
 

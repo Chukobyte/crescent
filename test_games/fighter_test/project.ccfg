@@ -1,0 +1,81 @@
+{
+    "name": "Fighter Proto",
+    "window_width": 800,
+    "window_height": 600,
+    "resolution_width": 800,
+    "resolution_height": 600,
+    "target_fps": 66,
+    "initial_node_path": "nodes/title_screen.cscn",
+    "colliders_visible": false,
+    "assets": {
+        "audio_sources": [
+            {
+                "file_path": "assets/audio/sfx/rainbow_orb.wav"
+            }
+        ],
+        "textures": [
+            {
+                "file_path": "assets/images/characters/mor/mor_idle_sheet.png",
+                "wrap_s": "clamp_to_border",
+                "wrap_t": "clamp_to_border",
+                "filter_min": "nearest",
+                "filter_mag": "nearest"
+            },
+            {
+                "file_path": "assets/images/characters/mor/mor_crouch_idle_sheet.png",
+                "wrap_s": "clamp_to_border",
+                "wrap_t": "clamp_to_border",
+                "filter_min": "nearest",
+                "filter_mag": "nearest"
+            },
+            {
+                "file_path": "assets/images/characters/mor/mor_jump_up_sheet.png",
+                "wrap_s": "clamp_to_border",
+                "wrap_t": "clamp_to_border",
+                "filter_min": "nearest",
+                "filter_mag": "nearest"
+            },
+            {
+                "file_path": "assets/images/characters/mor/mor_still.png",
+                "wrap_s": "clamp_to_border",
+                "wrap_t": "clamp_to_border",
+                "filter_min": "nearest",
+                "filter_mag": "nearest"
+            },
+            {
+                "file_path": "assets/images/characters/mor/mor_walk_forward_sheet.png",
+                "wrap_s": "clamp_to_border",
+                "wrap_t": "clamp_to_border",
+                "filter_min": "nearest",
+                "filter_mag": "nearest"
+            },
+            {
+                "file_path": "assets/images/characters/mor/mor_walk_backward_sheet.png",
+                "wrap_s": "clamp_to_border",
+                "wrap_t": "clamp_to_border",
+                "filter_min": "nearest",
+                "filter_mag": "nearest"
+            }
+        ],
+        "fonts": [
+            {
+                "file_path": "assets/fonts/verdana.ttf",
+                "uid": "verdana-32",
+                "size": 32
+            },
+            {
+                "file_path": "assets/fonts/fight_font.ttf",
+                "uid": "fight-64",
+                "size": 64
+            }
+        ]
+    },
+    "inputs": [
+        {
+            "name": "quit",
+            "values": [
+                "esc"
+            ]
+        }
+    ]
+}
