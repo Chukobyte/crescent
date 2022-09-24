@@ -26,12 +26,12 @@ RBEGameProperties* rbe_game_props_create() {
     return props;
 }
 
-void rbe_game_props_initialize(bool loadConfig) {
-    properties = rbe_game_props_create();
-    if (loadConfig) {
-        bool readSuccess = rbe_py_load_project_config();
-        RBE_ASSERT_FMT(readSuccess, "Failed to read project configuration!");
-    }
+void rbe_game_props_initialize(RBEGameProperties* initialProps) {
+    properties = initialProps;
+//    if (loadConfig) {
+//        bool readSuccess = rbe_py_load_project_config();
+//        RBE_ASSERT_FMT(readSuccess, "Failed to read project configuration!");
+//    }
 }
 
 void rbe_game_props_finalize() {

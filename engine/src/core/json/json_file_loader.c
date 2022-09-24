@@ -281,6 +281,7 @@ JsonSceneNode* cre_json_load_scene_node(cJSON* nodeJson, JsonSceneNode* parentNo
                     json_get_string(componentJson, "class_path"),
                     json_get_string(componentJson, "class_name")
             );
+            scriptComponent->contextType = ScriptContextType_PYTHON;
             rbe_logger_debug("Script\nclass path: '%s'\nclass name: '%s'",
                              scriptComponent->classPath, scriptComponent->className);
             node->components[ComponentDataIndex_SCRIPT] = scriptComponent;

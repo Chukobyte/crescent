@@ -1,0 +1,245 @@
+{
+  "name": "ExampleNode",
+  "type": "Node2D",
+  "tags": null,
+  "external_node_source": null,
+  "components": [
+    {
+      "type": "transform_2d",
+      "position": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0
+      },
+      "rotation": 0.0,
+      "z_index": 0,
+      "z_index_relative_to_parent": true,
+      "ignore_camera": false
+    },
+    {
+      "type": "script",
+      "class_path": "src.title_screen",
+      "class_name": "TitleScreen"
+    }
+  ],
+  "children": [
+    {
+      "name": "SpriteTest",
+      "type": "Sprite",
+      "tags": null,
+      "external_node_source": null,
+      "components": [
+        {
+          "type": "transform_2d",
+          "position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "scale": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "rotation": 0.0,
+          "z_index": 0,
+          "z_index_relative_to_parent": true,
+          "ignore_camera": false
+        },
+        {
+          "type": "sprite",
+          "texture_path": "assets/images/test.png",
+          "draw_source": {
+            "x": 0.0,
+            "y": 0.0,
+            "w": 0.0,
+            "h": 0.0
+          },
+          "origin": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "modulate": {
+            "r": 255,
+            "g": 255,
+            "b": 255,
+            "a": 255
+          },
+          "flip_x": false,
+          "flip_y": false
+        }
+      ],
+      "children": []
+    },
+    {
+      "name": "AnimatedSpriteTest",
+      "type": "AnimatedSprite",
+      "tags": null,
+      "external_node_source": null,
+      "components": [
+        {
+          "type": "transform_2d",
+          "position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "scale": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "rotation": 0.0,
+          "z_index": 0,
+          "z_index_relative_to_parent": true,
+          "ignore_camera": false
+        },
+        {
+          "type": "animated_sprite",
+          "current_animation_name": "walk",
+          "is_playing": false,
+          "origin": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "modulate": {
+            "r": 255,
+            "g": 255,
+            "b": 255,
+            "a": 255
+          },
+          "flip_x": false,
+          "flip_y": false,
+          "animations": [
+            {
+              "name": "walk",
+              "speed": 100,
+              "loops": true,
+              "frames": [
+                {
+                  "frame": 0,
+                  "texture_path": "assets/images/test.png",
+                  "draw_source": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "w": 0.0,
+                    "h": 0.0
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "children": []
+    },
+    {
+      "name": "TextLabelTest",
+      "type": "TextLabel",
+      "tags": null,
+      "external_node_source": null,
+      "components": [
+        {
+          "type": "transform_2d",
+          "position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "scale": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "rotation": 0.0,
+          "z_index": 0,
+          "z_index_relative_to_parent": true,
+          "ignore_camera": false
+        },
+        {
+          "type": "text_label",
+          "uid": "verdana-16",
+          "text": "Yo",
+          "color": {
+            "r": 1.0,
+            "g": 1.0,
+            "b": 1.0,
+            "a": 1.0
+          }
+        }
+      ],
+      "children": []
+    },
+    {
+      "name": "Collider2DTest",
+      "type": "Collider2D",
+      "tags": null,
+      "external_node_source": null,
+      "components": [
+        {
+          "type": "transform_2d",
+          "position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "scale": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "rotation": 0.0,
+          "z_index": 0,
+          "z_index_relative_to_parent": true,
+          "ignore_camera": false
+        },
+        {
+          "type": "collider_2d",
+          "extents": {
+            "w": 32.0,
+            "h": 32.0
+          },
+          "color": {
+            "r": 1.0,
+            "g": 1.0,
+            "b": 1.0,
+            "a": 1.0
+          }
+        }
+      ],
+      "children": []
+    },
+    {
+      "name": "ColorRectTest",
+      "type": "ColorRect",
+      "tags": null,
+      "external_node_source": null,
+      "components": [
+        {
+          "type": "transform_2d",
+          "position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "scale": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "rotation": 0.0,
+          "z_index": 0,
+          "z_index_relative_to_parent": true,
+          "ignore_camera": false
+        },
+        {
+          "type": "color_rect",
+          "size": {
+            "w": 32.0,
+            "h": 32.0
+          },
+          "color": {
+            "r": 1.0,
+            "g": 1.0,
+            "b": 1.0,
+            "a": 1.0
+          }
+        }
+      ],
+      "children": []
+    }
+  ]
+}

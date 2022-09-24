@@ -24,6 +24,7 @@
 // The default project path if no directory override is provided
 //#define DEFAULT_START_PROJECT_PATH "test_games/fighter_test"
 #define DEFAULT_START_PROJECT_PATH "test_games/new_fighter"
+#define CRE_PROJECT_CONFIG_FILE_NAME "project.ccfg"
 
 bool rbe_initialize_sdl();
 bool rbe_initialize_rendering();
@@ -71,8 +72,8 @@ bool rbe_initialize(int argv, char** args) {
     rbe_py_initialize();
     rbe_asset_manager_initialize();
 
-    rbe_game_props_initialize(true);
-    gameProperties = rbe_game_props_get();
+    gameProperties = cre_json_load_config_file(CRE_PROJECT_CONFIG_FILE_NAME);
+    rbe_game_props_initialize(gameProperties);
     rbe_game_props_print();
 
     // Initialize sub systems
@@ -107,18 +108,6 @@ bool rbe_initialize(int argv, char** args) {
 
     // Go to initial scene
     rbe_scene_manager_queue_scene_change(gameProperties->initialScenePath);
-
-    // Temp load json config
-    const char* projectConfigFile = "project.ccfg";
-    if (rbe_fs_does_file_exist(projectConfigFile)) {
-        cre_json_load_config_file(projectConfigFile);
-    }
-
-    // Temp load scene file
-    const char* sceneFilePath = "nodes/title_screen.cscn";
-    if (rbe_fs_does_file_exist(sceneFilePath)) {
-        cre_json_load_scene_file(sceneFilePath);
-    }
 
     return true;
 }
