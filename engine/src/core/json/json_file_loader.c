@@ -338,6 +338,26 @@ void cre_json_load_scene_node(cJSON* nodeJson, cJSON* parentNode) {
             rbe_logger_debug("Animated Sprite\ncurrent animation name: '%s'\nis playing: %s\norigin: (%f, %f)\nmodulate: (%f, %f, %f, %f)\nflip x: %s\nflip y: %s",
                              currentAnimationName, cre_bool_to_string(isPlaying), origin.x, origin.y, modulate.r, modulate.g, modulate.b, modulate.a,
                              cre_bool_to_string(flipX), cre_bool_to_string(flipY));
+            // Animation
+            cJSON* animationsJsonArray = cJSON_GetObjectItemCaseSensitive(nodeJson, "animations");
+            cJSON* animationJson = NULL;
+            cJSON_ArrayForEach(animationJson, animationsJsonArray) {
+                const char* animationName = json_get_string(animationJson, "name");
+                const int animationSpeed = json_get_int(animationJson, "speed");
+                const bool animationLoops = json_get_bool(animationJson, "loops");
+                rbe_logger_debug("Animation\nname: '%s'\nspeed: %d\nloops: %s", animationName, animationSpeed,
+                                 cre_bool_to_string(animationLoops));
+                // Animation Frames
+                cJSON* framesJsonArray = cJSON_GetObjectItemCaseSensitive(nodeJson, "frames");
+                cJSON* frameJson = NULL;
+                cJSON_ArrayForEach(frameJson, framesJsonArray) {
+                    const int frameIndex = json_get_int(frameJson, "frame");
+                    const char* frameTexturePath = json_get_string(frameJson, "texture_path");
+                    const Rect2 drawSource = json_get_rect2(frameJson, "draw_source");
+                    rbe_logger_debug("Frame\nframe: %d\ntexture path: '%s'\ndraw source: (%f, %f, %f, %f)",
+                                     frameIndex, frameTexturePath, drawSource.x, drawSource.y, drawSource.w, drawSource.h);
+                }
+            }
         } else if (strcmp(componentType, "text_label") == 0) {
             const char* uid = json_get_string(componentJson, "uid");
             const char* text = json_get_string(componentJson, "text");
