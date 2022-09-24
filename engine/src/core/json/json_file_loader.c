@@ -324,6 +324,39 @@ void cre_json_load_scene_node(cJSON* nodeJson, cJSON* parentNode) {
             rbe_logger_debug("Sprite\ntexture_path: '%s', draw_source = (%f, %f, %f, %f), origin: (%f, %f), flip_x: %s, flip_y: %s, modulate: (%d, %d, %d, %d)",
                              texturePath, drawSource.x, drawSource.y, drawSource.w, drawSource.h, origin.x, origin.y,
                              cre_bool_to_string(flipX), cre_bool_to_string(flipY), modulate.r, modulate.g, modulate.b, modulate.a);
+        } else if (strcmp(componentType, "animated_sprite") == 0) {
+            const char* currentAnimationName = json_get_string(componentJson, "current_animation_name");
+            const bool isPlaying = json_get_bool(componentJson, "is_playing");
+            const Vector2 origin = json_get_vec2_default(componentJson, "origin", (Vector2) {
+                .x = 0.0f, .y = 0.0f
+            });
+            const Color modulate = json_get_linear_color_default(componentJson, "modulate", (Color) {
+                .r = 1.0f, .g = 1.0f, .b = 1.0f, .a = 1.0f
+            });
+            const bool flipX = json_get_bool_default(componentJson, "flip_x", false);
+            const bool flipY = json_get_bool_default(componentJson, "flip_y", false);
+            rbe_logger_debug("Animated Sprite\ncurrent animation name: '%s'\nis playing: %s\norigin: (%f, %f)\nmodulate: (%f, %f, %f, %f)\nflip x: %s\nflip y: %s",
+                             currentAnimationName, cre_bool_to_string(isPlaying), origin.x, origin.y, modulate.r, modulate.g, modulate.b, modulate.a,
+                             cre_bool_to_string(flipX), cre_bool_to_string(flipY));
+        } else if (strcmp(componentType, "text_label") == 0) {
+            const char* uid = json_get_string(componentJson, "uid");
+            const char* text = json_get_string(componentJson, "text");
+            const Color color = json_get_linear_color_default(componentJson, "color", (Color) {
+                .r = 1.0f, .g = 1.0f, .b = 1.0f, .a = 1.0f
+            });
+            rbe_logger_debug("Text Label\nuid: '%s'\ntext: '%s'\ncolor: (%f, %f, %f, %f)", uid, text, color.r, color.g, color.b, color.a);
+        } else if (strcmp(componentType, "collider_2d") == 0) {
+            const Size2D extents = json_get_size2d(componentJson, "extents");
+            const Color color = json_get_linear_color_default(componentJson, "color", (Color) {
+                .r = 1.0f, .g = 1.0f, .b = 1.0f, .a = 1.0f
+            });
+            rbe_logger_debug("Collider2D\nextents: (%f, %f)\ncolor: (%f, %f, %f, %f)", extents.w, extents.h, color.r, color.g, color.b, color.a);
+        } else if (strcmp(componentType, "color_rect") == 0) {
+            const Size2D size = json_get_size2d(componentJson, "size");
+            const Color color = json_get_linear_color_default(componentJson, "color", (Color) {
+                .r = 1.0f, .g = 1.0f, .b = 1.0f, .a = 1.0f
+            });
+            rbe_logger_debug("Color Rext\nsize: (%f, %f)\ncolor: (%f, %f, %f, %f)", size.w, size.h, color.r, color.g, color.b, color.a);
         } else if (strcmp(componentType, "script") == 0) {
             const char* classPath = json_get_string(componentJson, "class_path");
             const char* className = json_get_string(componentJson, "class_name");
