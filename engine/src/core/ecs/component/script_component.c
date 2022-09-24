@@ -5,10 +5,10 @@
 
 #include "../../memory/rbe_mem.h"
 
-ScriptComponent* script_component_create() {
+ScriptComponent* script_component_create(const char* path, const char* name) {
     ScriptComponent* scriptComponent = RBE_MEM_ALLOCATE(ScriptComponent);
-    scriptComponent->classPath = NULL;
-    scriptComponent->className = NULL;
+    scriptComponent->classPath = path;
+    scriptComponent->className = name;
     scriptComponent->contextType = ScriptContextType_NONE;
     return scriptComponent;
 }

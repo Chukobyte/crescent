@@ -2,10 +2,16 @@
 
 #include "json_helper.h"
 #include "../game_properties.h"
+#include "../ecs/component/transform2d_component.h"
+#include "../ecs/component/sprite_component.h"
+#include "../ecs/component/animated_sprite_component.h"
+#include "../ecs/component/text_label_component.h"
+#include "../ecs/component/script_component.h"
+#include "../ecs/component/collider2d_component.h"
+#include "../ecs/component/color_rect_component.h"
 #include "../utils/rbe_string_util.h"
 #include "../utils/rbe_file_system_utils.h"
 #include "../memory/rbe_mem.h"
-#include "../ecs/component/node_component.h"
 
 // Project Configuration Files
 void cre_json_configure_assets(cJSON* configJson, RBEGameProperties* properties) {
@@ -123,103 +129,161 @@ RBEGameProperties* cre_json_load_config_file(const char* filePath) {
 }
 
 // Scene Files
-void cre_json_load_scene_node(cJSON* nodeJson, cJSON* parentNode) {
-    const char* name = json_get_string_new(nodeJson, "name");
-    NodeBaseType baseType = node_get_base_type(json_get_string_new(nodeJson, "type"));
-    rbe_logger_debug("Node Name: '%s', Base Type: '%s'", name, node_get_base_type_string(baseType));
+JsonSceneNode* cre_json_create_new_node() {
+    JsonSceneNode* node = RBE_MEM_ALLOCATE(JsonSceneNode);
+    node->name = NULL;
+    node->fontUID = NULL;
+    node->spriteTexturePath = NULL;
+    node->parent = NULL;
+    node->childrenCount = 0;
+    node->type = NodeBaseType_INVALID;
+    for (size_t i = 0; i < MAX_COMPONENTS; i++) {
+        node->components[i] = NULL;
+    }
+    return node;
+}
+
+JsonSceneNode* cre_json_load_scene_node(cJSON* nodeJson, JsonSceneNode* parentNode) {
+    JsonSceneNode* node = cre_json_create_new_node();
+    node->parent = parentNode;
+    node->name = json_get_string_new(nodeJson, "name");
+    node->type = node_get_base_type(json_get_string_new(nodeJson, "type"));
+    rbe_logger_debug("Node Name: '%s', Base Type: '%s'", node->name, node_get_base_type_string(node->type));
     // TODO: Load tags
     // TODO: Load external scene file
 
     // Load Components
-    rbe_logger_debug("Loading components for '%'s", name);
+    rbe_logger_debug("Loading components for '%'s", node->name);
     cJSON* componentsJsonArray = cJSON_GetObjectItemCaseSensitive(nodeJson, "components");
     cJSON* componentJson = NULL;
     cJSON_ArrayForEach(componentJson, componentsJsonArray) {
         const char* componentType = json_get_string(componentJson, "type");
         if (strcmp(componentType, "transform_2d") == 0) {
-            const Vector2 position = json_get_vec2_default(componentJson, "position", (Vector2) {
+            Transform2DComponent* transform2DComponent = transform2d_component_create();
+            transform2DComponent->localTransform.position = json_get_vec2_default(componentJson, "position", (Vector2) {
                 .x = 0.0f, .y = 0.0f
             });
-            const Vector2 scale = json_get_vec2_default(componentJson, "scale", (Vector2) {
+            transform2DComponent->localTransform.scale = json_get_vec2_default(componentJson, "scale", (Vector2) {
                 .x = 1.0f, .y = 1.0f
             });
-            const float rotation = (float) json_get_double_default(componentJson, "rotation", 0.0);
-            const int zIndex = json_get_int_default(componentJson, "z_index", 0);
-            const bool zIndexRelativeToParent = json_get_bool_default(componentJson, "z_index_relative_to_parent", true);
-            const bool ignoreCamera = json_get_bool_default(componentJson, "ignore_camera", false);
+            transform2DComponent->localTransform.rotation = (float) json_get_double_default(componentJson, "rotation", 0.0);
+            transform2DComponent->zIndex = json_get_int_default(componentJson, "z_index", 0);
+            transform2DComponent->isZIndexRelativeToParent = json_get_bool_default(componentJson, "z_index_relative_to_parent", true);
+            transform2DComponent->ignoreCamera = json_get_bool_default(componentJson, "ignore_camera", false);
             rbe_logger_debug("Transform2D\nposition: (%f, %f)\nscale: (%f, %f)\nrotation: %f\nz_index: %d\nz_index_relative_to_parent: %s\nignore_camera: %s",
-                             position.x, position.y, scale.x, scale.y, rotation, zIndex, cre_bool_to_string(zIndexRelativeToParent), cre_bool_to_string(ignoreCamera));
+                             transform2DComponent->localTransform.position.x, transform2DComponent->localTransform.position.y,
+                             transform2DComponent->localTransform.scale.x, transform2DComponent->localTransform.scale.y,
+                             transform2DComponent->localTransform.rotation,
+                             transform2DComponent->zIndex, cre_bool_to_string(transform2DComponent->isZIndexRelativeToParent),
+                             cre_bool_to_string(transform2DComponent->ignoreCamera));
+            node->components[ComponentDataIndex_TRANSFORM_2D] = transform2DComponent;
         } else if (strcmp(componentType, "sprite") == 0) {
-            const char* texturePath = json_get_string(componentJson, "texture_path");
-            const Rect2 drawSource = json_get_rect2(componentJson, "draw_source");
-            const Vector2 origin = json_get_vec2_default(componentJson, "origin", (Vector2) {
+            SpriteComponent* spriteComponent = sprite_component_create();
+            node->spriteTexturePath = json_get_string_new(componentJson, "texture_path");
+            spriteComponent->drawSource = json_get_rect2(componentJson, "draw_source");
+            spriteComponent->origin = json_get_vec2_default(componentJson, "origin", (Vector2) {
                 .x = 0.0f, .y = 0.0f
             });
-            const bool flipX = json_get_bool_default(componentJson, "flip_x", false);
-            const bool flipY = json_get_bool_default(componentJson, "flip_y", false);
-            const Color modulate = json_get_linear_color_default(componentJson, "modulate", (Color) {
+            spriteComponent->flipX = json_get_bool_default(componentJson, "flip_x", false);
+            spriteComponent->flipY = json_get_bool_default(componentJson, "flip_y", false);
+            spriteComponent->modulate = json_get_linear_color_default(componentJson, "modulate", (Color) {
                 .r = 1.0f, .g = 1.0f, .b = 1.0f, .a = 1.0f
             });
-            rbe_logger_debug("Sprite\ntexture_path: '%s', draw_source = (%f, %f, %f, %f), origin: (%f, %f), flip_x: %s, flip_y: %s, modulate: (%d, %d, %d, %d)",
-                             texturePath, drawSource.x, drawSource.y, drawSource.w, drawSource.h, origin.x, origin.y,
-                             cre_bool_to_string(flipX), cre_bool_to_string(flipY), modulate.r, modulate.g, modulate.b, modulate.a);
+            rbe_logger_debug("Sprite\ntexture_path: '%s'\ndraw_source = (%f, %f, %f, %f)\norigin: (%f, %f)\nflip_x: %s\nflip_y: %s\nmodulate: (%f, %f, %f, %f)",
+                             node->spriteTexturePath,
+                             spriteComponent->drawSource.x, spriteComponent->drawSource.y, spriteComponent->drawSource.w, spriteComponent->drawSource.h,
+                             spriteComponent->origin.x, spriteComponent->origin.y,
+                             cre_bool_to_string(spriteComponent->flipX), cre_bool_to_string(spriteComponent->flipY),
+                             spriteComponent->modulate.r, spriteComponent->modulate.g, spriteComponent->modulate.b, spriteComponent->modulate.a);
+            node->components[ComponentDataIndex_SPRITE] = spriteComponent;
         } else if (strcmp(componentType, "animated_sprite") == 0) {
+            AnimatedSpriteComponentData* animatedSpriteComponent = animated_sprite_component_data_create();
             const char* currentAnimationName = json_get_string(componentJson, "current_animation_name");
-            const bool isPlaying = json_get_bool(componentJson, "is_playing");
-            const Vector2 origin = json_get_vec2_default(componentJson, "origin", (Vector2) {
+            animatedSpriteComponent->isPlaying = json_get_bool(componentJson, "is_playing");
+            animatedSpriteComponent->origin = json_get_vec2_default(componentJson, "origin", (Vector2) {
                 .x = 0.0f, .y = 0.0f
             });
-            const Color modulate = json_get_linear_color_default(componentJson, "modulate", (Color) {
+            animatedSpriteComponent->modulate = json_get_linear_color_default(componentJson, "modulate", (Color) {
                 .r = 1.0f, .g = 1.0f, .b = 1.0f, .a = 1.0f
             });
-            const bool flipX = json_get_bool_default(componentJson, "flip_x", false);
-            const bool flipY = json_get_bool_default(componentJson, "flip_y", false);
+            animatedSpriteComponent->flipX = json_get_bool_default(componentJson, "flip_x", false);
+            animatedSpriteComponent->flipY = json_get_bool_default(componentJson, "flip_y", false);
             rbe_logger_debug("Animated Sprite\ncurrent animation name: '%s'\nis playing: %s\norigin: (%f, %f)\nmodulate: (%f, %f, %f, %f)\nflip x: %s\nflip y: %s",
-                             currentAnimationName, cre_bool_to_string(isPlaying), origin.x, origin.y, modulate.r, modulate.g, modulate.b, modulate.a,
-                             cre_bool_to_string(flipX), cre_bool_to_string(flipY));
+                             currentAnimationName, cre_bool_to_string(animatedSpriteComponent->isPlaying),
+                             animatedSpriteComponent->origin.x, animatedSpriteComponent->origin.y,
+                             animatedSpriteComponent->modulate.r, animatedSpriteComponent->modulate.g, animatedSpriteComponent->modulate.b, animatedSpriteComponent->modulate.a,
+                             cre_bool_to_string(animatedSpriteComponent->flipX), cre_bool_to_string(animatedSpriteComponent->flipY));
             // Animation
             cJSON* animationsJsonArray = cJSON_GetObjectItemCaseSensitive(componentJson, "animations");
             cJSON* animationJson = NULL;
             cJSON_ArrayForEach(animationJson, animationsJsonArray) {
-                const char* animationName = json_get_string(animationJson, "name");
-                const int animationSpeed = json_get_int(animationJson, "speed");
-                const bool animationLoops = json_get_bool(animationJson, "loops");
-                rbe_logger_debug("Animation\nname: '%s'\nspeed: %d\nloops: %s", animationName, animationSpeed,
-                                 cre_bool_to_string(animationLoops));
+                AnimationData animation;
+                strcpy(animation.name, json_get_string(animationJson, "name"));
+                animation.speed = json_get_int(animationJson, "speed");
+                animation.doesLoop = json_get_bool(animationJson, "loops");
+                animation.frameCount = 0;
+                animation.isValid = true;
+                rbe_logger_debug("Animation\nname: '%s'\nspeed: %d\nloops: %s",
+                                 animation.name, animation.speed, cre_bool_to_string(animation.doesLoop));
                 // Animation Frames
                 cJSON* framesJsonArray = cJSON_GetObjectItemCaseSensitive(animationJson, "frames");
                 cJSON* frameJson = NULL;
                 cJSON_ArrayForEach(frameJson, framesJsonArray) {
-                    const int frameIndex = json_get_int(frameJson, "frame");
-                    const char* frameTexturePath = json_get_string(frameJson, "texture_path");
-                    const Rect2 drawSource = json_get_rect2(frameJson, "draw_source");
+                    AnimationFrameData frameData;
+                    frameData.frame = json_get_int(frameJson, "frame");
+                    strcpy(frameData.texturePath, json_get_string(frameJson, "texture_path"));
+                    frameData.drawSource = json_get_rect2(frameJson, "draw_source");
                     rbe_logger_debug("Frame\nframe: %d\ntexture path: '%s'\ndraw source: (%f, %f, %f, %f)",
-                                     frameIndex, frameTexturePath, drawSource.x, drawSource.y, drawSource.w, drawSource.h);
+                                     frameData.frame, frameData.texturePath,
+                                     frameData.drawSource.x, frameData.drawSource.y, frameData.drawSource.w, frameData.drawSource.h);
+                    animation.animationFrames[animation.frameCount++] = frameData;
+                }
+                animatedSpriteComponent->animations[animatedSpriteComponent->animationCount++] = animation;
+                if (strcmp(currentAnimationName, animation.name) == 0) {
+                    animatedSpriteComponent->currentAnimation = animation;
                 }
             }
+            node->components[ComponentDataIndex_ANIMATED_SPRITE] = animatedSpriteComponent;
         } else if (strcmp(componentType, "text_label") == 0) {
-            const char* uid = json_get_string(componentJson, "uid");
-            const char* text = json_get_string(componentJson, "text");
-            const Color color = json_get_linear_color_default(componentJson, "color", (Color) {
+            TextLabelComponent* textLabelComponent = text_label_component_create();
+            node->fontUID = json_get_string_new(componentJson, "uid");
+            strcpy(textLabelComponent->text, json_get_string(componentJson, "text"));
+            textLabelComponent->color = json_get_linear_color_default(componentJson, "color", (Color) {
                 .r = 1.0f, .g = 1.0f, .b = 1.0f, .a = 1.0f
             });
-            rbe_logger_debug("Text Label\nuid: '%s'\ntext: '%s'\ncolor: (%f, %f, %f, %f)", uid, text, color.r, color.g, color.b, color.a);
+            rbe_logger_debug("Text Label\nuid: '%s'\ntext: '%s'\ncolor: (%f, %f, %f, %f)",
+                             node->fontUID,
+                             textLabelComponent->text,
+                             textLabelComponent->color.r, textLabelComponent->color.g, textLabelComponent->color.b, textLabelComponent->color.a);
+            node->components[ComponentDataIndex_TEXT_LABEL] = textLabelComponent;
         } else if (strcmp(componentType, "collider_2d") == 0) {
-            const Size2D extents = json_get_size2d(componentJson, "extents");
-            const Color color = json_get_linear_color_default(componentJson, "color", (Color) {
+            Collider2DComponent* collider2DComponent = collider2d_component_create();
+            collider2DComponent->extents = json_get_size2d(componentJson, "extents");
+            collider2DComponent->color = json_get_linear_color_default(componentJson, "color", (Color) {
                 .r = 1.0f, .g = 1.0f, .b = 1.0f, .a = 1.0f
             });
-            rbe_logger_debug("Collider2D\nextents: (%f, %f)\ncolor: (%f, %f, %f, %f)", extents.w, extents.h, color.r, color.g, color.b, color.a);
+            rbe_logger_debug("Collider2D\nextents: (%f, %f)\ncolor: (%f, %f, %f, %f)",
+                             collider2DComponent->extents.w, collider2DComponent->extents.h,
+                             collider2DComponent->color.r, collider2DComponent->color.g, collider2DComponent->color.b, collider2DComponent->color.a);
+            node->components[ComponentDataIndex_COLLIDER_2D] = collider2DComponent;
         } else if (strcmp(componentType, "color_rect") == 0) {
-            const Size2D size = json_get_size2d(componentJson, "size");
-            const Color color = json_get_linear_color_default(componentJson, "color", (Color) {
+            ColorRectComponent* colorRectComponent = color_rect_component_create();
+            colorRectComponent->size = json_get_size2d(componentJson, "size");
+            colorRectComponent->color = json_get_linear_color_default(componentJson, "color", (Color) {
                 .r = 1.0f, .g = 1.0f, .b = 1.0f, .a = 1.0f
             });
-            rbe_logger_debug("Color Rext\nsize: (%f, %f)\ncolor: (%f, %f, %f, %f)", size.w, size.h, color.r, color.g, color.b, color.a);
+            rbe_logger_debug("Color Rext\nsize: (%f, %f)\ncolor: (%f, %f, %f, %f)",
+                             colorRectComponent->size.w, colorRectComponent->size.h,
+                             colorRectComponent->color.r, colorRectComponent->color.g, colorRectComponent->color.b, colorRectComponent->color.a);
+            node->components[ComponentDataIndex_COLOR_RECT] = colorRectComponent;
         } else if (strcmp(componentType, "script") == 0) {
-            const char* classPath = json_get_string(componentJson, "class_path");
-            const char* className = json_get_string(componentJson, "class_name");
-            rbe_logger_debug("Script\nclass path: '%s'\nclass name: '%s'", classPath, className);
+            ScriptComponent* scriptComponent = script_component_create(
+                    json_get_string(componentJson, "class_path"),
+                    json_get_string(componentJson, "class_name")
+            );
+            rbe_logger_debug("Script\nclass path: '%s'\nclass name: '%s'",
+                             scriptComponent->classPath, scriptComponent->className);
+            node->components[ComponentDataIndex_SCRIPT] = scriptComponent;
         } else {
             rbe_logger_error("component type '%s' in invalid!", componentType);
         }
@@ -228,16 +292,53 @@ void cre_json_load_scene_node(cJSON* nodeJson, cJSON* parentNode) {
     cJSON* childrenJsonArray = cJSON_GetObjectItemCaseSensitive(nodeJson, "children");
     cJSON* childNodeJson = NULL;
     cJSON_ArrayForEach(childNodeJson, childrenJsonArray) {
-        cre_json_load_scene_node(childNodeJson, nodeJson);
+        cre_json_load_scene_node(childNodeJson, node);
     }
+    return node;
 }
 
-void cre_json_load_scene_file(const char* filePath) {
+JsonSceneNode* cre_json_load_scene_file(const char* filePath) {
     char* fileContent = rbe_fs_read_file_contents(filePath, NULL);
     rbe_logger_debug("Loading scene from path '%s'", filePath);
 
     cJSON* sceneJson = cJSON_Parse(fileContent);
     if (sceneJson != NULL) {
-        cre_json_load_scene_node(sceneJson, NULL);
+        return cre_json_load_scene_node(sceneJson, NULL); // Return root node
     }
+    rbe_logger_error("Error loading scene file from path '%s'!", filePath);
+
+    return NULL;
+}
+
+void cre_json_delete_json_scene_node(JsonSceneNode* node) {
+    // Children
+    for (size_t i = 0; i < node->childrenCount; i++) {
+        cre_json_delete_json_scene_node(node->children[i]);
+    }
+    // Components
+    if (node->components[ComponentDataIndex_TRANSFORM_2D] != NULL) {
+        transform2d_component_delete(node->components[ComponentDataIndex_TRANSFORM_2D]);
+    }
+    if (node->components[ComponentDataIndex_SPRITE] != NULL) {
+        sprite_component_delete(node->components[ComponentDataIndex_SPRITE]);
+    }
+    if (node->components[ComponentDataIndex_ANIMATED_SPRITE] != NULL) {
+        animated_sprite_component_data_delete(node->components[ComponentDataIndex_ANIMATED_SPRITE]);
+    }
+    if (node->components[ComponentDataIndex_TEXT_LABEL] != NULL) {
+        text_label_component_delete(node->components[ComponentDataIndex_TEXT_LABEL]);
+    }
+    if (node->components[ComponentDataIndex_SCRIPT] != NULL) {
+        script_component_delete(node->components[ComponentDataIndex_SCRIPT]);
+    }
+    if (node->components[ComponentDataIndex_COLLIDER_2D] != NULL) {
+        collider2d_component_delete(node->components[ComponentDataIndex_COLLIDER_2D]);
+    }
+    if (node->components[ComponentDataIndex_COLOR_RECT] != NULL) {
+        color_rect_component_delete(node->components[ComponentDataIndex_COLOR_RECT]);
+    }
+    // String Arrays
+    RBE_MEM_FREE(node->name);
+    RBE_MEM_FREE(node->fontUID);
+    RBE_MEM_FREE(node->spriteTexturePath);
 }

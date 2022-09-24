@@ -190,9 +190,7 @@ void file_scene_node_load_component(FileSceneNode* node, PyObject* pComponent) {
         rbe_logger_debug("Building script component");
         const char* scriptClassPath = phy_get_string_from_var(pComponent, "class_path");
         const char* scriptClassName = phy_get_string_from_var(pComponent, "class_name");
-        ScriptComponent* scriptComponent = script_component_create();
-        scriptComponent->classPath = scriptClassPath;
-        scriptComponent->className = scriptClassName;
+        ScriptComponent* scriptComponent = script_component_create(scriptClassPath, scriptClassName);
         scriptComponent->contextType = ScriptContextType_PYTHON;
 
         node->components[ComponentDataIndex_SCRIPT] = scriptComponent;

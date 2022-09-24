@@ -409,9 +409,7 @@ PyObject* rbe_py_api_node_new(PyObject* self, PyObject* args, PyObject* kwargs) 
         const Entity newEntity = rbe_ec_system_create_entity();
 
         // Setup script component first
-        ScriptComponent* scriptComponent = script_component_create();
-        scriptComponent->classPath = classPath;
-        scriptComponent->className = className;
+        ScriptComponent* scriptComponent = script_component_create(classPath, className);
         scriptComponent->contextType = ScriptContextType_PYTHON;
         component_manager_set_component(newEntity, ComponentDataIndex_SCRIPT, scriptComponent);
         // Call create instance on script context
