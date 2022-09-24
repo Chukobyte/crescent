@@ -35,7 +35,7 @@ void ProjectManagerUI::ProcessWindows() {
                 gameProperties->projectPath = projectPath;
                 editorContext->projectState = EditorProjectState::OpenedProject;
                 rbe_logger_debug("Opening project at directory = %s", projectPath);
-                gameProperties->LoadPropertiesFromConfig("cre_config.py");
+                gameProperties->LoadPropertiesFromConfig("project.ccfg");
                 gameProperties->PrintProperties();
                 // Update recently opened projects list
                 editorContext->settings.AddToRecentlyLoadedProjectsList(gameProperties->gameTitle, projectPath);
@@ -71,7 +71,7 @@ void ProjectManagerUI::ProcessWindows() {
                 .size = ImVec2{ 600.0f, 320.0f },
                 .rootPath = {},
                 .mode = ImGuiHelper::FileBrowser::Mode::OpenFile,
-                .validExtensions = { ".py" },
+                .validExtensions = { ".ccfg" },
                 .onModeCompletedFunc = [](const std::filesystem::path& fullPath) {
                     rbe_logger_debug("Opening project at file path = '%s'", fullPath.parent_path().generic_string().c_str());
                     LoadProject(fullPath.parent_path().generic_string().c_str());

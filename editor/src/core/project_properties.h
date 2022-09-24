@@ -4,19 +4,18 @@
 #include <utility>
 #include <vector>
 
-#include "../engine/src/core/game_properties.h"
-
+#include "utils/json_helper.h"
 #include "utils/singleton.h"
 
 struct TextureAsset {
     TextureAsset() = default;
 
-    explicit TextureAsset(const RBEAssetTexture& texture)
-        : file_path(texture.file_path),
-          wrap_s(texture.wrap_s),
-          wrap_t(texture.wrap_t),
-          filter_min(texture.filter_min),
-          filter_mag(texture.filter_mag) {}
+    explicit TextureAsset(const nlohmann::json& texture)
+        : file_path(JsonHelper::Get<std::string>(texture, "file_path")),
+          wrap_s(JsonHelper::Get<std::string>(texture, "wrap_s")),
+          wrap_t(JsonHelper::Get<std::string>(texture, "wrap_t")),
+          filter_min(JsonHelper::Get<std::string>(texture, "filter_min")),
+          filter_mag(JsonHelper::Get<std::string>(texture, "filter_mag")) {}
 
     TextureAsset(std::string filePath,
                  std::string wrapS = "clamp_to_border",
@@ -39,8 +38,8 @@ struct TextureAsset {
 struct AudioSourceAsset {
     AudioSourceAsset() = default;
 
-    explicit AudioSourceAsset(const RBEAssetAudioSource& audioSource) :
-        file_path(audioSource.file_path) {}
+    explicit AudioSourceAsset(const nlohmann::json& audioSource) :
+        file_path(JsonHelper::Get<std::string>(audioSource, "file_path")) {}
 
     AudioSourceAsset(std::string filePath)
         : file_path(std::move(filePath)) {}
@@ -50,14 +49,15 @@ struct AudioSourceAsset {
 
 struct FontAsset {
     FontAsset() = default;
-    explicit FontAsset(const RBEAssetFont& font) :
-        file_path(font.file_path),
-        uid(font.uid),
-        size(font.size) {}
+
+    explicit FontAsset(const nlohmann::json& font) :
+        file_path(JsonHelper::Get<std::string>(font, "file_path")),
+        uid(JsonHelper::Get<std::string>(font, "uid")),
+        size(JsonHelper::Get<int>(font, "size")) {}
 
     std::string file_path;
     std::string uid;
-    int size;
+    int size = -1;
 };
 
 struct ProjectAssets {
@@ -65,7 +65,7 @@ struct ProjectAssets {
     std::vector<AudioSourceAsset> audioSources;
     std::vector<FontAsset> fonts;
 
-    void SetAssets(RBEGameProperties* gameProperties);
+    void SetAssets(const nlohmann::json& assetsJson);
 };
 
 struct ProjectInputAction {
@@ -77,7 +77,7 @@ struct ProjectInputAction {
 struct ProjectInputs {
     std::vector<ProjectInputAction> actions;
 
-    void SetInputs(RBEGameProperties* gameProperties);
+    void SetInputs(const nlohmann::json& inputsJsonArray);
 };
 
 class ProjectProperties : public Singleton<ProjectProperties> {
@@ -95,13 +95,12 @@ class ProjectProperties : public Singleton<ProjectProperties> {
     std::string projectPath;
 
     ProjectProperties(singleton);
-    ~ProjectProperties();
 
     static std::string GetDefaultProjectPropertyFileContent(const std::string& gameTitle);
 
     void ResetToDefault();
 
-    void LoadPropertiesFromConfig(const char* modulePath);
+    void LoadPropertiesFromConfig(const char* filePath);
     void PrintProperties() const;
     void UpdateTextureAsset(const TextureAsset& textureAsset);
     void UpdateAudioSourceAsset(const AudioSourceAsset& audioSourceAsset);

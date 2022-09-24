@@ -312,7 +312,7 @@ void rbe_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneNode, Scene
     }
     if (jsonSceneNode->components[ComponentDataIndex_COLOR_RECT] != NULL) {
         ColorRectComponent* colorSquareComponent = color_rect_component_copy(
-                (ColorRectComponent *) jsonSceneNode->components[ComponentDataIndex_COLOR_RECT]);
+                    (ColorRectComponent*) jsonSceneNode->components[ComponentDataIndex_COLOR_RECT]);
         component_manager_set_component(node->entity, ComponentDataIndex_COLOR_RECT, colorSquareComponent);
     }
 

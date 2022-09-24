@@ -17,7 +17,7 @@
 #include "../game_exporter.h"
 #include "imgui/imgui_file_browser.h"
 
-const char* CONFIG_FILE_NAME = "cre_config.py";
+const char* CONFIG_FILE_NAME = "cre_config.ccfg";
 const std::string COMBO_BOX_LIST_NONE = "<none>";
 
 static EditorContext* editorContext = EditorContext::Get();
@@ -68,7 +68,7 @@ void OpenedProjectUI::ProcessMenuBar() {
                                         .size = ImVec2{ 600.0f, 320.0f },
                                         .rootPath = {},
                                         .mode = ImGuiHelper::FileBrowser::Mode::OpenFile,
-                                        .validExtensions = { ".py" },
+                                        .validExtensions = { ".cscn" },
                                         .onModeCompletedFunc = [](const std::filesystem::path& fullPath) {
                                             const std::string pathBeforeTrans = fullPath.generic_string();
                                             const std::string relativePath = projectProperties->GetPathRelativeToProjectPath(fullPath.generic_string());
@@ -90,9 +90,11 @@ void OpenedProjectUI::ProcessMenuBar() {
                                     if (ImGui::Button("Ok")) {
                                         static SceneManager* sceneManager = SceneManager::Get();
                                         std::string validSceneFilePath = filePathInputText.GetValue();
-                                        validSceneFilePath = Helper::ConvertFilePathToFilePathExtension(validSceneFilePath, ".py");
+                                        validSceneFilePath = Helper::ConvertFilePathToFilePathExtension(validSceneFilePath, ".cscn");
                                         if (!validSceneFilePath.empty() && FileSystemHelper::DoesFileExist(validSceneFilePath)) {
                                             sceneManager->selectedSceneFile = sceneManager->LoadSceneFromFile(validSceneFilePath.c_str());
+                                            RBE_ASSERT_FMT(sceneManager->selectedSceneFile != nullptr, "selected scene node file at path '%s' is NULL!",
+                                                           sceneManager->selectedSceneFile);
                                             sceneManager->selectedSceneNode = sceneManager->selectedSceneFile->rootNode;
                                         }
                                         filePathInputText.SetValue("");
@@ -132,7 +134,7 @@ void OpenedProjectUI::ProcessMenuBar() {
                                                     .size = ImVec2{ 600.0f, 320.0f },
                                                     .rootPath = {},
                                                     .mode = ImGuiHelper::FileBrowser::Mode::SaveFile,
-                                                    .validExtensions = { ".py" },
+                                                    .validExtensions = { ".cscn" },
                                                     .onModeCompletedFunc = [](const std::filesystem::path& fullPath) {
                                                         const std::string relativePath = projectProperties->GetPathRelativeToProjectPath(fullPath.generic_string());
                                                         rbe_logger_debug("New project at file path = '%s'", relativePath.c_str());
@@ -153,7 +155,7 @@ void OpenedProjectUI::ProcessMenuBar() {
                                                 ImGui::SameLine();
                                                 if (ImGui::Button("Ok") && !filePathText.GetValue().empty()) {
                                                     auto* selectedSceneFile = SceneManager::Get()->selectedSceneFile;
-                                                    const std::string validFullFilePath = Helper::ConvertFilePathToFilePathExtension(filePathText.GetValue(), ".py");
+                                                    const std::string validFullFilePath = Helper::ConvertFilePathToFilePathExtension(filePathText.GetValue(), ".cscn");
                                                     selectedSceneFile->filePath = validFullFilePath;
                                                     SceneFileCreator::GenerateSceneFile(selectedSceneFile, validFullFilePath.c_str());
                                                     selectedSceneFile->hasBeenSaved = true;
@@ -218,7 +220,7 @@ void OpenedProjectUI::ProcessMenuBar() {
                                     static ImGuiHelper::InputText titleText("Title", projectProperties->gameTitle);
                                     ImGuiHelper::BeginInputText(titleText);
 
-                                    static ImGuiHelper::AssetBrowserComboBox initialSceneComboBox("Initial Node Path", ".py", [](const char* newItem) {
+                                    static ImGuiHelper::AssetBrowserComboBox initialSceneComboBox("Initial Node Path", ".cscn", [](const char* newItem) {
                                         projectProperties->initialNodePath = newItem;
                                         if (projectProperties->initialNodePath == COMBO_BOX_LIST_NONE) {
                                             projectProperties->initialNodePath.clear();

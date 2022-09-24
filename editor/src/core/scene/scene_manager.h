@@ -121,10 +121,10 @@ class SceneManager : public Singleton<SceneManager> {
     SceneNode* selectedSceneNode = nullptr;
 
   private:
-    static SceneNodeFile* GenerateSceneNodeFile(FileSceneNode* rootTreeNode, const char* sceneFilePath);
+    static SceneNodeFile* GenerateSceneNodeFileFromJson(struct JsonSceneNode* rootTreeNode, const char* sceneFilePath);
 
     // Recursive function to load SceneTreeNode into SceneNode for usability purposes
-    static SceneNode* LoadSceneTreeNode(FileSceneNode* node, SceneNode* parent = nullptr);
+    static SceneNode* LoadSceneTreeJson(struct JsonSceneNode* node, SceneNode* parent = nullptr);
 
     std::vector<SceneNode*> nodesQueuedForDeletion;
 };

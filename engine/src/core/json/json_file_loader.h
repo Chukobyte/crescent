@@ -1,11 +1,12 @@
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "../ecs/entity/entity.h"
 #include "../ecs/component/component.h"
 #include "../ecs/component/node_component.h"
-
-// TODO: Decide if we want a callback function to load scene files...
-//typedef void (*OnSceneNodeLoad) (SceneNode*);
 
 typedef struct JsonSceneNode {
     char* name;
@@ -21,3 +22,7 @@ typedef struct JsonSceneNode {
 struct RBEGameProperties* cre_json_load_config_file(const char* filePath);
 JsonSceneNode* cre_json_load_scene_file(const char* filePath);
 void cre_json_delete_json_scene_node(JsonSceneNode* node);
+
+#ifdef __cplusplus
+}
+#endif

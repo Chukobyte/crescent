@@ -278,9 +278,9 @@ JsonSceneNode* cre_json_load_scene_node(cJSON* nodeJson, JsonSceneNode* parentNo
             node->components[ComponentDataIndex_COLOR_RECT] = colorRectComponent;
         } else if (strcmp(componentType, "script") == 0) {
             ScriptComponent* scriptComponent = script_component_create(
-                    json_get_string(componentJson, "class_path"),
-                    json_get_string(componentJson, "class_name")
-            );
+                                                   json_get_string(componentJson, "class_path"),
+                                                   json_get_string(componentJson, "class_name")
+                                               );
             scriptComponent->contextType = ScriptContextType_PYTHON;
             rbe_logger_debug("Script\nclass path: '%s'\nclass name: '%s'",
                              scriptComponent->classPath, scriptComponent->className);
