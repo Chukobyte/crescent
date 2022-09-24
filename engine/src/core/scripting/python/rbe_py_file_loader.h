@@ -14,10 +14,6 @@ extern "C" {
 struct _object; // PyObject
 
 // File Scene Node
-typedef struct FileSceneNodeAnimatedSpritePaths {
-    char* data[RBE_MAX_ANIMATION_FRAMES][RBE_MAX_ANIMATION_FRAMES];
-} FileSceneNodeAnimatedSpritePaths;
-
 typedef struct FileSceneNode {
     char* name;
     NodeBaseType type;
