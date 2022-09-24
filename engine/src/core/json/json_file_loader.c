@@ -178,7 +178,7 @@ void cre_json_load_scene_node(cJSON* nodeJson, cJSON* parentNode) {
                              currentAnimationName, cre_bool_to_string(isPlaying), origin.x, origin.y, modulate.r, modulate.g, modulate.b, modulate.a,
                              cre_bool_to_string(flipX), cre_bool_to_string(flipY));
             // Animation
-            cJSON* animationsJsonArray = cJSON_GetObjectItemCaseSensitive(nodeJson, "animations");
+            cJSON* animationsJsonArray = cJSON_GetObjectItemCaseSensitive(componentJson, "animations");
             cJSON* animationJson = NULL;
             cJSON_ArrayForEach(animationJson, animationsJsonArray) {
                 const char* animationName = json_get_string(animationJson, "name");
@@ -187,7 +187,7 @@ void cre_json_load_scene_node(cJSON* nodeJson, cJSON* parentNode) {
                 rbe_logger_debug("Animation\nname: '%s'\nspeed: %d\nloops: %s", animationName, animationSpeed,
                                  cre_bool_to_string(animationLoops));
                 // Animation Frames
-                cJSON* framesJsonArray = cJSON_GetObjectItemCaseSensitive(nodeJson, "frames");
+                cJSON* framesJsonArray = cJSON_GetObjectItemCaseSensitive(animationJson, "frames");
                 cJSON* frameJson = NULL;
                 cJSON_ArrayForEach(frameJson, framesJsonArray) {
                     const int frameIndex = json_get_int(frameJson, "frame");
