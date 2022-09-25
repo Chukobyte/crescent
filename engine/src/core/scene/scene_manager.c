@@ -3,7 +3,6 @@
 #include <string.h>
 
 #include "../asset_manager.h"
-#include "../scripting/python/rbe_py_file_loader.h"
 #include "../ecs/system/ec_system.h"
 #include "../ecs/component/sprite_component.h"
 #include "../ecs/component/animated_sprite_component.h"
@@ -66,7 +65,6 @@ Scene* queuedSceneToChangeTo = NULL;
 
 static RBEHashMap* entityToTreeNodeMap = NULL;
 
-void rbe_scene_manager_setup_scene_nodes_from_parent(FileSceneNode* fileSceneNode);
 void rbe_scene_manager_setup_scene_nodes_from_json(JsonSceneNode* jsonSceneNode);
 
 void rbe_scene_manager_initialize() {
@@ -321,73 +319,6 @@ void rbe_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneNode, Scene
     // Children
     for (size_t i = 0; i < jsonSceneNode->childrenCount; i++) {
         rbe_scene_manager_setup_json_scene_node(jsonSceneNode->children[i], node);
-    }
-
-    rbe_scene_manager_queue_entity_for_creation(node);
-}
-
-
-// OLD
-void rbe_scene_manager_setup_scene_node(FileSceneNode* fileSceneNode, SceneTreeNode* parent);
-
-void rbe_scene_manager_setup_scene_nodes_from_parent(FileSceneNode* fileSceneNode) {
-    rbe_scene_manager_setup_scene_node(fileSceneNode, NULL);
-}
-
-void rbe_scene_manager_setup_scene_node(FileSceneNode* fileSceneNode, SceneTreeNode* parent) {
-    SceneTreeNode* node = rbe_scene_tree_create_tree_node(rbe_ec_system_create_entity(), parent);
-
-    const bool isRoot = parent == NULL;
-    if (isRoot) {
-        rbe_scene_manager_set_active_scene_root(node);
-    }  else {
-        parent->children[parent->childCount++] = node;
-    }
-
-    // Components
-    NodeComponent* nodeComponent = node_component_create();
-    strcpy(nodeComponent->name, fileSceneNode->name);
-    nodeComponent->type = fileSceneNode->type;
-    RBE_ASSERT_FMT(nodeComponent->type != NodeBaseType_INVALID, "Node '%s' has an invalid node type '%d'", nodeComponent->name, nodeComponent->type);
-    component_manager_set_component(node->entity, ComponentDataIndex_NODE, nodeComponent);
-
-    if (fileSceneNode->components[ComponentDataIndex_TRANSFORM_2D] != NULL) {
-        Transform2DComponent* transform2DComponent = transform2d_component_copy((Transform2DComponent*) fileSceneNode->components[ComponentDataIndex_TRANSFORM_2D]);
-        component_manager_set_component(node->entity, ComponentDataIndex_TRANSFORM_2D, transform2DComponent);
-    }
-    if (fileSceneNode->components[ComponentDataIndex_SPRITE] != NULL) {
-        SpriteComponent* spriteComponent = sprite_component_copy((SpriteComponent*) fileSceneNode->components[ComponentDataIndex_SPRITE]);
-        spriteComponent->texture = rbe_asset_manager_get_texture(fileSceneNode->spriteTexturePath);
-        component_manager_set_component(node->entity, ComponentDataIndex_SPRITE, spriteComponent);
-    }
-    if (fileSceneNode->components[ComponentDataIndex_ANIMATED_SPRITE] != NULL) {
-        AnimatedSpriteComponent* animatedSpriteComponent = animated_sprite_component_data_copy_to_animated_sprite((AnimatedSpriteComponentData*) fileSceneNode->components[ComponentDataIndex_ANIMATED_SPRITE]);
-        component_manager_set_component(node->entity, ComponentDataIndex_ANIMATED_SPRITE, animatedSpriteComponent);
-    }
-    if (fileSceneNode->components[ComponentDataIndex_TEXT_LABEL] != NULL) {
-        TextLabelComponent* textLabelComponent = text_label_component_copy((TextLabelComponent*) fileSceneNode->components[ComponentDataIndex_TEXT_LABEL]);
-        textLabelComponent->font = rbe_asset_manager_get_font(fileSceneNode->fontUID);
-        component_manager_set_component(node->entity, ComponentDataIndex_TEXT_LABEL, textLabelComponent);
-    }
-    if (fileSceneNode->components[ComponentDataIndex_SCRIPT] != NULL) {
-        ScriptComponent* scriptComponent = script_component_copy((ScriptComponent*) fileSceneNode->components[ComponentDataIndex_SCRIPT]);
-        component_manager_set_component(node->entity, ComponentDataIndex_SCRIPT, scriptComponent);
-    }
-    if (fileSceneNode->components[ComponentDataIndex_COLLIDER_2D] != NULL) {
-        Collider2DComponent* collider2DComponent = collider2d_component_copy((Collider2DComponent*) fileSceneNode->components[ComponentDataIndex_COLLIDER_2D]);
-        component_manager_set_component(node->entity, ComponentDataIndex_COLLIDER_2D, collider2DComponent);
-    }
-    if (fileSceneNode->components[ComponentDataIndex_COLOR_RECT] != NULL) {
-        ColorRectComponent* colorSquareComponent = color_rect_component_copy(
-                    (ColorRectComponent *) fileSceneNode->components[ComponentDataIndex_COLOR_RECT]);
-        component_manager_set_component(node->entity, ComponentDataIndex_COLOR_RECT, colorSquareComponent);
-    }
-
-    rbe_ec_system_update_entity_signature_with_systems(node->entity);
-
-    // Children
-    for (size_t i = 0; i < fileSceneNode->childrenCount; i++) {
-        rbe_scene_manager_setup_scene_node(fileSceneNode->children[i], node);
     }
 
     rbe_scene_manager_queue_entity_for_creation(node);

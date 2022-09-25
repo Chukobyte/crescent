@@ -39,7 +39,6 @@ add_library(${PROJECT_NAME} STATIC
         src/core/scripting/python/py_helper.c
         src/core/scripting/python/rbe_py.c
         src/core/scripting/python/rbe_py_api_module.c
-        src/core/scripting/python/rbe_py_file_loader.c
         src/core/scripting/python/py_cache.c
         src/core/scripting/python/py_script_context.c
         src/core/scripting/native/native_script_context.c
