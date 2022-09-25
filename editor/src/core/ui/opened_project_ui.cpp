@@ -142,7 +142,7 @@ void OpenedProjectUI::ProcessMenuBar() {
                             static ImGuiHelper::PopupModal projectSettingsPopup = {
                                 .name = "Project Settings Menu",
                                 .open = nullptr,
-                                .windowFlags = 0,
+                                .windowFlags = ImGuiWindowFlags_NoResize,
                                 .callbackFunc = [] (ImGuiHelper::Context* context) {
                                     static bool justOpened = true;
                                     // TODO: Do more validation
@@ -181,7 +181,7 @@ void OpenedProjectUI::ProcessMenuBar() {
                                     ImGuiHelper::BeginCheckBox(areCollidersVisibleCheckBox);
                                 },
                                 .position = ImVec2{ 100.0f, 100.0f },
-                                .size = ImVec2{ 200.0f, 200.0f },
+                                .size = ImVec2{ 600.0f, 200.0f },
                             };
                             ImGuiHelper::StaticPopupModalManager::Get()->QueueOpenPopop(&projectSettingsPopup);
                         },
@@ -314,7 +314,7 @@ void OpenedProjectUI::ProcessMenuBar() {
                                     }
                                 },
                                 .position = ImVec2{ 100.0f, 100.0f },
-                                .size = ImVec2{ 200.0f, 200.0f },
+                                .size = ImVec2{ 500.0f, 200.0f },
                             };
                             ImGuiHelper::StaticPopupModalManager::Get()->QueueOpenPopop(&fontConfigurationPopup);
                         },
@@ -331,7 +331,7 @@ void OpenedProjectUI::ProcessMenuBar() {
                             static ImGuiHelper::PopupModal projectSettingsPopup = {
                                 .name = "Export Game Menu",
                                 .open = nullptr,
-                                .windowFlags = 0,
+                                .windowFlags = ImGuiWindowFlags_NoResize,
                                 .callbackFunc = [] (ImGuiHelper::Context* context) {
                                     static std::string exportFileName;
                                     static ImGuiHelper::InputText exportPathInputText("Folder Path", exportFileName);
@@ -380,7 +380,7 @@ void OpenedProjectUI::ProcessMenuBar() {
                                     }
                                 },
                                 .position = ImVec2{ 100.0f, 100.0f },
-                                .size = ImVec2{ 200.0f, 200.0f },
+                                .size = ImVec2{ 600.0f, 200.0f },
                             };
                             ImGuiHelper::StaticPopupModalManager::Get()->QueueOpenPopop(&projectSettingsPopup);
                         },

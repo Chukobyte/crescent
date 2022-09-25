@@ -24,7 +24,7 @@ void ProjectManagerUI::ProcessWindows() {
     static ImGuiHelper::Window window = {
         .name = "Project Manager",
         .open = nullptr,
-        .windowFlags = 0,
+        .windowFlags = ImGuiWindowFlags_NoResize,
         .callbackFunc = [] (ImGuiHelper::Context* context) {
             static auto sceneManager = SceneManager::Get();
             static auto gameProperties = ProjectProperties::Get();
@@ -135,8 +135,8 @@ void ProjectManagerUI::ProcessWindows() {
                 LoadProject(fullNewProjectPath.c_str());
             }
         },
-        .position = ImVec2{ 150.0f, 100.0f },
-        .size = ImVec2{ 400.0f, 300.0f },
+        .position = ImVec2{ 100.0f, 100.0f },
+        .size = ImVec2{ 600.0f, 300.0f },
     };
     ImGuiHelper::BeginWindowWithEnd(window);
 }
