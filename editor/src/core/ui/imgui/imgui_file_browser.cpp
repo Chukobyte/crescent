@@ -5,6 +5,7 @@
 namespace {
 unsigned int selectedFileBrowserIndex = 0;
 
+//--- File Browser ---//
 void DisplayFileBrowser(ImGuiHelper::FileBrowser& fileBrowser) {
     static std::string pathText;
     static ImGuiHelper::InputText pathInputText("Path:", pathText);
@@ -208,4 +209,23 @@ void ImGuiHelper::BeginFileBrowser(ImGuiHelper::FileBrowser& fileBrowser) {
         ImGui::EndPopup();
     }
     fileBrowser.hasJustOpened = false;
+}
+
+//--- Popup Manager ---//
+void ImGuiHelper::FileBrowserPopupManager::QueueOpenPopop(FileBrowser* fileBrowser) {
+    if (!fileBrowser->hasRegistered) {
+        fileBrowser->hasRegistered = true;
+        framePopupModals.emplace_back(fileBrowser);
+    }
+    popupModalsToOpen.emplace_back(fileBrowser);
+}
+
+void ImGuiHelper::FileBrowserPopupManager::Flush() {
+    for (auto* popupModal : popupModalsToOpen) {
+        ImGui::OpenPopup(popupModal->name.c_str());
+    }
+    popupModalsToOpen.clear();
+    for (auto* popupModal : framePopupModals) {
+        ImGuiHelper::BeginFileBrowser(*popupModal);
+    }
 }

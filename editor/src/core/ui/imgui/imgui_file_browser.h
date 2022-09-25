@@ -31,4 +31,15 @@ struct FileBrowser {
 };
 
 void BeginFileBrowser(FileBrowser& fileBrowser);
+
+class FileBrowserPopupManager : public Singleton<FileBrowserPopupManager> {
+  public:
+    FileBrowserPopupManager(singleton) {}
+    void QueueOpenPopop(FileBrowser* fileBrowser);
+    void Flush();
+
+  private:
+    std::vector<FileBrowser*> framePopupModals;
+    std::vector<FileBrowser*> popupModalsToOpen;
+};
 } // ImGuiHelper
