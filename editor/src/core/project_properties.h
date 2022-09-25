@@ -96,8 +96,7 @@ class ProjectProperties : public Singleton<ProjectProperties> {
 
     ProjectProperties(singleton);
 
-    static std::string GetDefaultProjectPropertyFileContent(const std::string& gameTitle);
-
+    nlohmann::ordered_json ToJson() const;
     void ResetToDefault();
 
     void LoadPropertiesFromConfig(const char* filePath);

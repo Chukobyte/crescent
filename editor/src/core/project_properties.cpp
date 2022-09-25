@@ -147,30 +147,67 @@ bool ProjectProperties::HasAudioSourceWithPath(const std::string &path) const {
     return false;
 }
 
-// Default project property file
-std::string ProjectProperties::GetDefaultProjectPropertyFileContent(const std::string& gameTitle) {
-    return "from crescent_api import *\n"
-           "\n"
-           "configure_game(\n"
-           "        game_title=\"" + gameTitle + "\",\n"
-           "        window_width=800,\n"
-           "        window_height=600,\n"
-           "        resolution_width=800,\n"
-           "        resolution_height=600,\n"
-           "        target_fps=66,\n"
-           "        initial_node_path=\"\",\n"
-           "        colliders_visible=False,\n"
-           ")\n"
-           "\n"
-           "configure_assets(\n"
-           "        audio_sources=[],\n"
-           "        textures=[],\n"
-           "        fonts=[],\n"
-           ")\n"
-           "\n"
-           "configure_inputs(\n"
-           "        input_actions=[]\n"
-           ")\n";
+nlohmann::ordered_json ProjectProperties::ToJson() const {
+    nlohmann::ordered_json configJson;
+    configJson["name"] = gameTitle;
+    configJson["window_width"] = windowWidth;
+    configJson["window_height"] = windowHeight;
+    configJson["resolution_width"] = resolutionWidth;
+    configJson["resolution_height"] = resolutionHeight;
+    configJson["target_fps"] = targetFPS;
+    configJson["initial_node_path"] = initialNodePath;
+    configJson["colliders_visible"] = areCollidersVisible;
+
+    // Assets
+    nlohmann::ordered_json assetJson;
+    // Audio Sources
+    nlohmann::ordered_json audioSourceJsonArray = nlohmann::ordered_json::array();
+    for (const auto& audioSource : assets.audioSources) {
+        nlohmann::ordered_json audioSourceJson;
+        audioSourceJson["file_path"] = audioSource.file_path;
+        audioSourceJsonArray.emplace_back(audioSourceJson);
+    }
+    assetJson["audio_sources"] = audioSourceJsonArray;
+    // Textures
+    nlohmann::ordered_json textureJsonArray = nlohmann::ordered_json::array();
+    for (const auto& texture : assets.textures) {
+        nlohmann::ordered_json textureJson;
+        textureJson["file_path"] = texture.file_path;
+        textureJson["wrap_s"] = texture.wrap_s;
+        textureJson["wrap_t"] = texture.wrap_t;
+        textureJson["filter_min"] = texture.filter_min;
+        textureJson["filter_mag"] = texture.filter_mag;
+        textureJsonArray.emplace_back(textureJson);
+    }
+    assetJson["textures"] = textureJsonArray;
+    // Fonts
+    nlohmann::ordered_json fontJsonArray = nlohmann::ordered_json::array();
+    for (const auto& font : assets.fonts) {
+        nlohmann::ordered_json fontJson;
+        fontJson["file_path"] = font.file_path;
+        fontJson["uid"] = font.uid;
+        fontJson["size"] = font.size;
+        fontJsonArray.emplace_back(fontJson);
+    }
+    assetJson["fonts"] = fontJsonArray;
+
+    configJson["assets"] = assetJson;
+
+    // Inputs
+    nlohmann::ordered_json inputsJsonArray = nlohmann::ordered_json::array();
+    for (const auto& inputAction : inputs.actions) {
+        nlohmann::ordered_json inputActionJson;
+        inputActionJson["name"] = inputAction.name;
+        inputActionJson["device_id"] = inputAction.deviceId;
+        nlohmann::ordered_json valueJsonArray = nlohmann::ordered_json::array();
+        for (const std::string& value : inputAction.values) {
+            valueJsonArray.emplace_back(value);
+        }
+        inputActionJson["values"] = valueJsonArray;
+    }
+    configJson["inputs"] = inputsJsonArray;
+
+    return configJson;
 }
 
 std::string ProjectProperties::GetPathRelativeToProjectPath(const std::string& path) {

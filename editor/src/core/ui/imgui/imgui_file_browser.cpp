@@ -15,7 +15,7 @@ void DisplayFileBrowser(ImGuiHelper::FileBrowser& fileBrowser) {
 
     static auto CloseDisplayPopup = [] {
         pathInputText.SetValue("");
-        selectedFileBrowserIndex = 0;
+//        selectedFileBrowserIndex = 0;
         ImGui::CloseCurrentPopup();
     };
 

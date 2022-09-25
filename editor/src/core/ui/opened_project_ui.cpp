@@ -17,7 +17,6 @@
 #include "../game_exporter.h"
 #include "imgui/imgui_file_browser.h"
 
-const char* CONFIG_FILE_NAME = "cre_config.ccfg";
 const std::string COMBO_BOX_LIST_NONE = "<none>";
 
 static EditorContext* editorContext = EditorContext::Get();
@@ -148,7 +147,7 @@ void OpenedProjectUI::ProcessMenuBar() {
                                     static bool justOpened = true;
                                     // TODO: Do more validation
                                     if (ImGui::Button("Close") && !projectProperties->gameTitle.empty()) {
-                                        ConfigFileCreator::GenerateConfigFile(CONFIG_FILE_NAME, projectProperties);
+                                        ConfigFileCreator::GenerateConfigFile(projectProperties);
                                         justOpened = true;
                                         ImGui::CloseCurrentPopup();
                                         return;
@@ -197,7 +196,7 @@ void OpenedProjectUI::ProcessMenuBar() {
                                 .windowFlags = 0,
                                 .callbackFunc = [] (ImGuiHelper::Context* context) {
                                     if (ImGui::Button("Close")) {
-                                        ConfigFileCreator::GenerateConfigFile(CONFIG_FILE_NAME, projectProperties);
+                                        ConfigFileCreator::GenerateConfigFile(projectProperties);
                                         ImGui::CloseCurrentPopup();
                                     }
                                     ImGui::SameLine();
@@ -268,7 +267,7 @@ void OpenedProjectUI::ProcessMenuBar() {
                                 .windowFlags = 0,
                                 .callbackFunc = [] (ImGuiHelper::Context* context) {
                                     if (ImGui::Button("Close")) {
-                                        ConfigFileCreator::GenerateConfigFile(CONFIG_FILE_NAME, projectProperties);
+                                        ConfigFileCreator::GenerateConfigFile(projectProperties);
                                         ImGui::CloseCurrentPopup();
                                     }
                                     ImGui::SameLine();
@@ -949,7 +948,7 @@ void OpenedProjectUI::ProcessWindows() {
                         ProjectProperties* projectProperties = ProjectProperties::Get();
                         const TextureAsset updatedTextureAsset = TextureAsset(selectedFileNode.GetRelativePath(), selectedWrapS, selectedWrapT, selectedFilterMin, selectedFilterMag);
                         projectProperties->UpdateTextureAsset(updatedTextureAsset);
-                        ConfigFileCreator::GenerateConfigFile(CONFIG_FILE_NAME, ProjectProperties::Get());
+                        ConfigFileCreator::GenerateConfigFile(ProjectProperties::Get());
                     }
                 }
                 // TODO: Add audio source properties when they exist...
