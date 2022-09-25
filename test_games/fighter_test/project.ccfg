@@ -72,9 +72,112 @@
     },
     "inputs": [
         {
-            "name": "quit",
+            "name": "exit",
             "values": [
-                "esc"
+                "esc",
+                "joystick_back"
+            ]
+        },
+        {
+            "name": "ui_confirm",
+            "values": [
+                "return"
+            ]
+        },
+        {
+            "name": "p1_move_left",
+            "values": [
+                "a"
+            ]
+        },
+        {
+            "name": "p1_move_right",
+            "values": [
+                "d"
+            ]
+        },
+        {
+            "name": "p1_crouch",
+            "values": [
+                "s"
+            ]
+        },
+        {
+            "name": "p1_jump",
+            "values": [
+                "w"
+            ]
+        },
+        {
+            "name": "p1_light_punch",
+            "values": [
+                "q"
+            ]
+        },
+        {
+            "name": "p2_move_left",
+            "values": [
+                "left"
+            ]
+        },
+        {
+            "name": "p2_move_right",
+            "values": [
+                "right"
+            ]
+        },
+        {
+            "name": "p2_crouch",
+            "values": [
+                "down"
+            ]
+        },
+        {
+            "name": "p2_jump",
+            "values": [
+                "up"
+            ]
+        },
+        {
+            "name": "p2_light_punch",
+            "values": [
+                "0"
+            ]
+        },
+        {
+            "name": "camera_left",
+            "values": [
+                "j"
+            ]
+        },
+        {
+            "name": "camera_right",
+            "values": [
+                "l"
+            ]
+        },
+        {
+            "name": "camera_up",
+            "values": [
+                "i"
+            ]
+        },
+        {
+            "name": "camera_down",
+            "values": [
+                "k"
+            ]
+        },
+        {
+            "name": "rotate_pos",
+            "values": [
+                "m"
+            ]
+        },
+        {
+            "name": "rotate_neg",
+            "values": [
+                "n"
             ]
         }
     ]
