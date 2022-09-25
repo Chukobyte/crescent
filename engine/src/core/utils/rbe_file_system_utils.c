@@ -106,3 +106,12 @@ char* rbe_fs_read_file_contents(const char* filePath, size_t* fileSize) {
     }
     return buffer;
 }
+
+bool rbe_fs_does_file_exist(const char* filePath) {
+    FILE* fp = fopen(filePath, "r");
+    if (fp) {
+        fclose(fp);
+        return true;
+    }
+    return false;
+}

@@ -51,10 +51,8 @@ void rbe_ecs_manager_enable_fps_display_entity(bool enabled) {
         strcpy(textLabelComponent->text, "FPS: ");
         component_manager_set_component(currentFpsEntity, ComponentDataIndex_TEXT_LABEL, textLabelComponent);
         // Script Component
-        ScriptComponent* scriptComponent = script_component_create();
+        ScriptComponent* scriptComponent = script_component_create("main", "FpsDisplay");
         scriptComponent->contextType = ScriptContextType_NATIVE;
-        scriptComponent->classPath = "main";
-        scriptComponent->className = "FpsDisplay";
         component_manager_set_component(currentFpsEntity, ComponentDataIndex_SCRIPT, scriptComponent);
         // Update systems
         rbe_ec_system_update_entity_signature_with_systems(currentFpsEntity);

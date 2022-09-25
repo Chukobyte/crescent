@@ -99,7 +99,7 @@ AnimatedSpriteComponent* animated_sprite_component_data_copy_to_animated_sprite(
     copiedNode->startAnimationTickTime = 0;
     strcpy(copiedNode->currentAnimation.name, animatedSpriteComponentData->currentAnimation.name);
     for (size_t animationIndex = 0; animationIndex < animatedSpriteComponentData->animationCount; animationIndex++) {
-        AnimationData* animationData = &animatedSpriteComponentData->animations[animationIndex];
+        const AnimationData* animationData = &animatedSpriteComponentData->animations[animationIndex];
         Animation animation;
         strcpy(animation.name, animationData->name);
         animation.doesLoop = animationData->doesLoop;
@@ -108,7 +108,7 @@ AnimatedSpriteComponent* animated_sprite_component_data_copy_to_animated_sprite(
         animation.currentFrame = 0;
         animation.frameCount = animationData->frameCount;
         for (size_t frameIndex = 0; (int) frameIndex < animationData->frameCount; frameIndex++) {
-            AnimationFrameData* animationFrameData = &animationData->animationFrames[frameIndex];
+            const AnimationFrameData* animationFrameData = &animationData->animationFrames[frameIndex];
             AnimationFrame animationFrame;
             animationFrame.texture = rbe_asset_manager_get_texture(animationFrameData->texturePath);
             animationFrame.drawSource = animationFrameData->drawSource;

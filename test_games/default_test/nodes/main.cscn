@@ -1,0 +1,65 @@
+{
+  "name": "Main",
+  "type": "Node2D",
+  "tags": null,
+  "external_node_source": null,
+  "components": [
+    {
+      "type": "transform_2d",
+      "position": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0
+      },
+      "rotation": 0.0,
+      "z_index": 0,
+      "z_index_relative_to_parent": true,
+      "ignore_camera": false
+    },
+    {
+      "type": "script",
+      "class_path": "src.main",
+      "class_name": "Main"
+    }
+  ],
+  "children": [
+    {
+      "name": "TestTextLabel",
+      "type": "TextLabel",
+      "tags": null,
+      "external_node_source": null,
+      "components": [
+        {
+          "type": "transform_2d",
+          "position": {
+            "x": 120.0,
+            "y": 200.0
+          },
+          "scale": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "rotation": 0.0,
+          "z_index": 0,
+          "z_index_relative_to_parent": true,
+          "ignore_camera": false
+        },
+        {
+          "type": "text_label",
+          "uid": "fight-32",
+          "text": "Default Project, Press 'ESC' to exit!",
+          "color": {
+            "r": 255,
+            "g": 255,
+            "b": 255,
+            "a": 255
+          }
+        }
+      ],
+      "children": []
+    }
+  ]
+}

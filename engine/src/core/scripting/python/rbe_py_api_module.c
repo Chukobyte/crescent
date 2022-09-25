@@ -4,13 +4,11 @@
 
 #include "py_cache.h"
 #include "py_script_context.h"
-#include "rbe_py_file_loader.h"
 #include "../../engine_context.h"
 #include "../../asset_manager.h"
 #include "../../input/input.h"
 #include "../../audio/audio_manager.h"
 #include "../../scripting/script_context.h"
-#include "../../scripting/python/py_helper.h"
 #include "../../physics/collision/collision.h"
 #include "../../camera/camera.h"
 #include "../../camera/camera_manager.h"
@@ -22,9 +20,9 @@
 #include "../../ecs/component/script_component.h"
 #include "../../ecs/component/sprite_component.h"
 #include "../../ecs/component/text_label_component.h"
+#include "../../ecs/component/node_component.h"
 #include "../../scene/scene_manager.h"
 #include "../../networking/rbe_network.h"
-#include "../../utils/rbe_string_util.h"
 #include "../../utils/rbe_assert.h"
 
 #ifdef _MSC_VER
@@ -32,10 +30,6 @@
 #endif
 
 // TODO: Clean up strdups
-
-//--- Node Utils ---//
-void setup_scene_stage_nodes(SceneTreeNode* parent, PyObject* stageNodeList);
-void setup_scene_component_node(Entity entity, PyObject* component);
 
 //--- Py Utils ---//
 PyObject* rbe_py_utils_get_entity_instance(Entity entity);
@@ -77,138 +71,6 @@ PyObject* rbe_py_api_engine_set_fps_display_enabled(PyObject* self, PyObject* ar
     bool isEnabled;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "b", rbePyApiGenericEnabledKWList, &isEnabled)) {
         rbe_ecs_manager_enable_fps_display_entity(isEnabled);
-        Py_RETURN_NONE;
-    }
-    return NULL;
-}
-
-// Configure
-PyObject* rbe_py_api_configure_game(PyObject* self, PyObject* args, PyObject* kwargs) {
-    char* gameTitle;
-    int windowWidth;
-    int windowHeight;
-    int resolutionWidth;
-    int resolutionHeight;
-    int targetFPS;
-    char* initialScenePath;
-    bool collidersVisible = false;
-    if (PyArg_ParseTupleAndKeywords(args, kwargs, "siiiiisb", rbePyApiProjectConfigureKWList, &gameTitle, &windowWidth, &windowHeight, &resolutionWidth, &resolutionHeight, &targetFPS, &initialScenePath, &collidersVisible)) {
-        RBEGameProperties* gameProperties = rbe_game_props_get();
-        gameProperties->gameTitle = rbe_strdup(gameTitle);
-        gameProperties->windowWidth = windowWidth;
-        gameProperties->windowHeight = windowHeight;
-        gameProperties->resolutionWidth = resolutionWidth;
-        gameProperties->resolutionHeight = resolutionHeight;
-        gameProperties->targetFPS = targetFPS;
-        gameProperties->initialScenePath = rbe_strdup(initialScenePath);
-        gameProperties->areCollidersVisible = collidersVisible;
-        Py_RETURN_NONE;
-    }
-    return NULL;
-}
-
-PyObject* rbe_py_api_configure_assets(PyObject* self, PyObject* args, PyObject* kwargs) {
-    PyObject* audioSourcesList;
-    PyObject* texturesList;
-    PyObject* fontsList;
-    if (PyArg_ParseTupleAndKeywords(args, kwargs, "OOO", rbePyApiConfigureAssetsKWList, &audioSourcesList, &texturesList, &fontsList)) {
-        RBE_ASSERT_FMT(PyList_Check(audioSourcesList), "Passed in audio source assets are not a python list, check python api implementation...");
-        RBE_ASSERT_FMT(PyList_Check(texturesList), "Passed in texture assets are not a python list, check python api implementation...");
-        RBE_ASSERT_FMT(PyList_Check(fontsList), "Passed in font assets are not a python list, check python api implementation...");
-
-        RBEGameProperties* gameProperties = rbe_game_props_get();
-
-        // Audio Sources
-        rbe_logger_debug("audio_sources:");
-        for (Py_ssize_t i = 0; i < PyList_Size(audioSourcesList); i++) {
-            PyObject* pAudioSourceAsset = PyList_GetItem(audioSourcesList, i);
-            RBE_ASSERT(pAudioSourceAsset != NULL);
-            const char* filePath = phy_get_string_from_var(pAudioSourceAsset, "file_path");
-            rbe_logger_debug("file_path = %s", filePath);
-            RBEAssetAudioSource assetAudioSource = { .file_path = rbe_strdup(filePath) };
-            gameProperties->audioSources[gameProperties->audioSourceCount++] = assetAudioSource;
-        }
-
-        // Textures
-        rbe_logger_debug("textures:");
-        for (Py_ssize_t i = 0; i < PyList_Size(texturesList); i++) {
-            PyObject* pTextureAsset = PyList_GetItem(texturesList, i);
-            RBE_ASSERT(pTextureAsset != NULL);
-            const char* filePath = phy_get_string_from_var(pTextureAsset, "file_path");
-            const char* wrapS = phy_get_string_from_var(pTextureAsset, "wrap_s");
-            const char* wrapT = phy_get_string_from_var(pTextureAsset, "wrap_t");
-            const char* filterMin = phy_get_string_from_var(pTextureAsset, "filter_min");
-            const char* filterMag = phy_get_string_from_var(pTextureAsset, "filter_mag");
-            rbe_logger_debug("file_path = %s, wrap_s = %s, wrap_t = %s, filter_min = %s, filter_mag = %s",
-                             filePath, wrapS, wrapT, filterMin, filterMag);
-            RBEAssetTexture assetTexture = {
-                .file_path = rbe_strdup(filePath),
-                .wrap_s = rbe_strdup(wrapS),
-                .wrap_t = rbe_strdup(wrapT),
-                .filter_min = rbe_strdup(filterMin),
-                .filter_mag = rbe_strdup(filterMag)
-            };
-            gameProperties->textures[gameProperties->textureCount++] = assetTexture;
-        }
-
-        // Fonts
-        rbe_logger_debug("fonts:");
-        for (Py_ssize_t i = 0; i < PyList_Size(fontsList); i++) {
-            PyObject* pFontAsset = PyList_GetItem(fontsList, i);
-            RBE_ASSERT(pFontAsset != NULL);
-            const char* filePath = phy_get_string_from_var(pFontAsset, "file_path");
-            const char* uid = phy_get_string_from_var(pFontAsset, "uid");
-            const int size = phy_get_int_from_var(pFontAsset, "size");
-            rbe_logger_debug("file_path = %s, uid = %s, size = %d", filePath, uid, size);
-            RBEAssetFont assetFont = { .file_path = rbe_strdup(filePath), .uid = rbe_strdup(uid), .size = size };
-            gameProperties->fonts[gameProperties->fontCount++] = assetFont;
-        }
-
-        Py_RETURN_NONE;
-    }
-    return NULL;
-}
-
-PyObject* rbe_py_api_configure_inputs(PyObject* self, PyObject* args, PyObject* kwargs) {
-    PyObject* inputActionsList;
-    if (PyArg_ParseTupleAndKeywords(args, kwargs, "O", rbePyApiConfigureInputsKWList, &inputActionsList)) {
-        RBE_ASSERT_FMT(PyList_Check(inputActionsList), "Passed in input actions are not a python list, check python api implementation...");
-
-        RBEGameProperties* gameProperties = rbe_game_props_get();
-
-        rbe_logger_debug("input actions:");
-        for (Py_ssize_t i = 0; i < PyList_Size(inputActionsList); i++) {
-            PyObject* pInputAction = PyList_GetItem(inputActionsList, i);
-            RBE_ASSERT(pInputAction != NULL);
-            const char* actionName = phy_get_string_from_var(pInputAction, "name");
-            const int actionDeviceId = phy_get_int_from_var(pInputAction, "device_id");
-            rbe_logger_debug("name = '%s', device_id = '%d'", actionName, actionDeviceId);
-            PyObject* valuesList = PyObject_GetAttrString(pInputAction, "values");
-            RBE_ASSERT(valuesList != NULL);
-            RBE_ASSERT_FMT(PyList_Check(valuesList), "Input action values for '%s' is not a list!  Check python api implementation.", actionName);
-            Py_ssize_t valueListSize = PyList_Size(valuesList);
-            RBEInputAction inputAction = { .name = rbe_strdup(actionName), .deviceId = actionDeviceId, .valueCount = (size_t) valueListSize };
-            for (Py_ssize_t actionIndex = 0; actionIndex < valueListSize; actionIndex++) {
-                PyObject* pActionValue = PyList_GetItem(valuesList, actionIndex);
-                const char* actionValue = pyh_get_string_from_obj(pActionValue);
-                rbe_logger_debug("action value = '%s'", actionValue);
-                inputAction.values[actionIndex] = rbe_strdup(actionValue);
-            }
-            gameProperties->inputActions[gameProperties->inputActionCount++] = inputAction;
-        }
-        Py_RETURN_NONE;
-    }
-    return NULL;
-}
-
-// Stage
-PyObject* rbe_py_api_create_stage_nodes(PyObject* self, PyObject* args, PyObject* kwargs) {
-    PyObject* stageNodeList;
-    if (PyArg_ParseTupleAndKeywords(args, kwargs, "O", rbePyApiCreateStageNodesKWList, &stageNodeList)) {
-        RBE_ASSERT_FMT(PyList_Check(stageNodeList), "Passed in stage nodes are not a python list, check python api implementation...");
-        rbe_logger_debug("setup stage nodes:");
-        file_scene_node_create_cached_file_scene_nodes_from_list(stageNodeList);
-//        setup_scene_stage_nodes(NULL, stageNodeList); // Assumes this is the root entity node for the scene
         Py_RETURN_NONE;
     }
     return NULL;
@@ -414,9 +276,7 @@ PyObject* rbe_py_api_node_new(PyObject* self, PyObject* args, PyObject* kwargs) 
         const Entity newEntity = rbe_ec_system_create_entity();
 
         // Setup script component first
-        ScriptComponent* scriptComponent = script_component_create();
-        scriptComponent->classPath = classPath;
-        scriptComponent->className = className;
+        ScriptComponent* scriptComponent = script_component_create(classPath, className);
         scriptComponent->contextType = ScriptContextType_PYTHON;
         component_manager_set_component(newEntity, ComponentDataIndex_SCRIPT, scriptComponent);
         // Call create instance on script context

@@ -1,33 +1,35 @@
 #include "project_properties.h"
 
-#include "../engine/src/core/scripting/python/rbe_py_file_loader.h"
-#include "../engine/src/core/utils/logger.h"
-
 #include "asset_browser.h"
 
 //--- Project Assets ---//
-void ProjectAssets::SetAssets(RBEGameProperties* gameProperties) {
-    for (size_t i = 0; i < gameProperties->textureCount; i++) {
-        textures.emplace_back(TextureAsset(gameProperties->textures[i]));
+void ProjectAssets::SetAssets(const nlohmann::json &assetsJson) {
+    if (JsonHelper::HasKey(assetsJson, "textures")) {
+        for (auto& textureJson : JsonHelper::Get<nlohmann::json>(assetsJson, "textures")) {
+            textures.emplace_back(TextureAsset(textureJson));
+        }
     }
-    for (size_t i = 0; i < gameProperties->audioSourceCount; i++) {
-        audioSources.emplace_back(AudioSourceAsset(gameProperties->audioSources[i]));
+    if (JsonHelper::HasKey(assetsJson, "audio_sources")) {
+        for (auto& audioSourceJson : JsonHelper::Get<nlohmann::json>(assetsJson, "audio_sources")) {
+            audioSources.emplace_back(AudioSourceAsset(audioSourceJson));
+        }
     }
-    for (size_t i = 0; i < gameProperties->fontCount; i++) {
-        fonts.emplace_back(FontAsset(gameProperties->fonts[i]));
+    if (JsonHelper::HasKey(assetsJson, "fonts")) {
+        for (auto& fontJson : JsonHelper::Get<nlohmann::json>(assetsJson, "fonts")) {
+            fonts.emplace_back(FontAsset(fontJson));
+        }
     }
 }
 
 //--- Project Inputs ---//
-void ProjectInputs::SetInputs(RBEGameProperties *gameProperties) {
-    for (size_t i = 0; i < gameProperties->inputActionCount; i++) {
-        const RBEInputAction& propertyInputAction = gameProperties->inputActions[i];
+void ProjectInputs::SetInputs(const nlohmann::json &inputsJsonArray) {
+    for (auto& inputJson : inputsJsonArray) {
         ProjectInputAction inputAction = {
-            .name = std::string(propertyInputAction.name),
-            .deviceId = propertyInputAction.deviceId
+            .name = JsonHelper::Get<std::string>(inputJson, "name"),
+            .deviceId = JsonHelper::GetDefault<int>(inputJson, "device_id", 0)
         };
-        for (size_t j = 0; j < propertyInputAction.valueCount; j++) {
-            inputAction.values.emplace_back(propertyInputAction.values[j]);
+        for (const std::string& value : JsonHelper::Get<nlohmann::json>(inputJson, "values")) {
+            inputAction.values.emplace_back(value);
         }
         actions.emplace_back(inputAction);
     }
@@ -55,8 +57,6 @@ void CreateDefaultAssetIfNonExisting(const FileNode& dirNode) {
 } // namespace
 
 ProjectProperties::ProjectProperties(singleton) {
-    rbe_game_props_initialize(false);
-
     // Register project properties with asset browser refresh cache
     AssetBrowser* assetBrowser = AssetBrowser::Get();
     assetBrowser->RegisterRefreshCallback([this](const FileNode& rootNode) {
@@ -79,25 +79,19 @@ void ProjectProperties::ResetToDefault() {
     inputs.actions.clear();
 }
 
-ProjectProperties::~ProjectProperties() {
-    rbe_game_props_finalize();
-}
-
-void ProjectProperties::LoadPropertiesFromConfig(const char* modulePath) {
+void ProjectProperties::LoadPropertiesFromConfig(const char* filePath) {
     rbe_logger_debug("Loading game properties");
-    rbe_game_props_finalize();
-    rbe_game_props_initialize(false);
-    RBEGameProperties* gameProps = rbe_py_load_game_properties(modulePath);
-    gameTitle = std::string(gameProps->gameTitle);
-    initialNodePath = std::string(gameProps->initialScenePath);
-    windowWidth = gameProps->windowWidth;
-    windowHeight = gameProps->windowHeight;
-    resolutionWidth = gameProps->resolutionWidth;
-    resolutionHeight = gameProps->resolutionHeight;
-    targetFPS = gameProps->targetFPS;
-    areCollidersVisible = gameProps->areCollidersVisible;
-    assets.SetAssets(gameProps);
-    inputs.SetInputs(gameProps);
+    nlohmann::json propertyJson = JsonHelper::LoadFile(filePath);
+    gameTitle = JsonHelper::Get<std::string>(propertyJson, "name");
+    initialNodePath = JsonHelper::Get<std::string>(propertyJson, "initial_node_path");
+    windowWidth = JsonHelper::Get<int>(propertyJson, "window_width");
+    windowHeight = JsonHelper::Get<int>(propertyJson, "window_height");
+    resolutionWidth = JsonHelper::Get<int>(propertyJson, "resolution_width");
+    resolutionHeight = JsonHelper::Get<int>(propertyJson, "resolution_height");
+    targetFPS = JsonHelper::Get<int>(propertyJson, "target_fps");
+    areCollidersVisible = JsonHelper::Get<bool>(propertyJson, "colliders_visible");
+    assets.SetAssets(JsonHelper::Get<nlohmann::json>(propertyJson, "assets"));
+    inputs.SetInputs(JsonHelper::Get<nlohmann::json>(propertyJson, "inputs"));
     rbe_logger_debug("Loading game properties finished");
 }
 

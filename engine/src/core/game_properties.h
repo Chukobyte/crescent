@@ -25,12 +25,16 @@ typedef struct RBEAssetFont {
     int size;
 } RBEAssetFont;
 
+#define CRE_INPUT_VALUES_LIMIT 4
+
 typedef struct RBEInputAction {
     char* name;
     int deviceId;
     size_t valueCount;
-    char* values[4];
+    char* values[CRE_INPUT_VALUES_LIMIT];
 } RBEInputAction;
+
+#define CRE_PROPERTIES_ASSET_LIMIT 20
 
 typedef struct RBEGameProperties {
     char* gameTitle;
@@ -41,17 +45,18 @@ typedef struct RBEGameProperties {
     int targetFPS;
     char* initialScenePath;
     bool areCollidersVisible;
-    RBEAssetAudioSource audioSources[20];
+    RBEAssetAudioSource audioSources[CRE_PROPERTIES_ASSET_LIMIT];
     size_t audioSourceCount;
-    RBEAssetTexture textures[20];
+    RBEAssetTexture textures[CRE_PROPERTIES_ASSET_LIMIT];
     size_t textureCount;
-    RBEAssetFont fonts[20];
+    RBEAssetFont fonts[CRE_PROPERTIES_ASSET_LIMIT];
     size_t fontCount;
-    RBEInputAction inputActions[20];
+    RBEInputAction inputActions[CRE_PROPERTIES_ASSET_LIMIT];
     size_t inputActionCount;
 } RBEGameProperties;
 
-void rbe_game_props_initialize(bool loadConfig);
+RBEGameProperties* rbe_game_props_create();
+void rbe_game_props_initialize(RBEGameProperties* initialProps);
 void rbe_game_props_finalize();
 RBEGameProperties* rbe_game_props_get();
 void rbe_game_props_print();

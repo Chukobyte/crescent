@@ -35,7 +35,7 @@ void ProjectManagerUI::ProcessWindows() {
                 gameProperties->projectPath = projectPath;
                 editorContext->projectState = EditorProjectState::OpenedProject;
                 rbe_logger_debug("Opening project at directory = %s", projectPath);
-                gameProperties->LoadPropertiesFromConfig("cre_config.py");
+                gameProperties->LoadPropertiesFromConfig("project.ccfg");
                 gameProperties->PrintProperties();
                 // Update recently opened projects list
                 editorContext->settings.AddToRecentlyLoadedProjectsList(gameProperties->gameTitle, projectPath);
@@ -71,7 +71,7 @@ void ProjectManagerUI::ProcessWindows() {
                 .size = ImVec2{ 600.0f, 320.0f },
                 .rootPath = {},
                 .mode = ImGuiHelper::FileBrowser::Mode::OpenFile,
-                .validExtensions = { ".py" },
+                .validExtensions = { ".ccfg" },
                 .onModeCompletedFunc = [](const std::filesystem::path& fullPath) {
                     rbe_logger_debug("Opening project at file path = '%s'", fullPath.parent_path().generic_string().c_str());
                     LoadProject(fullPath.parent_path().generic_string().c_str());
@@ -100,7 +100,6 @@ void ProjectManagerUI::ProcessWindows() {
             }
 
             // New Project Section
-            ImGui::Text("Creates new project in 'test_games' folder...");
             // Name
             static std::string newProjectName;
             static ImGuiHelper::InputText newProjectNameInputText("New Project Name", newProjectName);
@@ -130,8 +129,9 @@ void ProjectManagerUI::ProcessWindows() {
                 ImGui::OpenPopup(newProjectFileBrowser.name.c_str());
             }
             // Create new project
-            const std::string fullNewProjectPath = Helper::RemoveExtensionFromFilePath(newProjectPath);
-            if (ImGui::Button("Create New Project") && !newProjectName.empty() && !newProjectPath.empty() && FileSystemHelper::DirectoryExistsAndIsEmpty(fullNewProjectPath)) {
+            const std::string newProjectPathText = newProjectPathInputText.GetValue();
+            const std::string fullNewProjectPath = Helper::RemoveExtensionFromFilePath(newProjectPathText);
+            if (ImGui::Button("Create New Project") && FileSystemHelper::DirectoryExistsAndIsEmpty(fullNewProjectPath)) {
                 rbe_fs_chdir(std::filesystem::path(fullNewProjectPath).string().c_str());
                 // Create New Project Stuff
                 gameProperties->ResetToDefault();

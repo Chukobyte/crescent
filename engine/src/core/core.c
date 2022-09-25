@@ -19,9 +19,11 @@
 #include "ecs/ecs_manager.h"
 #include "ecs/system/ec_system.h"
 #include "scene/scene_manager.h"
+#include "json/json_file_loader.h"
 
 // The default project path if no directory override is provided
 #define DEFAULT_START_PROJECT_PATH "test_games/fighter_test"
+#define CRE_PROJECT_CONFIG_FILE_NAME "project.ccfg"
 
 bool rbe_initialize_sdl();
 bool rbe_initialize_rendering();
@@ -69,8 +71,8 @@ bool rbe_initialize(int argv, char** args) {
     rbe_py_initialize();
     rbe_asset_manager_initialize();
 
-    rbe_game_props_initialize(true);
-    gameProperties = rbe_game_props_get();
+    gameProperties = cre_json_load_config_file(CRE_PROJECT_CONFIG_FILE_NAME);
+    rbe_game_props_initialize(gameProperties);
     rbe_game_props_print();
 
     // Initialize sub systems

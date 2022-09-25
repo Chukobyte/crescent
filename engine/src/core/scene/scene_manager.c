@@ -3,20 +3,19 @@
 #include <string.h>
 
 #include "../asset_manager.h"
-#include "../scripting/python/py_helper.h"
-#include "../scripting/python/rbe_py_file_loader.h"
 #include "../ecs/system/ec_system.h"
-#include "../camera/camera_manager.h"
-#include "../memory/rbe_mem.h"
-#include "../data_structures/rbe_hash_map.h"
-#include "../utils/logger.h"
-#include "../utils/rbe_assert.h"
 #include "../ecs/component/sprite_component.h"
 #include "../ecs/component/animated_sprite_component.h"
 #include "../ecs/component/text_label_component.h"
 #include "../ecs/component/script_component.h"
 #include "../ecs/component/collider2d_component.h"
 #include "../ecs/component/color_rect_component.h"
+#include "../camera/camera_manager.h"
+#include "../memory/rbe_mem.h"
+#include "../data_structures/rbe_hash_map.h"
+#include "../json/json_file_loader.h"
+#include "../utils/logger.h"
+#include "../utils/rbe_assert.h"
 
 // --- Scene Tree --- //
 typedef void (*ExecuteOnAllTreeNodesFunc) (SceneTreeNode*);
@@ -66,7 +65,7 @@ Scene* queuedSceneToChangeTo = NULL;
 
 static RBEHashMap* entityToTreeNodeMap = NULL;
 
-void rbe_scene_manager_setup_scene_nodes_from_parent(FileSceneNode* fileSceneNode);
+void rbe_scene_manager_setup_scene_nodes_from_json(JsonSceneNode* jsonSceneNode);
 
 void rbe_scene_manager_initialize() {
     RBE_ASSERT(entityToTreeNodeMap == NULL);
@@ -153,12 +152,11 @@ void rbe_scene_manager_process_queued_scene_change() {
         activeScene = queuedSceneToChangeTo;
         queuedSceneToChangeTo = NULL;
         RBE_ASSERT(activeScene->scenePath != NULL);
-        // Load from cached file scene node (calls rbe_py_api_create_stage_nodes)
-        pyh_run_python_file(activeScene->scenePath);
-        FileSceneNode* rootFileSceneNode = file_scene_node_get_cached_file_scene_node();
-        RBE_ASSERT_FMT(rootFileSceneNode != NULL, "Root file scene node is NULL!");
-        rbe_scene_manager_setup_scene_nodes_from_parent(rootFileSceneNode);
-        file_scene_node_delete_cached_file_scene_node();
+        // Load scene file
+        JsonSceneNode* rootJsonSceneNode = cre_json_load_scene_file(activeScene->scenePath);
+        RBE_ASSERT_FMT(rootJsonSceneNode != NULL, "Root scene file at path '%s' is NULL!", activeScene->scenePath);
+        rbe_scene_manager_setup_scene_nodes_from_json(rootJsonSceneNode);
+        cre_json_delete_json_scene_node(rootJsonSceneNode);
     }
 }
 
@@ -260,13 +258,14 @@ Entity rbe_scene_manager_get_entity_child_by_name(Entity parent, const char* chi
 }
 
 // Scene node setup
-void rbe_scene_manager_setup_scene_node(FileSceneNode* fileSceneNode, SceneTreeNode* parent);
+// NEW
+void rbe_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneNode, SceneTreeNode* parent);
 
-void rbe_scene_manager_setup_scene_nodes_from_parent(FileSceneNode* fileSceneNode) {
-    rbe_scene_manager_setup_scene_node(fileSceneNode, NULL);
+void rbe_scene_manager_setup_scene_nodes_from_json(JsonSceneNode* jsonSceneNode) {
+    rbe_scene_manager_setup_json_scene_node(jsonSceneNode, NULL);
 }
 
-void rbe_scene_manager_setup_scene_node(FileSceneNode* fileSceneNode, SceneTreeNode* parent) {
+void rbe_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneNode, SceneTreeNode* parent) {
     SceneTreeNode* node = rbe_scene_tree_create_tree_node(rbe_ec_system_create_entity(), parent);
 
     const bool isRoot = parent == NULL;
@@ -278,48 +277,48 @@ void rbe_scene_manager_setup_scene_node(FileSceneNode* fileSceneNode, SceneTreeN
 
     // Components
     NodeComponent* nodeComponent = node_component_create();
-    strcpy(nodeComponent->name, fileSceneNode->name);
-    nodeComponent->type = fileSceneNode->type;
+    strcpy(nodeComponent->name, jsonSceneNode->name);
+    nodeComponent->type = jsonSceneNode->type;
     RBE_ASSERT_FMT(nodeComponent->type != NodeBaseType_INVALID, "Node '%s' has an invalid node type '%d'", nodeComponent->name, nodeComponent->type);
     component_manager_set_component(node->entity, ComponentDataIndex_NODE, nodeComponent);
 
-    if (fileSceneNode->components[ComponentDataIndex_TRANSFORM_2D] != NULL) {
-        Transform2DComponent* transform2DComponent = transform2d_component_copy((Transform2DComponent*) fileSceneNode->components[ComponentDataIndex_TRANSFORM_2D]);
+    if (jsonSceneNode->components[ComponentDataIndex_TRANSFORM_2D] != NULL) {
+        Transform2DComponent* transform2DComponent = transform2d_component_copy((Transform2DComponent*) jsonSceneNode->components[ComponentDataIndex_TRANSFORM_2D]);
         component_manager_set_component(node->entity, ComponentDataIndex_TRANSFORM_2D, transform2DComponent);
     }
-    if (fileSceneNode->components[ComponentDataIndex_SPRITE] != NULL) {
-        SpriteComponent* spriteComponent = sprite_component_copy((SpriteComponent*) fileSceneNode->components[ComponentDataIndex_SPRITE]);
-        spriteComponent->texture = rbe_asset_manager_get_texture(fileSceneNode->spriteTexturePath);
+    if (jsonSceneNode->components[ComponentDataIndex_SPRITE] != NULL) {
+        SpriteComponent* spriteComponent = sprite_component_copy((SpriteComponent*) jsonSceneNode->components[ComponentDataIndex_SPRITE]);
+        spriteComponent->texture = rbe_asset_manager_get_texture(jsonSceneNode->spriteTexturePath);
         component_manager_set_component(node->entity, ComponentDataIndex_SPRITE, spriteComponent);
     }
-    if (fileSceneNode->components[ComponentDataIndex_ANIMATED_SPRITE] != NULL) {
-        AnimatedSpriteComponent* animatedSpriteComponent = animated_sprite_component_data_copy_to_animated_sprite((AnimatedSpriteComponentData*) fileSceneNode->components[ComponentDataIndex_ANIMATED_SPRITE]);
+    if (jsonSceneNode->components[ComponentDataIndex_ANIMATED_SPRITE] != NULL) {
+        AnimatedSpriteComponent* animatedSpriteComponent = animated_sprite_component_data_copy_to_animated_sprite((AnimatedSpriteComponentData*) jsonSceneNode->components[ComponentDataIndex_ANIMATED_SPRITE]);
         component_manager_set_component(node->entity, ComponentDataIndex_ANIMATED_SPRITE, animatedSpriteComponent);
     }
-    if (fileSceneNode->components[ComponentDataIndex_TEXT_LABEL] != NULL) {
-        TextLabelComponent* textLabelComponent = text_label_component_copy((TextLabelComponent*) fileSceneNode->components[ComponentDataIndex_TEXT_LABEL]);
-        textLabelComponent->font = rbe_asset_manager_get_font(fileSceneNode->fontUID);
+    if (jsonSceneNode->components[ComponentDataIndex_TEXT_LABEL] != NULL) {
+        TextLabelComponent* textLabelComponent = text_label_component_copy((TextLabelComponent*) jsonSceneNode->components[ComponentDataIndex_TEXT_LABEL]);
+        textLabelComponent->font = rbe_asset_manager_get_font(jsonSceneNode->fontUID);
         component_manager_set_component(node->entity, ComponentDataIndex_TEXT_LABEL, textLabelComponent);
     }
-    if (fileSceneNode->components[ComponentDataIndex_SCRIPT] != NULL) {
-        ScriptComponent* scriptComponent = script_component_copy((ScriptComponent*) fileSceneNode->components[ComponentDataIndex_SCRIPT]);
+    if (jsonSceneNode->components[ComponentDataIndex_SCRIPT] != NULL) {
+        ScriptComponent* scriptComponent = script_component_copy((ScriptComponent*) jsonSceneNode->components[ComponentDataIndex_SCRIPT]);
         component_manager_set_component(node->entity, ComponentDataIndex_SCRIPT, scriptComponent);
     }
-    if (fileSceneNode->components[ComponentDataIndex_COLLIDER_2D] != NULL) {
-        Collider2DComponent* collider2DComponent = collider2d_component_copy((Collider2DComponent*) fileSceneNode->components[ComponentDataIndex_COLLIDER_2D]);
+    if (jsonSceneNode->components[ComponentDataIndex_COLLIDER_2D] != NULL) {
+        Collider2DComponent* collider2DComponent = collider2d_component_copy((Collider2DComponent*) jsonSceneNode->components[ComponentDataIndex_COLLIDER_2D]);
         component_manager_set_component(node->entity, ComponentDataIndex_COLLIDER_2D, collider2DComponent);
     }
-    if (fileSceneNode->components[ComponentDataIndex_COLOR_RECT] != NULL) {
+    if (jsonSceneNode->components[ComponentDataIndex_COLOR_RECT] != NULL) {
         ColorRectComponent* colorSquareComponent = color_rect_component_copy(
-                    (ColorRectComponent *) fileSceneNode->components[ComponentDataIndex_COLOR_RECT]);
+                    (ColorRectComponent*) jsonSceneNode->components[ComponentDataIndex_COLOR_RECT]);
         component_manager_set_component(node->entity, ComponentDataIndex_COLOR_RECT, colorSquareComponent);
     }
 
     rbe_ec_system_update_entity_signature_with_systems(node->entity);
 
     // Children
-    for (size_t i = 0; i < fileSceneNode->childrenCount; i++) {
-        rbe_scene_manager_setup_scene_node(fileSceneNode->children[i], node);
+    for (size_t i = 0; i < jsonSceneNode->childrenCount; i++) {
+        rbe_scene_manager_setup_json_scene_node(jsonSceneNode->children[i], node);
     }
 
     rbe_scene_manager_queue_entity_for_creation(node);

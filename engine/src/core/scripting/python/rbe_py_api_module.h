@@ -12,14 +12,6 @@ PyObject* rbe_py_api_engine_get_target_fps(PyObject* self, PyObject* args);
 PyObject* rbe_py_api_engine_get_average_fps(PyObject* self, PyObject* args);
 PyObject* rbe_py_api_engine_set_fps_display_enabled(PyObject* self, PyObject* args, PyObject* kwargs);
 
-// Configuration
-PyObject* rbe_py_api_configure_game(PyObject* self, PyObject* args, PyObject* kwargs);
-PyObject* rbe_py_api_configure_assets(PyObject* self, PyObject* args, PyObject* kwargs);
-PyObject* rbe_py_api_configure_inputs(PyObject* self, PyObject* args, PyObject* kwargs);
-
-// Stage (Scene)
-PyObject* rbe_py_api_create_stage_nodes(PyObject* self, PyObject* args, PyObject* kwargs);
-
 // Input
 PyObject* rbe_py_api_input_add_action(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* rbe_py_api_input_is_action_pressed(PyObject* self, PyObject* args, PyObject* kwargs);
@@ -132,24 +124,6 @@ static struct PyMethodDef rbePyApiMethods[] = {
     {
         "engine_set_fps_display_enabled", (PyCFunction) rbe_py_api_engine_set_fps_display_enabled,
         METH_VARARGS | METH_KEYWORDS, "If enabled will display the average fps."
-    },
-    // CONFIGURATION
-    {
-        "configure_game", (PyCFunction) rbe_py_api_configure_game,
-        METH_VARARGS | METH_KEYWORDS, "Configures the game project properties."
-    },
-    {
-        "configure_assets", (PyCFunction) rbe_py_api_configure_assets,
-        METH_VARARGS | METH_KEYWORDS, "Configure metadata for game assets."
-    },
-    {
-        "configure_inputs", (PyCFunction) rbe_py_api_configure_inputs,
-        METH_VARARGS | METH_KEYWORDS, "Configure the game inputs."
-    },
-    // STAGE
-    {
-        "create_stage_nodes", (PyCFunction) rbe_py_api_create_stage_nodes,
-        METH_VARARGS | METH_KEYWORDS, "Create stage nodes that will be added to the scene."
     },
     // INPUT
     {
@@ -435,12 +409,6 @@ static char *rbePyApiGenericSetEntityColorKWList[] = {"entity_id", "r", "g", "b"
 
 static char *rbePyApiEngineExitKWList[] = {"code", NULL};
 static char *rbePyApiEngineSetTargetFPSKWList[] = {"fps", NULL};
-
-static char *rbePyApiProjectConfigureKWList[] = {"game_title", "window_width", "window_height", "resolution_width", "resolution_height", "target_fps", "initial_node_path", "colliders_visible", NULL};
-static char *rbePyApiConfigureAssetsKWList[] = {"audio_sources", "textures", "fonts", NULL};
-static char *rbePyApiConfigureInputsKWList[] = {"input_actions", NULL};
-
-static char *rbePyApiCreateStageNodesKWList[] = {"stage_nodes", NULL};
 
 static char *rbePyApiInputAddActionKWList[] = {"name", "value", "device_id", NULL};
 static char *rbePyApiInputActionInputCheckKWList[] = {"name", NULL};
