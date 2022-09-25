@@ -23,7 +23,6 @@
 
 // The default project path if no directory override is provided
 #define DEFAULT_START_PROJECT_PATH "test_games/fighter_test"
-//#define DEFAULT_START_PROJECT_PATH "test_games/new_fighter"
 #define CRE_PROJECT_CONFIG_FILE_NAME "project.ccfg"
 
 bool rbe_initialize_sdl();
