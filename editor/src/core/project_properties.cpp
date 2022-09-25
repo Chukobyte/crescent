@@ -204,6 +204,7 @@ nlohmann::ordered_json ProjectProperties::ToJson() const {
             valueJsonArray.emplace_back(value);
         }
         inputActionJson["values"] = valueJsonArray;
+        inputsJsonArray.emplace_back(inputActionJson);
     }
     configJson["inputs"] = inputsJsonArray;
 
