@@ -1,8 +1,6 @@
 #include "scene_file_creator.h"
 
 #include "../scene/scene_manager.h"
-#include "../utils/file_system_helper.h"
-#include "../utils/helper.h"
 #include "../utils/json_helper.h"
 
 namespace {
@@ -115,7 +113,7 @@ nlohmann::ordered_json GetComponentsJsonArray(SceneNode* sceneNode) {
     }
     if (const ColorRectComp* colorRectComp = sceneNode->GetComponentSafe<ColorRectComp>()) {
         nlohmann::ordered_json colorRectJson;
-        colorRectJson["type"] = "colore_rect";
+        colorRectJson["type"] = "color_rect";
         colorRectJson["size"] = Size2DToJson(colorRectComp->size);
         colorRectJson["color"] = ColorToJson(colorRectComp->color);
         componentsJsonArray.emplace_back(colorRectJson);
