@@ -58,10 +58,6 @@ void ProjectManagerUI::ProcessWindows() {
             ImGui::Separator();
 
             // Open Project Section
-            static bool openFileBrowser = false;
-            if (ImGui::Button("Open Project")) {
-                openFileBrowser = true;
-            }
             static ImGuiHelper::FileBrowser openProjectFileBrowser = {
                 .name = "Open Project Browser",
                 .open = nullptr,
@@ -78,8 +74,7 @@ void ProjectManagerUI::ProcessWindows() {
                 }
             };
             ImGuiHelper::BeginFileBrowser(openProjectFileBrowser);
-            if (openFileBrowser) {
-                openFileBrowser = false;
+            if (ImGui::Button("Open Project")) {
                 ImGui::OpenPopup(openProjectFileBrowser.name.c_str());
             }
             ImGui::Separator();
