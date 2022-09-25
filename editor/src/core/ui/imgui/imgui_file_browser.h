@@ -28,6 +28,7 @@ struct FileBrowser {
     std::optional<FileNode> selectedNode;
     bool hasJustOpened = false;
     FileNodeCache pathCache;
+    std::filesystem::path lastDirectoryPath;
 };
 
 void BeginFileBrowser(FileBrowser& fileBrowser);

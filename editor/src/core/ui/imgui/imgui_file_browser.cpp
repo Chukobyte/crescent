@@ -19,8 +19,6 @@ void DisplayFileBrowser(ImGuiHelper::FileBrowser& fileBrowser) {
         ImGui::CloseCurrentPopup();
     };
 
-    static std::filesystem::path lastDirectoryPath = FileSystemHelper::GetCurrentDir();
-
     const ImVec2 windowSize = ImGui::GetWindowSize();
 
     static std::string dirText;
@@ -32,8 +30,13 @@ void DisplayFileBrowser(ImGuiHelper::FileBrowser& fileBrowser) {
     ImGui::SetNextWindowContentSize(ImVec2(windowSize.x - 20, 0));
     ImGui::BeginChild("##ScrollingRegion", ImVec2(0, 200), true, ImGuiWindowFlags_None);
 
+    // Load current directory if last dir was empty
+    if (fileBrowser.lastDirectoryPath.empty()) {
+        fileBrowser.lastDirectoryPath = FileSystemHelper::GetCurrentDir();
+    }
+
     if (fileBrowser.hasJustOpened || reloadDirPathCache) {
-        const std::string lastDirPathText = lastDirectoryPath.generic_string();
+        const std::string lastDirPathText = fileBrowser.lastDirectoryPath.generic_string();
         dirInputText.SetValue(lastDirPathText);
         fileBrowser.pathCache.LoadRootNodeDir(lastDirPathText, FileNodeCache::LoadFlag::IncludeExtensions);
         reloadDirPathCache = false;
@@ -45,12 +48,12 @@ void DisplayFileBrowser(ImGuiHelper::FileBrowser& fileBrowser) {
     index = 0;
     // Go to parent directory selectable
     // Skip if at the root
-    if (lastDirectoryPath.has_relative_path()) {
+    if (fileBrowser.lastDirectoryPath.has_relative_path()) {
         if (ImGui::Selectable("..", selectionIndex == index, ImGuiSelectableFlags_AllowDoubleClick | ImGuiSelectableFlags_DontClosePopups)) {
             selectionIndex = index;
 
             if(ImGui::IsMouseDoubleClicked(0)) {
-                lastDirectoryPath = lastDirectoryPath.parent_path();
+                fileBrowser.lastDirectoryPath = fileBrowser.lastDirectoryPath.parent_path();
                 reloadDirPathCache = true;
                 reloadExtensionList = true;
             }
@@ -67,7 +70,7 @@ void DisplayFileBrowser(ImGuiHelper::FileBrowser& fileBrowser) {
             }
 
             if(ImGui::IsMouseDoubleClicked(0)) {
-                lastDirectoryPath = dir.path;
+                fileBrowser.lastDirectoryPath = dir.path;
                 reloadDirPathCache = true;
                 reloadExtensionList = true;
             }
@@ -145,7 +148,7 @@ void DisplayFileBrowser(ImGuiHelper::FileBrowser& fileBrowser) {
     switch (mode) {
     case ImGuiHelper::FileBrowser::Mode::SelectDir: {
         if (ImGui::Button("Open") && doesPathInputHaveText && FileSystemHelper::DoesDirectoryExist(fullPath)) {
-            lastDirectoryPath = fullPath;
+            fileBrowser.lastDirectoryPath = fullPath;
             reloadDirPathCache = true;
             reloadExtensionList = true;
         }
