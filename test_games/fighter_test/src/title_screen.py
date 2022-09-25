@@ -58,7 +58,7 @@ class TitleScreen(Node2D):
                 self.is_waiting_to_connect = True
                 self.connection_text.color = Color(255, 255, 255, 255)
             else:
-                SceneTree.change_scene(path="nodes/main_node.cscn")
+                SceneTree.change_scene(path="nodes/main.cscn")
 
         if Input.is_action_just_pressed(name="p2_move_left"):
             self.selected_game_mode_index -= 1
@@ -68,4 +68,4 @@ class TitleScreen(Node2D):
             self._update_game_mode_text()
 
     def _network_server_client_connected_callback(self) -> None:
-        SceneTree.change_scene(path="nodes/main_node.cscn")
+        SceneTree.change_scene(path="nodes/main.cscn")

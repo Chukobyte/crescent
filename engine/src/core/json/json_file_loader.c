@@ -311,7 +311,7 @@ JsonSceneNode* cre_json_load_scene_file(const char* filePath) {
     if (sceneJson != NULL) {
         return cre_json_load_scene_node(sceneJson, NULL); // Return root node
     }
-    rbe_logger_error("Error loading scene file from path '%s'!", filePath);
+    rbe_logger_error("Error loading scene file from path '%s', wasn't able to locate file!", filePath);
 
     return NULL;
 }
