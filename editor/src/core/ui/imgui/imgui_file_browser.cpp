@@ -33,6 +33,7 @@ void DisplayFileBrowser(ImGuiHelper::FileBrowser& fileBrowser) {
     // Load current directory if last dir was empty
     if (fileBrowser.lastDirectoryPath.empty()) {
         fileBrowser.lastDirectoryPath = FileSystemHelper::GetCurrentDir();
+        reloadDirPathCache = true;
     }
 
     if (fileBrowser.hasJustOpened || reloadDirPathCache) {
