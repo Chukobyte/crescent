@@ -17,7 +17,6 @@
 #include "../game_exporter.h"
 #include "imgui/imgui_file_browser.h"
 
-const char* CONFIG_FILE_NAME = "cre_config.ccfg";
 const std::string COMBO_BOX_LIST_NONE = "<none>";
 
 static EditorContext* editorContext = EditorContext::Get();
@@ -50,61 +49,32 @@ void OpenedProjectUI::ProcessMenuBar() {
                         .name = "Open Scene",
                         .keyboardShortcut = "Ctrl+O",
                         .callbackFunc = [] (ImGuiHelper::Context* context) {
-                            static ImGuiHelper::PopupModal openScenePopup = {
-                                .name = "Open Scene Menu",
-                                .open = nullptr,
-                                .windowFlags = 0,
-                                .callbackFunc = [] (ImGuiHelper::Context* context) {
-                                    static std::string openSceneFilePath;
-                                    static ImGuiHelper::InputText filePathInputText("File Path", openSceneFilePath);
-                                    ImGuiHelper::BeginInputText(filePathInputText);
-                                    ImGui::SameLine();
-                                    static ImGuiHelper::FileBrowser openSceneFileBrowser = {
-                                        .name = "Open Scene Browser",
-                                        .open = nullptr,
-                                        .windowFlags = ImGuiWindowFlags_NoResize,
-                                        .callbackFunc = nullptr,
-                                        .position = ImVec2{ 100.0f, 100.0f },
-                                        .size = ImVec2{ 600.0f, 320.0f },
-                                        .rootPath = {},
-                                        .mode = ImGuiHelper::FileBrowser::Mode::OpenFile,
-                                        .validExtensions = { ".cscn" },
-                                        .onModeCompletedFunc = [](const std::filesystem::path& fullPath) {
-                                            const std::string pathBeforeTrans = fullPath.generic_string();
-                                            const std::string relativePath = projectProperties->GetPathRelativeToProjectPath(fullPath.generic_string());
-                                            rbe_logger_debug("Open scene at file path = '%s'", relativePath.c_str());
-                                            filePathInputText.SetValue(relativePath);
-                                        }
-                                    };
-                                    openSceneFileBrowser.rootPath = projectProperties->projectPath;
-                                    ImGuiHelper::BeginFileBrowser(openSceneFileBrowser);
-                                    if (ImGui::Button("Browse")) {
-                                        ImGui::OpenPopup(openSceneFileBrowser.name.c_str());
-                                    }
+                            static ImGuiHelper::FileBrowser openSceneFileBrowser = {
+                                    .name = "Open Scene Browser",
+                                    .open = nullptr,
+                                    .windowFlags = ImGuiWindowFlags_NoResize,
+                                    .callbackFunc = nullptr,
+                                    .position = ImVec2{ 100.0f, 100.0f },
+                                    .size = ImVec2{ 600.0f, 320.0f },
+                                    .rootPath = {},
+                                    .mode = ImGuiHelper::FileBrowser::Mode::OpenFile,
+                                    .validExtensions = { ".cscn" },
+                                    .onModeCompletedFunc = [](const std::filesystem::path& fullPath) {
+                                        const std::string relativePath = projectProperties->GetPathRelativeToProjectPath(fullPath.generic_string());
+                                        rbe_logger_debug("Open scene at file path = '%s'", relativePath.c_str());
 
-                                    if (ImGui::Button("Close")) {
-                                        filePathInputText.SetValue("");
-                                        ImGui::CloseCurrentPopup();
-                                    }
-                                    ImGui::SameLine();
-                                    if (ImGui::Button("Ok")) {
                                         static SceneManager* sceneManager = SceneManager::Get();
-                                        std::string validSceneFilePath = filePathInputText.GetValue();
-                                        validSceneFilePath = Helper::ConvertFilePathToFilePathExtension(validSceneFilePath, ".cscn");
+                                        const std::string validSceneFilePath = Helper::ConvertFilePathToFilePathExtension(relativePath, ".cscn");
                                         if (!validSceneFilePath.empty() && FileSystemHelper::DoesFileExist(validSceneFilePath)) {
                                             sceneManager->selectedSceneFile = sceneManager->LoadSceneFromFile(validSceneFilePath.c_str());
                                             RBE_ASSERT_FMT(sceneManager->selectedSceneFile != nullptr, "selected scene node file at path '%s' is NULL!",
                                                            sceneManager->selectedSceneFile);
                                             sceneManager->selectedSceneNode = sceneManager->selectedSceneFile->rootNode;
                                         }
-                                        filePathInputText.SetValue("");
-                                        ImGui::CloseCurrentPopup();
                                     }
-                                },
-                                .position = ImVec2{ 100.0f, 100.0f },
-                                .size = ImVec2{ 200.0f, 200.0f },
                             };
-                            ImGuiHelper::StaticPopupModalManager::Get()->QueueOpenPopop(&openScenePopup);
+                            openSceneFileBrowser.rootPath = projectProperties->projectPath;
+                            ImGuiHelper::FileBrowserPopupManager::Get()->QueueOpenPopop(&openSceneFileBrowser);
                         },
                     },
                     {
@@ -115,63 +85,29 @@ void OpenedProjectUI::ProcessMenuBar() {
                                 if (selectedSceneFile->hasBeenSaved) {
                                     SceneFileCreator::GenerateSceneFile(selectedSceneFile, selectedSceneFile->filePath.c_str());
                                 } else {
-                                    if (selectedSceneFile->rootNode != nullptr) {
-                                        static ImGuiHelper::PopupModal saveNewScenePopup = {
-                                            .name = "Save New Scene Menu",
-                                            .open = nullptr,
-                                            .windowFlags = 0,
-                                            .callbackFunc = [] (ImGuiHelper::Context* context) {
-                                                static std::string saveSceneFilePath;
-                                                static ImGuiHelper::InputText filePathText("File Path", saveSceneFilePath);
-                                                ImGuiHelper::BeginInputText(filePathText);
-                                                ImGui::SameLine();
-                                                static ImGuiHelper::FileBrowser saveSceneFileBrowser = {
-                                                    .name = "Save Scene Browser",
-                                                    .open = nullptr,
-                                                    .windowFlags = ImGuiWindowFlags_NoResize,
-                                                    .callbackFunc = nullptr,
-                                                    .position = ImVec2{ 100.0f, 100.0f },
-                                                    .size = ImVec2{ 600.0f, 320.0f },
-                                                    .rootPath = {},
-                                                    .mode = ImGuiHelper::FileBrowser::Mode::SaveFile,
-                                                    .validExtensions = { ".cscn" },
-                                                    .onModeCompletedFunc = [](const std::filesystem::path& fullPath) {
-                                                        const std::string relativePath = projectProperties->GetPathRelativeToProjectPath(fullPath.generic_string());
-                                                        rbe_logger_debug("New project at file path = '%s'", relativePath.c_str());
-                                                        filePathText.SetValue(relativePath);
-                                                    }
-                                                };
-                                                saveSceneFileBrowser.rootPath = projectProperties->projectPath;
-                                                ImGuiHelper::BeginFileBrowser(saveSceneFileBrowser);
-                                                if (ImGui::Button("Browse")) {
-                                                    ImGui::OpenPopup(saveSceneFileBrowser.name.c_str());
-                                                }
-
-                                                if (ImGui::Button("Close")) {
-                                                    filePathText.SetValue("");
-                                                    saveSceneFilePath.clear();
-                                                    ImGui::CloseCurrentPopup();
-                                                }
-                                                ImGui::SameLine();
-                                                if (ImGui::Button("Ok") && !filePathText.GetValue().empty()) {
-                                                    auto* selectedSceneFile = SceneManager::Get()->selectedSceneFile;
-                                                    const std::string validFullFilePath = Helper::ConvertFilePathToFilePathExtension(filePathText.GetValue(), ".cscn");
-                                                    selectedSceneFile->filePath = validFullFilePath;
-                                                    SceneFileCreator::GenerateSceneFile(selectedSceneFile, validFullFilePath.c_str());
-                                                    selectedSceneFile->hasBeenSaved = true;
-                                                    AssetBrowser::Get()->RefreshCache();
-                                                    saveSceneFilePath.clear();
-                                                    ImGui::CloseCurrentPopup();
-                                                }
-                                            },
-                                            .position = ImVec2{ 100.0f, 100.0f },
-                                            .size = ImVec2{ 200.0f, 200.0f },
-                                        };
-                                        ImGuiHelper::StaticPopupModalManager::Get()->QueueOpenPopop(&saveNewScenePopup);
-                                    } else {
-                                        // TODO: Make a pop up!
-                                        rbe_logger_error("Scene file doesn't have root file, can't save!");
-                                    }
+                                    static ImGuiHelper::FileBrowser saveSceneFileBrowser = {
+                                        .name = "Save Scene Browser",
+                                        .open = nullptr,
+                                        .windowFlags = ImGuiWindowFlags_NoResize,
+                                        .callbackFunc = nullptr,
+                                        .position = ImVec2{ 100.0f, 100.0f },
+                                        .size = ImVec2{ 600.0f, 320.0f },
+                                        .rootPath = {},
+                                        .mode = ImGuiHelper::FileBrowser::Mode::SaveFile,
+                                        .validExtensions = { ".cscn" },
+                                        .onModeCompletedFunc = [](const std::filesystem::path& fullPath) {
+                                            const std::string relativePath = projectProperties->GetPathRelativeToProjectPath(fullPath.generic_string());
+                                            auto* selectedSceneFile = SceneManager::Get()->selectedSceneFile;
+                                            const std::string validFullFilePath = Helper::ConvertFilePathToFilePathExtension(relativePath, ".cscn");
+                                            selectedSceneFile->filePath = validFullFilePath;
+                                            rbe_logger_debug("New project at file path = '%s'", selectedSceneFile->filePath.c_str());
+                                            SceneFileCreator::GenerateSceneFile(selectedSceneFile, validFullFilePath.c_str());
+                                            selectedSceneFile->hasBeenSaved = true;
+                                            AssetBrowser::Get()->RefreshCache();
+                                        }
+                                    };
+                                    saveSceneFileBrowser.rootPath = projectProperties->projectPath;
+                                    ImGuiHelper::FileBrowserPopupManager::Get()->QueueOpenPopop(&saveSceneFileBrowser);
                                 }
                             }
                         },
@@ -206,12 +142,12 @@ void OpenedProjectUI::ProcessMenuBar() {
                             static ImGuiHelper::PopupModal projectSettingsPopup = {
                                 .name = "Project Settings Menu",
                                 .open = nullptr,
-                                .windowFlags = 0,
+                                .windowFlags = ImGuiWindowFlags_NoResize,
                                 .callbackFunc = [] (ImGuiHelper::Context* context) {
                                     static bool justOpened = true;
                                     // TODO: Do more validation
                                     if (ImGui::Button("Close") && !projectProperties->gameTitle.empty()) {
-                                        ConfigFileCreator::GenerateConfigFile(CONFIG_FILE_NAME, projectProperties);
+                                        ConfigFileCreator::GenerateConfigFile(projectProperties);
                                         justOpened = true;
                                         ImGui::CloseCurrentPopup();
                                         return;
@@ -245,7 +181,7 @@ void OpenedProjectUI::ProcessMenuBar() {
                                     ImGuiHelper::BeginCheckBox(areCollidersVisibleCheckBox);
                                 },
                                 .position = ImVec2{ 100.0f, 100.0f },
-                                .size = ImVec2{ 200.0f, 200.0f },
+                                .size = ImVec2{ 600.0f, 200.0f },
                             };
                             ImGuiHelper::StaticPopupModalManager::Get()->QueueOpenPopop(&projectSettingsPopup);
                         },
@@ -260,7 +196,7 @@ void OpenedProjectUI::ProcessMenuBar() {
                                 .windowFlags = 0,
                                 .callbackFunc = [] (ImGuiHelper::Context* context) {
                                     if (ImGui::Button("Close")) {
-                                        ConfigFileCreator::GenerateConfigFile(CONFIG_FILE_NAME, projectProperties);
+                                        ConfigFileCreator::GenerateConfigFile(projectProperties);
                                         ImGui::CloseCurrentPopup();
                                     }
                                     ImGui::SameLine();
@@ -331,7 +267,7 @@ void OpenedProjectUI::ProcessMenuBar() {
                                 .windowFlags = 0,
                                 .callbackFunc = [] (ImGuiHelper::Context* context) {
                                     if (ImGui::Button("Close")) {
-                                        ConfigFileCreator::GenerateConfigFile(CONFIG_FILE_NAME, projectProperties);
+                                        ConfigFileCreator::GenerateConfigFile(projectProperties);
                                         ImGui::CloseCurrentPopup();
                                     }
                                     ImGui::SameLine();
@@ -378,7 +314,7 @@ void OpenedProjectUI::ProcessMenuBar() {
                                     }
                                 },
                                 .position = ImVec2{ 100.0f, 100.0f },
-                                .size = ImVec2{ 200.0f, 200.0f },
+                                .size = ImVec2{ 500.0f, 200.0f },
                             };
                             ImGuiHelper::StaticPopupModalManager::Get()->QueueOpenPopop(&fontConfigurationPopup);
                         },
@@ -395,7 +331,7 @@ void OpenedProjectUI::ProcessMenuBar() {
                             static ImGuiHelper::PopupModal projectSettingsPopup = {
                                 .name = "Export Game Menu",
                                 .open = nullptr,
-                                .windowFlags = 0,
+                                .windowFlags = ImGuiWindowFlags_NoResize,
                                 .callbackFunc = [] (ImGuiHelper::Context* context) {
                                     static std::string exportFileName;
                                     static ImGuiHelper::InputText exportPathInputText("Folder Path", exportFileName);
@@ -444,7 +380,7 @@ void OpenedProjectUI::ProcessMenuBar() {
                                     }
                                 },
                                 .position = ImVec2{ 100.0f, 100.0f },
-                                .size = ImVec2{ 200.0f, 200.0f },
+                                .size = ImVec2{ 600.0f, 200.0f },
                             };
                             ImGuiHelper::StaticPopupModalManager::Get()->QueueOpenPopop(&projectSettingsPopup);
                         },
@@ -459,6 +395,8 @@ void OpenedProjectUI::ProcessMenuBar() {
 void OpenedProjectUI::ProcessModalPopups() {
     static ImGuiHelper::StaticPopupModalManager* staticPopupModalManager = ImGuiHelper::StaticPopupModalManager::Get();
     staticPopupModalManager->Flush();
+    static ImGuiHelper::FileBrowserPopupManager* fileBrowserPopupManager = ImGuiHelper::FileBrowserPopupManager::Get();
+    fileBrowserPopupManager->Flush();
 }
 
 // Temp
@@ -1010,7 +948,7 @@ void OpenedProjectUI::ProcessWindows() {
                         ProjectProperties* projectProperties = ProjectProperties::Get();
                         const TextureAsset updatedTextureAsset = TextureAsset(selectedFileNode.GetRelativePath(), selectedWrapS, selectedWrapT, selectedFilterMin, selectedFilterMag);
                         projectProperties->UpdateTextureAsset(updatedTextureAsset);
-                        ConfigFileCreator::GenerateConfigFile(CONFIG_FILE_NAME, ProjectProperties::Get());
+                        ConfigFileCreator::GenerateConfigFile(ProjectProperties::Get());
                     }
                 }
                 // TODO: Add audio source properties when they exist...

@@ -28,7 +28,19 @@ struct FileBrowser {
     std::optional<FileNode> selectedNode;
     bool hasJustOpened = false;
     FileNodeCache pathCache;
+    std::filesystem::path lastDirectoryPath;
 };
 
 void BeginFileBrowser(FileBrowser& fileBrowser);
+
+class FileBrowserPopupManager : public Singleton<FileBrowserPopupManager> {
+  public:
+    FileBrowserPopupManager(singleton) {}
+    void QueueOpenPopop(FileBrowser* fileBrowser);
+    void Flush();
+
+  private:
+    std::vector<FileBrowser*> framePopupModals;
+    std::vector<FileBrowser*> popupModalsToOpen;
+};
 } // ImGuiHelper

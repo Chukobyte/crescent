@@ -9,6 +9,7 @@
 #include "../project_properties.h"
 #include "../scene/scene_manager.h"
 #include "../utils/file_system_helper.h"
+#include "../file_creation/config_file_creator.h"
 
 static EditorContext* editorContext = EditorContext::Get();
 
@@ -23,7 +24,7 @@ void ProjectManagerUI::ProcessWindows() {
     static ImGuiHelper::Window window = {
         .name = "Project Manager",
         .open = nullptr,
-        .windowFlags = 0,
+        .windowFlags = ImGuiWindowFlags_NoResize,
         .callbackFunc = [] (ImGuiHelper::Context* context) {
             static auto sceneManager = SceneManager::Get();
             static auto gameProperties = ProjectProperties::Get();
@@ -58,10 +59,6 @@ void ProjectManagerUI::ProcessWindows() {
             ImGui::Separator();
 
             // Open Project Section
-            static bool openFileBrowser = false;
-            if (ImGui::Button("Open Project")) {
-                openFileBrowser = true;
-            }
             static ImGuiHelper::FileBrowser openProjectFileBrowser = {
                 .name = "Open Project Browser",
                 .open = nullptr,
@@ -78,8 +75,7 @@ void ProjectManagerUI::ProcessWindows() {
                 }
             };
             ImGuiHelper::BeginFileBrowser(openProjectFileBrowser);
-            if (openFileBrowser) {
-                openFileBrowser = false;
+            if (ImGui::Button("Open Project")) {
                 ImGui::OpenPopup(openProjectFileBrowser.name.c_str());
             }
             ImGui::Separator();
@@ -99,7 +95,6 @@ void ProjectManagerUI::ProcessWindows() {
                 ImGui::Separator();
             }
 
-            // New Project Section
             // Name
             static std::string newProjectName;
             static ImGuiHelper::InputText newProjectNameInputText("New Project Name", newProjectName);
@@ -136,12 +131,12 @@ void ProjectManagerUI::ProcessWindows() {
                 // Create New Project Stuff
                 gameProperties->ResetToDefault();
                 gameProperties->gameTitle = newProjectName;
-                FileSystemHelper::WriteFile("cre_config.py", ProjectProperties::GetDefaultProjectPropertyFileContent(newProjectName));
+                ConfigFileCreator::GenerateConfigFile(gameProperties);
                 LoadProject(fullNewProjectPath.c_str());
             }
         },
-        .position = ImVec2{ 150.0f, 100.0f },
-        .size = ImVec2{ 400.0f, 300.0f },
+        .position = ImVec2{ 100.0f, 100.0f },
+        .size = ImVec2{ 600.0f, 300.0f },
     };
     ImGuiHelper::BeginWindowWithEnd(window);
 }
