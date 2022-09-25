@@ -3,188 +3,146 @@
 #include "../scene/scene_manager.h"
 #include "../utils/file_system_helper.h"
 #include "../utils/helper.h"
+#include "../utils/json_helper.h"
 
 namespace {
-template<typename T> std::string ToString(const T& t) {
-    std::ostringstream os;
-    os << t;
-    return os.str();
+nlohmann::ordered_json Vector2ToJson(Vector2 value) {
+    nlohmann::ordered_json vec;
+    vec["x"] = value.x;
+    vec["y"] = value.y;
+    return vec;
 }
 
-std::string Vector2ToString(const Vector2& v) {
-    return "Vector2(" + ToString(v.x) + ", " + ToString(v.y) + ")";
+nlohmann::ordered_json Size2DToJson(Size2D value) {
+    nlohmann::ordered_json size;
+    size["w"] = value.w;
+    size["h"] = value.h;
+    return size;
 }
 
-std::string Size2DToString(const Size2D& s) {
-    return "Size2D(" + ToString(s.w) + ", " + ToString(s.h) + ")";
+nlohmann::ordered_json Rect2ToJson(const Rect2& value) {
+    nlohmann::ordered_json rect;
+    rect["x"] = value.x;
+    rect["y"] = value.y;
+    rect["w"] = value.w;
+    rect["h"] = value.h;
+    return rect;
 }
 
-std::string Rect2ToString(const Rect2& r) {
-    return "Rect2(" + ToString(r.x) + ", " + ToString(r.y) + ", " + ToString(r.w) + ", " + ToString(r.h) + ")";
+nlohmann::ordered_json ColorToJson(const Color& value) {
+    nlohmann::ordered_json rect;
+    rect["r"] = (int) (value.r * 255);
+    rect["g"] = (int) (value.g * 255);
+    rect["b"] = (int) (value.b * 255);
+    rect["a"] = (int) (value.a * 255);
+    return rect;
 }
 
-std::string ColorToString(const Color& c) {
-    return "Color(" + ToString((int) (c.r * 255.0f)) + ", " + ToString((int) (c.g * 255.0f)) + ", " + ToString((int) (c.b * 255.0f)) + ", " + ToString((int) (c.a * 255.0f)) + ")";
-}
-
-std::string GetStageAnimationText(const EditorAnimation& animation, int tabSpace) {
-    const std::string tabSpaceText = std::string(tabSpace, ' ');
-    std::string fileContents;
-
-    for (const auto& animFrame : animation.animationFrames) {
-        fileContents += tabSpaceText + "                    AnimationFrame(\n";
-        fileContents += tabSpaceText + "                        frame=" + ToString(animFrame.frame) + ",\n";
-        fileContents += tabSpaceText + "                        texture_path=\"" + animFrame.texturePath + "\",\n";
-        fileContents += tabSpaceText + "                        draw_source=" + Rect2ToString(animFrame.drawSource) + ",\n";
-        fileContents += tabSpaceText + "                    ),\n";
-    }
-
-    return fileContents;
-}
-
-std::string GetStageAnimatedSpriteComponentText(const AnimatedSpriteComp* animatedSpriteComp, int tabSpace) {
-    const std::string tabSpaceText = std::string(tabSpace, ' ');
-    std::string fileContents;
-
-    for (const auto& anim : animatedSpriteComp->animations) {
-        fileContents += tabSpaceText + "                    Animation(\n";
-        fileContents += tabSpaceText + "                        name=\"" + anim.name + "\",\n";
-        fileContents += tabSpaceText + "                        speed=" + ToString(anim.speed) + ",\n";
-        fileContents += tabSpaceText + "                        loops=" + Helper::BoolToStringCapital(anim.doesLoop) + ",\n";
-
-        if (anim.animationFrames.empty()) {
-            fileContents += tabSpaceText + "                        frames=[],\n";
-        } else {
-            fileContents += tabSpaceText + "                        frames=[\n";
-            fileContents += GetStageAnimationText(anim, tabSpace + 8);
-            fileContents += tabSpaceText + "                        ],\n";
-        }
-
-        fileContents += tabSpaceText + "                    ),\n";
-    }
-
-    return fileContents;
-}
-
-std::string GetStageNodeComponentsText(SceneNode* sceneNode, int tabSpace) {
-    if (!sceneNode->HasComponents()) {
-        return "[]";
-    }
-    const std::string tabSpaceText = std::string(tabSpace, ' ');
-    std::string fileContents;
-
+nlohmann::ordered_json GetComponentsJsonArray(SceneNode* sceneNode) {
+    nlohmann::ordered_json componentsJsonArray = nlohmann::ordered_json::array();
     if (const Transform2DComp* transform2DComp = sceneNode->GetComponentSafe<Transform2DComp>()) {
-        fileContents += tabSpaceText + "                Transform2DComponent(\n";
-        fileContents += tabSpaceText + "                    position=" + Vector2ToString(transform2DComp->transform2D.position) + ",\n";
-        fileContents += tabSpaceText + "                    scale=" + Vector2ToString(transform2DComp->transform2D.scale) + ",\n";
-        fileContents += tabSpaceText + "                    rotation=" + ToString(transform2DComp->transform2D.rotation) + ",\n";
-        fileContents += tabSpaceText + "                    z_index=" + ToString(transform2DComp->zIndex) + ",\n";
-        fileContents += tabSpaceText + "                    z_index_relative_to_parent=" + Helper::BoolToStringCapital(transform2DComp->isZIndexRelativeToParent) + ",\n";
-        fileContents += tabSpaceText + "                    ignore_camera=" + Helper::BoolToStringCapital(transform2DComp->ignoreCamera) + ",\n";
-        fileContents += tabSpaceText + "                ),\n";
+        nlohmann::ordered_json transform2dJson;
+        transform2dJson["type"] = "transform_2d";
+        transform2dJson["position"] = Vector2ToJson(transform2DComp->transform2D.position);
+        transform2dJson["scale"] = Vector2ToJson(transform2DComp->transform2D.scale);
+        transform2dJson["rotation"] = transform2DComp->transform2D.rotation;
+        transform2dJson["z_index"] = transform2DComp->zIndex;
+        transform2dJson["z_index_relative_to_parent"] = transform2DComp->isZIndexRelativeToParent;
+        transform2dJson["ignore_camera"] = transform2DComp->ignoreCamera;
+        componentsJsonArray.emplace_back(transform2dJson);
     }
     if (const SpriteComp* spriteComp = sceneNode->GetComponentSafe<SpriteComp>()) {
-        fileContents += tabSpaceText + "                SpriteComponent(\n";
-        fileContents += tabSpaceText + "                    texture_path=\"" + spriteComp->texturePath + "\",\n";
-        fileContents += tabSpaceText + "                    draw_source=" + Rect2ToString(spriteComp->drawSource) + ",\n";
-        fileContents += tabSpaceText + "                    origin=" + Vector2ToString(spriteComp->origin) + ",\n";
-        fileContents += tabSpaceText + "                    flip_x=" + Helper::BoolToStringCapital(spriteComp->flipX) + ",\n";
-        fileContents += tabSpaceText + "                    flip_y=" + Helper::BoolToStringCapital(spriteComp->flipY) + ",\n";
-        fileContents += tabSpaceText + "                    modulate=" + ColorToString(spriteComp->modulate) + ",\n";
-        fileContents += tabSpaceText + "                ),\n";
+        nlohmann::ordered_json spriteJson;
+        spriteJson["type"] = "sprite";
+        spriteJson["texture_path"] = spriteComp->texturePath;
+        spriteJson["draw_source"] = Rect2ToJson(spriteComp->drawSource);
+        spriteJson["origin"] = Vector2ToJson(spriteComp->origin);
+        spriteJson["modulate"] = ColorToJson(spriteComp->modulate);
+        spriteJson["flip_x"] = spriteComp->flipX;
+        spriteJson["flip_y"] = spriteComp->flipY;
+        componentsJsonArray.emplace_back(spriteJson);
     }
     if (const AnimatedSpriteComp* animatedSpriteComp = sceneNode->GetComponentSafe<AnimatedSpriteComp>()) {
-        fileContents += tabSpaceText + "                AnimatedSpriteComponent(\n";
-        fileContents += tabSpaceText + "                    current_animation_name=\"" + animatedSpriteComp->currentAnimationName + "\",\n";
-        fileContents += tabSpaceText + "                    is_playing=" + Helper::BoolToStringCapital(animatedSpriteComp->isPlaying) + ",\n";
-        fileContents += tabSpaceText + "                    origin=" + Vector2ToString(animatedSpriteComp->origin) + ",\n";
-        fileContents += tabSpaceText + "                    flip_x=" + Helper::BoolToStringCapital(animatedSpriteComp->flipX) + ",\n";
-        fileContents += tabSpaceText + "                    flip_y=" + Helper::BoolToStringCapital(animatedSpriteComp->flipY) + ",\n";
-        fileContents += tabSpaceText + "                    modulate=" + ColorToString(animatedSpriteComp->modulate) + ",\n";
-
-        if (animatedSpriteComp->animations.empty()) {
-            fileContents += tabSpaceText + "                    animations=[],\n";
-        } else {
-            fileContents += tabSpaceText + "                    animations=[\n";
-            fileContents += GetStageAnimatedSpriteComponentText(animatedSpriteComp, tabSpace + 4);
-            fileContents += tabSpaceText + "                    ],\n";
+        nlohmann::ordered_json animSpriteJson;
+        animSpriteJson["type"] = "animated_sprite";
+        animSpriteJson["current_animation_name"] = animatedSpriteComp->currentAnimationName;
+        animSpriteJson["is_playing"] = animatedSpriteComp->isPlaying;
+        animSpriteJson["origin"] = Vector2ToJson(animatedSpriteComp->origin);
+        animSpriteJson["modulate"] = ColorToJson(animatedSpriteComp->modulate);
+        animSpriteJson["flip_x"] = animatedSpriteComp->flipX;
+        animSpriteJson["flip_y"] = animatedSpriteComp->flipY;
+        // Animations
+        nlohmann::ordered_json animationsJsonArray = nlohmann::ordered_json::array();
+        for (const auto& animation : animatedSpriteComp->animations) {
+            nlohmann::ordered_json animJson;
+            animJson["name"] = animation.name;
+            animJson["speed"] = animation.speed;
+            animJson["loops"] = animation.doesLoop;
+            // Frames
+            nlohmann::ordered_json framesJsonArray = nlohmann::ordered_json::array();
+            for (const auto& frame : animation.animationFrames) {
+                nlohmann::ordered_json frameJson;
+                frameJson["frame"] = frame.frame;
+                frameJson["texture_path"] = frame.texturePath;
+                frameJson["draw_source"] = Rect2ToJson(frame.drawSource);
+                framesJsonArray.emplace_back(frameJson);
+            }
+            animJson["frames"] = framesJsonArray;
         }
-
-        fileContents += tabSpaceText + "                ),\n";
+        animSpriteJson["animations"] = animationsJsonArray;
     }
     if (const TextLabelComp* textLabelComp = sceneNode->GetComponentSafe<TextLabelComp>()) {
-        fileContents += tabSpaceText + "                TextLabelComponent(\n";
-        fileContents += tabSpaceText + "                    uid=\"" + textLabelComp->fontUID + "\",\n";
-        fileContents += tabSpaceText + "                    text=\"" + textLabelComp->text + "\",\n";
-        fileContents += tabSpaceText + "                    color=" + ColorToString(textLabelComp->color) + ",\n";
-        fileContents += tabSpaceText + "                ),\n";
+        nlohmann::ordered_json textLabelJson;
+        textLabelJson["type"] = "text_label";
+        textLabelJson["uid"] = textLabelComp->fontUID;
+        textLabelJson["text"] = textLabelComp->text;
+        textLabelJson["color"] = ColorToJson(textLabelComp->color);
+        componentsJsonArray.emplace_back(textLabelJson);
     }
     if (const ScriptComp* scriptComp = sceneNode->GetComponentSafe<ScriptComp>()) {
-        fileContents += tabSpaceText + "                ScriptComponent(\n";
-        fileContents += tabSpaceText + "                    class_path=\"" + scriptComp->classPath + "\",\n";
-        fileContents += tabSpaceText + "                    class_name=\"" + scriptComp->className + "\",\n";
-        fileContents += tabSpaceText + "                ),\n";
+        nlohmann::ordered_json scriptJson;
+        scriptJson["type"] = "script";
+        scriptJson["class_path"] = scriptComp->classPath;
+        scriptJson["class_name"] = scriptComp->className;
+        componentsJsonArray.emplace_back(scriptJson);
     }
     if (const Collider2DComp* collider2DComp = sceneNode->GetComponentSafe<Collider2DComp>()) {
-        fileContents += tabSpaceText + "                Collider2DComponent(\n";
-        fileContents += tabSpaceText + "                    extents=" + Size2DToString(collider2DComp->extents) + ",\n";
-        fileContents += tabSpaceText + "                    color=" + ColorToString(collider2DComp->color) + ",\n";
-        fileContents += tabSpaceText + "                ),\n";
+        nlohmann::ordered_json collider2DJson;
+        collider2DJson["type"] = "collider_2d";
+        collider2DJson["extents"] = Size2DToJson(collider2DComp->extents);
+        collider2DJson["color"] = ColorToJson(collider2DComp->color);
+        componentsJsonArray.emplace_back(collider2DJson);
     }
     if (const ColorRectComp* colorRectComp = sceneNode->GetComponentSafe<ColorRectComp>()) {
-        fileContents += tabSpaceText + "                ColorRectComponent(\n";
-        fileContents += tabSpaceText + "                    size=" + Size2DToString(colorRectComp->size) + ",\n";
-        fileContents += tabSpaceText + "                    color=" + ColorToString(colorRectComp->color) + ",\n";
-        fileContents += tabSpaceText + "                ),\n";
+        nlohmann::ordered_json colorRectJson;
+        colorRectJson["type"] = "colore_rect";
+        colorRectJson["size"] = Size2DToJson(colorRectComp->size);
+        colorRectJson["color"] = ColorToJson(colorRectComp->color);
+        componentsJsonArray.emplace_back(colorRectJson);
     }
-
-    return fileContents;
+    return componentsJsonArray;
 }
 
-std::string GetStageNodeText(SceneNode* sceneNode, int tabSpace = 0) {
-    const std::string tabSpaceText = std::string(tabSpace, ' ');
-    const std::string childrenText = sceneNode->children.empty() ? "[]" : "[\n";
-    std::string fileContents;
-    fileContents += tabSpaceText + "        StageNode(\n";
-    fileContents += tabSpaceText + "            name=\"" + sceneNode->name + "\",\n";
-    fileContents += tabSpaceText + "            type=\"" + sceneNode->GetTypeString() + "\",\n";
-    fileContents += tabSpaceText + "            tags=None,\n";
-    fileContents += tabSpaceText + "            external_node_source=None,\n";
-
-    if (!sceneNode->HasComponents()) {
-        fileContents += tabSpaceText + "            components=[]\n";
-    } else {
-        fileContents += tabSpaceText + "            components=[\n";
-        fileContents += GetStageNodeComponentsText(sceneNode, tabSpace);
-        fileContents += tabSpaceText + "            ],\n";
+nlohmann::ordered_json GetSceneNodeJson(SceneNode* sceneNode) {
+    nlohmann::ordered_json sceneJson;
+    sceneJson["name"] = sceneNode->name;
+    sceneJson["type"] = sceneNode->GetTypeString();
+    sceneJson["tags"] = nullptr;
+    sceneJson["external_node_source"] = nullptr;
+    //Components
+    sceneJson["components"] = GetComponentsJsonArray(sceneNode);
+    // Children
+    nlohmann::ordered_json childrenJsonArray = nlohmann::ordered_json::array();
+    for (const auto& childNode : sceneNode->children) {
+        const nlohmann::ordered_json& childSceneNode = GetSceneNodeJson(childNode);
+        childrenJsonArray.emplace_back(childSceneNode);
     }
-
-    if (sceneNode->children.empty()) {
-        fileContents += tabSpaceText + "            children=[],\n";
-    } else {
-        fileContents += tabSpaceText + "            children=[\n";
-        for (auto* childNode : sceneNode->children) {
-            fileContents += GetStageNodeText(childNode, tabSpace + 8);
-        }
-        fileContents += tabSpaceText + "            ],\n";
-    }
-
-    fileContents += tabSpaceText + "        ),\n";
-    return fileContents;
+    sceneJson["children"] = childrenJsonArray;
+    return sceneJson;
 }
 } // namespace
 
 void SceneFileCreator::GenerateSceneFile(SceneNodeFile *nodeFile, const char *filePath) {
-    std::string fileContents = "from crescent_api import *\n";
-    fileContents += "\n";
-    // Begin
-    fileContents += "create_stage_nodes(\n";
-    fileContents += "    stage_nodes=[\n";
-    // Stage Nodes
-    fileContents += GetStageNodeText(nodeFile->rootNode);
-    // End
-    fileContents += "    ],\n";
-    fileContents += ")\n";
-
-    FileSystemHelper::WriteFile(filePath, fileContents);
+    nlohmann::ordered_json sceneJson = GetSceneNodeJson(nodeFile->rootNode);
+    JsonHelper::SaveFile(filePath, sceneJson);
 }
