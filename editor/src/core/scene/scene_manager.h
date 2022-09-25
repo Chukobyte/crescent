@@ -9,7 +9,6 @@
 #include "../components/component.h"
 #include "../utils/singleton.h"
 #include "../engine/src/core/ecs/component/node_component.h"
-#include "../engine/src/core/scripting/python/rbe_py_file_loader.h"
 
 class SceneNode {
   public:

@@ -41,24 +41,27 @@ inline bool IsJsonValid(const std::string& jsonText) {
 }
 
 // File Related
-inline nlohmann::json LoadFile(const std::string& filePath) {
+template<typename JsonType = nlohmann::json>
+inline JsonType LoadFile(const std::string& filePath) {
     std::ifstream i(filePath);
     nlohmann::json json;
     i >> json;
     return json;
 }
 
-inline void SaveFile(const std::string& filePath, const nlohmann::json& outputJson, bool format = true) {
+template<typename JsonType = nlohmann::json>
+inline void SaveFile(const std::string& filePath, const JsonType& outputJson, bool format = true) {
     std::ofstream myFile(filePath);
     const std::string jsonText = format ? outputJson.dump(4) : outputJson.dump();
     myFile << jsonText << "\n";
     myFile.close();
 }
 
+template<typename JsonType = nlohmann::json>
 inline nlohmann::json ConvertString(const std::string& jsonString) {
     std::stringstream ss;
     ss << jsonString;
-    nlohmann::json outputJson;
+    JsonType outputJson;
     outputJson << ss;
     return outputJson;
 }
