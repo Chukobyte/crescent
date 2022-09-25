@@ -50,13 +50,13 @@ void ConfigFileCreator::GenerateConfigFile(const char *filePath, ProjectProperti
     nlohmann::ordered_json inputsJsonArray = nlohmann::ordered_json::array();
     for (const auto& inputAction : properties->inputs.actions) {
         nlohmann::ordered_json inputActionJson;
-        inputsJsonArray["name"] = inputAction.name;
-        inputsJsonArray["device_id"] = inputAction.deviceId;
+        inputActionJson["name"] = inputAction.name;
+        inputActionJson["device_id"] = inputAction.deviceId;
         nlohmann::ordered_json valueJsonArray = nlohmann::ordered_json::array();
         for (const std::string& value : inputAction.values) {
             valueJsonArray.emplace_back(value);
         }
-        inputsJsonArray["values"] = valueJsonArray;
+        inputActionJson["values"] = valueJsonArray;
     }
     assetJson["inputs"] = inputsJsonArray;
 
