@@ -4,6 +4,8 @@
 extern "C" {
 #endif
 
+#include <stddef.h>
+
 #include "../ecs/entity/entity.h"
 #include "../ecs/component/component.h"
 #include "../ecs/component/node_component.h"
