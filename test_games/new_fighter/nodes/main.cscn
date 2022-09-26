@@ -420,36 +420,6 @@
                     "w": 126.0,
                     "h": 53.0
                   }
-                },
-                {
-                  "frame": 10,
-                  "texture_path": "assets/images/characters/mor/mor_walk_backward_sheet.png",
-                  "draw_source": {
-                    "x": 1260.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 11,
-                  "texture_path": "assets/images/characters/mor/mor_walk_backward_sheet.png",
-                  "draw_source": {
-                    "x": 1386.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 12,
-                  "texture_path": "assets/images/characters/mor/mor_walk_backward_sheet.png",
-                  "draw_source": {
-                    "x": 1512.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
                 }
               ]
             },
@@ -990,36 +960,6 @@
                   "texture_path": "assets/images/characters/mor/mor_walk_backward_sheet.png",
                   "draw_source": {
                     "x": 1134.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 10,
-                  "texture_path": "assets/images/characters/mor/mor_walk_backward_sheet.png",
-                  "draw_source": {
-                    "x": 1260.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 11,
-                  "texture_path": "assets/images/characters/mor/mor_walk_backward_sheet.png",
-                  "draw_source": {
-                    "x": 1386.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 12,
-                  "texture_path": "assets/images/characters/mor/mor_walk_backward_sheet.png",
-                  "draw_source": {
-                    "x": 1512.0,
                     "y": 0.0,
                     "w": 126.0,
                     "h": 53.0
