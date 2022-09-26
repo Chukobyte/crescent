@@ -86,8 +86,10 @@ nlohmann::ordered_json GetComponentsJsonArray(SceneNode* sceneNode) {
                 framesJsonArray.emplace_back(frameJson);
             }
             animJson["frames"] = framesJsonArray;
+            animationsJsonArray.emplace_back(animJson);
         }
         animSpriteJson["animations"] = animationsJsonArray;
+        componentsJsonArray.emplace_back(animSpriteJson);
     }
     if (const TextLabelComp* textLabelComp = sceneNode->GetComponentSafe<TextLabelComp>()) {
         nlohmann::ordered_json textLabelJson;

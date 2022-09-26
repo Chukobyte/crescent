@@ -53,7 +53,7 @@
           "is_playing": true,
           "origin": {
             "x": 62.0,
-            "y": 27.0
+            "y": 40.0
           },
           "modulate": {
             "r": 255,
@@ -597,7 +597,7 @@
           "is_playing": true,
           "origin": {
             "x": 62.0,
-            "y": 27.0
+            "y": 40.0
           },
           "modulate": {
             "r": 255,
