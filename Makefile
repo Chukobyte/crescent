@@ -98,7 +98,7 @@ run-engine:
 	./$(CORE_BUILD_OBJECT)
 
 run-game-fighter-test:
-	./$(CORE_BUILD_OBJECT) -d test_games/fighter_test/
+	./$(CORE_BUILD_OBJECT) -d test_games/new_fighter/
 
 # Engine Test
 engine-test: build-engine-test run-engine-test

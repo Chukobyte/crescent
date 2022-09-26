@@ -8,7 +8,6 @@ extern "C" {
 
 void rbe_py_initialize();
 void rbe_py_finalize();
-bool rbe_py_load_project_config();
 
 #ifdef __cplusplus
 }

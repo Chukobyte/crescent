@@ -1,5 +1,6 @@
 #include "project_manager_ui.h"
 
+#include "../engine/src/core/engine_context.h"
 #include "../engine/src/core/utils/rbe_file_system_utils.h"
 #include "../engine/src/core/utils/logger.h"
 
@@ -54,7 +55,7 @@ void ProjectManagerUI::ProcessWindows() {
 
             // Test Fighter Section
             if (ImGui::Button("Go To Test Fighter Project")) {
-                LoadProject(std::string(editorContext->initialDir + "/test_games/fighter_test").c_str());
+                LoadProject(std::string(editorContext->initialDir + "/" + DEFAULT_START_PROJECT_PATH).c_str());
             }
             ImGui::Separator();
 
