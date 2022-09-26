@@ -2,6 +2,8 @@
 
 #include <stdbool.h>
 
+#define DEFAULT_START_PROJECT_PATH "test_games/new_fighter"
+
 typedef struct RBEEngineContext {
     bool isRunning;
     int targetFPS;
