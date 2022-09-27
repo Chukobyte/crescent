@@ -71,8 +71,20 @@ class Fighter:
         print(
             f"Attack Node '{attack}' connected to '{self.node}' with collider '{self.collider}'"
         )
-        self.hp = max(self.hp - 10, 0)
-        self.health_bar.set_health_percentage(self.hp)
+        if self._can_block():
+            # TODO: Do more stuff for blocking...
+            pass
+        else:
+            self.hp = max(self.hp - 10, 0)
+            self.health_bar.set_health_percentage(self.hp)
+
+    def _can_block(self) -> bool:
+        if self.state != FighterState.IDLE:
+            return False
+        scale = self.node.scale
+        return (self.input_buffer.move_left_pressed and scale.x > 0) or (
+            self.input_buffer.move_right_pressed and scale.x < 0
+        )
 
     def set_stance(self, stance: int) -> bool:
         self._previous_stance = self.stance
