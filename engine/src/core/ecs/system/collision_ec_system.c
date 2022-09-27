@@ -44,7 +44,7 @@ EntitySystem* collision_ec_system_get() {
 void collision_system_physics_update(float deltaTime) {
     for (size_t i = 0; i < collisionSystem->entity_count; i++) {
         const Entity entity = collisionSystem->entities[i];
-        Transform2DComponent* transformComp = (Transform2DComponent *) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
+        Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
         transformComp->isGlobalTransformDirty = true;
     }
 }
