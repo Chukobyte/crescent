@@ -52,8 +52,8 @@
           "current_animation_name": "idle",
           "is_playing": true,
           "origin": {
-            "x": 62.0,
-            "y": 40.0
+            "x": 58.0,
+            "y": 43.0
           },
           "modulate": {
             "r": 255,
@@ -596,8 +596,8 @@
           "current_animation_name": "idle",
           "is_playing": true,
           "origin": {
-            "x": 62.0,
-            "y": 40.0
+            "x": 58.0,
+            "y": 43.0
           },
           "modulate": {
             "r": 255,
