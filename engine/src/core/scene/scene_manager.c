@@ -258,7 +258,6 @@ Entity rbe_scene_manager_get_entity_child_by_name(Entity parent, const char* chi
 }
 
 // Scene node setup
-// NEW
 void rbe_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneNode, SceneTreeNode* parent);
 
 void rbe_scene_manager_setup_scene_nodes_from_json(JsonSceneNode* jsonSceneNode) {
