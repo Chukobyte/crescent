@@ -55,8 +55,6 @@ class Main(Node2D):
             )
         )
 
-        # self.fight_sim.add_health_bars()
-
         # Network
         is_network_enabled = (
             self.game_state.mode == GameMode.ONLINE_PVP_HOST
@@ -77,6 +75,9 @@ class Main(Node2D):
                     listener_func=self._network_client_callback,
                 )
                 print("[PYTHON SCRIPT] Client")
+
+    def _end(self) -> None:
+        Engine.set_fps_display_enabled(False)
 
     def _update(self, delta_time: float) -> None:
         if Input.is_action_just_pressed(name="exit"):
