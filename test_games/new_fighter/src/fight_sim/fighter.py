@@ -14,6 +14,12 @@ class FighterStance:
     IN_AIR = 2
 
 
+class FighterState:
+    IDLE = 0
+    ATTACKING = 1
+    BLOCKING = 2
+
+
 class Fighter:
     def __init__(
         self,
@@ -29,7 +35,7 @@ class Fighter:
         self.velocity = Vector2.ZERO()
         self.hp = 100
         self.speed = 50
-        self.is_attacking = False  # Temp
+        self.state = FighterState.IDLE
         self.stance = FighterStance.NONE
         self._previous_stance = FighterStance.NONE
 
@@ -37,7 +43,7 @@ class Fighter:
         self.input_buffer.process_inputs()
 
     def set_is_attacking(self, value: bool) -> None:
-        self.is_attacking = value
+        self.state = FighterState.ATTACKING
 
     def _get_base_attack_offset_and_xscale(self) -> Tuple[Vector2, Vector2]:
         # TODO: Clean up attack stuff by calculating the sprite with the width and origin x

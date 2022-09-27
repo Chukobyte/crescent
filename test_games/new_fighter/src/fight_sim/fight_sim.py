@@ -69,7 +69,7 @@ class FighterSimulation:
         # Move fighters
         for i, fighter in enumerate(self.fighters):
             fighter.input_buffer.process_inputs()
-            if not fighter.is_attacking:
+            if fighter.state == FighterState.IDLE:
                 if fighter.input_buffer.move_left_pressed:
                     fighter.velocity += Vector2.LEFT()
                 elif fighter.input_buffer.move_right_pressed:
@@ -82,7 +82,7 @@ class FighterSimulation:
                     fighter.node.add_to_position(fighter.velocity * delta_vector)
 
             # Jump
-            if fighter.input_buffer.jump_pressed and not fighter.is_attacking:
+            if fighter.input_buffer.jump_pressed and fighter.state == FighterState.IDLE:
                 if fighter.set_stance(FighterStance.IN_AIR):
                     fighter.node.play("jump")
                     self.fighter_coroutines.append(
@@ -111,7 +111,10 @@ class FighterSimulation:
                         fighter.node.play("idle")
 
             # Attack
-            if fighter.input_buffer.light_punch_pressed and not fighter.is_attacking:
+            if (
+                fighter.input_buffer.light_punch_pressed
+                and fighter.state == FighterState.IDLE
+            ):
                 attack = fighter.spawn_basic_attack_from_stance()
                 if i == 0:
                     attack_target = self.fighters[1]
@@ -121,7 +124,7 @@ class FighterSimulation:
                 print(f"[PY_SCRIPT] attack = {attack}")
                 self.main_node.add_child(attack)
                 self.add_attack(attack=attack, fighter_index=i)
-                fighter.is_attacking = True
+                fighter.state = FighterState.ATTACKING
 
             # Zero out vel for now...
             fighter.velocity = Vector2.ZERO()
@@ -145,7 +148,7 @@ class FighterSimulation:
                 if awaitable.state == Awaitable.State.FINISHED:
                     raise StopIteration
             except StopIteration:
-                self.fighters[attack_ref.fighter_index].is_attacking = False
+                self.fighters[attack_ref.fighter_index].state = FighterState.IDLE
                 attack_ref.attack.queue_deletion()
                 self.active_attacks.remove(attack_ref)
                 continue
