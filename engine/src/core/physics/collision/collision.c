@@ -7,7 +7,7 @@
 #include "../../utils/logger.h"
 #include "../../scene/scene_manager.h"
 
-// Temp collision stuff until a better solution is implemented...
+// TODO: Temp collision logic, implement a more efficient solution!
 bool is_entity_in_collision_exceptions(Entity entity, Collider2DComponent* collider2DComponent);
 Rect2 get_collision_rectangle(Entity entity, Transform2DComponent* transform2DComponent, Collider2DComponent* collider2DComponent);
 bool does_rectangles_collide(Rect2* sourceRect, Rect2* targetRect);
