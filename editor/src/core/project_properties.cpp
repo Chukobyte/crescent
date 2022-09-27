@@ -198,7 +198,9 @@ nlohmann::ordered_json ProjectProperties::ToJson() const {
     for (const auto& inputAction : inputs.actions) {
         nlohmann::ordered_json inputActionJson;
         inputActionJson["name"] = inputAction.name;
-        inputActionJson["device_id"] = inputAction.deviceId;
+        if (inputAction.deviceId != 0) {
+            inputActionJson["device_id"] = inputAction.deviceId;
+        }
         nlohmann::ordered_json valueJsonArray = nlohmann::ordered_json::array();
         for (const std::string& value : inputAction.values) {
             valueJsonArray.emplace_back(value);
