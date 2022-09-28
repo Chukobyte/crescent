@@ -127,8 +127,9 @@ class FighterSimulation:
                         fighter.node.play("idle")
 
             # Attack
+            # TODO: Make different attacks for heavy punch, light kick, and heavy kick
             if (
-                fighter.input_buffer.light_punch_pressed
+                fighter.input_buffer.any_attack_pressed()
                 and fighter.state == FighterState.IDLE
             ):
                 attack = fighter.spawn_basic_attack_from_stance()
