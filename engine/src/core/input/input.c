@@ -26,14 +26,14 @@ void input_gamepad_cleanup_flags();
 
 //--- Input ---//
 RBEStringHashMap* inputActionMap = NULL;
-const char* inputActionNames[24];
+const char* inputActionNames[MAX_INPUT_ACTIONS];
 size_t inputActionNamesCount = 0;
 
 RBEStringHashMap* keyboardStringValuesMap = NULL;
 RBEStringHashMap* gamepadStringValuesMap = NULL;
 
 typedef struct InputFlagCleaner {
-    InputAction* inputActions[10];
+    InputAction* inputActions[MAX_INPUT_ACTIONS];
     size_t count;
 } InputFlagCleaner;
 

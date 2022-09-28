@@ -94,7 +94,7 @@ class Fighter:
     async def manage_jump_state(self, delta_time: float):
         jump_height = 40
         up_speed = 10
-        down_speed = 4
+        down_speed = 5
         floor_y = self.node.position.y
         try:
             while True:

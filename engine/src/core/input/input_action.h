@@ -3,6 +3,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 
+#define MAX_INPUT_ACTIONS 24
 #define MAX_INPUT_VALUES 4
 
 typedef enum InputActionType {
