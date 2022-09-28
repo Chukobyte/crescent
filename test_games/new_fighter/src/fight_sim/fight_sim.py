@@ -66,6 +66,22 @@ class FighterSimulation:
         self.fighters[fighter_index].node.play(anim_name)
 
     def update(self, delta_time: float) -> None:
+        # Temp correct direction facing
+        fighter_one_pos = self.fighters[0].node.position
+        fighter_two_pos = self.fighters[1].node.position
+        # Fighter One
+        one_scale = self.fighters[0].node.scale
+        if fighter_one_pos.x > fighter_two_pos.x:
+            self.fighters[0].node.scale = Vector2(-abs(one_scale.x), one_scale.y)
+        else:
+            self.fighters[0].node.scale = Vector2(abs(one_scale.x), one_scale.y)
+        # Fighter Two
+        two_scale = self.fighters[1].node.scale
+        if fighter_two_pos.x > fighter_one_pos.x:
+            self.fighters[1].node.scale = Vector2(-abs(two_scale.x), two_scale.y)
+        else:
+            self.fighters[1].node.scale = Vector2(abs(two_scale.x), two_scale.y)
+
         # Move fighters
         for i, fighter in enumerate(self.fighters):
             fighter.input_buffer.process_inputs()
