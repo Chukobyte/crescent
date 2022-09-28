@@ -1,1248 +1,1192 @@
 {
-  "name": "Main",
-  "type": "Node2D",
-  "tags": null,
-  "external_node_source": null,
-  "components": [
-    {
-      "type": "transform_2d",
-      "position": {
-        "x": 0.0,
-        "y": 0.0
-      },
-      "scale": {
-        "x": 1.0,
-        "y": 1.0
-      },
-      "rotation": 0.0,
-      "z_index": 0,
-      "z_index_relative_to_parent": true,
-      "ignore_camera": false
-    },
-    {
-      "type": "script",
-      "class_path": "src.main",
-      "class_name": "Main"
-    }
-  ],
-  "children": [
-    {
-      "name": "PlayerOne",
-      "type": "AnimatedSprite",
-      "tags": null,
-      "external_node_source": null,
-      "components": [
+    "name": "Main",
+    "type": "Node2D",
+    "tags": null,
+    "external_node_source": null,
+    "components": [
         {
-          "type": "transform_2d",
-          "position": {
-            "x": 200.0,
-            "y": 368.0
-          },
-          "scale": {
-            "x": 4.0,
-            "y": 4.0
-          },
-          "rotation": 0.0,
-          "z_index": 0,
-          "z_index_relative_to_parent": true,
-          "ignore_camera": false
-        },
-        {
-          "type": "animated_sprite",
-          "current_animation_name": "idle",
-          "is_playing": true,
-          "origin": {
-            "x": 62.0,
-            "y": 27.0
-          },
-          "modulate": {
-            "r": 255,
-            "g": 255,
-            "b": 255,
-            "a": 255
-          },
-          "animations": [
-            {
-              "name": "idle",
-              "speed": 100,
-              "loops": true,
-              "frames": [
-                {
-                  "frame": 0,
-                  "texture_path": "assets/images/characters/mor/mor_idle_sheet.png",
-                  "draw_source": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 1,
-                  "texture_path": "assets/images/characters/mor/mor_idle_sheet.png",
-                  "draw_source": {
-                    "x": 126.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 2,
-                  "texture_path": "assets/images/characters/mor/mor_idle_sheet.png",
-                  "draw_source": {
-                    "x": 252.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 3,
-                  "texture_path": "assets/images/characters/mor/mor_idle_sheet.png",
-                  "draw_source": {
-                    "x": 378.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 4,
-                  "texture_path": "assets/images/characters/mor/mor_idle_sheet.png",
-                  "draw_source": {
-                    "x": 504.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 5,
-                  "texture_path": "assets/images/characters/mor/mor_idle_sheet.png",
-                  "draw_source": {
-                    "x": 630.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 6,
-                  "texture_path": "assets/images/characters/mor/mor_idle_sheet.png",
-                  "draw_source": {
-                    "x": 756.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 7,
-                  "texture_path": "assets/images/characters/mor/mor_idle_sheet.png",
-                  "draw_source": {
-                    "x": 882.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 8,
-                  "texture_path": "assets/images/characters/mor/mor_idle_sheet.png",
-                  "draw_source": {
-                    "x": 1008.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 9,
-                  "texture_path": "assets/images/characters/mor/mor_idle_sheet.png",
-                  "draw_source": {
-                    "x": 1134.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 10,
-                  "texture_path": "assets/images/characters/mor/mor_idle_sheet.png",
-                  "draw_source": {
-                    "x": 1260.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                }
-              ]
+            "type": "transform_2d",
+            "position": {
+                "x": 0.0,
+                "y": 0.0
             },
-            {
-              "name": "walk-forward",
-              "speed": 100,
-              "loops": true,
-              "frames": [
-                {
-                  "frame": 0,
-                  "texture_path": "assets/images/characters/mor/mor_walk_forward_sheet.png",
-                  "draw_source": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 1,
-                  "texture_path": "assets/images/characters/mor/mor_walk_forward_sheet.png",
-                  "draw_source": {
-                    "x": 126.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 2,
-                  "texture_path": "assets/images/characters/mor/mor_walk_forward_sheet.png",
-                  "draw_source": {
-                    "x": 252.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 3,
-                  "texture_path": "assets/images/characters/mor/mor_walk_forward_sheet.png",
-                  "draw_source": {
-                    "x": 378.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 4,
-                  "texture_path": "assets/images/characters/mor/mor_walk_forward_sheet.png",
-                  "draw_source": {
-                    "x": 504.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 5,
-                  "texture_path": "assets/images/characters/mor/mor_walk_forward_sheet.png",
-                  "draw_source": {
-                    "x": 630.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 6,
-                  "texture_path": "assets/images/characters/mor/mor_walk_forward_sheet.png",
-                  "draw_source": {
-                    "x": 756.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 7,
-                  "texture_path": "assets/images/characters/mor/mor_walk_forward_sheet.png",
-                  "draw_source": {
-                    "x": 882.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 8,
-                  "texture_path": "assets/images/characters/mor/mor_walk_forward_sheet.png",
-                  "draw_source": {
-                    "x": 1008.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 9,
-                  "texture_path": "assets/images/characters/mor/mor_walk_forward_sheet.png",
-                  "draw_source": {
-                    "x": 1134.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 10,
-                  "texture_path": "assets/images/characters/mor/mor_walk_forward_sheet.png",
-                  "draw_source": {
-                    "x": 1260.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 11,
-                  "texture_path": "assets/images/characters/mor/mor_walk_forward_sheet.png",
-                  "draw_source": {
-                    "x": 1386.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 12,
-                  "texture_path": "assets/images/characters/mor/mor_walk_forward_sheet.png",
-                  "draw_source": {
-                    "x": 1512.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                }
-              ]
-            },
-            {
-              "name": "walk-backward",
-              "speed": 100,
-              "loops": true,
-              "frames": [
-                {
-                  "frame": 0,
-                  "texture_path": "assets/images/characters/mor/mor_walk_backward_sheet.png",
-                  "draw_source": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 1,
-                  "texture_path": "assets/images/characters/mor/mor_walk_backward_sheet.png",
-                  "draw_source": {
-                    "x": 126.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 2,
-                  "texture_path": "assets/images/characters/mor/mor_walk_backward_sheet.png",
-                  "draw_source": {
-                    "x": 252.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 3,
-                  "texture_path": "assets/images/characters/mor/mor_walk_backward_sheet.png",
-                  "draw_source": {
-                    "x": 378.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 4,
-                  "texture_path": "assets/images/characters/mor/mor_walk_backward_sheet.png",
-                  "draw_source": {
-                    "x": 504.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 5,
-                  "texture_path": "assets/images/characters/mor/mor_walk_backward_sheet.png",
-                  "draw_source": {
-                    "x": 630.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 6,
-                  "texture_path": "assets/images/characters/mor/mor_walk_backward_sheet.png",
-                  "draw_source": {
-                    "x": 756.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 7,
-                  "texture_path": "assets/images/characters/mor/mor_walk_backward_sheet.png",
-                  "draw_source": {
-                    "x": 882.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 8,
-                  "texture_path": "assets/images/characters/mor/mor_walk_backward_sheet.png",
-                  "draw_source": {
-                    "x": 1008.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 9,
-                  "texture_path": "assets/images/characters/mor/mor_walk_backward_sheet.png",
-                  "draw_source": {
-                    "x": 1134.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 10,
-                  "texture_path": "assets/images/characters/mor/mor_walk_backward_sheet.png",
-                  "draw_source": {
-                    "x": 1260.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 11,
-                  "texture_path": "assets/images/characters/mor/mor_walk_backward_sheet.png",
-                  "draw_source": {
-                    "x": 1386.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 12,
-                  "texture_path": "assets/images/characters/mor/mor_walk_backward_sheet.png",
-                  "draw_source": {
-                    "x": 1512.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                }
-              ]
-            },
-            {
-              "name": "crouch",
-              "speed": 100,
-              "loops": true,
-              "frames": [
-                {
-                  "frame": 0,
-                  "texture_path": "assets/images/characters/mor/mor_crouch_idle_sheet.png",
-                  "draw_source": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 1,
-                  "texture_path": "assets/images/characters/mor/mor_crouch_idle_sheet.png",
-                  "draw_source": {
-                    "x": 126.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 2,
-                  "texture_path": "assets/images/characters/mor/mor_crouch_idle_sheet.png",
-                  "draw_source": {
-                    "x": 252.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 3,
-                  "texture_path": "assets/images/characters/mor/mor_crouch_idle_sheet.png",
-                  "draw_source": {
-                    "x": 378.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 4,
-                  "texture_path": "assets/images/characters/mor/mor_crouch_idle_sheet.png",
-                  "draw_source": {
-                    "x": 504.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 5,
-                  "texture_path": "assets/images/characters/mor/mor_crouch_idle_sheet.png",
-                  "draw_source": {
-                    "x": 630.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 6,
-                  "texture_path": "assets/images/characters/mor/mor_crouch_idle_sheet.png",
-                  "draw_source": {
-                    "x": 756.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 7,
-                  "texture_path": "assets/images/characters/mor/mor_crouch_idle_sheet.png",
-                  "draw_source": {
-                    "x": 882.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                }
-              ]
-            },
-            {
-              "name": "jump",
-              "speed": 100,
-              "loops": true,
-              "frames": [
-                {
-                  "frame": 0,
-                  "texture_path": "assets/images/characters/mor/mor_jump_up_sheet.png",
-                  "draw_source": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                }
-              ]
-            }
-          ]
-        }
-      ],
-      "children": [
-        {
-          "name": "Collider",
-          "type": "Collider2D",
-          "tags": null,
-          "external_node_source": null,
-          "components": [
-            {
-              "type": "transform_2d",
-              "position": {
-                "x": -8.0,
-                "y": -7.0
-              },
-              "scale": {
+            "scale": {
                 "x": 1.0,
                 "y": 1.0
-              },
-              "rotation": 0.0,
-              "z_index": 0,
-              "z_index_relative_to_parent": true,
-              "ignore_camera": false
             },
-            {
-              "type": "collider_2d",
-              "extents": {
-                "w": 16.0,
-                "h": 17.0
-              },
-              "color": {
-                "r": 200,
-                "g": 200,
-                "b": 255,
-                "a": 200
-              }
-            }
-          ],
-          "children": []
-        }
-      ]
-    },
-    {
-      "name": "PlayerTwo",
-      "type": "AnimatedSprite",
-      "tags": null,
-      "external_node_source": null,
-      "components": [
-        {
-          "type": "transform_2d",
-          "position": {
-            "x": 550.0,
-            "y": 368.0
-          },
-          "scale": {
-            "x": -4.0,
-            "y": 4.0
-          },
-          "rotation": 0.0,
-          "z_index": 0,
-          "z_index_relative_to_parent": true,
-          "ignore_camera": false
+            "rotation": 0.0,
+            "z_index": 0,
+            "z_index_relative_to_parent": true,
+            "ignore_camera": false
         },
         {
-          "type": "animated_sprite",
-          "current_animation_name": "idle",
-          "is_playing": true,
-          "origin": {
-            "x": 62.0,
-            "y": 27.0
-          },
-          "modulate": {
-            "r": 255,
-            "g": 255,
-            "b": 255,
-            "a": 255
-          },
-          "animations": [
-            {
-              "name": "idle",
-              "speed": 100,
-              "loops": true,
-              "frames": [
-                {
-                  "frame": 0,
-                  "texture_path": "assets/images/characters/mor/mor_idle_sheet.png",
-                  "draw_source": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 1,
-                  "texture_path": "assets/images/characters/mor/mor_idle_sheet.png",
-                  "draw_source": {
-                    "x": 126.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 2,
-                  "texture_path": "assets/images/characters/mor/mor_idle_sheet.png",
-                  "draw_source": {
-                    "x": 252.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 3,
-                  "texture_path": "assets/images/characters/mor/mor_idle_sheet.png",
-                  "draw_source": {
-                    "x": 378.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 4,
-                  "texture_path": "assets/images/characters/mor/mor_idle_sheet.png",
-                  "draw_source": {
-                    "x": 504.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 5,
-                  "texture_path": "assets/images/characters/mor/mor_idle_sheet.png",
-                  "draw_source": {
-                    "x": 630.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 6,
-                  "texture_path": "assets/images/characters/mor/mor_idle_sheet.png",
-                  "draw_source": {
-                    "x": 756.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 7,
-                  "texture_path": "assets/images/characters/mor/mor_idle_sheet.png",
-                  "draw_source": {
-                    "x": 882.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 8,
-                  "texture_path": "assets/images/characters/mor/mor_idle_sheet.png",
-                  "draw_source": {
-                    "x": 1008.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 9,
-                  "texture_path": "assets/images/characters/mor/mor_idle_sheet.png",
-                  "draw_source": {
-                    "x": 1134.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 10,
-                  "texture_path": "assets/images/characters/mor/mor_idle_sheet.png",
-                  "draw_source": {
-                    "x": 1260.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                }
-              ]
-            },
-            {
-              "name": "walk-forward",
-              "speed": 100,
-              "loops": true,
-              "frames": [
-                {
-                  "frame": 0,
-                  "texture_path": "assets/images/characters/mor/mor_walk_forward_sheet.png",
-                  "draw_source": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 1,
-                  "texture_path": "assets/images/characters/mor/mor_walk_forward_sheet.png",
-                  "draw_source": {
-                    "x": 126.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 2,
-                  "texture_path": "assets/images/characters/mor/mor_walk_forward_sheet.png",
-                  "draw_source": {
-                    "x": 252.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 3,
-                  "texture_path": "assets/images/characters/mor/mor_walk_forward_sheet.png",
-                  "draw_source": {
-                    "x": 378.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 4,
-                  "texture_path": "assets/images/characters/mor/mor_walk_forward_sheet.png",
-                  "draw_source": {
-                    "x": 504.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 5,
-                  "texture_path": "assets/images/characters/mor/mor_walk_forward_sheet.png",
-                  "draw_source": {
-                    "x": 630.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 6,
-                  "texture_path": "assets/images/characters/mor/mor_walk_forward_sheet.png",
-                  "draw_source": {
-                    "x": 756.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 7,
-                  "texture_path": "assets/images/characters/mor/mor_walk_forward_sheet.png",
-                  "draw_source": {
-                    "x": 882.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 8,
-                  "texture_path": "assets/images/characters/mor/mor_walk_forward_sheet.png",
-                  "draw_source": {
-                    "x": 1008.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 9,
-                  "texture_path": "assets/images/characters/mor/mor_walk_forward_sheet.png",
-                  "draw_source": {
-                    "x": 1134.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 10,
-                  "texture_path": "assets/images/characters/mor/mor_walk_forward_sheet.png",
-                  "draw_source": {
-                    "x": 1260.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 11,
-                  "texture_path": "assets/images/characters/mor/mor_walk_forward_sheet.png",
-                  "draw_source": {
-                    "x": 1386.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 12,
-                  "texture_path": "assets/images/characters/mor/mor_walk_forward_sheet.png",
-                  "draw_source": {
-                    "x": 1512.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                }
-              ]
-            },
-            {
-              "name": "walk-backward",
-              "speed": 100,
-              "loops": true,
-              "frames": [
-                {
-                  "frame": 0,
-                  "texture_path": "assets/images/characters/mor/mor_walk_backward_sheet.png",
-                  "draw_source": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 1,
-                  "texture_path": "assets/images/characters/mor/mor_walk_backward_sheet.png",
-                  "draw_source": {
-                    "x": 126.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 2,
-                  "texture_path": "assets/images/characters/mor/mor_walk_backward_sheet.png",
-                  "draw_source": {
-                    "x": 252.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 3,
-                  "texture_path": "assets/images/characters/mor/mor_walk_backward_sheet.png",
-                  "draw_source": {
-                    "x": 378.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 4,
-                  "texture_path": "assets/images/characters/mor/mor_walk_backward_sheet.png",
-                  "draw_source": {
-                    "x": 504.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 5,
-                  "texture_path": "assets/images/characters/mor/mor_walk_backward_sheet.png",
-                  "draw_source": {
-                    "x": 630.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 6,
-                  "texture_path": "assets/images/characters/mor/mor_walk_backward_sheet.png",
-                  "draw_source": {
-                    "x": 756.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 7,
-                  "texture_path": "assets/images/characters/mor/mor_walk_backward_sheet.png",
-                  "draw_source": {
-                    "x": 882.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 8,
-                  "texture_path": "assets/images/characters/mor/mor_walk_backward_sheet.png",
-                  "draw_source": {
-                    "x": 1008.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 9,
-                  "texture_path": "assets/images/characters/mor/mor_walk_backward_sheet.png",
-                  "draw_source": {
-                    "x": 1134.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 10,
-                  "texture_path": "assets/images/characters/mor/mor_walk_backward_sheet.png",
-                  "draw_source": {
-                    "x": 1260.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 11,
-                  "texture_path": "assets/images/characters/mor/mor_walk_backward_sheet.png",
-                  "draw_source": {
-                    "x": 1386.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 12,
-                  "texture_path": "assets/images/characters/mor/mor_walk_backward_sheet.png",
-                  "draw_source": {
-                    "x": 1512.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                }
-              ]
-            },
-            {
-              "name": "crouch",
-              "speed": 100,
-              "loops": true,
-              "frames": [
-                {
-                  "frame": 0,
-                  "texture_path": "assets/images/characters/mor/mor_crouch_idle_sheet.png",
-                  "draw_source": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 1,
-                  "texture_path": "assets/images/characters/mor/mor_crouch_idle_sheet.png",
-                  "draw_source": {
-                    "x": 126.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 2,
-                  "texture_path": "assets/images/characters/mor/mor_crouch_idle_sheet.png",
-                  "draw_source": {
-                    "x": 252.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 3,
-                  "texture_path": "assets/images/characters/mor/mor_crouch_idle_sheet.png",
-                  "draw_source": {
-                    "x": 378.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 4,
-                  "texture_path": "assets/images/characters/mor/mor_crouch_idle_sheet.png",
-                  "draw_source": {
-                    "x": 504.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 5,
-                  "texture_path": "assets/images/characters/mor/mor_crouch_idle_sheet.png",
-                  "draw_source": {
-                    "x": 630.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 6,
-                  "texture_path": "assets/images/characters/mor/mor_crouch_idle_sheet.png",
-                  "draw_source": {
-                    "x": 756.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                },
-                {
-                  "frame": 7,
-                  "texture_path": "assets/images/characters/mor/mor_crouch_idle_sheet.png",
-                  "draw_source": {
-                    "x": 882.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                }
-              ]
-            },
-            {
-              "name": "jump",
-              "speed": 100,
-              "loops": true,
-              "frames": [
-                {
-                  "frame": 0,
-                  "texture_path": "assets/images/characters/mor/mor_jump_up_sheet.png",
-                  "draw_source": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "w": 126.0,
-                    "h": 53.0
-                  }
-                }
-              ]
-            }
-          ]
+            "type": "script",
+            "class_path": "src.main",
+            "class_name": "Main"
         }
-      ],
-      "children": [
+    ],
+    "children": [
         {
-          "name": "Collider",
-          "type": "Collider2D",
-          "tags": null,
-          "external_node_source": null,
-          "components": [
-            {
-              "type": "transform_2d",
-              "position": {
-                "x": -8.0,
-                "y": -7.0
-              },
-              "scale": {
-                "x": 1.0,
-                "y": 1.0
-              },
-              "rotation": 0.0,
-              "z_index": 0,
-              "z_index_relative_to_parent": true,
-              "ignore_camera": false
-            },
-            {
-              "type": "collider_2d",
-              "extents": {
-                "w": 16.0,
-                "h": 17.0
-              },
-              "color": {
-                "r": 200,
-                "g": 200,
-                "b": 255,
-                "a": 200
-              }
-            }
-          ],
-          "children": []
-        }
-      ]
-    },
-    {
-      "name": "TextLabel",
-      "type": "TextLabel",
-      "tags": null,
-      "external_node_source": null,
-      "components": [
-        {
-          "type": "transform_2d",
-          "position": {
-            "x": 250.0,
-            "y": 200.0
-          },
-          "scale": {
-            "x": 1.0,
-            "y": 1.0
-          },
-          "rotation": 0.0,
-          "z_index": 0,
-          "z_index_relative_to_parent": true,
-          "ignore_camera": false
+            "name": "PlayerOne",
+            "type": "AnimatedSprite",
+            "tags": null,
+            "external_node_source": null,
+            "components": [
+                {
+                    "type": "transform_2d",
+                    "position": {
+                        "x": 200.0,
+                        "y": 368.0
+                    },
+                    "scale": {
+                        "x": 4.0,
+                        "y": 4.0
+                    },
+                    "rotation": 0.0,
+                    "z_index": 0,
+                    "z_index_relative_to_parent": true,
+                    "ignore_camera": false
+                },
+                {
+                    "type": "animated_sprite",
+                    "current_animation_name": "idle",
+                    "is_playing": true,
+                    "origin": {
+                        "x": 58.0,
+                        "y": 43.0
+                    },
+                    "modulate": {
+                        "r": 255,
+                        "g": 255,
+                        "b": 255,
+                        "a": 255
+                    },
+                    "flip_x": false,
+                    "flip_y": false,
+                    "animations": [
+                        {
+                            "name": "idle",
+                            "speed": 100,
+                            "loops": true,
+                            "frames": [
+                                {
+                                    "frame": 0,
+                                    "texture_path": "assets/images/characters/mor/mor_idle_sheet.png",
+                                    "draw_source": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 1,
+                                    "texture_path": "assets/images/characters/mor/mor_idle_sheet.png",
+                                    "draw_source": {
+                                        "x": 126.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 2,
+                                    "texture_path": "assets/images/characters/mor/mor_idle_sheet.png",
+                                    "draw_source": {
+                                        "x": 252.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 3,
+                                    "texture_path": "assets/images/characters/mor/mor_idle_sheet.png",
+                                    "draw_source": {
+                                        "x": 378.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 4,
+                                    "texture_path": "assets/images/characters/mor/mor_idle_sheet.png",
+                                    "draw_source": {
+                                        "x": 504.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 5,
+                                    "texture_path": "assets/images/characters/mor/mor_idle_sheet.png",
+                                    "draw_source": {
+                                        "x": 630.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 6,
+                                    "texture_path": "assets/images/characters/mor/mor_idle_sheet.png",
+                                    "draw_source": {
+                                        "x": 756.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 7,
+                                    "texture_path": "assets/images/characters/mor/mor_idle_sheet.png",
+                                    "draw_source": {
+                                        "x": 882.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 8,
+                                    "texture_path": "assets/images/characters/mor/mor_idle_sheet.png",
+                                    "draw_source": {
+                                        "x": 1008.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 9,
+                                    "texture_path": "assets/images/characters/mor/mor_idle_sheet.png",
+                                    "draw_source": {
+                                        "x": 1134.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 10,
+                                    "texture_path": "assets/images/characters/mor/mor_idle_sheet.png",
+                                    "draw_source": {
+                                        "x": 1260.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "name": "walk-forward",
+                            "speed": 100,
+                            "loops": true,
+                            "frames": [
+                                {
+                                    "frame": 0,
+                                    "texture_path": "assets/images/characters/mor/mor_walk_forward_sheet.png",
+                                    "draw_source": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 1,
+                                    "texture_path": "assets/images/characters/mor/mor_walk_forward_sheet.png",
+                                    "draw_source": {
+                                        "x": 126.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 2,
+                                    "texture_path": "assets/images/characters/mor/mor_walk_forward_sheet.png",
+                                    "draw_source": {
+                                        "x": 252.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 3,
+                                    "texture_path": "assets/images/characters/mor/mor_walk_forward_sheet.png",
+                                    "draw_source": {
+                                        "x": 378.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 4,
+                                    "texture_path": "assets/images/characters/mor/mor_walk_forward_sheet.png",
+                                    "draw_source": {
+                                        "x": 504.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 5,
+                                    "texture_path": "assets/images/characters/mor/mor_walk_forward_sheet.png",
+                                    "draw_source": {
+                                        "x": 630.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 6,
+                                    "texture_path": "assets/images/characters/mor/mor_walk_forward_sheet.png",
+                                    "draw_source": {
+                                        "x": 756.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 7,
+                                    "texture_path": "assets/images/characters/mor/mor_walk_forward_sheet.png",
+                                    "draw_source": {
+                                        "x": 882.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 8,
+                                    "texture_path": "assets/images/characters/mor/mor_walk_forward_sheet.png",
+                                    "draw_source": {
+                                        "x": 1008.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 9,
+                                    "texture_path": "assets/images/characters/mor/mor_walk_forward_sheet.png",
+                                    "draw_source": {
+                                        "x": 1134.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 10,
+                                    "texture_path": "assets/images/characters/mor/mor_walk_forward_sheet.png",
+                                    "draw_source": {
+                                        "x": 1260.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 11,
+                                    "texture_path": "assets/images/characters/mor/mor_walk_forward_sheet.png",
+                                    "draw_source": {
+                                        "x": 1386.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 12,
+                                    "texture_path": "assets/images/characters/mor/mor_walk_forward_sheet.png",
+                                    "draw_source": {
+                                        "x": 1512.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "name": "walk-backward",
+                            "speed": 100,
+                            "loops": true,
+                            "frames": [
+                                {
+                                    "frame": 0,
+                                    "texture_path": "assets/images/characters/mor/mor_walk_backward_sheet.png",
+                                    "draw_source": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 1,
+                                    "texture_path": "assets/images/characters/mor/mor_walk_backward_sheet.png",
+                                    "draw_source": {
+                                        "x": 126.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 2,
+                                    "texture_path": "assets/images/characters/mor/mor_walk_backward_sheet.png",
+                                    "draw_source": {
+                                        "x": 252.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 3,
+                                    "texture_path": "assets/images/characters/mor/mor_walk_backward_sheet.png",
+                                    "draw_source": {
+                                        "x": 378.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 4,
+                                    "texture_path": "assets/images/characters/mor/mor_walk_backward_sheet.png",
+                                    "draw_source": {
+                                        "x": 504.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 5,
+                                    "texture_path": "assets/images/characters/mor/mor_walk_backward_sheet.png",
+                                    "draw_source": {
+                                        "x": 630.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 6,
+                                    "texture_path": "assets/images/characters/mor/mor_walk_backward_sheet.png",
+                                    "draw_source": {
+                                        "x": 756.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 7,
+                                    "texture_path": "assets/images/characters/mor/mor_walk_backward_sheet.png",
+                                    "draw_source": {
+                                        "x": 882.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 8,
+                                    "texture_path": "assets/images/characters/mor/mor_walk_backward_sheet.png",
+                                    "draw_source": {
+                                        "x": 1008.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 9,
+                                    "texture_path": "assets/images/characters/mor/mor_walk_backward_sheet.png",
+                                    "draw_source": {
+                                        "x": 1134.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "name": "crouch",
+                            "speed": 100,
+                            "loops": true,
+                            "frames": [
+                                {
+                                    "frame": 0,
+                                    "texture_path": "assets/images/characters/mor/mor_crouch_idle_sheet.png",
+                                    "draw_source": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 1,
+                                    "texture_path": "assets/images/characters/mor/mor_crouch_idle_sheet.png",
+                                    "draw_source": {
+                                        "x": 126.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 2,
+                                    "texture_path": "assets/images/characters/mor/mor_crouch_idle_sheet.png",
+                                    "draw_source": {
+                                        "x": 252.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 3,
+                                    "texture_path": "assets/images/characters/mor/mor_crouch_idle_sheet.png",
+                                    "draw_source": {
+                                        "x": 378.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 4,
+                                    "texture_path": "assets/images/characters/mor/mor_crouch_idle_sheet.png",
+                                    "draw_source": {
+                                        "x": 504.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 5,
+                                    "texture_path": "assets/images/characters/mor/mor_crouch_idle_sheet.png",
+                                    "draw_source": {
+                                        "x": 630.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 6,
+                                    "texture_path": "assets/images/characters/mor/mor_crouch_idle_sheet.png",
+                                    "draw_source": {
+                                        "x": 756.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 7,
+                                    "texture_path": "assets/images/characters/mor/mor_crouch_idle_sheet.png",
+                                    "draw_source": {
+                                        "x": 882.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "name": "jump",
+                            "speed": 100,
+                            "loops": true,
+                            "frames": [
+                                {
+                                    "frame": 0,
+                                    "texture_path": "assets/images/characters/mor/mor_jump_up_sheet.png",
+                                    "draw_source": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "children": [
+                {
+                    "name": "Collider",
+                    "type": "Collider2D",
+                    "tags": null,
+                    "external_node_source": null,
+                    "components": [
+                        {
+                            "type": "transform_2d",
+                            "position": {
+                                "x": -8.0,
+                                "y": -7.0
+                            },
+                            "scale": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "rotation": 0.0,
+                            "z_index": 0,
+                            "z_index_relative_to_parent": true,
+                            "ignore_camera": false
+                        },
+                        {
+                            "type": "collider_2d",
+                            "extents": {
+                                "w": 16.0,
+                                "h": 17.0
+                            },
+                            "color": {
+                                "r": 200,
+                                "g": 200,
+                                "b": 255,
+                                "a": 200
+                            }
+                        }
+                    ],
+                    "children": []
+                }
+            ]
         },
         {
-          "type": "text_label",
-          "uid": "fight-64",
-          "text": "Fight Game",
-          "color": {
-            "r": 255,
-            "g": 255,
-            "b": 255,
-            "a": 255
-          }
-        }
-      ],
-      "children": []
-    },
-    {
-      "name": "TimeDisplay",
-      "type": "TextLabel",
-      "tags": null,
-      "external_node_source": null,
-      "components": [
-        {
-          "type": "transform_2d",
-          "position": {
-            "x": 380.0,
-            "y": 50.0
-          },
-          "scale": {
-            "x": 1.0,
-            "y": 1.0
-          },
-          "rotation": 0.0,
-          "z_index": 0,
-          "z_index_relative_to_parent": true,
-          "ignore_camera": false
+            "name": "PlayerTwo",
+            "type": "AnimatedSprite",
+            "tags": null,
+            "external_node_source": null,
+            "components": [
+                {
+                    "type": "transform_2d",
+                    "position": {
+                        "x": 550.0,
+                        "y": 368.0
+                    },
+                    "scale": {
+                        "x": -4.0,
+                        "y": 4.0
+                    },
+                    "rotation": 0.0,
+                    "z_index": 0,
+                    "z_index_relative_to_parent": true,
+                    "ignore_camera": false
+                },
+                {
+                    "type": "animated_sprite",
+                    "current_animation_name": "idle",
+                    "is_playing": true,
+                    "origin": {
+                        "x": 58.0,
+                        "y": 43.0
+                    },
+                    "modulate": {
+                        "r": 255,
+                        "g": 255,
+                        "b": 255,
+                        "a": 255
+                    },
+                    "flip_x": false,
+                    "flip_y": false,
+                    "animations": [
+                        {
+                            "name": "idle",
+                            "speed": 100,
+                            "loops": true,
+                            "frames": [
+                                {
+                                    "frame": 0,
+                                    "texture_path": "assets/images/characters/mor/mor_idle_sheet.png",
+                                    "draw_source": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 1,
+                                    "texture_path": "assets/images/characters/mor/mor_idle_sheet.png",
+                                    "draw_source": {
+                                        "x": 126.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 2,
+                                    "texture_path": "assets/images/characters/mor/mor_idle_sheet.png",
+                                    "draw_source": {
+                                        "x": 252.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 3,
+                                    "texture_path": "assets/images/characters/mor/mor_idle_sheet.png",
+                                    "draw_source": {
+                                        "x": 378.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 4,
+                                    "texture_path": "assets/images/characters/mor/mor_idle_sheet.png",
+                                    "draw_source": {
+                                        "x": 504.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 5,
+                                    "texture_path": "assets/images/characters/mor/mor_idle_sheet.png",
+                                    "draw_source": {
+                                        "x": 630.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 6,
+                                    "texture_path": "assets/images/characters/mor/mor_idle_sheet.png",
+                                    "draw_source": {
+                                        "x": 756.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 7,
+                                    "texture_path": "assets/images/characters/mor/mor_idle_sheet.png",
+                                    "draw_source": {
+                                        "x": 882.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 8,
+                                    "texture_path": "assets/images/characters/mor/mor_idle_sheet.png",
+                                    "draw_source": {
+                                        "x": 1008.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 9,
+                                    "texture_path": "assets/images/characters/mor/mor_idle_sheet.png",
+                                    "draw_source": {
+                                        "x": 1134.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 10,
+                                    "texture_path": "assets/images/characters/mor/mor_idle_sheet.png",
+                                    "draw_source": {
+                                        "x": 1260.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "name": "walk-forward",
+                            "speed": 100,
+                            "loops": true,
+                            "frames": [
+                                {
+                                    "frame": 0,
+                                    "texture_path": "assets/images/characters/mor/mor_walk_forward_sheet.png",
+                                    "draw_source": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 1,
+                                    "texture_path": "assets/images/characters/mor/mor_walk_forward_sheet.png",
+                                    "draw_source": {
+                                        "x": 126.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 2,
+                                    "texture_path": "assets/images/characters/mor/mor_walk_forward_sheet.png",
+                                    "draw_source": {
+                                        "x": 252.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 3,
+                                    "texture_path": "assets/images/characters/mor/mor_walk_forward_sheet.png",
+                                    "draw_source": {
+                                        "x": 378.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 4,
+                                    "texture_path": "assets/images/characters/mor/mor_walk_forward_sheet.png",
+                                    "draw_source": {
+                                        "x": 504.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 5,
+                                    "texture_path": "assets/images/characters/mor/mor_walk_forward_sheet.png",
+                                    "draw_source": {
+                                        "x": 630.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 6,
+                                    "texture_path": "assets/images/characters/mor/mor_walk_forward_sheet.png",
+                                    "draw_source": {
+                                        "x": 756.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 7,
+                                    "texture_path": "assets/images/characters/mor/mor_walk_forward_sheet.png",
+                                    "draw_source": {
+                                        "x": 882.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 8,
+                                    "texture_path": "assets/images/characters/mor/mor_walk_forward_sheet.png",
+                                    "draw_source": {
+                                        "x": 1008.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 9,
+                                    "texture_path": "assets/images/characters/mor/mor_walk_forward_sheet.png",
+                                    "draw_source": {
+                                        "x": 1134.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 10,
+                                    "texture_path": "assets/images/characters/mor/mor_walk_forward_sheet.png",
+                                    "draw_source": {
+                                        "x": 1260.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 11,
+                                    "texture_path": "assets/images/characters/mor/mor_walk_forward_sheet.png",
+                                    "draw_source": {
+                                        "x": 1386.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 12,
+                                    "texture_path": "assets/images/characters/mor/mor_walk_forward_sheet.png",
+                                    "draw_source": {
+                                        "x": 1512.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "name": "walk-backward",
+                            "speed": 100,
+                            "loops": true,
+                            "frames": [
+                                {
+                                    "frame": 0,
+                                    "texture_path": "assets/images/characters/mor/mor_walk_backward_sheet.png",
+                                    "draw_source": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 1,
+                                    "texture_path": "assets/images/characters/mor/mor_walk_backward_sheet.png",
+                                    "draw_source": {
+                                        "x": 126.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 2,
+                                    "texture_path": "assets/images/characters/mor/mor_walk_backward_sheet.png",
+                                    "draw_source": {
+                                        "x": 252.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 3,
+                                    "texture_path": "assets/images/characters/mor/mor_walk_backward_sheet.png",
+                                    "draw_source": {
+                                        "x": 378.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 4,
+                                    "texture_path": "assets/images/characters/mor/mor_walk_backward_sheet.png",
+                                    "draw_source": {
+                                        "x": 504.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 5,
+                                    "texture_path": "assets/images/characters/mor/mor_walk_backward_sheet.png",
+                                    "draw_source": {
+                                        "x": 630.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 6,
+                                    "texture_path": "assets/images/characters/mor/mor_walk_backward_sheet.png",
+                                    "draw_source": {
+                                        "x": 756.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 7,
+                                    "texture_path": "assets/images/characters/mor/mor_walk_backward_sheet.png",
+                                    "draw_source": {
+                                        "x": 882.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 8,
+                                    "texture_path": "assets/images/characters/mor/mor_walk_backward_sheet.png",
+                                    "draw_source": {
+                                        "x": 1008.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 9,
+                                    "texture_path": "assets/images/characters/mor/mor_walk_backward_sheet.png",
+                                    "draw_source": {
+                                        "x": 1134.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "name": "crouch",
+                            "speed": 100,
+                            "loops": true,
+                            "frames": [
+                                {
+                                    "frame": 0,
+                                    "texture_path": "assets/images/characters/mor/mor_crouch_idle_sheet.png",
+                                    "draw_source": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 1,
+                                    "texture_path": "assets/images/characters/mor/mor_crouch_idle_sheet.png",
+                                    "draw_source": {
+                                        "x": 126.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 2,
+                                    "texture_path": "assets/images/characters/mor/mor_crouch_idle_sheet.png",
+                                    "draw_source": {
+                                        "x": 252.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 3,
+                                    "texture_path": "assets/images/characters/mor/mor_crouch_idle_sheet.png",
+                                    "draw_source": {
+                                        "x": 378.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 4,
+                                    "texture_path": "assets/images/characters/mor/mor_crouch_idle_sheet.png",
+                                    "draw_source": {
+                                        "x": 504.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 5,
+                                    "texture_path": "assets/images/characters/mor/mor_crouch_idle_sheet.png",
+                                    "draw_source": {
+                                        "x": 630.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 6,
+                                    "texture_path": "assets/images/characters/mor/mor_crouch_idle_sheet.png",
+                                    "draw_source": {
+                                        "x": 756.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                },
+                                {
+                                    "frame": 7,
+                                    "texture_path": "assets/images/characters/mor/mor_crouch_idle_sheet.png",
+                                    "draw_source": {
+                                        "x": 882.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "name": "jump",
+                            "speed": 100,
+                            "loops": true,
+                            "frames": [
+                                {
+                                    "frame": 0,
+                                    "texture_path": "assets/images/characters/mor/mor_jump_up_sheet.png",
+                                    "draw_source": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "children": [
+                {
+                    "name": "Collider",
+                    "type": "Collider2D",
+                    "tags": null,
+                    "external_node_source": null,
+                    "components": [
+                        {
+                            "type": "transform_2d",
+                            "position": {
+                                "x": -8.0,
+                                "y": -7.0
+                            },
+                            "scale": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "rotation": 0.0,
+                            "z_index": 0,
+                            "z_index_relative_to_parent": true,
+                            "ignore_camera": false
+                        },
+                        {
+                            "type": "collider_2d",
+                            "extents": {
+                                "w": 16.0,
+                                "h": 17.0
+                            },
+                            "color": {
+                                "r": 200,
+                                "g": 200,
+                                "b": 255,
+                                "a": 200
+                            }
+                        }
+                    ],
+                    "children": []
+                }
+            ]
         },
         {
-          "type": "text_label",
-          "uid": "fight-64",
-          "text": "60",
-          "color": {
-            "r": 255,
-            "g": 255,
-            "b": 255,
-            "a": 255
-          }
+            "name": "TextLabel",
+            "type": "TextLabel",
+            "tags": null,
+            "external_node_source": null,
+            "components": [
+                {
+                    "type": "transform_2d",
+                    "position": {
+                        "x": 250.0,
+                        "y": 200.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0
+                    },
+                    "rotation": 0.0,
+                    "z_index": 0,
+                    "z_index_relative_to_parent": true,
+                    "ignore_camera": false
+                },
+                {
+                    "type": "text_label",
+                    "uid": "fight-64",
+                    "text": "Fight Game",
+                    "color": {
+                        "r": 255,
+                        "g": 255,
+                        "b": 255,
+                        "a": 255
+                    }
+                }
+            ],
+            "children": []
+        },
+        {
+            "name": "TimeDisplay",
+            "type": "TextLabel",
+            "tags": null,
+            "external_node_source": null,
+            "components": [
+                {
+                    "type": "transform_2d",
+                    "position": {
+                        "x": 380.0,
+                        "y": 50.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0
+                    },
+                    "rotation": 0.0,
+                    "z_index": 0,
+                    "z_index_relative_to_parent": true,
+                    "ignore_camera": false
+                },
+                {
+                    "type": "text_label",
+                    "uid": "fight-64",
+                    "text": "60",
+                    "color": {
+                        "r": 255,
+                        "g": 255,
+                        "b": 255,
+                        "a": 255
+                    }
+                }
+            ],
+            "children": []
         }
-      ],
-      "children": []
-    }
-  ]
+    ]
 }

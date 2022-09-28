@@ -55,8 +55,6 @@ class Main(Node2D):
             )
         )
 
-        # self.fight_sim.add_health_bars()
-
         # Network
         is_network_enabled = (
             self.game_state.mode == GameMode.ONLINE_PVP_HOST
@@ -77,6 +75,9 @@ class Main(Node2D):
                     listener_func=self._network_client_callback,
                 )
                 print("[PYTHON SCRIPT] Client")
+
+    def _end(self) -> None:
+        Engine.set_fps_display_enabled(False)
 
     def _update(self, delta_time: float) -> None:
         if Input.is_action_just_pressed(name="exit"):
@@ -133,6 +134,9 @@ class Main(Node2D):
                 crouch_action_name="p1_crouch",
                 jump_action_name="p1_jump",
                 light_punch_action_name="p1_light_punch",
+                heavy_punch_action_name="p1_heavy_punch",
+                light_kick_action_name="p1_light_kick",
+                heavy_kick_action_name="p1_heavy_kick",
             )
             player_two_input = AIInputBuffer(
                 move_left_action_name="p2_move_left",
@@ -140,6 +144,9 @@ class Main(Node2D):
                 crouch_action_name="p2_crouch",
                 jump_action_name="p2_jump",
                 light_punch_action_name="p2_light_punch",
+                heavy_punch_action_name="p2_heavy_punch",
+                light_kick_action_name="p2_light_kick",
+                heavy_kick_action_name="p2_heavy_kick",
             )
         elif game_mode == GameMode.LOCAL_PVP:
             player_one_input = InputBuffer(
@@ -148,6 +155,9 @@ class Main(Node2D):
                 crouch_action_name="p1_crouch",
                 jump_action_name="p1_jump",
                 light_punch_action_name="p1_light_punch",
+                heavy_punch_action_name="p1_heavy_punch",
+                light_kick_action_name="p1_light_kick",
+                heavy_kick_action_name="p1_heavy_kick",
             )
             player_two_input = InputBuffer(
                 move_left_action_name="p2_move_left",
@@ -155,6 +165,9 @@ class Main(Node2D):
                 crouch_action_name="p2_crouch",
                 jump_action_name="p2_jump",
                 light_punch_action_name="p2_light_punch",
+                heavy_punch_action_name="p2_heavy_punch",
+                light_kick_action_name="p2_light_kick",
+                heavy_kick_action_name="p2_heavy_kick",
             )
         elif (
             game_mode == GameMode.ONLINE_PVP_HOST
@@ -166,6 +179,9 @@ class Main(Node2D):
                 crouch_action_name="p1_crouch",
                 jump_action_name="p1_jump",
                 light_punch_action_name="p1_light_punch",
+                heavy_punch_action_name="p1_heavy_punch",
+                light_kick_action_name="p1_light_kick",
+                heavy_kick_action_name="p1_heavy_kick",
             )
             if game_mode == GameMode.ONLINE_PVP_CLIENT:
                 player_one_input.send_func = Client.send
@@ -175,6 +191,9 @@ class Main(Node2D):
                 crouch_action_name="p2_crouch",
                 jump_action_name="p2_jump",
                 light_punch_action_name="p2_light_punch",
+                heavy_punch_action_name="p2_heavy_punch",
+                light_kick_action_name="p2_light_kick",
+                heavy_kick_action_name="p2_heavy_kick",
             )
         elif game_mode == GameMode.ONLINE_PVP_HOST:
             player_one_input = NetworkSenderInputBuffer(
@@ -183,6 +202,9 @@ class Main(Node2D):
                 crouch_action_name="p1_crouch",
                 jump_action_name="p1_jump",
                 light_punch_action_name="p1_light_punch",
+                heavy_punch_action_name="p1_heavy_punch",
+                light_kick_action_name="p1_light_kick",
+                heavy_kick_action_name="p1_heavy_kick",
             )
             player_two_input = NetworkReceiverInputBuffer(
                 move_left_action_name="p2_move_left",
@@ -190,6 +212,9 @@ class Main(Node2D):
                 crouch_action_name="p2_crouch",
                 jump_action_name="p2_jump",
                 light_punch_action_name="p2_light_punch",
+                heavy_punch_action_name="p2_heavy_punch",
+                light_kick_action_name="p2_light_kick",
+                heavy_kick_action_name="p2_heavy_kick",
             )
         elif game_mode == GameMode.ONLINE_PVP_CLIENT:
             player_two_input = NetworkSenderInputBuffer(
@@ -198,6 +223,9 @@ class Main(Node2D):
                 crouch_action_name="p1_crouch",
                 jump_action_name="p1_jump",
                 light_punch_action_name="p1_light_punch",
+                heavy_punch_action_name="p1_heavy_punch",
+                light_kick_action_name="p1_light_kick",
+                heavy_kick_action_name="p1_heavy_kick",
             )
             player_two_input.send_func = Client.send
             player_one_input = NetworkReceiverInputBuffer(
@@ -206,5 +234,8 @@ class Main(Node2D):
                 crouch_action_name="p2_crouch",
                 jump_action_name="p2_jump",
                 light_punch_action_name="p2_light_punch",
+                heavy_punch_action_name="p2_heavy_punch",
+                light_kick_action_name="p2_light_kick",
+                heavy_kick_action_name="p2_heavy_kick",
             )
         return player_one_input, player_two_input

@@ -34,7 +34,7 @@ typedef struct RBEInputAction {
     char* values[CRE_INPUT_VALUES_LIMIT];
 } RBEInputAction;
 
-#define CRE_PROPERTIES_ASSET_LIMIT 20
+#define CRE_PROPERTIES_ASSET_LIMIT 24
 
 typedef struct RBEGameProperties {
     char* gameTitle;

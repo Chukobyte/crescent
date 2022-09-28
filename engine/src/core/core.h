@@ -2,7 +2,7 @@
 
 #include <stdbool.h>
 
-#define RBE_CORE_VERSION "0.1.0"
+#define RBE_CORE_VERSION "0.2.0"
 
 bool rbe_initialize(int argv, char** args);
 void rbe_update();

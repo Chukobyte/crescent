@@ -115,6 +115,24 @@
             ]
         },
         {
+            "name": "p1_heavy_punch",
+            "values": [
+                "e"
+            ]
+        },
+        {
+            "name": "p1_light_kick",
+            "values": [
+                "z"
+            ]
+        },
+        {
+            "name": "p1_heavy_kick",
+            "values": [
+                "c"
+            ]
+        },
+        {
             "name": "p2_move_left",
             "values": [
                 "left"
@@ -142,6 +160,24 @@
             "name": "p2_light_punch",
             "values": [
                 "0"
+            ]
+        },
+        {
+            "name": "p2_heavy_punch",
+            "values": [
+                "9"
+            ]
+        },
+        {
+            "name": "p2_light_kick",
+            "values": [
+                "8"
+            ]
+        },
+        {
+            "name": "p2_heavy_kick",
+            "values": [
+                "7"
             ]
         },
         {

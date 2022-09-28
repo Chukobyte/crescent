@@ -14,6 +14,12 @@ class FighterStance:
     IN_AIR = 2
 
 
+class FighterState:
+    IDLE = 0
+    ATTACKING = 1
+    BLOCKING = 2
+
+
 class Fighter:
     def __init__(
         self,
@@ -29,7 +35,7 @@ class Fighter:
         self.velocity = Vector2.ZERO()
         self.hp = 100
         self.speed = 50
-        self.is_attacking = False  # Temp
+        self.state = FighterState.IDLE
         self.stance = FighterStance.NONE
         self._previous_stance = FighterStance.NONE
 
@@ -37,7 +43,7 @@ class Fighter:
         self.input_buffer.process_inputs()
 
     def set_is_attacking(self, value: bool) -> None:
-        self.is_attacking = value
+        self.state = FighterState.ATTACKING
 
     def _get_base_attack_offset_and_xscale(self) -> Tuple[Vector2, Vector2]:
         # TODO: Clean up attack stuff by calculating the sprite with the width and origin x
@@ -65,8 +71,20 @@ class Fighter:
         print(
             f"Attack Node '{attack}' connected to '{self.node}' with collider '{self.collider}'"
         )
-        self.hp = max(self.hp - 10, 0)
-        self.health_bar.set_health_percentage(self.hp)
+        if self._can_block():
+            # TODO: Do more stuff for blocking...
+            pass
+        else:
+            self.hp = max(self.hp - 10, 0)
+            self.health_bar.set_health_percentage(self.hp)
+
+    def _can_block(self) -> bool:
+        if self.state != FighterState.IDLE:
+            return False
+        scale = self.node.scale
+        return (self.input_buffer.move_left_pressed and scale.x > 0) or (
+            self.input_buffer.move_right_pressed and scale.x < 0
+        )
 
     def set_stance(self, stance: int) -> bool:
         self._previous_stance = self.stance
@@ -74,17 +92,19 @@ class Fighter:
         return self._previous_stance != self.stance
 
     async def manage_jump_state(self, delta_time: float):
-        jump_height = 10
+        jump_height = 40
+        up_speed = 10
+        down_speed = 5
         floor_y = self.node.position.y
         try:
             while True:
                 if jump_height > 0:
-                    jump_height -= 1
-                    self.node.add_to_position(Vector2.UP())
+                    jump_height -= up_speed
+                    self.node.add_to_position(Vector2(0.0, -up_speed))
                 else:
                     if self.node.position.y >= floor_y:
                         raise GeneratorExit
-                    self.node.add_to_position(Vector2.DOWN())
+                    self.node.add_to_position(Vector2(0.0, down_speed))
                 await co_suspend()
         except GeneratorExit:
             self.set_stance(FighterStance.STANDING)

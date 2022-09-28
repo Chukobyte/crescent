@@ -66,10 +66,26 @@ class FighterSimulation:
         self.fighters[fighter_index].node.play(anim_name)
 
     def update(self, delta_time: float) -> None:
+        # Temp correct direction facing
+        fighter_one_pos = self.fighters[0].node.position
+        fighter_two_pos = self.fighters[1].node.position
+        # Fighter One
+        one_scale = self.fighters[0].node.scale
+        if fighter_one_pos.x > fighter_two_pos.x:
+            self.fighters[0].node.scale = Vector2(-abs(one_scale.x), one_scale.y)
+        else:
+            self.fighters[0].node.scale = Vector2(abs(one_scale.x), one_scale.y)
+        # Fighter Two
+        two_scale = self.fighters[1].node.scale
+        if fighter_two_pos.x > fighter_one_pos.x:
+            self.fighters[1].node.scale = Vector2(-abs(two_scale.x), two_scale.y)
+        else:
+            self.fighters[1].node.scale = Vector2(abs(two_scale.x), two_scale.y)
+
         # Move fighters
         for i, fighter in enumerate(self.fighters):
             fighter.input_buffer.process_inputs()
-            if not fighter.is_attacking:
+            if fighter.state == FighterState.IDLE:
                 if fighter.input_buffer.move_left_pressed:
                     fighter.velocity += Vector2.LEFT()
                 elif fighter.input_buffer.move_right_pressed:
@@ -82,7 +98,7 @@ class FighterSimulation:
                     fighter.node.add_to_position(fighter.velocity * delta_vector)
 
             # Jump
-            if fighter.input_buffer.jump_pressed and not fighter.is_attacking:
+            if fighter.input_buffer.jump_pressed and fighter.state == FighterState.IDLE:
                 if fighter.set_stance(FighterStance.IN_AIR):
                     fighter.node.play("jump")
                     self.fighter_coroutines.append(
@@ -111,7 +127,11 @@ class FighterSimulation:
                         fighter.node.play("idle")
 
             # Attack
-            if fighter.input_buffer.light_punch_pressed and not fighter.is_attacking:
+            # TODO: Make different attacks for heavy punch, light kick, and heavy kick
+            if (
+                fighter.input_buffer.any_attack_pressed()
+                and fighter.state == FighterState.IDLE
+            ):
                 attack = fighter.spawn_basic_attack_from_stance()
                 if i == 0:
                     attack_target = self.fighters[1]
@@ -121,7 +141,7 @@ class FighterSimulation:
                 print(f"[PY_SCRIPT] attack = {attack}")
                 self.main_node.add_child(attack)
                 self.add_attack(attack=attack, fighter_index=i)
-                fighter.is_attacking = True
+                fighter.state = FighterState.ATTACKING
 
             # Zero out vel for now...
             fighter.velocity = Vector2.ZERO()
@@ -145,7 +165,7 @@ class FighterSimulation:
                 if awaitable.state == Awaitable.State.FINISHED:
                     raise StopIteration
             except StopIteration:
-                self.fighters[attack_ref.fighter_index].is_attacking = False
+                self.fighters[attack_ref.fighter_index].state = FighterState.IDLE
                 attack_ref.attack.queue_deletion()
                 self.active_attacks.remove(attack_ref)
                 continue
