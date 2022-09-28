@@ -92,17 +92,19 @@ class Fighter:
         return self._previous_stance != self.stance
 
     async def manage_jump_state(self, delta_time: float):
-        jump_height = 10
+        jump_height = 40
+        up_speed = 10
+        down_speed = 4
         floor_y = self.node.position.y
         try:
             while True:
                 if jump_height > 0:
-                    jump_height -= 1
-                    self.node.add_to_position(Vector2.UP())
+                    jump_height -= up_speed
+                    self.node.add_to_position(Vector2(0.0, -up_speed))
                 else:
                     if self.node.position.y >= floor_y:
                         raise GeneratorExit
-                    self.node.add_to_position(Vector2.DOWN())
+                    self.node.add_to_position(Vector2(0.0, down_speed))
                 await co_suspend()
         except GeneratorExit:
             self.set_stance(FighterStance.STANDING)
