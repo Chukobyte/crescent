@@ -1,4 +1,5 @@
 from typing import List
+import json
 
 from src.timer import Timer
 
@@ -42,6 +43,7 @@ class SpecialMove:
         new_move = SpecialMove("temp", [], 0.0)
         new_move.name = json_data["name"]
         new_move.time_window = json_data["time_window"]
+        new_move.timer = Timer(new_move.time_window)
         for command in json_data["commands"]:
             new_move.commands.append(MoveCommand.from_json(command))
         return new_move
@@ -69,14 +71,21 @@ class SpecialMove:
 
 
 class SpecialMovesManager:
-    def __init__(self, moves: List[SpecialMove]):
-        self.moves = moves
+    def __init__(self):
+        self.moves = []
 
     def has_move_triggered(self, name: str) -> bool:
         return False
 
     def add_move(self, move: SpecialMove) -> None:
         self.moves.append(move)
+
+    def add_moves_from_file(self, file_path: str):
+        json_file = open(file_path)
+        json_data = json.load(json_file)
+        for move_data in json_data["moves"]:
+            self.add_move(SpecialMove.from_json(move_data))
+        json_file.close()
 
     def update(self) -> None:
         pass
