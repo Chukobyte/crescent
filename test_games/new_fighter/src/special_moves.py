@@ -1,50 +1,8 @@
 from typing import List
 
-# from abc import ABC, abstractmethod
-
-from src.input import InputBuffer
 from src.timer import Timer
 
 TEMP_GLOBAL_DELTA = 0.1
-
-
-# class Command(ABC):
-#     @abstractmethod
-#     def has_triggered(self) -> bool:
-#         return False
-#
-#
-# class PressedCommand(Command):
-#     def __init__(
-#         self, input_buffer: InputBuffer, input_names: List[str], time_window=None
-#     ):
-#         self.input_buffer = input_buffer
-#         self.input_names = input_names
-#         self.time_window = time_window
-#
-#     def has_triggered(self) -> bool:
-#         triggered = False
-#         for input_name in self.input_names:
-#             if self.input_buffer.is_input_pressed(input_name):
-#                 triggered = True
-#             else:
-#                 return False
-#         return triggered
-#
-#
-# class ReleasedCommand(Command):
-#     def __init__(self, input_buffer: InputBuffer, input_names: List[str]):
-#         self.input_buffer = input_buffer
-#         self.input_names = input_names
-#
-#     def has_triggered(self) -> bool:
-#         triggered = False
-#         for input_name in self.input_names:
-#             if self.input_buffer.is_input_pressed(input_name):
-#                 triggered = True
-#             else:
-#                 return False
-#         return triggered
 
 
 class MoveCommand:
