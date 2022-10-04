@@ -81,6 +81,9 @@ class InputBuffer:
             or self.heavy_kick_pressed
         )
 
+    def is_input_pressed(self, input_name: str) -> bool:
+        return locals().get(input_name, False)
+
 
 class NetworkSenderInputBuffer(InputBuffer):
     def __init__(

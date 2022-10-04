@@ -85,6 +85,11 @@ class FighterSimulation:
         # Move fighters
         for i, fighter in enumerate(self.fighters):
             fighter.input_buffer.process_inputs()
+
+            # Special Attack (has the highest priority)
+            if fighter.state == FighterState.IDLE:
+                pass
+
             if fighter.state == FighterState.IDLE:
                 if fighter.input_buffer.move_left_pressed:
                     fighter.velocity += Vector2.LEFT()
