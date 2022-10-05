@@ -33,10 +33,17 @@ class MoveCommand:
 
 
 class SpecialMove:
-    def __init__(self, name: str, commands: List[MoveCommand], time_window: float):
+    def __init__(
+        self,
+        name: str,
+        commands: List[MoveCommand],
+        time_window: float,
+        cooldown_time=None,
+    ):
         self.name = name
         self.commands = commands
         self.time_window = time_window
+        self.cooldown_time = cooldown_time if cooldown_time else 0.5
         self._command_index = 0
         self.timer = Timer(time_window)
 
