@@ -1,6 +1,8 @@
-from typing import List
+from typing import List, Optional, Callable
 import json
 
+from crescent_api import Vector2
+from src.input import InputBuffer
 from src.timer import Timer
 
 TEMP_GLOBAL_DELTA = 0.1
@@ -70,15 +72,62 @@ class SpecialMove:
         return f"SpecialMove(\n  name: {self.name},\n  time_window: {self.time_window},\n  commands: {self._get_commands_text()}\n)"
 
 
+# Special Moves Manager
+class SpecialMoveTask:
+    def __init__(self, move: SpecialMove):
+        self.move = move
+        self.is_active = False
+        self.move_index = 0
+        self.move_timer = Timer(move.time_window)
+
+    def update(self) -> None:
+        pass
+
+    def reset(self) -> None:
+        self.is_active = False
+        self.move_index = 0
+        self.move_timer.reset()
+
+    def does_current_move_satisfy_criteria(
+        self, input_buffer: InputBuffer, facing_dir: Vector2
+    ) -> bool:
+        for value in self.move.commands[self.move_index].values:
+            if not input_buffer.is_input_pressed(
+                input_name=value, facing_dir=facing_dir
+            ):
+                return False
+        return True
+
+    def has_executed_all_commands(self) -> bool:
+        return self.move_index >= len(self.move.commands)
+
+
 class SpecialMovesManager:
-    def __init__(self):
+    def __init__(
+        self,
+        moves: Optional[List[SpecialMove]] = None,
+        on_completed_funcs: List[Callable] = None,
+    ):
         self.moves = []
+        self.tasks = []
+        if on_completed_funcs:
+            self.on_completed_funcs = on_completed_funcs
+        else:
+            self.on_completed_funcs = []
+        if moves:
+            for move in moves:
+                self.add_move(move)
 
     def has_move_triggered(self, name: str) -> bool:
         return False
 
     def add_move(self, move: SpecialMove) -> None:
         self.moves.append(move)
+        self.tasks.append(SpecialMoveTask(move))
+
+    # TODO: Return handle
+    def bind_on_completed_func(self, func: Callable) -> None:
+        self.on_completed_funcs.append(func)
 
     def add_moves_from_file(self, file_path: str):
         json_file = open(file_path)
@@ -87,5 +136,37 @@ class SpecialMovesManager:
             self.add_move(SpecialMove.from_json(move_data))
         json_file.close()
 
-    def update(self) -> None:
-        pass
+    def reset_all_task_states(self) -> None:
+        for task in self.tasks:
+            task.reset()
+
+    def _update_move_task(
+        self, task: SpecialMoveTask, input_buffer: InputBuffer, facing_dir: Vector2
+    ) -> None:
+        # Timeout
+        if task.move_timer.tick(TEMP_GLOBAL_DELTA):
+            task.reset()
+        # In progress
+        else:
+            if task.does_current_move_satisfy_criteria(input_buffer, facing_dir):
+                task.move_index += 1
+                if task.has_executed_all_commands():
+                    self._process_and_broadcast_completed_move(task)
+
+    def _process_and_broadcast_completed_move(self, task: SpecialMoveTask) -> None:
+        for func in self.on_completed_funcs:
+            func(task.move)
+        self.reset_all_task_states()
+
+    def update(self, input_buffer: InputBuffer, facing_dir: Vector2) -> None:
+        for task in self.tasks:
+            # Update current move task
+            if task.is_active:
+                self._update_move_task(task, input_buffer, facing_dir)
+            # Attempt to start move task
+            else:
+                if task.does_current_move_satisfy_criteria(input_buffer, facing_dir):
+                    task.is_active = True
+                    task.move_index += 1
+                    if task.has_executed_all_commands():
+                        self._process_and_broadcast_completed_move(task)

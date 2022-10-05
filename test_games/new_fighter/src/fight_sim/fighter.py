@@ -2,6 +2,7 @@ from typing import Tuple
 
 from crescent_api import *
 from src.hit_box import Attack
+from src.special_moves import SpecialMovesManager
 from src.task import co_suspend
 from src.health_bar import HealthBar
 from src.input import InputBuffer
@@ -37,6 +38,8 @@ class Fighter:
         self.speed = 50
         self.state = FighterState.IDLE
         self.stance = FighterStance.NONE
+        self.facing_dir = Vector2.RIGHT()
+        self.moves_manager = SpecialMovesManager()
         self._previous_stance = FighterStance.NONE
 
     def update_input_state(self) -> None:

@@ -81,8 +81,15 @@ class InputBuffer:
             or self.heavy_kick_pressed
         )
 
-    def is_input_pressed(self, input_name: str) -> bool:
-        return locals().get(input_name, False)
+    def is_input_pressed(
+        self, input_name: str, facing_dir: Vector2 = Vector2.RIGHT()
+    ) -> bool:
+        if input_name == "forward":
+            return self.move_right_pressed
+        elif input_name == "down":
+            return self.crouch_pressed
+        return False
+        # return locals().get(input_name, False)
 
 
 class NetworkSenderInputBuffer(InputBuffer):
