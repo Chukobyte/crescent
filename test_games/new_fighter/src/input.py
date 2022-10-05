@@ -85,9 +85,17 @@ class InputBuffer:
         self, input_name: str, facing_dir: Vector2 = Vector2.RIGHT()
     ) -> bool:
         if input_name == "forward":
+            if facing_dir == Vector2.RIGHT():
+                return self.move_right_pressed
+            return self.move_left_pressed
+        elif input_name == "backward":
+            if facing_dir == Vector2.RIGHT():
+                return self.move_left_pressed
             return self.move_right_pressed
         elif input_name == "down":
             return self.crouch_pressed
+        elif input_name == "up":
+            return self.jump_pressed
         return False
         # return locals().get(input_name, False)
 
