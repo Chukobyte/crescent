@@ -140,19 +140,6 @@ class SpecialMovesManager:
         for task in self.tasks:
             task.reset()
 
-    def _update_move_task(
-        self, task: SpecialMoveTask, input_buffer: InputBuffer, facing_dir: Vector2
-    ) -> None:
-        # Timeout
-        if task.move_timer.tick(TEMP_GLOBAL_DELTA):
-            task.reset()
-        # In progress
-        else:
-            if task.does_current_move_satisfy_criteria(input_buffer, facing_dir):
-                task.move_index += 1
-                if task.has_executed_all_commands():
-                    self._process_and_broadcast_completed_move(task)
-
     def _process_and_broadcast_completed_move(self, task: SpecialMoveTask) -> None:
         for func in self.on_completed_funcs:
             func(task.move)
@@ -162,7 +149,18 @@ class SpecialMovesManager:
         for task in self.tasks:
             # Update current move task
             if task.is_active:
-                self._update_move_task(task, input_buffer, facing_dir)
+                # Timeout
+                if task.move_timer.tick(TEMP_GLOBAL_DELTA):
+                    task.reset()
+                # In progress
+                else:
+                    if task.does_current_move_satisfy_criteria(
+                        input_buffer, facing_dir
+                    ):
+                        task.move_index += 1
+                        if task.has_executed_all_commands():
+                            self._process_and_broadcast_completed_move(task)
+                            break
             # Attempt to start move task
             else:
                 if task.does_current_move_satisfy_criteria(input_buffer, facing_dir):
@@ -170,3 +168,4 @@ class SpecialMovesManager:
                     task.move_index += 1
                     if task.has_executed_all_commands():
                         self._process_and_broadcast_completed_move(task)
+                        break
