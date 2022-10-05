@@ -88,7 +88,11 @@ class FighterSimulation:
 
             # Special Attack (has the highest priority)
             if fighter.state == FighterState.IDLE:
-                pass
+                fighter.moves_manager.update(
+                    fighter.input_buffer, fighter.facing_dir, delta_time
+                )
+                if fighter.moves_manager.current_triggered_move:
+                    fighter.state = FighterState.ATTACKING
 
             if fighter.state == FighterState.IDLE:
                 if fighter.input_buffer.move_left_pressed:

@@ -110,6 +110,7 @@ class SpecialMovesManager:
     ):
         self.moves = []
         self.tasks = []
+        self.current_triggered_move = None
         if on_completed_funcs:
             self.on_completed_funcs = on_completed_funcs
         else:
@@ -144,13 +145,20 @@ class SpecialMovesManager:
         for func in self.on_completed_funcs:
             func(task.move)
         self.reset_all_task_states()
+        self.current_triggered_move = task.move
 
-    def update(self, input_buffer: InputBuffer, facing_dir: Vector2) -> None:
+    def update(
+        self,
+        input_buffer: InputBuffer,
+        facing_dir: Vector2,
+        delta_time=TEMP_GLOBAL_DELTA,
+    ) -> None:
+        self.current_triggered_move = None
         for task in self.tasks:
             # Update current move task
             if task.is_active:
                 # Timeout
-                if task.move_timer.tick(TEMP_GLOBAL_DELTA):
+                if task.move_timer.tick(delta_time) <= 0.0:
                     task.reset()
                 # In progress
                 else:
