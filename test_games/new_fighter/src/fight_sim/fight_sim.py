@@ -1,4 +1,5 @@
 from src.input import *
+from src.special_moves import SpecialMove
 from src.task import *
 from src.fight_sim.fighter import *
 
@@ -42,10 +43,18 @@ class FighterSimulation:
         self.fighter_coroutines = []  # temp for now
         self.fight_match_time = 99
 
-    def add_fighter(self, fighter: Fighter) -> None:
+    def _on_fighter_special_move_triggered(self, move: SpecialMove):
+        print(f"move '{move.name}' triggered!")
+
+    def add_fighter(self, fighter: Fighter, moves_path: str = None) -> None:
         self.fighters.append(fighter)
         if isinstance(fighter.input_buffer, NetworkReceiverInputBuffer):
             self.network_receiving_fighters.append(fighter)
+        if moves_path:
+            fighter.moves_manager.add_moves_from_file(moves_path)
+            fighter.moves_manager.bind_on_completed_func(
+                self._on_fighter_special_move_triggered
+            )
 
     def add_attack(self, attack: Attack, fighter_index: int) -> None:
         self.active_attacks.append(

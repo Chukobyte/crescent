@@ -1,0 +1,94 @@
+{
+  "moves": [
+    {
+      "name": "Dragon Fire Ball",
+      "time_window": 0.75,
+      "commands": [
+        {
+          "type": "pressed",
+          "values": [
+            "down"
+          ]
+        },
+        {
+          "type": "pressed",
+          "values": [
+            "down", "forward"
+          ]
+        },
+        {
+          "type": "pressed",
+          "values": [
+            "forward"
+          ]
+        },
+        {
+          "type": "pressed",
+          "values": [
+            "light_punch"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Dragon Uppercut",
+      "time_window": 0.75,
+      "commands": [
+        {
+          "type": "pressed",
+          "values": [
+            "forward"
+          ]
+        },
+        {
+          "type": "pressed",
+          "values": [
+            "down"
+          ]
+        },
+        {
+          "type": "pressed",
+          "values": [
+            "forward"
+          ]
+        },
+        {
+          "type": "pressed",
+          "values": [
+            "light_punch"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Dragon Kick",
+      "time_window": 0.75,
+      "commands": [
+        {
+          "type": "pressed",
+          "values": [
+            "backward"
+          ]
+        },
+        {
+          "type": "pressed",
+          "values": [
+            "down"
+          ]
+        },
+        {
+          "type": "pressed",
+          "values": [
+            "backward"
+          ]
+        },
+        {
+          "type": "pressed",
+          "values": [
+            "light_kick"
+          ]
+        }
+      ]
+    }
+  ]
+}
