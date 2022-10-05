@@ -96,6 +96,10 @@ class InputBuffer:
             return self.crouch_pressed
         elif input_name == "up":
             return self.jump_pressed
+        elif input_name == "light_punch":
+            return self.light_punch_pressed
+        elif input_name == "light_kick":
+            return self.light_kick_pressed
         return False
         # return locals().get(input_name, False)
 
