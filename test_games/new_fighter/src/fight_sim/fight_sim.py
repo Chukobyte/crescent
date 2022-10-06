@@ -82,14 +82,18 @@ class FighterSimulation:
         one_scale = self.fighters[0].node.scale
         if fighter_one_pos.x > fighter_two_pos.x:
             self.fighters[0].node.scale = Vector2(-abs(one_scale.x), one_scale.y)
+            self.fighters[0].facing_dir = Vector2.LEFT()
         else:
             self.fighters[0].node.scale = Vector2(abs(one_scale.x), one_scale.y)
+            self.fighters[0].facing_dir = Vector2.RIGHT()
         # Fighter Two
         two_scale = self.fighters[1].node.scale
         if fighter_two_pos.x > fighter_one_pos.x:
             self.fighters[1].node.scale = Vector2(-abs(two_scale.x), two_scale.y)
+            self.fighters[1].facing_dir = Vector2.LEFT()
         else:
             self.fighters[1].node.scale = Vector2(abs(two_scale.x), two_scale.y)
+            self.fighters[1].facing_dir = Vector2.RIGHT()
 
         # Move fighters
         for i, fighter in enumerate(self.fighters):

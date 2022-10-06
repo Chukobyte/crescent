@@ -70,6 +70,7 @@ class Fighter:
     def spawn_basic_attack_from_stance(self) -> Attack:
         attack = Attack.new()
         attack.position = self._get_default_attack_position()
+        attack.direction = self.facing_dir
         attack.life_time = 0.2
         return attack
 
@@ -77,14 +78,17 @@ class Fighter:
         if attack_name == "Dragon Fire Ball":
             dragon_fire_ball = DragonFireBallAttack.new()
             dragon_fire_ball.position = self._get_default_attack_position()
+            dragon_fire_ball.direction = self.facing_dir
             return dragon_fire_ball
         elif attack_name == "Dragon Uppercut":
             dragon_uppercut = DragonPunchAttack.new()
             dragon_uppercut.position = self._get_default_attack_position()
+            dragon_uppercut.direction = self.facing_dir
             return dragon_uppercut
         elif attack_name == "Dragon Kick":
             dragon_kick = DragonPunchKick.new()
             dragon_kick.position = self._get_default_attack_position()
+            dragon_kick.direction = self.facing_dir
             return dragon_kick
         return self.spawn_basic_attack_from_stance()
 

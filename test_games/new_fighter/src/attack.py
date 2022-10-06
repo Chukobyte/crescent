@@ -15,6 +15,7 @@ class Attack(HitBox):
         super().__init__(entity_id=entity_id)
         self.life_time = 1.0
         self.targets = []
+        self.direction = Vector2.RIGHT()
 
     def _start(self) -> None:
         collider_size = Size2D(32, 32)
@@ -70,7 +71,7 @@ class DragonFireBallAttack(Attack):
         self.speed = 100
 
     def _update(self, delta_time: float) -> None:
-        self.add_to_position(Vector2(self.speed * delta_time, 0))
+        self.add_to_position(Vector2(self.speed * self.direction.x * delta_time, 0))
 
 
 class DragonPunchAttack(Attack):
@@ -80,7 +81,11 @@ class DragonPunchAttack(Attack):
         self.speed = 50
 
     def _update(self, delta_time: float) -> None:
-        self.add_to_position(Vector2(self.speed * delta_time, -self.speed * delta_time))
+        self.add_to_position(
+            Vector2(
+                self.speed * self.direction.x * delta_time, -self.speed * delta_time
+            )
+        )
 
 
 class DragonPunchKick(Attack):
@@ -96,5 +101,5 @@ class DragonPunchKick(Attack):
 
     def _update(self, delta_time: float) -> None:
         if self.position.x < self.original_position.x:
-            self.add_to_position(Vector2(1000 * delta_time, 0))
-        self.add_to_position(Vector2(-10 * delta_time, 0))
+            self.add_to_position(Vector2(1000 * self.direction.x * delta_time, 0))
+        self.add_to_position(Vector2(-10 * self.direction.x * delta_time, 0))
