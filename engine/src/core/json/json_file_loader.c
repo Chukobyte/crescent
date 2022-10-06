@@ -69,7 +69,8 @@ void cre_json_configure_inputs(cJSON* configJson, RBEGameProperties* properties)
         RBE_ASSERT_FMT(properties->inputActionCount < CRE_PROPERTIES_ASSET_LIMIT, "Input count is over the max limit of %d, increase the limit of CRE_PROPERTIES_ASSET_LIMIT", CRE_INPUT_VALUES_LIMIT);
         RBEInputAction* inputAction = &properties->inputActions[properties->inputActionCount];
         inputAction->name = json_get_string_new(inputJson, "name");
-        rbe_logger_debug("Input Action Name: '%s'", inputAction->name);
+        inputAction->deviceId = json_get_int_default(inputJson, "device_id", 0);
+        rbe_logger_debug("Input Action -  name: '%s', device_id: '%d'", inputAction->name, inputAction->deviceId);
         cJSON* valuesJsonArray = cJSON_GetObjectItemCaseSensitive(inputJson, "values");
         cJSON* valueJson = NULL;
         cJSON_ArrayForEach(valueJson, valuesJsonArray) {

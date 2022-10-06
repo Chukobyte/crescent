@@ -50,28 +50,28 @@ void OpenedProjectUI::ProcessMenuBar() {
                         .keyboardShortcut = "Ctrl+O",
                         .callbackFunc = [] (ImGuiHelper::Context* context) {
                             static ImGuiHelper::FileBrowser openSceneFileBrowser = {
-                                    .name = "Open Scene Browser",
-                                    .open = nullptr,
-                                    .windowFlags = ImGuiWindowFlags_NoResize,
-                                    .callbackFunc = nullptr,
-                                    .position = ImVec2{ 100.0f, 100.0f },
-                                    .size = ImVec2{ 600.0f, 320.0f },
-                                    .rootPath = {},
-                                    .mode = ImGuiHelper::FileBrowser::Mode::OpenFile,
-                                    .validExtensions = { ".cscn" },
-                                    .onModeCompletedFunc = [](const std::filesystem::path& fullPath) {
-                                        const std::string relativePath = projectProperties->GetPathRelativeToProjectPath(fullPath.generic_string());
-                                        rbe_logger_debug("Open scene at file path = '%s'", relativePath.c_str());
+                                .name = "Open Scene Browser",
+                                .open = nullptr,
+                                .windowFlags = ImGuiWindowFlags_NoResize,
+                                .callbackFunc = nullptr,
+                                .position = ImVec2{ 100.0f, 100.0f },
+                                .size = ImVec2{ 600.0f, 320.0f },
+                                .rootPath = {},
+                                .mode = ImGuiHelper::FileBrowser::Mode::OpenFile,
+                                .validExtensions = { ".cscn" },
+                                .onModeCompletedFunc = [](const std::filesystem::path& fullPath) {
+                                    const std::string relativePath = projectProperties->GetPathRelativeToProjectPath(fullPath.generic_string());
+                                    rbe_logger_debug("Open scene at file path = '%s'", relativePath.c_str());
 
-                                        static SceneManager* sceneManager = SceneManager::Get();
-                                        const std::string validSceneFilePath = Helper::ConvertFilePathToFilePathExtension(relativePath, ".cscn");
-                                        if (!validSceneFilePath.empty() && FileSystemHelper::DoesFileExist(validSceneFilePath)) {
-                                            sceneManager->selectedSceneFile = sceneManager->LoadSceneFromFile(validSceneFilePath.c_str());
-                                            RBE_ASSERT_FMT(sceneManager->selectedSceneFile != nullptr, "selected scene node file at path '%s' is NULL!",
-                                                           sceneManager->selectedSceneFile);
-                                            sceneManager->selectedSceneNode = sceneManager->selectedSceneFile->rootNode;
-                                        }
+                                    static SceneManager* sceneManager = SceneManager::Get();
+                                    const std::string validSceneFilePath = Helper::ConvertFilePathToFilePathExtension(relativePath, ".cscn");
+                                    if (!validSceneFilePath.empty() && FileSystemHelper::DoesFileExist(validSceneFilePath)) {
+                                        sceneManager->selectedSceneFile = sceneManager->LoadSceneFromFile(validSceneFilePath.c_str());
+                                        RBE_ASSERT_FMT(sceneManager->selectedSceneFile != nullptr, "selected scene node file at path '%s' is NULL!",
+                                                       sceneManager->selectedSceneFile);
+                                        sceneManager->selectedSceneNode = sceneManager->selectedSceneFile->rootNode;
                                     }
+                                }
                             };
                             openSceneFileBrowser.rootPath = projectProperties->projectPath;
                             ImGuiHelper::FileBrowserPopupManager::Get()->QueueOpenPopop(&openSceneFileBrowser);

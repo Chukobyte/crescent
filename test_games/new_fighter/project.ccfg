@@ -81,103 +81,129 @@
         {
             "name": "ui_confirm",
             "values": [
-                "return"
+                "return",
+                "joystick_start"
             ]
         },
         {
             "name": "p1_move_left",
             "values": [
-                "a"
+                "a",
+                "joystick_left_analog_left"
             ]
         },
         {
             "name": "p1_move_right",
             "values": [
-                "d"
+                "d",
+                "joystick_left_analog_right"
             ]
         },
         {
             "name": "p1_crouch",
             "values": [
-                "s"
+                "s",
+                "joystick_left_analog_down"
             ]
         },
         {
             "name": "p1_jump",
             "values": [
-                "w"
+                "w",
+                "joystick_left_analog_up"
             ]
         },
         {
             "name": "p1_light_punch",
             "values": [
-                "q"
+                "q",
+                "joystick_button_x"
             ]
         },
         {
             "name": "p1_heavy_punch",
             "values": [
-                "e"
+                "e",
+                "joystick_button_y"
             ]
         },
         {
             "name": "p1_light_kick",
             "values": [
-                "z"
+                "z",
+                "joystick_button_a"
             ]
         },
         {
             "name": "p1_heavy_kick",
             "values": [
-                "c"
+                "c",
+                "joystick_button_b"
             ]
         },
         {
             "name": "p2_move_left",
+            "device_id": 1,
             "values": [
-                "left"
+                "left",
+                "joystick_left_analog_left"
+
             ]
         },
         {
             "name": "p2_move_right",
+            "device_id": 1,
             "values": [
-                "right"
+                "right",
+                "joystick_left_analog_right"
             ]
         },
         {
             "name": "p2_crouch",
+            "device_id": 1,
             "values": [
-                "down"
+                "down",
+                "joystick_left_analog_down"
             ]
         },
         {
             "name": "p2_jump",
+            "device_id": 1,
             "values": [
-                "up"
+                "up",
+                "joystick_left_analog_up"
             ]
         },
         {
             "name": "p2_light_punch",
+            "device_id": 1,
             "values": [
-                "0"
+                "0",
+                "joystick_button_x"
             ]
         },
         {
             "name": "p2_heavy_punch",
+            "device_id": 1,
             "values": [
-                "9"
+                "9",
+                "joystick_button_y"
             ]
         },
         {
             "name": "p2_light_kick",
+            "device_id": 1,
             "values": [
-                "8"
+                "8",
+                "joystick_button_a"
             ]
         },
         {
             "name": "p2_heavy_kick",
+            "device_id": 1,
             "values": [
-                "7"
+                "7",
+                "joystick_button_b"
             ]
         },
         {
