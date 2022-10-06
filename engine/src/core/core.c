@@ -166,7 +166,7 @@ bool rbe_initialize_audio() {
 }
 
 bool rbe_initialize_input() {
-    if (!rbe_input_initialize()) {
+    if (!cre_input_initialize()) {
         return false;
     }
     return true;
@@ -202,7 +202,7 @@ bool rbe_load_assets_from_configuration() {
         for (size_t valueIndex = 0; valueIndex < inputAction.valueCount; valueIndex++) {
             const char* actionValue = inputAction.values[valueIndex];
             rbe_logger_debug("action_name = %s, action_value = %s", inputAction.name, actionValue);
-            rbe_input_add_action_value(inputAction.name, actionValue, inputAction.deviceId);
+            cre_input_add_action_value(inputAction.name, actionValue, inputAction.deviceId);
         }
     }
 
@@ -245,7 +245,7 @@ void rbe_process_inputs() {
         default:
             break;
         }
-        rbe_input_process(event);
+        cre_input_process(event);
     }
 }
 
@@ -281,10 +281,10 @@ void rbe_process_game_update() {
         fixedTime += PHYSICS_DELTA_TIME;
         accumulator -= PHYSICS_DELTA_TIME;
         rbe_ec_system_physics_process_systems((float) PHYSICS_DELTA_TIME);
-        rbe_input_clean_up_flags();
+        cre_input_clean_up_flags();
     }
 
-    rbe_input_clean_up_flags();
+    cre_input_clean_up_flags();
     lastFrameTime = SDL_GetTicks();
 }
 
@@ -311,7 +311,7 @@ void rbe_shutdown() {
     rbe_renderer_finalize();
     rbe_game_props_finalize();
     rbe_audio_manager_finalize();
-    rbe_input_finalize();
+    cre_input_finalize();
     rbe_asset_manager_finalize();
     rbe_scene_manager_finalize();
     rbe_ecs_manager_finalize();

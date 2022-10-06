@@ -40,7 +40,7 @@ typedef struct InputFlagCleaner {
 InputFlagCleaner actionJustPressedClean = {0};
 InputFlagCleaner actionJustReleasedClean = {0};
 
-bool rbe_input_initialize() {
+bool cre_input_initialize() {
     inputActionMap = rbe_string_hash_map_create(32);
     // SETUP INPUT STRING VALUES
     // Keyboard
@@ -111,9 +111,9 @@ bool rbe_input_initialize() {
     return true;
 }
 
-void rbe_input_finalize() {}
+void cre_input_finalize() {}
 
-void rbe_input_add_action_value(const char* actionName, const char* actionValue, int deviceId) {
+void cre_input_add_action_value(const char* actionName, const char* actionValue, int deviceId) {
     if (!rbe_string_hash_map_has(inputActionMap, actionName)) {
         rbe_string_hash_map_add(inputActionMap, actionName, rbe_input_action_create_new_input_action(actionName, deviceId), sizeof(InputAction));
         inputActionNames[inputActionNamesCount] = actionName;
@@ -138,17 +138,17 @@ void rbe_input_add_action_value(const char* actionName, const char* actionValue,
     }
 }
 
-void rbe_input_remove_action_value(const char* actionName, const char* actionValue) {}
+void cre_input_remove_action_value(const char* actionName, const char* actionValue) {}
 
-void rbe_input_remove_action(const char* actionName) {}
+void cre_input_remove_action(const char* actionName) {}
 
-void rbe_input_process(SDL_Event event) {
+void cre_input_process(SDL_Event event) {
     input_process_keyboard();
     input_process_mouse(event);
     input_process_gamepad(event);
 }
 
-void rbe_input_clean_up_flags() {
+void cre_input_clean_up_flags() {
     // Just Pressed
     for (size_t i = 0; i < actionJustPressedClean.count; i++) {
         actionJustPressedClean.inputActions[i]->isActionJustPressed = false;
@@ -165,7 +165,7 @@ void rbe_input_clean_up_flags() {
 }
 
 // Queries
-bool rbe_input_is_action_pressed(const char* actionName) {
+bool cre_input_is_action_pressed(const char* actionName) {
     if (rbe_string_hash_map_has(inputActionMap, actionName)) {
         InputAction* inputAction = (InputAction*) rbe_string_hash_map_get(inputActionMap, actionName);
         return inputAction->isActionPressed;
@@ -173,7 +173,7 @@ bool rbe_input_is_action_pressed(const char* actionName) {
     return false;
 }
 
-bool rbe_input_is_action_just_pressed(const char* actionName) {
+bool cre_input_is_action_just_pressed(const char* actionName) {
     if (rbe_string_hash_map_has(inputActionMap, actionName)) {
         InputAction* inputAction = (InputAction*) rbe_string_hash_map_get(inputActionMap, actionName);
         return inputAction->isActionJustPressed;
@@ -181,7 +181,7 @@ bool rbe_input_is_action_just_pressed(const char* actionName) {
     return false;
 }
 
-bool rbe_input_is_action_just_released(const char* actionName) {
+bool cre_input_is_action_just_released(const char* actionName) {
     if (rbe_string_hash_map_has(inputActionMap, actionName)) {
         InputAction* inputAction = (InputAction*) rbe_string_hash_map_get(inputActionMap, actionName);
         return inputAction->isActionJustReleased;
@@ -267,7 +267,8 @@ void input_process_mouse(SDL_Event event) {
 }
 
 //--- Gamepad ---//
-#define RBE_MAX_GAMEPAD_INTERNAL_INPUT_ACTIONS 29
+#define CRE_MAX_GAMEPAD_INTERNAL_INPUT_ACTIONS 29
+#define CRE_MAX_GAMEPAD_DEVICES 4
 // TODO: Make dead zones configurable per action
 #define GAMEPAD_AXIS_DEAD_ZONE 10000
 #define GAMEPAD_TRIGGER_DEAD_ZONE 8000
@@ -314,7 +315,7 @@ typedef enum GamepadInputAxisMotionType {
 } GamepadInputAxisMotionType;
 
 // Some indices from 0 - 14 use SDL_GameControllerButton enum values
-GamepadInputButtonAction gamepadInputButtonActions[RBE_MAX_GAMEPAD_INTERNAL_INPUT_ACTIONS];
+GamepadInputButtonAction gamepadInputButtonActions[CRE_MAX_GAMEPAD_INTERNAL_INPUT_ACTIONS];
 
 SDL_Joystick* joystickController = NULL;
 SDL_GameController* gameController = NULL;
@@ -357,7 +358,7 @@ void input_initialize_gamepad_system() {
 // TODO: Make better (e.g. loading more than one controller and checking for connects/disconnects)...
 void input_load_gamepads() {
     // Initialize gamepad input action array
-    for (size_t i = 0; i < RBE_MAX_GAMEPAD_INTERNAL_INPUT_ACTIONS; i++) {
+    for (size_t i = 0; i < CRE_MAX_GAMEPAD_INTERNAL_INPUT_ACTIONS; i++) {
         gamepadInputButtonActions[i].isPressed = false;
         gamepadInputButtonActions[i].isJustPressed = false;
         gamepadInputButtonActions[i].isJustReleased = false;
@@ -391,7 +392,7 @@ void input_process_gamepad(SDL_Event event) {
         const int controllerId = event.jbutton.which;
         const bool isButtonPressed = event.jbutton.state == SDL_PRESSED;
         const uint8_t buttonValue = event.jbutton.button;
-        RBE_ASSERT(buttonValue < RBE_MAX_GAMEPAD_INTERNAL_INPUT_ACTIONS);
+        RBE_ASSERT(buttonValue < CRE_MAX_GAMEPAD_INTERNAL_INPUT_ACTIONS);
         if (controllerId == 0) {
             if (isButtonPressed) {
                 gamepadInputButtonActions[buttonValue].isPressed = true;
@@ -626,7 +627,7 @@ bool input_process_axis_motions() {
 
 void input_gamepad_cleanup_flags() {
     // Gamepad action clean up references
-    for (size_t i = 0; i < RBE_MAX_GAMEPAD_INTERNAL_INPUT_ACTIONS; i++) {
+    for (size_t i = 0; i < CRE_MAX_GAMEPAD_INTERNAL_INPUT_ACTIONS; i++) {
         gamepadInputButtonActions[i].isJustPressed = false;
         gamepadInputButtonActions[i].isJustReleased = false;
     }
