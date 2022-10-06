@@ -45,14 +45,16 @@ class Main(Node2D):
         self.add_child(p2_health_bar)
         # Add fighters
         self.fight_sim.add_fighter(
-            Fighter(
+            fighter=Fighter(
                 player_one_node, player_one_collider, player_one_input, p1_health_bar
-            )
+            ),
+            moves_path="moves/mor_moves.csmv",
         )
         self.fight_sim.add_fighter(
-            Fighter(
+            fighter=Fighter(
                 player_two_node, player_two_collider, player_two_input, p2_health_bar
-            )
+            ),
+            moves_path="moves/mor_moves.csmv",
         )
 
         # Network

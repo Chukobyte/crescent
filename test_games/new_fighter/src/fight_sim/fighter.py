@@ -1,7 +1,8 @@
 from typing import Tuple
 
 from crescent_api import *
-from src.hit_box import Attack
+from src.attack import Attack, DragonFireBallAttack, DragonPunchAttack, DragonPunchKick
+from src.special_moves import SpecialMovesManager
 from src.task import co_suspend
 from src.health_bar import HealthBar
 from src.input import InputBuffer
@@ -37,6 +38,8 @@ class Fighter:
         self.speed = 50
         self.state = FighterState.IDLE
         self.stance = FighterStance.NONE
+        self.facing_dir = Vector2.RIGHT()
+        self.moves_manager = SpecialMovesManager()
         self._previous_stance = FighterStance.NONE
 
     def update_input_state(self) -> None:
@@ -54,7 +57,7 @@ class Fighter:
         # Facing right
         return Vector2(48, -10) * x_scale_vec, x_scale_vec
 
-    def spawn_basic_attack_from_stance(self) -> Attack:
+    def _get_default_attack_position(self) -> Vector2:
         attack_offset, x_scale_vec2 = self._get_base_attack_offset_and_xscale()
         if self.stance == FighterStance.STANDING:
             pass
@@ -62,10 +65,32 @@ class Fighter:
             attack_offset += Vector2(0.0, 20) * x_scale_vec2
         elif self.stance == FighterStance.IN_AIR:
             attack_offset += Vector2(0.0, 20) * x_scale_vec2
+        return self.node.global_position + attack_offset
+
+    def spawn_basic_attack_from_stance(self) -> Attack:
         attack = Attack.new()
-        attack.position = self.node.global_position + attack_offset
+        attack.position = self._get_default_attack_position()
+        attack.direction = self.facing_dir
         attack.life_time = 0.2
         return attack
+
+    def spawn_special_attack(self, attack_name) -> Attack:
+        if attack_name == "Dragon Fire Ball":
+            dragon_fire_ball = DragonFireBallAttack.new()
+            dragon_fire_ball.position = self._get_default_attack_position()
+            dragon_fire_ball.direction = self.facing_dir
+            return dragon_fire_ball
+        elif attack_name == "Dragon Uppercut":
+            dragon_uppercut = DragonPunchAttack.new()
+            dragon_uppercut.position = self._get_default_attack_position()
+            dragon_uppercut.direction = self.facing_dir
+            return dragon_uppercut
+        elif attack_name == "Dragon Kick":
+            dragon_kick = DragonPunchKick.new()
+            dragon_kick.position = self._get_default_attack_position()
+            dragon_kick.direction = self.facing_dir
+            return dragon_kick
+        return self.spawn_basic_attack_from_stance()
 
     def on_attack_connect(self, attack: Attack) -> None:
         print(
@@ -90,6 +115,9 @@ class Fighter:
         self._previous_stance = self.stance
         self.stance = stance
         return self._previous_stance != self.stance
+
+    def set_state(self, state: int) -> None:
+        self.state = state
 
     async def manage_jump_state(self, delta_time: float):
         jump_height = 40

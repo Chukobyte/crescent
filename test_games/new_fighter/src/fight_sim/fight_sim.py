@@ -1,4 +1,5 @@
 from src.input import *
+from src.special_moves import SpecialMove
 from src.task import *
 from src.fight_sim.fighter import *
 
@@ -42,10 +43,18 @@ class FighterSimulation:
         self.fighter_coroutines = []  # temp for now
         self.fight_match_time = 99
 
-    def add_fighter(self, fighter: Fighter) -> None:
+    def _on_fighter_special_move_triggered(self, move: SpecialMove):
+        print(f"move '{move.name}' triggered!")
+
+    def add_fighter(self, fighter: Fighter, moves_path: str = None) -> None:
         self.fighters.append(fighter)
         if isinstance(fighter.input_buffer, NetworkReceiverInputBuffer):
             self.network_receiving_fighters.append(fighter)
+        if moves_path:
+            fighter.moves_manager.add_moves_from_file(moves_path)
+            fighter.moves_manager.bind_on_completed_func(
+                self._on_fighter_special_move_triggered
+            )
 
     def add_attack(self, attack: Attack, fighter_index: int) -> None:
         self.active_attacks.append(
@@ -73,18 +82,48 @@ class FighterSimulation:
         one_scale = self.fighters[0].node.scale
         if fighter_one_pos.x > fighter_two_pos.x:
             self.fighters[0].node.scale = Vector2(-abs(one_scale.x), one_scale.y)
+            self.fighters[0].facing_dir = Vector2.LEFT()
         else:
             self.fighters[0].node.scale = Vector2(abs(one_scale.x), one_scale.y)
+            self.fighters[0].facing_dir = Vector2.RIGHT()
         # Fighter Two
         two_scale = self.fighters[1].node.scale
         if fighter_two_pos.x > fighter_one_pos.x:
             self.fighters[1].node.scale = Vector2(-abs(two_scale.x), two_scale.y)
+            self.fighters[1].facing_dir = Vector2.LEFT()
         else:
             self.fighters[1].node.scale = Vector2(abs(two_scale.x), two_scale.y)
+            self.fighters[1].facing_dir = Vector2.RIGHT()
 
         # Move fighters
         for i, fighter in enumerate(self.fighters):
             fighter.input_buffer.process_inputs()
+
+            # Special Attack (has the highest priority)
+            if fighter.state == FighterState.IDLE:
+                fighter.moves_manager.update(
+                    fighter.input_buffer, fighter.facing_dir, delta_time
+                )
+                if fighter.moves_manager.current_triggered_move:
+                    attacking_fighter = fighter
+                    attacking_fighter.set_state(FighterState.ATTACKING)
+                    self.add_timed_func(
+                        TimedFunction(
+                            fighter.moves_manager.current_triggered_move.cooldown_time,
+                            lambda: attacking_fighter.set_state(FighterState.IDLE),
+                        )
+                    )
+                    special_attack = fighter.spawn_special_attack(
+                        fighter.moves_manager.current_triggered_move.name
+                    )
+                    if i == 0:
+                        attack_target = self.fighters[1]
+                    else:
+                        attack_target = self.fighters[0]
+                    special_attack.add_fighter_target(attack_target)
+                    self.main_node.add_child(special_attack)
+                    self.add_attack(attack=special_attack, fighter_index=i)
+
             if fighter.state == FighterState.IDLE:
                 if fighter.input_buffer.move_left_pressed:
                     fighter.velocity += Vector2.LEFT()
@@ -141,7 +180,7 @@ class FighterSimulation:
                 print(f"[PY_SCRIPT] attack = {attack}")
                 self.main_node.add_child(attack)
                 self.add_attack(attack=attack, fighter_index=i)
-                fighter.state = FighterState.ATTACKING
+                fighter.set_state(FighterState.ATTACKING)
 
             # Zero out vel for now...
             fighter.velocity = Vector2.ZERO()
@@ -165,7 +204,7 @@ class FighterSimulation:
                 if awaitable.state == Awaitable.State.FINISHED:
                     raise StopIteration
             except StopIteration:
-                self.fighters[attack_ref.fighter_index].state = FighterState.IDLE
+                self.fighters[attack_ref.fighter_index].set_state(FighterState.IDLE)
                 attack_ref.attack.queue_deletion()
                 self.active_attacks.remove(attack_ref)
                 continue

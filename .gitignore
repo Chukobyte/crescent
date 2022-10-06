@@ -28,3 +28,6 @@ CTestTestfile.cmake
 _deps
 
 cmake-build-*
+
+# Test Projects
+test_games/new_fighter/src/test
