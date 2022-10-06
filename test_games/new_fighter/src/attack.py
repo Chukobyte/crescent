@@ -66,10 +66,37 @@ class Attack(HitBox):
 
 
 class DragonFireBallAttack(Attack):
-    def _start(self) -> None:
-        super()._start()
+    def __init__(self, entity_id: int):
+        super().__init__(entity_id)
         self.life_time = 5.0
+        self.speed = 100
 
     def _update(self, delta_time: float) -> None:
-        speed = 100
-        self.add_to_position(Vector2(speed * delta_time, 0))
+        self.add_to_position(Vector2(self.speed * delta_time, 0))
+
+
+class DragonPunchAttack(Attack):
+    def __init__(self, entity_id: int):
+        super().__init__(entity_id)
+        self.life_time = 2.0
+        self.speed = 50
+
+    def _update(self, delta_time: float) -> None:
+        self.add_to_position(Vector2(self.speed * delta_time, -self.speed * delta_time))
+
+
+class DragonPunchKick(Attack):
+    def __init__(self, entity_id: int):
+        super().__init__(entity_id)
+        self.life_time = 2.0
+        self.original_position = Vector2.ZERO()
+        self.is_right = False
+
+    def _start(self):
+        super()._start()
+        self.original_position = self.position
+
+    def _update(self, delta_time: float) -> None:
+        if self.position.x < self.original_position.x:
+            self.add_to_position(Vector2(1000 * delta_time, 0))
+        self.add_to_position(Vector2(-10 * delta_time, 0))

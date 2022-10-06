@@ -1,7 +1,7 @@
 from typing import Tuple
 
 from crescent_api import *
-from src.attack import Attack, DragonFireBallAttack
+from src.attack import Attack, DragonFireBallAttack, DragonPunchAttack, DragonPunchKick
 from src.special_moves import SpecialMovesManager
 from src.task import co_suspend
 from src.health_bar import HealthBar
@@ -78,6 +78,14 @@ class Fighter:
             dragon_fire_ball = DragonFireBallAttack.new()
             dragon_fire_ball.position = self._get_default_attack_position()
             return dragon_fire_ball
+        elif attack_name == "Dragon Uppercut":
+            dragon_uppercut = DragonPunchAttack.new()
+            dragon_uppercut.position = self._get_default_attack_position()
+            return dragon_uppercut
+        elif attack_name == "Dragon Kick":
+            dragon_kick = DragonPunchKick.new()
+            dragon_kick.position = self._get_default_attack_position()
+            return dragon_kick
         return self.spawn_basic_attack_from_stance()
 
     def on_attack_connect(self, attack: Attack) -> None:
