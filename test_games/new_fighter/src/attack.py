@@ -63,8 +63,6 @@ class Attack(HitBox):
 
 
 # Child classes
-
-
 class DragonFireBallAttack(Attack):
     def __init__(self, entity_id: int):
         super().__init__(entity_id)
