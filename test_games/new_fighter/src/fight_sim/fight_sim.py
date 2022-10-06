@@ -109,7 +109,6 @@ class FighterSimulation:
                             lambda: attacking_fighter.set_state(FighterState.IDLE),
                         )
                     )
-                    # TODO: Spawn special attack!
                     special_attack = fighter.spawn_special_attack(
                         fighter.moves_manager.current_triggered_move.name
                     )
