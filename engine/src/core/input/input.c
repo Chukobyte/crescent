@@ -316,6 +316,7 @@ typedef enum GamepadInputAxisMotionType {
 
 typedef struct CreGamepad {
     SDL_Joystick* joystickController;
+    SDL_GameController* gameController;
     // Some indices from 0 - 14 use SDL_GameControllerButton enum values
     GamepadInputButtonAction gamepadInputButtonActions[CRE_MAX_GAMEPAD_INTERNAL_INPUT_ACTIONS];
 } CreGamepad;
@@ -362,6 +363,7 @@ void input_initialize_gamepad_system() {
 // TODO: Make better (e.g. loading more than one controller and checking for connects/disconnects)...
 void input_load_gamepads() {
     for (size_t i = 0; i < CRE_MAX_GAMEPAD_DEVICES; i++) {
+        activeGamePads[i].gameController = NULL;
         activeGamePads[i].joystickController = NULL;
         activeGamePads[i].gamepadInputButtonActions->isPressed = false;
         activeGamePads[i].gamepadInputButtonActions->isJustPressed = false;
@@ -382,9 +384,14 @@ void input_process_gamepad(SDL_Event event) {
     bool buttonInputUpdated = false;
     switch (event.type) {
     case SDL_JOYDEVICEADDED: {
-        const int gamepadIndex = event.jdevice.which;
-        activeGamePads[gamepadIndex].joystickController = SDL_JoystickOpen(gamepadIndex);
-        RBE_ASSERT_FMT(activeGamePads[gamepadIndex].joystickController != NULL, "Failed to load gamepad with index '%d'", gamepadIndex);
+        SDL_GameController* newGameController = SDL_GameControllerOpen(event.cdevice.which);
+        RBE_ASSERT_FMT(newGameController != NULL, "Failed to load game controller with index '%d'", event.cdevice.which);
+        SDL_Joystick* newJoystick = SDL_GameControllerGetJoystick(newGameController);
+        RBE_ASSERT_FMT(newJoystick != NULL, "Failed to load joystick with index '%d'", event.jdevice.which);
+        const int gamepadIndex = SDL_JoystickInstanceID(newJoystick);
+        RBE_ASSERT_FMT(gamepadIndex < CRE_MAX_GAMEPAD_DEVICES, "Gamepad index '%d' higher than limit.", gamepadIndex);
+        activeGamePads[gamepadIndex].gameController = newGameController;
+        activeGamePads[gamepadIndex].joystickController = newJoystick;
         RBE_STATIC_ARRAY_ADD(activeGamepadIds, gamepadIndex);
         activeGamepadCount++;
         // TODO: Trigger gamepad connected callbacks
@@ -407,9 +414,9 @@ void input_process_gamepad(SDL_Event event) {
     case SDL_JOYBUTTONDOWN:
     case SDL_JOYBUTTONUP: {
         buttonInputUpdated = true;
-        const int controllerId = event.jbutton.which;
-        const bool isButtonPressed = event.jbutton.state == SDL_PRESSED;
-        const uint8_t buttonValue = event.jbutton.button;
+        const int controllerId = event.cbutton.which;
+        const bool isButtonPressed = event.cbutton.state == SDL_PRESSED;
+        const uint8_t buttonValue = event.cbutton.button;
         RBE_ASSERT(buttonValue < CRE_MAX_GAMEPAD_INTERNAL_INPUT_ACTIONS);
         if (isButtonPressed) {
             activeGamePads[controllerId].gamepadInputButtonActions[buttonValue].isPressed = true;
