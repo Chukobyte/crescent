@@ -316,7 +316,6 @@ typedef enum GamepadInputAxisMotionType {
 
 typedef struct CreGamepad {
     SDL_Joystick* joystickController;
-//    SDL_GameController* gameController;
     // Some indices from 0 - 14 use SDL_GameControllerButton enum values
     GamepadInputButtonAction gamepadInputButtonActions[CRE_MAX_GAMEPAD_INTERNAL_INPUT_ACTIONS];
 } CreGamepad;
@@ -363,7 +362,6 @@ void input_initialize_gamepad_system() {
 // TODO: Make better (e.g. loading more than one controller and checking for connects/disconnects)...
 void input_load_gamepads() {
     for (size_t i = 0; i < CRE_MAX_GAMEPAD_DEVICES; i++) {
-//        activeGamePads[i].gameController = NULL;
         activeGamePads[i].joystickController = NULL;
         activeGamePads[i].gamepadInputButtonActions->isPressed = false;
         activeGamePads[i].gamepadInputButtonActions->isJustPressed = false;
