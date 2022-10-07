@@ -377,25 +377,23 @@ void input_load_gamepads() {
     strcat(controllerMappingFilePath, "/assets/resources/game_controller_db.txt");
     const int result = SDL_GameControllerAddMappingsFromFile(controllerMappingFilePath);
     RBE_ASSERT_FMT(result >= 0, "Couldn't load sdl controller mapping file at path '%s'!", controllerMappingFilePath);
-    for (int i = 0; i < SDL_NumJoysticks(); i++) {
-        if (SDL_IsGameController(i)) {
-            activeGamePads[i].joystickController = SDL_JoystickOpen(i);
-            RBE_ASSERT_FMT(activeGamePads[i].joystickController != NULL, "SDL joystick '%d' didn't load correctly at path '%s'!", i, controllerMappingFilePath);
-//            activeGamePads[activeGamepadCount].gameController = SDL_GameControllerOpen(gamepadIndex);
-//            RBE_ASSERT_FMT(activeGamePads[gamepadIndex].gameController != NULL, "SDL game controller '%d' didn't load correctly at path '%s'!", gamepadIndex, controllerMappingFilePath);
-            rbe_logger_debug("Loaded gamepad %d!", i);
-            activeGamepadIds[i] = i; // One to one mapping for now
-            activeGamepadCount++;
-        }
-    }
-    if (activeGamepadCount == 0) {
-        rbe_logger_debug("No gamepads detected.");
-    }
 }
 
 void input_process_gamepad(SDL_Event event) {
     bool buttonInputUpdated = false;
     switch (event.type) {
+    case SDL_JOYDEVICEADDED: {
+        const int gamepadIndex = event.jdevice.which;
+        activeGamePads[gamepadIndex].joystickController = SDL_JoystickOpen(gamepadIndex);
+        RBE_ASSERT_FMT(activeGamePads[gamepadIndex].joystickController != NULL, "Failed to load gamepad with index '%d'", gamepadIndex);
+        activeGamepadIds[activeGamepadCount] = gamepadIndex;
+        activeGamepadCount++;
+        // TODO: Trigger gamepad connected callbacks
+        break;
+    }
+    case SDL_JOYDEVICEREMOVED:
+        // TODO: Trigger gamepad disconnected callbacks
+        break;
     case SDL_JOYBUTTONDOWN:
     case SDL_JOYBUTTONUP: {
         buttonInputUpdated = true;
