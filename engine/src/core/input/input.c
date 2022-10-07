@@ -394,7 +394,7 @@ void input_process_gamepad(SDL_Event event) {
     bool buttonInputUpdated = false;
     switch (event.type) {
     case SDL_CONTROLLERDEVICEADDED: {
-        // TODO: Trigger gamepad connected callbacks
+        // TODO: Trigger gamepad connected script callbacks
         SDL_GameController* newGameController = SDL_GameControllerOpen(event.cdevice.which);
         RBE_ASSERT_FMT(newGameController != NULL, "Failed to load game controller with index '%d'", event.cdevice.which);
         SDL_Joystick* newJoystick = SDL_GameControllerGetJoystick(newGameController);
@@ -413,7 +413,7 @@ void input_process_gamepad(SDL_Event event) {
         break;
     }
     case SDL_CONTROLLERDEVICEREMOVED: {
-        // TODO: Trigger gamepad disconnected callbacks
+        // TODO: Trigger gamepad disconnected script callbacks
         const int gamepadIndex = event.cdevice.which;
         SDL_JoystickClose(activeGamePads[gamepadIndex].joystickController);
         for (int i = 0; i < activeGamepadCount; i++) {
