@@ -60,10 +60,14 @@ class TitleScreen(Node2D):
             else:
                 SceneTree.change_scene(path="nodes/main.cscn")
 
-        if Input.is_action_just_pressed(name="p1_move_left") or Input.is_action_just_pressed(name="p2_move_left"):
+        if Input.is_action_just_pressed(
+            name="p1_move_left"
+        ) or Input.is_action_just_pressed(name="p2_move_left"):
             self.selected_game_mode_index -= 1
             self._update_game_mode_text()
-        elif Input.is_action_just_pressed(name="p1_move_right") or Input.is_action_just_pressed(name="p2_move_right"):
+        elif Input.is_action_just_pressed(
+            name="p1_move_right"
+        ) or Input.is_action_just_pressed(name="p2_move_right"):
             self.selected_game_mode_index += 1
             self._update_game_mode_text()
 
