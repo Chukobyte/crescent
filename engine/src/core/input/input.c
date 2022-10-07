@@ -315,7 +315,7 @@ typedef enum GamepadInputAxisMotionType {
 
 typedef struct CreGamepad {
     SDL_Joystick* joystickController;
-    SDL_GameController* gameController;
+//    SDL_GameController* gameController;
     // Some indices from 0 - 14 use SDL_GameControllerButton enum values
     GamepadInputButtonAction gamepadInputButtonActions[CRE_MAX_GAMEPAD_INTERNAL_INPUT_ACTIONS];
 } CreGamepad;
@@ -362,7 +362,7 @@ void input_initialize_gamepad_system() {
 // TODO: Make better (e.g. loading more than one controller and checking for connects/disconnects)...
 void input_load_gamepads() {
     for (size_t i = 0; i < CRE_MAX_GAMEPAD_DEVICES; i++) {
-        activeGamePads[i].gameController = NULL;
+//        activeGamePads[i].gameController = NULL;
         activeGamePads[i].joystickController = NULL;
         activeGamePads[i].gamepadInputButtonActions->isPressed = false;
         activeGamePads[i].gamepadInputButtonActions->isJustPressed = false;
@@ -379,12 +379,12 @@ void input_load_gamepads() {
     RBE_ASSERT_FMT(result >= 0, "Couldn't load sdl controller mapping file at path '%s'!", controllerMappingFilePath);
     for (int i = 0; i < SDL_NumJoysticks(); i++) {
         if (SDL_IsGameController(i)) {
-            activeGamePads[activeGamepadCount].joystickController = SDL_JoystickOpen(i);
-            RBE_ASSERT_FMT(activeGamePads[activeGamepadCount].joystickController != NULL, "SDL joystick '%d' didn't load correctly at path '%s'!", i, controllerMappingFilePath);
-            activeGamePads[activeGamepadCount].gameController = SDL_GameControllerOpen(i);
-            RBE_ASSERT_FMT(activeGamePads[activeGamepadCount].gameController != NULL, "SDL game controller '%d' didn't load correctly at path '%s'!", i, controllerMappingFilePath);
+            activeGamePads[i].joystickController = SDL_JoystickOpen(i);
+            RBE_ASSERT_FMT(activeGamePads[i].joystickController != NULL, "SDL joystick '%d' didn't load correctly at path '%s'!", i, controllerMappingFilePath);
+//            activeGamePads[activeGamepadCount].gameController = SDL_GameControllerOpen(gamepadIndex);
+//            RBE_ASSERT_FMT(activeGamePads[gamepadIndex].gameController != NULL, "SDL game controller '%d' didn't load correctly at path '%s'!", gamepadIndex, controllerMappingFilePath);
             rbe_logger_debug("Loaded gamepad %d!", i);
-            activeGamepadIds[activeGamepadCount] = activeGamepadCount; // One to one mapping for now
+            activeGamepadIds[i] = i; // One to one mapping for now
             activeGamepadCount++;
         }
     }
