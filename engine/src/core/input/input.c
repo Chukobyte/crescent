@@ -414,9 +414,9 @@ void input_process_gamepad(SDL_Event event) {
     case SDL_JOYBUTTONDOWN:
     case SDL_JOYBUTTONUP: {
         buttonInputUpdated = true;
-        const int controllerId = event.cbutton.which;
-        const bool isButtonPressed = event.cbutton.state == SDL_PRESSED;
-        const uint8_t buttonValue = event.cbutton.button;
+        const int controllerId = event.jbutton.which;
+        const bool isButtonPressed = event.jbutton.state == SDL_PRESSED;
+        const uint8_t buttonValue = event.jbutton.button;
         RBE_ASSERT(buttonValue < CRE_MAX_GAMEPAD_INTERNAL_INPUT_ACTIONS);
         if (isButtonPressed) {
             activeGamePads[controllerId].gamepadInputButtonActions[buttonValue].isPressed = true;
@@ -431,7 +431,7 @@ void input_process_gamepad(SDL_Event event) {
     case SDL_JOYHATMOTION: {
         buttonInputUpdated = true;
         const int controllerId = event.jhat.which;
-        const uint8_t hat = event.jhat.hat;
+//        const uint8_t hat = event.jhat.hat;
         const uint8_t hatValue = event.jhat.value;
         // Process Joyhat Motion (dpad)
         if (hatValue & SDL_HAT_LEFT) {
