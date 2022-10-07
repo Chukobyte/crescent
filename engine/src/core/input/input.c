@@ -389,7 +389,7 @@ void input_process_gamepad(SDL_Event event) {
         RBE_ASSERT_FMT(newGameController != NULL, "Failed to load game controller with index '%d'", event.cdevice.which);
         SDL_Joystick* newJoystick = SDL_GameControllerGetJoystick(newGameController);
         RBE_ASSERT_FMT(newJoystick != NULL, "Failed to load joystick with index '%d'", event.jdevice.which);
-        const int gamepadIndex = SDL_JoystickInstanceID(newJoystick);
+        const int gamepadIndex = SDL_JoystickGetDeviceInstanceID(event.cdevice.which);
         RBE_ASSERT_FMT(gamepadIndex < CRE_MAX_GAMEPAD_DEVICES, "Gamepad index '%d' higher than limit.", gamepadIndex);
         activeGamePads[gamepadIndex].gameController = newGameController;
         activeGamePads[gamepadIndex].joystickController = newJoystick;
