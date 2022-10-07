@@ -5,6 +5,7 @@
 #include "input_action.h"
 #include "input_value_constants.h"
 #include "../data_structures/rbe_hash_map_string.h"
+#include "../data_structures/rbe_static_array.h"
 #include "../utils/logger.h"
 #include "../utils/rbe_string_util.h"
 #include "../utils/rbe_assert.h"
@@ -270,7 +271,7 @@ void input_process_mouse(SDL_Event event) {
 // TODO: Make dead zones configurable per action
 #define GAMEPAD_AXIS_DEAD_ZONE 10000
 #define GAMEPAD_TRIGGER_DEAD_ZONE 8000
-#define INVALID_GAMEPAD_ID -1
+#define INVALID_GAMEPAD_ID (-1)
 
 typedef struct GamepadInputButtonAction {
     bool isPressed;
@@ -322,7 +323,7 @@ typedef struct CreGamepad {
 
 CreGamepad activeGamePads[CRE_MAX_GAMEPAD_DEVICES];
 static int activeGamepadCount = 0;
-static int activeGamepadIds[CRE_MAX_GAMEPAD_DEVICES];
+RBE_STATIC_ARRAY_CREATE(int, CRE_MAX_GAMEPAD_DEVICES, activeGamepadIds);
 
 bool input_process_axis_motions();
 
@@ -386,14 +387,25 @@ void input_process_gamepad(SDL_Event event) {
         const int gamepadIndex = event.jdevice.which;
         activeGamePads[gamepadIndex].joystickController = SDL_JoystickOpen(gamepadIndex);
         RBE_ASSERT_FMT(activeGamePads[gamepadIndex].joystickController != NULL, "Failed to load gamepad with index '%d'", gamepadIndex);
-        activeGamepadIds[activeGamepadCount] = gamepadIndex;
+        RBE_STATIC_ARRAY_ADD(activeGamepadIds, gamepadIndex);
         activeGamepadCount++;
         // TODO: Trigger gamepad connected callbacks
         break;
     }
-    case SDL_JOYDEVICEREMOVED:
+    case SDL_JOYDEVICEREMOVED: {
         // TODO: Trigger gamepad disconnected callbacks
+        const int gamepadIndex = event.jdevice.which;
+        SDL_JoystickClose(activeGamePads[gamepadIndex].joystickController);
+        for (int i = 0; i < activeGamepadCount; i++) {
+            if (activeGamepadIds[i] == gamepadIndex) {
+                RBE_STATIC_ARRAY_REMOVE(activeGamepadIds, gamepadIndex, INVALID_GAMEPAD_ID);
+                activeGamepadCount--;
+                break;
+            }
+        }
+        rbe_logger_error("Failed to remove gamepad with index '%d'", gamepadIndex);
         break;
+    }
     case SDL_JOYBUTTONDOWN:
     case SDL_JOYBUTTONUP: {
         buttonInputUpdated = true;
