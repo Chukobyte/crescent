@@ -315,8 +315,9 @@ typedef enum GamepadInputAxisMotionType {
 } GamepadInputAxisMotionType;
 
 typedef struct CreGamepad {
-    SDL_Joystick* joystickController;
     SDL_GameController* gameController;
+    SDL_Joystick* joystickController;
+    SDL_JoystickID joystickId;
     // Some indices from 0 - 14 use SDL_GameControllerButton enum values
     GamepadInputButtonAction gamepadInputButtonActions[CRE_MAX_GAMEPAD_INTERNAL_INPUT_ACTIONS];
 } CreGamepad;
@@ -380,6 +381,15 @@ void input_load_gamepads() {
     RBE_ASSERT_FMT(result >= 0, "Couldn't load sdl controller mapping file at path '%s'!", controllerMappingFilePath);
 }
 
+CreGamepad* input_find_gamepad(SDL_JoystickID id) {
+    for (int i = 0; i < activeGamepadCount; i++) {
+        if (id == activeGamePads[i].joystickId) {
+            return &activeGamePads[i];
+        }
+    }
+    return NULL;
+}
+
 void input_process_gamepad(SDL_Event event) {
     bool buttonInputUpdated = false;
     switch (event.type) {
@@ -389,10 +399,15 @@ void input_process_gamepad(SDL_Event event) {
         RBE_ASSERT_FMT(newGameController != NULL, "Failed to load game controller with index '%d'", event.cdevice.which);
         SDL_Joystick* newJoystick = SDL_GameControllerGetJoystick(newGameController);
         RBE_ASSERT_FMT(newJoystick != NULL, "Failed to load joystick with index '%d'", event.jdevice.which);
-        const int gamepadIndex = SDL_JoystickGetDevicePlayerIndex(SDL_JoystickInstanceID(newJoystick));
+        int gamepadIndex = SDL_GameControllerGetPlayerIndex(newGameController);
+        if (gamepadIndex == -1) {
+            gamepadIndex = SDL_JoystickInstanceID(newJoystick);
+            rbe_logger_warn("Unable to get player index from controller, using SDL joystick instance id '%d'", gamepadIndex);
+        }
         RBE_ASSERT_FMT(gamepadIndex < CRE_MAX_GAMEPAD_DEVICES, "Gamepad index '%d' higher than limit.", gamepadIndex);
         activeGamePads[gamepadIndex].gameController = newGameController;
         activeGamePads[gamepadIndex].joystickController = newJoystick;
+        activeGamePads[gamepadIndex].joystickId = SDL_JoystickInstanceID(newJoystick);
         RBE_STATIC_ARRAY_ADD(activeGamepadIds, gamepadIndex);
         activeGamepadCount++;
         break;
@@ -414,24 +429,24 @@ void input_process_gamepad(SDL_Event event) {
     case SDL_JOYBUTTONDOWN:
     case SDL_JOYBUTTONUP: {
         buttonInputUpdated = true;
-        const int controllerId = event.jbutton.which;
+        const SDL_JoystickID controllerId = event.jbutton.which;
         const bool isButtonPressed = event.jbutton.state == SDL_PRESSED;
         const uint8_t buttonValue = event.jbutton.button;
         RBE_ASSERT(buttonValue < CRE_MAX_GAMEPAD_INTERNAL_INPUT_ACTIONS);
+        CreGamepad* gamepad = input_find_gamepad(controllerId);
         if (isButtonPressed) {
-            activeGamePads[controllerId].gamepadInputButtonActions[buttonValue].isPressed = true;
-            activeGamePads[controllerId].gamepadInputButtonActions[buttonValue].isJustPressed = true;
+            gamepad->gamepadInputButtonActions[buttonValue].isPressed = true;
+            gamepad->gamepadInputButtonActions[buttonValue].isJustPressed = true;
         } else {
-            activeGamePads[controllerId].gamepadInputButtonActions[buttonValue].isPressed = false;
-            activeGamePads[controllerId].gamepadInputButtonActions[buttonValue].isJustPressed = false;
-            activeGamePads[controllerId].gamepadInputButtonActions[buttonValue].isJustReleased = true;
+            gamepad->gamepadInputButtonActions[buttonValue].isPressed = false;
+            gamepad->gamepadInputButtonActions[buttonValue].isJustPressed = false;
+            gamepad->gamepadInputButtonActions[buttonValue].isJustReleased = true;
         }
         break;
     }
     case SDL_JOYHATMOTION: {
         buttonInputUpdated = true;
         const int controllerId = event.jhat.which;
-//        const uint8_t hat = event.jhat.hat;
         const uint8_t hatValue = event.jhat.value;
         // Process Joyhat Motion (dpad)
         if (hatValue & SDL_HAT_LEFT) {
