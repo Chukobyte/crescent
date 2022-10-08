@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdbool.h>
+
 // Helper class for generalized use of static arrays
 
 #define RBE_STATIC_ARRAY_CREATE(ARRAY_TYPE, ARRAY_SIZE, ARRAY_NAME) \
@@ -11,9 +13,26 @@ ARRAY_NAME[ARRAY_NAME ##_count++] = ARRAY_VALUE
 
 #define RBE_STATIC_ARRAY_REMOVE(ARRAY_NAME, ARRAY_VALUE, EMPTY_VALUE) \
 {                                                                     \
-const size_t ARRAY_NAME ##_count_ref = ARRAY_NAME ##_count;\
+const size_t ARRAY_NAME ##_count_ref = ARRAY_NAME ##_count;           \
 for (size_t ARRAY_NAME ##_loop_index = 0; ARRAY_NAME ##_loop_index < ARRAY_NAME ##_count_ref; ARRAY_NAME ##_loop_index++) {       \
 if (ARRAY_NAME[ARRAY_NAME ##_loop_index] == ARRAY_VALUE) {                      \
+ARRAY_NAME[ARRAY_NAME ##_loop_index] = ARRAY_NAME[ARRAY_NAME ##_loop_index + 1];                       \
+ARRAY_NAME[ARRAY_NAME ##_loop_index + 1] = EMPTY_VALUE;                         \
+ARRAY_NAME ##_count--;                                   \
+}                                                        \
+if (ARRAY_NAME[ARRAY_NAME ##_loop_index] == EMPTY_VALUE) {                      \
+ARRAY_NAME[ARRAY_NAME ##_loop_index] = ARRAY_NAME[ARRAY_NAME ##_loop_index + 1];                       \
+ARRAY_NAME[ARRAY_NAME ##_loop_index + 1] = EMPTY_VALUE;                         \
+}                                                        \
+}                                                        \
+}
+
+#define RBE_STATIC_ARRAY_REMOVE_WITH_PREDICATE(ARRAY_NAME, ARRAY_VALUE, EMPTY_VALUE, ARRAY_TYPE, PRED_FUNC) \
+{                                                                                                           \
+bool (*static_array_compare_func)(ARRAY_TYPE first, ARRAY_TYPE second) = PRED_FUNC; \
+const size_t ARRAY_NAME ##_count_ref = ARRAY_NAME ##_count;           \
+for (size_t ARRAY_NAME ##_loop_index = 0; ARRAY_NAME ##_loop_index < ARRAY_NAME ##_count_ref; ARRAY_NAME ##_loop_index++) {       \
+if (static_array_compare_func(ARRAY_NAME[ARRAY_NAME ##_loop_index], ARRAY_VALUE)) {                      \
 ARRAY_NAME[ARRAY_NAME ##_loop_index] = ARRAY_NAME[ARRAY_NAME ##_loop_index + 1];                       \
 ARRAY_NAME[ARRAY_NAME ##_loop_index + 1] = EMPTY_VALUE;                         \
 ARRAY_NAME ##_count--;                                   \
