@@ -10,5 +10,4 @@ class RestartGameScreen(Node2D):
             Engine.exit()
 
         if Input.is_action_just_pressed(name="ui_confirm"):
-            # SceneTree.change_scene(path="nodes/main.cscn")
-            pass
+            SceneTree.change_scene(path="nodes/main.cscn")
