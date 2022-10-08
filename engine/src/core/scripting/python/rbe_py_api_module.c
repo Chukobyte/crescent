@@ -86,7 +86,7 @@ PyObject* rbe_py_api_input_add_action(PyObject* self, PyObject* args, PyObject* 
     char* actionValue;
     int deviceId;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "ssi", rbePyApiInputAddActionKWList, &actionName, &actionValue, &deviceId)) {
-        rbe_input_add_action_value(actionName, actionValue, deviceId);
+        cre_input_add_action_value(actionName, actionValue, deviceId);
         Py_RETURN_NONE;
     }
     return NULL;
@@ -95,7 +95,7 @@ PyObject* rbe_py_api_input_add_action(PyObject* self, PyObject* args, PyObject* 
 PyObject* rbe_py_api_input_is_action_pressed(PyObject* self, PyObject* args, PyObject* kwargs) {
     char* actionName;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "s", rbePyApiInputActionInputCheckKWList, &actionName)) {
-        if (rbe_input_is_action_pressed(actionName)) {
+        if (cre_input_is_action_pressed(actionName)) {
             Py_RETURN_TRUE;
         }
         Py_RETURN_FALSE;
@@ -106,7 +106,7 @@ PyObject* rbe_py_api_input_is_action_pressed(PyObject* self, PyObject* args, PyO
 PyObject* rbe_py_api_input_is_action_just_pressed(PyObject* self, PyObject* args, PyObject* kwargs) {
     char* actionName;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "s", rbePyApiInputActionInputCheckKWList, &actionName)) {
-        if (rbe_input_is_action_just_pressed(actionName)) {
+        if (cre_input_is_action_just_pressed(actionName)) {
             Py_RETURN_TRUE;
         }
         Py_RETURN_FALSE;
@@ -117,7 +117,7 @@ PyObject* rbe_py_api_input_is_action_just_pressed(PyObject* self, PyObject* args
 PyObject* rbe_py_api_input_is_action_just_released(PyObject* self, PyObject* args, PyObject* kwargs) {
     char* actionName;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "s", rbePyApiInputActionInputCheckKWList, &actionName)) {
-        if (rbe_input_is_action_just_released(actionName)) {
+        if (cre_input_is_action_just_released(actionName)) {
             Py_RETURN_TRUE;
         }
         Py_RETURN_FALSE;

@@ -5,6 +5,7 @@
 #include "input_action.h"
 #include "input_value_constants.h"
 #include "../data_structures/rbe_hash_map_string.h"
+#include "../data_structures/rbe_static_array.h"
 #include "../utils/logger.h"
 #include "../utils/rbe_string_util.h"
 #include "../utils/rbe_assert.h"
@@ -13,8 +14,6 @@
 #ifdef _MSC_VER
 #pragma warning(disable : 4996) // for strcpy
 #endif
-
-// TODO: Rough implementation of input, will refactor later...
 
 void input_process_keyboard();
 void input_process_mouse(SDL_Event event);
@@ -40,7 +39,7 @@ typedef struct InputFlagCleaner {
 InputFlagCleaner actionJustPressedClean = {0};
 InputFlagCleaner actionJustReleasedClean = {0};
 
-bool rbe_input_initialize() {
+bool cre_input_initialize() {
     inputActionMap = rbe_string_hash_map_create(32);
     // SETUP INPUT STRING VALUES
     // Keyboard
@@ -111,9 +110,9 @@ bool rbe_input_initialize() {
     return true;
 }
 
-void rbe_input_finalize() {}
+void cre_input_finalize() {}
 
-void rbe_input_add_action_value(const char* actionName, const char* actionValue, int deviceId) {
+void cre_input_add_action_value(const char* actionName, const char* actionValue, int deviceId) {
     if (!rbe_string_hash_map_has(inputActionMap, actionName)) {
         rbe_string_hash_map_add(inputActionMap, actionName, rbe_input_action_create_new_input_action(actionName, deviceId), sizeof(InputAction));
         inputActionNames[inputActionNamesCount] = actionName;
@@ -128,7 +127,7 @@ void rbe_input_add_action_value(const char* actionName, const char* actionValue,
     } else if (rbe_string_hash_map_has(gamepadStringValuesMap, actionValue)) {
         inputAction->gamepadValues[inputAction->gamepadValueCount] = rbe_strdup(actionValue);
         inputAction->gamepadValueCount++;
-        rbe_logger_debug("Added gamepad value '%s'", actionValue);
+        rbe_logger_debug("Added gamepad value '%s' with device id = %d", actionValue, deviceId);
     } else if (strcmp(actionValue, "mb_left") == 0 || strcmp(actionValue, "mb_right") == 0 || strcmp(actionValue, "mb_middle") == 0) {
         strcpy(&inputAction->mouseValues[inputAction->mouseValueCount], actionValue);
         rbe_logger_debug("Added mouse action | name: '%s', value: '%s'", actionName, inputAction->mouseValues[inputAction->mouseValueCount]);
@@ -138,17 +137,17 @@ void rbe_input_add_action_value(const char* actionName, const char* actionValue,
     }
 }
 
-void rbe_input_remove_action_value(const char* actionName, const char* actionValue) {}
+void cre_input_remove_action_value(const char* actionName, const char* actionValue) {}
 
-void rbe_input_remove_action(const char* actionName) {}
+void cre_input_remove_action(const char* actionName) {}
 
-void rbe_input_process(SDL_Event event) {
+void cre_input_process(SDL_Event event) {
     input_process_keyboard();
     input_process_mouse(event);
     input_process_gamepad(event);
 }
 
-void rbe_input_clean_up_flags() {
+void cre_input_clean_up_flags() {
     // Just Pressed
     for (size_t i = 0; i < actionJustPressedClean.count; i++) {
         actionJustPressedClean.inputActions[i]->isActionJustPressed = false;
@@ -165,7 +164,7 @@ void rbe_input_clean_up_flags() {
 }
 
 // Queries
-bool rbe_input_is_action_pressed(const char* actionName) {
+bool cre_input_is_action_pressed(const char* actionName) {
     if (rbe_string_hash_map_has(inputActionMap, actionName)) {
         InputAction* inputAction = (InputAction*) rbe_string_hash_map_get(inputActionMap, actionName);
         return inputAction->isActionPressed;
@@ -173,7 +172,7 @@ bool rbe_input_is_action_pressed(const char* actionName) {
     return false;
 }
 
-bool rbe_input_is_action_just_pressed(const char* actionName) {
+bool cre_input_is_action_just_pressed(const char* actionName) {
     if (rbe_string_hash_map_has(inputActionMap, actionName)) {
         InputAction* inputAction = (InputAction*) rbe_string_hash_map_get(inputActionMap, actionName);
         return inputAction->isActionJustPressed;
@@ -181,7 +180,7 @@ bool rbe_input_is_action_just_pressed(const char* actionName) {
     return false;
 }
 
-bool rbe_input_is_action_just_released(const char* actionName) {
+bool cre_input_is_action_just_released(const char* actionName) {
     if (rbe_string_hash_map_has(inputActionMap, actionName)) {
         InputAction* inputAction = (InputAction*) rbe_string_hash_map_get(inputActionMap, actionName);
         return inputAction->isActionJustReleased;
@@ -267,10 +266,12 @@ void input_process_mouse(SDL_Event event) {
 }
 
 //--- Gamepad ---//
-#define RBE_MAX_GAMEPAD_INTERNAL_INPUT_ACTIONS 29
+#define CRE_MAX_GAMEPAD_INTERNAL_INPUT_ACTIONS 29
+#define CRE_MAX_GAMEPAD_DEVICES 4
 // TODO: Make dead zones configurable per action
 #define GAMEPAD_AXIS_DEAD_ZONE 10000
 #define GAMEPAD_TRIGGER_DEAD_ZONE 8000
+#define INVALID_GAMEPAD_ID (-1)
 
 typedef struct GamepadInputButtonAction {
     bool isPressed;
@@ -313,11 +314,17 @@ typedef enum GamepadInputAxisMotionType {
     GamepadInputAxisMotionType_RIGHT_TRIGGER = 5,
 } GamepadInputAxisMotionType;
 
-// Some indices from 0 - 14 use SDL_GameControllerButton enum values
-GamepadInputButtonAction gamepadInputButtonActions[RBE_MAX_GAMEPAD_INTERNAL_INPUT_ACTIONS];
+typedef struct CreGamepad {
+    SDL_GameController* gameController;
+    SDL_Joystick* joystickController;
+    SDL_JoystickID joystickId;
+    // Some indices from 0 - 14 use SDL_GameControllerButton enum values
+    GamepadInputButtonAction gamepadInputButtonActions[CRE_MAX_GAMEPAD_INTERNAL_INPUT_ACTIONS];
+} CreGamepad;
 
-SDL_Joystick* joystickController = NULL;
-SDL_GameController* gameController = NULL;
+CreGamepad activeGamePads[CRE_MAX_GAMEPAD_DEVICES];
+static int activeGamepadCount = 0;
+RBE_STATIC_ARRAY_CREATE(int, CRE_MAX_GAMEPAD_DEVICES, activeGamepadIds);
 
 bool input_process_axis_motions();
 
@@ -356,93 +363,125 @@ void input_initialize_gamepad_system() {
 
 // TODO: Make better (e.g. loading more than one controller and checking for connects/disconnects)...
 void input_load_gamepads() {
-    // Initialize gamepad input action array
-    for (size_t i = 0; i < RBE_MAX_GAMEPAD_INTERNAL_INPUT_ACTIONS; i++) {
-        gamepadInputButtonActions[i].isPressed = false;
-        gamepadInputButtonActions[i].isJustPressed = false;
-        gamepadInputButtonActions[i].isJustReleased = false;
+    for (size_t i = 0; i < CRE_MAX_GAMEPAD_DEVICES; i++) {
+        activeGamePads[i].gameController = NULL;
+        activeGamePads[i].joystickController = NULL;
+        for (size_t j = 0; j < CRE_MAX_GAMEPAD_INTERNAL_INPUT_ACTIONS; j++) {
+            activeGamePads[i].gamepadInputButtonActions[j].isPressed = false;
+            activeGamePads[i].gamepadInputButtonActions[j].isJustPressed = false;
+            activeGamePads[i].gamepadInputButtonActions[j].isJustReleased = false;
+        }
+        // Set all active gamepad ids to -1
+        activeGamepadIds[i] = INVALID_GAMEPAD_ID;
     }
 
-    // Load gamepads
-    // Get engine root directory and concatenate with game controller db file.
     RBEEngineContext* engineContext = rbe_engine_context_get();
     char controllerMappingFilePath[256];
     strcpy(controllerMappingFilePath, engineContext->internalAssetsDir);
     strcat(controllerMappingFilePath, "/assets/resources/game_controller_db.txt");
-    int result = SDL_GameControllerAddMappingsFromFile(controllerMappingFilePath);
+    const int result = SDL_GameControllerAddMappingsFromFile(controllerMappingFilePath);
     RBE_ASSERT_FMT(result >= 0, "Couldn't load sdl controller mapping file at path '%s'!", controllerMappingFilePath);
-    if (SDL_NumJoysticks() > 0) {
-        joystickController = SDL_JoystickOpen(0);
-        RBE_ASSERT_FMT(joystickController != NULL, "SDL joystick object didn't load correctly at path '%s'!", controllerMappingFilePath);
-        gameController = SDL_GameControllerOpen(0);
-        RBE_ASSERT_FMT(gameController != NULL, "SDL 'game controller' object didn't load correctly at path '%s'!", controllerMappingFilePath);
-        rbe_logger_debug("Loaded one gamepad!");
-    } else {
-        rbe_logger_debug("No gamepads detected.");
+}
+
+CreGamepad* input_find_gamepad(SDL_JoystickID id) {
+    for (int i = 0; i < activeGamepadCount; i++) {
+        if (id == activeGamePads[i].joystickId) {
+            return &activeGamePads[i];
+        }
     }
+    return NULL;
 }
 
 void input_process_gamepad(SDL_Event event) {
     bool buttonInputUpdated = false;
     switch (event.type) {
+    case SDL_CONTROLLERDEVICEADDED: {
+        // TODO: Trigger gamepad connected script callbacks
+        SDL_GameController* newGameController = SDL_GameControllerOpen(event.cdevice.which);
+        RBE_ASSERT_FMT(newGameController != NULL, "Failed to load game controller with index '%d'", event.cdevice.which);
+        SDL_Joystick* newJoystick = SDL_GameControllerGetJoystick(newGameController);
+        RBE_ASSERT_FMT(newJoystick != NULL, "Failed to load joystick with index '%d'", event.jdevice.which);
+        int gamepadIndex = SDL_GameControllerGetPlayerIndex(newGameController);
+        if (gamepadIndex == -1) {
+            gamepadIndex = SDL_JoystickInstanceID(newJoystick);
+            rbe_logger_warn("Unable to get player index from controller, using SDL joystick instance id '%d'", gamepadIndex);
+        }
+        RBE_ASSERT_FMT(gamepadIndex < CRE_MAX_GAMEPAD_DEVICES, "Gamepad index '%d' higher than limit.", gamepadIndex);
+        activeGamePads[gamepadIndex].gameController = newGameController;
+        activeGamePads[gamepadIndex].joystickController = newJoystick;
+        activeGamePads[gamepadIndex].joystickId = SDL_JoystickInstanceID(newJoystick);
+        RBE_STATIC_ARRAY_ADD(activeGamepadIds, gamepadIndex);
+        activeGamepadCount++;
+        break;
+    }
+    case SDL_CONTROLLERDEVICEREMOVED: {
+        // TODO: Trigger gamepad disconnected script callbacks
+        const int gamepadIndex = event.cdevice.which;
+        SDL_JoystickClose(activeGamePads[gamepadIndex].joystickController);
+        for (int i = 0; i < activeGamepadCount; i++) {
+            if (activeGamepadIds[i] == gamepadIndex) {
+                RBE_STATIC_ARRAY_REMOVE(activeGamepadIds, gamepadIndex, INVALID_GAMEPAD_ID);
+                activeGamepadCount--;
+                break;
+            }
+        }
+        rbe_logger_error("Failed to remove gamepad with index '%d'", gamepadIndex);
+        break;
+    }
     case SDL_JOYBUTTONDOWN:
     case SDL_JOYBUTTONUP: {
         buttonInputUpdated = true;
-        const int controllerId = event.jbutton.which;
+        const SDL_JoystickID controllerId = event.jbutton.which;
         const bool isButtonPressed = event.jbutton.state == SDL_PRESSED;
         const uint8_t buttonValue = event.jbutton.button;
-        RBE_ASSERT(buttonValue < RBE_MAX_GAMEPAD_INTERNAL_INPUT_ACTIONS);
-        if (controllerId == 0) {
-            if (isButtonPressed) {
-                gamepadInputButtonActions[buttonValue].isPressed = true;
-                gamepadInputButtonActions[buttonValue].isJustPressed = true;
-            } else {
-                gamepadInputButtonActions[buttonValue].isPressed = false;
-                gamepadInputButtonActions[buttonValue].isJustPressed = false;
-                gamepadInputButtonActions[buttonValue].isJustReleased = true;
-            }
+        RBE_ASSERT(buttonValue < CRE_MAX_GAMEPAD_INTERNAL_INPUT_ACTIONS);
+        CreGamepad* gamepad = input_find_gamepad(controllerId);
+        if (isButtonPressed) {
+            gamepad->gamepadInputButtonActions[buttonValue].isPressed = true;
+            gamepad->gamepadInputButtonActions[buttonValue].isJustPressed = true;
+        } else {
+            gamepad->gamepadInputButtonActions[buttonValue].isPressed = false;
+            gamepad->gamepadInputButtonActions[buttonValue].isJustPressed = false;
+            gamepad->gamepadInputButtonActions[buttonValue].isJustReleased = true;
         }
         break;
     }
     case SDL_JOYHATMOTION: {
         buttonInputUpdated = true;
         const int controllerId = event.jhat.which;
-        const uint8_t hat = event.jhat.hat;
         const uint8_t hatValue = event.jhat.value;
-        if (controllerId == 0) {
-            // Process Joyhat Motion (dpad)
-            if (hatValue & SDL_HAT_LEFT) {
-                gamepadInputButtonActions[GamepadInputButtonType_DPAD_LEFT].isPressed = true;
-                gamepadInputButtonActions[GamepadInputButtonType_DPAD_LEFT].isJustPressed = true;
-            } else {
-                gamepadInputButtonActions[GamepadInputButtonType_DPAD_LEFT].isPressed = false;
-                gamepadInputButtonActions[GamepadInputButtonType_DPAD_LEFT].isJustPressed = false;
-                gamepadInputButtonActions[GamepadInputButtonType_DPAD_LEFT].isJustReleased = true;
-            }
-            if (hatValue & SDL_HAT_RIGHT) {
-                gamepadInputButtonActions[GamepadInputButtonType_DPAD_RIGHT].isPressed = true;
-                gamepadInputButtonActions[GamepadInputButtonType_DPAD_RIGHT].isJustPressed = true;
-            } else {
-                gamepadInputButtonActions[GamepadInputButtonType_DPAD_RIGHT].isPressed = false;
-                gamepadInputButtonActions[GamepadInputButtonType_DPAD_RIGHT].isJustPressed = false;
-                gamepadInputButtonActions[GamepadInputButtonType_DPAD_RIGHT].isJustReleased = true;
-            }
-            if (hatValue & SDL_HAT_UP) {
-                gamepadInputButtonActions[GamepadInputButtonType_DPAD_UP].isPressed = true;
-                gamepadInputButtonActions[GamepadInputButtonType_DPAD_UP].isJustPressed = true;
-            } else {
-                gamepadInputButtonActions[GamepadInputButtonType_DPAD_UP].isPressed = false;
-                gamepadInputButtonActions[GamepadInputButtonType_DPAD_UP].isJustPressed = false;
-                gamepadInputButtonActions[GamepadInputButtonType_DPAD_UP].isJustReleased = true;
-            }
-            if (hatValue & SDL_HAT_DOWN) {
-                gamepadInputButtonActions[GamepadInputButtonType_DPAD_DOWN].isPressed = true;
-                gamepadInputButtonActions[GamepadInputButtonType_DPAD_DOWN].isJustPressed = true;
-            } else {
-                gamepadInputButtonActions[GamepadInputButtonType_DPAD_DOWN].isPressed = false;
-                gamepadInputButtonActions[GamepadInputButtonType_DPAD_DOWN].isJustPressed = false;
-                gamepadInputButtonActions[GamepadInputButtonType_DPAD_DOWN].isJustReleased = true;
-            }
+        // Process Joyhat Motion (dpad)
+        if (hatValue & SDL_HAT_LEFT) {
+            activeGamePads[controllerId].gamepadInputButtonActions[GamepadInputButtonType_DPAD_LEFT].isPressed = true;
+            activeGamePads[controllerId].gamepadInputButtonActions[GamepadInputButtonType_DPAD_LEFT].isJustPressed = true;
+        } else {
+            activeGamePads[controllerId].gamepadInputButtonActions[GamepadInputButtonType_DPAD_LEFT].isPressed = false;
+            activeGamePads[controllerId].gamepadInputButtonActions[GamepadInputButtonType_DPAD_LEFT].isJustPressed = false;
+            activeGamePads[controllerId].gamepadInputButtonActions[GamepadInputButtonType_DPAD_LEFT].isJustReleased = true;
+        }
+        if (hatValue & SDL_HAT_RIGHT) {
+            activeGamePads[controllerId].gamepadInputButtonActions[GamepadInputButtonType_DPAD_RIGHT].isPressed = true;
+            activeGamePads[controllerId].gamepadInputButtonActions[GamepadInputButtonType_DPAD_RIGHT].isJustReleased = true;
+        } else {
+            activeGamePads[controllerId].gamepadInputButtonActions[GamepadInputButtonType_DPAD_RIGHT].isPressed = false;
+            activeGamePads[controllerId].gamepadInputButtonActions[GamepadInputButtonType_DPAD_RIGHT].isJustPressed = false;
+            activeGamePads[controllerId].gamepadInputButtonActions[GamepadInputButtonType_DPAD_RIGHT].isJustReleased = true;
+        }
+        if (hatValue & SDL_HAT_UP) {
+            activeGamePads[controllerId].gamepadInputButtonActions[GamepadInputButtonType_DPAD_UP].isPressed = true;
+            activeGamePads[controllerId].gamepadInputButtonActions[GamepadInputButtonType_DPAD_UP].isJustPressed = true;
+        } else {
+            activeGamePads[controllerId].gamepadInputButtonActions[GamepadInputButtonType_DPAD_UP].isPressed = false;
+            activeGamePads[controllerId].gamepadInputButtonActions[GamepadInputButtonType_DPAD_UP].isJustPressed = false;
+            activeGamePads[controllerId].gamepadInputButtonActions[GamepadInputButtonType_DPAD_UP].isJustReleased = true;
+        }
+        if (hatValue & SDL_HAT_DOWN) {
+            activeGamePads[controllerId].gamepadInputButtonActions[GamepadInputButtonType_DPAD_DOWN].isPressed = true;
+            activeGamePads[controllerId].gamepadInputButtonActions[GamepadInputButtonType_DPAD_DOWN].isJustPressed = true;
+        } else {
+            activeGamePads[controllerId].gamepadInputButtonActions[GamepadInputButtonType_DPAD_DOWN].isPressed = false;
+            activeGamePads[controllerId].gamepadInputButtonActions[GamepadInputButtonType_DPAD_DOWN].isJustPressed = false;
+            activeGamePads[controllerId].gamepadInputButtonActions[GamepadInputButtonType_DPAD_DOWN].isJustReleased = true;
         }
         break;
     }
@@ -463,9 +502,9 @@ void input_process_gamepad(SDL_Event event) {
             for (size_t j = 0; j < inputAction->gamepadValueCount; j++) {
                 const char* gamepadValue = inputAction->gamepadValues[j];
                 const uint8_t buttonScancode = rbe_string_hash_map_get_int(gamepadStringValuesMap, gamepadValue);
-                inputAction->isActionPressed = gamepadInputButtonActions[buttonScancode].isPressed;
-                inputAction->isActionJustPressed = gamepadInputButtonActions[buttonScancode].isJustPressed;
-                inputAction->isActionJustReleased = gamepadInputButtonActions[buttonScancode].isJustReleased;
+                inputAction->isActionPressed = activeGamePads[inputAction->deviceId].gamepadInputButtonActions[buttonScancode].isPressed;
+                inputAction->isActionJustPressed = activeGamePads[inputAction->deviceId].gamepadInputButtonActions[buttonScancode].isJustPressed;
+                inputAction->isActionJustReleased = activeGamePads[inputAction->deviceId].gamepadInputButtonActions[buttonScancode].isJustReleased;
                 // Set flags
                 if (inputAction->isActionJustPressed) {
                     actionJustPressedClean.inputActions[actionJustPressedClean.count++] = inputAction;
@@ -481,143 +520,149 @@ void input_process_gamepad(SDL_Event event) {
 // TODO: Get 'strength' of axis motions for more fine tuned controls from the user's perspective
 bool input_process_axis_motions() {
     bool inputUpdated = false;
-    // LEFT AXIS
-    // Horizontal
-    int16_t leftHorizontalValue = SDL_JoystickGetAxis(joystickController, GamepadInputAxisMotionType_LEFT_HORIZONTAL_AXIS);
-    if (leftHorizontalValue < -GAMEPAD_AXIS_DEAD_ZONE) {
-        if (!gamepadInputButtonActions[GamepadInputButtonType_LEFT_ANALOG_LEFT].isPressed) {
-            gamepadInputButtonActions[GamepadInputButtonType_LEFT_ANALOG_LEFT].isPressed = true;
-            gamepadInputButtonActions[GamepadInputButtonType_LEFT_ANALOG_LEFT].isJustPressed = true;
-            inputUpdated = true;
-        }
-    } else if (leftHorizontalValue > GAMEPAD_AXIS_DEAD_ZONE) {
-        if (!gamepadInputButtonActions[GamepadInputButtonType_LEFT_ANALOG_RIGHT].isPressed) {
-            gamepadInputButtonActions[GamepadInputButtonType_LEFT_ANALOG_RIGHT].isPressed = true;
-            gamepadInputButtonActions[GamepadInputButtonType_LEFT_ANALOG_RIGHT].isJustPressed = true;
-            inputUpdated = true;
-        }
-    } else {
-        if (gamepadInputButtonActions[GamepadInputButtonType_LEFT_ANALOG_LEFT].isPressed) {
-            gamepadInputButtonActions[GamepadInputButtonType_LEFT_ANALOG_LEFT].isPressed = false;
-            gamepadInputButtonActions[GamepadInputButtonType_LEFT_ANALOG_LEFT].isJustReleased = true;
-            inputUpdated = true;
-        }
-        if (gamepadInputButtonActions[GamepadInputButtonType_LEFT_ANALOG_RIGHT].isPressed) {
-            gamepadInputButtonActions[GamepadInputButtonType_LEFT_ANALOG_RIGHT].isPressed = false;
-            gamepadInputButtonActions[GamepadInputButtonType_LEFT_ANALOG_RIGHT].isJustReleased = true;
-            inputUpdated = true;
-        }
-    }
-    // Vertical
-    int16_t leftVerticalValue = SDL_JoystickGetAxis(joystickController, GamepadInputAxisMotionType_LEFT_VERTICAL_AXIS);
-    if (leftVerticalValue < -GAMEPAD_AXIS_DEAD_ZONE) {
-        if (!gamepadInputButtonActions[GamepadInputButtonType_LEFT_ANALOG_UP].isPressed) {
-            gamepadInputButtonActions[GamepadInputButtonType_LEFT_ANALOG_UP].isPressed = true;
-            gamepadInputButtonActions[GamepadInputButtonType_LEFT_ANALOG_UP].isJustPressed = true;
-            inputUpdated = true;
-        }
-    } else if (leftVerticalValue > GAMEPAD_AXIS_DEAD_ZONE) {
-        if (!gamepadInputButtonActions[GamepadInputButtonType_LEFT_ANALOG_DOWN].isPressed) {
-            gamepadInputButtonActions[GamepadInputButtonType_LEFT_ANALOG_DOWN].isPressed = true;
-            gamepadInputButtonActions[GamepadInputButtonType_LEFT_ANALOG_DOWN].isJustPressed = true;
-            inputUpdated = true;
-        }
-    } else {
-        if (gamepadInputButtonActions[GamepadInputButtonType_LEFT_ANALOG_UP].isPressed) {
-            gamepadInputButtonActions[GamepadInputButtonType_LEFT_ANALOG_UP].isPressed = false;
-            gamepadInputButtonActions[GamepadInputButtonType_LEFT_ANALOG_UP].isJustReleased = true;
-            inputUpdated = true;
-        }
-        if (gamepadInputButtonActions[GamepadInputButtonType_LEFT_ANALOG_DOWN].isPressed) {
-            gamepadInputButtonActions[GamepadInputButtonType_LEFT_ANALOG_DOWN].isPressed = false;
-            gamepadInputButtonActions[GamepadInputButtonType_LEFT_ANALOG_DOWN].isJustReleased = true;
-            inputUpdated = true;
-        }
-    }
 
-    // RIGHT AXIS
-    // Horizontal
-    int16_t rightHorizontalValue = SDL_JoystickGetAxis(joystickController, GamepadInputAxisMotionType_RIGHT_HORIZONTAL_AXIS);
-    if (rightHorizontalValue < -GAMEPAD_AXIS_DEAD_ZONE) {
-        if (!gamepadInputButtonActions[GamepadInputButtonType_RIGHT_ANALOG_LEFT].isPressed) {
-            gamepadInputButtonActions[GamepadInputButtonType_RIGHT_ANALOG_LEFT].isPressed = true;
-            gamepadInputButtonActions[GamepadInputButtonType_RIGHT_ANALOG_LEFT].isJustPressed = true;
-            inputUpdated = true;
-        }
-    } else if (rightHorizontalValue > GAMEPAD_AXIS_DEAD_ZONE) {
-        if (!gamepadInputButtonActions[GamepadInputButtonType_RIGHT_ANALOG_RIGHT].isPressed) {
-            gamepadInputButtonActions[GamepadInputButtonType_RIGHT_ANALOG_RIGHT].isPressed = true;
-            gamepadInputButtonActions[GamepadInputButtonType_RIGHT_ANALOG_RIGHT].isJustPressed = true;
-            inputUpdated = true;
-        }
-    } else {
-        if (gamepadInputButtonActions[GamepadInputButtonType_RIGHT_ANALOG_LEFT].isPressed) {
-            gamepadInputButtonActions[GamepadInputButtonType_RIGHT_ANALOG_LEFT].isPressed = false;
-            gamepadInputButtonActions[GamepadInputButtonType_RIGHT_ANALOG_LEFT].isJustReleased = true;
-            inputUpdated = true;
-        }
-        if (gamepadInputButtonActions[GamepadInputButtonType_RIGHT_ANALOG_RIGHT].isPressed) {
-            gamepadInputButtonActions[GamepadInputButtonType_RIGHT_ANALOG_RIGHT].isPressed = false;
-            gamepadInputButtonActions[GamepadInputButtonType_RIGHT_ANALOG_RIGHT].isJustReleased = true;
-            inputUpdated = true;
-        }
-    }
-    // Vertical
-    int16_t rightVerticalValue = SDL_JoystickGetAxis(joystickController, GamepadInputAxisMotionType_RIGHT_VERTICAL_AXIS);
-    if (rightVerticalValue < -GAMEPAD_AXIS_DEAD_ZONE) {
-        if (!gamepadInputButtonActions[GamepadInputButtonType_RIGHT_ANALOG_UP].isPressed) {
-            gamepadInputButtonActions[GamepadInputButtonType_RIGHT_ANALOG_UP].isPressed = true;
-            gamepadInputButtonActions[GamepadInputButtonType_RIGHT_ANALOG_UP].isJustPressed = true;
-            inputUpdated = true;
-        }
-    } else if (rightVerticalValue > GAMEPAD_AXIS_DEAD_ZONE) {
-        if (!gamepadInputButtonActions[GamepadInputButtonType_RIGHT_ANALOG_DOWN].isPressed) {
-            gamepadInputButtonActions[GamepadInputButtonType_RIGHT_ANALOG_DOWN].isPressed = true;
-            gamepadInputButtonActions[GamepadInputButtonType_RIGHT_ANALOG_DOWN].isJustPressed = true;
-            inputUpdated = true;
-        }
-    } else {
-        if (gamepadInputButtonActions[GamepadInputButtonType_RIGHT_ANALOG_UP].isPressed) {
-            gamepadInputButtonActions[GamepadInputButtonType_RIGHT_ANALOG_UP].isPressed = false;
-            gamepadInputButtonActions[GamepadInputButtonType_RIGHT_ANALOG_UP].isJustReleased = true;
-            inputUpdated = true;
-        }
-        if (gamepadInputButtonActions[GamepadInputButtonType_RIGHT_ANALOG_DOWN].isPressed) {
-            gamepadInputButtonActions[GamepadInputButtonType_RIGHT_ANALOG_DOWN].isPressed = false;
-            gamepadInputButtonActions[GamepadInputButtonType_RIGHT_ANALOG_DOWN].isJustReleased = true;
-            inputUpdated = true;
-        }
-    }
+    for (int i = 0; i < activeGamepadCount; i++) {
+        const int deviceId = activeGamepadIds[i];
+        CreGamepad* gamepad = &activeGamePads[deviceId];
 
-    // TRIGGERS
-    // Left Trigger
-    int16_t leftTriggerValue = SDL_JoystickGetAxis(joystickController, GamepadInputAxisMotionType_LEFT_TRIGGER);
-    if (leftTriggerValue < -GAMEPAD_TRIGGER_DEAD_ZONE) {
-        if (gamepadInputButtonActions[GamepadInputButtonType_LEFT_TRIGGER].isPressed) {
-            gamepadInputButtonActions[GamepadInputButtonType_LEFT_TRIGGER].isPressed = false;
-            gamepadInputButtonActions[GamepadInputButtonType_LEFT_TRIGGER].isJustReleased = true;
-            inputUpdated = true;
+        // LEFT AXIS
+        // Horizontal
+        const int16_t leftHorizontalValue = SDL_JoystickGetAxis(gamepad->joystickController, GamepadInputAxisMotionType_LEFT_HORIZONTAL_AXIS);
+        if (leftHorizontalValue < -GAMEPAD_AXIS_DEAD_ZONE) {
+            if (!gamepad->gamepadInputButtonActions[GamepadInputButtonType_LEFT_ANALOG_LEFT].isPressed) {
+                gamepad->gamepadInputButtonActions[GamepadInputButtonType_LEFT_ANALOG_LEFT].isPressed = true;
+                gamepad->gamepadInputButtonActions[GamepadInputButtonType_LEFT_ANALOG_LEFT].isJustPressed = true;
+                inputUpdated = true;
+            }
+        } else if (leftHorizontalValue > GAMEPAD_AXIS_DEAD_ZONE) {
+            if (!gamepad->gamepadInputButtonActions[GamepadInputButtonType_LEFT_ANALOG_RIGHT].isPressed) {
+                gamepad->gamepadInputButtonActions[GamepadInputButtonType_LEFT_ANALOG_RIGHT].isPressed = true;
+                gamepad->gamepadInputButtonActions[GamepadInputButtonType_LEFT_ANALOG_RIGHT].isJustPressed = true;
+                inputUpdated = true;
+            }
+        } else {
+            if (gamepad->gamepadInputButtonActions[GamepadInputButtonType_LEFT_ANALOG_LEFT].isPressed) {
+                gamepad->gamepadInputButtonActions[GamepadInputButtonType_LEFT_ANALOG_LEFT].isPressed = false;
+                gamepad->gamepadInputButtonActions[GamepadInputButtonType_LEFT_ANALOG_LEFT].isJustReleased = true;
+                inputUpdated = true;
+            }
+            if (gamepad->gamepadInputButtonActions[GamepadInputButtonType_LEFT_ANALOG_RIGHT].isPressed) {
+                gamepad->gamepadInputButtonActions[GamepadInputButtonType_LEFT_ANALOG_RIGHT].isPressed = false;
+                gamepad->gamepadInputButtonActions[GamepadInputButtonType_LEFT_ANALOG_RIGHT].isJustReleased = true;
+                inputUpdated = true;
+            }
         }
-    } else if (leftTriggerValue > GAMEPAD_AXIS_DEAD_ZONE) {
-        if (!gamepadInputButtonActions[GamepadInputButtonType_LEFT_TRIGGER].isPressed) {
-            gamepadInputButtonActions[GamepadInputButtonType_LEFT_TRIGGER].isPressed = true;
-            gamepadInputButtonActions[GamepadInputButtonType_LEFT_TRIGGER].isJustPressed = true;
-            inputUpdated = true;
+        // Vertical
+        const int16_t leftVerticalValue = SDL_JoystickGetAxis(gamepad->joystickController, GamepadInputAxisMotionType_LEFT_VERTICAL_AXIS);
+        if (leftVerticalValue < -GAMEPAD_AXIS_DEAD_ZONE) {
+            if (!gamepad->gamepadInputButtonActions[GamepadInputButtonType_LEFT_ANALOG_UP].isPressed) {
+                gamepad->gamepadInputButtonActions[GamepadInputButtonType_LEFT_ANALOG_UP].isPressed = true;
+                gamepad->gamepadInputButtonActions[GamepadInputButtonType_LEFT_ANALOG_UP].isJustPressed = true;
+                inputUpdated = true;
+            }
+        } else if (leftVerticalValue > GAMEPAD_AXIS_DEAD_ZONE) {
+            if (!gamepad->gamepadInputButtonActions[GamepadInputButtonType_LEFT_ANALOG_DOWN].isPressed) {
+                gamepad->gamepadInputButtonActions[GamepadInputButtonType_LEFT_ANALOG_DOWN].isPressed = true;
+                gamepad->gamepadInputButtonActions[GamepadInputButtonType_LEFT_ANALOG_DOWN].isJustPressed = true;
+                inputUpdated = true;
+            }
+        } else {
+            if (gamepad->gamepadInputButtonActions[GamepadInputButtonType_LEFT_ANALOG_UP].isPressed) {
+                gamepad->gamepadInputButtonActions[GamepadInputButtonType_LEFT_ANALOG_UP].isPressed = false;
+                gamepad->gamepadInputButtonActions[GamepadInputButtonType_LEFT_ANALOG_UP].isJustReleased = true;
+                inputUpdated = true;
+            }
+            if (gamepad->gamepadInputButtonActions[GamepadInputButtonType_LEFT_ANALOG_DOWN].isPressed) {
+                gamepad->gamepadInputButtonActions[GamepadInputButtonType_LEFT_ANALOG_DOWN].isPressed = false;
+                gamepad->gamepadInputButtonActions[GamepadInputButtonType_LEFT_ANALOG_DOWN].isJustReleased = true;
+                inputUpdated = true;
+            }
         }
-    }
-    // Right Trigger
-    int16_t rightTriggerValue = SDL_JoystickGetAxis(joystickController, GamepadInputAxisMotionType_RIGHT_TRIGGER);
-    if (rightTriggerValue < -GAMEPAD_TRIGGER_DEAD_ZONE) {
-        if (gamepadInputButtonActions[GamepadInputButtonType_RIGHT_TRIGGER].isPressed) {
-            gamepadInputButtonActions[GamepadInputButtonType_RIGHT_TRIGGER].isPressed = false;
-            gamepadInputButtonActions[GamepadInputButtonType_RIGHT_TRIGGER].isJustReleased = true;
-            inputUpdated = true;
+
+        // RIGHT AXIS
+        // Horizontal
+        const int16_t rightHorizontalValue = SDL_JoystickGetAxis(gamepad->joystickController, GamepadInputAxisMotionType_RIGHT_HORIZONTAL_AXIS);
+        if (rightHorizontalValue < -GAMEPAD_AXIS_DEAD_ZONE) {
+            if (!gamepad->gamepadInputButtonActions[GamepadInputButtonType_RIGHT_ANALOG_LEFT].isPressed) {
+                gamepad->gamepadInputButtonActions[GamepadInputButtonType_RIGHT_ANALOG_LEFT].isPressed = true;
+                gamepad->gamepadInputButtonActions[GamepadInputButtonType_RIGHT_ANALOG_LEFT].isJustPressed = true;
+                inputUpdated = true;
+            }
+        } else if (rightHorizontalValue > GAMEPAD_AXIS_DEAD_ZONE) {
+            if (!gamepad->gamepadInputButtonActions[GamepadInputButtonType_RIGHT_ANALOG_RIGHT].isPressed) {
+                gamepad->gamepadInputButtonActions[GamepadInputButtonType_RIGHT_ANALOG_RIGHT].isPressed = true;
+                gamepad->gamepadInputButtonActions[GamepadInputButtonType_RIGHT_ANALOG_RIGHT].isJustPressed = true;
+                inputUpdated = true;
+            }
+        } else {
+            if (gamepad->gamepadInputButtonActions[GamepadInputButtonType_RIGHT_ANALOG_LEFT].isPressed) {
+                gamepad->gamepadInputButtonActions[GamepadInputButtonType_RIGHT_ANALOG_LEFT].isPressed = false;
+                gamepad->gamepadInputButtonActions[GamepadInputButtonType_RIGHT_ANALOG_LEFT].isJustReleased = true;
+                inputUpdated = true;
+            }
+            if (gamepad->gamepadInputButtonActions[GamepadInputButtonType_RIGHT_ANALOG_RIGHT].isPressed) {
+                gamepad->gamepadInputButtonActions[GamepadInputButtonType_RIGHT_ANALOG_RIGHT].isPressed = false;
+                gamepad->gamepadInputButtonActions[GamepadInputButtonType_RIGHT_ANALOG_RIGHT].isJustReleased = true;
+                inputUpdated = true;
+            }
         }
-    } else if (rightTriggerValue > GAMEPAD_AXIS_DEAD_ZONE) {
-        if (!gamepadInputButtonActions[GamepadInputButtonType_RIGHT_TRIGGER].isPressed) {
-            gamepadInputButtonActions[GamepadInputButtonType_RIGHT_TRIGGER].isPressed = true;
-            gamepadInputButtonActions[GamepadInputButtonType_RIGHT_TRIGGER].isJustPressed = true;
-            inputUpdated = true;
+        // Vertical
+        const int16_t rightVerticalValue = SDL_JoystickGetAxis(gamepad->joystickController, GamepadInputAxisMotionType_RIGHT_VERTICAL_AXIS);
+        if (rightVerticalValue < -GAMEPAD_AXIS_DEAD_ZONE) {
+            if (!gamepad->gamepadInputButtonActions[GamepadInputButtonType_RIGHT_ANALOG_UP].isPressed) {
+                gamepad->gamepadInputButtonActions[GamepadInputButtonType_RIGHT_ANALOG_UP].isPressed = true;
+                gamepad->gamepadInputButtonActions[GamepadInputButtonType_RIGHT_ANALOG_UP].isJustPressed = true;
+                inputUpdated = true;
+            }
+        } else if (rightVerticalValue > GAMEPAD_AXIS_DEAD_ZONE) {
+            if (!gamepad->gamepadInputButtonActions[GamepadInputButtonType_RIGHT_ANALOG_DOWN].isPressed) {
+                gamepad->gamepadInputButtonActions[GamepadInputButtonType_RIGHT_ANALOG_DOWN].isPressed = true;
+                gamepad->gamepadInputButtonActions[GamepadInputButtonType_RIGHT_ANALOG_DOWN].isJustPressed = true;
+                inputUpdated = true;
+            }
+        } else {
+            if (gamepad->gamepadInputButtonActions[GamepadInputButtonType_RIGHT_ANALOG_UP].isPressed) {
+                gamepad->gamepadInputButtonActions[GamepadInputButtonType_RIGHT_ANALOG_UP].isPressed = false;
+                gamepad->gamepadInputButtonActions[GamepadInputButtonType_RIGHT_ANALOG_UP].isJustReleased = true;
+                inputUpdated = true;
+            }
+            if (gamepad->gamepadInputButtonActions[GamepadInputButtonType_RIGHT_ANALOG_DOWN].isPressed) {
+                gamepad->gamepadInputButtonActions[GamepadInputButtonType_RIGHT_ANALOG_DOWN].isPressed = false;
+                gamepad->gamepadInputButtonActions[GamepadInputButtonType_RIGHT_ANALOG_DOWN].isJustReleased = true;
+                inputUpdated = true;
+            }
+        }
+
+        // TRIGGERS
+        // Left Trigger
+        const int16_t leftTriggerValue = SDL_JoystickGetAxis(gamepad->joystickController, GamepadInputAxisMotionType_LEFT_TRIGGER);
+        if (leftTriggerValue < -GAMEPAD_TRIGGER_DEAD_ZONE) {
+            if (gamepad->gamepadInputButtonActions[GamepadInputButtonType_LEFT_TRIGGER].isPressed) {
+                gamepad->gamepadInputButtonActions[GamepadInputButtonType_LEFT_TRIGGER].isPressed = false;
+                gamepad->gamepadInputButtonActions[GamepadInputButtonType_LEFT_TRIGGER].isJustReleased = true;
+                inputUpdated = true;
+            }
+        } else if (leftTriggerValue > GAMEPAD_AXIS_DEAD_ZONE) {
+            if (!gamepad->gamepadInputButtonActions[GamepadInputButtonType_LEFT_TRIGGER].isPressed) {
+                gamepad->gamepadInputButtonActions[GamepadInputButtonType_LEFT_TRIGGER].isPressed = true;
+                gamepad->gamepadInputButtonActions[GamepadInputButtonType_LEFT_TRIGGER].isJustPressed = true;
+                inputUpdated = true;
+            }
+        }
+        // Right Trigger
+        const int16_t rightTriggerValue = SDL_JoystickGetAxis(gamepad->joystickController, GamepadInputAxisMotionType_RIGHT_TRIGGER);
+        if (rightTriggerValue < -GAMEPAD_TRIGGER_DEAD_ZONE) {
+            if (gamepad->gamepadInputButtonActions[GamepadInputButtonType_RIGHT_TRIGGER].isPressed) {
+                gamepad->gamepadInputButtonActions[GamepadInputButtonType_RIGHT_TRIGGER].isPressed = false;
+                gamepad->gamepadInputButtonActions[GamepadInputButtonType_RIGHT_TRIGGER].isJustReleased = true;
+                inputUpdated = true;
+            }
+        } else if (rightTriggerValue > GAMEPAD_AXIS_DEAD_ZONE) {
+            if (!gamepad->gamepadInputButtonActions[GamepadInputButtonType_RIGHT_TRIGGER].isPressed) {
+                gamepad->gamepadInputButtonActions[GamepadInputButtonType_RIGHT_TRIGGER].isPressed = true;
+                gamepad->gamepadInputButtonActions[GamepadInputButtonType_RIGHT_TRIGGER].isJustPressed = true;
+                inputUpdated = true;
+            }
         }
     }
 
@@ -626,8 +671,11 @@ bool input_process_axis_motions() {
 
 void input_gamepad_cleanup_flags() {
     // Gamepad action clean up references
-    for (size_t i = 0; i < RBE_MAX_GAMEPAD_INTERNAL_INPUT_ACTIONS; i++) {
-        gamepadInputButtonActions[i].isJustPressed = false;
-        gamepadInputButtonActions[i].isJustReleased = false;
+    for (int i = 0; i < activeGamepadCount; i++) {
+        const int deviceId = activeGamepadIds[i];
+        for (size_t j = 0; j < CRE_MAX_GAMEPAD_INTERNAL_INPUT_ACTIONS; j++) {
+            activeGamePads[deviceId].gamepadInputButtonActions[j].isJustPressed = false;
+            activeGamePads[deviceId].gamepadInputButtonActions[j].isJustReleased = false;
+        }
     }
 }
