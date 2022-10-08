@@ -141,7 +141,7 @@ void rbe_scene_manager_process_queued_scene_change() {
     if (queuedSceneToChangeTo != NULL) {
         // Destroy old scene
         if (activeScene != NULL) {
-            rbe_scene_execute_on_all_tree_nodes(activeScene->sceneTree->root, rbe_queue_destroy_tree_node_entity);
+            rbe_queue_destroy_tree_node_entity_all(activeScene->sceneTree->root);
             RBE_MEM_FREE(activeScene);
         }
 
