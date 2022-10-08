@@ -31,7 +31,24 @@ A work in progress fighting game engine for Windows and Linux with the core writ
 
 ## Building
 
-Supports Windows and linux builds at the moment. These environment variables are required to be set before building with make.
+Supports Windows and linux builds at the moment.  Crescent engine can be either built with cmake or make.  All build commands should be executed from the project's root directory.
+
+### CMake
+
+**MinGW build**
+1. Install MinGW through MSYS2
+2. Update pacman: `pacman -Syy`
+3. Install the following packages:
+    * `pacman -S mingw-w64-x86_64-SDL2`
+    * `pacman -S mingw-w64-x86_64-freetype`
+    * `pacman -S mingw-w64-x86_64-python`
+4. Run cmake
+
+### Make
+
+*Note: Currently outdated*
+
+These environment variables are required to be set before building with make.
 
 | Environment Variable  |                      Description                   | Required | Default Value |
 |:---------------------:|:--------------------------------------------------:|:--------:|:-------------:|
@@ -42,11 +59,6 @@ Supports Windows and linux builds at the moment. These environment variables are
 | FREETYPE_INCLUDE_PATH | The include directory of Freetype.                 |    YES   |      N/A      |
 |  FREETYPE_LIBS_PATH   | The libs directory of Freetype.                    |    YES   |      N/A      |
 
-Crescent engine can be either built with make or cmake.  All build command should be executed from the project's root directory.
-
-### Make
-
-*Note: Currently outdated*
 
 Engine:
 
@@ -69,14 +81,3 @@ make run-editor
 # Clean
 make clean-editor
 ```
-
-### CMake
-
-**MinGW build**
-1. Install MinGW through MSYS2
-2. Update pacman: `pacman -Syy`
-3. Install the following packages:
-   * `pacman -S mingw-w64-x86_64-SDL2`
-   * `pacman -S mingw-w64-x86_64-freetype`
-   * `pacman -S mingw-w64-x86_64-python`
-4. Run cmake
