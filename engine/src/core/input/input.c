@@ -366,9 +366,11 @@ void input_load_gamepads() {
     for (size_t i = 0; i < CRE_MAX_GAMEPAD_DEVICES; i++) {
         activeGamePads[i].gameController = NULL;
         activeGamePads[i].joystickController = NULL;
-        activeGamePads[i].gamepadInputButtonActions->isPressed = false;
-        activeGamePads[i].gamepadInputButtonActions->isJustPressed = false;
-        activeGamePads[i].gamepadInputButtonActions->isJustReleased = false;
+        for (size_t j = 0; j < CRE_MAX_GAMEPAD_INTERNAL_INPUT_ACTIONS; j++) {
+            activeGamePads[i].gamepadInputButtonActions[j].isPressed = false;
+            activeGamePads[i].gamepadInputButtonActions[j].isJustPressed = false;
+            activeGamePads[i].gamepadInputButtonActions[j].isJustReleased = false;
+        }
         // Set all active gamepad ids to -1
         activeGamepadIds[i] = INVALID_GAMEPAD_ID;
     }
