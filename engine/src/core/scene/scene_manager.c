@@ -193,7 +193,7 @@ CombineModelResult rbe_scene_manager_get_scene_graph_entity_hierarchy(Entity ent
     return combineModelResult;
 }
 
-void rbe_scene_manager_update_global_tranform_model(Entity entity, TransformModel2D* globalTransform) {
+void rbe_scene_manager_update_global_transform_model(Entity entity, TransformModel2D* globalTransform) {
     glm_mat4_identity(globalTransform->model);
     CombineModelResult combineModelResult = rbe_scene_manager_get_scene_graph_entity_hierarchy(entity);
     Vector2 scaleTotal = { 1.0f, 1.0f };
@@ -217,7 +217,7 @@ TransformModel2D* rbe_scene_manager_get_scene_node_global_transform(Entity entit
     RBE_ASSERT_FMT(transform2DComponent != NULL, "Transform Model is NULL for entity '%d'", entity);
     if (transform2DComponent->isGlobalTransformDirty) {
         // Walk up scene to root node and calculate global transform
-        rbe_scene_manager_update_global_tranform_model(entity, &transform2DComponent->globalTransform);
+        rbe_scene_manager_update_global_transform_model(entity, &transform2DComponent->globalTransform);
         // Decompose trs matrix
         vec4 translation;
         mat4 rotation;
