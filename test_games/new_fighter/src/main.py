@@ -116,7 +116,7 @@ class Main(Node2D):
 
         # Rough transition to restart screen...
         if self.fight_sim.is_fight_finished:
-            SceneTree.change_scene(path="nodes/restart_game_screen_node.py")
+            SceneTree.change_scene(path="nodes/restart_game_screen.cscn")
 
     def _network_server_callback(self, message: str) -> None:
         # print(
