@@ -114,6 +114,10 @@ class Main(Node2D):
 
         self.time_display.text = f"{int(fighting_round_timer.tick(delta_time))}"
 
+        # Rough transition to restart screen...
+        if self.fight_sim.is_fight_finished:
+            SceneTree.change_scene(path="nodes/restart_game_screen_node.py")
+
     def _network_server_callback(self, message: str) -> None:
         # print(
         #     f"[PYTHON SCRIPT] [SERVER] _network_server_callback - message: '{message}'"

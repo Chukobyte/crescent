@@ -42,6 +42,7 @@ class FighterSimulation:
         self.timed_funcs = []
         self.fighter_coroutines = []  # temp for now
         self.fight_match_time = 99
+        self.is_fight_finished = False  # temp for now
 
     def _on_fighter_special_move_triggered(self, move: SpecialMove):
         print(f"move '{move.name}' triggered!")
@@ -223,6 +224,14 @@ class FighterSimulation:
             except StopIteration:
                 self.fighter_coroutines.remove(coroutine)
                 continue
+
+        # Status update
+        # TODO: Finish, for now is just checking health
+        if not self.is_fight_finished:
+            for fighter in self.fighters:
+                if fighter.hp <= 0.0:
+                    self.is_fight_finished = True
+                    break
 
     def on_entities_collided(
         self, collider: Collider2D, collided_entities: list
