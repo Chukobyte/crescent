@@ -158,7 +158,7 @@ void rbe_ec_system_network_callback(const char* message) {
 Entity rbe_ec_system_create_entity() {
     // TODO: Create entity pool
     Entity newEntity = entityIndex;
-    rbe_logger_info("New entity created with id = '%d'", newEntity);
+//    rbe_logger_info("New entity created with id = '%d'", newEntity);
     entityIndex++;
     return newEntity;
 }

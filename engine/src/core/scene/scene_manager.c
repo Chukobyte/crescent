@@ -280,6 +280,8 @@ void rbe_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneNode, Scene
     nodeComponent->type = jsonSceneNode->type;
     RBE_ASSERT_FMT(nodeComponent->type != NodeBaseType_INVALID, "Node '%s' has an invalid node type '%d'", nodeComponent->name, nodeComponent->type);
     component_manager_set_component(node->entity, ComponentDataIndex_NODE, nodeComponent);
+    rbe_logger_info("Creating entity - name: '%s', entity_id = '%d', type: '%s'", nodeComponent->name, node->entity,
+                    node_get_base_type_string(nodeComponent->type));
 
     if (jsonSceneNode->components[ComponentDataIndex_TRANSFORM_2D] != NULL) {
         Transform2DComponent* transform2DComponent = transform2d_component_copy((Transform2DComponent*) jsonSceneNode->components[ComponentDataIndex_TRANSFORM_2D]);
