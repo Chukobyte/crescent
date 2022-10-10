@@ -67,18 +67,14 @@ void native_on_create_instance(Entity entity, const char* classPath, const char*
     }
 }
 
-bool native_compare_script_class_ref(RBENativeScriptClass* first, RBENativeScriptClass* second) {
-    return first->entity == second->entity;
-}
-
 void native_on_delete_instance(Entity entity) {
     RBENativeScriptClass* scriptClassRef = (RBENativeScriptClass*) *(RBENativeScriptClass**)  rbe_hash_map_get(entityToClassName, &entity);
 
     if (scriptClassRef->update_func != NULL) {
-        RBE_STATIC_ARRAY_REMOVE_WITH_PREDICATE(entities_to_update, scriptClassRef, NULL, RBENativeScriptClass*, native_compare_script_class_ref);
+        RBE_STATIC_ARRAY_REMOVE(entities_to_update, scriptClassRef, NULL);
     }
     if (scriptClassRef->physics_update_func != NULL) {
-        RBE_STATIC_ARRAY_REMOVE_WITH_PREDICATE(entities_to_physics_update, scriptClassRef, NULL, RBENativeScriptClass*, native_compare_script_class_ref);
+        RBE_STATIC_ARRAY_REMOVE(entities_to_physics_update, scriptClassRef, NULL);
     }
 
     RBE_MEM_FREE(scriptClassRef);
