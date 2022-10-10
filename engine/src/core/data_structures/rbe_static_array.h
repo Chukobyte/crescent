@@ -46,3 +46,20 @@ ARRAY_NAME[ARRAY_NAME ##_loop_index + 1] = EMPTY_VALUE;                         
 
 #define RBE_STATIC_ARRAY_EMPTY(ARRAY_NAME) \
 ARRAY_NAME ##_count = 0;
+
+// Array Utils (TODO: Move in own file)
+#define CRE_ARRAY_REMOVE_AND_CONDENSE(ARRAY_NAME, ARRAY_SIZE_VAR, ARRAY_VALUE, EMPTY_VALUE) \
+{                                                                                       \
+const size_t temp_arac_size = ARRAY_SIZE_VAR;                                                                                        \
+for (size_t temp_arac_loop_index = 0; temp_arac_loop_index < temp_arac_size; temp_arac_loop_index++) {       \
+if (ARRAY_NAME[temp_arac_loop_index] == ARRAY_VALUE) {                      \
+ARRAY_NAME[temp_arac_loop_index] = ARRAY_NAME[temp_arac_loop_index + 1];                       \
+ARRAY_NAME[temp_arac_loop_index + 1] = EMPTY_VALUE;                         \
+ARRAY_SIZE_VAR--;                                   \
+}                                                        \
+if (ARRAY_NAME[temp_arac_loop_index] == EMPTY_VALUE) {                      \
+ARRAY_NAME[temp_arac_loop_index] = ARRAY_NAME[temp_arac_loop_index + 1];                       \
+ARRAY_NAME[temp_arac_loop_index + 1] = EMPTY_VALUE;                         \
+}                                                        \
+}                                                        \
+}
