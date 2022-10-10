@@ -63,3 +63,20 @@ ARRAY_NAME[temp_arac_loop_index + 1] = EMPTY_VALUE;                         \
 }                                                        \
 }                                                        \
 }
+
+#define CRE_ARRAY_REMOVE_AND_CONDENSE_PREDICATE(ARRAY_NAME, ARRAY_SIZE_VAR, ARRAY_VALUE, EMPTY_VALUE, ARRAY_TYPE, PRED_FUNC) \
+{                                                                                                                \
+bool (*static_array_compare_func)(ARRAY_TYPE first, ARRAY_TYPE second) = PRED_FUNC; \
+const size_t temp_arac_size = ARRAY_SIZE_VAR;                                                                                        \
+for (size_t temp_arac_loop_index = 0; temp_arac_loop_index < temp_arac_size; temp_arac_loop_index++) {       \
+if (static_array_compare_func(ARRAY_NAME[temp_arac_loop_index], ARRAY_VALUE)) {                      \
+ARRAY_NAME[temp_arac_loop_index] = ARRAY_NAME[temp_arac_loop_index + 1];                       \
+ARRAY_NAME[temp_arac_loop_index + 1] = EMPTY_VALUE;                         \
+ARRAY_SIZE_VAR--;                                   \
+}                                                        \
+if (ARRAY_NAME[temp_arac_loop_index] == EMPTY_VALUE) {                      \
+ARRAY_NAME[temp_arac_loop_index] = ARRAY_NAME[temp_arac_loop_index + 1];                       \
+ARRAY_NAME[temp_arac_loop_index + 1] = EMPTY_VALUE;                         \
+}                                                        \
+}                                                        \
+}

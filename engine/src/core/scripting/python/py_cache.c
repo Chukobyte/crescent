@@ -40,6 +40,7 @@ PyObject* rbe_py_cache_get_module(const char* modulePath) {
         cacheItem->classHashMap = rbe_string_hash_map_create(16);
 
         rbe_string_hash_map_add(pyModuleCacheHashMap, modulePath, cacheItem, cacheItemSize);
+        RBE_MEM_FREE(cacheItem);
         // Increase ref to store in cache and to return to caller
         Py_IncRef(pNewModule);
         Py_DecRef(pName);
