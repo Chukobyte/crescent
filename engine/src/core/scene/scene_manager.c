@@ -61,6 +61,8 @@ size_t entitiesQueuedForCreationSize = 0;
 Entity entitiesQueuedForDeletion[MAX_ENTITIES];
 size_t entitiesQueuedForDeletionSize = 0;
 
+RBE_STATIC_ARRAY_CREATE(Entity, MAX_ENTITIES, entitiesToUnlinkParent);
+
 Scene* activeScene = NULL;
 Scene* queuedSceneToChangeTo = NULL;
 
@@ -106,6 +108,13 @@ void rbe_scene_manager_queue_entity_for_deletion(Entity entity) {
 }
 
 void rbe_scene_manager_process_queued_deletion_entities() {
+    for (size_t i = 0; i < entitiesToUnlinkParent_count; i++) {
+        SceneTreeNode* treeNode = (SceneTreeNode*) *(SceneTreeNode**) rbe_hash_map_get(entityToTreeNodeMap, &entitiesToUnlinkParent[i]);
+        SceneTreeNode* parentNode = treeNode->parent;
+        CRE_ARRAY_REMOVE_AND_CONDENSE(parentNode->children, parentNode->childCount, treeNode, NULL);
+    }
+    entitiesToUnlinkParent_count = 0;
+
     for (size_t i = 0; i < entitiesQueuedForDeletionSize; i++) {
         // Remove entity from entity to tree node map
         Entity entityToDelete = entitiesQueuedForDeletion[i];
@@ -135,6 +144,9 @@ void rbe_queue_destroy_tree_node_entity(SceneTreeNode* treeNode) {
 
 void rbe_queue_destroy_tree_node_entity_all(SceneTreeNode* treeNode) {
     rbe_scene_execute_on_all_tree_nodes(treeNode, rbe_queue_destroy_tree_node_entity);
+    if (treeNode->parent != NULL) {
+        RBE_STATIC_ARRAY_ADD(entitiesToUnlinkParent, treeNode->entity);
+    }
 }
 
 void rbe_scene_manager_process_queued_scene_change() {
