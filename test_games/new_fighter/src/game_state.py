@@ -16,4 +16,5 @@ class GameState:
         if not cls._instance:
             cls._instance = object.__new__(cls)
             cls.mode = GameMode.NONE
+            cls.last_win_state = None
         return cls._instance

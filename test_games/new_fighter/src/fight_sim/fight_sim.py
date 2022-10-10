@@ -33,6 +33,12 @@ class TimedFunction:
         return False
 
 
+class WinState:
+    NONE = -1
+    PLAYER_ONE = 0
+    PLAYER_TWO = 1
+
+
 class FighterSimulation:
     def __init__(self, main_node: Node2D):
         self.main_node = main_node
@@ -42,7 +48,7 @@ class FighterSimulation:
         self.timed_funcs = []
         self.fighter_coroutines = []  # temp for now
         self.fight_match_time = 99
-        self.is_fight_finished = False  # temp for now
+        self.win_state = WinState.NONE
 
     def _on_fighter_special_move_triggered(self, move: SpecialMove):
         print(f"move '{move.name}' triggered!")
@@ -227,10 +233,13 @@ class FighterSimulation:
 
         # Status update
         # TODO: Finish, for now is just checking health
-        if not self.is_fight_finished:
-            for fighter in self.fighters:
+        if self.win_state == WinState.NONE:
+            for i, fighter in enumerate(self.fighters):
                 if fighter.hp <= 0.0:
-                    self.is_fight_finished = True
+                    if i == 0:
+                        self.win_state = WinState.PLAYER_TWO
+                    else:
+                        self.win_state = WinState.PLAYER_ONE
                     break
 
     def on_entities_collided(
