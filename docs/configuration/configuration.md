@@ -1,5 +1,9 @@
 # Configuration
 
+## About
+
+Configuration files are automatically generated and maintained by the editor as json files with unique file extensions.  This allows the ability to work with a project without an editor or create a separate editor.
+
 ## Project Configuration
 
 Configuration is configured in the project's root directory with the `project.ccfg`.  It should look like the following:
