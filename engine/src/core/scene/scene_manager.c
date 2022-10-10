@@ -61,8 +61,6 @@ size_t entitiesQueuedForCreationSize = 0;
 Entity entitiesQueuedForDeletion[MAX_ENTITIES];
 size_t entitiesQueuedForDeletionSize = 0;
 
-RBE_STATIC_ARRAY_CREATE(Entity, MAX_ENTITIES, entitiesToUnlinkParent);
-
 Scene* activeScene = NULL;
 Scene* queuedSceneToChangeTo = NULL;
 
@@ -72,7 +70,7 @@ void rbe_scene_manager_setup_scene_nodes_from_json(JsonSceneNode* jsonSceneNode)
 
 void rbe_scene_manager_initialize() {
     RBE_ASSERT(entityToTreeNodeMap == NULL);
-    entityToTreeNodeMap = rbe_hash_map_create(sizeof(Entity), sizeof(SceneTreeNode), 16); // TODO: Update capacity
+    entityToTreeNodeMap = rbe_hash_map_create(sizeof(Entity), sizeof(SceneTreeNode**), 16); // TODO: Update capacity
 }
 
 void rbe_scene_manager_finalize() {
@@ -83,7 +81,7 @@ void rbe_scene_manager_finalize() {
 void rbe_scene_manager_queue_entity_for_creation(SceneTreeNode* treeNode) {
     entitiesQueuedForCreation[entitiesQueuedForCreationSize++] = treeNode->entity;
     RBE_ASSERT_FMT(!rbe_hash_map_has(entityToTreeNodeMap, &treeNode->entity), "Entity '%d' already in entity to tree map!", treeNode->entity);
-    rbe_hash_map_add(entityToTreeNodeMap, &treeNode->entity, treeNode);
+    rbe_hash_map_add(entityToTreeNodeMap, &treeNode->entity, &treeNode);
 }
 
 void rbe_scene_manager_process_queued_creation_entities() {
@@ -108,20 +106,12 @@ void rbe_scene_manager_queue_entity_for_deletion(Entity entity) {
 }
 
 void rbe_scene_manager_process_queued_deletion_entities() {
-    for (size_t i = 0; i < entitiesToUnlinkParent_count; i++) {
-        SceneTreeNode* treeNode = rbe_hash_map_get(entityToTreeNodeMap, &entitiesToUnlinkParent[i]);
-        SceneTreeNode* parentNode = treeNode->parent;
-        CRE_ARRAY_REMOVE_AND_CONDENSE(parentNode->children, parentNode->childCount, treeNode, NULL);
-    }
-    entitiesToUnlinkParent_count = 0;
-
     for (size_t i = 0; i < entitiesQueuedForDeletionSize; i++) {
         // Remove entity from entity to tree node map
         Entity entityToDelete = entitiesQueuedForDeletion[i];
         RBE_ASSERT_FMT(rbe_hash_map_has(entityToTreeNodeMap, &entityToDelete), "Entity '%d' not in tree node map!?", entityToDelete);
-        // FIXME: Check if hashmap erase deletes treeNode and fix issue
-//        SceneTreeNode* treeNode = rbe_hash_map_get(entityToTreeNodeMap, &entityToDelete);
-//        RBE_MEM_FREE(treeNode);
+        SceneTreeNode* treeNode = (SceneTreeNode*) *(SceneTreeNode**) rbe_hash_map_get(entityToTreeNodeMap, &entityToDelete);
+        RBE_MEM_FREE(treeNode);
         rbe_hash_map_erase(entityToTreeNodeMap, &entityToDelete);
         // Remove entity from systems
         rbe_ec_system_remove_entity_from_all_systems(entityToDelete);
@@ -145,9 +135,6 @@ void rbe_queue_destroy_tree_node_entity(SceneTreeNode* treeNode) {
 
 void rbe_queue_destroy_tree_node_entity_all(SceneTreeNode* treeNode) {
     rbe_scene_execute_on_all_tree_nodes(treeNode, rbe_queue_destroy_tree_node_entity);
-    if (treeNode->parent != NULL) {
-        RBE_STATIC_ARRAY_ADD(entitiesToUnlinkParent, treeNode->entity);
-    }
 }
 
 void rbe_scene_manager_process_queued_scene_change() {
@@ -251,7 +238,7 @@ TransformModel2D* rbe_scene_manager_get_scene_node_global_transform(Entity entit
 
 SceneTreeNode* rbe_scene_manager_get_entity_tree_node(Entity entity) {
     RBE_ASSERT_FMT(rbe_hash_map_has(entityToTreeNodeMap, &entity), "Doesn't have entity '%d' in scene tree!", entity);
-    SceneTreeNode* treeNode = (SceneTreeNode*) rbe_hash_map_get(entityToTreeNodeMap, &entity);
+    SceneTreeNode* treeNode = (SceneTreeNode*) *(SceneTreeNode**) rbe_hash_map_get(entityToTreeNodeMap, &entity);
     RBE_ASSERT_FMT(treeNode != NULL, "Failed to get tree node for entity '%d'", entity);
     return treeNode;
 }
