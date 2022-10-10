@@ -38,7 +38,7 @@ RBEScriptContext* rbe_native_create_script_context() {
     classCache = rbe_string_hash_map_create(MAX_NATIVE_CLASSES);
 
     RBE_ASSERT(entityToClassName == NULL);
-    entityToClassName = rbe_hash_map_create(sizeof(Entity), sizeof(RBENativeScriptClass), MAX_NATIVE_CLASS_ENTITIES);
+    entityToClassName = rbe_hash_map_create(sizeof(Entity), sizeof(RBENativeScriptClass**), MAX_NATIVE_CLASS_ENTITIES);
 
     return scriptContext;
 }
@@ -49,16 +49,16 @@ void rbe_native_class_register_new_class(RBENativeScriptClass* scriptClass) {
         return;
     }
     rbe_logger_debug("register native c/c++ class, name: %s, path: %s", scriptClass->name, scriptClass->path);
-    rbe_string_hash_map_add(classCache, scriptClass->name, scriptClass, scriptClass->class_instance_size);
+    rbe_string_hash_map_add(classCache, scriptClass->name, &scriptClass, scriptClass->class_instance_size);
 }
 
 void native_on_create_instance(Entity entity, const char* classPath, const char* className) {
     RBE_ASSERT_FMT(rbe_string_hash_map_has(classCache, className), "Class ref not cached!  entity: '%d', class_path: '%s', class_name: '%s'", entity, classPath, className);
-    RBENativeScriptClass* scriptClassRef = rbe_string_hash_map_get(classCache, className);
+    RBENativeScriptClass* scriptClassRef = (RBENativeScriptClass*) *(RBENativeScriptClass**) rbe_string_hash_map_get(classCache, className);
     RBE_ASSERT(scriptClassRef != NULL);
     RBE_ASSERT(scriptClassRef->create_new_instance_func != NULL);
     RBENativeScriptClass* newScriptClass = scriptClassRef->create_new_instance_func(entity);
-    rbe_hash_map_add(entityToClassName, &entity, newScriptClass);
+    rbe_hash_map_add(entityToClassName, &entity, &newScriptClass);
     if (newScriptClass->update_func != NULL) {
         RBE_STATIC_ARRAY_ADD(entities_to_update, newScriptClass);
     }
@@ -68,7 +68,7 @@ void native_on_create_instance(Entity entity, const char* classPath, const char*
 }
 
 void native_on_delete_instance(Entity entity) {
-    RBENativeScriptClass* scriptClassRef = (RBENativeScriptClass*) rbe_hash_map_get(entityToClassName, &entity);
+    RBENativeScriptClass* scriptClassRef = (RBENativeScriptClass*) *(RBENativeScriptClass**)  rbe_hash_map_get(entityToClassName, &entity);
 
     if (scriptClassRef->update_func != NULL) {
         RBE_STATIC_ARRAY_REMOVE(entities_to_update, scriptClassRef, NULL);
@@ -83,7 +83,7 @@ void native_on_delete_instance(Entity entity) {
 
 void native_on_start(Entity entity) {
     RBE_ASSERT(rbe_hash_map_has(entityToClassName, &entity));
-    RBENativeScriptClass* scriptClassRef = (RBENativeScriptClass*) rbe_hash_map_get(entityToClassName, &entity);
+    RBENativeScriptClass* scriptClassRef = (RBENativeScriptClass*) *(RBENativeScriptClass**) rbe_hash_map_get(entityToClassName, &entity);
     scriptClassRef->on_start_func(scriptClassRef);
 }
 
@@ -101,6 +101,6 @@ void native_on_physics_update_all_instances(float deltaTime) {
 
 void native_on_end(Entity entity) {
     RBE_ASSERT(rbe_hash_map_has(entityToClassName, &entity));
-    RBENativeScriptClass* scriptClassRef = (RBENativeScriptClass*) rbe_hash_map_get(entityToClassName, &entity);
+    RBENativeScriptClass* scriptClassRef = (RBENativeScriptClass*) *(RBENativeScriptClass**) rbe_hash_map_get(entityToClassName, &entity);
     scriptClassRef->on_end_func(scriptClassRef);
 }

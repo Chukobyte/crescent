@@ -83,6 +83,7 @@ void* component_manager_get_component_unsafe(Entity entity, ComponentDataIndex i
 }
 
 void component_manager_set_component(Entity entity, ComponentDataIndex index, void* component) {
+    RBE_ASSERT_FMT(entity < MAX_ENTITIES, "Entity limit reached!  Try increasing MAX_ENTITIES count or implementing entity id pooling!");
     component_array_set_component(componentManager->entityComponentArrays[entity], index, component);
     // Update signature
     ComponentType componentSignature = component_manager_get_component_signature(entity);

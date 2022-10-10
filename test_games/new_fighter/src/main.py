@@ -86,7 +86,7 @@ class Main(Node2D):
             Engine.exit()
 
         if Input.is_action_just_pressed(name="ui_confirm"):
-            SceneTree.change_scene(path="nodes/main_node.py")
+            SceneTree.change_scene(path="nodes/main.cscn")
 
         if Input.is_action_just_pressed(name="play_sfx"):
             self.fight_sim.fighters[0].health_bar.print_debug_info()
@@ -113,6 +113,11 @@ class Main(Node2D):
         self.fight_sim.update(delta_time)
 
         self.time_display.text = f"{int(fighting_round_timer.tick(delta_time))}"
+
+        # Rough transition to restart screen...
+        if self.fight_sim.win_state != WinState.NONE:
+            self.game_state.last_win_state = self.fight_sim.win_state
+            SceneTree.change_scene(path="nodes/restart_game_screen.cscn")
 
     def _network_server_callback(self, message: str) -> None:
         # print(

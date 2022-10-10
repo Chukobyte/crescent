@@ -20,6 +20,8 @@
 #pragma warning(disable : 4996) // for strcpy
 #endif
 
+static SceneTreeNode* fpsDisplayNode = NULL;
+
 void rbe_ecs_manager_initialize() {
     component_manager_initialize();
     rbe_ec_system_initialize();
@@ -37,8 +39,8 @@ void rbe_ecs_manager_enable_fps_display_entity(bool enabled) {
     static Entity currentFpsEntity = NULL_ENTITY;
     // Create temp entity
     if (!isEnabled && enabled) {
-        SceneTreeNode* node = rbe_scene_tree_create_tree_node(rbe_ec_system_create_entity(), NULL);
-        currentFpsEntity = node->entity;
+        fpsDisplayNode = rbe_scene_tree_create_tree_node(rbe_ec_system_create_entity(), NULL);
+        currentFpsEntity = fpsDisplayNode->entity;
         // Transform 2D
         Transform2DComponent* transform2DComponent = transform2d_component_create();
         transform2DComponent->localTransform.position.x = 20.0f;
@@ -56,11 +58,13 @@ void rbe_ecs_manager_enable_fps_display_entity(bool enabled) {
         component_manager_set_component(currentFpsEntity, ComponentDataIndex_SCRIPT, scriptComponent);
         // Update systems
         rbe_ec_system_update_entity_signature_with_systems(currentFpsEntity);
-        rbe_scene_manager_queue_entity_for_creation(node);
+        rbe_scene_manager_queue_entity_for_creation(fpsDisplayNode);
     } else if (isEnabled && !enabled) {
-        RBE_ASSERT(currentFpsEntity != NULL_ENTITY);
-        rbe_scene_manager_queue_entity_for_deletion(currentFpsEntity);
+        RBE_ASSERT_FMT(currentFpsEntity != NULL_ENTITY, "Current fps entity is a null entity!?");
+        RBE_ASSERT_FMT(fpsDisplayNode != NULL, "FPS Display Node is NULL!?");
+        rbe_queue_destroy_tree_node_entity_all(fpsDisplayNode);
         currentFpsEntity = NULL_ENTITY;
+        fpsDisplayNode = NULL;
     }
     isEnabled = enabled;
 }

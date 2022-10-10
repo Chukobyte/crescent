@@ -733,12 +733,6 @@ class Node:
             parent_entity_id=self.entity_id, child_entity_id=child_node.entity_id
         )
 
-    def get_node(self, name: str):
-        node = crescent_api_internal.node_get_node(name=name)
-        if not node:
-            return None
-        return self.parse_scene_node_from_engine(scene_node=node)
-
     def queue_deletion(self) -> None:
         crescent_api_internal.node_queue_deletion(entity_id=self.entity_id)
 

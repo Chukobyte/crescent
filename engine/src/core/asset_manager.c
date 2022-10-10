@@ -32,6 +32,7 @@ Texture* rbe_asset_manager_load_texture(const char* fileName, const char* key) {
     RBE_ASSERT_FMT(!rbe_string_hash_map_has(texturesMap, fileName), "Already loaded texture at file path '%'s!  Has key '%s'.", fileName, key);
     Texture* texture = rbe_texture_create_texture(fileName);
     rbe_string_hash_map_add(texturesMap, key, texture, sizeof(Texture));
+    RBE_MEM_FREE(texture);
     return texture;
 }
 
@@ -49,6 +50,7 @@ Font* rbe_asset_manager_load_font(const char* fileName, const char* key, int siz
     Font* font = font_create_font(fileName, size);
     RBE_ASSERT_FMT(font != NULL, "Failed to load font! file_name: '%s', key: '%s', size: '%d'", fileName, key, size);
     rbe_string_hash_map_add(fontMap, key, font, sizeof(Font));
+    RBE_MEM_FREE(font);
     return font;
 }
 
@@ -79,6 +81,8 @@ RBEAudioSource* rbe_asset_manager_load_audio_source_wav(const char* fileName, co
     newAudioSource->sample_rate = sampleRate;
     newAudioSource->samples = samples;
     rbe_string_hash_map_add(audioSourceMap, key, newAudioSource, sizeof(RBEAudioSource));
+    RBE_MEM_FREE(newAudioSource);
+    newAudioSource = rbe_string_hash_map_get(audioSourceMap, key);
     rbe_audio_print_audio_source(newAudioSource);
     return newAudioSource;
 }
