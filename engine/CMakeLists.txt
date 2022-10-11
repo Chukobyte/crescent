@@ -46,6 +46,7 @@ add_library(${PROJECT_NAME} STATIC
         src/core/scripting/native/internal_classes/fps_display_class.c
         src/core/networking/rbe_network.c
         src/core/rendering/font.c
+        src/core/rendering/frame_buffer.c
         src/core/rendering/renderer.c
         src/core/rendering/render_context.c
         src/core/rendering/shader.c

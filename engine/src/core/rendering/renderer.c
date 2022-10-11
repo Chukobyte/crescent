@@ -5,6 +5,7 @@
 #include "render_context.h"
 #include "shader.h"
 #include "shader_source.h"
+#include "frame_buffer.h"
 #include "../math/rbe_math.h"
 #include "../game_properties.h"
 #include "../data_structures/rbe_static_array.h"
@@ -42,12 +43,15 @@ void rbe_renderer_initialize() {
     rbe_render_context_initialize();
     sprite_renderer_initialize();
     font_renderer_initialize();
+    // Test framebuffer
+    RBE_ASSERT_FMT(cre_frame_buffer_initialize(), "Framebuffer didn't initialize!");
 }
 
 void rbe_renderer_finalize() {
     font_renderer_finalize();
     sprite_renderer_finalize();
     rbe_render_context_finalize();
+    cre_frame_buffer_finalize();
 }
 
 // --- Sprite Batching --- //
