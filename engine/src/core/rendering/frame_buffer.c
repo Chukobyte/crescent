@@ -14,8 +14,49 @@ GLuint rbo = -1;
 bool hasBeenInitialized = false;
 
 static Shader* screenShader = NULL;
+static GLuint screenVAO = -1;
+static GLuint screenVBO = -1;
 
 bool cre_frame_buffer_initialize() {
+    // VAO & VBO
+    GLfloat vertices[] = {
+            // pos      // tex coords
+            -1.0f, 1.0f, 0.0f, 1.0f,
+            -1.0f, -1.0f, 0.0f, 0.0f,
+            -1.0f, -1.0f, 1.0f, 0.0f,
+
+            -1.0f, 1.0f, 0.0f, 1.0f,
+            1.0f, -1.0f, 1.0f, 0.0f,
+            1.0f, 1.0f, 1.0f, 1.0f
+    };
+//    GLfloat vertices[] = {
+//        // pos      // tex coords
+//        0.0f, 1.0f, 0.0f, 1.0f,
+//        1.0f, 0.0f, 1.0f, 0.0f,
+//        0.0f, 0.0f, 0.0f, 0.0f,
+//
+//        0.0f, 1.0f, 0.0f, 1.0f,
+//        1.0f, 1.0f, 1.0f, 1.0f,
+//        1.0f, 0.0f, 1.0f, 0.0f
+//    };
+
+    // Initialize render data
+    glGenVertexArrays(1, &screenVAO);
+    glGenBuffers(1, &screenVBO);
+    glBindVertexArray(screenVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, screenVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    // position attribute
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*) NULL);
+    // texture coords attribute
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)(2 * sizeof(GLfloat)));
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
+    // Create Framebuffer
     glGenFramebuffers(1, &frameBuffer);
     glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
     // Create color attachment
@@ -36,8 +77,8 @@ bool cre_frame_buffer_initialize() {
         rbe_logger_error("Framebuffer is not complete!");
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-    screenShader = shader_compile_new_shader(OPENGL_SHADER_SOURCE_VERTEX_SPRITE, OPENGL_SHADER_SOURCE_FRAGMENT_SPRITE);
+    // compile shaders
+    screenShader = shader_compile_new_shader(OPENGL_SHADER_SOURCE_VERTEX_SCREEN, OPENGL_SHADER_SOURCE_FRAGMENT_SCREEN);
     shader_use(screenShader);
     shader_set_int(screenShader, "screenTexture", 0);
 
@@ -49,15 +90,9 @@ void cre_frame_buffer_finalize() {
     hasBeenInitialized = false;
 }
 
-void frame_buffer_clear() {
-    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-}
-
 void cre_frame_buffer_bind() {
     RBE_ASSERT(hasBeenInitialized);
     glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
-    frame_buffer_clear();
 }
 
 void cre_frame_buffer_unbind() {
@@ -66,4 +101,12 @@ void cre_frame_buffer_unbind() {
 
 Shader* cre_frame_buffer_get_screen_shader() {
     return screenShader;
+}
+
+unsigned int cre_frame_buffer_get_color_buffer_texture() {
+    return textureColorBuffer;
+}
+
+unsigned int cre_frame_buffer_get_quad_vao() {
+    return screenVAO;
 }

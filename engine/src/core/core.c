@@ -289,13 +289,10 @@ void rbe_process_game_update() {
 }
 
 void rbe_render() {
-    static Color backgroundColor = { 33.0f / 255.0f, 33.0f / 255.0f, 33.0f / 255.0f, 1.0f };
-    glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
     rbe_ec_system_render_systems();
 
-    rbe_renderer_flush_batches();
+    static Color backgroundColor = { 33.0f / 255.0f, 33.0f / 255.0f, 33.0f / 255.0f, 1.0f };
+    cre_renderer_process_and_flush_batches(&backgroundColor);
 
     SDL_GL_SwapWindow(window);
 }
