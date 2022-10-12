@@ -59,6 +59,7 @@ RBEGameProperties* rbe_game_props_create();
 void rbe_game_props_initialize(RBEGameProperties* initialProps);
 void rbe_game_props_finalize();
 RBEGameProperties* rbe_game_props_get();
+RBEGameProperties* cre_game_props_get_or_default();
 void rbe_game_props_print();
 
 #ifdef __cplusplus

@@ -195,7 +195,7 @@ void sprite_renderer_initialize() {
         {0.0f, 0.0f, 1.0f, 0.0f},
         {0.0f, 0.0f, 0.0f, 1.0f}
     };
-    RBEGameProperties* gameProperties = rbe_game_props_get();
+    RBEGameProperties* gameProperties = cre_game_props_get_or_default();
     glm_ortho(0.0f, (float) gameProperties->resolutionWidth, (float) gameProperties->resolutionHeight, 0.0f, -1.0f, 1.0f, proj);
     shader_use(spriteShader);
     shader_set_mat4_float(spriteShader, "projection", &proj);
