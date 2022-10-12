@@ -6,11 +6,12 @@
 #include "shader.h"
 #include "shader_source.h"
 #include "frame_buffer.h"
-#include "../math/rbe_math.h"
 #include "../game_properties.h"
 #include "../data_structures/rbe_static_array.h"
-#include "../memory/rbe_mem.h"
 #include "../utils/rbe_assert.h"
+
+#define CRE_RENDER_TO_FRAMEBUFFER
+#define CRE_RENDER_FRAMEBUFFER_DRAW_TEXTURE
 
 typedef struct TextureCoordinates {
     GLfloat sMin;
@@ -121,24 +122,32 @@ void rbe_renderer_flush_batches() {
 }
 
 void cre_renderer_process_and_flush_batches(const Color* backgroundColor) {
+#ifdef CRE_RENDER_TO_FRAMEBUFFER
     cre_frame_buffer_bind();
+#endif
     // Clear framebuffer with background color
     glClearColor(backgroundColor->r, backgroundColor->g, backgroundColor->b, backgroundColor->a);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
     rbe_renderer_flush_batches();
+
+#ifdef CRE_RENDER_TO_FRAMEBUFFER
     cre_frame_buffer_unbind();
 
     // Clear screen texture background
     static Color screenBackgroundColor = { 1.0f, 1.0f, 1.0f, 1.0f };
     glClearColor(screenBackgroundColor.r, screenBackgroundColor.g, screenBackgroundColor.b, screenBackgroundColor.a);
+    glClear(GL_COLOR_BUFFER_BIT);
 
+#ifdef CRE_RENDER_FRAMEBUFFER_DRAW_TEXTURE
     // Draw screen texture from framebuffer
     Shader* screenShader = cre_frame_buffer_get_screen_shader();
     shader_use(screenShader);
     glBindVertexArray(cre_frame_buffer_get_quad_vao());
     glBindTexture(GL_TEXTURE_2D, cre_frame_buffer_get_color_buffer_texture());	// use the color attachment texture as the texture of the quad plane
     glDrawArrays(GL_TRIANGLES, 0, 6);
+#endif
+#endif
 }
 
 // --- Sprite Renderer --- //
