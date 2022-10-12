@@ -20,25 +20,15 @@ static GLuint screenVBO = -1;
 bool cre_frame_buffer_initialize() {
     // VAO & VBO
     GLfloat vertices[] = {
-            // pos      // tex coords
-            -1.0f, 1.0f, 0.0f, 1.0f,
+        // pos      // tex coords
+        -1.0f, 1.0f, 0.0f, 1.0f,
             -1.0f, -1.0f, 0.0f, 0.0f,
-            -1.0f, -1.0f, 1.0f, 0.0f,
+            1.0f, -1.0f, 1.0f, 0.0f,
 
             -1.0f, 1.0f, 0.0f, 1.0f,
             1.0f, -1.0f, 1.0f, 0.0f,
             1.0f, 1.0f, 1.0f, 1.0f
-    };
-//    GLfloat vertices[] = {
-//        // pos      // tex coords
-//        0.0f, 1.0f, 0.0f, 1.0f,
-//        1.0f, 0.0f, 1.0f, 0.0f,
-//        0.0f, 0.0f, 0.0f, 0.0f,
-//
-//        0.0f, 1.0f, 0.0f, 1.0f,
-//        1.0f, 1.0f, 1.0f, 1.0f,
-//        1.0f, 0.0f, 1.0f, 0.0f
-//    };
+        };
 
     // Initialize render data
     glGenVertexArrays(1, &screenVAO);
