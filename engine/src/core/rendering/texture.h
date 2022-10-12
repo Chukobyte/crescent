@@ -1,5 +1,9 @@
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <glad/glad.h>
 
 typedef struct Texture {
@@ -21,3 +25,7 @@ typedef struct Texture {
 
 Texture* rbe_texture_create_texture(const char* filePath);
 Texture* rbe_texture_create_solid_colored_texture(GLsizei width, GLsizei height, GLuint colorValue);
+
+#ifdef __cplusplus
+}
+#endif

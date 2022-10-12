@@ -970,6 +970,7 @@ void OpenedProjectUI::ProcessWindows() {
                 windowRenderer.Initialize();
                 isInitialized = true;
             }
+            windowRenderer.Render();
         },
         .position = ImVec2{ 300.0f, 100.0f },
         .size = ImVec2{ 400.0f, 300.0f },

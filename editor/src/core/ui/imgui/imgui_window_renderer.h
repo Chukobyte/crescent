@@ -2,7 +2,9 @@
 
 namespace ImGuiHelper {
 class WindowRenderer {
-public:
+  public:
     void Initialize();
+    void Render();
+    void Finalize();
 };
 }
