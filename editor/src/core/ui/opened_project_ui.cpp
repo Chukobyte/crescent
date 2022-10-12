@@ -16,6 +16,7 @@
 #include "../editor_callbacks.h"
 #include "../game_exporter.h"
 #include "imgui/imgui_file_browser.h"
+#include "imgui/imgui_window_renderer.h"
 
 const std::string COMBO_BOX_LIST_NONE = "<none>";
 
@@ -962,7 +963,14 @@ void OpenedProjectUI::ProcessWindows() {
         .name = "Scene View",
         .open = nullptr,
         .windowFlags = ImGuiWindowFlags_NoResize,
-        .callbackFunc = [] (ImGuiHelper::Context* context) {},
+        .callbackFunc = [] (ImGuiHelper::Context* context) {
+            static ImGuiHelper::WindowRenderer windowRenderer;
+            static bool isInitialized = false;
+            if (!isInitialized) {
+                windowRenderer.Initialize();
+                isInitialized = true;
+            }
+        },
         .position = ImVec2{ 300.0f, 100.0f },
         .size = ImVec2{ 400.0f, 300.0f },
     };

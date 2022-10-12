@@ -34,6 +34,7 @@ add_library(${PROJECT_NAME} STATIC
         src/core/ui/imgui/imgui_handler.cpp
         src/core/ui/imgui/imgui_helper.cpp
         src/core/ui/imgui/imgui_styler.cpp
+        src/core/ui/imgui/imgui_window_renderer.cpp
         src/core/utils/process_runner/process_runner.cpp
         src/core/utils/process_runner/process_context.cpp
         ../include/imgui.cpp
