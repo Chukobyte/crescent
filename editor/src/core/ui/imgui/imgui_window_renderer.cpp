@@ -40,18 +40,18 @@ void ImGuiHelper::WindowRenderer::Render() {
     static Color color = { 1.0f, 1.0f, 1.0f, 1.0f };
     static TransformModel2D globalTransform = GetDefaultGlobalTransform();
     // New frame
-//    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame(EditorContext::Get()->window);
-//    ImGui::NewFrame();
     // Queue draw call within engine code paths
     rbe_renderer_queue_sprite_draw_call(screenTexture, sourceRect, destSize, color, false, false, &globalTransform);
     // Flush queued calls and render to framebuffer
     cre_renderer_process_and_flush_batches(&backgroundColor, false);
     // Add screen texture to draw list
+    const ImVec2 cursorPos = ImGui::GetCursorScreenPos();
     ImGui::GetWindowDrawList()->AddImage(
         (void*) cre_frame_buffer_get_color_buffer_texture(),
-        ImVec2(ImGui::GetCursorScreenPos()),
-        ImVec2(ImGui::GetCursorScreenPos().x + windowSize.w / 2.0f, ImGui::GetCursorScreenPos().y + windowSize.h / 2.0f),
+        cursorPos,
+        ImVec2(cursorPos.x + windowSize.w, cursorPos.y + windowSize.h),
         ImVec2(0.0f, 1.0f),
         ImVec2(1.0f, 0.0f)
     );
