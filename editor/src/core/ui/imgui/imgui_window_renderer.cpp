@@ -18,8 +18,8 @@ Texture* screenTexture = nullptr;
 namespace {
 TransformModel2D GetDefaultGlobalTransform() {
     TransformModel2D transformModel2D = {
-        .position = { 0.0f, 0.0f },
-        .scale = { 1.0f, 1.0f },
+        .position = { 400.0f, 300.0f },
+        .scale = { 4.0f, 4.0f },
         .rotation = 0.0f,
         .scaleSign = { 1.0f, 1.0f }
     };
