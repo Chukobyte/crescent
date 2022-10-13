@@ -292,7 +292,7 @@ void rbe_render() {
     rbe_ec_system_render_systems();
 
     static Color backgroundColor = { 33.0f / 255.0f, 33.0f / 255.0f, 33.0f / 255.0f, 1.0f };
-    cre_renderer_process_and_flush_batches(&backgroundColor);
+    cre_renderer_process_and_flush_batches(&backgroundColor, true);
 
     SDL_GL_SwapWindow(window);
 }
