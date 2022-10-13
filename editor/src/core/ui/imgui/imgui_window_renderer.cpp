@@ -23,7 +23,15 @@ TransformModel2D GetDefaultGlobalTransform() {
         .rotation = 0.0f,
         .scaleSign = { 1.0f, 1.0f }
     };
+    Transform2DComponent transform2DComponent = {
+        .localTransform = {
+            .position = { 400.0f, 300.0f },
+            .scale = { 4.0f, 4.0f },
+            .rotation = 0.0f
+        }
+    };
     glm_mat4_identity(transformModel2D.model);
+    transform2d_component_get_local_model_matrix(transformModel2D.model, &transform2DComponent);
     return transformModel2D;
 }
 } // namespace
