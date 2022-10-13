@@ -11,7 +11,6 @@
 #include "../../editor_context.h"
 
 Color backgroundColor = { 0.1f, 0.1f, 0.1f, 1.0f };
-Size2D windowSize = { 800.0f, 600.0f };
 
 Texture* screenTexture = nullptr;
 
@@ -30,7 +29,6 @@ TransformModel2D GetDefaultGlobalTransform() {
             .rotation = 0.0f
         }
     };
-    glm_mat4_identity(transformModel2D.model);
     transform2d_component_get_local_model_matrix(transformModel2D.model, &transform2DComponent);
     return transformModel2D;
 }
@@ -56,10 +54,11 @@ void ImGuiHelper::WindowRenderer::Render() {
     cre_renderer_process_and_flush_batches(&backgroundColor, false);
     // Add screen texture to draw list
     const ImVec2 cursorPos = ImGui::GetCursorScreenPos();
+    const ImVec2 windowSize = ImGui::GetWindowSize();
     ImGui::GetWindowDrawList()->AddImage(
-        (void*) cre_frame_buffer_get_color_buffer_texture(),
+        (ImTextureID) cre_frame_buffer_get_color_buffer_texture(),
         cursorPos,
-        ImVec2(cursorPos.x + windowSize.w, cursorPos.y + windowSize.h),
+        ImVec2(cursorPos.x + windowSize.x, cursorPos.y + windowSize.y),
         ImVec2(0.0f, 1.0f),
         ImVec2(1.0f, 0.0f)
     );
