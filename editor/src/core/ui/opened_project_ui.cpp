@@ -965,7 +965,7 @@ void OpenedProjectUI::ProcessWindows() {
         .windowFlags = ImGuiWindowFlags_NoResize,
         .callbackFunc = [] (ImGuiHelper::Context* context) {
             // Test scene for now until the scene tree is hooked in...
-            static auto GetTestGlobalTransform = [] {
+            static auto GetTestGlobalTransform = [] (const Vector2& pos = { 400.0f, 300.0f }) {
                 TransformModel2D transformModel2D = {
                     .position = { 0.0f, 0.0f },
                     .scale = { 1.0f, 1.0f },
@@ -974,7 +974,7 @@ void OpenedProjectUI::ProcessWindows() {
                 };
                 Transform2DComponent transform2DComponent = {
                     .localTransform = {
-                        .position = { 400.0f, 300.0f },
+                        .position = pos,
                         .scale = { 1.0f, 1.0f },
                         .rotation = 0.0f
                     }
@@ -985,21 +985,43 @@ void OpenedProjectUI::ProcessWindows() {
             static ImGuiHelper::WindowRenderer windowRenderer;
             static bool isInitialized = false;
             static Texture* testTexture = rbe_texture_create_solid_colored_texture(1, 1, 255);
-            TransformModel2D testTransform = GetTestGlobalTransform();
-            ImGuiHelper::TextureRenderTarget testRenderTarget = {
-                .texture = testTexture,
-                .sourceRect = { 0.0f, 0.0f, 1.0f, 1.0f },
-                .destSize = { 32.0f, 32.0f },
-                .color = { 0.75f, 0.1f, 0.1f, 1.0f },
-                .flipX = false,
-                .flipY = false,
-                .globalTransform = &testTransform
-            };
             if (!isInitialized) {
                 windowRenderer.Initialize();
                 isInitialized = true;
             }
-            windowRenderer.Render({ testRenderTarget });
+            static SceneManager* sceneManager = SceneManager::Get();
+            std::vector<ImGuiHelper::TextureRenderTarget> renderTargets;
+            TransformModel2D testTransform = GetTestGlobalTransform();
+            ImGuiHelper::TextureRenderTarget testRenderTarget = {
+                    .texture = testTexture,
+                    .sourceRect = { 0.0f, 0.0f, 1.0f, 1.0f },
+                    .destSize = { 32.0f, 32.0f },
+                    .color = { 0.75f, 0.1f, 0.1f, 1.0f },
+                    .flipX = false,
+                    .flipY = false,
+                    .globalTransform = &testTransform
+            };
+            renderTargets.emplace_back(testRenderTarget);
+            windowRenderer.Render(renderTargets);
+
+//            if (sceneManager->selectedSceneFile && sceneManager->selectedSceneFile->rootNode) {
+//                sceneManager->IterateAllSceneNodes(sceneManager->selectedSceneFile->rootNode, [&renderTargets](SceneNode* node, size_t i) {
+//                    if (auto* transformComp = node->GetComponentSafe<Transform2DComp>()) {
+//                        TransformModel2D testTransform = GetTestGlobalTransform(transformComp->transform2D.position);
+//                        ImGuiHelper::TextureRenderTarget testRenderTarget = {
+//                                .texture = testTexture,
+//                                .sourceRect = { 0.0f, 0.0f, 1.0f, 1.0f },
+//                                .destSize = { 32.0f, 32.0f },
+//                                .color = { 0.75f, 0.1f, 0.1f, 1.0f },
+//                                .flipX = false,
+//                                .flipY = false,
+//                                .globalTransform = &testTransform
+//                        };
+//                        renderTargets.emplace_back(testRenderTarget);
+//                    }
+//                });
+//            }
+//            windowRenderer.Render(renderTargets);
         },
         .position = ImVec2{ 300.0f, 100.0f },
         .size = ImVec2{ 400.0f, 300.0f },

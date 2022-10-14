@@ -268,3 +268,18 @@ SceneNode* SceneManager::LoadSceneTreeJson(JsonSceneNode* node, SceneNode* paren
     }
     return sceneNode;
 }
+
+namespace {
+void LoopNodes(SceneNode* node, std::function<void(SceneNode*, size_t)>& func, size_t& index) {
+    func(node, index);
+    index++;
+    for (auto* child : node->children) {
+        LoopNodes(child, func, index);
+    }
+}
+}
+
+void SceneManager::IterateAllSceneNodes(SceneNode* node, std::function<void(SceneNode*, size_t)> func) {
+    size_t index = 0;
+    LoopNodes(node, func, index);
+}
