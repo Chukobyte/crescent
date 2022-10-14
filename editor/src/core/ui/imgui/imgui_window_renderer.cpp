@@ -1,5 +1,7 @@
 #include "imgui_window_renderer.h"
 
+#define CRE_DISABLE_RENDER_TO_SCREEN_FROM_FRAMEBUFFER // To disable the engine renderer from rendering to the screen
+
 #include "imgui.h"
 #include "imgui/imgui_impl_opengl3.h"
 #include "imgui/imgui_impl_sdl.h"
@@ -10,22 +12,20 @@
 
 #include "../../editor_context.h"
 
-Color backgroundColor = { 0.1f, 0.1f, 0.1f, 1.0f };
-
 Texture* screenTexture = nullptr;
 
 namespace {
 TransformModel2D GetDefaultGlobalTransform() {
     TransformModel2D transformModel2D = {
-        .position = { 400.0f, 300.0f },
-        .scale = { 4.0f, 4.0f },
+        .position = { 0.0f, 0.0f },
+        .scale = { 1.0f, 1.0f },
         .rotation = 0.0f,
         .scaleSign = { 1.0f, 1.0f }
     };
     Transform2DComponent transform2DComponent = {
         .localTransform = {
             .position = { 400.0f, 300.0f },
-            .scale = { 4.0f, 4.0f },
+            .scale = { 1.0f, 1.0f },
             .rotation = 0.0f
         }
     };
@@ -42,16 +42,17 @@ void ImGuiHelper::WindowRenderer::Initialize() {
 void ImGuiHelper::WindowRenderer::Render() {
     // Queue Test Sprite
     static Rect2 sourceRect = { 0.0f, 0.0f, 1.0f, 1.0f };
-    static Size2D destSize = { 64.0f, 64.0f };
-    static Color color = { 1.0f, 1.0f, 1.0f, 1.0f };
-    static TransformModel2D globalTransform = GetDefaultGlobalTransform();
+    static Size2D destSize = { 32.0f, 32.0f };
+    static Color color = { 0.75f, 0.1f, 0.1f, 1.0f };
+    TransformModel2D globalTransform = GetDefaultGlobalTransform();
     // New frame
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame(EditorContext::Get()->window);
     // Queue draw call within engine code paths
     rbe_renderer_queue_sprite_draw_call(screenTexture, sourceRect, destSize, color, false, false, &globalTransform);
     // Flush queued calls and render to framebuffer
-    cre_renderer_process_and_flush_batches(&backgroundColor, false);
+    static const Color backgroundColor = { 0.1f, 0.1f, 0.1f, 1.0f };
+    cre_renderer_process_and_flush_batches(&backgroundColor);
     // Add screen texture to draw list
     const ImVec2 cursorPos = ImGui::GetCursorScreenPos();
     const ImVec2 windowSize = ImGui::GetWindowSize();
