@@ -993,13 +993,13 @@ void OpenedProjectUI::ProcessWindows() {
             std::vector<ImGuiHelper::TextureRenderTarget> renderTargets;
             TransformModel2D testTransform = GetTestGlobalTransform();
             ImGuiHelper::TextureRenderTarget testRenderTarget = {
-                    .texture = testTexture,
-                    .sourceRect = { 0.0f, 0.0f, 1.0f, 1.0f },
-                    .destSize = { 32.0f, 32.0f },
-                    .color = { 0.75f, 0.1f, 0.1f, 1.0f },
-                    .flipX = false,
-                    .flipY = false,
-                    .globalTransform = &testTransform
+                .texture = testTexture,
+                .sourceRect = { 0.0f, 0.0f, 1.0f, 1.0f },
+                .destSize = { 32.0f, 32.0f },
+                .color = { 0.75f, 0.1f, 0.1f, 1.0f },
+                .flipX = false,
+                .flipY = false,
+                .globalTransform = &testTransform
             };
             renderTargets.emplace_back(testRenderTarget);
             windowRenderer.Render(renderTargets);
