@@ -991,37 +991,25 @@ void OpenedProjectUI::ProcessWindows() {
             }
             static SceneManager* sceneManager = SceneManager::Get();
             std::vector<ImGuiHelper::TextureRenderTarget> renderTargets;
-            TransformModel2D testTransform = GetTestGlobalTransform();
-            ImGuiHelper::TextureRenderTarget testRenderTarget = {
-                .texture = testTexture,
-                .sourceRect = { 0.0f, 0.0f, 1.0f, 1.0f },
-                .destSize = { 32.0f, 32.0f },
-                .color = { 0.75f, 0.1f, 0.1f, 1.0f },
-                .flipX = false,
-                .flipY = false,
-                .globalTransform = &testTransform
-            };
-            renderTargets.emplace_back(testRenderTarget);
+            if (sceneManager->selectedSceneFile && sceneManager->selectedSceneFile->rootNode) {
+                sceneManager->IterateAllSceneNodes(sceneManager->selectedSceneFile->rootNode, [&renderTargets](SceneNode* node, size_t i) {
+                    if (auto* transformComp = node->GetComponentSafe<Transform2DComp>()) {
+                        static TransformModel2D transforms[MAX_ENTITIES];
+                        transforms[i] = GetTestGlobalTransform(transformComp->transform2D.position);
+                        ImGuiHelper::TextureRenderTarget testRenderTarget = {
+                            .texture = testTexture,
+                            .sourceRect = { 0.0f, 0.0f, 1.0f, 1.0f },
+                            .destSize = { 32.0f, 32.0f },
+                            .color = { 0.75f, 0.1f, 0.1f, 1.0f },
+                            .flipX = false,
+                            .flipY = false,
+                            .globalTransform = &transforms[i]
+                        };
+                        renderTargets.emplace_back(testRenderTarget);
+                    }
+                });
+            }
             windowRenderer.Render(renderTargets);
-
-//            if (sceneManager->selectedSceneFile && sceneManager->selectedSceneFile->rootNode) {
-//                sceneManager->IterateAllSceneNodes(sceneManager->selectedSceneFile->rootNode, [&renderTargets](SceneNode* node, size_t i) {
-//                    if (auto* transformComp = node->GetComponentSafe<Transform2DComp>()) {
-//                        TransformModel2D testTransform = GetTestGlobalTransform(transformComp->transform2D.position);
-//                        ImGuiHelper::TextureRenderTarget testRenderTarget = {
-//                                .texture = testTexture,
-//                                .sourceRect = { 0.0f, 0.0f, 1.0f, 1.0f },
-//                                .destSize = { 32.0f, 32.0f },
-//                                .color = { 0.75f, 0.1f, 0.1f, 1.0f },
-//                                .flipX = false,
-//                                .flipY = false,
-//                                .globalTransform = &testTransform
-//                        };
-//                        renderTargets.emplace_back(testRenderTarget);
-//                    }
-//                });
-//            }
-//            windowRenderer.Render(renderTargets);
         },
         .position = ImVec2{ 300.0f, 100.0f },
         .size = ImVec2{ 400.0f, 300.0f },
