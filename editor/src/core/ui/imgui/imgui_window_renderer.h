@@ -8,7 +8,7 @@ struct Texture;
 
 namespace ImGuiHelper {
 
-struct WindowRenderTarget {
+struct TextureRenderTarget {
     Texture* texture = nullptr;
     Rect2 sourceRect { 0.0f, 0.0f, 0.0f, 0.0f };
     Size2D destSize = { 0.0f, 0.0f };
@@ -21,7 +21,7 @@ struct WindowRenderTarget {
 class WindowRenderer {
   public:
     void Initialize();
-    void Render(const std::vector<WindowRenderTarget>& renderTargets);
+    void Render(const std::vector<TextureRenderTarget>& renderTargets);
     void Finalize();
 };
 }

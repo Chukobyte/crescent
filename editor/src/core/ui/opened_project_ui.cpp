@@ -986,7 +986,7 @@ void OpenedProjectUI::ProcessWindows() {
             static bool isInitialized = false;
             static Texture* testTexture = rbe_texture_create_solid_colored_texture(1, 1, 255);
             TransformModel2D testTransform = GetTestGlobalTransform();
-            ImGuiHelper::WindowRenderTarget testRenderTarget = {
+            ImGuiHelper::TextureRenderTarget testRenderTarget = {
                 .texture = testTexture,
                 .sourceRect = { 0.0f, 0.0f, 1.0f, 1.0f },
                 .destSize = { 32.0f, 32.0f },

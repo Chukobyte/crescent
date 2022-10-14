@@ -17,7 +17,7 @@ void ImGuiHelper::WindowRenderer::Initialize() {
     rbe_renderer_initialize();
 }
 
-void ImGuiHelper::WindowRenderer::Render(const std::vector<WindowRenderTarget>& renderTargets) {
+void ImGuiHelper::WindowRenderer::Render(const std::vector<TextureRenderTarget>& renderTargets) {
     // New frame
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame(EditorContext::Get()->window);
