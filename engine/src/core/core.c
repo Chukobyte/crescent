@@ -291,7 +291,7 @@ void rbe_process_game_update() {
 void rbe_render() {
     rbe_ec_system_render_systems();
 
-    static Color backgroundColor = { 33.0f / 255.0f, 33.0f / 255.0f, 33.0f / 255.0f, 1.0f };
+    static const Color backgroundColor = { 33.0f / 255.0f, 33.0f / 255.0f, 33.0f / 255.0f, 1.0f };
     cre_renderer_process_and_flush_batches(&backgroundColor);
 
     SDL_GL_SwapWindow(window);
