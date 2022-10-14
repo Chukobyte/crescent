@@ -11,6 +11,8 @@
 
 #include "../../editor_context.h"
 
+const Color WINDOW_BACKGROUND_COLOR = {0.1f, 0.1f, 0.1f, 1.0f };
+
 void ImGuiHelper::WindowRenderer::Initialize() {
     rbe_renderer_initialize();
 }
@@ -24,8 +26,7 @@ void ImGuiHelper::WindowRenderer::Render(const std::vector<WindowRenderTarget>& 
         rbe_renderer_queue_sprite_draw_call(target.texture, target.sourceRect, target.destSize, target.color, target.flipX, target.flipY, target.globalTransform);
     }
     // Flush queued calls and render to framebuffer
-    static const Color backgroundColor = { 0.1f, 0.1f, 0.1f, 1.0f };
-    cre_renderer_process_and_flush_batches(&backgroundColor);
+    cre_renderer_process_and_flush_batches(&WINDOW_BACKGROUND_COLOR);
     // Add screen texture from framebuffer to draw list
     const ImVec2 cursorPos = ImGui::GetCursorScreenPos();
     const ImVec2 windowSize = ImGui::GetWindowSize();
