@@ -964,13 +964,42 @@ void OpenedProjectUI::ProcessWindows() {
         .open = nullptr,
         .windowFlags = ImGuiWindowFlags_NoResize,
         .callbackFunc = [] (ImGuiHelper::Context* context) {
+            // Test scene for now until the scene tree is hooked in...
+            static auto GetTestGlobalTransform = [] {
+                TransformModel2D transformModel2D = {
+                    .position = { 0.0f, 0.0f },
+                    .scale = { 1.0f, 1.0f },
+                    .rotation = 0.0f,
+                    .scaleSign = { 1.0f, 1.0f }
+                };
+                Transform2DComponent transform2DComponent = {
+                    .localTransform = {
+                        .position = { 400.0f, 300.0f },
+                        .scale = { 1.0f, 1.0f },
+                        .rotation = 0.0f
+                    }
+                };
+                transform2d_component_get_local_model_matrix(transformModel2D.model, &transform2DComponent);
+                return transformModel2D;
+            };
             static ImGuiHelper::WindowRenderer windowRenderer;
             static bool isInitialized = false;
+            static Texture* testTexture = rbe_texture_create_solid_colored_texture(1, 1, 255);
+            TransformModel2D testTransform = GetTestGlobalTransform();
+            ImGuiHelper::WindowRenderTarget testRenderTarget = {
+                .texture = testTexture,
+                .sourceRect = { 0.0f, 0.0f, 1.0f, 1.0f },
+                .destSize = { 32.0f, 32.0f },
+                .color = { 0.75f, 0.1f, 0.1f, 1.0f },
+                .flipX = false,
+                .flipY = false,
+                .globalTransform = &testTransform
+            };
             if (!isInitialized) {
                 windowRenderer.Initialize();
                 isInitialized = true;
             }
-            windowRenderer.Render();
+            windowRenderer.Render({ testRenderTarget });
         },
         .position = ImVec2{ 300.0f, 100.0f },
         .size = ImVec2{ 400.0f, 300.0f },

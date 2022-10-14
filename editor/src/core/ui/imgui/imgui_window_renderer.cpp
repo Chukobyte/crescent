@@ -8,52 +8,25 @@
 
 #include "../engine/src/core/rendering/renderer.h"
 #include "../engine/src/core/rendering/frame_buffer.h"
-#include "../engine/src/core/memory/rbe_mem.h"
 
 #include "../../editor_context.h"
 
-Texture* screenTexture = nullptr;
-
-namespace {
-TransformModel2D GetDefaultGlobalTransform() {
-    TransformModel2D transformModel2D = {
-        .position = { 0.0f, 0.0f },
-        .scale = { 1.0f, 1.0f },
-        .rotation = 0.0f,
-        .scaleSign = { 1.0f, 1.0f }
-    };
-    Transform2DComponent transform2DComponent = {
-        .localTransform = {
-            .position = { 400.0f, 300.0f },
-            .scale = { 1.0f, 1.0f },
-            .rotation = 0.0f
-        }
-    };
-    transform2d_component_get_local_model_matrix(transformModel2D.model, &transform2DComponent);
-    return transformModel2D;
-}
-} // namespace
-
 void ImGuiHelper::WindowRenderer::Initialize() {
     rbe_renderer_initialize();
-    screenTexture = rbe_texture_create_solid_colored_texture(1, 1, 255);
 }
 
-void ImGuiHelper::WindowRenderer::Render() {
-    // Queue Test Sprite
-    static Rect2 sourceRect = { 0.0f, 0.0f, 1.0f, 1.0f };
-    static Size2D destSize = { 32.0f, 32.0f };
-    static Color color = { 0.75f, 0.1f, 0.1f, 1.0f };
-    TransformModel2D globalTransform = GetDefaultGlobalTransform();
+void ImGuiHelper::WindowRenderer::Render(const std::vector<WindowRenderTarget>& renderTargets) {
     // New frame
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame(EditorContext::Get()->window);
-    // Queue draw call within engine code paths
-    rbe_renderer_queue_sprite_draw_call(screenTexture, sourceRect, destSize, color, false, false, &globalTransform);
+    // Queue draw calls within engine code paths
+    for (auto& target : renderTargets) {
+        rbe_renderer_queue_sprite_draw_call(target.texture, target.sourceRect, target.destSize, target.color, target.flipX, target.flipY, target.globalTransform);
+    }
     // Flush queued calls and render to framebuffer
     static const Color backgroundColor = { 0.1f, 0.1f, 0.1f, 1.0f };
     cre_renderer_process_and_flush_batches(&backgroundColor);
-    // Add screen texture to draw list
+    // Add screen texture from framebuffer to draw list
     const ImVec2 cursorPos = ImGui::GetCursorScreenPos();
     const ImVec2 windowSize = ImGui::GetWindowSize();
     ImGui::GetWindowDrawList()->AddImage(
@@ -65,8 +38,4 @@ void ImGuiHelper::WindowRenderer::Render() {
     );
 }
 
-void ImGuiHelper::WindowRenderer::Finalize() {
-    if (screenTexture) {
-        RBE_MEM_FREE(screenTexture);
-    }
-}
+void ImGuiHelper::WindowRenderer::Finalize() {}
