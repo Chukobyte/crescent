@@ -1,7 +1,5 @@
 #include "imgui_window_renderer.h"
 
-#define CRE_DISABLE_RENDER_TO_SCREEN_FROM_FRAMEBUFFER // To disable the engine renderer from rendering to the screen
-
 #include "imgui.h"
 #include "imgui/imgui_impl_opengl3.h"
 #include "imgui/imgui_impl_sdl.h"
@@ -26,7 +24,7 @@ void ImGuiHelper::WindowRenderer::Render(const std::vector<TextureRenderTarget>&
         rbe_renderer_queue_sprite_draw_call(target.texture, target.sourceRect, target.destSize, target.color, target.flipX, target.flipY, target.globalTransform);
     }
     // Flush queued calls and render to framebuffer
-    cre_renderer_process_and_flush_batches(&WINDOW_BACKGROUND_COLOR);
+    cre_renderer_process_and_flush_batches_just_framebuffer(&WINDOW_BACKGROUND_COLOR);
     // Add screen texture from framebuffer to draw list
     const ImVec2 cursorPos = ImGui::GetCursorScreenPos();
     const ImVec2 windowSize = ImGui::GetWindowSize();

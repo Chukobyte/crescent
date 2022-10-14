@@ -11,7 +11,6 @@
 #include "../utils/rbe_assert.h"
 
 #define CRE_RENDER_TO_FRAMEBUFFER
-//#define CRE_DISABLE_RENDER_TO_SCREEN_FROM_FRAMEBUFFER // Should be defined if using the renderer outside of the engine
 
 typedef struct TextureCoordinates {
     GLfloat sMin;
@@ -135,7 +134,6 @@ void cre_renderer_process_and_flush_batches(const Color* backgroundColor) {
 #ifdef CRE_RENDER_TO_FRAMEBUFFER
     cre_frame_buffer_unbind();
 
-#ifndef CRE_DISABLE_RENDER_TO_SCREEN_FROM_FRAMEBUFFER
     // Clear screen texture background
     static Color screenBackgroundColor = { 1.0f, 1.0f, 1.0f, 1.0f };
     glClearColor(screenBackgroundColor.r, screenBackgroundColor.g, screenBackgroundColor.b, screenBackgroundColor.a);
@@ -147,7 +145,18 @@ void cre_renderer_process_and_flush_batches(const Color* backgroundColor) {
     glBindTexture(GL_TEXTURE_2D, cre_frame_buffer_get_color_buffer_texture());	// use the color attachment texture as the texture of the quad plane
     glDrawArrays(GL_TRIANGLES, 0, 6);
 #endif
-#endif
+}
+
+void cre_renderer_process_and_flush_batches_just_framebuffer(const Color* backgroundColor) {
+    cre_frame_buffer_bind();
+
+    // Clear framebuffer with background color
+    glClearColor(backgroundColor->r, backgroundColor->g, backgroundColor->b, backgroundColor->a);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+    rbe_renderer_flush_batches();
+
+    cre_frame_buffer_unbind();
 }
 
 // --- Sprite Renderer --- //
