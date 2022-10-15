@@ -974,14 +974,12 @@ void OpenedProjectUI::ProcessWindows() {
                     .rotation = 0.0f,
                     .scaleSign = { 1.0f, 1.0f }
                 };
-                Transform2DComponent transform2DComponent = {
-                    .localTransform = {
-                        .position = pos,
-                        .scale = { 1.0f, 1.0f },
-                        .rotation = 0.0f
-                    }
+                const Transform2D localTransform = {
+                    .position = pos,
+                    .scale = { 1.0f, 1.0f },
+                    .rotation = 0.0f
                 };
-                transform2d_component_get_local_model_matrix(transformModel2D.model, &transform2DComponent.localTransform);
+                transform2d_component_get_local_model_matrix(transformModel2D.model, &localTransform);
                 return transformModel2D;
             };
             static Texture* testTexture = rbe_texture_create_solid_colored_texture(1, 1, 255);

@@ -64,4 +64,16 @@ void cre_scene_utils_update_global_transform_model(Entity entity, TransformModel
         glm_mat4_mul(globalTransform->model, newModel, globalTransform->model);
     }
     globalTransform->scaleSign = rbe_math_signvec2(&scaleTotal);
+    // Decompose trs matrix
+    vec4 translation;
+    mat4 rotation;
+    vec3 scale;
+    glm_decompose(globalTransform->model, translation, rotation, scale);
+    // Update global transform
+    globalTransform->position.x = translation[0];
+    globalTransform->position.y = translation[1];
+    // Scale sign is used to fix sign of scale not being properly decomposed in trs matrix
+    globalTransform->scale.x = fabsf(scale[0]) * globalTransform->scaleSign.x;
+    globalTransform->scale.y = fabsf(scale[1]) * globalTransform->scaleSign.y;
+    globalTransform->rotation = transform2d_component_get_rotation_deg_from_model(rotation);
 }
