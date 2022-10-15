@@ -985,7 +985,7 @@ void OpenedProjectUI::ProcessWindows() {
                 return transformModel2D;
             };
             static Texture* testTexture = rbe_texture_create_solid_colored_texture(1, 1, 255);
-            static auto GetNodeRenderTarget = [](SceneNode* node, size_t index) {
+            static auto GetNodeTextureRenderTarget = [](SceneNode* node, size_t index) {
                 static AssetManager* assetManager = AssetManager::Get();
                 static TransformModel2D transforms[MAX_ENTITIES];
                 Texture* renderTargetTexture = testTexture;
@@ -1058,7 +1058,7 @@ void OpenedProjectUI::ProcessWindows() {
                         };
                         fontRenderTargets.emplace_back(renderTarget);
                     } else {
-                        const ImGuiHelper::TextureRenderTarget renderTarget = GetNodeRenderTarget(node, i);
+                        const ImGuiHelper::TextureRenderTarget renderTarget = GetNodeTextureRenderTarget(node, i);
                         textureRenderTargets.emplace_back(renderTarget);
                     }
                 });
