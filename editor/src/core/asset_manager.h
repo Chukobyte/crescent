@@ -13,6 +13,8 @@ class AssetManager : public Singleton<AssetManager> {
     explicit AssetManager(singleton) {}
     void Initialize();
     void Finalize();
+    void ClearContents();
+    void RefreshFromProperties(class ProjectProperties* projectProperties);
     // Texture
     Texture* LoadTexture(const char* fileName, const char* key);
     Texture* GetTexture(const char* key);

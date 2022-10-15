@@ -8,6 +8,7 @@
 #include "imgui/imgui_file_browser.h"
 #include "../editor_context.h"
 #include "../project_properties.h"
+#include "../asset_manager.h"
 #include "../scene/scene_manager.h"
 #include "../utils/file_system_helper.h"
 #include "../file_creation/config_file_creator.h"
@@ -27,9 +28,10 @@ void ProjectManagerUI::ProcessWindows() {
         .open = nullptr,
         .windowFlags = ImGuiWindowFlags_NoResize,
         .callbackFunc = [] (ImGuiHelper::Context* context) {
-            static auto sceneManager = SceneManager::Get();
-            static auto gameProperties = ProjectProperties::Get();
-            static auto editorContext = EditorContext::Get();
+            static auto* sceneManager = SceneManager::Get();
+            static auto* gameProperties = ProjectProperties::Get();
+            static auto* assetManager = AssetManager::Get();
+            static auto* editorContext = EditorContext::Get();
             static auto LoadProject = [](const char* projectPath) {
                 if (FileSystemHelper::GetCurrentDir() != std::string(projectPath)) {
                     rbe_fs_chdir(projectPath);
@@ -42,7 +44,8 @@ void ProjectManagerUI::ProcessWindows() {
                 // Update recently opened projects list
                 editorContext->settings.AddToRecentlyLoadedProjectsList(gameProperties->gameTitle, projectPath);
                 editorContext->settings.SaveSettings();
-
+                // Update asset manager fonts
+                assetManager->RefreshFromProperties(gameProperties);
                 // Load initial scene if it exists, if not create a new one
                 if (gameProperties->initialNodePath.empty()) {
                     sceneManager->selectedSceneFile = sceneManager->GenerateDefaultSceneNodeFile();

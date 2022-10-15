@@ -3,6 +3,7 @@
 #include <imgui/imgui_impl_sdl.h>
 #include <imgui/imgui_impl_opengl3.h>
 
+#include "../engine/src/core/rendering/renderer.h"
 #include "../engine/src/core/utils/logger.h"
 #include "../engine/src/core/scripting/python/rbe_py.h"
 
@@ -32,6 +33,9 @@ bool Editor::Initialize() {
 
     // Initialize Asset Manager
     AssetManager::Get()->Initialize();
+
+    // TODO: Move engine renderer init in another location
+    rbe_renderer_initialize();
 
     editorContext->initialDir = FileSystemHelper::GetCurrentDir();
     editorContext->isRunning = true;

@@ -6,6 +6,7 @@
 #include "imgui/imgui_helper.h"
 #include "../editor_context.h"
 #include "../project_properties.h"
+#include "../asset_manager.h"
 #include "../utils/file_system_helper.h"
 #include "../utils/helper.h"
 #include "../file_creation/config_file_creator.h"
@@ -269,6 +270,7 @@ void OpenedProjectUI::ProcessMenuBar() {
                                 .callbackFunc = [] (ImGuiHelper::Context* context) {
                                     if (ImGui::Button("Close")) {
                                         ConfigFileCreator::GenerateConfigFile(projectProperties);
+                                        AssetManager::Get()->RefreshFromProperties(projectProperties);
                                         ImGui::CloseCurrentPopup();
                                     }
                                     ImGui::SameLine();
@@ -982,13 +984,7 @@ void OpenedProjectUI::ProcessWindows() {
                 transform2d_component_get_local_model_matrix(transformModel2D.model, &transform2DComponent);
                 return transformModel2D;
             };
-            static ImGuiHelper::WindowRenderer windowRenderer;
-            static bool isInitialized = false;
             static Texture* testTexture = rbe_texture_create_solid_colored_texture(1, 1, 255);
-            if (!isInitialized) {
-                windowRenderer.Initialize();
-                isInitialized = true;
-            }
             static SceneManager* sceneManager = SceneManager::Get();
             std::vector<ImGuiHelper::TextureRenderTarget> renderTargets;
             // Loop through and render all scene nodes starting from the root
@@ -1010,7 +1006,7 @@ void OpenedProjectUI::ProcessWindows() {
                     }
                 });
             }
-            windowRenderer.Render(renderTargets);
+            ImGuiHelper::WindowRenderer::Render(renderTargets);
         },
         .position = ImVec2{ 300.0f, 100.0f },
         .size = ImVec2{ 400.0f, 300.0f },

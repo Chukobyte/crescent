@@ -11,10 +11,6 @@
 
 const Color WINDOW_BACKGROUND_COLOR = {0.1f, 0.1f, 0.1f, 1.0f };
 
-void ImGuiHelper::WindowRenderer::Initialize() {
-    rbe_renderer_initialize();
-}
-
 void ImGuiHelper::WindowRenderer::Render(const std::vector<TextureRenderTarget>& renderTargets) {
     // New frame
     ImGui_ImplOpenGL3_NewFrame();
@@ -36,5 +32,3 @@ void ImGuiHelper::WindowRenderer::Render(const std::vector<TextureRenderTarget>&
         ImVec2(1.0f, 0.0f)
     );
 }
-
-void ImGuiHelper::WindowRenderer::Finalize() {}

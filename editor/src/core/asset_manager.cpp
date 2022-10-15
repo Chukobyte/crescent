@@ -1,11 +1,13 @@
 #include "asset_manager.h"
 #include "asset_browser.h"
+#include "project_properties.h"
 
 static AssetBrowserRefreshSubscriberHandle subscriberHandle = 0;
 static bool isInitialized = false;
 
+// TODO: Remove assets from refresh functions
 namespace {
-void LoadAllTextures(AssetManager* assetManager, const std::vector<FileNode>& fileNodes) {
+void RefreshAllTextures(AssetManager* assetManager, const std::vector<FileNode>& fileNodes) {
     for (const FileNode& textureFile : fileNodes) {
         const std::string relativePath = textureFile.GetRelativePath();
         if (!assetManager->HasTexture(relativePath.c_str())) {
@@ -14,7 +16,7 @@ void LoadAllTextures(AssetManager* assetManager, const std::vector<FileNode>& fi
     }
 }
 
-void LoadAllAudioSources(AssetManager* assetManager, const std::vector<FileNode>& fileNodes) {
+void RefreshAllAudioSources(AssetManager* assetManager, const std::vector<FileNode>& fileNodes) {
     for (const FileNode& audioSourceFile : fileNodes) {
         const std::string relativePath = audioSourceFile.GetRelativePath();
         if (!assetManager->HasAudioSource(relativePath.c_str())) {
@@ -31,11 +33,11 @@ void AssetManager::Initialize() {
         subscriberHandle = assetBrowser->RegisterRefreshCallback([this, assetBrowser](const FileNode& rootNode) {
             // Textures
             if (assetBrowser->fileCache.HasFilesWithExtension(".png")) {
-                LoadAllTextures(this, assetBrowser->fileCache.GetFilesWithExtension(".png"));
+                RefreshAllTextures(this, assetBrowser->fileCache.GetFilesWithExtension(".png"));
             }
             // Audio Sources
             if (assetBrowser->fileCache.HasFilesWithExtension(".wav")) {
-                LoadAllAudioSources(this, assetBrowser->fileCache.GetFilesWithExtension(".wav"));
+                RefreshAllAudioSources(this, assetBrowser->fileCache.GetFilesWithExtension(".wav"));
             }
         });
         isInitialized = true;
@@ -47,6 +49,19 @@ void AssetManager::Finalize() {
         rbe_asset_manager_finalize();
         AssetBrowser::Get()->UnregisterRefreshCallback(subscriberHandle);
         isInitialized = false;
+    }
+}
+
+void AssetManager::ClearContents() {
+    // TODO: Implement...
+}
+
+void AssetManager::RefreshFromProperties(ProjectProperties* projectProperties) {
+    // TODO: Remove ones that don't exist anymore...
+    for (const FontAsset& fontAsset : projectProperties->assets.fonts) {
+        if (!HasFont(fontAsset.uid.c_str())) {
+            LoadFont(fontAsset.file_path.c_str(), fontAsset.uid.c_str(), fontAsset.size);
+        }
     }
 }
 
