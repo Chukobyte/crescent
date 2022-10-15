@@ -16,6 +16,7 @@ find_package(SDL2 CONFIG REQUIRED)
 
 add_library(${PROJECT_NAME} STATIC
         # C++
+        src/core/asset_manager.cpp
         src/core/file_node.cpp
         src/core/editor.cpp
         src/core/editor_background_tasks.cpp

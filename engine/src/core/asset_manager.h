@@ -1,5 +1,9 @@
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdbool.h>
 
 void rbe_asset_manager_initialize();
@@ -16,3 +20,7 @@ bool rbe_asset_manager_has_font(const char* key);
 struct RBEAudioSource* rbe_asset_manager_load_audio_source_wav(const char* fileName, const char* key);
 struct RBEAudioSource* rbe_asset_manager_get_audio_source(const char* key);
 bool rbe_asset_manager_has_audio_source(const char* key);
+
+#ifdef __cplusplus
+}
+#endif

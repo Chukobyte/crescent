@@ -10,6 +10,7 @@
 #include "editor_background_tasks.h"
 #include "scene/scene_manager.h"
 #include "color.h"
+#include "asset_manager.h"
 #include "ui/imgui/imgui_handler.h"
 #include "ui/imgui/imgui_styler.h"
 #include "utils/file_system_helper.h"
@@ -28,6 +29,9 @@ bool Editor::Initialize() {
 
     // Initialize Python Instance
     rbe_py_initialize();
+
+    // Initialize Asset Manager
+    AssetManager::Get()->Initialize();
 
     editorContext->initialDir = FileSystemHelper::GetCurrentDir();
     editorContext->isRunning = true;
