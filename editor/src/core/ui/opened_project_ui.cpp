@@ -991,6 +991,7 @@ void OpenedProjectUI::ProcessWindows() {
             }
             static SceneManager* sceneManager = SceneManager::Get();
             std::vector<ImGuiHelper::TextureRenderTarget> renderTargets;
+            // Loop through and render all scene nodes starting from the root
             if (sceneManager->selectedSceneFile && sceneManager->selectedSceneFile->rootNode) {
                 sceneManager->IterateAllSceneNodes(sceneManager->selectedSceneFile->rootNode, [&renderTargets](SceneNode* node, size_t i) {
                     if (auto* transformComp = node->GetComponentSafe<Transform2DComp>()) {

@@ -33,6 +33,7 @@ Texture* rbe_asset_manager_load_texture(const char* fileName, const char* key) {
     Texture* texture = rbe_texture_create_texture(fileName);
     rbe_string_hash_map_add(texturesMap, key, texture, sizeof(Texture));
     RBE_MEM_FREE(texture);
+    texture = rbe_string_hash_map_get(texturesMap, key);
     return texture;
 }
 
@@ -51,6 +52,7 @@ Font* rbe_asset_manager_load_font(const char* fileName, const char* key, int siz
     RBE_ASSERT_FMT(font != NULL, "Failed to load font! file_name: '%s', key: '%s', size: '%d'", fileName, key, size);
     rbe_string_hash_map_add(fontMap, key, font, sizeof(Font));
     RBE_MEM_FREE(font);
+    font = rbe_string_hash_map_get(fontMap, key);
     return font;
 }
 
