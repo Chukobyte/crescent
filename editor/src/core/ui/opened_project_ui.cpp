@@ -1033,13 +1033,13 @@ void OpenedProjectUI::ProcessWindows() {
                     hasTexture = false;
                 }
                 return (ImGuiHelper::TextureRenderTarget) {
-                        .texture = renderTargetTexture,
-                        .sourceRect = sourceRect,
-                        .destSize = destSize,
-                        .color = color,
-                        .flipX = flipX,
-                        .flipY = flipY,
-                        .globalTransform = &globalTransforms[index]
+                    .texture = renderTargetTexture,
+                    .sourceRect = sourceRect,
+                    .destSize = destSize,
+                    .color = color,
+                    .flipX = flipX,
+                    .flipY = flipY,
+                    .globalTransform = &globalTransforms[index]
                 };
             };
             static SceneManager* sceneManager = SceneManager::Get();
