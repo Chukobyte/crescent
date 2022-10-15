@@ -1040,27 +1040,30 @@ void OpenedProjectUI::ProcessWindows() {
                 };
             };
             static SceneManager* sceneManager = SceneManager::Get();
-            std::vector<ImGuiHelper::TextureRenderTarget> renderTargets;
+            static AssetManager* assetManager = AssetManager::Get();
+            // TODO: Get font render targets
+            std::vector<ImGuiHelper::TextureRenderTarget> textureRenderTargets;
+            std::vector<ImGuiHelper::FontRenderTarget> fontRenderTargets;
             // Loop through and render all scene nodes starting from the root
             if (sceneManager->selectedSceneFile && sceneManager->selectedSceneFile->rootNode) {
-                sceneManager->IterateAllSceneNodes(sceneManager->selectedSceneFile->rootNode, [&renderTargets](SceneNode* node, size_t i) {
-                    if (auto* transformComp = node->GetComponentSafe<Transform2DComp>()) {
-                        static TransformModel2D transforms[MAX_ENTITIES];
-                        transforms[i] = GetGlobalTransform(transformComp->transform2D.position);
-                        ImGuiHelper::TextureRenderTarget testRenderTarget = {
-                            .texture = testTexture,
-                            .sourceRect = { 0.0f, 0.0f, 1.0f, 1.0f },
-                            .destSize = { 32.0f, 32.0f },
-                            .color = { 0.75f, 0.1f, 0.1f, 1.0f },
-                            .flipX = false,
-                            .flipY = false,
-                            .globalTransform = &transforms[i]
+                sceneManager->IterateAllSceneNodes(sceneManager->selectedSceneFile->rootNode, [&textureRenderTargets, &fontRenderTargets](SceneNode* node, size_t i) {
+                    if (auto* textLabelComp = node->GetComponentSafe<TextLabelComp>()) {
+                        auto* transformComp = node->GetComponent<Transform2DComp>();
+                        const ImGuiHelper::FontRenderTarget renderTarget = {
+                            .font = assetManager->GetFont(textLabelComp->fontUID.c_str()),
+                            .text = textLabelComp->text,
+                            .position = transformComp->transform2D.position,
+                            .scale = transformComp->transform2D.scale.x,
+                            .color = textLabelComp->color
                         };
-                        renderTargets.emplace_back(testRenderTarget);
+                        fontRenderTargets.emplace_back(renderTarget);
+                    } else {
+                        const ImGuiHelper::TextureRenderTarget renderTarget = GetNodeRenderTarget(node, i);
+                        textureRenderTargets.emplace_back(renderTarget);
                     }
                 });
             }
-            ImGuiHelper::WindowRenderer::Render(renderTargets);
+            ImGuiHelper::WindowRenderer::Render(textureRenderTargets, fontRenderTargets);
         },
         .position = ImVec2{ 300.0f, 100.0f },
         .size = ImVec2{ 400.0f, 300.0f },

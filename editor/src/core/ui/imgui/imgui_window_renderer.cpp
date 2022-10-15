@@ -11,13 +11,18 @@
 
 const Color WINDOW_BACKGROUND_COLOR = {0.1f, 0.1f, 0.1f, 1.0f };
 
-void ImGuiHelper::WindowRenderer::Render(const std::vector<TextureRenderTarget>& renderTargets) {
+void ImGuiHelper::WindowRenderer::Render(const std::vector<TextureRenderTarget>& textureRenderTargets, const std::vector<FontRenderTarget>& fontRenderTargets) {
     // New frame
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame(EditorContext::Get()->window);
     // Queue draw calls within engine code paths
-    for (auto& target : renderTargets) {
+    // Textures
+    for (auto& target : textureRenderTargets) {
         rbe_renderer_queue_sprite_draw_call(target.texture, target.sourceRect, target.destSize, target.color, target.flipX, target.flipY, target.globalTransform);
+    }
+    // Fonts
+    for (auto& target : fontRenderTargets) {
+        rbe_renderer_queue_font_draw_call(target.font, target.text.c_str(), target.position.x, target.position.y, target.scale, target.color);
     }
     // Flush queued calls and render to framebuffer
     cre_renderer_process_and_flush_batches_just_framebuffer(&WINDOW_BACKGROUND_COLOR);
