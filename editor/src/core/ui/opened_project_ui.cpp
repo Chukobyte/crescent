@@ -981,7 +981,7 @@ void OpenedProjectUI::ProcessWindows() {
                         .rotation = 0.0f
                     }
                 };
-                transform2d_component_get_local_model_matrix(transformModel2D.model, &transform2DComponent);
+                transform2d_component_get_local_model_matrix(transformModel2D.model, &transform2DComponent.localTransform);
                 return transformModel2D;
             };
             static Texture* testTexture = rbe_texture_create_solid_colored_texture(1, 1, 255);

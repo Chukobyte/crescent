@@ -45,21 +45,21 @@ Transform2DComponent* transform2d_component_copy(const Transform2DComponent* tra
     return copiedNode;
 }
 
-void transform2d_component_get_local_model_matrix(mat4 model, Transform2DComponent* transform2DComponent) {
+void transform2d_component_get_local_model_matrix(mat4 model, const Transform2D* transform) {
     glm_mat4_identity(model);
     // 1. Translation
     glm_translate(model, (vec3) {
-        transform2DComponent->localTransform.position.x, transform2DComponent->localTransform.position.y, 0.0f
+        transform->position.x, transform->position.y, 0.0f
     });
     // 2. Rotation
-    float rotation = transform2DComponent->localTransform.rotation;
+    float rotation = transform->rotation;
     glm_make_rad(&rotation);
     glm_rotate(model, rotation, (vec3) {
         0.0f, 0.0f, 1.0f
     });
     // 3. Scaling
     glm_scale(model, (vec3) {
-        transform2DComponent->localTransform.scale.x, transform2DComponent->localTransform.scale.y, 1.0f
+            transform->scale.x, transform->scale.y, 1.0f
     });
 }
 
