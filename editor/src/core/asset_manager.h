@@ -25,6 +25,4 @@ class AssetManager : public Singleton<AssetManager> {
     RBEAudioSource* LoadAudioSource(const char* fileName, const char* key);
     RBEAudioSource* GetAudioSource(const char* key);
     bool HasAudioSource(const char* key) const;
-  private:
-    bool isInitialized = false;
 };
