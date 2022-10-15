@@ -117,6 +117,9 @@ class SceneManager : public Singleton<SceneManager> {
 
     void IterateAllSceneNodes(SceneNode* node, std::function<void(SceneNode*, size_t)> func);
 
+    SceneNode* GetNode(SceneNodeFile* nodeFile, Entity entity);
+    SceneNode* GetNode(SceneNode* node, Entity entity);
+
     std::unordered_map<std::string, SceneNodeFile*> loadedSceneFiles;
     SceneNodeFile* selectedSceneFile = nullptr;
 

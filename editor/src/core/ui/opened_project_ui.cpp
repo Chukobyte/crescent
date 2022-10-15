@@ -1,5 +1,6 @@
 #include "opened_project_ui.h"
 
+#include "../engine/src/core/scene/scene_utils.h"
 #include "../engine/src/core/utils/rbe_file_system_utils.h"
 #include "../engine/src/core/utils/logger.h"
 
@@ -843,6 +844,35 @@ void DrawColorRect(SceneNode* node) {
 }
 } // namespace ComponentDetailsDrawUtils
 
+// TODO: come backy
+namespace WindowRenderUtils {
+EntityArray OnGetSelfAndParentEntitiesFunc(Entity entity) {
+    static auto* sceneManager = SceneManager::Get();
+    EntityArray combineModelResult = { .entityCount = 0 };
+    combineModelResult.entities[combineModelResult.entityCount++] = entity;
+    if (auto* node = sceneManager->GetNode(sceneManager->selectedSceneFile, entity)) {
+        auto* parent = node->parent;
+        while (parent != nullptr) {
+            combineModelResult.entities[combineModelResult.entityCount++] = parent->GetUID();
+            parent = parent->parent;
+        }
+    }
+    return combineModelResult;
+}
+
+Transform2D OnGetLocalTransformFunc(Entity entity, bool* success) {
+    static auto* sceneManager = SceneManager::Get();
+    if (auto* node = sceneManager->GetNode(sceneManager->selectedSceneFile, entity)) {
+        if (auto* transformComp = node->GetComponentSafe<Transform2DComp>()) {
+            *success = true;
+            return transformComp->transform2D;
+        }
+    }
+    *success = false;
+    return (Transform2D) {};
+}
+} // namespace WindowRenderUtils
+
 void OpenedProjectUI::ProcessWindows() {
     int windowWidth = 0;
     int windowHeight = 0;
@@ -966,98 +996,85 @@ void OpenedProjectUI::ProcessWindows() {
         .open = nullptr,
         .windowFlags = ImGuiWindowFlags_NoResize,
         .callbackFunc = [] (ImGuiHelper::Context* context) {
-            // Test scene for now until the scene tree is hooked in...
-            static auto GetGlobalTransform = [] (const Vector2& pos) {
-                TransformModel2D transformModel2D = {
-                    .position = { 0.0f, 0.0f },
-                    .scale = { 1.0f, 1.0f },
-                    .rotation = 0.0f,
-                    .scaleSign = { 1.0f, 1.0f }
-                };
-                const Transform2D localTransform = {
-                    .position = pos,
-                    .scale = { 1.0f, 1.0f },
-                    .rotation = 0.0f
-                };
-                transform2d_component_get_local_model_matrix(transformModel2D.model, &localTransform);
-                return transformModel2D;
-            };
             static Texture* testTexture = rbe_texture_create_solid_colored_texture(1, 1, 255);
-            static auto GetNodeTextureRenderTarget = [](SceneNode* node, size_t index) {
+            static auto GetNodeTextureRenderTarget = [](SceneNode* node, size_t index, Transform2DComp* transformComp, bool& hasTexture) {
                 static AssetManager* assetManager = AssetManager::Get();
-                static TransformModel2D transforms[MAX_ENTITIES];
+                static TransformModel2D globalTransforms[MAX_ENTITIES];
                 Texture* renderTargetTexture = testTexture;
-                if (auto* transformComp = node->GetComponentSafe<Transform2DComp>()) {
-                    transforms[index] = GetGlobalTransform(transformComp->transform2D.position);
-                    Rect2 sourceRect = { 0.0f, 0.0f, 0.0f, 0.0f };
-                    Size2D destSize = { 0.0f, 0.0f };
-                    Color color = { 1.0f, 1.0f, 1.0f, 1.0f };
-                    bool flipX = false;
-                    bool flipY = false;
-                    if (auto* spriteComp = node->GetComponentSafe<SpriteComp>()) {
-                        renderTargetTexture = assetManager->GetTexture(spriteComp->texturePath.c_str());
-                        sourceRect = spriteComp->drawSource;
-                        destSize = { sourceRect.w, sourceRect.h };
-                        color = spriteComp->modulate;
-                        flipX = spriteComp->flipX;
-                        flipY = spriteComp->flipY;
-                    } else if (auto* animSpriteComp = node->GetComponentSafe<AnimatedSpriteComp>()) {
-                        if (!animSpriteComp->currentAnimationName.empty()) {
-                            const EditorAnimation& anim = animSpriteComp->GetAnimationByName(animSpriteComp->currentAnimationName);
-                            // TODO: Match current frame instead
-                            for (const auto& animFrame : anim.animationFrames) {
-                                renderTargetTexture = assetManager->GetTexture(animFrame.texturePath.c_str());
-                                sourceRect = animFrame.drawSource;
-                                destSize = { sourceRect.w, sourceRect.h };
-                                color = animSpriteComp->modulate;
-                                flipX = animSpriteComp->flipX;
-                                flipY = animSpriteComp->flipY;
-                                break;
-                            }
+                cre_scene_utils_update_global_transform_model(node->GetUID(), &globalTransforms[index]);
+                Rect2 sourceRect = { 0.0f, 0.0f, 0.0f, 0.0f };
+                Size2D destSize = { 0.0f, 0.0f };
+                Color color = { 1.0f, 1.0f, 1.0f, 1.0f };
+                bool flipX = false;
+                bool flipY = false;
+                hasTexture = true;
+                if (auto* spriteComp = node->GetComponentSafe<SpriteComp>()) {
+                    renderTargetTexture = assetManager->GetTexture(spriteComp->texturePath.c_str());
+                    sourceRect = spriteComp->drawSource;
+                    destSize = { sourceRect.w, sourceRect.h };
+                    color = spriteComp->modulate;
+                    flipX = spriteComp->flipX;
+                    flipY = spriteComp->flipY;
+                } else if (auto* animSpriteComp = node->GetComponentSafe<AnimatedSpriteComp>()) {
+                    if (!animSpriteComp->currentAnimationName.empty()) {
+                        const EditorAnimation& anim = animSpriteComp->GetAnimationByName(animSpriteComp->currentAnimationName);
+                        // TODO: Match current frame instead
+                        for (const auto& animFrame : anim.animationFrames) {
+                            renderTargetTexture = assetManager->GetTexture(animFrame.texturePath.c_str());
+                            sourceRect = animFrame.drawSource;
+                            destSize = { sourceRect.w, sourceRect.h };
+                            color = animSpriteComp->modulate;
+                            flipX = animSpriteComp->flipX;
+                            flipY = animSpriteComp->flipY;
+                            break;
                         }
                     }
-                    return (ImGuiHelper::TextureRenderTarget) {
+                } else {
+                    hasTexture = false;
+                }
+                return (ImGuiHelper::TextureRenderTarget) {
                         .texture = renderTargetTexture,
                         .sourceRect = sourceRect,
                         .destSize = destSize,
                         .color = color,
                         .flipX = flipX,
                         .flipY = flipY,
-                        .globalTransform = &transforms[index]
-                    };
-                }
-                // Invalid
-                return (ImGuiHelper::TextureRenderTarget) {
-                    .texture = renderTargetTexture,
-                    .sourceRect = { 0.0f, 0.0f, 0.0f, 0.0f },
-                    .destSize = { 0.0f, 0.0f },
-                    .color = { 0.75f, 0.1f, 0.1f, 1.0f },
-                    .flipX = false,
-                    .flipY = false,
-                    .globalTransform = &transforms[index]
+                        .globalTransform = &globalTransforms[index]
                 };
             };
             static SceneManager* sceneManager = SceneManager::Get();
             static AssetManager* assetManager = AssetManager::Get();
-            // TODO: Get font render targets
+            // TODO: come backy
             std::vector<ImGuiHelper::TextureRenderTarget> textureRenderTargets;
             std::vector<ImGuiHelper::FontRenderTarget> fontRenderTargets;
+            static bool hasBindedSceneUtilsFuncs = false;
+            if (!hasBindedSceneUtilsFuncs) {
+                cre_scene_utils_override_on_get_local_transform_func(WindowRenderUtils::OnGetLocalTransformFunc);
+                cre_scene_utils_override_on_get_self_and_parent_entities_func(WindowRenderUtils::OnGetSelfAndParentEntitiesFunc);
+                hasBindedSceneUtilsFuncs = true;
+            }
             // Loop through and render all scene nodes starting from the root
             if (sceneManager->selectedSceneFile && sceneManager->selectedSceneFile->rootNode) {
                 sceneManager->IterateAllSceneNodes(sceneManager->selectedSceneFile->rootNode, [&textureRenderTargets, &fontRenderTargets](SceneNode* node, size_t i) {
-                    if (auto* textLabelComp = node->GetComponentSafe<TextLabelComp>()) {
-                        auto* transformComp = node->GetComponent<Transform2DComp>();
-                        const ImGuiHelper::FontRenderTarget renderTarget = {
-                            .font = assetManager->GetFont(textLabelComp->fontUID.c_str()),
-                            .text = textLabelComp->text,
-                            .position = transformComp->transform2D.position,
-                            .scale = transformComp->transform2D.scale.x,
-                            .color = textLabelComp->color
-                        };
-                        fontRenderTargets.emplace_back(renderTarget);
-                    } else {
-                        const ImGuiHelper::TextureRenderTarget renderTarget = GetNodeTextureRenderTarget(node, i);
-                        textureRenderTargets.emplace_back(renderTarget);
+                    if (auto* transformComp = node->GetComponentSafe<Transform2DComp>()) {
+                        TransformModel2D globalTransform = { transformComp->transform2D.position, transformComp->transform2D.scale, transformComp->transform2D.rotation };
+                        cre_scene_utils_update_global_transform_model(node->GetUID(), &globalTransform);
+                        if (auto* textLabelComp = node->GetComponentSafe<TextLabelComp>()) {
+                            const ImGuiHelper::FontRenderTarget renderTarget = {
+                                .font = assetManager->GetFont(textLabelComp->fontUID.c_str()),
+                                .text = textLabelComp->text,
+                                .position = globalTransform.position,
+                                .scale = globalTransform.scale.x,
+                                .color = textLabelComp->color
+                            };
+                            fontRenderTargets.emplace_back(renderTarget);
+                        } else {
+                            bool hasTexture = false;
+                            const ImGuiHelper::TextureRenderTarget renderTarget = GetNodeTextureRenderTarget(node, i, transformComp, hasTexture);
+                            if (hasTexture) {
+                                textureRenderTargets.emplace_back(renderTarget);
+                            }
+                        }
                     }
                 });
             }

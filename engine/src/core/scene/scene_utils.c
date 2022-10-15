@@ -6,13 +6,6 @@
 #include "../ecs/component/component.h"
 
 // TODO: Clean up temp stuff for CombineModelResult
-typedef struct EntityArray {
-    int entityCount;
-    Entity entities[10];
-} EntityArray;
-
-typedef EntityArray (*on_get_self_and_parent_entities) (Entity);
-typedef Transform2D (*on_get_local_transform) (Entity, bool*);
 
 EntityArray default_get_self_and_parent_nodes(Entity entity);
 Transform2D default_get_local_transform(Entity entity, bool* success);
@@ -76,4 +69,17 @@ void cre_scene_utils_update_global_transform_model(Entity entity, TransformModel
     globalTransform->scale.x = fabsf(scale[0]) * globalTransform->scaleSign.x;
     globalTransform->scale.y = fabsf(scale[1]) * globalTransform->scaleSign.y;
     globalTransform->rotation = transform2d_component_get_rotation_deg_from_model(rotation);
+}
+
+void cre_scene_utils_override_on_get_self_and_parent_entities_func(on_get_self_and_parent_entities func) {
+    onGetSelfAndParentEntitiesFunc = func;
+}
+
+void cre_scene_utils_override_on_get_local_transform_func(on_get_local_transform func) {
+    onGetLocalTransformFunc = func;
+}
+
+void cre_scene_utils_reset_callback_func_overrides() {
+    onGetSelfAndParentEntitiesFunc = &default_get_self_and_parent_nodes;
+    onGetLocalTransformFunc = &default_get_local_transform;
 }

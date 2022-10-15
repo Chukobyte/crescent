@@ -283,3 +283,19 @@ void SceneManager::IterateAllSceneNodes(SceneNode* node, std::function<void(Scen
     size_t index = 0;
     LoopNodes(node, func, index);
 }
+
+SceneNode* SceneManager::GetNode(SceneNodeFile* nodeFile, Entity entity) {
+    return GetNode(nodeFile->rootNode, entity);
+}
+
+SceneNode* SceneManager::GetNode(SceneNode* node, Entity entity) {
+    if (node->GetUID() == entity) {
+        return node;
+    }
+    for (auto* childNode : node->children) {
+        if (auto* foundChildNode = GetNode(childNode, entity)) {
+            return foundChildNode;
+        }
+    }
+    return nullptr;
+}
