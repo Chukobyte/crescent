@@ -967,7 +967,7 @@ void OpenedProjectUI::ProcessWindows() {
         .windowFlags = ImGuiWindowFlags_NoResize,
         .callbackFunc = [] (ImGuiHelper::Context* context) {
             // Test scene for now until the scene tree is hooked in...
-            static auto GetTestGlobalTransform = [] (const Vector2& pos = { 400.0f, 300.0f }) {
+            static auto GetGlobalTransform = [] (const Vector2& pos) {
                 TransformModel2D transformModel2D = {
                     .position = { 0.0f, 0.0f },
                     .scale = { 1.0f, 1.0f },
@@ -985,6 +985,60 @@ void OpenedProjectUI::ProcessWindows() {
                 return transformModel2D;
             };
             static Texture* testTexture = rbe_texture_create_solid_colored_texture(1, 1, 255);
+            static auto GetNodeRenderTarget = [](SceneNode* node, size_t index) {
+                static AssetManager* assetManager = AssetManager::Get();
+                static TransformModel2D transforms[MAX_ENTITIES];
+                Texture* renderTargetTexture = testTexture;
+                if (auto* transformComp = node->GetComponentSafe<Transform2DComp>()) {
+                    transforms[index] = GetGlobalTransform(transformComp->transform2D.position);
+                    Rect2 sourceRect = { 0.0f, 0.0f, 0.0f, 0.0f };
+                    Size2D destSize = { 0.0f, 0.0f };
+                    Color color = { 1.0f, 1.0f, 1.0f, 1.0f };
+                    bool flipX = false;
+                    bool flipY = false;
+                    if (auto* spriteComp = node->GetComponentSafe<SpriteComp>()) {
+                        renderTargetTexture = assetManager->GetTexture(spriteComp->texturePath.c_str());
+                        sourceRect = spriteComp->drawSource;
+                        destSize = { sourceRect.w, sourceRect.h };
+                        color = spriteComp->modulate;
+                        flipX = spriteComp->flipX;
+                        flipY = spriteComp->flipY;
+                    } else if (auto* animSpriteComp = node->GetComponentSafe<AnimatedSpriteComp>()) {
+                        if (!animSpriteComp->currentAnimationName.empty()) {
+                            const EditorAnimation& anim = animSpriteComp->GetAnimationByName(animSpriteComp->currentAnimationName);
+                            // TODO: Match current frame instead
+                            for (const auto& animFrame : anim.animationFrames) {
+                                renderTargetTexture = assetManager->GetTexture(animFrame.texturePath.c_str());
+                                sourceRect = animFrame.drawSource;
+                                destSize = { sourceRect.w, sourceRect.h };
+                                color = animSpriteComp->modulate;
+                                flipX = animSpriteComp->flipX;
+                                flipY = animSpriteComp->flipY;
+                                break;
+                            }
+                        }
+                    }
+                    return (ImGuiHelper::TextureRenderTarget) {
+                        .texture = renderTargetTexture,
+                        .sourceRect = sourceRect,
+                        .destSize = destSize,
+                        .color = color,
+                        .flipX = flipX,
+                        .flipY = flipY,
+                        .globalTransform = &transforms[index]
+                    };
+                }
+                // Invalid
+                return (ImGuiHelper::TextureRenderTarget) {
+                    .texture = renderTargetTexture,
+                    .sourceRect = { 0.0f, 0.0f, 0.0f, 0.0f },
+                    .destSize = { 0.0f, 0.0f },
+                    .color = { 0.75f, 0.1f, 0.1f, 1.0f },
+                    .flipX = false,
+                    .flipY = false,
+                    .globalTransform = &transforms[index]
+                };
+            };
             static SceneManager* sceneManager = SceneManager::Get();
             std::vector<ImGuiHelper::TextureRenderTarget> renderTargets;
             // Loop through and render all scene nodes starting from the root
@@ -992,7 +1046,7 @@ void OpenedProjectUI::ProcessWindows() {
                 sceneManager->IterateAllSceneNodes(sceneManager->selectedSceneFile->rootNode, [&renderTargets](SceneNode* node, size_t i) {
                     if (auto* transformComp = node->GetComponentSafe<Transform2DComp>()) {
                         static TransformModel2D transforms[MAX_ENTITIES];
-                        transforms[i] = GetTestGlobalTransform(transformComp->transform2D.position);
+                        transforms[i] = GetGlobalTransform(transformComp->transform2D.position);
                         ImGuiHelper::TextureRenderTarget testRenderTarget = {
                             .texture = testTexture,
                             .sourceRect = { 0.0f, 0.0f, 1.0f, 1.0f },
