@@ -40,7 +40,7 @@ Transform2D default_get_local_transform(Entity entity, bool* success) {
     Transform2DComponent* transform2DComponent = component_manager_get_component_unsafe(entity, ComponentDataIndex_TRANSFORM_2D);
     if (transform2DComponent == NULL) {
         *success = false;
-        return (Transform2D){};
+        return (Transform2D) {};
     }
     *success = true;
     return transform2DComponent->localTransform;

@@ -59,7 +59,7 @@ void transform2d_component_get_local_model_matrix(mat4 model, const Transform2D*
     });
     // 3. Scaling
     glm_scale(model, (vec3) {
-            transform->scale.x, transform->scale.y, 1.0f
+        transform->scale.x, transform->scale.y, 1.0f
     });
 }
 
