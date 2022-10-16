@@ -4,6 +4,8 @@
 #include "scene_manager.h"
 #include "../ecs/component/transform2d_component.h"
 #include "../ecs/component/component.h"
+#include "../camera/camera.h"
+#include "../camera/camera_manager.h"
 
 // TODO: Clean up temp stuff for CombineModelResult
 
@@ -69,6 +71,16 @@ void cre_scene_utils_update_global_transform_model(Entity entity, TransformModel
     globalTransform->scale.x = fabsf(scale[0]) * globalTransform->scaleSign.x;
     globalTransform->scale.y = fabsf(scale[1]) * globalTransform->scaleSign.y;
     globalTransform->rotation = transform2d_component_get_rotation_deg_from_model(rotation);
+}
+
+void cre_scene_utils_apply_camera_and_origin_translation(TransformModel2D* globalTransform, Vector2* origin, bool ignoreCamera) {
+    const RBECamera2D* renderCamera = ignoreCamera ? rbe_camera_manager_get_default_camera() : rbe_camera_manager_get_current_camera();
+    vec3 globalTranslation = {
+        (renderCamera->offset.x - (renderCamera->viewport.x * globalTransform->scaleSign.x) - origin->x) * renderCamera->zoom.x,
+        (renderCamera->offset.y - (renderCamera->viewport.y * globalTransform->scaleSign.y) - origin->y) * renderCamera->zoom.y,
+        0.0f
+    };
+    glm_translate(globalTransform->model, globalTranslation);
 }
 
 void cre_scene_utils_override_on_get_self_and_parent_entities_func(on_get_self_and_parent_entities func) {

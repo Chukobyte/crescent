@@ -1,6 +1,8 @@
 #include "opened_project_ui.h"
 
 #include "../engine/src/core/scene/scene_utils.h"
+#include "../engine/src/core/camera/camera.h"
+#include "../engine/src/core/camera/camera_manager.h"
 #include "../engine/src/core/utils/rbe_file_system_utils.h"
 #include "../engine/src/core/utils/logger.h"
 
@@ -844,7 +846,6 @@ void DrawColorRect(SceneNode* node) {
 }
 } // namespace ComponentDetailsDrawUtils
 
-// TODO: come backy
 namespace WindowRenderUtils {
 EntityArray OnGetSelfAndParentEntitiesFunc(Entity entity) {
     static auto* sceneManager = SceneManager::Get();
@@ -1007,6 +1008,7 @@ void OpenedProjectUI::ProcessWindows() {
                 Color color = { 1.0f, 1.0f, 1.0f, 1.0f };
                 bool flipX = false;
                 bool flipY = false;
+                Vector2 origin = { 0.0f, 0.0f };
                 hasTexture = true;
                 if (auto* spriteComp = node->GetComponentSafe<SpriteComp>()) {
                     renderTargetTexture = assetManager->GetTexture(spriteComp->texturePath.c_str());
@@ -1015,6 +1017,7 @@ void OpenedProjectUI::ProcessWindows() {
                     color = spriteComp->modulate;
                     flipX = spriteComp->flipX;
                     flipY = spriteComp->flipY;
+                    origin = spriteComp->origin;
                 } else if (auto* animSpriteComp = node->GetComponentSafe<AnimatedSpriteComp>()) {
                     if (!animSpriteComp->currentAnimationName.empty()) {
                         const EditorAnimation& anim = animSpriteComp->GetAnimationByName(animSpriteComp->currentAnimationName);
@@ -1026,12 +1029,14 @@ void OpenedProjectUI::ProcessWindows() {
                             color = animSpriteComp->modulate;
                             flipX = animSpriteComp->flipX;
                             flipY = animSpriteComp->flipY;
+                            origin = animSpriteComp->origin;
                             break;
                         }
                     }
                 } else {
                     hasTexture = false;
                 }
+                cre_scene_utils_apply_camera_and_origin_translation(&globalTransforms[index], &origin, transformComp->ignoreCamera);
                 return (ImGuiHelper::TextureRenderTarget) {
                     .texture = renderTargetTexture,
                     .sourceRect = sourceRect,
@@ -1044,7 +1049,6 @@ void OpenedProjectUI::ProcessWindows() {
             };
             static SceneManager* sceneManager = SceneManager::Get();
             static AssetManager* assetManager = AssetManager::Get();
-            // TODO: come backy
             std::vector<ImGuiHelper::TextureRenderTarget> textureRenderTargets;
             std::vector<ImGuiHelper::FontRenderTarget> fontRenderTargets;
             static bool hasBindedSceneUtilsFuncs = false;
@@ -1057,9 +1061,11 @@ void OpenedProjectUI::ProcessWindows() {
             if (sceneManager->selectedSceneFile && sceneManager->selectedSceneFile->rootNode) {
                 sceneManager->IterateAllSceneNodes(sceneManager->selectedSceneFile->rootNode, [&textureRenderTargets, &fontRenderTargets](SceneNode* node, size_t i) {
                     if (auto* transformComp = node->GetComponentSafe<Transform2DComp>()) {
-                        TransformModel2D globalTransform = { transformComp->transform2D.position, transformComp->transform2D.scale, transformComp->transform2D.rotation };
-                        cre_scene_utils_update_global_transform_model(node->GetUID(), &globalTransform);
                         if (auto* textLabelComp = node->GetComponentSafe<TextLabelComp>()) {
+                            TransformModel2D globalTransform = { transformComp->transform2D.position, transformComp->transform2D.scale, transformComp->transform2D.rotation };
+                            cre_scene_utils_update_global_transform_model(node->GetUID(), &globalTransform);
+                            static Vector2 textLabelOrigin = { 0.0f, 0.0f };
+                            cre_scene_utils_apply_camera_and_origin_translation(&globalTransform, &textLabelOrigin, transformComp->ignoreCamera);
                             const ImGuiHelper::FontRenderTarget renderTarget = {
                                 .font = assetManager->GetFont(textLabelComp->fontUID.c_str()),
                                 .text = textLabelComp->text,
