@@ -15,6 +15,7 @@
 #include "ui/imgui/imgui_handler.h"
 #include "ui/imgui/imgui_styler.h"
 #include "utils/file_system_helper.h"
+#include "utils/console_logger.h"
 
 static EditorContext* editorContext = EditorContext::Get();
 
@@ -45,6 +46,10 @@ bool Editor::Initialize() {
     if (!editorContext->settings.LoadSettings()) {
         editorContext->settings.SaveSettings();
     }
+
+    // Route stdout and stderr to console logger
+    ConsoleLogger* consoleLogger = ConsoleLogger::Get();
+    consoleLogger->StartCapture();
 
     mainTasks.RunManaged(EditorBackgroundTasks::Main(&mainTasks));
     return true;
@@ -173,6 +178,9 @@ void Editor::Shutdown() {
     SDL_Quit();
 
     rbe_py_finalize();
+
+    // Stop capturing stdout and stderr from console logger
+    ConsoleLogger::Get()->StopCapture();
 
     rbe_logger_info("Crescent Engine Editor has been shutdown!");
 }

@@ -16,6 +16,7 @@
 #include "../scene/scene_manager.h"
 #include "../asset_browser.h"
 #include "../file_creation/scene_file_creator.h"
+#include "../utils/console_logger.h"
 #include "../utils/process_runner/process_runner.h"
 #include "../editor_callbacks.h"
 #include "../game_exporter.h"
@@ -1129,7 +1130,10 @@ void OpenedProjectUI::ProcessWindows() {
         .name = "Console",
         .open = nullptr,
         .windowFlags = ImGuiWindowFlags_NoResize,
-        .callbackFunc = [] (ImGuiHelper::Context* context) {},
+        .callbackFunc = [] (ImGuiHelper::Context* context) {
+            static ConsoleLogger* consoleLogger = ConsoleLogger::Get();
+            ImGui::Text("%s", consoleLogger->GetText().c_str());
+        },
         .position = ImVec2{ 200.0f, 200.0f },
         .size = ImVec2{ 400.0f, 300.0f },
     };
