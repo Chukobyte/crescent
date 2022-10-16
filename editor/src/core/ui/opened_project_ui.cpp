@@ -1037,7 +1037,7 @@ void OpenedProjectUI::ProcessWindows() {
                     hasTexture = false;
                 }
                 cre_scene_utils_apply_camera_and_origin_translation(&globalTransforms[index], &origin, transformComp->ignoreCamera);
-                return (ImGuiHelper::TextureRenderTarget) {
+                return ImGuiHelper::TextureRenderTarget{
                     .texture = renderTargetTexture,
                     .sourceRect = sourceRect,
                     .destSize = destSize,
