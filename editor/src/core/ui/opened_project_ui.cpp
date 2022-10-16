@@ -870,7 +870,7 @@ Transform2D OnGetLocalTransformFunc(Entity entity, bool* success) {
         }
     }
     *success = false;
-    return (Transform2D) {};
+    return {};
 }
 } // namespace WindowRenderUtils
 
