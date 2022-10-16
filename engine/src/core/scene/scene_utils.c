@@ -2,12 +2,9 @@
 
 #include "scene_tree.h"
 #include "scene_manager.h"
-#include "../ecs/component/transform2d_component.h"
 #include "../ecs/component/component.h"
 #include "../camera/camera.h"
 #include "../camera/camera_manager.h"
-
-// TODO: Clean up temp stuff for CombineModelResult
 
 EntityArray default_get_self_and_parent_nodes(Entity entity);
 Transform2D default_get_local_transform(Entity entity, bool* success);
