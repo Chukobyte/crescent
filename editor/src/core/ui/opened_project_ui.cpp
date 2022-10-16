@@ -1021,8 +1021,9 @@ void OpenedProjectUI::ProcessWindows() {
                 } else if (auto* animSpriteComp = node->GetComponentSafe<AnimatedSpriteComp>()) {
                     if (!animSpriteComp->currentAnimationName.empty()) {
                         const EditorAnimation& anim = animSpriteComp->GetAnimationByName(animSpriteComp->currentAnimationName);
-                        // TODO: Match current frame instead
-                        for (const auto& animFrame : anim.animationFrames) {
+                        if (!anim.animationFrames.empty()) {
+                            // TODO: Get frame from current index instead...
+                            const auto& animFrame = anim.animationFrames[0];
                             renderTargetTexture = assetManager->GetTexture(animFrame.texturePath.c_str());
                             sourceRect = animFrame.drawSource;
                             destSize = { sourceRect.w, sourceRect.h };
@@ -1030,7 +1031,6 @@ void OpenedProjectUI::ProcessWindows() {
                             flipX = animSpriteComp->flipX;
                             flipY = animSpriteComp->flipY;
                             origin = animSpriteComp->origin;
-                            break;
                         }
                     }
                 } else {
