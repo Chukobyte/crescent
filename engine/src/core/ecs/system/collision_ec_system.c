@@ -8,6 +8,7 @@
 #include "../../rendering/renderer.h"
 #include "../../camera/camera.h"
 #include "../../camera/camera_manager.h"
+#include "../../scene/scene_utils.h"
 #include "../../utils/rbe_string_util.h"
 #include "../../utils/rbe_assert.h"
 
@@ -58,16 +59,13 @@ void collision_system_render() {
         const Collider2DComponent* colliderComp = (Collider2DComponent*) component_manager_get_component(entity, ComponentDataIndex_COLLIDER_2D);
         const RBECamera2D* renderCamera = transformComp->ignoreCamera ? defaultCamera : camera2D;
         TransformModel2D* globalTransform = rbe_scene_manager_get_scene_node_global_transform(entity, transformComp);
+        static Vector2 origin = { 0.0f, 0.0f };
+        cre_scene_utils_apply_camera_and_origin_translation(globalTransform, &origin, transformComp->ignoreCamera);
         transformComp->isGlobalTransformDirty = true; // TODO: Make global transform const
         const Size2D colliderDrawSize = {
             colliderComp->extents.w * renderCamera->zoom.x,
             colliderComp->extents.h * renderCamera->zoom.y
         };
-        glm_translate(globalTransform->model, (vec3) {
-            (renderCamera->offset.x - (renderCamera->viewport.x * globalTransform->scaleSign.x)) * renderCamera->zoom.x,
-            (renderCamera->offset.y - (renderCamera->viewport.y * globalTransform->scaleSign.y)) * renderCamera->zoom.y,
-            0.0f
-        });
         rbe_renderer_queue_sprite_draw_call(
             collisionOutlineTexture,
             colliderDrawSource,

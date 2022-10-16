@@ -75,12 +75,11 @@ void cre_scene_utils_update_global_transform_model(Entity entity, TransformModel
 
 void cre_scene_utils_apply_camera_and_origin_translation(TransformModel2D* globalTransform, Vector2* origin, bool ignoreCamera) {
     const RBECamera2D* renderCamera = ignoreCamera ? rbe_camera_manager_get_default_camera() : rbe_camera_manager_get_current_camera();
-    vec3 globalTranslation = {
+    glm_translate(globalTransform->model, (vec3) {
         (renderCamera->offset.x - (renderCamera->viewport.x * globalTransform->scaleSign.x) - origin->x) * renderCamera->zoom.x,
         (renderCamera->offset.y - (renderCamera->viewport.y * globalTransform->scaleSign.y) - origin->y) * renderCamera->zoom.y,
         0.0f
-    };
-    glm_translate(globalTransform->model, globalTranslation);
+    });
 }
 
 void cre_scene_utils_override_on_get_self_and_parent_entities_func(on_get_self_and_parent_entities func) {
