@@ -11,6 +11,7 @@
 #include "../../scene/scene_manager.h"
 #include "../../camera/camera.h"
 #include "../../camera/camera_manager.h"
+#include "../../scene/scene_utils.h"
 #include "../../utils/rbe_string_util.h"
 #include "../../utils/rbe_assert.h"
 
@@ -51,12 +52,8 @@ void animated_sprite_rendering_system_render() {
         }
         const RBECamera2D* renderCamera = spriteTransformComp->ignoreCamera ? defaultCamera : camera2D;
         TransformModel2D* globalTransform = rbe_scene_manager_get_scene_node_global_transform(entity, spriteTransformComp);
+        cre_scene_utils_apply_camera_and_origin_translation(globalTransform, &animatedSpriteComponent->origin, spriteTransformComp->ignoreCamera);
         spriteTransformComp->isGlobalTransformDirty = true; // TODO: Make global transform const
-        glm_translate(globalTransform->model, (vec3) {
-            (renderCamera->offset.x - (renderCamera->viewport.x * globalTransform->scaleSign.x) - animatedSpriteComponent->origin.x) * renderCamera->zoom.x,
-            (renderCamera->offset.y - (renderCamera->viewport.y * globalTransform->scaleSign.y) - animatedSpriteComponent->origin.y) * renderCamera->zoom.y,
-            0.0f
-        });
         const Size2D destinationSize = {
             currentFrame.drawSource.w * renderCamera->zoom.x,
             currentFrame.drawSource.h * renderCamera->zoom.y

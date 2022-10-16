@@ -5,11 +5,12 @@
 #include "render_context.h"
 #include "shader.h"
 #include "shader_source.h"
-#include "../math/rbe_math.h"
+#include "frame_buffer.h"
 #include "../game_properties.h"
 #include "../data_structures/rbe_static_array.h"
-#include "../memory/rbe_mem.h"
 #include "../utils/rbe_assert.h"
+
+#define CRE_RENDER_TO_FRAMEBUFFER
 
 typedef struct TextureCoordinates {
     GLfloat sMin;
@@ -42,12 +43,15 @@ void rbe_renderer_initialize() {
     rbe_render_context_initialize();
     sprite_renderer_initialize();
     font_renderer_initialize();
+    // Test framebuffer
+    RBE_ASSERT_FMT(cre_frame_buffer_initialize(), "Framebuffer didn't initialize!");
 }
 
 void rbe_renderer_finalize() {
     font_renderer_finalize();
     sprite_renderer_finalize();
     rbe_render_context_finalize();
+    cre_frame_buffer_finalize();
 }
 
 // --- Sprite Batching --- //
@@ -116,6 +120,45 @@ void rbe_renderer_flush_batches() {
     RBE_STATIC_ARRAY_EMPTY(font_batch_items);
 }
 
+void cre_renderer_process_and_flush_batches(const Color* backgroundColor) {
+#ifdef CRE_RENDER_TO_FRAMEBUFFER
+    cre_frame_buffer_bind();
+#endif
+
+    // Clear framebuffer with background color
+    glClearColor(backgroundColor->r, backgroundColor->g, backgroundColor->b, backgroundColor->a);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+    rbe_renderer_flush_batches();
+
+#ifdef CRE_RENDER_TO_FRAMEBUFFER
+    cre_frame_buffer_unbind();
+
+    // Clear screen texture background
+    static Color screenBackgroundColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+    glClearColor(screenBackgroundColor.r, screenBackgroundColor.g, screenBackgroundColor.b, screenBackgroundColor.a);
+    glClear(GL_COLOR_BUFFER_BIT);
+    // Draw screen texture from framebuffer
+    Shader* screenShader = cre_frame_buffer_get_screen_shader();
+    shader_use(screenShader);
+    glBindVertexArray(cre_frame_buffer_get_quad_vao());
+    glBindTexture(GL_TEXTURE_2D, cre_frame_buffer_get_color_buffer_texture());	// use the color attachment texture as the texture of the quad plane
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+#endif
+}
+
+void cre_renderer_process_and_flush_batches_just_framebuffer(const Color* backgroundColor) {
+    cre_frame_buffer_bind();
+
+    // Clear framebuffer with background color
+    glClearColor(backgroundColor->r, backgroundColor->g, backgroundColor->b, backgroundColor->a);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+    rbe_renderer_flush_batches();
+
+    cre_frame_buffer_unbind();
+}
+
 // --- Sprite Renderer --- //
 void sprite_renderer_initialize() {
     GLfloat vertices[] = {
@@ -161,7 +204,7 @@ void sprite_renderer_initialize() {
         {0.0f, 0.0f, 1.0f, 0.0f},
         {0.0f, 0.0f, 0.0f, 1.0f}
     };
-    RBEGameProperties* gameProperties = rbe_game_props_get();
+    RBEGameProperties* gameProperties = cre_game_props_get_or_default();
     glm_ortho(0.0f, (float) gameProperties->resolutionWidth, (float) gameProperties->resolutionHeight, 0.0f, -1.0f, 1.0f, proj);
     shader_use(spriteShader);
     shader_set_mat4_float(spriteShader, "projection", &proj);

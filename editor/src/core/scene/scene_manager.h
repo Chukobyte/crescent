@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <typeinfo>
 #include <string>
+#include <functional>
 
 #include "../components/component.h"
 #include "../utils/singleton.h"
@@ -113,6 +114,11 @@ class SceneManager : public Singleton<SceneManager> {
     void ResetCurrentSceneNodeFile();
 
     static std::string GetUniqueNodeName(const std::string& nameCandidate, SceneNode* parent = nullptr);
+
+    void IterateAllSceneNodes(SceneNode* node, std::function<void(SceneNode*, size_t)> func);
+
+    SceneNode* GetNode(SceneNodeFile* nodeFile, Entity entity);
+    SceneNode* GetNode(SceneNode* node, Entity entity);
 
     std::unordered_map<std::string, SceneNodeFile*> loadedSceneFiles;
     SceneNodeFile* selectedSceneFile = nullptr;

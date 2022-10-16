@@ -50,6 +50,7 @@ Texture* rbe_texture_create_texture(const char* filePath) {
 
     rbe_texture_generate(texture);
 
+    stbi_image_free(imageData);
     return texture;
 }
 

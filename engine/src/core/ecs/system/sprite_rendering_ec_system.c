@@ -11,6 +11,7 @@
 #include "../../camera/camera_manager.h"
 #include "../../utils/rbe_string_util.h"
 #include "../../utils/rbe_assert.h"
+#include "../../scene/scene_utils.h"
 
 EntitySystem* spriteRenderingSystem = NULL;
 
@@ -32,20 +33,15 @@ void sprite_rendering_system_render() {
     for (size_t i = 0; i < spriteRenderingSystem->entity_count; i++) {
         const Entity entity = spriteRenderingSystem->entities[i];
         Transform2DComponent* spriteTransformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
-        const SpriteComponent* spriteComponent = (SpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_SPRITE);
+        SpriteComponent* spriteComponent = (SpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_SPRITE);
         const RBECamera2D* renderCamera = spriteTransformComp->ignoreCamera ? defaultCamera : camera2D;
         TransformModel2D* globalTransform = rbe_scene_manager_get_scene_node_global_transform(entity, spriteTransformComp);
+        cre_scene_utils_apply_camera_and_origin_translation(globalTransform, &spriteComponent->origin, spriteTransformComp->ignoreCamera);
         spriteTransformComp->isGlobalTransformDirty = true; // TODO: Make global transform const
         const Size2D destinationSize = {
             spriteComponent->drawSource.w * renderCamera->zoom.x,
             spriteComponent->drawSource.h * renderCamera->zoom.y
         };
-        glm_translate(globalTransform->model, (vec3) {
-            (renderCamera->offset.x - (renderCamera->viewport.x * globalTransform->scaleSign.x) - spriteComponent->origin.x) * renderCamera->zoom.x,
-            (renderCamera->offset.y - (renderCamera->viewport.y * globalTransform->scaleSign.y) - spriteComponent->origin.y) * renderCamera->zoom.y,
-            0.0f
-        });
-
         rbe_renderer_queue_sprite_draw_call(
             spriteComponent->texture,
             spriteComponent->drawSource,

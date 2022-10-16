@@ -3,6 +3,7 @@
 #include <imgui/imgui_impl_sdl.h>
 #include <imgui/imgui_impl_opengl3.h>
 
+#include "../engine/src/core/rendering/renderer.h"
 #include "../engine/src/core/utils/logger.h"
 #include "../engine/src/core/scripting/python/rbe_py.h"
 
@@ -10,6 +11,7 @@
 #include "editor_background_tasks.h"
 #include "scene/scene_manager.h"
 #include "color.h"
+#include "asset_manager.h"
 #include "ui/imgui/imgui_handler.h"
 #include "ui/imgui/imgui_styler.h"
 #include "utils/file_system_helper.h"
@@ -28,6 +30,12 @@ bool Editor::Initialize() {
 
     // Initialize Python Instance
     rbe_py_initialize();
+
+    // Initialize Asset Manager
+    AssetManager::Get()->Initialize();
+
+    // TODO: Move engine renderer init in another location
+    rbe_renderer_initialize();
 
     editorContext->initialDir = FileSystemHelper::GetCurrentDir();
     editorContext->isRunning = true;

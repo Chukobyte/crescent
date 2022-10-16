@@ -268,3 +268,34 @@ SceneNode* SceneManager::LoadSceneTreeJson(JsonSceneNode* node, SceneNode* paren
     }
     return sceneNode;
 }
+
+namespace {
+void LoopNodes(SceneNode* node, std::function<void(SceneNode*, size_t)>& func, size_t& index) {
+    func(node, index);
+    index++;
+    for (auto* child : node->children) {
+        LoopNodes(child, func, index);
+    }
+}
+}
+
+void SceneManager::IterateAllSceneNodes(SceneNode* node, std::function<void(SceneNode*, size_t)> func) {
+    size_t index = 0;
+    LoopNodes(node, func, index);
+}
+
+SceneNode* SceneManager::GetNode(SceneNodeFile* nodeFile, Entity entity) {
+    return GetNode(nodeFile->rootNode, entity);
+}
+
+SceneNode* SceneManager::GetNode(SceneNode* node, Entity entity) {
+    if (node->GetUID() == entity) {
+        return node;
+    }
+    for (auto* childNode : node->children) {
+        if (auto* foundChildNode = GetNode(childNode, entity)) {
+            return foundChildNode;
+        }
+    }
+    return nullptr;
+}

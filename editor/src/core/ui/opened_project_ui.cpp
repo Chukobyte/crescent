@@ -1,11 +1,15 @@
 #include "opened_project_ui.h"
 
+#include "../engine/src/core/scene/scene_utils.h"
+#include "../engine/src/core/camera/camera.h"
+#include "../engine/src/core/camera/camera_manager.h"
 #include "../engine/src/core/utils/rbe_file_system_utils.h"
 #include "../engine/src/core/utils/logger.h"
 
 #include "imgui/imgui_helper.h"
 #include "../editor_context.h"
 #include "../project_properties.h"
+#include "../asset_manager.h"
 #include "../utils/file_system_helper.h"
 #include "../utils/helper.h"
 #include "../file_creation/config_file_creator.h"
@@ -16,6 +20,7 @@
 #include "../editor_callbacks.h"
 #include "../game_exporter.h"
 #include "imgui/imgui_file_browser.h"
+#include "imgui/imgui_window_renderer.h"
 
 const std::string COMBO_BOX_LIST_NONE = "<none>";
 
@@ -268,6 +273,7 @@ void OpenedProjectUI::ProcessMenuBar() {
                                 .callbackFunc = [] (ImGuiHelper::Context* context) {
                                     if (ImGui::Button("Close")) {
                                         ConfigFileCreator::GenerateConfigFile(projectProperties);
+                                        AssetManager::Get()->RefreshFromProperties(projectProperties);
                                         ImGui::CloseCurrentPopup();
                                     }
                                     ImGui::SameLine();
@@ -840,6 +846,34 @@ void DrawColorRect(SceneNode* node) {
 }
 } // namespace ComponentDetailsDrawUtils
 
+namespace WindowRenderUtils {
+EntityArray OnGetSelfAndParentEntitiesFunc(Entity entity) {
+    static auto* sceneManager = SceneManager::Get();
+    EntityArray combineModelResult = { .entityCount = 0 };
+    combineModelResult.entities[combineModelResult.entityCount++] = entity;
+    if (auto* node = sceneManager->GetNode(sceneManager->selectedSceneFile, entity)) {
+        auto* parent = node->parent;
+        while (parent != nullptr) {
+            combineModelResult.entities[combineModelResult.entityCount++] = parent->GetUID();
+            parent = parent->parent;
+        }
+    }
+    return combineModelResult;
+}
+
+Transform2D OnGetLocalTransformFunc(Entity entity, bool* success) {
+    static auto* sceneManager = SceneManager::Get();
+    if (auto* node = sceneManager->GetNode(sceneManager->selectedSceneFile, entity)) {
+        if (auto* transformComp = node->GetComponentSafe<Transform2DComp>()) {
+            *success = true;
+            return transformComp->transform2D;
+        }
+    }
+    *success = false;
+    return {};
+}
+} // namespace WindowRenderUtils
+
 void OpenedProjectUI::ProcessWindows() {
     int windowWidth = 0;
     int windowHeight = 0;
@@ -962,7 +996,96 @@ void OpenedProjectUI::ProcessWindows() {
         .name = "Scene View",
         .open = nullptr,
         .windowFlags = ImGuiWindowFlags_NoResize,
-        .callbackFunc = [] (ImGuiHelper::Context* context) {},
+        .callbackFunc = [] (ImGuiHelper::Context* context) {
+            static Texture* testTexture = rbe_texture_create_solid_colored_texture(1, 1, 255);
+            static auto GetNodeTextureRenderTarget = [](SceneNode* node, size_t index, Transform2DComp* transformComp, bool& hasTexture) {
+                static AssetManager* assetManager = AssetManager::Get();
+                static TransformModel2D globalTransforms[MAX_ENTITIES];
+                Texture* renderTargetTexture = testTexture;
+                cre_scene_utils_update_global_transform_model(node->GetUID(), &globalTransforms[index]);
+                Rect2 sourceRect = { 0.0f, 0.0f, 0.0f, 0.0f };
+                Size2D destSize = { 0.0f, 0.0f };
+                Color color = { 1.0f, 1.0f, 1.0f, 1.0f };
+                bool flipX = false;
+                bool flipY = false;
+                Vector2 origin = { 0.0f, 0.0f };
+                hasTexture = true;
+                if (auto* spriteComp = node->GetComponentSafe<SpriteComp>()) {
+                    renderTargetTexture = assetManager->GetTexture(spriteComp->texturePath.c_str());
+                    sourceRect = spriteComp->drawSource;
+                    destSize = { sourceRect.w, sourceRect.h };
+                    color = spriteComp->modulate;
+                    flipX = spriteComp->flipX;
+                    flipY = spriteComp->flipY;
+                    origin = spriteComp->origin;
+                } else if (auto* animSpriteComp = node->GetComponentSafe<AnimatedSpriteComp>()) {
+                    if (!animSpriteComp->currentAnimationName.empty()) {
+                        const EditorAnimation& anim = animSpriteComp->GetAnimationByName(animSpriteComp->currentAnimationName);
+                        if (!anim.animationFrames.empty()) {
+                            // TODO: Get frame from current index instead...
+                            const auto& animFrame = anim.animationFrames[0];
+                            renderTargetTexture = assetManager->GetTexture(animFrame.texturePath.c_str());
+                            sourceRect = animFrame.drawSource;
+                            destSize = { sourceRect.w, sourceRect.h };
+                            color = animSpriteComp->modulate;
+                            flipX = animSpriteComp->flipX;
+                            flipY = animSpriteComp->flipY;
+                            origin = animSpriteComp->origin;
+                        }
+                    }
+                } else {
+                    hasTexture = false;
+                }
+                cre_scene_utils_apply_camera_and_origin_translation(&globalTransforms[index], &origin, transformComp->ignoreCamera);
+                return ImGuiHelper::TextureRenderTarget{
+                    .texture = renderTargetTexture,
+                    .sourceRect = sourceRect,
+                    .destSize = destSize,
+                    .color = color,
+                    .flipX = flipX,
+                    .flipY = flipY,
+                    .globalTransform = &globalTransforms[index]
+                };
+            };
+            static SceneManager* sceneManager = SceneManager::Get();
+            static AssetManager* assetManager = AssetManager::Get();
+            std::vector<ImGuiHelper::TextureRenderTarget> textureRenderTargets;
+            std::vector<ImGuiHelper::FontRenderTarget> fontRenderTargets;
+            static bool hasBindedSceneUtilsFuncs = false;
+            if (!hasBindedSceneUtilsFuncs) {
+                cre_scene_utils_override_on_get_local_transform_func(WindowRenderUtils::OnGetLocalTransformFunc);
+                cre_scene_utils_override_on_get_self_and_parent_entities_func(WindowRenderUtils::OnGetSelfAndParentEntitiesFunc);
+                hasBindedSceneUtilsFuncs = true;
+            }
+            // Loop through and render all scene nodes starting from the root
+            if (sceneManager->selectedSceneFile && sceneManager->selectedSceneFile->rootNode) {
+                sceneManager->IterateAllSceneNodes(sceneManager->selectedSceneFile->rootNode, [&textureRenderTargets, &fontRenderTargets](SceneNode* node, size_t i) {
+                    if (auto* transformComp = node->GetComponentSafe<Transform2DComp>()) {
+                        if (auto* textLabelComp = node->GetComponentSafe<TextLabelComp>()) {
+                            TransformModel2D globalTransform = { transformComp->transform2D.position, transformComp->transform2D.scale, transformComp->transform2D.rotation };
+                            cre_scene_utils_update_global_transform_model(node->GetUID(), &globalTransform);
+                            static Vector2 textLabelOrigin = { 0.0f, 0.0f };
+                            cre_scene_utils_apply_camera_and_origin_translation(&globalTransform, &textLabelOrigin, transformComp->ignoreCamera);
+                            const ImGuiHelper::FontRenderTarget renderTarget = {
+                                .font = assetManager->GetFont(textLabelComp->fontUID.c_str()),
+                                .text = textLabelComp->text,
+                                .position = globalTransform.position,
+                                .scale = globalTransform.scale.x,
+                                .color = textLabelComp->color
+                            };
+                            fontRenderTargets.emplace_back(renderTarget);
+                        } else {
+                            bool hasTexture = false;
+                            const ImGuiHelper::TextureRenderTarget renderTarget = GetNodeTextureRenderTarget(node, i, transformComp, hasTexture);
+                            if (hasTexture) {
+                                textureRenderTargets.emplace_back(renderTarget);
+                            }
+                        }
+                    }
+                });
+            }
+            ImGuiHelper::WindowRenderer::Render(textureRenderTargets, fontRenderTargets);
+        },
         .position = ImVec2{ 300.0f, 100.0f },
         .size = ImVec2{ 400.0f, 300.0f },
     };

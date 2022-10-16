@@ -35,6 +35,7 @@ add_library(${PROJECT_NAME} STATIC
         src/core/input/input.c
         src/core/input/input_action.c
         src/core/scene/scene_manager.c
+        src/core/scene/scene_utils.c
         src/core/scripting/script_context.c
         src/core/scripting/python/py_helper.c
         src/core/scripting/python/rbe_py.c
@@ -46,6 +47,7 @@ add_library(${PROJECT_NAME} STATIC
         src/core/scripting/native/internal_classes/fps_display_class.c
         src/core/networking/rbe_network.c
         src/core/rendering/font.c
+        src/core/rendering/frame_buffer.c
         src/core/rendering/renderer.c
         src/core/rendering/render_context.c
         src/core/rendering/shader.c

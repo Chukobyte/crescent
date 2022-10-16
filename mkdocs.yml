@@ -14,6 +14,9 @@ markdown_extensions:
   - pymdownx.superfences
   - pymdownx.inlinehilite
 
+theme:
+  name: material
+
 nav:
   - Introduction: index.md
   - Configuration: configuration/configuration.md

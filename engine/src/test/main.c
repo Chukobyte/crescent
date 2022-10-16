@@ -271,7 +271,7 @@ void rbe_scene_graph_test() {
     rbe_scene_manager_queue_entity_for_creation(parentNode);
 
     mat4 parentModel;
-    transform2d_component_get_local_model_matrix(parentModel, parentTransform);
+    transform2d_component_get_local_model_matrix(parentModel, &parentTransform->localTransform);
     glm_mat4_print(parentModel, stdout);
     // Child 1
     Entity childOneEntity = 2;
@@ -283,7 +283,7 @@ void rbe_scene_graph_test() {
     rbe_scene_manager_queue_entity_for_creation(childOneNode);
 
     mat4 childOneModel;
-    transform2d_component_get_local_model_matrix(childOneModel, childOneTransform);
+    transform2d_component_get_local_model_matrix(childOneModel, &childOneTransform->localTransform);
     // Multiply with parent to get world space
 //    glm_mat4_mul(childOneModel, parentModel, childOneModel);
     glm_mat4_mul(parentModel, childOneModel, childOneModel);
