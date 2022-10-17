@@ -1,7 +1,7 @@
 #ifndef STDCAPTURE_H
 #define STDCAPTURE_H
 
-#ifdef _MSC_VER
+#ifdef _WIN32
 #include <io.h>
 #define popen _popen
 #define pclose _pclose
@@ -58,7 +58,7 @@ namespace std {
                 secure_pipe(pipes);
                 streamOld = secure_dup(fd);
                 secure_dup2(pipes[WRITE], fd);
-#ifndef _MSC_VER
+#ifndef _WIN32
                 secure_close(pipes[WRITE]);
 #endif
             }
@@ -76,7 +76,7 @@ namespace std {
                 {
                     bytesRead = 0;
                     fd_blocked = false;
-#ifdef _MSC_VER
+#ifdef _WIN32
                     if (!eof(pipes[READ]))
                         bytesRead = read(pipes[READ], buf, bufSize - 1);
 #else
@@ -98,7 +98,7 @@ namespace std {
 
                 secure_close(streamOld);
                 secure_close(pipes[READ]);
-#ifdef _MSC_VER
+#ifdef _WIN32
                 secure_close(pipes[WRITE]);
 #endif
             }
@@ -126,7 +126,7 @@ namespace std {
                 bool fd_blocked = false;
                 do
                 {
-#ifdef _MSC_VER
+#ifdef _WIN32
                     ret = pipe(pipes, 65536, O_BINARY);
 #else
                     ret = pipe(pipes) == -1;
