@@ -1,5 +1,7 @@
 #include "editor.h"
 
+#include <iostream>
+
 #include <imgui/imgui_impl_sdl.h>
 #include <imgui/imgui_impl_opengl3.h>
 
@@ -47,15 +49,15 @@ bool Editor::Initialize() {
         editorContext->settings.SaveSettings();
     }
 
-    // Route stdout and stderr to console logger
-    ConsoleLogger* consoleLogger = ConsoleLogger::Get();
-    consoleLogger->StartCapture();
-
+    // Start editor background tasks
     mainTasks.RunManaged(EditorBackgroundTasks::Main(&mainTasks));
     return true;
 }
 
 void Editor::Update() {
+    // Capture stdout and stderr to output to console
+    auto captureToken = ConsoleLogger::Get()->CaptureOutput();
+
     ProcessInput();
     Render();
     mainTasks.Update();
