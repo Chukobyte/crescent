@@ -1129,14 +1129,16 @@ void OpenedProjectUI::ProcessWindows() {
     static ImGuiHelper::Window consoleWindow = {
         .name = "Console",
         .open = nullptr,
-        .windowFlags = ImGuiWindowFlags_NoResize,
+        .windowFlags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar,
         .callbackFunc = [] (ImGuiHelper::Context* context) {
             static ConsoleLogger* consoleLogger = ConsoleLogger::Get();
             if (ImGui::Button("Clear")) {
                 consoleLogger->Clear();
             }
             ImGui::Separator();
+            ImGui::BeginChild("ConsoleLogWindow", ImGui::GetContentRegionAvail(), false, ImGuiWindowFlags_HorizontalScrollbar);
             ImGui::Text("%s", consoleLogger->GetText().c_str());
+            ImGui::EndChild();
         },
         .position = ImVec2{ 200.0f, 200.0f },
         .size = ImVec2{ 400.0f, 300.0f },
