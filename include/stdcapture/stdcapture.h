@@ -52,7 +52,7 @@ namespace std {
             {
                 // Make output stream unbuffered, so that we don't need to flush
                 // the streams before capture and after capture (fflush can cause a deadlock)
-                setvbuf(stream, NULL, _IONBF, 0);
+                setvbuf(stream, nullptr, _IONBF, 0);
 
                 // Start capturing.
                 secure_pipe(pipes);
