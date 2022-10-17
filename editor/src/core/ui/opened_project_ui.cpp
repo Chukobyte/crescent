@@ -1132,6 +1132,10 @@ void OpenedProjectUI::ProcessWindows() {
         .windowFlags = ImGuiWindowFlags_NoResize,
         .callbackFunc = [] (ImGuiHelper::Context* context) {
             static ConsoleLogger* consoleLogger = ConsoleLogger::Get();
+            if (ImGui::Button("Clear")) {
+                consoleLogger->Clear();
+            }
+            ImGui::Separator();
             ImGui::Text("%s", consoleLogger->GetText().c_str());
         },
         .position = ImVec2{ 200.0f, 200.0f },

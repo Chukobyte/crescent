@@ -181,8 +181,5 @@ void Editor::Shutdown() {
 
     rbe_py_finalize();
 
-    // Stop capturing stdout and stderr from console logger
-    ConsoleLogger::Get()->StopCapture();
-
     rbe_logger_info("Crescent Engine Editor has been shutdown!");
 }
