@@ -1136,8 +1136,8 @@ void OpenedProjectUI::ProcessWindows() {
                 consoleLogger->Clear();
             }
             ImGui::Separator();
-            ImGui::BeginChild("ConsoleLogWindow", ImGui::GetContentRegionAvail(), false, ImGuiWindowFlags_HorizontalScrollbar);
-            ImGui::Text("%s", consoleLogger->GetText().c_str());
+            ImGui::BeginChild("ConsoleLogWindow", ImGui::GetContentRegionAvail(), false, ImGuiWindowFlags_AlwaysHorizontalScrollbar);
+            ImGui::TextUnformatted(consoleLogger->GetText().c_str());
             ImGui::EndChild();
         },
         .position = ImVec2{ 200.0f, 200.0f },
@@ -1154,6 +1154,9 @@ void OpenedProjectUI::ProcessWindows() {
                 if (!ProjectProperties::Get()->initialNodePath.empty()) {
                     if (!engineProcess.Start(editorContext->GetEngineBinaryPath(), editorContext->GetEngineBinaryProgramArgs())) {
                         rbe_logger_error("Failed to start engine process at path '%s'", editorContext->GetEngineBinaryPath().c_str());
+                    } else {
+                        // Clear console log
+                        ConsoleLogger::Get()->Clear();
                     }
                     rbe_logger_debug("Starting engine process at path '%s' with args '%s'",
                                      editorContext->GetEngineBinaryPath().c_str(),
