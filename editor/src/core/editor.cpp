@@ -46,6 +46,7 @@ bool Editor::Initialize() {
         editorContext->settings.SaveSettings();
     }
 
+    // Start editor background tasks
     mainTasks.RunManaged(EditorBackgroundTasks::Main(&mainTasks));
     return true;
 }

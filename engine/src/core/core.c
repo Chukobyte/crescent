@@ -5,6 +5,7 @@
 #include <SDL2/SDL.h>
 #include <glad/glad.h>
 
+#include "core_info.h"
 #include "game_properties.h"
 #include "engine_context.h"
 #include "asset_manager.h"
@@ -100,7 +101,7 @@ bool rbe_initialize(int argv, char** args) {
 
     rbe_load_assets_from_configuration();
 
-    rbe_logger_info("RBE Engine v%s initialized!", RBE_CORE_VERSION);
+    rbe_logger_info("Crescent Engine v%s initialized!", CRE_CORE_VERSION);
     engineContext->targetFPS = gameProperties->targetFPS;
     engineContext->isRunning = true;
 

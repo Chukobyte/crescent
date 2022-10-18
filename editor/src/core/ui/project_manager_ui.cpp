@@ -1,6 +1,7 @@
 #include "project_manager_ui.h"
 
 #include "../engine/src/core/engine_context.h"
+#include "../engine/src/core/core_info.h"
 #include "../engine/src/core/utils/rbe_file_system_utils.h"
 #include "../engine/src/core/utils/logger.h"
 
@@ -10,8 +11,9 @@
 #include "../project_properties.h"
 #include "../asset_manager.h"
 #include "../scene/scene_manager.h"
-#include "../utils/file_system_helper.h"
 #include "../file_creation/config_file_creator.h"
+#include "../utils/file_system_helper.h"
+#include "../utils/console_logger.h"
 
 static EditorContext* editorContext = EditorContext::Get();
 
@@ -46,6 +48,10 @@ void ProjectManagerUI::ProcessWindows() {
                 editorContext->settings.SaveSettings();
                 // Update asset manager fonts
                 assetManager->RefreshFromProperties(gameProperties);
+                // Add initial log entry
+                static ConsoleLogger* consoleLogger = ConsoleLogger::Get();
+                consoleLogger->Clear();
+                consoleLogger->AddEntry("Crescent Engine v" + std::string(CRE_CORE_VERSION));
                 // Load initial scene if it exists, if not create a new one
                 if (gameProperties->initialNodePath.empty()) {
                     sceneManager->selectedSceneFile = sceneManager->GenerateDefaultSceneNodeFile();

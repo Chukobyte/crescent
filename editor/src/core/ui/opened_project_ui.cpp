@@ -16,6 +16,7 @@
 #include "../scene/scene_manager.h"
 #include "../asset_browser.h"
 #include "../file_creation/scene_file_creator.h"
+#include "../utils/console_logger.h"
 #include "../utils/process_runner/process_runner.h"
 #include "../editor_callbacks.h"
 #include "../game_exporter.h"
@@ -1128,8 +1129,17 @@ void OpenedProjectUI::ProcessWindows() {
     static ImGuiHelper::Window consoleWindow = {
         .name = "Console",
         .open = nullptr,
-        .windowFlags = ImGuiWindowFlags_NoResize,
-        .callbackFunc = [] (ImGuiHelper::Context* context) {},
+        .windowFlags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar,
+        .callbackFunc = [] (ImGuiHelper::Context* context) {
+            static ConsoleLogger* consoleLogger = ConsoleLogger::Get();
+            if (ImGui::Button("Clear")) {
+                consoleLogger->Clear();
+            }
+            ImGui::Separator();
+            ImGui::BeginChild("ConsoleLogWindow", ImGui::GetContentRegionAvail(), false, ImGuiWindowFlags_HorizontalScrollbar);
+            ImGui::TextUnformatted(consoleLogger->GetText().c_str());
+            ImGui::EndChild();
+        },
         .position = ImVec2{ 200.0f, 200.0f },
         .size = ImVec2{ 400.0f, 300.0f },
     };
@@ -1138,10 +1148,16 @@ void OpenedProjectUI::ProcessWindows() {
         .id = "DockSpace",
         .size = ImVec2((float) windowWidth, (float) windowHeight),
         .onMainWindowUpdateCallback = [] {
+            static ConsoleLogger* consoleLogger = ConsoleLogger::Get();
+            static std::shared_ptr<ConsoleLogCapture> processLogCapture;
             static ProcessRunner engineProcess;
+            static bool wasProcessRunningLastFrame = false;
             const bool isProcessRunning = engineProcess.IsRunning();
             if (ImGui::Button(">") && !isProcessRunning) {
                 if (!ProjectProperties::Get()->initialNodePath.empty()) {
+                    // Clear console log
+                    consoleLogger->Clear();
+                    processLogCapture = consoleLogger->CaptureOutput();
                     if (!engineProcess.Start(editorContext->GetEngineBinaryPath(), editorContext->GetEngineBinaryProgramArgs())) {
                         rbe_logger_error("Failed to start engine process at path '%s'", editorContext->GetEngineBinaryPath().c_str());
                     }
@@ -1165,11 +1181,15 @@ void OpenedProjectUI::ProcessWindows() {
                     ImGuiHelper::StaticPopupModalManager::Get()->QueueOpenPopop(&playErrorPopup);
                 }
             }
+            if (!isProcessRunning && wasProcessRunningLastFrame) {
+                processLogCapture.reset();
+            }
             ImGui::SameLine();
             if (ImGui::Button("[]") && isProcessRunning) {
                 engineProcess.Stop();
+                processLogCapture.reset();
             }
-
+            wasProcessRunningLastFrame = isProcessRunning;
         },
         .windows = {
             { .window = sceneViewWindow, .position = ImGuiHelper::DockSpacePosition::Main },
