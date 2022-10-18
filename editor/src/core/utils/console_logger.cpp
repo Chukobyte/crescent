@@ -26,8 +26,9 @@ void ConsoleLogger::Clear() {
     buffer.clear();
 }
 
-void ConsoleLogger::AddText(const std::string &text) {
+void ConsoleLogger::AddEntry(const std::string &text) {
     buffer += text;
+    buffer += "\n";
 }
 
 std::string& ConsoleLogger::GetText() {

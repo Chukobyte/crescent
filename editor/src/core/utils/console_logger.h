@@ -22,7 +22,7 @@ class ConsoleLogger : public Singleton<ConsoleLogger> {
 
     std::shared_ptr<ConsoleLogCapture> CaptureOutput();
     void Clear();
-    void AddText(const std::string& text);
+    void AddEntry(const std::string& text);
     std::string& GetText();
 
   private:

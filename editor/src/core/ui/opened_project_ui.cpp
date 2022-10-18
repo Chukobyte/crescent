@@ -1136,7 +1136,7 @@ void OpenedProjectUI::ProcessWindows() {
                 consoleLogger->Clear();
             }
             ImGui::Separator();
-            ImGui::BeginChild("ConsoleLogWindow", ImGui::GetContentRegionAvail(), false, ImGuiWindowFlags_AlwaysHorizontalScrollbar);
+            ImGui::BeginChild("ConsoleLogWindow", ImGui::GetContentRegionAvail(), false, ImGuiWindowFlags_HorizontalScrollbar);
             ImGui::TextUnformatted(consoleLogger->GetText().c_str());
             ImGui::EndChild();
         },
