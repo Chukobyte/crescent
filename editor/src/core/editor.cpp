@@ -15,7 +15,6 @@
 #include "ui/imgui/imgui_handler.h"
 #include "ui/imgui/imgui_styler.h"
 #include "utils/file_system_helper.h"
-#include "utils/console_logger.h"
 
 static EditorContext* editorContext = EditorContext::Get();
 
@@ -53,9 +52,6 @@ bool Editor::Initialize() {
 }
 
 void Editor::Update() {
-    // Capture stdout and stderr to output to console
-    auto captureToken = ConsoleLogger::Get()->CaptureOutput();
-
     ProcessInput();
     Render();
     mainTasks.Update();
