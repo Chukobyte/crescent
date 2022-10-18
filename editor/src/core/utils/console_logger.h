@@ -29,6 +29,4 @@ class ConsoleLogger : public Singleton<ConsoleLogger> {
     void CaptureCallback(const char* buff, size_t size);
 
     std::string buffer;
-    std::shared_ptr<std::capture::CaptureStdout> captureStdout;
-    std::shared_ptr<std::capture::CaptureStderr> captureStderr;
 };
