@@ -1148,15 +1148,18 @@ void OpenedProjectUI::ProcessWindows() {
         .id = "DockSpace",
         .size = ImVec2((float) windowWidth, (float) windowHeight),
         .onMainWindowUpdateCallback = [] {
+            static ConsoleLogger* consoleLogger = ConsoleLogger::Get();
+            static std::shared_ptr<ConsoleLogCapture> processLogCapture;
             static ProcessRunner engineProcess;
+            static bool wasProcessRunningLastFrame = false;
             const bool isProcessRunning = engineProcess.IsRunning();
             if (ImGui::Button(">") && !isProcessRunning) {
                 if (!ProjectProperties::Get()->initialNodePath.empty()) {
+                    // Clear console log
+                    consoleLogger->Clear();
+                    processLogCapture = consoleLogger->CaptureOutput();
                     if (!engineProcess.Start(editorContext->GetEngineBinaryPath(), editorContext->GetEngineBinaryProgramArgs())) {
                         rbe_logger_error("Failed to start engine process at path '%s'", editorContext->GetEngineBinaryPath().c_str());
-                    } else {
-                        // Clear console log
-                        ConsoleLogger::Get()->Clear();
                     }
                     rbe_logger_debug("Starting engine process at path '%s' with args '%s'",
                                      editorContext->GetEngineBinaryPath().c_str(),
@@ -1178,11 +1181,15 @@ void OpenedProjectUI::ProcessWindows() {
                     ImGuiHelper::StaticPopupModalManager::Get()->QueueOpenPopop(&playErrorPopup);
                 }
             }
+            if (!isProcessRunning && wasProcessRunningLastFrame) {
+                processLogCapture.reset();
+            }
             ImGui::SameLine();
             if (ImGui::Button("[]") && isProcessRunning) {
                 engineProcess.Stop();
+                processLogCapture.reset();
             }
-
+            wasProcessRunningLastFrame = isProcessRunning;
         },
         .windows = {
             { .window = sceneViewWindow, .position = ImGuiHelper::DockSpacePosition::Main },
