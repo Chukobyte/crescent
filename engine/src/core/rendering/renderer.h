@@ -9,7 +9,6 @@ extern "C" {
 #include "texture.h"
 #include "font.h"
 #include "../math/rbe_math.h"
-#include "../ecs/component/transform2d_component.h"
 
 void rbe_renderer_initialize();
 void rbe_renderer_finalize();
