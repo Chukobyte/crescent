@@ -30,8 +30,8 @@ void py_on_physics_update_all_instances(float deltaTime);
 void py_on_end(Entity entity);
 void py_on_network_callback(const char* message);
 
-RBE_STATIC_ARRAY_CREATE(PyObject*, MAX_ENTITY_ID, entities_to_update);
-RBE_STATIC_ARRAY_CREATE(PyObject*, MAX_ENTITY_ID, entities_to_physics_update);
+RBE_STATIC_ARRAY_CREATE(PyObject*, MAX_ENTITIES, entities_to_update);
+RBE_STATIC_ARRAY_CREATE(PyObject*, MAX_ENTITIES, entities_to_physics_update);
 
 RBEHashMap* pythonInstanceHashMap = NULL;
 RBEScriptContext* python_script_context = NULL;

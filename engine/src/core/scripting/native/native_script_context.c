@@ -22,8 +22,8 @@ void native_on_end(Entity entity);
 RBEStringHashMap* classCache = NULL;
 RBEHashMap* entityToClassName = NULL;
 
-RBE_STATIC_ARRAY_CREATE(RBENativeScriptClass*, MAX_ENTITY_ID, entities_to_update);
-RBE_STATIC_ARRAY_CREATE(RBENativeScriptClass*, MAX_ENTITY_ID, entities_to_physics_update);
+RBE_STATIC_ARRAY_CREATE(RBENativeScriptClass*, MAX_ENTITIES, entities_to_update);
+RBE_STATIC_ARRAY_CREATE(RBENativeScriptClass*, MAX_ENTITIES, entities_to_physics_update);
 
 RBEScriptContext* rbe_native_create_script_context() {
     RBEScriptContext* scriptContext = rbe_script_context_create();

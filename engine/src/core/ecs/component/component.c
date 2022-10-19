@@ -51,8 +51,8 @@ void component_array_remove_all_components(ComponentArray* componentArray) {
 
 //--- Component Manager ---//
 typedef struct ComponentManager {
-    ComponentArray* entityComponentArrays[MAX_ENTITY_ID];
-    ComponentType entityComponentSignatures[MAX_ENTITY_ID];
+    ComponentArray* entityComponentArrays[MAX_ENTITIES];
+    ComponentType entityComponentSignatures[MAX_ENTITIES];
 } ComponentManager;
 
 static ComponentManager* componentManager = NULL;
@@ -62,7 +62,7 @@ ComponentType component_manager_translate_index_to_type(ComponentDataIndex index
 void component_manager_initialize() {
     RBE_ASSERT(componentManager == NULL);
     componentManager = RBE_MEM_ALLOCATE(ComponentManager);
-    for (int i = 0; i < MAX_ENTITY_ID; i++) {
+    for (int i = 0; i < MAX_ENTITIES; i++) {
         componentManager->entityComponentArrays[i] = RBE_MEM_ALLOCATE(ComponentArray);
         component_array_initialize(componentManager->entityComponentArrays[i]);
         componentManager->entityComponentSignatures[i] = ComponentType_NONE;

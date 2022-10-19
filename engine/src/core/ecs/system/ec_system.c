@@ -46,7 +46,7 @@ void rbe_ec_system_initialize() {
     // Fill up entity id queue
     entityIdQueue = cre_queue_create(MAX_ENTITIES, NULL_ENTITY);
     for (Entity entityId = 0; entityId < MAX_ENTITIES; entityId++) {
-        cre_queue_enqueue(entityIdQueue, entityId + 1);
+        cre_queue_enqueue(entityIdQueue, entityId);
     }
     // Set system data initial values
     entitySystemData.entity_systems_count = 0;

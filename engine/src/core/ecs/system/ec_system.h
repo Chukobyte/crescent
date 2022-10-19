@@ -25,7 +25,7 @@ typedef struct EntitySystem {
     NetworkCallbackFunc network_callback_func;
     ComponentType component_signature;
     size_t entity_count;
-    Entity entities[MAX_ENTITY_ID];
+    Entity entities[MAX_ENTITIES];
 } EntitySystem;
 
 void rbe_ec_system_initialize();
