@@ -3,7 +3,9 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-// Unsigned int queue, can create other types if needed...
+// TODO: If other types are needed, create a macro to simplify queues by type
+
+// Unsigned int queue
 typedef struct CREQueue {
     uint32_t front, rear, size, invalidValue;
     size_t capacity;
