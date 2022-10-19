@@ -100,6 +100,7 @@ void component_manager_remove_component(Entity entity, ComponentDataIndex index)
 
 void component_manager_remove_all_components(Entity entity) {
     component_array_remove_all_components(componentManager->entityComponentArrays[entity]);
+    component_manager_set_component_signature(entity, ComponentType_NONE);
 }
 
 bool component_manager_has_component(Entity entity, ComponentDataIndex index) {
