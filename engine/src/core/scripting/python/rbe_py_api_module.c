@@ -273,7 +273,7 @@ PyObject* rbe_py_api_node_new(PyObject* self, PyObject* args, PyObject* kwargs) 
     char* className;
     char* nodeType;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "sss", rbePyApiNodeNewKWList, &classPath, &className, &nodeType)) {
-        const Entity newEntity = rbe_ec_system_create_entity();
+        const Entity newEntity = cre_ec_system_create_entity_uid();
 
         // Setup script component first
         ScriptComponent* scriptComponent = script_component_create(classPath, className);

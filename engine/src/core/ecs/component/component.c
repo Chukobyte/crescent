@@ -51,8 +51,8 @@ void component_array_remove_all_components(ComponentArray* componentArray) {
 
 //--- Component Manager ---//
 typedef struct ComponentManager {
-    ComponentArray* entityComponentArrays[MAX_ENTITIES];
-    ComponentType entityComponentSignatures[MAX_ENTITIES];
+    ComponentArray* entityComponentArrays[MAX_ENTITY_ID];
+    ComponentType entityComponentSignatures[MAX_ENTITY_ID];
 } ComponentManager;
 
 static ComponentManager* componentManager = NULL;
@@ -62,7 +62,7 @@ ComponentType component_manager_translate_index_to_type(ComponentDataIndex index
 void component_manager_initialize() {
     RBE_ASSERT(componentManager == NULL);
     componentManager = RBE_MEM_ALLOCATE(ComponentManager);
-    for (int i = 0; i < MAX_ENTITIES; i++) {
+    for (int i = 0; i < MAX_ENTITY_ID; i++) {
         componentManager->entityComponentArrays[i] = RBE_MEM_ALLOCATE(ComponentArray);
         component_array_initialize(componentManager->entityComponentArrays[i]);
         componentManager->entityComponentSignatures[i] = ComponentType_NONE;
@@ -83,7 +83,7 @@ void* component_manager_get_component_unsafe(Entity entity, ComponentDataIndex i
 }
 
 void component_manager_set_component(Entity entity, ComponentDataIndex index, void* component) {
-    RBE_ASSERT_FMT(entity < MAX_ENTITIES, "Entity limit reached!  Try increasing MAX_ENTITIES count or implementing entity id pooling!");
+//    RBE_ASSERT_FMT(entity < MAX_ENTITIES, "Entity limit reached!  Try increasing MAX_ENTITIES count or implementing entity id pooling!");
     component_array_set_component(componentManager->entityComponentArrays[entity], index, component);
     // Update signature
     ComponentType componentSignature = component_manager_get_component_signature(entity);

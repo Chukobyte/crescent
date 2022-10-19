@@ -127,6 +127,8 @@ void rbe_scene_manager_process_queued_deletion_entities() {
         rbe_ec_system_remove_entity_from_all_systems(entityToDelete);
         // Remove all components
         component_manager_remove_all_components(entityToDelete);
+        // Return entity id to pool
+        cre_ec_system_return_entity_uid(entityToDelete);
     }
     entitiesQueuedForDeletionSize = 0;
 }
@@ -227,7 +229,7 @@ void rbe_scene_manager_setup_scene_nodes_from_json(JsonSceneNode* jsonSceneNode)
 }
 
 void rbe_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneNode, SceneTreeNode* parent) {
-    SceneTreeNode* node = rbe_scene_tree_create_tree_node(rbe_ec_system_create_entity(), parent);
+    SceneTreeNode* node = rbe_scene_tree_create_tree_node(cre_ec_system_create_entity_uid(), parent);
 
     const bool isRoot = parent == NULL;
     if (isRoot) {

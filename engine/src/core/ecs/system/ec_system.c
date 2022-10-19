@@ -1,5 +1,6 @@
 #include "ec_system.h"
 
+#include "../../data_structures/cre_queue.h"
 #include "../../memory/rbe_mem.h"
 #include "../../utils/logger.h"
 #include "../../utils/rbe_assert.h"
@@ -28,7 +29,7 @@ void rbe_ec_system_insert_entity_into_system(Entity entity, EntitySystem* system
 void rbe_ec_system_remove_entity_from_system(Entity entity, EntitySystem* system);
 
 EntitySystemData entitySystemData;
-Entity entityIndex = 1; // 0 is NULL_ENTITY
+CREQueue* entityIdQueue = NULL;
 
 void rbe_ec_system_initialize() {
     for (size_t i = 0; i < MAX_COMPONENTS; i++) {
@@ -42,6 +43,12 @@ void rbe_ec_system_initialize() {
         entitySystemData.physics_process_systems[i] = NULL;
         entitySystemData.network_callback_systems[i] = NULL;
     }
+    // Fill up entity id queue
+    entityIdQueue = cre_queue_create(MAX_ENTITIES, NULL_ENTITY);
+    for (Entity entityId = 0; entityId < MAX_ENTITIES; entityId++) {
+        cre_queue_enqueue(entityIdQueue, entityId + 1);
+    }
+    // Set system data initial values
     entitySystemData.entity_systems_count = 0;
     entitySystemData.on_entity_start_systems_count = 0;
     entitySystemData.on_entity_end_systems_count = 0;
@@ -56,6 +63,7 @@ void rbe_ec_system_finalize() {
         rbe_ec_system_destroy(entitySystemData.entity_systems[i]);
         entitySystemData.entity_systems[i] = NULL;
     }
+    cre_queue_destroy(entityIdQueue);
 }
 
 EntitySystem* rbe_ec_system_create() {
@@ -155,11 +163,13 @@ void rbe_ec_system_network_callback(const char* message) {
 }
 
 // --- Entity Management --- //
-Entity rbe_ec_system_create_entity() {
-    // TODO: Create entity pool
-    Entity newEntity = entityIndex;
-    entityIndex++;
-    return newEntity;
+Entity cre_ec_system_create_entity_uid() {
+    RBE_ASSERT_FMT(!cre_queue_is_empty(entityIdQueue), "Entity pool is empty.  Entity limit reached, considering increasing MAX_ENTITIES!");
+    return cre_queue_dequeue(entityIdQueue);
+}
+
+void cre_ec_system_return_entity_uid(Entity entity) {
+    cre_queue_enqueue(entityIdQueue, entity);
 }
 
 // --- Internal Functions --- //
