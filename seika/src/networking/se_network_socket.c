@@ -110,7 +110,7 @@ SESocket se_socket_create_client(const char* serverAddr, int serverPort, on_se_s
     sock.si_other.sin_addr.S_un.S_addr = inet_addr(serverAddr);
 #else
     if (inet_aton(serverAddr, &sock.si_other.sin_addr) == 0) {
-        RBE_ASSERT_FMT(false, "inet_aton() failed!");
+        SE_ASSERT_FMT(false, "inet_aton() failed!");
     }
 #endif
 
