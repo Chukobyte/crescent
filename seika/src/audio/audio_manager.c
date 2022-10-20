@@ -6,10 +6,10 @@
 
 #include "audio.h"
 #include "../asset_manager.h"
-#include "../memory/rbe_mem.h"
-#include "../thread/rbe_pthread.h"
+#include "../memory/se_mem.h"
+#include "../thread/se_pthread.h"
 #include "../utils/logger.h"
-#include "../utils/rbe_file_system_utils.h"
+#include "../utils/se_file_system_utils.h"
 
 #define MAX_AUDIO_INSTANCES 32
 
@@ -20,7 +20,7 @@ static pthread_mutex_t audio_mutex;
 
 // An instance of an RBE audio source
 typedef struct RBEAudioInstance {
-    RBEAudioSource* source;
+    SEAudioSource* source;
     unsigned int id;
     bool is_playing;
     bool does_loop;
@@ -35,8 +35,8 @@ struct AudioInstances {
 static struct AudioInstances* audio_instances = NULL;
 
 // --- Audio Manager --- //
-bool rbe_audio_manager_init() {
-    audio_instances = RBE_MEM_ALLOCATE(struct AudioInstances);
+bool se_audio_manager_init() {
+    audio_instances = SE_MEM_ALLOCATE(struct AudioInstances);
     pthread_mutex_init(&audio_mutex, NULL);
     // Device
     ma_device_config config = ma_device_config_init(ma_device_type_playback);
@@ -49,55 +49,55 @@ bool rbe_audio_manager_init() {
     config.sampleRate = 44100;
     config.dataCallback = audio_data_callback;
     config.pUserData = NULL;
-    audio_device = RBE_MEM_ALLOCATE(ma_device);
+    audio_device = SE_MEM_ALLOCATE(ma_device);
     if (ma_device_init(NULL, &config, audio_device) != MA_SUCCESS) {
-        rbe_logger_error("Failed to initialize miniaudio device!");
+        se_logger_error("Failed to initialize miniaudio device!");
         return false;
     }
 
     if (ma_device_start(audio_device) != MA_SUCCESS) {
-        rbe_logger_error("Failed to start audio device!");
+        se_logger_error("Failed to start audio device!");
         return false;
     }
 
     return true;
 }
 
-void rbe_audio_manager_finalize() {
+void se_audio_manager_finalize() {
     ma_device_uninit(audio_device);
-    RBE_MEM_FREE(audio_device);
+    SE_MEM_FREE(audio_device);
     audio_device = NULL;
 
-    RBE_MEM_FREE(audio_instances); // TODO: Properly free up all instances
+    SE_MEM_FREE(audio_instances); // TODO: Properly free up all instances
     audio_instances = NULL;
 
     pthread_mutex_destroy(&audio_mutex);
 }
 
-void rbe_audio_manager_play_sound(const char* filePath, bool loops) {
+void se_audio_manager_play_sound(const char* filePath, bool loops) {
     // Temp asset creation
-    if (!rbe_asset_manager_has_audio_source(filePath)) {
-        rbe_logger_error("Doesn't have audio source loaded at path '%s' loaded!  Aborting...", filePath);
+    if (!se_asset_manager_has_audio_source(filePath)) {
+        se_logger_error("Doesn't have audio source loaded at path '%s' loaded!  Aborting...", filePath);
         return;
     } else if (audio_instances->count >= MAX_AUDIO_INSTANCES) {
-        rbe_logger_warn("Reached max audio instances of '%d', not playing sound!", MAX_AUDIO_INSTANCES);
+        se_logger_warn("Reached max audio instances of '%d', not playing sound!", MAX_AUDIO_INSTANCES);
         return;
     }
 
     // Create audio instance and add to instances array
     static unsigned int audioInstanceId = 0;  // TODO: temp id for now in case we need to grab a hold of an audio instance for roll back later...
-    RBEAudioInstance* audioInstance = RBE_MEM_ALLOCATE(RBEAudioInstance);
-    audioInstance->source = rbe_asset_manager_get_audio_source(filePath);
+    RBEAudioInstance* audioInstance = SE_MEM_ALLOCATE(RBEAudioInstance);
+    audioInstance->source = se_asset_manager_get_audio_source(filePath);
     audioInstance->id = audioInstanceId++;
     audioInstance->does_loop = loops;
     audioInstance->sample_position = 0.0f;
     audioInstance->is_playing = true; // Sets sound instance to be played
 
     audio_instances->instances[audio_instances->count++] = audioInstance;
-    rbe_logger_debug("Added audio instance from file path '%s' to play!", filePath);
+    se_logger_debug("Added audio instance from file path '%s' to play!", filePath);
 }
 
-void rbe_audio_manager_stop_sound(const char* filePath) {
+void se_audio_manager_stop_sound(const char* filePath) {
     for (size_t i = 0; i < audio_instances->count; i++) {
         RBEAudioInstance* audioInst = audio_instances->instances[i];
         if (strcmp(audioInst->source->file_path, filePath) == 0) {
@@ -169,11 +169,11 @@ void audio_data_callback(ma_device* device, void* output, const void* input, ma_
             if (isAtEnd) {
                 audioInst->sample_position = 0;
                 if (!audioInst->does_loop) {
-                    rbe_logger_debug("Audio instance with id '%u' is queued for deletion!", audioInst->id);
+                    se_logger_debug("Audio instance with id '%u' is queued for deletion!", audioInst->id);
                     audioInst->is_playing = false;
                     audio_instances->instances[i] = NULL;
                     removedInstances++;
-                    RBE_MEM_FREE(audioInst);
+                    SE_MEM_FREE(audioInst);
                     break;
                 }
             }
@@ -194,18 +194,18 @@ void audio_data_callback(ma_device* device, void* output, const void* input, ma_
 }
 
 // --- RBE Audio --- //
-bool rbe_audio_load_wav_data_from_file(const char* file_path, int32_t* sample_count, int32_t* channels, int32_t* sample_rate, void** samples) {
+bool se_audio_load_wav_data_from_file(const char* file_path, int32_t* sample_count, int32_t* channels, int32_t* sample_rate, void** samples) {
     size_t len = 0;
-    char* file_data = rbe_fs_read_file_contents(file_path, &len);
-    rbe_logger_debug("file '%s' size '%u' bytes", file_path, len);
+    char* file_data = se_fs_read_file_contents(file_path, &len);
+    se_logger_debug("file '%s' size '%u' bytes", file_path, len);
 
     drwav_uint64 totalPcmFrameCount = 0;
     *samples =  drwav_open_memory_and_read_pcm_frames_s16(file_data, len, (uint32_t*)channels, (uint32_t*)sample_rate, &totalPcmFrameCount, NULL);
-    RBE_MEM_FREE(file_data);
+    SE_MEM_FREE(file_data);
 
     if (!*samples) {
         *samples = NULL;
-        rbe_logger_error("Could not load .wav file: %s", file_path);
+        se_logger_error("Could not load .wav file: %s", file_path);
         return false;
     }
 

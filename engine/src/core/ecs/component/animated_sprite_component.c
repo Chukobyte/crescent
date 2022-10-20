@@ -3,13 +3,13 @@
 #include <string.h>
 
 #include "../seika/src/asset_manager.h"
-#include "../seika/src/memory/rbe_mem.h"
-#include "../seika/src/utils/rbe_assert.h"
+#include "../seika/src/memory/se_mem.h"
+#include "../seika/src/utils/se_assert.h"
 
 #define RBE_MAX_ANIMATIONS 16
 
 AnimatedSpriteComponent* animated_sprite_component_create() {
-    AnimatedSpriteComponent* animatedSpriteComponent = RBE_MEM_ALLOCATE(AnimatedSpriteComponent);
+    AnimatedSpriteComponent* animatedSpriteComponent = SE_MEM_ALLOCATE(AnimatedSpriteComponent);
     animatedSpriteComponent->animationCount = 0;
     animatedSpriteComponent->modulate.r = 1.0f;
     animatedSpriteComponent->modulate.g = 1.0f;
@@ -27,18 +27,18 @@ AnimatedSpriteComponent* animated_sprite_component_create() {
 }
 
 void animated_sprite_component_delete(AnimatedSpriteComponent* animatedSpriteComponent) {
-    RBE_MEM_FREE(animatedSpriteComponent);
+    SE_MEM_FREE(animatedSpriteComponent);
 }
 
 AnimatedSpriteComponent* animated_sprite_component_copy(const AnimatedSpriteComponent* animatedSpriteComponent) {
-    AnimatedSpriteComponent* copiedNode = RBE_MEM_ALLOCATE(AnimatedSpriteComponent);
+    AnimatedSpriteComponent* copiedNode = SE_MEM_ALLOCATE(AnimatedSpriteComponent);
     memcpy(copiedNode, animatedSpriteComponent, sizeof(AnimatedSpriteComponent));
     return copiedNode;
 }
 
 void animated_sprite_component_add_animation(AnimatedSpriteComponent* animatedSpriteComponent, Animation animation) {
-    RBE_ASSERT_FMT(animatedSpriteComponent->animationCount + 1 < RBE_MAX_ANIMATIONS,
-                   "Adding animation '%s' exceeds the max limit of animations which is '%d'", animation.name, RBE_MAX_ANIMATIONS);
+    SE_ASSERT_FMT(animatedSpriteComponent->animationCount + 1 < RBE_MAX_ANIMATIONS,
+                  "Adding animation '%s' exceeds the max limit of animations which is '%d'", animation.name, RBE_MAX_ANIMATIONS);
     animatedSpriteComponent->animations[animatedSpriteComponent->animationCount++] = animation;
 }
 
@@ -67,7 +67,7 @@ AnimationQueryResult animated_sprite_component_get_animation(AnimatedSpriteCompo
 
 //--- Animated Sprite Component Data ---//
 AnimatedSpriteComponentData* animated_sprite_component_data_create() {
-    AnimatedSpriteComponentData* animatedSpriteComponent = RBE_MEM_ALLOCATE(AnimatedSpriteComponentData);
+    AnimatedSpriteComponentData* animatedSpriteComponent = SE_MEM_ALLOCATE(AnimatedSpriteComponentData);
     animatedSpriteComponent->animationCount = 0;
     animatedSpriteComponent->modulate.r = 1.0f;
     animatedSpriteComponent->modulate.g = 1.0f;
@@ -85,11 +85,11 @@ AnimatedSpriteComponentData* animated_sprite_component_data_create() {
 }
 
 void animated_sprite_component_data_delete(AnimatedSpriteComponentData* animatedSpriteComponent) {
-    RBE_MEM_FREE(animatedSpriteComponent);
+    SE_MEM_FREE(animatedSpriteComponent);
 }
 
 AnimatedSpriteComponent* animated_sprite_component_data_copy_to_animated_sprite(const AnimatedSpriteComponentData* animatedSpriteComponentData) {
-    AnimatedSpriteComponent* copiedNode = RBE_MEM_ALLOCATE(AnimatedSpriteComponent);
+    AnimatedSpriteComponent* copiedNode = SE_MEM_ALLOCATE(AnimatedSpriteComponent);
     copiedNode->animationCount = animatedSpriteComponentData->animationCount;
     copiedNode->modulate = animatedSpriteComponentData->modulate;
     copiedNode->origin = animatedSpriteComponentData->origin;
@@ -110,7 +110,7 @@ AnimatedSpriteComponent* animated_sprite_component_data_copy_to_animated_sprite(
         for (size_t frameIndex = 0; (int) frameIndex < animationData->frameCount; frameIndex++) {
             const AnimationFrameData* animationFrameData = &animationData->animationFrames[frameIndex];
             AnimationFrame animationFrame;
-            animationFrame.texture = rbe_asset_manager_get_texture(animationFrameData->texturePath);
+            animationFrame.texture = se_asset_manager_get_texture(animationFrameData->texturePath);
             animationFrame.drawSource = animationFrameData->drawSource;
             animationFrame.frame = animationFrameData->frame;
             animation.animationFrames[frameIndex] = animationFrame;
@@ -125,7 +125,7 @@ AnimatedSpriteComponent* animated_sprite_component_data_copy_to_animated_sprite(
 }
 
 void animated_sprite_component_data_add_animation(AnimatedSpriteComponentData* animatedSpriteComponent, AnimationData animation) {
-    RBE_ASSERT_FMT(animatedSpriteComponent->animationCount + 1 < RBE_MAX_ANIMATIONS,
-                   "Adding animation '%s' exceeds the max limit of animations which is '%d'", animation.name, RBE_MAX_ANIMATIONS);
+    SE_ASSERT_FMT(animatedSpriteComponent->animationCount + 1 < RBE_MAX_ANIMATIONS,
+                  "Adding animation '%s' exceeds the max limit of animations which is '%d'", animation.name, RBE_MAX_ANIMATIONS);
     animatedSpriteComponent->animations[animatedSpriteComponent->animationCount++] = animation;
 }

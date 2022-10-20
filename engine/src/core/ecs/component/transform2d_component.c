@@ -3,7 +3,7 @@
 #include <string.h>
 
 #include "../seika/src/utils/logger.h"
-#include "../seika/src/memory/rbe_mem.h"
+#include "../seika/src/memory/se_mem.h"
 
 Transform2D transform2d_component_create_blank_transform2d() {
     Transform2D transform2D = {
@@ -25,7 +25,7 @@ TransformModel2D transform2d_component_create_blank_global_transform2d() {
 }
 
 Transform2DComponent* transform2d_component_create() {
-    Transform2DComponent* transform2DComponent = RBE_MEM_ALLOCATE(Transform2DComponent);
+    Transform2DComponent* transform2DComponent = SE_MEM_ALLOCATE(Transform2DComponent);
     transform2DComponent->localTransform = transform2d_component_create_blank_transform2d();
     transform2DComponent->globalTransform = transform2d_component_create_blank_global_transform2d();
     transform2DComponent->zIndex = 0;
@@ -36,11 +36,11 @@ Transform2DComponent* transform2d_component_create() {
 }
 
 void transform2d_component_delete(Transform2DComponent* transform2DComponent) {
-    RBE_MEM_FREE(transform2DComponent);
+    SE_MEM_FREE(transform2DComponent);
 }
 
 Transform2DComponent* transform2d_component_copy(const Transform2DComponent* transform2DComponent) {
-    Transform2DComponent* copiedNode = RBE_MEM_ALLOCATE(Transform2DComponent);
+    Transform2DComponent* copiedNode = SE_MEM_ALLOCATE(Transform2DComponent);
     memcpy(copiedNode, transform2DComponent, sizeof(Transform2DComponent));
     return copiedNode;
 }
@@ -71,8 +71,9 @@ float transform2d_component_get_rotation_deg_from_model(mat4 model) {
 }
 
 void transform2d_component_print(Transform2DComponent* transform2DComponent) {
-    rbe_logger_print_err("{ position: (%f, %f), scale: (%f, %f), rotation: %f }",
-                         transform2DComponent->localTransform.position.x, transform2DComponent->localTransform.position.y,
-                         transform2DComponent->localTransform.scale.x, transform2DComponent->localTransform.scale.y,
-                         transform2DComponent->localTransform.rotation);
+    se_logger_print_err("{ position: (%f, %f), scale: (%f, %f), rotation: %f }",
+                        transform2DComponent->localTransform.position.x,
+                        transform2DComponent->localTransform.position.y,
+                        transform2DComponent->localTransform.scale.x, transform2DComponent->localTransform.scale.y,
+                        transform2DComponent->localTransform.rotation);
 }

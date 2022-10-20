@@ -3,8 +3,8 @@
 #include <string.h>
 
 #include "../seika/src/rendering/renderer.h"
-#include "../seika/src/utils/rbe_string_util.h"
-#include "../seika/src/utils/rbe_assert.h"
+#include "../seika/src/utils/se_string_util.h"
+#include "../seika/src/utils/se_assert.h"
 
 #include "ec_system.h"
 #include "../component/transform2d_component.h"
@@ -19,9 +19,9 @@ EntitySystem* spriteRenderingSystem = NULL;
 void sprite_rendering_system_render();
 
 EntitySystem* sprite_rendering_ec_system_create() {
-    RBE_ASSERT(spriteRenderingSystem == NULL);
+    SE_ASSERT(spriteRenderingSystem == NULL);
     spriteRenderingSystem = rbe_ec_system_create();
-    spriteRenderingSystem->name = rbe_strdup("Sprite Rendering");
+    spriteRenderingSystem->name = se_strdup("Sprite Rendering");
     spriteRenderingSystem->render_func = sprite_rendering_system_render;
     spriteRenderingSystem->component_signature = ComponentType_TRANSFORM_2D | ComponentType_SPRITE;
     return spriteRenderingSystem;
@@ -43,7 +43,7 @@ void sprite_rendering_system_render() {
             spriteComponent->drawSource.w * renderCamera->zoom.x,
             spriteComponent->drawSource.h * renderCamera->zoom.y
         };
-        sf_renderer_queue_sprite_draw_call(
+        se_renderer_queue_sprite_draw_call(
             spriteComponent->texture,
             spriteComponent->drawSource,
             destinationSize,

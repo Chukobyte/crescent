@@ -221,7 +221,7 @@ void ImGuiHelper::ComboBox::SetSelected(const std::string& itemToSelect, bool ex
             return;
         }
     }
-    rbe_logger_error("Combo Box failed to select item '%s'", itemToSelect.c_str());
+    se_logger_error("Combo Box failed to select item '%s'", itemToSelect.c_str());
 }
 
 void ImGuiHelper::BeginComboBox(ImGuiHelper::ComboBox &comboBox) {
@@ -288,7 +288,7 @@ void ImGuiHelper::AssetBrowserComboBox::SetSelected(const std::string& itemToSel
             return;
         }
     }
-    rbe_logger_error("Asset Browser Combo Box failed to select item '%s'", itemToSelect.c_str());
+    se_logger_error("Asset Browser Combo Box failed to select item '%s'", itemToSelect.c_str());
 }
 
 void ImGuiHelper::AssetBrowserComboBox::RefreshListFromBrowser() {

@@ -2,8 +2,8 @@
 
 #include <stddef.h>
 
-#include "../seika/src/memory/rbe_mem.h"
-#include "../seika/src/utils/rbe_assert.h"
+#include "../seika/src/memory/se_mem.h"
+#include "../seika/src/utils/se_assert.h"
 
 //--- Component Array ---//
 typedef struct ComponentArray {
@@ -11,7 +11,7 @@ typedef struct ComponentArray {
 } ComponentArray;
 
 ComponentArray* component_array_create() {
-    ComponentArray* componentArray = RBE_MEM_ALLOCATE(ComponentArray);
+    ComponentArray* componentArray = SE_MEM_ALLOCATE(ComponentArray);
     for (unsigned int i = 0; i < MAX_COMPONENTS; i++) {
         componentArray->components[i] = NULL;
     }
@@ -38,7 +38,7 @@ void component_array_set_component(ComponentArray* componentArray, ComponentData
 
 void component_array_remove_component(ComponentArray* componentArray, ComponentDataIndex index) {
     if (component_array_has_component(componentArray, index)) {
-        RBE_MEM_FREE(componentArray->components[index]);
+        SE_MEM_FREE(componentArray->components[index]);
         componentArray->components[index] = NULL;
     }
 }
@@ -60,10 +60,10 @@ static ComponentManager* componentManager = NULL;
 ComponentType component_manager_translate_index_to_type(ComponentDataIndex index);
 
 void component_manager_initialize() {
-    RBE_ASSERT(componentManager == NULL);
-    componentManager = RBE_MEM_ALLOCATE(ComponentManager);
+    SE_ASSERT(componentManager == NULL);
+    componentManager = SE_MEM_ALLOCATE(ComponentManager);
     for (int i = 0; i < MAX_ENTITIES; i++) {
-        componentManager->entityComponentArrays[i] = RBE_MEM_ALLOCATE(ComponentArray);
+        componentManager->entityComponentArrays[i] = SE_MEM_ALLOCATE(ComponentArray);
         component_array_initialize(componentManager->entityComponentArrays[i]);
         componentManager->entityComponentSignatures[i] = ComponentType_NONE;
     }
@@ -73,8 +73,8 @@ void component_manager_finalize() {}
 
 void* component_manager_get_component(Entity entity, ComponentDataIndex index) {
     void* component = component_array_get_component(componentManager->entityComponentArrays[entity], index);
-    RBE_ASSERT_FMT(component != NULL, "Entity '%d' doesn't have '%s' component!",
-                   entity, component_get_component_data_index_string(index));
+    SE_ASSERT_FMT(component != NULL, "Entity '%d' doesn't have '%s' component!",
+                  entity, component_get_component_data_index_string(index));
     return component;
 }
 
@@ -135,7 +135,7 @@ ComponentType component_manager_translate_index_to_type(ComponentDataIndex index
         return ComponentType_COLOR_RECT;
     case ComponentDataIndex_NONE:
     default:
-        rbe_logger_error("Not a valid component data index: '%d'", index);
+        se_logger_error("Not a valid component data index: '%d'", index);
         return ComponentType_NONE;
     }
 }
@@ -160,7 +160,7 @@ const char* component_get_component_data_index_string(ComponentDataIndex index) 
         return "ColorRect";
     case ComponentDataIndex_NONE:
     default:
-        rbe_logger_error("Not a valid component data index: '%d'", index);
+        se_logger_error("Not a valid component data index: '%d'", index);
         return "NONE";
     }
     return "INVALID";

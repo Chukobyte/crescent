@@ -2,10 +2,10 @@
 
 #include <string.h>
 
-#include "../seika/src/memory/rbe_mem.h"
+#include "../seika/src/memory/se_mem.h"
 
 ColorRectComponent* color_rect_component_create() {
-    ColorRectComponent* colorRectComponent = RBE_MEM_ALLOCATE(ColorRectComponent);
+    ColorRectComponent* colorRectComponent = SE_MEM_ALLOCATE(ColorRectComponent);
     colorRectComponent->size.w = 32.0f;
     colorRectComponent->size.h = 32.0f;
     colorRectComponent->color.r = 1.0f;
@@ -16,11 +16,11 @@ ColorRectComponent* color_rect_component_create() {
 }
 
 void color_rect_component_delete(ColorRectComponent* colorRectComponent) {
-    RBE_MEM_FREE(colorRectComponent);
+    SE_MEM_FREE(colorRectComponent);
 }
 
 ColorRectComponent* color_rect_component_copy(const ColorRectComponent* colorRectComponent) {
-    ColorRectComponent* copiedNode = RBE_MEM_ALLOCATE(ColorRectComponent);
+    ColorRectComponent* copiedNode = SE_MEM_ALLOCATE(ColorRectComponent);
     memcpy(copiedNode, colorRectComponent, sizeof(ColorRectComponent));
     return copiedNode;
 }

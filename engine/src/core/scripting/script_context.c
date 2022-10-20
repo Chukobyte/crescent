@@ -1,11 +1,11 @@
 #include "script_context.h"
 
-#include "../seika/src/memory/rbe_mem.h"
-#include "../seika/src/utils/rbe_assert.h"
+#include "../seika/src/memory/se_mem.h"
+#include "../seika/src/utils/se_assert.h"
 
 RBEScriptContext* rbe_script_context_create() {
     // Only have one script context for now...
-    RBEScriptContext* newScriptContext = RBE_MEM_ALLOCATE(RBEScriptContext);
+    RBEScriptContext* newScriptContext = SE_MEM_ALLOCATE(RBEScriptContext);
     newScriptContext->on_create_instance = NULL;
     newScriptContext->on_delete_instance = NULL;
     newScriptContext->on_start = NULL;

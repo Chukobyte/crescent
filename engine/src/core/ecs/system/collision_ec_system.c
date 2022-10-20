@@ -1,8 +1,8 @@
 #include "collision_ec_system.h"
 
 #include "../seika/src/rendering/renderer.h"
-#include "../seika/src/utils/rbe_string_util.h"
-#include "../seika/src/utils/rbe_assert.h"
+#include "../seika/src/utils/se_string_util.h"
+#include "../seika/src/utils/se_assert.h"
 
 #include "ec_system.h"
 #include "../component/transform2d_component.h"
@@ -21,19 +21,19 @@ void collision_system_physics_update(float deltaTime);
 void collision_system_render();
 
 EntitySystem* collision_ec_system_create() {
-    RBE_ASSERT(collisionSystem == NULL);
+    SE_ASSERT(collisionSystem == NULL);
     collisionSystem = rbe_ec_system_create();
-    collisionSystem->name = rbe_strdup("Collision");
+    collisionSystem->name = se_strdup("Collision");
     collisionSystem->component_signature = ComponentType_TRANSFORM_2D | ComponentType_COLLIDER_2D;
 
     collisionSystem->physics_process_func = collision_system_physics_update;
 
     RBEGameProperties* gameProps = rbe_game_props_get();
-    RBE_ASSERT(rbe_game_props_get() != NULL);
+    SE_ASSERT(rbe_game_props_get() != NULL);
     if (gameProps->areCollidersVisible) {
         collisionSystem->render_func = collision_system_render;
-        collisionOutlineTexture = rbe_texture_create_solid_colored_texture(1, 1, 255);
-        RBE_ASSERT(collisionOutlineTexture != NULL);
+        collisionOutlineTexture = se_texture_create_solid_colored_texture(1, 1, 255);
+        SE_ASSERT(collisionOutlineTexture != NULL);
     }
     return collisionSystem;
 }
@@ -67,7 +67,7 @@ void collision_system_render() {
             colliderComp->extents.w * renderCamera->zoom.x,
             colliderComp->extents.h * renderCamera->zoom.y
         };
-        sf_renderer_queue_sprite_draw_call(
+        se_renderer_queue_sprite_draw_call(
             collisionOutlineTexture,
             colliderDrawSource,
             colliderDrawSize,

@@ -57,7 +57,7 @@ void cre_scene_utils_update_global_transform_model(Entity entity, TransformModel
         transform2d_component_get_local_model_matrix(newModel, &localTransform);
         glm_mat4_mul(globalTransform->model, newModel, globalTransform->model);
     }
-    globalTransform->scaleSign = rbe_math_signvec2(&scaleTotal);
+    globalTransform->scaleSign = se_math_signvec2(&scaleTotal);
     // Decompose trs matrix
     vec4 translation;
     mat4 rotation;

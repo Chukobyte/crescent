@@ -22,7 +22,7 @@ std::string GetEditorSettingSaveFilePath() {
 bool EditorSettings::LoadSettings() {
     const std::string saveFilePath = GetEditorSettingSaveFilePath();
     if (!FileSystemHelper::DoesFileExist(saveFilePath)) {
-        rbe_logger_debug("Settings doesn't exist at path '%s', skipping...", saveFilePath.c_str());
+        se_logger_debug("Settings doesn't exist at path '%s', skipping...", saveFilePath.c_str());
         return false;
     }
     nlohmann::json settingsJson = JsonHelper::LoadFile(saveFilePath);

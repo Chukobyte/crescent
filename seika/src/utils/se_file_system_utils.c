@@ -1,4 +1,4 @@
-#include "rbe_file_system_utils.h"
+#include "se_file_system_utils.h"
 
 #ifdef _WIN32
 #include <windows.h>
@@ -19,34 +19,34 @@
 
 
 #include "logger.h"
-#include "../memory/rbe_mem.h"
+#include "../memory/se_mem.h"
 
 #ifdef _MSC_VER
 #pragma warning(disable : 4996) // for fopen
 #endif
 
-void rbe_fs_get_cwd_array(char* array, size_t size) {
+void se_fs_get_cwd_array(char* array, size_t size) {
     if (getcwd(array, size) != NULL) {
         return;
     }
 }
 
-bool rbe_fs_chdir(const char* dirPath) {
+bool se_fs_chdir(const char* dirPath) {
 #define CWD_MAX_BUFFER_SIZE 256
     char currentWorkingPath[CWD_MAX_BUFFER_SIZE];
-    rbe_fs_get_cwd_array(currentWorkingPath, CWD_MAX_BUFFER_SIZE);
+    se_fs_get_cwd_array(currentWorkingPath, CWD_MAX_BUFFER_SIZE);
     if (strcmp(currentWorkingPath, dirPath) == 0) {
-        rbe_logger_warn("Attempting to change to the same directory at path '%s'", currentWorkingPath);
+        se_logger_warn("Attempting to change to the same directory at path '%s'", currentWorkingPath);
         return false;
     }
     if (chdir(dirPath) == 0) {
         return true;
     }
-    rbe_logger_error("Failed to change directory to path '%s'", dirPath);
+    se_logger_error("Failed to change directory to path '%s'", dirPath);
     return false;
 }
 
-char* rbe_fs_get_cwd() {
+char* se_fs_get_cwd() {
     char cwd[256];
     if (getcwd(cwd, sizeof(cwd)) != NULL) {
         return strdup(cwd);
@@ -54,27 +54,27 @@ char* rbe_fs_get_cwd() {
     return NULL;
 }
 
-void rbe_fs_print_cwd() {
+void se_fs_print_cwd() {
     char cwd[256];
     if (getcwd(cwd, sizeof(cwd)) != NULL) {
-        rbe_logger_info("Current working directory: %s\n", cwd);
+        se_logger_info("Current working directory: %s\n", cwd);
     } else {
-        rbe_logger_error("Not able to get current working directory!");
+        se_logger_error("Not able to get current working directory!");
     }
 }
 
-size_t rbe_fs_get_file_size(const char* filePath) {
+size_t se_fs_get_file_size(const char* filePath) {
 #ifdef _WIN32
     HANDLE hFile = CreateFile(filePath, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
     if (hFile == INVALID_HANDLE_VALUE) {
-        rbe_logger_error("Error invalid handle value when getting file size at path '%s'", filePath);
+        se_logger_error("Error invalid handle value when getting file size at path '%s'", filePath);
         return 0;
     }
 
     LARGE_INTEGER size;
     if (!GetFileSizeEx(hFile, &size)) {
         CloseHandle(hFile);
-        rbe_logger_error("Error getting file size at path '%s'", filePath);
+        se_logger_error("Error getting file size at path '%s'", filePath);
         return 0;
     }
 
@@ -87,27 +87,27 @@ size_t rbe_fs_get_file_size(const char* filePath) {
 #endif
 }
 
-char* rbe_fs_read_file_contents(const char* filePath, size_t* fileSize) {
+char* se_fs_read_file_contents(const char* filePath, size_t* sz) {
     char* buffer = NULL;
     FILE* fp = fopen(filePath, "rb");
     size_t readSize = 0;
     if (fp) {
-        readSize = rbe_fs_get_file_size(filePath);
+        readSize = se_fs_get_file_size(filePath);
         // Update buffer
-        buffer = (char*) RBE_MEM_ALLOCATE_SIZE(readSize + 1);
+        buffer = (char*) SE_MEM_ALLOCATE_SIZE(readSize + 1);
         if (buffer != NULL) {
             fread(buffer, 1, readSize, fp);
             buffer[readSize] = '\0';
         }
         fclose(fp);
     }
-    if (fileSize != NULL) {
-        *fileSize = readSize;
+    if (sz != NULL) {
+        *sz = readSize;
     }
     return buffer;
 }
 
-bool rbe_fs_does_file_exist(const char* filePath) {
+bool se_fs_does_file_exist(const char* filePath) {
     FILE* fp = fopen(filePath, "r");
     if (fp) {
         fclose(fp);

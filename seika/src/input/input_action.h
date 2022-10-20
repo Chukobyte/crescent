@@ -26,4 +26,4 @@ typedef struct InputAction {
     int deviceId;
 } InputAction;
 
-InputAction* rbe_input_action_create_new_input_action(const char* actionName, int deviceId);
+InputAction* se_input_action_create_new_input_action(const char* actionName, int deviceId);

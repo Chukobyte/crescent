@@ -5,8 +5,8 @@
 #include <SDL2/SDL.h>
 
 #include "../seika/src/rendering/renderer.h"
-#include "../seika/src/utils/rbe_string_util.h"
-#include "../seika/src/utils/rbe_assert.h"
+#include "../seika/src/utils/se_string_util.h"
+#include "../seika/src/utils/se_assert.h"
 
 #include "ec_system.h"
 #include "../component/transform2d_component.h"
@@ -22,7 +22,7 @@ void animated_sprite_rendering_system_render();
 
 EntitySystem* animated_sprite_rendering_ec_system_create() {
     animatedSpriteRenderingSystem = rbe_ec_system_create();
-    animatedSpriteRenderingSystem->name = rbe_strdup("Animated Sprite Rendering");
+    animatedSpriteRenderingSystem->name = se_strdup("Animated Sprite Rendering");
     animatedSpriteRenderingSystem->render_func = animated_sprite_rendering_system_render;
     animatedSpriteRenderingSystem->component_signature = ComponentType_TRANSFORM_2D | ComponentType_ANIMATED_SPRITE;
     return animatedSpriteRenderingSystem;
@@ -59,7 +59,7 @@ void animated_sprite_rendering_system_render() {
             currentFrame.drawSource.w * renderCamera->zoom.x,
             currentFrame.drawSource.h * renderCamera->zoom.y
         };
-        sf_renderer_queue_sprite_draw_call(
+        se_renderer_queue_sprite_draw_call(
             currentFrame.texture,
             currentFrame.drawSource,
             destinationSize,

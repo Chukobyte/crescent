@@ -1,6 +1,6 @@
 #include "scene_manager.h"
 
-#include "../seika/src/utils/rbe_assert.h"
+#include "../seika/src/utils/se_assert.h"
 
 #include "../engine/src/core/json/json_file_loader.h"
 #include "../ui/imgui/imgui_helper.h"
@@ -104,7 +104,7 @@ SceneNodeFile *SceneManager::GenerateDefaultSceneNodeFile() const {
 }
 
 SceneNodeFile* SceneManager::GenerateDefaultSceneNodeFile(SceneNode* rootSceneNode) const {
-    RBE_ASSERT_FMT(rootSceneNode->parent == nullptr, "Scene tree root has a parent!?");
+    SE_ASSERT_FMT(rootSceneNode->parent == nullptr, "Scene tree root has a parent!?");
     SceneNodeFile* nodeFile = new SceneNodeFile();
     nodeFile->rootNode = rootSceneNode;
     return nodeFile;
@@ -217,7 +217,7 @@ std::string SceneManager::GetUniqueNodeName(const std::string& nameCandidate, Sc
 }
 
 SceneNodeFile* SceneManager::GenerateSceneNodeFileFromJson(JsonSceneNode *rootTreeNode, const char *sceneFilePath) {
-    RBE_ASSERT_FMT(rootTreeNode->parent == nullptr, "Scene tree root has a parent!?  At path '%s'", sceneFilePath);
+    SE_ASSERT_FMT(rootTreeNode->parent == nullptr, "Scene tree root has a parent!?  At path '%s'", sceneFilePath);
     SceneNodeFile* nodeFile = new SceneNodeFile{ sceneFilePath };
     nodeFile->rootNode = LoadSceneTreeJson(rootTreeNode);
     return nodeFile;

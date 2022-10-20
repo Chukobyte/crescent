@@ -80,7 +80,7 @@ void ProjectProperties::ResetToDefault() {
 }
 
 void ProjectProperties::LoadPropertiesFromConfig(const char* filePath) {
-    rbe_logger_debug("Loading game properties");
+    se_logger_debug("Loading game properties");
     nlohmann::json propertyJson = JsonHelper::LoadFile(filePath);
     gameTitle = JsonHelper::Get<std::string>(propertyJson, "name");
     initialNodePath = JsonHelper::Get<std::string>(propertyJson, "initial_node_path");
@@ -92,12 +92,12 @@ void ProjectProperties::LoadPropertiesFromConfig(const char* filePath) {
     areCollidersVisible = JsonHelper::Get<bool>(propertyJson, "colliders_visible");
     assets.SetAssets(JsonHelper::Get<nlohmann::json>(propertyJson, "assets"));
     inputs.SetInputs(JsonHelper::Get<nlohmann::json>(propertyJson, "inputs"));
-    rbe_logger_debug("Loading game properties finished");
+    se_logger_debug("Loading game properties finished");
 }
 
 void ProjectProperties::PrintProperties() const {
-    rbe_logger_debug("game_title = %s, window_width = %d, window_height = %d, target_fps = %d",
-                     gameTitle.c_str(), windowWidth, windowHeight, targetFPS);
+    se_logger_debug("game_title = %s, window_width = %d, window_height = %d, target_fps = %d",
+                    gameTitle.c_str(), windowWidth, windowHeight, targetFPS);
 }
 
 void ProjectProperties::UpdateTextureAsset(const TextureAsset &textureAsset) {
@@ -124,7 +124,7 @@ TextureAsset& ProjectProperties::GetTextureAsset(const std::string &texturePath)
             return asset;
         }
     }
-    rbe_logger_error("Couldn't find texture at path '%s'", texturePath.c_str());
+    se_logger_error("Couldn't find texture at path '%s'", texturePath.c_str());
     static TextureAsset invalid("invalid", "invalid", "invalid", "invalid", "invalid");
     return invalid;
 }

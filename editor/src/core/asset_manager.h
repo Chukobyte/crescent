@@ -24,7 +24,7 @@ class AssetManager : public Singleton<AssetManager> {
     Font* GetFont(const char* key);
     bool HasFont(const char* key) const;
     // Audio Source
-    RBEAudioSource* LoadAudioSource(const char* fileName, const char* key);
-    RBEAudioSource* GetAudioSource(const char* key);
+    SEAudioSource* LoadAudioSource(const char* fileName, const char* key);
+    SEAudioSource* GetAudioSource(const char* key);
     bool HasAudioSource(const char* key) const;
 };

@@ -2,10 +2,10 @@
 
 #include <stddef.h>
 
-#include "../seika/src/memory/rbe_mem.h"
+#include "../seika/src/memory/se_mem.h"
 
 RBENativeScriptClass* rbe_native_class_create_new(Entity entity, const char* path, const char* name) {
-    RBENativeScriptClass* scriptClass = RBE_MEM_ALLOCATE(RBENativeScriptClass);
+    RBENativeScriptClass* scriptClass = SE_MEM_ALLOCATE(RBENativeScriptClass);
     scriptClass->entity = entity;
     scriptClass->path = path;
     scriptClass->name = name;

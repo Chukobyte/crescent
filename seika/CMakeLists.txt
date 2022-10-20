@@ -25,12 +25,12 @@ endif()
 add_library(${PROJECT_NAME} STATIC
         src/seika.c
         src/asset_manager.c
-        src/memory/rbe_mem.c
-        src/math/rbe_math.c
+        src/memory/se_mem.c
+        src/math/se_math.c
         src/input/input.c
         src/input/input_action.c
-        src/networking/rbe_network.c
-        src/networking/rbe_network_socket.c
+        src/networking/se_network.c
+        src/networking/se_network_socket.c
         src/rendering/font.c
         src/rendering/frame_buffer.c
         src/rendering/renderer.c
@@ -39,14 +39,14 @@ add_library(${PROJECT_NAME} STATIC
         src/rendering/texture.c
         src/audio/audio_manager.c
         src/audio/audio.c
-        src/thread/rbe_pthread.c
-        src/thread/rbe_thread_pool.c
+        src/thread/se_pthread.c
+        src/thread/se_thread_pool.c
         src/utils/logger.c
-        src/utils/rbe_file_system_utils.c
-        src/utils/rbe_string_util.c
-        src/data_structures/cre_queue.c
-        src/data_structures/rbe_hash_map.c
-        src/data_structures/rbe_hash_map_string.c
+        src/utils/se_file_system_utils.c
+        src/utils/se_string_util.c
+        src/data_structures/se_queue.c
+        src/data_structures/se_hash_map.c
+        src/data_structures/se_hash_map_string.c
         )
 
 add_library(glad ../include/glad/glad.c)

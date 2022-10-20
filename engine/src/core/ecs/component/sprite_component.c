@@ -2,10 +2,10 @@
 
 #include <string.h>
 
-#include "../seika/src/memory/rbe_mem.h"
+#include "../seika/src/memory/se_mem.h"
 
 SpriteComponent* sprite_component_create() {
-    SpriteComponent* spriteComponent = RBE_MEM_ALLOCATE(SpriteComponent);
+    SpriteComponent* spriteComponent = SE_MEM_ALLOCATE(SpriteComponent);
     spriteComponent->texture = NULL;
     spriteComponent->drawSource.x = 0.0f;
     spriteComponent->drawSource.y = 0.0f;
@@ -23,11 +23,11 @@ SpriteComponent* sprite_component_create() {
 }
 
 void sprite_component_delete(SpriteComponent* spriteComponent) {
-    RBE_MEM_FREE(spriteComponent);
+    SE_MEM_FREE(spriteComponent);
 }
 
 SpriteComponent* sprite_component_copy(const SpriteComponent* spriteComponent) {
-    SpriteComponent* copiedNode = RBE_MEM_ALLOCATE(SpriteComponent);
+    SpriteComponent* copiedNode = SE_MEM_ALLOCATE(SpriteComponent);
     memcpy(copiedNode, spriteComponent, sizeof(SpriteComponent));
     return copiedNode;
 }

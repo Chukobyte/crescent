@@ -134,11 +134,11 @@ void AssetBrowser::QueueRefreshCache() {
 void AssetBrowser::RenameFile(const std::filesystem::path& oldPath, const std::string& newName) {
     const std::filesystem::path parentPath = oldPath.parent_path();
     const std::filesystem::path newFilePath = parentPath / newName;
-    rbe_logger_debug("old file path = %s, new file path = %s", oldPath.string().c_str(), newFilePath.string().c_str());
+    se_logger_debug("old file path = %s, new file path = %s", oldPath.string().c_str(), newFilePath.string().c_str());
     std::error_code ec;
     std::filesystem::rename(oldPath, newFilePath, ec);
     if (ec.value() != 0) {
-        rbe_logger_error("ec value = %d, message = %s", ec.value(), ec.message().c_str());
+        se_logger_error("ec value = %d, message = %s", ec.value(), ec.message().c_str());
     } else {
         QueueRefreshCache();
     }
@@ -149,13 +149,13 @@ void AssetBrowser::DeleteFile(const std::filesystem::path& path) {
     std::error_code ec;
     if (std::filesystem::is_directory(path)) {
         std::uintmax_t numberDeleted = std::filesystem::remove_all(path, ec);
-        rbe_logger_debug("Number of files deleted from path '%s' = '%zu'", path.string().c_str(), numberDeleted);
+        se_logger_debug("Number of files deleted from path '%s' = '%zu'", path.string().c_str(), numberDeleted);
     } else {
         std::filesystem::remove(path, ec);
     }
     if (ec.value() != 0) {
-        rbe_logger_error("Error deleting from path '%s'!\nec value = %d, message = %s",
-                         path.string().c_str(), ec.value(), ec.message().c_str());
+        se_logger_error("Error deleting from path '%s'!\nec value = %d, message = %s",
+                        path.string().c_str(), ec.value(), ec.message().c_str());
     } else {
         QueueRefreshCache();
     }
@@ -165,13 +165,13 @@ void AssetBrowser::CreateDirectory(const std::filesystem::path& path, const std:
     std::error_code ec;
     const std::filesystem::path fullDirPath = path / name;
     if (std::filesystem::is_directory(fullDirPath)) {
-        rbe_logger_warn("Directory '%s' already exists, not creating!", fullDirPath.string().c_str());
+        se_logger_warn("Directory '%s' already exists, not creating!", fullDirPath.string().c_str());
         return;
     }
     std::filesystem::create_directory(fullDirPath, ec);
     if (ec.value() != 0) {
-        rbe_logger_error("Create directory failed for asset path '%s'!\nec value = %d, message = %s",
-                         fullDirPath.string().c_str(), ec.value(), ec.message().c_str());
+        se_logger_error("Create directory failed for asset path '%s'!\nec value = %d, message = %s",
+                        fullDirPath.string().c_str(), ec.value(), ec.message().c_str());
     } else {
         QueueRefreshCache();
     }

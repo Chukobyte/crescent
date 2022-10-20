@@ -6,7 +6,7 @@ extern "C" {
 
 #include <stdbool.h>
 
-#include "../seika/src/math/rbe_math.h"
+#include "../seika/src/math/se_math.h"
 
 typedef struct Transform2DComponent {
     Transform2D localTransform;

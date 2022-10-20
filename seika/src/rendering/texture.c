@@ -4,8 +4,8 @@
 
 #include <stb_image/stb_image.h>
 
-#include "../memory/rbe_mem.h"
-#include "../utils/rbe_assert.h"
+#include "../memory/se_mem.h"
+#include "../utils/se_assert.h"
 
 static const struct Texture DEFAULT_TEXTURE_REF = {
     .id = 0,
@@ -21,10 +21,10 @@ static const struct Texture DEFAULT_TEXTURE_REF = {
     .filterMag = GL_NEAREST
 };
 
-bool rbe_texture_is_texture_valid(Texture* texture);
+bool se_texture_is_texture_valid(Texture* texture);
 
-Texture* rbe_texture_create_default_texture() {
-    Texture* texture = RBE_MEM_ALLOCATE(Texture);
+Texture* se_texture_create_default_texture() {
+    Texture* texture = SE_MEM_ALLOCATE(Texture);
     texture->fileName = NULL;
     texture->internalFormat = DEFAULT_TEXTURE_REF.internalFormat;
     texture->imageFormat = DEFAULT_TEXTURE_REF.imageFormat;
@@ -35,43 +35,43 @@ Texture* rbe_texture_create_default_texture() {
     return texture;
 }
 
-void rbe_texture_generate(Texture* texture);
+void se_texture_generate(Texture* texture);
 
-Texture* rbe_texture_create_texture(const char* filePath) {
-    Texture* texture = rbe_texture_create_default_texture();
+Texture* se_texture_create_texture(const char* filePath) {
+    Texture* texture = se_texture_create_default_texture();
     texture->fileName = filePath;
     stbi_set_flip_vertically_on_load(false);
     unsigned char* imageData = stbi_load(filePath, &texture->width, &texture->height, &texture->nrChannels, 0);
-    RBE_ASSERT_FMT(imageData != NULL, "Failed to load texture image at file path '%s'", filePath);
+    SE_ASSERT_FMT(imageData != NULL, "Failed to load texture image at file path '%s'", filePath);
     const size_t imageDataSize = sizeof(Texture*);
-    texture->data = (unsigned char*) RBE_MEM_ALLOCATE_SIZE(imageDataSize);
+    texture->data = (unsigned char*) SE_MEM_ALLOCATE_SIZE(imageDataSize);
     memcpy(texture->data, imageData, imageDataSize);
     texture->data = imageData;
 
-    rbe_texture_generate(texture);
+    se_texture_generate(texture);
 
     stbi_image_free(imageData);
     return texture;
 }
 
-Texture* rbe_texture_create_solid_colored_texture(GLsizei width, GLsizei height, GLuint colorValue) {
-    Texture* texture = rbe_texture_create_default_texture();
+Texture* se_texture_create_solid_colored_texture(GLsizei width, GLsizei height, GLuint colorValue) {
+    Texture* texture = se_texture_create_default_texture();
     texture->nrChannels = 4;
     texture->width = width;
     texture->height = height;
 
     const GLsizei dataSize = width * height * 4;
-    texture->data = (unsigned char*) RBE_MEM_ALLOCATE_SIZE(dataSize);
+    texture->data = (unsigned char*) SE_MEM_ALLOCATE_SIZE(dataSize);
     for (GLsizei i = 0; i < dataSize; i++) {
         texture->data[i] = colorValue;
     }
 
-    rbe_texture_generate(texture);
+    se_texture_generate(texture);
 
     return texture;
 }
 
-void rbe_texture_generate(Texture* texture) {
+void se_texture_generate(Texture* texture) {
     // OpenGL Stuff
     if (texture->nrChannels == 1) {
         texture->imageFormat = GL_RED;
@@ -94,9 +94,9 @@ void rbe_texture_generate(Texture* texture) {
     // Unbind texture
     glBindTexture(GL_TEXTURE_2D, 0);
 
-    RBE_ASSERT_FMT(rbe_texture_is_texture_valid(texture), "Texture at file path '%s' is not valid!", texture->fileName);
+    SE_ASSERT_FMT(se_texture_is_texture_valid(texture), "Texture at file path '%s' is not valid!", texture->fileName);
 }
 
-bool rbe_texture_is_texture_valid(Texture* texture) {
+bool se_texture_is_texture_valid(Texture* texture) {
     return texture != NULL;
 }

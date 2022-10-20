@@ -11,7 +11,8 @@ void CopyAllFilesFromFileNode(const FileNode& fileNode, const std::string& copyR
     static auto CopyFunc = [] (const FileNode& fn, const std::string& copyPath) {
         const std::filesystem::path copyDest = copyPath + "/" + fn.GetRelativePath();
         FileSystemHelper::CopyFile(fn.path, copyDest);
-        rbe_logger_debug("copying project file from '%s' to '%s'", fn.path.generic_string().c_str(), copyDest.generic_string().c_str());
+        se_logger_debug("copying project file from '%s' to '%s'", fn.path.generic_string().c_str(),
+                        copyDest.generic_string().c_str());
     };
     if (copyCurrentNode) {
         CopyFunc(fileNode, copyRootPath);
@@ -44,18 +45,20 @@ void GameExporter::Export(const GameExporter::ExportProperties &props) {
     std::error_code ec;
     // Validation
     if (!std::filesystem::is_directory(projectPath) || !std::filesystem::is_directory(binPath)) {
-        rbe_logger_error("Failed to export to path '%s'!  Project or bin directory doesn't exist!", exportPath.generic_string().c_str());
+        se_logger_error("Failed to export to path '%s'!  Project or bin directory doesn't exist!",
+                        exportPath.generic_string().c_str());
         return;
     }
     // TODO: Do the same for temp path and move files to the full export path
     if (std::filesystem::is_directory(fullExportPath)) {
         std::uintmax_t numberDeleted = std::filesystem::remove_all(exportPath, ec);
         if (ec.value() != 0) {
-            rbe_logger_error("Export failed!  Error code: '%d', message = '%s'", ec.value(), ec.message().c_str());
+            se_logger_error("Export failed!  Error code: '%d', message = '%s'", ec.value(), ec.message().c_str());
         }
     }
-    rbe_logger_debug("export file path = '%s'\nproject file path = '%s'\nbin file path = '%s'\ntemp file path = '%s'",
-                     exportPath.generic_string().c_str(), projectPath.generic_string().c_str(), binPath.generic_string().c_str(), tempPath.generic_string().c_str());
+    se_logger_debug("export file path = '%s'\nproject file path = '%s'\nbin file path = '%s'\ntemp file path = '%s'",
+                    exportPath.generic_string().c_str(), projectPath.generic_string().c_str(),
+                    binPath.generic_string().c_str(), tempPath.generic_string().c_str());
     std::filesystem::create_directory(fullExportPath, ec);
     // Copy engine binary
     const std::filesystem::path binarySourcePath = binPath / std::string(EDITOR_ENGINE_BINARY_NAME);
@@ -71,7 +74,8 @@ void GameExporter::Export(const GameExporter::ExportProperties &props) {
         if (dir_entry.is_regular_file() && dir_entry.path().extension().string() == ".dll") {
             const std::filesystem::path dllDestPath = fullExportPath / dir_entry.path().filename();
             FileSystemHelper::CopyFile(dir_entry.path(), dllDestPath);
-            rbe_logger_debug("DLL source = '%s', dest = '%s'", dir_entry.path().generic_string().c_str(), dllDestPath.generic_string().c_str());
+            se_logger_debug("DLL source = '%s', dest = '%s'", dir_entry.path().generic_string().c_str(),
+                            dllDestPath.generic_string().c_str());
         }
     }
 #endif

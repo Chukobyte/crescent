@@ -28,7 +28,7 @@ void RefreshAllAudioSources(AssetManager* assetManager, const std::vector<FileNo
 
 void AssetManager::Initialize() {
     if (!isInitialized) {
-        rbe_asset_manager_initialize();
+        se_asset_manager_initialize();
         AssetBrowser* assetBrowser = AssetBrowser::Get();
         subscriberHandle = assetBrowser->RegisterRefreshCallback([this, assetBrowser](const FileNode& rootNode) {
             // Textures
@@ -46,7 +46,7 @@ void AssetManager::Initialize() {
 
 void AssetManager::Finalize() {
     if (isInitialized) {
-        rbe_asset_manager_finalize();
+        se_asset_manager_finalize();
         AssetBrowser::Get()->UnregisterRefreshCallback(subscriberHandle);
         isInitialized = false;
     }
@@ -67,39 +67,39 @@ void AssetManager::RefreshFromProperties(ProjectProperties* projectProperties) {
 
 // Texture
 Texture* AssetManager::LoadTexture(const char* fileName, const char* key) {
-    return rbe_asset_manager_load_texture(fileName, key);
+    return se_asset_manager_load_texture(fileName, key);
 }
 
 Texture* AssetManager::GetTexture(const char* key) {
-    return rbe_asset_manager_get_texture(key);
+    return se_asset_manager_get_texture(key);
 }
 
 bool AssetManager::HasTexture(const char* key) const {
-    return rbe_asset_manager_has_texture(key);
+    return se_asset_manager_has_texture(key);
 }
 
 // Font
 Font* AssetManager::LoadFont(const char* fileName, const char* key, int size) {
-    return rbe_asset_manager_load_font(fileName, key, size);
+    return se_asset_manager_load_font(fileName, key, size);
 }
 
 Font* AssetManager::GetFont(const char* key) {
-    return rbe_asset_manager_get_font(key);
+    return se_asset_manager_get_font(key);
 }
 
 bool AssetManager::HasFont(const char* key) const {
-    return rbe_asset_manager_has_font(key);
+    return se_asset_manager_has_font(key);
 }
 
 // Audio Source
-RBEAudioSource* AssetManager::LoadAudioSource(const char* fileName, const char* key) {
-    return rbe_asset_manager_load_audio_source_wav(fileName, key);
+SEAudioSource* AssetManager::LoadAudioSource(const char* fileName, const char* key) {
+    return se_asset_manager_load_audio_source_wav(fileName, key);
 }
 
-RBEAudioSource* AssetManager::GetAudioSource(const char* key) {
-    return rbe_asset_manager_get_audio_source(key);
+SEAudioSource* AssetManager::GetAudioSource(const char* key) {
+    return se_asset_manager_get_audio_source(key);
 }
 
 bool AssetManager::HasAudioSource(const char* key) const {
-    return rbe_asset_manager_has_audio_source(key);
+    return se_asset_manager_has_audio_source(key);
 }

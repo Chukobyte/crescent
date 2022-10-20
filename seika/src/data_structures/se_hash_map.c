@@ -1,46 +1,46 @@
-#include "rbe_hash_map.h"
+#include "se_hash_map.h"
 
 #include <string.h>
 
-#include "../memory/rbe_mem.h"
-#include "../utils/rbe_assert.h"
+#include "../memory/se_mem.h"
+#include "../utils/se_assert.h"
 
-size_t rbe_default_hash(void* raw_key, size_t key_size);
-int rbe_default_compare(void* first_key, void* second_key, size_t key_size);
+size_t se_default_hash(void* raw_key, size_t key_size);
+int se_default_compare(void* first_key, void* second_key, size_t key_size);
 
-HashMapNode* hash_map_create_node(RBEHashMap* hashMap, void* key, void* value, HashMapNode* next);
+HashMapNode* hash_map_create_node(SEHashMap* hashMap, void* key, void* value, HashMapNode* next);
 void hash_map_destroy_node(HashMapNode* node);
 
-bool hash_map_push_front(RBEHashMap* hashMap, size_t index, void* key, void* value);
-void hash_map_grow_if_needed(RBEHashMap* hashMap);
-void hash_map_shrink_if_needed(RBEHashMap* hashMap);
-void hash_map_allocate(RBEHashMap* hashMap, size_t capacity);
-void hash_map_resize(RBEHashMap* hashMap, size_t newCapacity);
+bool hash_map_push_front(SEHashMap* hashMap, size_t index, void* key, void* value);
+void hash_map_grow_if_needed(SEHashMap* hashMap);
+void hash_map_shrink_if_needed(SEHashMap* hashMap);
+void hash_map_allocate(SEHashMap* hashMap, size_t capacity);
+void hash_map_resize(SEHashMap* hashMap, size_t newCapacity);
 
-RBEHashMap* rbe_hash_map_create(size_t keySize, size_t valueSize, size_t capacity) {
-    RBEHashMap* map = (RBEHashMap*) RBE_MEM_ALLOCATE_SIZE(sizeof(RBEHashMap));
+SEHashMap* se_hash_map_create(size_t keySize, size_t valueSize, size_t capacity) {
+    SEHashMap* map = (SEHashMap*) SE_MEM_ALLOCATE_SIZE(sizeof(SEHashMap));
     map->keySize = keySize;
     map->valueSize = valueSize;
     map->capacity = capacity;
     map->size = 0;
-    map->hashFunc = rbe_default_hash;
-    map->compareFunc = rbe_default_compare;
-    map->nodes = (HashMapNode**) RBE_MEM_ALLOCATE_SIZE(capacity * sizeof(HashMapNode*));
+    map->hashFunc = se_default_hash;
+    map->compareFunc = se_default_compare;
+    map->nodes = (HashMapNode**) SE_MEM_ALLOCATE_SIZE(capacity * sizeof(HashMapNode*));
     memset(map->nodes, 0, capacity * sizeof(HashMapNode*)); // TODO: fix
     return map;
 }
 
-HashMapNode* hash_map_create_node(RBEHashMap* hashMap, void* key, void* value, HashMapNode* next) {
-    HashMapNode* node = (HashMapNode*) RBE_MEM_ALLOCATE(HashMapNode);
-    node->key = RBE_MEM_ALLOCATE_SIZE(hashMap->keySize);
-    node->value = RBE_MEM_ALLOCATE_SIZE(hashMap->valueSize);
+HashMapNode* hash_map_create_node(SEHashMap* hashMap, void* key, void* value, HashMapNode* next) {
+    HashMapNode* node = (HashMapNode*) SE_MEM_ALLOCATE(HashMapNode);
+    node->key = SE_MEM_ALLOCATE_SIZE(hashMap->keySize);
+    node->value = SE_MEM_ALLOCATE_SIZE(hashMap->valueSize);
     memcpy(node->key, key, hashMap->keySize);
     memcpy(node->value, value, hashMap->valueSize);
     node->next = next;
     return node;
 }
 
-bool rbe_hash_map_destroy(RBEHashMap* hashMap) {
+bool se_hash_map_destroy(SEHashMap* hashMap) {
     HashMapNode* node = NULL;
     HashMapNode* next = NULL;
     for (size_t chain = 0; chain < hashMap->capacity; chain++) {
@@ -52,25 +52,25 @@ bool rbe_hash_map_destroy(RBEHashMap* hashMap) {
         }
     }
 
-    RBE_MEM_FREE(hashMap);
+    SE_MEM_FREE(hashMap);
 
     return true;
 }
 
-bool hash_map_push_front(RBEHashMap* hashMap, size_t index, void* key, void* value) {
+bool hash_map_push_front(SEHashMap* hashMap, size_t index, void* key, void* value) {
     hashMap->nodes[index] = hash_map_create_node(hashMap, key, value, hashMap->nodes[index]);
     return hashMap->nodes[index] != NULL;
 }
 
-bool rbe_hash_map_add(RBEHashMap* hashMap, void* key, void* value) {
-    RBE_ASSERT(hashMap != NULL);
-    RBE_ASSERT(key != NULL);
-    RBE_ASSERT(value != NULL);
+bool se_hash_map_add(SEHashMap* hashMap, void* key, void* value) {
+    SE_ASSERT(hashMap != NULL);
+    SE_ASSERT(key != NULL);
+    SE_ASSERT(value != NULL);
 
     hash_map_grow_if_needed(hashMap);
 
     size_t index = hashMap->hashFunc(key, hashMap->keySize) % hashMap->capacity;
-    if (rbe_hash_map_has(hashMap, key)) {
+    if (se_hash_map_has(hashMap, key)) {
         HashMapNode* node = hashMap->nodes[index];
         memcpy(node->value, value, hashMap->valueSize);
         return true; // Updated Item
@@ -85,8 +85,8 @@ bool rbe_hash_map_add(RBEHashMap* hashMap, void* key, void* value) {
     return true;
 }
 
-bool rbe_hash_map_has(RBEHashMap* hashMap, void* key) {
-    RBE_ASSERT(hashMap != NULL);
+bool se_hash_map_has(SEHashMap* hashMap, void* key) {
+    SE_ASSERT(hashMap != NULL);
     size_t index = hashMap->hashFunc(key, hashMap->keySize) % hashMap->capacity;
     for (HashMapNode* node = hashMap->nodes[index]; node; node = node->next) {
         if (hashMap->compareFunc(key, node->key, hashMap->keySize) == 0) {
@@ -96,8 +96,8 @@ bool rbe_hash_map_has(RBEHashMap* hashMap, void* key) {
     return false;
 }
 
-void* rbe_hash_map_get(RBEHashMap* hashMap, void* key) {
-    RBE_ASSERT(hashMap != NULL);
+void* se_hash_map_get(SEHashMap* hashMap, void* key) {
+    SE_ASSERT(hashMap != NULL);
     size_t index = hashMap->hashFunc(key, hashMap->keySize) % hashMap->capacity;
     for (HashMapNode* node = hashMap->nodes[index]; node; node = node->next) {
         if (hashMap->compareFunc(key, node->key, hashMap->keySize) == 0) {
@@ -107,9 +107,9 @@ void* rbe_hash_map_get(RBEHashMap* hashMap, void* key) {
     return NULL;
 }
 
-bool rbe_hash_map_erase(RBEHashMap* hashMap, void* key) {
-    RBE_ASSERT(hashMap != NULL);
-    RBE_ASSERT(key != NULL);
+bool se_hash_map_erase(SEHashMap* hashMap, void* key) {
+    SE_ASSERT(hashMap != NULL);
+    SE_ASSERT(key != NULL);
 
     size_t index = hashMap->hashFunc(key, hashMap->keySize) % hashMap->capacity;
     HashMapNode* node = hashMap->nodes[index];
@@ -133,29 +133,29 @@ bool rbe_hash_map_erase(RBEHashMap* hashMap, void* key) {
     return false;
 }
 
-void hash_map_grow_if_needed(RBEHashMap* hashMap) {
-    RBE_ASSERT_FMT(hashMap->size <= hashMap->capacity, "Hashmap size '%d' is bigger than its capacity '%d'!", hashMap->size, hashMap->capacity);
+void hash_map_grow_if_needed(SEHashMap* hashMap) {
+    SE_ASSERT_FMT(hashMap->size <= hashMap->capacity, "Hashmap size '%d' is bigger than its capacity '%d'!", hashMap->size, hashMap->capacity);
     if (hashMap->size == hashMap->capacity) {
         hash_map_resize(hashMap, hashMap->size * 2);
     }
 }
 
-void hash_map_shrink_if_needed(RBEHashMap* hashMap) {
-    RBE_ASSERT_FMT(hashMap->size <= hashMap->capacity, "Hashmap size '%d' is bigger than its capacity '%d'!", hashMap->size, hashMap->capacity);
-    size_t shrinkCapacity = (size_t) ((float) hashMap->capacity * RBE_HASH_MAP_SHRINK_THRESHOLD);
+void hash_map_shrink_if_needed(SEHashMap* hashMap) {
+    SE_ASSERT_FMT(hashMap->size <= hashMap->capacity, "Hashmap size '%d' is bigger than its capacity '%d'!", hashMap->size, hashMap->capacity);
+    size_t shrinkCapacity = (size_t) ((float) hashMap->capacity * SE_HASH_MAP_SHRINK_THRESHOLD);
     if (hashMap->size == shrinkCapacity) {
         hash_map_resize(hashMap, shrinkCapacity);
     }
 }
 
-void hash_map_allocate(RBEHashMap* hashMap, size_t capacity) {
-    hashMap->nodes = RBE_MEM_ALLOCATE_SIZE(capacity * sizeof(HashMapNode*));
+void hash_map_allocate(SEHashMap* hashMap, size_t capacity) {
+    hashMap->nodes = SE_MEM_ALLOCATE_SIZE(capacity * sizeof(HashMapNode*));
     memset(hashMap->nodes, 0, capacity * sizeof(HashMapNode*));
 
     hashMap->capacity = capacity;
 }
 
-void hash_map_rehash(RBEHashMap* hashMap, HashMapNode** oldNode, size_t oldCapacity) {
+void hash_map_rehash(SEHashMap* hashMap, HashMapNode** oldNode, size_t oldCapacity) {
     for (size_t chain = 0; chain < oldCapacity; chain++) {
         for (HashMapNode* node = oldNode[chain]; node != NULL;) {
             HashMapNode* next = node->next;
@@ -169,10 +169,10 @@ void hash_map_rehash(RBEHashMap* hashMap, HashMapNode** oldNode, size_t oldCapac
     }
 }
 
-void hash_map_resize(RBEHashMap* hashMap, size_t newCapacity) {
-    if (newCapacity < RBE_HASH_MAP_MIN_CAPACITY) {
-        if (hashMap->capacity > RBE_HASH_MAP_MIN_CAPACITY) {
-            newCapacity = RBE_HASH_MAP_MIN_CAPACITY;
+void hash_map_resize(SEHashMap* hashMap, size_t newCapacity) {
+    if (newCapacity < SE_HASH_MAP_MIN_CAPACITY) {
+        if (hashMap->capacity > SE_HASH_MAP_MIN_CAPACITY) {
+            newCapacity = SE_HASH_MAP_MIN_CAPACITY;
         } else {
             // Do nothing since the passed in capacity is too low and the current map's capacity is already at min limit
             return;
@@ -185,11 +185,11 @@ void hash_map_resize(RBEHashMap* hashMap, size_t newCapacity) {
 
     hash_map_rehash(hashMap, oldNode, oldCapacity);
 
-    RBE_MEM_FREE(oldNode);
+    SE_MEM_FREE(oldNode);
 }
 
 // --- Iterator --- //
-RBEHashMapIterator rbe_hash_map_iter_create(RBEHashMap* hashMap) {
+SEHashMapIterator se_hash_map_iter_create(SEHashMap* hashMap) {
     // Get initial node if exists
     HashMapNode* initialNode = NULL;
     size_t initialIndex = 0;
@@ -202,16 +202,16 @@ RBEHashMapIterator rbe_hash_map_iter_create(RBEHashMap* hashMap) {
         }
     }
     size_t iteratorCount = initialNode != NULL ? 1 : 0;
-    RBEHashMapIterator iterator = { .count = iteratorCount, .end = hashMap->capacity, .index = initialIndex, .pair = initialNode };
+    SEHashMapIterator iterator = { .count = iteratorCount, .end = hashMap->capacity, .index = initialIndex, .pair = initialNode };
     return iterator;
 }
 
-bool rbe_hash_map_iter_is_valid(RBEHashMap* hashMap, RBEHashMapIterator* iterator) {
+bool se_hash_map_iter_is_valid(SEHashMap* hashMap, SEHashMapIterator* iterator) {
     return iterator->pair != NULL && iterator->count <= hashMap->size;
 }
 
-void rbe_hash_map_iter_advance(RBEHashMap* hashMap, RBEHashMapIterator* iterator) {
-    if (rbe_hash_map_iter_is_valid(hashMap, iterator)) {
+void se_hash_map_iter_advance(SEHashMap* hashMap, SEHashMapIterator* iterator) {
+    if (se_hash_map_iter_is_valid(hashMap, iterator)) {
         if (iterator->pair->next != NULL) {
             iterator->pair = iterator->pair->next;
             iterator->count++;
@@ -234,7 +234,7 @@ void rbe_hash_map_iter_advance(RBEHashMap* hashMap, RBEHashMapIterator* iterator
 }
 
 // Misc
-size_t rbe_default_hash(void* raw_key, size_t key_size) {
+size_t se_default_hash(void* raw_key, size_t key_size) {
     // djb2 string hashing algorithm
     // sstp://www.cse.yorku.ca/~oz/hash.ssml
     size_t byte;
@@ -249,18 +249,18 @@ size_t rbe_default_hash(void* raw_key, size_t key_size) {
     return hash;
 }
 
-int rbe_default_compare(void* first_key, void* second_key, size_t key_size) {
+int se_default_compare(void* first_key, void* second_key, size_t key_size) {
     return memcmp(first_key, second_key, key_size);
 }
 
 void hash_map_destroy_node(HashMapNode* node) {
-    RBE_ASSERT(node != NULL);
-    RBE_ASSERT(node->value != NULL);
-    RBE_ASSERT(node->key != NULL);
+    SE_ASSERT(node != NULL);
+    SE_ASSERT(node->value != NULL);
+    SE_ASSERT(node->key != NULL);
 
-    RBE_MEM_FREE(node->key);
+    SE_MEM_FREE(node->key);
     node->key = NULL;
-    RBE_MEM_FREE(node->value);
+    SE_MEM_FREE(node->value);
     node->value = NULL;
-    RBE_MEM_FREE(node);
+    SE_MEM_FREE(node);
 }

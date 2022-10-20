@@ -30,7 +30,7 @@ CollisionResult rbe_collision_process_entity_collisions(Entity entity) {
         if (does_rectangles_collide(&sourceCollisionRect, &otherCollisionRect)) {
             collisionResult.collidedEntities[collisionResult.collidedEntityCount++] = otherEntity;
             if (collisionResult.collidedEntityCount >= RBE_MAX_ENTITY_COLLISION) {
-                rbe_logger_warn("Reached collided entity limit of '%d'", RBE_MAX_ENTITY_COLLISION);
+                se_logger_warn("Reached collided entity limit of '%d'", RBE_MAX_ENTITY_COLLISION);
                 break;
             }
         }

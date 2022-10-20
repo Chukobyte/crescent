@@ -1,7 +1,7 @@
-#include "rbe_pthread.h"
+#include "se_pthread.h"
 
 #ifdef _WIN32
-#include "../memory/rbe_mem.h"
+#include "../memory/se_mem.h"
 
 typedef struct {
     void* (*start_routine)(void*);
@@ -210,7 +210,7 @@ static DWORD WINAPI win_thread_start(void* arg) {
     void* (*start_routine)(void*) = data->start_routine;
     void* start_arg = data->start_arg;
 
-    RBE_MEM_FREE(data);
+    SE_MEM_FREE(data);
 
     start_routine(start_arg);
     return 0; // ERROR_SUCCESS

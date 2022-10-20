@@ -6,20 +6,20 @@ extern "C" {
 
 #include <stdbool.h>
 
-void rbe_asset_manager_initialize();
-void rbe_asset_manager_finalize();
+void se_asset_manager_initialize();
+void se_asset_manager_finalize();
 // --- Texture --- //
-struct Texture* rbe_asset_manager_load_texture(const char* fileName, const char* key);
-struct Texture* rbe_asset_manager_get_texture(const char* key);
-bool rbe_asset_manager_has_texture(const char* key);
+struct Texture* se_asset_manager_load_texture(const char* fileName, const char* key);
+struct Texture* se_asset_manager_get_texture(const char* key);
+bool se_asset_manager_has_texture(const char* key);
 // --- Font --- //
-struct Font* rbe_asset_manager_load_font(const char* fileName, const char* key, int size);
-struct Font* rbe_asset_manager_get_font(const char* key);
-bool rbe_asset_manager_has_font(const char* key);
+struct Font* se_asset_manager_load_font(const char* fileName, const char* key, int size);
+struct Font* se_asset_manager_get_font(const char* key);
+bool se_asset_manager_has_font(const char* key);
 // -- Audio Source --- //
-struct RBEAudioSource* rbe_asset_manager_load_audio_source_wav(const char* fileName, const char* key);
-struct RBEAudioSource* rbe_asset_manager_get_audio_source(const char* key);
-bool rbe_asset_manager_has_audio_source(const char* key);
+struct SEAudioSource* se_asset_manager_load_audio_source_wav(const char* fileName, const char* key);
+struct SEAudioSource* se_asset_manager_get_audio_source(const char* key);
+bool se_asset_manager_has_audio_source(const char* key);
 
 #ifdef __cplusplus
 }
