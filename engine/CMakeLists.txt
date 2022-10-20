@@ -91,9 +91,12 @@ if (NOT DEFINED IS_CI_BUILD)
     set(IS_CI_BUILD "false")
 endif()
 
-add_library(glad ../include/glad/glad.c)
-add_library(stb_image ../include/stb_image/stb_image.c)
-add_library(cJSON ../include/cjson/cJSON.c)
+if (NOT TARGET glad)
+    add_library(glad ../include/glad/glad.c)
+endif()
+if (NOT TARGET stb_image)
+    add_library(stb_image ../include/stb_image/stb_image.c)
+endif()
 
 target_include_directories(${PROJECT_NAME} PUBLIC
         "${PROJECT_BINARY_DIR}"
