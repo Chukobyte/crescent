@@ -375,12 +375,13 @@ void input_load_gamepads() {
         activeGamepadIds[i] = INVALID_GAMEPAD_ID;
     }
 
-    RBEEngineContext* engineContext = rbe_engine_context_get();
-    char controllerMappingFilePath[256];
-    strcpy(controllerMappingFilePath, engineContext->internalAssetsDir);
-    strcat(controllerMappingFilePath, "/assets/resources/game_controller_db.txt");
-    const int result = SDL_GameControllerAddMappingsFromFile(controllerMappingFilePath);
-    RBE_ASSERT_FMT(result >= 0, "Couldn't load sdl controller mapping file at path '%s'!", controllerMappingFilePath);
+    // TODO: Pass game controller db file from init params
+//    RBEEngineContext* engineContext = rbe_engine_context_get();
+//    char controllerMappingFilePath[256];
+//    strcpy(controllerMappingFilePath, engineContext->internalAssetsDir);
+//    strcat(controllerMappingFilePath, "/assets/resources/game_controller_db.txt");
+//    const int result = SDL_GameControllerAddMappingsFromFile(controllerMappingFilePath);
+//    RBE_ASSERT_FMT(result >= 0, "Couldn't load sdl controller mapping file at path '%s'!", controllerMappingFilePath);
 }
 
 CreGamepad* input_find_gamepad(SDL_JoystickID id) {

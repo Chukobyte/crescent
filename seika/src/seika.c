@@ -5,7 +5,7 @@
 #include <SDL2/SDL.h>
 #include <glad/glad.h>
 
-//#include "input/input.h"
+#include "input/input.h"
 #include "utils/logger.h"
 #include "utils/rbe_assert.h"
 #include "rendering/renderer.h"
@@ -14,7 +14,7 @@
 bool initialize_sdl();
 bool initialize_rendering(const char* title, int windowWidth, int windowHeight);
 //bool initialize_audio();
-//bool initialize_input();
+bool initialize_input();
 
 static SDL_Window* window = NULL;
 static SDL_GLContext openGlContext;
@@ -41,10 +41,10 @@ bool sf_initialize(const char* title, int windowWidth, int windowHeight) {
 //        rbe_logger_error("Failed to initialize audio!");
 //        return false;
 //    }
-//    if (!initialize_input()) {
-//        rbe_logger_error("Failed to initialize input!");
-//        return false;
-//    }
+    if (!initialize_input()) {
+        rbe_logger_error("Failed to initialize input!");
+        return false;
+    }
 
     isRunning = true;
 
@@ -104,13 +104,13 @@ bool initialize_rendering(const char* title, int windowWidth, int windowHeight) 
 //bool initialize_audio() {
 //    return rbe_audio_manager_init();
 //}
-//
-//bool initialize_input() {
-//    if (!cre_input_initialize()) {
-//        return false;
-//    }
-//    return true;
-//}
+
+bool initialize_input() {
+    if (!cre_input_initialize()) {
+        return false;
+    }
+    return true;
+}
 
 void sf_update() {}
 
@@ -124,7 +124,7 @@ void sf_process_inputs() {
         default:
             break;
         }
-//        cre_input_process(event);
+        cre_input_process(event);
     }
 }
 
@@ -147,9 +147,9 @@ void sf_shutdown() {
         SDL_DestroyWindow(window);
         SDL_GL_DeleteContext(openGlContext);
         SDL_Quit();
-//        rbe_renderer_finalize();
+        sf_renderer_finalize();
 //        rbe_audio_manager_finalize();
-//        cre_input_finalize();
+        cre_input_finalize();
 //        rbe_asset_manager_finalize();
         isRunning = false;
     }

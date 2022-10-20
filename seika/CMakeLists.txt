@@ -29,9 +29,10 @@ add_library(${PROJECT_NAME} STATIC
         src/seika.c
         src/memory/rbe_mem.c
         src/math/rbe_math.c
-#        src/core/input/input.c
-#        src/core/input/input_action.c
-#        src/core/networking/rbe_network.c
+        src/input/input.c
+        src/input/input_action.c
+        src/networking/rbe_network.c
+        src/networking/rbe_network_socket.c
         src/rendering/font.c
         src/rendering/frame_buffer.c
         src/rendering/renderer.c
@@ -49,7 +50,6 @@ add_library(${PROJECT_NAME} STATIC
         src/data_structures/cre_queue.c
         src/data_structures/rbe_hash_map.c
         src/data_structures/rbe_hash_map_string.c
-        src/networking/rbe_network_socket.c
         )
 
 add_library(glad ../include/glad/glad.c)
