@@ -9,11 +9,12 @@
 #include "utils/logger.h"
 #include "utils/rbe_assert.h"
 #include "rendering/renderer.h"
-//#include "audio/audio_manager.h"
+#include "audio/audio_manager.h"
+#include "asset_manager.h"
 
 bool initialize_sdl();
 bool initialize_rendering(const char* title, int windowWidth, int windowHeight);
-//bool initialize_audio();
+bool initialize_audio();
 bool initialize_input();
 
 static SDL_Window* window = NULL;
@@ -37,14 +38,16 @@ bool sf_initialize(const char* title, int windowWidth, int windowHeight) {
         rbe_logger_error("Failed to initialize rendering!");
         return false;
     }
-//    if (!initialize_audio()) {
-//        rbe_logger_error("Failed to initialize audio!");
-//        return false;
-//    }
+    if (!initialize_audio()) {
+        rbe_logger_error("Failed to initialize audio!");
+        return false;
+    }
     if (!initialize_input()) {
         rbe_logger_error("Failed to initialize input!");
         return false;
     }
+
+    rbe_asset_manager_initialize();
 
     isRunning = true;
 
@@ -101,9 +104,9 @@ bool initialize_rendering(const char* title, int windowWidth, int windowHeight) 
     return true;
 }
 
-//bool initialize_audio() {
-//    return rbe_audio_manager_init();
-//}
+bool initialize_audio() {
+    return rbe_audio_manager_init();
+}
 
 bool initialize_input() {
     if (!cre_input_initialize()) {
@@ -148,9 +151,9 @@ void sf_shutdown() {
         SDL_GL_DeleteContext(openGlContext);
         SDL_Quit();
         sf_renderer_finalize();
-//        rbe_audio_manager_finalize();
+        rbe_audio_manager_finalize();
         cre_input_finalize();
-//        rbe_asset_manager_finalize();
+        rbe_asset_manager_finalize();
         isRunning = false;
     }
 }

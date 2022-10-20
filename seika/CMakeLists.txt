@@ -22,11 +22,9 @@ if (NOT freetype_FOUND)
     set(freetype_from_find_package FALSE)
 endif()
 
-
-#find_package (Python3 COMPONENTS Interpreter Development REQUIRED)
-
 add_library(${PROJECT_NAME} STATIC
         src/seika.c
+        src/asset_manager.c
         src/memory/rbe_mem.c
         src/math/rbe_math.c
         src/input/input.c
@@ -39,11 +37,10 @@ add_library(${PROJECT_NAME} STATIC
         src/rendering/render_context.c
         src/rendering/shader.c
         src/rendering/texture.c
-#        src/core/audio/audio_manager.c
-#        src/core/audio/audio.c
-#        src/core/thread/rbe_pthread.c
-#        src/core/thread/rbe_thread_pool.c
-#        src/core/utils/command_line_args_util.c
+        src/audio/audio_manager.c
+        src/audio/audio.c
+        src/thread/rbe_pthread.c
+        src/thread/rbe_thread_pool.c
         src/utils/logger.c
         src/utils/rbe_file_system_utils.c
         src/utils/rbe_string_util.c
