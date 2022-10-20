@@ -2,7 +2,7 @@
 
 #include <stdbool.h>
 
-#define DEFAULT_START_PROJECT_PATH "test_games/new_fighter"
+#define DEFAULT_START_PROJECT_PATH "test_games/cardboard_fighter"
 
 typedef struct RBEEngineContext {
     bool isRunning;
