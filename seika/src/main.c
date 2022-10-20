@@ -6,7 +6,11 @@
 
 int main(int argv, char** args) {
     sf_initialize("Test", 800, 600);
-    for (int i = 0; i < 100000; i++) {}
+    while (sf_is_running()) {
+        sf_process_inputs();
+        sf_update();
+        sf_render();
+    }
     sf_shutdown();
     return EXIT_SUCCESS;
 }
