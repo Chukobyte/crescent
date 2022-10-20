@@ -68,13 +68,18 @@ bool rbe_initialize(int argv, char** args) {
     rbe_game_props_initialize(gameProperties);
     rbe_game_props_print();
 
+    // Setup Game Controller DB Path
+    char controllerMappingFilePath[256];
+    strcpy(controllerMappingFilePath, engineContext->internalAssetsDir);
+    strcat(controllerMappingFilePath, "/assets/resources/game_controller_db.txt");
+
     // Initialize seika framework
     sf_initialize(gameProperties->gameTitle,
                   gameProperties->windowWidth,
                   gameProperties->windowHeight,
                   gameProperties->resolutionWidth,
                   gameProperties->resolutionHeight,
-                  NULL);
+                  controllerMappingFilePath);
 
     // Initialize sub systems
     if (!rbe_initialize_ecs()) {
