@@ -9,7 +9,6 @@
 #include "../utils/logger.h"
 #include "../utils/rbe_string_util.h"
 #include "../utils/rbe_assert.h"
-#include "../engine_context.h"
 
 #ifdef _MSC_VER
 #pragma warning(disable : 4996) // for strcpy
@@ -361,7 +360,6 @@ void input_initialize_gamepad_system() {
     input_load_gamepads();
 }
 
-// TODO: Make better (e.g. loading more than one controller and checking for connects/disconnects)...
 void input_load_gamepads() {
     for (size_t i = 0; i < CRE_MAX_GAMEPAD_DEVICES; i++) {
         activeGamePads[i].gameController = NULL;
