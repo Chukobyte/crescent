@@ -13,7 +13,7 @@
 #include "system/script_ec_system.h"
 #include "system/sprite_rendering_ec_system.h"
 #include "../scene/scene_manager.h"
-#include "../seika/src/utils/rbe_assert.h"
+#include "../seika/src/utils/se_assert.h"
 #include "../seika/src/asset_manager.h"
 
 #ifdef _MSC_VER
@@ -49,7 +49,7 @@ void rbe_ecs_manager_enable_fps_display_entity(bool enabled) {
         component_manager_set_component(currentFpsEntity, ComponentDataIndex_TRANSFORM_2D, transform2DComponent);
         // Text Label Component
         TextLabelComponent* textLabelComponent = text_label_component_create();
-        textLabelComponent->font = rbe_asset_manager_get_font("verdana-32");
+        textLabelComponent->font = se_asset_manager_get_font("verdana-32");
         strcpy(textLabelComponent->text, "FPS: ");
         component_manager_set_component(currentFpsEntity, ComponentDataIndex_TEXT_LABEL, textLabelComponent);
         // Script Component
@@ -60,8 +60,8 @@ void rbe_ecs_manager_enable_fps_display_entity(bool enabled) {
         rbe_ec_system_update_entity_signature_with_systems(currentFpsEntity);
         rbe_scene_manager_queue_entity_for_creation(fpsDisplayNode);
     } else if (isEnabled && !enabled) {
-        RBE_ASSERT_FMT(currentFpsEntity != NULL_ENTITY, "Current fps entity is a null entity!?");
-        RBE_ASSERT_FMT(fpsDisplayNode != NULL, "FPS Display Node is NULL!?");
+        SE_ASSERT_FMT(currentFpsEntity != NULL_ENTITY, "Current fps entity is a null entity!?");
+        SE_ASSERT_FMT(fpsDisplayNode != NULL, "FPS Display Node is NULL!?");
         rbe_queue_destroy_tree_node_entity_all(fpsDisplayNode);
         currentFpsEntity = NULL_ENTITY;
         fpsDisplayNode = NULL;

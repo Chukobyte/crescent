@@ -7,8 +7,8 @@ extern "C" {
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "../seika/src/math/rbe_math.h"
-#include "../seika/src/data_structures/rbe_hash_map_string.h"
+#include "../seika/src/math/se_math.h"
+#include "../seika/src/data_structures/se_hash_map_string.h"
 
 #include "../../animation/animation.h"
 

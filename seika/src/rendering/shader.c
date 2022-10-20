@@ -3,10 +3,10 @@
 #include <stdio.h>
 
 #include "../utils/logger.h"
-#include "../memory/rbe_mem.h"
+#include "../memory/se_mem.h"
 
 Shader* shader_compile_new_shader(const char* vertexSource, const char* fragmentSource) {
-    struct Shader* shader = RBE_MEM_ALLOCATE(Shader);
+    struct Shader* shader = SE_MEM_ALLOCATE(Shader);
     GLuint vertex, fragment;
     // vertex
     vertex = glCreateShader(GL_VERTEX_SHADER);
@@ -36,13 +36,13 @@ void shader_check_compile_errors(unsigned int shaderId, const char* type) {
         glGetProgramiv(shaderId, GL_LINK_STATUS, &success);
         if(!success) {
             glGetProgramInfoLog(shaderId, 1024, NULL, infoLog);
-            rbe_logger_error("Shader type '%s' linking failed!\nInfoLog = %s", type, &infoLog);
+            se_logger_error("Shader type '%s' linking failed!\nInfoLog = %s", type, &infoLog);
         }
     } else {
         glGetShaderiv(shaderId, GL_COMPILE_STATUS, &success);
         if(!success) {
             glGetShaderInfoLog(shaderId, 1024, NULL, infoLog);
-            rbe_logger_error("Shader type '%s' compilation failed!InfoLog = \n%s", type, &infoLog);
+            se_logger_error("Shader type '%s' compilation failed!InfoLog = \n%s", type, &infoLog);
         }
     }
 }

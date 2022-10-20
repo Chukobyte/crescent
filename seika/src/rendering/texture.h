@@ -23,8 +23,8 @@ typedef struct Texture {
     const char* fileName;
 } Texture;
 
-Texture* rbe_texture_create_texture(const char* filePath);
-Texture* rbe_texture_create_solid_colored_texture(GLsizei width, GLsizei height, GLuint colorValue);
+Texture* se_texture_create_texture(const char* filePath);
+Texture* se_texture_create_solid_colored_texture(GLsizei width, GLsizei height, GLuint colorValue);
 
 #ifdef __cplusplus
 }

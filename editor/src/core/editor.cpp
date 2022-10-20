@@ -20,7 +20,7 @@
 static EditorContext* editorContext = EditorContext::Get();
 
 bool Editor::Initialize() {
-    rbe_logger_set_level(LogLevel_DEBUG);
+    se_logger_set_level(LogLevel_DEBUG);
 
     if (!InitializeSDL()) {
         return false;
@@ -36,11 +36,11 @@ bool Editor::Initialize() {
     AssetManager::Get()->Initialize();
 
     // TODO: Figure out window stuff dimensions...
-    sf_renderer_initialize(800, 600);
+    se_renderer_initialize(800, 600);
 
     editorContext->initialDir = FileSystemHelper::GetCurrentDir();
     editorContext->isRunning = true;
-    rbe_logger_info("Crescent Engine Editor has started!");
+    se_logger_info("Crescent Engine Editor has started!");
 
     // Load editor setting or create a new file if it doesn't exist
     if (!editorContext->settings.LoadSettings()) {
@@ -61,7 +61,7 @@ void Editor::Update() {
 
 bool Editor::InitializeSDL() {
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-        rbe_logger_error(SDL_GetError());
+        se_logger_error(SDL_GetError());
         return false;
     }
 
@@ -93,7 +93,7 @@ bool Editor::InitializeSDL() {
     SDL_GL_SetSwapInterval(1);
 
     if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
-        rbe_logger_error("Couldn't initialize glad!");
+        se_logger_error("Couldn't initialize glad!");
         return false;
     }
 
@@ -176,5 +176,5 @@ void Editor::Shutdown() {
 
     rbe_py_finalize();
 
-    rbe_logger_info("Crescent Engine Editor has been shutdown!");
+    se_logger_info("Crescent Engine Editor has been shutdown!");
 }

@@ -2,22 +2,22 @@
 
 #include <stddef.h>
 
-#include "../memory/rbe_mem.h"
-#include "../utils/rbe_assert.h"
+#include "../memory/se_mem.h"
+#include "../utils/se_assert.h"
 
 static RenderContext* renderContext = NULL;
 
-void rbe_render_context_initialize() {
-    RBE_ASSERT_FMT(renderContext == NULL, "Render context is already initialized!");
-    renderContext = RBE_MEM_ALLOCATE(RenderContext);
+void se_render_context_initialize() {
+    SE_ASSERT_FMT(renderContext == NULL, "Render context is already initialized!");
+    renderContext = SE_MEM_ALLOCATE(RenderContext);
 }
 
-void rbe_render_context_finalize() {
-    RBE_ASSERT_FMT(renderContext != NULL, "Render context is not initialized!");
-    RBE_MEM_FREE(renderContext);
+void se_render_context_finalize() {
+    SE_ASSERT_FMT(renderContext != NULL, "Render context is not initialized!");
+    SE_MEM_FREE(renderContext);
 }
 
-RenderContext* rbe_render_context_get() {
-    RBE_ASSERT_FMT(renderContext != NULL, "Render context is not initialized!");
+RenderContext* se_render_context_get() {
+    SE_ASSERT_FMT(renderContext != NULL, "Render context is not initialized!");
     return renderContext;
 }

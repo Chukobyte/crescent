@@ -5,7 +5,7 @@
 
 #include <nlohmann/json.hpp>
 
-#include "../seika/src/utils/rbe_assert.h"
+#include "../seika/src/utils/se_assert.h"
 
 
 namespace JsonHelper {
@@ -25,7 +25,7 @@ inline T Get(const nlohmann::json& json, const std::string& key) {
     if (HasKey(json, key)) {
         return json.at(key);
     }
-    RBE_ASSERT_FMT(false, "Key '%s' doesn't exist in json!", key.c_str());
+    SE_ASSERT_FMT(false, "Key '%s' doesn't exist in json!", key.c_str());
     return T();
 }
 

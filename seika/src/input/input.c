@@ -4,11 +4,11 @@
 
 #include "input_action.h"
 #include "input_value_constants.h"
-#include "../data_structures/rbe_hash_map_string.h"
-#include "../data_structures/rbe_static_array.h"
+#include "../data_structures/se_hash_map_string.h"
+#include "../data_structures/se_static_array.h"
 #include "../utils/logger.h"
-#include "../utils/rbe_string_util.h"
-#include "../utils/rbe_assert.h"
+#include "../utils/se_string_util.h"
+#include "../utils/se_assert.h"
 
 #ifdef _MSC_VER
 #pragma warning(disable : 4996) // for strcpy
@@ -23,12 +23,12 @@ void input_initialize_gamepad_system();
 void input_gamepad_cleanup_flags();
 
 //--- Input ---//
-RBEStringHashMap* inputActionMap = NULL;
+SEStringHashMap* inputActionMap = NULL;
 const char* inputActionNames[MAX_INPUT_ACTIONS];
 size_t inputActionNamesCount = 0;
 
-RBEStringHashMap* keyboardStringValuesMap = NULL;
-RBEStringHashMap* gamepadStringValuesMap = NULL;
+SEStringHashMap* keyboardStringValuesMap = NULL;
+SEStringHashMap* gamepadStringValuesMap = NULL;
 
 typedef struct InputFlagCleaner {
     InputAction* inputActions[MAX_INPUT_ACTIONS];
@@ -38,70 +38,70 @@ typedef struct InputFlagCleaner {
 InputFlagCleaner actionJustPressedClean = {0};
 InputFlagCleaner actionJustReleasedClean = {0};
 
-bool cre_input_initialize(const char* controllerDBFilePath) {
-    inputActionMap = rbe_string_hash_map_create(32);
+bool se_input_initialize(const char* controllerDBFilePath) {
+    inputActionMap = se_string_hash_map_create(32);
     // SETUP INPUT STRING VALUES
     // Keyboard
-    keyboardStringValuesMap = rbe_string_hash_map_create(80);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_ZERO, SDL_SCANCODE_0);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_ONE, SDL_SCANCODE_1);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_TWO, SDL_SCANCODE_2);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_THREE, SDL_SCANCODE_3);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_FOUR, SDL_SCANCODE_4);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_FIVE, SDL_SCANCODE_5);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_SIX, SDL_SCANCODE_6);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_SEVEN, SDL_SCANCODE_7);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_EIGHT, SDL_SCANCODE_8);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_NINE, SDL_SCANCODE_9);
+    keyboardStringValuesMap = se_string_hash_map_create(80);
+    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_ZERO, SDL_SCANCODE_0);
+    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_ONE, SDL_SCANCODE_1);
+    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_TWO, SDL_SCANCODE_2);
+    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_THREE, SDL_SCANCODE_3);
+    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_FOUR, SDL_SCANCODE_4);
+    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_FIVE, SDL_SCANCODE_5);
+    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_SIX, SDL_SCANCODE_6);
+    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_SEVEN, SDL_SCANCODE_7);
+    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_EIGHT, SDL_SCANCODE_8);
+    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_NINE, SDL_SCANCODE_9);
 
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_A, SDL_SCANCODE_A);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_B, SDL_SCANCODE_B);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_C, SDL_SCANCODE_C);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_D, SDL_SCANCODE_D);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_E, SDL_SCANCODE_E);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_F, SDL_SCANCODE_F);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_G, SDL_SCANCODE_G);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_H, SDL_SCANCODE_H);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_I, SDL_SCANCODE_I);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_J, SDL_SCANCODE_J);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_K, SDL_SCANCODE_K);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_L, SDL_SCANCODE_L);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_M, SDL_SCANCODE_M);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_N, SDL_SCANCODE_N);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_O, SDL_SCANCODE_O);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_P, SDL_SCANCODE_P);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_Q, SDL_SCANCODE_Q);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_R, SDL_SCANCODE_R);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_S, SDL_SCANCODE_S);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_T, SDL_SCANCODE_T);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_U, SDL_SCANCODE_U);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_V, SDL_SCANCODE_V);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_W, SDL_SCANCODE_W);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_X, SDL_SCANCODE_X);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_Y, SDL_SCANCODE_Y);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_Z, SDL_SCANCODE_Z);
+    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_A, SDL_SCANCODE_A);
+    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_B, SDL_SCANCODE_B);
+    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_C, SDL_SCANCODE_C);
+    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_D, SDL_SCANCODE_D);
+    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_E, SDL_SCANCODE_E);
+    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_F, SDL_SCANCODE_F);
+    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_G, SDL_SCANCODE_G);
+    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_H, SDL_SCANCODE_H);
+    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_I, SDL_SCANCODE_I);
+    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_J, SDL_SCANCODE_J);
+    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_K, SDL_SCANCODE_K);
+    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_L, SDL_SCANCODE_L);
+    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_M, SDL_SCANCODE_M);
+    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_N, SDL_SCANCODE_N);
+    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_O, SDL_SCANCODE_O);
+    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_P, SDL_SCANCODE_P);
+    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_Q, SDL_SCANCODE_Q);
+    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_R, SDL_SCANCODE_R);
+    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_S, SDL_SCANCODE_S);
+    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_T, SDL_SCANCODE_T);
+    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_U, SDL_SCANCODE_U);
+    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_V, SDL_SCANCODE_V);
+    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_W, SDL_SCANCODE_W);
+    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_X, SDL_SCANCODE_X);
+    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_Y, SDL_SCANCODE_Y);
+    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_Z, SDL_SCANCODE_Z);
 
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_LEFT, SDL_SCANCODE_LEFT);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_RIGHT, SDL_SCANCODE_RIGHT);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_UP, SDL_SCANCODE_UP);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_DOWN, SDL_SCANCODE_DOWN);
+    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_LEFT, SDL_SCANCODE_LEFT);
+    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_RIGHT, SDL_SCANCODE_RIGHT);
+    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_UP, SDL_SCANCODE_UP);
+    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_DOWN, SDL_SCANCODE_DOWN);
 
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_RETURN, SDL_SCANCODE_RETURN);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_SPACE, SDL_SCANCODE_SPACE);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_ESCAPE, SDL_SCANCODE_ESCAPE);
+    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_RETURN, SDL_SCANCODE_RETURN);
+    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_SPACE, SDL_SCANCODE_SPACE);
+    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_ESCAPE, SDL_SCANCODE_ESCAPE);
 
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_F1, SDL_SCANCODE_F1);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_F2, SDL_SCANCODE_F2);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_F3, SDL_SCANCODE_F3);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_F4, SDL_SCANCODE_F4);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_F5, SDL_SCANCODE_F5);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_F6, SDL_SCANCODE_F6);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_F7, SDL_SCANCODE_F7);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_F8, SDL_SCANCODE_F8);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_F9, SDL_SCANCODE_F9);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_F10, SDL_SCANCODE_F10);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_F11, SDL_SCANCODE_F11);
-    rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_F12, SDL_SCANCODE_F12);
+    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_F1, SDL_SCANCODE_F1);
+    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_F2, SDL_SCANCODE_F2);
+    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_F3, SDL_SCANCODE_F3);
+    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_F4, SDL_SCANCODE_F4);
+    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_F5, SDL_SCANCODE_F5);
+    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_F6, SDL_SCANCODE_F6);
+    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_F7, SDL_SCANCODE_F7);
+    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_F8, SDL_SCANCODE_F8);
+    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_F9, SDL_SCANCODE_F9);
+    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_F10, SDL_SCANCODE_F10);
+    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_F11, SDL_SCANCODE_F11);
+    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_F12, SDL_SCANCODE_F12);
 
     // Gamepad
     input_initialize_gamepad_system(controllerDBFilePath);
@@ -109,44 +109,48 @@ bool cre_input_initialize(const char* controllerDBFilePath) {
     return true;
 }
 
-void cre_input_finalize() {}
+void se_input_finalize() {}
 
-void cre_input_add_action_value(const char* actionName, const char* actionValue, int deviceId) {
-    if (!rbe_string_hash_map_has(inputActionMap, actionName)) {
-        rbe_string_hash_map_add(inputActionMap, actionName, rbe_input_action_create_new_input_action(actionName, deviceId), sizeof(InputAction));
+void se_input_add_action_value(const char* actionName, const char* actionValue, int deviceId) {
+    if (!se_string_hash_map_has(inputActionMap, actionName)) {
+        se_string_hash_map_add(inputActionMap, actionName,
+                               se_input_action_create_new_input_action(actionName, deviceId), sizeof(InputAction));
         inputActionNames[inputActionNamesCount] = actionName;
         inputActionNamesCount++;
     }
-    InputAction* inputAction = (InputAction*) rbe_string_hash_map_get(inputActionMap, actionName);
-    // TODO: Remember to properly delete char* from rbe_strdup
-    if (rbe_string_hash_map_has(keyboardStringValuesMap, actionValue)) {
-        inputAction->keyboardValues[inputAction->keyboardValueCount] = rbe_string_hash_map_get_int(keyboardStringValuesMap, actionValue);
+    InputAction* inputAction = (InputAction*) se_string_hash_map_get(inputActionMap, actionName);
+    // TODO: Remember to properly delete char* from se_strdup
+    if (se_string_hash_map_has(keyboardStringValuesMap, actionValue)) {
+        inputAction->keyboardValues[inputAction->keyboardValueCount] = se_string_hash_map_get_int(
+                    keyboardStringValuesMap, actionValue);
         inputAction->keyboardValueCount++;
-        rbe_logger_debug("Added keyboard action | name: '%s', value: '%s', scancode: '%d'", actionName, actionValue, inputAction->keyboardValues[inputAction->keyboardValueCount - 1]);
-    } else if (rbe_string_hash_map_has(gamepadStringValuesMap, actionValue)) {
-        inputAction->gamepadValues[inputAction->gamepadValueCount] = rbe_strdup(actionValue);
+        se_logger_debug("Added keyboard action | name: '%s', value: '%s', scancode: '%d'", actionName, actionValue,
+                        inputAction->keyboardValues[inputAction->keyboardValueCount - 1]);
+    } else if (se_string_hash_map_has(gamepadStringValuesMap, actionValue)) {
+        inputAction->gamepadValues[inputAction->gamepadValueCount] = se_strdup(actionValue);
         inputAction->gamepadValueCount++;
-        rbe_logger_debug("Added gamepad value '%s' with device id = %d", actionValue, deviceId);
+        se_logger_debug("Added gamepad value '%s' with device id = %d", actionValue, deviceId);
     } else if (strcmp(actionValue, "mb_left") == 0 || strcmp(actionValue, "mb_right") == 0 || strcmp(actionValue, "mb_middle") == 0) {
         strcpy(&inputAction->mouseValues[inputAction->mouseValueCount], actionValue);
-        rbe_logger_debug("Added mouse action | name: '%s', value: '%s'", actionName, inputAction->mouseValues[inputAction->mouseValueCount]);
+        se_logger_debug("Added mouse action | name: '%s', value: '%s'", actionName,
+                        inputAction->mouseValues[inputAction->mouseValueCount]);
         inputAction->mouseValueCount++;
     } else {
-        rbe_logger_error("No valid value found for action | name: '%s', value: '%s'", actionName, actionValue);
+        se_logger_error("No valid value found for action | name: '%s', value: '%s'", actionName, actionValue);
     }
 }
 
-void cre_input_remove_action_value(const char* actionName, const char* actionValue) {}
+void se_input_remove_action_value(const char* actionName, const char* actionValue) {}
 
-void cre_input_remove_action(const char* actionName) {}
+void se_input_remove_action(const char* actionName) {}
 
-void cre_input_process(SDL_Event event) {
+void se_input_process(SDL_Event event) {
     input_process_keyboard();
     input_process_mouse(event);
     input_process_gamepad(event);
 }
 
-void cre_input_clean_up_flags() {
+void se_input_clean_up_flags() {
     // Just Pressed
     for (size_t i = 0; i < actionJustPressedClean.count; i++) {
         actionJustPressedClean.inputActions[i]->isActionJustPressed = false;
@@ -163,25 +167,25 @@ void cre_input_clean_up_flags() {
 }
 
 // Queries
-bool cre_input_is_action_pressed(const char* actionName) {
-    if (rbe_string_hash_map_has(inputActionMap, actionName)) {
-        InputAction* inputAction = (InputAction*) rbe_string_hash_map_get(inputActionMap, actionName);
+bool se_input_is_action_pressed(const char* actionName) {
+    if (se_string_hash_map_has(inputActionMap, actionName)) {
+        InputAction* inputAction = (InputAction*) se_string_hash_map_get(inputActionMap, actionName);
         return inputAction->isActionPressed;
     }
     return false;
 }
 
-bool cre_input_is_action_just_pressed(const char* actionName) {
-    if (rbe_string_hash_map_has(inputActionMap, actionName)) {
-        InputAction* inputAction = (InputAction*) rbe_string_hash_map_get(inputActionMap, actionName);
+bool se_input_is_action_just_pressed(const char* actionName) {
+    if (se_string_hash_map_has(inputActionMap, actionName)) {
+        InputAction* inputAction = (InputAction*) se_string_hash_map_get(inputActionMap, actionName);
         return inputAction->isActionJustPressed;
     }
     return false;
 }
 
-bool cre_input_is_action_just_released(const char* actionName) {
-    if (rbe_string_hash_map_has(inputActionMap, actionName)) {
-        InputAction* inputAction = (InputAction*) rbe_string_hash_map_get(inputActionMap, actionName);
+bool se_input_is_action_just_released(const char* actionName) {
+    if (se_string_hash_map_has(inputActionMap, actionName)) {
+        InputAction* inputAction = (InputAction*) se_string_hash_map_get(inputActionMap, actionName);
         return inputAction->isActionJustReleased;
     }
     return false;
@@ -192,12 +196,11 @@ bool cre_input_is_action_just_released(const char* actionName) {
 void input_process_keyboard() {
     const Uint8* keyboardState = SDL_GetKeyboardState(NULL);
     for (size_t i = 0; i < inputActionNamesCount; i++) {
-        InputAction* inputAction = (InputAction*) rbe_string_hash_map_get(inputActionMap, inputActionNames[i]);
+        InputAction* inputAction = (InputAction*) se_string_hash_map_get(inputActionMap, inputActionNames[i]);
         for (size_t j = 0; j < inputAction->keyboardValueCount; j++) {
             SDL_Scancode scancode = (SDL_Scancode) inputAction->keyboardValues[j];
             bool isKeyboardValuePressed = keyboardState[scancode];
             if (isKeyboardValuePressed && !inputAction->isActionPressed) {
-//                rbe_logger_debug("isKeyboardValuePressed = %d, scancode = %d", isKeyboardValuePressed, scancode);
                 inputAction->isActionPressed = true;
                 inputAction->isActionJustPressed = true;
                 inputAction->lastScancodePressed = scancode;
@@ -241,7 +244,7 @@ void input_process_mouse(SDL_Event event) {
     }
     if (isMouseEvent) {
         for (size_t i = 0; i < inputActionNamesCount; i++) {
-            InputAction* inputAction = (InputAction*) rbe_string_hash_map_get(inputActionMap, inputActionNames[i]);
+            InputAction* inputAction = (InputAction*) se_string_hash_map_get(inputActionMap, inputActionNames[i]);
             for (size_t j = 0; j < inputAction->mouseValueCount; j++) {
                 bool isLeftMouseButton = strcmp(&inputAction->mouseValues[j], "mb_left") == 0 && mouseButton == SDL_BUTTON_LEFT;
                 bool isRightMouseButton = strcmp(&inputAction->mouseValues[j], "mb_right") == 0 && mouseButton == SDL_BUTTON_RIGHT;
@@ -323,38 +326,45 @@ typedef struct CreGamepad {
 
 CreGamepad activeGamePads[CRE_MAX_GAMEPAD_DEVICES];
 static int activeGamepadCount = 0;
-RBE_STATIC_ARRAY_CREATE(int, CRE_MAX_GAMEPAD_DEVICES, activeGamepadIds);
+SE_STATIC_ARRAY_CREATE(int, CRE_MAX_GAMEPAD_DEVICES, activeGamepadIds);
 
 bool input_process_axis_motions();
 
 void input_initialize_gamepad_system(const char* controllerDBFilePath) {
-    gamepadStringValuesMap = rbe_string_hash_map_create(30);
-    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_button_a", SDL_CONTROLLER_BUTTON_A);
-    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_button_b", SDL_CONTROLLER_BUTTON_B);
-    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_button_x", SDL_CONTROLLER_BUTTON_X);
-    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_button_y", SDL_CONTROLLER_BUTTON_Y);
-    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_dpad_left", GamepadInputButtonType_DPAD_LEFT);
-    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_dpad_right", GamepadInputButtonType_DPAD_RIGHT);
-    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_dpad_up", GamepadInputButtonType_DPAD_UP);
-    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_dpad_down", GamepadInputButtonType_DPAD_DOWN);
-    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_start", GamepadInputButtonType_START);
-    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_back", GamepadInputButtonType_BACK);
-    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_left_shoulder", GamepadInputButtonType_LEFT_SHOULDER);
-    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_right_shoulder", GamepadInputButtonType_RIGHT_SHOULDER);
-    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_left_analog", GamepadInputButtonType_LEFT_ANALOG);
-    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_right_analog", GamepadInputButtonType_RIGHT_ANALOG);
+    gamepadStringValuesMap = se_string_hash_map_create(30);
+    se_string_hash_map_add_int(gamepadStringValuesMap, "joystick_button_a", SDL_CONTROLLER_BUTTON_A);
+    se_string_hash_map_add_int(gamepadStringValuesMap, "joystick_button_b", SDL_CONTROLLER_BUTTON_B);
+    se_string_hash_map_add_int(gamepadStringValuesMap, "joystick_button_x", SDL_CONTROLLER_BUTTON_X);
+    se_string_hash_map_add_int(gamepadStringValuesMap, "joystick_button_y", SDL_CONTROLLER_BUTTON_Y);
+    se_string_hash_map_add_int(gamepadStringValuesMap, "joystick_dpad_left", GamepadInputButtonType_DPAD_LEFT);
+    se_string_hash_map_add_int(gamepadStringValuesMap, "joystick_dpad_right", GamepadInputButtonType_DPAD_RIGHT);
+    se_string_hash_map_add_int(gamepadStringValuesMap, "joystick_dpad_up", GamepadInputButtonType_DPAD_UP);
+    se_string_hash_map_add_int(gamepadStringValuesMap, "joystick_dpad_down", GamepadInputButtonType_DPAD_DOWN);
+    se_string_hash_map_add_int(gamepadStringValuesMap, "joystick_start", GamepadInputButtonType_START);
+    se_string_hash_map_add_int(gamepadStringValuesMap, "joystick_back", GamepadInputButtonType_BACK);
+    se_string_hash_map_add_int(gamepadStringValuesMap, "joystick_left_shoulder", GamepadInputButtonType_LEFT_SHOULDER);
+    se_string_hash_map_add_int(gamepadStringValuesMap, "joystick_right_shoulder", GamepadInputButtonType_RIGHT_SHOULDER);
+    se_string_hash_map_add_int(gamepadStringValuesMap, "joystick_left_analog", GamepadInputButtonType_LEFT_ANALOG);
+    se_string_hash_map_add_int(gamepadStringValuesMap, "joystick_right_analog", GamepadInputButtonType_RIGHT_ANALOG);
 
     // Non Game Controller Button Action
-    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_left_trigger", GamepadInputButtonType_LEFT_TRIGGER);
-    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_right_trigger", GamepadInputButtonType_RIGHT_TRIGGER);
-    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_left_analog_left", GamepadInputButtonType_LEFT_ANALOG_LEFT);
-    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_left_analog_right", GamepadInputButtonType_LEFT_ANALOG_RIGHT);
-    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_left_analog_up", GamepadInputButtonType_LEFT_ANALOG_UP);
-    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_left_analog_down", GamepadInputButtonType_LEFT_ANALOG_DOWN);
-    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_right_analog_left", GamepadInputButtonType_RIGHT_ANALOG_LEFT);
-    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_right_analog_right", GamepadInputButtonType_RIGHT_ANALOG_RIGHT);
-    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_right_analog_up", GamepadInputButtonType_RIGHT_ANALOG_UP);
-    rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_right_analog_down", GamepadInputButtonType_RIGHT_ANALOG_DOWN);
+    se_string_hash_map_add_int(gamepadStringValuesMap, "joystick_left_trigger", GamepadInputButtonType_LEFT_TRIGGER);
+    se_string_hash_map_add_int(gamepadStringValuesMap, "joystick_right_trigger", GamepadInputButtonType_RIGHT_TRIGGER);
+    se_string_hash_map_add_int(gamepadStringValuesMap, "joystick_left_analog_left",
+                               GamepadInputButtonType_LEFT_ANALOG_LEFT);
+    se_string_hash_map_add_int(gamepadStringValuesMap, "joystick_left_analog_right",
+                               GamepadInputButtonType_LEFT_ANALOG_RIGHT);
+    se_string_hash_map_add_int(gamepadStringValuesMap, "joystick_left_analog_up", GamepadInputButtonType_LEFT_ANALOG_UP);
+    se_string_hash_map_add_int(gamepadStringValuesMap, "joystick_left_analog_down",
+                               GamepadInputButtonType_LEFT_ANALOG_DOWN);
+    se_string_hash_map_add_int(gamepadStringValuesMap, "joystick_right_analog_left",
+                               GamepadInputButtonType_RIGHT_ANALOG_LEFT);
+    se_string_hash_map_add_int(gamepadStringValuesMap, "joystick_right_analog_right",
+                               GamepadInputButtonType_RIGHT_ANALOG_RIGHT);
+    se_string_hash_map_add_int(gamepadStringValuesMap, "joystick_right_analog_up",
+                               GamepadInputButtonType_RIGHT_ANALOG_UP);
+    se_string_hash_map_add_int(gamepadStringValuesMap, "joystick_right_analog_down",
+                               GamepadInputButtonType_RIGHT_ANALOG_DOWN);
 
     // Initialize game pads
     input_load_gamepads(controllerDBFilePath);
@@ -375,7 +385,7 @@ void input_load_gamepads(const char* controllerDBFilePath) {
 
     if (controllerDBFilePath != NULL) {
         const int result = SDL_GameControllerAddMappingsFromFile(controllerDBFilePath);
-        RBE_ASSERT_FMT(result >= 0, "Couldn't load sdl controller mapping file at path '%s'!", controllerDBFilePath);
+        SE_ASSERT_FMT(result >= 0, "Couldn't load sdl controller mapping file at path '%s'!", controllerDBFilePath);
     }
 }
 
@@ -394,19 +404,20 @@ void input_process_gamepad(SDL_Event event) {
     case SDL_CONTROLLERDEVICEADDED: {
         // TODO: Trigger gamepad connected script callbacks
         SDL_GameController* newGameController = SDL_GameControllerOpen(event.cdevice.which);
-        RBE_ASSERT_FMT(newGameController != NULL, "Failed to load game controller with index '%d'", event.cdevice.which);
+        SE_ASSERT_FMT(newGameController != NULL, "Failed to load game controller with index '%d'", event.cdevice.which);
         SDL_Joystick* newJoystick = SDL_GameControllerGetJoystick(newGameController);
-        RBE_ASSERT_FMT(newJoystick != NULL, "Failed to load joystick with index '%d'", event.jdevice.which);
+        SE_ASSERT_FMT(newJoystick != NULL, "Failed to load joystick with index '%d'", event.jdevice.which);
         int gamepadIndex = SDL_GameControllerGetPlayerIndex(newGameController);
         if (gamepadIndex == -1) {
             gamepadIndex = SDL_JoystickInstanceID(newJoystick);
-            rbe_logger_warn("Unable to get player index from controller, using SDL joystick instance id '%d'", gamepadIndex);
+            se_logger_warn("Unable to get player index from controller, using SDL joystick instance id '%d'",
+                           gamepadIndex);
         }
-        RBE_ASSERT_FMT(gamepadIndex < CRE_MAX_GAMEPAD_DEVICES, "Gamepad index '%d' higher than limit.", gamepadIndex);
+        SE_ASSERT_FMT(gamepadIndex < CRE_MAX_GAMEPAD_DEVICES, "Gamepad index '%d' higher than limit.", gamepadIndex);
         activeGamePads[gamepadIndex].gameController = newGameController;
         activeGamePads[gamepadIndex].joystickController = newJoystick;
         activeGamePads[gamepadIndex].joystickId = SDL_JoystickInstanceID(newJoystick);
-        RBE_STATIC_ARRAY_ADD(activeGamepadIds, gamepadIndex);
+        SE_STATIC_ARRAY_ADD(activeGamepadIds, gamepadIndex);
         activeGamepadCount++;
         break;
     }
@@ -416,12 +427,12 @@ void input_process_gamepad(SDL_Event event) {
         SDL_JoystickClose(activeGamePads[gamepadIndex].joystickController);
         for (int i = 0; i < activeGamepadCount; i++) {
             if (activeGamepadIds[i] == gamepadIndex) {
-                RBE_STATIC_ARRAY_REMOVE(activeGamepadIds, gamepadIndex, INVALID_GAMEPAD_ID);
+                SE_STATIC_ARRAY_REMOVE(activeGamepadIds, gamepadIndex, INVALID_GAMEPAD_ID);
                 activeGamepadCount--;
                 break;
             }
         }
-        rbe_logger_error("Failed to remove gamepad with index '%d'", gamepadIndex);
+        se_logger_error("Failed to remove gamepad with index '%d'", gamepadIndex);
         break;
     }
     case SDL_JOYBUTTONDOWN:
@@ -430,7 +441,7 @@ void input_process_gamepad(SDL_Event event) {
         const SDL_JoystickID controllerId = event.jbutton.which;
         const bool isButtonPressed = event.jbutton.state == SDL_PRESSED;
         const uint8_t buttonValue = event.jbutton.button;
-        RBE_ASSERT(buttonValue < CRE_MAX_GAMEPAD_INTERNAL_INPUT_ACTIONS);
+        SE_ASSERT(buttonValue < CRE_MAX_GAMEPAD_INTERNAL_INPUT_ACTIONS);
         CreGamepad* gamepad = input_find_gamepad(controllerId);
         if (isButtonPressed) {
             gamepad->gamepadInputButtonActions[buttonValue].isPressed = true;
@@ -494,10 +505,10 @@ void input_process_gamepad(SDL_Event event) {
     // Update actions
     if (buttonInputUpdated) {
         for (size_t i = 0; i < inputActionNamesCount; i++) {
-            InputAction* inputAction = (InputAction*) rbe_string_hash_map_get(inputActionMap, inputActionNames[i]);
+            InputAction* inputAction = (InputAction*) se_string_hash_map_get(inputActionMap, inputActionNames[i]);
             for (size_t j = 0; j < inputAction->gamepadValueCount; j++) {
                 const char* gamepadValue = inputAction->gamepadValues[j];
-                const uint8_t buttonScancode = rbe_string_hash_map_get_int(gamepadStringValuesMap, gamepadValue);
+                const uint8_t buttonScancode = se_string_hash_map_get_int(gamepadStringValuesMap, gamepadValue);
                 inputAction->isActionPressed = activeGamePads[inputAction->deviceId].gamepadInputButtonActions[buttonScancode].isPressed;
                 inputAction->isActionJustPressed = activeGamePads[inputAction->deviceId].gamepadInputButtonActions[buttonScancode].isJustPressed;
                 inputAction->isActionJustReleased = activeGamePads[inputAction->deviceId].gamepadInputButtonActions[buttonScancode].isJustReleased;

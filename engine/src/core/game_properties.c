@@ -1,15 +1,15 @@
 #include "game_properties.h"
 
 #include "../seika/src/utils/logger.h"
-#include "../seika/src/memory/rbe_mem.h"
-#include "../seika/src/utils/rbe_assert.h"
+#include "../seika/src/memory/se_mem.h"
+#include "../seika/src/utils/se_assert.h"
 
 #include "scripting/python/rbe_py.h"
 
 static RBEGameProperties* properties = NULL;
 
 RBEGameProperties* rbe_game_props_create() {
-    RBEGameProperties* props = RBE_MEM_ALLOCATE(RBEGameProperties);
+    RBEGameProperties* props = SE_MEM_ALLOCATE(RBEGameProperties);
     props->gameTitle = NULL;
     props->windowWidth = 800;
     props->windowHeight = 600;
@@ -31,7 +31,7 @@ void rbe_game_props_initialize(RBEGameProperties* initialProps) {
 
 void rbe_game_props_finalize() {
     if (properties != NULL) {
-        RBE_MEM_FREE(properties);
+        SE_MEM_FREE(properties);
         properties = NULL;
     }
 }
@@ -49,9 +49,11 @@ RBEGameProperties* cre_game_props_get_or_default() {
 
 void rbe_game_props_print() {
     if (properties == NULL) {
-        rbe_logger_error("No game properties set, not printing!");
+        se_logger_error("No game properties set, not printing!");
         return;
     }
-    rbe_logger_debug("game properties:\n    game_title = %s\n    resolution_width = %d\n    resolution_height = %d\n    window_width = %d\n    window_height = %d\n    target_fps = %d",
-                     properties->gameTitle, properties->resolutionWidth, properties->resolutionHeight,properties->windowWidth, properties->windowHeight, properties->targetFPS);
+    se_logger_debug(
+        "game properties:\n    game_title = %s\n    resolution_width = %d\n    resolution_height = %d\n    window_width = %d\n    window_height = %d\n    target_fps = %d",
+        properties->gameTitle, properties->resolutionWidth, properties->resolutionHeight, properties->windowWidth,
+        properties->windowHeight, properties->targetFPS);
 }

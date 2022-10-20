@@ -2,21 +2,21 @@
 
 #include <string.h>
 
-#include "../seika/src/memory/rbe_mem.h"
+#include "../seika/src/memory/se_mem.h"
 
 NodeComponent* node_component_create() {
-    NodeComponent* nodeComponent = RBE_MEM_ALLOCATE(NodeComponent);
+    NodeComponent* nodeComponent = SE_MEM_ALLOCATE(NodeComponent);
     nodeComponent->name[0] = '\0';
     nodeComponent->type = NodeBaseType_INVALID;
     return nodeComponent;
 }
 
 void node_component_delete(NodeComponent* nodeComponent) {
-    RBE_MEM_FREE(nodeComponent);
+    SE_MEM_FREE(nodeComponent);
 }
 
 NodeComponent* node_component_copy(const NodeComponent* nodeComponent) {
-    NodeComponent* copiedNode = RBE_MEM_ALLOCATE(NodeComponent);
+    NodeComponent* copiedNode = SE_MEM_ALLOCATE(NodeComponent);
     memcpy(copiedNode, nodeComponent, sizeof(NodeComponent));
     return copiedNode;
 }

@@ -7,7 +7,7 @@
 
 #include "input/input.h"
 #include "utils/logger.h"
-#include "utils/rbe_assert.h"
+#include "utils/se_assert.h"
 #include "rendering/renderer.h"
 #include "audio/audio_manager.h"
 #include "asset_manager.h"
@@ -40,23 +40,23 @@ bool sf_initialize(const char* title,
 
     // Initialize sub systems
     if (!initialize_sdl()) {
-        rbe_logger_error("Failed to initialize sdl!");
+        se_logger_error("Failed to initialize sdl!");
         return false;
     }
     if (!initialize_rendering(title, windowWidth, windowHeight, resolutionWidth, resolutionHeight)) {
-        rbe_logger_error("Failed to initialize rendering!");
+        se_logger_error("Failed to initialize rendering!");
         return false;
     }
     if (!initialize_audio()) {
-        rbe_logger_error("Failed to initialize audio!");
+        se_logger_error("Failed to initialize audio!");
         return false;
     }
     if (!initialize_input(controllerDBFilePath)) {
-        rbe_logger_error("Failed to initialize input!");
+        se_logger_error("Failed to initialize input!");
         return false;
     }
 
-    rbe_asset_manager_initialize();
+    se_asset_manager_initialize();
 
     isRunning = true;
 
@@ -65,7 +65,7 @@ bool sf_initialize(const char* title,
 
 bool initialize_sdl() {
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
-        rbe_logger_error("Failed to initialize sdl!");
+        se_logger_error("Failed to initialize sdl!");
         return false;
     }
     return true;
@@ -96,7 +96,7 @@ bool initialize_rendering(const char* title, int windowWidth, int windowHeight, 
                  windowFlags
              );
     if (!window) {
-        rbe_logger_error("Failed to create window!");
+        se_logger_error("Failed to create window!");
         return false;
     }
 
@@ -105,20 +105,20 @@ bool initialize_rendering(const char* title, int windowWidth, int windowHeight, 
 
     // Initialize Glad
     if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
-        rbe_logger_error("Couldn't initialize glad!");
+        se_logger_error("Couldn't initialize glad!");
         return false;
     }
 
-    sf_renderer_initialize(resolutionWidth, resolutionHeight);
+    se_renderer_initialize(resolutionWidth, resolutionHeight);
     return true;
 }
 
 bool initialize_audio() {
-    return rbe_audio_manager_init();
+    return se_audio_manager_init();
 }
 
 bool initialize_input(const char* controllerDBFilePath) {
-    if (!cre_input_initialize(controllerDBFilePath)) {
+    if (!se_input_initialize(controllerDBFilePath)) {
         return false;
     }
     return true;
@@ -136,13 +136,13 @@ void sf_process_inputs() {
         default:
             break;
         }
-        cre_input_process(event);
+        se_input_process(event);
     }
 }
 
 void sf_render() {
     static const Color backgroundColor = { 33.0f / 255.0f, 33.0f / 255.0f, 33.0f / 255.0f, 1.0f };
-    sf_renderer_process_and_flush_batches(&backgroundColor);
+    se_renderer_process_and_flush_batches(&backgroundColor);
 
     // TODO: Pass window to renderer and swap there?
     SDL_GL_SwapWindow(window);
@@ -157,10 +157,10 @@ void sf_shutdown() {
         SDL_DestroyWindow(window);
         SDL_GL_DeleteContext(openGlContext);
         SDL_Quit();
-        sf_renderer_finalize();
-        rbe_audio_manager_finalize();
-        cre_input_finalize();
-        rbe_asset_manager_finalize();
+        se_renderer_finalize();
+        se_audio_manager_finalize();
+        se_input_finalize();
+        se_asset_manager_finalize();
         isRunning = false;
     }
 }

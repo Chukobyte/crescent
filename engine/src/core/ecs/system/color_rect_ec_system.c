@@ -3,8 +3,8 @@
 #include <string.h>
 
 #include "../seika/src/rendering/renderer.h"
-#include "../seika/src/utils/rbe_string_util.h"
-#include "../seika/src/utils/rbe_assert.h"
+#include "../seika/src/utils/se_string_util.h"
+#include "../seika/src/utils/se_assert.h"
 
 #include "ec_system.h"
 #include "../component/transform2d_component.h"
@@ -21,14 +21,14 @@ Rect2 colorRectDrawSource = {0.0f, 0.0f, 1.0f, 1.0f };
 void color_rect_system_render();
 
 EntitySystem* color_rect_ec_system_create() {
-    RBE_ASSERT(colorRectSystem == NULL);
+    SE_ASSERT(colorRectSystem == NULL);
     colorRectSystem = rbe_ec_system_create();
-    colorRectSystem->name = rbe_strdup("Color Square");
+    colorRectSystem->name = se_strdup("Color Square");
     colorRectSystem->render_func = color_rect_system_render;
     colorRectSystem->component_signature = ComponentType_TRANSFORM_2D | ComponentType_COLOR_RECT;
 
-    RBE_ASSERT_FMT(colorRectTexture == NULL, "Color Square Texture isn't NULL!");
-    colorRectTexture = rbe_texture_create_solid_colored_texture(1, 1, 255);
+    SE_ASSERT_FMT(colorRectTexture == NULL, "Color Square Texture isn't NULL!");
+    colorRectTexture = se_texture_create_solid_colored_texture(1, 1, 255);
     return colorRectSystem;
 }
 
@@ -49,7 +49,7 @@ void color_rect_system_render() {
             colorRectComponent->size.w * renderCamera->zoom.x,
             colorRectComponent->size.h * renderCamera->zoom.y
         };
-        sf_renderer_queue_sprite_draw_call(
+        se_renderer_queue_sprite_draw_call(
             colorRectTexture,
             colorRectDrawSource,
             destinationSize,

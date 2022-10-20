@@ -4,7 +4,7 @@
 extern "C" {
 #endif
 
-#include "../seika/src/math/rbe_math.h"
+#include "../seika/src/math/se_math.h"
 
 typedef struct RBECamera2D {
     Rect2 boundary;

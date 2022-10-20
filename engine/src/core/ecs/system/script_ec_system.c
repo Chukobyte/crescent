@@ -2,9 +2,9 @@
 
 #include <Python.h>
 
-#include "../seika/src/data_structures/rbe_hash_map.h"
-#include "../seika/src/utils/rbe_string_util.h"
-#include "../seika/src/utils/rbe_assert.h"
+#include "../seika/src/data_structures/se_hash_map.h"
+#include "../seika/src/utils/se_string_util.h"
+#include "../seika/src/utils/se_assert.h"
 
 #include "ec_system.h"
 #include "../../scripting/python/py_script_context.h"
@@ -25,9 +25,9 @@ static RBEScriptContext* scriptContexts[ScriptContextType_TOTAL_TYPES];
 static size_t scriptContextsCount = 0;
 
 EntitySystem* script_ec_system_create() {
-    RBE_ASSERT(scriptSystem == NULL);
+    SE_ASSERT(scriptSystem == NULL);
     scriptSystem = rbe_ec_system_create();
-    scriptSystem->name = rbe_strdup("Script");
+    scriptSystem->name = se_strdup("Script");
     scriptSystem->on_entity_registered_func = script_system_on_entity_registered;
     scriptSystem->on_entity_unregistered_func = script_system_on_entity_unregistered;
     scriptSystem->on_entity_start_func = script_system_entity_start;
@@ -39,7 +39,7 @@ EntitySystem* script_ec_system_create() {
     // Python Context
     scriptContexts[ScriptContextType_PYTHON] = rbe_py_create_script_context();
     scriptContextsCount++;
-    RBE_ASSERT(scriptContexts[ScriptContextType_PYTHON] != NULL);
+    SE_ASSERT(scriptContexts[ScriptContextType_PYTHON] != NULL);
     // Native Context
     scriptContexts[ScriptContextType_NATIVE] = rbe_native_create_script_context();
     scriptContextsCount++;
@@ -50,8 +50,8 @@ EntitySystem* script_ec_system_create() {
 
 void script_system_on_entity_registered(Entity entity) {
     const ScriptComponent* scriptComponent = (ScriptComponent*) component_manager_get_component(entity, ComponentDataIndex_SCRIPT);
-    RBE_ASSERT(scriptContexts[scriptComponent->contextType] != NULL);
-    RBE_ASSERT(scriptContexts[scriptComponent->contextType]->on_create_instance != NULL);
+    SE_ASSERT(scriptContexts[scriptComponent->contextType] != NULL);
+    SE_ASSERT(scriptContexts[scriptComponent->contextType]->on_create_instance != NULL);
     scriptContexts[scriptComponent->contextType]->on_create_instance(entity, scriptComponent->classPath, scriptComponent->className);
 }
 
@@ -62,9 +62,9 @@ void script_system_on_entity_unregistered(Entity entity) {
 
 void script_system_entity_start(Entity entity) {
     const ScriptComponent* scriptComponent = (ScriptComponent*) component_manager_get_component(entity, ComponentDataIndex_SCRIPT);
-    RBE_ASSERT(scriptComponent != NULL);
-    RBE_ASSERT_FMT(scriptComponent->contextType == ScriptContextType_PYTHON || scriptComponent->contextType == ScriptContextType_NATIVE,
-                   "Invalid context type '%d' for entity '%d'", scriptComponent->contextType, entity);
+    SE_ASSERT(scriptComponent != NULL);
+    SE_ASSERT_FMT(scriptComponent->contextType == ScriptContextType_PYTHON || scriptComponent->contextType == ScriptContextType_NATIVE,
+                  "Invalid context type '%d' for entity '%d'", scriptComponent->contextType, entity);
     scriptContexts[scriptComponent->contextType]->on_start(entity);
 }
 

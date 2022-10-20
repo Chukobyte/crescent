@@ -48,7 +48,7 @@ std::vector<FileNode> FileNodeCache::GetFilesWithExtension(const std::string& ex
 void FileNodeCache::LoadRootNodeDir(const std::string& filePath, LoadFlag loadFlag) {
     rootNode.path = filePath;
     if (!std::filesystem::is_directory(rootNode.path)) {
-        rbe_logger_error("Failed to load root dir node at file path '%s'", filePath.c_str());
+        se_logger_error("Failed to load root dir node at file path '%s'", filePath.c_str());
         return;
     }
     nodeIndexCount = 0;

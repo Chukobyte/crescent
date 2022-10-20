@@ -1,6 +1,6 @@
 #include "opened_project_ui.h"
 
-#include "../seika/src/utils/rbe_file_system_utils.h"
+#include "../seika/src/utils/se_file_system_utils.h"
 #include "../seika/src/utils/logger.h"
 
 #include "../engine/src/core/scene/scene_utils.h"
@@ -66,14 +66,14 @@ void OpenedProjectUI::ProcessMenuBar() {
                                 .validExtensions = { ".cscn" },
                                 .onModeCompletedFunc = [](const std::filesystem::path& fullPath) {
                                     const std::string relativePath = projectProperties->GetPathRelativeToProjectPath(fullPath.generic_string());
-                                    rbe_logger_debug("Open scene at file path = '%s'", relativePath.c_str());
+                                    se_logger_debug("Open scene at file path = '%s'", relativePath.c_str());
 
                                     static SceneManager* sceneManager = SceneManager::Get();
                                     const std::string validSceneFilePath = Helper::ConvertFilePathToFilePathExtension(relativePath, ".cscn");
                                     if (!validSceneFilePath.empty() && FileSystemHelper::DoesFileExist(validSceneFilePath)) {
                                         sceneManager->selectedSceneFile = sceneManager->LoadSceneFromFile(validSceneFilePath.c_str());
-                                        RBE_ASSERT_FMT(sceneManager->selectedSceneFile != nullptr, "selected scene node file at path '%s' is NULL!",
-                                                       sceneManager->selectedSceneFile);
+                                        SE_ASSERT_FMT(sceneManager->selectedSceneFile != nullptr, "selected scene node file at path '%s' is NULL!",
+                                                      sceneManager->selectedSceneFile);
                                         sceneManager->selectedSceneNode = sceneManager->selectedSceneFile->rootNode;
                                     }
                                 }
@@ -105,7 +105,8 @@ void OpenedProjectUI::ProcessMenuBar() {
                                             auto* selectedSceneFile = SceneManager::Get()->selectedSceneFile;
                                             const std::string validFullFilePath = Helper::ConvertFilePathToFilePathExtension(relativePath, ".cscn");
                                             selectedSceneFile->filePath = validFullFilePath;
-                                            rbe_logger_debug("New project at file path = '%s'", selectedSceneFile->filePath.c_str());
+                                            se_logger_debug("New project at file path = '%s'",
+                                                            selectedSceneFile->filePath.c_str());
                                             SceneFileCreator::GenerateSceneFile(selectedSceneFile, validFullFilePath.c_str());
                                             selectedSceneFile->hasBeenSaved = true;
                                             AssetBrowser::Get()->RefreshCache();
@@ -121,9 +122,10 @@ void OpenedProjectUI::ProcessMenuBar() {
                         .name = "Go To Project Manager",
                         .keyboardShortcut = "Ctrl+Shift+Q",
                         .callbackFunc = [] (ImGuiHelper::Context* context) {
-                            rbe_fs_chdir(editorContext->initialDir.c_str());
+                            se_fs_chdir(editorContext->initialDir.c_str());
                             editorContext->projectState = EditorProjectState::ProjectManager;
-                            rbe_logger_debug("Going back to project manager at path = %s", editorContext->initialDir.c_str());
+                            se_logger_debug("Going back to project manager at path = %s",
+                                            editorContext->initialDir.c_str());
                             // TODO: Clean up scene manager and stuff...
                         },
                     },
@@ -376,7 +378,7 @@ void OpenedProjectUI::ProcessMenuBar() {
                                         .validExtensions = {},
                                         .onModeCompletedFunc = [](const std::filesystem::path& fullPath) {
                                             const std::string exportPath = fullPath.generic_string();
-                                            rbe_logger_debug("Setting project export path to '%s'", exportPath.c_str());
+                                            se_logger_debug("Setting project export path to '%s'", exportPath.c_str());
                                             exportPathInputText.SetValue(exportPath);
                                         }
                                     };
@@ -997,7 +999,7 @@ void OpenedProjectUI::ProcessWindows() {
         .open = nullptr,
         .windowFlags = ImGuiWindowFlags_NoResize,
         .callbackFunc = [] (ImGuiHelper::Context* context) {
-            static Texture* testTexture = rbe_texture_create_solid_colored_texture(1, 1, 255);
+            static Texture* testTexture = se_texture_create_solid_colored_texture(1, 1, 255);
             static auto GetNodeTextureRenderTarget = [](SceneNode* node, size_t index, Transform2DComp* transformComp, bool& hasTexture) {
                 static AssetManager* assetManager = AssetManager::Get();
                 static TransformModel2D globalTransforms[MAX_ENTITIES];
@@ -1158,11 +1160,12 @@ void OpenedProjectUI::ProcessWindows() {
                     consoleLogger->Clear();
                     processLogCapture = consoleLogger->CaptureOutput();
                     if (!engineProcess.Start(editorContext->GetEngineBinaryPath(), editorContext->GetEngineBinaryProgramArgs())) {
-                        rbe_logger_error("Failed to start engine process at path '%s'", editorContext->GetEngineBinaryPath().c_str());
+                        se_logger_error("Failed to start engine process at path '%s'",
+                                        editorContext->GetEngineBinaryPath().c_str());
                     }
-                    rbe_logger_debug("Starting engine process at path '%s' with args '%s'",
-                                     editorContext->GetEngineBinaryPath().c_str(),
-                                     editorContext->GetEngineBinaryProgramArgs().c_str());
+                    se_logger_debug("Starting engine process at path '%s' with args '%s'",
+                                    editorContext->GetEngineBinaryPath().c_str(),
+                                    editorContext->GetEngineBinaryProgramArgs().c_str());
                 } else {
                     static ImGuiHelper::PopupModal playErrorPopup = {
                         .name = "Play Error",

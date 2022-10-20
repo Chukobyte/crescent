@@ -2,10 +2,10 @@
 
 #include <string.h>
 
-#include "../seika/src/memory/rbe_mem.h"
+#include "../seika/src/memory/se_mem.h"
 
 ScriptComponent* script_component_create(const char* path, const char* name) {
-    ScriptComponent* scriptComponent = RBE_MEM_ALLOCATE(ScriptComponent);
+    ScriptComponent* scriptComponent = SE_MEM_ALLOCATE(ScriptComponent);
     scriptComponent->classPath = path;
     scriptComponent->className = name;
     scriptComponent->contextType = ScriptContextType_NONE;
@@ -13,11 +13,11 @@ ScriptComponent* script_component_create(const char* path, const char* name) {
 }
 
 void script_component_delete(ScriptComponent* scriptComponent) {
-    RBE_MEM_FREE(scriptComponent);
+    SE_MEM_FREE(scriptComponent);
 }
 
 ScriptComponent* script_component_copy(const ScriptComponent* scriptComponent) {
-    ScriptComponent* copiedNode = RBE_MEM_ALLOCATE(ScriptComponent);
+    ScriptComponent* copiedNode = SE_MEM_ALLOCATE(ScriptComponent);
     memcpy(copiedNode, scriptComponent, sizeof(ScriptComponent));
     return copiedNode;
 }

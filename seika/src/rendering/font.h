@@ -4,7 +4,7 @@
 
 #include <glad/glad.h>
 
-#include "../math/rbe_math.h"
+#include "../math/se_math.h"
 
 typedef struct Character {
     GLuint textureId;

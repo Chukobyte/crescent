@@ -21,11 +21,6 @@ typedef struct {
     bool    exclusive;
 } pthread_rwlock_t;
 
-//struct timespec {
-//    long tv_sec;
-//    long tv_nsec;
-//};
-
 typedef struct {
     int DUMMY_MEMBER; // FIXME: this is only here because of: 'error C2016: C requires that a struct or union have at least one member'
 } pthread_attr_t;

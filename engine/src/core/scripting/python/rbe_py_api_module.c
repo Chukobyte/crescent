@@ -5,8 +5,8 @@
 #include "../seika/src/asset_manager.h"
 #include "../seika/src/input/input.h"
 #include "../seika/src/audio/audio_manager.h"
-#include "../seika/src/networking/rbe_network.h"
-#include "../seika/src/utils/rbe_assert.h"
+#include "../seika/src/networking/se_network.h"
+#include "../seika/src/utils/se_assert.h"
 
 #include "py_cache.h"
 #include "py_script_context.h"
@@ -87,7 +87,7 @@ PyObject* rbe_py_api_input_add_action(PyObject* self, PyObject* args, PyObject* 
     char* actionValue;
     int deviceId;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "ssi", rbePyApiInputAddActionKWList, &actionName, &actionValue, &deviceId)) {
-        cre_input_add_action_value(actionName, actionValue, deviceId);
+        se_input_add_action_value(actionName, actionValue, deviceId);
         Py_RETURN_NONE;
     }
     return NULL;
@@ -96,7 +96,7 @@ PyObject* rbe_py_api_input_add_action(PyObject* self, PyObject* args, PyObject* 
 PyObject* rbe_py_api_input_is_action_pressed(PyObject* self, PyObject* args, PyObject* kwargs) {
     char* actionName;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "s", rbePyApiInputActionInputCheckKWList, &actionName)) {
-        if (cre_input_is_action_pressed(actionName)) {
+        if (se_input_is_action_pressed(actionName)) {
             Py_RETURN_TRUE;
         }
         Py_RETURN_FALSE;
@@ -107,7 +107,7 @@ PyObject* rbe_py_api_input_is_action_pressed(PyObject* self, PyObject* args, PyO
 PyObject* rbe_py_api_input_is_action_just_pressed(PyObject* self, PyObject* args, PyObject* kwargs) {
     char* actionName;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "s", rbePyApiInputActionInputCheckKWList, &actionName)) {
-        if (cre_input_is_action_just_pressed(actionName)) {
+        if (se_input_is_action_just_pressed(actionName)) {
             Py_RETURN_TRUE;
         }
         Py_RETURN_FALSE;
@@ -118,7 +118,7 @@ PyObject* rbe_py_api_input_is_action_just_pressed(PyObject* self, PyObject* args
 PyObject* rbe_py_api_input_is_action_just_released(PyObject* self, PyObject* args, PyObject* kwargs) {
     char* actionName;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "s", rbePyApiInputActionInputCheckKWList, &actionName)) {
-        if (cre_input_is_action_just_released(actionName)) {
+        if (se_input_is_action_just_released(actionName)) {
             Py_RETURN_TRUE;
         }
         Py_RETURN_FALSE;
@@ -253,7 +253,7 @@ PyObject* rbe_py_api_audio_manager_play_sound(PyObject* self, PyObject* args, Py
     char* audioPath;
     bool loops;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "sb", rbePyApiAudioManagerPlaySoundKWList, &audioPath, &loops)) {
-        rbe_audio_manager_play_sound(audioPath, loops);
+        se_audio_manager_play_sound(audioPath, loops);
         Py_RETURN_NONE;
     }
     return NULL;
@@ -262,7 +262,7 @@ PyObject* rbe_py_api_audio_manager_play_sound(PyObject* self, PyObject* args, Py
 PyObject* rbe_py_api_audio_manager_stop_sound(PyObject* self, PyObject* args, PyObject* kwargs) {
     char* audioPath;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "s", rbePyApiGenericPathKWList, &audioPath)) {
-        rbe_audio_manager_stop_sound(audioPath);
+        se_audio_manager_stop_sound(audioPath);
         Py_RETURN_NONE;
     }
     return NULL;
@@ -284,12 +284,12 @@ PyObject* rbe_py_api_node_new(PyObject* self, PyObject* args, PyObject* kwargs) 
         // TODO: Not a big fan of updating the scripting system signature this way, but I guess it will suffice for now...
         rbe_ec_system_update_entity_signature_with_systems(newEntity);
         PyObject* entityInstance = rbe_py_get_script_instance(newEntity);
-        RBE_ASSERT_FMT(entityInstance != NULL, "Entity instance '%d' is NULL!", newEntity);
+        SE_ASSERT_FMT(entityInstance != NULL, "Entity instance '%d' is NULL!", newEntity);
 
         NodeComponent* nodeComponent = node_component_create();
         strcpy(nodeComponent->name, nodeType);
         nodeComponent->type = node_get_base_type(nodeType);
-        RBE_ASSERT_FMT(nodeComponent->type != NodeBaseType_INVALID, "Node '%s' has an invalid node type '%s'", nodeType, nodeType);
+        SE_ASSERT_FMT(nodeComponent->type != NodeBaseType_INVALID, "Node '%s' has an invalid node type '%s'", nodeType, nodeType);
         component_manager_set_component(newEntity, ComponentDataIndex_NODE, nodeComponent);
 
         const NodeBaseInheritanceType inheritanceType = node_get_type_inheritance(nodeComponent->type);
@@ -378,7 +378,8 @@ PyObject* rbe_py_api_node_get_child(PyObject* self, PyObject* args, PyObject* kw
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "is", rbePyApiNodeGetChildKWList, &parentEntity, &childName)) {
         Entity childEntity = rbe_scene_manager_get_entity_child_by_name(parentEntity, childName);
         if (childEntity == NULL_ENTITY) {
-            rbe_logger_warn("Failed to get child node from parent entity '%d' with the name '%s'", parentEntity, childName);
+            se_logger_warn("Failed to get child node from parent entity '%d' with the name '%s'", parentEntity,
+                           childName);
             Py_RETURN_NONE;
         }
         return rbe_py_utils_get_entity_instance(childEntity);
@@ -395,7 +396,8 @@ PyObject* rbe_py_api_node_get_children(PyObject* self, PyObject* args, PyObject*
             const SceneTreeNode* childTreeNode = parentTreeNode->children[i];
             PyObject* childNode = rbe_py_utils_get_entity_instance(childTreeNode->entity);
             if (PyList_Append(pyChildList, childNode) == -1) {
-                rbe_logger_error("Failed to append entity '%d' to '%d' children list!", parentEntity, childTreeNode->entity);
+                se_logger_error("Failed to append entity '%d' to '%d' children list!", parentEntity,
+                                childTreeNode->entity);
                 PyErr_Print();
             }
         }
@@ -540,8 +542,8 @@ PyObject* rbe_py_api_sprite_set_texture(PyObject* self, PyObject* args, PyObject
     char* filePath;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "is", rbePyApiSpriteSetTextureKWList, &entity, &filePath)) {
         SpriteComponent* spriteComponent = (SpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_SPRITE);
-        RBE_ASSERT_FMT(rbe_asset_manager_has_texture(filePath), "Doesn't have texture with file path '%s'", filePath);
-        spriteComponent->texture = rbe_asset_manager_get_texture(filePath);
+        SE_ASSERT_FMT(se_asset_manager_has_texture(filePath), "Doesn't have texture with file path '%s'", filePath);
+        spriteComponent->texture = se_asset_manager_get_texture(filePath);
         Py_RETURN_NONE;
     }
     return NULL;
@@ -636,7 +638,7 @@ PyObject* rbe_py_api_text_label_set_color(PyObject* self, PyObject* args, PyObje
     int alpha;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "iffff", rbePyApiGenericSetEntityColorKWList, &entity, &red, &green, &blue, &alpha)) {
         TextLabelComponent* textLabelComponent = (TextLabelComponent*) component_manager_get_component(entity, ComponentDataIndex_TEXT_LABEL);
-        textLabelComponent->color = rbe_color_get_normalized_color(red, green, blue, alpha);
+        textLabelComponent->color = se_color_get_normalized_color(red, green, blue, alpha);
         Py_RETURN_NONE;
     }
     return NULL;
@@ -686,7 +688,7 @@ PyObject* rbe_py_api_collider2D_set_color(PyObject* self, PyObject* args, PyObje
     int alpha;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "iiiii", rbePyApiGenericSetEntityColorKWList, &entity, &red, &green, &blue, &alpha)) {
         Collider2DComponent* collider2DComponent = (Collider2DComponent*) component_manager_get_component(entity, ComponentDataIndex_COLLIDER_2D);
-        collider2DComponent->color = rbe_color_get_normalized_color(red, green, blue, alpha);
+        collider2DComponent->color = se_color_get_normalized_color(red, green, blue, alpha);
         Py_RETURN_NONE;
     }
     return NULL;
@@ -736,7 +738,7 @@ PyObject* rbe_py_api_color_rect_set_color(PyObject* self, PyObject* args, PyObje
     int alpha;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "iiiii", rbePyApiGenericSetEntityColorKWList, &entity, &red, &green, &blue, &alpha)) {
         ColorRectComponent* colorSquareComponent = (ColorRectComponent *) component_manager_get_component(entity, ComponentDataIndex_COLOR_RECT);
-        colorSquareComponent->color = rbe_color_get_normalized_color(red, green, blue, alpha);
+        colorSquareComponent->color = se_color_get_normalized_color(red, green, blue, alpha);
         Py_RETURN_NONE;
     }
     return NULL;
@@ -757,7 +759,7 @@ PyObject* rbe_py_api_color_rect_get_color(PyObject* self, PyObject* args, PyObje
 
 // Network
 PyObject* rbe_py_api_network_is_server(PyObject* self, PyObject* args) {
-    if (rbe_network_is_server()) {
+    if (se_network_is_server()) {
         Py_RETURN_TRUE;
     }
     Py_RETURN_FALSE;
@@ -767,21 +769,21 @@ PyObject* rbe_py_api_network_is_server(PyObject* self, PyObject* args) {
 PyObject* rbe_py_api_server_start(PyObject* self, PyObject* args, PyObject* kwargs) {
     int port;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", rbePyApiServerStartKWList, &port)) {
-        rbe_udp_server_initialize(port, rbe_ec_system_network_callback);
+        se_udp_server_initialize(port, rbe_ec_system_network_callback);
         Py_RETURN_NONE;
     }
     return NULL;
 }
 
 PyObject* rbe_py_api_server_stop(PyObject* self, PyObject* args) {
-    rbe_udp_server_finalize();
+    se_udp_server_finalize();
     Py_RETURN_NONE;
 }
 
 PyObject* rbe_py_api_server_send(PyObject* self, PyObject* args, PyObject* kwargs) {
     char* message;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "s", rbePyApiNetworkSendMessageKWList, &message)) {
-        rbe_udp_server_send_message(message);
+        se_udp_server_send_message(message);
         Py_RETURN_NONE;
     }
     return NULL;
@@ -792,9 +794,9 @@ PyObject* rbe_py_api_server_subscribe(PyObject* self, PyObject* args, PyObject* 
     Entity listenerNode;
     PyObject* listenerFunc;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "siO", rbePyApiNetworkSubscribeKWList, &signalId, &listenerNode, &listenerFunc)) {
-        RBE_ASSERT(PyObject_IsTrue(listenerFunc));
+        SE_ASSERT(PyObject_IsTrue(listenerFunc));
         const RBEScriptContext* scriptContext =  rbe_py_get_script_context();
-        RBE_ASSERT(scriptContext != NULL && scriptContext->on_entity_subscribe_to_network_callback != NULL);
+        SE_ASSERT(scriptContext != NULL && scriptContext->on_entity_subscribe_to_network_callback != NULL);
         scriptContext->on_entity_subscribe_to_network_callback(listenerNode, listenerFunc, signalId);
 
         Py_DECREF(listenerFunc);
@@ -808,21 +810,21 @@ PyObject* rbe_py_api_client_start(PyObject* self, PyObject* args, PyObject* kwar
     char* host;
     int port;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "si", rbePyApiClientStartKWList, &host, &port)) {
-        rbe_udp_client_initialize(host, port, rbe_ec_system_network_callback);
+        se_udp_client_initialize(host, port, rbe_ec_system_network_callback);
         Py_RETURN_NONE;
     }
     return NULL;
 }
 
 PyObject* rbe_py_api_client_stop(PyObject* self, PyObject* args) {
-    rbe_udp_client_finalize();
+    se_udp_client_finalize();
     Py_RETURN_NONE;
 }
 
 PyObject* rbe_py_api_client_send(PyObject* self, PyObject* args, PyObject* kwargs) {
     char* message;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "s", rbePyApiNetworkSendMessageKWList, &message)) {
-        rbe_udp_client_send_message(message);
+        se_udp_client_send_message(message);
         Py_RETURN_NONE;
     }
     return NULL;
@@ -833,9 +835,9 @@ PyObject* rbe_py_api_client_subscribe(PyObject* self, PyObject* args, PyObject* 
     Entity listenerNode;
     PyObject* listenerFunc;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "siO", rbePyApiNetworkSubscribeKWList, &signalId, &listenerNode, &listenerFunc)) {
-        RBE_ASSERT(PyObject_IsTrue(listenerFunc));
+        SE_ASSERT(PyObject_IsTrue(listenerFunc));
         const RBEScriptContext* scriptContext =  rbe_py_get_script_context();
-        RBE_ASSERT(scriptContext != NULL && scriptContext->on_entity_subscribe_to_network_callback != NULL);
+        SE_ASSERT(scriptContext != NULL && scriptContext->on_entity_subscribe_to_network_callback != NULL);
         scriptContext->on_entity_subscribe_to_network_callback(listenerNode, listenerFunc, signalId);
 
         Py_DECREF(listenerFunc);

@@ -4,13 +4,13 @@
 
 #include <cjson/cJSON.h>
 
-#include "../seika/src/math/rbe_math.h"
-#include "../seika/src/utils/rbe_assert.h"
+#include "../seika/src/math/se_math.h"
+#include "../seika/src/utils/se_assert.h"
 
 // Utility Functions
 const char* json_get_string(cJSON* json, const char* key) {
     cJSON* stringJson = cJSON_GetObjectItemCaseSensitive(json, key);
-    RBE_ASSERT_FMT(cJSON_IsString(stringJson) && (stringJson->valuestring != NULL), "Not able to load json string value for key '%s'", key);
+    SE_ASSERT_FMT(cJSON_IsString(stringJson) && (stringJson->valuestring != NULL), "Not able to load json string value for key '%s'", key);
     return stringJson->valuestring;
 }
 
@@ -24,7 +24,7 @@ const char* json_get_string_default(cJSON* json, const char* key, const char* de
 
 char* json_get_string_new(cJSON* json, const char* key) {
     cJSON* stringJson = cJSON_GetObjectItemCaseSensitive(json, key);
-    RBE_ASSERT_FMT(cJSON_IsString(stringJson) && (stringJson->valuestring != NULL), "Not able to load json string value for key '%s'", key);
+    SE_ASSERT_FMT(cJSON_IsString(stringJson) && (stringJson->valuestring != NULL), "Not able to load json string value for key '%s'", key);
     return strdup(stringJson->valuestring);
 }
 
@@ -38,7 +38,7 @@ char* json_get_string_default_new(cJSON* json, const char* key, const char* defa
 
 int json_get_int(cJSON* json, const char* key) {
     cJSON* numJson = cJSON_GetObjectItemCaseSensitive(json, key);
-    RBE_ASSERT_FMT(cJSON_IsNumber(numJson), "Not able to load json int value for key '%s'", key);
+    SE_ASSERT_FMT(cJSON_IsNumber(numJson), "Not able to load json int value for key '%s'", key);
     return (int) numJson->valuedouble;
 }
 
@@ -52,7 +52,7 @@ int json_get_int_default(cJSON* json, const char* key, int defaultValue) {
 
 double json_get_double(cJSON* json, const char* key) {
     cJSON* numJson = cJSON_GetObjectItemCaseSensitive(json, key);
-    RBE_ASSERT_FMT(cJSON_IsNumber(numJson), "Not able to load json int value for key '%s'", key);
+    SE_ASSERT_FMT(cJSON_IsNumber(numJson), "Not able to load json int value for key '%s'", key);
     return numJson->valuedouble;
 }
 
@@ -66,7 +66,7 @@ double json_get_double_default(cJSON* json, const char* key, double defaultValue
 
 bool json_get_bool(cJSON* json, const char* key) {
     cJSON* boolJson = cJSON_GetObjectItemCaseSensitive(json, key);
-    RBE_ASSERT_FMT(cJSON_IsBool(boolJson), "Not able to load json bool value for key '%s'", key);
+    SE_ASSERT_FMT(cJSON_IsBool(boolJson), "Not able to load json bool value for key '%s'", key);
     return cJSON_IsTrue(boolJson) ? true : false;
 }
 

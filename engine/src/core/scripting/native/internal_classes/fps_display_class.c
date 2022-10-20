@@ -5,7 +5,7 @@
 #include <stdlib.h>
 
 #include "../seika/src/rendering/renderer.h"
-#include "../seika/src/memory/rbe_mem.h"
+#include "../seika/src/memory/se_mem.h"
 
 #include "../native_script_class.h"
 #include "../../../engine_context.h"
@@ -36,7 +36,7 @@ RBENativeScriptClass* fps_display_create_new_instance(Entity entity) {
     fpsClassInstance->on_start_func = fps_display_on_start;
     fpsClassInstance->on_end_func = fps_display_on_end;
     fpsClassInstance->update_func = fps_display_update;
-    FpsDisplayClassData* classData = RBE_MEM_ALLOCATE(FpsDisplayClassData);
+    FpsDisplayClassData* classData = SE_MEM_ALLOCATE(FpsDisplayClassData);
     classData->value = 10;
     fpsClassInstance->instance_data = classData;
     fpsClassInstance->class_instance_size = (sizeof(RBENativeScriptClass*) + sizeof(FpsDisplayClassData*)) * 4;

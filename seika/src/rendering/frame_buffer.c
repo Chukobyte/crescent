@@ -2,7 +2,7 @@
 
 #include "shader.h"
 #include "../utils/logger.h"
-#include "../utils/rbe_assert.h"
+#include "../utils/se_assert.h"
 #include "shader_source.h"
 
 #define SCREEN_WIDTH 800
@@ -17,7 +17,7 @@ static Shader* screenShader = NULL;
 static GLuint screenVAO = -1;
 static GLuint screenVBO = -1;
 
-bool cre_frame_buffer_initialize() {
+bool se_frame_buffer_initialize() {
     // VAO & VBO
     GLfloat vertices[] = {
         // pos      // tex coords
@@ -64,7 +64,7 @@ bool cre_frame_buffer_initialize() {
     // Check if framebuffer is complete
     const bool success = glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE;
     if (!success) {
-        rbe_logger_error("Framebuffer is not complete!");
+        se_logger_error("Framebuffer is not complete!");
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     // compile shaders
@@ -76,27 +76,27 @@ bool cre_frame_buffer_initialize() {
     return success;
 }
 
-void cre_frame_buffer_finalize() {
+void se_frame_buffer_finalize() {
     hasBeenInitialized = false;
 }
 
-void cre_frame_buffer_bind() {
-    RBE_ASSERT(hasBeenInitialized);
+void se_frame_buffer_bind() {
+    SE_ASSERT(hasBeenInitialized);
     glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
 }
 
-void cre_frame_buffer_unbind() {
+void se_frame_buffer_unbind() {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-Shader* cre_frame_buffer_get_screen_shader() {
+Shader* se_frame_buffer_get_screen_shader() {
     return screenShader;
 }
 
-unsigned int cre_frame_buffer_get_color_buffer_texture() {
+unsigned int se_frame_buffer_get_color_buffer_texture() {
     return textureColorBuffer;
 }
 
-unsigned int cre_frame_buffer_get_quad_vao() {
+unsigned int se_frame_buffer_get_quad_vao() {
     return screenVAO;
 }

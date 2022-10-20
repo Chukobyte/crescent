@@ -18,19 +18,21 @@ void ImGuiHelper::WindowRenderer::Render(const std::vector<TextureRenderTarget>&
     // Queue draw calls within engine code paths
     // Textures
     for (auto& target : textureRenderTargets) {
-        sf_renderer_queue_sprite_draw_call(target.texture, target.sourceRect, target.destSize, target.color, target.flipX, target.flipY, target.globalTransform);
+        se_renderer_queue_sprite_draw_call(target.texture, target.sourceRect, target.destSize, target.color,
+                                           target.flipX, target.flipY, target.globalTransform);
     }
     // Fonts
     for (auto& target : fontRenderTargets) {
-        sf_renderer_queue_font_draw_call(target.font, target.text.c_str(), target.position.x, target.position.y, target.scale, target.color);
+        se_renderer_queue_font_draw_call(target.font, target.text.c_str(), target.position.x, target.position.y,
+                                         target.scale, target.color);
     }
     // Flush queued calls and render to framebuffer
-    sf_renderer_process_and_flush_batches_just_framebuffer(&WINDOW_BACKGROUND_COLOR);
+    se_renderer_process_and_flush_batches_just_framebuffer(&WINDOW_BACKGROUND_COLOR);
     // Add screen texture from framebuffer to draw list
     const ImVec2 cursorPos = ImGui::GetCursorScreenPos();
     const ImVec2 windowSize = ImGui::GetWindowSize();
     ImGui::GetWindowDrawList()->AddImage(
-        (ImTextureID) cre_frame_buffer_get_color_buffer_texture(),
+        (ImTextureID) se_frame_buffer_get_color_buffer_texture(),
         cursorPos,
         ImVec2(cursorPos.x + windowSize.x, cursorPos.y + windowSize.y),
         ImVec2(0.0f, 1.0f),

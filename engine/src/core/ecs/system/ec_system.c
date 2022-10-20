@@ -1,9 +1,9 @@
 #include "ec_system.h"
 
-#include "../seika/src/data_structures/cre_queue.h"
-#include "../seika/src/memory/rbe_mem.h"
+#include "../seika/src/data_structures/se_queue.h"
+#include "../seika/src/memory/se_mem.h"
 #include "../seika/src/utils/logger.h"
-#include "../seika/src/utils/rbe_assert.h"
+#include "../seika/src/utils/se_assert.h"
 
 //--- EC System Manager ---//
 #define MAX_ENTITY_SYSTEMS_PER_HOOK 6
@@ -44,9 +44,9 @@ void rbe_ec_system_initialize() {
         entitySystemData.network_callback_systems[i] = NULL;
     }
     // Fill up entity id queue
-    entityIdQueue = cre_queue_create(MAX_ENTITIES, NULL_ENTITY);
+    entityIdQueue = se_queue_create(MAX_ENTITIES, NULL_ENTITY);
     for (Entity entityId = 0; entityId < MAX_ENTITIES; entityId++) {
-        cre_queue_enqueue(entityIdQueue, entityId);
+        se_queue_enqueue(entityIdQueue, entityId);
     }
     // Set system data initial values
     entitySystemData.entity_systems_count = 0;
@@ -63,11 +63,11 @@ void rbe_ec_system_finalize() {
         rbe_ec_system_destroy(entitySystemData.entity_systems[i]);
         entitySystemData.entity_systems[i] = NULL;
     }
-    cre_queue_destroy(entityIdQueue);
+    se_queue_destroy(entityIdQueue);
 }
 
 EntitySystem* rbe_ec_system_create() {
-    EntitySystem* newSystem = RBE_MEM_ALLOCATE(EntitySystem);
+    EntitySystem* newSystem = SE_MEM_ALLOCATE(EntitySystem);
     newSystem->name = NULL;
     newSystem->entity_count = 0;
     newSystem->on_entity_registered_func = NULL;
@@ -83,11 +83,11 @@ EntitySystem* rbe_ec_system_create() {
 }
 
 void rbe_ec_system_destroy(EntitySystem* entitySystem) {
-    RBE_MEM_FREE(entitySystem);
+    SE_MEM_FREE(entitySystem);
 }
 
 void rbe_ec_system_register(EntitySystem* system) {
-    RBE_ASSERT_FMT(system != NULL, "Passed in system is NULL!");
+    SE_ASSERT_FMT(system != NULL, "Passed in system is NULL!");
     entitySystemData.entity_systems[entitySystemData.entity_systems_count++] = system;
     if (system->on_entity_start_func != NULL) {
         entitySystemData.on_entity_start_systems[entitySystemData.on_entity_start_systems_count++] = system;
@@ -164,12 +164,12 @@ void rbe_ec_system_network_callback(const char* message) {
 
 // --- Entity Management --- //
 Entity cre_ec_system_create_entity_uid() {
-    RBE_ASSERT_FMT(!cre_queue_is_empty(entityIdQueue), "Entity pool is empty.  Entity limit reached, considering increasing MAX_ENTITIES!");
-    return cre_queue_dequeue(entityIdQueue);
+    SE_ASSERT_FMT(!se_queue_is_empty(entityIdQueue), "Entity pool is empty.  Entity limit reached, considering increasing MAX_ENTITIES!");
+    return se_queue_dequeue(entityIdQueue);
 }
 
 void cre_ec_system_return_entity_uid(Entity entity) {
-    cre_queue_enqueue(entityIdQueue, entity);
+    se_queue_enqueue(entityIdQueue, entity);
 }
 
 // --- Internal Functions --- //
@@ -189,7 +189,7 @@ void rbe_ec_system_insert_entity_into_system(Entity entity, EntitySystem* system
             system->on_entity_registered_func(entity);
         }
     } else {
-        rbe_logger_warn("Entity '%d' already in system '%s'", entity, system->name);
+        se_logger_warn("Entity '%d' already in system '%s'", entity, system->name);
     }
 }
 

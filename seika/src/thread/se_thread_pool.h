@@ -3,7 +3,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-#include "rbe_pthread.h"
+#include "se_pthread.h"
 
 typedef void (*ThreadFunc)(void* arg);
 

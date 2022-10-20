@@ -9,7 +9,7 @@
 #include "../seika/src/asset_manager.h"
 #include "../seika/src/input/input.h"
 #include "../seika/src/utils/logger.h"
-#include "../seika/src/utils/rbe_file_system_utils.h"
+#include "../seika/src/utils/se_file_system_utils.h"
 
 #include "core_info.h"
 #include "game_properties.h"
@@ -38,21 +38,21 @@ bool rbe_initialize(int argv, char** args) {
     // Set random seed
     srand((int)time(NULL));
 
-    rbe_logger_set_level(LogLevel_DEBUG);
+    se_logger_set_level(LogLevel_DEBUG);
 
     engineContext = rbe_engine_context_initialize();
-    engineContext->engineRootDir = rbe_fs_get_cwd();
+    engineContext->engineRootDir = se_fs_get_cwd();
 
     // Handle command line flags
     CommandLineFlagResult commandLineFlagResult = rbe_command_line_args_parse(argv, args);
     if (strcmp(commandLineFlagResult.workingDirOverride, "") != 0) {
-        rbe_logger_debug("Changing working directory from override to '%s'.", commandLineFlagResult.workingDirOverride);
-        rbe_fs_chdir(commandLineFlagResult.workingDirOverride);
-        rbe_fs_print_cwd();
+        se_logger_debug("Changing working directory from override to '%s'.", commandLineFlagResult.workingDirOverride);
+        se_fs_chdir(commandLineFlagResult.workingDirOverride);
+        se_fs_print_cwd();
     } else {
-        rbe_logger_debug("No directory override given, starting default project at '%s'", DEFAULT_START_PROJECT_PATH);
-        rbe_fs_chdir(DEFAULT_START_PROJECT_PATH);
-        rbe_fs_print_cwd();
+        se_logger_debug("No directory override given, starting default project at '%s'", DEFAULT_START_PROJECT_PATH);
+        se_fs_chdir(DEFAULT_START_PROJECT_PATH);
+        se_fs_print_cwd();
     }
 
     // Internal Assets Override
@@ -83,7 +83,7 @@ bool rbe_initialize(int argv, char** args) {
 
     // Initialize sub systems
     if (!rbe_initialize_ecs()) {
-        rbe_logger_error("Failed to initialize ecs!");
+        se_logger_error("Failed to initialize ecs!");
         return false;
     }
 
@@ -91,7 +91,7 @@ bool rbe_initialize(int argv, char** args) {
 
     rbe_load_assets_from_configuration();
 
-    rbe_logger_info("Crescent Engine v%s initialized!", CRE_CORE_VERSION);
+    se_logger_info("Crescent Engine v%s initialized!", CRE_CORE_VERSION);
     engineContext->targetFPS = gameProperties->targetFPS;
     engineContext->isRunning = true;
 
@@ -110,19 +110,19 @@ bool rbe_load_assets_from_configuration() {
     // Audio Sources
     for (size_t i = 0; i < gameProperties->audioSourceCount; i++) {
         const RBEAssetAudioSource assetAudioSource = gameProperties->audioSources[i];
-        rbe_asset_manager_load_audio_source_wav(assetAudioSource.file_path, assetAudioSource.file_path);
+        se_asset_manager_load_audio_source_wav(assetAudioSource.file_path, assetAudioSource.file_path);
     }
 
     // Textures
     for (size_t i = 0; i < gameProperties->textureCount; i++) {
         const RBEAssetTexture assetTexture = gameProperties->textures[i];
-        rbe_asset_manager_load_texture(assetTexture.file_path, assetTexture.file_path);
+        se_asset_manager_load_texture(assetTexture.file_path, assetTexture.file_path);
     }
 
     // Fonts
     for (size_t i = 0; i < gameProperties->fontCount; i++) {
         const RBEAssetFont assetFont = gameProperties->fonts[i];
-        rbe_asset_manager_load_font(assetFont.file_path, assetFont.uid, assetFont.size);
+        se_asset_manager_load_font(assetFont.file_path, assetFont.uid, assetFont.size);
     }
 
     // Inputs
@@ -130,8 +130,8 @@ bool rbe_load_assets_from_configuration() {
         const RBEInputAction inputAction = gameProperties->inputActions[i];
         for (size_t valueIndex = 0; valueIndex < inputAction.valueCount; valueIndex++) {
             const char* actionValue = inputAction.values[valueIndex];
-            rbe_logger_debug("action_name = %s, action_value = %s", inputAction.name, actionValue);
-            cre_input_add_action_value(inputAction.name, actionValue, inputAction.deviceId);
+            se_logger_debug("action_name = %s, action_value = %s", inputAction.name, actionValue);
+            se_input_add_action_value(inputAction.name, actionValue, inputAction.deviceId);
         }
     }
 
@@ -196,10 +196,10 @@ void rbe_process_game_update() {
         fixedTime += PHYSICS_DELTA_TIME;
         accumulator -= PHYSICS_DELTA_TIME;
         rbe_ec_system_physics_process_systems((float) PHYSICS_DELTA_TIME);
-        cre_input_clean_up_flags();
+        se_input_clean_up_flags();
     }
 
-    cre_input_clean_up_flags();
+    se_input_clean_up_flags();
     lastFrameTime = SDL_GetTicks();
 }
 
@@ -223,5 +223,5 @@ void rbe_shutdown() {
     rbe_scene_manager_finalize();
     rbe_ecs_manager_finalize();
     rbe_py_finalize();
-    rbe_logger_info("RBE Engine shutdown!");
+    se_logger_info("RBE Engine shutdown!");
 }

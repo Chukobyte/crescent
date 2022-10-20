@@ -4,15 +4,15 @@
 #include FT_FREETYPE_H
 
 #include "render_context.h"
-#include "../memory/rbe_mem.h"
+#include "../memory/se_mem.h"
 #include "../utils/logger.h"
 
 Font* font_create_font(const char* fileName, int size) {
     FT_Face face;
-    Font* font = RBE_MEM_ALLOCATE(Font);
+    Font* font = SE_MEM_ALLOCATE(Font);
     font->size = size;
-    if (FT_New_Face(rbe_render_context_get()->freeTypeLibrary, fileName, 0, &face)) {
-        rbe_logger_error("Freetype failed to load font!");
+    if (FT_New_Face(se_render_context_get()->freeTypeLibrary, fileName, 0, &face)) {
+        se_logger_error("Freetype failed to load font!");
         font->isValid = false;
     } else {
         // Set size to load glyphs, width set to 0 to dynamically adjust
@@ -23,7 +23,7 @@ Font* font_create_font(const char* fileName, int size) {
         for (unsigned char c = 0; c < 128; c++) { // 'c++' ;-)
             // Load character glyph
             if (FT_Load_Char(face, c, FT_LOAD_RENDER)) {
-                rbe_logger_error("Freetype failed to load Glyph!");
+                se_logger_error("Freetype failed to load Glyph!");
                 continue;
             }
             // Generate texture

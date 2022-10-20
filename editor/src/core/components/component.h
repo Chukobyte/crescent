@@ -4,7 +4,7 @@
 #include <algorithm>
 
 #include "../seika/src/utils/logger.h"
-#include "../seika/src/utils/rbe_assert.h"
+#include "../seika/src/utils/se_assert.h"
 
 #include "../engine/src/core/ecs/component/animated_sprite_component.h"
 #include "../engine/src/core/ecs/component/collider2d_component.h"
@@ -80,7 +80,8 @@ struct EditorAnimation {
                 }
             }
         } else {
-            rbe_logger_error("Tried to remove frame nonexistent frame '%d' from animation '%s'", frameIndex, name.c_str());
+            se_logger_error("Tried to remove frame nonexistent frame '%d' from animation '%s'", frameIndex,
+                            name.c_str());
         }
     }
 
@@ -99,7 +100,7 @@ struct EditorAnimation {
                 return animFrame;
             }
         }
-        rbe_logger_error("Anim '%s' doesn't have frame '%d'", name.c_str(), frameIndex);
+        se_logger_error("Anim '%s' doesn't have frame '%d'", name.c_str(), frameIndex);
         static EditorAnimationFrame errorAnimFrame;
         return errorAnimFrame;
     }
@@ -123,7 +124,7 @@ struct AnimatedSpriteComp : public EditorComponent {
         for (size_t animationIndex = 0; animationIndex < animatedSpriteComponentData->animationCount; animationIndex++) {
             const AnimationData& animData = animatedSpriteComponentData->animations[animationIndex];
             EditorAnimation animation = { animData.name, animData.speed, animData.doesLoop };
-            RBE_ASSERT_FMT(!animation.name.empty(), "Animation is empty!");
+            SE_ASSERT_FMT(!animation.name.empty(), "Animation is empty!");
             for (size_t frameIndex = 0; (int) frameIndex < animData.frameCount; frameIndex++) {
                 const AnimationFrameData& frameData = animData.animationFrames[frameIndex];
                 const EditorAnimationFrame animationFrame = { frameData.texturePath, frameData.drawSource, frameData.frame };
@@ -157,7 +158,7 @@ struct AnimatedSpriteComp : public EditorComponent {
                 return const_cast<EditorAnimation &>(anim);
             }
         }
-        rbe_logger_error("Failed to get anim at with name '%s'", name.c_str());
+        se_logger_error("Failed to get anim at with name '%s'", name.c_str());
         static EditorAnimation failedAnim;
         return failedAnim;
     }

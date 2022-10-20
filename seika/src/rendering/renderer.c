@@ -6,8 +6,8 @@
 #include "shader.h"
 #include "shader_source.h"
 #include "frame_buffer.h"
-#include "../data_structures/rbe_static_array.h"
-#include "../utils/rbe_assert.h"
+#include "../data_structures/se_static_array.h"
+#include "../utils/se_assert.h"
 
 #define CRE_RENDER_TO_FRAMEBUFFER
 
@@ -39,24 +39,24 @@ static float resolutionWidth = 800.0f;
 static float resolutionHeight = 600.0f;
 
 // --- Renderer --- //
-void sf_renderer_initialize(int inResolutionWidth, int inResolutionHeight) {
+void se_renderer_initialize(int inResolutionWidth, int inResolutionHeight) {
     resolutionWidth = (float) inResolutionWidth;
     resolutionHeight = (float) inResolutionHeight;
     glEnable(GL_CULL_FACE);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    rbe_render_context_initialize();
+    se_render_context_initialize();
     sprite_renderer_initialize();
     font_renderer_initialize();
     // Test framebuffer
-    RBE_ASSERT_FMT(cre_frame_buffer_initialize(), "Framebuffer didn't initialize!");
+    SE_ASSERT_FMT(se_frame_buffer_initialize(), "Framebuffer didn't initialize!");
 }
 
-void sf_renderer_finalize() {
+void se_renderer_finalize() {
     font_renderer_finalize();
     sprite_renderer_finalize();
-    rbe_render_context_finalize();
-    cre_frame_buffer_finalize();
+    se_render_context_finalize();
+    se_frame_buffer_finalize();
 }
 
 // --- Sprite Batching --- //
@@ -79,24 +79,24 @@ typedef struct FontBatchItem {
     Color color;
 } FontBatchItem;
 
-RBE_STATIC_ARRAY_CREATE(SpriteBatchItem, 100, sprite_batch_items);
-RBE_STATIC_ARRAY_CREATE(FontBatchItem, 100, font_batch_items);
+SE_STATIC_ARRAY_CREATE(SpriteBatchItem, 100, sprite_batch_items);
+SE_STATIC_ARRAY_CREATE(FontBatchItem, 100, font_batch_items);
 
-void sf_renderer_queue_sprite_draw_call(Texture* texture, Rect2 sourceRect, Size2D destSize, Color color, bool flipX, bool flipY, TransformModel2D* globalTransform) {
+void se_renderer_queue_sprite_draw_call(Texture* texture, Rect2 sourceRect, Size2D destSize, Color color, bool flipX, bool flipY, TransformModel2D* globalTransform) {
     if (texture == NULL) {
-        rbe_logger_error("NULL texture, not submitting draw call!");
+        se_logger_error("NULL texture, not submitting draw call!");
         return;
     }
     SpriteBatchItem item = { .texture = texture, .sourceRect = sourceRect, .destSize = destSize, .color = color, .flipX = flipX, .flipY = flipY, .globalTransform = globalTransform };
-    RBE_STATIC_ARRAY_ADD(sprite_batch_items, item);
+    SE_STATIC_ARRAY_ADD(sprite_batch_items, item);
 }
 
-void sf_renderer_queue_font_draw_call(Font* font, const char* text, float x, float y, float scale, Color color) {
+void se_renderer_queue_font_draw_call(Font* font, const char* text, float x, float y, float scale, Color color) {
     FontBatchItem item = { .font = font, .text = text, .x = x, .y = y, .scale = scale, .color = color };
-    RBE_STATIC_ARRAY_ADD(font_batch_items, item);
+    SE_STATIC_ARRAY_ADD(font_batch_items, item);
 }
 
-void rbe_renderer_flush_batches() {
+void se_renderer_flush_batches() {
     // Sprite
     for (size_t i = 0; i < sprite_batch_items_count; i++) {
         sprite_renderer_draw_sprite(
@@ -109,7 +109,7 @@ void rbe_renderer_flush_batches() {
             sprite_batch_items[i].globalTransform
         );
     }
-    RBE_STATIC_ARRAY_EMPTY(sprite_batch_items);
+    SE_STATIC_ARRAY_EMPTY(sprite_batch_items);
     // Fonts
     for (size_t i = 0; i < font_batch_items_count; i++) {
         font_renderer_draw_text(
@@ -121,46 +121,46 @@ void rbe_renderer_flush_batches() {
             &font_batch_items[i].color
         );
     }
-    RBE_STATIC_ARRAY_EMPTY(font_batch_items);
+    SE_STATIC_ARRAY_EMPTY(font_batch_items);
 }
 
-void sf_renderer_process_and_flush_batches(const Color* backgroundColor) {
+void se_renderer_process_and_flush_batches(const Color* backgroundColor) {
 #ifdef CRE_RENDER_TO_FRAMEBUFFER
-    cre_frame_buffer_bind();
+    se_frame_buffer_bind();
 #endif
 
     // Clear framebuffer with background color
     glClearColor(backgroundColor->r, backgroundColor->g, backgroundColor->b, backgroundColor->a);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-    rbe_renderer_flush_batches();
+    se_renderer_flush_batches();
 
 #ifdef CRE_RENDER_TO_FRAMEBUFFER
-    cre_frame_buffer_unbind();
+    se_frame_buffer_unbind();
 
     // Clear screen texture background
     static Color screenBackgroundColor = { 1.0f, 1.0f, 1.0f, 1.0f };
     glClearColor(screenBackgroundColor.r, screenBackgroundColor.g, screenBackgroundColor.b, screenBackgroundColor.a);
     glClear(GL_COLOR_BUFFER_BIT);
     // Draw screen texture from framebuffer
-    Shader* screenShader = cre_frame_buffer_get_screen_shader();
+    Shader* screenShader = se_frame_buffer_get_screen_shader();
     shader_use(screenShader);
-    glBindVertexArray(cre_frame_buffer_get_quad_vao());
-    glBindTexture(GL_TEXTURE_2D, cre_frame_buffer_get_color_buffer_texture());	// use the color attachment texture as the texture of the quad plane
+    glBindVertexArray(se_frame_buffer_get_quad_vao());
+    glBindTexture(GL_TEXTURE_2D, se_frame_buffer_get_color_buffer_texture());	// use the color attachment texture as the texture of the quad plane
     glDrawArrays(GL_TRIANGLES, 0, 6);
 #endif
 }
 
-void sf_renderer_process_and_flush_batches_just_framebuffer(const Color* backgroundColor) {
-    cre_frame_buffer_bind();
+void se_renderer_process_and_flush_batches_just_framebuffer(const Color* backgroundColor) {
+    se_frame_buffer_bind();
 
     // Clear framebuffer with background color
     glClearColor(backgroundColor->r, backgroundColor->g, backgroundColor->b, backgroundColor->a);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-    rbe_renderer_flush_batches();
+    se_renderer_flush_batches();
 
-    cre_frame_buffer_unbind();
+    se_frame_buffer_unbind();
 }
 
 // --- Sprite Renderer --- //
@@ -273,8 +273,8 @@ void sprite_renderer_draw_sprite(const Texture* texture, const Rect2* sourceRect
 
 // --- Font Renderer --- //
 void font_renderer_initialize() {
-    if (FT_Init_FreeType(&rbe_render_context_get()->freeTypeLibrary)) {
-        rbe_logger_error("Unable to initialize FreeType library!");
+    if (FT_Init_FreeType(&se_render_context_get()->freeTypeLibrary)) {
+        se_logger_error("Unable to initialize FreeType library!");
     }
     mat4 proj = {
         {1.0f, 0.0f, 0.0f, 0.0f},
@@ -289,7 +289,7 @@ void font_renderer_initialize() {
 }
 
 void font_renderer_finalize() {
-    FT_Done_FreeType(rbe_render_context_get()->freeTypeLibrary);
+    FT_Done_FreeType(se_render_context_get()->freeTypeLibrary);
 }
 
 void font_renderer_draw_text(const Font* font, const char* text, float x, float y, float scale, const Color* color) {

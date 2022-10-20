@@ -21,7 +21,7 @@ CommandLineFlagResult rbe_command_line_args_parse(int argv, char** args) {
     for (int argumentIndex = 1; argumentIndex < argv; argumentIndex++) {
         // Can process single argument if needed
         const char* argument = args[argumentIndex];
-        rbe_logger_debug("command line argument = '%s'", argument);
+        se_logger_debug("command line argument = '%s'", argument);
         // Process arg value
         const int nextArgumentIndex = argumentIndex + 1;
         if (nextArgumentIndex >= argv) {
@@ -30,12 +30,12 @@ CommandLineFlagResult rbe_command_line_args_parse(int argv, char** args) {
         if (strcmp(argument, RBE_COMMAND_LINE_FLAG_WORK_DIR) == 0) {
             const char* workingDirectoryOverride = args[nextArgumentIndex];
             strcpy(flagResult.workingDirOverride, workingDirectoryOverride);
-            rbe_logger_debug("working directory override = '%s'", flagResult.workingDirOverride);
+            se_logger_debug("working directory override = '%s'", flagResult.workingDirOverride);
             argumentIndex++;
         } else if (strcmp(argument, RBE_COMMAND_LINE_FLAG_INTERNAL_ASSETS_DIR) == 0) {
             const char* internalAssetsDirectoryOverride = args[nextArgumentIndex];
             strcpy(flagResult.internalAssetsDirOverride, internalAssetsDirectoryOverride);
-            rbe_logger_debug("internal assets directory override = '%s'", flagResult.internalAssetsDirOverride);
+            se_logger_debug("internal assets directory override = '%s'", flagResult.internalAssetsDirOverride);
             argumentIndex++;
         }
     }

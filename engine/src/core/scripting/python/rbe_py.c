@@ -2,7 +2,7 @@
 
 #include <Python.h>
 
-#include "../seika/src/utils/rbe_assert.h"
+#include "../seika/src/utils/se_assert.h"
 
 #include "py_cache.h"
 #include "rbe_py_api_module.h"

@@ -7,7 +7,7 @@ extern "C" {
 #include <stdbool.h>
 
 #include "../seika/src/rendering/texture.h"
-#include "../seika/src/math/rbe_math.h"
+#include "../seika/src/math/se_math.h"
 
 typedef struct SpriteComponent {
     Texture* texture;
