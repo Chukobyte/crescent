@@ -1,3 +1,3 @@
-## Crescent Engine Core
+## Seika Framework
 
-The core to crescent engine...
+A framework that can be used to make 2D games.
