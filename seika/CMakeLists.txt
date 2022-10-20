@@ -31,9 +31,6 @@ add_library(${PROJECT_NAME} STATIC
         src/math/rbe_math.c
 #        src/core/input/input.c
 #        src/core/input/input_action.c
-#        src/core/scene/scene_manager.c
-#        src/core/scene/scene_utils.c
-#        src/core/scripting/script_context.c
 #        src/core/networking/rbe_network.c
         src/rendering/font.c
         src/rendering/frame_buffer.c
@@ -47,12 +44,12 @@ add_library(${PROJECT_NAME} STATIC
 #        src/core/thread/rbe_thread_pool.c
 #        src/core/utils/command_line_args_util.c
         src/utils/logger.c
-#        src/core/utils/rbe_file_system_utils.c
-#        src/core/utils/rbe_string_util.c
-#        src/core/data_structures/cre_queue.c
-#        src/core/data_structures/rbe_hash_map.c
-#        src/core/data_structures/rbe_hash_map_string.c
-#        src/core/networking/rbe_network_socket.c
+        src/utils/rbe_file_system_utils.c
+        src/utils/rbe_string_util.c
+        src/data_structures/cre_queue.c
+        src/data_structures/rbe_hash_map.c
+        src/data_structures/rbe_hash_map_string.c
+        src/networking/rbe_network_socket.c
         )
 
 add_library(glad ../include/glad/glad.c)
