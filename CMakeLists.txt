@@ -16,4 +16,4 @@ target_link_libraries(${PROJECT_NAME} crescent_core seika)
 
 # Create editor exe
 add_executable(crescent_engine_editor editor/src/main.cpp)
-target_link_libraries(crescent_engine_editor crescent_editor crescent_core)
+target_link_libraries(crescent_engine_editor crescent_editor crescent_core seika)

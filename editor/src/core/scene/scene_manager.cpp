@@ -1,7 +1,8 @@
 #include "scene_manager.h"
 
+#include "../seika/src/utils/rbe_assert.h"
+
 #include "../engine/src/core/json/json_file_loader.h"
-#include "../engine/src/core/utils/rbe_assert.h"
 #include "../ui/imgui/imgui_helper.h"
 #include "../editor_callbacks.h"
 

@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-#include "../engine/src/core/math/rbe_math.h"
+#include "../seika/src/math/rbe_math.h"
 
 struct Texture;
 struct Font;

@@ -1,10 +1,9 @@
 #include "opened_project_ui.h"
 
+#include "../seika/src/utils/rbe_file_system_utils.h"
+#include "../seika/src/utils/logger.h"
+
 #include "../engine/src/core/scene/scene_utils.h"
-#include "../engine/src/core/camera/camera.h"
-#include "../engine/src/core/camera/camera_manager.h"
-#include "../engine/src/core/utils/rbe_file_system_utils.h"
-#include "../engine/src/core/utils/logger.h"
 
 #include "imgui/imgui_helper.h"
 #include "../editor_context.h"

@@ -3,8 +3,9 @@
 #include <imgui/imgui_impl_sdl.h>
 #include <imgui/imgui_impl_opengl3.h>
 
-#include "../engine/src/core/rendering/renderer.h"
-#include "../engine/src/core/utils/logger.h"
+#include "../seika/src/rendering/renderer.h"
+#include "../seika/src/utils/logger.h"
+
 #include "../engine/src/core/scripting/python/rbe_py.h"
 
 #include "editor_context.h"
@@ -34,8 +35,8 @@ bool Editor::Initialize() {
     // Initialize Asset Manager
     AssetManager::Get()->Initialize();
 
-    // TODO: Move engine renderer init in another location
-    rbe_renderer_initialize();
+    // TODO: Figure out window stuff dimensions...
+    sf_renderer_initialize(800, 600);
 
     editorContext->initialDir = FileSystemHelper::GetCurrentDir();
     editorContext->isRunning = true;
