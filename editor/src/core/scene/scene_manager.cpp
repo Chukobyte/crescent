@@ -1,8 +1,6 @@
 #include "scene_manager.h"
 
-#include "../engine/src/core/scripting/python/py_helper.h"
 #include "../engine/src/core/json/json_file_loader.h"
-#include "../engine/src/core/utils/logger.h"
 #include "../engine/src/core/utils/rbe_assert.h"
 #include "../ui/imgui/imgui_helper.h"
 #include "../editor_callbacks.h"
