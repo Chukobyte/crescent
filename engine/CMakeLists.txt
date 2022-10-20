@@ -60,6 +60,7 @@ add_library(${PROJECT_NAME} STATIC
         src/core/utils/logger.c
         src/core/utils/rbe_file_system_utils.c
         src/core/utils/rbe_string_util.c
+        src/core/data_structures/cre_queue.c
         src/core/data_structures/rbe_hash_map.c
         src/core/data_structures/rbe_hash_map_string.c
         src/core/physics/collision/collision.c

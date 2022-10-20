@@ -1,5 +1,5 @@
 {
-    "name": "New Fighter",
+    "name": "Cardboard Fighter",
     "window_width": 800,
     "window_height": 600,
     "resolution_width": 800,
@@ -147,7 +147,6 @@
             "values": [
                 "left",
                 "joystick_left_analog_left"
-
             ]
         },
         {

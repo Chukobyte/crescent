@@ -72,7 +72,6 @@ typedef struct FontBatchItem {
     float y;
     float scale;
     Color color;
-    Transform2DComponent* transform2DComponent;
 } FontBatchItem;
 
 RBE_STATIC_ARRAY_CREATE(SpriteBatchItem, 100, sprite_batch_items);

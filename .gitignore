@@ -30,4 +30,4 @@ _deps
 cmake-build-*
 
 # Test Projects
-test_games/new_fighter/src/test
+test_games/cardboard_fighter/src/test
