@@ -1,7 +1,8 @@
 #include "file_node.h"
 
+#include "../seika/src/utils/logger.h"
+
 #include "utils/file_system_helper.h"
-#include "../engine/src/core/utils/logger.h"
 
 //--- FileNode ---//
 std::string FileNode::GetRelativePath() const {

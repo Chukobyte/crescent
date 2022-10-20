@@ -2,13 +2,14 @@
 
 #include <Python.h>
 
+#include "../seika/src/data_structures/rbe_hash_map.h"
+#include "../seika/src/utils/rbe_string_util.h"
+#include "../seika/src/utils/rbe_assert.h"
+
 #include "ec_system.h"
-#include "../../data_structures/rbe_hash_map.h"
 #include "../../scripting/python/py_script_context.h"
 #include "../../scripting/native/native_script_context.h"
 #include "../../scripting/native/internal_classes/fps_display_class.h"
-#include "../../utils/rbe_string_util.h"
-#include "../../utils/rbe_assert.h"
 
 void script_system_on_entity_registered(Entity entity);
 void script_system_on_entity_unregistered(Entity entity);

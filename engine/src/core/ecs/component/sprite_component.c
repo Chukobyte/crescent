@@ -2,7 +2,7 @@
 
 #include <string.h>
 
-#include "../../memory/rbe_mem.h"
+#include "../seika/src/memory/rbe_mem.h"
 
 SpriteComponent* sprite_component_create() {
     SpriteComponent* spriteComponent = RBE_MEM_ALLOCATE(SpriteComponent);

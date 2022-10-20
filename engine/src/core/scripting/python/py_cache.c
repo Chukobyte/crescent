@@ -2,9 +2,9 @@
 
 #include <Python.h>
 
-#include "../../data_structures/rbe_hash_map_string.h"
-#include "../../memory/rbe_mem.h"
-#include "../../utils/rbe_assert.h"
+#include "../seika/src/data_structures/rbe_hash_map_string.h"
+#include "../seika/src/memory/rbe_mem.h"
+#include "../seika/src/utils/rbe_assert.h"
 
 typedef struct PyModuleCacheItem {
     PyObject* module;

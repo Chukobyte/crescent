@@ -1,14 +1,15 @@
 #include "font_rendering_ec_system.h"
 
+#include "../seika/src/rendering/renderer.h"
+#include "../seika/src/utils/rbe_string_util.h"
+#include "../seika/src/utils/rbe_assert.h"
+
 #include "ec_system.h"
 #include "../component/transform2d_component.h"
 #include "../component/text_label_component.h"
-#include "../../rendering/renderer.h"
 #include "../../scene/scene_manager.h"
 #include "../../camera/camera.h"
 #include "../../camera/camera_manager.h"
-#include "../../utils/rbe_string_util.h"
-#include "../../utils/rbe_assert.h"
 
 
 EntitySystem* fontRenderingSystem = NULL;
@@ -34,7 +35,7 @@ void font_rendering_system_render() {
         const RBECamera2D* renderCamera = fontTransformComp->ignoreCamera ? defaultCamera : camera2D;
         const TransformModel2D* globalTransform = rbe_scene_manager_get_scene_node_global_transform(entity, fontTransformComp);
 
-        rbe_renderer_queue_font_draw_call(
+        sf_renderer_queue_font_draw_call(
             textLabelComponent->font,
             textLabelComponent->text,
             (globalTransform->position.x - renderCamera->viewport.x + renderCamera->offset.x) * renderCamera->zoom.x,

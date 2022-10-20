@@ -2,7 +2,7 @@
 
 #include <stddef.h>
 
-#include "../../memory/rbe_mem.h"
+#include "../seika/src/memory/rbe_mem.h"
 
 RBENativeScriptClass* rbe_native_class_create_new(Entity entity, const char* path, const char* name) {
     RBENativeScriptClass* scriptClass = RBE_MEM_ALLOCATE(RBENativeScriptClass);

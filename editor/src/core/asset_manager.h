@@ -2,10 +2,10 @@
 
 #include "utils/singleton.h"
 
-#include "../engine/src/core/asset_manager.h"
-#include "../engine/src/core/rendering/texture.h"
-#include "../engine/src/core/rendering/font.h"
-#include "../engine/src/core/audio/audio.h"
+#include "../seika/src/asset_manager.h"
+#include "../seika/src/rendering/texture.h"
+#include "../seika/src/rendering/font.h"
+#include "../seika/src/audio/audio.h"
 
 // C++ Wrapper for the engine's asset manager
 class AssetManager : public Singleton<AssetManager> {

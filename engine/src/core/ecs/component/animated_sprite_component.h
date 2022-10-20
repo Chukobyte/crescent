@@ -7,9 +7,10 @@ extern "C" {
 #include <stdint.h>
 #include <stdbool.h>
 
+#include "../seika/src/math/rbe_math.h"
+#include "../seika/src/data_structures/rbe_hash_map_string.h"
+
 #include "../../animation/animation.h"
-#include "../../math/rbe_math.h"
-#include "../../data_structures/rbe_hash_map_string.h"
 
 #define ANIMATED_SPRITE_COMPONENT_MAX_ANIMATIONS 16
 

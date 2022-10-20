@@ -2,13 +2,14 @@
 
 #include <Python.h>
 
+#include "../seika/src/data_structures/rbe_hash_map.h"
+#include "../seika/src/data_structures/rbe_static_array.h"
+#include "../seika/src/utils/rbe_assert.h"
+#include "../seika/src/memory/rbe_mem.h"
+#include "../seika/src/networking/rbe_network.h"
+
 #include "py_cache.h"
 #include "../script_context.h"
-#include "../../data_structures/rbe_hash_map.h"
-#include "../../data_structures/rbe_static_array.h"
-#include "../../utils/rbe_assert.h"
-#include "../../memory/rbe_mem.h"
-#include "../../networking/rbe_network.h"
 
 //--- RBE Script Callback ---//
 typedef struct RBEScriptCallback {

@@ -4,8 +4,8 @@
 
 #include <cjson/cJSON.h>
 
-#include "../math/rbe_math.h"
-#include "../utils/rbe_assert.h"
+#include "../seika/src/math/rbe_math.h"
+#include "../seika/src/utils/rbe_assert.h"
 
 // Utility Functions
 const char* json_get_string(cJSON* json, const char* key) {

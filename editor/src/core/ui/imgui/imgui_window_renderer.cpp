@@ -4,8 +4,8 @@
 #include "imgui/imgui_impl_opengl3.h"
 #include "imgui/imgui_impl_sdl.h"
 
-#include "../engine/src/core/rendering/renderer.h"
-#include "../engine/src/core/rendering/frame_buffer.h"
+#include "../seika/src/rendering/renderer.h"
+#include "../seika/src/rendering/frame_buffer.h"
 
 #include "../../editor_context.h"
 
@@ -18,14 +18,14 @@ void ImGuiHelper::WindowRenderer::Render(const std::vector<TextureRenderTarget>&
     // Queue draw calls within engine code paths
     // Textures
     for (auto& target : textureRenderTargets) {
-        rbe_renderer_queue_sprite_draw_call(target.texture, target.sourceRect, target.destSize, target.color, target.flipX, target.flipY, target.globalTransform);
+        sf_renderer_queue_sprite_draw_call(target.texture, target.sourceRect, target.destSize, target.color, target.flipX, target.flipY, target.globalTransform);
     }
     // Fonts
     for (auto& target : fontRenderTargets) {
-        rbe_renderer_queue_font_draw_call(target.font, target.text.c_str(), target.position.x, target.position.y, target.scale, target.color);
+        sf_renderer_queue_font_draw_call(target.font, target.text.c_str(), target.position.x, target.position.y, target.scale, target.color);
     }
     // Flush queued calls and render to framebuffer
-    cre_renderer_process_and_flush_batches_just_framebuffer(&WINDOW_BACKGROUND_COLOR);
+    sf_renderer_process_and_flush_batches_just_framebuffer(&WINDOW_BACKGROUND_COLOR);
     // Add screen texture from framebuffer to draw list
     const ImVec2 cursorPos = ImGui::GetCursorScreenPos();
     const ImVec2 windowSize = ImGui::GetWindowSize();

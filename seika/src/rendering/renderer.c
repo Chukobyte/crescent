@@ -6,7 +6,6 @@
 #include "shader.h"
 #include "shader_source.h"
 #include "frame_buffer.h"
-#include "../game_properties.h"
 #include "../data_structures/rbe_static_array.h"
 #include "../utils/rbe_assert.h"
 
@@ -35,8 +34,14 @@ static GLuint spriteQuadVBO;
 static Shader* spriteShader = NULL;
 static Shader* fontShader = NULL;
 
+// TODO: Get Resolution Width
+static float resolutionWidth = 800.0f;
+static float resolutionHeight = 600.0f;
+
 // --- Renderer --- //
-void rbe_renderer_initialize() {
+void sf_renderer_initialize(int inResolutionWidth, int inResolutionHeight) {
+    resolutionWidth = (float) inResolutionWidth;
+    resolutionHeight = (float) inResolutionHeight;
     glEnable(GL_CULL_FACE);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -47,7 +52,7 @@ void rbe_renderer_initialize() {
     RBE_ASSERT_FMT(cre_frame_buffer_initialize(), "Framebuffer didn't initialize!");
 }
 
-void rbe_renderer_finalize() {
+void sf_renderer_finalize() {
     font_renderer_finalize();
     sprite_renderer_finalize();
     rbe_render_context_finalize();
@@ -77,7 +82,7 @@ typedef struct FontBatchItem {
 RBE_STATIC_ARRAY_CREATE(SpriteBatchItem, 100, sprite_batch_items);
 RBE_STATIC_ARRAY_CREATE(FontBatchItem, 100, font_batch_items);
 
-void rbe_renderer_queue_sprite_draw_call(Texture* texture, Rect2 sourceRect, const Size2D destSize, Color color, bool flipX, bool flipY, TransformModel2D* globalTransform) {
+void sf_renderer_queue_sprite_draw_call(Texture* texture, Rect2 sourceRect, Size2D destSize, Color color, bool flipX, bool flipY, TransformModel2D* globalTransform) {
     if (texture == NULL) {
         rbe_logger_error("NULL texture, not submitting draw call!");
         return;
@@ -86,7 +91,7 @@ void rbe_renderer_queue_sprite_draw_call(Texture* texture, Rect2 sourceRect, con
     RBE_STATIC_ARRAY_ADD(sprite_batch_items, item);
 }
 
-void rbe_renderer_queue_font_draw_call(Font* font, const char* text, float x, float y, float scale, Color color) {
+void sf_renderer_queue_font_draw_call(Font* font, const char* text, float x, float y, float scale, Color color) {
     FontBatchItem item = { .font = font, .text = text, .x = x, .y = y, .scale = scale, .color = color };
     RBE_STATIC_ARRAY_ADD(font_batch_items, item);
 }
@@ -119,7 +124,7 @@ void rbe_renderer_flush_batches() {
     RBE_STATIC_ARRAY_EMPTY(font_batch_items);
 }
 
-void cre_renderer_process_and_flush_batches(const Color* backgroundColor) {
+void sf_renderer_process_and_flush_batches(const Color* backgroundColor) {
 #ifdef CRE_RENDER_TO_FRAMEBUFFER
     cre_frame_buffer_bind();
 #endif
@@ -146,7 +151,7 @@ void cre_renderer_process_and_flush_batches(const Color* backgroundColor) {
 #endif
 }
 
-void cre_renderer_process_and_flush_batches_just_framebuffer(const Color* backgroundColor) {
+void sf_renderer_process_and_flush_batches_just_framebuffer(const Color* backgroundColor) {
     cre_frame_buffer_bind();
 
     // Clear framebuffer with background color
@@ -203,8 +208,7 @@ void sprite_renderer_initialize() {
         {0.0f, 0.0f, 1.0f, 0.0f},
         {0.0f, 0.0f, 0.0f, 1.0f}
     };
-    RBEGameProperties* gameProperties = cre_game_props_get_or_default();
-    glm_ortho(0.0f, (float) gameProperties->resolutionWidth, (float) gameProperties->resolutionHeight, 0.0f, -1.0f, 1.0f, proj);
+    glm_ortho(0.0f, resolutionWidth, resolutionHeight, 0.0f, -1.0f, 1.0f, proj);
     shader_use(spriteShader);
     shader_set_mat4_float(spriteShader, "projection", &proj);
     shader_set_int(spriteShader, "sprite", 0);
@@ -278,8 +282,7 @@ void font_renderer_initialize() {
         {0.0f, 0.0f, 1.0f, 0.0f},
         {0.0f, 0.0f, 0.0f, 1.0f}
     };
-    RBEGameProperties* gameProperties = rbe_game_props_get();
-    glm_ortho(0.0f, (float) gameProperties->resolutionWidth, (float) -gameProperties->resolutionHeight, 0.0f, -1.0f, 1.0f, proj);
+    glm_ortho(0.0f, resolutionWidth, -resolutionHeight, 0.0f, -1.0f, 1.0f, proj);
     fontShader = shader_compile_new_shader(OPENGL_SHADER_SOURCE_VERTEX_FONT, OPENGL_SHADER_SOURCE_FRAGMENT_FONT);
     shader_use(fontShader);
     shader_set_mat4_float(fontShader, "projection", &proj);

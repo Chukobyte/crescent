@@ -29,11 +29,6 @@ add_library(${PROJECT_NAME} STATIC
         src/core/core.c
         src/core/game_properties.c
         src/core/engine_context.c
-        src/core/asset_manager.c
-        src/core/memory/rbe_mem.c
-        src/core/math/rbe_math.c
-        src/core/input/input.c
-        src/core/input/input_action.c
         src/core/scene/scene_manager.c
         src/core/scene/scene_utils.c
         src/core/scripting/script_context.c
@@ -45,24 +40,7 @@ add_library(${PROJECT_NAME} STATIC
         src/core/scripting/native/native_script_context.c
         src/core/scripting/native/native_script_class.c
         src/core/scripting/native/internal_classes/fps_display_class.c
-        src/core/networking/rbe_network.c
-        src/core/rendering/font.c
-        src/core/rendering/frame_buffer.c
-        src/core/rendering/renderer.c
-        src/core/rendering/render_context.c
-        src/core/rendering/shader.c
-        src/core/rendering/texture.c
-        src/core/audio/audio_manager.c
-        src/core/audio/audio.c
-        src/core/thread/rbe_pthread.c
-        src/core/thread/rbe_thread_pool.c
         src/core/utils/command_line_args_util.c
-        src/core/utils/logger.c
-        src/core/utils/rbe_file_system_utils.c
-        src/core/utils/rbe_string_util.c
-        src/core/data_structures/cre_queue.c
-        src/core/data_structures/rbe_hash_map.c
-        src/core/data_structures/rbe_hash_map_string.c
         src/core/physics/collision/collision.c
         src/core/camera/camera.c
         src/core/camera/camera_manager.c
@@ -83,7 +61,6 @@ add_library(${PROJECT_NAME} STATIC
         src/core/ecs/system/script_ec_system.c
         src/core/ecs/system/sprite_rendering_ec_system.c
         src/core/ecs/system/collision_ec_system.c
-        src/core/networking/rbe_network_socket.c
         src/core/json/json_file_loader.c
         )
 
@@ -91,8 +68,12 @@ if (NOT DEFINED IS_CI_BUILD)
     set(IS_CI_BUILD "false")
 endif()
 
-add_library(glad ../include/glad/glad.c)
-add_library(stb_image ../include/stb_image/stb_image.c)
+if (NOT TARGET glad)
+    add_library(glad ../include/glad/glad.c)
+endif()
+if (NOT TARGET stb_image)
+    add_library(stb_image ../include/stb_image/stb_image.c)
+endif()
 add_library(cJSON ../include/cjson/cJSON.c)
 
 target_include_directories(${PROJECT_NAME} PUBLIC

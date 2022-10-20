@@ -4,11 +4,11 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include "../seika/src/rendering/renderer.h"
+#include "../seika/src/memory/rbe_mem.h"
+
 #include "../native_script_class.h"
 #include "../../../engine_context.h"
-#include "../../../asset_manager.h"
-#include "../../../rendering/renderer.h"
-#include "../../../memory/rbe_mem.h"
 #include "../../../ecs/component/text_label_component.h"
 #include "../../../ecs/component/component.h"
 

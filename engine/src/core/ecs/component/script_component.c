@@ -1,9 +1,8 @@
 #include "script_component.h"
 
-#include <stddef.h>
 #include <string.h>
 
-#include "../../memory/rbe_mem.h"
+#include "../seika/src/memory/rbe_mem.h"
 
 ScriptComponent* script_component_create(const char* path, const char* name) {
     ScriptComponent* scriptComponent = RBE_MEM_ALLOCATE(ScriptComponent);

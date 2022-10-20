@@ -2,8 +2,14 @@
 
 #include <string.h>
 
+#include "../seika/src/utils/logger.h"
+#include "../seika/src/asset_manager.h"
+#include "../seika/src/utils/rbe_assert.h"
+#include "../seika/src/memory/rbe_mem.h"
+#include "../seika/src/data_structures/rbe_hash_map.h"
+#include "../seika/src/data_structures/rbe_static_array.h"
+
 #include "scene_utils.h"
-#include "../asset_manager.h"
 #include "../ecs/system/ec_system.h"
 #include "../ecs/component/sprite_component.h"
 #include "../ecs/component/animated_sprite_component.h"
@@ -12,12 +18,7 @@
 #include "../ecs/component/collider2d_component.h"
 #include "../ecs/component/color_rect_component.h"
 #include "../camera/camera_manager.h"
-#include "../memory/rbe_mem.h"
-#include "../data_structures/rbe_hash_map.h"
-#include "../data_structures/rbe_static_array.h"
 #include "../json/json_file_loader.h"
-#include "../utils/logger.h"
-#include "../utils/rbe_assert.h"
 
 // --- Scene Tree --- //
 typedef void (*ExecuteOnAllTreeNodesFunc) (SceneTreeNode*);

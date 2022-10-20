@@ -5,18 +5,17 @@
 #include <SDL2/SDL.h>
 #include <glad/glad.h>
 
+#include "../seika/src/seika.h"
+#include "../seika/src/asset_manager.h"
+#include "../seika/src/input/input.h"
+#include "../seika/src/utils/logger.h"
+#include "../seika/src/utils/rbe_file_system_utils.h"
+
 #include "core_info.h"
 #include "game_properties.h"
 #include "engine_context.h"
-#include "asset_manager.h"
-#include "input/input.h"
-#include "utils/logger.h"
 #include "utils/command_line_args_util.h"
-#include "utils/rbe_file_system_utils.h"
-#include "utils/rbe_assert.h"
 #include "scripting/python/rbe_py.h"
-#include "rendering/renderer.h"
-#include "audio/audio_manager.h"
 #include "ecs/ecs_manager.h"
 #include "ecs/system/ec_system.h"
 #include "scene/scene_manager.h"
@@ -25,13 +24,8 @@
 // The default project path if no directory override is provided
 #define CRE_PROJECT_CONFIG_FILE_NAME "project.ccfg"
 
-bool rbe_initialize_sdl();
-bool rbe_initialize_rendering();
-bool rbe_initialize_audio();
-bool rbe_initialize_input();
 bool rbe_initialize_ecs();
 bool rbe_load_assets_from_configuration();
-void rbe_process_inputs();
 void rbe_process_game_update();
 void rbe_render();
 
@@ -69,29 +63,25 @@ bool rbe_initialize(int argv, char** args) {
     }
 
     rbe_py_initialize();
-    rbe_asset_manager_initialize();
 
     gameProperties = cre_json_load_config_file(CRE_PROJECT_CONFIG_FILE_NAME);
     rbe_game_props_initialize(gameProperties);
     rbe_game_props_print();
 
+    // Setup Game Controller DB Path
+    char controllerMappingFilePath[256];
+    strcpy(controllerMappingFilePath, engineContext->internalAssetsDir);
+    strcat(controllerMappingFilePath, "/assets/resources/game_controller_db.txt");
+
+    // Initialize seika framework
+    sf_initialize(gameProperties->gameTitle,
+                  gameProperties->windowWidth,
+                  gameProperties->windowHeight,
+                  gameProperties->resolutionWidth,
+                  gameProperties->resolutionHeight,
+                  controllerMappingFilePath);
+
     // Initialize sub systems
-    if (!rbe_initialize_sdl()) {
-        rbe_logger_error("Failed to initialize sdl!");
-        return false;
-    }
-    if (!rbe_initialize_rendering()) {
-        rbe_logger_error("Failed to initialize rendering!");
-        return false;
-    }
-    if (!rbe_initialize_audio()) {
-        rbe_logger_error("Failed to initialize audio!");
-        return false;
-    }
-    if (!rbe_initialize_input()) {
-        rbe_logger_error("Failed to initialize input!");
-        return false;
-    }
     if (!rbe_initialize_ecs()) {
         rbe_logger_error("Failed to initialize ecs!");
         return false;
@@ -108,68 +98,6 @@ bool rbe_initialize(int argv, char** args) {
     // Go to initial scene
     rbe_scene_manager_queue_scene_change(gameProperties->initialScenePath);
 
-    return true;
-}
-
-bool rbe_initialize_sdl() {
-    if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
-        rbe_logger_error("Failed to initialize sdl!");
-        return false;
-    }
-    return true;
-}
-
-bool rbe_initialize_rendering() {
-    // OpenGL attributes
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-    SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
-
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-
-    // Create window
-    SDL_WindowFlags windowFlags = (SDL_WindowFlags)(
-                                      SDL_WINDOW_OPENGL
-                                      | SDL_WINDOW_RESIZABLE
-                                      | SDL_WINDOW_ALLOW_HIGHDPI
-                                  );
-    RBEGameProperties* props = rbe_game_props_get();
-    window = SDL_CreateWindow(
-                 props->gameTitle,
-                 SDL_WINDOWPOS_CENTERED,
-                 SDL_WINDOWPOS_CENTERED,
-                 props->windowWidth,
-                 props->windowHeight,
-                 windowFlags
-             );
-    if (!window) {
-        rbe_logger_error("Failed to create window!");
-        return false;
-    }
-
-    // Create OpenGL Context
-    openGlContext = SDL_GL_CreateContext(window);
-
-    // Initialize Glad
-    if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
-        rbe_logger_error("Couldn't initialize glad!");
-        return false;
-    }
-
-    rbe_renderer_initialize();
-    return true;
-}
-
-bool rbe_initialize_audio() {
-    return rbe_audio_manager_init();
-}
-
-bool rbe_initialize_input() {
-    if (!cre_input_initialize()) {
-        return false;
-    }
     return true;
 }
 
@@ -221,7 +149,7 @@ void rbe_update() {
     rbe_scene_manager_process_queued_creation_entities();
 
     // Main loop
-    rbe_process_inputs();
+    sf_process_inputs();
     rbe_process_game_update();
     rbe_render();
 
@@ -234,20 +162,6 @@ void rbe_update() {
     }
     float averageFPS = (float) countedFrames / ((float) SDL_GetTicks() / 1000.f);
     engineContext->averageFPS = averageFPS;
-}
-
-void rbe_process_inputs() {
-    SDL_Event event;
-    while (SDL_PollEvent(&event)) {
-        switch(event.type) {
-        case SDL_QUIT:
-            engineContext->isRunning = false;
-            break;
-        default:
-            break;
-        }
-        cre_input_process(event);
-    }
 }
 
 void rbe_process_game_update() {
@@ -290,27 +204,22 @@ void rbe_process_game_update() {
 }
 
 void rbe_render() {
+    // Gather render data from ec systems
     rbe_ec_system_render_systems();
-
-    static const Color backgroundColor = { 33.0f / 255.0f, 33.0f / 255.0f, 33.0f / 255.0f, 1.0f };
-    cre_renderer_process_and_flush_batches(&backgroundColor);
-
-    SDL_GL_SwapWindow(window);
+    // Actually render
+    sf_render();
 }
 
 bool rbe_is_running() {
-    return engineContext->isRunning;
+    return engineContext->isRunning && sf_is_running();
 }
 
 void rbe_shutdown() {
     SDL_DestroyWindow(window);
     SDL_GL_DeleteContext(openGlContext);
     SDL_Quit();
-    rbe_renderer_finalize();
+    sf_shutdown();
     rbe_game_props_finalize();
-    rbe_audio_manager_finalize();
-    cre_input_finalize();
-    rbe_asset_manager_finalize();
     rbe_scene_manager_finalize();
     rbe_ecs_manager_finalize();
     rbe_py_finalize();

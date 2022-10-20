@@ -1,6 +1,6 @@
 #include "game_exporter.h"
 
-#include "../engine/src/core/utils/logger.h"
+#include "../seika/src/utils/logger.h"
 
 #include "asset_browser.h"
 #include "utils/file_system_helper.h"

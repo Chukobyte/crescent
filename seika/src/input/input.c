@@ -9,7 +9,6 @@
 #include "../utils/logger.h"
 #include "../utils/rbe_string_util.h"
 #include "../utils/rbe_assert.h"
-#include "../engine_context.h"
 
 #ifdef _MSC_VER
 #pragma warning(disable : 4996) // for strcpy
@@ -39,7 +38,7 @@ typedef struct InputFlagCleaner {
 InputFlagCleaner actionJustPressedClean = {0};
 InputFlagCleaner actionJustReleasedClean = {0};
 
-bool cre_input_initialize() {
+bool cre_input_initialize(const char* controllerDBFilePath) {
     inputActionMap = rbe_string_hash_map_create(32);
     // SETUP INPUT STRING VALUES
     // Keyboard
@@ -105,7 +104,7 @@ bool cre_input_initialize() {
     rbe_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_F12, SDL_SCANCODE_F12);
 
     // Gamepad
-    input_initialize_gamepad_system();
+    input_initialize_gamepad_system(controllerDBFilePath);
 
     return true;
 }
@@ -328,7 +327,7 @@ RBE_STATIC_ARRAY_CREATE(int, CRE_MAX_GAMEPAD_DEVICES, activeGamepadIds);
 
 bool input_process_axis_motions();
 
-void input_initialize_gamepad_system() {
+void input_initialize_gamepad_system(const char* controllerDBFilePath) {
     gamepadStringValuesMap = rbe_string_hash_map_create(30);
     rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_button_a", SDL_CONTROLLER_BUTTON_A);
     rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_button_b", SDL_CONTROLLER_BUTTON_B);
@@ -358,11 +357,10 @@ void input_initialize_gamepad_system() {
     rbe_string_hash_map_add_int(gamepadStringValuesMap, "joystick_right_analog_down", GamepadInputButtonType_RIGHT_ANALOG_DOWN);
 
     // Initialize game pads
-    input_load_gamepads();
+    input_load_gamepads(controllerDBFilePath);
 }
 
-// TODO: Make better (e.g. loading more than one controller and checking for connects/disconnects)...
-void input_load_gamepads() {
+void input_load_gamepads(const char* controllerDBFilePath) {
     for (size_t i = 0; i < CRE_MAX_GAMEPAD_DEVICES; i++) {
         activeGamePads[i].gameController = NULL;
         activeGamePads[i].joystickController = NULL;
@@ -375,12 +373,10 @@ void input_load_gamepads() {
         activeGamepadIds[i] = INVALID_GAMEPAD_ID;
     }
 
-    RBEEngineContext* engineContext = rbe_engine_context_get();
-    char controllerMappingFilePath[256];
-    strcpy(controllerMappingFilePath, engineContext->internalAssetsDir);
-    strcat(controllerMappingFilePath, "/assets/resources/game_controller_db.txt");
-    const int result = SDL_GameControllerAddMappingsFromFile(controllerMappingFilePath);
-    RBE_ASSERT_FMT(result >= 0, "Couldn't load sdl controller mapping file at path '%s'!", controllerMappingFilePath);
+    if (controllerDBFilePath != NULL) {
+        const int result = SDL_GameControllerAddMappingsFromFile(controllerDBFilePath);
+        RBE_ASSERT_FMT(result >= 0, "Couldn't load sdl controller mapping file at path '%s'!", controllerDBFilePath);
+    }
 }
 
 CreGamepad* input_find_gamepad(SDL_JoystickID id) {

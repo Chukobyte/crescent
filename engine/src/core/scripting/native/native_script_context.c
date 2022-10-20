@@ -1,11 +1,12 @@
 #include "native_script_context.h"
 
+#include "../seika/src/data_structures/rbe_hash_map.h"
+#include "../seika/src/data_structures/rbe_hash_map_string.h"
+#include "../seika/src/data_structures/rbe_static_array.h"
+#include "../seika/src/utils/rbe_assert.h"
+#include "../seika/src/memory/rbe_mem.h"
+
 #include "../script_context.h"
-#include "../../data_structures/rbe_hash_map.h"
-#include "../../data_structures/rbe_hash_map_string.h"
-#include "../../data_structures/rbe_static_array.h"
-#include "../../utils/rbe_assert.h"
-#include "../../memory/rbe_mem.h"
 
 #define MAX_NATIVE_CLASSES 4
 #define MAX_NATIVE_CLASS_ENTITIES 8

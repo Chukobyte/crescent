@@ -4,7 +4,7 @@
 
 #include <SDL2/SDL.h>
 
-bool cre_input_initialize();
+bool cre_input_initialize(const char* controllerDBFilePath);
 void cre_input_finalize();
 void cre_input_process(SDL_Event event);
 void cre_input_add_action_value(const char* actionName, const char* actionValue, int deviceId);

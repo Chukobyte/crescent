@@ -2,7 +2,7 @@
 
 #include <string.h>
 
-#include "../../memory/rbe_mem.h"
+#include "../seika/src/memory/rbe_mem.h"
 
 ColorRectComponent* color_rect_component_create() {
     ColorRectComponent* colorRectComponent = RBE_MEM_ALLOCATE(ColorRectComponent);

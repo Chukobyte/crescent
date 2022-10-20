@@ -2,7 +2,7 @@
 
 #include <string.h>
 
-#include "logger.h"
+#include "../seika/src/utils/logger.h"
 
 #ifdef _MSC_VER
 #pragma warning(disable : 4996) // for strcpy

@@ -1,0 +1,81 @@
+cmake_minimum_required(VERSION 3.20.0)
+
+set(CMAKE_C_STANDARD 11)
+
+project(seika C)
+
+if (CMAKE_C_COMPILER_ID STREQUAL "MSVC")
+#    list(APPEND flags "/std:c11" "/W3" "/Zc:preprocessor") # TODO: Adding "/std:c11" breaks editor, fix later...
+    list(APPEND flags "/W3" "/Zc:preprocessor")
+else ()
+    list(APPEND flags "-std=c11" "-Wfatal-errors" "-Wall" "-Wextra" "-Wno-write-strings" "-Wno-deprecated-declarations"
+            "-Wno-unused-variable" "-Wno-cast-function-type" "-Wno-unused-parameter" "-Wno-missing-field-initializers")
+endif ()
+
+find_package(SDL2 CONFIG REQUIRED)
+
+find_package(freetype CONFIG)
+set(freetype_from_find_package TRUE)
+if (NOT freetype_FOUND)
+    find_package(PkgConfig REQUIRED)
+    pkg_check_modules(freetype REQUIRED freetype2)
+    set(freetype_from_find_package FALSE)
+endif()
+
+add_library(${PROJECT_NAME} STATIC
+        src/seika.c
+        src/asset_manager.c
+        src/memory/rbe_mem.c
+        src/math/rbe_math.c
+        src/input/input.c
+        src/input/input_action.c
+        src/networking/rbe_network.c
+        src/networking/rbe_network_socket.c
+        src/rendering/font.c
+        src/rendering/frame_buffer.c
+        src/rendering/renderer.c
+        src/rendering/render_context.c
+        src/rendering/shader.c
+        src/rendering/texture.c
+        src/audio/audio_manager.c
+        src/audio/audio.c
+        src/thread/rbe_pthread.c
+        src/thread/rbe_thread_pool.c
+        src/utils/logger.c
+        src/utils/rbe_file_system_utils.c
+        src/utils/rbe_string_util.c
+        src/data_structures/cre_queue.c
+        src/data_structures/rbe_hash_map.c
+        src/data_structures/rbe_hash_map_string.c
+        )
+
+add_library(glad ../include/glad/glad.c)
+add_library(stb_image ../include/stb_image/stb_image.c)
+
+target_include_directories(${PROJECT_NAME} PUBLIC
+        "${PROJECT_BINARY_DIR}"
+        "../include"
+        )
+target_include_directories(glad PUBLIC
+        "${PROJECT_BINARY_DIR}"
+        "../include"
+        )
+target_include_directories(stb_image PUBLIC
+        "${PROJECT_BINARY_DIR}"
+        "../include"
+        )
+
+
+if (NOT freetype_from_find_package)
+    target_include_directories(${PROJECT_NAME} PUBLIC ${freetype_INCLUDE_DIRS})
+endif()
+
+if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image SDL2::SDL2main SDL2::SDL2 freetype Ws2_32)
+elseif(WIN32)
+    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image -lmingw32 -static-libgcc SDL2::SDL2main SDL2::SDL2 freetype -lws2_32)
+else ()
+    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image -static-libgcc -Xlinker -export-dynamic SDL2::SDL2main SDL2::SDL2 freetype m)
+endif ()
+
+target_compile_options(${PROJECT_NAME} PUBLIC ${flags})

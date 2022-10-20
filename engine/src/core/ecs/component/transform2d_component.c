@@ -2,8 +2,8 @@
 
 #include <string.h>
 
-#include "../../utils/logger.h"
-#include "../../memory/rbe_mem.h"
+#include "../seika/src/utils/logger.h"
+#include "../seika/src/memory/rbe_mem.h"
 
 Transform2D transform2d_component_create_blank_transform2d() {
     Transform2D transform2D = {

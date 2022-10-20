@@ -2,8 +2,8 @@
 
 #include <Python.h>
 
-#include "../../utils/rbe_assert.h"
-#include "../../data_structures/rbe_hash_map_string.h"
+#include "../seika/src/utils/rbe_assert.h"
+#include "../seika/src/data_structures/rbe_hash_map_string.h"
 
 // Helper functions
 const char* pyh_get_string_from_obj(PyObject* obj) {

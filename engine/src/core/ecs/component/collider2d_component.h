@@ -5,8 +5,10 @@ extern "C" {
 #endif
 
 #include <stddef.h>
+
+#include "../seika/src/math/rbe_math.h"
+
 #include "../entity/entity.h"
-#include "../../math/rbe_math.h"
 
 typedef struct Collider2DComponent {
     Size2D extents; // TODO: Default to a box, implement other colliders later.  Also should use extents instead of rect!

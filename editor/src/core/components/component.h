@@ -3,6 +3,9 @@
 #include <string>
 #include <algorithm>
 
+#include "../seika/src/utils/logger.h"
+#include "../seika/src/utils/rbe_assert.h"
+
 #include "../engine/src/core/ecs/component/animated_sprite_component.h"
 #include "../engine/src/core/ecs/component/collider2d_component.h"
 #include "../engine/src/core/ecs/component/color_rect_component.h"
@@ -10,8 +13,6 @@
 #include "../engine/src/core/ecs/component/sprite_component.h"
 #include "../engine/src/core/ecs/component/text_label_component.h"
 #include "../engine/src/core/ecs/component/transform2d_component.h"
-#include "../engine/src/core/utils/logger.h"
-#include "../engine/src/core/utils/rbe_assert.h"
 
 struct EditorComponent {};
 

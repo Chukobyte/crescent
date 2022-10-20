@@ -1,9 +1,9 @@
 #include "ec_system.h"
 
-#include "../../data_structures/cre_queue.h"
-#include "../../memory/rbe_mem.h"
-#include "../../utils/logger.h"
-#include "../../utils/rbe_assert.h"
+#include "../seika/src/data_structures/cre_queue.h"
+#include "../seika/src/memory/rbe_mem.h"
+#include "../seika/src/utils/logger.h"
+#include "../seika/src/utils/rbe_assert.h"
 
 //--- EC System Manager ---//
 #define MAX_ENTITY_SYSTEMS_PER_HOOK 6

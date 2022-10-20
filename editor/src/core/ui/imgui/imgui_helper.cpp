@@ -3,8 +3,9 @@
 
 #include <utility>
 
+#include "../seika/src/utils/logger.h"
+
 #include "../../asset_browser.h"
-#include "../engine/src/core/utils/logger.h"
 
 static ImGuiHelper::Context* context = ImGuiHelper::Context::Get();
 

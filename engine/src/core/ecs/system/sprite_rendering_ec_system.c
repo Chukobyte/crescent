@@ -2,15 +2,16 @@
 
 #include <string.h>
 
+#include "../seika/src/rendering/renderer.h"
+#include "../seika/src/utils/rbe_string_util.h"
+#include "../seika/src/utils/rbe_assert.h"
+
 #include "ec_system.h"
 #include "../component/transform2d_component.h"
 #include "../component/sprite_component.h"
-#include "../../rendering/renderer.h"
 #include "../../scene/scene_manager.h"
 #include "../../camera/camera.h"
 #include "../../camera/camera_manager.h"
-#include "../../utils/rbe_string_util.h"
-#include "../../utils/rbe_assert.h"
 #include "../../scene/scene_utils.h"
 
 EntitySystem* spriteRenderingSystem = NULL;
@@ -42,7 +43,7 @@ void sprite_rendering_system_render() {
             spriteComponent->drawSource.w * renderCamera->zoom.x,
             spriteComponent->drawSource.h * renderCamera->zoom.y
         };
-        rbe_renderer_queue_sprite_draw_call(
+        sf_renderer_queue_sprite_draw_call(
             spriteComponent->texture,
             spriteComponent->drawSource,
             destinationSize,

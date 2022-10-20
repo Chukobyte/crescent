@@ -4,8 +4,8 @@
 extern "C" {
 #endif
 
-#include "../../rendering/font.h"
-#include "../../math/rbe_math.h"
+#include "../seika/src/rendering/font.h"
+#include "../seika/src/math/rbe_math.h"
 
 #define TEXT_LABEL_BUFFER_SIZE 64
 
