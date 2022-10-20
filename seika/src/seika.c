@@ -13,15 +13,24 @@
 #include "asset_manager.h"
 
 bool initialize_sdl();
-bool initialize_rendering(const char* title, int windowWidth, int windowHeight);
+bool initialize_rendering(const char* title, int windowWidth, int windowHeight, int resolutionWidth, int resolutionHeight);
 bool initialize_audio();
-bool initialize_input();
+bool initialize_input(const char* controllerDBFilePath);
 
 static SDL_Window* window = NULL;
 static SDL_GLContext openGlContext;
 static bool isRunning = false;
 
-bool sf_initialize(const char* title, int windowWidth, int windowHeight) {
+bool sf_initialize_simple(const char* title, int windowWidth, int windowHeight) {
+    return sf_initialize(title, windowWidth, windowHeight, windowWidth, windowHeight, NULL);
+}
+
+bool sf_initialize(const char* title,
+                   int windowWidth,
+                   int windowHeight,
+                   int resolutionWidth,
+                   int resolutionHeight,
+                   const char* controllerDBFilePath) {
     if (isRunning) {
         return false;
     }
@@ -34,7 +43,7 @@ bool sf_initialize(const char* title, int windowWidth, int windowHeight) {
         rbe_logger_error("Failed to initialize sdl!");
         return false;
     }
-    if (!initialize_rendering(title, windowWidth, windowHeight)) {
+    if (!initialize_rendering(title, windowWidth, windowHeight, resolutionWidth, resolutionHeight)) {
         rbe_logger_error("Failed to initialize rendering!");
         return false;
     }
@@ -42,7 +51,7 @@ bool sf_initialize(const char* title, int windowWidth, int windowHeight) {
         rbe_logger_error("Failed to initialize audio!");
         return false;
     }
-    if (!initialize_input()) {
+    if (!initialize_input(controllerDBFilePath)) {
         rbe_logger_error("Failed to initialize input!");
         return false;
     }
@@ -62,7 +71,7 @@ bool initialize_sdl() {
     return true;
 }
 
-bool initialize_rendering(const char* title, int windowWidth, int windowHeight) {
+bool initialize_rendering(const char* title, int windowWidth, int windowHeight, int resolutionWidth, int resolutionHeight) {
     // OpenGL attributes
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
@@ -74,10 +83,10 @@ bool initialize_rendering(const char* title, int windowWidth, int windowHeight) 
 
     // Create window
     const SDL_WindowFlags windowFlags = (SDL_WindowFlags)(
-                                      SDL_WINDOW_OPENGL
-                                      | SDL_WINDOW_RESIZABLE
-                                      | SDL_WINDOW_ALLOW_HIGHDPI
-                                  );
+                                            SDL_WINDOW_OPENGL
+                                            | SDL_WINDOW_RESIZABLE
+                                            | SDL_WINDOW_ALLOW_HIGHDPI
+                                        );
     window = SDL_CreateWindow(
                  title,
                  SDL_WINDOWPOS_CENTERED,
@@ -100,7 +109,7 @@ bool initialize_rendering(const char* title, int windowWidth, int windowHeight) 
         return false;
     }
 
-    sf_renderer_initialize();
+    sf_renderer_initialize(resolutionWidth, resolutionHeight);
     return true;
 }
 
@@ -108,8 +117,8 @@ bool initialize_audio() {
     return rbe_audio_manager_init();
 }
 
-bool initialize_input() {
-    if (!cre_input_initialize()) {
+bool initialize_input(const char* controllerDBFilePath) {
+    if (!cre_input_initialize(controllerDBFilePath)) {
         return false;
     }
     return true;
@@ -132,12 +141,10 @@ void sf_process_inputs() {
 }
 
 void sf_render() {
-//    static const Color backgroundColor = { 33.0f / 255.0f, 33.0f / 255.0f, 33.0f / 255.0f, 1.0f };
-//    cre_renderer_process_and_flush_batches(&backgroundColor);
+    static const Color backgroundColor = { 33.0f / 255.0f, 33.0f / 255.0f, 33.0f / 255.0f, 1.0f };
+    sf_renderer_process_and_flush_batches(&backgroundColor);
 
-    glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
+    // TODO: Pass window to renderer and swap there?
     SDL_GL_SwapWindow(window);
 }
 

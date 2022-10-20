@@ -5,7 +5,7 @@
 #include "seika.h"
 
 int main(int argv, char** args) {
-    sf_initialize("Test", 800, 600);
+    sf_initialize_simple("Test", 800, 600);
     while (sf_is_running()) {
         sf_process_inputs();
         sf_update();

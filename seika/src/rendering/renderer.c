@@ -39,7 +39,9 @@ static float resolutionWidth = 800.0f;
 static float resolutionHeight = 600.0f;
 
 // --- Renderer --- //
-void sf_renderer_initialize() {
+void sf_renderer_initialize(int inResolutionWidth, int inResolutionHeight) {
+    resolutionWidth = (float) inResolutionWidth;
+    resolutionHeight = (float) inResolutionHeight;
     glEnable(GL_CULL_FACE);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

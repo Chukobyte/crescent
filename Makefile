@@ -82,7 +82,7 @@ debug-build-engine: CORE_C_FLAGS +=  -g
 debug-build-engine: build-engine
 
 format-engine:
-	astyle -n --style=google --recursive engine/src/*.c engine/src/*.h
+	astyle -n --style=google --recursive engine/src/*.c engine/src/*.h seika/*.c seika/*.h
 
 clean-engine:
 ifneq ("$(wildcard $(CORE_BUILD_OBJECT))","")
