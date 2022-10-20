@@ -2,9 +2,9 @@
 
 #include <string.h>
 
-#include "../../asset_manager.h"
-#include "../../memory/rbe_mem.h"
-#include "../../utils/rbe_assert.h"
+#include "../seika/src/asset_manager.h"
+#include "../seika/src/memory/rbe_mem.h"
+#include "../seika/src/utils/rbe_assert.h"
 
 #define RBE_MAX_ANIMATIONS 16
 

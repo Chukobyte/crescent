@@ -2,7 +2,7 @@
 
 #include <string.h>
 
-#include "../../memory/rbe_mem.h"
+#include "../seika/src/memory/rbe_mem.h"
 
 Collider2DComponent* collider2d_component_create() {
     Collider2DComponent* collider2DComponent = RBE_MEM_ALLOCATE(Collider2DComponent);

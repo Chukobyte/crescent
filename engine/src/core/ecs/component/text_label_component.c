@@ -3,7 +3,7 @@
 #include <stddef.h>
 #include <string.h>
 
-#include "../../memory/rbe_mem.h"
+#include "../seika/src/memory/rbe_mem.h"
 
 TextLabelComponent* text_label_component_create() {
     TextLabelComponent* textLabelComponent = RBE_MEM_ALLOCATE(TextLabelComponent);

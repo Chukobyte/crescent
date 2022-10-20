@@ -1,5 +1,9 @@
 #include "json_file_loader.h"
 
+#include "../seika/src/utils/rbe_string_util.h"
+#include "../seika/src/utils/rbe_file_system_utils.h"
+#include "../seika/src/memory/rbe_mem.h"
+
 #include "json_helper.h"
 #include "../game_properties.h"
 #include "../ecs/component/transform2d_component.h"
@@ -9,9 +13,6 @@
 #include "../ecs/component/script_component.h"
 #include "../ecs/component/collider2d_component.h"
 #include "../ecs/component/color_rect_component.h"
-#include "../utils/rbe_string_util.h"
-#include "../utils/rbe_file_system_utils.h"
-#include "../memory/rbe_mem.h"
 
 // Project Configuration Files
 void cre_json_configure_assets(cJSON* configJson, RBEGameProperties* properties) {

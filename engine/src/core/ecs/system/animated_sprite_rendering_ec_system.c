@@ -4,16 +4,17 @@
 
 #include <SDL2/SDL.h>
 
+#include "../seika/src/rendering/renderer.h"
+#include "../seika/src/utils/rbe_string_util.h"
+#include "../seika/src/utils/rbe_assert.h"
+
 #include "ec_system.h"
 #include "../component/transform2d_component.h"
 #include "../component/animated_sprite_component.h"
-#include "../../rendering/renderer.h"
 #include "../../scene/scene_manager.h"
 #include "../../camera/camera.h"
 #include "../../camera/camera_manager.h"
 #include "../../scene/scene_utils.h"
-#include "../../utils/rbe_string_util.h"
-#include "../../utils/rbe_assert.h"
 
 EntitySystem* animatedSpriteRenderingSystem = NULL;
 
@@ -58,7 +59,7 @@ void animated_sprite_rendering_system_render() {
             currentFrame.drawSource.w * renderCamera->zoom.x,
             currentFrame.drawSource.h * renderCamera->zoom.y
         };
-        rbe_renderer_queue_sprite_draw_call(
+        sf_renderer_queue_sprite_draw_call(
             currentFrame.texture,
             currentFrame.drawSource,
             destinationSize,

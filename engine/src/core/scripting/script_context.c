@@ -1,7 +1,7 @@
 #include "script_context.h"
 
-#include "../memory/rbe_mem.h"
-#include "../utils/rbe_assert.h"
+#include "../seika/src/memory/rbe_mem.h"
+#include "../seika/src/utils/rbe_assert.h"
 
 RBEScriptContext* rbe_script_context_create() {
     // Only have one script context for now...

@@ -2,11 +2,11 @@
 
 #include <Python.h>
 
-#include "py_helper.h"
+#include "../seika/src/utils/rbe_assert.h"
+
 #include "py_cache.h"
 #include "rbe_py_api_module.h"
 #include "crescent_api_source.h"
-#include "../../utils/rbe_assert.h"
 
 void rbe_py_initialize() {
     rbe_py_cache_initialize();

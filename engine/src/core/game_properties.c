@@ -1,11 +1,10 @@
 #include "game_properties.h"
 
-#include <stdlib.h>
+#include "../seika/src/utils/logger.h"
+#include "../seika/src/memory/rbe_mem.h"
+#include "../seika/src/utils/rbe_assert.h"
 
-#include "utils/logger.h"
-#include "memory/rbe_mem.h"
 #include "scripting/python/rbe_py.h"
-#include "utils/rbe_assert.h"
 
 static RBEGameProperties* properties = NULL;
 

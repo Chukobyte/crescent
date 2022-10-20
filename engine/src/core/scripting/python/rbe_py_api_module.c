@@ -2,12 +2,15 @@
 
 #include <string.h>
 
+#include "../seika/src/asset_manager.h"
+#include "../seika/src/input/input.h"
+#include "../seika/src/audio/audio_manager.h"
+#include "../seika/src/networking/rbe_network.h"
+#include "../seika/src/utils/rbe_assert.h"
+
 #include "py_cache.h"
 #include "py_script_context.h"
 #include "../../engine_context.h"
-#include "../../asset_manager.h"
-#include "../../input/input.h"
-#include "../../audio/audio_manager.h"
 #include "../../scripting/script_context.h"
 #include "../../physics/collision/collision.h"
 #include "../../camera/camera.h"
@@ -22,8 +25,6 @@
 #include "../../ecs/component/text_label_component.h"
 #include "../../ecs/component/node_component.h"
 #include "../../scene/scene_manager.h"
-#include "../../networking/rbe_network.h"
-#include "../../utils/rbe_assert.h"
 
 #ifdef _MSC_VER
 #pragma warning(disable : 4996) // for strcpy

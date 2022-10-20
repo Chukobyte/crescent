@@ -2,7 +2,7 @@
 
 #include <string.h>
 
-#include "../../memory/rbe_mem.h"
+#include "../seika/src/memory/rbe_mem.h"
 
 NodeComponent* node_component_create() {
     NodeComponent* nodeComponent = RBE_MEM_ALLOCATE(NodeComponent);
