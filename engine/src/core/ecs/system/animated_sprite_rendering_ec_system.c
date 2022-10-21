@@ -21,7 +21,7 @@ EntitySystem* animatedSpriteRenderingSystem = NULL;
 void animated_sprite_rendering_system_render();
 
 EntitySystem* animated_sprite_rendering_ec_system_create() {
-    animatedSpriteRenderingSystem = rbe_ec_system_create();
+    animatedSpriteRenderingSystem = cre_ec_system_create();
     animatedSpriteRenderingSystem->name = se_strdup("Animated Sprite Rendering");
     animatedSpriteRenderingSystem->render_func = animated_sprite_rendering_system_render;
     animatedSpriteRenderingSystem->component_signature = ComponentType_TRANSFORM_2D | ComponentType_ANIMATED_SPRITE;
@@ -29,8 +29,8 @@ EntitySystem* animated_sprite_rendering_ec_system_create() {
 }
 
 void animated_sprite_rendering_system_render() {
-    const RBECamera2D* camera2D = rbe_camera_manager_get_current_camera();
-    const RBECamera2D* defaultCamera = rbe_camera_manager_get_default_camera();
+    const CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
+    const CRECamera2D* defaultCamera = cre_camera_manager_get_default_camera();
     const int currentTickTime = (int) SDL_GetTicks();
     for (size_t i = 0; i < animatedSpriteRenderingSystem->entity_count; i++) {
         const Entity entity = animatedSpriteRenderingSystem->entities[i];
@@ -51,8 +51,9 @@ void animated_sprite_rendering_system_render() {
                 animatedSpriteComponent->currentAnimation.currentFrame = newIndex;
             }
         }
-        const RBECamera2D* renderCamera = spriteTransformComp->ignoreCamera ? defaultCamera : camera2D;
-        TransformModel2D* globalTransform = rbe_scene_manager_get_scene_node_global_transform(entity, spriteTransformComp);
+        const CRECamera2D* renderCamera = spriteTransformComp->ignoreCamera ? defaultCamera : camera2D;
+        TransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity,
+                                            spriteTransformComp);
         cre_scene_utils_apply_camera_and_origin_translation(globalTransform, &animatedSpriteComponent->origin, spriteTransformComp->ignoreCamera);
         spriteTransformComp->isGlobalTransformDirty = true; // TODO: Make global transform const
         const Size2D destinationSize = {

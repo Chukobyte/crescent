@@ -22,24 +22,24 @@
 
 static SceneTreeNode* fpsDisplayNode = NULL;
 
-void rbe_ecs_manager_initialize() {
+void cre_ecs_manager_initialize() {
     component_manager_initialize();
-    rbe_ec_system_initialize();
+    cre_ec_system_initialize();
     // Initialize and register ec systems
-    rbe_ec_system_register(sprite_rendering_ec_system_create());
-    rbe_ec_system_register(animated_sprite_rendering_ec_system_create());
-    rbe_ec_system_register(font_rendering_ec_system_create());
-    rbe_ec_system_register(script_ec_system_create());
-    rbe_ec_system_register(collision_ec_system_create());
-    rbe_ec_system_register(color_rect_ec_system_create());
+    cre_ec_system_register(sprite_rendering_ec_system_create());
+    cre_ec_system_register(animated_sprite_rendering_ec_system_create());
+    cre_ec_system_register(font_rendering_ec_system_create());
+    cre_ec_system_register(script_ec_system_create());
+    cre_ec_system_register(collision_ec_system_create());
+    cre_ec_system_register(color_rect_ec_system_create());
 }
 
-void rbe_ecs_manager_enable_fps_display_entity(bool enabled) {
+void cre_ecs_manager_enable_fps_display_entity(bool enabled) {
     static bool isEnabled = false;
     static Entity currentFpsEntity = NULL_ENTITY;
     // Create temp entity
     if (!isEnabled && enabled) {
-        fpsDisplayNode = rbe_scene_tree_create_tree_node(cre_ec_system_create_entity_uid(), NULL);
+        fpsDisplayNode = cre_scene_tree_create_tree_node(cre_ec_system_create_entity_uid(), NULL);
         currentFpsEntity = fpsDisplayNode->entity;
         // Transform 2D
         Transform2DComponent* transform2DComponent = transform2d_component_create();
@@ -57,19 +57,19 @@ void rbe_ecs_manager_enable_fps_display_entity(bool enabled) {
         scriptComponent->contextType = ScriptContextType_NATIVE;
         component_manager_set_component(currentFpsEntity, ComponentDataIndex_SCRIPT, scriptComponent);
         // Update systems
-        rbe_ec_system_update_entity_signature_with_systems(currentFpsEntity);
-        rbe_scene_manager_queue_entity_for_creation(fpsDisplayNode);
+        cre_ec_system_update_entity_signature_with_systems(currentFpsEntity);
+        cre_scene_manager_queue_entity_for_creation(fpsDisplayNode);
     } else if (isEnabled && !enabled) {
         SE_ASSERT_FMT(currentFpsEntity != NULL_ENTITY, "Current fps entity is a null entity!?");
         SE_ASSERT_FMT(fpsDisplayNode != NULL, "FPS Display Node is NULL!?");
-        rbe_queue_destroy_tree_node_entity_all(fpsDisplayNode);
+        cre_queue_destroy_tree_node_entity_all(fpsDisplayNode);
         currentFpsEntity = NULL_ENTITY;
         fpsDisplayNode = NULL;
     }
     isEnabled = enabled;
 }
 
-void rbe_ecs_manager_finalize() {
-    rbe_ec_system_finalize();
+void cre_ecs_manager_finalize() {
+    cre_ec_system_finalize();
     component_manager_finalize();
 }

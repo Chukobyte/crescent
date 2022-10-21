@@ -23,11 +23,11 @@ void native_on_end(Entity entity);
 SEStringHashMap* classCache = NULL;
 SEHashMap* entityToClassName = NULL;
 
-SE_STATIC_ARRAY_CREATE(RBENativeScriptClass*, MAX_ENTITIES, entities_to_update);
-SE_STATIC_ARRAY_CREATE(RBENativeScriptClass*, MAX_ENTITIES, entities_to_physics_update);
+SE_STATIC_ARRAY_CREATE(CRENativeScriptClass*, MAX_ENTITIES, entities_to_update);
+SE_STATIC_ARRAY_CREATE(CRENativeScriptClass*, MAX_ENTITIES, entities_to_physics_update);
 
-RBEScriptContext* rbe_native_create_script_context() {
-    RBEScriptContext* scriptContext = rbe_script_context_create();
+CREScriptContext* cre_native_create_script_context() {
+    CREScriptContext* scriptContext = cre_script_context_create();
     scriptContext->on_create_instance = native_on_create_instance;
     scriptContext->on_delete_instance = native_on_delete_instance;
     scriptContext->on_start = native_on_start;
@@ -39,12 +39,12 @@ RBEScriptContext* rbe_native_create_script_context() {
     classCache = se_string_hash_map_create(MAX_NATIVE_CLASSES);
 
     SE_ASSERT(entityToClassName == NULL);
-    entityToClassName = se_hash_map_create(sizeof(Entity), sizeof(RBENativeScriptClass **), MAX_NATIVE_CLASS_ENTITIES);
+    entityToClassName = se_hash_map_create(sizeof(Entity), sizeof(CRENativeScriptClass **), MAX_NATIVE_CLASS_ENTITIES);
 
     return scriptContext;
 }
 
-void rbe_native_class_register_new_class(RBENativeScriptClass* scriptClass) {
+void cre_native_class_register_new_class(CRENativeScriptClass* scriptClass) {
     if (se_string_hash_map_has(classCache, scriptClass->name)) {
         se_logger_warn("Already have script class registered!\nname: '%s', path: '%s'", scriptClass->name,
                        scriptClass->path);
@@ -56,11 +56,11 @@ void rbe_native_class_register_new_class(RBENativeScriptClass* scriptClass) {
 
 void native_on_create_instance(Entity entity, const char* classPath, const char* className) {
     SE_ASSERT_FMT(se_string_hash_map_has(classCache, className), "Class ref not cached!  entity: '%d', class_path: '%s', class_name: '%s'", entity, classPath, className);
-    RBENativeScriptClass* scriptClassRef = (RBENativeScriptClass*) *(RBENativeScriptClass**) se_string_hash_map_get(
+    CRENativeScriptClass* scriptClassRef = (CRENativeScriptClass*) *(CRENativeScriptClass**) se_string_hash_map_get(
             classCache, className);
     SE_ASSERT(scriptClassRef != NULL);
     SE_ASSERT(scriptClassRef->create_new_instance_func != NULL);
-    RBENativeScriptClass* newScriptClass = scriptClassRef->create_new_instance_func(entity);
+    CRENativeScriptClass* newScriptClass = scriptClassRef->create_new_instance_func(entity);
     se_hash_map_add(entityToClassName, &entity, &newScriptClass);
     if (newScriptClass->update_func != NULL) {
         SE_STATIC_ARRAY_ADD(entities_to_update, newScriptClass);
@@ -71,7 +71,7 @@ void native_on_create_instance(Entity entity, const char* classPath, const char*
 }
 
 void native_on_delete_instance(Entity entity) {
-    RBENativeScriptClass* scriptClassRef = (RBENativeScriptClass*) *(RBENativeScriptClass**) se_hash_map_get(
+    CRENativeScriptClass* scriptClassRef = (CRENativeScriptClass*) *(CRENativeScriptClass**) se_hash_map_get(
             entityToClassName, &entity);
 
     if (scriptClassRef->update_func != NULL) {
@@ -87,7 +87,7 @@ void native_on_delete_instance(Entity entity) {
 
 void native_on_start(Entity entity) {
     SE_ASSERT(se_hash_map_has(entityToClassName, &entity));
-    RBENativeScriptClass* scriptClassRef = (RBENativeScriptClass*) *(RBENativeScriptClass**) se_hash_map_get(
+    CRENativeScriptClass* scriptClassRef = (CRENativeScriptClass*) *(CRENativeScriptClass**) se_hash_map_get(
             entityToClassName, &entity);
     scriptClassRef->on_start_func(scriptClassRef);
 }
@@ -106,7 +106,7 @@ void native_on_physics_update_all_instances(float deltaTime) {
 
 void native_on_end(Entity entity) {
     SE_ASSERT(se_hash_map_has(entityToClassName, &entity));
-    RBENativeScriptClass* scriptClassRef = (RBENativeScriptClass*) *(RBENativeScriptClass**) se_hash_map_get(
+    CRENativeScriptClass* scriptClassRef = (CRENativeScriptClass*) *(CRENativeScriptClass**) se_hash_map_get(
             entityToClassName, &entity);
     scriptClassRef->on_end_func(scriptClassRef);
 }

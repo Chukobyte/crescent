@@ -2,7 +2,7 @@
 
 #include "camera.h"
 
-static const RBECamera2D DEFAULT_CAMERA =   {
+static const CRECamera2D DEFAULT_CAMERA =   {
     .boundary = {
         .x = -10000000.0f,
         .y = -10000000.0f,
@@ -14,7 +14,7 @@ static const RBECamera2D DEFAULT_CAMERA =   {
     .offset = { .x = 0.0f, .y = 0.0f }
 };
 
-static RBECamera2D currentCamera = {
+static CRECamera2D currentCamera = {
     .boundary = {
         .x = -10000000.0f,
         .y = -10000000.0f,
@@ -26,14 +26,14 @@ static RBECamera2D currentCamera = {
     .offset = { .x = 0.0f, .y = 0.0f }
 };
 
-RBECamera2D* rbe_camera_manager_get_current_camera() {
+CRECamera2D* cre_camera_manager_get_current_camera() {
     return &currentCamera;
 }
 
-RBECamera2D* rbe_camera_manager_get_default_camera() {
+CRECamera2D* cre_camera_manager_get_default_camera() {
     return &DEFAULT_CAMERA;
 }
 
-void rbe_camera_manager_reset_current_camera() {
+void cre_camera_manager_reset_current_camera() {
     currentCamera = DEFAULT_CAMERA;
 }

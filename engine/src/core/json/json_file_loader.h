@@ -21,7 +21,7 @@ typedef struct JsonSceneNode {
     char* fontUID;
 } JsonSceneNode;
 
-struct RBEGameProperties* cre_json_load_config_file(const char* filePath);
+struct CREGameProperties* cre_json_load_config_file(const char* filePath);
 JsonSceneNode* cre_json_load_scene_file(const char* filePath);
 void cre_json_delete_json_scene_node(JsonSceneNode* node);
 

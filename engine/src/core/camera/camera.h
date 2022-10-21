@@ -6,14 +6,14 @@ extern "C" {
 
 #include "../seika/src/math/se_math.h"
 
-typedef struct RBECamera2D {
+typedef struct CRECamera2D {
     Rect2 boundary;
     Vector2 viewport;
     Vector2 offset;
     Vector2 zoom;
-} RBECamera2D;
+} CRECamera2D;
 
-void rbe_camera2d_clamp_viewport_to_boundary(RBECamera2D* camera2D);
+void cre_camera2d_clamp_viewport_to_boundary(CRECamera2D* camera2D);
 
 #ifdef __cplusplus
 }

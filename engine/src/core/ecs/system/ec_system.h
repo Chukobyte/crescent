@@ -28,22 +28,22 @@ typedef struct EntitySystem {
     Entity entities[MAX_ENTITIES];
 } EntitySystem;
 
-void rbe_ec_system_initialize();
-void rbe_ec_system_finalize();
-EntitySystem* rbe_ec_system_create();
-void rbe_ec_system_destroy(EntitySystem* entitySystem);
-void rbe_ec_system_register(EntitySystem* system);
-void rbe_ec_system_update_entity_signature_with_systems(Entity entity);
-void rbe_ec_system_remove_entity_from_all_systems(Entity entity);
-bool rbe_ec_system_has_entity(Entity entity, EntitySystem* system);
+void cre_ec_system_initialize();
+void cre_ec_system_finalize();
+EntitySystem* cre_ec_system_create();
+void cre_ec_system_destroy(EntitySystem* entitySystem);
+void cre_ec_system_register(EntitySystem* system);
+void cre_ec_system_update_entity_signature_with_systems(Entity entity);
+void cre_ec_system_remove_entity_from_all_systems(Entity entity);
+bool cre_ec_system_has_entity(Entity entity, EntitySystem* system);
 
-void rbe_ec_system_entity_start(Entity entity);
-void rbe_ec_system_entity_end(Entity entity);
-void rbe_ec_system_render_systems();
-void rbe_ec_system_process_systems(float deltaTime);
-void rbe_ec_system_physics_process_systems(float deltaTime);
+void cre_ec_system_entity_start(Entity entity);
+void cre_ec_system_entity_end(Entity entity);
+void cre_ec_system_render_systems();
+void cre_ec_system_process_systems(float deltaTime);
+void cre_ec_system_physics_process_systems(float deltaTime);
 
-void rbe_ec_system_network_callback(const char* message);
+void cre_ec_system_network_callback(const char* message);
 
 // Entity System Management
 Entity cre_ec_system_create_entity_uid();

@@ -5,24 +5,24 @@
 #include "../seika/src/memory/se_mem.h"
 #include "../seika/src/utils/se_assert.h"
 
-RBEEngineContext* rbeEngineContext = NULL;
+CREEngineContext* creEngineContext = NULL;
 
-RBEEngineContext* rbe_engine_context_initialize() {
-    SE_ASSERT(rbeEngineContext == NULL);
-    rbeEngineContext = SE_MEM_ALLOCATE(RBEEngineContext);
-    rbeEngineContext->isRunning = false;
-    rbeEngineContext->targetFPS = 66;
-    rbeEngineContext->averageFPS = 0.0f;
-    rbeEngineContext->engineRootDir = NULL;
-    rbeEngineContext->internalAssetsDir = NULL;
-    return rbeEngineContext;
+CREEngineContext* cre_engine_context_initialize() {
+    SE_ASSERT(creEngineContext == NULL);
+    creEngineContext = SE_MEM_ALLOCATE(CREEngineContext);
+    creEngineContext->isRunning = false;
+    creEngineContext->targetFPS = 66;
+    creEngineContext->averageFPS = 0.0f;
+    creEngineContext->engineRootDir = NULL;
+    creEngineContext->internalAssetsDir = NULL;
+    return creEngineContext;
 }
 
-void rbe_engine_context_finalize() {
-    SE_ASSERT(rbeEngineContext != NULL);
-    SE_MEM_FREE(rbeEngineContext);
+void cre_engine_context_finalize() {
+    SE_ASSERT(creEngineContext != NULL);
+    SE_MEM_FREE(creEngineContext);
 }
 
-RBEEngineContext* rbe_engine_context_get() {
-    return rbeEngineContext;
+CREEngineContext* cre_engine_context_get() {
+    return creEngineContext;
 }

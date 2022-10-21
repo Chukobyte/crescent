@@ -7,36 +7,36 @@ extern "C" {
 #include <stdbool.h>
 #include <stddef.h>
 
-typedef struct RBEAssetAudioSource {
+typedef struct CREAssetAudioSource {
     char* file_path;
-} RBEAssetAudioSource;
+} CREAssetAudioSource;
 
-typedef struct RBEAssetTexture {
+typedef struct CREAssetTexture {
     char* file_path;
     char* wrap_s;
     char* wrap_t;
     char* filter_min;
     char* filter_mag;
-} RBEAssetTexture;
+} CREAssetTexture;
 
-typedef struct RBEAssetFont {
+typedef struct CREAssetFont {
     char* file_path;
     char* uid;
     int size;
-} RBEAssetFont;
+} CREAssetFont;
 
 #define CRE_INPUT_VALUES_LIMIT 4
 
-typedef struct RBEInputAction {
+typedef struct CREInputAction {
     char* name;
     int deviceId;
     size_t valueCount;
     char* values[CRE_INPUT_VALUES_LIMIT];
-} RBEInputAction;
+} CREInputAction;
 
 #define CRE_PROPERTIES_ASSET_LIMIT 24
 
-typedef struct RBEGameProperties {
+typedef struct CREGameProperties {
     char* gameTitle;
     int resolutionWidth;
     int resolutionHeight;
@@ -45,22 +45,22 @@ typedef struct RBEGameProperties {
     int targetFPS;
     char* initialScenePath;
     bool areCollidersVisible;
-    RBEAssetAudioSource audioSources[CRE_PROPERTIES_ASSET_LIMIT];
+    CREAssetAudioSource audioSources[CRE_PROPERTIES_ASSET_LIMIT];
     size_t audioSourceCount;
-    RBEAssetTexture textures[CRE_PROPERTIES_ASSET_LIMIT];
+    CREAssetTexture textures[CRE_PROPERTIES_ASSET_LIMIT];
     size_t textureCount;
-    RBEAssetFont fonts[CRE_PROPERTIES_ASSET_LIMIT];
+    CREAssetFont fonts[CRE_PROPERTIES_ASSET_LIMIT];
     size_t fontCount;
-    RBEInputAction inputActions[CRE_PROPERTIES_ASSET_LIMIT];
+    CREInputAction inputActions[CRE_PROPERTIES_ASSET_LIMIT];
     size_t inputActionCount;
-} RBEGameProperties;
+} CREGameProperties;
 
-RBEGameProperties* rbe_game_props_create();
-void rbe_game_props_initialize(RBEGameProperties* initialProps);
-void rbe_game_props_finalize();
-RBEGameProperties* rbe_game_props_get();
-RBEGameProperties* cre_game_props_get_or_default();
-void rbe_game_props_print();
+CREGameProperties* cre_game_props_create();
+void cre_game_props_initialize(CREGameProperties* initialProps);
+void cre_game_props_finalize();
+CREGameProperties* cre_game_props_get();
+CREGameProperties* cre_game_props_get_or_default();
+void cre_game_props_print();
 
 #ifdef __cplusplus
 }

@@ -1,7 +1,7 @@
 #pragma once
 
-#define RBE_COMMAND_LINE_FLAG_WORK_DIR "-d"
-#define RBE_COMMAND_LINE_FLAG_INTERNAL_ASSETS_DIR "-ia"
+#define CRE_COMMAND_LINE_FLAG_WORK_DIR "-d"
+#define CRE_COMMAND_LINE_FLAG_INTERNAL_ASSETS_DIR "-ia"
 
 typedef struct CommandLineFlagResult {
     char workingDirOverride[128];
@@ -9,4 +9,4 @@ typedef struct CommandLineFlagResult {
     int flagCount;
 } CommandLineFlagResult;
 
-CommandLineFlagResult rbe_command_line_args_parse(int argv, char** args);
+CommandLineFlagResult cre_command_line_args_parse(int argv, char** args);

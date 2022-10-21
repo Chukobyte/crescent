@@ -15,7 +15,7 @@
 #include "../ecs/component/color_rect_component.h"
 
 // Project Configuration Files
-void cre_json_configure_assets(cJSON* configJson, RBEGameProperties* properties) {
+void cre_json_configure_assets(cJSON* configJson, CREGameProperties* properties) {
     cJSON* assetsJson = cJSON_GetObjectItemCaseSensitive(configJson, "assets");
     SE_ASSERT_FMT(assetsJson != NULL, "Assets json object is NULL!");
     // Audio Sources
@@ -63,13 +63,13 @@ void cre_json_configure_assets(cJSON* configJson, RBEGameProperties* properties)
     }
 }
 
-void cre_json_configure_inputs(cJSON* configJson, RBEGameProperties* properties) {
+void cre_json_configure_inputs(cJSON* configJson, CREGameProperties* properties) {
     se_logger_debug("Loading inputs...");
     cJSON* inputsJsonArray = cJSON_GetObjectItemCaseSensitive(configJson, "inputs");
     cJSON* inputJson = NULL;
     cJSON_ArrayForEach(inputJson, inputsJsonArray) {
         SE_ASSERT_FMT(properties->inputActionCount < CRE_PROPERTIES_ASSET_LIMIT, "Input count is over the max limit of %d, increase the limit of CRE_PROPERTIES_ASSET_LIMIT", CRE_INPUT_VALUES_LIMIT);
-        RBEInputAction* inputAction = &properties->inputActions[properties->inputActionCount];
+        CREInputAction* inputAction = &properties->inputActions[properties->inputActionCount];
         inputAction->name = json_get_string_new(inputJson, "name");
         inputAction->deviceId = json_get_int_default(inputJson, "device_id", 0);
         se_logger_debug("Input Action -  name: '%s', device_id: '%d'", inputAction->name, inputAction->deviceId);
@@ -86,8 +86,8 @@ void cre_json_configure_inputs(cJSON* configJson, RBEGameProperties* properties)
     }
 }
 
-RBEGameProperties* cre_json_load_config_file(const char* filePath) {
-    RBEGameProperties* properties = rbe_game_props_create();
+CREGameProperties* cre_json_load_config_file(const char* filePath) {
+    CREGameProperties* properties = cre_game_props_create();
     char* fileContent = se_fs_read_file_contents(filePath, NULL);
 
     se_logger_debug("Loading game properties...");

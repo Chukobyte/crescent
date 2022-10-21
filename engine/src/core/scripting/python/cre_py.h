@@ -6,8 +6,8 @@ extern "C" {
 
 #include <stdbool.h>
 
-void rbe_py_initialize();
-void rbe_py_finalize();
+void cre_py_initialize();
+void cre_py_finalize();
 
 #ifdef __cplusplus
 }

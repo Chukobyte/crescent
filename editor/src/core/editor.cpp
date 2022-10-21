@@ -6,7 +6,7 @@
 #include "../seika/src/rendering/renderer.h"
 #include "../seika/src/utils/logger.h"
 
-#include "../engine/src/core/scripting/python/rbe_py.h"
+#include "../engine/src/core/scripting/python/cre_py.h"
 
 #include "editor_context.h"
 #include "editor_background_tasks.h"
@@ -30,7 +30,7 @@ bool Editor::Initialize() {
     }
 
     // Initialize Python Instance
-    rbe_py_initialize();
+    cre_py_initialize();
 
     // Initialize Asset Manager
     AssetManager::Get()->Initialize();
@@ -174,7 +174,7 @@ void Editor::Shutdown() {
     SDL_DestroyWindow(editorContext->window);
     SDL_Quit();
 
-    rbe_py_finalize();
+    cre_py_finalize();
 
     se_logger_info("Crescent Engine Editor has been shutdown!");
 }

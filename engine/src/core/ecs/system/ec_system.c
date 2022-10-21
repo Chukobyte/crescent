@@ -25,13 +25,13 @@ typedef struct EntitySystemData {
     EntitySystem* network_callback_systems[MAX_ENTITY_SYSTEMS_PER_HOOK];
 } EntitySystemData;
 
-void rbe_ec_system_insert_entity_into_system(Entity entity, EntitySystem* system);
-void rbe_ec_system_remove_entity_from_system(Entity entity, EntitySystem* system);
+void cre_ec_system_insert_entity_into_system(Entity entity, EntitySystem* system);
+void cre_ec_system_remove_entity_from_system(Entity entity, EntitySystem* system);
 
 EntitySystemData entitySystemData;
 CREQueue* entityIdQueue = NULL;
 
-void rbe_ec_system_initialize() {
+void cre_ec_system_initialize() {
     for (size_t i = 0; i < MAX_COMPONENTS; i++) {
         entitySystemData.entity_systems[i] = NULL;
     }
@@ -58,15 +58,15 @@ void rbe_ec_system_initialize() {
     entitySystemData.network_callback_systems_count = 0;
 }
 
-void rbe_ec_system_finalize() {
+void cre_ec_system_finalize() {
     for (size_t i = 0; i < entitySystemData.entity_systems_count; i++) {
-        rbe_ec_system_destroy(entitySystemData.entity_systems[i]);
+        cre_ec_system_destroy(entitySystemData.entity_systems[i]);
         entitySystemData.entity_systems[i] = NULL;
     }
     se_queue_destroy(entityIdQueue);
 }
 
-EntitySystem* rbe_ec_system_create() {
+EntitySystem* cre_ec_system_create() {
     EntitySystem* newSystem = SE_MEM_ALLOCATE(EntitySystem);
     newSystem->name = NULL;
     newSystem->entity_count = 0;
@@ -82,11 +82,11 @@ EntitySystem* rbe_ec_system_create() {
     return newSystem;
 }
 
-void rbe_ec_system_destroy(EntitySystem* entitySystem) {
+void cre_ec_system_destroy(EntitySystem* entitySystem) {
     SE_MEM_FREE(entitySystem);
 }
 
-void rbe_ec_system_register(EntitySystem* system) {
+void cre_ec_system_register(EntitySystem* system) {
     SE_ASSERT_FMT(system != NULL, "Passed in system is NULL!");
     entitySystemData.entity_systems[entitySystemData.entity_systems_count++] = system;
     if (system->on_entity_start_func != NULL) {
@@ -109,18 +109,18 @@ void rbe_ec_system_register(EntitySystem* system) {
     }
 }
 
-void rbe_ec_system_update_entity_signature_with_systems(Entity entity) {
+void cre_ec_system_update_entity_signature_with_systems(Entity entity) {
     ComponentType entityComponentSignature = component_manager_get_component_signature(entity);
     for (size_t i = 0; i < entitySystemData.entity_systems_count; i++) {
         if ((entityComponentSignature & entitySystemData.entity_systems[i]->component_signature) == entitySystemData.entity_systems[i]->component_signature) {
-            rbe_ec_system_insert_entity_into_system(entity, entitySystemData.entity_systems[i]);
+            cre_ec_system_insert_entity_into_system(entity, entitySystemData.entity_systems[i]);
         } else {
-            rbe_ec_system_remove_entity_from_system(entity, entitySystemData.entity_systems[i]);
+            cre_ec_system_remove_entity_from_system(entity, entitySystemData.entity_systems[i]);
         }
     }
 }
 
-void rbe_ec_system_entity_start(Entity entity) {
+void cre_ec_system_entity_start(Entity entity) {
     ComponentType entityComponentSignature = component_manager_get_component_signature(entity);
     for (size_t i = 0; i < entitySystemData.on_entity_start_systems_count; i++) {
         if ((entityComponentSignature & entitySystemData.on_entity_start_systems[i]->component_signature) == entitySystemData.on_entity_start_systems[i]->component_signature) {
@@ -129,7 +129,7 @@ void rbe_ec_system_entity_start(Entity entity) {
     }
 }
 
-void rbe_ec_system_entity_end(Entity entity) {
+void cre_ec_system_entity_end(Entity entity) {
     ComponentType entityComponentSignature = component_manager_get_component_signature(entity);
     for (size_t i = 0; i < entitySystemData.on_entity_end_systems_count; i++) {
         if ((entityComponentSignature & entitySystemData.on_entity_end_systems[i]->component_signature) == entitySystemData.on_entity_end_systems[i]->component_signature) {
@@ -138,25 +138,25 @@ void rbe_ec_system_entity_end(Entity entity) {
     }
 }
 
-void rbe_ec_system_render_systems() {
+void cre_ec_system_render_systems() {
     for (size_t i = 0; i < entitySystemData.render_systems_count; i++) {
         entitySystemData.render_systems[i]->render_func();
     }
 }
 
-void rbe_ec_system_process_systems(float deltaTime) {
+void cre_ec_system_process_systems(float deltaTime) {
     for (size_t i = 0; i < entitySystemData.process_systems_count; i++) {
         entitySystemData.process_systems[i]->process_func(deltaTime);
     }
 }
 
-void rbe_ec_system_physics_process_systems(float deltaTime) {
+void cre_ec_system_physics_process_systems(float deltaTime) {
     for (size_t i = 0; i < entitySystemData.physics_process_systems_count; i++) {
         entitySystemData.physics_process_systems[i]->physics_process_func(deltaTime);
     }
 }
 
-void rbe_ec_system_network_callback(const char* message) {
+void cre_ec_system_network_callback(const char* message) {
     for (size_t i = 0; i < entitySystemData.network_callback_systems_count; i++) {
         entitySystemData.network_callback_systems[i]->network_callback_func(message);
     }
@@ -173,7 +173,7 @@ void cre_ec_system_return_entity_uid(Entity entity) {
 }
 
 // --- Internal Functions --- //
-bool rbe_ec_system_has_entity(Entity entity, EntitySystem* system) {
+bool cre_ec_system_has_entity(Entity entity, EntitySystem* system) {
     for (size_t i = 0; i < system->entity_count; i++) {
         if (entity == system->entities[i]) {
             return true;
@@ -182,8 +182,8 @@ bool rbe_ec_system_has_entity(Entity entity, EntitySystem* system) {
     return false;
 }
 
-void rbe_ec_system_insert_entity_into_system(Entity entity, EntitySystem* system) {
-    if (!rbe_ec_system_has_entity(entity, system)) {
+void cre_ec_system_insert_entity_into_system(Entity entity, EntitySystem* system) {
+    if (!cre_ec_system_has_entity(entity, system)) {
         system->entities[system->entity_count++] = entity;
         if (system->on_entity_registered_func != NULL) {
             system->on_entity_registered_func(entity);
@@ -193,7 +193,7 @@ void rbe_ec_system_insert_entity_into_system(Entity entity, EntitySystem* system
     }
 }
 
-void rbe_ec_system_remove_entity_from_system(Entity entity, EntitySystem* system) {
+void cre_ec_system_remove_entity_from_system(Entity entity, EntitySystem* system) {
     for (size_t i = 0; i < system->entity_count; i++) {
         if (entity == system->entities[i]) {
             // Entity found
@@ -222,8 +222,8 @@ void rbe_ec_system_remove_entity_from_system(Entity entity, EntitySystem* system
     }
 }
 
-void rbe_ec_system_remove_entity_from_all_systems(Entity entity) {
+void cre_ec_system_remove_entity_from_all_systems(Entity entity) {
     for (size_t i = 0; i < entitySystemData.entity_systems_count; i++) {
-        rbe_ec_system_remove_entity_from_system(entity, entitySystemData.entity_systems[i]);
+        cre_ec_system_remove_entity_from_system(entity, entitySystemData.entity_systems[i]);
     }
 }

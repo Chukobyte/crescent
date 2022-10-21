@@ -33,8 +33,8 @@ add_library(${PROJECT_NAME} STATIC
         src/core/scene/scene_utils.c
         src/core/scripting/script_context.c
         src/core/scripting/python/py_helper.c
-        src/core/scripting/python/rbe_py.c
-        src/core/scripting/python/rbe_py_api_module.c
+        src/core/scripting/python/cre_py.c
+        src/core/scripting/python/cre_py_api_module.c
         src/core/scripting/python/py_cache.c
         src/core/scripting/python/py_script_context.c
         src/core/scripting/native/native_script_context.c
