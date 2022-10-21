@@ -13,15 +13,15 @@ typedef struct PyModuleCacheItem {
 
 static SEStringHashMap* pyModuleCacheHashMap = NULL;
 
-void rbe_py_cache_initialize() {
+void cre_py_cache_initialize() {
     pyModuleCacheHashMap = se_string_hash_map_create(128);
 }
 
-void rbe_py_cache_finalize() {
+void cre_py_cache_finalize() {
     se_string_hash_map_destroy(pyModuleCacheHashMap);
 }
 
-PyObject* rbe_py_cache_get_module(const char* modulePath) {
+PyObject* cre_py_cache_get_module(const char* modulePath) {
     if (!se_string_hash_map_has(pyModuleCacheHashMap, modulePath)) {
         PyObject* pName = PyUnicode_FromString(modulePath);
         PyObject* pNewModule = PyImport_Import(pName);
@@ -51,8 +51,8 @@ PyObject* rbe_py_cache_get_module(const char* modulePath) {
     return moduleCacheItem->module;
 }
 
-PyObject* rbe_py_cache_get_class(const char* modulePath, const char* classPath) {
-    PyObject* pyModule = rbe_py_cache_get_module(modulePath);
+PyObject* cre_py_cache_get_class(const char* modulePath, const char* classPath) {
+    PyObject* pyModule = cre_py_cache_get_module(modulePath);
     PyModuleCacheItem* moduleCacheItem = (PyModuleCacheItem*) se_string_hash_map_get(pyModuleCacheHashMap, modulePath);
     if (!se_string_hash_map_has(moduleCacheItem->classHashMap, classPath)) {
         PyObject* pModuleDict = PyModule_GetDict(pyModule);
@@ -68,10 +68,10 @@ PyObject* rbe_py_cache_get_class(const char* modulePath, const char* classPath) 
     return *pClass;
 }
 
-PyObject* rbe_py_cache_create_instance(const char* modulePath, const char* classPath, Entity entity) {
+PyObject* cre_py_cache_create_instance(const char* modulePath, const char* classPath, Entity entity) {
     PyObject* argsList = Py_BuildValue("(i)", entity);
     SE_ASSERT(argsList != NULL);
-    PyObject* classRef = rbe_py_cache_get_class(modulePath, classPath);
+    PyObject* classRef = cre_py_cache_get_class(modulePath, classPath);
     PyObject* classInstance = PyObject_CallObject(classRef, argsList);
     SE_ASSERT(classInstance != NULL);
     SE_ASSERT(PyObject_IsInstance(classInstance, classRef));

@@ -10,7 +10,7 @@
 
 #define DIR_OVERRIDE_CAPACITY  128
 
-CommandLineFlagResult rbe_command_line_args_parse(int argv, char** args) {
+CommandLineFlagResult cre_command_line_args_parse(int argv, char** args) {
     CommandLineFlagResult flagResult;
     memset(flagResult.workingDirOverride, 0, DIR_OVERRIDE_CAPACITY);
     memset(flagResult.internalAssetsDirOverride, 0, DIR_OVERRIDE_CAPACITY);
@@ -27,12 +27,12 @@ CommandLineFlagResult rbe_command_line_args_parse(int argv, char** args) {
         if (nextArgumentIndex >= argv) {
             break;
         }
-        if (strcmp(argument, RBE_COMMAND_LINE_FLAG_WORK_DIR) == 0) {
+        if (strcmp(argument, CRE_COMMAND_LINE_FLAG_WORK_DIR) == 0) {
             const char* workingDirectoryOverride = args[nextArgumentIndex];
             strcpy(flagResult.workingDirOverride, workingDirectoryOverride);
             se_logger_debug("working directory override = '%s'", flagResult.workingDirOverride);
             argumentIndex++;
-        } else if (strcmp(argument, RBE_COMMAND_LINE_FLAG_INTERNAL_ASSETS_DIR) == 0) {
+        } else if (strcmp(argument, CRE_COMMAND_LINE_FLAG_INTERNAL_ASSETS_DIR) == 0) {
             const char* internalAssetsDirectoryOverride = args[nextArgumentIndex];
             strcpy(flagResult.internalAssetsDirOverride, internalAssetsDirectoryOverride);
             se_logger_debug("internal assets directory override = '%s'", flagResult.internalAssetsDirOverride);

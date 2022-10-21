@@ -2,7 +2,7 @@
 
 #include <stdbool.h>
 
-bool rbe_initialize(int argv, char** args);
-void rbe_update();
-bool rbe_is_running();
-void rbe_shutdown();
+bool cre_initialize(int argv, char** args);
+void cre_update();
+bool cre_is_running();
+void cre_shutdown();

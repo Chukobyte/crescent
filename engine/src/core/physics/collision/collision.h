@@ -13,4 +13,4 @@ typedef struct CollisionResult {
     Entity collidedEntities[RBE_MAX_ENTITY_COLLISION];
 } CollisionResult;
 
-CollisionResult rbe_collision_process_entity_collisions(Entity entity);
+CollisionResult cre_collision_process_entity_collisions(Entity entity);

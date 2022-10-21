@@ -21,12 +21,12 @@ void script_system_network_callback(const char* message);
 
 EntitySystem* scriptSystem = NULL;
 
-static RBEScriptContext* scriptContexts[ScriptContextType_TOTAL_TYPES];
+static CREScriptContext* scriptContexts[ScriptContextType_TOTAL_TYPES];
 static size_t scriptContextsCount = 0;
 
 EntitySystem* script_ec_system_create() {
     SE_ASSERT(scriptSystem == NULL);
-    scriptSystem = rbe_ec_system_create();
+    scriptSystem = cre_ec_system_create();
     scriptSystem->name = se_strdup("Script");
     scriptSystem->on_entity_registered_func = script_system_on_entity_registered;
     scriptSystem->on_entity_unregistered_func = script_system_on_entity_unregistered;
@@ -37,14 +37,14 @@ EntitySystem* script_ec_system_create() {
     scriptSystem->network_callback_func = script_system_network_callback;
     scriptSystem->component_signature = ComponentType_SCRIPT;
     // Python Context
-    scriptContexts[ScriptContextType_PYTHON] = rbe_py_create_script_context();
+    scriptContexts[ScriptContextType_PYTHON] = cre_py_create_script_context();
     scriptContextsCount++;
     SE_ASSERT(scriptContexts[ScriptContextType_PYTHON] != NULL);
     // Native Context
-    scriptContexts[ScriptContextType_NATIVE] = rbe_native_create_script_context();
+    scriptContexts[ScriptContextType_NATIVE] = cre_native_create_script_context();
     scriptContextsCount++;
     // Register internal classed
-    rbe_native_class_register_new_class(fps_display_native_class_create_new());
+    cre_native_class_register_new_class(fps_display_native_class_create_new());
     return scriptSystem;
 }
 

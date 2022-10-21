@@ -13,7 +13,7 @@ bool is_entity_in_collision_exceptions(Entity entity, Collider2DComponent* colli
 Rect2 get_collision_rectangle(Entity entity, Transform2DComponent* transform2DComponent, Collider2DComponent* collider2DComponent);
 bool does_rectangles_collide(Rect2* sourceRect, Rect2* targetRect);
 
-CollisionResult rbe_collision_process_entity_collisions(Entity entity) {
+CollisionResult cre_collision_process_entity_collisions(Entity entity) {
     CollisionResult collisionResult = { .sourceEntity = entity, .collidedEntityCount = 0 };
     const EntitySystem* collisionSystem = collision_ec_system_get();
     Transform2DComponent* transformComponent = component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
@@ -48,7 +48,8 @@ bool is_entity_in_collision_exceptions(Entity entity, Collider2DComponent* colli
 }
 
 Rect2 get_collision_rectangle(Entity entity, Transform2DComponent* transform2DComponent, Collider2DComponent* collider2DComponent) {
-    const TransformModel2D* globalTransform = rbe_scene_manager_get_scene_node_global_transform(entity, transform2DComponent);
+    const TransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity,
+            transform2DComponent);
     Rect2 collisionRect = {
         .x = globalTransform->position.x,
         .y = globalTransform->position.y,

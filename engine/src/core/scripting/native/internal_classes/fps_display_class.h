@@ -1,4 +1,4 @@
 #pragma once
 
-struct RBENativeScriptClass* fps_display_native_class_create_new();
+struct CRENativeScriptClass* fps_display_native_class_create_new();
 

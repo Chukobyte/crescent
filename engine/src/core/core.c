@@ -15,7 +15,7 @@
 #include "game_properties.h"
 #include "engine_context.h"
 #include "utils/command_line_args_util.h"
-#include "scripting/python/rbe_py.h"
+#include "scripting/python/cre_py.h"
 #include "ecs/ecs_manager.h"
 #include "ecs/system/ec_system.h"
 #include "scene/scene_manager.h"
@@ -24,27 +24,27 @@
 // The default project path if no directory override is provided
 #define CRE_PROJECT_CONFIG_FILE_NAME "project.ccfg"
 
-bool rbe_initialize_ecs();
-bool rbe_load_assets_from_configuration();
-void rbe_process_game_update();
-void rbe_render();
+bool cre_initialize_ecs();
+bool cre_load_assets_from_configuration();
+void cre_process_game_update();
+void cre_render();
 
 static SDL_Window* window = NULL;
 static SDL_GLContext openGlContext;
-RBEGameProperties* gameProperties = NULL;
-RBEEngineContext* engineContext = NULL;
+CREGameProperties* gameProperties = NULL;
+CREEngineContext* engineContext = NULL;
 
-bool rbe_initialize(int argv, char** args) {
+bool cre_initialize(int argv, char** args) {
     // Set random seed
     srand((int)time(NULL));
 
     se_logger_set_level(LogLevel_DEBUG);
 
-    engineContext = rbe_engine_context_initialize();
+    engineContext = cre_engine_context_initialize();
     engineContext->engineRootDir = se_fs_get_cwd();
 
     // Handle command line flags
-    CommandLineFlagResult commandLineFlagResult = rbe_command_line_args_parse(argv, args);
+    CommandLineFlagResult commandLineFlagResult = cre_command_line_args_parse(argv, args);
     if (strcmp(commandLineFlagResult.workingDirOverride, "") != 0) {
         se_logger_debug("Changing working directory from override to '%s'.", commandLineFlagResult.workingDirOverride);
         se_fs_chdir(commandLineFlagResult.workingDirOverride);
@@ -62,11 +62,11 @@ bool rbe_initialize(int argv, char** args) {
         engineContext->internalAssetsDir = strdup(engineContext->engineRootDir); // TODO: Clean up properly
     }
 
-    rbe_py_initialize();
+    cre_py_initialize();
 
     gameProperties = cre_json_load_config_file(CRE_PROJECT_CONFIG_FILE_NAME);
-    rbe_game_props_initialize(gameProperties);
-    rbe_game_props_print();
+    cre_game_props_initialize(gameProperties);
+    cre_game_props_print();
 
     // Setup Game Controller DB Path
     char controllerMappingFilePath[256];
@@ -82,52 +82,52 @@ bool rbe_initialize(int argv, char** args) {
                   controllerMappingFilePath);
 
     // Initialize sub systems
-    if (!rbe_initialize_ecs()) {
+    if (!cre_initialize_ecs()) {
         se_logger_error("Failed to initialize ecs!");
         return false;
     }
 
-    rbe_scene_manager_initialize();
+    cre_scene_manager_initialize();
 
-    rbe_load_assets_from_configuration();
+    cre_load_assets_from_configuration();
 
     se_logger_info("Crescent Engine v%s initialized!", CRE_CORE_VERSION);
     engineContext->targetFPS = gameProperties->targetFPS;
     engineContext->isRunning = true;
 
     // Go to initial scene
-    rbe_scene_manager_queue_scene_change(gameProperties->initialScenePath);
+    cre_scene_manager_queue_scene_change(gameProperties->initialScenePath);
 
     return true;
 }
 
-bool rbe_initialize_ecs() {
-    rbe_ecs_manager_initialize();
+bool cre_initialize_ecs() {
+    cre_ecs_manager_initialize();
     return true;
 }
 
-bool rbe_load_assets_from_configuration() {
+bool cre_load_assets_from_configuration() {
     // Audio Sources
     for (size_t i = 0; i < gameProperties->audioSourceCount; i++) {
-        const RBEAssetAudioSource assetAudioSource = gameProperties->audioSources[i];
+        const CREAssetAudioSource assetAudioSource = gameProperties->audioSources[i];
         se_asset_manager_load_audio_source_wav(assetAudioSource.file_path, assetAudioSource.file_path);
     }
 
     // Textures
     for (size_t i = 0; i < gameProperties->textureCount; i++) {
-        const RBEAssetTexture assetTexture = gameProperties->textures[i];
+        const CREAssetTexture assetTexture = gameProperties->textures[i];
         se_asset_manager_load_texture(assetTexture.file_path, assetTexture.file_path);
     }
 
     // Fonts
     for (size_t i = 0; i < gameProperties->fontCount; i++) {
-        const RBEAssetFont assetFont = gameProperties->fonts[i];
+        const CREAssetFont assetFont = gameProperties->fonts[i];
         se_asset_manager_load_font(assetFont.file_path, assetFont.uid, assetFont.size);
     }
 
     // Inputs
     for (size_t i = 0; i < gameProperties->inputActionCount; i++) {
-        const RBEInputAction inputAction = gameProperties->inputActions[i];
+        const CREInputAction inputAction = gameProperties->inputActions[i];
         for (size_t valueIndex = 0; valueIndex < inputAction.valueCount; valueIndex++) {
             const char* actionValue = inputAction.values[valueIndex];
             se_logger_debug("action_name = %s, action_value = %s", inputAction.name, actionValue);
@@ -138,20 +138,20 @@ bool rbe_load_assets_from_configuration() {
     return true;
 }
 
-void rbe_update() {
+void cre_update() {
     // Process Scene change if exists
-    rbe_scene_manager_process_queued_scene_change();
+    cre_scene_manager_process_queued_scene_change();
 
     // Clear out queued nodes for deletion
-    rbe_scene_manager_process_queued_deletion_entities();
+    cre_scene_manager_process_queued_deletion_entities();
 
     // Create nodes queued for creation a.k.a. '_start()'
-    rbe_scene_manager_process_queued_creation_entities();
+    cre_scene_manager_process_queued_creation_entities();
 
     // Main loop
     sf_process_inputs();
-    rbe_process_game_update();
-    rbe_render();
+    cre_process_game_update();
+    cre_render();
 
     // Get FPS
     static unsigned int countedFrames = 0;
@@ -164,7 +164,7 @@ void rbe_update() {
     engineContext->averageFPS = averageFPS;
 }
 
-void rbe_process_game_update() {
+void cre_process_game_update() {
     static const uint32_t MILLISECONDS_PER_TICK = 1000; // TODO: Put in another place
     static uint32_t lastFrameTime = 0;
     const uint32_t targetFps = engineContext->targetFPS;
@@ -176,7 +176,7 @@ void rbe_process_game_update() {
 
     // Variable Time Step
     const float variableDeltaTime = (float) (SDL_GetTicks() - lastFrameTime) / (float) MILLISECONDS_PER_TICK;
-    rbe_ec_system_process_systems(variableDeltaTime);
+    cre_ec_system_process_systems(variableDeltaTime);
 
     // Fixed Time Step
     static double fixedTime = 0.0f;
@@ -195,7 +195,7 @@ void rbe_process_game_update() {
     while (accumulator >= PHYSICS_DELTA_TIME) {
         fixedTime += PHYSICS_DELTA_TIME;
         accumulator -= PHYSICS_DELTA_TIME;
-        rbe_ec_system_physics_process_systems((float) PHYSICS_DELTA_TIME);
+        cre_ec_system_physics_process_systems((float) PHYSICS_DELTA_TIME);
         se_input_clean_up_flags();
     }
 
@@ -203,25 +203,25 @@ void rbe_process_game_update() {
     lastFrameTime = SDL_GetTicks();
 }
 
-void rbe_render() {
+void cre_render() {
     // Gather render data from ec systems
-    rbe_ec_system_render_systems();
+    cre_ec_system_render_systems();
     // Actually render
     sf_render();
 }
 
-bool rbe_is_running() {
+bool cre_is_running() {
     return engineContext->isRunning && sf_is_running();
 }
 
-void rbe_shutdown() {
+void cre_shutdown() {
     SDL_DestroyWindow(window);
     SDL_GL_DeleteContext(openGlContext);
     SDL_Quit();
     sf_shutdown();
-    rbe_game_props_finalize();
-    rbe_scene_manager_finalize();
-    rbe_ecs_manager_finalize();
-    rbe_py_finalize();
+    cre_game_props_finalize();
+    cre_scene_manager_finalize();
+    cre_ecs_manager_finalize();
+    cre_py_finalize();
     se_logger_info("RBE Engine shutdown!");
 }

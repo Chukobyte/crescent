@@ -255,7 +255,7 @@ void rbe_thread_main_test() {
 }
 
 void rbe_scene_graph_test() {
-    rbe_scene_manager_initialize();
+    cre_scene_manager_initialize();
     component_manager_initialize();
 
     // Parent
@@ -267,8 +267,8 @@ void rbe_scene_graph_test() {
     parentTransform->localTransform.scale.x = 4.0f;
     parentTransform->localTransform.scale.y = 4.0f;
     component_manager_set_component(parentEntity, ComponentDataIndex_TRANSFORM_2D, parentTransform);
-    SceneTreeNode* parentNode = rbe_scene_tree_create_tree_node(parentEntity, NULL);
-    rbe_scene_manager_queue_entity_for_creation(parentNode);
+    SceneTreeNode* parentNode = cre_scene_tree_create_tree_node(parentEntity, NULL);
+    cre_scene_manager_queue_entity_for_creation(parentNode);
 
     mat4 parentModel;
     transform2d_component_get_local_model_matrix(parentModel, &parentTransform->localTransform);
@@ -279,8 +279,8 @@ void rbe_scene_graph_test() {
     childOneTransform->localTransform.position.x = 100.0f;
     childOneTransform->localTransform.position.y = 20.0f;
     component_manager_set_component(childOneEntity, ComponentDataIndex_TRANSFORM_2D, childOneTransform);
-    SceneTreeNode* childOneNode = rbe_scene_tree_create_tree_node(childOneEntity, parentNode);
-    rbe_scene_manager_queue_entity_for_creation(childOneNode);
+    SceneTreeNode* childOneNode = cre_scene_tree_create_tree_node(childOneEntity, parentNode);
+    cre_scene_manager_queue_entity_for_creation(childOneNode);
 
     mat4 childOneModel;
     transform2d_component_get_local_model_matrix(childOneModel, &childOneTransform->localTransform);
@@ -309,5 +309,5 @@ void rbe_scene_graph_test() {
 //    transform2d_component_print(&childOneCombinedTransform);
 
     component_manager_finalize();
-    rbe_scene_manager_finalize();
+    cre_scene_manager_finalize();
 }

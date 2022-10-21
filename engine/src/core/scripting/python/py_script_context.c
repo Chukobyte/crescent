@@ -35,11 +35,11 @@ SE_STATIC_ARRAY_CREATE(PyObject*, MAX_ENTITIES, entities_to_update);
 SE_STATIC_ARRAY_CREATE(PyObject*, MAX_ENTITIES, entities_to_physics_update);
 
 SEHashMap* pythonInstanceHashMap = NULL;
-RBEScriptContext* python_script_context = NULL;
+CREScriptContext* python_script_context = NULL;
 
-RBEScriptContext* rbe_py_create_script_context() {
+CREScriptContext* cre_py_create_script_context() {
     SE_ASSERT(python_script_context == NULL);
-    RBEScriptContext* scriptContext = rbe_script_context_create();
+    CREScriptContext* scriptContext = cre_script_context_create();
     scriptContext->on_create_instance = py_on_create_instance;
     scriptContext->on_delete_instance = py_on_delete_instance;
     scriptContext->on_start = py_on_start;
@@ -54,12 +54,12 @@ RBEScriptContext* rbe_py_create_script_context() {
     return scriptContext;
 }
 
-RBEScriptContext* rbe_py_get_script_context() {
+CREScriptContext* cre_py_get_script_context() {
     return python_script_context;
 }
 
 void py_on_create_instance(Entity entity, const char* classPath, const char* className) {
-    PyObject* pScriptInstance = rbe_py_cache_create_instance(classPath, className, entity);
+    PyObject* pScriptInstance = cre_py_cache_create_instance(classPath, className, entity);
     if (PyObject_HasAttrString(pScriptInstance, "_update")) {
         SE_STATIC_ARRAY_ADD(entities_to_update, pScriptInstance);
     }
@@ -151,7 +151,7 @@ void py_on_entity_subscribe_to_network_callback(Entity entity, PyObject* callbac
         }
     } else if (strcmp(id, "client_connected") == 0) {
         if (current_network_server_client_connected_script_callback == NULL) {
-            se_udp_server_register_client_connected_callback(rbe_py_on_network_udp_server_client_connected);
+            se_udp_server_register_client_connected_callback(cre_py_on_network_udp_server_client_connected);
             current_network_server_client_connected_script_callback = SE_MEM_ALLOCATE(RBEScriptCallback);
             current_network_server_client_connected_script_callback->entity = entity;
             current_network_server_client_connected_script_callback->callback_func = callback_func;
@@ -161,7 +161,7 @@ void py_on_entity_subscribe_to_network_callback(Entity entity, PyObject* callbac
     }
 }
 
-void rbe_py_on_network_udp_server_client_connected() {
+void cre_py_on_network_udp_server_client_connected() {
     if (current_network_server_client_connected_script_callback != NULL) {
         PyGILState_STATE pyGilStateState = PyGILState_Ensure();
         PyObject_CallObject(current_network_server_client_connected_script_callback->callback_func, NULL);
@@ -169,7 +169,7 @@ void rbe_py_on_network_udp_server_client_connected() {
     }
 }
 
-PyObject* rbe_py_get_script_instance(Entity entity) {
+PyObject* cre_py_get_script_instance(Entity entity) {
     if (se_hash_map_has(pythonInstanceHashMap, &entity)) {
         return (PyObject*) *(PyObject**) se_hash_map_get(pythonInstanceHashMap, &entity);
     }

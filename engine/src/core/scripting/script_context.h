@@ -14,7 +14,7 @@ typedef void (*OnNetworkCallback) (const char*);
 struct _object; // PyObject
 typedef void (*OnEntitySubscribeToNetworkCallback) (Entity, struct _object*, const char*);
 
-typedef struct RBEScriptContext {
+typedef struct CREScriptContext {
     OnCreateInstance on_create_instance;
     OnDeleteInstance on_delete_instance;
     OnStart on_start;
@@ -23,6 +23,6 @@ typedef struct RBEScriptContext {
     OnEnd on_end;
     OnNetworkCallback on_network_callback;
     OnEntitySubscribeToNetworkCallback on_entity_subscribe_to_network_callback;
-} RBEScriptContext;
+} CREScriptContext;
 
-RBEScriptContext* rbe_script_context_create();
+CREScriptContext* cre_script_context_create();

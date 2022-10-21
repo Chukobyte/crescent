@@ -24,9 +24,9 @@
 typedef void (*ExecuteOnAllTreeNodesFunc) (SceneTreeNode*);
 
 // Executes function on passed in tree node and all child tree nodes
-void rbe_scene_execute_on_all_tree_nodes(SceneTreeNode* treeNode, ExecuteOnAllTreeNodesFunc func) {
+void cre_scene_execute_on_all_tree_nodes(SceneTreeNode* treeNode, ExecuteOnAllTreeNodesFunc func) {
     for (size_t i = 0; i < treeNode->childCount; i++) {
-        rbe_scene_execute_on_all_tree_nodes(treeNode->children[i], func);
+        cre_scene_execute_on_all_tree_nodes(treeNode->children[i], func);
     }
     func(treeNode);
 }
@@ -35,7 +35,7 @@ typedef struct SceneTree {
     SceneTreeNode* root;
 } SceneTree;
 
-SceneTreeNode* rbe_scene_tree_create_tree_node(Entity entity, SceneTreeNode* parent) {
+SceneTreeNode* cre_scene_tree_create_tree_node(Entity entity, SceneTreeNode* parent) {
     SceneTreeNode* treeNode = SE_MEM_ALLOCATE(SceneTreeNode);
     treeNode->entity = entity;
     treeNode->parent = parent;
@@ -49,7 +49,7 @@ typedef struct Scene {
     SceneTree* sceneTree;
 } Scene;
 
-Scene* rbe_scene_create_scene(const char* scenePath) {
+Scene* cre_scene_create_scene(const char* scenePath) {
     Scene* scene = SE_MEM_ALLOCATE(Scene);
     scene->scenePath = scenePath;
     scene->sceneTree = SE_MEM_ALLOCATE(SceneTree);
@@ -70,32 +70,32 @@ Scene* queuedSceneToChangeTo = NULL;
 
 static SEHashMap* entityToTreeNodeMap = NULL;
 
-void rbe_scene_manager_setup_scene_nodes_from_json(JsonSceneNode* jsonSceneNode);
+void cre_scene_manager_setup_scene_nodes_from_json(JsonSceneNode* jsonSceneNode);
 
-void rbe_scene_manager_initialize() {
+void cre_scene_manager_initialize() {
     SE_ASSERT(entityToTreeNodeMap == NULL);
     entityToTreeNodeMap = se_hash_map_create(sizeof(Entity), sizeof(SceneTreeNode **), 16); // TODO: Update capacity
 }
 
-void rbe_scene_manager_finalize() {
+void cre_scene_manager_finalize() {
     SE_ASSERT(entityToTreeNodeMap != NULL);
     se_hash_map_destroy(entityToTreeNodeMap);
 }
 
-void rbe_scene_manager_queue_entity_for_creation(SceneTreeNode* treeNode) {
+void cre_scene_manager_queue_entity_for_creation(SceneTreeNode* treeNode) {
     entitiesQueuedForCreation[entitiesQueuedForCreationSize++] = treeNode->entity;
     SE_ASSERT_FMT(!se_hash_map_has(entityToTreeNodeMap, &treeNode->entity), "Entity '%d' already in entity to tree map!", treeNode->entity);
     se_hash_map_add(entityToTreeNodeMap, &treeNode->entity, &treeNode);
 }
 
-void rbe_scene_manager_process_queued_creation_entities() {
+void cre_scene_manager_process_queued_creation_entities() {
     for (size_t i = 0; i < entitiesQueuedForCreationSize; i++) {
-        rbe_ec_system_entity_start(entitiesQueuedForCreation[i]);
+        cre_ec_system_entity_start(entitiesQueuedForCreation[i]);
     }
     entitiesQueuedForCreationSize = 0;
 }
 
-void rbe_scene_manager_queue_entity_for_deletion(Entity entity) {
+void cre_scene_manager_queue_entity_for_deletion(Entity entity) {
     // Check if entity is already queued exit out early if so
     for (size_t i = 0; i < entitiesQueuedForDeletionSize; i++) {
         if (entitiesQueuedForDeletion[i] == entity) {
@@ -106,10 +106,10 @@ void rbe_scene_manager_queue_entity_for_deletion(Entity entity) {
     // Insert queued entity
     entitiesQueuedForDeletion[entitiesQueuedForDeletionSize++] = entity;
     // Clean up
-    rbe_ec_system_entity_end(entity);
+    cre_ec_system_entity_end(entity);
 }
 
-void rbe_scene_manager_process_queued_deletion_entities() {
+void cre_scene_manager_process_queued_deletion_entities() {
     for (size_t i = 0; i < entitiesToUnlinkParent_count; i++) {
         SceneTreeNode* treeNode = (SceneTreeNode*) *(SceneTreeNode**) se_hash_map_get(entityToTreeNodeMap,
                                   &entitiesToUnlinkParent[i]);
@@ -127,7 +127,7 @@ void rbe_scene_manager_process_queued_deletion_entities() {
         SE_MEM_FREE(treeNode);
         se_hash_map_erase(entityToTreeNodeMap, &entityToDelete);
         // Remove entity from systems
-        rbe_ec_system_remove_entity_from_all_systems(entityToDelete);
+        cre_ec_system_remove_entity_from_all_systems(entityToDelete);
         // Remove all components
         component_manager_remove_all_components(entityToDelete);
         // Return entity id to pool
@@ -136,35 +136,35 @@ void rbe_scene_manager_process_queued_deletion_entities() {
     entitiesQueuedForDeletionSize = 0;
 }
 
-void rbe_scene_manager_queue_scene_change(const char* scenePath) {
+void cre_scene_manager_queue_scene_change(const char* scenePath) {
     if (queuedSceneToChangeTo == NULL) {
-        queuedSceneToChangeTo = rbe_scene_create_scene(scenePath);
+        queuedSceneToChangeTo = cre_scene_create_scene(scenePath);
     } else {
         se_logger_warn("Scene already queued, not loading '%s'", scenePath);
     }
 }
 
-void rbe_queue_destroy_tree_node_entity(SceneTreeNode* treeNode) {
-    rbe_scene_manager_queue_entity_for_deletion(treeNode->entity);
+void cre_queue_destroy_tree_node_entity(SceneTreeNode* treeNode) {
+    cre_scene_manager_queue_entity_for_deletion(treeNode->entity);
 }
 
-void rbe_queue_destroy_tree_node_entity_all(SceneTreeNode* treeNode) {
-    rbe_scene_execute_on_all_tree_nodes(treeNode, rbe_queue_destroy_tree_node_entity);
+void cre_queue_destroy_tree_node_entity_all(SceneTreeNode* treeNode) {
+    cre_scene_execute_on_all_tree_nodes(treeNode, cre_queue_destroy_tree_node_entity);
     if (treeNode->parent != NULL) {
         SE_STATIC_ARRAY_ADD(entitiesToUnlinkParent, treeNode->entity);
     }
 }
 
-void rbe_scene_manager_process_queued_scene_change() {
+void cre_scene_manager_process_queued_scene_change() {
     if (queuedSceneToChangeTo != NULL) {
         // Destroy old scene
         if (activeScene != NULL) {
-            rbe_queue_destroy_tree_node_entity_all(activeScene->sceneTree->root);
+            cre_queue_destroy_tree_node_entity_all(activeScene->sceneTree->root);
             SE_MEM_FREE(activeScene);
         }
 
         // Reset Camera
-        rbe_camera_manager_reset_current_camera();
+        cre_camera_manager_reset_current_camera();
 
         // Setup new scene
         activeScene = queuedSceneToChangeTo;
@@ -173,18 +173,18 @@ void rbe_scene_manager_process_queued_scene_change() {
         // Load scene file
         JsonSceneNode* rootJsonSceneNode = cre_json_load_scene_file(activeScene->scenePath);
         SE_ASSERT_FMT(rootJsonSceneNode != NULL, "Root scene file at path '%s' is NULL!", activeScene->scenePath);
-        rbe_scene_manager_setup_scene_nodes_from_json(rootJsonSceneNode);
+        cre_scene_manager_setup_scene_nodes_from_json(rootJsonSceneNode);
         cre_json_delete_json_scene_node(rootJsonSceneNode);
     }
 }
 
-void rbe_scene_manager_set_active_scene_root(SceneTreeNode* root) {
+void cre_scene_manager_set_active_scene_root(SceneTreeNode* root) {
     SE_ASSERT_FMT(activeScene != NULL, "There is no active scene!");
     SE_ASSERT_FMT(activeScene->sceneTree->root == NULL, "Trying to overwrite an already existing scene root!");
     activeScene->sceneTree->root = root;
 }
 
-SceneTreeNode* rbe_scene_manager_get_active_scene_root() {
+SceneTreeNode* cre_scene_manager_get_active_scene_root() {
     if (activeScene != NULL && activeScene->sceneTree != NULL) {
         return activeScene->sceneTree->root;
     }
@@ -192,7 +192,7 @@ SceneTreeNode* rbe_scene_manager_get_active_scene_root() {
 }
 
 // TODO: Make function to update flags for all children
-TransformModel2D* rbe_scene_manager_get_scene_node_global_transform(Entity entity, Transform2DComponent* transform2DComponent) {
+TransformModel2D* cre_scene_manager_get_scene_node_global_transform(Entity entity, Transform2DComponent* transform2DComponent) {
     SE_ASSERT_FMT(transform2DComponent != NULL, "Transform Model is NULL for entity '%d'", entity);
     if (transform2DComponent->isGlobalTransformDirty) {
         // Walk up scene to root node and calculate global transform
@@ -203,15 +203,15 @@ TransformModel2D* rbe_scene_manager_get_scene_node_global_transform(Entity entit
     return &transform2DComponent->globalTransform;
 }
 
-SceneTreeNode* rbe_scene_manager_get_entity_tree_node(Entity entity) {
+SceneTreeNode* cre_scene_manager_get_entity_tree_node(Entity entity) {
     SE_ASSERT_FMT(se_hash_map_has(entityToTreeNodeMap, &entity), "Doesn't have entity '%d' in scene tree!", entity);
     SceneTreeNode* treeNode = (SceneTreeNode*) *(SceneTreeNode**) se_hash_map_get(entityToTreeNodeMap, &entity);
     SE_ASSERT_FMT(treeNode != NULL, "Failed to get tree node for entity '%d'", entity);
     return treeNode;
 }
 
-Entity rbe_scene_manager_get_entity_child_by_name(Entity parent, const char* childName) {
-    SceneTreeNode* parentNode = rbe_scene_manager_get_entity_tree_node(parent);
+Entity cre_scene_manager_get_entity_child_by_name(Entity parent, const char* childName) {
+    SceneTreeNode* parentNode = cre_scene_manager_get_entity_tree_node(parent);
     for (size_t childIndex = 0; childIndex < parentNode->childCount; childIndex++) {
         const Entity childEntity = parentNode->children[childIndex]->entity;
         if (component_manager_has_component(childEntity, ComponentDataIndex_NODE)) {
@@ -225,18 +225,18 @@ Entity rbe_scene_manager_get_entity_child_by_name(Entity parent, const char* chi
 }
 
 // Scene node setup
-void rbe_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneNode, SceneTreeNode* parent);
+void cre_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneNode, SceneTreeNode* parent);
 
-void rbe_scene_manager_setup_scene_nodes_from_json(JsonSceneNode* jsonSceneNode) {
-    rbe_scene_manager_setup_json_scene_node(jsonSceneNode, NULL);
+void cre_scene_manager_setup_scene_nodes_from_json(JsonSceneNode* jsonSceneNode) {
+    cre_scene_manager_setup_json_scene_node(jsonSceneNode, NULL);
 }
 
-void rbe_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneNode, SceneTreeNode* parent) {
-    SceneTreeNode* node = rbe_scene_tree_create_tree_node(cre_ec_system_create_entity_uid(), parent);
+void cre_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneNode, SceneTreeNode* parent) {
+    SceneTreeNode* node = cre_scene_tree_create_tree_node(cre_ec_system_create_entity_uid(), parent);
 
     const bool isRoot = parent == NULL;
     if (isRoot) {
-        rbe_scene_manager_set_active_scene_root(node);
+        cre_scene_manager_set_active_scene_root(node);
     }  else {
         parent->children[parent->childCount++] = node;
     }
@@ -282,12 +282,12 @@ void rbe_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneNode, Scene
         component_manager_set_component(node->entity, ComponentDataIndex_COLOR_RECT, colorSquareComponent);
     }
 
-    rbe_ec_system_update_entity_signature_with_systems(node->entity);
+    cre_ec_system_update_entity_signature_with_systems(node->entity);
 
     // Children
     for (size_t i = 0; i < jsonSceneNode->childrenCount; i++) {
-        rbe_scene_manager_setup_json_scene_node(jsonSceneNode->children[i], node);
+        cre_scene_manager_setup_json_scene_node(jsonSceneNode->children[i], node);
     }
 
-    rbe_scene_manager_queue_entity_for_creation(node);
+    cre_scene_manager_queue_entity_for_creation(node);
 }

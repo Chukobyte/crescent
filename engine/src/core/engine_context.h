@@ -4,14 +4,14 @@
 
 #define DEFAULT_START_PROJECT_PATH "test_games/cardboard_fighter"
 
-typedef struct RBEEngineContext {
+typedef struct CREEngineContext {
     bool isRunning;
     int targetFPS;
     float averageFPS;
     char* engineRootDir;
     char* internalAssetsDir;
-} RBEEngineContext;
+} CREEngineContext;
 
-RBEEngineContext* rbe_engine_context_initialize();
-void rbe_engine_context_finalize();
-RBEEngineContext* rbe_engine_context_get();
+CREEngineContext* cre_engine_context_initialize();
+void cre_engine_context_finalize();
+CREEngineContext* cre_engine_context_get();

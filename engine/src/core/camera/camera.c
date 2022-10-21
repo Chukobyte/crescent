@@ -2,8 +2,8 @@
 
 #include "../game_properties.h"
 
-void rbe_camera2d_clamp_viewport_to_boundary(RBECamera2D* camera2D) {
-    RBEGameProperties* gameProperties = rbe_game_props_get();
+void cre_camera2d_clamp_viewport_to_boundary(CRECamera2D* camera2D) {
+    CREGameProperties* gameProperties = cre_game_props_get();
     if (camera2D->viewport.x < camera2D->boundary.x) {
         camera2D->viewport.x = camera2D->boundary.x;
     } else if (camera2D->viewport.x > camera2D->boundary.w - (float) gameProperties->resolutionWidth) {

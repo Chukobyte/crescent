@@ -4,12 +4,12 @@
 #include "../seika/src/memory/se_mem.h"
 #include "../seika/src/utils/se_assert.h"
 
-#include "scripting/python/rbe_py.h"
+#include "scripting/python/cre_py.h"
 
-static RBEGameProperties* properties = NULL;
+static CREGameProperties* properties = NULL;
 
-RBEGameProperties* rbe_game_props_create() {
-    RBEGameProperties* props = SE_MEM_ALLOCATE(RBEGameProperties);
+CREGameProperties* cre_game_props_create() {
+    CREGameProperties* props = SE_MEM_ALLOCATE(CREGameProperties);
     props->gameTitle = NULL;
     props->windowWidth = 800;
     props->windowHeight = 600;
@@ -25,29 +25,29 @@ RBEGameProperties* rbe_game_props_create() {
     return props;
 }
 
-void rbe_game_props_initialize(RBEGameProperties* initialProps) {
+void cre_game_props_initialize(CREGameProperties* initialProps) {
     properties = initialProps;
 }
 
-void rbe_game_props_finalize() {
+void cre_game_props_finalize() {
     if (properties != NULL) {
         SE_MEM_FREE(properties);
         properties = NULL;
     }
 }
 
-RBEGameProperties* rbe_game_props_get() {
+CREGameProperties* cre_game_props_get() {
     return properties;
 }
 
-RBEGameProperties* cre_game_props_get_or_default() {
+CREGameProperties* cre_game_props_get_or_default() {
     if (properties == NULL) {
-        properties = rbe_game_props_create();
+        properties = cre_game_props_create();
     }
     return properties;
 }
 
-void rbe_game_props_print() {
+void cre_game_props_print() {
     if (properties == NULL) {
         se_logger_error("No game properties set, not printing!");
         return;

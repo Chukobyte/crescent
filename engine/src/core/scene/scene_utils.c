@@ -19,7 +19,7 @@ EntityArray default_get_self_and_parent_nodes(Entity entity) {
     EntityArray combineModelResult = { .entityCount = 0 };
     combineModelResult.entities[combineModelResult.entityCount++] = entity;
 
-    SceneTreeNode* sceneTreeNode = rbe_scene_manager_get_entity_tree_node(entity);
+    SceneTreeNode* sceneTreeNode = cre_scene_manager_get_entity_tree_node(entity);
     SceneTreeNode* parentTreeNode = sceneTreeNode->parent;
     while (parentTreeNode != NULL) {
         combineModelResult.entities[combineModelResult.entityCount++] = parentTreeNode->entity;
@@ -73,7 +73,7 @@ void cre_scene_utils_update_global_transform_model(Entity entity, TransformModel
 }
 
 void cre_scene_utils_apply_camera_and_origin_translation(TransformModel2D* globalTransform, Vector2* origin, bool ignoreCamera) {
-    const RBECamera2D* renderCamera = ignoreCamera ? rbe_camera_manager_get_default_camera() : rbe_camera_manager_get_current_camera();
+    const CRECamera2D* renderCamera = ignoreCamera ? cre_camera_manager_get_default_camera() : cre_camera_manager_get_current_camera();
     glm_translate(globalTransform->model, (vec3) {
         (renderCamera->offset.x - (renderCamera->viewport.x * globalTransform->scaleSign.x) - origin->x) * renderCamera->zoom.x,
         (renderCamera->offset.y - (renderCamera->viewport.y * globalTransform->scaleSign.y) - origin->y) * renderCamera->zoom.y,

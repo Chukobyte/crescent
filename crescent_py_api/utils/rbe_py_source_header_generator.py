@@ -15,7 +15,7 @@ def get_py_source_text() -> str:
     return py_source_text.rstrip()
 
 
-rbe_py_source_text = f"""#pragma once
+cre_py_source_text = f"""#pragma once
 
 #define RBE_PY_API_SOURCE_VERSION "{RBE_PY_API_VERSION}"
 
@@ -71,8 +71,8 @@ RBE_PY_API_SOURCE\\
 "\\n"
 """
 
-print(rbe_py_source_text)
+print(cre_py_source_text)
 
 # Generate File
 with open(RBE_PY_API_SOURCE_OUTPUT_PATH, "w") as c_py_source_file:
-    c_py_source_file.write(rbe_py_source_text)
+    c_py_source_file.write(cre_py_source_text)
