@@ -6,6 +6,7 @@ from src.special_moves import SpecialMovesManager
 from src.task import co_suspend
 from src.health_bar import HealthBar
 from src.input import InputBuffer
+from src.timer import Timer
 
 
 class FighterStance:
@@ -41,6 +42,7 @@ class Fighter:
         self.facing_dir = Vector2.RIGHT()
         self.moves_manager = SpecialMovesManager()
         self._previous_stance = FighterStance.NONE
+        self.block_timer = Timer(1.0)
 
     def update_input_state(self) -> None:
         self.input_buffer.process_inputs()
@@ -98,7 +100,9 @@ class Fighter:
         )
         if self._can_block():
             # TODO: Do more stuff for blocking...
-            pass
+            print("Blocked!")
+            self.state = FighterState.BLOCKING
+            self.block_timer.reset()
         else:
             self.hp = max(self.hp - 10, 0)
             self.health_bar.set_health_percentage(self.hp)
