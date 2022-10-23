@@ -2,6 +2,8 @@
 
 #include "../../utils/file_system_helper.h"
 
+// TODO: Refactor for better readability
+
 namespace {
 unsigned int selectedFileBrowserIndex = 0;
 
@@ -19,12 +21,32 @@ void DisplayFileBrowser(ImGuiHelper::FileBrowser& fileBrowser) {
         ImGui::CloseCurrentPopup();
     };
 
+    static auto AttemptToOpenFile = [](ImGuiHelper::FileBrowser& fileBrowser, const std::filesystem::path& fullPathCandidate) {
+        if (!fullPathCandidate.empty() && FileSystemHelper::DoesFileExist(fullPathCandidate)) {
+            if (fileBrowser.onModeCompletedFunc) {
+                fileBrowser.onModeCompletedFunc(fullPathCandidate);
+            }
+            CloseDisplayPopup();
+        }
+    };
+
     const ImVec2 windowSize = ImGui::GetWindowSize();
+    const auto& mode = fileBrowser.mode;
 
     static std::string dirText;
     static ImGuiHelper::InputText dirInputText("Dir:", dirText);
     ImGui::PushItemWidth(500);
     ImGuiHelper::BeginInputText(dirInputText);
+
+    // Full dir or file path
+    std::string pathCandidate = dirInputText.GetValue() + "/" + pathInputText.GetValue();
+    if (!selectedExtensionType.empty() && mode != ImGuiHelper::FileBrowser::Mode::SelectDir && selectedExtensionType != "*.*") {
+        pathCandidate = Helper::ConvertFilePathToFilePathExtension(pathCandidate, selectedExtensionType);
+    } else if (mode == ImGuiHelper::FileBrowser::Mode::SelectDir) {
+        pathCandidate = Helper::RemoveExtensionFromFilePath(pathCandidate);
+    }
+    const std::filesystem::path fullPath = pathCandidate;
+    const bool doesPathInputHaveText = !pathCandidate.empty();
 
     // Show Files/Dirs Region
     ImGui::SetNextWindowContentSize(ImVec2(windowSize.x - 20, 0));
@@ -43,7 +65,6 @@ void DisplayFileBrowser(ImGuiHelper::FileBrowser& fileBrowser) {
         reloadDirPathCache = false;
     }
 
-    const auto& mode = fileBrowser.mode;
     static unsigned int selectionIndex = 0;
     static unsigned int index = 0;
     index = 0;
@@ -79,7 +100,7 @@ void DisplayFileBrowser(ImGuiHelper::FileBrowser& fileBrowser) {
         index++;
     }
 
-    static auto HandleFile = [](const FileNode& fileNode, ImGuiHelper::FileBrowser::Mode mode) {
+    static auto HandleFile = [](ImGuiHelper::FileBrowser& fileBrowser, const FileNode& fileNode, ImGuiHelper::FileBrowser::Mode mode) {
         const std::string filePath = fileNode.path.filename().string();
         if (ImGui::Selectable(filePath.c_str(), selectionIndex == index, ImGuiSelectableFlags_AllowDoubleClick | ImGuiSelectableFlags_DontClosePopups)) {
             selectionIndex = index;
@@ -87,18 +108,20 @@ void DisplayFileBrowser(ImGuiHelper::FileBrowser& fileBrowser) {
                 pathInputText.SetValue(filePath);
             }
 
-            if(ImGui::IsMouseDoubleClicked(0)) {}
+            if(ImGui::IsMouseDoubleClicked(0)) {
+                AttemptToOpenFile(fileBrowser, fileNode.path);
+            }
         }
         index++;
     };
     if (mode != ImGuiHelper::FileBrowser::Mode::SelectDir) {
         if (fileBrowser.validExtensions.empty()) {
             for (auto& file : fileBrowser.pathCache.rootNode.files) {
-                HandleFile(file, mode);
+                HandleFile(fileBrowser, file, mode);
             }
         } else {
             for (auto& file : fileBrowser.pathCache.extensionToFileNodeMap[selectedExtensionType]) {
-                HandleFile(file, mode);
+                HandleFile(fileBrowser, file, mode);
             }
         }
     }
@@ -137,15 +160,7 @@ void DisplayFileBrowser(ImGuiHelper::FileBrowser& fileBrowser) {
         CloseDisplayPopup();
     }
     ImGui::SameLine();
-    // TODO: Validate better...
-    std::string pathCandidate = dirInputText.GetValue() + "/" + pathInputText.GetValue();
-    if (!selectedExtensionType.empty() && mode != ImGuiHelper::FileBrowser::Mode::SelectDir && selectedExtensionType != "*.*") {
-        pathCandidate = Helper::ConvertFilePathToFilePathExtension(pathCandidate, selectedExtensionType);
-    } else if (mode == ImGuiHelper::FileBrowser::Mode::SelectDir) {
-        pathCandidate = Helper::RemoveExtensionFromFilePath(pathCandidate);
-    }
-    const std::filesystem::path fullPath = pathCandidate;
-    const bool doesPathInputHaveText = !pathCandidate.empty();
+
     switch (mode) {
     case ImGuiHelper::FileBrowser::Mode::SelectDir: {
         if (ImGui::Button("Open") && doesPathInputHaveText && FileSystemHelper::DoesDirectoryExist(fullPath)) {
@@ -163,11 +178,8 @@ void DisplayFileBrowser(ImGuiHelper::FileBrowser& fileBrowser) {
         break;
     }
     case ImGuiHelper::FileBrowser::Mode::OpenFile: {
-        if (ImGui::Button("Open") && doesPathInputHaveText && FileSystemHelper::DoesFileExist(fullPath)) {
-            if (fileBrowser.onModeCompletedFunc) {
-                fileBrowser.onModeCompletedFunc(fullPath);
-            }
-            CloseDisplayPopup();
+        if (ImGui::Button("Open")) {
+            AttemptToOpenFile(fileBrowser, fullPath);
         }
         break;
     }
