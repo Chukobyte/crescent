@@ -204,7 +204,7 @@ class FighterSimulation:
         #     print(f"Entities collided!")
         #     break
 
-        # Attack test
+        # Update active attack tasks.  May want to handle attacks explicitly here instead of in a coroutine?
         for attack_ref in self.active_attacks[:]:
             try:
                 awaitable = attack_ref.update_task.send(None)
