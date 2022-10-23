@@ -153,7 +153,7 @@ class FighterSimulation:
 
             # Handle Block
             if fighter.state == FighterState.BLOCKING:
-                if fighter.block_timer.tick() <= 0.0:
+                if fighter.block_timer.tick(delta_time) <= 0.0:
                     fighter.state = FighterState.IDLE
 
             # Stance logic, super basic now as there are no hit reactions, down states, etc...

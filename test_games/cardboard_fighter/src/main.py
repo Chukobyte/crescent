@@ -85,9 +85,6 @@ class Main(Node2D):
         if Input.is_action_just_pressed(name="exit"):
             Engine.exit()
 
-        if Input.is_action_just_pressed(name="ui_confirm"):
-            SceneTree.change_scene(path="nodes/main.cscn")
-
         if Input.is_action_just_pressed(name="play_sfx"):
             self.fight_sim.fighters[0].health_bar.print_debug_info()
             self.fight_sim.fighters[0].health_bar.set_health_percentage(50)

@@ -42,7 +42,7 @@ class Fighter:
         self.facing_dir = Vector2.RIGHT()
         self.moves_manager = SpecialMovesManager()
         self._previous_stance = FighterStance.NONE
-        self.block_timer = Timer(1.0)
+        self.block_timer = Timer(0.5)  # Block cooldown
 
     def update_input_state(self) -> None:
         self.input_buffer.process_inputs()
@@ -108,8 +108,10 @@ class Fighter:
             self.health_bar.set_health_percentage(self.hp)
 
     def _can_block(self) -> bool:
-        if self.state != FighterState.IDLE:
+        if self.state == FighterState.ATTACKING:
             return False
+        elif self.state == FighterState.BLOCKING:
+            return True
         scale = self.node.scale
         return (self.input_buffer.move_left_pressed and scale.x > 0) or (
             self.input_buffer.move_right_pressed and scale.x < 0
