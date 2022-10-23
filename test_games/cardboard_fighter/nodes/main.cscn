@@ -528,6 +528,23 @@
                                     }
                                 }
                             ]
+                        },
+                        {
+                            "name": "block",
+                            "speed": 100,
+                            "loops": true,
+                            "frames": [
+                                {
+                                    "frame": 0,
+                                    "texture_path": "assets/images/characters/mor/mor_standing_block.png",
+                                    "draw_source": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                }
+                            ]
                         }
                     ]
                 }
@@ -1066,6 +1083,23 @@
                                 {
                                     "frame": 0,
                                     "texture_path": "assets/images/characters/mor/mor_jump_up_sheet.png",
+                                    "draw_source": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "w": 126.0,
+                                        "h": 53.0
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "name": "block",
+                            "speed": 100,
+                            "loops": true,
+                            "frames": [
+                                {
+                                    "frame": 0,
+                                    "texture_path": "assets/images/characters/mor/mor_standing_block.png",
                                     "draw_source": {
                                         "x": 0.0,
                                         "y": 0.0,

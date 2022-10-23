@@ -99,10 +99,9 @@ class Fighter:
             f"Attack Node '{attack}' connected to '{self.node}' with collider '{self.collider}'"
         )
         if self._can_block():
-            # TODO: Do more stuff for blocking...
-            print("Blocked!")
             self.state = FighterState.BLOCKING
             self.block_timer.reset()
+            self.node.play("block")
         else:
             self.hp = max(self.hp - 10, 0)
             self.health_bar.set_health_percentage(self.hp)
