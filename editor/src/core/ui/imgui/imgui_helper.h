@@ -14,6 +14,9 @@
 // TODO: Templatize and separate classes/structs into separate files
 
 namespace ImGuiHelper {
+static const std::string COMBO_BOX_LIST_NONE = "<none>";
+
+
 class Context : public Singleton<Context> {
   public:
     Context(singleton) {}
