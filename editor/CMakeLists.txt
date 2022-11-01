@@ -37,6 +37,7 @@ add_library(${PROJECT_NAME} STATIC
         src/core/ui/imgui/imgui_styler.cpp
         src/core/ui/imgui/imgui_window_renderer.cpp
         src/core/ui/views/opened_project/menu_bar_ui.cpp
+        src/core/ui/views/opened_project/windows/animation_editor_ui.cpp
         src/core/ui/views/opened_project/windows/asset_browser_ui.cpp
         src/core/ui/views/opened_project/windows/asset_import_ui.cpp
         src/core/ui/views/opened_project/windows/console_ui.cpp
