@@ -18,8 +18,6 @@
 #include "imgui/imgui_file_browser.h"
 #include "imgui/imgui_helper.h"
 
-static EditorContext* editorContext = EditorContext::Get();
-
 void OpenedProjectUI::ProcessMenuBar() {
     static ImGuiHelper::MenuBar menuBar = OpenedProjectUI::MenuBar::GetMenuBar();
     ImGuiHelper::BeginMainMenuBar(menuBar);
@@ -33,6 +31,7 @@ void OpenedProjectUI::ProcessModalPopups() {
 }
 
 void OpenedProjectUI::ProcessWindows() {
+    static EditorContext* editorContext = EditorContext::Get();
     int windowWidth = 0;
     int windowHeight = 0;
     SDL_GetWindowSize(editorContext->window, &windowWidth, &windowHeight);
@@ -106,10 +105,9 @@ void OpenedProjectUI::ProcessWindows() {
 }
 
 Task<> OpenedProjectUI::ManageOpenedProject() {
-    EditorContext* edContext = EditorContext::Get();
+    static EditorContext* editorContext = EditorContext::Get();
     while (true) {
-
-        co_await WaitUntil([edContext] { return editorContext->projectState == EditorProjectState::OpenedProject; });
+        co_await WaitUntil([] { return editorContext->projectState == EditorProjectState::OpenedProject; });
 
         while (editorContext->projectState == EditorProjectState::OpenedProject) {
             co_await Suspend();
