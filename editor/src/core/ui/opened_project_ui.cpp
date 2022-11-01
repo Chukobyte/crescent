@@ -6,7 +6,7 @@
 #include "../engine/src/core/scene/scene_utils.h"
 
 #include "views/opened_project/menu_bar_ui.h"
-#include "views/opened_project/windows/asset_browser_ui.h"
+#include "views/opened_project/windows/asset_import_ui.h"
 #include "views/opened_project/windows/details_ui.h"
 #include "views/opened_project/windows/scene_outliner_ui.h"
 #include "views/opened_project/windows/scene_view_ui.h"
@@ -48,11 +48,8 @@ void OpenedProjectUI::ProcessWindows() {
 
     // Create editor windows
     static ImGuiHelper::Window sceneOutlinerWindow = OpenedProjectUI::Windows::GetSceneOutlinerWindow();
-
-    static ImGuiHelper::Window assetImportWindow = OpenedProjectUI::Windows::GetAssetBrowserWindow();
-
+    static ImGuiHelper::Window assetImportWindow = OpenedProjectUI::Windows::GetAssetImportWindow();
     static ImGuiHelper::Window sceneViewWindow = OpenedProjectUI::Windows::GetSceneViewWindow();
-
     static ImGuiHelper::Window detailsWindow = OpenedProjectUI::Windows::GetDetailsWindow();
 
     static ImGuiHelper::Window assetBrowserWindow = {
