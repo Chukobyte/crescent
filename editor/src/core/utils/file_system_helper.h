@@ -1,8 +1,5 @@
 #pragma once
 
-#include <iostream>
-#include <fstream>
-#include <sstream>
 #include <filesystem>
 
 namespace FileSystemHelper {
@@ -10,13 +7,7 @@ inline std::string GetCurrentDir() {
     return std::filesystem::current_path().string();
 }
 
-inline void WriteFile(const std::string& filePath, const std::string& fileText) {
-    std::ofstream myFile(filePath);
-    std::stringstream textStream;
-    textStream.str(fileText);
-    myFile << textStream.rdbuf();
-    myFile.close();
-}
+void WriteFile(const std::string& filePath, const std::string& fileText);
 
 inline bool DoesDirectoryExist(const std::filesystem::path& filePath) {
     return std::filesystem::is_directory(filePath);

@@ -6,6 +6,7 @@ from src.special_moves import SpecialMovesManager
 from src.task import co_suspend
 from src.health_bar import HealthBar
 from src.input import InputBuffer
+from src.timer import Timer
 
 
 class FighterStance:
@@ -41,6 +42,7 @@ class Fighter:
         self.facing_dir = Vector2.RIGHT()
         self.moves_manager = SpecialMovesManager()
         self._previous_stance = FighterStance.NONE
+        self.block_timer = Timer(0.5)  # Block cooldown
 
     def update_input_state(self) -> None:
         self.input_buffer.process_inputs()
@@ -97,15 +99,18 @@ class Fighter:
             f"Attack Node '{attack}' connected to '{self.node}' with collider '{self.collider}'"
         )
         if self._can_block():
-            # TODO: Do more stuff for blocking...
-            pass
+            self.state = FighterState.BLOCKING
+            self.block_timer.reset()
+            self.node.play("block")
         else:
             self.hp = max(self.hp - 10, 0)
             self.health_bar.set_health_percentage(self.hp)
 
     def _can_block(self) -> bool:
-        if self.state != FighterState.IDLE:
+        if self.state == FighterState.ATTACKING:
             return False
+        elif self.state == FighterState.BLOCKING:
+            return True
         scale = self.node.scale
         return (self.input_buffer.move_left_pressed and scale.x > 0) or (
             self.input_buffer.move_right_pressed and scale.x < 0

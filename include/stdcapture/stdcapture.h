@@ -12,7 +12,13 @@
 #define close _close
 #define pipe _pipe
 #define read _read
+
+#ifdef _MSC_VER
+// TODO: Fix on MSV as it clashes with sstream '_eof'
+#else
 #define eof _eof
+#endif
+
 #else
 #include <unistd.h>
 #endif

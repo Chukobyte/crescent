@@ -151,26 +151,31 @@ class FighterSimulation:
                         fighter.manage_jump_state(delta_time)
                     )
 
-            # Stance logic, super basic now as there are no hit reactions, down states, etc...
-            if fighter.stance != FighterStance.IN_AIR:
-                if fighter.input_buffer.crouch_pressed:
-                    if fighter.set_stance(FighterStance.CROUCHING):
-                        fighter.node.play("crouch")
-                else:
-                    fighter.set_stance(FighterStance.STANDING)
-                    x_scale = fighter.node.scale.x
-                    if fighter.velocity.x > 0:
-                        if x_scale > 0:
-                            fighter.node.play("walk-forward")
-                        else:
-                            fighter.node.play("walk-backward")
-                    elif fighter.velocity.x < 0:
-                        if x_scale > 0:
-                            fighter.node.play("walk-backward")
-                        else:
-                            fighter.node.play("walk-forward")
+            # Handle Block
+            if fighter.state == FighterState.BLOCKING:
+                if fighter.block_timer.tick(delta_time) <= 0.0:
+                    fighter.state = FighterState.IDLE
+            else:
+                # Stance logic, super basic now as there are no hit reactions, down states, etc...
+                if fighter.stance != FighterStance.IN_AIR and fighter.state != FighterState.BLOCKING:
+                    if fighter.input_buffer.crouch_pressed:
+                        if fighter.set_stance(FighterStance.CROUCHING):
+                            fighter.node.play("crouch")
                     else:
-                        fighter.node.play("idle")
+                        fighter.set_stance(FighterStance.STANDING)
+                        x_scale = fighter.node.scale.x
+                        if fighter.velocity.x > 0:
+                            if x_scale > 0:
+                                fighter.node.play("walk-forward")
+                            else:
+                                fighter.node.play("walk-backward")
+                        elif fighter.velocity.x < 0:
+                            if x_scale > 0:
+                                fighter.node.play("walk-backward")
+                            else:
+                                fighter.node.play("walk-forward")
+                        else:
+                            fighter.node.play("idle")
 
             # Attack
             # TODO: Make different attacks for heavy punch, light kick, and heavy kick
@@ -204,7 +209,7 @@ class FighterSimulation:
         #     print(f"Entities collided!")
         #     break
 
-        # Attack test
+        # Update active attack tasks.  May want to handle attacks explicitly here instead of in a coroutine?
         for attack_ref in self.active_attacks[:]:
             try:
                 awaitable = attack_ref.update_task.send(None)
