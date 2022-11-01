@@ -39,6 +39,7 @@ add_library(${PROJECT_NAME} STATIC
         src/core/ui/views/opened_project/menu_bar_ui.cpp
         src/core/ui/views/opened_project/windows/asset_browser_ui.cpp
         src/core/ui/views/opened_project/windows/asset_import_ui.cpp
+        src/core/ui/views/opened_project/windows/console_ui.cpp
         src/core/ui/views/opened_project/windows/details_ui.cpp
         src/core/ui/views/opened_project/windows/scene_outliner_ui.cpp
         src/core/ui/views/opened_project/windows/scene_view_ui.cpp
