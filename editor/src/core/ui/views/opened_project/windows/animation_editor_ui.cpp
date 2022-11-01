@@ -1,6 +1,13 @@
-#include "details_ui.h"
+#include "animation_editor_ui.h"
 #include "../../../../asset_browser.h"
 #include "../../../../components/component.h"
+
+// Temp
+struct FuncObject {
+    FuncObject(std::function<void()> func) {
+        func();
+    }
+};
 
 ImGuiHelper::PopupModal& OpenedProjectUI::Windows::AnimationEditor::GetPopup(AnimatedSpriteComp* animatedSpriteComp) {
     static ImGuiHelper::PopupModal animationsEditPopup = {
