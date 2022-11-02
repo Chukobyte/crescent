@@ -847,8 +847,8 @@ PyObject* cre_py_api_client_subscribe(PyObject* self, PyObject* args, PyObject* 
 }
 
 // Collision Handler
-PyObject* cre_py_api_collision_handler_process_collisions(PyObject* self, PyObject* args, PyObject* kwargs) {
 #define TYPE_BUFFER_SIZE 32
+PyObject* cre_py_api_collision_handler_process_collisions(PyObject* self, PyObject* args, PyObject* kwargs) {
     Entity entity;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
         char typeBuffer[TYPE_BUFFER_SIZE];
@@ -865,5 +865,30 @@ PyObject* cre_py_api_collision_handler_process_collisions(PyObject* self, PyObje
         return Py_BuildValue("O", pyCollidedEntityList);
     }
     return NULL;
-#undef TYPE_BUFFER_SIZE
 }
+
+PyObject* cre_py_api_collision_handler_process_mouse_collisions(PyObject* self, PyObject* args, PyObject* kwargs) {
+    float positionOffsetX;
+    float positionOffsetY;
+    float collisionSizeW;
+    float collisionSizeH;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "ffff", crePyApiCollisionHandlerProcessMouseCollisionsKWList, &positionOffsetX, &positionOffsetY, &collisionSizeW, &collisionSizeH)) {
+        char typeBuffer[TYPE_BUFFER_SIZE];
+        PyObject* pyCollidedEntityList = PyList_New(0);
+        // TODO: Transform mouse screen position into world position.
+        static Vector2 mouseWorldPos = { 0.0f, 0.0f }; // TODO: Implement mouse stuff...
+        Rect2 collisionRect = {mouseWorldPos.x + positionOffsetX, mouseWorldPos.y + positionOffsetY, collisionSizeW, collisionSizeH };
+        CollisionResult collisionResult = cre_collision_process_mouse_collisions(&collisionRect);
+        for (size_t i = 0; i < collisionResult.collidedEntityCount; i++) {
+            const Entity collidedEntity = collisionResult.collidedEntities[i];
+            NodeComponent* nodeComponent = (NodeComponent*) component_manager_get_component(collidedEntity, ComponentDataIndex_NODE);
+            strcpy(typeBuffer, node_get_base_type_string(nodeComponent->type));
+            if (PyList_Append(pyCollidedEntityList, Py_BuildValue("(is)", collidedEntity, typeBuffer)) == -1) {
+                PyErr_Print();
+            }
+        }
+        return Py_BuildValue("O", pyCollidedEntityList);
+    }
+    return NULL;
+}
+#undef TYPE_BUFFER_SIZE

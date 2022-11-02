@@ -1129,6 +1129,21 @@ class CollisionHandler:
         for index, node in enumerate(collided_entities):
             yield Node.parse_scene_node_from_engine(scene_node=node)
 
+    @staticmethod
+    def process_mouse_collisions(
+        pos_offset=Vector2(0.0, 0.0), collision_size=Size2D(1.0, 1.0)
+    ):
+        collided_entities = (
+            crescent_api_internal.collision_handler_process_mouse_collisions(
+                pos_offset_x=pos_offset.x,
+                pos_offset_y=pos_offset.y,
+                collision_size_w=collision_size.w,
+                collision_size_h=collision_size.h,
+            )
+        )
+        for index, node in enumerate(collided_entities):
+            yield Node.parse_scene_node_from_engine(scene_node=node)
+
 
 # NETWORK
 class Network:

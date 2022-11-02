@@ -20,7 +20,10 @@
 static EditorContext* editorContext = EditorContext::Get();
 
 bool Editor::Initialize() {
-    se_logger_set_level(LogLevel_DEBUG);
+    // Load editor setting or create a new file if it doesn't exist
+    if (!editorContext->settings.LoadSettings()) {
+        editorContext->settings.SaveSettings();
+    }
 
     if (!InitializeSDL()) {
         return false;
@@ -41,11 +44,6 @@ bool Editor::Initialize() {
     editorContext->initialDir = FileSystemHelper::GetCurrentDir();
     editorContext->isRunning = true;
     se_logger_info("Crescent Engine Editor has started!");
-
-    // Load editor setting or create a new file if it doesn't exist
-    if (!editorContext->settings.LoadSettings()) {
-        editorContext->settings.SaveSettings();
-    }
 
     // Start editor background tasks
     mainTasks.RunManaged(EditorBackgroundTasks::Main(&mainTasks));
