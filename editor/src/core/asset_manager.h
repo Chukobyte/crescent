@@ -18,6 +18,7 @@ class AssetManager : public Singleton<AssetManager> {
     // Texture
     Texture* LoadTexture(const char* fileName, const char* key);
     Texture* GetTexture(const char* key);
+    Texture* GetTextureSafe(const char* key);
     bool HasTexture(const char* key) const;
     // Font
     Font* LoadFont(const char* fileName, const char* key, int size);

@@ -1,5 +1,6 @@
 #include "animation_editor_ui.h"
 #include "../../../../asset_browser.h"
+#include "../../../../asset_manager.h"
 #include "../../../../components/component.h"
 
 // Temp
@@ -13,7 +14,7 @@ ImGuiHelper::PopupModal& OpenedProjectUI::Windows::AnimationEditor::GetPopup(Ani
     static ImGuiHelper::PopupModal animationsEditPopup = {
         .name = "Animation Edit Menu",
         .open = nullptr,
-        .windowFlags = 0,
+        .windowFlags = ImGuiWindowFlags_None,
         .position = ImVec2{ 100.0f, 100.0f },
         .size = ImVec2{ 400.0f, 400.0f },
     };
@@ -124,10 +125,41 @@ ImGuiHelper::PopupModal& OpenedProjectUI::Windows::AnimationEditor::GetPopup(Ani
         }
         ImGui::Separator();
 
-        // If there is a selected anim
+        // Selected animation logic
         if (!selectedAnimName.empty() && animatedSpriteComp->HasAnimationWithName(selectedAnimName)) {
             auto& selectedAnim = animatedSpriteComp->GetAnimationByName(selectedAnimName);
             const size_t frameCount = selectedAnim.animationFrames.size();
+
+            // Animation Frames Display
+            // TODO: Cache results until updates are needed...
+            static AssetManager* assetManager = AssetManager::Get();
+            ImGui::BeginChild("AnimationIndexDisplay", ImGui::GetContentRegionAvail(), false, ImGuiWindowFlags_HorizontalScrollbar);
+            ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(1.0f, 1.0f));
+            for (int i = 0; i < frameCount; i++) {
+                ImGui::PushID(i);
+                const auto& animFrame = selectedAnim.GetAnimationFrame(i);
+                if (Texture* texture = assetManager->GetTexture(animFrame.texturePath.c_str())) {
+                    static ImVec2 buttonSize = ImVec2(64.0f, 64.0f);
+                    static ImVec2 imageSize = ImVec2(126.0f, 53.0f);
+                    ImVec2 uv0 = ImVec2(0.0f, 0.0f);
+                    ImVec2 uv1 = ImVec2(imageSize.x / (float) texture->width, imageSize.y / (float) texture->height);
+                    ImVec4 bg_col = ImVec4(0.1f, 0.1f, 0.1f, 1.0f);
+                    ImVec4 tint_col = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
+                    ImGui::Text("%d:", i);
+                    ImGui::SameLine();
+                    if (ImGui::ImageButton("", (ImTextureID) texture->id, buttonSize, uv0, uv1, bg_col, tint_col)) {}
+                } else {
+                    ImGui::Text("Text");
+                }
+                ImGui::PopID();
+                ImGui::SameLine();
+            }
+            ImGui::PopStyleVar();
+            ImGui::NewLine();
+            ImGui::EndChild();
+            ImGui::Separator();
+
+            // Frame Count
             ImGui::Text("Frame Count: %zu", frameCount);
 
             // Have to define anim frame stuff here in order to refresh combo box when adding frame

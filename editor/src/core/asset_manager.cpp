@@ -74,6 +74,10 @@ Texture* AssetManager::GetTexture(const char* key) {
     return se_asset_manager_get_texture(key);
 }
 
+Texture *AssetManager::GetTextureSafe(const char *key) {
+    return se_asset_manager_has_texture(key) ? se_asset_manager_get_texture(key) : nullptr;
+}
+
 bool AssetManager::HasTexture(const char* key) const {
     return se_asset_manager_has_texture(key);
 }
