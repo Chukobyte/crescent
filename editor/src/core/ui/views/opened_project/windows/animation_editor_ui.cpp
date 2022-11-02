@@ -133,12 +133,14 @@ ImGuiHelper::PopupModal& OpenedProjectUI::Windows::AnimationEditor::GetPopup(Ani
             // Animation Frames Display
             // TODO: Cache results until updates are needed...
             static AssetManager* assetManager = AssetManager::Get();
-            ImGui::BeginChild("AnimationIndexDisplay", ImGui::GetContentRegionAvail(), false, ImGuiWindowFlags_HorizontalScrollbar);
+            ImVec2 indexContentSize = ImVec2(ImGui::GetContentRegionAvail().x, 100);
+            ImGui::BeginChild("AnimationIndexDisplay", indexContentSize, false, ImGuiWindowFlags_HorizontalScrollbar);
             ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(1.0f, 1.0f));
             for (int i = 0; i < frameCount; i++) {
                 ImGui::PushID(i);
                 const auto& animFrame = selectedAnim.GetAnimationFrame(i);
                 if (Texture* texture = assetManager->GetTextureSafe(animFrame.texturePath.c_str())) {
+                    // TODO: Fix up stuff with rendering to image button...
                     static ImVec2 buttonSize = ImVec2(64.0f, 64.0f);
                     static ImVec2 imageSize = ImVec2(126.0f, 53.0f);
                     ImVec2 uv0 = ImVec2(0.0f, 0.0f);
@@ -147,7 +149,9 @@ ImGuiHelper::PopupModal& OpenedProjectUI::Windows::AnimationEditor::GetPopup(Ani
                     ImVec4 tint_col = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
                     ImGui::Text("%d:", i);
                     ImGui::SameLine();
-                    if (ImGui::ImageButton("", (ImTextureID) texture->id, buttonSize, uv0, uv1, bg_col, tint_col)) {}
+                    if (ImGui::ImageButton("", (ImTextureID) texture->id, buttonSize, uv0, uv1, bg_col, tint_col)) {
+                        selectedAnimFrameIndex = i;
+                    }
                 } else {
                     ImGui::Text("Text");
                 }
