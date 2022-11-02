@@ -83,4 +83,9 @@ template<typename T>
 inline T Max(T a, T b) {
     return a > b ? a : b;
 }
+
+template<typename T>
+inline T SafeDiv(T a, T b) {
+    return b != 0.0f ? a / b : 0.0f;
+}
 } // namespace

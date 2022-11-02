@@ -18,7 +18,32 @@
 
 static EditorContext* editorContext = EditorContext::Get();
 
-void ProjectManagerUI::ProcessMenuBar() {}
+#ifdef _DEBUG
+static bool isImguiDemoEnabled = false;
+#endif
+
+void ProjectManagerUI::ProcessMenuBar() {
+#ifdef _DEBUG
+    ImGuiHelper::MenuBar menuBar = {
+        .name = "SceneMenuBar",
+        .menus = {
+            {
+                .name = "Debug",
+                .menuItems = {
+                    {
+                        .name = "Toggle Imgui Demo",
+                        .keyboardShortcut = "",
+                        .callbackFunc = [] (ImGuiHelper::Context* context) {
+                            isImguiDemoEnabled = !isImguiDemoEnabled;
+                        },
+                    }
+                },
+            }
+        }
+    };
+    ImGuiHelper::BeginMainMenuBar(menuBar);
+#endif
+}
 
 void ProjectManagerUI::ProcessModalPopups() {}
 
@@ -152,4 +177,10 @@ void ProjectManagerUI::ProcessWindows() {
         .size = ImVec2{ 600.0f, 300.0f },
     };
     ImGuiHelper::BeginWindowWithEnd(window);
+
+#ifdef _DEBUG
+    if (isImguiDemoEnabled) {
+        ImGui::ShowDemoWindow();
+    }
+#endif
 }

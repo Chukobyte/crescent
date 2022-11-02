@@ -135,36 +135,36 @@ ImGuiHelper::PopupModal& OpenedProjectUI::Windows::AnimationEditor::GetPopup(Ani
             static AssetManager* assetManager = AssetManager::Get();
             ImVec2 indexContentSize = ImVec2(ImGui::GetContentRegionAvail().x, 100);
             ImGui::BeginChild("AnimationIndexDisplay", indexContentSize, false, ImGuiWindowFlags_HorizontalScrollbar);
-            ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(1.0f, 1.0f));
             for (int i = 0; i < frameCount; i++) {
+                const ImVec2 framePaddingSize = selectedAnimFrameIndex == i ? ImVec2(4.0f, 4.0f) : ImVec2(1.0f, 1.0f);
+                ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, framePaddingSize);
                 ImGui::PushID(i);
                 const auto& animFrame = selectedAnim.GetAnimationFrame(i);
                 if (Texture* texture = assetManager->GetTextureSafe(animFrame.texturePath.c_str())) {
                     // TODO: Fix up stuff with rendering to image button...
                     static ImVec2 buttonSize = ImVec2(64.0f, 64.0f);
-                    static ImVec2 imageSize = ImVec2(126.0f, 53.0f);
-                    ImVec2 uv0 = ImVec2(0.0f, 0.0f);
-                    ImVec2 uv1 = ImVec2(imageSize.x / (float) texture->width, imageSize.y / (float) texture->height);
-                    ImVec4 bg_col = ImVec4(0.1f, 0.1f, 0.1f, 1.0f);
-                    ImVec4 tint_col = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
+                    const ImVec2 imageSize = ImVec2(animFrame.drawSource.w, animFrame.drawSource.h);
+                    const Size2D textureSize = { (float) texture->width, (float) texture->height };
+                    const ImVec2 uv0 = ImVec2(0.0f, 0.0f);
+//                    const ImVec2 uv0 = ImVec2(Helper::SafeDiv(animFrame.drawSource.x, textureSize.w), Helper::SafeDiv(animFrame.drawSource.y, textureSize.h));
+                    const ImVec2 uv1 = ImVec2(imageSize.x / textureSize.w, imageSize.y / textureSize.h);
+                    const ImVec4 bg_col = ImVec4(0.1f, 0.1f, 0.1f, 1.0f);
+                    const ImVec4 tint_col = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
                     ImGui::Text("%d:", i);
                     ImGui::SameLine();
                     if (ImGui::ImageButton("", (ImTextureID) texture->id, buttonSize, uv0, uv1, bg_col, tint_col)) {
                         selectedAnimFrameIndex = i;
                     }
                 } else {
-                    ImGui::Text("Text");
+                    ImGui::Text("%d: Empty", i);
                 }
                 ImGui::PopID();
                 ImGui::SameLine();
+                ImGui::PopStyleVar();
             }
-            ImGui::PopStyleVar();
             ImGui::NewLine();
             ImGui::EndChild();
             ImGui::Separator();
-
-            // Frame Count
-            ImGui::Text("Frame Count: %zu", frameCount);
 
             // Have to define anim frame stuff here in order to refresh combo box when adding frame
             static std::vector<std::string> animFrameTexturePathList = {ImGuiHelper::COMBO_BOX_LIST_NONE };
@@ -185,6 +185,25 @@ ImGuiHelper::PopupModal& OpenedProjectUI::Windows::AnimationEditor::GetPopup(Ani
                 });
             });
             static ImGuiHelper::ComboBox animFrameTexturePathComboBox("Texture Path", animFrameTexturePathList);
+
+            // Selection Arrows
+            const int beforeArrowsAnimFrame = selectedAnimFrameIndex;
+            if (ImGui::Button("<--")) {
+                selectedAnimFrameIndex = Helper::Max(selectedAnimFrameIndex - 1, 0);
+            }
+            ImGui::SameLine();
+            ImGui::Text("Current Frame: %d", selectedAnimFrameIndex);
+            ImGui::SameLine();
+            if (ImGui::Button("-->")) {
+                selectedAnimFrameIndex = Helper::Min(selectedAnimFrameIndex + 1, (int) frameCount - 1);
+            }
+            if (beforeArrowsAnimFrame != selectedAnimFrameIndex) {
+                const auto& newSelectedAnimFrame = selectedAnim.GetAnimationFrame(selectedAnimFrameIndex);
+                const std::string newSelectedAnimFrameTexturePath = !newSelectedAnimFrame.texturePath.empty() ? newSelectedAnimFrame.texturePath : ImGuiHelper::COMBO_BOX_LIST_NONE;
+                // Null callback since it's not needed and will be reset next frame
+                animFrameTexturePathComboBox.onSelectionChangeCallback = nullptr;
+                animFrameTexturePathComboBox.SetSelected(newSelectedAnimFrameTexturePath);
+            }
 
             if (ImGui::Button("Add Frame")) {
                 EditorAnimationFrame newAnimFrame;
@@ -231,24 +250,8 @@ ImGuiHelper::PopupModal& OpenedProjectUI::Windows::AnimationEditor::GetPopup(Ani
                 ImGuiHelper::DragFloat4 frameDrawSourceDragFloat4("Draw Source", (float*) &selectedAnimFrame.drawSource);
                 ImGuiHelper::BeginDragFloat4(frameDrawSourceDragFloat4);
 
-                // Selection Arrows
-                const int beforeArrowsAnimFrame = selectedAnimFrameIndex;
-                if (ImGui::Button("<--")) {
-                    selectedAnimFrameIndex = Helper::Max(selectedAnimFrameIndex - 1, 0);
-                }
-                ImGui::SameLine();
-                ImGui::Text("Current Frame: %d", selectedAnimFrameIndex);
-                ImGui::SameLine();
-                if (ImGui::Button("-->")) {
-                    selectedAnimFrameIndex = Helper::Min(selectedAnimFrameIndex + 1, (int) frameCount - 1);
-                }
-                if (beforeArrowsAnimFrame != selectedAnimFrameIndex) {
-                    const auto& newSelectedAnimFrame = selectedAnim.GetAnimationFrame(selectedAnimFrameIndex);
-                    const std::string newSelectedAnimFrameTexturePath = !newSelectedAnimFrame.texturePath.empty() ? newSelectedAnimFrame.texturePath : ImGuiHelper::COMBO_BOX_LIST_NONE;
-                    // Null callback since it's not needed and will be reset next frame
-                    animFrameTexturePathComboBox.onSelectionChangeCallback = nullptr;
-                    animFrameTexturePathComboBox.SetSelected(newSelectedAnimFrameTexturePath);
-                }
+                // Frame Count
+                ImGui::Text("Frame Count: %zu", frameCount);
             }
             if (animFrameToDelete >= 0) {
                 selectedAnim.RemoveAnimatationFrameByIndex(animFrameToDelete);
