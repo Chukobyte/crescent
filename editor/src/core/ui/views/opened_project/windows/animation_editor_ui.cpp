@@ -138,7 +138,7 @@ ImGuiHelper::PopupModal& OpenedProjectUI::Windows::AnimationEditor::GetPopup(Ani
             for (int i = 0; i < frameCount; i++) {
                 ImGui::PushID(i);
                 const auto& animFrame = selectedAnim.GetAnimationFrame(i);
-                if (Texture* texture = assetManager->GetTexture(animFrame.texturePath.c_str())) {
+                if (Texture* texture = assetManager->GetTextureSafe(animFrame.texturePath.c_str())) {
                     static ImVec2 buttonSize = ImVec2(64.0f, 64.0f);
                     static ImVec2 imageSize = ImVec2(126.0f, 53.0f);
                     ImVec2 uv0 = ImVec2(0.0f, 0.0f);
