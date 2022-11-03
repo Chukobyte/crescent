@@ -318,6 +318,52 @@ ImGuiHelper::MenuBar OpenedProjectUI::MenuBar::GetMenuBar() {
                 },
             },
             {
+                .name = "Editor",
+                .menuItems = {
+                    {
+                        .name = "Editor Settings",
+                        .keyboardShortcut = "",
+                        .callbackFunc = [] (ImGuiHelper::Context* context) {
+                            static ImGuiHelper::PopupModal editorSettingsPopup = {
+                                .name = "Editor Settings Menu",
+                                .open = nullptr,
+                                .windowFlags = ImGuiWindowFlags_NoResize,
+                                .callbackFunc = [] (ImGuiHelper::Context* context) {
+                                    static bool resetLogLevelComboBoxes = true;
+                                    static EditorSettings* editorSettings = &EditorContext::Get()->settings;
+                                    static ImGuiHelper::ComboBox editorLogLevelComboBox("EditorLogLevel", { "debug", "info", "warn", "error" }, [](const char* newItem) {
+                                        if (std::string(newItem) != editorSettings->GetEditorLogLevelString()) {
+                                            editorSettings->SetEditorLogLevel(newItem);
+                                        }
+                                    });
+                                    static ImGuiHelper::ComboBox gameLogLevelComboBox("GameLogLevel", { "debug", "info", "warn", "error" }, [](const char* newItem) {
+                                        if (std::string(newItem) != editorSettings->GetGameLogLevelString()) {
+                                            editorSettings->SetGameLogLevel(newItem);
+                                        }
+                                    });
+                                    if (resetLogLevelComboBoxes) {
+                                        editorLogLevelComboBox.SetSelected(editorSettings->GetEditorLogLevelString());
+                                        gameLogLevelComboBox.SetSelected(editorSettings->GetGameLogLevelString());
+                                        resetLogLevelComboBoxes = false;
+                                    }
+
+                                    if (ImGui::Button("Close")) {
+                                        resetLogLevelComboBoxes = true;
+                                        editorSettings->SaveSettings();
+                                        ImGui::CloseCurrentPopup();
+                                    }
+                                    ImGuiHelper::BeginComboBox(editorLogLevelComboBox);
+                                    ImGuiHelper::BeginComboBox(gameLogLevelComboBox);
+                                },
+                                .position = ImVec2{ 100.0f, 100.0f },
+                                .size = ImVec2{ 600.0f, 200.0f },
+                            };
+                            ImGuiHelper::StaticPopupModalManager::Get()->QueueOpenPopop(&editorSettingsPopup);
+                        },
+                    },
+                },
+            },
+            {
                 .name = "Export",
                 .menuItems = {
                     {
