@@ -45,6 +45,11 @@ bool cre_initialize(int argv, char** args) {
 
     // Handle command line flags
     CommandLineFlagResult commandLineFlagResult = cre_command_line_args_parse(argv, args);
+    // log level
+    if (strcmp(commandLineFlagResult.logLevel, "") != 0) {
+        se_logger_set_level(se_logger_get_log_level_enum(commandLineFlagResult.logLevel));
+    }
+    // working dir override
     if (strcmp(commandLineFlagResult.workingDirOverride, "") != 0) {
         se_logger_debug("Changing working directory from override to '%s'.", commandLineFlagResult.workingDirOverride);
         se_fs_chdir(commandLineFlagResult.workingDirOverride);
@@ -54,7 +59,6 @@ bool cre_initialize(int argv, char** args) {
         se_fs_chdir(DEFAULT_START_PROJECT_PATH);
         se_fs_print_cwd();
     }
-
     // Internal Assets Override
     if (strcmp(commandLineFlagResult.internalAssetsDirOverride, "") != 0) {
         engineContext->internalAssetsDir = strdup(commandLineFlagResult.internalAssetsDirOverride); // TODO: Clean up properly

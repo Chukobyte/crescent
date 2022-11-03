@@ -12,7 +12,7 @@ std::string EditorContext::GetEngineBinaryPath() const {
 }
 
 std::string EditorContext::GetEngineBinaryProgramArgs() const {
-    return "-ia " + GetEngineBinPath() + "/";
+    return "-l " + settings.GetGameLogLevelString() + " -ia " + GetEngineBinPath() + "/";
 }
 
 std::string EditorContext::GetProjectExportPath() const {
