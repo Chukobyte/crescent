@@ -8,12 +8,14 @@
 #pragma warning(disable : 4996) // for strcpy
 #endif
 
-#define DIR_OVERRIDE_CAPACITY  128
+#define CRE_DIR_OVERRIDE_CAPACITY  128
+#define CRE_LOG_LEVEL_CAPACITY  8
 
 CommandLineFlagResult cre_command_line_args_parse(int argv, char** args) {
     CommandLineFlagResult flagResult;
-    memset(flagResult.workingDirOverride, 0, DIR_OVERRIDE_CAPACITY);
-    memset(flagResult.internalAssetsDirOverride, 0, DIR_OVERRIDE_CAPACITY);
+    memset(flagResult.workingDirOverride, 0, CRE_DIR_OVERRIDE_CAPACITY);
+    memset(flagResult.internalAssetsDirOverride, 0, CRE_DIR_OVERRIDE_CAPACITY);
+    memset(flagResult.logLevel, 0, CRE_LOG_LEVEL_CAPACITY);
     flagResult.flagCount = 0;
     if (argv <= 1) {
         return flagResult;
@@ -21,7 +23,6 @@ CommandLineFlagResult cre_command_line_args_parse(int argv, char** args) {
     for (int argumentIndex = 1; argumentIndex < argv; argumentIndex++) {
         // Can process single argument if needed
         const char* argument = args[argumentIndex];
-        se_logger_debug("command line argument = '%s'", argument);
         // Process arg value
         const int nextArgumentIndex = argumentIndex + 1;
         if (nextArgumentIndex >= argv) {
@@ -30,12 +31,14 @@ CommandLineFlagResult cre_command_line_args_parse(int argv, char** args) {
         if (strcmp(argument, CRE_COMMAND_LINE_FLAG_WORK_DIR) == 0) {
             const char* workingDirectoryOverride = args[nextArgumentIndex];
             strcpy(flagResult.workingDirOverride, workingDirectoryOverride);
-            se_logger_debug("working directory override = '%s'", flagResult.workingDirOverride);
             argumentIndex++;
         } else if (strcmp(argument, CRE_COMMAND_LINE_FLAG_INTERNAL_ASSETS_DIR) == 0) {
             const char* internalAssetsDirectoryOverride = args[nextArgumentIndex];
             strcpy(flagResult.internalAssetsDirOverride, internalAssetsDirectoryOverride);
-            se_logger_debug("internal assets directory override = '%s'", flagResult.internalAssetsDirOverride);
+            argumentIndex++;
+        } else if (strcmp(argument, CRE_COMMAND_LINE_FLAG_LOG_LEVEL) == 0) {
+            const char* logLevelOverride = args[nextArgumentIndex];
+            strcpy(flagResult.logLevel, logLevelOverride);
             argumentIndex++;
         }
     }

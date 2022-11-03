@@ -18,6 +18,9 @@ PyObject* cre_py_api_input_is_action_pressed(PyObject* self, PyObject* args, PyO
 PyObject* cre_py_api_input_is_action_just_pressed(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_input_is_action_just_released(PyObject* self, PyObject* args, PyObject* kwargs);
 
+// Mouse
+PyObject* cre_py_api_mouse_get_position(PyObject* self, PyObject* args);
+
 // Camera
 PyObject* cre_py_api_camera2D_set_position(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_camera2D_add_to_position(PyObject* self, PyObject* args, PyObject* kwargs);
@@ -101,6 +104,7 @@ PyObject* cre_py_api_client_subscribe(PyObject* self, PyObject* args, PyObject* 
 
 // Collision Handler
 PyObject* cre_py_api_collision_handler_process_collisions(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_collision_handler_process_mouse_collisions(PyObject* self, PyObject* args, PyObject* kwargs);
 
 // --- Module Methods Definitions --- //
 static struct PyMethodDef crePyApiMethods[] = {
@@ -141,6 +145,11 @@ static struct PyMethodDef crePyApiMethods[] = {
     {
         "input_is_action_just_released", (PyCFunction) cre_py_api_input_is_action_just_released,
         METH_VARARGS | METH_KEYWORDS, "Checks if an input actions was just released."
+    },
+    // MOUSE
+    {
+        "mouse_get_position", cre_py_api_mouse_get_position,
+        METH_VARARGS, "Returns the position of the mouse."
     },
     // CAMERA
     {
@@ -383,9 +392,14 @@ static struct PyMethodDef crePyApiMethods[] = {
         "client_subscribe", (PyCFunction) cre_py_api_client_subscribe,
         METH_VARARGS | METH_KEYWORDS, "Subscribe a node's function to one of the client's signals."
     },
+    // Collision Handler
     {
         "collision_handler_process_collisions", (PyCFunction) cre_py_api_collision_handler_process_collisions,
         METH_VARARGS | METH_KEYWORDS, "Returns collided entities."
+    },
+    {
+        "collision_handler_process_mouse_collisions", (PyCFunction) cre_py_api_collision_handler_process_mouse_collisions,
+        METH_VARARGS | METH_KEYWORDS, "Returns entities that collide with the mouse."
     },
     // COLLISION HANDLER
     { NULL, NULL, 0,NULL },
@@ -434,6 +448,8 @@ static char* crePyApiNetworkSubscribeKWList[] = {"signal_id", "listener_node", "
 static char* crePyApiServerStartKWList[] = {"port", NULL};
 
 static char* crePyApiClientStartKWList[] = {"host", "port", NULL};
+
+static char* crePyApiCollisionHandlerProcessMouseCollisionsKWList[] = {"pos_offset_x", "pos_offset_y", "collision_size_w", "collision_size_h", NULL};
 
 // --- Module Init --- //
 PyObject* PyInit_cre_py_API(void);

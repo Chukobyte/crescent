@@ -157,7 +157,10 @@ class FighterSimulation:
                     fighter.state = FighterState.IDLE
             else:
                 # Stance logic, super basic now as there are no hit reactions, down states, etc...
-                if fighter.stance != FighterStance.IN_AIR and fighter.state != FighterState.BLOCKING:
+                if (
+                    fighter.stance != FighterStance.IN_AIR
+                    and fighter.state != FighterState.BLOCKING
+                ):
                     if fighter.input_buffer.crouch_pressed:
                         if fighter.set_stance(FighterStance.CROUCHING):
                             fighter.node.play("crouch")

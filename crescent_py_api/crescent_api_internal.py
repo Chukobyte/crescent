@@ -65,6 +65,10 @@ def input_is_action_just_released(name: str) -> bool:
     return False
 
 
+def mouse_get_position() -> tuple:
+    return 0.0, 0.0
+
+
 def scene_tree_change_scene(path: str) -> None:
     pass
 
@@ -306,4 +310,13 @@ def client_subscribe(signal_id: str, listener_node: int, listener_func) -> None:
 
 
 def collision_handler_process_collisions(entity_id: int) -> list:
+    return []
+
+
+def collision_handler_process_mouse_collisions(
+    pos_offset_x: float,
+    pos_offset_y: float,
+    collision_size_w: float,
+    collision_size_h: float,
+) -> list:
     return []

@@ -247,6 +247,12 @@
             "values": [
                 "n"
             ]
+        },
+        {
+            "name": "lb",
+            "values": [
+                "mb_left"
+            ]
         }
     ]
 }

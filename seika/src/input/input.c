@@ -9,6 +9,7 @@
 #include "../utils/logger.h"
 #include "../utils/se_string_util.h"
 #include "../utils/se_assert.h"
+#include "mouse.h"
 
 #ifdef _MSC_VER
 #pragma warning(disable : 4996) // for strcpy
@@ -131,10 +132,9 @@ void se_input_add_action_value(const char* actionName, const char* actionValue, 
         inputAction->gamepadValueCount++;
         se_logger_debug("Added gamepad value '%s' with device id = %d", actionValue, deviceId);
     } else if (strcmp(actionValue, "mb_left") == 0 || strcmp(actionValue, "mb_right") == 0 || strcmp(actionValue, "mb_middle") == 0) {
-        strcpy(&inputAction->mouseValues[inputAction->mouseValueCount], actionValue);
-        se_logger_debug("Added mouse action | name: '%s', value: '%s'", actionName,
-                        inputAction->mouseValues[inputAction->mouseValueCount]);
+        inputAction->mouseValues[inputAction->mouseValueCount] = se_strdup(actionValue);
         inputAction->mouseValueCount++;
+        se_logger_debug("Added mouse action | name: '%s', value: '%s'", actionName, actionValue);
     } else {
         se_logger_error("No valid value found for action | name: '%s', value: '%s'", actionName, actionValue);
     }
@@ -223,8 +223,9 @@ void input_process_mouse(SDL_Event event) {
     Uint8 mouseButton = 0;
     switch (event.type) {
     case SDL_MOUSEMOTION:
-//            inputEvent.type = InputEventType::MOUSE;
-//            inputEvent.mouseMotion = Vector2(event.motion.x, event.motion.y);
+        SEMouse* globalMouse = se_mouse_get();
+        globalMouse->position.x = (float) event.motion.x;
+        globalMouse->position.y = (float) event.motion.y;
         break;
     case SDL_MOUSEWHEEL:
 //            inputEvent.type = InputEventType::MOUSE;
@@ -246,8 +247,8 @@ void input_process_mouse(SDL_Event event) {
         for (size_t i = 0; i < inputActionNamesCount; i++) {
             InputAction* inputAction = (InputAction*) se_string_hash_map_get(inputActionMap, inputActionNames[i]);
             for (size_t j = 0; j < inputAction->mouseValueCount; j++) {
-                bool isLeftMouseButton = strcmp(&inputAction->mouseValues[j], "mb_left") == 0 && mouseButton == SDL_BUTTON_LEFT;
-                bool isRightMouseButton = strcmp(&inputAction->mouseValues[j], "mb_right") == 0 && mouseButton == SDL_BUTTON_RIGHT;
+                const bool isLeftMouseButton = strcmp((const char*) inputAction->mouseValues[j], "mb_left") == 0 && mouseButton == SDL_BUTTON_LEFT;
+                const bool isRightMouseButton = strcmp((const char*) inputAction->mouseValues[j], "mb_right") == 0 && mouseButton == SDL_BUTTON_RIGHT;
                 if (isLeftMouseButton || isRightMouseButton) {
                     // Event yes
                     if (mousePressed) {

@@ -90,6 +90,14 @@ class Main(Node2D):
             self.fight_sim.fighters[0].health_bar.set_health_percentage(50)
             self.fight_sim.fighters[0].health_bar.print_debug_info()
 
+        if Input.is_action_just_pressed(name="lb"):
+            mouse_pos = Input.Mouse.get_position()
+            collisions = CollisionHandler.process_mouse_collisions()
+            total_collisions = []
+            for collision in collisions:
+                total_collisions.append(collision)
+            print(f"mouse_pos = {mouse_pos} collisions = {total_collisions}")
+
     def _physics_update(self, delta_time: float) -> None:
         # Temp camera test
         camera_speed = Vector2(5.0, 5.0)

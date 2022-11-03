@@ -4,6 +4,7 @@
 
 #include "../seika/src/asset_manager.h"
 #include "../seika/src/input/input.h"
+#include "../seika/src/input/mouse.h"
 #include "../seika/src/audio/audio_manager.h"
 #include "../seika/src/networking/se_network.h"
 #include "../seika/src/utils/se_assert.h"
@@ -124,6 +125,13 @@ PyObject* cre_py_api_input_is_action_just_released(PyObject* self, PyObject* arg
         Py_RETURN_FALSE;
     }
     return NULL;
+}
+
+// Mouse
+PyObject* cre_py_api_mouse_get_position(PyObject* self, PyObject* args) {
+    const CREEngineContext* engineContext = cre_engine_context_get();
+    const SEMouse* globalMouse = se_mouse_get();
+    return Py_BuildValue("(ff)", globalMouse->position.x, globalMouse->position.y);
 }
 
 // Camera
@@ -847,8 +855,8 @@ PyObject* cre_py_api_client_subscribe(PyObject* self, PyObject* args, PyObject* 
 }
 
 // Collision Handler
-PyObject* cre_py_api_collision_handler_process_collisions(PyObject* self, PyObject* args, PyObject* kwargs) {
 #define TYPE_BUFFER_SIZE 32
+PyObject* cre_py_api_collision_handler_process_collisions(PyObject* self, PyObject* args, PyObject* kwargs) {
     Entity entity;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
         char typeBuffer[TYPE_BUFFER_SIZE];
@@ -865,5 +873,35 @@ PyObject* cre_py_api_collision_handler_process_collisions(PyObject* self, PyObje
         return Py_BuildValue("O", pyCollidedEntityList);
     }
     return NULL;
-#undef TYPE_BUFFER_SIZE
 }
+
+PyObject* cre_py_api_collision_handler_process_mouse_collisions(PyObject* self, PyObject* args, PyObject* kwargs) {
+    float positionOffsetX;
+    float positionOffsetY;
+    float collisionSizeW;
+    float collisionSizeH;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "ffff", crePyApiCollisionHandlerProcessMouseCollisionsKWList, &positionOffsetX, &positionOffsetY, &collisionSizeW, &collisionSizeH)) {
+        char typeBuffer[TYPE_BUFFER_SIZE];
+        PyObject* pyCollidedEntityList = PyList_New(0);
+        // TODO: Transform mouse screen position into world position.
+        CRECamera2D* camera = cre_camera_manager_get_current_camera();
+        SEMouse* globalMouse = se_mouse_get();
+        const Vector2 mouseWorldPos = {
+            (camera->viewport.x + camera->offset.x + globalMouse->position.x + positionOffsetX) * camera->zoom.x,
+            (camera->viewport.y + camera->offset.y + globalMouse->position.y + positionOffsetY) * camera->zoom.y
+        };
+        Rect2 collisionRect = { mouseWorldPos.x, mouseWorldPos.y, collisionSizeW, collisionSizeH };
+        CollisionResult collisionResult = cre_collision_process_mouse_collisions(&collisionRect);
+        for (size_t i = 0; i < collisionResult.collidedEntityCount; i++) {
+            const Entity collidedEntity = collisionResult.collidedEntities[i];
+            NodeComponent* nodeComponent = (NodeComponent*) component_manager_get_component(collidedEntity, ComponentDataIndex_NODE);
+            strcpy(typeBuffer, node_get_base_type_string(nodeComponent->type));
+            if (PyList_Append(pyCollidedEntityList, Py_BuildValue("(is)", collidedEntity, typeBuffer)) == -1) {
+                PyErr_Print();
+            }
+        }
+        return Py_BuildValue("O", pyCollidedEntityList);
+    }
+    return NULL;
+}
+#undef TYPE_BUFFER_SIZE

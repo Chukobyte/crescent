@@ -38,6 +38,25 @@ CollisionResult cre_collision_process_entity_collisions(Entity entity) {
     return collisionResult;
 }
 
+CollisionResult cre_collision_process_mouse_collisions(Rect2* collisionRect) {
+    CollisionResult collisionResult = { .sourceEntity = NULL_ENTITY, .collidedEntityCount = 0 };
+    const EntitySystem* collisionSystem = collision_ec_system_get();
+    for (size_t i = 0; i < collisionSystem->entity_count; i++) {
+        const Entity otherEntity = collisionSystem->entities[i];
+        Transform2DComponent* otherTransformComponent = component_manager_get_component(otherEntity, ComponentDataIndex_TRANSFORM_2D);
+        Collider2DComponent* otherColliderComponent = component_manager_get_component(otherEntity, ComponentDataIndex_COLLIDER_2D);
+        Rect2 otherCollisionRect = get_collision_rectangle(otherEntity, otherTransformComponent, otherColliderComponent);
+        if (does_rectangles_collide(collisionRect, &otherCollisionRect)) {
+            collisionResult.collidedEntities[collisionResult.collidedEntityCount++] = otherEntity;
+            if (collisionResult.collidedEntityCount >= RBE_MAX_ENTITY_COLLISION) {
+                se_logger_warn("Reached collided entity limit of '%d' (with mouse)", RBE_MAX_ENTITY_COLLISION);
+                break;
+            }
+        }
+    }
+    return collisionResult;
+}
+
 bool is_entity_in_collision_exceptions(Entity entity, Collider2DComponent* collider2DComponent) {
     for (size_t i = 0; i < collider2DComponent->collisionExceptionCount; i++) {
         if (entity == collider2DComponent->collisionExceptions[i]) {

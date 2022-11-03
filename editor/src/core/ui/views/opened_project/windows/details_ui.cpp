@@ -1,8 +1,16 @@
 #include "details_ui.h"
+#include "animation_editor_ui.h"
 #include "../../../../scene/scene_manager.h"
 #include "../../../../project_properties.h"
 #include "../../../../asset_browser.h"
 #include "../../../../editor_callbacks.h"
+
+// Temp
+struct FuncObject {
+    FuncObject(std::function<void()> func) {
+        func();
+    }
+};
 
 namespace ComponentDetailsDrawUtils {
 void DrawTransform2D(SceneNode* node) {

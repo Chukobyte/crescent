@@ -94,7 +94,7 @@ struct EditorAnimation {
         return false;
     }
 
-    EditorAnimationFrame& GetAnimationFrame(int frameIndex) {
+    [[nodiscard]] EditorAnimationFrame& GetAnimationFrame(int frameIndex) {
         for (auto& animFrame : animationFrames) {
             if (animFrame.frame == frameIndex) {
                 return animFrame;
