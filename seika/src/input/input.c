@@ -9,6 +9,7 @@
 #include "../utils/logger.h"
 #include "../utils/se_string_util.h"
 #include "../utils/se_assert.h"
+#include "mouse.h"
 
 #ifdef _MSC_VER
 #pragma warning(disable : 4996) // for strcpy
@@ -223,8 +224,9 @@ void input_process_mouse(SDL_Event event) {
     Uint8 mouseButton = 0;
     switch (event.type) {
     case SDL_MOUSEMOTION:
-//            inputEvent.type = InputEventType::MOUSE;
-//            inputEvent.mouseMotion = Vector2(event.motion.x, event.motion.y);
+        SEMouse* globalMouse = se_mouse_get();
+        globalMouse->position.x = (float) event.motion.x;
+        globalMouse->position.y = (float) event.motion.y;
         break;
     case SDL_MOUSEWHEEL:
 //            inputEvent.type = InputEventType::MOUSE;

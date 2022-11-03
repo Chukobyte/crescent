@@ -4,6 +4,7 @@
 
 #include "../seika/src/asset_manager.h"
 #include "../seika/src/input/input.h"
+#include "../seika/src/input/mouse.h"
 #include "../seika/src/audio/audio_manager.h"
 #include "../seika/src/networking/se_network.h"
 #include "../seika/src/utils/se_assert.h"
@@ -876,8 +877,13 @@ PyObject* cre_py_api_collision_handler_process_mouse_collisions(PyObject* self, 
         char typeBuffer[TYPE_BUFFER_SIZE];
         PyObject* pyCollidedEntityList = PyList_New(0);
         // TODO: Transform mouse screen position into world position.
-        static Vector2 mouseWorldPos = { 0.0f, 0.0f }; // TODO: Implement mouse stuff...
-        Rect2 collisionRect = {mouseWorldPos.x + positionOffsetX, mouseWorldPos.y + positionOffsetY, collisionSizeW, collisionSizeH };
+        CRECamera2D* camera = cre_camera_manager_get_current_camera();
+        SEMouse* globalMouse = se_mouse_get();
+        const Vector2 mouseWorldPos = {
+            camera->viewport.x + camera->offset.x + globalMouse->position.x + positionOffsetX,
+            camera->viewport.y + camera->offset.y + globalMouse->position.y + positionOffsetY
+        };
+        Rect2 collisionRect = { mouseWorldPos.x, mouseWorldPos.y, collisionSizeW, collisionSizeH };
         CollisionResult collisionResult = cre_collision_process_mouse_collisions(&collisionRect);
         for (size_t i = 0; i < collisionResult.collidedEntityCount; i++) {
             const Entity collidedEntity = collisionResult.collidedEntities[i];

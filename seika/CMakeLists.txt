@@ -29,6 +29,7 @@ add_library(${PROJECT_NAME} STATIC
         src/math/se_math.c
         src/input/input.c
         src/input/input_action.c
+        src/input/mouse.c
         src/networking/se_network.c
         src/networking/se_network_socket.c
         src/rendering/font.c
