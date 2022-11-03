@@ -17,7 +17,7 @@ typedef struct InputAction {
     size_t mouseValueCount;
     size_t gamepadValueCount;
     int keyboardValues[MAX_INPUT_VALUES];
-    char mouseValues[MAX_INPUT_VALUES * 8];
+    char* mouseValues[MAX_INPUT_VALUES];
     char* gamepadValues[MAX_INPUT_VALUES];
     int lastScancodePressed;
     bool isActionPressed;

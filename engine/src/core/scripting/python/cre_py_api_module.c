@@ -880,8 +880,8 @@ PyObject* cre_py_api_collision_handler_process_mouse_collisions(PyObject* self, 
         CRECamera2D* camera = cre_camera_manager_get_current_camera();
         SEMouse* globalMouse = se_mouse_get();
         const Vector2 mouseWorldPos = {
-            camera->viewport.x + camera->offset.x + globalMouse->position.x + positionOffsetX,
-            camera->viewport.y + camera->offset.y + globalMouse->position.y + positionOffsetY
+            (camera->viewport.x + camera->offset.x + globalMouse->position.x + positionOffsetX) * camera->zoom.x,
+            (camera->viewport.y + camera->offset.y + globalMouse->position.y + positionOffsetY) * camera->zoom.y
         };
         Rect2 collisionRect = { mouseWorldPos.x, mouseWorldPos.y, collisionSizeW, collisionSizeH };
         CollisionResult collisionResult = cre_collision_process_mouse_collisions(&collisionRect);

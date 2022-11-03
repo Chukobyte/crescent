@@ -132,10 +132,9 @@ void se_input_add_action_value(const char* actionName, const char* actionValue, 
         inputAction->gamepadValueCount++;
         se_logger_debug("Added gamepad value '%s' with device id = %d", actionValue, deviceId);
     } else if (strcmp(actionValue, "mb_left") == 0 || strcmp(actionValue, "mb_right") == 0 || strcmp(actionValue, "mb_middle") == 0) {
-        strcpy(&inputAction->mouseValues[inputAction->mouseValueCount], actionValue);
-        se_logger_debug("Added mouse action | name: '%s', value: '%s'", actionName,
-                        inputAction->mouseValues[inputAction->mouseValueCount]);
+        inputAction->mouseValues[inputAction->mouseValueCount] = se_strdup(actionValue);
         inputAction->mouseValueCount++;
+        se_logger_debug("Added mouse action | name: '%s', value: '%s'", actionName, actionValue);
     } else {
         se_logger_error("No valid value found for action | name: '%s', value: '%s'", actionName, actionValue);
     }
@@ -248,8 +247,8 @@ void input_process_mouse(SDL_Event event) {
         for (size_t i = 0; i < inputActionNamesCount; i++) {
             InputAction* inputAction = (InputAction*) se_string_hash_map_get(inputActionMap, inputActionNames[i]);
             for (size_t j = 0; j < inputAction->mouseValueCount; j++) {
-                bool isLeftMouseButton = strcmp(&inputAction->mouseValues[j], "mb_left") == 0 && mouseButton == SDL_BUTTON_LEFT;
-                bool isRightMouseButton = strcmp(&inputAction->mouseValues[j], "mb_right") == 0 && mouseButton == SDL_BUTTON_RIGHT;
+                bool isLeftMouseButton = strcmp(inputAction->mouseValues[j], "mb_left") == 0 && mouseButton == SDL_BUTTON_LEFT;
+                bool isRightMouseButton = strcmp(inputAction->mouseValues[j], "mb_right") == 0 && mouseButton == SDL_BUTTON_RIGHT;
                 if (isLeftMouseButton || isRightMouseButton) {
                     // Event yes
                     if (mousePressed) {
