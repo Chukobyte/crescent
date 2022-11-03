@@ -127,6 +127,13 @@ PyObject* cre_py_api_input_is_action_just_released(PyObject* self, PyObject* arg
     return NULL;
 }
 
+// Mouse
+PyObject* cre_py_api_mouse_get_position(PyObject* self, PyObject* args) {
+    const CREEngineContext* engineContext = cre_engine_context_get();
+    const SEMouse* globalMouse = se_mouse_get();
+    return Py_BuildValue("(ff)", globalMouse->position.x, globalMouse->position.y);
+}
+
 // Camera
 PyObject* cre_py_api_camera2D_set_position(PyObject* self, PyObject* args, PyObject* kwargs) {
     float x;

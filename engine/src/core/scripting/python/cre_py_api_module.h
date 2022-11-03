@@ -18,6 +18,9 @@ PyObject* cre_py_api_input_is_action_pressed(PyObject* self, PyObject* args, PyO
 PyObject* cre_py_api_input_is_action_just_pressed(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_input_is_action_just_released(PyObject* self, PyObject* args, PyObject* kwargs);
 
+// Mouse
+PyObject* cre_py_api_mouse_get_position(PyObject* self, PyObject* args);
+
 // Camera
 PyObject* cre_py_api_camera2D_set_position(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_camera2D_add_to_position(PyObject* self, PyObject* args, PyObject* kwargs);
@@ -142,6 +145,11 @@ static struct PyMethodDef crePyApiMethods[] = {
     {
         "input_is_action_just_released", (PyCFunction) cre_py_api_input_is_action_just_released,
         METH_VARARGS | METH_KEYWORDS, "Checks if an input actions was just released."
+    },
+    // MOUSE
+    {
+        "mouse_get_position", cre_py_api_mouse_get_position,
+        METH_VARARGS, "Returns the position of the mouse."
     },
     // CAMERA
     {

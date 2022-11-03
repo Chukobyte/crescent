@@ -65,6 +65,10 @@ def input_is_action_just_released(name: str) -> bool:
     return False
 
 
+def mouse_get_position() -> tuple:
+    return 0.0, 0.0
+
+
 def scene_tree_change_scene(path: str) -> None:
     pass
 
