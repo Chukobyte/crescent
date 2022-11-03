@@ -2,6 +2,7 @@
 
 #include <stdint.h>
 #include <string.h>
+#include <ctype.h>
 
 #include "../memory/se_mem.h"
 
@@ -18,4 +19,22 @@ char* se_strdup(const char* string) {
 
 const char* se_bool_to_string(bool value) {
     return value == true ? "true" : "false";
+}
+
+char* se_str_to_lower(char* str) {
+    for (char* p = str; *p; p++) {
+        *p = tolower(*p);
+    }
+    return str;
+}
+
+char* se_str_to_lower_and_underscore_whitespace(char* str) {
+    for (char* p = str; *p; p++) {
+        if (*p == ' ') {
+            *p = '_';
+        } else {
+            *p = tolower(*p);
+        }
+    }
+    return str;
 }

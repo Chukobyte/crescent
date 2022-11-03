@@ -18,6 +18,11 @@ def get_game_mode(index: int) -> str:
 
 class TitleScreen(Node2D):
     def _start(self) -> None:
+        # Temp
+        GameConfig.save("game.sav", {"level": 0})
+        game_data = GameConfig.load("game.sav")
+        print(f"game_data = {game_data}")
+
         self.is_waiting_to_connect = False
         self.selected_game_mode = GameMode.LOCAL_PVP
         self.selected_game_mode_index = 0

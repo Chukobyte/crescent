@@ -37,7 +37,9 @@
 "\n"
 
 #define RBE_PY_API_SOURCE ""\
+"import json\n"\
 "from enum import Enum\n"\
+"from json import JSONDecodeError\n"\
 "from typing import Optional\n"\
 "\n"\
 "import crescent_api_internal\n"\
@@ -601,93 +603,6 @@
 "        self.children = children\n"\
 "\n"\
 "\n"\
-"# COMPONENTS\n"\
-"class Transform2DComponent:\n"\
-"    def __init__(\n"\
-"        self,\n"\
-"        position: Vector2,\n"\
-"        scale: Vector2,\n"\
-"        rotation: float,\n"\
-"        z_index: int,\n"\
-"        z_index_relative_to_parent: bool,\n"\
-"        ignore_camera: bool,\n"\
-"    ):\n"\
-"        self.position = position\n"\
-"        self.scale = scale\n"\
-"        self.rotation = rotation\n"\
-"        self.z_index = z_index\n"\
-"        self.z_index_relative_to_parent = z_index_relative_to_parent\n"\
-"        self.ignore_camera = ignore_camera\n"\
-"\n"\
-"\n"\
-"class SpriteComponent:\n"\
-"    def __init__(\n"\
-"        self,\n"\
-"        texture_path: str,\n"\
-"        draw_source: Rect2,\n"\
-"        origin=Vector2.ZERO(),\n"\
-"        flip_x=False,\n"\
-"        flip_y=False,\n"\
-"        modulate=Color(255, 255, 255),\n"\
-"    ):\n"\
-"        self.texture_path = texture_path\n"\
-"        self.draw_source = draw_source\n"\
-"        self.origin = origin\n"\
-"        self.flip_x = flip_x\n"\
-"        self.flip_y = flip_y\n"\
-"        self.modulate = modulate\n"\
-"\n"\
-"\n"\
-"class AnimatedSpriteComponent:\n"\
-"    def __init__(\n"\
-"        self,\n"\
-"        current_animation_name: str,\n"\
-"        is_playing: bool,\n"\
-"        animations: list,\n"\
-"        modulate=Color.WHITE(),\n"\
-"        origin=Vector2.ZERO(),\n"\
-"        flip_x=False,\n"\
-"        flip_y=False,\n"\
-"    ):\n"\
-"        self.current_animation_name = current_animation_name\n"\
-"        self.is_playing = is_playing\n"\
-"        self.animations = animations\n"\
-"        self.modulate = modulate\n"\
-"        self.origin = origin\n"\
-"        self.flip_x = flip_x\n"\
-"        self.flip_y = flip_y\n"\
-"\n"\
-"\n"\
-"class TextLabelComponent:\n"\
-"    def __init__(\n"\
-"        self,\n"\
-"        uid: str,\n"\
-"        text: str,\n"\
-"        color: Color,\n"\
-"    ):\n"\
-"        self.uid = uid\n"\
-"        self.text = text\n"\
-"        self.color = color\n"\
-"\n"\
-"\n"\
-"class ScriptComponent:\n"\
-"    def __init__(self, class_path: str, class_name: str):\n"\
-"        self.class_path = class_path\n"\
-"        self.class_name = class_name\n"\
-"\n"\
-"\n"\
-"class Collider2DComponent:\n"\
-"    def __init__(self, extents: Size2D, color: Color):\n"\
-"        self.extents = extents\n"\
-"        self.color = color\n"\
-"\n"\
-"\n"\
-"class ColorRectComponent:\n"\
-"    def __init__(self, size: Size2D, color: Color):\n"\
-"        self.size = size\n"\
-"        self.color = color\n"\
-"\n"\
-"\n"\
 "# NODE\n"\
 "class NodeType(str, Enum):\n"\
 "    NODE = \"Node\"\n"\
@@ -1235,50 +1150,30 @@
 "        )\n"\
 "\n"\
 "\n"\
-"# CONFIGURATION\n"\
-"def configure_game(\n"\
-"    game_title=\"Test Game\",\n"\
-"    window_width=800,\n"\
-"    window_height=600,\n"\
-"    resolution_width=800,\n"\
-"    resolution_height=600,\n"\
-"    target_fps=66,\n"\
-"    initial_node_path=\"\",\n"\
-"    colliders_visible=False,\n"\
-") -> None:\n"\
-"    crescent_api_internal.configure_game(\n"\
-"        game_title=game_title,\n"\
-"        window_width=window_width,\n"\
-"        window_height=window_height,\n"\
-"        resolution_width=resolution_width,\n"\
-"        resolution_height=resolution_height,\n"\
-"        target_fps=target_fps,\n"\
-"        initial_node_path=initial_node_path,\n"\
-"        colliders_visible=colliders_visible,\n"\
-"    )\n"\
+"class GameConfig:\n"\
+"    @staticmethod\n"\
+"    def save(path: str, data: dict, encryption_key=\"\") -> bool:\n"\
+"        try:\n"\
+"            json_text = json.dumps(data, indent=4)\n"\
+"        except JSONDecodeError as e:\n"\
+"            print(f\"Game Config Save Json Decode Error: {e}\")\n"\
+"            return False\n"\
+"        return crescent_api_internal.game_config_save(\n"\
+"            path=path, data_json=json_text, encryption_key=encryption_key\n"\
+"        )\n"\
 "\n"\
-"\n"\
-"def configure_assets(audio_sources=None, textures=None, fonts=None) -> None:\n"\
-"    if fonts is None:\n"\
-"        fonts = []\n"\
-"    if textures is None:\n"\
-"        textures = []\n"\
-"    if audio_sources is None:\n"\
-"        audio_sources = []\n"\
-"    crescent_api_internal.configure_assets(\n"\
-"        audio_sources=audio_sources, textures=textures, fonts=fonts\n"\
-"    )\n"\
-"\n"\
-"\n"\
-"def configure_inputs(input_actions=None) -> None:\n"\
-"    if input_actions is None:\n"\
-"        input_actions = []\n"\
-"    crescent_api_internal.configure_inputs(input_actions=input_actions)\n"\
-"\n"\
-"\n"\
-"# STAGE\n"\
-"def create_stage_nodes(stage_nodes: list) -> None:\n"\
-"    crescent_api_internal.create_stage_nodes(stage_nodes=stage_nodes)\n"\
+"    @staticmethod\n"\
+"    def load(path: str, encryption_key=\"\") -> dict:\n"\
+"        try:\n"\
+"            json_dict = json.loads(\n"\
+"                crescent_api_internal.game_config_load(\n"\
+"                    path=path, encryption_key=encryption_key\n"\
+"                )\n"\
+"            )\n"\
+"        except JSONDecodeError as e:\n"\
+"            print(f\"Game Config Load Json Decode Error: {e}\")\n"\
+"            return {}\n"\
+"        return json_dict\n"\
 "\n"
 
 #define RBE_PY_API_SOURCE_IMPORTER_MODULE_IMPORTS ""\
