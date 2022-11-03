@@ -247,8 +247,8 @@ void input_process_mouse(SDL_Event event) {
         for (size_t i = 0; i < inputActionNamesCount; i++) {
             InputAction* inputAction = (InputAction*) se_string_hash_map_get(inputActionMap, inputActionNames[i]);
             for (size_t j = 0; j < inputAction->mouseValueCount; j++) {
-                bool isLeftMouseButton = strcmp(inputAction->mouseValues[j], "mb_left") == 0 && mouseButton == SDL_BUTTON_LEFT;
-                bool isRightMouseButton = strcmp(inputAction->mouseValues[j], "mb_right") == 0 && mouseButton == SDL_BUTTON_RIGHT;
+                const bool isLeftMouseButton = strcmp((const char*) inputAction->mouseValues[j], "mb_left") == 0 && mouseButton == SDL_BUTTON_LEFT;
+                const bool isRightMouseButton = strcmp((const char*) inputAction->mouseValues[j], "mb_right") == 0 && mouseButton == SDL_BUTTON_RIGHT;
                 if (isLeftMouseButton || isRightMouseButton) {
                     // Event yes
                     if (mousePressed) {
