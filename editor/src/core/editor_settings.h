@@ -21,13 +21,23 @@ class EditorSettings {
     void SetEditorLogLevel(const std::string& level);
     void SetGameLogLevel(LogLevel level);
     void SetGameLogLevel(const std::string& level);
-    LogLevel GetEditorLogLevel() const { return editorLogLevel; }
-    LogLevel GetGameLogLevel() const { return gameLogLevel; }
+    [[nodiscard]] LogLevel GetEditorLogLevel() const {
+        return editorLogLevel;
+    }
+    [[nodiscard]] std::string GetEditorLogLevelString() const {
+        return se_logger_get_log_level_string(editorLogLevel);
+    }
+    [[nodiscard]] LogLevel GetGameLogLevel() const {
+        return gameLogLevel;
+    }
+    [[nodiscard]] std::string GetGameLogLevelString() const {
+        return se_logger_get_log_level_string(gameLogLevel);
+    }
 
     size_t recentlyLoadedProjectsLimit = 5;
     std::vector<RecentlyLoadedProjectData> recentlyLoadedProjects;
 
-private:
+  private:
     LogLevel editorLogLevel = LogLevel_ERROR;
     LogLevel gameLogLevel = LogLevel_ERROR;
 };

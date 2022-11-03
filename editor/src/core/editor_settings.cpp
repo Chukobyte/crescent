@@ -17,37 +17,6 @@ std::string GetEditorSettingSaveFilePath() {
     static const std::string editorSettingsSavePath = GetEditorSettingsSavePath();
     return editorSettingsSavePath + "/" + EDITOR_SETTINGS_FILE_NAME;
 }
-
-std::string GetLogLevelString(LogLevel level) {
-    switch (level) {
-        case LogLevel_ERROR:
-            return "error";
-            break;
-        case LogLevel_WARN:
-            return "warn";
-            break;
-        case LogLevel_INFO:
-            return "info";
-            break;
-        case LogLevel_DEBUG:
-            return "debug";
-            break;
-    }
-    return "unknown";
-}
-
-LogLevel GetLogLevelEnum(const std::string& level, LogLevel failValue = LogLevel_ERROR) {
-    if (level == "error") {
-        return LogLevel_ERROR;
-    } else if (level == "warn") {
-        return LogLevel_WARN;
-    } else if (level == "info") {
-        return LogLevel_INFO;
-    } else if (level == "debug") {
-        return LogLevel_DEBUG;
-    }
-    return failValue;
-}
 } // namespace
 
 bool EditorSettings::LoadSettings() {
@@ -58,10 +27,10 @@ bool EditorSettings::LoadSettings() {
     }
     nlohmann::json settingsJson = JsonHelper::LoadFile(saveFilePath);
     // Log levels
-    const std::string editorLogLevelString = JsonHelper::GetDefault<std::string>(settingsJson, "editor_log_level", GetLogLevelString(editorLogLevel));
-    editorLogLevel = GetLogLevelEnum(editorLogLevelString);
-    const std::string gameLogLevelString = JsonHelper::GetDefault<std::string>(settingsJson, "game_log_level", GetLogLevelString(gameLogLevel));
-    gameLogLevel = GetLogLevelEnum(gameLogLevelString);
+    const std::string editorLogLevelString = JsonHelper::GetDefault<std::string>(settingsJson, "editor_log_level", GetEditorLogLevelString());
+    SetEditorLogLevel(editorLogLevelString);
+    const std::string gameLogLevelString = JsonHelper::GetDefault<std::string>(settingsJson, "game_log_level", GetGameLogLevelString());
+    SetGameLogLevel(gameLogLevelString);
     // Recently loaded projects
     auto recentlyLoadedProjectsJson = JsonHelper::Get<nlohmann::ordered_json>(settingsJson, "recently_loaded_projects");
     for (auto& projectJson : recentlyLoadedProjectsJson) {
@@ -77,8 +46,8 @@ bool EditorSettings::LoadSettings() {
 void EditorSettings::SaveSettings() const {
     nlohmann::ordered_json settingsJson;
     // Log levels
-    settingsJson["editor_log_level"] = GetLogLevelString(editorLogLevel);
-    settingsJson["game_log_level"] = GetLogLevelString(gameLogLevel);
+    settingsJson["editor_log_level"] = GetEditorLogLevelString();
+    settingsJson["game_log_level"] = GetGameLogLevelString();
     // Recently loaded projects
     nlohmann::ordered_json recentlyLoadedProjectsJsonArray = nlohmann::ordered_json::array();
     for (const auto& project : recentlyLoadedProjects) {
@@ -115,7 +84,8 @@ void EditorSettings::SetEditorLogLevel(LogLevel level) {
 }
 
 void EditorSettings::SetEditorLogLevel(const std::string& level) {
-    SetEditorLogLevel(GetLogLevelEnum(level));
+    const auto logLevel = se_logger_get_log_level_enum(level.c_str());
+    SetEditorLogLevel(logLevel);
 }
 
 void EditorSettings::SetGameLogLevel(LogLevel level) {
@@ -123,5 +93,6 @@ void EditorSettings::SetGameLogLevel(LogLevel level) {
 }
 
 void EditorSettings::SetGameLogLevel(const std::string& level) {
-    SetGameLogLevel(GetLogLevelEnum(level));
+    const auto logLevel = se_logger_get_log_level_enum(level.c_str());
+    SetGameLogLevel(logLevel);
 }

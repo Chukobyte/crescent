@@ -79,3 +79,30 @@ void se_logger_print_err(const char* fmt, ...) {
     vfprintf(stderr, str, args);
     va_end(args);
 }
+
+const char* se_logger_get_log_level_string(enum LogLevel level) {
+    switch (level) {
+    case LogLevel_DEBUG:
+        return "debug";
+    case LogLevel_INFO:
+        return "info";
+    case LogLevel_WARN:
+        return "warn";
+    case LogLevel_ERROR:
+        return "error";
+    }
+    return NULL;
+}
+
+enum LogLevel se_logger_get_log_level_enum(const char* level) {
+    if (strcmp(level, "debug") == 0) {
+        return LogLevel_DEBUG;
+    } else if (strcmp(level, "info") == 0) {
+        return LogLevel_INFO;
+    } else if (strcmp(level, "warn") == 0) {
+        return LogLevel_WARN;
+    } else if (strcmp(level, "error") == 0) {
+        return LogLevel_ERROR;
+    }
+    return LogLevel_ERROR;
+}

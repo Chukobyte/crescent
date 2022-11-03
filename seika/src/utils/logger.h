@@ -20,6 +20,9 @@ void se_logger_info(const char* fmt, ...);
 void se_logger_debug(const char* fmt, ...);
 void se_logger_print_err(const char* fmt, ...);
 
+const char* se_logger_get_log_level_string(enum LogLevel level);
+enum LogLevel se_logger_get_log_level_enum(const char* level);
+
 #ifdef __cplusplus
 }
 #endif
