@@ -19,7 +19,7 @@ std::string GetEditorSettingSaveFilePath() {
 }
 } // namespace
 
-bool EditorSettings::LoadSettings() {
+bool EditorSettings::Load() {
     const std::string saveFilePath = GetEditorSettingSaveFilePath();
     if (!FileSystemHelper::DoesFileExist(saveFilePath)) {
         se_logger_debug("Settings doesn't exist at path '%s', skipping...", saveFilePath.c_str());
@@ -43,7 +43,7 @@ bool EditorSettings::LoadSettings() {
     return true;
 }
 
-void EditorSettings::SaveSettings() const {
+void EditorSettings::Save() const {
     nlohmann::ordered_json settingsJson;
     // Log levels
     settingsJson["editor_log_level"] = GetEditorLogLevelString();

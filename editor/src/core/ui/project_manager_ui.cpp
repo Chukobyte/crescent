@@ -71,7 +71,7 @@ void ProjectManagerUI::ProcessWindows() {
                 gameProperties->PrintProperties();
                 // Update recently opened projects list
                 editorContext->settings.AddToRecentlyLoadedProjectsList(gameProperties->gameTitle, projectPath);
-                editorContext->settings.SaveSettings();
+                editorContext->settings.Save();
                 // Update asset manager fonts
                 assetManager->RefreshFromProperties(gameProperties);
                 // Add initial log entry

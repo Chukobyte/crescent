@@ -349,7 +349,7 @@ ImGuiHelper::MenuBar OpenedProjectUI::MenuBar::GetMenuBar() {
 
                                     if (ImGui::Button("Close")) {
                                         resetLogLevelComboBoxes = true;
-                                        editorSettings->SaveSettings();
+                                        editorSettings->Save();
                                         ImGui::CloseCurrentPopup();
                                     }
                                     ImGuiHelper::BeginComboBox(editorLogLevelComboBox);

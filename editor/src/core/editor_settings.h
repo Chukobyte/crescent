@@ -14,8 +14,8 @@ struct RecentlyLoadedProjectData {
 
 class EditorSettings {
   public:
-    bool LoadSettings();
-    void SaveSettings() const;
+    bool Load();
+    void Save() const;
     void AddToRecentlyLoadedProjectsList(const std::string& name, const std::string& path);
     void SetEditorLogLevel(LogLevel level);
     void SetEditorLogLevel(const std::string& level);
