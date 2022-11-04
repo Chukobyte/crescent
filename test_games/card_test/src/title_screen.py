@@ -4,6 +4,7 @@ from crescent_api import *
 class MouseTracker:
     def __init__(self):
         self.node_being_tracked = None
+        self.node_offset = Vector2.ZERO()
         self.previous_mouse_pos = Vector2(-1, -1)
 
     def process_left_mouse_pressed(self) -> None:
@@ -13,13 +14,14 @@ class MouseTracker:
             collision_parent = collision.get_parent()
             if not self.node_being_tracked:
                 self.node_being_tracked = collision_parent
+                mouse_world_pos = Input.Mouse.get_world_position()
+                self.node_offset = self.node_being_tracked.position - mouse_world_pos
                 print(f"Tracking new node {self.node_being_tracked}")
         # Process movement
         if self.node_being_tracked:
             mouse_pos = Input.Mouse.get_position()
             if mouse_pos != self.previous_mouse_pos:
-                print("tracked object moved")
-                self.node_being_tracked.position = mouse_pos
+                self.node_being_tracked.position = mouse_pos + self.node_offset
             self.previous_mouse_pos = mouse_pos
 
     def process_left_mouse_released(self) -> None:

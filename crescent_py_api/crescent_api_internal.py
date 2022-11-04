@@ -69,6 +69,10 @@ def mouse_get_position() -> tuple:
     return 0.0, 0.0
 
 
+def mouse_get_world_position() -> tuple:
+    return 0.0, 0.0
+
+
 def scene_tree_change_scene(path: str) -> None:
     pass
 

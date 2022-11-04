@@ -452,6 +452,11 @@
 "            mouse_x, mouse_y = crescent_api_internal.mouse_get_position()\n"\
 "            return Vector2(mouse_x, mouse_y)\n"\
 "\n"\
+"        @staticmethod\n"\
+"        def get_world_position() -> Vector2:\n"\
+"            mouse_x, mouse_y = crescent_api_internal.mouse_get_world_position()\n"\
+"            return Vector2(mouse_x, mouse_y)\n"\
+"\n"\
 "    class Keyboard:\n"\
 "        NUM_0 = \"0\"\n"\
 "        NUM_1 = \"1\"\n"\

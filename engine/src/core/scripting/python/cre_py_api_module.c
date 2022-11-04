@@ -138,6 +138,13 @@ PyObject* cre_py_api_mouse_get_position(PyObject* self, PyObject* args) {
     return Py_BuildValue("(ff)", globalMouse->position.x, globalMouse->position.y);
 }
 
+PyObject* cre_py_api_mouse_get_world_position(PyObject* self, PyObject* args) {
+    const CREEngineContext* engineContext = cre_engine_context_get();
+    const SEMouse* globalMouse = se_mouse_get();
+    // TODO: Do world pos
+    return Py_BuildValue("(ff)", globalMouse->position.x, globalMouse->position.y);
+}
+
 // Camera
 PyObject* cre_py_api_camera2D_set_position(PyObject* self, PyObject* args, PyObject* kwargs) {
     float x;

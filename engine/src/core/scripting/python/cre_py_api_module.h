@@ -20,6 +20,7 @@ PyObject* cre_py_api_input_is_action_just_released(PyObject* self, PyObject* arg
 
 // Mouse
 PyObject* cre_py_api_mouse_get_position(PyObject* self, PyObject* args);
+PyObject* cre_py_api_mouse_get_world_position(PyObject* self, PyObject* args);
 
 // Camera
 PyObject* cre_py_api_camera2D_set_position(PyObject* self, PyObject* args, PyObject* kwargs);
@@ -155,6 +156,10 @@ static struct PyMethodDef crePyApiMethods[] = {
     {
         "mouse_get_position", cre_py_api_mouse_get_position,
         METH_VARARGS, "Returns the position of the mouse."
+    },
+    {
+        "mouse_get_world_position", cre_py_api_mouse_get_world_position,
+        METH_VARARGS, "Returns the world position of the mouse."
     },
     // CAMERA
     {

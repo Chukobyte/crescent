@@ -10,7 +10,13 @@
     "assets": {
         "audio_sources": [],
         "textures": [],
-        "fonts": []
+        "fonts": [
+            {
+                "file_path": "assets/fonts/verdana.ttf",
+                "uid": "verdana-16",
+                "size": 16
+            }
+        ]
     },
     "inputs": [
         {

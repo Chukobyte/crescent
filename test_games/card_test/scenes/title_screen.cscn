@@ -35,23 +35,23 @@
                 {
                     "type": "transform_2d",
                     "position": {
-                        "x": 200.0,
-                        "y": 200.0
+                        "x": 360.0,
+                        "y": 440.0
                     },
                     "scale": {
                         "x": 1.0,
                         "y": 1.0
                     },
                     "rotation": 0.0,
-                    "z_index": 0,
+                    "z_index": 1,
                     "z_index_relative_to_parent": true,
                     "ignore_camera": false
                 },
                 {
                     "type": "color_rect",
                     "size": {
-                        "w": 32.0,
-                        "h": 32.0
+                        "w": 96.0,
+                        "h": 64.0
                     },
                     "color": {
                         "r": 187,
@@ -86,8 +86,118 @@
                         {
                             "type": "collider_2d",
                             "extents": {
-                                "w": 36.0,
-                                "h": 36.0
+                                "w": 100.0,
+                                "h": 68.0
+                            },
+                            "color": {
+                                "r": 0,
+                                "g": 0,
+                                "b": 204,
+                                "a": 255
+                            }
+                        }
+                    ],
+                    "children": []
+                },
+                {
+                    "name": "TextLabel",
+                    "type": "TextLabel",
+                    "tags": null,
+                    "external_node_source": null,
+                    "components": [
+                        {
+                            "type": "transform_2d",
+                            "position": {
+                                "x": 10.0,
+                                "y": 20.0
+                            },
+                            "scale": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "rotation": 0.0,
+                            "z_index": 0,
+                            "z_index_relative_to_parent": true,
+                            "ignore_camera": false
+                        },
+                        {
+                            "type": "text_label",
+                            "uid": "verdana-16",
+                            "text": "Attack: 0",
+                            "color": {
+                                "r": 255,
+                                "g": 255,
+                                "b": 255,
+                                "a": 255
+                            }
+                        }
+                    ],
+                    "children": []
+                }
+            ]
+        },
+        {
+            "name": "CardZone0",
+            "type": "ColorRect",
+            "tags": null,
+            "external_node_source": null,
+            "components": [
+                {
+                    "type": "transform_2d",
+                    "position": {
+                        "x": 100.0,
+                        "y": 200.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0
+                    },
+                    "rotation": 0.0,
+                    "z_index": 0,
+                    "z_index_relative_to_parent": true,
+                    "ignore_camera": false
+                },
+                {
+                    "type": "color_rect",
+                    "size": {
+                        "w": 128.0,
+                        "h": 128.0
+                    },
+                    "color": {
+                        "r": 158,
+                        "g": 147,
+                        "b": 147,
+                        "a": 255
+                    }
+                }
+            ],
+            "children": [
+                {
+                    "name": "Collider2D",
+                    "type": "Collider2D",
+                    "tags": null,
+                    "external_node_source": null,
+                    "components": [
+                        {
+                            "type": "transform_2d",
+                            "position": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "scale": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "rotation": 0.0,
+                            "z_index": 0,
+                            "z_index_relative_to_parent": true,
+                            "ignore_camera": false
+                        },
+                        {
+                            "type": "collider_2d",
+                            "extents": {
+                                "w": 132.0,
+                                "h": 132.0
                             },
                             "color": {
                                 "r": 0,

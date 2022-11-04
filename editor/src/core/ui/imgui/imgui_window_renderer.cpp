@@ -18,13 +18,17 @@ void ImGuiHelper::WindowRenderer::Render(const std::vector<TextureRenderTarget>&
     // Queue draw calls within engine code paths
     // Textures
     for (auto& target : textureRenderTargets) {
-        se_renderer_queue_sprite_draw_call(target.texture, target.sourceRect, target.destSize, target.color,
-                                           target.flipX, target.flipY, target.globalTransform);
+        if (target.texture) {
+            se_renderer_queue_sprite_draw_call(target.texture, target.sourceRect, target.destSize, target.color,
+                                               target.flipX, target.flipY, target.globalTransform);
+        }
     }
     // Fonts
     for (auto& target : fontRenderTargets) {
-        se_renderer_queue_font_draw_call(target.font, target.text.c_str(), target.position.x, target.position.y,
-                                         target.scale, target.color);
+        if (target.font) {
+            se_renderer_queue_font_draw_call(target.font, target.text.c_str(), target.position.x, target.position.y,
+                                             target.scale, target.color);
+        }
     }
     // Flush queued calls and render to framebuffer
     se_renderer_process_and_flush_batches_just_framebuffer(&WINDOW_BACKGROUND_COLOR);
