@@ -74,7 +74,8 @@ void collision_system_render() {
             colliderComp->color,
             false,
             false,
-            globalTransform
+            globalTransform,
+            globalTransform->zIndex // Do we just want to make this the max z index?
         );
     }
 }

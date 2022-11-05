@@ -19,6 +19,7 @@ TransformModel2D transform2d_component_create_blank_global_transform2d() {
         .position = { .x = 0.0f, .y = 0.0f },
         .scale = { .x = 1.0f, .y = 1.0f },
         .rotation = 0.0f,
+        .zIndex = 0,
         .scaleSign = { .x = 1.0f, .y = 1.0f }
     };
     return transform2D;

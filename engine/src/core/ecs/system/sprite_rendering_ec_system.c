@@ -51,7 +51,8 @@ void sprite_rendering_system_render() {
             spriteComponent->modulate,
             spriteComponent->flipX,
             spriteComponent->flipY,
-            globalTransform
+            globalTransform,
+            globalTransform->zIndex
         );
     }
 }

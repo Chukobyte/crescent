@@ -67,7 +67,8 @@ void animated_sprite_rendering_system_render() {
             animatedSpriteComponent->modulate,
             animatedSpriteComponent->flipX,
             animatedSpriteComponent->flipY,
-            globalTransform
+            globalTransform,
+            globalTransform->zIndex
         );
     }
 }

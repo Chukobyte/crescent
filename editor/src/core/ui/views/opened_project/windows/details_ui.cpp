@@ -189,11 +189,10 @@ void DrawScript(SceneNode* node) {
         if (ImGui::Button("Remove Script")) {
             node->RemoveComponent<ScriptComp>();
         }
-
-        ImGui::Separator();
     } else if (ImGui::Button("Add Script")) {
         node->AddComponent<ScriptComp>();
     }
+    ImGui::Separator();
 }
 
 void DrawCollider2D(SceneNode* node) {

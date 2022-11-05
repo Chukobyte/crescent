@@ -21,11 +21,12 @@ EntityArray OnGetSelfAndParentEntitiesFunc(Entity entity) {
     return combineModelResult;
 }
 
-Transform2D OnGetLocalTransformFunc(Entity entity, bool* success) {
+Transform2D OnGetLocalTransformFunc(Entity entity, int* zIndex, bool* success) {
     static auto* sceneManager = SceneManager::Get();
     if (auto* node = sceneManager->GetNode(sceneManager->selectedSceneFile, entity)) {
         if (auto* transformComp = node->GetComponentSafe<Transform2DComp>()) {
             *success = true;
+            *zIndex = transformComp->zIndex;
             return transformComp->transform2D;
         }
     }
@@ -43,6 +44,7 @@ ImGuiHelper::Window OpenedProjectUI::Windows::GetSceneViewWindow() {
             static auto GetNodeTextureRenderTarget = [](SceneNode* node, size_t index, Transform2DComp* transformComp, bool& hasTexture) {
                 static AssetManager* assetManager = AssetManager::Get();
                 static TransformModel2D globalTransforms[MAX_ENTITIES];
+                static Texture* whiteRectTexture = se_texture_create_solid_colored_texture(1, 1, 255);
                 Texture* renderTargetTexture = nullptr;
                 cre_scene_utils_update_global_transform_model(node->GetUID(), &globalTransforms[index]);
                 Rect2 sourceRect = { 0.0f, 0.0f, 0.0f, 0.0f };
@@ -75,6 +77,16 @@ ImGuiHelper::Window OpenedProjectUI::Windows::GetSceneViewWindow() {
                             origin = animSpriteComp->origin;
                         }
                     }
+                } else if (auto* colorSpriteComp = node->GetComponentSafe<ColorRectComp>()) {
+                    renderTargetTexture = whiteRectTexture;
+                    sourceRect = { 0.0f, 0.0f, 1.0f, 1.0f };
+                    destSize = colorSpriteComp->size;
+                    color = colorSpriteComp->color;
+//                }  else if (auto* collider2DComp = node->GetComponentSafe<Collider2DComp>()) {
+//                    renderTargetTexture = whiteRectTexture;
+//                    sourceRect = { 0.0f, 0.0f, 1.0f, 1.0f };
+//                    destSize = collider2DComp->extents;
+//                    color = collider2DComp->color;
                 } else {
                     hasTexture = false;
                 }

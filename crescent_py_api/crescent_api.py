@@ -1,4 +1,6 @@
+import json
 from enum import Enum
+from json import JSONDecodeError
 from typing import Optional
 
 import crescent_api_internal
@@ -411,6 +413,11 @@ class Input:
             mouse_x, mouse_y = crescent_api_internal.mouse_get_position()
             return Vector2(mouse_x, mouse_y)
 
+        @staticmethod
+        def get_world_position() -> Vector2:
+            mouse_x, mouse_y = crescent_api_internal.mouse_get_world_position()
+            return Vector2(mouse_x, mouse_y)
+
     class Keyboard:
         NUM_0 = "0"
         NUM_1 = "1"
@@ -560,93 +567,6 @@ class StageNode:
         self.external_node_source = external_node_source
         self.components = components
         self.children = children
-
-
-# COMPONENTS
-class Transform2DComponent:
-    def __init__(
-        self,
-        position: Vector2,
-        scale: Vector2,
-        rotation: float,
-        z_index: int,
-        z_index_relative_to_parent: bool,
-        ignore_camera: bool,
-    ):
-        self.position = position
-        self.scale = scale
-        self.rotation = rotation
-        self.z_index = z_index
-        self.z_index_relative_to_parent = z_index_relative_to_parent
-        self.ignore_camera = ignore_camera
-
-
-class SpriteComponent:
-    def __init__(
-        self,
-        texture_path: str,
-        draw_source: Rect2,
-        origin=Vector2.ZERO(),
-        flip_x=False,
-        flip_y=False,
-        modulate=Color(255, 255, 255),
-    ):
-        self.texture_path = texture_path
-        self.draw_source = draw_source
-        self.origin = origin
-        self.flip_x = flip_x
-        self.flip_y = flip_y
-        self.modulate = modulate
-
-
-class AnimatedSpriteComponent:
-    def __init__(
-        self,
-        current_animation_name: str,
-        is_playing: bool,
-        animations: list,
-        modulate=Color.WHITE(),
-        origin=Vector2.ZERO(),
-        flip_x=False,
-        flip_y=False,
-    ):
-        self.current_animation_name = current_animation_name
-        self.is_playing = is_playing
-        self.animations = animations
-        self.modulate = modulate
-        self.origin = origin
-        self.flip_x = flip_x
-        self.flip_y = flip_y
-
-
-class TextLabelComponent:
-    def __init__(
-        self,
-        uid: str,
-        text: str,
-        color: Color,
-    ):
-        self.uid = uid
-        self.text = text
-        self.color = color
-
-
-class ScriptComponent:
-    def __init__(self, class_path: str, class_name: str):
-        self.class_path = class_path
-        self.class_name = class_name
-
-
-class Collider2DComponent:
-    def __init__(self, extents: Size2D, color: Color):
-        self.extents = extents
-        self.color = color
-
-
-class ColorRectComponent:
-    def __init__(self, size: Size2D, color: Color):
-        self.size = size
-        self.color = color
 
 
 # NODE
@@ -1196,47 +1116,27 @@ class Client:
         )
 
 
-# CONFIGURATION
-def configure_game(
-    game_title="Test Game",
-    window_width=800,
-    window_height=600,
-    resolution_width=800,
-    resolution_height=600,
-    target_fps=66,
-    initial_node_path="",
-    colliders_visible=False,
-) -> None:
-    crescent_api_internal.configure_game(
-        game_title=game_title,
-        window_width=window_width,
-        window_height=window_height,
-        resolution_width=resolution_width,
-        resolution_height=resolution_height,
-        target_fps=target_fps,
-        initial_node_path=initial_node_path,
-        colliders_visible=colliders_visible,
-    )
+class GameConfig:
+    @staticmethod
+    def save(path: str, data: dict, encryption_key="") -> bool:
+        try:
+            json_text = json.dumps(data, indent=4)
+        except JSONDecodeError as e:
+            print(f"Game Config Save Json Decode Error: {e}")
+            return False
+        return crescent_api_internal.game_config_save(
+            path=path, data_json=json_text, encryption_key=encryption_key
+        )
 
-
-def configure_assets(audio_sources=None, textures=None, fonts=None) -> None:
-    if fonts is None:
-        fonts = []
-    if textures is None:
-        textures = []
-    if audio_sources is None:
-        audio_sources = []
-    crescent_api_internal.configure_assets(
-        audio_sources=audio_sources, textures=textures, fonts=fonts
-    )
-
-
-def configure_inputs(input_actions=None) -> None:
-    if input_actions is None:
-        input_actions = []
-    crescent_api_internal.configure_inputs(input_actions=input_actions)
-
-
-# STAGE
-def create_stage_nodes(stage_nodes: list) -> None:
-    crescent_api_internal.create_stage_nodes(stage_nodes=stage_nodes)
+    @staticmethod
+    def load(path: str, encryption_key="") -> dict:
+        try:
+            json_dict = json.loads(
+                crescent_api_internal.game_config_load(
+                    path=path, encryption_key=encryption_key
+                )
+            )
+        except JSONDecodeError as e:
+            print(f"Game Config Load Json Decode Error: {e}")
+            return {}
+        return json_dict

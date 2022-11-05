@@ -17,6 +17,7 @@ struct TextureRenderTarget {
     bool flipX = false;
     bool flipY = false;
     TransformModel2D *globalTransform = nullptr;
+    int zIndex = 0;
 };
 
 struct FontRenderTarget {
@@ -25,6 +26,7 @@ struct FontRenderTarget {
     Vector2 position = { 0.0f, 0.0f };
     float scale = 1.0f;
     Color color = {1.0f, 1.0f, 1.0f, 1.0f};
+    int zIndex = 0;
 };
 
 namespace WindowRenderer {

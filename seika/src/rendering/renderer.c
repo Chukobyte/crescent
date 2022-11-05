@@ -6,10 +6,13 @@
 #include "shader.h"
 #include "shader_source.h"
 #include "frame_buffer.h"
+#include "../data_structures/se_hash_map.h"
 #include "../data_structures/se_static_array.h"
 #include "../utils/se_assert.h"
 
-#define CRE_RENDER_TO_FRAMEBUFFER
+#define SE_RENDER_TO_FRAMEBUFFER
+#define SE_RENDER_LAYER_BATCH_MAX 200
+#define SE_RENDER_LAYER_BATCH_ITEM_MAX (SE_RENDER_LAYER_BATCH_MAX / 2)
 
 typedef struct TextureCoordinates {
     GLfloat sMin;
@@ -34,32 +37,10 @@ static GLuint spriteQuadVBO;
 static Shader* spriteShader = NULL;
 static Shader* fontShader = NULL;
 
-// TODO: Get Resolution Width
 static float resolutionWidth = 800.0f;
 static float resolutionHeight = 600.0f;
 
-// --- Renderer --- //
-void se_renderer_initialize(int inResolutionWidth, int inResolutionHeight) {
-    resolutionWidth = (float) inResolutionWidth;
-    resolutionHeight = (float) inResolutionHeight;
-    glEnable(GL_CULL_FACE);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    se_render_context_initialize();
-    sprite_renderer_initialize();
-    font_renderer_initialize();
-    // Test framebuffer
-    SE_ASSERT_FMT(se_frame_buffer_initialize(), "Framebuffer didn't initialize!");
-}
-
-void se_renderer_finalize() {
-    font_renderer_finalize();
-    sprite_renderer_finalize();
-    se_render_context_finalize();
-    se_frame_buffer_finalize();
-}
-
-// --- Sprite Batching --- //
+// Sprite Batching
 typedef struct SpriteBatchItem {
     Texture* texture;
     Rect2 sourceRect;
@@ -79,53 +60,110 @@ typedef struct FontBatchItem {
     Color color;
 } FontBatchItem;
 
-SE_STATIC_ARRAY_CREATE(SpriteBatchItem, 100, sprite_batch_items);
-SE_STATIC_ARRAY_CREATE(FontBatchItem, 100, font_batch_items);
+// Render Layer - Arranges draw order by z index
+typedef struct RenderLayer {
+    SpriteBatchItem spriteBatchItems[SE_RENDER_LAYER_BATCH_ITEM_MAX];
+    FontBatchItem fontBatchItems[SE_RENDER_LAYER_BATCH_ITEM_MAX];
+    size_t spriteBatchItemCount;
+    size_t fontBatchItemCount;
+} RenderLayer;
 
-void se_renderer_queue_sprite_draw_call(Texture* texture, Rect2 sourceRect, Size2D destSize, Color color, bool flipX, bool flipY, TransformModel2D* globalTransform) {
+SE_STATIC_ARRAY_CREATE(RenderLayer, SE_RENDER_LAYER_BATCH_MAX, render_layer_items);
+SE_STATIC_ARRAY_CREATE(int, SE_RENDER_LAYER_BATCH_MAX, active_render_layer_items_indices);
+
+// Renderer
+void se_renderer_initialize(int inResolutionWidth, int inResolutionHeight) {
+    resolutionWidth = (float) inResolutionWidth;
+    resolutionHeight = (float) inResolutionHeight;
+    glEnable(GL_CULL_FACE);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    se_render_context_initialize();
+    sprite_renderer_initialize();
+    font_renderer_initialize();
+    // Initialize framebuffer
+    SE_ASSERT_FMT(se_frame_buffer_initialize(), "Framebuffer didn't initialize!");
+    // Set initial data for render layer
+    for (size_t i = 0; i < SE_RENDER_LAYER_BATCH_MAX; i++) {
+        render_layer_items[i].spriteBatchItemCount = 0;
+        render_layer_items[i].fontBatchItemCount = 0;
+    }
+}
+
+void se_renderer_finalize() {
+    font_renderer_finalize();
+    sprite_renderer_finalize();
+    se_render_context_finalize();
+    se_frame_buffer_finalize();
+}
+
+void update_active_render_layer_index(int zIndex) {
+    const size_t sizeBefore = SE_STATIC_ARRAY_SIZE(active_render_layer_items_indices);
+    SE_STATIC_ARRAY_ADD_IF_UNIQUE(active_render_layer_items_indices, zIndex);
+    const size_t sizeAfter = SE_STATIC_ARRAY_SIZE(active_render_layer_items_indices);
+    if (sizeBefore != sizeAfter) {
+        SE_STATIC_ARRAY_SORT_INT(active_render_layer_items_indices);
+    }
+}
+
+void se_renderer_queue_sprite_draw_call(Texture* texture, Rect2 sourceRect, Size2D destSize, Color color, bool flipX, bool flipY, TransformModel2D* globalTransform, int zIndex) {
     if (texture == NULL) {
         se_logger_error("NULL texture, not submitting draw call!");
         return;
     }
     SpriteBatchItem item = { .texture = texture, .sourceRect = sourceRect, .destSize = destSize, .color = color, .flipX = flipX, .flipY = flipY, .globalTransform = globalTransform };
-    SE_STATIC_ARRAY_ADD(sprite_batch_items, item);
+    const int arrayZIndex = se_math_clamp_int(zIndex + SE_RENDER_LAYER_BATCH_MAX / 2, 0, SE_RENDER_LAYER_BATCH_MAX - 1);
+    // Update sprite batch item on render layer
+    render_layer_items[arrayZIndex].spriteBatchItems[render_layer_items[arrayZIndex].spriteBatchItemCount++] = item;
+    // Update active render layer indices
+    update_active_render_layer_index(arrayZIndex);
 }
 
-void se_renderer_queue_font_draw_call(Font* font, const char* text, float x, float y, float scale, Color color) {
+void se_renderer_queue_font_draw_call(Font* font, const char* text, float x, float y, float scale, Color color, int zIndex) {
     FontBatchItem item = { .font = font, .text = text, .x = x, .y = y, .scale = scale, .color = color };
-    SE_STATIC_ARRAY_ADD(font_batch_items, item);
+    const int arrayZIndex = se_math_clamp_int(zIndex + SE_RENDER_LAYER_BATCH_MAX / 2, 0, SE_RENDER_LAYER_BATCH_MAX - 1);
+    // Update font batch item on render layer
+    render_layer_items[arrayZIndex].fontBatchItems[render_layer_items[arrayZIndex].fontBatchItemCount++] = item;
+    // Update active render layer indices
+    update_active_render_layer_index(arrayZIndex);
 }
 
 void se_renderer_flush_batches() {
-    // Sprite
-    for (size_t i = 0; i < sprite_batch_items_count; i++) {
-        sprite_renderer_draw_sprite(
-            sprite_batch_items[i].texture,
-            &sprite_batch_items[i].sourceRect,
-            &sprite_batch_items[i].destSize,
-            &sprite_batch_items[i].color,
-            sprite_batch_items[i].flipX,
-            sprite_batch_items[i].flipY,
-            sprite_batch_items[i].globalTransform
-        );
+    for (size_t i = 0; i < active_render_layer_items_indices_count; i++) {
+        const size_t layerIndex = active_render_layer_items_indices[i];
+        // Sprite
+        for (size_t spriteIndex = 0; spriteIndex < render_layer_items[layerIndex].spriteBatchItemCount; spriteIndex++) {
+            sprite_renderer_draw_sprite(
+                render_layer_items[layerIndex].spriteBatchItems[spriteIndex].texture,
+                &render_layer_items[layerIndex].spriteBatchItems[spriteIndex].sourceRect,
+                &render_layer_items[layerIndex].spriteBatchItems[spriteIndex].destSize,
+                &render_layer_items[layerIndex].spriteBatchItems[spriteIndex].color,
+                render_layer_items[layerIndex].spriteBatchItems[spriteIndex].flipX,
+                render_layer_items[layerIndex].spriteBatchItems[spriteIndex].flipY,
+                render_layer_items[layerIndex].spriteBatchItems[spriteIndex].globalTransform
+            );
+        }
+        render_layer_items[layerIndex].spriteBatchItemCount = 0;
+        // Font
+        for (size_t fontIndex = 0; fontIndex < render_layer_items[layerIndex].fontBatchItemCount; fontIndex++) {
+            font_renderer_draw_text(
+                render_layer_items[layerIndex].fontBatchItems[fontIndex].font,
+                render_layer_items[layerIndex].fontBatchItems[fontIndex].text,
+                render_layer_items[layerIndex].fontBatchItems[fontIndex].x,
+                render_layer_items[layerIndex].fontBatchItems[fontIndex].y,
+                render_layer_items[layerIndex].fontBatchItems[fontIndex].scale,
+                &render_layer_items[layerIndex].fontBatchItems[fontIndex].color
+            );
+        }
+        render_layer_items[layerIndex].fontBatchItemCount = 0;
     }
-    SE_STATIC_ARRAY_EMPTY(sprite_batch_items);
-    // Fonts
-    for (size_t i = 0; i < font_batch_items_count; i++) {
-        font_renderer_draw_text(
-            font_batch_items[i].font,
-            font_batch_items[i].text,
-            font_batch_items[i].x,
-            font_batch_items[i].y,
-            font_batch_items[i].scale,
-            &font_batch_items[i].color
-        );
-    }
-    SE_STATIC_ARRAY_EMPTY(font_batch_items);
+
+    SE_STATIC_ARRAY_EMPTY(render_layer_items);
+    SE_STATIC_ARRAY_EMPTY(active_render_layer_items_indices);
 }
 
 void se_renderer_process_and_flush_batches(const Color* backgroundColor) {
-#ifdef CRE_RENDER_TO_FRAMEBUFFER
+#ifdef SE_RENDER_TO_FRAMEBUFFER
     se_frame_buffer_bind();
 #endif
 
@@ -135,7 +173,7 @@ void se_renderer_process_and_flush_batches(const Color* backgroundColor) {
 
     se_renderer_flush_batches();
 
-#ifdef CRE_RENDER_TO_FRAMEBUFFER
+#ifdef SE_RENDER_TO_FRAMEBUFFER
     se_frame_buffer_unbind();
 
     // Clear screen texture background

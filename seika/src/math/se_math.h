@@ -40,6 +40,7 @@ typedef struct TransformModel2D {
     Vector2 position;
     Vector2 scale;
     float rotation; // degrees
+    int zIndex;
     Vector2 scaleSign;
     mat4 model;
 } TransformModel2D;
@@ -69,3 +70,4 @@ float se_math_map_to_range(float input, float inputLow, float inputHigh, float o
 float se_math_map_to_unit(float input, float inputLow, float inputHigh);
 float se_math_signf(float value);
 Vector2 se_math_signvec2(Vector2* value);
+int se_math_clamp_int(int value, int min, int max);

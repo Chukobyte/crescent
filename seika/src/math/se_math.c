@@ -61,3 +61,7 @@ Vector2 se_math_signvec2(Vector2* value) {
     };
     return sign_vec;
 }
+
+int se_math_clamp_int(int value, int min, int max) {
+    return value < min ? min : (value > max ? max : value);
+}

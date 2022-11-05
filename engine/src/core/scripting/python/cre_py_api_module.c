@@ -7,7 +7,10 @@
 #include "../seika/src/input/mouse.h"
 #include "../seika/src/audio/audio_manager.h"
 #include "../seika/src/networking/se_network.h"
+#include "../seika/src/memory/se_mem.h"
 #include "../seika/src/utils/se_assert.h"
+#include "../seika/src/utils/se_file_system_utils.h"
+#include "../seika/src/utils/se_string_util.h"
 
 #include "py_cache.h"
 #include "py_script_context.h"
@@ -26,6 +29,7 @@
 #include "../../ecs/component/text_label_component.h"
 #include "../../ecs/component/node_component.h"
 #include "../../scene/scene_manager.h"
+#include "../../game_properties.h"
 
 #ifdef _MSC_VER
 #pragma warning(disable : 4996) // for strcpy
@@ -131,6 +135,13 @@ PyObject* cre_py_api_input_is_action_just_released(PyObject* self, PyObject* arg
 PyObject* cre_py_api_mouse_get_position(PyObject* self, PyObject* args) {
     const CREEngineContext* engineContext = cre_engine_context_get();
     const SEMouse* globalMouse = se_mouse_get();
+    return Py_BuildValue("(ff)", globalMouse->position.x, globalMouse->position.y);
+}
+
+PyObject* cre_py_api_mouse_get_world_position(PyObject* self, PyObject* args) {
+    const CREEngineContext* engineContext = cre_engine_context_get();
+    const SEMouse* globalMouse = se_mouse_get();
+    // TODO: Do world pos
     return Py_BuildValue("(ff)", globalMouse->position.x, globalMouse->position.y);
 }
 
@@ -422,6 +433,15 @@ PyObject* cre_py_api_node_get_parent(PyObject* self, PyObject* args, PyObject* k
             Py_RETURN_NONE;
         }
         return cre_py_utils_get_entity_instance(treeNode->parent->entity);
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_node_get_name(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
+        NodeComponent* nodeComponent = (NodeComponent*) component_manager_get_component(entity, ComponentDataIndex_NODE);
+        return Py_BuildValue("s", nodeComponent->name);
     }
     return NULL;
 }
@@ -905,3 +925,41 @@ PyObject* cre_py_api_collision_handler_process_mouse_collisions(PyObject* self, 
     return NULL;
 }
 #undef TYPE_BUFFER_SIZE
+
+// Game Config
+PyObject* cre_py_api_game_config_save(PyObject* self, PyObject* args, PyObject* kwargs) {
+    char* path;
+    char* dataJson;
+    char* encryptionKey;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "sss", crePyApiGameConfigSaveKWList, &path, &dataJson, &encryptionKey)) {
+        CREGameProperties* gameProps = cre_game_props_get();
+        char* validGameTitle = se_strdup(gameProps->gameTitle);
+        se_str_to_lower_and_underscore_whitespace(validGameTitle);
+        char* fullSavePath = se_fs_get_user_save_path("crescent", validGameTitle, path);
+        const bool success = se_fs_write_to_file(fullSavePath, dataJson);
+        SE_MEM_FREE(validGameTitle);
+        SE_MEM_FREE(fullSavePath);
+        if (success) {
+            Py_RETURN_TRUE;
+        }
+    }
+    Py_RETURN_FALSE;
+}
+
+PyObject* cre_py_api_game_config_load(PyObject* self, PyObject* args, PyObject* kwargs) {
+    char* path;
+    char* encryptionKey;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "ss", crePyApiGameConfigLoadKWList, &path, &encryptionKey)) {
+        CREGameProperties* gameProps = cre_game_props_get();
+        char* validGameTitle = se_strdup(gameProps->gameTitle);
+        se_str_to_lower_and_underscore_whitespace(validGameTitle);
+        char* fullSavePath = se_fs_get_user_save_path("crescent", validGameTitle, path);
+        char* fileContents = se_fs_read_file_contents(fullSavePath, NULL);
+        PyObject* returnValue =  Py_BuildValue("s", fileContents);
+        SE_MEM_FREE(validGameTitle);
+        SE_MEM_FREE(fullSavePath);
+        SE_MEM_FREE(fileContents);
+        return returnValue;
+    }
+    return Py_BuildValue("s", "{}");
+}

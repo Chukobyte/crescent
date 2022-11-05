@@ -205,10 +205,10 @@ ImGuiHelper::MenuBar OpenedProjectUI::MenuBar::GetMenuBar() {
                                     for (size_t i = 0; i < projectProperties->inputs.actions.size(); i++) {
                                         ProjectInputAction& inputAction = projectProperties->inputs.actions[i];
 
-                                        ImGuiHelper::InputText nameText("Name", inputAction.name, i);
+                                        ImGuiHelper::InputText nameText("Name", inputAction.name, (int) i);
                                         ImGuiHelper::BeginInputText(nameText);
 
-                                        ImGuiHelper::DragInt deviceId("Device Id", inputAction.deviceId, i);
+                                        ImGuiHelper::DragInt deviceId("Device Id", inputAction.deviceId, (int) i);
                                         deviceId.valueMin = 0;
                                         deviceId.valueMax = 16;
                                         ImGuiHelper::BeginDragInt(deviceId);
@@ -216,18 +216,20 @@ ImGuiHelper::MenuBar OpenedProjectUI::MenuBar::GetMenuBar() {
                                         // Values
                                         ImGui::Text("Values:");
                                         ImGui::SameLine();
-                                        if (ImGui::Button("+")) {
+                                        const std::string addValueText = "+##input_value_" + std::to_string(i);
+                                        if (ImGui::Button(addValueText.c_str())) {
                                             inputAction.values.emplace_back("");
                                         }
                                         int deletedValueIndex = -1;
                                         for (size_t valueIndex = 0; valueIndex < inputAction.values.size(); valueIndex++) {
+                                            const int combinedIndex = ((int) i * 10) + valueIndex;
                                             std::string& value = inputAction.values[valueIndex];
-                                            ImGuiHelper::InputText valueText("", value, valueIndex);
+                                            ImGuiHelper::InputText valueText("", value, combinedIndex);
                                             ImGuiHelper::BeginInputText(valueText);
                                             ImGui::SameLine();
-                                            const std::string buttonText = "-##" + std::to_string(valueIndex);
+                                            const std::string buttonText = "-##" + std::to_string(combinedIndex);
                                             if (ImGui::Button(buttonText.c_str())) {
-                                                deletedValueIndex = valueIndex;
+                                                deletedValueIndex = (int) valueIndex;
                                             }
                                         }
                                         if (deletedValueIndex >= 0) {
@@ -236,7 +238,7 @@ ImGuiHelper::MenuBar OpenedProjectUI::MenuBar::GetMenuBar() {
 
                                         const std::string deleteText = "Delete##" + std::to_string(i);
                                         if (ImGui::Button(deleteText.c_str())) {
-                                            actionIndexToDelete = i;
+                                            actionIndexToDelete = (int) i;
                                         }
 
                                         ImGui::Separator();

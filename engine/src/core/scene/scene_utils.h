@@ -15,7 +15,7 @@ typedef struct EntityArray {
 } EntityArray;
 
 typedef EntityArray (*on_get_self_and_parent_entities) (Entity);
-typedef Transform2D (*on_get_local_transform) (Entity, bool*);
+typedef Transform2D (*on_get_local_transform) (Entity, int*, bool*);
 
 void cre_scene_utils_update_global_transform_model(Entity entity, TransformModel2D* globalTransform);
 void cre_scene_utils_apply_camera_and_origin_translation(TransformModel2D* globalTransform, Vector2* offset, bool ignoreCamera);

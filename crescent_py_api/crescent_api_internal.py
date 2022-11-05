@@ -69,6 +69,10 @@ def mouse_get_position() -> tuple:
     return 0.0, 0.0
 
 
+def mouse_get_world_position() -> tuple:
+    return 0.0, 0.0
+
+
 def scene_tree_change_scene(path: str) -> None:
     pass
 
@@ -147,6 +151,10 @@ def node_get_children(entity_id: int) -> list:
 
 def node_get_parent(entity_id: int) -> tuple:
     return 1, "Node"
+
+
+def node_get_name(entity_id: int) -> str:
+    return "Node"
 
 
 def node2D_set_position(entity_id: int, x: float, y: float) -> None:
@@ -320,3 +328,11 @@ def collision_handler_process_mouse_collisions(
     collision_size_h: float,
 ) -> list:
     return []
+
+
+def game_config_save(path: str, data_json: str, encryption_key="") -> bool:
+    return True
+
+
+def game_config_load(path: str, encryption_key="") -> str:
+    return '{ "level": 0 }'

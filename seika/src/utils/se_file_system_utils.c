@@ -20,10 +20,14 @@
 
 #include "logger.h"
 #include "../memory/se_mem.h"
+#include "SDL_filesystem.h"
+#include "se_string_util.h"
 
 #ifdef _MSC_VER
 #pragma warning(disable : 4996) // for fopen
 #endif
+
+#define CHAR_ARRAY_MAX_BUFFER_SIZE 256
 
 void se_fs_get_cwd_array(char* array, size_t size) {
     if (getcwd(array, size) != NULL) {
@@ -32,9 +36,8 @@ void se_fs_get_cwd_array(char* array, size_t size) {
 }
 
 bool se_fs_chdir(const char* dirPath) {
-#define CWD_MAX_BUFFER_SIZE 256
-    char currentWorkingPath[CWD_MAX_BUFFER_SIZE];
-    se_fs_get_cwd_array(currentWorkingPath, CWD_MAX_BUFFER_SIZE);
+    char currentWorkingPath[CHAR_ARRAY_MAX_BUFFER_SIZE];
+    se_fs_get_cwd_array(currentWorkingPath, CHAR_ARRAY_MAX_BUFFER_SIZE);
     if (strcmp(currentWorkingPath, dirPath) == 0) {
         se_logger_warn("Attempting to change to the same directory at path '%s'", currentWorkingPath);
         return false;
@@ -47,7 +50,7 @@ bool se_fs_chdir(const char* dirPath) {
 }
 
 char* se_fs_get_cwd() {
-    char cwd[256];
+    char cwd[CHAR_ARRAY_MAX_BUFFER_SIZE];
     if (getcwd(cwd, sizeof(cwd)) != NULL) {
         return strdup(cwd);
     }
@@ -55,7 +58,7 @@ char* se_fs_get_cwd() {
 }
 
 void se_fs_print_cwd() {
-    char cwd[256];
+    char cwd[CHAR_ARRAY_MAX_BUFFER_SIZE];
     if (getcwd(cwd, sizeof(cwd)) != NULL) {
         se_logger_info("Current working directory: %s\n", cwd);
     } else {
@@ -87,6 +90,16 @@ size_t se_fs_get_file_size(const char* filePath) {
 #endif
 }
 
+bool se_fs_write_to_file(const char* filePath, const char* contents) {
+    FILE* fp = fopen(filePath, "w");
+    if (fp) {
+        fprintf(fp, "%s\n", contents);
+        fclose(fp);
+        return true;
+    }
+    return false;
+}
+
 char* se_fs_read_file_contents(const char* filePath, size_t* sz) {
     char* buffer = NULL;
     FILE* fp = fopen(filePath, "rb");
@@ -114,4 +127,14 @@ bool se_fs_does_file_exist(const char* filePath) {
         return true;
     }
     return false;
+}
+
+char* se_fs_get_user_save_path(const char* orgName, const char* applicationName, const char* savePath) {
+    char buffer[CHAR_ARRAY_MAX_BUFFER_SIZE];
+    char* filePath = SDL_GetPrefPath(orgName, applicationName);
+    strcpy(buffer, filePath);
+    strcat(buffer, savePath);
+    char* fullUserSavePath = se_strdup(buffer);
+    SDL_free(filePath);
+    return fullUserSavePath;
 }
