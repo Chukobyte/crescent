@@ -25,7 +25,7 @@ void input_gamepad_cleanup_flags();
 
 //--- Input ---//
 SEStringHashMap* inputActionMap = NULL;
-const char* inputActionNames[MAX_INPUT_ACTIONS];
+char* inputActionNames[MAX_INPUT_ACTIONS];
 size_t inputActionNamesCount = 0;
 
 SEStringHashMap* keyboardStringValuesMap = NULL;
@@ -116,8 +116,7 @@ void se_input_add_action_value(const char* actionName, const char* actionValue, 
     if (!se_string_hash_map_has(inputActionMap, actionName)) {
         se_string_hash_map_add(inputActionMap, actionName,
                                se_input_action_create_new_input_action(actionName, deviceId), sizeof(InputAction));
-        inputActionNames[inputActionNamesCount] = actionName;
-        inputActionNamesCount++;
+        inputActionNames[inputActionNamesCount++] = se_strdup(actionName);
     }
     InputAction* inputAction = (InputAction*) se_string_hash_map_get(inputActionMap, actionName);
     // TODO: Remember to properly delete char* from se_strdup
