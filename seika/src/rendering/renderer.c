@@ -82,7 +82,7 @@ typedef struct FontBatchItem {
 SE_STATIC_ARRAY_CREATE(SpriteBatchItem, 100, sprite_batch_items);
 SE_STATIC_ARRAY_CREATE(FontBatchItem, 100, font_batch_items);
 
-void se_renderer_queue_sprite_draw_call(Texture* texture, Rect2 sourceRect, Size2D destSize, Color color, bool flipX, bool flipY, TransformModel2D* globalTransform) {
+void se_renderer_queue_sprite_draw_call(Texture* texture, Rect2 sourceRect, Size2D destSize, Color color, bool flipX, bool flipY, TransformModel2D* globalTransform, int zIndex) {
     if (texture == NULL) {
         se_logger_error("NULL texture, not submitting draw call!");
         return;
@@ -91,7 +91,7 @@ void se_renderer_queue_sprite_draw_call(Texture* texture, Rect2 sourceRect, Size
     SE_STATIC_ARRAY_ADD(sprite_batch_items, item);
 }
 
-void se_renderer_queue_font_draw_call(Font* font, const char* text, float x, float y, float scale, Color color) {
+void se_renderer_queue_font_draw_call(Font* font, const char* text, float x, float y, float scale, Color color, int zIndex) {
     FontBatchItem item = { .font = font, .text = text, .x = x, .y = y, .scale = scale, .color = color };
     SE_STATIC_ARRAY_ADD(font_batch_items, item);
 }
