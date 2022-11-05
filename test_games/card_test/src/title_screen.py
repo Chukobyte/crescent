@@ -29,7 +29,7 @@ class MouseTracker:
     def process_left_mouse_released(self) -> None:
         if self.node_being_tracked:
             has_landed_in_card_zone = False
-            collisions = CollisionHandler.process_mouse_collisions()
+            collisions = CollisionHandler.process_collisions(self.node_being_tracked.get_child("Collider2D"))
             for collision in collisions:
                 collision_parent = collision.get_parent()
                 if "CardZone" in collision_parent.name:
