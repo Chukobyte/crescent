@@ -57,7 +57,7 @@ void color_rect_system_render() {
             false,
             false,
             globalTransform,
-            transformComp->zIndex
+            globalTransform->zIndex
         );
     }
 }
