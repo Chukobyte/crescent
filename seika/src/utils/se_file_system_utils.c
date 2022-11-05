@@ -132,8 +132,8 @@ bool se_fs_does_file_exist(const char* filePath) {
 char* se_fs_get_user_save_path(const char* orgName, const char* applicationName, const char* savePath) {
     char buffer[CHAR_ARRAY_MAX_BUFFER_SIZE];
     char* filePath = SDL_GetPrefPath(orgName, applicationName);
-    strcpy_s(buffer, sizeof(buffer), filePath);
-    strcat_s(buffer, sizeof(buffer), savePath);
+    strcpy(buffer, filePath);
+    strcat(buffer, savePath);
     char* fullUserSavePath = se_strdup(buffer);
     SDL_free(filePath);
     return fullUserSavePath;
