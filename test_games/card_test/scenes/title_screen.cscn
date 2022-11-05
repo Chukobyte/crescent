@@ -181,8 +181,8 @@
                         {
                             "type": "transform_2d",
                             "position": {
-                                "x": 0.0,
-                                "y": 0.0
+                                "x": -2.0,
+                                "y": -2.0
                             },
                             "scale": {
                                 "x": 1.0,
@@ -198,6 +198,116 @@
                             "extents": {
                                 "w": 132.0,
                                 "h": 132.0
+                            },
+                            "color": {
+                                "r": 0,
+                                "g": 0,
+                                "b": 204,
+                                "a": 255
+                            }
+                        }
+                    ],
+                    "children": []
+                }
+            ]
+        },
+        {
+            "name": "EndTurnButton",
+            "type": "ColorRect",
+            "tags": null,
+            "external_node_source": null,
+            "components": [
+                {
+                    "type": "transform_2d",
+                    "position": {
+                        "x": 675.0,
+                        "y": 250.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0
+                    },
+                    "rotation": 0.0,
+                    "z_index": 0,
+                    "z_index_relative_to_parent": true,
+                    "ignore_camera": false
+                },
+                {
+                    "type": "color_rect",
+                    "size": {
+                        "w": 96.0,
+                        "h": 64.0
+                    },
+                    "color": {
+                        "r": 52,
+                        "g": 179,
+                        "b": 40,
+                        "a": 255
+                    }
+                }
+            ],
+            "children": [
+                {
+                    "name": "TextLabel",
+                    "type": "TextLabel",
+                    "tags": null,
+                    "external_node_source": null,
+                    "components": [
+                        {
+                            "type": "transform_2d",
+                            "position": {
+                                "x": 12.0,
+                                "y": 34.0
+                            },
+                            "scale": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "rotation": 0.0,
+                            "z_index": 0,
+                            "z_index_relative_to_parent": true,
+                            "ignore_camera": false
+                        },
+                        {
+                            "type": "text_label",
+                            "uid": "verdana-16",
+                            "text": "End Turn",
+                            "color": {
+                                "r": 255,
+                                "g": 255,
+                                "b": 255,
+                                "a": 255
+                            }
+                        }
+                    ],
+                    "children": []
+                },
+                {
+                    "name": "Collider2D",
+                    "type": "Collider2D",
+                    "tags": null,
+                    "external_node_source": null,
+                    "components": [
+                        {
+                            "type": "transform_2d",
+                            "position": {
+                                "x": -2.0,
+                                "y": -2.0
+                            },
+                            "scale": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "rotation": 0.0,
+                            "z_index": 0,
+                            "z_index_relative_to_parent": true,
+                            "ignore_camera": false
+                        },
+                        {
+                            "type": "collider_2d",
+                            "extents": {
+                                "w": 100.0,
+                                "h": 68.0
                             },
                             "color": {
                                 "r": 0,

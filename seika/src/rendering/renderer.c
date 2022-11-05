@@ -120,6 +120,11 @@ void se_renderer_queue_sprite_draw_call(Texture* texture, Rect2 sourceRect, Size
 }
 
 void se_renderer_queue_font_draw_call(Font* font, const char* text, float x, float y, float scale, Color color, int zIndex) {
+    if (font == NULL) {
+        se_logger_error("NULL font, not submitting draw call!");
+        return;
+    }
+
     FontBatchItem item = { .font = font, .text = text, .x = x, .y = y, .scale = scale, .color = color };
     const int arrayZIndex = se_math_clamp_int(zIndex + SE_RENDER_LAYER_BATCH_MAX / 2, 0, SE_RENDER_LAYER_BATCH_MAX - 1);
     // Update font batch item on render layer
