@@ -49,6 +49,7 @@ PyObject* cre_py_api_node_add_child(PyObject* self, PyObject* args, PyObject* kw
 PyObject* cre_py_api_node_get_child(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_node_get_children(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_node_get_parent(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_node_get_name(PyObject* self, PyObject* args, PyObject* kwargs);
 
 // Node2D
 PyObject* cre_py_api_node2D_set_position(PyObject* self, PyObject* args, PyObject* kwargs);
@@ -244,6 +245,10 @@ static struct PyMethodDef crePyApiMethods[] = {
     {
         "node_get_parent", (PyCFunction) cre_py_api_node_get_parent,
         METH_VARARGS | METH_KEYWORDS, "Node get parent."
+    },
+    {
+        "node_get_name", (PyCFunction) cre_py_api_node_get_name,
+        METH_VARARGS | METH_KEYWORDS, "Returns the node's name."
     },
     // NODE2D
     {

@@ -437,6 +437,15 @@ PyObject* cre_py_api_node_get_parent(PyObject* self, PyObject* args, PyObject* k
     return NULL;
 }
 
+PyObject* cre_py_api_node_get_name(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
+        NodeComponent* nodeComponent = (NodeComponent*) component_manager_get_component(entity, ComponentDataIndex_NODE);
+        return Py_BuildValue("s", nodeComponent->name);
+    }
+    return NULL;
+}
+
 // Node2D
 PyObject* cre_py_api_node2D_set_position(PyObject* self, PyObject* args, PyObject* kwargs) {
     Entity entity;
