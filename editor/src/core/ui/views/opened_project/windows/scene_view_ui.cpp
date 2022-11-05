@@ -21,11 +21,12 @@ EntityArray OnGetSelfAndParentEntitiesFunc(Entity entity) {
     return combineModelResult;
 }
 
-Transform2D OnGetLocalTransformFunc(Entity entity, bool* success) {
+Transform2D OnGetLocalTransformFunc(Entity entity, int* zIndex, bool* success) {
     static auto* sceneManager = SceneManager::Get();
     if (auto* node = sceneManager->GetNode(sceneManager->selectedSceneFile, entity)) {
         if (auto* transformComp = node->GetComponentSafe<Transform2DComp>()) {
             *success = true;
+            *zIndex = transformComp->zIndex;
             return transformComp->transform2D;
         }
     }
