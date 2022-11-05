@@ -7,7 +7,7 @@
 #include "../camera/camera_manager.h"
 
 EntityArray default_get_self_and_parent_nodes(Entity entity);
-Transform2D default_get_local_transform(Entity entity, bool* success);
+Transform2D default_get_local_transform(Entity entity, int* zIndex, bool* success);
 
 on_get_self_and_parent_entities onGetSelfAndParentEntitiesFunc = &default_get_self_and_parent_nodes;
 on_get_local_transform onGetLocalTransformFunc = &default_get_local_transform;
@@ -28,7 +28,7 @@ EntityArray default_get_self_and_parent_nodes(Entity entity) {
     return combineModelResult;
 }
 
-Transform2D default_get_local_transform(Entity entity, bool* success) {
+Transform2D default_get_local_transform(Entity entity, int* zIndex, bool* success) {
     Transform2DComponent* transform2DComponent = component_manager_get_component_unsafe(entity, ComponentDataIndex_TRANSFORM_2D);
     if (transform2DComponent == NULL) {
         *success = false;
@@ -36,6 +36,7 @@ Transform2D default_get_local_transform(Entity entity, bool* success) {
             .position = { 0.0f, 0.0f }, .scale = { 1.0f, 1.0f }, .rotation = 0.0f
         };
     }
+    *zIndex = transform2DComponent->zIndex;
     *success = true;
     return transform2DComponent->localTransform;
 }
@@ -44,13 +45,16 @@ void cre_scene_utils_update_global_transform_model(Entity entity, TransformModel
     glm_mat4_identity(globalTransform->model);
     EntityArray combineModelResult = onGetSelfAndParentEntitiesFunc(entity);
     Vector2 scaleTotal = { 1.0f, 1.0f };
+    globalTransform->zIndex = 0;
     for (int i = combineModelResult.entityCount - 1; i >= 0; i--) {
         Entity currentEntity = combineModelResult.entities[i];
         bool hasLocalTransform = false;
-        const Transform2D localTransform = onGetLocalTransformFunc(currentEntity, &hasLocalTransform);
+        int localZIndex = 0;
+        const Transform2D localTransform = onGetLocalTransformFunc(currentEntity, &localZIndex, &hasLocalTransform);
         if (!hasLocalTransform) {
             continue;
         }
+        globalTransform->zIndex += localZIndex;
         scaleTotal.x *= localTransform.scale.x;
         scaleTotal.y *= localTransform.scale.y;
         mat4 newModel;

@@ -45,7 +45,7 @@ void font_rendering_system_render() {
             renderCamera->zoom.y,
             fontTransformComp->localTransform.scale.x * globalTransform->scale.x * renderCamera->zoom.x,
             textLabelComponent->color,
-            fontTransformComp->zIndex
+            globalTransform->zIndex
         );
     }
 }
