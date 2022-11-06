@@ -108,7 +108,7 @@
                         {
                             "type": "transform_2d",
                             "position": {
-                                "x": 10.0,
+                                "x": 8.0,
                                 "y": 20.0
                             },
                             "scale": {
@@ -123,7 +123,7 @@
                         {
                             "type": "text_label",
                             "uid": "verdana-16",
-                            "text": "Attack: 0",
+                            "text": "Worker: 1",
                             "color": {
                                 "r": 255,
                                 "g": 255,
