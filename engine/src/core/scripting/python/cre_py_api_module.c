@@ -875,18 +875,16 @@ PyObject* cre_py_api_client_subscribe(PyObject* self, PyObject* args, PyObject* 
 }
 
 // Collision Handler
-#define TYPE_BUFFER_SIZE 32
 PyObject* cre_py_api_collision_handler_process_collisions(PyObject* self, PyObject* args, PyObject* kwargs) {
     Entity entity;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
-        char typeBuffer[TYPE_BUFFER_SIZE];
         PyObject* pyCollidedEntityList = PyList_New(0);
         CollisionResult collisionResult = cre_collision_process_entity_collisions(entity);
         for (size_t i = 0; i < collisionResult.collidedEntityCount; i++) {
             const Entity collidedEntity = collisionResult.collidedEntities[i];
-            NodeComponent* nodeComponent = (NodeComponent*) component_manager_get_component(collidedEntity, ComponentDataIndex_NODE);
-            strcpy(typeBuffer, node_get_base_type_string(nodeComponent->type));
-            if (PyList_Append(pyCollidedEntityList, Py_BuildValue("(is)", collidedEntity, typeBuffer)) == -1) {
+            PyObject* collidedNode = cre_py_utils_get_entity_instance(collidedEntity);
+            if (PyList_Append(pyCollidedEntityList, collidedNode) == -1) {
+                se_logger_error("Failed to append collided entity '%d' to collision list!", collidedEntity);
                 PyErr_Print();
             }
         }
@@ -901,7 +899,6 @@ PyObject* cre_py_api_collision_handler_process_mouse_collisions(PyObject* self, 
     float collisionSizeW;
     float collisionSizeH;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "ffff", crePyApiCollisionHandlerProcessMouseCollisionsKWList, &positionOffsetX, &positionOffsetY, &collisionSizeW, &collisionSizeH)) {
-        char typeBuffer[TYPE_BUFFER_SIZE];
         PyObject* pyCollidedEntityList = PyList_New(0);
         // TODO: Transform mouse screen position into world position.
         CRECamera2D* camera = cre_camera_manager_get_current_camera();
@@ -914,9 +911,9 @@ PyObject* cre_py_api_collision_handler_process_mouse_collisions(PyObject* self, 
         CollisionResult collisionResult = cre_collision_process_mouse_collisions(&collisionRect);
         for (size_t i = 0; i < collisionResult.collidedEntityCount; i++) {
             const Entity collidedEntity = collisionResult.collidedEntities[i];
-            NodeComponent* nodeComponent = (NodeComponent*) component_manager_get_component(collidedEntity, ComponentDataIndex_NODE);
-            strcpy(typeBuffer, node_get_base_type_string(nodeComponent->type));
-            if (PyList_Append(pyCollidedEntityList, Py_BuildValue("(is)", collidedEntity, typeBuffer)) == -1) {
+            PyObject* collidedNode = cre_py_utils_get_entity_instance(collidedEntity);
+            if (PyList_Append(pyCollidedEntityList, collidedNode) == -1) {
+                se_logger_error("Failed to append mouse collided entity '%d' to collision list!", collidedEntity);
                 PyErr_Print();
             }
         }
@@ -924,7 +921,6 @@ PyObject* cre_py_api_collision_handler_process_mouse_collisions(PyObject* self, 
     }
     return NULL;
 }
-#undef TYPE_BUFFER_SIZE
 
 // Game Config
 PyObject* cre_py_api_game_config_save(PyObject* self, PyObject* args, PyObject* kwargs) {
