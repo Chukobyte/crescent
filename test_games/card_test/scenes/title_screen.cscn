@@ -208,6 +208,76 @@
                         }
                     ],
                     "children": []
+                },
+                {
+                    "name": "PlayerOnePoints",
+                    "type": "TextLabel",
+                    "tags": null,
+                    "external_node_source": null,
+                    "components": [
+                        {
+                            "type": "transform_2d",
+                            "position": {
+                                "x": 58.0,
+                                "y": -8.0
+                            },
+                            "scale": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "rotation": 0.0,
+                            "z_index": 0,
+                            "z_index_relative_to_parent": true,
+                            "ignore_camera": false
+                        },
+                        {
+                            "type": "text_label",
+                            "uid": "verdana-16",
+                            "text": "0",
+                            "color": {
+                                "r": 255,
+                                "g": 255,
+                                "b": 255,
+                                "a": 255
+                            }
+                        }
+                    ],
+                    "children": []
+                },
+                {
+                    "name": "PlayerTwoPoints",
+                    "type": "TextLabel",
+                    "tags": null,
+                    "external_node_source": null,
+                    "components": [
+                        {
+                            "type": "transform_2d",
+                            "position": {
+                                "x": 58.0,
+                                "y": 146.0
+                            },
+                            "scale": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "rotation": 0.0,
+                            "z_index": 0,
+                            "z_index_relative_to_parent": true,
+                            "ignore_camera": false
+                        },
+                        {
+                            "type": "text_label",
+                            "uid": "verdana-16",
+                            "text": "0",
+                            "color": {
+                                "r": 255,
+                                "g": 255,
+                                "b": 255,
+                                "a": 255
+                            }
+                        }
+                    ],
+                    "children": []
                 }
             ]
         },
@@ -283,6 +353,76 @@
                         }
                     ],
                     "children": []
+                },
+                {
+                    "name": "PlayerOnePoints",
+                    "type": "TextLabel",
+                    "tags": null,
+                    "external_node_source": null,
+                    "components": [
+                        {
+                            "type": "transform_2d",
+                            "position": {
+                                "x": 58.0,
+                                "y": -8.0
+                            },
+                            "scale": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "rotation": 0.0,
+                            "z_index": 0,
+                            "z_index_relative_to_parent": true,
+                            "ignore_camera": false
+                        },
+                        {
+                            "type": "text_label",
+                            "uid": "verdana-16",
+                            "text": "0",
+                            "color": {
+                                "r": 255,
+                                "g": 255,
+                                "b": 255,
+                                "a": 255
+                            }
+                        }
+                    ],
+                    "children": []
+                },
+                {
+                    "name": "PlayerTwoPoints",
+                    "type": "TextLabel",
+                    "tags": null,
+                    "external_node_source": null,
+                    "components": [
+                        {
+                            "type": "transform_2d",
+                            "position": {
+                                "x": 58.0,
+                                "y": 146.0
+                            },
+                            "scale": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "rotation": 0.0,
+                            "z_index": 0,
+                            "z_index_relative_to_parent": true,
+                            "ignore_camera": false
+                        },
+                        {
+                            "type": "text_label",
+                            "uid": "verdana-16",
+                            "text": "0",
+                            "color": {
+                                "r": 255,
+                                "g": 255,
+                                "b": 255,
+                                "a": 255
+                            }
+                        }
+                    ],
+                    "children": []
                 }
             ]
         },
@@ -353,6 +493,76 @@
                                 "r": 0,
                                 "g": 0,
                                 "b": 204,
+                                "a": 255
+                            }
+                        }
+                    ],
+                    "children": []
+                },
+                {
+                    "name": "PlayerOnePoints",
+                    "type": "TextLabel",
+                    "tags": null,
+                    "external_node_source": null,
+                    "components": [
+                        {
+                            "type": "transform_2d",
+                            "position": {
+                                "x": 58.0,
+                                "y": -8.0
+                            },
+                            "scale": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "rotation": 0.0,
+                            "z_index": 0,
+                            "z_index_relative_to_parent": true,
+                            "ignore_camera": false
+                        },
+                        {
+                            "type": "text_label",
+                            "uid": "verdana-16",
+                            "text": "0",
+                            "color": {
+                                "r": 255,
+                                "g": 255,
+                                "b": 255,
+                                "a": 255
+                            }
+                        }
+                    ],
+                    "children": []
+                },
+                {
+                    "name": "PlayerTwoPoints",
+                    "type": "TextLabel",
+                    "tags": null,
+                    "external_node_source": null,
+                    "components": [
+                        {
+                            "type": "transform_2d",
+                            "position": {
+                                "x": 58.0,
+                                "y": 146.0
+                            },
+                            "scale": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "rotation": 0.0,
+                            "z_index": 0,
+                            "z_index_relative_to_parent": true,
+                            "ignore_camera": false
+                        },
+                        {
+                            "type": "text_label",
+                            "uid": "verdana-16",
+                            "text": "0",
+                            "color": {
+                                "r": 255,
+                                "g": 255,
+                                "b": 255,
                                 "a": 255
                             }
                         }
