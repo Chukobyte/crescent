@@ -13,12 +13,13 @@ class MouseTracker:
         # Process Collisions
         if not self.node_being_tracked:
             collisions = CollisionHandler.process_mouse_collisions()
+            game_state = GameState()
             for collision in collisions:
                 collision_parent = collision.get_parent()
                 collision_parent_name = collision_parent.name
                 print(f"collision_parent_name = {collision_parent_name}")
                 # Try card
-                card = GameState().get_card_data(collision_parent_name)
+                card = game_state.get_card_data(collision_parent_name)
                 if card:
                     print(
                         f"card: name='{collision_parent_name}', is_in_hand='{card.is_in_hand}'"
@@ -32,11 +33,12 @@ class MouseTracker:
                         )
                         print(f"Tracking new node {self.node_being_tracked}")
                         card.is_in_hand = True
+                        game_state.can_end_turn = True
                         break
                 # Try end turn
                 elif collision_parent_name == "EndTurnButton":
-                    GameState().end_turn()
-                    break
+                    if game_state.end_turn():
+                        break
 
         # Process movement
         if self.node_being_tracked:
