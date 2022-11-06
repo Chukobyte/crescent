@@ -386,7 +386,6 @@ PyObject* cre_py_utils_get_entity_instance(Entity entity) {
     char typeBuffer[TYPE_BUFFER_SIZE];
     NodeComponent* nodeComponent = (NodeComponent*) component_manager_get_component(entity, ComponentDataIndex_NODE);
     strcpy(typeBuffer, node_get_base_type_string(nodeComponent->type));
-
     return Py_BuildValue("(is)", entity, typeBuffer);
 #undef TYPE_BUFFER_SIZE
 }
