@@ -14,12 +14,14 @@ class MouseTracker:
         collisions = CollisionHandler.process_mouse_collisions()
         for collision in collisions:
             collision_parent = collision.get_parent()
-            if collision_parent.name == "Card0" and not self.node_being_tracked:
+            card = GameState().get_card_data(collision_parent.name)
+            if card and not self.node_being_tracked:
                 self.node_being_tracked = collision_parent
                 self.initial_position = collision_parent.global_position
                 mouse_world_pos = Input.Mouse.get_world_position()
                 self.node_offset = self.node_being_tracked.position - mouse_world_pos
                 print(f"Tracking new node {self.node_being_tracked}")
+                break
         # Process movement
         if self.node_being_tracked:
             mouse_pos = Input.Mouse.get_position()
