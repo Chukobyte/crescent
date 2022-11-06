@@ -133,6 +133,16 @@ void sf_process_inputs() {
         case SDL_QUIT:
             isRunning = false;
             break;
+        case SDL_WINDOWEVENT:
+            switch (event.window.event) {
+            case SDL_WINDOWEVENT_RESIZED:
+                const Sint32 windowWidth = event.window.data1;
+                const Sint32 windowHeight = event.window.data2;
+                se_renderer_update_resolution((float) windowWidth, (float) windowHeight);
+                glViewport(0, 0, windowWidth, windowHeight);
+                break;
+            }
+            break;
         default:
             break;
         }
