@@ -210,7 +210,7 @@
                     "children": []
                 },
                 {
-                    "name": "PlayerOnePoints",
+                    "name": "PlayerTwoPoints",
                     "type": "TextLabel",
                     "tags": null,
                     "external_node_source": null,
@@ -245,7 +245,7 @@
                     "children": []
                 },
                 {
-                    "name": "PlayerTwoPoints",
+                    "name": "PlayerOnePoints",
                     "type": "TextLabel",
                     "tags": null,
                     "external_node_source": null,
@@ -355,7 +355,7 @@
                     "children": []
                 },
                 {
-                    "name": "PlayerOnePoints",
+                    "name": "PlayerTwoPoints",
                     "type": "TextLabel",
                     "tags": null,
                     "external_node_source": null,
@@ -390,7 +390,7 @@
                     "children": []
                 },
                 {
-                    "name": "PlayerTwoPoints",
+                    "name": "PlayerOnePoints",
                     "type": "TextLabel",
                     "tags": null,
                     "external_node_source": null,
@@ -500,7 +500,7 @@
                     "children": []
                 },
                 {
-                    "name": "PlayerOnePoints",
+                    "name": "PlayerTwoPoints",
                     "type": "TextLabel",
                     "tags": null,
                     "external_node_source": null,
@@ -535,7 +535,7 @@
                     "children": []
                 },
                 {
-                    "name": "PlayerTwoPoints",
+                    "name": "PlayerOnePoints",
                     "type": "TextLabel",
                     "tags": null,
                     "external_node_source": null,

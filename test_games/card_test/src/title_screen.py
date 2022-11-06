@@ -1,4 +1,5 @@
 from crescent_api import *
+from src.game_state import GameState
 from src.mouse_tracker import MouseTracker
 
 
@@ -8,7 +9,8 @@ class TitleScreen(Node2D):
         self.mouse_tracker = MouseTracker()
 
     def _start(self) -> None:
-        pass
+        game_state = GameState()
+        game_state.initialize(self)
 
     def _update(self, delta_time: float) -> None:
         if Input.is_action_just_pressed("ui_back"):

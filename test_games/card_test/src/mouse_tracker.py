@@ -1,4 +1,5 @@
 from crescent_api import *
+from src.game_state import GameState
 
 
 class MouseTracker:
@@ -34,7 +35,9 @@ class MouseTracker:
             )
             for collision in collisions:
                 collision_parent = collision.get_parent()
-                if "CardZone" in collision_parent.name:
+                card_zone = GameState().get_card_zone_data(collision_parent.name)
+                if card_zone:
+                    card_zone.player_one_score += 1
                     has_landed_in_card_zone = True
                     break
             if not has_landed_in_card_zone:
