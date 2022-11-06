@@ -7,7 +7,7 @@ class Card:
 
     def __init__(self, card_node: ColorRect):
         self.node = card_node
-        self.is_in_hand = True
+        self.is_in_hand = False
 
     @property
     def name(self) -> str:

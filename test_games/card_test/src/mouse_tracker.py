@@ -11,17 +11,33 @@ class MouseTracker:
 
     def process_left_mouse_pressed(self) -> None:
         # Process Collisions
-        collisions = CollisionHandler.process_mouse_collisions()
-        for collision in collisions:
-            collision_parent = collision.get_parent()
-            card = GameState().get_card_data(collision_parent.name)
-            if card and not self.node_being_tracked:
-                self.node_being_tracked = collision_parent
-                self.initial_position = collision_parent.global_position
-                mouse_world_pos = Input.Mouse.get_world_position()
-                self.node_offset = self.node_being_tracked.position - mouse_world_pos
-                print(f"Tracking new node {self.node_being_tracked}")
-                break
+        if not self.node_being_tracked:
+            collisions = CollisionHandler.process_mouse_collisions()
+            for collision in collisions:
+                collision_parent = collision.get_parent()
+                collision_parent_name = collision_parent.name
+                print(f"collision_parent_name = {collision_parent_name}")
+                # Try card
+                card = GameState().get_card_data(collision_parent_name)
+                if card:
+                    print(
+                        f"card: name='{collision_parent_name}', is_in_hand='{card.is_in_hand}'"
+                    )
+                    if not card.is_in_hand:
+                        self.node_being_tracked = collision_parent
+                        self.initial_position = collision_parent.global_position
+                        mouse_world_pos = Input.Mouse.get_world_position()
+                        self.node_offset = (
+                            self.node_being_tracked.position - mouse_world_pos
+                        )
+                        print(f"Tracking new node {self.node_being_tracked}")
+                        card.is_in_hand = True
+                        break
+                # Try end turn
+                elif collision_parent_name == "EndTurnButton":
+                    GameState().end_turn()
+                    break
+
         # Process movement
         if self.node_being_tracked:
             mouse_pos = Input.Mouse.get_position()

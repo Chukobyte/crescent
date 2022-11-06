@@ -29,3 +29,9 @@ class GameState:
 
     def get_card_data(self, card_name: str) -> Card:
         return self.cards.get(card_name, None)
+
+    def end_turn(self) -> None:
+        for card_name in self.cards:
+            card = self.cards[card_name]
+            card.is_in_hand = False
+            print(f"resetting card '{card_name}'")
