@@ -941,7 +941,6 @@ PyObject* cre_py_api_game_config_save(PyObject* self, PyObject* args, PyObject* 
     Py_RETURN_FALSE;
 }
 
-
 PyObject* cre_py_api_game_config_load(PyObject* self, PyObject* args, PyObject* kwargs) {
     char* path;
     char* encryptionKey;
