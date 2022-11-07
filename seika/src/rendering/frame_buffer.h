@@ -13,6 +13,7 @@ void se_frame_buffer_unbind();
 struct Shader* se_frame_buffer_get_screen_shader();
 unsigned int se_frame_buffer_get_color_buffer_texture();
 unsigned int se_frame_buffer_get_quad_vao();
+void se_frame_buffer_resize_texture(int newWidth, int newHeight);
 
 #ifdef __cplusplus
 }

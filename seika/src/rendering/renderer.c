@@ -9,7 +9,7 @@
 #include "../data_structures/se_static_array.h"
 #include "../utils/se_assert.h"
 
-//#define SE_RENDER_TO_FRAMEBUFFER
+#define SE_RENDER_TO_FRAMEBUFFER
 #define SE_RENDER_LAYER_BATCH_MAX 200
 #define SE_RENDER_LAYER_BATCH_ITEM_MAX (SE_RENDER_LAYER_BATCH_MAX / 2)
 
@@ -89,7 +89,7 @@ void se_renderer_initialize(int inWindowWidth, int inWindowHeight, int inResolut
     font_renderer_initialize();
     // Initialize framebuffer
 #ifdef SE_RENDER_TO_FRAMEBUFFER
-    SE_ASSERT_FMT(se_frame_buffer_initialize(), "Framebuffer didn't initialize!");
+    SE_ASSERT_FMT(se_frame_buffer_initialize(inWindowWidth, inWindowHeight), "Framebuffer didn't initialize!");
 #endif
     // Set initial data for render layer
     for (size_t i = 0; i < SE_RENDER_LAYER_BATCH_MAX; i++) {
@@ -111,6 +111,9 @@ void se_renderer_update_window_size(float windowWidth, float windowHeight) {
     RenderContext* renderContext = se_render_context_get();
     renderContext->windowWidth = windowWidth;
     renderContext->windowHeight = windowHeight;
+#ifdef SE_RENDER_TO_FRAMEBUFFER
+    se_frame_buffer_resize_texture(windowWidth, windowHeight);
+#endif
 }
 
 void update_active_render_layer_index(int zIndex) {
