@@ -29,8 +29,6 @@ bool cre_load_assets_from_configuration();
 void cre_process_game_update();
 void cre_render();
 
-static SDL_Window* window = NULL;
-static SDL_GLContext openGlContext;
 CREGameProperties* gameProperties = NULL;
 CREEngineContext* engineContext = NULL;
 
@@ -219,13 +217,11 @@ bool cre_is_running() {
 }
 
 void cre_shutdown() {
-    SDL_DestroyWindow(window);
-    SDL_GL_DeleteContext(openGlContext);
-    SDL_Quit();
     sf_shutdown();
     cre_game_props_finalize();
     cre_scene_manager_finalize();
     cre_ecs_manager_finalize();
     cre_py_finalize();
+    SDL_Quit();
     se_logger_info("RBE Engine shutdown!");
 }

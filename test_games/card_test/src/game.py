@@ -1,6 +1,7 @@
 from crescent_api import *
 from src.game_state import GameState
 from src.mouse_tracker import MouseTracker
+from src.card import Card, CardData
 
 
 class Game(Node2D):
@@ -11,6 +12,12 @@ class Game(Node2D):
     def _start(self) -> None:
         game_state = GameState()
         game_state.initialize(self)
+        # Card test
+        card_test = Card.generate(CardData.ID.CardOne)
+        card_test.position = Vector2(360, 440)
+        card_test.location = Card.Location.Hand
+        self.add_child(card_test)
+        print(f"card_test = {card_test}")
 
     def _update(self, delta_time: float) -> None:
         if Input.is_action_just_pressed("ui_back"):

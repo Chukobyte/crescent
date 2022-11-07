@@ -24,6 +24,10 @@ class Color:
         return f"({self.r}, {self.g}, {self.b}, {self.a})"
 
     @staticmethod
+    def linear_color(r: float, g: float, b: float, a=1.0):
+        return Color(int(r * 255), int(g * 255), int(b * 255), int(a * 255))
+
+    @staticmethod
     def BLACK():
         return Color(0, 0, 0)
 

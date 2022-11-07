@@ -63,6 +63,10 @@
 "        return f\"({self.r}, {self.g}, {self.b}, {self.a})\"\n"\
 "\n"\
 "    @staticmethod\n"\
+"    def linear_color(r: float, g: float, b: float, a=1.0):\n"\
+"        return Color(int(r * 255), int(g * 255), int(b * 255), int(a * 255))\n"\
+"\n"\
+"    @staticmethod\n"\
 "    def BLACK():\n"\
 "        return Color(0, 0, 0)\n"\
 "\n"\
