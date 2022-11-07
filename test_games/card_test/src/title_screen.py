@@ -23,4 +23,6 @@ class TitleScreen(Node2D):
             self.mouse_tracker.process_left_mouse_released()
 
         if Input.is_action_pressed("rmb"):
-            print(f"mouse_position = {Input.Mouse.get_position()}, mouse_world_position = {Input.Mouse.get_world_position()}")
+            print(
+                f"mouse_position = {Input.Mouse.get_position()}, mouse_world_position = {Input.Mouse.get_world_position()}"
+            )

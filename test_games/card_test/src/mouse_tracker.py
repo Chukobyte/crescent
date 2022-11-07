@@ -42,7 +42,7 @@ class MouseTracker:
 
         # Process movement
         if self.node_being_tracked:
-            mouse_pos = Input.Mouse.get_position()
+            mouse_pos = Input.Mouse.get_world_position()
             if mouse_pos != self.previous_mouse_pos:
                 self.node_being_tracked.position = mouse_pos + self.node_offset
             self.previous_mouse_pos = mouse_pos
