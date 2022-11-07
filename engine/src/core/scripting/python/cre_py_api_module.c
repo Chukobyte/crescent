@@ -30,6 +30,7 @@
 #include "../../ecs/component/node_component.h"
 #include "../../scene/scene_manager.h"
 #include "../../game_properties.h"
+#include "../../../../../seika/src/rendering/render_context.h"
 
 #ifdef _MSC_VER
 #pragma warning(disable : 4996) // for strcpy
@@ -37,10 +38,29 @@
 
 // TODO: Clean up strdups
 
+//--- Helper Functions ---//
+
+// TODO: May want to move into another location...
+Vector2 se_mouse_get_global_position(SEMouse* mouse, Vector2* offset) {
+    CRECamera2D* camera = cre_camera_manager_get_current_camera();
+    SEMouse* globalMouse = se_mouse_get();
+    CREGameProperties* gameProps = cre_game_props_get();
+    RenderContext* renderContext = se_render_context_get();
+    const Vector2 mouse_pixel_coord = {
+        se_math_map_to_range(globalMouse->position.x, 0.0f, (float) renderContext->windowWidth, 0.0f, (float) gameProps->resolutionWidth),
+        se_math_map_to_range(globalMouse->position.y, 0.0f, (float) renderContext->windowHeight, 0.0f, (float) gameProps->resolutionHeight)
+    };
+    const Vector2 mouseWorldPos = {
+        (camera->viewport.x + camera->offset.x + mouse_pixel_coord.x + offset->x) * camera->zoom.x,
+        (camera->viewport.y + camera->offset.y + mouse_pixel_coord.y + offset->y) * camera->zoom.y
+    };
+    return mouseWorldPos;
+}
+
 //--- Py Utils ---//
 PyObject* cre_py_utils_get_entity_instance(Entity entity);
 
-//--- RBE PY API ---//
+//--- CRE PY API ---//
 
 // Engine
 PyObject* cre_py_api_engine_exit(PyObject* self, PyObject* args, PyObject* kwargs) {
@@ -140,9 +160,10 @@ PyObject* cre_py_api_mouse_get_position(PyObject* self, PyObject* args) {
 
 PyObject* cre_py_api_mouse_get_world_position(PyObject* self, PyObject* args) {
     const CREEngineContext* engineContext = cre_engine_context_get();
-    const SEMouse* globalMouse = se_mouse_get();
-    // TODO: Do world pos
-    return Py_BuildValue("(ff)", globalMouse->position.x, globalMouse->position.y);
+    SEMouse* globalMouse = se_mouse_get();
+    static Vector2 zeroOffset = { 0.0f, 0.0f };
+    const Vector2 worldPosition = se_mouse_get_global_position(globalMouse, &zeroOffset);
+    return Py_BuildValue("(ff)", worldPosition.x, worldPosition.y);
 }
 
 // Camera
@@ -900,12 +921,9 @@ PyObject* cre_py_api_collision_handler_process_mouse_collisions(PyObject* self, 
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "ffff", crePyApiCollisionHandlerProcessMouseCollisionsKWList, &positionOffsetX, &positionOffsetY, &collisionSizeW, &collisionSizeH)) {
         PyObject* pyCollidedEntityList = PyList_New(0);
         // TODO: Transform mouse screen position into world position.
-        CRECamera2D* camera = cre_camera_manager_get_current_camera();
         SEMouse* globalMouse = se_mouse_get();
-        const Vector2 mouseWorldPos = {
-            (camera->viewport.x + camera->offset.x + globalMouse->position.x + positionOffsetX) * camera->zoom.x,
-            (camera->viewport.y + camera->offset.y + globalMouse->position.y + positionOffsetY) * camera->zoom.y
-        };
+        Vector2 positionOffset = { positionOffsetX, positionOffsetY };
+        const Vector2 mouseWorldPos = se_mouse_get_global_position(globalMouse, &positionOffset);
         Rect2 collisionRect = { mouseWorldPos.x, mouseWorldPos.y, collisionSizeW, collisionSizeH };
         CollisionResult collisionResult = cre_collision_process_mouse_collisions(&collisionRect);
         for (size_t i = 0; i < collisionResult.collidedEntityCount; i++) {

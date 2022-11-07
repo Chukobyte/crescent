@@ -5,6 +5,8 @@
 
 typedef struct RenderContext {
     FT_Library freeTypeLibrary;
+    int windowWidth;
+    int windowHeight;
 } RenderContext;
 
 void se_render_context_initialize();

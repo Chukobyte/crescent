@@ -77,13 +77,14 @@ SE_STATIC_ARRAY_CREATE(RenderLayer, SE_RENDER_LAYER_BATCH_MAX, render_layer_item
 SE_STATIC_ARRAY_CREATE(int, SE_RENDER_LAYER_BATCH_MAX, active_render_layer_items_indices);
 
 // Renderer
-void se_renderer_initialize(int inResolutionWidth, int inResolutionHeight) {
+void se_renderer_initialize(int inWindowWidth, int inWindowHeight, int inResolutionWidth, int inResolutionHeight) {
     resolutionWidth = (float) inResolutionWidth;
     resolutionHeight = (float) inResolutionHeight;
     glEnable(GL_CULL_FACE);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     se_render_context_initialize();
+    se_renderer_update_window_size(inWindowWidth, inWindowHeight);
     sprite_renderer_initialize();
     font_renderer_initialize();
     // Initialize framebuffer
@@ -106,11 +107,10 @@ void se_renderer_finalize() {
 #endif
 }
 
-void se_renderer_update_resolution(float windowWidth, float windowHeight) {
-    resolutionWidth = windowWidth;
-    resolutionHeight = windowHeight;
-    sprite_renderer_update_resolution();
-    font_renderer_update_resolution();
+void se_renderer_update_window_size(float windowWidth, float windowHeight) {
+    RenderContext* renderContext = se_render_context_get();
+    renderContext->windowWidth = windowWidth;
+    renderContext->windowHeight = windowHeight;
 }
 
 void update_active_render_layer_index(int zIndex) {

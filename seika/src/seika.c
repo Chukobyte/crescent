@@ -109,7 +109,7 @@ bool initialize_rendering(const char* title, int windowWidth, int windowHeight, 
         return false;
     }
 
-    se_renderer_initialize(resolutionWidth, resolutionHeight);
+    se_renderer_initialize(windowWidth, windowHeight, resolutionWidth, resolutionHeight);
     return true;
 }
 
@@ -139,7 +139,7 @@ void sf_process_inputs() {
             case SDL_WINDOWEVENT_SIZE_CHANGED:
                 const Sint32 windowWidth = event.window.data1;
                 const Sint32 windowHeight = event.window.data2;
-//                se_renderer_update_resolution((float) windowWidth, (float) windowHeight); // TODO: Not needed, but may be needed in the future?
+                se_renderer_update_window_size((float) windowWidth, (float) windowHeight);
                 glViewport(0, 0, windowWidth, windowHeight);
                 break;
             }
