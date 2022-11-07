@@ -5,9 +5,6 @@
 #include "../utils/se_assert.h"
 #include "shader_source.h"
 
-#define SCREEN_WIDTH 800
-#define SCREEN_HEIGHT 600
-
 GLuint frameBuffer = -1;
 GLuint textureColorBuffer = -1;
 GLuint rbo = -1;
@@ -17,7 +14,37 @@ static Shader* screenShader = NULL;
 static GLuint screenVAO = -1;
 static GLuint screenVBO = -1;
 
-bool se_frame_buffer_initialize() {
+static int screenTextureWidth = 800;
+static int screenTextureHeight = 600;
+
+bool recreate_frame_buffer_object() {
+    // Create Framebuffer
+    glGenFramebuffers(1, &frameBuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
+    // Create color attachment
+    glGenTextures(1, &textureColorBuffer);
+    glBindTexture(GL_TEXTURE_2D, textureColorBuffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, screenTextureWidth, screenTextureHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorBuffer, 0);
+    // Create renderbuffer object for depth and stencil attachment
+    glGenRenderbuffers(1, &rbo);
+    glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, screenTextureWidth, screenTextureHeight);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
+    // Check if framebuffer is complete
+    const bool success = glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE;
+    if (!success) {
+        se_logger_error("Framebuffer is not complete!");
+    }
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    return success;
+}
+
+bool se_frame_buffer_initialize(int inWindowWidth, int inWindowHeight) {
+    screenTextureWidth = inWindowWidth;
+    screenTextureHeight = inWindowHeight;
     // VAO & VBO
     GLfloat vertices[] = {
         // pos      // tex coords
@@ -46,27 +73,8 @@ bool se_frame_buffer_initialize() {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
-    // Create Framebuffer
-    glGenFramebuffers(1, &frameBuffer);
-    glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
-    // Create color attachment
-    glGenTextures(1, &textureColorBuffer);
-    glBindTexture(GL_TEXTURE_2D, textureColorBuffer);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorBuffer, 0);
-    // Create renderbuffer object for depth and stencil attachment
-    glGenRenderbuffers(1, &rbo);
-    glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, SCREEN_WIDTH, SCREEN_HEIGHT);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
-    // Check if framebuffer is complete
-    const bool success = glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE;
-    if (!success) {
-        se_logger_error("Framebuffer is not complete!");
-    }
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    bool success = recreate_frame_buffer_object();
+
     // compile shaders
     screenShader = shader_compile_new_shader(OPENGL_SHADER_SOURCE_VERTEX_SCREEN, OPENGL_SHADER_SOURCE_FRAGMENT_SCREEN);
     shader_use(screenShader);
@@ -99,4 +107,10 @@ unsigned int se_frame_buffer_get_color_buffer_texture() {
 
 unsigned int se_frame_buffer_get_quad_vao() {
     return screenVAO;
+}
+
+void se_frame_buffer_resize_texture(int newWidth, int newHeight) {
+    screenTextureWidth = newWidth;
+    screenTextureHeight = newHeight;
+    recreate_frame_buffer_object();
 }

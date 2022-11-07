@@ -36,6 +36,12 @@
             "values": [
                 "mb_left"
             ]
+        },
+        {
+            "name": "rmb",
+            "values": [
+                "mb_right"
+            ]
         }
     ]
 }

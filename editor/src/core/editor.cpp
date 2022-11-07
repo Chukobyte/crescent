@@ -39,7 +39,7 @@ bool Editor::Initialize() {
     AssetManager::Get()->Initialize();
 
     // TODO: Figure out window stuff dimensions...
-    se_renderer_initialize(800, 600);
+    se_renderer_initialize(800, 600, 800, 600);
 
     editorContext->initialDir = FileSystemHelper::GetCurrentDir();
     editorContext->isRunning = true;

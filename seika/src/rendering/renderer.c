@@ -5,7 +5,6 @@
 #include "render_context.h"
 #include "shader.h"
 #include "shader_source.h"
-#include "frame_buffer.h"
 #include "../data_structures/se_hash_map.h"
 #include "../data_structures/se_static_array.h"
 #include "../utils/se_assert.h"
@@ -13,6 +12,10 @@
 #define SE_RENDER_TO_FRAMEBUFFER
 #define SE_RENDER_LAYER_BATCH_MAX 200
 #define SE_RENDER_LAYER_BATCH_ITEM_MAX (SE_RENDER_LAYER_BATCH_MAX / 2)
+
+#ifdef SE_RENDER_TO_FRAMEBUFFER
+#include "frame_buffer.h"
+#endif
 
 typedef struct TextureCoordinates {
     GLfloat sMin;
@@ -23,10 +26,12 @@ typedef struct TextureCoordinates {
 
 void sprite_renderer_initialize();
 void sprite_renderer_finalize();
+void sprite_renderer_update_resolution();
 void sprite_renderer_draw_sprite(const Texture* texture, const Rect2* sourceRect, const Size2D* destSize, const Color *color, bool flipX, bool flipY, TransformModel2D* globalTransform);
 void font_renderer_initialize();
-void font_renderer_draw_text(const Font* font, const char* text, float x, float y, float scale, const Color* color);
 void font_renderer_finalize();
+void font_renderer_update_resolution();
+void font_renderer_draw_text(const Font* font, const char* text, float x, float y, float scale, const Color* color);
 
 TextureCoordinates renderer_get_texture_coordinates(const Texture* texture, const Rect2* drawSource, bool flipX, bool flipY);
 void renderer_print_opengl_errors();
@@ -72,17 +77,20 @@ SE_STATIC_ARRAY_CREATE(RenderLayer, SE_RENDER_LAYER_BATCH_MAX, render_layer_item
 SE_STATIC_ARRAY_CREATE(int, SE_RENDER_LAYER_BATCH_MAX, active_render_layer_items_indices);
 
 // Renderer
-void se_renderer_initialize(int inResolutionWidth, int inResolutionHeight) {
+void se_renderer_initialize(int inWindowWidth, int inWindowHeight, int inResolutionWidth, int inResolutionHeight) {
     resolutionWidth = (float) inResolutionWidth;
     resolutionHeight = (float) inResolutionHeight;
     glEnable(GL_CULL_FACE);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     se_render_context_initialize();
+    se_renderer_update_window_size(inWindowWidth, inWindowHeight);
     sprite_renderer_initialize();
     font_renderer_initialize();
     // Initialize framebuffer
-    SE_ASSERT_FMT(se_frame_buffer_initialize(), "Framebuffer didn't initialize!");
+#ifdef SE_RENDER_TO_FRAMEBUFFER
+    SE_ASSERT_FMT(se_frame_buffer_initialize(inWindowWidth, inWindowHeight), "Framebuffer didn't initialize!");
+#endif
     // Set initial data for render layer
     for (size_t i = 0; i < SE_RENDER_LAYER_BATCH_MAX; i++) {
         render_layer_items[i].spriteBatchItemCount = 0;
@@ -94,7 +102,18 @@ void se_renderer_finalize() {
     font_renderer_finalize();
     sprite_renderer_finalize();
     se_render_context_finalize();
+#ifdef SE_RENDER_TO_FRAMEBUFFER
     se_frame_buffer_finalize();
+#endif
+}
+
+void se_renderer_update_window_size(float windowWidth, float windowHeight) {
+    RenderContext* renderContext = se_render_context_get();
+    renderContext->windowWidth = windowWidth;
+    renderContext->windowHeight = windowHeight;
+#ifdef SE_RENDER_TO_FRAMEBUFFER
+    se_frame_buffer_resize_texture(windowWidth, windowHeight);
+#endif
 }
 
 void update_active_render_layer_index(int zIndex) {
@@ -120,6 +139,11 @@ void se_renderer_queue_sprite_draw_call(Texture* texture, Rect2 sourceRect, Size
 }
 
 void se_renderer_queue_font_draw_call(Font* font, const char* text, float x, float y, float scale, Color color, int zIndex) {
+    if (font == NULL) {
+        se_logger_error("NULL font, not submitting draw call!");
+        return;
+    }
+
     FontBatchItem item = { .font = font, .text = text, .x = x, .y = y, .scale = scale, .color = color };
     const int arrayZIndex = se_math_clamp_int(zIndex + SE_RENDER_LAYER_BATCH_MAX / 2, 0, SE_RENDER_LAYER_BATCH_MAX - 1);
     // Update font batch item on render layer
@@ -189,6 +213,7 @@ void se_renderer_process_and_flush_batches(const Color* backgroundColor) {
 #endif
 }
 
+#ifdef SE_RENDER_TO_FRAMEBUFFER
 void se_renderer_process_and_flush_batches_just_framebuffer(const Color* backgroundColor) {
     se_frame_buffer_bind();
 
@@ -200,6 +225,7 @@ void se_renderer_process_and_flush_batches_just_framebuffer(const Color* backgro
 
     se_frame_buffer_unbind();
 }
+#endif
 
 // --- Sprite Renderer --- //
 void sprite_renderer_initialize() {
@@ -240,6 +266,13 @@ void sprite_renderer_initialize() {
 
     // compile shaders
     spriteShader = shader_compile_new_shader(OPENGL_SHADER_SOURCE_VERTEX_SPRITE, OPENGL_SHADER_SOURCE_FRAGMENT_SPRITE);
+    sprite_renderer_update_resolution();
+    shader_set_int(spriteShader, "sprite", 0);
+}
+
+void sprite_renderer_finalize() {}
+
+void sprite_renderer_update_resolution() {
     mat4 proj = {
         {1.0f, 0.0f, 0.0f, 0.0f},
         {0.0f, 1.0f, 0.0f, 0.0f},
@@ -249,10 +282,7 @@ void sprite_renderer_initialize() {
     glm_ortho(0.0f, resolutionWidth, resolutionHeight, 0.0f, -1.0f, 1.0f, proj);
     shader_use(spriteShader);
     shader_set_mat4_float(spriteShader, "projection", &proj);
-    shader_set_int(spriteShader, "sprite", 0);
 }
-
-void sprite_renderer_finalize() {}
 
 // TODO: Just need to pass in destination size instead of rect2
 void sprite_renderer_draw_sprite(const Texture* texture, const Rect2* sourceRect, const Size2D* destSize, const Color* color, bool flipX, bool flipY, TransformModel2D* globalTransform) {
@@ -314,6 +344,15 @@ void font_renderer_initialize() {
     if (FT_Init_FreeType(&se_render_context_get()->freeTypeLibrary)) {
         se_logger_error("Unable to initialize FreeType library!");
     }
+    fontShader = shader_compile_new_shader(OPENGL_SHADER_SOURCE_VERTEX_FONT, OPENGL_SHADER_SOURCE_FRAGMENT_FONT);
+    font_renderer_update_resolution();
+}
+
+void font_renderer_finalize() {
+    FT_Done_FreeType(se_render_context_get()->freeTypeLibrary);
+}
+
+void font_renderer_update_resolution() {
     mat4 proj = {
         {1.0f, 0.0f, 0.0f, 0.0f},
         {0.0f, 1.0f, 0.0f, 0.0f},
@@ -321,13 +360,8 @@ void font_renderer_initialize() {
         {0.0f, 0.0f, 0.0f, 1.0f}
     };
     glm_ortho(0.0f, resolutionWidth, -resolutionHeight, 0.0f, -1.0f, 1.0f, proj);
-    fontShader = shader_compile_new_shader(OPENGL_SHADER_SOURCE_VERTEX_FONT, OPENGL_SHADER_SOURCE_FRAGMENT_FONT);
     shader_use(fontShader);
     shader_set_mat4_float(fontShader, "projection", &proj);
-}
-
-void font_renderer_finalize() {
-    FT_Done_FreeType(se_render_context_get()->freeTypeLibrary);
 }
 
 void font_renderer_draw_text(const Font* font, const char* text, float x, float y, float scale, const Color* color) {
