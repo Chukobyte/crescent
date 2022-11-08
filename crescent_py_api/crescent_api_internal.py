@@ -197,6 +197,14 @@ def node2D_get_rotation(entity_id: int) -> float:
     return 0.0
 
 
+def node2D_get_z_index(entity_id: int) -> int:
+    return 0
+
+
+def node2D_set_z_index(entity_id: int, z_index: int) -> None:
+    pass
+
+
 def sprite_set_texture(entity_id: int, file_path: str) -> None:
     pass
 

@@ -584,6 +584,26 @@ PyObject* cre_py_api_node2D_get_rotation(PyObject* self, PyObject* args, PyObjec
     return NULL;
 }
 
+PyObject* cre_py_api_node2D_set_z_index(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    int zIndex;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "ii", crePyApiNode2DSetZIndexKWList, &entity, &zIndex)) {
+        Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
+        transformComp->zIndex = zIndex;
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_node2D_get_z_index(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
+        const Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
+        return Py_BuildValue("i", transformComp->zIndex);
+    }
+    return NULL;
+}
+
 // Sprite
 PyObject* cre_py_api_sprite_set_texture(PyObject* self, PyObject* args, PyObject* kwargs) {
     Entity entity;

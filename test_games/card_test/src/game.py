@@ -15,6 +15,7 @@ class Game(Node2D):
         # Card test
         card_test = Card.generate(CardData.ID.CardOne)
         card_test.position = Vector2(360, 440)
+        card_test.z_index = 1
         card_test.location = Card.Location.Hand
         self.add_child(card_test)
         print(f"card_test = {card_test}")
@@ -23,6 +24,7 @@ class Game(Node2D):
         if Input.is_action_just_pressed("ui_back"):
             Engine.exit()
 
+        # All gameplay logic is centralized in mouse tracker for now...
         if Input.is_action_pressed("lmb"):
             self.mouse_tracker.process_left_mouse_pressed()
 
