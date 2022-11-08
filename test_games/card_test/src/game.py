@@ -18,6 +18,7 @@ class Deck:
         drawn_card_count = 0
         while drawn_card_count < count and self.cards:
             drawn_cards.append(self.cards.pop(0))
+            drawn_card_count += 1
         return drawn_cards
 
     def shuffle(self) -> None:
@@ -35,13 +36,15 @@ class Game(Node2D):
         # Card test
         player_one_deck = Deck()
         player_one_deck.add_card(CardData.ID.CardOne)
-        cards_drawn = player_one_deck.draw(1)
-        card_test = Card.generate(cards_drawn[0])
-        card_test.position = Vector2(360, 440)
-        card_test.z_index = 1
-        card_test.location = Card.Location.Hand
-        self.add_child(card_test)
-        print(f"card_test = {card_test}")
+        player_one_deck.add_card(CardData.ID.CardOne)
+        cards_drawn = player_one_deck.draw(2)
+        for index, card_id in enumerate(cards_drawn):
+            card = Card.generate(cards_drawn[0])
+            card.position = Vector2(200 + (index * 80), 440)
+            card.z_index = 1
+            card.location = Card.Location.Hand
+            self.add_child(card)
+            print(f"card_test = {card}")
 
     def _update(self, delta_time: float) -> None:
         if Input.is_action_just_pressed("ui_back"):
