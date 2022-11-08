@@ -1,7 +1,27 @@
+import random
+
 from crescent_api import *
 from src.game_state import GameState
 from src.mouse_tracker import MouseTracker
 from src.card import Card, CardData
+
+
+class Deck:
+    def __init__(self):
+        self.cards = []  # Contains card ids
+
+    def add_card(self, card_id: str) -> None:
+        self.cards.append(card_id)
+
+    def draw(self, count: int) -> list:
+        drawn_cards = []
+        drawn_card_count = 0
+        while drawn_card_count < count and self.cards:
+            drawn_cards.append(self.cards.pop(0))
+        return drawn_cards
+
+    def shuffle(self) -> None:
+        random.shuffle(self.cards)
 
 
 class Game(Node2D):
@@ -13,7 +33,10 @@ class Game(Node2D):
         game_state = GameState()
         game_state.initialize(self)
         # Card test
-        card_test = Card.generate(CardData.ID.CardOne)
+        player_one_deck = Deck()
+        player_one_deck.add_card(CardData.ID.CardOne)
+        cards_drawn = player_one_deck.draw(1)
+        card_test = Card.generate(cards_drawn[0])
         card_test.position = Vector2(360, 440)
         card_test.z_index = 1
         card_test.location = Card.Location.Hand
