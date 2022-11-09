@@ -52,9 +52,9 @@ class MouseTracker:
                 collision_parent = collision.get_parent()
                 card_zone = GameState().get_card_zone_data(collision_parent.name)
                 if card_zone:
-                    card_zone.player_one_score += 1
                     has_landed_in_card_zone = True
                     if isinstance(self.node_being_tracked, Card):
+                        card_zone.player_one_score += self.node_being_tracked.power
                         self.node_being_tracked.location = Card.Location.Zone
                     break
             if not has_landed_in_card_zone:

@@ -59,7 +59,12 @@ class Game(Node2D):
         try:
             game_state = GameState()
             player_one_deck = Deck()
-            for card_id in [CardData.ID.CardOne, CardData.ID.CardOne, CardData.ID.CardOne, CardData.ID.CardOne]:
+            for card_id in [
+                CardData.ID.CardOne,
+                CardData.ID.CardOne,
+                CardData.ID.CardOne,
+                CardData.ID.CardOne,
+            ]:
                 player_one_deck.add_card(card_id)
             while True:
                 if game_state.turn_phase == TurnPhase.Init:
@@ -71,7 +76,9 @@ class Game(Node2D):
                     cards_drawn = player_one_deck.draw(2)
                     for index, card_id in enumerate(cards_drawn):
                         card = Card.generate(card_id)
-                        card.position = Vector2(200 + (index * 80), 440)  # TODO: Implement slot positions for hand
+                        card.position = Vector2(
+                            200 + (index * 80), 440
+                        )  # TODO: Implement slot positions for hand
                         card.z_index = 1
                         card.location = Card.Location.Hand
                         self.add_child(card)
@@ -83,4 +90,7 @@ class Game(Node2D):
                     game_state.turn_phase = TurnPhase.Standby
                 await co_suspend()
         except GeneratorExit:
+            await co_return()
+        except Exception as e:
+            print(f"exited main coroutine due to the following error:\n{e}")
             await co_return()

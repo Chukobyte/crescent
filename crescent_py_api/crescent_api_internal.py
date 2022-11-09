@@ -253,6 +253,14 @@ def text_label_get_color(entity_id: int) -> tuple:
     return 255, 255, 255, 255
 
 
+def text_label_set_font_uid(entity_id: int, uid: str) -> None:
+    pass
+
+
+def text_label_get_font_uid(entity_id: int) -> str:
+    return "default"
+
+
 def collider2D_set_extents(entity_id: int, w: float, h: float) -> None:
     pass
 

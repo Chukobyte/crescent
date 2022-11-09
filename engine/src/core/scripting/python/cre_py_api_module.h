@@ -80,6 +80,8 @@ PyObject* cre_py_api_text_label_set_text(PyObject* self, PyObject* args, PyObjec
 PyObject* cre_py_api_text_label_get_text(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_text_label_set_color(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_text_label_get_color(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_text_label_set_font_uid(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_text_label_get_font_uid(PyObject* self, PyObject* args, PyObject* kwargs);
 
 // Collider2D
 PyObject* cre_py_api_collider2D_set_extents(PyObject* self, PyObject* args, PyObject* kwargs);
@@ -344,6 +346,14 @@ static struct PyMethodDef crePyApiMethods[] = {
         "text_label_get_color", (PyCFunction) cre_py_api_text_label_get_color,
         METH_VARARGS | METH_KEYWORDS, "Gets the text label's color."
     },
+    {
+        "text_label_set_font_uid", (PyCFunction) cre_py_api_text_label_set_font_uid,
+        METH_VARARGS | METH_KEYWORDS, "Sets the text label's font uid."
+    },
+    {
+        "text_label_get_font_uid", (PyCFunction) cre_py_api_text_label_get_font_uid,
+        METH_VARARGS | METH_KEYWORDS, "Gets the text label's font uid."
+    },
     // Collider2D
     {
         "collider2D_set_extents", (PyCFunction) cre_py_api_collider2D_set_extents,
@@ -476,6 +486,7 @@ static char* crePyApiSpriteSetTextureKWList[] = {"entity_id", "file_path", NULL}
 static char* crePyApiAnimatedSpriteSetAnimationKWList[] = {"entity_id", "animation_name", NULL};
 
 static char* crePyApiTextLabelSetTextKWList[] = {"entity_id", "text", NULL};
+static char* crePyApiTextLabelSetFontUIDKWList[] = {"entity_id", "uid", NULL};
 
 static char* crePyApiNetworkSendMessageKWList[] = {"message", NULL};
 static char* crePyApiNetworkSubscribeKWList[] = {"signal_id", "listener_node", "listener_func", NULL};

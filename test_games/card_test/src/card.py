@@ -24,7 +24,14 @@ class Card(ColorRect):
         super().__init__(entity_id)
         self.id = None
         self.collider = None
+        self.power_label = None
         self.location = None
+        self.power = 0
+
+    def set_power(self, value: int) -> None:
+        self.power = value
+        if self.power_label:
+            self.power_label.text(str(self.power))
 
     @staticmethod
     def generate(card_id: str):
@@ -42,9 +49,18 @@ class Card(ColorRect):
         new_card.collider.extents = Size2D(
             card_size.w + collider_padding, card_size.h + collider_padding
         )
+        # Create power label
+        new_card.power_label = TextLabel.new()
+        new_card.power_label.font_uid = "verdana-16"
+        new_card.power_label.text = str(new_card.power)
+        new_card.power_label.position = Vector2(card_size.w - 12.0, 12.0)
+        # TODO: Fill out card stats from another source
+        # new_card.set_power(1)
         return new_card
 
     # TODO: Allow queueing entities to add to node when not in scene (within the engine)
     def _start(self) -> None:
         if self.collider:
             self.add_child(self.collider)
+        if self.power_label:
+            self.add_child(self.power_label)

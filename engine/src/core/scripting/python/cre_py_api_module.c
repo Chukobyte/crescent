@@ -725,6 +725,30 @@ PyObject* cre_py_api_text_label_get_color(PyObject* self, PyObject* args, PyObje
     return NULL;
 }
 
+PyObject* cre_py_api_text_label_set_font_uid(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    char* uid;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "is", crePyApiTextLabelSetFontUIDKWList, &entity, &uid)) {
+        TextLabelComponent* textLabelComponent = (TextLabelComponent*) component_manager_get_component(entity, ComponentDataIndex_TEXT_LABEL);
+        if (se_asset_manager_has_font(uid)) {
+            textLabelComponent->font = se_asset_manager_get_font(uid);
+        } else {
+            se_logger_error("Failed to set font to '%s' as it doesn't exist in the asset manager!", uid);
+        }
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_text_label_get_font_uid(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
+        TextLabelComponent* textLabelComponent = (TextLabelComponent*) component_manager_get_component(entity, ComponentDataIndex_TEXT_LABEL);
+        return Py_BuildValue("s", "default"); // TODO: Do want this?
+    }
+    return NULL;
+}
+
 // Collider2D
 PyObject* cre_py_api_collider2D_set_extents(PyObject* self, PyObject* args, PyObject* kwargs) {
     Entity entity;

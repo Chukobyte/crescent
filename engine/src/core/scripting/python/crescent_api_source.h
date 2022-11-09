@@ -40,7 +40,6 @@
 "import json\n"\
 "from enum import Enum\n"\
 "from json import JSONDecodeError\n"\
-"from typing import Optional\n"\
 "\n"\
 "import crescent_api_internal\n"\
 "\n"\
@@ -967,6 +966,16 @@
 "    def set_color(self, color: Color) -> None:\n"\
 "        crescent_api_internal.text_label_set_color(\n"\
 "            entity_id=self.entity_id, r=color.r, g=color.g, b=color.b, a=color.a\n"\
+"        )\n"\
+"\n"\
+"    @property\n"\
+"    def font_uid(self) -> str:\n"\
+"        return crescent_api_internal.text_label_get_font_uid(entity_id=self.entity_id)\n"\
+"\n"\
+"    @font_uid.setter\n"\
+"    def font_uid(self, value: str) -> None:\n"\
+"        crescent_api_internal.text_label_set_font_uid(\n"\
+"            entity_id=self.entity_id, uid=value\n"\
 "        )\n"\
 "\n"\
 "\n"\

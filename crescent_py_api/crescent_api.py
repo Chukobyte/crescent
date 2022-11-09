@@ -929,6 +929,16 @@ class TextLabel(Node2D):
             entity_id=self.entity_id, r=color.r, g=color.g, b=color.b, a=color.a
         )
 
+    @property
+    def font_uid(self) -> str:
+        return crescent_api_internal.text_label_get_font_uid(entity_id=self.entity_id)
+
+    @font_uid.setter
+    def font_uid(self, value: str) -> None:
+        crescent_api_internal.text_label_set_font_uid(
+            entity_id=self.entity_id, uid=value
+        )
+
 
 class Collider2D(Node2D):
     def get_extents(self) -> Size2D:
