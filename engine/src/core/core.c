@@ -1,5 +1,3 @@
-
-
 #include "core.h"
 
 #include <time.h>

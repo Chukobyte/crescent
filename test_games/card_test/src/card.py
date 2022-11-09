@@ -31,7 +31,7 @@ class Card(ColorRect):
     def set_power(self, value: int) -> None:
         self.power = value
         if self.power_label:
-            self.power_label.text(str(self.power))
+            self.power_label.text = str(self.power)
 
     @staticmethod
     def generate(card_id: str):
@@ -55,7 +55,7 @@ class Card(ColorRect):
         new_card.power_label.text = str(new_card.power)
         new_card.power_label.position = Vector2(card_size.w - 12.0, 12.0)
         # TODO: Fill out card stats from another source
-        # new_card.set_power(1)
+        new_card.set_power(1)
         return new_card
 
     # TODO: Allow queueing entities to add to node when not in scene (within the engine)
