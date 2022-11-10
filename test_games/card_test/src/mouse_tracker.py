@@ -54,8 +54,7 @@ class MouseTracker:
                 if card_zone:
                     has_landed_in_card_zone = True
                     if isinstance(self.node_being_tracked, Card):
-                        card_zone.player_one_score += self.node_being_tracked.power
-                        self.node_being_tracked.location = Card.Location.Zone
+                        card_zone.add_card_to_player_one_slot(self.node_being_tracked)
                     break
             if not has_landed_in_card_zone:
                 self.node_being_tracked.position = self.initial_position

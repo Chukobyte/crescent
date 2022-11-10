@@ -81,7 +81,7 @@ class Game(Node2D):
                     for index, card_id in enumerate(cards_drawn):
                         card = Card.generate(card_id)
                         card.position = Vector2(
-                            200 + (index * 80), 440
+                            200 + (index * 80), 500
                         )  # TODO: Implement slot positions for hand
                         card.z_index = 1
                         card.location = Card.Location.Hand
