@@ -3,15 +3,34 @@ from crescent_api import *
 
 class CardData:
     class ID:
-        CardOne = "Card0"
+        Thug = "Thug"
+        Crook = "Crook"
+        Bouncer = "Bouncer"
+        Banker = "Banker"
+        Politician = "Politician"
+        CrookedCop = "CrookedCop"
+        Agent = "Agent"
+        Royal = "Royal"
 
-    def __init__(self, card_node: ColorRect):
-        self.node = card_node
-        self.is_in_hand = False
 
-    @property
-    def name(self) -> str:
-        return self.node.name
+# Base definitions for cards
+class CardDefinition:
+    def __init__(self, id: str, cost: int, power: int):
+        self.id = id
+        self.cost = cost
+        self.power = power
+
+
+CardDefinitions = {
+    CardData.ID.Thug: CardDefinition(id=CardData.ID.Thug, cost=1, power=1),
+    CardData.ID.Crook: CardDefinition(id=CardData.ID.Crook, cost=1, power=0),
+    CardData.ID.Bouncer: CardDefinition(id=CardData.ID.Bouncer, cost=2, power=2),
+    CardData.ID.Banker: CardDefinition(id=CardData.ID.Banker, cost=3, power=3),
+    CardData.ID.Politician: CardDefinition(id=CardData.ID.Politician, cost=4, power=5),
+    CardData.ID.CrookedCop: CardDefinition(id=CardData.ID.CrookedCop, cost=3, power=4),
+    CardData.ID.Agent: CardDefinition(id=CardData.ID.Agent, cost=4, power=4),
+    CardData.ID.Royal: CardDefinition(id=CardData.ID.Royal, cost=5, power=6),
+}
 
 
 class Card(ColorRect):
@@ -39,7 +58,6 @@ class Card(ColorRect):
         new_card = Card.new()
         new_card.size = card_size
         new_card.color = Color.linear_color(0.73, 0.1, 0.1)
-        new_card.id = card_id
         # Create collider
         collider_padding = 4.0
         new_card.collider = Collider2D.new()
@@ -54,8 +72,8 @@ class Card(ColorRect):
         new_card.power_label.font_uid = "verdana-16"
         new_card.power_label.text = str(new_card.power)
         new_card.power_label.position = Vector2(card_size.w - 12.0, 12.0)
-        # TODO: Fill out card stats from another source
-        new_card.set_power(1)
+        # Set card id and definition
+        new_card.set_definition(card_id)
         return new_card
 
     # TODO: Allow queueing entities to add to node when not in scene (within the engine)
@@ -64,3 +82,13 @@ class Card(ColorRect):
             self.add_child(self.collider)
         if self.power_label:
             self.add_child(self.power_label)
+
+    def set_definition(self, card_id: str) -> None:
+        base_def = self.get_base_definition(card_id)
+        if base_def:
+            self.id = base_def.id
+            self.set_power(base_def.power)
+
+    @staticmethod
+    def get_base_definition(card_id: str) -> CardDefinition:
+        return CardDefinitions.get(card_id, None)

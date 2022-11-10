@@ -60,10 +60,14 @@ class Game(Node2D):
             game_state = GameState()
             player_one_deck = Deck()
             for card_id in [
-                CardData.ID.CardOne,
-                CardData.ID.CardOne,
-                CardData.ID.CardOne,
-                CardData.ID.CardOne,
+                CardData.ID.Thug,
+                CardData.ID.Crook,
+                CardData.ID.Bouncer,
+                CardData.ID.Banker,
+                CardData.ID.Politician,
+                CardData.ID.CrookedCop,
+                CardData.ID.Agent,
+                CardData.ID.Royal,
             ]:
                 player_one_deck.add_card(card_id)
             while True:
