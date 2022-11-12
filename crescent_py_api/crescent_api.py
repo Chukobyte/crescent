@@ -1,7 +1,6 @@
 import json
 from enum import Enum
 from json import JSONDecodeError
-from typing import Optional
 
 import crescent_api_internal
 
@@ -22,6 +21,10 @@ class Color:
 
     def __repr__(self):
         return f"({self.r}, {self.g}, {self.b}, {self.a})"
+
+    @staticmethod
+    def linear_color(r: float, g: float, b: float, a=1.0):
+        return Color(int(r * 255), int(g * 255), int(b * 255), int(a * 255))
 
     @staticmethod
     def BLACK():
@@ -924,6 +927,16 @@ class TextLabel(Node2D):
     def set_color(self, color: Color) -> None:
         crescent_api_internal.text_label_set_color(
             entity_id=self.entity_id, r=color.r, g=color.g, b=color.b, a=color.a
+        )
+
+    @property
+    def font_uid(self) -> str:
+        return crescent_api_internal.text_label_get_font_uid(entity_id=self.entity_id)
+
+    @font_uid.setter
+    def font_uid(self, value: str) -> None:
+        crescent_api_internal.text_label_set_font_uid(
+            entity_id=self.entity_id, uid=value
         )
 
 

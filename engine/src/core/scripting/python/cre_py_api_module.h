@@ -62,6 +62,8 @@ PyObject* cre_py_api_node2D_get_scale(PyObject* self, PyObject* args, PyObject* 
 PyObject* cre_py_api_node2D_set_rotation(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_node2D_add_to_rotation(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_node2D_get_rotation(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_node2D_set_z_index(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_node2D_get_z_index(PyObject* self, PyObject* args, PyObject* kwargs);
 
 // Sprite
 PyObject* cre_py_api_sprite_set_texture(PyObject* self, PyObject* args, PyObject* kwargs);
@@ -78,6 +80,8 @@ PyObject* cre_py_api_text_label_set_text(PyObject* self, PyObject* args, PyObjec
 PyObject* cre_py_api_text_label_get_text(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_text_label_set_color(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_text_label_get_color(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_text_label_set_font_uid(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_text_label_get_font_uid(PyObject* self, PyObject* args, PyObject* kwargs);
 
 // Collider2D
 PyObject* cre_py_api_collider2D_set_extents(PyObject* self, PyObject* args, PyObject* kwargs);
@@ -291,6 +295,14 @@ static struct PyMethodDef crePyApiMethods[] = {
         "node2D_get_rotation", (PyCFunction) cre_py_api_node2D_get_rotation,
         METH_VARARGS | METH_KEYWORDS, "Get the rotation of a node."
     },
+    {
+        "node2D_set_z_index", (PyCFunction) cre_py_api_node2D_set_z_index,
+        METH_VARARGS | METH_KEYWORDS, "Set the node's z index."
+    },
+    {
+        "node2D_get_z_index", (PyCFunction) cre_py_api_node2D_get_z_index,
+        METH_VARARGS | METH_KEYWORDS, "Get the node's z index."
+    },
     // SPRITE
     {
         "sprite_set_texture", (PyCFunction) cre_py_api_sprite_set_texture,
@@ -333,6 +345,14 @@ static struct PyMethodDef crePyApiMethods[] = {
     {
         "text_label_get_color", (PyCFunction) cre_py_api_text_label_get_color,
         METH_VARARGS | METH_KEYWORDS, "Gets the text label's color."
+    },
+    {
+        "text_label_set_font_uid", (PyCFunction) cre_py_api_text_label_set_font_uid,
+        METH_VARARGS | METH_KEYWORDS, "Sets the text label's font uid."
+    },
+    {
+        "text_label_get_font_uid", (PyCFunction) cre_py_api_text_label_get_font_uid,
+        METH_VARARGS | METH_KEYWORDS, "Gets the text label's font uid."
     },
     // Collider2D
     {
@@ -459,12 +479,14 @@ static char* crePyApiNodeGetChildKWList[] = {"entity_id", "child_name", NULL};
 
 static char* crePyApiNode2DSetXYKWList[] = {"entity_id", "x", "y", NULL};
 static char* crePyApiNode2DSetRotationKWList[] = {"entity_id", "rotation", NULL};
+static char* crePyApiNode2DSetZIndexKWList[] = {"entity_id", "z_index", NULL};
 
 static char* crePyApiSpriteSetTextureKWList[] = {"entity_id", "file_path", NULL};
 
 static char* crePyApiAnimatedSpriteSetAnimationKWList[] = {"entity_id", "animation_name", NULL};
 
 static char* crePyApiTextLabelSetTextKWList[] = {"entity_id", "text", NULL};
+static char* crePyApiTextLabelSetFontUIDKWList[] = {"entity_id", "uid", NULL};
 
 static char* crePyApiNetworkSendMessageKWList[] = {"message", NULL};
 static char* crePyApiNetworkSubscribeKWList[] = {"signal_id", "listener_node", "listener_func", NULL};

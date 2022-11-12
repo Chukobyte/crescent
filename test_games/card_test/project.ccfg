@@ -1,15 +1,23 @@
 {
     "name": "Card Test",
     "window_width": 800,
-    "window_height": 600,
+    "window_height": 450,
     "resolution_width": 800,
-    "resolution_height": 600,
+    "resolution_height": 450,
     "target_fps": 66,
     "initial_node_path": "scenes/title_screen.cscn",
     "colliders_visible": true,
     "assets": {
         "audio_sources": [],
-        "textures": [],
+        "textures": [
+            {
+                "file_path": "assets/images/card_base.png",
+                "wrap_s": "clamp_to_border",
+                "wrap_t": "clamp_to_border",
+                "filter_min": "nearest",
+                "filter_mag": "nearest"
+            }
+        ],
         "fonts": [
             {
                 "file_path": "assets/fonts/verdana.ttf",

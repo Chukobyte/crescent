@@ -197,6 +197,14 @@ def node2D_get_rotation(entity_id: int) -> float:
     return 0.0
 
 
+def node2D_get_z_index(entity_id: int) -> int:
+    return 0
+
+
+def node2D_set_z_index(entity_id: int, z_index: int) -> None:
+    pass
+
+
 def sprite_set_texture(entity_id: int, file_path: str) -> None:
     pass
 
@@ -243,6 +251,14 @@ def text_label_set_color(entity_id: int, r: int, g: int, b: int, a: int) -> None
 
 def text_label_get_color(entity_id: int) -> tuple:
     return 255, 255, 255, 255
+
+
+def text_label_set_font_uid(entity_id: int, uid: str) -> None:
+    pass
+
+
+def text_label_get_font_uid(entity_id: int) -> str:
+    return "default"
 
 
 def collider2D_set_extents(entity_id: int, w: float, h: float) -> None:

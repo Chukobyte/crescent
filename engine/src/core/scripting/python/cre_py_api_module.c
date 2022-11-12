@@ -584,6 +584,26 @@ PyObject* cre_py_api_node2D_get_rotation(PyObject* self, PyObject* args, PyObjec
     return NULL;
 }
 
+PyObject* cre_py_api_node2D_set_z_index(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    int zIndex;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "ii", crePyApiNode2DSetZIndexKWList, &entity, &zIndex)) {
+        Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
+        transformComp->zIndex = zIndex;
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_node2D_get_z_index(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
+        const Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
+        return Py_BuildValue("i", transformComp->zIndex);
+    }
+    return NULL;
+}
+
 // Sprite
 PyObject* cre_py_api_sprite_set_texture(PyObject* self, PyObject* args, PyObject* kwargs) {
     Entity entity;
@@ -701,6 +721,30 @@ PyObject* cre_py_api_text_label_get_color(PyObject* self, PyObject* args, PyObje
         const int blue = (int) (textLabelComponent->color.r * 255.0f);
         const int alpha = (int) (textLabelComponent->color.r * 255.0f);
         return Py_BuildValue("(iiii)", red, green, blue, alpha);
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_text_label_set_font_uid(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    char* uid;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "is", crePyApiTextLabelSetFontUIDKWList, &entity, &uid)) {
+        TextLabelComponent* textLabelComponent = (TextLabelComponent*) component_manager_get_component(entity, ComponentDataIndex_TEXT_LABEL);
+        if (se_asset_manager_has_font(uid)) {
+            textLabelComponent->font = se_asset_manager_get_font(uid);
+        } else {
+            se_logger_error("Failed to set font to '%s' as it doesn't exist in the asset manager!", uid);
+        }
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_text_label_get_font_uid(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
+        TextLabelComponent* textLabelComponent = (TextLabelComponent*) component_manager_get_component(entity, ComponentDataIndex_TEXT_LABEL);
+        return Py_BuildValue("s", "default"); // TODO: Do want this?
     }
     return NULL;
 }
