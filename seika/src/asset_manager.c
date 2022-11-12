@@ -4,7 +4,6 @@
 #include "rendering/texture.h"
 #include "rendering/font.h"
 #include "audio/audio.h"
-#include "audio/audio_manager.h"
 #include "memory/se_mem.h"
 #include "utils/se_assert.h"
 
@@ -68,22 +67,10 @@ bool se_asset_manager_has_font(const char* key) {
 SEAudioSource* se_asset_manager_load_audio_source_wav(const char* fileName, const char* key) {
     SE_ASSERT(audioSourceMap != NULL);
     SE_ASSERT_FMT(!se_string_hash_map_has(audioSourceMap, fileName), "Already loaded audio source at file path '%'s!  Has key '%s'.", fileName, key);
-    int32_t sampleCount;
-    int32_t channels;
-    int32_t sampleRate;
-    void* samples = NULL;
-    if (!se_audio_load_wav_data_from_file(fileName, &sampleCount, &channels, &sampleRate, &samples)) {
-        se_logger_error("Failed to load audio wav file at '%s'", fileName);
-        return NULL;
-    }
-    SEAudioSource* newAudioSource = (SEAudioSource*) SE_MEM_ALLOCATE_SIZE(sizeof(SEAudioSource*) + (sampleCount * sizeof(int16_t*)));
-    newAudioSource->file_path = fileName;
-    newAudioSource->sample_count = sampleCount;
-    newAudioSource->channels = channels;
-    newAudioSource->sample_rate = sampleRate;
-    newAudioSource->samples = samples;
+    SEAudioSource* newAudioSource = se_audio_load_audio_source_wav(fileName);
     se_string_hash_map_add(audioSourceMap, key, newAudioSource, sizeof(SEAudioSource));
     SE_MEM_FREE(newAudioSource);
+    // Test
     newAudioSource = (SEAudioSource*) se_string_hash_map_get(audioSourceMap, key);
     se_audio_print_audio_source(newAudioSource);
     return newAudioSource;

@@ -1,5 +1,4 @@
 #include "audio_manager.h"
-#define MINIAUDIO_IMPLEMENTATION
 
 #include <miniaudio/miniaudio.h>
 #include <stdint.h>
@@ -9,7 +8,6 @@
 #include "../memory/se_mem.h"
 #include "../thread/se_pthread.h"
 #include "../utils/logger.h"
-#include "../utils/se_file_system_utils.h"
 
 #define MAX_AUDIO_INSTANCES 32
 
@@ -191,25 +189,4 @@ void audio_data_callback(ma_device* device, void* output, const void* input, ma_
         audio_instances->count -= removedInstances;
     }
     pthread_mutex_unlock(&audio_mutex);
-}
-
-// --- RBE Audio --- //
-bool se_audio_load_wav_data_from_file(const char* file_path, int32_t* sample_count, int32_t* channels, int32_t* sample_rate, void** samples) {
-    size_t len = 0;
-    char* file_data = se_fs_read_file_contents(file_path, &len);
-    se_logger_debug("file '%s' size '%u' bytes", file_path, len);
-
-    drwav_uint64 totalPcmFrameCount = 0;
-    *samples =  drwav_open_memory_and_read_pcm_frames_s16(file_data, len, (uint32_t*)channels, (uint32_t*)sample_rate, &totalPcmFrameCount, NULL);
-    SE_MEM_FREE(file_data);
-
-    if (!*samples) {
-        *samples = NULL;
-        se_logger_error("Could not load .wav file: %s", file_path);
-        return false;
-    }
-
-    *sample_count = (int32_t) totalPcmFrameCount * *channels;
-
-    return true;
 }
