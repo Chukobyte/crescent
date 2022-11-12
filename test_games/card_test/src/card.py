@@ -43,14 +43,18 @@ class Card(ColorRect):
         super().__init__(entity_id)
         self.id = None
         self.collider = None
-        self.power_label = None
+        self.stats_label = None
         self.location = None
         self.power = 0
+        self.cost = 0
+
+    def update_stats_label(self) -> None:
+        if self.stats_label:
+            self.stats_label.text = f"{self.cost}     {self.power}"
 
     def set_power(self, value: int) -> None:
         self.power = value
-        if self.power_label:
-            self.power_label.text = str(self.power)
+        self.update_stats_label()
 
     @staticmethod
     def generate(card_id: str):
@@ -68,10 +72,12 @@ class Card(ColorRect):
             card_size.w + collider_padding, card_size.h + collider_padding
         )
         # Create power label
-        new_card.power_label = TextLabel.new()
-        new_card.power_label.font_uid = "verdana-16"
-        new_card.power_label.text = str(new_card.power)
-        new_card.power_label.position = Vector2(card_size.w - 12.0, 12.0)
+        new_card.stats_label = TextLabel.new()
+        new_card.stats_label.font_uid = "verdana-16"
+        new_card.update_stats_label()
+        # new_card.stats_label.text = str(new_card.power)
+        # new_card.stats_label.position = Vector2(card_size.w - 12.0, 12.0)
+        new_card.stats_label.position = Vector2(2.0, 14.0)
         # Set card id and definition
         new_card.set_definition(card_id)
         return new_card
@@ -80,8 +86,8 @@ class Card(ColorRect):
     def _start(self) -> None:
         if self.collider:
             self.add_child(self.collider)
-        if self.power_label:
-            self.add_child(self.power_label)
+        if self.stats_label:
+            self.add_child(self.stats_label)
 
     def set_definition(self, card_id: str) -> None:
         base_def = self.get_base_definition(card_id)

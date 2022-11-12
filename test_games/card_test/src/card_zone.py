@@ -57,6 +57,6 @@ class CardZone:
                 current_cards_in_row = 0
                 row_index = 0
                 y_pos += 70
-            card.position = card_zone_position + Vector2(5 + (row_index * 48), y_pos)
+            card.position = card_zone_position + Vector2(0 + (row_index * 64), y_pos)
             current_cards_in_row += 1
             row_index += 1
