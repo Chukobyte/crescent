@@ -54,6 +54,7 @@ add_library(${PROJECT_NAME} STATIC
 
 add_library(glad ../include/glad/glad.c)
 add_library(stb_image ../include/stb_image/stb_image.c)
+add_library(kuba_zip ../include/kuba_zip/zip.c)
 
 target_include_directories(${PROJECT_NAME} PUBLIC
         "${PROJECT_BINARY_DIR}"
@@ -74,11 +75,11 @@ if (NOT freetype_from_find_package)
 endif()
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image SDL2::SDL2main SDL2::SDL2 freetype Ws2_32)
+    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image kuba_zip SDL2::SDL2main SDL2::SDL2 freetype Ws2_32)
 elseif(WIN32)
-    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image -lmingw32 -static-libgcc SDL2::SDL2main SDL2::SDL2 freetype -lws2_32)
+    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image kuba_zip -lmingw32 -static-libgcc SDL2::SDL2main SDL2::SDL2 freetype -lws2_32)
 else ()
-    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image -static-libgcc -Xlinker -export-dynamic SDL2::SDL2main SDL2::SDL2 freetype m)
+    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image kuba_zip -static-libgcc -Xlinker -export-dynamic SDL2::SDL2main SDL2::SDL2 freetype m)
 endif ()
 
 target_compile_options(${PROJECT_NAME} PUBLIC ${flags})

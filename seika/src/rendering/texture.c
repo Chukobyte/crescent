@@ -26,6 +26,7 @@ bool se_texture_is_texture_valid(Texture* texture);
 Texture* se_texture_create_default_texture() {
     Texture* texture = SE_MEM_ALLOCATE(Texture);
     texture->fileName = NULL;
+    texture->data = NULL;
     texture->internalFormat = DEFAULT_TEXTURE_REF.internalFormat;
     texture->imageFormat = DEFAULT_TEXTURE_REF.imageFormat;
     texture->wrapS = DEFAULT_TEXTURE_REF.wrapS;
