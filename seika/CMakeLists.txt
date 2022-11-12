@@ -25,6 +25,7 @@ endif()
 add_library(${PROJECT_NAME} STATIC
         src/seika.c
         src/asset/asset_manager.c
+        src/asset/asset_file_loader.c
         src/memory/se_mem.c
         src/math/se_math.c
         src/input/input.c
