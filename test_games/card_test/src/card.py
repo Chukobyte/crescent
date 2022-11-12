@@ -54,7 +54,7 @@ class Card(ColorRect):
 
     @staticmethod
     def generate(card_id: str):
-        card_size = Size2D(40.0, 64.0)
+        card_size = Size2D(54.0, 72.0)
         new_card = Card.new()
         new_card.size = card_size
         new_card.color = Color.linear_color(0.73, 0.1, 0.1)
