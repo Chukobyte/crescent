@@ -1,11 +1,11 @@
 #include "asset_manager.h"
 
-#include "data_structures/se_hash_map_string.h"
-#include "rendering/texture.h"
-#include "rendering/font.h"
-#include "audio/audio.h"
-#include "memory/se_mem.h"
-#include "utils/se_assert.h"
+#include "../data_structures/se_hash_map_string.h"
+#include "../rendering/texture.h"
+#include "../rendering/font.h"
+#include "../audio/audio.h"
+#include "../memory/se_mem.h"
+#include "../utils/se_assert.h"
 
 #define INITIAL_ASSET_HASHMAP_SIZE 8
 

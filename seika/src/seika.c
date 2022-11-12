@@ -10,7 +10,7 @@
 #include "utils/se_assert.h"
 #include "rendering/renderer.h"
 #include "audio/audio_manager.h"
-#include "asset_manager.h"
+#include "asset/asset_manager.h"
 
 bool initialize_sdl();
 bool initialize_rendering(const char* title, int windowWidth, int windowHeight, int resolutionWidth, int resolutionHeight);

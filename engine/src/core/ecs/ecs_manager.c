@@ -14,7 +14,7 @@
 #include "system/sprite_rendering_ec_system.h"
 #include "../scene/scene_manager.h"
 #include "../seika/src/utils/se_assert.h"
-#include "../seika/src/asset_manager.h"
+#include "../../../../seika/src/asset/asset_manager.h"
 
 #ifdef _MSC_VER
 #pragma warning(disable : 4996) // for strcpy

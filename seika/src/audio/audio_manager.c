@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 #include "audio.h"
-#include "../asset_manager.h"
+#include "../asset/asset_manager.h"
 #include "../memory/se_mem.h"
 #include "../thread/se_pthread.h"
 #include "../utils/logger.h"
@@ -73,7 +73,6 @@ void se_audio_manager_finalize() {
 }
 
 void se_audio_manager_play_sound(const char* filePath, bool loops) {
-    // Temp asset creation
     if (!se_asset_manager_has_audio_source(filePath)) {
         se_logger_error("Doesn't have audio source loaded at path '%s' loaded!  Aborting...", filePath);
         return;

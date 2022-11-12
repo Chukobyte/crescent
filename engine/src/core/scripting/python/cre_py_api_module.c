@@ -2,16 +2,17 @@
 
 #include <string.h>
 
-#include "../seika/src/asset_manager.h"
+#include "../seika/src/asset/asset_manager.h"
 #include "../seika/src/input/input.h"
 #include "../seika/src/input/mouse.h"
 #include "../seika/src/audio/audio_manager.h"
 #include "../seika/src/networking/se_network.h"
 #include "../seika/src/memory/se_mem.h"
+#include "../seika/src/rendering/render_context.h"
 #include "../seika/src/utils/se_assert.h"
 #include "../seika/src/utils/se_file_system_utils.h"
-#include "../seika/src/utils/se_string_util.h"
 
+#include "../seika/src/utils/se_string_util.h"
 #include "py_cache.h"
 #include "py_script_context.h"
 #include "../../engine_context.h"
@@ -30,7 +31,6 @@
 #include "../../ecs/component/node_component.h"
 #include "../../scene/scene_manager.h"
 #include "../../game_properties.h"
-#include "../../../../../seika/src/rendering/render_context.h"
 
 #ifdef _MSC_VER
 #pragma warning(disable : 4996) // for strcpy

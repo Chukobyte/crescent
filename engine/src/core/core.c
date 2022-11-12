@@ -6,7 +6,7 @@
 #include <glad/glad.h>
 
 #include "../seika/src/seika.h"
-#include "../seika/src/asset_manager.h"
+#include "../../../seika/src/asset/asset_manager.h"
 #include "../seika/src/input/input.h"
 #include "../seika/src/utils/logger.h"
 #include "../seika/src/utils/se_file_system_utils.h"
