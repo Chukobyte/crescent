@@ -4,8 +4,8 @@
 #include <miniaudio/miniaudio.h>
 
 #include "../memory/se_mem.h"
+#include "../asset/asset_file_loader.h"
 #include "../utils/logger.h"
-#include "../utils/se_file_system_utils.h"
 
 bool load_wav_data_from_file(const char* file_path, int32_t* sample_count, int32_t* channels, int32_t* sample_rate, void** samples);
 
@@ -34,7 +34,7 @@ SEAudioSource* se_audio_load_audio_source_wav(const char* fileName) {
 
 bool load_wav_data_from_file(const char* file_path, int32_t* sample_count, int32_t* channels, int32_t* sample_rate, void** samples) {
     size_t len = 0;
-    char* file_data = se_fs_read_file_contents(file_path, &len);
+    char* file_data = sf_asset_file_loader_read_file_contents_as_string(file_path, &len);
     se_logger_debug("file '%s' size '%u' bytes", file_path, len);
 
     drwav_uint64 totalPcmFrameCount = 0;

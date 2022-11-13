@@ -86,9 +86,10 @@ class Main(Node2D):
             Engine.exit()
 
         if Input.is_action_just_pressed(name="play_sfx"):
-            self.fight_sim.fighters[0].health_bar.print_debug_info()
-            self.fight_sim.fighters[0].health_bar.set_health_percentage(50)
-            self.fight_sim.fighters[0].health_bar.print_debug_info()
+            AudioManager.play_sound("assets/audio/sfx/rainbow_orb.wav")
+            # self.fight_sim.fighters[0].health_bar.print_debug_info()
+            # self.fight_sim.fighters[0].health_bar.set_health_percentage(50)
+            # self.fight_sim.fighters[0].health_bar.print_debug_info()
 
         if Input.is_action_just_pressed(name="lb"):
             mouse_pos = Input.Mouse.get_position()
