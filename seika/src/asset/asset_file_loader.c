@@ -27,9 +27,12 @@ void sf_asset_file_loader_finalize() {
 }
 
 bool sf_asset_file_loader_load_archive(const char* filePath) {
-    clear_package_archive();
-    packageArchive = zip_open(filePath, 0, 'r');
-    return true;
+    if (se_fs_does_file_exist(filePath)) {
+        clear_package_archive();
+        packageArchive = zip_open(filePath, 0, 'r');
+        return true;
+    }
+    return false;
 }
 
 void sf_asset_file_loader_set_read_mode(SEAssetFileLoaderReadMode readMode) {

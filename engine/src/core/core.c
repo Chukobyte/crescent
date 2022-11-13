@@ -6,10 +6,14 @@
 #include <glad/glad.h>
 
 #include "../seika/src/seika.h"
+#include "../seika/src/asset/asset_file_loader.h"
 #include "../seika/src/asset/asset_manager.h"
 #include "../seika/src/input/input.h"
+#include "../seika/src/memory/se_mem.h"
 #include "../seika/src/utils/logger.h"
 #include "../seika/src/utils/se_file_system_utils.h"
+#include "../seika/src/utils/se_string_util.h"
+#include "../seika/src/utils/se_assert.h"
 
 #include "core_info.h"
 #include "game_properties.h"
@@ -41,11 +45,25 @@ bool cre_initialize(int argv, char** args) {
     engineContext = cre_engine_context_initialize();
     engineContext->engineRootDir = se_fs_get_cwd();
 
+    // Load project archive if it exists
+    // TODO: Check for flag to force flat files
+    char* projectArchivePath = se_str_trim_and_replace(args[0], '.', ".pck");
+    if (sf_asset_file_loader_load_archive(projectArchivePath)) {
+        se_logger_debug("Setting asset read mode to 'archive', found pck file at '%s'", projectArchivePath);
+        sf_asset_file_loader_set_read_mode(SEAssetFileLoaderReadMode_ARCHIVE);
+    } else {
+        se_logger_debug("Not able to find .pck file, setting asset read mode to 'disk'");
+        sf_asset_file_loader_set_read_mode(SEAssetFileLoaderReadMode_DISK);
+    }
+    SE_MEM_FREE(projectArchivePath);
+
     // Handle command line flags
+    SE_ASSERT_FMT(argv > 0, "Starting arguments are 0 or less!?");
     CommandLineFlagResult commandLineFlagResult = cre_command_line_args_parse(argv, args);
     // log level
     if (strcmp(commandLineFlagResult.logLevel, "") != 0) {
         se_logger_set_level(se_logger_get_log_level_enum(commandLineFlagResult.logLevel));
+        se_logger_debug("Log level override set to '%s'", commandLineFlagResult.logLevel);
     }
     // working dir override
     if (strcmp(commandLineFlagResult.workingDirOverride, "") != 0) {

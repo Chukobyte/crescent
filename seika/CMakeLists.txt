@@ -55,6 +55,7 @@ add_library(${PROJECT_NAME} STATIC
 add_library(glad ../include/glad/glad.c)
 add_library(stb_image ../include/stb_image/stb_image.c)
 add_library(kuba_zip ../include/kuba_zip/zip.c)
+add_library(unity ../include/unity.c)
 
 target_include_directories(${PROJECT_NAME} PUBLIC
         "${PROJECT_BINARY_DIR}"
@@ -69,6 +70,10 @@ target_include_directories(stb_image PUBLIC
         "../include"
         )
 
+target_include_directories(unity PUBLIC
+        "${PROJECT_BINARY_DIR}"
+        "../include"
+        )
 
 if (NOT freetype_from_find_package)
     target_include_directories(${PROJECT_NAME} PUBLIC ${freetype_INCLUDE_DIRS})
