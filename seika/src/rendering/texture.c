@@ -44,27 +44,19 @@ Texture* se_texture_create_texture(const char* filePath) {
     Texture* texture = se_texture_create_default_texture();
     texture->fileName = filePath;
 
-//    SEAssetFileImageData* fileImageData = sf_asset_file_loader_load_image_data(filePath);
-//    SE_ASSERT_FMT(fileImageData != NULL, "Failed to load texture image at file path '%s'", filePath);
-//    const size_t imageDataSize = strlen((char*) fileImageData->data);
-//    texture->data = (unsigned char*) SE_MEM_ALLOCATE_SIZE(imageDataSize);
-//    memcpy(texture->data, fileImageData->data, imageDataSize);
-//    texture->width = fileImageData->width;
-//    texture->height = fileImageData->height;
-//    texture->nrChannels = fileImageData->nrChannels;
-
-    stbi_set_flip_vertically_on_load(false);
-    unsigned char* imageData = stbi_load(filePath, &texture->width, &texture->height, &texture->nrChannels, 0);
-    SE_ASSERT_FMT(imageData != NULL, "Failed to load texture image at file path '%s'", filePath);
-    const size_t imageDataSize = sizeof(Texture*);
+    SEAssetFileImageData* fileImageData = sf_asset_file_loader_load_image_data(filePath);
+    SE_ASSERT_FMT(fileImageData != NULL, "Failed to load texture image at file path '%s'", filePath);
+    const size_t imageDataSize = strlen((char*) fileImageData->data);
     texture->data = (unsigned char*) SE_MEM_ALLOCATE_SIZE(imageDataSize);
-    memcpy(texture->data, imageData, imageDataSize);
-    texture->data = imageData;
+    memcpy(texture->data, fileImageData->data, imageDataSize);
+    texture->data = fileImageData->data; // TODO: Fix
+    texture->width = fileImageData->width;
+    texture->height = fileImageData->height;
+    texture->nrChannels = fileImageData->nrChannels;
 
     se_texture_generate(texture);
 
-    stbi_image_free(imageData);
-//    sf_asset_file_loader_free_image_data(fileImageData);
+    sf_asset_file_loader_free_image_data(fileImageData);
 
     return texture;
 }

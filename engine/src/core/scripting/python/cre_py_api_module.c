@@ -11,8 +11,8 @@
 #include "../seika/src/rendering/render_context.h"
 #include "../seika/src/utils/se_assert.h"
 #include "../seika/src/utils/se_file_system_utils.h"
-
 #include "../seika/src/utils/se_string_util.h"
+
 #include "py_cache.h"
 #include "py_script_context.h"
 #include "../../engine_context.h"

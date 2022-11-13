@@ -3,7 +3,7 @@
 #include <string.h>
 
 #include "../seika/src/utils/logger.h"
-#include "../../../../seika/src/asset/asset_manager.h"
+#include "../seika/src/asset/asset_manager.h"
 #include "../seika/src/utils/se_assert.h"
 #include "../seika/src/memory/se_mem.h"
 #include "../seika/src/data_structures/se_hash_map.h"

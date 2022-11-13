@@ -70,9 +70,6 @@ SEAudioSource* se_asset_manager_load_audio_source_wav(const char* fileName, cons
     SEAudioSource* newAudioSource = se_audio_load_audio_source_wav(fileName);
     se_string_hash_map_add(audioSourceMap, key, newAudioSource, sizeof(SEAudioSource));
     SE_MEM_FREE(newAudioSource);
-    // Test
-    newAudioSource = (SEAudioSource*) se_string_hash_map_get(audioSourceMap, key);
-    se_audio_print_audio_source(newAudioSource);
     return newAudioSource;
 }
 
