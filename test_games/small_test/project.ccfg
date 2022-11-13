@@ -9,8 +9,22 @@
     "colliders_visible": false,
     "assets": {
         "audio_sources": [],
-        "textures": [],
-        "fonts": []
+        "textures": [
+            {
+                "file_path": "assets/images/card_base.png",
+                "wrap_s": "clamp_to_border",
+                "wrap_t": "clamp_to_border",
+                "filter_min": "nearest",
+                "filter_mag": "nearest"
+            }
+        ],
+        "fonts": [
+            {
+                "file_path": "assets/fonts/fight_font.ttf",
+                "uid": "fight-16",
+                "size": 16
+            }
+        ]
     },
     "inputs": []
 }
