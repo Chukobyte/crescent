@@ -392,7 +392,7 @@ void input_load_controller_mappings(const char* controllerDBFilePath) {
     int result = -1;
     if (sf_asset_file_loader_get_read_mode() == SEAssetFileLoaderReadMode_ARCHIVE) {
         SEArchiveFileAsset fileAsset = sf_asset_file_loader_get_asset(controllerDBFilePath);
-        SE_ASSERT_FMT(sf_asset_file_loader_is_asset_valid(&fileAsset), "Game controller file asset at path '%s' is invalid!", controllerDBFilePath);
+        SE_ASSERT_FMT(sf_asset_file_loader_is_asset_valid(&fileAsset), "Failed to load game controller db file asset from memory!  Path: '%s'", controllerDBFilePath);
         result = SDL_GameControllerAddMappingsFromRW(SDL_RWFromMem(fileAsset.buffer, (int) fileAsset.bufferSize), 1);
     } else if (sf_asset_file_loader_get_read_mode() == SEAssetFileLoaderReadMode_DISK) {
         result = SDL_GameControllerAddMappingsFromFile(controllerDBFilePath);

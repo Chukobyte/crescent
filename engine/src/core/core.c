@@ -89,12 +89,13 @@ bool cre_initialize(int argv, char** args) {
     cre_game_props_print();
 
     // Setup Game Controller DB Path
-    static const char* gameControllerDBFilePath = "/assets/resources/game_controller_db.txt";
+    static const char* gameControllerDBFilePath = "assets/resources/game_controller_db.txt";
     char controllerMappingFilePath[256];
     if (sf_asset_file_loader_get_read_mode() == SEAssetFileLoaderReadMode_ARCHIVE) {
-        strcat(controllerMappingFilePath, gameControllerDBFilePath);
+        strcpy(controllerMappingFilePath, gameControllerDBFilePath);
     } else { // Can only be disk
         strcpy(controllerMappingFilePath, engineContext->internalAssetsDir);
+        strcat(controllerMappingFilePath, "/");
         strcat(controllerMappingFilePath, gameControllerDBFilePath);
     }
 
