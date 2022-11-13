@@ -1,8 +1,9 @@
 #include "json_file_loader.h"
 
+#include "../seika/src/asset/asset_file_loader.h"
+#include "../seika/src/memory/se_mem.h"
 #include "../seika/src/utils/se_string_util.h"
 #include "../seika/src/utils/se_file_system_utils.h"
-#include "../seika/src/memory/se_mem.h"
 
 #include "json_helper.h"
 #include "../game_properties.h"
@@ -88,7 +89,7 @@ void cre_json_configure_inputs(cJSON* configJson, CREGameProperties* properties)
 
 CREGameProperties* cre_json_load_config_file(const char* filePath) {
     CREGameProperties* properties = cre_game_props_create();
-    char* fileContent = se_fs_read_file_contents(filePath, NULL);
+    char* fileContent = sf_asset_file_loader_read_file_contents_as_string(filePath, NULL);
 
     se_logger_debug("Loading game properties...");
 
@@ -318,10 +319,12 @@ JsonSceneNode* cre_json_load_scene_node(cJSON* nodeJson, JsonSceneNode* parentNo
 }
 
 JsonSceneNode* cre_json_load_scene_file(const char* filePath) {
-    char* fileContent = se_fs_read_file_contents(filePath, NULL);
+    char* fileContent = sf_asset_file_loader_read_file_contents_as_string(filePath, NULL);
+
     se_logger_debug("Loading scene from path '%s'", filePath);
 
     cJSON* sceneJson = cJSON_Parse(fileContent);
+    SE_MEM_FREE(fileContent);
     if (sceneJson != NULL) {
         return cre_json_load_scene_node(sceneJson, NULL); // Return root node
     }
