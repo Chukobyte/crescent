@@ -88,3 +88,15 @@ else ()
 endif ()
 
 target_compile_options(${PROJECT_NAME} PUBLIC ${flags})
+
+# Copy directories over that are needed to test
+if (NOT DEFINED IS_CI_BUILD)
+    set(IS_CI_BUILD "false")
+endif()
+if (IS_CI_BUILD STREQUAL "false")
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${PROJECT_SOURCE_DIR}/../seika/test
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/../seika/test
+            )
+endif()

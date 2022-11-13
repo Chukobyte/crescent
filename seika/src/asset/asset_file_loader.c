@@ -14,7 +14,8 @@ struct zip_t* packageArchive = NULL;
 
 void clear_package_archive() {
     if (packageArchive != NULL) {
-
+        zip_entry_close(packageArchive);
+        packageArchive = NULL;
     }
 }
 
@@ -23,6 +24,7 @@ void sf_asset_file_loader_initialize() {
 }
 
 void sf_asset_file_loader_finalize() {
+    clear_package_archive();
 //    se_string_hash_map_destroy(archiveAssetMap);
 }
 
