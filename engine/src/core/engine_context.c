@@ -15,12 +15,20 @@ CREEngineContext* cre_engine_context_initialize() {
     creEngineContext->averageFPS = 0.0f;
     creEngineContext->engineRootDir = NULL;
     creEngineContext->internalAssetsDir = NULL;
+    creEngineContext->projectArchivePath = NULL;
     return creEngineContext;
 }
 
 void cre_engine_context_finalize() {
     SE_ASSERT(creEngineContext != NULL);
+    if (creEngineContext->internalAssetsDir != NULL) {
+        SE_MEM_FREE(creEngineContext->internalAssetsDir);
+    }
+    if (creEngineContext->projectArchivePath != NULL) {
+        SE_MEM_FREE(creEngineContext->projectArchivePath);
+    }
     SE_MEM_FREE(creEngineContext);
+    creEngineContext = NULL;
 }
 
 CREEngineContext* cre_engine_context_get() {

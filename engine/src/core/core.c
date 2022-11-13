@@ -47,15 +47,14 @@ bool cre_initialize(int argv, char** args) {
 
     // Load project archive if it exists
     // TODO: Check for flag to force flat files
-    char* projectArchivePath = se_str_trim_and_replace(args[0], '.', ".pck");
-    if (sf_asset_file_loader_load_archive(projectArchivePath)) {
-        se_logger_debug("Setting asset read mode to 'archive', found pck file at '%s'", projectArchivePath);
+    engineContext->projectArchivePath = se_str_trim_and_replace(args[0], '.', ".pck");
+    if (sf_asset_file_loader_load_archive(engineContext->projectArchivePath)) {
+        se_logger_debug("Setting asset read mode to 'archive', found pck file at '%s'", engineContext->projectArchivePath);
         sf_asset_file_loader_set_read_mode(SEAssetFileLoaderReadMode_ARCHIVE);
     } else {
         se_logger_debug("Not able to find .pck file, setting asset read mode to 'disk'");
         sf_asset_file_loader_set_read_mode(SEAssetFileLoaderReadMode_DISK);
     }
-    SE_MEM_FREE(projectArchivePath);
 
     // Handle command line flags
     SE_ASSERT_FMT(argv > 0, "Starting arguments are 0 or less!?");
@@ -82,6 +81,7 @@ bool cre_initialize(int argv, char** args) {
         engineContext->internalAssetsDir = strdup(engineContext->engineRootDir); // TODO: Clean up properly
     }
 
+    // TODO: Determine if python needs to be initialized
     cre_py_initialize();
 
     gameProperties = cre_json_load_config_file(CRE_PROJECT_CONFIG_FILE_NAME);
