@@ -82,12 +82,7 @@ Font* font_create_font(const char* fileName, int size) {
 }
 
 bool generate_new_font_face(const char* fileName, FT_Face* face) {
-    if (sf_asset_file_loader_get_read_mode() == SEAssetFileLoaderReadMode_DISK) {
-        if (FT_New_Face(se_render_context_get()->freeTypeLibrary, fileName, 0, face)) {
-            // Failed to create new face
-            return false;
-        }
-    } else if (sf_asset_file_loader_get_read_mode() == SEAssetFileLoaderReadMode_ARCHIVE) {
+    if (sf_asset_file_loader_get_read_mode() == SEAssetFileLoaderReadMode_ARCHIVE) {
         SEArchiveFileAsset fileAsset = sf_asset_file_loader_get_asset(fileName);
         if (sf_asset_file_loader_is_asset_valid(&fileAsset)) {
             if (FT_New_Memory_Face(se_render_context_get()->freeTypeLibrary, (unsigned char*) fileAsset.buffer, (FT_Long) fileAsset.bufferSize, 0, face)) {
@@ -96,6 +91,11 @@ bool generate_new_font_face(const char* fileName, FT_Face* face) {
             }
         } else {
             // Failed to load asset from archive
+            return false;
+        }
+    } else if (sf_asset_file_loader_get_read_mode() == SEAssetFileLoaderReadMode_DISK) {
+        if (FT_New_Face(se_render_context_get()->freeTypeLibrary, fileName, 0, face)) {
+            // Failed to create new face
             return false;
         }
     }
