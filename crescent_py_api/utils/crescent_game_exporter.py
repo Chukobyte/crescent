@@ -99,10 +99,16 @@ class ProjectArchiver:
             current_cwd = os.getcwd()
             os.chdir(source_dir)
             name_path = PurePath(name)
-            for file in FileUtils.get_dir_file_paths("."):
-                file_path = PurePath(file)
-                if not name_path.as_posix().endswith(file_path.as_posix()):
-                    export_zip_file.write(file)
+
+            # TODO: Clean code up
+            for root, dirs, files in os.walk("."):
+                for dir in dirs:
+                    export_zip_file.write(os.path.join(root, dir))
+                for file in files:
+                    file_path_text = os.path.join(root, file)
+                    file_path = PurePath(file_path_text)
+                    if not name_path.as_posix().endswith(file_path.as_posix()):
+                        export_zip_file.write(file_path_text)
             os.chdir(current_cwd)
 
 
