@@ -29,7 +29,7 @@ void cre_py_initialize() {
         PyRun_SimpleString("sys.path.insert(0, \".\")");
     }
     // Disable writing compiled python files if they are imported as python files
-    PyRun_SimpleString("sys.dont_write_bytecode = True");
+    PyRun_SimpleString("sys.dont_write_bytecode = True"); // TODO: Make this an advanced setting within the editor
     // Enable tracemalloc for more information on stack traces
     PyRun_SimpleString("import tracemalloc\n");
     PyRun_SimpleString("tracemalloc.start()");
@@ -41,5 +41,5 @@ void cre_py_initialize() {
 
 void cre_py_finalize() {
     cre_py_cache_finalize();
-//    Py_Finalize(); // FIXME: Figure out why this crashes...
+    Py_Finalize();
 }
