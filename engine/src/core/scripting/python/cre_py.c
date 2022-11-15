@@ -16,6 +16,7 @@ void cre_py_initialize() {
     PyImport_AppendInittab("crescent_api_internal", &PyInit_cre_py_API); // Load engine modules
     Py_Initialize();
     PyRun_SimpleString("import sys");
+    // Set first path for python module lookups
     if (sf_asset_file_loader_get_read_mode() == SEAssetFileLoaderReadMode_ARCHIVE) {
         PyRun_SimpleString("from pathlib import PurePath");
         CREEngineContext* engineContext = cre_engine_context_get();
@@ -27,11 +28,14 @@ void cre_py_initialize() {
     } else if (sf_asset_file_loader_get_read_mode() == SEAssetFileLoaderReadMode_DISK) {
         PyRun_SimpleString("sys.path.insert(0, \".\")");
     }
+    // Disable writing compiled python files if they are imported as python files
     PyRun_SimpleString("sys.dont_write_bytecode = True");
+    // Enable tracemalloc for more information on stack traces
     PyRun_SimpleString("import tracemalloc\n");
     PyRun_SimpleString("tracemalloc.start()");
-
+    // Import custom python source importer
     PyRun_SimpleString(RBE_PY_API_SOURCE_IMPORTER);
+    // Import other custom python modules
     PyRun_SimpleString(RBE_PY_API_SOURCE_IMPORTER_MODULE_IMPORTS);
 }
 
