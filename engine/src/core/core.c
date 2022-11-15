@@ -52,7 +52,7 @@ bool cre_initialize(int argv, char** args) {
         se_logger_debug("Setting asset read mode to 'archive', found pck file at '%s'", engineContext->projectArchivePath);
         sf_asset_file_loader_set_read_mode(SEAssetFileLoaderReadMode_ARCHIVE);
     } else {
-        se_logger_debug("Not able to find .pck file, setting asset read mode to 'disk'");
+        se_logger_debug("Not able to find .pck file at '%s', setting asset read mode to 'disk'", engineContext->projectArchivePath);
         sf_asset_file_loader_set_read_mode(SEAssetFileLoaderReadMode_DISK);
     }
 

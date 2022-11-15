@@ -17,11 +17,12 @@ void cre_py_initialize() {
     Py_Initialize();
     PyRun_SimpleString("import sys");
     if (sf_asset_file_loader_get_read_mode() == SEAssetFileLoaderReadMode_ARCHIVE) {
+        PyRun_SimpleString("from pathlib import PurePath");
         CREEngineContext* engineContext = cre_engine_context_get();
         char sysPathInsertBuffer[256];
-        strcpy(sysPathInsertBuffer, "sys.path.insert(0, \"");
+        strcpy(sysPathInsertBuffer, "sys.path.insert(0, PurePath(r\'");
         strcat(sysPathInsertBuffer, engineContext->projectArchivePath);
-        strcat(sysPathInsertBuffer, "\")");
+        strcat(sysPathInsertBuffer, "\').as_posix())");
         PyRun_SimpleString(sysPathInsertBuffer);
     } else if (sf_asset_file_loader_get_read_mode() == SEAssetFileLoaderReadMode_DISK) {
         PyRun_SimpleString("sys.path.insert(0, \".\")");
