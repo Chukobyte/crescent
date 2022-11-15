@@ -8,6 +8,8 @@ extern "C" {
 
 void cre_py_initialize();
 void cre_py_finalize();
+void cre_py_import_module_source(const char* moduleName, const char* moduleText);
+
 
 #ifdef __cplusplus
 }
