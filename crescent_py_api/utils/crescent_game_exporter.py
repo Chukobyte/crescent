@@ -98,8 +98,11 @@ class ProjectArchiver:
         with zipfile.ZipFile(name, "w") as export_zip_file:
             current_cwd = os.getcwd()
             os.chdir(source_dir)
+            name_path = PurePath(name)
             for file in FileUtils.get_dir_file_paths("."):
-                export_zip_file.write(file)
+                file_path = PurePath(file)
+                if not name_path.as_posix().endswith(file_path.as_posix()):
+                    export_zip_file.write(file)
             os.chdir(current_cwd)
 
 
@@ -154,8 +157,7 @@ class GameExporter:
             recursive=False,
         ):
             file_to_delete_path = PurePath(file)
-            if file_to_delete_path.as_posix() != project_pack_path.as_posix():
-                print(f"Deleting file '{file_to_delete_path.as_posix()}'")
+            if file_to_delete_path != project_pack_path:
                 FileUtils.delete_file(file_to_delete_path.as_posix())
 
         # Copy dlls
