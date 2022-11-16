@@ -5,10 +5,6 @@ import importlib.util
 
 class SourceImporter:
     @staticmethod
-    def load_source_importer_module() -> None:
-        pass
-
-    @staticmethod
     def import_from_source(module_name: str, source_code: str, reload_module=False):
         if module_name not in sys.modules or reload_module:
             spec = importlib.util.spec_from_loader(

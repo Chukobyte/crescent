@@ -30,16 +30,6 @@ cre_py_source_text = f"""#pragma once
 
 #define RBE_PY_API_SOURCE ""\\
 {Helper.convert_py_file_to_source_c_string(CRE_PY_API_SOURCE_PATH)}
-
-#define RBE_PY_API_SOURCE_IMPORTER_MODULE_IMPORTS ""\\
-"from source_importer import SourceImporter\\n"\\
-"\\n"\\
-"crescent_api_source_code = \\"\\"\\"\\n"\\
-RBE_PY_API_SOURCE\\
-"\\"\\"\\"\\n"\\
-"\\n"\\
-"SourceImporter.import_from_source(\\"crescent_api\\", crescent_api_source_code)\\n"\\
-"\\n"
 """
 
 print(cre_py_source_text)

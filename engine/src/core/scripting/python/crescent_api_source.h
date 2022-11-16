@@ -16,10 +16,6 @@
 "\n"\
 "class SourceImporter:\n"\
 "    @staticmethod\n"\
-"    def load_source_importer_module() -> None:\n"\
-"        pass\n"\
-"\n"\
-"    @staticmethod\n"\
 "    def import_from_source(module_name: str, source_code: str, reload_module=False):\n"\
 "        if module_name not in sys.modules or reload_module:\n"\
 "            spec = importlib.util.spec_from_loader(\n"\
@@ -1194,14 +1190,4 @@
 "            print(f\"Game Config Load Json Decode Error: {e}\")\n"\
 "            return {}\n"\
 "        return json_dict\n"\
-"\n"
-
-#define RBE_PY_API_SOURCE_IMPORTER_MODULE_IMPORTS ""\
-"from source_importer import SourceImporter\n"\
-"\n"\
-"crescent_api_source_code = \"\"\"\n"\
-RBE_PY_API_SOURCE\
-"\"\"\"\n"\
-"\n"\
-"SourceImporter.import_from_source(\"crescent_api\", crescent_api_source_code)\n"\
 "\n"

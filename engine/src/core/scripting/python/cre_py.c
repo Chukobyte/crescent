@@ -36,8 +36,7 @@ void cre_py_initialize() {
     // Import custom python source importer
     PyRun_SimpleString(RBE_PY_API_SOURCE_IMPORTER);
     // Import other custom python modules
-    PyRun_SimpleString(RBE_PY_API_SOURCE_IMPORTER_MODULE_IMPORTS);
-//    cre_py_import_module_source("crescent_api", RBE_PY_API_SOURCE);
+    cre_py_import_module_source("crescent_api", RBE_PY_API_SOURCE);
 }
 
 void cre_py_finalize() {
@@ -46,11 +45,15 @@ void cre_py_finalize() {
 }
 
 void cre_py_import_module_source(const char* moduleName, const char* moduleText) {
-    char importCommandBuffer[4096];
-    strcpy(importCommandBuffer, "game_source_importer.import_from_source(r\"");
+#define IMPORT_COMMAND_BUFFER_SIZE 65536
+    char importCommandBuffer[IMPORT_COMMAND_BUFFER_SIZE];
+    strcpy(importCommandBuffer, "from source_importer import SourceImporter\n");
+    strcat(importCommandBuffer, "source_code_to_import = \"\"\"\n");
+    strcat(importCommandBuffer, RBE_PY_API_SOURCE);
+    strcat(importCommandBuffer, "\"\"\"\n");
+    strcat(importCommandBuffer, "SourceImporter.import_from_source(\"");
     strcat(importCommandBuffer, moduleName);
-    strcat(importCommandBuffer, "\", r\"");
-    strcat(importCommandBuffer, moduleText);
-    strcat(importCommandBuffer, "\")");
+    strcat(importCommandBuffer, "\", source_code_to_import)");
     PyRun_SimpleString(importCommandBuffer);
+#undef IMPORT_COMMAND_BUFFER_SIZE
 }
