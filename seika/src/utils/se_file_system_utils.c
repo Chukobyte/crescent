@@ -133,7 +133,6 @@ bool se_fs_does_file_exist(const char* filePath) {
 
 bool se_fs_does_dir_exist(const char* dirPath) {
 #ifdef WIN32
-#ifdef WINAPI
     if (strnlen(dirPath, MAX_PATH + 1) > MAX_PATH) {
         return false;
     }
@@ -144,15 +143,8 @@ bool se_fs_does_dir_exist(const char* dirPath) {
     if (stat(dirPath, &stats) == 0) {
         return S_ISDIR(stats.st_mode);
     }
-#endif
-// Linux and other
-#else
-    struct stat stats;
-    if (stat(dirPath, &stats) == 0) {
-        return S_ISDIR(stats.st_mode);
-    }
-#endif
     return false;
+#endif
 }
 
 char* se_fs_get_user_save_path(const char* orgName, const char* applicationName, const char* savePath) {

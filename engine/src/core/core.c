@@ -76,9 +76,9 @@ bool cre_initialize(int argv, char** args) {
     }
     // Internal Assets Override
     if (strcmp(commandLineFlagResult.internalAssetsDirOverride, "") != 0) {
-        engineContext->internalAssetsDir = strdup(commandLineFlagResult.internalAssetsDirOverride); // TODO: Clean up properly
+        engineContext->internalAssetsDir = se_strdup(commandLineFlagResult.internalAssetsDirOverride); // TODO: Clean up properly
     } else {
-        engineContext->internalAssetsDir = strdup(engineContext->engineRootDir); // TODO: Clean up properly
+        engineContext->internalAssetsDir = se_strdup(engineContext->engineRootDir); // TODO: Clean up properly
     }
 
     // TODO: Determine if python needs to be initialized
