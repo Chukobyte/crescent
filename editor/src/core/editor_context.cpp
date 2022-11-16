@@ -15,8 +15,8 @@ std::string EditorContext::GetEngineBinaryProgramArgs() const {
     return "-l " + settings.GetGameLogLevelString() + " -ia " + GetEngineBinPath() + "/";
 }
 
-std::string EditorContext::GetProjectExportPath() const {
-    return initialDir + "/export";
+std::string EditorContext::GetProjectTempPath() const {
+    return initialDir + "/cre_tmp";
 }
 
 float EditorContext::Time() {
