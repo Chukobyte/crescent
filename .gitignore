@@ -29,5 +29,7 @@ _deps
 
 cmake-build-*
 
+crescent_py_api/utils/test
+
 # Test Projects
 test_games/cardboard_fighter/src/test
