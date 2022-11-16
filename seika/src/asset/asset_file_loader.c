@@ -9,7 +9,6 @@
 #include "../utils/se_string_util.h"
 
 SEAssetFileLoaderReadMode globalReadMode = SEAssetFileLoaderReadMode_DISK;
-//SEStringHashMap* archiveAssetMap = NULL;
 struct zip_t* packageArchive = NULL;
 
 void clear_package_archive() {
@@ -19,13 +18,10 @@ void clear_package_archive() {
     }
 }
 
-void sf_asset_file_loader_initialize() {
-//    archiveAssetMap = se_string_hash_map_create(8);
-}
+void sf_asset_file_loader_initialize() {}
 
 void sf_asset_file_loader_finalize() {
     clear_package_archive();
-//    se_string_hash_map_destroy(archiveAssetMap);
 }
 
 bool sf_asset_file_loader_load_archive(const char* filePath) {
