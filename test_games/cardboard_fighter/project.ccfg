@@ -253,6 +253,12 @@
             "values": [
                 "mb_left"
             ]
+        },
+        {
+            "name": "play_sfx",
+            "values": [
+                "t"
+            ]
         }
     ]
 }

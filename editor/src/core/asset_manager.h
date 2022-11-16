@@ -2,7 +2,7 @@
 
 #include "utils/singleton.h"
 
-#include "../seika/src/asset_manager.h"
+#include "../seika/src/asset/asset_manager.h"
 #include "../seika/src/rendering/texture.h"
 #include "../seika/src/rendering/font.h"
 #include "../seika/src/audio/audio.h"

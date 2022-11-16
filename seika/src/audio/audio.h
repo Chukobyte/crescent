@@ -12,3 +12,4 @@ typedef struct SEAudioSource {
 } SEAudioSource;
 
 void se_audio_print_audio_source(SEAudioSource* audioSource);
+SEAudioSource* se_audio_load_audio_source_wav(const char* fileName);

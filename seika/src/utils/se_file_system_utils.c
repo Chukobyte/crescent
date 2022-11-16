@@ -3,6 +3,8 @@
 #ifdef _WIN32
 #include <windows.h>
 #include <corecrt.h>
+#else
+#include <sys/stat.h>
 #endif
 
 #include <stdio.h>
@@ -30,7 +32,7 @@
 #define CHAR_ARRAY_MAX_BUFFER_SIZE 256
 
 void se_fs_get_cwd_array(char* array, size_t size) {
-    if (getcwd(array, size) != NULL) {
+    if (getcwd(array, (int) size) != NULL) {
         return;
     }
 }
@@ -127,6 +129,22 @@ bool se_fs_does_file_exist(const char* filePath) {
         return true;
     }
     return false;
+}
+
+bool se_fs_does_dir_exist(const char* dirPath) {
+#ifdef WIN32
+    if (strnlen(dirPath, MAX_PATH + 1) > MAX_PATH) {
+        return false;
+    }
+    DWORD result = GetFileAttributesA(dirPath);
+    return (result != INVALID_FILE_ATTRIBUTES && (result & FILE_ATTRIBUTE_DIRECTORY));
+#else
+    struct stat stats;
+    if (stat(dirPath, &stats) == 0) {
+        return S_ISDIR(stats.st_mode);
+    }
+    return false;
+#endif
 }
 
 char* se_fs_get_user_save_path(const char* orgName, const char* applicationName, const char* savePath) {

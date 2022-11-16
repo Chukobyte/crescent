@@ -2,7 +2,8 @@
 
 #include <stdbool.h>
 
-#define DEFAULT_START_PROJECT_PATH "test_games/cardboard_fighter"
+//#define DEFAULT_START_PROJECT_PATH "test_games/cardboard_fighter"
+#define DEFAULT_START_PROJECT_PATH "test_games/card_test"
 
 typedef struct CREEngineContext {
     bool isRunning;
@@ -10,6 +11,7 @@ typedef struct CREEngineContext {
     float averageFPS;
     char* engineRootDir;
     char* internalAssetsDir;
+    char* projectArchivePath;
 } CREEngineContext;
 
 CREEngineContext* cre_engine_context_initialize();

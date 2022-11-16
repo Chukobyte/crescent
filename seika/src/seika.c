@@ -10,7 +10,8 @@
 #include "utils/se_assert.h"
 #include "rendering/renderer.h"
 #include "audio/audio_manager.h"
-#include "asset_manager.h"
+#include "asset/asset_file_loader.h"
+#include "asset/asset_manager.h"
 
 bool initialize_sdl();
 bool initialize_rendering(const char* title, int windowWidth, int windowHeight, int resolutionWidth, int resolutionHeight);
@@ -39,6 +40,8 @@ bool sf_initialize(const char* title,
     srand((int)time(NULL));
 
     // Initialize sub systems
+    sf_asset_file_loader_initialize();
+
     if (!initialize_sdl()) {
         se_logger_error("Failed to initialize sdl!");
         return false;
@@ -172,6 +175,7 @@ void sf_shutdown() {
         se_audio_manager_finalize();
         se_input_finalize();
         se_asset_manager_finalize();
+        sf_asset_file_loader_finalize();
         isRunning = false;
     }
 }

@@ -2,6 +2,9 @@
 
 #include <string.h>
 
+#include "../seika/src/utils/se_assert.h"
+#include "../seika/src/asset/asset_manager.h"
+
 #include "component/component.h"
 #include "component/transform2d_component.h"
 #include "component/text_label_component.h"
@@ -13,8 +16,6 @@
 #include "system/script_ec_system.h"
 #include "system/sprite_rendering_ec_system.h"
 #include "../scene/scene_manager.h"
-#include "../seika/src/utils/se_assert.h"
-#include "../seika/src/asset_manager.h"
 
 #ifdef _MSC_VER
 #pragma warning(disable : 4996) // for strcpy

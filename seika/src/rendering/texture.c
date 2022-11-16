@@ -1,9 +1,11 @@
 #include "texture.h"
 
+#include <string.h>
 #include <memory.h>
 
 #include <stb_image/stb_image.h>
 
+#include "../asset/asset_file_loader.h"
 #include "../memory/se_mem.h"
 #include "../utils/se_assert.h"
 
@@ -26,6 +28,7 @@ bool se_texture_is_texture_valid(Texture* texture);
 Texture* se_texture_create_default_texture() {
     Texture* texture = SE_MEM_ALLOCATE(Texture);
     texture->fileName = NULL;
+    texture->data = NULL;
     texture->internalFormat = DEFAULT_TEXTURE_REF.internalFormat;
     texture->imageFormat = DEFAULT_TEXTURE_REF.imageFormat;
     texture->wrapS = DEFAULT_TEXTURE_REF.wrapS;
@@ -40,17 +43,21 @@ void se_texture_generate(Texture* texture);
 Texture* se_texture_create_texture(const char* filePath) {
     Texture* texture = se_texture_create_default_texture();
     texture->fileName = filePath;
-    stbi_set_flip_vertically_on_load(false);
-    unsigned char* imageData = stbi_load(filePath, &texture->width, &texture->height, &texture->nrChannels, 0);
-    SE_ASSERT_FMT(imageData != NULL, "Failed to load texture image at file path '%s'", filePath);
-    const size_t imageDataSize = sizeof(Texture*);
+
+    SEAssetFileImageData* fileImageData = sf_asset_file_loader_load_image_data(filePath);
+    SE_ASSERT_FMT(fileImageData != NULL, "Failed to load texture image at file path '%s'", filePath);
+    const size_t imageDataSize = strlen((char*) fileImageData->data);
     texture->data = (unsigned char*) SE_MEM_ALLOCATE_SIZE(imageDataSize);
-    memcpy(texture->data, imageData, imageDataSize);
-    texture->data = imageData;
+    memcpy(texture->data, fileImageData->data, imageDataSize);
+    texture->data = fileImageData->data; // TODO: Fix
+    texture->width = fileImageData->width;
+    texture->height = fileImageData->height;
+    texture->nrChannels = fileImageData->nrChannels;
 
     se_texture_generate(texture);
 
-    stbi_image_free(imageData);
+    sf_asset_file_loader_free_image_data(fileImageData);
+
     return texture;
 }
 

@@ -68,6 +68,13 @@ const char* ImGuiHelper::InputText::GetInternalLabel() const {
     return internalLabel.c_str();
 }
 
+bool ImGuiHelper::InputText::HasValue() const {
+    if (buffer) {
+        return true;
+    }
+    return false;
+}
+
 void ImGuiHelper::BeginInputText(const InputText& inputText) {
     if (!inputText.label.empty()) {
         ImGui::Text("%s", inputText.label.c_str());

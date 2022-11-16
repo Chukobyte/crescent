@@ -32,6 +32,7 @@ class EditorContext : public Singleton<EditorContext> {
     std::string GetEngineBinaryPath() const;
     std::string GetEngineBinaryProgramArgs() const;
     std::string GetProjectExportPath() const;
+    std::string GetProjectTempPath() const;
 
     static float Time();
 

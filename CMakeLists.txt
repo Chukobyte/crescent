@@ -7,8 +7,8 @@ add_subdirectory(engine)
 add_subdirectory(editor)
 
 # Create seika test exe
-add_executable(seika_test seika/src/main.c)
-target_link_libraries(seika_test seika)
+add_executable(seika_test seika/test/main.c)
+target_link_libraries(seika_test seika unity)
 
 # Create engine exe
 add_executable(${PROJECT_NAME} engine/src/main.c)

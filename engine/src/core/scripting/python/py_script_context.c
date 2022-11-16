@@ -2,6 +2,7 @@
 
 #include <Python.h>
 
+#include "../seika/src/asset/asset_file_loader.h"
 #include "../seika/src/data_structures/se_hash_map.h"
 #include "../seika/src/data_structures/se_static_array.h"
 #include "../seika/src/utils/se_assert.h"
@@ -38,7 +39,7 @@ SEHashMap* pythonInstanceHashMap = NULL;
 CREScriptContext* python_script_context = NULL;
 
 CREScriptContext* cre_py_create_script_context() {
-    SE_ASSERT(python_script_context == NULL);
+    SE_ASSERT_FMT(python_script_context == NULL, "Script context already created!");
     CREScriptContext* scriptContext = cre_script_context_create();
     scriptContext->on_create_instance = py_on_create_instance;
     scriptContext->on_delete_instance = py_on_delete_instance;

@@ -6,10 +6,14 @@
 #include <glad/glad.h>
 
 #include "../seika/src/seika.h"
-#include "../seika/src/asset_manager.h"
+#include "../seika/src/asset/asset_file_loader.h"
+#include "../seika/src/asset/asset_manager.h"
 #include "../seika/src/input/input.h"
+#include "../seika/src/memory/se_mem.h"
 #include "../seika/src/utils/logger.h"
 #include "../seika/src/utils/se_file_system_utils.h"
+#include "../seika/src/utils/se_string_util.h"
+#include "../seika/src/utils/se_assert.h"
 
 #include "core_info.h"
 #include "game_properties.h"
@@ -41,29 +45,43 @@ bool cre_initialize(int argv, char** args) {
     engineContext = cre_engine_context_initialize();
     engineContext->engineRootDir = se_fs_get_cwd();
 
+    // Load project archive if it exists
+    engineContext->projectArchivePath = se_str_trim_and_replace(args[0], '.', ".pck");
+    if (sf_asset_file_loader_load_archive(engineContext->projectArchivePath)) {
+        se_logger_debug("Setting asset read mode to 'archive', found pck file at '%s'", engineContext->projectArchivePath);
+        sf_asset_file_loader_set_read_mode(SEAssetFileLoaderReadMode_ARCHIVE);
+    } else {
+        se_logger_debug("Not able to find .pck file at '%s', setting asset read mode to 'disk'", engineContext->projectArchivePath);
+        sf_asset_file_loader_set_read_mode(SEAssetFileLoaderReadMode_DISK);
+    }
+
     // Handle command line flags
     CommandLineFlagResult commandLineFlagResult = cre_command_line_args_parse(argv, args);
     // log level
     if (strcmp(commandLineFlagResult.logLevel, "") != 0) {
         se_logger_set_level(se_logger_get_log_level_enum(commandLineFlagResult.logLevel));
+        se_logger_debug("Log level override set to '%s'", commandLineFlagResult.logLevel);
     }
     // working dir override
     if (strcmp(commandLineFlagResult.workingDirOverride, "") != 0) {
         se_logger_debug("Changing working directory from override to '%s'.", commandLineFlagResult.workingDirOverride);
         se_fs_chdir(commandLineFlagResult.workingDirOverride);
         se_fs_print_cwd();
-    } else {
-        se_logger_debug("No directory override given, starting default project at '%s'", DEFAULT_START_PROJECT_PATH);
+    }
+    // Check if default project is present, if so change to the directory.  Will probably want to change at some point...
+    else if (se_fs_does_dir_exist(DEFAULT_START_PROJECT_PATH)) {
+        se_logger_debug("No directory override given and default project found.  Starting default project at '%s'", DEFAULT_START_PROJECT_PATH);
         se_fs_chdir(DEFAULT_START_PROJECT_PATH);
         se_fs_print_cwd();
     }
     // Internal Assets Override
     if (strcmp(commandLineFlagResult.internalAssetsDirOverride, "") != 0) {
-        engineContext->internalAssetsDir = strdup(commandLineFlagResult.internalAssetsDirOverride); // TODO: Clean up properly
+        engineContext->internalAssetsDir = se_strdup(commandLineFlagResult.internalAssetsDirOverride); // TODO: Clean up properly
     } else {
-        engineContext->internalAssetsDir = strdup(engineContext->engineRootDir); // TODO: Clean up properly
+        engineContext->internalAssetsDir = se_strdup(engineContext->engineRootDir); // TODO: Clean up properly
     }
 
+    // TODO: Determine if python needs to be initialized
     cre_py_initialize();
 
     gameProperties = cre_json_load_config_file(CRE_PROJECT_CONFIG_FILE_NAME);
@@ -71,9 +89,15 @@ bool cre_initialize(int argv, char** args) {
     cre_game_props_print();
 
     // Setup Game Controller DB Path
+    static const char* gameControllerDBFilePath = "assets/resources/game_controller_db.txt";
     char controllerMappingFilePath[256];
-    strcpy(controllerMappingFilePath, engineContext->internalAssetsDir);
-    strcat(controllerMappingFilePath, "/assets/resources/game_controller_db.txt");
+    if (sf_asset_file_loader_get_read_mode() == SEAssetFileLoaderReadMode_ARCHIVE) {
+        strcpy(controllerMappingFilePath, gameControllerDBFilePath);
+    } else { // Can only be disk
+        strcpy(controllerMappingFilePath, engineContext->internalAssetsDir);
+        strcat(controllerMappingFilePath, "/");
+        strcat(controllerMappingFilePath, gameControllerDBFilePath);
+    }
 
     // Initialize seika framework
     sf_initialize(gameProperties->gameTitle,

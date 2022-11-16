@@ -384,15 +384,14 @@ ImGuiHelper::MenuBar OpenedProjectUI::MenuBar::GetMenuBar() {
                                         ImGui::CloseCurrentPopup();
                                     }
                                     ImGui::SameLine();
-                                    if (ImGui::Button("Export") && !exportFileName.empty()) {
-                                        exportFileName = Helper::RemoveExtensionFromFilePath(exportPathInputText.GetValue());
+                                    if (ImGui::Button("Export") && exportPathInputText.HasValue()) {
+                                        exportFileName = Helper::ConvertFilePathToFilePathExtension(exportPathInputText.GetValue(), ".zip");
                                         const GameExporter::ExportProperties exportProps = {
                                             .gameTitle = projectProperties->gameTitle,
-                                            .exportName = exportFileName,
-                                            .exportPath = editorContext->GetProjectExportPath(),
+                                            .exportArchivePath = exportFileName,
                                             .projectPath = FileSystemHelper::GetCurrentDir(),
                                             .binPath = editorContext->GetEngineBinPath(),
-                                            .tempPath = editorContext->GetProjectExportPath() + "/" + "tmp_cre"
+                                            .tempPath = editorContext->GetProjectTempPath()
                                         };
                                         GameExporter::Export(exportProps);
                                         exportPathInputText.SetValue("");
@@ -410,8 +409,8 @@ ImGuiHelper::MenuBar OpenedProjectUI::MenuBar::GetMenuBar() {
                                         .position = ImVec2{ 100.0f, 100.0f },
                                         .size = ImVec2{ 600.0f, 320.0f },
                                         .rootPath = {},
-                                        .mode = ImGuiHelper::FileBrowser::Mode::SelectDir,
-                                        .validExtensions = {},
+                                        .mode = ImGuiHelper::FileBrowser::Mode::SaveFile,
+                                        .validExtensions = {".zip"},
                                         .onModeCompletedFunc = [](const std::filesystem::path& fullPath) {
                                             const std::string exportPath = fullPath.generic_string();
                                             se_logger_debug("Setting project export path to '%s'", exportPath.c_str());

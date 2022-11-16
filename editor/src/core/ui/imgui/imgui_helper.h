@@ -54,6 +54,7 @@ struct InputText {
     InputText(const std::string& label, std::string& value, int labelIndex = 0);
     void SetValue(std::string value);
     [[nodiscard]] std::string GetValue() const;
+    [[nodiscard]] bool HasValue() const;
     [[nodiscard]] const char* GetInternalLabel() const;
 
     std::string label;
