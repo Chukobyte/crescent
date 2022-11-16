@@ -64,23 +64,23 @@ void cre_py_export_game_project(const char* gameTitle, const char* archivePath, 
     strcpy(exportGameCommandBuffer, "from game_exporter import GameExporter\n");
     strcat(exportGameCommandBuffer, "GameExporter.export_game(\n");
     // Game Title
-    strcat(exportGameCommandBuffer, "   game_title=\"");
+    strcat(exportGameCommandBuffer, "   game_title=r\"");
     strcat(exportGameCommandBuffer, gameTitle);
     strcat(exportGameCommandBuffer, "\",\n");
     // Archive Path
-    strcat(exportGameCommandBuffer, "   archive_name=\"");
+    strcat(exportGameCommandBuffer, "   archive_name=r\"");
     strcat(exportGameCommandBuffer, archivePath);
     strcat(exportGameCommandBuffer, "\",\n");
     // Engine Bin path
-    strcat(exportGameCommandBuffer, "   engine_bin_dir=\"");
+    strcat(exportGameCommandBuffer, "   engine_bin_dir=r\"");
     strcat(exportGameCommandBuffer, engineBinPath);
     strcat(exportGameCommandBuffer, "\",\n");
     // Project path
-    strcat(exportGameCommandBuffer, "   project_dir=\"");
+    strcat(exportGameCommandBuffer, "   project_dir=r\"");
     strcat(exportGameCommandBuffer, projectPath);
     strcat(exportGameCommandBuffer, "\",\n");
     // Temp path
-    strcat(exportGameCommandBuffer, "   temp_path=\"");
+    strcat(exportGameCommandBuffer, "   temp_path=r\"");
     strcat(exportGameCommandBuffer, tempPath);
     strcat(exportGameCommandBuffer, "\",\n");
 

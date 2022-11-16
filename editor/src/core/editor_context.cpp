@@ -16,7 +16,7 @@ std::string EditorContext::GetEngineBinaryProgramArgs() const {
 }
 
 std::string EditorContext::GetProjectTempPath() const {
-    return initialDir + "/cre_tmp";
+    return initialDir;
 }
 
 float EditorContext::Time() {
