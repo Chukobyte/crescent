@@ -46,7 +46,6 @@ bool cre_initialize(int argv, char** args) {
     engineContext->engineRootDir = se_fs_get_cwd();
 
     // Load project archive if it exists
-    // TODO: Check for flag to force flat files
     engineContext->projectArchivePath = se_str_trim_and_replace(args[0], '.', ".pck");
     if (sf_asset_file_loader_load_archive(engineContext->projectArchivePath)) {
         se_logger_debug("Setting asset read mode to 'archive', found pck file at '%s'", engineContext->projectArchivePath);
@@ -57,7 +56,6 @@ bool cre_initialize(int argv, char** args) {
     }
 
     // Handle command line flags
-    SE_ASSERT_FMT(argv > 0, "Starting arguments are 0 or less!?");
     CommandLineFlagResult commandLineFlagResult = cre_command_line_args_parse(argv, args);
     // log level
     if (strcmp(commandLineFlagResult.logLevel, "") != 0) {
@@ -69,8 +67,10 @@ bool cre_initialize(int argv, char** args) {
         se_logger_debug("Changing working directory from override to '%s'.", commandLineFlagResult.workingDirOverride);
         se_fs_chdir(commandLineFlagResult.workingDirOverride);
         se_fs_print_cwd();
-    } else {
-        se_logger_debug("No directory override given, starting default project at '%s'", DEFAULT_START_PROJECT_PATH);
+    }
+    // Check if default project is present, if so change to the directory.  Will probably want to change at some point...
+    else if (se_fs_does_dir_exist(DEFAULT_START_PROJECT_PATH)) {
+        se_logger_debug("No directory override given and default project found.  Starting default project at '%s'", DEFAULT_START_PROJECT_PATH);
         se_fs_chdir(DEFAULT_START_PROJECT_PATH);
         se_fs_print_cwd();
     }

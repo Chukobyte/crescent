@@ -5,17 +5,31 @@
 #include "../src/utils/se_string_util.h"
 #include "../src/utils/se_file_system_utils.h"
 
+#define RESOURCES_PATH "seika/test/resources"
+#define RESOURCES_PACK_PATH "seika/test/resources/test.pck"
+
 void setUp() {}
 void tearDown() {}
 
+void seika_file_system_utils_test();
 void seika_string_utils_test();
 void seika_asset_file_loader_test();
 
 int main(int argv, char** args) {
     UNITY_BEGIN();
+    RUN_TEST(seika_file_system_utils_test);
     RUN_TEST(seika_string_utils_test);
     RUN_TEST(seika_asset_file_loader_test);
     return UNITY_END();
+}
+
+void seika_file_system_utils_test() {
+    // File tests
+    TEST_ASSERT_TRUE(se_fs_does_file_exist(RESOURCES_PACK_PATH));
+    TEST_ASSERT_FALSE(se_fs_does_file_exist("somemadeupfile.txt"));
+    // Directory tests
+    TEST_ASSERT_TRUE(se_fs_does_dir_exist(RESOURCES_PATH));
+    TEST_ASSERT_FALSE(se_fs_does_dir_exist("something/somemadeupath"));
 }
 
 void seika_string_utils_test() {
@@ -42,7 +56,6 @@ void seika_asset_file_loader_test() {
     sf_asset_file_loader_initialize();
 
     sf_asset_file_loader_set_read_mode(SEAssetFileLoaderReadMode_ARCHIVE);
-    printf("cwd = %s\n", se_fs_get_cwd());
     const bool hasLoaded = sf_asset_file_loader_load_archive("seika/test/resources/test.pck");
     TEST_ASSERT_TRUE(hasLoaded);
 

@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "../seika/src/utils/logger.h"
+#include "../seika/src/utils/se_assert.h"
 
 #ifdef _MSC_VER
 #pragma warning(disable : 4996) // for strcpy
@@ -12,6 +13,7 @@
 #define CRE_LOG_LEVEL_CAPACITY  8
 
 CommandLineFlagResult cre_command_line_args_parse(int argv, char** args) {
+    SE_ASSERT_FMT(argv > 0, "Starting arguments are 0 or less!?");
     CommandLineFlagResult flagResult;
     memset(flagResult.workingDirOverride, 0, CRE_DIR_OVERRIDE_CAPACITY);
     memset(flagResult.internalAssetsDirOverride, 0, CRE_DIR_OVERRIDE_CAPACITY);

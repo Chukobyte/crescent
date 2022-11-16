@@ -195,12 +195,4 @@ class GameExporter:
         )
 
         # Clean up
-        # FileUtils.remove_dir(temp_file_path.as_posix())
-
-
-# test_path = Path("c:/ProjectWorkspace/C_Lang/cmake_rbe")
-# print(f"exists = {test_path.exists()}")
-# print(f"path = {test_path.as_posix()}")
-# print(f"'C_Lang' is relative = {test_path.is_relative_to('/C_Lang')}")
-# print(f"'C_Lang' is relative (str) = {'/C_Lang' in test_path.as_posix()}")
-# print(f"'C_Lang' matches = {test_path.match('/C_Lang')}")
+        FileUtils.remove_dir(temp_file_path.as_posix())
