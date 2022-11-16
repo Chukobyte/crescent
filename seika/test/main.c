@@ -1,5 +1,7 @@
 #include "unity.h"
 
+#include <SDL2/SDL_main.h>
+
 #include "../src/asset/asset_file_loader.h"
 #include "../src/memory/se_mem.h"
 #include "../src/utils/se_string_util.h"
