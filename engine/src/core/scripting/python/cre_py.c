@@ -49,7 +49,7 @@ void cre_py_import_module_source(const char* moduleName, const char* moduleText)
     char importCommandBuffer[IMPORT_COMMAND_BUFFER_SIZE];
     strcpy(importCommandBuffer, "from source_importer import SourceImporter\n");
     strcat(importCommandBuffer, "source_code_to_import = \"\"\"\n");
-    strcat(importCommandBuffer, RBE_PY_API_SOURCE);
+    strcat(importCommandBuffer, moduleText);
     strcat(importCommandBuffer, "\"\"\"\n");
     strcat(importCommandBuffer, "SourceImporter.import_from_source(\"");
     strcat(importCommandBuffer, moduleName);
