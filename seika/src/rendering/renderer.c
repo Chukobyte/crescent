@@ -84,7 +84,7 @@ void se_renderer_initialize(int inWindowWidth, int inWindowHeight, int inResolut
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     se_render_context_initialize();
-    se_renderer_update_window_size(inWindowWidth, inWindowHeight);
+    se_renderer_update_window_size((float) inWindowWidth, (float) inWindowHeight);
     sprite_renderer_initialize();
     font_renderer_initialize();
     // Initialize framebuffer
@@ -108,11 +108,13 @@ void se_renderer_finalize() {
 }
 
 void se_renderer_update_window_size(float windowWidth, float windowHeight) {
+    const int width = (int) windowWidth;
+    const int height = (int) windowHeight;
     RenderContext* renderContext = se_render_context_get();
-    renderContext->windowWidth = windowWidth;
-    renderContext->windowHeight = windowHeight;
+    renderContext->windowWidth = width;
+    renderContext->windowHeight = height;
 #ifdef SE_RENDER_TO_FRAMEBUFFER
-    se_frame_buffer_resize_texture(windowWidth, windowHeight);
+    se_frame_buffer_resize_texture(width, height);
 #endif
 }
 

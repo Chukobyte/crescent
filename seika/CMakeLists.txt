@@ -50,6 +50,7 @@ add_library(${PROJECT_NAME} STATIC
         src/data_structures/se_queue.c
         src/data_structures/se_hash_map.c
         src/data_structures/se_hash_map_string.c
+        src/data_structures/set_spatial_hash_map.c
         )
 
 add_library(glad ../include/glad/glad.c)

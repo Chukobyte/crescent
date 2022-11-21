@@ -74,7 +74,7 @@ void cre_scene_manager_setup_scene_nodes_from_json(JsonSceneNode* jsonSceneNode)
 
 void cre_scene_manager_initialize() {
     SE_ASSERT(entityToTreeNodeMap == NULL);
-    entityToTreeNodeMap = se_hash_map_create(sizeof(Entity), sizeof(SceneTreeNode **), 16); // TODO: Update capacity
+    entityToTreeNodeMap = se_hash_map_create(sizeof(Entity), sizeof(SceneTreeNode**), 16); // TODO: Update capacity
 }
 
 void cre_scene_manager_finalize() {

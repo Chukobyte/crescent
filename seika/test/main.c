@@ -2,6 +2,7 @@
 
 #include <SDL2/SDL_main.h>
 
+#include "../src/data_structures/set_spatial_hash_map.h"
 #include "../src/asset/asset_file_loader.h"
 #include "../src/memory/se_mem.h"
 #include "../src/utils/se_string_util.h"
@@ -13,16 +14,36 @@
 void setUp() {}
 void tearDown() {}
 
+void seika_spatial_hash_map_test();
 void seika_file_system_utils_test();
 void seika_string_utils_test();
 void seika_asset_file_loader_test();
 
 int main(int argv, char** args) {
     UNITY_BEGIN();
+    RUN_TEST(seika_spatial_hash_map_test);
     RUN_TEST(seika_file_system_utils_test);
     RUN_TEST(seika_string_utils_test);
     RUN_TEST(seika_asset_file_loader_test);
     return UNITY_END();
+}
+
+void seika_spatial_hash_map_test() {
+    const int maxSpriteSize = 32;
+    SESpatialHashMap* spatialHashMap = se_spatial_hash_map_create(maxSpriteSize * 2);
+    TEST_ASSERT_TRUE(spatialHashMap != NULL);
+
+    unsigned int entity = 1;
+    SESpatialHashMapGridSpacesHandle* handle = se_spatial_hash_map_insert(spatialHashMap, entity, &(Rect2) {
+        0.0f, 0.0f, 32.0f, 32.0f
+    });
+    TEST_ASSERT_EQUAL(handle, se_spatial_hash_map_get(spatialHashMap, entity));
+
+
+//    se_spatial_hash_map_remove(spatialHashMap, entity);
+//    TEST_ASSERT_EQUAL(handle, se_spatial_hash_map_get(NULL, entity));
+
+    se_spatial_hash_map_destroy(spatialHashMap);
 }
 
 void seika_file_system_utils_test() {
