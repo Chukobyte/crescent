@@ -122,7 +122,7 @@ void se_spatial_hash_map_remove(SESpatialHashMap* hashMap, unsigned int entity) 
     if (!se_hash_map_has(hashMap->objectToGridMap, &entity)) {
         return;
     }
-    SESpatialHashMapGridSpacesHandle* objectHandle = (SESpatialHashMapGridSpacesHandle*) (SESpatialHashMapGridSpacesHandle**) se_hash_map_get(hashMap->objectToGridMap, &entity);
+    SESpatialHashMapGridSpacesHandle* objectHandle = (SESpatialHashMapGridSpacesHandle*) *(SESpatialHashMapGridSpacesHandle**) se_hash_map_get(hashMap->objectToGridMap, &entity);
     const size_t numberOfSpaces = objectHandle->gridSpaceCount;
     for (size_t i = 0; i < numberOfSpaces; i++) {
         unlink_object_by_entity(hashMap, objectHandle, objectHandle->gridSpaces[i], entity);

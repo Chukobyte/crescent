@@ -39,9 +39,8 @@ void seika_spatial_hash_map_test() {
     });
     TEST_ASSERT_EQUAL(handle, se_spatial_hash_map_get(spatialHashMap, entity));
 
-
-//    se_spatial_hash_map_remove(spatialHashMap, entity);
-//    TEST_ASSERT_EQUAL(handle, se_spatial_hash_map_get(NULL, entity));
+    se_spatial_hash_map_remove(spatialHashMap, entity);
+    TEST_ASSERT_EQUAL(NULL, se_spatial_hash_map_get(spatialHashMap, entity));
 
     se_spatial_hash_map_destroy(spatialHashMap);
 }
