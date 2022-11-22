@@ -33,6 +33,7 @@ void seika_spatial_hash_map_test() {
     SESpatialHashMap* spatialHashMap = se_spatial_hash_map_create(maxSpriteSize * 2);
     TEST_ASSERT_TRUE(spatialHashMap != NULL);
 
+    // Create two entities and insert them into hash map
     const unsigned int entity = 1;
     SESpatialHashMapGridSpacesHandle* handle = se_spatial_hash_map_insert_or_update(spatialHashMap, entity, &(Rect2) {
         0.0f, 0.0f, 32.0f, 32.0f
@@ -45,6 +46,7 @@ void seika_spatial_hash_map_test() {
     });
     TEST_ASSERT_EQUAL(handleTwo, se_spatial_hash_map_get(spatialHashMap, entityTwo));
 
+    // Test collision result to make sure the two entities collide
     const SESpatialHashMapCollisionResult collisionResult = se_spatial_hash_map_compute_collision(spatialHashMap, entity);
     TEST_ASSERT_EQUAL_INT(1, collisionResult.collisionCount);
 
