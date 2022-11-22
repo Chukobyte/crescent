@@ -4,18 +4,21 @@
 
 #include "../memory/se_mem.h"
 
-#define SE_SPATIAL_HASH_GRID_SPACE_LIMIT 1000
 #define SE_SPATIAL_HASH_NULL_ENTITY 4294967295
-
-//typedef struct SESpatialHashMapObject {
-//
-//} SESpatialHashMapObject;
 
 typedef struct PositionHashes {
     size_t hashCount;
     int32_t hashes[4];
 } PositionHashes;
 
+int32_t spatial_hash(SESpatialHashMap* hashMap, Vector2* position);
+SESpatialHashMapGridSpace* get_or_create_grid_space(SESpatialHashMap* hashMap, int32_t positionHash);
+bool link_object_by_position_hash(SESpatialHashMap* hashMap, SESpatialHashMapGridSpacesHandle* object, unsigned int value, int32_t positionHash, PositionHashes* hashes);
+bool unlink_object_by_entity(SESpatialHashMap* hashMap, SESpatialHashMapGridSpacesHandle* object, SESpatialHashMapGridSpace* gridSpace, unsigned int entity);
+void unlink_all_objects_by_entity(SESpatialHashMap* hashMap, SESpatialHashMapGridSpacesHandle* object, unsigned int entity);
+bool collision_result_has_entity(SESpatialHashMapCollisionResult* result, unsigned int entity);
+
+// Public facing functions
 SESpatialHashMap* se_spatial_hash_map_create(int cellSize) {
     SESpatialHashMap* map = SE_MEM_ALLOCATE(SESpatialHashMap);
     map->cellSize = cellSize;
@@ -32,6 +35,63 @@ void se_spatial_hash_map_destroy(SESpatialHashMap* hashMap) {
     SE_MEM_FREE(hashMap);
 }
 
+SESpatialHashMapGridSpacesHandle* se_spatial_hash_map_insert_or_update(SESpatialHashMap* hashMap, unsigned int entity, Rect2* collisionRect) {
+    // Create new object handle if it doesn't exist
+    if (!se_hash_map_has(hashMap->objectToGridMap, &entity)) {
+        SESpatialHashMapGridSpacesHandle* newHandle = SE_MEM_ALLOCATE(SESpatialHashMapGridSpacesHandle);
+        newHandle->gridSpaceCount = 0;
+        se_hash_map_add(hashMap->objectToGridMap, &entity, &newHandle);
+    }
+    SESpatialHashMapGridSpacesHandle* objectHandle = (SESpatialHashMapGridSpacesHandle*) *(SESpatialHashMapGridSpacesHandle**) se_hash_map_get(hashMap->objectToGridMap, &entity);
+
+    // Unlink all previous spaces and objects
+    unlink_all_objects_by_entity(hashMap, objectHandle, entity);
+
+    // Add values to spaces and spaces to object handles (moving clockwise starting from top-left)
+    PositionHashes hashes = { .hashCount = 0 };
+    // Top left
+    const int32_t topLeftHash = spatial_hash(hashMap, &(Vector2) {
+        collisionRect->x, collisionRect->y
+    });
+    link_object_by_position_hash(hashMap, objectHandle, entity, topLeftHash, &hashes);
+    // Top right
+    const int32_t topRightHash = spatial_hash(hashMap, &(Vector2) {
+        collisionRect->x + collisionRect->w, collisionRect->y
+    });
+    link_object_by_position_hash(hashMap, objectHandle, entity, topRightHash, &hashes);
+    // Bottom Left
+    const int32_t bottomLeftHash = spatial_hash(hashMap, &(Vector2) {
+        collisionRect->x, collisionRect->y + collisionRect->h
+    });
+    link_object_by_position_hash(hashMap, objectHandle, entity, bottomLeftHash, &hashes);
+    // Bottom Right
+    const int32_t bottomRightHash = spatial_hash(hashMap, &(Vector2) {
+        collisionRect->x + collisionRect->w, collisionRect->y + collisionRect->h
+    });
+    link_object_by_position_hash(hashMap, objectHandle, entity, bottomRightHash, &hashes);
+
+    return objectHandle;
+}
+
+void se_spatial_hash_map_remove(SESpatialHashMap* hashMap, unsigned int entity) {
+    if (!se_hash_map_has(hashMap->objectToGridMap, &entity)) {
+        return;
+    }
+    SESpatialHashMapGridSpacesHandle* objectHandle = (SESpatialHashMapGridSpacesHandle*) *(SESpatialHashMapGridSpacesHandle**) se_hash_map_get(hashMap->objectToGridMap, &entity);
+    const size_t numberOfSpaces = objectHandle->gridSpaceCount;
+    unlink_all_objects_by_entity(hashMap, objectHandle, entity);
+    SE_MEM_FREE(objectHandle);
+    se_hash_map_erase(hashMap->objectToGridMap, &entity);
+}
+
+SESpatialHashMapGridSpacesHandle* se_spatial_hash_map_get(SESpatialHashMap* hashMap, unsigned int entity) {
+    if (se_hash_map_has(hashMap->objectToGridMap, &entity)) {
+        return (SESpatialHashMapGridSpacesHandle*) *(SESpatialHashMapGridSpacesHandle**) se_hash_map_get(hashMap->objectToGridMap, &entity);
+    }
+    return NULL;
+}
+
+// Internal Functions
 int32_t spatial_hash(SESpatialHashMap* hashMap, Vector2* position) {
     const int32_t x = (int32_t) position->x / hashMap->cellSize;
     const int32_t y = (int32_t) position->y / hashMap->cellSize;
@@ -82,70 +142,34 @@ bool unlink_object_by_entity(SESpatialHashMap* hashMap, SESpatialHashMapGridSpac
     return objectUnlinked;
 }
 
-SESpatialHashMapGridSpacesHandle* se_spatial_hash_map_insert(SESpatialHashMap* hashMap, unsigned int entity, Rect2* collisionRect) {
-    // Create new object handle
-    if (!se_hash_map_has(hashMap->objectToGridMap, &entity)) {
-        SESpatialHashMapGridSpacesHandle* newHandle = SE_MEM_ALLOCATE(SESpatialHashMapGridSpacesHandle);
-        newHandle->gridSpaceCount = 0;
-        se_hash_map_add(hashMap->objectToGridMap, &entity, &newHandle);
-    }
-    SESpatialHashMapGridSpacesHandle* objectHandle = (SESpatialHashMapGridSpacesHandle*) *(SESpatialHashMapGridSpacesHandle**) se_hash_map_get(hashMap->objectToGridMap, &entity);
-    objectHandle->gridSpaceCount = 0;
-
-    // Add values to spaces and spaces to object handles (moving clockwise starting from top-left)
-    PositionHashes hashes = { .hashCount = 0 };
-    // Top left
-    const int32_t topLeftHash = spatial_hash(hashMap, &(Vector2) {
-        collisionRect->x, collisionRect->y
-    });
-    link_object_by_position_hash(hashMap, objectHandle, entity, topLeftHash, &hashes);
-    // Top right
-    const int32_t topRightHash = spatial_hash(hashMap, &(Vector2) {
-        collisionRect->x + collisionRect->w, collisionRect->y
-    });
-    link_object_by_position_hash(hashMap, objectHandle, entity, topRightHash, &hashes);
-    // Bottom Left
-    const int32_t bottomLeftHash = spatial_hash(hashMap, &(Vector2) {
-        collisionRect->x, collisionRect->y + collisionRect->h
-    });
-    link_object_by_position_hash(hashMap, objectHandle, entity, bottomLeftHash, &hashes);
-    // Bottom Right
-    const int32_t bottomRightHash = spatial_hash(hashMap, &(Vector2) {
-        collisionRect->x + collisionRect->w, collisionRect->y + collisionRect->h
-    });
-    link_object_by_position_hash(hashMap, objectHandle, entity, bottomRightHash, &hashes);
-
-    return objectHandle;
-}
-
-void se_spatial_hash_map_remove(SESpatialHashMap* hashMap, unsigned int entity) {
-    if (!se_hash_map_has(hashMap->objectToGridMap, &entity)) {
-        return;
-    }
-    SESpatialHashMapGridSpacesHandle* objectHandle = (SESpatialHashMapGridSpacesHandle*) *(SESpatialHashMapGridSpacesHandle**) se_hash_map_get(hashMap->objectToGridMap, &entity);
-    const size_t numberOfSpaces = objectHandle->gridSpaceCount;
+void unlink_all_objects_by_entity(SESpatialHashMap* hashMap, SESpatialHashMapGridSpacesHandle* object, unsigned int entity) {
+    const size_t numberOfSpaces = object->gridSpaceCount;
     for (size_t i = 0; i < numberOfSpaces; i++) {
-        unlink_object_by_entity(hashMap, objectHandle, objectHandle->gridSpaces[i], entity);
+        unlink_object_by_entity(hashMap, object, object->gridSpaces[i], entity);
     }
-    SE_MEM_FREE(objectHandle);
-    se_hash_map_erase(hashMap->objectToGridMap, &entity);
 }
 
-SESpatialHashMapGridSpacesHandle* se_spatial_hash_map_get(SESpatialHashMap* hashMap, unsigned int entity) {
-    if (se_hash_map_has(hashMap->objectToGridMap, &entity)) {
-        return (SESpatialHashMapGridSpacesHandle*) *(SESpatialHashMapGridSpacesHandle**) se_hash_map_get(hashMap->objectToGridMap, &entity);
+SESpatialHashMapCollisionResult se_spatial_hash_map_compute_collision(SESpatialHashMap* hashMap, unsigned int entity) {
+    SESpatialHashMapCollisionResult result = { .collisionCount = 0 };
+    SESpatialHashMapGridSpacesHandle* objectHandle = (SESpatialHashMapGridSpacesHandle*) *(SESpatialHashMapGridSpacesHandle**) se_hash_map_get(hashMap->objectToGridMap, &entity);
+    for (size_t i = 0; i < objectHandle->gridSpaceCount; i++) {
+        SESpatialHashMapGridSpace* gridSpace = objectHandle->gridSpaces[i];
+        for (size_t j = 0; j < gridSpace->entityCount; j++) {
+            const unsigned int entityToCollide = gridSpace->entities[j];
+            if (entity != entityToCollide && !collision_result_has_entity(&result, entityToCollide)) {
+                // TODO: Calculate bounds before inserting as collided...
+                result.collisions[result.collisionCount++] = entityToCollide;
+            }
+        }
     }
-    return NULL;
+    return result;
 }
 
-// Clean up unused spaces
-void se_spatial_hash_map_sanitize() {}
-
-void se_spatial_hash_map_update_object(SESpatialHashMapGridSpacesHandle* object, Rect2* collisionRect) {}
-
-void se_spatial_hash_map_process_collisions(SESpatialHashMap* hashMap) {
-    if (!hashMap->doesCollisionDataNeedUpdating) {
-        return;
+bool collision_result_has_entity(SESpatialHashMapCollisionResult* result, unsigned int entity) {
+    for (size_t i = 0; i < result->collisionCount; i++) {
+        if (entity == result->collisions[i]) {
+            return true;
+        }
     }
-    hashMap->doesCollisionDataNeedUpdating = false;
+    return false;
 }

@@ -3,9 +3,12 @@
 #include "../math/se_math.h"
 #include "se_hash_map.h"
 
+#define SE_SPATIAL_HASH_GRID_SPACE_ENTITY_LIMIT 32
+#define SE_SPATIAL_HASH_GRID_MAX_COLLISIONS 4
+
 // Contains the object id for a particular grid space
 typedef struct SESpatialHashMapGridSpace {
-    unsigned int entities[16];
+    unsigned int entities[SE_SPATIAL_HASH_GRID_SPACE_ENTITY_LIMIT];
     size_t entityCount;
 } SESpatialHashMapGridSpace;
 
@@ -23,8 +26,14 @@ typedef struct SESpatialHashMap {
     bool doesCollisionDataNeedUpdating;
 } SESpatialHashMap;
 
+typedef struct SESpatialHashMapCollisionResult {
+    size_t collisionCount;
+    unsigned int collisions[SE_SPATIAL_HASH_GRID_MAX_COLLISIONS];
+} SESpatialHashMapCollisionResult;
+
 SESpatialHashMap* se_spatial_hash_map_create(int cellSize);
 void se_spatial_hash_map_destroy(SESpatialHashMap* hashMap);
-SESpatialHashMapGridSpacesHandle* se_spatial_hash_map_insert(SESpatialHashMap* hashMap, unsigned int entity, Rect2* collisionRect);
+SESpatialHashMapGridSpacesHandle* se_spatial_hash_map_insert_or_update(SESpatialHashMap* hashMap, unsigned int entity, Rect2* collisionRect);
 void se_spatial_hash_map_remove(SESpatialHashMap* hashMap, unsigned int entity);
 SESpatialHashMapGridSpacesHandle* se_spatial_hash_map_get(SESpatialHashMap* hashMap, unsigned int entity);
+SESpatialHashMapCollisionResult se_spatial_hash_map_compute_collision(SESpatialHashMap* hashMap, unsigned int entity);

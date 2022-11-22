@@ -33,14 +33,29 @@ void seika_spatial_hash_map_test() {
     SESpatialHashMap* spatialHashMap = se_spatial_hash_map_create(maxSpriteSize * 2);
     TEST_ASSERT_TRUE(spatialHashMap != NULL);
 
-    unsigned int entity = 1;
-    SESpatialHashMapGridSpacesHandle* handle = se_spatial_hash_map_insert(spatialHashMap, entity, &(Rect2) {
+    const unsigned int entity = 1;
+    SESpatialHashMapGridSpacesHandle* handle = se_spatial_hash_map_insert_or_update(spatialHashMap, entity, &(Rect2) {
         0.0f, 0.0f, 32.0f, 32.0f
     });
     TEST_ASSERT_EQUAL(handle, se_spatial_hash_map_get(spatialHashMap, entity));
 
+    const unsigned int entityTwo = 2;
+    SESpatialHashMapGridSpacesHandle* handleTwo = se_spatial_hash_map_insert_or_update(spatialHashMap, entityTwo, &(Rect2) {
+        0.0f, 0.0f, 32.0f, 32.0f
+    });
+    TEST_ASSERT_EQUAL(handleTwo, se_spatial_hash_map_get(spatialHashMap, entityTwo));
+
+    const SESpatialHashMapCollisionResult collisionResult = se_spatial_hash_map_compute_collision(spatialHashMap, entity);
+    TEST_ASSERT_EQUAL_INT(1, collisionResult.collisionCount);
+
+    if (collisionResult.collisionCount > 0) {
+        TEST_ASSERT_EQUAL_INT(2, collisionResult.collisions[0]);
+    }
+
     se_spatial_hash_map_remove(spatialHashMap, entity);
     TEST_ASSERT_EQUAL(NULL, se_spatial_hash_map_get(spatialHashMap, entity));
+    se_spatial_hash_map_remove(spatialHashMap, entityTwo);
+    TEST_ASSERT_EQUAL(NULL, se_spatial_hash_map_get(spatialHashMap, entityTwo));
 
     se_spatial_hash_map_destroy(spatialHashMap);
 }
