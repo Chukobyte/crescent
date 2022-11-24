@@ -49,7 +49,7 @@ void seika_spatial_hash_map_test() {
     // An entity that should not be collided with
     const unsigned int entityNotCollided = 3;
     se_spatial_hash_map_insert_or_update(spatialHashMap, entityNotCollided, &(Rect2) {
-            64.0f, 64.0f, 96.0f, 96.0f
+        64.0f, 64.0f, 96.0f, 96.0f
     });
 
     // Test collision result to make sure the two entities collide

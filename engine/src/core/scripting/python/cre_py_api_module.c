@@ -56,13 +56,12 @@ Vector2 se_mouse_get_global_position(SEMouse* mouse, Vector2* offset) {
 }
 
 Rect2 se_get_collision_rectangle(Entity entity, Transform2DComponent* transform2DComponent, Collider2DComponent* collider2DComponent) {
-    const TransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity,
-                                                                                                transform2DComponent);
+    const TransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity, transform2DComponent);
     Rect2 collisionRect = {
-            .x = globalTransform->position.x,
-            .y = globalTransform->position.y,
-            .w = globalTransform->scale.x * collider2DComponent->extents.w,
-            .h = globalTransform->scale.y * collider2DComponent->extents.h,
+        .x = globalTransform->position.x,
+        .y = globalTransform->position.y,
+        .w = globalTransform->scale.x * collider2DComponent->extents.w,
+        .h = globalTransform->scale.y * collider2DComponent->extents.h,
     };
     if (collisionRect.w < 0.0f) {
         collisionRect.x += collisionRect.w;
@@ -75,18 +74,22 @@ Rect2 se_get_collision_rectangle(Entity entity, Transform2DComponent* transform2
     return collisionRect;
 }
 
+void se_update_collision_data(Entity entity, Transform2DComponent* transformComp) {
+// TODO: We are checking for a collider each time, I think it probably would be better to have a separate function for moving in collider2D nodes.
+    Collider2DComponent* colliderComp = (Collider2DComponent*) component_manager_get_component_unsafe(entity, ComponentDataIndex_COLLIDER_2D);
+    if (colliderComp != NULL && cre_scene_manager_has_entity_tree_node(entity)) {
+        Rect2 collisionRect = se_get_collision_rectangle(entity, transformComp, colliderComp);
+        SESpatialHashMap* spatialHashMap = cre_collision_get_global_spatial_hash_map();
+        se_spatial_hash_map_insert_or_update(spatialHashMap, entity, &collisionRect);
+    }
+}
+
 void se_update_entity_local_position(Entity entity, Vector2* position) {
     Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
     transformComp->localTransform.position.x = position->x;
     transformComp->localTransform.position.y = position->y;
     transformComp->isGlobalTransformDirty = true;
-    // Check if collider TODO: Probably do something else...
-    Collider2DComponent* colliderComp = (Collider2DComponent*) component_manager_get_component(entity, ComponentDataIndex_COLLIDER_2D);
-    if (colliderComp != NULL) {
-        Rect2 collisionRect = se_get_collision_rectangle(entity, transformComp, colliderComp);
-        SESpatialHashMap* spatialHashMap = cre_collision_get_global_spatial_hash_map();
-        se_spatial_hash_map_insert_or_update(spatialHashMap, entity, &collisionRect);
-    }
+    se_update_collision_data(entity, transformComp);
 }
 
 void se_update_entity_local_scale(Entity entity, Vector2 * scale) {
@@ -94,26 +97,14 @@ void se_update_entity_local_scale(Entity entity, Vector2 * scale) {
     transformComp->localTransform.scale.x = scale->x;
     transformComp->localTransform.scale.y = scale->y;
     transformComp->isGlobalTransformDirty = true;
-    // Check if collider TODO: Probably do something else...
-    Collider2DComponent* colliderComp = (Collider2DComponent*) component_manager_get_component(entity, ComponentDataIndex_COLLIDER_2D);
-    if (colliderComp != NULL) {
-        Rect2 collisionRect = se_get_collision_rectangle(entity, transformComp, colliderComp);
-        SESpatialHashMap* spatialHashMap = cre_collision_get_global_spatial_hash_map();
-        se_spatial_hash_map_insert_or_update(spatialHashMap, entity, &collisionRect);
-    }
+    se_update_collision_data(entity, transformComp);
 }
 
 void se_update_entity_local_rotation(Entity entity, float rotation) {
     Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
     transformComp->localTransform.rotation = rotation;
     transformComp->isGlobalTransformDirty = true;
-    // Check if collider TODO: Probably do something else...
-    Collider2DComponent* colliderComp = (Collider2DComponent*) component_manager_get_component(entity, ComponentDataIndex_COLLIDER_2D);
-    if (colliderComp != NULL) {
-        Rect2 collisionRect = se_get_collision_rectangle(entity, transformComp, colliderComp);
-        SESpatialHashMap* spatialHashMap = cre_collision_get_global_spatial_hash_map();
-        se_spatial_hash_map_insert_or_update(spatialHashMap, entity, &collisionRect);
-    }
+    se_update_collision_data(entity, transformComp);
 }
 
 //--- Py Utils ---//
@@ -531,7 +522,9 @@ PyObject* cre_py_api_node2D_set_position(PyObject* self, PyObject* args, PyObjec
     float x;
     float y;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "iff", crePyApiNode2DSetXYKWList, &entity, &x, &y)) {
-        se_update_entity_local_position(entity, &(Vector2){ x, y });
+        se_update_entity_local_position(entity, &(Vector2) {
+            x, y
+        });
         Py_RETURN_NONE;
     }
     return NULL;
@@ -543,7 +536,9 @@ PyObject* cre_py_api_node2D_add_to_position(PyObject* self, PyObject* args, PyOb
     float y;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "iff", crePyApiNode2DSetXYKWList, &entity, &x, &y)) {
         Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
-        se_update_entity_local_position(entity, &(Vector2){ x + transformComp->localTransform.position.x, y + transformComp->localTransform.position.y });
+        se_update_entity_local_position(entity, &(Vector2) {
+            x + transformComp->localTransform.position.x, y + transformComp->localTransform.position.y
+        });
         Py_RETURN_NONE;
     }
     return NULL;
@@ -573,7 +568,9 @@ PyObject* cre_py_api_node2D_set_scale(PyObject* self, PyObject* args, PyObject* 
     float x;
     float y;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "iff", crePyApiNode2DSetXYKWList, &entity, &x, &y)) {
-        se_update_entity_local_scale(entity, &(Vector2){ x, y });
+        se_update_entity_local_scale(entity, &(Vector2) {
+            x, y
+        });
         Py_RETURN_NONE;
     }
     return NULL;
@@ -585,7 +582,9 @@ PyObject* cre_py_api_node2D_add_to_scale(PyObject* self, PyObject* args, PyObjec
     float y;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "iff", crePyApiNode2DSetXYKWList, &entity, &x, &y)) {
         Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
-        se_update_entity_local_scale(entity, &(Vector2){ x + transformComp->localTransform.scale.x, y + transformComp->localTransform.scale.y });
+        se_update_entity_local_scale(entity, &(Vector2) {
+            x + transformComp->localTransform.scale.x, y + transformComp->localTransform.scale.y
+        });
         Py_RETURN_NONE;
     }
     return NULL;

@@ -224,6 +224,10 @@ Entity cre_scene_manager_get_entity_child_by_name(Entity parent, const char* chi
     return NULL_ENTITY;
 }
 
+bool cre_scene_manager_has_entity_tree_node(Entity entity) {
+    return se_hash_map_has(entityToTreeNodeMap, &entity);
+}
+
 // Scene node setup
 void cre_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneNode, SceneTreeNode* parent);
 
