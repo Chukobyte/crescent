@@ -2,7 +2,7 @@
 
 #include <SDL2/SDL_main.h>
 
-#include "../src/data_structures/set_spatial_hash_map.h"
+#include "../src/data_structures/se_spatial_hash_map.h"
 #include "../src/asset/asset_file_loader.h"
 #include "../src/memory/se_mem.h"
 #include "../src/utils/se_string_util.h"
