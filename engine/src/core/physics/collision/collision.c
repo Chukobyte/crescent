@@ -13,6 +13,8 @@ bool is_entity_in_collision_exceptions(Entity entity, Collider2DComponent* colli
 Rect2 get_collision_rectangle(Entity entity, Transform2DComponent* transform2DComponent, Collider2DComponent* collider2DComponent);
 bool does_rectangles_collide(Rect2* sourceRect, Rect2* targetRect);
 
+SESpatialHashMap* globalSpatialHashMap = NULL;
+
 CollisionResult cre_collision_process_entity_collisions(Entity entity) {
     CollisionResult collisionResult = { .sourceEntity = entity, .collidedEntityCount = 0 };
     const EntitySystem* collisionSystem = collision_ec_system_get();
@@ -57,6 +59,15 @@ CollisionResult cre_collision_process_mouse_collisions(Rect2* collisionRect) {
     return collisionResult;
 }
 
+void cre_collision_set_global_spatial_hash_map(SESpatialHashMap* hashMap) {
+    globalSpatialHashMap = hashMap;
+}
+
+SESpatialHashMap* cre_collision_get_global_spatial_hash_map() {
+    return globalSpatialHashMap;
+}
+
+// Internal functions
 bool is_entity_in_collision_exceptions(Entity entity, Collider2DComponent* collider2DComponent) {
     for (size_t i = 0; i < collider2DComponent->collisionExceptionCount; i++) {
         if (entity == collider2DComponent->collisionExceptions[i]) {

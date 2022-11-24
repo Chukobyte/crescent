@@ -2,7 +2,7 @@
 
 #include <stddef.h>
 
-#include "../seika/src/math/se_math.h"
+#include "../seika/src/data_structures/se_spatial_hash_map.h"
 
 #include "../../ecs/entity/entity.h"
 
@@ -18,3 +18,5 @@ typedef struct CollisionResult {
 
 CollisionResult cre_collision_process_entity_collisions(Entity entity);
 CollisionResult cre_collision_process_mouse_collisions(Rect2* collisionRect);
+void cre_collision_set_global_spatial_hash_map(SESpatialHashMap* hashMap);
+SESpatialHashMap* cre_collision_get_global_spatial_hash_map();

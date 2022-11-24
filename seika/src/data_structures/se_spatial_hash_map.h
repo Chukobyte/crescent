@@ -6,6 +6,8 @@
 #define SE_SPATIAL_HASH_GRID_SPACE_ENTITY_LIMIT 32
 #define SE_SPATIAL_HASH_GRID_MAX_COLLISIONS 4
 
+// Note: Spatial hash expects rectangles that have 0 rotation
+
 // Contains the object id for a particular grid space
 typedef struct SESpatialHashMapGridSpace {
     unsigned int entities[SE_SPATIAL_HASH_GRID_SPACE_ENTITY_LIMIT];
