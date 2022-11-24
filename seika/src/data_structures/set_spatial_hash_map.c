@@ -91,6 +91,22 @@ SESpatialHashMapGridSpacesHandle* se_spatial_hash_map_get(SESpatialHashMap* hash
     return NULL;
 }
 
+SESpatialHashMapCollisionResult se_spatial_hash_map_compute_collision(SESpatialHashMap* hashMap, unsigned int entity) {
+    SESpatialHashMapCollisionResult result = { .collisionCount = 0 };
+    SESpatialHashMapGridSpacesHandle* objectHandle = (SESpatialHashMapGridSpacesHandle*) *(SESpatialHashMapGridSpacesHandle**) se_hash_map_get(hashMap->objectToGridMap, &entity);
+    for (size_t i = 0; i < objectHandle->gridSpaceCount; i++) {
+        SESpatialHashMapGridSpace* gridSpace = objectHandle->gridSpaces[i];
+        for (size_t j = 0; j < gridSpace->entityCount; j++) {
+            const unsigned int entityToCollide = gridSpace->entities[j];
+            if (entity != entityToCollide && !collision_result_has_entity(&result, entityToCollide)) {
+                // TODO: Calculate bounds before inserting as collided...
+                result.collisions[result.collisionCount++] = entityToCollide;
+            }
+        }
+    }
+    return result;
+}
+
 // Internal Functions
 int32_t spatial_hash(SESpatialHashMap* hashMap, Vector2* position) {
     const int32_t x = (int32_t) position->x / hashMap->cellSize;
@@ -147,22 +163,6 @@ void unlink_all_objects_by_entity(SESpatialHashMap* hashMap, SESpatialHashMapGri
     for (size_t i = 0; i < numberOfSpaces; i++) {
         unlink_object_by_entity(hashMap, object, object->gridSpaces[i], entity);
     }
-}
-
-SESpatialHashMapCollisionResult se_spatial_hash_map_compute_collision(SESpatialHashMap* hashMap, unsigned int entity) {
-    SESpatialHashMapCollisionResult result = { .collisionCount = 0 };
-    SESpatialHashMapGridSpacesHandle* objectHandle = (SESpatialHashMapGridSpacesHandle*) *(SESpatialHashMapGridSpacesHandle**) se_hash_map_get(hashMap->objectToGridMap, &entity);
-    for (size_t i = 0; i < objectHandle->gridSpaceCount; i++) {
-        SESpatialHashMapGridSpace* gridSpace = objectHandle->gridSpaces[i];
-        for (size_t j = 0; j < gridSpace->entityCount; j++) {
-            const unsigned int entityToCollide = gridSpace->entities[j];
-            if (entity != entityToCollide && !collision_result_has_entity(&result, entityToCollide)) {
-                // TODO: Calculate bounds before inserting as collided...
-                result.collisions[result.collisionCount++] = entityToCollide;
-            }
-        }
-    }
-    return result;
 }
 
 bool collision_result_has_entity(SESpatialHashMapCollisionResult* result, unsigned int entity) {
