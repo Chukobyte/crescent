@@ -22,6 +22,10 @@ void collision_system_entity_unregistered(Entity entity);
 void collision_system_physics_update(float deltaTime);
 void collision_system_render();
 
+void collision_system_on_node_entered_scene(Entity entity);
+
+Rect2 collision_get_collision_rectangle(Entity entity, Transform2DComponent* transform2DComponent, Collider2DComponent* collider2DComponent);
+
 SESpatialHashMap* spatialHashMap = NULL;
 
 EntitySystem* collision_ec_system_create() {
@@ -49,6 +53,11 @@ EntitySystem* collision_ec_system_create() {
         cre_collision_set_global_spatial_hash_map(spatialHashMap);
         isGlobalSpatialHashMapInitialized = true;
     }
+
+    // Setup scene manager call back
+    cre_scene_manager_register_scene_node_callback_sub((SceneNodeCallbackSubscriber) {
+        .onNodeEnteredSceneFunc = collision_system_on_node_entered_scene
+    });
 
     return collisionSystem;
 }
@@ -97,4 +106,33 @@ void collision_system_render() {
             globalTransform->zIndex // Do we just want to make this the max z index?
         );
     }
+}
+
+void collision_system_on_node_entered_scene(Entity entity) {
+    Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component_unsafe(entity, ComponentDataIndex_TRANSFORM_2D);
+    Collider2DComponent* colliderComp = (Collider2DComponent*) component_manager_get_component_unsafe(entity, ComponentDataIndex_COLLIDER_2D);
+    if (transformComp != NULL && colliderComp != NULL) {
+        Rect2 collisionRect = collision_get_collision_rectangle(entity, transformComp, colliderComp);
+        se_spatial_hash_map_insert_or_update(spatialHashMap, entity, &collisionRect);
+    }
+}
+
+// TODO: Centralize func
+Rect2 collision_get_collision_rectangle(Entity entity, Transform2DComponent* transform2DComponent, Collider2DComponent* collider2DComponent) {
+    const TransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity, transform2DComponent);
+    Rect2 collisionRect = {
+        .x = globalTransform->position.x,
+        .y = globalTransform->position.y,
+        .w = globalTransform->scale.x * collider2DComponent->extents.w,
+        .h = globalTransform->scale.y * collider2DComponent->extents.h,
+    };
+    if (collisionRect.w < 0.0f) {
+        collisionRect.x += collisionRect.w;
+        collisionRect.w = fabsf(collisionRect.w);
+    }
+    if (collisionRect.h < 0.0f) {
+        collisionRect.y += collisionRect.h;
+        collisionRect.h = fabsf(collisionRect.h);
+    }
+    return collisionRect;
 }

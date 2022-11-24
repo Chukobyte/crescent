@@ -64,6 +64,7 @@ Entity entitiesQueuedForDeletion[MAX_ENTITIES];
 size_t entitiesQueuedForDeletionSize = 0;
 
 SE_STATIC_ARRAY_CREATE(Entity, MAX_ENTITIES, entitiesToUnlinkParent);
+SE_STATIC_ARRAY_CREATE(SceneNodeCallbackSubscriber, 4, nodeCallbackSubscribers);
 
 Scene* activeScene = NULL;
 Scene* queuedSceneToChangeTo = NULL;
@@ -91,8 +92,16 @@ void cre_scene_manager_queue_entity_for_creation(SceneTreeNode* treeNode) {
 void cre_scene_manager_process_queued_creation_entities() {
     for (size_t i = 0; i < entitiesQueuedForCreationSize; i++) {
         cre_ec_system_entity_start(entitiesQueuedForCreation[i]);
+        SE_STATIC_ARRAY_FOR_LOOP(nodeCallbackSubscribers) {
+            SceneNodeCallbackSubscriber* nodeCallbackSubscriber = &nodeCallbackSubscribers[nodeCallbackSubscribers_loop_index];
+            nodeCallbackSubscriber->onNodeEnteredSceneFunc(entitiesQueuedForCreation[i]);
+        }
     }
     entitiesQueuedForCreationSize = 0;
+}
+
+void cre_scene_manager_register_scene_node_callback_sub(SceneNodeCallbackSubscriber subscriber) {
+    SE_STATIC_ARRAY_ADD(nodeCallbackSubscribers, subscriber);
 }
 
 void cre_scene_manager_queue_entity_for_deletion(Entity entity) {
@@ -204,7 +213,10 @@ TransformModel2D* cre_scene_manager_get_scene_node_global_transform(Entity entit
 }
 
 SceneTreeNode* cre_scene_manager_get_entity_tree_node(Entity entity) {
-    SE_ASSERT_FMT(se_hash_map_has(entityToTreeNodeMap, &entity), "Doesn't have entity '%d' in scene tree!", entity);
+    if (!se_hash_map_has(entityToTreeNodeMap, &entity)) {
+        SE_ASSERT_FMT(se_hash_map_has(entityToTreeNodeMap, &entity), "Doesn't have entity '%d' in scene tree!", entity);
+    }
+//    SE_ASSERT_FMT(se_hash_map_has(entityToTreeNodeMap, &entity), "Doesn't have entity '%d' in scene tree!", entity);
     SceneTreeNode* treeNode = (SceneTreeNode*) *(SceneTreeNode**) se_hash_map_get(entityToTreeNodeMap, &entity);
     SE_ASSERT_FMT(treeNode != NULL, "Failed to get tree node for entity '%d'", entity);
     return treeNode;

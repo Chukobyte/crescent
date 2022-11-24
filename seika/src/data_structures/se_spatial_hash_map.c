@@ -95,7 +95,12 @@ SESpatialHashMapGridSpacesHandle* se_spatial_hash_map_get(SESpatialHashMap* hash
 
 SESpatialHashMapCollisionResult se_spatial_hash_map_compute_collision(SESpatialHashMap* hashMap, unsigned int entity) {
     SESpatialHashMapCollisionResult result = { .collisionCount = 0 };
-    SESpatialHashMapGridSpacesHandle* objectHandle = (SESpatialHashMapGridSpacesHandle*) *(SESpatialHashMapGridSpacesHandle**) se_hash_map_get(hashMap->objectToGridMap, &entity);
+    void* objectHandlePtr = se_hash_map_get(hashMap->objectToGridMap, &entity);
+    // Early out if object not in spatial hash map
+    if (objectHandlePtr == NULL) {
+        return result;
+    }
+    SESpatialHashMapGridSpacesHandle* objectHandle = (SESpatialHashMapGridSpacesHandle*) *(SESpatialHashMapGridSpacesHandle**) objectHandlePtr;
     for (size_t i = 0; i < objectHandle->gridSpaceCount; i++) {
         SESpatialHashMapGridSpace* gridSpace = objectHandle->gridSpaces[i];
         for (size_t j = 0; j < gridSpace->entityCount; j++) {

@@ -12,6 +12,12 @@ extern "C" {
 SceneTreeNode* cre_scene_tree_create_tree_node(Entity entity, SceneTreeNode* parent);
 
 // --- Scene Manager --- //
+typedef void (*OnNodeEnteredSceneFunc) (Entity);
+
+typedef struct SceneNodeCallbackSubscriber {
+    OnNodeEnteredSceneFunc onNodeEnteredSceneFunc;
+} SceneNodeCallbackSubscriber;
+
 void cre_scene_manager_initialize();
 void cre_scene_manager_finalize();
 void cre_scene_manager_queue_entity_for_creation(SceneTreeNode* treeNode);
@@ -21,6 +27,7 @@ void cre_queue_destroy_tree_node_entity_all(SceneTreeNode* treeNode);
 void cre_scene_manager_process_queued_deletion_entities();
 void cre_scene_manager_queue_scene_change(const char* scenePath);
 void cre_scene_manager_process_queued_scene_change();
+void cre_scene_manager_register_scene_node_callback_sub(SceneNodeCallbackSubscriber subscriber);
 
 // Scene Tree related stuff, may separate into separate functionality later.
 void cre_scene_manager_set_active_scene_root(SceneTreeNode* root);
