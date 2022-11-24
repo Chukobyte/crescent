@@ -1,6 +1,7 @@
 #include "se_spatial_hash_map.h"
 
 #include <stdint.h>
+#include <string.h>
 
 #include "../memory/se_mem.h"
 
@@ -17,6 +18,7 @@ bool link_object_by_position_hash(SESpatialHashMap* hashMap, SESpatialHashMapGri
 bool unlink_object_by_entity(SESpatialHashMap* hashMap, SESpatialHashMapGridSpacesHandle* object, SESpatialHashMapGridSpace* gridSpace, unsigned int entity);
 void unlink_all_objects_by_entity(SESpatialHashMap* hashMap, SESpatialHashMapGridSpacesHandle* object, unsigned int entity);
 bool collision_result_has_entity(SESpatialHashMapCollisionResult* result, unsigned int entity);
+bool does_rectangles_collide(Rect2* sourceRect, Rect2* targetRect);
 
 // Public facing functions
 SESpatialHashMap* se_spatial_hash_map_create(int cellSize) {
@@ -43,6 +45,7 @@ SESpatialHashMapGridSpacesHandle* se_spatial_hash_map_insert_or_update(SESpatial
         se_hash_map_add(hashMap->objectToGridMap, &entity, &newHandle);
     }
     SESpatialHashMapGridSpacesHandle* objectHandle = (SESpatialHashMapGridSpacesHandle*) *(SESpatialHashMapGridSpacesHandle**) se_hash_map_get(hashMap->objectToGridMap, &entity);
+    memcpy(&objectHandle->collisionRect, collisionRect, sizeof(Rect2));
 
     // Unlink all previous spaces and objects
     unlink_all_objects_by_entity(hashMap, objectHandle, entity);
@@ -78,7 +81,6 @@ void se_spatial_hash_map_remove(SESpatialHashMap* hashMap, unsigned int entity) 
         return;
     }
     SESpatialHashMapGridSpacesHandle* objectHandle = (SESpatialHashMapGridSpacesHandle*) *(SESpatialHashMapGridSpacesHandle**) se_hash_map_get(hashMap->objectToGridMap, &entity);
-    const size_t numberOfSpaces = objectHandle->gridSpaceCount;
     unlink_all_objects_by_entity(hashMap, objectHandle, entity);
     SE_MEM_FREE(objectHandle);
     se_hash_map_erase(hashMap->objectToGridMap, &entity);
@@ -97,10 +99,13 @@ SESpatialHashMapCollisionResult se_spatial_hash_map_compute_collision(SESpatialH
     for (size_t i = 0; i < objectHandle->gridSpaceCount; i++) {
         SESpatialHashMapGridSpace* gridSpace = objectHandle->gridSpaces[i];
         for (size_t j = 0; j < gridSpace->entityCount; j++) {
-            const unsigned int entityToCollide = gridSpace->entities[j];
+            unsigned int entityToCollide = gridSpace->entities[j];
             if (entity != entityToCollide && !collision_result_has_entity(&result, entityToCollide)) {
-                // TODO: Calculate bounds before inserting as collided...
-                result.collisions[result.collisionCount++] = entityToCollide;
+                SESpatialHashMapGridSpacesHandle* entityToCollideObjectHandle = (SESpatialHashMapGridSpacesHandle*) *(SESpatialHashMapGridSpacesHandle**) se_hash_map_get(hashMap->objectToGridMap, &entityToCollide);
+                // Now that we have passed all checks, actually check collision
+                if (does_rectangles_collide(&objectHandle->collisionRect, &entityToCollideObjectHandle->collisionRect)) {
+                    result.collisions[result.collisionCount++] = entityToCollide;
+                }
             }
         }
     }
@@ -172,4 +177,11 @@ bool collision_result_has_entity(SESpatialHashMapCollisionResult* result, unsign
         }
     }
     return false;
+}
+
+bool does_rectangles_collide(Rect2* sourceRect, Rect2* targetRect) {
+    return (sourceRect->x + sourceRect->w >= targetRect->x) &&
+           (targetRect->x + targetRect->w >= sourceRect->x) &&
+           (sourceRect->y + sourceRect->h >= targetRect->y) &&
+           (targetRect->y + targetRect->h >= sourceRect->y);
 }

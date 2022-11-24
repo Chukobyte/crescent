@@ -42,9 +42,15 @@ void seika_spatial_hash_map_test() {
 
     const unsigned int entityTwo = 2;
     SESpatialHashMapGridSpacesHandle* handleTwo = se_spatial_hash_map_insert_or_update(spatialHashMap, entityTwo, &(Rect2) {
-        0.0f, 0.0f, 32.0f, 32.0f
+        16.0f, 16.0f, 48.0f, 48.0f
     });
     TEST_ASSERT_EQUAL(handleTwo, se_spatial_hash_map_get(spatialHashMap, entityTwo));
+
+    // An entity that should not be collided with
+    const unsigned int entityNotCollided = 3;
+    se_spatial_hash_map_insert_or_update(spatialHashMap, entityNotCollided, &(Rect2) {
+            64.0f, 64.0f, 96.0f, 96.0f
+    });
 
     // Test collision result to make sure the two entities collide
     const SESpatialHashMapCollisionResult collisionResult = se_spatial_hash_map_compute_collision(spatialHashMap, entity);

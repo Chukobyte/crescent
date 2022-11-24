@@ -14,8 +14,9 @@ typedef struct SESpatialHashMapGridSpace {
 
 // Contains all grid spaces an object is assigned to
 typedef struct SESpatialHashMapGridSpacesHandle {
-    SESpatialHashMapGridSpace* gridSpaces[4];
     size_t gridSpaceCount;
+    Rect2 collisionRect;
+    SESpatialHashMapGridSpace* gridSpaces[4];
 } SESpatialHashMapGridSpacesHandle;
 
 // Contains a hash map of buckets that correspond to spaces on a grid
