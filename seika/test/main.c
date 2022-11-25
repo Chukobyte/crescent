@@ -14,6 +14,7 @@
 void setUp() {}
 void tearDown() {}
 
+void seika_hash_map_test();
 void seika_spatial_hash_map_test();
 void seika_file_system_utils_test();
 void seika_string_utils_test();
@@ -21,11 +22,44 @@ void seika_asset_file_loader_test();
 
 int main(int argv, char** args) {
     UNITY_BEGIN();
+    RUN_TEST(seika_hash_map_test);
     RUN_TEST(seika_spatial_hash_map_test);
     RUN_TEST(seika_file_system_utils_test);
     RUN_TEST(seika_string_utils_test);
     RUN_TEST(seika_asset_file_loader_test);
     return UNITY_END();
+}
+
+void seika_hash_map_test() {
+    SEHashMap* hashMap = se_hash_map_create(sizeof(int*), sizeof(int*), SE_HASH_MAP_MIN_CAPACITY);
+    TEST_ASSERT_TRUE(hashMap != NULL);
+
+    int key1 = 0;
+    int value1 = 11;
+    se_hash_map_add(hashMap, &key1, &value1);
+    TEST_ASSERT_EQUAL_INT(1, hashMap->size);
+    int returnedValue1 = *(int*) se_hash_map_get(hashMap, &key1);
+    TEST_ASSERT_EQUAL_INT(value1, returnedValue1);
+
+    int key2 = 1;
+    int value2 = 22;
+    se_hash_map_add(hashMap, &key2, &value2);
+    TEST_ASSERT_EQUAL_INT(2, hashMap->size);
+
+    // Iterator test
+    int iterCount = 0;
+    for (SEHashMapIterator iterator = se_hash_map_iter_create(hashMap); se_hash_map_iter_is_valid(hashMap, &iterator); se_hash_map_iter_advance(hashMap, &iterator)) {
+        iterCount++;
+    }
+    TEST_ASSERT_EQUAL_INT(2, iterCount);
+    // Iter Macro test
+    iterCount = 0;
+    SE_HASH_MAP_FOR_EACH(hashMap, iter) {
+        iterCount++;
+    }
+    TEST_ASSERT_EQUAL_INT(2, iterCount);
+
+    se_hash_map_destroy(hashMap);
 }
 
 void seika_spatial_hash_map_test() {

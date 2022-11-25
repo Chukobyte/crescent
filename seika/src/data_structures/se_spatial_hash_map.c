@@ -14,6 +14,7 @@ typedef struct PositionHashes {
 } PositionHashes;
 
 int32_t spatial_hash(SESpatialHashMap* hashMap, Vector2* position);
+void spatial_hash_map_destroy_node(SESpatialHashMap* hashMap);
 SESpatialHashMapGridSpace* get_or_create_grid_space(SESpatialHashMap* hashMap, int32_t positionHash);
 bool link_object_by_position_hash(SESpatialHashMap* hashMap, SESpatialHashMapGridSpacesHandle* object, unsigned int value, int32_t positionHash, PositionHashes* hashes);
 bool unlink_object_by_entity(SESpatialHashMap* hashMap, SESpatialHashMapGridSpacesHandle* object, SESpatialHashMapGridSpace* gridSpace, unsigned int entity);
@@ -31,17 +32,25 @@ SESpatialHashMap* se_spatial_hash_map_create(int cellSize) {
 }
 
 void se_spatial_hash_map_destroy(SESpatialHashMap* hashMap) {
-    // TODO: Destroy internal data
+    // Grid map
+    SE_HASH_MAP_FOR_EACH(hashMap->gridMap, iter) {
+        HashMapNode* node = iter.pair;
+        SESpatialHashMapGridSpace* gridSpace = (SESpatialHashMapGridSpace*) *(SESpatialHashMapGridSpace**) node->value;
+        SE_MEM_FREE(gridSpace);
+    }
     se_hash_map_destroy(hashMap->gridMap);
+    // Grid space Handle Map
+    SE_HASH_MAP_FOR_EACH(hashMap->objectToGridMap, iter) {
+        HashMapNode* node = iter.pair;
+        SESpatialHashMapGridSpacesHandle* handle = (SESpatialHashMapGridSpacesHandle*) *(SESpatialHashMapGridSpacesHandle**) node->value;
+        SE_MEM_FREE(handle);
+    }
     se_hash_map_destroy(hashMap->objectToGridMap);
+    // Finally free the hashmap memory
     SE_MEM_FREE(hashMap);
 }
 
 SESpatialHashMapGridSpacesHandle* se_spatial_hash_map_insert_or_update(SESpatialHashMap* hashMap, unsigned int entity, Rect2* collisionRect) {
-    // Debug
-    se_logger_debug("se_spatial_hash_map_insert_or_update | entity: '%d', collisionRect: (%f, %f, %f, %f)",
-                    entity, collisionRect->x, collisionRect->y, collisionRect->w, collisionRect->h);
-
     // Create new object handle if it doesn't exist
     if (!se_hash_map_has(hashMap->objectToGridMap, &entity)) {
         SESpatialHashMapGridSpacesHandle* newHandle = SE_MEM_ALLOCATE(SESpatialHashMapGridSpacesHandle);
