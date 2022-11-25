@@ -55,31 +55,12 @@ Vector2 se_mouse_get_global_position(SEMouse* mouse, Vector2* offset) {
     return mouseWorldPos;
 }
 
-Rect2 se_get_collision_rectangle(Entity entity, Transform2DComponent* transform2DComponent, Collider2DComponent* collider2DComponent) {
-    const TransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity, transform2DComponent);
-    Rect2 collisionRect = {
-        .x = globalTransform->position.x,
-        .y = globalTransform->position.y,
-        .w = globalTransform->scale.x * collider2DComponent->extents.w,
-        .h = globalTransform->scale.y * collider2DComponent->extents.h,
-    };
-    if (collisionRect.w < 0.0f) {
-        collisionRect.x += collisionRect.w;
-        collisionRect.w = fabsf(collisionRect.w);
-    }
-    if (collisionRect.h < 0.0f) {
-        collisionRect.y += collisionRect.h;
-        collisionRect.h = fabsf(collisionRect.h);
-    }
-    return collisionRect;
-}
-
 void se_update_collision_data(Entity entity) {
     Transform2DComponent* transformComp = (Transform2DComponent *) component_manager_get_component_unsafe(entity, ComponentDataIndex_TRANSFORM_2D);
     if (transformComp != NULL && cre_scene_manager_has_entity_tree_node(entity)) {
         Collider2DComponent* colliderComp = (Collider2DComponent*) component_manager_get_component_unsafe(entity, ComponentDataIndex_COLLIDER_2D);
         if (colliderComp != NULL) {
-            Rect2 collisionRect = se_get_collision_rectangle(entity, transformComp, colliderComp);
+            Rect2 collisionRect = cre_get_collision_rectangle(entity, transformComp, colliderComp);
             SESpatialHashMap* spatialHashMap = cre_collision_get_global_spatial_hash_map();
             se_spatial_hash_map_insert_or_update(spatialHashMap, entity, &collisionRect);
         }

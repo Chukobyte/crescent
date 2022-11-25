@@ -19,7 +19,6 @@ bool link_object_by_position_hash(SESpatialHashMap* hashMap, SESpatialHashMapGri
 bool unlink_object_by_entity(SESpatialHashMap* hashMap, SESpatialHashMapGridSpacesHandle* object, SESpatialHashMapGridSpace* gridSpace, unsigned int entity);
 void unlink_all_objects_by_entity(SESpatialHashMap* hashMap, SESpatialHashMapGridSpacesHandle* object, unsigned int entity);
 bool collision_result_has_entity(SESpatialHashMapCollisionResult* result, unsigned int entity);
-bool se_does_rectangles_collide(Rect2* sourceRect, Rect2* targetRect);
 
 // Public facing functions
 SESpatialHashMap* se_spatial_hash_map_create(int cellSize) {
@@ -113,7 +112,7 @@ SESpatialHashMapCollisionResult se_spatial_hash_map_compute_collision(SESpatialH
             if (entity != entityToCollide && !collision_result_has_entity(&result, entityToCollide)) {
                 SESpatialHashMapGridSpacesHandle* entityToCollideObjectHandle = (SESpatialHashMapGridSpacesHandle*) *(SESpatialHashMapGridSpacesHandle**) se_hash_map_get(hashMap->objectToGridMap, &entityToCollide);
                 // Now that we have passed all checks, actually check collision
-                if (se_does_rectangles_collide(&objectHandle->collisionRect, &entityToCollideObjectHandle->collisionRect)) {
+                if (se_rect2_does_rectangles_overlap(&objectHandle->collisionRect, &entityToCollideObjectHandle->collisionRect)) {
                     result.collisions[result.collisionCount++] = entityToCollide;
                 }
             }
@@ -187,11 +186,4 @@ bool collision_result_has_entity(SESpatialHashMapCollisionResult* result, unsign
         }
     }
     return false;
-}
-
-bool se_does_rectangles_collide(Rect2* sourceRect, Rect2* targetRect) {
-    return (sourceRect->x + sourceRect->w >= targetRect->x) &&
-           (targetRect->x + targetRect->w >= sourceRect->x) &&
-           (sourceRect->y + sourceRect->h >= targetRect->y) &&
-           (targetRect->y + targetRect->h >= sourceRect->y);
 }
