@@ -74,7 +74,7 @@ void cre_scene_manager_setup_scene_nodes_from_json(JsonSceneNode* jsonSceneNode)
 
 void cre_scene_manager_initialize() {
     SE_ASSERT(entityToTreeNodeMap == NULL);
-    entityToTreeNodeMap = se_hash_map_create(sizeof(Entity), sizeof(SceneTreeNode **), 16); // TODO: Update capacity
+    entityToTreeNodeMap = se_hash_map_create(sizeof(Entity), sizeof(SceneTreeNode**), 16); // TODO: Update capacity
 }
 
 void cre_scene_manager_finalize() {
@@ -91,6 +91,7 @@ void cre_scene_manager_queue_entity_for_creation(SceneTreeNode* treeNode) {
 void cre_scene_manager_process_queued_creation_entities() {
     for (size_t i = 0; i < entitiesQueuedForCreationSize; i++) {
         cre_ec_system_entity_start(entitiesQueuedForCreation[i]);
+        cre_ec_system_entity_entered_scene(entitiesQueuedForCreation[i]);
     }
     entitiesQueuedForCreationSize = 0;
 }
@@ -222,6 +223,10 @@ Entity cre_scene_manager_get_entity_child_by_name(Entity parent, const char* chi
         }
     }
     return NULL_ENTITY;
+}
+
+bool cre_scene_manager_has_entity_tree_node(Entity entity) {
+    return se_hash_map_has(entityToTreeNodeMap, &entity);
 }
 
 // Scene node setup

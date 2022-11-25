@@ -8,6 +8,7 @@ typedef void (*OnEntityRegisteredFunc) (Entity); // init
 typedef void (*OnEntityStartFunc) (Entity); // Useful for after initialization functionality (such as entering a scene)
 typedef void (*OnEntityEndFunc) (Entity); // Useful for before deletion functionality (such as leaving a scene)
 typedef void (*OnEntityUnRegisteredFunc) (Entity); // delete
+typedef void (*OnEntityEnteredSceneFunc) (Entity); // When entity enters a scene (after _start() is called)
 typedef void (*RenderFunc) ();
 typedef void (*ProcessFunc) (float);
 typedef void (*PhysicsProcessFunc) (float);
@@ -19,6 +20,7 @@ typedef struct EntitySystem {
     OnEntityStartFunc on_entity_start_func;
     OnEntityEndFunc on_entity_end_func;
     OnEntityUnRegisteredFunc on_entity_unregistered_func;
+    OnEntityEnteredSceneFunc on_entity_entered_scene_func;
     RenderFunc render_func;
     ProcessFunc process_func;
     PhysicsProcessFunc physics_process_func;
@@ -39,6 +41,7 @@ bool cre_ec_system_has_entity(Entity entity, EntitySystem* system);
 
 void cre_ec_system_entity_start(Entity entity);
 void cre_ec_system_entity_end(Entity entity);
+void cre_ec_system_entity_entered_scene(Entity entity);
 void cre_ec_system_render_systems();
 void cre_ec_system_process_systems(float deltaTime);
 void cre_ec_system_physics_process_systems(float deltaTime);

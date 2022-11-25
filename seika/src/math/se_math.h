@@ -29,6 +29,8 @@ typedef struct Rect2 {
     float h;
 } Rect2;
 
+bool se_rect2_does_rectangles_overlap(Rect2* sourceRect, Rect2* targetRect);
+
 //--- Transform2D ---//
 typedef struct Transform2D {
     Vector2 position;

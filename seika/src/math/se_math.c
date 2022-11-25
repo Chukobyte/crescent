@@ -1,5 +1,13 @@
 #include "se_math.h"
 
+// --- Rect2 --- //
+bool se_rect2_does_rectangles_overlap(Rect2* sourceRect, Rect2* targetRect) {
+    return (sourceRect->x + sourceRect->w >= targetRect->x) &&
+           (targetRect->x + targetRect->w >= sourceRect->x) &&
+           (sourceRect->y + sourceRect->h >= targetRect->y) &&
+           (targetRect->y + targetRect->h >= sourceRect->y);
+}
+
 // --- Color --- //
 Color se_color_get_normalized_color_default_alpha(unsigned int r, unsigned int g, unsigned int b) {
     Color color = {
