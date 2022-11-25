@@ -12,6 +12,7 @@ typedef struct EntitySystemData {
     size_t entity_systems_count;
     size_t on_entity_start_systems_count;
     size_t on_entity_end_systems_count;
+    size_t on_entity_entered_scene_systems_count;
     size_t render_systems_count;
     size_t process_systems_count;
     size_t physics_process_systems_count;
@@ -19,6 +20,7 @@ typedef struct EntitySystemData {
     EntitySystem* entity_systems[MAX_COMPONENTS];
     EntitySystem* on_entity_start_systems[MAX_ENTITY_SYSTEMS_PER_HOOK];
     EntitySystem* on_entity_end_systems[MAX_ENTITY_SYSTEMS_PER_HOOK];
+    EntitySystem* on_entity_entered_scene_systems[MAX_ENTITY_SYSTEMS_PER_HOOK];
     EntitySystem* render_systems[MAX_ENTITY_SYSTEMS_PER_HOOK];
     EntitySystem* process_systems[MAX_ENTITY_SYSTEMS_PER_HOOK];
     EntitySystem* physics_process_systems[MAX_ENTITY_SYSTEMS_PER_HOOK];
@@ -38,6 +40,7 @@ void cre_ec_system_initialize() {
     for (size_t i = 0; i < MAX_ENTITY_SYSTEMS_PER_HOOK; i++) {
         entitySystemData.on_entity_start_systems[i] = NULL;
         entitySystemData.on_entity_end_systems[i] = NULL;
+        entitySystemData.on_entity_entered_scene_systems[i] = NULL;
         entitySystemData.render_systems[i] = NULL;
         entitySystemData.process_systems[i] = NULL;
         entitySystemData.physics_process_systems[i] = NULL;
@@ -52,6 +55,7 @@ void cre_ec_system_initialize() {
     entitySystemData.entity_systems_count = 0;
     entitySystemData.on_entity_start_systems_count = 0;
     entitySystemData.on_entity_end_systems_count = 0;
+    entitySystemData.on_entity_entered_scene_systems_count = 0;
     entitySystemData.render_systems_count = 0;
     entitySystemData.process_systems_count = 0;
     entitySystemData.physics_process_systems_count = 0;
@@ -95,6 +99,9 @@ void cre_ec_system_register(EntitySystem* system) {
     if (system->on_entity_end_func != NULL) {
         entitySystemData.on_entity_end_systems[entitySystemData.on_entity_end_systems_count++] = system;
     }
+    if (system->on_entity_entered_scene_func != NULL) {
+        entitySystemData.on_entity_entered_scene_systems[entitySystemData.on_entity_entered_scene_systems_count++] = system;
+    }
     if (system->render_func != NULL) {
         entitySystemData.render_systems[entitySystemData.render_systems_count++] = system;
     }
@@ -135,6 +142,12 @@ void cre_ec_system_entity_end(Entity entity) {
         if ((entityComponentSignature & entitySystemData.on_entity_end_systems[i]->component_signature) == entitySystemData.on_entity_end_systems[i]->component_signature) {
             entitySystemData.on_entity_end_systems[i]->on_entity_end_func(entity);
         }
+    }
+}
+
+void cre_ec_system_entity_entered_scene(Entity entity) {
+    for (size_t i = 0; i < entitySystemData.on_entity_entered_scene_systems_count; i++) {
+        entitySystemData.on_entity_entered_scene_systems[i]->on_entity_entered_scene_func(entity);
     }
 }
 

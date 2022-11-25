@@ -7,6 +7,7 @@
 #include "ec_system.h"
 #include "../component/transform2d_component.h"
 #include "../component/collider2d_component.h"
+#include "../../physics/collision/collision.h"
 #include "../../scene/scene_manager.h"
 #include "../../game_properties.h"
 #include "../../camera/camera.h"
@@ -17,8 +18,13 @@ EntitySystem* collisionSystem = NULL;
 Texture* collisionOutlineTexture = NULL;
 Rect2 colliderDrawSource = { .x=0.0f, .y=0.0f, .w=1.0f, .h=1.0f };
 
+void collision_system_entity_unregistered(Entity entity);
 void collision_system_physics_update(float deltaTime);
 void collision_system_render();
+
+void collision_system_on_node_entered_scene(Entity entity);
+
+SESpatialHashMap* spatialHashMap = NULL;
 
 EntitySystem* collision_ec_system_create() {
     SE_ASSERT(collisionSystem == NULL);
@@ -26,6 +32,8 @@ EntitySystem* collision_ec_system_create() {
     collisionSystem->name = se_strdup("Collision");
     collisionSystem->component_signature = ComponentType_TRANSFORM_2D | ComponentType_COLLIDER_2D;
 
+    collisionSystem->on_entity_entered_scene_func = collision_system_on_node_entered_scene;
+    collisionSystem->on_entity_unregistered_func = collision_system_entity_unregistered;
     collisionSystem->physics_process_func = collision_system_physics_update;
 
     CREGameProperties* gameProps = cre_game_props_get();
@@ -35,11 +43,25 @@ EntitySystem* collision_ec_system_create() {
         collisionOutlineTexture = se_texture_create_solid_colored_texture(1, 1, 255);
         SE_ASSERT(collisionOutlineTexture != NULL);
     }
+
+    // One time init of global spatial hash map
+    static bool isGlobalSpatialHashMapInitialized = false;
+    if (!isGlobalSpatialHashMapInitialized) {
+        const int maxSpriteSize = 32;
+        spatialHashMap = se_spatial_hash_map_create(maxSpriteSize * 2);
+        cre_collision_set_global_spatial_hash_map(spatialHashMap);
+        isGlobalSpatialHashMapInitialized = true;
+    }
+
     return collisionSystem;
 }
 
 EntitySystem* collision_ec_system_get() {
     return collisionSystem;
+}
+
+void collision_system_entity_unregistered(Entity entity) {
+    se_spatial_hash_map_remove(spatialHashMap, entity);
 }
 
 // TODO: Temp, figure out how we want to handle caching the global transform
@@ -77,5 +99,14 @@ void collision_system_render() {
             globalTransform,
             globalTransform->zIndex // Do we just want to make this the max z index?
         );
+    }
+}
+
+void collision_system_on_node_entered_scene(Entity entity) {
+    Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component_unsafe(entity, ComponentDataIndex_TRANSFORM_2D);
+    Collider2DComponent* colliderComp = (Collider2DComponent*) component_manager_get_component_unsafe(entity, ComponentDataIndex_COLLIDER_2D);
+    if (transformComp != NULL && colliderComp != NULL) {
+        Rect2 collisionRect = cre_get_collision_rectangle(entity, transformComp, colliderComp);
+        se_spatial_hash_map_insert_or_update(spatialHashMap, entity, &collisionRect);
     }
 }

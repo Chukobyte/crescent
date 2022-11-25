@@ -1,38 +1,24 @@
 #include "collision.h"
 
 #include "../seika/src/utils/logger.h"
+#include "../seika/src/utils/se_assert.h"
 
 #include "../../ecs/system/ec_system.h"
 #include "../../ecs/system/collision_ec_system.h"
-#include "../../ecs/component/transform2d_component.h"
-#include "../../ecs/component/collider2d_component.h"
 #include "../../scene/scene_manager.h"
 
-// TODO: Temp collision logic, implement a more efficient solution!
 bool is_entity_in_collision_exceptions(Entity entity, Collider2DComponent* collider2DComponent);
-Rect2 get_collision_rectangle(Entity entity, Transform2DComponent* transform2DComponent, Collider2DComponent* collider2DComponent);
-bool does_rectangles_collide(Rect2* sourceRect, Rect2* targetRect);
+
+SESpatialHashMap* globalSpatialHashMap = NULL;
 
 CollisionResult cre_collision_process_entity_collisions(Entity entity) {
-    CollisionResult collisionResult = { .sourceEntity = entity, .collidedEntityCount = 0 };
-    const EntitySystem* collisionSystem = collision_ec_system_get();
-    Transform2DComponent* transformComponent = component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
     Collider2DComponent* colliderComponent = component_manager_get_component(entity, ComponentDataIndex_COLLIDER_2D);
-    Rect2 sourceCollisionRect = get_collision_rectangle(entity, transformComponent, colliderComponent);
-    for (size_t i = 0; i < collisionSystem->entity_count; i++) {
-        const Entity otherEntity = collisionSystem->entities[i];
-        if (entity == otherEntity || is_entity_in_collision_exceptions(otherEntity, colliderComponent)) {
-            continue;
-        }
-        Transform2DComponent* otherTransformComponent = component_manager_get_component(otherEntity, ComponentDataIndex_TRANSFORM_2D);
-        Collider2DComponent* otherColliderComponent = component_manager_get_component(otherEntity, ComponentDataIndex_COLLIDER_2D);
-        Rect2 otherCollisionRect = get_collision_rectangle(otherEntity, otherTransformComponent, otherColliderComponent);
-        if (does_rectangles_collide(&sourceCollisionRect, &otherCollisionRect)) {
-            collisionResult.collidedEntities[collisionResult.collidedEntityCount++] = otherEntity;
-            if (collisionResult.collidedEntityCount >= RBE_MAX_ENTITY_COLLISION) {
-                se_logger_warn("Reached collided entity limit of '%d'", RBE_MAX_ENTITY_COLLISION);
-                break;
-            }
+    CollisionResult collisionResult = { .sourceEntity = entity, .collidedEntityCount = 0 };
+    SESpatialHashMapCollisionResult hashMapCollisionResult = se_spatial_hash_map_compute_collision(globalSpatialHashMap, entity);
+    for (size_t i = 0; i < hashMapCollisionResult.collisionCount; i++) {
+        if (!is_entity_in_collision_exceptions(hashMapCollisionResult.collisions[i], colliderComponent)) {
+            SE_ASSERT_FMT(collisionResult.collidedEntityCount < RBE_MAX_ENTITY_COLLISION, "Collisions for entity '%d' beyond the limit of %d.  Consider increasing 'RBE_MAX_ENTITY_COLLISION'!", entity, RBE_MAX_ENTITY_COLLISION);
+            collisionResult.collidedEntities[collisionResult.collidedEntityCount++] = hashMapCollisionResult.collisions[i];
         }
     }
     return collisionResult;
@@ -45,8 +31,8 @@ CollisionResult cre_collision_process_mouse_collisions(Rect2* collisionRect) {
         const Entity otherEntity = collisionSystem->entities[i];
         Transform2DComponent* otherTransformComponent = component_manager_get_component(otherEntity, ComponentDataIndex_TRANSFORM_2D);
         Collider2DComponent* otherColliderComponent = component_manager_get_component(otherEntity, ComponentDataIndex_COLLIDER_2D);
-        Rect2 otherCollisionRect = get_collision_rectangle(otherEntity, otherTransformComponent, otherColliderComponent);
-        if (does_rectangles_collide(collisionRect, &otherCollisionRect)) {
+        Rect2 otherCollisionRect = cre_get_collision_rectangle(otherEntity, otherTransformComponent, otherColliderComponent);
+        if (se_rect2_does_rectangles_overlap(collisionRect, &otherCollisionRect)) {
             collisionResult.collidedEntities[collisionResult.collidedEntityCount++] = otherEntity;
             if (collisionResult.collidedEntityCount >= RBE_MAX_ENTITY_COLLISION) {
                 se_logger_warn("Reached collided entity limit of '%d' (with mouse)", RBE_MAX_ENTITY_COLLISION);
@@ -57,6 +43,15 @@ CollisionResult cre_collision_process_mouse_collisions(Rect2* collisionRect) {
     return collisionResult;
 }
 
+void cre_collision_set_global_spatial_hash_map(SESpatialHashMap* hashMap) {
+    globalSpatialHashMap = hashMap;
+}
+
+SESpatialHashMap* cre_collision_get_global_spatial_hash_map() {
+    return globalSpatialHashMap;
+}
+
+// Internal functions
 bool is_entity_in_collision_exceptions(Entity entity, Collider2DComponent* collider2DComponent) {
     for (size_t i = 0; i < collider2DComponent->collisionExceptionCount; i++) {
         if (entity == collider2DComponent->collisionExceptions[i]) {
@@ -66,7 +61,7 @@ bool is_entity_in_collision_exceptions(Entity entity, Collider2DComponent* colli
     return false;
 }
 
-Rect2 get_collision_rectangle(Entity entity, Transform2DComponent* transform2DComponent, Collider2DComponent* collider2DComponent) {
+Rect2 cre_get_collision_rectangle(Entity entity, Transform2DComponent* transform2DComponent, Collider2DComponent* collider2DComponent) {
     const TransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity,
             transform2DComponent);
     Rect2 collisionRect = {
@@ -84,11 +79,4 @@ Rect2 get_collision_rectangle(Entity entity, Transform2DComponent* transform2DCo
         collisionRect.h = fabsf(collisionRect.h);
     }
     return collisionRect;
-}
-
-bool does_rectangles_collide(Rect2* sourceRect, Rect2* targetRect) {
-    return (sourceRect->x + sourceRect->w >= targetRect->x) &&
-           (targetRect->x + targetRect->w >= sourceRect->x) &&
-           (sourceRect->y + sourceRect->h >= targetRect->y) &&
-           (targetRect->y + targetRect->h >= sourceRect->y);
 }

@@ -2,6 +2,7 @@
 
 #include <SDL2/SDL_main.h>
 
+#include "../src/data_structures/se_spatial_hash_map.h"
 #include "../src/asset/asset_file_loader.h"
 #include "../src/memory/se_mem.h"
 #include "../src/utils/se_string_util.h"
@@ -13,16 +14,92 @@
 void setUp() {}
 void tearDown() {}
 
+void seika_hash_map_test();
+void seika_spatial_hash_map_test();
 void seika_file_system_utils_test();
 void seika_string_utils_test();
 void seika_asset_file_loader_test();
 
 int main(int argv, char** args) {
     UNITY_BEGIN();
+    RUN_TEST(seika_hash_map_test);
+    RUN_TEST(seika_spatial_hash_map_test);
     RUN_TEST(seika_file_system_utils_test);
     RUN_TEST(seika_string_utils_test);
     RUN_TEST(seika_asset_file_loader_test);
     return UNITY_END();
+}
+
+void seika_hash_map_test() {
+    SEHashMap* hashMap = se_hash_map_create(sizeof(int*), sizeof(int*), SE_HASH_MAP_MIN_CAPACITY);
+    TEST_ASSERT_TRUE(hashMap != NULL);
+
+    int key1 = 0;
+    int value1 = 11;
+    se_hash_map_add(hashMap, &key1, &value1);
+    TEST_ASSERT_EQUAL_INT(1, hashMap->size);
+    int returnedValue1 = *(int*) se_hash_map_get(hashMap, &key1);
+    TEST_ASSERT_EQUAL_INT(value1, returnedValue1);
+
+    int key2 = 1;
+    int value2 = 22;
+    se_hash_map_add(hashMap, &key2, &value2);
+    TEST_ASSERT_EQUAL_INT(2, hashMap->size);
+
+    // Iterator test
+    int iterCount = 0;
+    for (SEHashMapIterator iterator = se_hash_map_iter_create(hashMap); se_hash_map_iter_is_valid(hashMap, &iterator); se_hash_map_iter_advance(hashMap, &iterator)) {
+        iterCount++;
+    }
+    TEST_ASSERT_EQUAL_INT(2, iterCount);
+    // Iter Macro test
+    iterCount = 0;
+    SE_HASH_MAP_FOR_EACH(hashMap, iter) {
+        iterCount++;
+    }
+    TEST_ASSERT_EQUAL_INT(2, iterCount);
+
+    se_hash_map_destroy(hashMap);
+}
+
+void seika_spatial_hash_map_test() {
+    const int maxSpriteSize = 32;
+    SESpatialHashMap* spatialHashMap = se_spatial_hash_map_create(maxSpriteSize * 2);
+    TEST_ASSERT_TRUE(spatialHashMap != NULL);
+
+    // Create two entities and insert them into hash map
+    const unsigned int entity = 1;
+    SESpatialHashMapGridSpacesHandle* handle = se_spatial_hash_map_insert_or_update(spatialHashMap, entity, &(Rect2) {
+        0.0f, 0.0f, 32.0f, 32.0f
+    });
+    TEST_ASSERT_EQUAL(handle, se_spatial_hash_map_get(spatialHashMap, entity));
+
+    const unsigned int entityTwo = 2;
+    SESpatialHashMapGridSpacesHandle* handleTwo = se_spatial_hash_map_insert_or_update(spatialHashMap, entityTwo, &(Rect2) {
+        16.0f, 16.0f, 48.0f, 48.0f
+    });
+    TEST_ASSERT_EQUAL(handleTwo, se_spatial_hash_map_get(spatialHashMap, entityTwo));
+
+    // An entity that should not be collided with
+    const unsigned int entityNotCollided = 3;
+    se_spatial_hash_map_insert_or_update(spatialHashMap, entityNotCollided, &(Rect2) {
+        64.0f, 64.0f, 96.0f, 96.0f
+    });
+
+    // Test collision result to make sure the two entities collide
+    const SESpatialHashMapCollisionResult collisionResult = se_spatial_hash_map_compute_collision(spatialHashMap, entity);
+    TEST_ASSERT_EQUAL_INT(1, collisionResult.collisionCount);
+
+    if (collisionResult.collisionCount > 0) {
+        TEST_ASSERT_EQUAL_INT(2, collisionResult.collisions[0]);
+    }
+
+    se_spatial_hash_map_remove(spatialHashMap, entity);
+    TEST_ASSERT_EQUAL(NULL, se_spatial_hash_map_get(spatialHashMap, entity));
+    se_spatial_hash_map_remove(spatialHashMap, entityTwo);
+    TEST_ASSERT_EQUAL(NULL, se_spatial_hash_map_get(spatialHashMap, entityTwo));
+
+    se_spatial_hash_map_destroy(spatialHashMap);
 }
 
 void seika_file_system_utils_test() {
