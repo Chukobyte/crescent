@@ -64,7 +64,6 @@ Entity entitiesQueuedForDeletion[MAX_ENTITIES];
 size_t entitiesQueuedForDeletionSize = 0;
 
 SE_STATIC_ARRAY_CREATE(Entity, MAX_ENTITIES, entitiesToUnlinkParent);
-SE_STATIC_ARRAY_CREATE(SceneNodeCallbackSubscriber, 4, nodeCallbackSubscribers);
 
 Scene* activeScene = NULL;
 Scene* queuedSceneToChangeTo = NULL;
@@ -92,16 +91,9 @@ void cre_scene_manager_queue_entity_for_creation(SceneTreeNode* treeNode) {
 void cre_scene_manager_process_queued_creation_entities() {
     for (size_t i = 0; i < entitiesQueuedForCreationSize; i++) {
         cre_ec_system_entity_start(entitiesQueuedForCreation[i]);
-        SE_STATIC_ARRAY_FOR_LOOP(nodeCallbackSubscribers) {
-            SceneNodeCallbackSubscriber* nodeCallbackSubscriber = &nodeCallbackSubscribers[nodeCallbackSubscribers_loop_index];
-            nodeCallbackSubscriber->onNodeEnteredSceneFunc(entitiesQueuedForCreation[i]);
-        }
+        cre_ec_system_entity_entered_scene(entitiesQueuedForCreation[i]);
     }
     entitiesQueuedForCreationSize = 0;
-}
-
-void cre_scene_manager_register_scene_node_callback_sub(SceneNodeCallbackSubscriber subscriber) {
-    SE_STATIC_ARRAY_ADD(nodeCallbackSubscribers, subscriber);
 }
 
 void cre_scene_manager_queue_entity_for_deletion(Entity entity) {

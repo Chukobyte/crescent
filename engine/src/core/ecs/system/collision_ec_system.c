@@ -34,6 +34,7 @@ EntitySystem* collision_ec_system_create() {
     collisionSystem->name = se_strdup("Collision");
     collisionSystem->component_signature = ComponentType_TRANSFORM_2D | ComponentType_COLLIDER_2D;
 
+    collisionSystem->on_entity_entered_scene_func = collision_system_on_node_entered_scene;
     collisionSystem->on_entity_unregistered_func = collision_system_entity_unregistered;
     collisionSystem->physics_process_func = collision_system_physics_update;
 
@@ -53,11 +54,6 @@ EntitySystem* collision_ec_system_create() {
         cre_collision_set_global_spatial_hash_map(spatialHashMap);
         isGlobalSpatialHashMapInitialized = true;
     }
-
-    // Setup scene manager call back
-    cre_scene_manager_register_scene_node_callback_sub((SceneNodeCallbackSubscriber) {
-        .onNodeEnteredSceneFunc = collision_system_on_node_entered_scene
-    });
 
     return collisionSystem;
 }
