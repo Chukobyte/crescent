@@ -1,13 +1,13 @@
 #include "collision.h"
 
 #include "../seika/src/utils/logger.h"
+#include "../seika/src/utils/se_assert.h"
 
 #include "../../ecs/system/ec_system.h"
 #include "../../ecs/system/collision_ec_system.h"
 #include "../../ecs/component/transform2d_component.h"
 #include "../../ecs/component/collider2d_component.h"
 #include "../../scene/scene_manager.h"
-#include "../../../../../seika/src/utils/se_assert.h"
 
 // TODO: Temp collision logic, implement a more efficient solution!
 bool is_entity_in_collision_exceptions(Entity entity, Collider2DComponent* collider2DComponent);

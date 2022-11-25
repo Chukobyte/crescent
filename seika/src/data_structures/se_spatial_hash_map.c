@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include "../memory/se_mem.h"
+#include "../utils/logger.h"
 
 #define SE_SPATIAL_HASH_NULL_ENTITY 4294967295
 
@@ -38,6 +39,10 @@ void se_spatial_hash_map_destroy(SESpatialHashMap* hashMap) {
 }
 
 SESpatialHashMapGridSpacesHandle* se_spatial_hash_map_insert_or_update(SESpatialHashMap* hashMap, unsigned int entity, Rect2* collisionRect) {
+    // Debug
+    se_logger_debug("se_spatial_hash_map_insert_or_update | entity: '%d', collisionRect: (%f, %f, %f, %f)",
+                    entity, collisionRect->x, collisionRect->y, collisionRect->w, collisionRect->h);
+
     // Create new object handle if it doesn't exist
     if (!se_hash_map_has(hashMap->objectToGridMap, &entity)) {
         SESpatialHashMapGridSpacesHandle* newHandle = SE_MEM_ALLOCATE(SESpatialHashMapGridSpacesHandle);
