@@ -205,10 +205,7 @@ TransformModel2D* cre_scene_manager_get_scene_node_global_transform(Entity entit
 }
 
 SceneTreeNode* cre_scene_manager_get_entity_tree_node(Entity entity) {
-    if (!se_hash_map_has(entityToTreeNodeMap, &entity)) {
-        SE_ASSERT_FMT(se_hash_map_has(entityToTreeNodeMap, &entity), "Doesn't have entity '%d' in scene tree!", entity);
-    }
-//    SE_ASSERT_FMT(se_hash_map_has(entityToTreeNodeMap, &entity), "Doesn't have entity '%d' in scene tree!", entity);
+    SE_ASSERT_FMT(se_hash_map_has(entityToTreeNodeMap, &entity), "Doesn't have entity '%d' in scene tree!", entity);
     SceneTreeNode* treeNode = (SceneTreeNode*) *(SceneTreeNode**) se_hash_map_get(entityToTreeNodeMap, &entity);
     SE_ASSERT_FMT(treeNode != NULL, "Failed to get tree node for entity '%d'", entity);
     return treeNode;
