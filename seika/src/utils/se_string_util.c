@@ -6,6 +6,10 @@
 
 #include "../memory/se_mem.h"
 
+#ifdef _MSC_VER
+#pragma warning(disable : 4996) // for strcpy
+#endif
+
 char* se_strdup(const char* string) {
     size_t string_length = strlen(string) + 1;
     void* new_string = SE_MEM_ALLOCATE_SIZE(string_length);

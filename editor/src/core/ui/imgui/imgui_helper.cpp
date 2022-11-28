@@ -212,14 +212,14 @@ const char* ImGuiHelper::ComboBox::GetInternalLabel() const {
 }
 
 const char* ImGuiHelper::ComboBox::GetSelectedItem() const {
-    if (selectedIndex < items.size()) {
+    if (selectedIndex < (int) items.size()) {
         return items[selectedIndex].c_str();
     }
     return nullptr;
 }
 
 void ImGuiHelper::ComboBox::SetSelected(const std::string& itemToSelect, bool executeCallbacks) {
-    for (int i = 0; i < items.size(); i++) {
+    for (int i = 0; i < (int) items.size(); i++) {
         if (items[i] == itemToSelect) {
             selectedIndex = i;
             if (onSelectionChangeCallback && executeCallbacks) {
@@ -238,7 +238,7 @@ void ImGuiHelper::BeginComboBox(ImGuiHelper::ComboBox &comboBox) {
     }
     const char* selectedItemText = comboBox.GetSelectedItem();
     if (ImGui::BeginCombo(comboBox.GetInternalLabel(), selectedItemText, 0)) {
-        for (int i = 0; i < comboBox.items.size(); i++) {
+        for (int i = 0; i < (int) comboBox.items.size(); i++) {
             const bool is_selected = (comboBox.selectedIndex == i);
             if (ImGui::Selectable(comboBox.items[i].c_str(), is_selected)) {
                 comboBox.selectedIndex = i;
@@ -279,14 +279,14 @@ const char* ImGuiHelper::AssetBrowserComboBox::GetInternalLabel() const {
 }
 
 const char* ImGuiHelper::AssetBrowserComboBox::GetSelectedItem() const {
-    if (selectedIndex < items.size()) {
+    if (selectedIndex < (int) items.size()) {
         return items[selectedIndex].c_str();
     }
     return nullptr;
 }
 
 void ImGuiHelper::AssetBrowserComboBox::SetSelected(const std::string& itemToSelect, bool executeCallbacks) {
-    for (int i = 0; i < items.size(); i++) {
+    for (int i = 0; i < (int) items.size(); i++) {
         if (items[i] == itemToSelect) {
             selectedIndex = i;
             if (onSelectionChangeCallback && executeCallbacks) {
@@ -316,7 +316,7 @@ void ImGuiHelper::BeginAssetBrowserComboBox(ImGuiHelper::AssetBrowserComboBox &c
     }
     const char* selectedItemText = comboBox.GetSelectedItem();
     if (ImGui::BeginCombo(comboBox.GetInternalLabel(), selectedItemText, 0)) {
-        for (int i = 0; i < comboBox.items.size(); i++) {
+        for (int i = 0; i < (int) comboBox.items.size(); i++) {
             const bool is_selected = (comboBox.selectedIndex == i);
             if (ImGui::Selectable(comboBox.items[i].c_str(), is_selected)) {
                 comboBox.selectedIndex = i;

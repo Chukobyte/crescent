@@ -13,10 +13,6 @@ extern "C" {
 #define SE_HASH_MAP_FOR_EACH(HASH_MAP, ITER_NAME) \
 for (SEHashMapIterator ITER_NAME = se_hash_map_iter_create(HASH_MAP); se_hash_map_iter_is_valid(HASH_MAP, &(ITER_NAME)); se_hash_map_iter_advance(HASH_MAP, &(ITER_NAME)))
 
-
-//for (SEHashMapIterator iterator = se_hash_map_iter_create(hashMap); se_hash_map_iter_is_valid(hashMap, &iterator); se_hash_map_iter_advance(hashMap, &iterator)) {
-
-
 typedef size_t (*SEHashFunc) (void*, size_t);
 typedef int (*SECompareFunc) (void*, void*, size_t);
 

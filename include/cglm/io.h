@@ -59,6 +59,12 @@
 #  define CGLM_PRINT_COLOR_RESET  "\033[0m"
 #endif
 
+// CRE-BEGIN - Disabling warning for msvc compilers
+#ifdef _MSC_VER
+#pragma warning(disable : 4996) // for sprintf_s
+#endif
+// CRE-END
+
 CGLM_INLINE
 void
 glm_mat4_print(mat4              matrix,

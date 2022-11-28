@@ -15,6 +15,10 @@
 #include "../ecs/component/collider2d_component.h"
 #include "../ecs/component/color_rect_component.h"
 
+#ifdef _MSC_VER
+#pragma warning(disable : 4996) // for strcpy
+#endif
+
 // Project Configuration Files
 void cre_json_configure_assets(cJSON* configJson, CREGameProperties* properties) {
     cJSON* assetsJson = cJSON_GetObjectItemCaseSensitive(configJson, "assets");
@@ -79,7 +83,7 @@ void cre_json_configure_inputs(cJSON* configJson, CREGameProperties* properties)
         cJSON_ArrayForEach(valueJson, valuesJsonArray) {
             SE_ASSERT_FMT(inputAction->valueCount < CRE_INPUT_VALUES_LIMIT, "Reading input action '%s' value that is over the max limit of %d, increase the limit of CRE_INPUT_VALUES_LIMIT", inputAction->name, CRE_INPUT_VALUES_LIMIT);
             const char* value = cJSON_GetStringValue(valueJson);
-            inputAction->values[inputAction->valueCount] = strdup(value);
+            inputAction->values[inputAction->valueCount] = se_strdup(value);
             se_logger_debug("Input Action Value: '%s'", inputAction->values[inputAction->valueCount]);
             inputAction->valueCount++;
         }

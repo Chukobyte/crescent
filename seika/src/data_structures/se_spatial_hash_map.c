@@ -4,7 +4,6 @@
 #include <string.h>
 
 #include "../memory/se_mem.h"
-#include "../utils/logger.h"
 
 #define SE_SPATIAL_HASH_NULL_ENTITY 4294967295
 

@@ -25,15 +25,15 @@ const char* json_get_string_default(cJSON* json, const char* key, const char* de
 char* json_get_string_new(cJSON* json, const char* key) {
     cJSON* stringJson = cJSON_GetObjectItemCaseSensitive(json, key);
     SE_ASSERT_FMT(cJSON_IsString(stringJson) && (stringJson->valuestring != NULL), "Not able to load json string value for key '%s'", key);
-    return strdup(stringJson->valuestring);
+    return se_strdup(stringJson->valuestring);
 }
 
 char* json_get_string_default_new(cJSON* json, const char* key, const char* defaultValue) {
     cJSON* stringJson = cJSON_GetObjectItemCaseSensitive(json, key);
     if (cJSON_IsString(stringJson) && (stringJson->valuestring != NULL)) {
-        return strdup(stringJson->valuestring);
+        return se_strdup(stringJson->valuestring);
     }
-    return strdup(defaultValue);
+    return se_strdup(defaultValue);
 }
 
 int json_get_int(cJSON* json, const char* key) {

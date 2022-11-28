@@ -14,11 +14,11 @@
 void setUp() {}
 void tearDown() {}
 
-void seika_hash_map_test();
-void seika_spatial_hash_map_test();
-void seika_file_system_utils_test();
-void seika_string_utils_test();
-void seika_asset_file_loader_test();
+void seika_hash_map_test(void);
+void seika_spatial_hash_map_test(void);
+void seika_file_system_utils_test(void);
+void seika_string_utils_test(void);
+void seika_asset_file_loader_test(void);
 
 int main(int argv, char** args) {
     UNITY_BEGIN();
@@ -30,7 +30,7 @@ int main(int argv, char** args) {
     return UNITY_END();
 }
 
-void seika_hash_map_test() {
+void seika_hash_map_test(void) {
     SEHashMap* hashMap = se_hash_map_create(sizeof(int*), sizeof(int*), SE_HASH_MAP_MIN_CAPACITY);
     TEST_ASSERT_TRUE(hashMap != NULL);
 
@@ -62,7 +62,7 @@ void seika_hash_map_test() {
     se_hash_map_destroy(hashMap);
 }
 
-void seika_spatial_hash_map_test() {
+void seika_spatial_hash_map_test(void) {
     const int maxSpriteSize = 32;
     SESpatialHashMap* spatialHashMap = se_spatial_hash_map_create(maxSpriteSize * 2);
     TEST_ASSERT_TRUE(spatialHashMap != NULL);
@@ -102,7 +102,7 @@ void seika_spatial_hash_map_test() {
     se_spatial_hash_map_destroy(spatialHashMap);
 }
 
-void seika_file_system_utils_test() {
+void seika_file_system_utils_test(void) {
     // File tests
     TEST_ASSERT_TRUE(se_fs_does_file_exist(RESOURCES_PACK_PATH));
     TEST_ASSERT_FALSE(se_fs_does_file_exist("somemadeupfile.txt"));
@@ -111,7 +111,7 @@ void seika_file_system_utils_test() {
     TEST_ASSERT_FALSE(se_fs_does_dir_exist("something/somemadeupath"));
 }
 
-void seika_string_utils_test() {
+void seika_string_utils_test(void) {
     // Test string dup
     char* filePath = se_strdup("project.cscn");
     TEST_ASSERT_EQUAL_STRING("project.cscn", filePath);
@@ -131,7 +131,7 @@ void seika_string_utils_test() {
     SE_MEM_FREE(filePathZip);
 }
 
-void seika_asset_file_loader_test() {
+void seika_asset_file_loader_test(void) {
     sf_asset_file_loader_initialize();
 
     sf_asset_file_loader_set_read_mode(SEAssetFileLoaderReadMode_ARCHIVE);

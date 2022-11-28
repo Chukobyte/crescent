@@ -2,7 +2,7 @@
 
 #include "../../../imgui/imgui_helper.h"
 
-class AnimatedSpriteComp;
+struct AnimatedSpriteComp;
 
 namespace OpenedProjectUI {
 namespace Windows {

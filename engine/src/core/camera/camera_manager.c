@@ -2,7 +2,7 @@
 
 #include "camera.h"
 
-static const CRECamera2D DEFAULT_CAMERA =   {
+static CRECamera2D DEFAULT_CAMERA =   {
     .boundary = {
         .x = -10000000.0f,
         .y = -10000000.0f,
