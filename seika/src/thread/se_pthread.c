@@ -223,7 +223,7 @@ static DWORD timespec_to_ms(const struct timespec *abstime) {
         return INFINITE;
     }
 
-    t = ((abstime->tv_sec - time(NULL)) * 1000) + (abstime->tv_nsec / 1000000);
+    t = (DWORD) (((abstime->tv_sec - time(NULL)) * 1000) + (abstime->tv_nsec / 1000000));
 //    if (t < 0) {
 //        t = 1;
 //    }

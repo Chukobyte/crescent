@@ -23,7 +23,6 @@
 #include "../../ecs/ecs_manager.h"
 #include "../../ecs/system/ec_system.h"
 #include "../../ecs/component/animated_sprite_component.h"
-#include "../../ecs/component/collider2d_component.h"
 #include "../../ecs/component/color_rect_component.h"
 #include "../../ecs/component/script_component.h"
 #include "../../ecs/component/sprite_component.h"

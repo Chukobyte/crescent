@@ -54,7 +54,7 @@ bool se_fs_chdir(const char* dirPath) {
 char* se_fs_get_cwd() {
     char cwd[CHAR_ARRAY_MAX_BUFFER_SIZE];
     if (getcwd(cwd, sizeof(cwd)) != NULL) {
-        return strdup(cwd);
+        return se_strdup(cwd);
     }
     return NULL;
 }

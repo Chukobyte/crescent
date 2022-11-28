@@ -6,6 +6,10 @@
 #include "../utils/logger.h"
 #include "../utils/se_assert.h"
 
+#ifdef _MSC_VER
+#pragma warning(disable : 4996) // for strcpy
+#endif
+
 //--- RBE Socket ---//
 int se_socket_get_last_error() {
 #ifdef _WIN32
