@@ -2,7 +2,6 @@
 
 #include <Python.h>
 
-#include "../seika/src/asset/asset_file_loader.h"
 #include "../seika/src/data_structures/se_hash_map.h"
 #include "../seika/src/data_structures/se_static_array.h"
 #include "../seika/src/utils/se_assert.h"

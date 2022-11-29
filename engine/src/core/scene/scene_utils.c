@@ -93,6 +93,10 @@ void cre_scene_utils_override_on_get_local_transform_func(on_get_local_transform
     onGetLocalTransformFunc = func;
 }
 
+EntityArray cre_scene_utils_get_self_and_parent_entities(Entity entity) {
+    return onGetSelfAndParentEntitiesFunc(entity);
+}
+
 void cre_scene_utils_reset_callback_func_overrides() {
     onGetSelfAndParentEntitiesFunc = &default_get_self_and_parent_nodes;
     onGetLocalTransformFunc = &default_get_local_transform;

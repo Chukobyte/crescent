@@ -9,8 +9,9 @@
 #include "../seika/src/utils/se_assert.h"
 
 #include "ec_system.h"
-#include "../component/transform2d_component.h"
 #include "../component/animated_sprite_component.h"
+#include "../component/node_component.h"
+#include "../component/transform2d_component.h"
 #include "../../scene/scene_manager.h"
 #include "../../camera/camera.h"
 #include "../../camera/camera_manager.h"
@@ -34,11 +35,13 @@ void animated_sprite_rendering_system_render() {
     const int currentTickTime = (int) SDL_GetTicks();
     for (size_t i = 0; i < animatedSpriteRenderingSystem->entity_count; i++) {
         const Entity entity = animatedSpriteRenderingSystem->entities[i];
+        NodeComponent* nodeComp = (NodeComponent*) component_manager_get_component(entity, ComponentDataIndex_NODE);
         Transform2DComponent* spriteTransformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
         AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_ANIMATED_SPRITE);
         AnimationFrame currentFrame = animatedSpriteComponent->currentAnimation.animationFrames[animatedSpriteComponent->currentAnimation.currentFrame];
         if (animatedSpriteComponent->isPlaying) {
-            const int newIndex = ((currentTickTime - (int) animatedSpriteComponent->startAnimationTickTime) / animatedSpriteComponent->currentAnimation.speed) % animatedSpriteComponent->currentAnimation.frameCount;
+            const int tickRate = (int) ((((float) currentTickTime - (float) animatedSpriteComponent->startAnimationTickTime) /(float) animatedSpriteComponent->currentAnimation.speed) * nodeComp->timeDilation);
+            const int newIndex = tickRate % animatedSpriteComponent->currentAnimation.frameCount;
             if (newIndex != animatedSpriteComponent->currentAnimation.currentFrame) {
                 // Index changed
                 currentFrame = animatedSpriteComponent->currentAnimation.animationFrames[newIndex];

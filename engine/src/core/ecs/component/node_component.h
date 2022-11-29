@@ -37,6 +37,7 @@ typedef enum NodeBaseInheritanceType {
 typedef struct NodeComponent {
     char name[32];
     NodeBaseType type;
+    float timeDilation;
 } NodeComponent;
 
 NodeComponent* node_component_create();
