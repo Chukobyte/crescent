@@ -148,6 +148,7 @@ void seika_array_utils_test(void) {
     TEST_ASSERT_EQUAL_INT(4, array[4]);
     se_array_utils_remove_item_uint32(array, &arraySize, 4, invalidValue);
     TEST_ASSERT_NOT_EQUAL_INT(4, array[4]);
+    TEST_ASSERT_EQUAL_INT(ARRAY_SIZE - 1, arraySize);
 
 #undef ARRAY_SIZE
 }
