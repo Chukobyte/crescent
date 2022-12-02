@@ -2,6 +2,7 @@
 
 #include <SDL2/SDL_main.h>
 
+#include "../src/data_structures/se_array_utils.h"
 #include "../src/data_structures/se_spatial_hash_map.h"
 #include "../src/asset/asset_file_loader.h"
 #include "../src/memory/se_mem.h"
@@ -18,6 +19,7 @@ void seika_hash_map_test(void);
 void seika_spatial_hash_map_test(void);
 void seika_file_system_utils_test(void);
 void seika_string_utils_test(void);
+void seika_array_utils_test(void);
 void seika_asset_file_loader_test(void);
 
 int main(int argv, char** args) {
@@ -26,6 +28,7 @@ int main(int argv, char** args) {
     RUN_TEST(seika_spatial_hash_map_test);
     RUN_TEST(seika_file_system_utils_test);
     RUN_TEST(seika_string_utils_test);
+    RUN_TEST(seika_array_utils_test);
     RUN_TEST(seika_asset_file_loader_test);
     return UNITY_END();
 }
@@ -129,6 +132,24 @@ void seika_string_utils_test(void) {
     SE_MEM_FREE(filePathWithoutExtension);
     SE_MEM_FREE(dupFilePathWithoutExtension);
     SE_MEM_FREE(filePathZip);
+}
+
+void seika_array_utils_test(void) {
+#define ARRAY_SIZE 6
+
+    const uint32_t invalidValue = 999999;
+    size_t arraySize = ARRAY_SIZE;
+    uint32_t array[ARRAY_SIZE];
+
+    for (size_t i = 0; i < arraySize; i++) {
+        array[i] = i;
+    }
+
+    TEST_ASSERT_EQUAL_INT(4, array[4]);
+    se_array_utils_remove_item_uint32(array, &arraySize, 4, invalidValue);
+    TEST_ASSERT_NOT_EQUAL_INT(4, array[4]);
+
+#undef ARRAY_SIZE
 }
 
 void seika_asset_file_loader_test(void) {

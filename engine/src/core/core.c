@@ -191,6 +191,8 @@ void cre_update() {
 }
 
 void cre_process_game_update() {
+    cre_ec_system_pre_process_all_systems();
+
     static const uint32_t MILLISECONDS_PER_TICK = 1000; // TODO: Put in another place
     static uint32_t lastFrameTime = 0;
     const uint32_t targetFps = engineContext->targetFPS;
@@ -227,6 +229,8 @@ void cre_process_game_update() {
 
     se_input_clean_up_flags();
     lastFrameTime = SDL_GetTicks();
+
+    cre_ec_system_post_process_all_systems();
 }
 
 void cre_render() {

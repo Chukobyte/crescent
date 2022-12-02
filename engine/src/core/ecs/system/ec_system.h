@@ -10,6 +10,8 @@ typedef void (*OnEntityEndFunc) (Entity); // Useful for before deletion function
 typedef void (*OnEntityUnRegisteredFunc) (Entity); // delete
 typedef void (*OnEntityEnteredSceneFunc) (Entity); // When entity enters a scene (after _start() is called)
 typedef void (*RenderFunc) ();
+typedef void (*PreProcessAllFunc) ();
+typedef void (*PostProcessAllFunc) ();
 typedef void (*ProcessFunc) (float);
 typedef void (*PhysicsProcessFunc) (float);
 typedef void (*NetworkCallbackFunc) (const char*);
@@ -22,6 +24,8 @@ typedef struct EntitySystem {
     OnEntityUnRegisteredFunc on_entity_unregistered_func;
     OnEntityEnteredSceneFunc on_entity_entered_scene_func;
     RenderFunc render_func;
+    PreProcessAllFunc pre_process_all_func;
+    PostProcessAllFunc post_process_all_func;
     ProcessFunc process_func;
     PhysicsProcessFunc physics_process_func;
     NetworkCallbackFunc network_callback_func;
@@ -43,6 +47,8 @@ void cre_ec_system_entity_start(Entity entity);
 void cre_ec_system_entity_end(Entity entity);
 void cre_ec_system_entity_entered_scene(Entity entity);
 void cre_ec_system_render_systems();
+void cre_ec_system_pre_process_all_systems();
+void cre_ec_system_post_process_all_systems();
 void cre_ec_system_process_systems(float deltaTime);
 void cre_ec_system_physics_process_systems(float deltaTime);
 
