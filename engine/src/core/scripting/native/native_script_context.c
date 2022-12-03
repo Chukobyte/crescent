@@ -15,8 +15,6 @@
 void native_on_create_instance(Entity entity, const char* classPath, const char* className);
 void native_on_delete_instance(Entity entity);
 void native_on_start(Entity entity);
-//void native_on_update_all_instances(float deltaTime);
-//void native_on_physics_update_all_instances(float deltaTime);
 void native_on_update_instance(Entity entity, float deltaTime);
 void native_on_physics_update_instance(Entity entity, float deltaTime);
 void native_on_end(Entity entity);
