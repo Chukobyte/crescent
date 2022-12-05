@@ -238,7 +238,7 @@ float cre_scene_manager_get_node_full_time_dilation(Entity entity) {
     // Set starting value
     nodeComp->timeDilation.cachedFullValue = cre_world_get_time_dilation();
     const SceneEntityArray entityArray = scene_manager_get_self_and_parent_nodes(entity);
-    for (size_t i = 0; i < entityArray.entityCount; i++) {
+    for (size_t i = 0; (int) i < entityArray.entityCount; i++) {
         NodeComponent* entityNodeComp = component_manager_get_component_unsafe(entityArray.entities[i], ComponentDataIndex_NODE);
         SE_ASSERT_FMT(entityNodeComp != NULL, "node comp is NULL!");
         nodeComp->timeDilation.cachedFullValue *= entityNodeComp->timeDilation.value;

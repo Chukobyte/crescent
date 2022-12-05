@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stddef.h>
+
 #include "../ecs/entity/entity.h"
 
 typedef void (*OnCreateInstance) (Entity, const char*, const char*);
