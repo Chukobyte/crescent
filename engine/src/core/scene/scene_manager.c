@@ -58,26 +58,6 @@ Scene* cre_scene_create_scene(const char* scenePath) {
     return scene;
 }
 
-// Copy of scene utils functions but private
-// First index is the child
-typedef struct SceneEntityArray {
-    int entityCount;
-    Entity entities[10];
-} SceneEntityArray;
-
-SceneEntityArray scene_manager_get_self_and_parent_nodes(Entity entity) {
-    SceneEntityArray combineModelResult = { .entityCount = 0 };
-    combineModelResult.entities[combineModelResult.entityCount++] = entity;
-
-    SceneTreeNode* sceneTreeNode = cre_scene_manager_get_entity_tree_node(entity);
-    SceneTreeNode* parentTreeNode = sceneTreeNode->parent;
-    while (parentTreeNode != NULL) {
-        combineModelResult.entities[combineModelResult.entityCount++] = parentTreeNode->entity;
-        parentTreeNode = parentTreeNode->parent;
-    }
-    return combineModelResult;
-}
-
 // --- Scene Manager --- //
 Entity entitiesQueuedForCreation[MAX_ENTITIES];
 size_t entitiesQueuedForCreationSize = 0;
@@ -237,7 +217,7 @@ float cre_scene_manager_get_node_full_time_dilation(Entity entity) {
     }
     // Set starting value
     nodeComp->timeDilation.cachedFullValue = cre_world_get_time_dilation();
-    const SceneEntityArray entityArray = scene_manager_get_self_and_parent_nodes(entity);
+    const EntityArray entityArray = cre_scene_manager_get_self_and_parent_nodes(entity);
     for (size_t i = 0; (int) i < entityArray.entityCount; i++) {
         NodeComponent* entityNodeComp = component_manager_get_component_unsafe(entityArray.entities[i], ComponentDataIndex_NODE);
         SE_ASSERT_FMT(entityNodeComp != NULL, "node comp is NULL!");
@@ -270,6 +250,19 @@ Entity cre_scene_manager_get_entity_child_by_name(Entity parent, const char* chi
 
 bool cre_scene_manager_has_entity_tree_node(Entity entity) {
     return se_hash_map_has(entityToTreeNodeMap, &entity);
+}
+
+EntityArray cre_scene_manager_get_self_and_parent_nodes(Entity entity) {
+    EntityArray combineModelResult = { .entityCount = 0 };
+    combineModelResult.entities[combineModelResult.entityCount++] = entity;
+
+    SceneTreeNode* sceneTreeNode = cre_scene_manager_get_entity_tree_node(entity);
+    SceneTreeNode* parentTreeNode = sceneTreeNode->parent;
+    while (parentTreeNode != NULL) {
+        combineModelResult.entities[combineModelResult.entityCount++] = parentTreeNode->entity;
+        parentTreeNode = parentTreeNode->parent;
+    }
+    return combineModelResult;
 }
 
 // Scene node setup

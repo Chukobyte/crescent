@@ -6,13 +6,9 @@ extern "C" {
 
 #include "../ecs/entity/entity.h"
 #include "../seika/src/math/se_math.h"
+#include "scene_manager.h"
 
 struct TransformModel2D;
-
-typedef struct EntityArray {
-    int entityCount;
-    Entity entities[10];
-} EntityArray;
 
 typedef EntityArray (*on_get_self_and_parent_entities) (Entity);
 typedef Transform2D (*on_get_local_transform) (Entity, int*, bool*);
