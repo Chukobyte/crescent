@@ -706,6 +706,16 @@ class Node:
         else:
             self.hide()
 
+    @property
+    def time_dilation(self) -> float:
+        return crescent_api_internal.node_get_time_dilation(entity_id=self.entity_id)
+
+    @time_dilation.setter
+    def time_dilation(self, value: float) -> None:
+        crescent_api_internal.node_set_time_dilation(
+            entity_id=self.entity_id, time_dilation=value
+        )
+
 
 # 2D
 class Node2D(Node):
@@ -1037,6 +1047,17 @@ class SceneTree:
     @staticmethod
     def change_scene(path: str) -> None:
         crescent_api_internal.scene_tree_change_scene(path=path)
+
+
+# WORLD
+class World:
+    @staticmethod
+    def set_time_dilation(value: float) -> None:
+        crescent_api_internal.world_set_time_dilation(time_dilation=value)
+
+    @staticmethod
+    def get_time_dilation() -> float:
+        return crescent_api_internal.world_get_time_dilation()
 
 
 # AUDIO MANAGER

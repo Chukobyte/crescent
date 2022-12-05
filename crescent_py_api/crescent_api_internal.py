@@ -77,6 +77,14 @@ def scene_tree_change_scene(path: str) -> None:
     pass
 
 
+def world_set_time_dilation(time_dilation: float) -> None:
+    pass
+
+
+def world_get_time_dilation() -> float:
+    return 1.0
+
+
 def audio_manager_play_sound(path: str, loops: bool) -> None:
     pass
 
@@ -155,6 +163,14 @@ def node_get_parent(entity_id: int) -> tuple:
 
 def node_get_name(entity_id: int) -> str:
     return "Node"
+
+
+def node_set_time_dilation(entity_id: int, time_dilation: float) -> None:
+    pass
+
+
+def node_get_time_dilation(entity_id: int) -> float:
+    return 1.0
 
 
 def node2D_set_position(entity_id: int, x: float, y: float) -> None:

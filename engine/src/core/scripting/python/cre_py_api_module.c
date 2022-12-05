@@ -16,6 +16,8 @@
 #include "py_cache.h"
 #include "py_script_context.h"
 #include "../../engine_context.h"
+#include "../../game_properties.h"
+#include "../../world.h"
 #include "../../scripting/script_context.h"
 #include "../../physics/collision/collision.h"
 #include "../../camera/camera.h"
@@ -29,7 +31,6 @@
 #include "../../ecs/component/text_label_component.h"
 #include "../../ecs/component/node_component.h"
 #include "../../scene/scene_manager.h"
-#include "../../game_properties.h"
 
 #ifdef _MSC_VER
 #pragma warning(disable : 4996) // for strcpy
@@ -333,6 +334,20 @@ PyObject* cre_py_api_camera2D_set_boundary(PyObject* self, PyObject* args, PyObj
 PyObject* cre_py_api_camera2D_get_boundary(PyObject* self, PyObject* args) {
     CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
     return Py_BuildValue("(ffff)", camera2D->boundary.x, camera2D->boundary.y, camera2D->boundary.w, camera2D->boundary.h);
+}
+
+// World
+PyObject* cre_py_api_world_set_time_dilation(PyObject* self, PyObject* args, PyObject* kwargs) {
+    float timeDilation;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "f", crePyApiWorldSetTimeDilationKWList, &timeDilation)) {
+        cre_world_set_time_dilation(timeDilation);
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_world_get_time_dilation(PyObject* self, PyObject* args) {
+    return Py_BuildValue("f)", cre_world_get_time_dilation());
 }
 
 // Audio Manager

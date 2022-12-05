@@ -743,6 +743,16 @@
 "        else:\n"\
 "            self.hide()\n"\
 "\n"\
+"    @property\n"\
+"    def time_dilation(self) -> float:\n"\
+"        return crescent_api_internal.node_get_time_dilation(entity_id=self.entity_id)\n"\
+"\n"\
+"    @time_dilation.setter\n"\
+"    def time_dilation(self, value: float) -> None:\n"\
+"        crescent_api_internal.node_set_time_dilation(\n"\
+"            entity_id=self.entity_id, time_dilation=value\n"\
+"        )\n"\
+"\n"\
 "\n"\
 "# 2D\n"\
 "class Node2D(Node):\n"\
@@ -1074,6 +1084,17 @@
 "    @staticmethod\n"\
 "    def change_scene(path: str) -> None:\n"\
 "        crescent_api_internal.scene_tree_change_scene(path=path)\n"\
+"\n"\
+"\n"\
+"# WORLD\n"\
+"class World:\n"\
+"    @staticmethod\n"\
+"    def set_time_dilation(value: float) -> None:\n"\
+"        crescent_api_internal.world_set_time_dilation(time_dilation=value)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def get_time_dilation() -> float:\n"\
+"        return crescent_api_internal.world_get_time_dilation()\n"\
 "\n"\
 "\n"\
 "# AUDIO MANAGER\n"\
