@@ -32,6 +32,7 @@ void cre_scene_manager_process_queued_scene_change();
 void cre_scene_manager_set_active_scene_root(SceneTreeNode* root);
 SceneTreeNode* cre_scene_manager_get_active_scene_root();
 TransformModel2D* cre_scene_manager_get_scene_node_global_transform(Entity entity, Transform2DComponent* transform2DComponent);
+float cre_scene_manager_get_node_full_time_dilation(Entity entity);
 Entity cre_scene_manager_get_entity_child_by_name(Entity parent, const char* childName);
 SceneTreeNode* cre_scene_manager_get_entity_tree_node(Entity entity);
 bool cre_scene_manager_has_entity_tree_node(Entity entity);

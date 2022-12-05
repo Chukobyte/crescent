@@ -10,6 +10,7 @@
 #include "../seika/src/data_structures/se_static_array.h"
 
 #include "scene_utils.h"
+#include "../world.h"
 #include "../ecs/system/ec_system.h"
 #include "../ecs/component/sprite_component.h"
 #include "../ecs/component/animated_sprite_component.h"
@@ -55,6 +56,26 @@ Scene* cre_scene_create_scene(const char* scenePath) {
     scene->sceneTree = SE_MEM_ALLOCATE(SceneTree);
     scene->sceneTree->root = NULL;
     return scene;
+}
+
+// Copy of scene utils functions but private
+// First index is the child
+typedef struct SceneEntityArray {
+    int entityCount;
+    Entity entities[10];
+} SceneEntityArray;
+
+SceneEntityArray scene_manager_get_self_and_parent_nodes(Entity entity) {
+    SceneEntityArray combineModelResult = { .entityCount = 0 };
+    combineModelResult.entities[combineModelResult.entityCount++] = entity;
+
+    SceneTreeNode* sceneTreeNode = cre_scene_manager_get_entity_tree_node(entity);
+    SceneTreeNode* parentTreeNode = sceneTreeNode->parent;
+    while (parentTreeNode != NULL) {
+        combineModelResult.entities[combineModelResult.entityCount++] = parentTreeNode->entity;
+        parentTreeNode = parentTreeNode->parent;
+    }
+    return combineModelResult;
 }
 
 // --- Scene Manager --- //
@@ -202,6 +223,27 @@ TransformModel2D* cre_scene_manager_get_scene_node_global_transform(Entity entit
         transform2DComponent->isGlobalTransformDirty = false;
     }
     return &transform2DComponent->globalTransform;
+}
+
+float cre_scene_manager_get_node_full_time_dilation(Entity entity) {
+    NodeComponent* nodeComp = component_manager_get_component_unsafe(entity, ComponentDataIndex_NODE);
+    // The only thing in the scene without nodes current are native script entities
+    if (nodeComp == NULL) {
+        return cre_world_get_time_dilation();
+    }
+    // Early out for cached value if the value is still valid
+    if (!nodeComp->timeDilation.cacheInvalid) {
+        return nodeComp->timeDilation.cachedFullValue;
+    }
+    nodeComp->timeDilation.cachedFullValue = cre_world_get_time_dilation();
+    const SceneEntityArray entityArray = scene_manager_get_self_and_parent_nodes(entity);
+    for (size_t i = 0; i < entityArray.entityCount; i++) {
+        NodeComponent* entityNodeComp = component_manager_get_component_unsafe(entityArray.entities[i], ComponentDataIndex_NODE);
+        SE_ASSERT_FMT(entityNodeComp != NULL, "node comp is NULL!");
+        nodeComp->timeDilation.cachedFullValue *= entityNodeComp->timeDilation.value;
+    }
+    nodeComp->timeDilation.cacheInvalid = false;
+    return nodeComp->timeDilation.cachedFullValue;
 }
 
 SceneTreeNode* cre_scene_manager_get_entity_tree_node(Entity entity) {
