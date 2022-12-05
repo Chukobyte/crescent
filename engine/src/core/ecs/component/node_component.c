@@ -9,6 +9,7 @@ NodeComponent* node_component_create() {
     nodeComponent->name[0] = '\0';
     nodeComponent->type = NodeBaseType_INVALID;
     nodeComponent->timeDilation = 1.0f;
+    nodeComponent->cachedTimeDilation = 1.0f;
     return nodeComponent;
 }
 

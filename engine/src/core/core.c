@@ -18,6 +18,7 @@
 #include "core_info.h"
 #include "game_properties.h"
 #include "engine_context.h"
+#include "world.h"
 #include "utils/command_line_args_util.h"
 #include "scripting/python/cre_py.h"
 #include "ecs/ecs_manager.h"
@@ -202,9 +203,11 @@ void cre_process_game_update() {
         SDL_Delay(timeToWait);
     }
 
+    const float globalTimeDilation = cre_world_get_time_dilation();
+
     // Variable Time Step
     const float variableDeltaTime = (float) (SDL_GetTicks() - lastFrameTime) / (float) MILLISECONDS_PER_TICK;
-    cre_ec_system_process_systems(variableDeltaTime);
+    cre_ec_system_process_systems(variableDeltaTime * globalTimeDilation);
 
     // Fixed Time Step
     static double fixedTime = 0.0f;
@@ -223,7 +226,7 @@ void cre_process_game_update() {
     while (accumulator >= PHYSICS_DELTA_TIME) {
         fixedTime += PHYSICS_DELTA_TIME;
         accumulator -= PHYSICS_DELTA_TIME;
-        cre_ec_system_physics_process_systems((float) PHYSICS_DELTA_TIME);
+        cre_ec_system_physics_process_systems((float) PHYSICS_DELTA_TIME * globalTimeDilation);
         se_input_clean_up_flags();
     }
 

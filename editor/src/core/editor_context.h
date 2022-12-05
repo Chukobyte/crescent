@@ -34,6 +34,7 @@ class EditorContext : public Singleton<EditorContext> {
     std::string GetProjectExportPath() const;
     std::string GetProjectTempPath() const;
 
+    // Returns a time used for ticking of seconds
     static float Time();
 
     bool isRunning = false;

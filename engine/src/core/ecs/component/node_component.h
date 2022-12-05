@@ -38,6 +38,7 @@ typedef struct NodeComponent {
     char name[32];
     NodeBaseType type;
     float timeDilation;
+    float cachedTimeDilation; // The cached full time dilation (include global time dilation and parents time dilation)
 } NodeComponent;
 
 NodeComponent* node_component_create();
