@@ -54,6 +54,9 @@ PyObject* cre_py_api_node_get_child(PyObject* self, PyObject* args, PyObject* kw
 PyObject* cre_py_api_node_get_children(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_node_get_parent(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_node_get_name(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_node_set_time_dilation(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_node_get_time_dilation(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_node_get_full_time_dilation(PyObject* self, PyObject* args, PyObject* kwargs);
 
 // Node2D
 PyObject* cre_py_api_node2D_set_position(PyObject* self, PyObject* args, PyObject* kwargs);
@@ -266,6 +269,18 @@ static struct PyMethodDef crePyApiMethods[] = {
     {
         "node_get_name", (PyCFunction) cre_py_api_node_get_name,
         METH_VARARGS | METH_KEYWORDS, "Returns the node's name."
+    },
+    {
+        "node_set_time_dilation", (PyCFunction) cre_py_api_node_set_time_dilation,
+        METH_VARARGS | METH_KEYWORDS, "Sets a node's time dilation."
+    },
+    {
+        "node_get_time_dilation", (PyCFunction) cre_py_api_node_get_time_dilation,
+        METH_VARARGS | METH_KEYWORDS, "Returns a node's time dilation."
+    },
+    {
+        "node_get_full_time_dilation", (PyCFunction) cre_py_api_node_get_full_time_dilation,
+        METH_VARARGS | METH_KEYWORDS, "Returns a node's total time dilation, including global world and parents."
     },
     // NODE2D
     {
@@ -489,6 +504,7 @@ static char* crePyApiAudioManagerPlaySoundKWList[] = {"path", "loops", NULL};
 static char* crePyApiNodeNewKWList[] = {"class_path", "class_name", "node_type", NULL};
 static char* crePyApiNodeAddChildKWList[] = {"parent_entity_id", "child_entity_id", NULL};
 static char* crePyApiNodeGetChildKWList[] = {"entity_id", "child_name", NULL};
+static char* crePyApiNodeSetTimeDilationKWList[] = {"entity_id", "time_dilation", NULL};
 
 static char* crePyApiNode2DSetXYKWList[] = {"entity_id", "x", "y", NULL};
 static char* crePyApiNode2DSetRotationKWList[] = {"entity_id", "rotation", NULL};

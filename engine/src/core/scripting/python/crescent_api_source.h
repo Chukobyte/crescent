@@ -753,6 +753,11 @@
 "            entity_id=self.entity_id, time_dilation=value\n"\
 "        )\n"\
 "\n"\
+"    def get_full_time_dilation(self) -> float:\n"\
+"        return crescent_api_internal.node_get_full_time_dilation(\n"\
+"            entity_id=self.entity_id\n"\
+"        )\n"\
+"\n"\
 "\n"\
 "# 2D\n"\
 "class Node2D(Node):\n"\

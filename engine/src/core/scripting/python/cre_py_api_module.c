@@ -528,6 +528,45 @@ PyObject* cre_py_api_node_get_name(PyObject* self, PyObject* args, PyObject* kwa
     return NULL;
 }
 
+// TODO: Move function to another place...
+void cre_invalidate_time_dilation_nodes_with_children(Entity entity) {
+    NodeComponent* nodeComponent = component_manager_get_component(entity, ComponentDataIndex_NODE);
+    nodeComponent->timeDilation.cacheInvalid = true;
+    SceneTreeNode* sceneTreeNode = cre_scene_manager_get_entity_tree_node(entity);
+    for (size_t i = 0; i < sceneTreeNode->childCount; i++) {
+        cre_invalidate_time_dilation_nodes_with_children(sceneTreeNode->children[i]->entity);
+    }
+}
+
+PyObject* cre_py_api_node_set_time_dilation(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    float timeDilation;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "if", crePyApiNodeSetTimeDilationKWList, &entity, &timeDilation)) {
+        NodeComponent* nodeComponent = component_manager_get_component(entity, ComponentDataIndex_NODE);
+        nodeComponent->timeDilation.value = timeDilation;
+        cre_invalidate_time_dilation_nodes_with_children(entity);
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_node_get_time_dilation(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
+        NodeComponent* nodeComponent = component_manager_get_component(entity, ComponentDataIndex_NODE);
+        return Py_BuildValue("f", nodeComponent->timeDilation.value);
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_node_get_full_time_dilation(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
+        return Py_BuildValue("f", cre_scene_manager_get_node_full_time_dilation(entity));
+    }
+    return NULL;
+}
+
 // Node2D
 PyObject* cre_py_api_node2D_set_position(PyObject* self, PyObject* args, PyObject* kwargs) {
     Entity entity;

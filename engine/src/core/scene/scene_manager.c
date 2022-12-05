@@ -235,6 +235,7 @@ float cre_scene_manager_get_node_full_time_dilation(Entity entity) {
     if (!nodeComp->timeDilation.cacheInvalid) {
         return nodeComp->timeDilation.cachedFullValue;
     }
+    // Set starting value
     nodeComp->timeDilation.cachedFullValue = cre_world_get_time_dilation();
     const SceneEntityArray entityArray = scene_manager_get_self_and_parent_nodes(entity);
     for (size_t i = 0; i < entityArray.entityCount; i++) {
