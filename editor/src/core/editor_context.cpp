@@ -20,5 +20,5 @@ std::string EditorContext::GetProjectTempPath() const {
 }
 
 float EditorContext::Time() {
-    return SDL_GetTicks() / 1000.0f;
+    return (float) SDL_GetTicks() / 1000.0f;
 }

@@ -39,7 +39,7 @@ ARRAY_NAME[ARRAY_NAME ##_loop_index] = ARRAY_NAME[ARRAY_NAME ##_loop_index + 1];
 ARRAY_NAME[ARRAY_NAME ##_loop_index + 1] = EMPTY_VALUE;                         \
 ARRAY_NAME ##_count--;                                   \
 }                                                        \
-if (ARRAY_NAME[ARRAY_NAME ##_loop_index] == EMPTY_VALUE) {                      \
+if (ARRAY_NAME[ARRAY_NAME ##_loop_index] == EMPTY_VALUE && ARRAY_NAME ##_loop_index + 1 < ARRAY_NAME ##_count_ref) {                      \
 ARRAY_NAME[ARRAY_NAME ##_loop_index] = ARRAY_NAME[ARRAY_NAME ##_loop_index + 1];                       \
 ARRAY_NAME[ARRAY_NAME ##_loop_index + 1] = EMPTY_VALUE;                         \
 }                                                        \
@@ -56,7 +56,7 @@ ARRAY_NAME[ARRAY_NAME ##_loop_index] = ARRAY_NAME[ARRAY_NAME ##_loop_index + 1];
 ARRAY_NAME[ARRAY_NAME ##_loop_index + 1] = EMPTY_VALUE;                         \
 ARRAY_NAME ##_count--;                                   \
 }                                                        \
-if (ARRAY_NAME[ARRAY_NAME ##_loop_index] == EMPTY_VALUE) {                      \
+if (ARRAY_NAME[ARRAY_NAME ##_loop_index] == EMPTY_VALUE && ARRAY_NAME ##_loop_index + 1 < ARRAY_NAME ##_count_ref) {                      \
 ARRAY_NAME[ARRAY_NAME ##_loop_index] = ARRAY_NAME[ARRAY_NAME ##_loop_index + 1];                       \
 ARRAY_NAME[ARRAY_NAME ##_loop_index + 1] = EMPTY_VALUE;                         \
 }                                                        \
@@ -83,7 +83,7 @@ ARRAY_NAME[temp_arac_loop_index] = ARRAY_NAME[temp_arac_loop_index + 1];        
 ARRAY_NAME[temp_arac_loop_index + 1] = EMPTY_VALUE;                         \
 ARRAY_SIZE_VAR--;                                   \
 }                                                        \
-if (ARRAY_NAME[temp_arac_loop_index] == EMPTY_VALUE) {                      \
+if (ARRAY_NAME[temp_arac_loop_index] == EMPTY_VALUE && temp_arac_loop_index + 1 < temp_arac_size) {                      \
 ARRAY_NAME[temp_arac_loop_index] = ARRAY_NAME[temp_arac_loop_index + 1];                       \
 ARRAY_NAME[temp_arac_loop_index + 1] = EMPTY_VALUE;                         \
 }                                                        \
@@ -100,7 +100,7 @@ ARRAY_NAME[temp_arac_loop_index] = ARRAY_NAME[temp_arac_loop_index + 1];        
 ARRAY_NAME[temp_arac_loop_index + 1] = EMPTY_VALUE;                         \
 ARRAY_SIZE_VAR--;                                   \
 }                                                        \
-if (ARRAY_NAME[temp_arac_loop_index] == EMPTY_VALUE) {                      \
+if (ARRAY_NAME[temp_arac_loop_index] == EMPTY_VALUE && temp_arac_loop_index + 1 < temp_arac_size) {                      \
 ARRAY_NAME[temp_arac_loop_index] = ARRAY_NAME[temp_arac_loop_index + 1];                       \
 ARRAY_NAME[temp_arac_loop_index + 1] = EMPTY_VALUE;                         \
 }                                                        \

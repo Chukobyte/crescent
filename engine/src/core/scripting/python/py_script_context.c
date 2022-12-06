@@ -2,7 +2,6 @@
 
 #include <Python.h>
 
-#include "../seika/src/asset/asset_file_loader.h"
 #include "../seika/src/data_structures/se_hash_map.h"
 #include "../seika/src/data_structures/se_static_array.h"
 #include "../seika/src/utils/se_assert.h"
@@ -27,16 +26,16 @@ static RBEScriptCallback* current_network_server_client_connected_script_callbac
 void py_on_create_instance(Entity entity, const char* classPath, const char* className);
 void py_on_delete_instance(Entity entity);
 void py_on_start(Entity entity);
-void py_on_update_all_instances(float deltaTime);
-void py_on_physics_update_all_instances(float deltaTime);
+void py_on_pre_update_all();
+void py_on_post_update_all();
+void py_on_update_instance(Entity entity, float deltaTime);
+void py_on_physics_update_instance(Entity entity, float deltaTime);
 void py_on_end(Entity entity);
 void py_on_network_callback(const char* message);
 
-SE_STATIC_ARRAY_CREATE(PyObject*, MAX_ENTITIES, entities_to_update);
-SE_STATIC_ARRAY_CREATE(PyObject*, MAX_ENTITIES, entities_to_physics_update);
-
 SEHashMap* pythonInstanceHashMap = NULL;
 CREScriptContext* python_script_context = NULL;
+PyGILState_STATE pyGlobalGilStateState;
 
 CREScriptContext* cre_py_create_script_context() {
     SE_ASSERT_FMT(python_script_context == NULL, "Script context already created!");
@@ -44,8 +43,10 @@ CREScriptContext* cre_py_create_script_context() {
     scriptContext->on_create_instance = py_on_create_instance;
     scriptContext->on_delete_instance = py_on_delete_instance;
     scriptContext->on_start = py_on_start;
-    scriptContext->on_update_all_instances = py_on_update_all_instances;
-    scriptContext->on_physics_update_all_instances = py_on_physics_update_all_instances;
+    scriptContext->on_pre_update_all = py_on_pre_update_all;
+    scriptContext->on_post_update_all = py_on_post_update_all;
+    scriptContext->on_update_instance = py_on_update_instance;
+    scriptContext->on_physics_update_instance = py_on_physics_update_instance;
     scriptContext->on_end = py_on_end;
     scriptContext->on_network_callback = py_on_network_callback;
     scriptContext->on_entity_subscribe_to_network_callback = py_on_entity_subscribe_to_network_callback;
@@ -62,10 +63,10 @@ CREScriptContext* cre_py_get_script_context() {
 void py_on_create_instance(Entity entity, const char* classPath, const char* className) {
     PyObject* pScriptInstance = cre_py_cache_create_instance(classPath, className, entity);
     if (PyObject_HasAttrString(pScriptInstance, "_update")) {
-        SE_STATIC_ARRAY_ADD(entities_to_update, pScriptInstance);
+        python_script_context->updateEntities[python_script_context->updateEntityCount++] = entity;
     }
     if (PyObject_HasAttrString(pScriptInstance, "_physics_update")) {
-        SE_STATIC_ARRAY_ADD(entities_to_physics_update, pScriptInstance);
+        python_script_context->physicsUpdateEntities[python_script_context->physicsUpdateEntityCount++] = entity;
     }
     se_hash_map_add(pythonInstanceHashMap, &entity, &pScriptInstance);
 }
@@ -75,10 +76,20 @@ void py_on_delete_instance(Entity entity) {
     PyObject* pScriptInstance = (PyObject*) *(PyObject**) se_hash_map_get(pythonInstanceHashMap, &entity);
     // Remove from update arrays
     if (PyObject_HasAttrString(pScriptInstance, "_update")) {
-        SE_STATIC_ARRAY_REMOVE(entities_to_update, pScriptInstance, NULL);
+        se_array_utils_remove_item_uint32(
+            python_script_context->updateEntities,
+            &python_script_context->updateEntityCount,
+            entity,
+            NULL_ENTITY
+        );
     }
     if (PyObject_HasAttrString(pScriptInstance, "_physics_update")) {
-        SE_STATIC_ARRAY_REMOVE(entities_to_physics_update, pScriptInstance, NULL);
+        se_array_utils_remove_item_uint32(
+            python_script_context->physicsUpdateEntities,
+            &python_script_context->physicsUpdateEntityCount,
+            entity,
+            NULL_ENTITY
+        );
     }
 
     Py_DecRef(pScriptInstance);
@@ -101,25 +112,24 @@ void py_on_start(Entity entity) {
     }
 }
 
-void py_on_update_all_instances(float deltaTime) {
-    PyGILState_STATE pyGilStateState = PyGILState_Ensure();
-    for (size_t i = 0; i < entities_to_update_count; i++) {
-        SE_ASSERT_FMT(entities_to_update[i] != NULL, "Python instance is null!");
-        PyObject_CallMethod(entities_to_update[i], "_update", "(f)", deltaTime);
-    }
-    PyGILState_Release(pyGilStateState);
+void py_on_pre_update_all() {
+    pyGlobalGilStateState = PyGILState_Ensure();
+}
 
-    // TODO: More robust error checking
+void py_on_post_update_all() {
+    PyGILState_Release(pyGlobalGilStateState);
     PyErr_Print();
 }
 
-void py_on_physics_update_all_instances(float deltaTime) {
-    PyGILState_STATE pyGilStateState = PyGILState_Ensure();
-    for (size_t i = 0; i < entities_to_physics_update_count; i++) {
-        SE_ASSERT_FMT(entities_to_physics_update[i] != NULL, "Python instance is null!");
-        PyObject_CallMethod(entities_to_physics_update[i], "_physics_update", "(f)", deltaTime);
-    }
-    PyGILState_Release(pyGilStateState);
+// TODO: Can get from an array instead of getting from a hashmap if performance becomes a problem.
+void py_on_update_instance(Entity entity, float deltaTime) {
+    PyObject* pScriptInstance = (PyObject*) *(PyObject**) se_hash_map_get(pythonInstanceHashMap, &entity);
+    PyObject_CallMethod(pScriptInstance, "_update", "(f)", deltaTime);
+}
+
+void py_on_physics_update_instance(Entity entity, float deltaTime) {
+    PyObject* pScriptInstance = (PyObject*) *(PyObject**) se_hash_map_get(pythonInstanceHashMap, &entity);
+    PyObject_CallMethod(pScriptInstance, "_physics_update", "(f)", deltaTime);
 }
 
 void py_on_end(Entity entity) {

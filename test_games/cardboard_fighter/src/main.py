@@ -26,6 +26,9 @@ class Main(Node2D):
 
         player_one_node.play(animation_name="crouch")
 
+        # Test time dilation
+        # player_one_node.time_dilation = 0.1
+
         # Test Get Parent
         # parent = player_one_node.get_parent()
         # print(f"[PY_SCRIPT] parent = {parent}")

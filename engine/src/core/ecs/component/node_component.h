@@ -4,6 +4,8 @@
 extern "C" {
 #endif
 
+#include <stdbool.h>
+
 #define RBE_NODE_NODE_STRING "Node"
 #define RBE_NODE_NODE2D_STRING "Node2D"
 #define RBE_NODE_SPRITE_STRING "Sprite"
@@ -34,9 +36,17 @@ typedef enum NodeBaseInheritanceType {
     NodeBaseInheritanceType_COLOR_RECT = NodeBaseType_NODE | NodeBaseType_NODE2D | NodeBaseType_COLOR_RECT,
 } NodeBaseInheritanceType;
 
+typedef struct NodeTimeDilation {
+    float value;
+    float cachedFullValue;
+    bool cacheInvalid;
+} NodeTimeDilation;
+
+// AKA Scene Component
 typedef struct NodeComponent {
     char name[32];
     NodeBaseType type;
+    NodeTimeDilation timeDilation;
 } NodeComponent;
 
 NodeComponent* node_component_create();

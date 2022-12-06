@@ -105,11 +105,12 @@ class FighterSimulation:
         # Move fighters
         for i, fighter in enumerate(self.fighters):
             fighter.input_buffer.process_inputs()
+            full_delta_time = delta_time * fighter.node.get_full_time_dilation()
 
             # Special Attack (has the highest priority)
             if fighter.state == FighterState.IDLE:
                 fighter.moves_manager.update(
-                    fighter.input_buffer, fighter.facing_dir, delta_time
+                    fighter.input_buffer, fighter.facing_dir, full_delta_time
                 )
                 if fighter.moves_manager.current_triggered_move:
                     attacking_fighter = fighter
@@ -139,7 +140,7 @@ class FighterSimulation:
 
                 if fighter.velocity != Vector2.ZERO():
                     delta_vector = Vector2(
-                        fighter.speed * delta_time, fighter.speed * delta_time
+                        fighter.speed * full_delta_time, fighter.speed * full_delta_time
                     )
                     fighter.node.add_to_position(fighter.velocity * delta_vector)
 

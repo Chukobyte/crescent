@@ -29,6 +29,7 @@ add_library(${PROJECT_NAME} STATIC
         src/core/core.c
         src/core/game_properties.c
         src/core/engine_context.c
+        src/core/world.c
         src/core/scene/scene_manager.c
         src/core/scene/scene_utils.c
         src/core/scripting/script_context.c

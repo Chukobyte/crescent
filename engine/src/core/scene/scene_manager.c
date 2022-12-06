@@ -10,6 +10,7 @@
 #include "../seika/src/data_structures/se_static_array.h"
 
 #include "scene_utils.h"
+#include "../world.h"
 #include "../ecs/system/ec_system.h"
 #include "../ecs/component/sprite_component.h"
 #include "../ecs/component/animated_sprite_component.h"
@@ -204,6 +205,28 @@ TransformModel2D* cre_scene_manager_get_scene_node_global_transform(Entity entit
     return &transform2DComponent->globalTransform;
 }
 
+float cre_scene_manager_get_node_full_time_dilation(Entity entity) {
+    NodeComponent* nodeComp = component_manager_get_component_unsafe(entity, ComponentDataIndex_NODE);
+    // The only thing in the scene without nodes current are native script entities
+    if (nodeComp == NULL) {
+        return cre_world_get_time_dilation();
+    }
+    // Early out for cached value if the value is still valid
+    if (!nodeComp->timeDilation.cacheInvalid) {
+        return nodeComp->timeDilation.cachedFullValue;
+    }
+    // Set starting value
+    nodeComp->timeDilation.cachedFullValue = cre_world_get_time_dilation();
+    const EntityArray entityArray = cre_scene_manager_get_self_and_parent_nodes(entity);
+    for (size_t i = 0; (int) i < entityArray.entityCount; i++) {
+        NodeComponent* entityNodeComp = component_manager_get_component_unsafe(entityArray.entities[i], ComponentDataIndex_NODE);
+        SE_ASSERT_FMT(entityNodeComp != NULL, "node comp is NULL!");
+        nodeComp->timeDilation.cachedFullValue *= entityNodeComp->timeDilation.value;
+    }
+    nodeComp->timeDilation.cacheInvalid = false;
+    return nodeComp->timeDilation.cachedFullValue;
+}
+
 SceneTreeNode* cre_scene_manager_get_entity_tree_node(Entity entity) {
     SE_ASSERT_FMT(se_hash_map_has(entityToTreeNodeMap, &entity), "Doesn't have entity '%d' in scene tree!", entity);
     SceneTreeNode* treeNode = (SceneTreeNode*) *(SceneTreeNode**) se_hash_map_get(entityToTreeNodeMap, &entity);
@@ -227,6 +250,19 @@ Entity cre_scene_manager_get_entity_child_by_name(Entity parent, const char* chi
 
 bool cre_scene_manager_has_entity_tree_node(Entity entity) {
     return se_hash_map_has(entityToTreeNodeMap, &entity);
+}
+
+EntityArray cre_scene_manager_get_self_and_parent_nodes(Entity entity) {
+    EntityArray combineModelResult = { .entityCount = 0 };
+    combineModelResult.entities[combineModelResult.entityCount++] = entity;
+
+    SceneTreeNode* sceneTreeNode = cre_scene_manager_get_entity_tree_node(entity);
+    SceneTreeNode* parentTreeNode = sceneTreeNode->parent;
+    while (parentTreeNode != NULL) {
+        combineModelResult.entities[combineModelResult.entityCount++] = parentTreeNode->entity;
+        parentTreeNode = parentTreeNode->parent;
+    }
+    return combineModelResult;
 }
 
 // Scene node setup

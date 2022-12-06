@@ -1,33 +1,16 @@
 #include "scene_utils.h"
 
 #include "scene_tree.h"
-#include "scene_manager.h"
 #include "../ecs/component/component.h"
 #include "../camera/camera.h"
 #include "../camera/camera_manager.h"
 
-EntityArray default_get_self_and_parent_nodes(Entity entity);
 Transform2D default_get_local_transform(Entity entity, int* zIndex, bool* success);
 
-on_get_self_and_parent_entities onGetSelfAndParentEntitiesFunc = &default_get_self_and_parent_nodes;
+on_get_self_and_parent_entities onGetSelfAndParentEntitiesFunc = &cre_scene_manager_get_self_and_parent_nodes;
 on_get_local_transform onGetLocalTransformFunc = &default_get_local_transform;
 
 // Default engine callbacks
-
-// First index is the child
-EntityArray default_get_self_and_parent_nodes(Entity entity) {
-    EntityArray combineModelResult = { .entityCount = 0 };
-    combineModelResult.entities[combineModelResult.entityCount++] = entity;
-
-    SceneTreeNode* sceneTreeNode = cre_scene_manager_get_entity_tree_node(entity);
-    SceneTreeNode* parentTreeNode = sceneTreeNode->parent;
-    while (parentTreeNode != NULL) {
-        combineModelResult.entities[combineModelResult.entityCount++] = parentTreeNode->entity;
-        parentTreeNode = parentTreeNode->parent;
-    }
-    return combineModelResult;
-}
-
 Transform2D default_get_local_transform(Entity entity, int* zIndex, bool* success) {
     Transform2DComponent* transform2DComponent = component_manager_get_component_unsafe(entity, ComponentDataIndex_TRANSFORM_2D);
     if (transform2DComponent == NULL) {
@@ -93,7 +76,11 @@ void cre_scene_utils_override_on_get_local_transform_func(on_get_local_transform
     onGetLocalTransformFunc = func;
 }
 
+EntityArray cre_scene_utils_get_self_and_parent_entities(Entity entity) {
+    return onGetSelfAndParentEntitiesFunc(entity);
+}
+
 void cre_scene_utils_reset_callback_func_overrides() {
-    onGetSelfAndParentEntitiesFunc = &default_get_self_and_parent_nodes;
+    onGetSelfAndParentEntitiesFunc = &cre_scene_manager_get_self_and_parent_nodes;
     onGetLocalTransformFunc = &default_get_local_transform;
 }

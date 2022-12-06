@@ -38,6 +38,10 @@ PyObject* cre_py_api_camera2D_get_boundary(PyObject* self, PyObject* args);
 // SceneTree
 PyObject* cre_py_api_scene_tree_change_scene(PyObject* self, PyObject* args, PyObject* kwargs);
 
+// World
+PyObject* cre_py_api_world_set_time_dilation(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_world_get_time_dilation(PyObject* self, PyObject* args);
+
 // Audio Manager
 PyObject* cre_py_api_audio_manager_play_sound(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_audio_manager_stop_sound(PyObject* self, PyObject* args, PyObject* kwargs);
@@ -50,6 +54,9 @@ PyObject* cre_py_api_node_get_child(PyObject* self, PyObject* args, PyObject* kw
 PyObject* cre_py_api_node_get_children(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_node_get_parent(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_node_get_name(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_node_set_time_dilation(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_node_get_time_dilation(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_node_get_full_time_dilation(PyObject* self, PyObject* args, PyObject* kwargs);
 
 // Node2D
 PyObject* cre_py_api_node2D_set_position(PyObject* self, PyObject* args, PyObject* kwargs);
@@ -216,6 +223,15 @@ static struct PyMethodDef crePyApiMethods[] = {
         "scene_tree_change_scene", (PyCFunction) cre_py_api_scene_tree_change_scene,
         METH_VARARGS | METH_KEYWORDS, "Change to a new scene."
     },
+    // WORLD
+    {
+        "world_set_time_dilation", (PyCFunction) cre_py_api_world_set_time_dilation,
+        METH_VARARGS | METH_KEYWORDS, "Set the global time dilation for world."
+    },
+    {
+        "world_get_time_dilation", cre_py_api_world_get_time_dilation,
+        METH_VARARGS, "Returns the global time dilation for world."
+    },
     // AUDIO MANAGER
     {
         "audio_manager_play_sound", (PyCFunction) cre_py_api_audio_manager_play_sound,
@@ -253,6 +269,18 @@ static struct PyMethodDef crePyApiMethods[] = {
     {
         "node_get_name", (PyCFunction) cre_py_api_node_get_name,
         METH_VARARGS | METH_KEYWORDS, "Returns the node's name."
+    },
+    {
+        "node_set_time_dilation", (PyCFunction) cre_py_api_node_set_time_dilation,
+        METH_VARARGS | METH_KEYWORDS, "Sets a node's time dilation."
+    },
+    {
+        "node_get_time_dilation", (PyCFunction) cre_py_api_node_get_time_dilation,
+        METH_VARARGS | METH_KEYWORDS, "Returns a node's time dilation."
+    },
+    {
+        "node_get_full_time_dilation", (PyCFunction) cre_py_api_node_get_full_time_dilation,
+        METH_VARARGS | METH_KEYWORDS, "Returns a node's total time dilation, including global world and parents."
     },
     // NODE2D
     {
@@ -476,6 +504,7 @@ static char* crePyApiAudioManagerPlaySoundKWList[] = {"path", "loops", NULL};
 static char* crePyApiNodeNewKWList[] = {"class_path", "class_name", "node_type", NULL};
 static char* crePyApiNodeAddChildKWList[] = {"parent_entity_id", "child_entity_id", NULL};
 static char* crePyApiNodeGetChildKWList[] = {"entity_id", "child_name", NULL};
+static char* crePyApiNodeSetTimeDilationKWList[] = {"entity_id", "time_dilation", NULL};
 
 static char* crePyApiNode2DSetXYKWList[] = {"entity_id", "x", "y", NULL};
 static char* crePyApiNode2DSetRotationKWList[] = {"entity_id", "rotation", NULL};
@@ -494,6 +523,8 @@ static char* crePyApiNetworkSubscribeKWList[] = {"signal_id", "listener_node", "
 static char* crePyApiServerStartKWList[] = {"port", NULL};
 
 static char* crePyApiClientStartKWList[] = {"host", "port", NULL};
+
+static char* crePyApiWorldSetTimeDilationKWList[] = {"time_dilation", NULL};
 
 static char* crePyApiCollisionHandlerProcessMouseCollisionsKWList[] = {"pos_offset_x", "pos_offset_y", "collision_size_w", "collision_size_h", NULL};
 

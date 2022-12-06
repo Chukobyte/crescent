@@ -7,6 +7,7 @@
 #include "../seika/src/utils/se_assert.h"
 
 #include "ec_system.h"
+#include "../../scene/scene_manager.h"
 #include "../../scripting/python/py_script_context.h"
 #include "../../scripting/native/native_script_context.h"
 #include "../../scripting/native/internal_classes/fps_display_class.h"
@@ -15,6 +16,8 @@ void script_system_on_entity_registered(Entity entity);
 void script_system_on_entity_unregistered(Entity entity);
 void script_system_entity_start(Entity entity);
 void script_system_entity_end(Entity entity);
+void script_system_pre_update_all();
+void script_system_post_update_all();
 void script_system_instance_update(float deltaTime);
 void script_system_instance_physics_update(float deltaTime);
 void script_system_network_callback(const char* message);
@@ -32,6 +35,8 @@ EntitySystem* script_ec_system_create() {
     scriptSystem->on_entity_unregistered_func = script_system_on_entity_unregistered;
     scriptSystem->on_entity_start_func = script_system_entity_start;
     scriptSystem->on_entity_end_func = script_system_entity_end;
+    scriptSystem->pre_process_all_func = script_system_pre_update_all;
+    scriptSystem->post_process_all_func = script_system_post_update_all;
     scriptSystem->process_func = script_system_instance_update;
     scriptSystem->physics_process_func = script_system_instance_physics_update;
     scriptSystem->network_callback_func = script_system_network_callback;
@@ -73,15 +78,39 @@ void script_system_entity_end(Entity entity) {
     scriptContexts[scriptComponent->contextType]->on_end(entity);
 }
 
+void script_system_pre_update_all() {
+    for (size_t i = 0; i < scriptContextsCount; i++) {
+        if (scriptContexts[i]->on_pre_update_all != NULL) {
+            scriptContexts[i]->on_pre_update_all();
+        }
+    }
+}
+
+void script_system_post_update_all() {
+    for (size_t i = 0; i < scriptContextsCount; i++) {
+        if (scriptContexts[i]->on_post_update_all != NULL) {
+            scriptContexts[i]->on_post_update_all();
+        }
+    }
+}
+
 void script_system_instance_update(float deltaTime) {
     for (size_t i = 0; i < scriptContextsCount; i++) {
-        scriptContexts[i]->on_update_all_instances(deltaTime);
+        for (size_t entityIndex = 0; entityIndex < scriptContexts[i]->updateEntityCount; entityIndex++) {
+            const Entity entity = scriptContexts[i]->updateEntities[entityIndex];
+            const float entityTimeDilation = cre_scene_manager_get_node_full_time_dilation(entity);
+            scriptContexts[i]->on_update_instance(entity, deltaTime * entityTimeDilation);
+        }
     }
 }
 
 void script_system_instance_physics_update(float deltaTime) {
     for (size_t i = 0; i < scriptContextsCount; i++) {
-        scriptContexts[i]->on_physics_update_all_instances(deltaTime);
+        for (size_t entityIndex = 0; entityIndex < scriptContexts[i]->physicsUpdateEntityCount; entityIndex++) {
+            const Entity entity = scriptContexts[i]->physicsUpdateEntities[entityIndex];
+            const float entityTimeDilation = cre_scene_manager_get_node_full_time_dilation(entity);
+            scriptContexts[i]->on_physics_update_instance(entity, deltaTime * entityTimeDilation);
+        }
     }
 }
 

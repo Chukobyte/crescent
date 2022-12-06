@@ -16,6 +16,8 @@
 #include "py_cache.h"
 #include "py_script_context.h"
 #include "../../engine_context.h"
+#include "../../game_properties.h"
+#include "../../world.h"
 #include "../../scripting/script_context.h"
 #include "../../physics/collision/collision.h"
 #include "../../camera/camera.h"
@@ -29,7 +31,6 @@
 #include "../../ecs/component/text_label_component.h"
 #include "../../ecs/component/node_component.h"
 #include "../../scene/scene_manager.h"
-#include "../../game_properties.h"
 
 #ifdef _MSC_VER
 #pragma warning(disable : 4996) // for strcpy
@@ -335,6 +336,20 @@ PyObject* cre_py_api_camera2D_get_boundary(PyObject* self, PyObject* args) {
     return Py_BuildValue("(ffff)", camera2D->boundary.x, camera2D->boundary.y, camera2D->boundary.w, camera2D->boundary.h);
 }
 
+// World
+PyObject* cre_py_api_world_set_time_dilation(PyObject* self, PyObject* args, PyObject* kwargs) {
+    float timeDilation;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "f", crePyApiWorldSetTimeDilationKWList, &timeDilation)) {
+        cre_world_set_time_dilation(timeDilation);
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_world_get_time_dilation(PyObject* self, PyObject* args) {
+    return Py_BuildValue("f)", cre_world_get_time_dilation());
+}
+
 // Audio Manager
 PyObject* cre_py_api_audio_manager_play_sound(PyObject* self, PyObject* args, PyObject* kwargs) {
     char* audioPath;
@@ -509,6 +524,45 @@ PyObject* cre_py_api_node_get_name(PyObject* self, PyObject* args, PyObject* kwa
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
         NodeComponent* nodeComponent = (NodeComponent*) component_manager_get_component(entity, ComponentDataIndex_NODE);
         return Py_BuildValue("s", nodeComponent->name);
+    }
+    return NULL;
+}
+
+// TODO: Move function to another place...
+void cre_invalidate_time_dilation_nodes_with_children(Entity entity) {
+    NodeComponent* nodeComponent = component_manager_get_component(entity, ComponentDataIndex_NODE);
+    nodeComponent->timeDilation.cacheInvalid = true;
+    SceneTreeNode* sceneTreeNode = cre_scene_manager_get_entity_tree_node(entity);
+    for (size_t i = 0; i < sceneTreeNode->childCount; i++) {
+        cre_invalidate_time_dilation_nodes_with_children(sceneTreeNode->children[i]->entity);
+    }
+}
+
+PyObject* cre_py_api_node_set_time_dilation(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    float timeDilation;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "if", crePyApiNodeSetTimeDilationKWList, &entity, &timeDilation)) {
+        NodeComponent* nodeComponent = component_manager_get_component(entity, ComponentDataIndex_NODE);
+        nodeComponent->timeDilation.value = timeDilation;
+        cre_invalidate_time_dilation_nodes_with_children(entity);
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_node_get_time_dilation(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
+        NodeComponent* nodeComponent = component_manager_get_component(entity, ComponentDataIndex_NODE);
+        return Py_BuildValue("f", nodeComponent->timeDilation.value);
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_node_get_full_time_dilation(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
+        return Py_BuildValue("f", cre_scene_manager_get_node_full_time_dilation(entity));
     }
     return NULL;
 }
