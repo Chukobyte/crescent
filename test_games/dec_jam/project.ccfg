@@ -32,6 +32,12 @@
                 "d",
                 "right"
             ]
+        },
+        {
+            "name": "attack",
+            "values": [
+                "space"
+            ]
         }
     ]
 }
