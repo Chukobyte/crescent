@@ -12,5 +12,12 @@
         "textures": [],
         "fonts": []
     },
-    "inputs": []
+    "inputs": [
+        {
+            "name": "quit_game",
+            "values": [
+                "esc"
+            ]
+        }
+    ]
 }
