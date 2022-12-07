@@ -18,6 +18,20 @@
             "values": [
                 "esc"
             ]
+        },
+        {
+            "name": "move_left",
+            "values": [
+                "a",
+                "left"
+            ]
+        },
+        {
+            "name": "move_right",
+            "values": [
+                "d",
+                "right"
+            ]
         }
     ]
 }
