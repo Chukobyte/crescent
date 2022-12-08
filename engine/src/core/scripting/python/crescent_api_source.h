@@ -546,56 +546,6 @@
 "        AXIS_RIGHT_ANALOG_DOWN = \"joystick_right_analog_down\"\n"\
 "\n"\
 "\n"\
-"# CAMERA\n"\
-"class Camera2D:\n"\
-"    @staticmethod\n"\
-"    def set_position(position: Vector2) -> None:\n"\
-"        crescent_api_internal.camera2D_set_position(x=position.x, y=position.y)\n"\
-"\n"\
-"    @staticmethod\n"\
-"    def add_to_position(position: Vector2) -> None:\n"\
-"        crescent_api_internal.camera2D_add_to_position(x=position.x, y=position.y)\n"\
-"\n"\
-"    @staticmethod\n"\
-"    def get_position() -> Vector2:\n"\
-"        x, y = crescent_api_internal.camera2D_get_position()\n"\
-"\n"\
-"    @staticmethod\n"\
-"    def set_offset(offset: Vector2) -> None:\n"\
-"        crescent_api_internal.camera2D_set_offset(x=offset.x, y=offset.y)\n"\
-"\n"\
-"    @staticmethod\n"\
-"    def add_to_offset(offset: Vector2) -> None:\n"\
-"        crescent_api_internal.camera2D_add_to_offset(x=offset.x, y=offset.y)\n"\
-"\n"\
-"    @staticmethod\n"\
-"    def get_offset() -> Vector2:\n"\
-"        x, y = crescent_api_internal.camera2D_get_offset()\n"\
-"\n"\
-"    @staticmethod\n"\
-"    def set_zoom(zoom: Vector2) -> None:\n"\
-"        crescent_api_internal.camera2D_set_zoom(x=zoom.x, y=zoom.y)\n"\
-"\n"\
-"    @staticmethod\n"\
-"    def add_to_zoom(zoom: Vector2) -> None:\n"\
-"        crescent_api_internal.camera2D_add_to_zoom(x=zoom.x, y=zoom.y)\n"\
-"\n"\
-"    @staticmethod\n"\
-"    def get_zoom() -> Vector2:\n"\
-"        x, y = crescent_api_internal.camera2D_get_zoom()\n"\
-"\n"\
-"    @staticmethod\n"\
-"    def set_boundary(boundary: Rect2) -> None:\n"\
-"        crescent_api_internal.camera2D_set_boundary(\n"\
-"            x=boundary.x, y=boundary.y, w=boundary.w, h=boundary.h\n"\
-"        )\n"\
-"\n"\
-"    @staticmethod\n"\
-"    def get_boundary() -> Rect2:\n"\
-"        x, y, w, h = crescent_api_internal.camera2D_get_boundary()\n"\
-"        return Rect2(x=x, y=y, w=w, h=h)\n"\
-"\n"\
-"\n"\
 "# STAGE SETUP\n"\
 "class StageNode:\n"\
 "    def __init__(\n"\
@@ -1139,6 +1089,64 @@
 "        )\n"\
 "        for index, node in enumerate(collided_entities):\n"\
 "            yield Node.parse_scene_node_from_engine(scene_node=node)\n"\
+"\n"\
+"\n"\
+"# CAMERA\n"\
+"class Camera2D:\n"\
+"    @staticmethod\n"\
+"    def set_position(position: Vector2) -> None:\n"\
+"        crescent_api_internal.camera2D_set_position(x=position.x, y=position.y)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def add_to_position(position: Vector2) -> None:\n"\
+"        crescent_api_internal.camera2D_add_to_position(x=position.x, y=position.y)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def get_position() -> Vector2:\n"\
+"        x, y = crescent_api_internal.camera2D_get_position()\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def set_offset(offset: Vector2) -> None:\n"\
+"        crescent_api_internal.camera2D_set_offset(x=offset.x, y=offset.y)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def add_to_offset(offset: Vector2) -> None:\n"\
+"        crescent_api_internal.camera2D_add_to_offset(x=offset.x, y=offset.y)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def get_offset() -> Vector2:\n"\
+"        x, y = crescent_api_internal.camera2D_get_offset()\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def set_zoom(zoom: Vector2) -> None:\n"\
+"        crescent_api_internal.camera2D_set_zoom(x=zoom.x, y=zoom.y)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def add_to_zoom(zoom: Vector2) -> None:\n"\
+"        crescent_api_internal.camera2D_add_to_zoom(x=zoom.x, y=zoom.y)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def get_zoom() -> Vector2:\n"\
+"        x, y = crescent_api_internal.camera2D_get_zoom()\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def set_boundary(boundary: Rect2) -> None:\n"\
+"        crescent_api_internal.camera2D_set_boundary(\n"\
+"            x=boundary.x, y=boundary.y, w=boundary.w, h=boundary.h\n"\
+"        )\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def get_boundary() -> Rect2:\n"\
+"        x, y, w, h = crescent_api_internal.camera2D_get_boundary()\n"\
+"        return Rect2(x=x, y=y, w=w, h=h)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def follow_node(node: Node2D) -> None:\n"\
+"        crescent_api_internal.camera2D_follow_node(entity_id=node.entity_id)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def unfollow_node(node: Node2D) -> None:\n"\
+"        crescent_api_internal.camera2D_unfollow_node(entity_id=node.entity_id)\n"\
 "\n"\
 "\n"\
 "# NETWORK\n"\

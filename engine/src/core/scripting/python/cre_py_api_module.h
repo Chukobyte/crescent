@@ -34,6 +34,8 @@ PyObject* cre_py_api_camera2D_add_to_zoom(PyObject* self, PyObject* args, PyObje
 PyObject* cre_py_api_camera2D_get_zoom(PyObject* self, PyObject* args);
 PyObject* cre_py_api_camera2D_set_boundary(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_camera2D_get_boundary(PyObject* self, PyObject* args);
+PyObject* cre_py_api_camera2D_follow_node(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_camera2D_unfollow_node(PyObject* self, PyObject* args, PyObject* kwargs);
 
 // SceneTree
 PyObject* cre_py_api_scene_tree_change_scene(PyObject* self, PyObject* args, PyObject* kwargs);
@@ -217,6 +219,14 @@ static struct PyMethodDef crePyApiMethods[] = {
     {
         "camera2D_get_boundary", (PyCFunction) cre_py_api_camera2D_get_boundary,
         METH_VARARGS, "Gets the camera's boundary."
+    },
+    {
+        "camera2D_follow_node", (PyCFunction) cre_py_api_camera2D_follow_node,
+        METH_VARARGS, "The camera will follow a node."
+    },
+    {
+        "camera2D_unfollow_node", (PyCFunction) cre_py_api_camera2D_unfollow_node,
+        METH_VARARGS, "The camera will unfollow a node."
     },
     // SCENE TREE
     {

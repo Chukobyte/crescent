@@ -345,6 +345,26 @@ PyObject* cre_py_api_camera2D_get_boundary(PyObject* self, PyObject* args) {
     return Py_BuildValue("(ffff)", camera2D->boundary.x, camera2D->boundary.y, camera2D->boundary.w, camera2D->boundary.h);
 }
 
+PyObject* cre_py_api_camera2D_follow_node(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
+        CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
+        cre_camera2d_follow_entity(camera2D, entity);
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_camera2D_unfollow_node(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
+        CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
+        cre_camera2d_unfollow_entity(camera2D, entity);
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
 // World
 PyObject* cre_py_api_world_set_time_dilation(PyObject* self, PyObject* args, PyObject* kwargs) {
     float timeDilation;

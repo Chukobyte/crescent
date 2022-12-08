@@ -137,6 +137,14 @@ def camera2D_get_boundary() -> tuple:
     return -1000000.0, -1000000.0, 1000000.0, 1000000.0
 
 
+def camera2D_follow_node(entity_id: int) -> None:
+    pass
+
+
+def camera2D_unfollow_node(entity_id: int) -> None:
+    pass
+
+
 def node_new(class_path: str, class_name: str, node_type: str):
     return None
 

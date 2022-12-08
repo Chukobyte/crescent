@@ -18,6 +18,7 @@ void camera2d_on_entity_transform_change(SESubjectNotifyPayload* payload) {
         globalTransform->position.y - ((float) gameProperties->resolutionHeight / 2.0f)
     };
     camera2D->viewport = newCameraPos;
+    cre_camera2d_clamp_viewport_to_boundary(camera2D);
 }
 
 void camera2d_on_entity_exit_scene(SESubjectNotifyPayload* payload) {
