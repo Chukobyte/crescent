@@ -11,6 +11,8 @@ NodeComponent* node_component_create() {
     nodeComponent->timeDilation = (NodeTimeDilation) {
         .value = 1.0f, .cachedFullValue = 1.0f, .cacheInvalid = true
     };
+    nodeComponent->onSceneTreeEnter.observerCount = 0;
+    nodeComponent->onSceneTreeExit.observerCount = 0;
     return nodeComponent;
 }
 

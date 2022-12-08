@@ -6,6 +6,7 @@ extern "C" {
 
 #include <stdbool.h>
 
+#include "../seika/src/utils/observer.h"
 #include "../seika/src/math/se_math.h"
 
 typedef struct Transform2DComponent {
@@ -15,6 +16,7 @@ typedef struct Transform2DComponent {
     bool isZIndexRelativeToParent;
     bool ignoreCamera;
     bool isGlobalTransformDirty;
+    SESubject onTransformChanged; // { data = Transform2DComponent (self), type = 0 (not used) }
 } Transform2DComponent;
 
 Transform2DComponent* transform2d_component_create();

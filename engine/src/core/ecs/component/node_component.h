@@ -6,6 +6,8 @@ extern "C" {
 
 #include <stdbool.h>
 
+#include "../seika/src/utils/observer.h"
+
 #define RBE_NODE_NODE_STRING "Node"
 #define RBE_NODE_NODE2D_STRING "Node2D"
 #define RBE_NODE_SPRITE_STRING "Sprite"
@@ -47,6 +49,10 @@ typedef struct NodeComponent {
     char name[32];
     NodeBaseType type;
     NodeTimeDilation timeDilation;
+    // Called after '_start' is called on an entity
+    SESubject onSceneTreeEnter; // { data = entity (unsigned int), type = 0 (not used) }
+    // Called before '_end' is called on an entity
+    SESubject onSceneTreeExit; // { data = entity (unsigned int), type = 0 (not used) }
 } NodeComponent;
 
 NodeComponent* node_component_create();
