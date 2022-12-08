@@ -8,6 +8,7 @@
 #include "../src/memory/se_mem.h"
 #include "../src/utils/se_string_util.h"
 #include "../src/utils/se_file_system_utils.h"
+#include "../src/utils/observer.h"
 
 #define RESOURCES_PATH "seika/test/resources"
 #define RESOURCES_PACK_PATH "seika/test/resources/test.pck"
@@ -21,6 +22,7 @@ void seika_file_system_utils_test(void);
 void seika_string_utils_test(void);
 void seika_array_utils_test(void);
 void seika_asset_file_loader_test(void);
+void seika_observer_test(void);
 
 int main(int argv, char** args) {
     UNITY_BEGIN();
@@ -30,6 +32,7 @@ int main(int argv, char** args) {
     RUN_TEST(seika_string_utils_test);
     RUN_TEST(seika_array_utils_test);
     RUN_TEST(seika_asset_file_loader_test);
+    RUN_TEST(seika_observer_test);
     return UNITY_END();
 }
 
@@ -168,4 +171,22 @@ void seika_asset_file_loader_test(void) {
     TEST_ASSERT_TRUE(!sf_asset_file_loader_is_asset_valid(&nonExistingFileAsset));
 
     sf_asset_file_loader_finalize();
+}
+
+static bool hasObserved = false;
+
+void observer_func(SESubjectNotifyPayload* payload) {
+    hasObserved = true;
+}
+
+void seika_observer_test(void) {
+    SEObserver* observer = se_observer_new(observer_func);
+    SESubject* subject = se_subject_new();
+    se_subject_register_observer(subject, observer);
+    TEST_ASSERT_EQUAL_INT(1, subject->observerCount);
+    se_subject_notify_observers(subject, NULL);
+    TEST_ASSERT(hasObserved);
+    // Clean up
+    se_subject_delete(subject);
+    se_observer_delete(observer);
 }

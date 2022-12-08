@@ -28,16 +28,5 @@ void se_array_utils_selection_sort_int(int arr[], int arraySize) {
 }
 
 void se_array_utils_remove_item_uint32(uint32_t array[], size_t* size, uint32_t item, uint32_t emptyValue) {
-    const size_t countRef = *size;
-    for (size_t i = 0; i < countRef; i++) {
-        if (array[i] == item) {
-            array[i] = array[i + 1];
-            array[i + 1] = emptyValue;
-            *size = *size - 1;
-        }
-        if (array[i] == emptyValue && i + 1 < countRef) {
-            array[i] = array[i + 1];
-            array[i + 1] = emptyValue;
-        }
-    }
+    SE_ARRAY_UTILS_REMOVE_ARRAY_ITEM(array, *size, item, emptyValue);
 }
