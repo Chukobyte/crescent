@@ -39,7 +39,7 @@ class Player(Node2D):
     def _start(self) -> None:
         self.color_rect = self.get_child("ColorRect")
         self.collider = self.get_child("Collider2D")
-        self._sync_camera_pos()
+        Camera2D.follow_node(node=self)
 
     def _update(self, delta_time: float) -> None:
         if Input.is_action_just_pressed(name="quit_game"):
@@ -56,26 +56,15 @@ class Player(Node2D):
             print("Attacked")
 
     def _physics_update(self, delta_time: float) -> None:
-        has_moved = False
         if Input.is_action_pressed(name="move_left"):
             self.add_to_position(
                 Vector2.LEFT()
                 * Vector2(delta_time * self.speed, delta_time * self.speed)
             )
             self.direction_facing = Vector2.LEFT()
-            has_moved = True
         elif Input.is_action_pressed(name="move_right"):
             self.add_to_position(
                 Vector2.RIGHT()
                 * Vector2(delta_time * self.speed, delta_time * self.speed)
             )
             self.direction_facing = Vector2.RIGHT()
-            has_moved = True
-        if has_moved:
-            self._sync_camera_pos()
-
-    # Updates camera position to be centered on player
-    def _sync_camera_pos(self) -> None:
-        player_pos = self.position
-        new_camera_pos = Vector2(player_pos.x - 400, player_pos.y - 300)
-        Camera2D.set_position(new_camera_pos)

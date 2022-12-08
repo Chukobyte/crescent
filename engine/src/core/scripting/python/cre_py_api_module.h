@@ -217,16 +217,16 @@ static struct PyMethodDef crePyApiMethods[] = {
         METH_VARARGS | METH_KEYWORDS, "Sets the camera's boundary."
     },
     {
-        "camera2D_get_boundary", (PyCFunction) cre_py_api_camera2D_get_boundary,
+        "camera2D_get_boundary", cre_py_api_camera2D_get_boundary,
         METH_VARARGS, "Gets the camera's boundary."
     },
     {
         "camera2D_follow_node", (PyCFunction) cre_py_api_camera2D_follow_node,
-        METH_VARARGS, "The camera will follow a node."
+        METH_VARARGS | METH_KEYWORDS, "The camera will follow a node."
     },
     {
         "camera2D_unfollow_node", (PyCFunction) cre_py_api_camera2D_unfollow_node,
-        METH_VARARGS, "The camera will unfollow a node."
+        METH_VARARGS | METH_KEYWORDS, "The camera will unfollow a node."
     },
     // SCENE TREE
     {
