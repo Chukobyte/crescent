@@ -81,7 +81,9 @@ void se_update_entity_local_position(Entity entity, Vector2* position) {
     transformComp->isGlobalTransformDirty = true;
     if (transformComp->localTransform.position.x != prevPosition.x || transformComp->localTransform.position.y != prevPosition.y) {
         se_update_collision_data(entity);
-        se_subject_notify_observers(&transformComp->onTransformChanged, &(SESubjectNotifyPayload){ .data = transformComp, .type = 0 });
+        se_subject_notify_observers(&transformComp->onTransformChanged, &(SESubjectNotifyPayload) {
+            .data = transformComp, .type = 0
+        });
     }
 }
 
@@ -93,7 +95,9 @@ void se_update_entity_local_scale(Entity entity, Vector2 * scale) {
     transformComp->isGlobalTransformDirty = true;
     if (transformComp->localTransform.scale.x != prevScale.x || transformComp->localTransform.scale.y != prevScale.y) {
         se_update_collision_data(entity);
-        se_subject_notify_observers(&transformComp->onTransformChanged, &(SESubjectNotifyPayload){ .data = transformComp, .type = 0 });
+        se_subject_notify_observers(&transformComp->onTransformChanged, &(SESubjectNotifyPayload) {
+            .data = transformComp, .type = 0
+        });
     }
 }
 
@@ -104,7 +108,9 @@ void se_update_entity_local_rotation(Entity entity, float rotation) {
     transformComp->isGlobalTransformDirty = true;
     if (transformComp->localTransform.rotation != prevRotation) {
         se_update_collision_data(entity);
-        se_subject_notify_observers(&transformComp->onTransformChanged, &(SESubjectNotifyPayload){ .data = transformComp, .type = 0 });
+        se_subject_notify_observers(&transformComp->onTransformChanged, &(SESubjectNotifyPayload) {
+            .data = transformComp, .type = 0
+        });
     }
 }
 

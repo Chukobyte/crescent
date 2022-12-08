@@ -204,7 +204,9 @@ void seika_observer_test(void) {
     observer = se_observer_new(observer_func2);
     se_subject_register_observer(subject, observer);
     int dataValue = 3;
-    se_subject_notify_observers(subject, &(SESubjectNotifyPayload){ .data = &dataValue, .type = 127 });
+    se_subject_notify_observers(subject, &(SESubjectNotifyPayload) {
+        .data = &dataValue, .type = 127
+    });
     TEST_ASSERT(hasObserved);
 
     // Clean up
