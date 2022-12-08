@@ -6,13 +6,13 @@
 #define SE_MAX_OBSERVERS 8
 
 typedef struct SESubjectNotifyPayload {
-    void* data;
-    int type;
+    void* data; // Primary data, be sure to cast properly
+    int type; // Secondary data, can be used to filter things, an easier value to access, etc...
 } SESubjectNotifyPayload;
 
-// Observer
 typedef void (*SEObserverOnNotify)(SESubjectNotifyPayload*);
 
+// An observer that can subscribe to a subject
 typedef struct SEObserver {
     SEObserverOnNotify on_notify;
 } SEObserver;
@@ -20,7 +20,7 @@ typedef struct SEObserver {
 SEObserver* se_observer_new(SEObserverOnNotify onNotifyFunc);
 void se_observer_delete(SEObserver* observer);
 
-// Subject
+// A subscribable subject
 typedef struct SESubject {
     size_t observerCount;
     SEObserver* observers[SE_MAX_OBSERVERS];

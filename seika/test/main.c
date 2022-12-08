@@ -173,19 +173,40 @@ void seika_asset_file_loader_test(void) {
     sf_asset_file_loader_finalize();
 }
 
+// Observer Test
 static bool hasObserved = false;
 
-void observer_func(SESubjectNotifyPayload* payload) {
+void observer_func1(SESubjectNotifyPayload* payload) {
     hasObserved = true;
 }
 
+void observer_func2(SESubjectNotifyPayload* payload) {
+    const int dataValue = *(int*) payload->data;
+    if (dataValue == 3 && payload->type == 127) {
+        hasObserved = true;
+    }
+}
+
 void seika_observer_test(void) {
-    SEObserver* observer = se_observer_new(observer_func);
     SESubject* subject = se_subject_new();
+    // Test 1 - Simple test with passing a NULL payload
+    SEObserver* observer = se_observer_new(observer_func1);
     se_subject_register_observer(subject, observer);
     TEST_ASSERT_EQUAL_INT(1, subject->observerCount);
     se_subject_notify_observers(subject, NULL);
     TEST_ASSERT(hasObserved);
+    se_subject_unregister_observer(subject, observer);
+    TEST_ASSERT_EQUAL_INT(0, subject->observerCount);
+    hasObserved = false;
+
+    // Test 2 - A slightly more complicated example filling out the payload
+    se_observer_delete(observer);
+    observer = se_observer_new(observer_func2);
+    se_subject_register_observer(subject, observer);
+    int dataValue = 3;
+    se_subject_notify_observers(subject, &(SESubjectNotifyPayload){ .data = &dataValue, .type = 127 });
+    TEST_ASSERT(hasObserved);
+
     // Clean up
     se_subject_delete(subject);
     se_observer_delete(observer);
