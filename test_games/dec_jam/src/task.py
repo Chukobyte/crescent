@@ -21,10 +21,14 @@ class Task:
         self.valid = True
 
     def close(self) -> None:
-        self.coroutine.close()
-        self.valid = False
-        for func in self.on_close_subscribers:
-            func(self)
+        try:
+            self.coroutine.close()
+            self.valid = False
+            for func in self.on_close_subscribers:
+                func(self)
+            self.on_close_subscribers.clear()
+        except ValueError:
+            pass
 
     def subscribe_to_on_close(self, func: Callable) -> None:
         self.on_close_subscribers.append(func)
@@ -53,6 +57,11 @@ class TaskManager:
                         raise StopIteration
                 except StopIteration:
                     self.remove_task(task)
+
+    def kill_tasks(self) -> None:
+        for task in self.tasks[:]:
+            if task.valid:
+                task.close()
 
 
 def co_suspend() -> Awaitable:
