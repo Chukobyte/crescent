@@ -1,4 +1,5 @@
 from crescent_api import *
+from task import *
 
 
 class Attack(Collider2D):
@@ -7,6 +8,7 @@ class Attack(Collider2D):
         self.life_time = 1.0
         self.targets = []
         self.direction = Vector2.RIGHT()
+        self._task_manager = TaskManager([Task(self._update_task())])
 
     def _start(self) -> None:
         collider_size = Size2D(32, 32)
@@ -17,15 +19,22 @@ class Attack(Collider2D):
         color_square.size = collider_size
         color_square.color = collider_color
         self.add_child(color_square)
-        print("Attack spawned")
 
     def _update(self, delta_time: float) -> None:
-        collisions = CollisionHandler.process_collisions(self)
-        for collision in collisions:
-            if collision.get_parent().name == "TestThing":
-                collision.get_parent().queue_deletion()
-                self.queue_deletion()
-                break
+        self._task_manager.update()
+
+    async def _update_task(self) -> None:
+        try:
+            while True:
+                collisions = CollisionHandler.process_collisions(self)
+                for collision in collisions:
+                    if collision.get_parent().name == "TestThing":
+                        collision.get_parent().queue_deletion()
+                        self.queue_deletion()
+                        break
+                await co_suspend()
+        except GeneratorExit:
+            pass
 
 
 class Player(Node2D):

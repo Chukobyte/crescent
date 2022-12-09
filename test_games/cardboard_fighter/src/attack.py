@@ -61,6 +61,9 @@ class Attack(HitBox):
                     await co_suspend()
         except GeneratorExit:
             pass
+        # Clean up code
+        finally:
+            pass
 
 
 # Child classes
