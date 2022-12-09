@@ -46,6 +46,7 @@ add_library(${PROJECT_NAME} STATIC
         src/utils/logger.c
         src/utils/se_file_system_utils.c
         src/utils/se_string_util.c
+        src/utils/observer.c
         src/data_structures/se_array_utils.c
         src/data_structures/se_queue.c
         src/data_structures/se_hash_map.c

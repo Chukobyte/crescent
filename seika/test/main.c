@@ -8,6 +8,7 @@
 #include "../src/memory/se_mem.h"
 #include "../src/utils/se_string_util.h"
 #include "../src/utils/se_file_system_utils.h"
+#include "../src/utils/observer.h"
 
 #define RESOURCES_PATH "seika/test/resources"
 #define RESOURCES_PACK_PATH "seika/test/resources/test.pck"
@@ -21,6 +22,7 @@ void seika_file_system_utils_test(void);
 void seika_string_utils_test(void);
 void seika_array_utils_test(void);
 void seika_asset_file_loader_test(void);
+void seika_observer_test(void);
 
 int main(int argv, char** args) {
     UNITY_BEGIN();
@@ -30,6 +32,7 @@ int main(int argv, char** args) {
     RUN_TEST(seika_string_utils_test);
     RUN_TEST(seika_array_utils_test);
     RUN_TEST(seika_asset_file_loader_test);
+    RUN_TEST(seika_observer_test);
     return UNITY_END();
 }
 
@@ -168,4 +171,45 @@ void seika_asset_file_loader_test(void) {
     TEST_ASSERT_TRUE(!sf_asset_file_loader_is_asset_valid(&nonExistingFileAsset));
 
     sf_asset_file_loader_finalize();
+}
+
+// Observer Test
+static bool hasObserved = false;
+
+void observer_func1(SESubjectNotifyPayload* payload) {
+    hasObserved = true;
+}
+
+void observer_func2(SESubjectNotifyPayload* payload) {
+    const int dataValue = *(int*) payload->data;
+    if (dataValue == 3 && payload->type == 127) {
+        hasObserved = true;
+    }
+}
+
+void seika_observer_test(void) {
+    SEEvent* event = se_event_new();
+    // Test 1 - Simple test with passing a NULL payload
+    SEObserver* observer = se_observer_new(observer_func1);
+    se_event_register_observer(event, observer);
+    TEST_ASSERT_EQUAL_INT(1, event->observerCount);
+    se_event_notify_observers(event, NULL);
+    TEST_ASSERT(hasObserved);
+    se_event_unregister_observer(event, observer);
+    TEST_ASSERT_EQUAL_INT(0, event->observerCount);
+    hasObserved = false;
+
+    // Test 2 - A slightly more complicated example filling out the payload
+    se_observer_delete(observer);
+    observer = se_observer_new(observer_func2);
+    se_event_register_observer(event, observer);
+    int dataValue = 3;
+    se_event_notify_observers(event, &(SESubjectNotifyPayload) {
+        .data = &dataValue, .type = 127
+    });
+    TEST_ASSERT(hasObserved);
+
+    // Clean up
+    se_event_delete(event);
+    se_observer_delete(observer);
 }

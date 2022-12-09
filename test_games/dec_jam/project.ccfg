@@ -1,0 +1,43 @@
+{
+    "name": "DecJam",
+    "window_width": 800,
+    "window_height": 600,
+    "resolution_width": 800,
+    "resolution_height": 600,
+    "target_fps": 66,
+    "initial_node_path": "scenes/main.cscn",
+    "colliders_visible": false,
+    "assets": {
+        "audio_sources": [],
+        "textures": [],
+        "fonts": []
+    },
+    "inputs": [
+        {
+            "name": "quit_game",
+            "values": [
+                "esc"
+            ]
+        },
+        {
+            "name": "move_left",
+            "values": [
+                "a",
+                "left"
+            ]
+        },
+        {
+            "name": "move_right",
+            "values": [
+                "d",
+                "right"
+            ]
+        },
+        {
+            "name": "attack",
+            "values": [
+                "space"
+            ]
+        }
+    ]
+}

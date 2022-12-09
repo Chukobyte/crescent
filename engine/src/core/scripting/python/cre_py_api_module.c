@@ -81,6 +81,10 @@ void se_update_entity_local_position(Entity entity, Vector2* position) {
     transformComp->isGlobalTransformDirty = true;
     if (transformComp->localTransform.position.x != prevPosition.x || transformComp->localTransform.position.y != prevPosition.y) {
         se_update_collision_data(entity);
+        se_event_notify_observers(&transformComp->onTransformChanged, &(SESubjectNotifyPayload) {
+            .data = &(ComponentEntityUpdatePayload) {.entity = entity, .component = transformComp, .componentType = ComponentType_TRANSFORM_2D},
+            .type = 0
+        });
     }
 }
 
@@ -92,6 +96,10 @@ void se_update_entity_local_scale(Entity entity, Vector2 * scale) {
     transformComp->isGlobalTransformDirty = true;
     if (transformComp->localTransform.scale.x != prevScale.x || transformComp->localTransform.scale.y != prevScale.y) {
         se_update_collision_data(entity);
+        se_event_notify_observers(&transformComp->onTransformChanged, &(SESubjectNotifyPayload) {
+            .data = &(ComponentEntityUpdatePayload) {.entity = entity, .component = transformComp, .componentType = ComponentType_TRANSFORM_2D},
+            .type = 0
+        });
     }
 }
 
@@ -102,6 +110,10 @@ void se_update_entity_local_rotation(Entity entity, float rotation) {
     transformComp->isGlobalTransformDirty = true;
     if (transformComp->localTransform.rotation != prevRotation) {
         se_update_collision_data(entity);
+        se_event_notify_observers(&transformComp->onTransformChanged, &(SESubjectNotifyPayload) {
+            .data = &(ComponentEntityUpdatePayload) {.entity = entity, .component = transformComp, .componentType = ComponentType_TRANSFORM_2D},
+            .type = 0
+        });
     }
 }
 
@@ -334,6 +346,26 @@ PyObject* cre_py_api_camera2D_set_boundary(PyObject* self, PyObject* args, PyObj
 PyObject* cre_py_api_camera2D_get_boundary(PyObject* self, PyObject* args) {
     CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
     return Py_BuildValue("(ffff)", camera2D->boundary.x, camera2D->boundary.y, camera2D->boundary.w, camera2D->boundary.h);
+}
+
+PyObject* cre_py_api_camera2D_follow_node(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
+        CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
+        cre_camera2d_follow_entity(camera2D, entity);
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_camera2D_unfollow_node(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
+        CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
+        cre_camera2d_unfollow_entity(camera2D, entity);
+        Py_RETURN_NONE;
+    }
+    return NULL;
 }
 
 // World
