@@ -16,7 +16,7 @@ typedef struct Transform2DComponent {
     bool isZIndexRelativeToParent;
     bool ignoreCamera;
     bool isGlobalTransformDirty;
-    SESubject onTransformChanged; // { data = Transform2DComponent (self), type = 0 (not used) }
+    SESubject onTransformChanged; // { data = ComponentEntityUpdatePayload(self), type = 0 (not used) }
 } Transform2DComponent;
 
 Transform2DComponent* transform2d_component_create();

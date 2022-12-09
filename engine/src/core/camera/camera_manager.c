@@ -7,14 +7,14 @@
 #include "../game_properties.h"
 
 void camera2d_on_entity_transform_change(SESubjectNotifyPayload* payload) {
-    Transform2DComponent* transform2DComponent = (Transform2DComponent*) payload->data;
+    ComponentEntityUpdatePayload* updatePayload = (ComponentEntityUpdatePayload*) payload->data;
+    const Entity entity = updatePayload->entity;
+    Transform2DComponent* transform2DComponent = (Transform2DComponent*) updatePayload->component;
 
     CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
-    // TODO: Get entity
-//    TransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity, transform2DComponent);
-    TransformModel2D* globalTransform = &transform2DComponent->globalTransform;
-    globalTransform->position = transform2DComponent->localTransform.position;
+    TransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity, transform2DComponent);
     CREGameProperties* gameProperties = cre_game_props_get();
+    // TODO: Check for mode
     Vector2 newCameraPos = {
         globalTransform->position.x - ((float) gameProperties->resolutionWidth / 2.0f),
         globalTransform->position.y - ((float) gameProperties->resolutionHeight / 2.0f)

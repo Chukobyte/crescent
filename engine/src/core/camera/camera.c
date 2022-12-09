@@ -38,7 +38,8 @@ void cre_camera2d_follow_entity(CRECamera2D* camera2D, Entity entity) {
         // Trigger update right away so camera can be in position
         // TODO: Call the function this notifies instead of triggering
         se_subject_notify_observers(&transform2DComponent->onTransformChanged, &(SESubjectNotifyPayload) {
-            .data = transform2DComponent, .type = 0
+            .data = &(ComponentEntityUpdatePayload) { .entity = entity, .component = transform2DComponent, .componentType = ComponentType_TRANSFORM_2D },
+            .type = 0
         });
     }
 }
