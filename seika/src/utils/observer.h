@@ -20,14 +20,14 @@ typedef struct SEObserver {
 SEObserver* se_observer_new(SEObserverOnNotify onNotifyFunc);
 void se_observer_delete(SEObserver* observer);
 
-// A subscribable subject
-typedef struct SESubject {
+// A subscribable event
+typedef struct SEEvent {
     size_t observerCount;
     SEObserver* observers[SE_MAX_OBSERVERS];
-} SESubject;
+} SEEvent;
 
-SESubject* se_subject_new();
-void se_subject_delete(SESubject* subject);
-bool se_subject_register_observer(SESubject* subject, SEObserver* observer);
-bool se_subject_unregister_observer(SESubject* subject, SEObserver* observer);
-void se_subject_notify_observers(SESubject* subject, SESubjectNotifyPayload* payload);
+SEEvent* se_event_new();
+void se_event_delete(SEEvent* event);
+bool se_event_register_observer(SEEvent* event, SEObserver* observer);
+bool se_event_unregister_observer(SEEvent* event, SEObserver* observer);
+void se_event_notify_observers(SEEvent* event, SESubjectNotifyPayload* payload);

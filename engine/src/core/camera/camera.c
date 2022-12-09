@@ -27,18 +27,19 @@ void cre_camera2d_follow_entity(CRECamera2D* camera2D, Entity entity) {
 
     camera2D->entityFollowing = entity;
     camera2D->mode = CreCameraMode_FOLLOW_ENTITY;
-    // Register to entity subjects
+    // Register to entity events
     NodeComponent* nodeComponent = (NodeComponent*) component_manager_get_component_unsafe(entity, ComponentDataIndex_NODE);
     if (nodeComponent != NULL) {
-        se_subject_register_observer(&nodeComponent->onSceneTreeExit, &camera2D->onEntityExitSceneObserver);
+        se_event_register_observer(&nodeComponent->onSceneTreeExit, &camera2D->onEntityExitSceneObserver);
     }
     Transform2DComponent* transform2DComponent = (Transform2DComponent *) component_manager_get_component_unsafe(entity, ComponentDataIndex_TRANSFORM_2D);
     if (transform2DComponent != NULL) {
-        se_subject_register_observer(&transform2DComponent->onTransformChanged, &camera2D->onEntityTransformChangeObserver);
+        se_event_register_observer(&transform2DComponent->onTransformChanged,
+                                   &camera2D->onEntityTransformChangeObserver);
         // Trigger update right away so camera can be in position
         // TODO: Call the function this notifies instead of triggering
-        se_subject_notify_observers(&transform2DComponent->onTransformChanged, &(SESubjectNotifyPayload) {
-            .data = &(ComponentEntityUpdatePayload) { .entity = entity, .component = transform2DComponent, .componentType = ComponentType_TRANSFORM_2D },
+        se_event_notify_observers(&transform2DComponent->onTransformChanged, &(SESubjectNotifyPayload) {
+            .data = &(ComponentEntityUpdatePayload) {.entity = entity, .component = transform2DComponent, .componentType = ComponentType_TRANSFORM_2D},
             .type = 0
         });
     }
@@ -48,14 +49,15 @@ void cre_camera2d_unfollow_entity(CRECamera2D* camera2D, Entity entity) {
     if (entity != NULL_ENTITY && entity == camera2D->entityFollowing) {
         camera2D->entityFollowing = NULL_ENTITY;
         camera2D->mode = CreCameraMode_MANUAL;
-        // Unregister from entity subjects
+        // Unregister from entity events
         NodeComponent* nodeComponent = (NodeComponent*) component_manager_get_component_unsafe(entity, ComponentDataIndex_NODE);
         if (nodeComponent != NULL) {
-            se_subject_unregister_observer(&nodeComponent->onSceneTreeExit, &camera2D->onEntityExitSceneObserver);
+            se_event_unregister_observer(&nodeComponent->onSceneTreeExit, &camera2D->onEntityExitSceneObserver);
         }
         Transform2DComponent* transform2DComponent = (Transform2DComponent *) component_manager_get_component_unsafe(entity, ComponentDataIndex_TRANSFORM_2D);
         if (transform2DComponent != NULL) {
-            se_subject_unregister_observer(&transform2DComponent->onTransformChanged, &camera2D->onEntityTransformChangeObserver);
+            se_event_unregister_observer(&transform2DComponent->onTransformChanged,
+                                         &camera2D->onEntityTransformChangeObserver);
         }
     }
 }

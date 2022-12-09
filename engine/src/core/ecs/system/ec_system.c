@@ -161,7 +161,7 @@ void cre_ec_system_entity_end(Entity entity) {
         // Notify scene exit observers before calling it on systems
         NodeComponent* nodeComponent = (NodeComponent*) component_manager_get_component_unsafe(entity, ComponentDataIndex_NODE);
         if (nodeComponent != NULL) {
-            se_subject_notify_observers(&nodeComponent->onSceneTreeExit, &(SESubjectNotifyPayload) {
+            se_event_notify_observers(&nodeComponent->onSceneTreeExit, &(SESubjectNotifyPayload) {
                 .data = &entity, .type = 0
             });
         }
@@ -177,7 +177,7 @@ void cre_ec_system_entity_entered_scene(Entity entity) {
         // Notify scene enter observers before calling it on systems
         NodeComponent* nodeComponent = (NodeComponent*) component_manager_get_component_unsafe(entity, ComponentDataIndex_NODE);
         if (nodeComponent != NULL) {
-            se_subject_notify_observers(&nodeComponent->onSceneTreeEnter, &(SESubjectNotifyPayload) {
+            se_event_notify_observers(&nodeComponent->onSceneTreeEnter, &(SESubjectNotifyPayload) {
                 .data = &entity, .type = 0
             });
         }

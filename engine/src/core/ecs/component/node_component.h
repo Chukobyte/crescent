@@ -50,9 +50,9 @@ typedef struct NodeComponent {
     NodeBaseType type;
     NodeTimeDilation timeDilation;
     // Called after '_start' is called on an entity
-    SESubject onSceneTreeEnter; // { data = entity (unsigned int), type = 0 (not used) }
+    SEEvent onSceneTreeEnter; // { data = entity (unsigned int), type = 0 (not used) }
     // Called before '_end' is called on an entity
-    SESubject onSceneTreeExit; // { data = entity (unsigned int), type = 0 (not used) }
+    SEEvent onSceneTreeExit; // { data = entity (unsigned int), type = 0 (not used) }
 } NodeComponent;
 
 NodeComponent* node_component_create();

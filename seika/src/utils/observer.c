@@ -16,32 +16,32 @@ void se_observer_delete(SEObserver* observer) {
     SE_MEM_FREE(observer);
 }
 
-//--- Subject ---//
-SESubject* se_subject_new() {
-    SESubject* subject = SE_MEM_ALLOCATE(SESubject);
-    subject->observerCount = 0;
-    return subject;
+//--- Event ---//
+SEEvent* se_event_new() {
+    SEEvent* event = SE_MEM_ALLOCATE(SEEvent);
+    event->observerCount = 0;
+    return event;
 }
 
-void se_subject_delete(SESubject* subject) {
-    SE_MEM_FREE(subject);
+void se_event_delete(SEEvent* event) {
+    SE_MEM_FREE(event);
 }
 
-bool se_subject_register_observer(SESubject* subject, SEObserver* observer) {
-    SE_ASSERT(subject != NULL);
+bool se_event_register_observer(SEEvent* event, SEObserver* observer) {
+    SE_ASSERT(event != NULL);
     SE_ASSERT(observer != NULL);
-    SE_ASSERT_FMT(subject->observerCount + 1 < SE_MAX_OBSERVERS, "Reached max observer count, consider increasing 'SE_MAX_OBSERVERS'!");
-    subject->observers[subject->observerCount++] = observer;
+    SE_ASSERT_FMT(event->observerCount + 1 < SE_MAX_OBSERVERS, "Reached max observer count, consider increasing 'SE_MAX_OBSERVERS'!");
+    event->observers[event->observerCount++] = observer;
     return true;
 }
 
-bool se_subject_unregister_observer(SESubject* subject, SEObserver* observer) {
-    SE_ARRAY_UTILS_REMOVE_ARRAY_ITEM(subject->observers, subject->observerCount, observer, NULL);
+bool se_event_unregister_observer(SEEvent* event, SEObserver* observer) {
+    SE_ARRAY_UTILS_REMOVE_ARRAY_ITEM(event->observers, event->observerCount, observer, NULL);
     return true;
 }
 
-void se_subject_notify_observers(SESubject* subject, SESubjectNotifyPayload* payload) {
-    for (size_t i = 0; i < subject->observerCount; i++) {
-        subject->observers[i]->on_notify(payload);
+void se_event_notify_observers(SEEvent* event, SESubjectNotifyPayload* payload) {
+    for (size_t i = 0; i < event->observerCount; i++) {
+        event->observers[i]->on_notify(payload);
     }
 }

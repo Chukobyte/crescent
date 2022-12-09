@@ -188,28 +188,28 @@ void observer_func2(SESubjectNotifyPayload* payload) {
 }
 
 void seika_observer_test(void) {
-    SESubject* subject = se_subject_new();
+    SEEvent* event = se_event_new();
     // Test 1 - Simple test with passing a NULL payload
     SEObserver* observer = se_observer_new(observer_func1);
-    se_subject_register_observer(subject, observer);
-    TEST_ASSERT_EQUAL_INT(1, subject->observerCount);
-    se_subject_notify_observers(subject, NULL);
+    se_event_register_observer(event, observer);
+    TEST_ASSERT_EQUAL_INT(1, event->observerCount);
+    se_event_notify_observers(event, NULL);
     TEST_ASSERT(hasObserved);
-    se_subject_unregister_observer(subject, observer);
-    TEST_ASSERT_EQUAL_INT(0, subject->observerCount);
+    se_event_unregister_observer(event, observer);
+    TEST_ASSERT_EQUAL_INT(0, event->observerCount);
     hasObserved = false;
 
     // Test 2 - A slightly more complicated example filling out the payload
     se_observer_delete(observer);
     observer = se_observer_new(observer_func2);
-    se_subject_register_observer(subject, observer);
+    se_event_register_observer(event, observer);
     int dataValue = 3;
-    se_subject_notify_observers(subject, &(SESubjectNotifyPayload) {
+    se_event_notify_observers(event, &(SESubjectNotifyPayload) {
         .data = &dataValue, .type = 127
     });
     TEST_ASSERT(hasObserved);
 
     // Clean up
-    se_subject_delete(subject);
+    se_event_delete(event);
     se_observer_delete(observer);
 }

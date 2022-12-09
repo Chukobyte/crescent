@@ -34,7 +34,7 @@ typedef enum ComponentType {
     ComponentType_COLOR_RECT = 1 << 7,
 } ComponentType;
 
-// Struct that is used to pass information to observers from subjects
+// Struct that is used to pass information to observers from events
 typedef struct ComponentEntityUpdatePayload {
     Entity entity;
     void* component;
