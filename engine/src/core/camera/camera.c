@@ -3,7 +3,7 @@
 #include "../game_properties.h"
 #include "../ecs/component/node_component.h"
 #include "../ecs/component/component.h"
-#include "../ecs/component/transform2d_component.h"
+#include "../scene/scene_manager.h"
 
 void cre_camera2d_clamp_viewport_to_boundary(CRECamera2D* camera2D) {
     CREGameProperties* gameProperties = cre_game_props_get();
@@ -34,14 +34,9 @@ void cre_camera2d_follow_entity(CRECamera2D* camera2D, Entity entity) {
     }
     Transform2DComponent* transform2DComponent = (Transform2DComponent *) component_manager_get_component_unsafe(entity, ComponentDataIndex_TRANSFORM_2D);
     if (transform2DComponent != NULL) {
-        se_event_register_observer(&transform2DComponent->onTransformChanged,
-                                   &camera2D->onEntityTransformChangeObserver);
+        se_event_register_observer(&transform2DComponent->onTransformChanged, &camera2D->onEntityTransformChangeObserver);
         // Trigger update right away so camera can be in position
-        // TODO: Call the function this notifies instead of triggering
-        se_event_notify_observers(&transform2DComponent->onTransformChanged, &(SESubjectNotifyPayload) {
-            .data = &(ComponentEntityUpdatePayload) {.entity = entity, .component = transform2DComponent, .componentType = ComponentType_TRANSFORM_2D},
-            .type = 0
-        });
+        cre_camera2d_update_entity_follow(camera2D, transform2DComponent);
     }
 }
 
@@ -60,4 +55,16 @@ void cre_camera2d_unfollow_entity(CRECamera2D* camera2D, Entity entity) {
                                          &camera2D->onEntityTransformChangeObserver);
         }
     }
+}
+
+void cre_camera2d_update_entity_follow(CRECamera2D* camera2D, Transform2DComponent* transform2DComponent) {
+    TransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(camera2D->entityFollowing, transform2DComponent);
+    CREGameProperties* gameProperties = cre_game_props_get();
+    // TODO: Check for mode
+    Vector2 newCameraPos = {
+        globalTransform->position.x - ((float) gameProperties->resolutionWidth / 2.0f),
+        globalTransform->position.y - ((float) gameProperties->resolutionHeight / 2.0f)
+    };
+    camera2D->viewport = newCameraPos;
+    cre_camera2d_clamp_viewport_to_boundary(camera2D);
 }

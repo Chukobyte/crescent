@@ -8,6 +8,7 @@ extern "C" {
 #include "../seika/src/math/se_math.h"
 
 #include "../ecs/entity/entity.h"
+#include "../ecs/component/transform2d_component.h"
 
 typedef enum CreCameraMode {
     CreCameraMode_MANUAL = 0,
@@ -34,6 +35,7 @@ typedef struct CRECamera2D {
 void cre_camera2d_clamp_viewport_to_boundary(CRECamera2D* camera2D);
 void cre_camera2d_follow_entity(CRECamera2D* camera2D, Entity entity);
 void cre_camera2d_unfollow_entity(CRECamera2D* camera2D, Entity entity);
+void cre_camera2d_update_entity_follow(CRECamera2D* camera2D, Transform2DComponent* transform2DComponent);
 
 #ifdef __cplusplus
 }

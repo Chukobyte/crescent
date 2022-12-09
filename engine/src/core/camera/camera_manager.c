@@ -8,19 +8,10 @@
 
 void camera2d_on_entity_transform_change(SESubjectNotifyPayload* payload) {
     ComponentEntityUpdatePayload* updatePayload = (ComponentEntityUpdatePayload*) payload->data;
-    const Entity entity = updatePayload->entity;
     Transform2DComponent* transform2DComponent = (Transform2DComponent*) updatePayload->component;
 
     CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
-    TransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity, transform2DComponent);
-    CREGameProperties* gameProperties = cre_game_props_get();
-    // TODO: Check for mode
-    Vector2 newCameraPos = {
-        globalTransform->position.x - ((float) gameProperties->resolutionWidth / 2.0f),
-        globalTransform->position.y - ((float) gameProperties->resolutionHeight / 2.0f)
-    };
-    camera2D->viewport = newCameraPos;
-    cre_camera2d_clamp_viewport_to_boundary(camera2D);
+    cre_camera2d_update_entity_follow(camera2D, transform2DComponent);
 }
 
 void camera2d_on_entity_exit_scene(SESubjectNotifyPayload* payload) {
