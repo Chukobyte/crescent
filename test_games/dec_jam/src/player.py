@@ -101,6 +101,27 @@ class Player(Node2D):
     def _physics_update(self, delta_time: float) -> None:
         self._physics_update_task_manager.update()
 
+    def _update_stance(self, stance: str) -> None:
+        if self.stance == stance:
+            return None
+        self.stance = stance
+        if stance == PlayerStance.STANDING:
+            stand_size = Size2D(48, 96)
+            stand_pos = Vector2.ZERO() + Vector2(-24, -48)
+            self.color_rect.size = stand_size
+            self.color_rect.position = stand_pos
+            self.collider.extents = stand_size
+            self.collider.position = stand_pos
+        elif stance == PlayerStance.CROUCHING:
+            crouch_size = Size2D(48, 48)
+            crouch_pos = Vector2(0, 48) + Vector2(-24, -48)
+            self.color_rect.size = crouch_size
+            self.color_rect.position = crouch_pos
+            self.collider.extents = crouch_size
+            self.collider.position = crouch_pos
+        elif stance == PlayerStance.IN_AIR:
+            pass
+
     # Tasks
     async def physics_update_task(self):
         # Doesn't change so no need to get every frame
@@ -122,24 +143,16 @@ class Player(Node2D):
                         )
                     self.direction_facing = input_dir
 
-                if Input.is_action_pressed(name="crouch"):
-                    if self.stance != PlayerStance.CROUCHING:
-                        self.stance = PlayerStance.CROUCHING
-                        crouch_size = Size2D(48, 48)
-                        crouch_pos = Vector2(0, 48) + Vector2(-24, -48)
-                        self.color_rect.size = crouch_size
-                        self.color_rect.position = crouch_pos
-                        self.collider.extents = crouch_size
-                        self.collider.position = crouch_pos
+                if self.stance != PlayerStance.IN_AIR:
+                    if Input.is_action_pressed(name="crouch"):
+                        if self.stance != PlayerStance.CROUCHING:
+                            self._update_stance(PlayerStance.CROUCHING)
+                    else:
+                        if self.stance == PlayerStance.CROUCHING:
+                            self._update_stance(PlayerStance.STANDING)
                 else:
-                    if self.stance == PlayerStance.CROUCHING:
-                        self.stance = PlayerStance.STANDING
-                        stand_size = Size2D(48, 96)
-                        stand_pos = Vector2.ZERO() + Vector2(-24, -48)
-                        self.color_rect.size = stand_size
-                        self.color_rect.position = stand_pos
-                        self.collider.extents = stand_size
-                        self.collider.position = stand_pos
+                    if Input.is_action_pressed(name="jump"):
+                        self.stance = PlayerStance.IN_AIR
                 await co_suspend()
         except GeneratorExit:
             pass
