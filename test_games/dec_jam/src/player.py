@@ -71,6 +71,9 @@ class Player(Node2D):
         self.speed = 200
         self.direction_facing = Vector2.RIGHT()
         self.stance = PlayerStance.STANDING
+        self._physics_update_task_manager = TaskManager(
+            tasks=[Task(self.physics_update_task())]
+        )
 
     def _start(self) -> None:
         self.color_rect = self.get_child("ColorRect")
@@ -92,28 +95,39 @@ class Player(Node2D):
             print("Attacked")
 
     def _physics_update(self, delta_time: float) -> None:
-        if Input.is_action_pressed(name="move_left"):
-            if self.stance != PlayerStance.CROUCHING:
-                self.add_to_position(
-                    Vector2.LEFT()
-                    * Vector2(delta_time * self.speed, delta_time * self.speed)
-                )
-            self.direction_facing = Vector2.LEFT()
-        elif Input.is_action_pressed(name="move_right"):
-            if self.stance != PlayerStance.CROUCHING:
-                self.add_to_position(
-                    Vector2.RIGHT()
-                    * Vector2(delta_time * self.speed, delta_time * self.speed)
-                )
-            self.direction_facing = Vector2.RIGHT()
+        self._physics_update_task_manager.update()
 
-        if Input.is_action_pressed(name="crouch"):
-            if self.stance != PlayerStance.CROUCHING:
-                self.stance = PlayerStance.CROUCHING
-                self.color_rect.size = Size2D(48, 48)
-                self.color_rect.position = Vector2(0, 48)
-        else:
-            if self.stance == PlayerStance.CROUCHING:
-                self.stance = PlayerStance.STANDING
-                self.color_rect.size = Size2D(48, 96)
-                self.color_rect.position = Vector2.ZERO()
+    # Tasks
+    async def physics_update_task(self):
+        engine_delta_time = 0.1  # TODO: Get delta time from engine api
+        try:
+            while True:
+                delta_time = self.get_full_time_dilation() * engine_delta_time
+                if Input.is_action_pressed(name="move_left"):
+                    if self.stance != PlayerStance.CROUCHING:
+                        self.add_to_position(
+                            Vector2.LEFT()
+                            * Vector2(delta_time * self.speed, delta_time * self.speed)
+                        )
+                    self.direction_facing = Vector2.LEFT()
+                elif Input.is_action_pressed(name="move_right"):
+                    if self.stance != PlayerStance.CROUCHING:
+                        self.add_to_position(
+                            Vector2.RIGHT()
+                            * Vector2(delta_time * self.speed, delta_time * self.speed)
+                        )
+                    self.direction_facing = Vector2.RIGHT()
+
+                if Input.is_action_pressed(name="crouch"):
+                    if self.stance != PlayerStance.CROUCHING:
+                        self.stance = PlayerStance.CROUCHING
+                        self.color_rect.size = Size2D(48, 48)
+                        self.color_rect.position = Vector2(0, 48)
+                else:
+                    if self.stance == PlayerStance.CROUCHING:
+                        self.stance = PlayerStance.STANDING
+                        self.color_rect.size = Size2D(48, 96)
+                        self.color_rect.position = Vector2.ZERO()
+                await co_suspend()
+        except GeneratorExit:
+            pass
