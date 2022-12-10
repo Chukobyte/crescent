@@ -105,20 +105,19 @@ class Player(Node2D):
         try:
             while True:
                 delta_time = self.get_full_time_dilation() * engine_delta_time
+                input_dir = Vector2.ZERO()
                 if Input.is_action_pressed(name="move_left"):
-                    if self.stance != PlayerStance.CROUCHING:
-                        self.add_to_position(
-                            Vector2.LEFT()
-                            * Vector2(delta_time * self.speed, delta_time * self.speed)
-                        )
-                    self.direction_facing = Vector2.LEFT()
+                    input_dir = Vector2.LEFT()
                 elif Input.is_action_pressed(name="move_right"):
+                    input_dir = Vector2.RIGHT()
+
+                if input_dir != Vector2.ZERO():
                     if self.stance != PlayerStance.CROUCHING:
                         self.add_to_position(
-                            Vector2.RIGHT()
+                            input_dir
                             * Vector2(delta_time * self.speed, delta_time * self.speed)
                         )
-                    self.direction_facing = Vector2.RIGHT()
+                    self.direction_facing = input_dir
 
                 if Input.is_action_pressed(name="crouch"):
                     if self.stance != PlayerStance.CROUCHING:
