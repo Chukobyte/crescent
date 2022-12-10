@@ -129,12 +129,13 @@ class Player(Node2D):
         try:
             while True:
                 delta_time = self.get_full_time_dilation() * engine_delta_time
+                # Check horizontal movement inputs
                 input_dir = Vector2.ZERO()
                 if Input.is_action_pressed(name="move_left"):
                     input_dir = Vector2.LEFT()
                 elif Input.is_action_pressed(name="move_right"):
                     input_dir = Vector2.RIGHT()
-
+                # Determine movement
                 if input_dir != Vector2.ZERO():
                     if self.stance != PlayerStance.CROUCHING:
                         self.add_to_position(
@@ -142,17 +143,15 @@ class Player(Node2D):
                             * Vector2(delta_time * self.speed, delta_time * self.speed)
                         )
                     self.direction_facing = input_dir
-
-                if self.stance != PlayerStance.IN_AIR:
+                # Handle player stances
+                if self.stance == PlayerStance.STANDING:
                     if Input.is_action_pressed(name="crouch"):
-                        if self.stance != PlayerStance.CROUCHING:
-                            self._update_stance(PlayerStance.CROUCHING)
-                    else:
-                        if self.stance == PlayerStance.CROUCHING:
-                            self._update_stance(PlayerStance.STANDING)
-                else:
-                    if Input.is_action_pressed(name="jump"):
-                        self.stance = PlayerStance.IN_AIR
+                        self._update_stance(PlayerStance.CROUCHING)
+                elif self.stance == PlayerStance.CROUCHING:
+                    if not Input.is_action_pressed(name="crouch"):
+                        self._update_stance(PlayerStance.STANDING)
+                elif self.stance == PlayerStance.IN_AIR:
+                    pass
                 await co_suspend()
         except GeneratorExit:
             pass
