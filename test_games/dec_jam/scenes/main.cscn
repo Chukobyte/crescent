@@ -31,7 +31,7 @@
                     "type": "transform_2d",
                     "position": {
                         "x": 400.0,
-                        "y": 300.0
+                        "y": 348.0
                     },
                     "scale": {
                         "x": 1.0,
@@ -58,8 +58,8 @@
                         {
                             "type": "transform_2d",
                             "position": {
-                                "x": 0.0,
-                                "y": 0.0
+                                "x": -24.0,
+                                "y": -48.0
                             },
                             "scale": {
                                 "x": 1.0,
@@ -95,8 +95,8 @@
                         {
                             "type": "transform_2d",
                             "position": {
-                                "x": 0.0,
-                                "y": 0.0
+                                "x": -24.0,
+                                "y": -48.0
                             },
                             "scale": {
                                 "x": 1.0,

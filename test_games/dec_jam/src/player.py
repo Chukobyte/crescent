@@ -87,10 +87,13 @@ class Player(Node2D):
 
         if Input.is_action_just_pressed(name="attack"):
             new_attack = Attack.new()
+            attack_y = 20
+            if self.stance == PlayerStance.CROUCHING:
+                attack_y = 50
             new_attack.position = (
                 self.position
-                + Vector2(24, 0)
-                + Vector2(self.direction_facing.x * 10, 20)
+                + Vector2(-16, -48)
+                + Vector2(self.direction_facing.x * 50, attack_y)
             )
             self.get_parent().add_child(new_attack)
             print("Attacked")
@@ -123,7 +126,7 @@ class Player(Node2D):
                     if self.stance != PlayerStance.CROUCHING:
                         self.stance = PlayerStance.CROUCHING
                         crouch_size = Size2D(48, 48)
-                        crouch_pos = Vector2(0, 48)
+                        crouch_pos = Vector2(0, 48) + Vector2(-24, -48)
                         self.color_rect.size = crouch_size
                         self.color_rect.position = crouch_pos
                         self.collider.extents = crouch_size
@@ -132,7 +135,7 @@ class Player(Node2D):
                     if self.stance == PlayerStance.CROUCHING:
                         self.stance = PlayerStance.STANDING
                         stand_size = Size2D(48, 96)
-                        stand_pos = Vector2.ZERO()
+                        stand_pos = Vector2.ZERO() + Vector2(-24, -48)
                         self.color_rect.size = stand_size
                         self.color_rect.position = stand_pos
                         self.collider.extents = stand_size
