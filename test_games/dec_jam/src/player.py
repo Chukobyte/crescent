@@ -142,13 +142,21 @@ class Player(Node2D):
                     self.direction_facing = input_dir
                 # Handle player stances
                 if self.stance == PlayerStance.STANDING:
-                    if Input.is_action_pressed(name="crouch"):
+                    if Input.is_action_pressed(name="jump"):
+                        self._update_stance(PlayerStance.IN_AIR)
+                    elif Input.is_action_pressed(name="crouch"):
                         self._update_stance(PlayerStance.CROUCHING)
                 elif self.stance == PlayerStance.CROUCHING:
-                    if not Input.is_action_pressed(name="crouch"):
+                    if Input.is_action_pressed(name="jump"):
+                        self._update_stance(PlayerStance.IN_AIR)
+                    elif not Input.is_action_pressed(name="crouch"):
                         self._update_stance(PlayerStance.STANDING)
                 elif self.stance == PlayerStance.IN_AIR:
-                    pass
+                    position_before_jump = self.position
+                    self.position += Vector2(0, -48)
+                    await co_wait_seconds(1.0)
+                    self.position = position_before_jump
+                    self._update_stance(PlayerStance.STANDING)
                 await co_suspend()
         except GeneratorExit:
             pass
