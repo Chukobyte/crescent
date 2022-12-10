@@ -81,7 +81,7 @@ bool cre_initialize(int argv, char** args) {
         engineContext->internalAssetsDir = se_strdup(engineContext->engineRootDir); // TODO: Clean up properly
     }
 
-    // TODO: Determine if python needs to be initialized
+    // TODO: Determine if python needs to be initialized programmatically
     cre_py_initialize();
 
     gameProperties = cre_json_load_config_file(CRE_PROJECT_CONFIG_FILE_NAME);
@@ -200,10 +200,9 @@ void cre_process_game_update() {
     cre_ec_system_process_systems(variableDeltaTime);
 
     // Fixed Time Step
-    static double fixedTime = 0.0f;
-    static const double PHYSICS_DELTA_TIME = 0.1f;
+    static float fixedTime = 0.0f;
     static uint32_t fixedCurrentTime = 0;
-    static double accumulator = 0.0f;
+    static float accumulator = 0.0f;
     uint32_t newTime = SDL_GetTicks();
     uint32_t frameTime = newTime - fixedCurrentTime;
     static const uint32_t MAX_FRAME_TIME = 250;
@@ -211,12 +210,12 @@ void cre_process_game_update() {
         frameTime = MAX_FRAME_TIME;
     }
     fixedCurrentTime = newTime;
-    accumulator += (double) frameTime / 1000.0f;
+    accumulator += (float) frameTime / 1000.0f;
 
-    while (accumulator >= PHYSICS_DELTA_TIME) {
-        fixedTime += PHYSICS_DELTA_TIME;
-        accumulator -= PHYSICS_DELTA_TIME;
-        cre_ec_system_physics_process_systems((float) PHYSICS_DELTA_TIME);
+    while (accumulator >= CRE_GLOBAL_PHYSICS_DELTA_TIME) {
+        fixedTime += CRE_GLOBAL_PHYSICS_DELTA_TIME;
+        accumulator -= CRE_GLOBAL_PHYSICS_DELTA_TIME;
+        cre_ec_system_physics_process_systems(CRE_GLOBAL_PHYSICS_DELTA_TIME);
         se_input_clean_up_flags();
     }
 

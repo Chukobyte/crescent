@@ -423,6 +423,10 @@
 "    def set_fps_display_enabled(enabled: bool) -> None:\n"\
 "        crescent_api_internal.engine_set_fps_display_enabled(enabled=enabled)\n"\
 "\n"\
+"    @staticmethod\n"\
+"    def get_global_physics_delta_time() -> float:\n"\
+"        return crescent_api_internal.engine_get_global_physics_delta_time()\n"\
+"\n"\
 "\n"\
 "# INPUT\n"\
 "class Input:\n"\

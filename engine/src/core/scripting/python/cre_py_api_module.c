@@ -162,6 +162,10 @@ PyObject* cre_py_api_engine_set_fps_display_enabled(PyObject* self, PyObject* ar
     return NULL;
 }
 
+PyObject* cre_py_api_engine_get_global_physics_delta_time(PyObject* self, PyObject* args) {
+    return Py_BuildValue("(f)", CRE_GLOBAL_PHYSICS_DELTA_TIME);
+}
+
 PyObject* PyInit_cre_py_API(void) {
     return PyModule_Create(&crePyAPIModDef);
 }

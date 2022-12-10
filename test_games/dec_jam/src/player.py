@@ -37,11 +37,12 @@ class Attack(Collider2D):
         self._task_manager.update()
 
     async def _update_task(self) -> None:
+        engine_delta_time = Engine.get_global_physics_delta_time()
         life_timer = Timer(self.life_time)
         try:
             # TODO: Get delta time and time dilation from engine python api.
             # Might be enough just to have a reference to the node that spawned the attack and get that time dilation
-            while life_timer.tick(0.1).time_remaining > 0:
+            while life_timer.tick(engine_delta_time).time_remaining > 0:
                 collisions = CollisionHandler.process_collisions(self)
                 for collision in collisions:
                     if collision.get_parent().name == "TestThing":
@@ -99,7 +100,8 @@ class Player(Node2D):
 
     # Tasks
     async def physics_update_task(self):
-        engine_delta_time = 0.1  # TODO: Get delta time from engine api
+        # Doesn't change so no need to get every frame
+        engine_delta_time = Engine.get_global_physics_delta_time()
         try:
             while True:
                 delta_time = self.get_full_time_dilation() * engine_delta_time
