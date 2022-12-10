@@ -156,16 +156,15 @@ void cre_ec_system_entity_start(Entity entity) {
 }
 
 void cre_ec_system_entity_end(Entity entity) {
+    // Notify scene exit observers before calling it on systems
+    NodeComponent* nodeComponent = (NodeComponent*) component_manager_get_component_unsafe(entity, ComponentDataIndex_NODE);
+    if (nodeComponent != NULL) {
+        se_event_notify_observers(&nodeComponent->onSceneTreeExit, &(SESubjectNotifyPayload) {
+            .data = &entity, .type = 0
+        });
+    }
     ComponentType entityComponentSignature = component_manager_get_component_signature(entity);
     for (size_t i = 0; i < entitySystemData.on_entity_end_systems_count; i++) {
-        // Notify scene exit observers before calling it on systems
-        NodeComponent* nodeComponent = (NodeComponent*) component_manager_get_component_unsafe(entity, ComponentDataIndex_NODE);
-        if (nodeComponent != NULL) {
-            se_event_notify_observers(&nodeComponent->onSceneTreeExit, &(SESubjectNotifyPayload) {
-                .data = &entity, .type = 0
-            });
-        }
-
         if ((entityComponentSignature & entitySystemData.on_entity_end_systems[i]->component_signature) == entitySystemData.on_entity_end_systems[i]->component_signature) {
             entitySystemData.on_entity_end_systems[i]->on_entity_end_func(entity);
         }
@@ -173,15 +172,14 @@ void cre_ec_system_entity_end(Entity entity) {
 }
 
 void cre_ec_system_entity_entered_scene(Entity entity) {
+    // Notify scene enter observers before calling it on systems
+    NodeComponent* nodeComponent = (NodeComponent*) component_manager_get_component_unsafe(entity, ComponentDataIndex_NODE);
+    if (nodeComponent != NULL) {
+        se_event_notify_observers(&nodeComponent->onSceneTreeEnter, &(SESubjectNotifyPayload) {
+            .data = &entity, .type = 0
+        });
+    }
     for (size_t i = 0; i < entitySystemData.on_entity_entered_scene_systems_count; i++) {
-        // Notify scene enter observers before calling it on systems
-        NodeComponent* nodeComponent = (NodeComponent*) component_manager_get_component_unsafe(entity, ComponentDataIndex_NODE);
-        if (nodeComponent != NULL) {
-            se_event_notify_observers(&nodeComponent->onSceneTreeEnter, &(SESubjectNotifyPayload) {
-                .data = &entity, .type = 0
-            });
-        }
-
         entitySystemData.on_entity_entered_scene_systems[i]->on_entity_entered_scene_func(entity);
     }
 }
