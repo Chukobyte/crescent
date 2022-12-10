@@ -106,21 +106,18 @@ class Player(Node2D):
             return None
         self.stance = stance
         if stance == PlayerStance.STANDING:
-            stand_size = Size2D(48, 96)
-            stand_pos = Vector2.ZERO() + Vector2(-24, -48)
-            self.color_rect.size = stand_size
-            self.color_rect.position = stand_pos
-            self.collider.extents = stand_size
-            self.collider.position = stand_pos
+            stance_size = Size2D(48, 96)
+            stance_pos = Vector2.ZERO() + Vector2(-24, -48)
         elif stance == PlayerStance.CROUCHING:
-            crouch_size = Size2D(48, 48)
-            crouch_pos = Vector2(0, 48) + Vector2(-24, -48)
-            self.color_rect.size = crouch_size
-            self.color_rect.position = crouch_pos
-            self.collider.extents = crouch_size
-            self.collider.position = crouch_pos
+            stance_size = Size2D(48, 48)
+            stance_pos = Vector2(0, 48) + Vector2(-24, -48)
         elif stance == PlayerStance.IN_AIR:
-            pass
+            stance_size = Size2D(48, 96)
+            stance_pos = Vector2.ZERO() + Vector2(-24, -48)
+        self.color_rect.size = stance_size
+        self.color_rect.position = stance_pos
+        self.collider.extents = stance_size
+        self.collider.position = stance_pos
 
     # Tasks
     async def physics_update_task(self):
