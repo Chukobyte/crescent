@@ -57,6 +57,12 @@ class Attack(Collider2D):
         self._task_manager.kill_tasks()
 
 
+class PlayerStance:
+    STANDING = "standing"
+    CROUCHING = "crouching"
+    IN_AIR = "in_air"
+
+
 class Player(Node2D):
     def __init__(self, entity_id: int):
         super().__init__(entity_id)
@@ -64,6 +70,7 @@ class Player(Node2D):
         self.collider = None
         self.speed = 200
         self.direction_facing = Vector2.RIGHT()
+        self.stance = PlayerStance.STANDING
 
     def _start(self) -> None:
         self.color_rect = self.get_child("ColorRect")
@@ -86,14 +93,27 @@ class Player(Node2D):
 
     def _physics_update(self, delta_time: float) -> None:
         if Input.is_action_pressed(name="move_left"):
-            self.add_to_position(
-                Vector2.LEFT()
-                * Vector2(delta_time * self.speed, delta_time * self.speed)
-            )
+            if self.stance != PlayerStance.CROUCHING:
+                self.add_to_position(
+                    Vector2.LEFT()
+                    * Vector2(delta_time * self.speed, delta_time * self.speed)
+                )
             self.direction_facing = Vector2.LEFT()
         elif Input.is_action_pressed(name="move_right"):
-            self.add_to_position(
-                Vector2.RIGHT()
-                * Vector2(delta_time * self.speed, delta_time * self.speed)
-            )
+            if self.stance != PlayerStance.CROUCHING:
+                self.add_to_position(
+                    Vector2.RIGHT()
+                    * Vector2(delta_time * self.speed, delta_time * self.speed)
+                )
             self.direction_facing = Vector2.RIGHT()
+
+        if Input.is_action_pressed(name="crouch"):
+            if self.stance != PlayerStance.CROUCHING:
+                self.stance = PlayerStance.CROUCHING
+                self.color_rect.size = Size2D(48, 48)
+                self.color_rect.position = Vector2(0, 48)
+        else:
+            if self.stance == PlayerStance.CROUCHING:
+                self.stance = PlayerStance.STANDING
+                self.color_rect.size = Size2D(48, 96)
+                self.color_rect.position = Vector2.ZERO()

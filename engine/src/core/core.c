@@ -179,15 +179,8 @@ void cre_update() {
     cre_process_game_update();
     cre_render();
 
-    // Get FPS
-    static unsigned int countedFrames = 0;
-    if (countedFrames == 0) {
-        countedFrames = engineContext->targetFPS;
-    } else {
-        countedFrames++;
-    }
-    float averageFPS = (float) countedFrames / ((float) SDL_GetTicks() / 1000.f);
-    engineContext->averageFPS = averageFPS;
+    // Update FPS
+    cre_engine_context_update_stats();
 }
 
 void cre_process_game_update() {

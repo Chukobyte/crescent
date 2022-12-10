@@ -38,6 +38,20 @@
             "values": [
                 "space"
             ]
+        },
+        {
+            "name": "crouch",
+            "values": [
+                "s",
+                "down"
+            ]
+        },
+        {
+            "name": "jump",
+            "values": [
+                "w",
+                "up"
+            ]
         }
     ]
 }

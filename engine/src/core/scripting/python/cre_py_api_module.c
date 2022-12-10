@@ -150,7 +150,7 @@ PyObject* cre_py_api_engine_get_target_fps(PyObject* self, PyObject* args) {
 
 PyObject* cre_py_api_engine_get_average_fps(PyObject* self, PyObject* args) {
     const CREEngineContext* engineContext = cre_engine_context_get();
-    return Py_BuildValue("(f)", engineContext->averageFPS);
+    return Py_BuildValue("(f)", engineContext->stats.averageFPS);
 }
 
 PyObject* cre_py_api_engine_set_fps_display_enabled(PyObject* self, PyObject* args, PyObject* kwargs) {
