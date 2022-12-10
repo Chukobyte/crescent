@@ -122,13 +122,21 @@ class Player(Node2D):
                 if Input.is_action_pressed(name="crouch"):
                     if self.stance != PlayerStance.CROUCHING:
                         self.stance = PlayerStance.CROUCHING
-                        self.color_rect.size = Size2D(48, 48)
-                        self.color_rect.position = Vector2(0, 48)
+                        crouch_size = Size2D(48, 48)
+                        crouch_pos = Vector2(0, 48)
+                        self.color_rect.size = crouch_size
+                        self.color_rect.position = crouch_pos
+                        self.collider.extents = crouch_size
+                        self.collider.position = crouch_pos
                 else:
                     if self.stance == PlayerStance.CROUCHING:
                         self.stance = PlayerStance.STANDING
-                        self.color_rect.size = Size2D(48, 96)
-                        self.color_rect.position = Vector2.ZERO()
+                        stand_size = Size2D(48, 96)
+                        stand_pos = Vector2.ZERO()
+                        self.color_rect.size = stand_size
+                        self.color_rect.position = stand_pos
+                        self.collider.extents = stand_size
+                        self.collider.position = stand_pos
                 await co_suspend()
         except GeneratorExit:
             pass
