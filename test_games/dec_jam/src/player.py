@@ -28,7 +28,7 @@ class Timer:
 class Attack(Collider2D):
     def __init__(self, entity_id: int):
         super().__init__(entity_id=entity_id)
-        self.life_time = 1.0
+        self.life_time = 0.25
         self.targets = []
         self.direction = Vector2.RIGHT()
         self._task_manager = TaskManager(tasks=[Task(self._update_task())])
