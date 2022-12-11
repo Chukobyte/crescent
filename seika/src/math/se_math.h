@@ -15,6 +15,8 @@ typedef struct Vector2 {
     float y;
 } Vector2;
 
+bool se_math_vec2_equals(const Vector2* v1, const Vector2* v2);
+
 // --- Size2D --- //
 typedef struct Size2D {
     float w;

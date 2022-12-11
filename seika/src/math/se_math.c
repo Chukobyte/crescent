@@ -1,5 +1,10 @@
 #include "se_math.h"
 
+// --- Vector2 --- //
+bool se_math_vec2_equals(const Vector2* v1, const Vector2* v2) {
+    return v1->x == v2->x && v1->y == v2->y;
+}
+
 // --- Rect2 --- //
 bool se_rect2_does_rectangles_overlap(Rect2* sourceRect, Rect2* targetRect) {
     return (sourceRect->x + sourceRect->w >= targetRect->x) &&

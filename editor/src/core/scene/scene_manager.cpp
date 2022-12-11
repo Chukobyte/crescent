@@ -5,6 +5,7 @@
 #include "../engine/src/core/json/json_file_loader.h"
 #include "../ui/imgui/imgui_helper.h"
 #include "../editor_callbacks.h"
+#include "../../../../engine/src/core/ecs/component/parallax_component.h"
 
 //--- Scene Node Utils ---//
 // TODO: Fix issue with not registering 'Right Click' logic because tree node is closed...
@@ -239,7 +240,7 @@ SceneNode* SceneManager::LoadSceneTreeJson(JsonSceneNode* node, SceneNode* paren
         sceneNode->AddComponent<SpriteComp>(spriteComponent, node->spriteTexturePath);
     }
     if (node->components[ComponentDataIndex_ANIMATED_SPRITE] != nullptr) {
-        AnimatedSpriteComponentData* animatedSpriteComponentData = (AnimatedSpriteComponentData*) node->components[ComponentDataIndex_ANIMATED_SPRITE];
+        auto* animatedSpriteComponentData = (AnimatedSpriteComponentData*) node->components[ComponentDataIndex_ANIMATED_SPRITE];
         sceneNode->AddComponent<AnimatedSpriteComp>(animatedSpriteComponentData);
     }
     if (node->components[ComponentDataIndex_TEXT_LABEL] != nullptr) {
@@ -255,9 +256,12 @@ SceneNode* SceneManager::LoadSceneTreeJson(JsonSceneNode* node, SceneNode* paren
         sceneNode->AddComponent<Collider2DComp>(collider2DComponent);
     }
     if (node->components[ComponentDataIndex_COLOR_RECT] != nullptr) {
-        ColorRectComponent* colorSquareComponent = color_rect_component_copy(
-                    (ColorRectComponent *) node->components[ComponentDataIndex_COLOR_RECT]);
+        ColorRectComponent* colorSquareComponent = color_rect_component_copy((ColorRectComponent*) node->components[ComponentDataIndex_COLOR_RECT]);
         sceneNode->AddComponent<ColorRectComp>(colorSquareComponent);
+    }
+    if (node->components[ComponentDataIndex_PARALLAX] != nullptr) {
+        // TODO: Add parallax component
+//        ParallaxComponent* parallaxComponent = parallax_component_copy((ParallaxComponent*) node->components[ComponentDataIndex_COLOR_RECT]);
     }
 
     // Load children

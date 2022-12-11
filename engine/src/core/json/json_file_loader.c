@@ -364,6 +364,9 @@ void cre_json_delete_json_scene_node(JsonSceneNode* node) {
     if (node->components[ComponentDataIndex_COLOR_RECT] != NULL) {
         color_rect_component_delete(node->components[ComponentDataIndex_COLOR_RECT]);
     }
+    if (node->components[ComponentDataIndex_PARALLAX] != NULL) {
+        color_rect_component_delete(node->components[ComponentDataIndex_PARALLAX]);
+    }
     // String Arrays
     SE_MEM_FREE(node->name);
     SE_MEM_FREE(node->fontUID);
