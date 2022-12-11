@@ -88,10 +88,13 @@ async def co_wait_until(predicate: [Callable, Coroutine]):
         )
 
 
-async def co_wait_seconds(seconds: float):
-    start_time = time.time()
+# TODO: Get current time from engine function to allow for time dilation changes
+async def co_wait_seconds(seconds: float, time_func: Callable = None):
+    if not time_func:
+        time_func = time.time
+    start_time = time_func()
     while True:
-        current_time = time.time()
+        current_time = time_func()
         delta = current_time - start_time
         if delta >= seconds:
             break

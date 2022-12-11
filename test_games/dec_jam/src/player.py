@@ -132,9 +132,9 @@ class Player(Node2D):
                     input_dir = Vector2.LEFT()
                 elif Input.is_action_pressed(name="move_right"):
                     input_dir = Vector2.RIGHT()
-                # Determine movement
+                # Determine movement (no air movement for now)
                 if input_dir != Vector2.ZERO():
-                    if self.stance != PlayerStance.CROUCHING:
+                    if self.stance == PlayerStance.STANDING:
                         self.add_to_position(
                             input_dir
                             * Vector2(delta_time * self.speed, delta_time * self.speed)
