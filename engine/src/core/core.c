@@ -142,7 +142,7 @@ bool cre_load_assets_from_configuration() {
     // Textures
     for (size_t i = 0; i < gameProperties->textureCount; i++) {
         const CREAssetTexture assetTexture = gameProperties->textures[i];
-        se_asset_manager_load_texture(assetTexture.file_path, assetTexture.file_path);
+        se_asset_manager_load_texture_ex(assetTexture.file_path, assetTexture.file_path, assetTexture.wrap_s, assetTexture.wrap_t, assetTexture.filter_min, assetTexture.filter_mag);
     }
 
     // Fonts

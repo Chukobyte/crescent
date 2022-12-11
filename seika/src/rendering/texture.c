@@ -41,9 +41,17 @@ Texture* se_texture_create_default_texture() {
 void se_texture_generate(Texture* texture);
 
 Texture* se_texture_create_texture(const char* filePath) {
+    return se_texture_create_texture_ex(filePath, DEFAULT_TEXTURE_REF.wrapS, DEFAULT_TEXTURE_REF.wrapT, DEFAULT_TEXTURE_REF.filterMin, DEFAULT_TEXTURE_REF.filterMag);
+}
+
+Texture* se_texture_create_texture_ex(const char* filePath, GLint wrapS, GLint wrapT, GLint filterMin, GLint filterMag) {
     Texture* texture = se_texture_create_default_texture();
     texture->fileName = filePath;
-
+    texture->wrapS = wrapS;
+    texture->wrapT = wrapT;
+    texture->filterMin = filterMin;
+    texture->filterMag = filterMag;
+    // Load image data
     SEAssetFileImageData* fileImageData = sf_asset_file_loader_load_image_data(filePath);
     SE_ASSERT_FMT(fileImageData != NULL, "Failed to load texture image at file path '%s'", filePath);
     const size_t imageDataSize = strlen((char*) fileImageData->data);
@@ -106,4 +114,22 @@ void se_texture_generate(Texture* texture) {
 
 bool se_texture_is_texture_valid(Texture* texture) {
     return texture != NULL;
+}
+
+GLint se_texture_wrap_string_to_int(const char* wrap) {
+    if (strcmp(wrap, "clamp_to_border") == 0) {
+        return GL_CLAMP_TO_BORDER;
+    } else if (strcmp(wrap, "repeat") == 0) {
+        return GL_REPEAT;
+    }
+    return GL_CLAMP_TO_BORDER;
+}
+
+GLint se_texture_filter_string_to_int(const char* filter) {
+    if (strcmp(filter, "nearest") == 0) {
+        return GL_NEAREST;
+    } else if (strcmp(filter, "linear") == 0) {
+        return GL_LINEAR;
+    }
+    return GL_NEAREST;
 }

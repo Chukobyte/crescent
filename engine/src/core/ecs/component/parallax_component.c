@@ -6,8 +6,12 @@
 
 ParallaxComponent* parallax_component_create() {
     ParallaxComponent* parallaxComponent = SE_MEM_ALLOCATE(ParallaxComponent);
-    parallaxComponent->offset = (Vector2){ 0.0f, 0.0f };
-    parallaxComponent->scrollSpeed = (Vector2){ 0.0f, 0.0f };
+    parallaxComponent->offset = (Vector2) {
+        0.0f, 0.0f
+    };
+    parallaxComponent->scrollSpeed = (Vector2) {
+        0.0f, 0.0f
+    };
     return parallaxComponent;
 }
 

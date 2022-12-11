@@ -24,7 +24,10 @@ typedef struct Texture {
 } Texture;
 
 Texture* se_texture_create_texture(const char* filePath);
+Texture* se_texture_create_texture_ex(const char* filePath, GLint wrapS, GLint wrapT, GLint filterMin, GLint filterMag);
 Texture* se_texture_create_solid_colored_texture(GLsizei width, GLsizei height, GLuint colorValue);
+GLint se_texture_wrap_string_to_int(const char* wrap);
+GLint se_texture_filter_string_to_int(const char* filter);
 
 #ifdef __cplusplus
 }
