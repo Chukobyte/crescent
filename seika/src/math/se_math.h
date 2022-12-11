@@ -68,8 +68,8 @@ Color se_color_get_normalized_color_from_color(const Color* color);
 Color se_color_get_white();
 
 // --- Misc --- //
-float se_math_map_to_range(float input, float inputLow, float inputHigh, float outputLow, float outputHigh);
-float se_math_map_to_unit(float input, float inputLow, float inputHigh);
+float se_math_map_to_range(float input, float inputMin, float inputMax, float outputMin, float outputMax);
+float se_math_map_to_unit(float input, float inputMin, float inputMax);
 float se_math_signf(float value);
 Vector2 se_math_signvec2(Vector2* value);
 int se_math_clamp_int(int value, int min, int max);

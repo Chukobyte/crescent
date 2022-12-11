@@ -45,12 +45,12 @@ Color se_color_get_white() {
 }
 
 // --- Misc --- //
-float se_math_map_to_range(float input, float inputLow, float inputHigh, float outputLow, float outputHigh) {
-    return (((input - inputLow) / (inputHigh - inputLow)) * (outputHigh - outputLow) + outputLow);
+float se_math_map_to_range(float input, float inputMin, float inputMax, float outputMin, float outputMax) {
+    return (((input - inputMin) / (inputMax - inputMin)) * (outputMax - outputMin) + outputMin);
 }
 
-float se_math_map_to_unit(float input, float inputLow, float inputHigh) {
-    return se_math_map_to_range(input, inputLow, inputHigh, 0.0f, 1.0f);
+float se_math_map_to_unit(float input, float inputMin, float inputMax) {
+    return se_math_map_to_range(input, inputMin, inputMax, 0.0f, 1.0f);
 }
 
 float se_math_signf(float value) {

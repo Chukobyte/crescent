@@ -2,6 +2,16 @@ from crescent_api import *
 from src.task import *
 
 
+def map_to_range(input, input_min, input_max, output_min, output_max):
+    return (input - input_min / (input_max - input_min)) * (
+        output_max - output_min
+    ) + output_min
+
+
+def map_to_unit_range(input, input_min, input_max):
+    return map_to_range(input, input_min, input_max, 0.0, 1.0)
+
+
 class Timer:
     def __init__(self, time: float):
         self.time = time
@@ -114,6 +124,9 @@ class Player(Node2D):
         elif stance == PlayerStance.IN_AIR:
             stance_size = Size2D(48, 96)
             stance_pos = Vector2.ZERO() + Vector2(-24, -48)
+        else:
+            stance_size = Size2D()
+            stance_pos = Vector2.ZERO()
         self.color_rect.size = stance_size
         self.color_rect.position = stance_pos
         self.collider.extents = stance_size
@@ -152,9 +165,35 @@ class Player(Node2D):
                     elif not Input.is_action_pressed(name="crouch"):
                         self._update_stance(PlayerStance.STANDING)
                 elif self.stance == PlayerStance.IN_AIR:
+                    jump_height = 48
                     position_before_jump = self.position
-                    self.position += Vector2(0, -48)
-                    await co_wait_seconds(1.0)
+                    position_to_jump_to = position_before_jump + Vector2(
+                        0, -jump_height
+                    )
+                    jump_time = 1.0
+                    timer = Timer(jump_time / 2.0)
+                    # Go Up
+                    while timer.tick(engine_delta_time).time_remaining > 0:
+                        alpha = 1.0 - map_to_unit_range(
+                            timer.time_remaining, 0.0, timer.time
+                        )
+                        new_pos = Vector2.lerp(
+                            position_before_jump, position_to_jump_to, alpha
+                        )
+                        self.position = new_pos
+                        await co_suspend()
+                    # Go Down
+                    timer.reset()
+                    while timer.tick(engine_delta_time).time_remaining > 0:
+                        alpha = 1.0 - map_to_unit_range(
+                            timer.time_remaining, 0.0, timer.time
+                        )
+                        new_pos = Vector2.lerp(
+                            position_to_jump_to, position_before_jump, alpha
+                        )
+                        self.position = new_pos
+                        await co_suspend()
+                    # Finish landing
                     self.position = position_before_jump
                     self._update_stance(PlayerStance.STANDING)
                 await co_suspend()
