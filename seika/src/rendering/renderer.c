@@ -302,7 +302,7 @@ void sprite_renderer_draw_sprite(const Texture* texture, const Rect2* sourceRect
     const int VERTEX_ITEM_COUNT = 1;
     const int NUMBER_OF_VERTICES = 6;
     const float SPRITE_ID = 0.0f;
-    TextureCoordinates textureCoords = renderer_get_texture_coordinates(texture, sourceRect, flipX, flipY);
+    const TextureCoordinates textureCoords = renderer_get_texture_coordinates(texture, sourceRect, flipX, flipY);
 
     const float determinate = glm_mat4_det(globalTransform->model);
     const int vertsStride = 9;

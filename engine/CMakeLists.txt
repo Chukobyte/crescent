@@ -53,6 +53,7 @@ add_library(${PROJECT_NAME} STATIC
         src/core/ecs/component/node_component.c
         src/core/ecs/component/script_component.c
         src/core/ecs/component/sprite_component.c
+        src/core/ecs/component/parallax_component.c
         src/core/ecs/component/text_label_component.c
         src/core/ecs/component/transform2d_component.c
         src/core/ecs/system/animated_sprite_rendering_ec_system.c
