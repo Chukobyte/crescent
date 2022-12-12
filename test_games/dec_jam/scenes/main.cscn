@@ -201,8 +201,8 @@
             ]
         },
         {
-            "name": "Background",
-            "type": "Sprite",
+            "name": "Parallax",
+            "type": "Parallax",
             "tags": null,
             "external_node_source": null,
             "components": [
@@ -222,29 +222,61 @@
                     "ignore_camera": false
                 },
                 {
-                    "type": "sprite",
-                    "texture_path": "assets/images/mockup.png",
-                    "draw_source": {
-                        "x": 0.0,
-                        "y": 0.0,
-                        "w": 1600.0,
-                        "h": 900.0
-                    },
-                    "origin": {
+                    "type": "parallax",
+                    "scroll_speed": {
                         "x": 0.0,
                         "y": 0.0
-                    },
-                    "modulate": {
-                        "r": 255,
-                        "g": 255,
-                        "b": 255,
-                        "a": 255
-                    },
-                    "flip_x": false,
-                    "flip_y": false
+                    }
                 }
             ],
-            "children": []
+            "children": [
+                {
+                    "name": "Background",
+                    "type": "Sprite",
+                    "tags": null,
+                    "external_node_source": null,
+                    "components": [
+                        {
+                            "type": "transform_2d",
+                            "position": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "scale": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "rotation": 0.0,
+                            "z_index": 0,
+                            "z_index_relative_to_parent": true,
+                            "ignore_camera": false
+                        },
+                        {
+                            "type": "sprite",
+                            "texture_path": "assets/images/mockup.png",
+                            "draw_source": {
+                                "x": 0.0,
+                                "y": 0.0,
+                                "w": 1600.0,
+                                "h": 900.0
+                            },
+                            "origin": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "modulate": {
+                                "r": 255,
+                                "g": 255,
+                                "b": 255,
+                                "a": 255
+                            },
+                            "flip_x": false,
+                            "flip_y": false
+                        }
+                    ],
+                    "children": []
+                }
+            ]
         }
     ]
 }

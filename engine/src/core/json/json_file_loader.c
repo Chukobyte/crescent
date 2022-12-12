@@ -14,6 +14,7 @@
 #include "../ecs/component/script_component.h"
 #include "../ecs/component/collider2d_component.h"
 #include "../ecs/component/color_rect_component.h"
+#include "../ecs/component/parallax_component.h"
 
 #ifdef _MSC_VER
 #pragma warning(disable : 4996) // for strcpy
@@ -309,6 +310,13 @@ JsonSceneNode* cre_json_load_scene_node(cJSON* nodeJson, JsonSceneNode* parentNo
             se_logger_debug("Script\nclass path: '%s'\nclass name: '%s'",
                             scriptComponent->classPath, scriptComponent->className);
             node->components[ComponentDataIndex_SCRIPT] = scriptComponent;
+        } else if (strcmp(componentType, "parallax") == 0) {
+            ParallaxComponent* parallaxComponent = parallax_component_create();
+            parallaxComponent->scrollSpeed =  json_get_vec2_default(componentJson, "scroll_speed", (Vector2) {
+                .x = 0.0f, .y = 0.0f
+            });
+            se_logger_debug("Parallax");
+            node->components[ComponentDataIndex_PARALLAX] = parallaxComponent;
         } else {
             se_logger_error("component type '%s' in invalid!", componentType);
         }
@@ -365,7 +373,7 @@ void cre_json_delete_json_scene_node(JsonSceneNode* node) {
         color_rect_component_delete(node->components[ComponentDataIndex_COLOR_RECT]);
     }
     if (node->components[ComponentDataIndex_PARALLAX] != NULL) {
-        color_rect_component_delete(node->components[ComponentDataIndex_PARALLAX]);
+        parallax_component_delete(node->components[ComponentDataIndex_PARALLAX]);
     }
     // String Arrays
     SE_MEM_FREE(node->name);

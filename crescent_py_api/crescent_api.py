@@ -536,6 +536,7 @@ class NodeType(str, Enum):
     TEXT_LABEL = "TextLabel"
     COLLIDER2D = "Collider2D"
     COLOR_RECT = "ColorRect"
+    PARALLAX = "Parallax"
 
 
 class Node:
@@ -999,6 +1000,16 @@ class ColorRect(Node2D):
         crescent_api_internal.color_rect_set_color(
             entity_id=self.entity_id, r=value.r, g=value.g, b=value.b, a=value.a
         )
+
+
+class Parallax(Node2D):
+    @property
+    def scroll_speed(self) -> Vector2:
+        return Vector2.ZERO()
+
+    @scroll_speed.setter
+    def scroll_speed(self, value: Vector2) -> None:
+        pass
 
 
 # SCENE TREE

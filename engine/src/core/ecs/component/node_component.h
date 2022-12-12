@@ -15,6 +15,7 @@ extern "C" {
 #define RBE_NODE_TEXT_LABEL_STRING "TextLabel"
 #define RBE_NODE_COLLIDER2D_STRING "Collider2D"
 #define RBE_NODE_COLOR_RECT_STRING "ColorRect"
+#define RBE_NODE_PARALLAX_STRING "Parallax"
 
 typedef enum NodeBaseType {
     NodeBaseType_INVALID = -1,
@@ -25,6 +26,7 @@ typedef enum NodeBaseType {
     NodeBaseType_TEXT_LABEL = 1 << 4,
     NodeBaseType_COLLIDER2D = 1 << 5,
     NodeBaseType_COLOR_RECT = 1 << 6,
+    NodeBaseType_PARALLAX = 1 << 7,
 } NodeBaseType;
 
 typedef enum NodeBaseInheritanceType {
@@ -36,6 +38,7 @@ typedef enum NodeBaseInheritanceType {
     NodeBaseInheritanceType_TEXT_LABEL = NodeBaseType_NODE | NodeBaseType_NODE2D | NodeBaseType_TEXT_LABEL,
     NodeBaseInheritanceType_COLLIDER2D = NodeBaseType_NODE | NodeBaseType_NODE2D | NodeBaseType_COLLIDER2D,
     NodeBaseInheritanceType_COLOR_RECT = NodeBaseType_NODE | NodeBaseType_NODE2D | NodeBaseType_COLOR_RECT,
+    NodeBaseInheritanceType_PARALLAX = NodeBaseType_NODE | NodeBaseType_NODE2D | NodeBaseType_PARALLAX,
 } NodeBaseInheritanceType;
 
 typedef struct NodeTimeDilation {

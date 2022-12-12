@@ -9,6 +9,7 @@
 #include "../engine/src/core/ecs/component/animated_sprite_component.h"
 #include "../engine/src/core/ecs/component/collider2d_component.h"
 #include "../engine/src/core/ecs/component/color_rect_component.h"
+#include "../engine/src/core/ecs/component/parallax_component.h"
 #include "../engine/src/core/ecs/component/script_component.h"
 #include "../engine/src/core/ecs/component/sprite_component.h"
 #include "../engine/src/core/ecs/component/text_label_component.h"
@@ -222,4 +223,13 @@ struct ColorRectComp : public EditorComponent {
 
     Size2D size = { .w = 32.0f, .h = 32.0f };
     Color color = { .r = 1.0f, .g = 1.0f, .b = 1.0f, .a = 1.0f };
+};
+
+struct ParallaxComp : public EditorComponent {
+    ParallaxComp() = default;
+
+    explicit ParallaxComp(const ParallaxComponent* parallaxComponent)
+        : scrollSpeed(parallaxComponent->scrollSpeed) {}
+
+    Vector2 scrollSpeed = { .x = 0.0f, .y = 0.0f };
 };

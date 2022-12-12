@@ -21,7 +21,7 @@ ImGuiHelper::Window OpenedProjectUI::Windows::GetSceneOutlinerWindow() {
                         static std::string selectedType = RBE_NODE_NODE_STRING;
                         static ImGuiHelper::ComboBox nodeTypeSelectionComboBox(
                             "Type",
-                        { RBE_NODE_NODE_STRING, RBE_NODE_NODE2D_STRING, RBE_NODE_SPRITE_STRING, RBE_NODE_ANIMATED_SPRITE_STRING, RBE_NODE_TEXT_LABEL_STRING, RBE_NODE_COLLIDER2D_STRING, RBE_NODE_COLOR_RECT_STRING },
+                        { RBE_NODE_NODE_STRING, RBE_NODE_NODE2D_STRING, RBE_NODE_SPRITE_STRING, RBE_NODE_ANIMATED_SPRITE_STRING, RBE_NODE_TEXT_LABEL_STRING, RBE_NODE_COLLIDER2D_STRING, RBE_NODE_COLOR_RECT_STRING, RBE_NODE_PARALLAX_STRING },
                         [](const char* newItem) {
                             selectedType = newItem;
                         }
