@@ -5,7 +5,6 @@
 #include "../engine/src/core/json/json_file_loader.h"
 #include "../ui/imgui/imgui_helper.h"
 #include "../editor_callbacks.h"
-#include "../../../../engine/src/core/ecs/component/parallax_component.h"
 
 //--- Scene Node Utils ---//
 // TODO: Fix issue with not registering 'Right Click' logic because tree node is closed...
