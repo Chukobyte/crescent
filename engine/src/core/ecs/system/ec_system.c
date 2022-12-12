@@ -179,8 +179,11 @@ void cre_ec_system_entity_entered_scene(Entity entity) {
             .data = &entity, .type = 0
         });
     }
+    ComponentType entityComponentSignature = component_manager_get_component_signature(entity);
     for (size_t i = 0; i < entitySystemData.on_entity_entered_scene_systems_count; i++) {
-        entitySystemData.on_entity_entered_scene_systems[i]->on_entity_entered_scene_func(entity);
+        if ((entityComponentSignature & entitySystemData.on_entity_entered_scene_systems[i]->component_signature) == entitySystemData.on_entity_entered_scene_systems[i]->component_signature) {
+            entitySystemData.on_entity_entered_scene_systems[i]->on_entity_entered_scene_func(entity);
+        }
     }
 }
 

@@ -209,7 +209,7 @@
                 {
                     "type": "transform_2d",
                     "position": {
-                        "x": 0.0,
+                        "x": -100.0,
                         "y": 100.0
                     },
                     "scale": {
@@ -224,8 +224,8 @@
                 {
                     "type": "parallax",
                     "scroll_speed": {
-                        "x": 32.0,
-                        "y": 32.0
+                        "x": 0.5,
+                        "y": 0.0
                     }
                 }
             ],
