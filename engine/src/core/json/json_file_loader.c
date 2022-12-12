@@ -315,7 +315,7 @@ JsonSceneNode* cre_json_load_scene_node(cJSON* nodeJson, JsonSceneNode* parentNo
             parallaxComponent->scrollSpeed =  json_get_vec2_default(componentJson, "scroll_speed", (Vector2) {
                 .x = 0.0f, .y = 0.0f
             });
-            se_logger_debug("Parallax");
+            se_logger_debug("Parallax\nscroll_speed: (%f, %f)", parallaxComponent->scrollSpeed.x, parallaxComponent->scrollSpeed.y);
             node->components[ComponentDataIndex_PARALLAX] = parallaxComponent;
         } else {
             se_logger_error("component type '%s' in invalid!", componentType);
