@@ -224,7 +224,7 @@
                 {
                     "type": "parallax",
                     "scroll_speed": {
-                        "x": 0.5,
+                        "x": 0.25,
                         "y": 0.0
                     }
                 }
