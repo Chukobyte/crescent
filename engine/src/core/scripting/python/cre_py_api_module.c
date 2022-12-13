@@ -38,8 +38,8 @@
 #endif
 
 //--- Helper Functions ---//
-
 // TODO: May want to move into another location...
+
 Vector2 se_mouse_get_global_position(SEMouse* mouse, Vector2* offset) {
     CRECamera2D* camera = cre_camera_manager_get_current_camera();
     SEMouse* globalMouse = se_mouse_get();
@@ -56,22 +56,22 @@ Vector2 se_mouse_get_global_position(SEMouse* mouse, Vector2* offset) {
     return mouseWorldPos;
 }
 
-void se_update_collision_data(Entity entity) {
-    Transform2DComponent* transformComp = (Transform2DComponent *) component_manager_get_component_unsafe(entity, ComponentDataIndex_TRANSFORM_2D);
-    if (transformComp != NULL && cre_scene_manager_has_entity_tree_node(entity)) {
-        Collider2DComponent* colliderComp = (Collider2DComponent*) component_manager_get_component_unsafe(entity, ComponentDataIndex_COLLIDER_2D);
-        if (colliderComp != NULL) {
-            Rect2 collisionRect = cre_get_collision_rectangle(entity, transformComp, colliderComp);
-            SESpatialHashMap* spatialHashMap = cre_collision_get_global_spatial_hash_map();
-            se_spatial_hash_map_insert_or_update(spatialHashMap, entity, &collisionRect);
-        }
-
+void se_scene_notify_all_on_transform_children_events(Entity entity, Transform2DComponent* transformComp) {
+    se_event_notify_observers(&transformComp->onTransformChanged, &(SESubjectNotifyPayload) {
+            .data = &(ComponentEntityUpdatePayload) {.entity = entity, .component = transformComp, .componentType = ComponentType_TRANSFORM_2D},
+            .type = 0
+    });
+    // Notify children by recursion
+    if (cre_scene_manager_has_entity_tree_node(entity)) {
         SceneTreeNode* sceneTreeNode = cre_scene_manager_get_entity_tree_node(entity);
         for (size_t i = 0; i < sceneTreeNode->childCount; i++) {
-            se_update_collision_data(sceneTreeNode->children[i]->entity);
+            const Entity childEntity = sceneTreeNode->children[i]->entity;
+            Transform2DComponent* childTransformComp = (Transform2DComponent*) component_manager_get_component_unsafe(childEntity, ComponentDataIndex_TRANSFORM_2D);
+            if (childTransformComp != NULL) {
+                se_scene_notify_all_on_transform_children_events(childEntity, childTransformComp);
+            }
         }
     }
-
 }
 
 void se_update_entity_local_position(Entity entity, Vector2* position) {
@@ -81,11 +81,7 @@ void se_update_entity_local_position(Entity entity, Vector2* position) {
     transformComp->localTransform.position.y = position->y;
     transformComp->isGlobalTransformDirty = true;
     if (transformComp->localTransform.position.x != prevPosition.x || transformComp->localTransform.position.y != prevPosition.y) {
-        se_update_collision_data(entity);
-        se_event_notify_observers(&transformComp->onTransformChanged, &(SESubjectNotifyPayload) {
-            .data = &(ComponentEntityUpdatePayload) {.entity = entity, .component = transformComp, .componentType = ComponentType_TRANSFORM_2D},
-            .type = 0
-        });
+        se_scene_notify_all_on_transform_children_events(entity, transformComp);
     }
 }
 
@@ -96,11 +92,7 @@ void se_update_entity_local_scale(Entity entity, Vector2 * scale) {
     transformComp->localTransform.scale.y = scale->y;
     transformComp->isGlobalTransformDirty = true;
     if (transformComp->localTransform.scale.x != prevScale.x || transformComp->localTransform.scale.y != prevScale.y) {
-        se_update_collision_data(entity);
-        se_event_notify_observers(&transformComp->onTransformChanged, &(SESubjectNotifyPayload) {
-            .data = &(ComponentEntityUpdatePayload) {.entity = entity, .component = transformComp, .componentType = ComponentType_TRANSFORM_2D},
-            .type = 0
-        });
+        se_scene_notify_all_on_transform_children_events(entity, transformComp);
     }
 }
 
@@ -110,11 +102,7 @@ void se_update_entity_local_rotation(Entity entity, float rotation) {
     transformComp->localTransform.rotation = rotation;
     transformComp->isGlobalTransformDirty = true;
     if (transformComp->localTransform.rotation != prevRotation) {
-        se_update_collision_data(entity);
-        se_event_notify_observers(&transformComp->onTransformChanged, &(SESubjectNotifyPayload) {
-            .data = &(ComponentEntityUpdatePayload) {.entity = entity, .component = transformComp, .componentType = ComponentType_TRANSFORM_2D},
-            .type = 0
-        });
+        se_scene_notify_all_on_transform_children_events(entity, transformComp);
     }
 }
 
