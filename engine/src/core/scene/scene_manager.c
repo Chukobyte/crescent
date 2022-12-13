@@ -20,6 +20,7 @@
 #include "../ecs/component/color_rect_component.h"
 #include "../camera/camera_manager.h"
 #include "../json/json_file_loader.h"
+#include "../ecs/component/parallax_component.h"
 
 // --- Scene Tree --- //
 typedef void (*ExecuteOnAllTreeNodesFunc) (SceneTreeNode*);
@@ -321,6 +322,10 @@ void cre_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneNode, Scene
         ColorRectComponent* colorSquareComponent = color_rect_component_copy(
                     (ColorRectComponent*) jsonSceneNode->components[ComponentDataIndex_COLOR_RECT]);
         component_manager_set_component(node->entity, ComponentDataIndex_COLOR_RECT, colorSquareComponent);
+    }
+    if (jsonSceneNode->components[ComponentDataIndex_PARALLAX] != NULL) {
+        ParallaxComponent* parallaxComponent = parallax_component_copy((ParallaxComponent *) jsonSceneNode->components[ComponentDataIndex_PARALLAX]);
+        component_manager_set_component(node->entity, ComponentDataIndex_PARALLAX, parallaxComponent);
     }
 
     cre_ec_system_update_entity_signature_with_systems(node->entity);

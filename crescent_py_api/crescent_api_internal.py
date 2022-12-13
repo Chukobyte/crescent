@@ -18,6 +18,10 @@ def engine_set_fps_display_enabled(enabled: bool) -> None:
     pass
 
 
+def engine_get_global_physics_delta_time() -> float:
+    return 0.1
+
+
 def configure_game(
     game_title="Test Game",
     window_width=800,

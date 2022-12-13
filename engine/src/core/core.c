@@ -81,7 +81,7 @@ bool cre_initialize(int argv, char** args) {
         engineContext->internalAssetsDir = se_strdup(engineContext->engineRootDir); // TODO: Clean up properly
     }
 
-    // TODO: Determine if python needs to be initialized
+    // TODO: Determine if python needs to be initialized programmatically
     cre_py_initialize();
 
     gameProperties = cre_json_load_config_file(CRE_PROJECT_CONFIG_FILE_NAME);
@@ -142,7 +142,7 @@ bool cre_load_assets_from_configuration() {
     // Textures
     for (size_t i = 0; i < gameProperties->textureCount; i++) {
         const CREAssetTexture assetTexture = gameProperties->textures[i];
-        se_asset_manager_load_texture(assetTexture.file_path, assetTexture.file_path);
+        se_asset_manager_load_texture_ex(assetTexture.file_path, assetTexture.file_path, assetTexture.wrap_s, assetTexture.wrap_t, assetTexture.filter_min, assetTexture.filter_mag);
     }
 
     // Fonts
@@ -179,15 +179,8 @@ void cre_update() {
     cre_process_game_update();
     cre_render();
 
-    // Get FPS
-    static unsigned int countedFrames = 0;
-    if (countedFrames == 0) {
-        countedFrames = engineContext->targetFPS;
-    } else {
-        countedFrames++;
-    }
-    float averageFPS = (float) countedFrames / ((float) SDL_GetTicks() / 1000.f);
-    engineContext->averageFPS = averageFPS;
+    // Update FPS
+    cre_engine_context_update_stats();
 }
 
 void cre_process_game_update() {
@@ -207,10 +200,9 @@ void cre_process_game_update() {
     cre_ec_system_process_systems(variableDeltaTime);
 
     // Fixed Time Step
-    static double fixedTime = 0.0f;
-    static const double PHYSICS_DELTA_TIME = 0.1f;
+    static float fixedTime = 0.0f;
     static uint32_t fixedCurrentTime = 0;
-    static double accumulator = 0.0f;
+    static float accumulator = 0.0f;
     uint32_t newTime = SDL_GetTicks();
     uint32_t frameTime = newTime - fixedCurrentTime;
     static const uint32_t MAX_FRAME_TIME = 250;
@@ -218,12 +210,12 @@ void cre_process_game_update() {
         frameTime = MAX_FRAME_TIME;
     }
     fixedCurrentTime = newTime;
-    accumulator += (double) frameTime / 1000.0f;
+    accumulator += (float) frameTime / 1000.0f;
 
-    while (accumulator >= PHYSICS_DELTA_TIME) {
-        fixedTime += PHYSICS_DELTA_TIME;
-        accumulator -= PHYSICS_DELTA_TIME;
-        cre_ec_system_physics_process_systems((float) PHYSICS_DELTA_TIME);
+    while (accumulator >= CRE_GLOBAL_PHYSICS_DELTA_TIME) {
+        fixedTime += CRE_GLOBAL_PHYSICS_DELTA_TIME;
+        accumulator -= CRE_GLOBAL_PHYSICS_DELTA_TIME;
+        cre_ec_system_physics_process_systems(CRE_GLOBAL_PHYSICS_DELTA_TIME);
         se_input_clean_up_flags();
     }
 

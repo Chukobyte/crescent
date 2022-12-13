@@ -1,5 +1,10 @@
 #include "se_math.h"
 
+// --- Vector2 --- //
+bool se_math_vec2_equals(const Vector2* v1, const Vector2* v2) {
+    return v1->x == v2->x && v1->y == v2->y;
+}
+
 // --- Rect2 --- //
 bool se_rect2_does_rectangles_overlap(Rect2* sourceRect, Rect2* targetRect) {
     return (sourceRect->x + sourceRect->w >= targetRect->x) &&
@@ -45,12 +50,12 @@ Color se_color_get_white() {
 }
 
 // --- Misc --- //
-float se_math_map_to_range(float input, float inputLow, float inputHigh, float outputLow, float outputHigh) {
-    return (((input - inputLow) / (inputHigh - inputLow)) * (outputHigh - outputLow) + outputLow);
+float se_math_map_to_range(float input, float inputMin, float inputMax, float outputMin, float outputMax) {
+    return (((input - inputMin) / (inputMax - inputMin)) * (outputMax - outputMin) + outputMin);
 }
 
-float se_math_map_to_unit(float input, float inputLow, float inputHigh) {
-    return se_math_map_to_range(input, inputLow, inputHigh, 0.0f, 1.0f);
+float se_math_map_to_unit(float input, float inputMin, float inputMax) {
+    return se_math_map_to_range(input, inputMin, inputMax, 0.0f, 1.0f);
 }
 
 float se_math_signf(float value) {

@@ -31,6 +31,7 @@
 #include "../../ecs/component/text_label_component.h"
 #include "../../ecs/component/node_component.h"
 #include "../../scene/scene_manager.h"
+#include "../../ecs/component/parallax_component.h"
 
 #ifdef _MSC_VER
 #pragma warning(disable : 4996) // for strcpy
@@ -150,7 +151,7 @@ PyObject* cre_py_api_engine_get_target_fps(PyObject* self, PyObject* args) {
 
 PyObject* cre_py_api_engine_get_average_fps(PyObject* self, PyObject* args) {
     const CREEngineContext* engineContext = cre_engine_context_get();
-    return Py_BuildValue("(f)", engineContext->averageFPS);
+    return Py_BuildValue("(f)", engineContext->stats.averageFPS);
 }
 
 PyObject* cre_py_api_engine_set_fps_display_enabled(PyObject* self, PyObject* args, PyObject* kwargs) {
@@ -160,6 +161,10 @@ PyObject* cre_py_api_engine_set_fps_display_enabled(PyObject* self, PyObject* ar
         Py_RETURN_NONE;
     }
     return NULL;
+}
+
+PyObject* cre_py_api_engine_get_global_physics_delta_time(PyObject* self, PyObject* args) {
+    return Py_BuildValue("f", CRE_GLOBAL_PHYSICS_DELTA_TIME);
 }
 
 PyObject* PyInit_cre_py_API(void) {
@@ -430,32 +435,25 @@ PyObject* cre_py_api_node_new(PyObject* self, PyObject* args, PyObject* kwargs) 
 
         if ((NodeBaseInheritanceType_NODE2D & inheritanceType) == NodeBaseInheritanceType_NODE2D) {
             Transform2DComponent* transform2DComponent = transform2d_component_create();
-            component_manager_set_component(newEntity, ComponentDataIndex_TRANSFORM_2D, transform2DComponent);
+            component_manager_set_component(newEntity, ComponentDataIndex_TRANSFORM_2D, transform2d_component_create());
         }
-
         if ((NodeBaseInheritanceType_SPRITE & inheritanceType) == NodeBaseInheritanceType_SPRITE) {
-            SpriteComponent* spriteComponent = sprite_component_create();
-            component_manager_set_component(newEntity, ComponentDataIndex_SPRITE, spriteComponent);
+            component_manager_set_component(newEntity, ComponentDataIndex_SPRITE, sprite_component_create());
         }
-
         if ((NodeBaseInheritanceType_ANIMATED_SPRITE & inheritanceType) == NodeBaseInheritanceType_ANIMATED_SPRITE) {
-            AnimatedSpriteComponent* animatedSpriteComponent = animated_sprite_component_create();
-            component_manager_set_component(newEntity, ComponentDataIndex_ANIMATED_SPRITE, animatedSpriteComponent);
+            component_manager_set_component(newEntity, ComponentDataIndex_ANIMATED_SPRITE, animated_sprite_component_create());
         }
-
         if ((NodeBaseInheritanceType_TEXT_LABEL & inheritanceType) == NodeBaseInheritanceType_TEXT_LABEL) {
-            TextLabelComponent* textLabelComponent = text_label_component_create();
-            component_manager_set_component(newEntity, ComponentDataIndex_TEXT_LABEL, textLabelComponent);
+            component_manager_set_component(newEntity, ComponentDataIndex_TEXT_LABEL, text_label_component_create());
         }
-
         if ((NodeBaseInheritanceType_COLLIDER2D & inheritanceType) == NodeBaseInheritanceType_COLLIDER2D) {
-            Collider2DComponent* collider2DComponent = collider2d_component_create();
-            component_manager_set_component(newEntity, ComponentDataIndex_COLLIDER_2D, collider2DComponent);
+            component_manager_set_component(newEntity, ComponentDataIndex_COLLIDER_2D, collider2d_component_create());
         }
-
         if ((NodeBaseInheritanceType_COLOR_RECT & inheritanceType) == NodeBaseInheritanceType_COLOR_RECT) {
-            ColorRectComponent* colorSquareComponent = color_rect_component_create();
-            component_manager_set_component(newEntity, ComponentDataIndex_COLOR_RECT, colorSquareComponent);
+            component_manager_set_component(newEntity, ComponentDataIndex_COLOR_RECT, color_rect_component_create());
+        }
+        if ((NodeBaseInheritanceType_PARALLAX & inheritanceType) == NodeBaseInheritanceType_PARALLAX) {
+            component_manager_set_component(newEntity, ComponentDataIndex_PARALLAX, parallax_component_create());
         }
 
         Py_IncRef(entityInstance);

@@ -16,7 +16,6 @@
 #include "../../camera/camera.h"
 #include "../../camera/camera_manager.h"
 #include "../../scene/scene_utils.h"
-#include "../../world.h"
 
 EntitySystem* animatedSpriteRenderingSystem = NULL;
 

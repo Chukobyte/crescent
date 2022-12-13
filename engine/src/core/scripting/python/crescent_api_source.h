@@ -423,6 +423,10 @@
 "    def set_fps_display_enabled(enabled: bool) -> None:\n"\
 "        crescent_api_internal.engine_set_fps_display_enabled(enabled=enabled)\n"\
 "\n"\
+"    @staticmethod\n"\
+"    def get_global_physics_delta_time() -> float:\n"\
+"        return crescent_api_internal.engine_get_global_physics_delta_time()\n"\
+"\n"\
 "\n"\
 "# INPUT\n"\
 "class Input:\n"\
@@ -569,6 +573,7 @@
 "    TEXT_LABEL = \"TextLabel\"\n"\
 "    COLLIDER2D = \"Collider2D\"\n"\
 "    COLOR_RECT = \"ColorRect\"\n"\
+"    PARALLAX = \"Parallax\"\n"\
 "\n"\
 "\n"\
 "class Node:\n"\
@@ -1032,6 +1037,16 @@
 "        crescent_api_internal.color_rect_set_color(\n"\
 "            entity_id=self.entity_id, r=value.r, g=value.g, b=value.b, a=value.a\n"\
 "        )\n"\
+"\n"\
+"\n"\
+"class Parallax(Node2D):\n"\
+"    @property\n"\
+"    def scroll_speed(self) -> Vector2:\n"\
+"        return Vector2.ZERO()\n"\
+"\n"\
+"    @scroll_speed.setter\n"\
+"    def scroll_speed(self, value: Vector2) -> None:\n"\
+"        pass\n"\
 "\n"\
 "\n"\
 "# SCENE TREE\n"\

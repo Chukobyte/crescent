@@ -14,7 +14,7 @@ struct FuncObject {
 
 namespace ComponentDetailsDrawUtils {
 void DrawTransform2D(SceneNode* node) {
-    if (Transform2DComp* transform2DComp = node->GetComponentSafe<Transform2DComp>()) {
+    if (auto* transform2DComp = node->GetComponentSafe<Transform2DComp>()) {
         ImGui::Text("Transform 2D Component");
 
         ImGuiHelper::DragFloat2 positionDragFloat2("Position", (float*) &transform2DComp->transform2D.position);
@@ -42,7 +42,7 @@ void DrawTransform2D(SceneNode* node) {
 }
 
 void DrawSprite(SceneNode* node) {
-    if (SpriteComp* spriteComp = node->GetComponentSafe<SpriteComp>()) {
+    if (auto* spriteComp = node->GetComponentSafe<SpriteComp>()) {
         ImGui::Text("Sprite Component");
 
         // Texture Path Combo Box
@@ -97,7 +97,7 @@ void DrawSprite(SceneNode* node) {
 }
 
 void DrawAnimatedSprite(SceneNode* node) {
-    if (AnimatedSpriteComp* animatedSpriteComp = node->GetComponentSafe<AnimatedSpriteComp>()) {
+    if (auto* animatedSpriteComp = node->GetComponentSafe<AnimatedSpriteComp>()) {
         ImGui::Text("Animated Sprite Component");
 
         static std::vector<std::string> spriteAnimationList = {ImGuiHelper::COMBO_BOX_LIST_NONE };
@@ -146,7 +146,7 @@ void DrawAnimatedSprite(SceneNode* node) {
 }
 
 void DrawTextLabel(SceneNode* node) {
-    if (TextLabelComp* textLabelComp = node->GetComponentSafe<TextLabelComp>()) {
+    if (auto* textLabelComp = node->GetComponentSafe<TextLabelComp>()) {
         ImGui::Text("Text Label Component");
 
         ImGuiHelper::InputText textInputText("Text", textLabelComp->text);
@@ -178,7 +178,7 @@ void DrawTextLabel(SceneNode* node) {
 
 void DrawScript(SceneNode* node) {
     ImGui::Text("Script Component");
-    if (ScriptComp* scriptComp = node->GetComponentSafe<ScriptComp>()) {
+    if (auto* scriptComp = node->GetComponentSafe<ScriptComp>()) {
 
         ImGuiHelper::InputText classPathInputText("Class Path", scriptComp->classPath);
         ImGuiHelper::BeginInputText(classPathInputText);
@@ -196,7 +196,7 @@ void DrawScript(SceneNode* node) {
 }
 
 void DrawCollider2D(SceneNode* node) {
-    if (Collider2DComp* collider2DComp = node->GetComponentSafe<Collider2DComp>()) {
+    if (auto* collider2DComp = node->GetComponentSafe<Collider2DComp>()) {
         ImGui::Text("Collider2D Component");
 
         ImGuiHelper::DragFloat2 extentsDragFloat2("Extents", (float*) &collider2DComp->extents);
@@ -210,7 +210,7 @@ void DrawCollider2D(SceneNode* node) {
 }
 
 void DrawColorRect(SceneNode* node) {
-    if (ColorRectComp* colorRectComp = node->GetComponentSafe<ColorRectComp>()) {
+    if (auto* colorRectComp = node->GetComponentSafe<ColorRectComp>()) {
         ImGui::Text("Color Rect Component");
 
         ImGuiHelper::DragFloat2 sizeDragFloat2("Size", (float*) &colorRectComp->size);
@@ -218,6 +218,17 @@ void DrawColorRect(SceneNode* node) {
 
         ImGuiHelper::ColorEdit4 colorColorEdit4("Color", (float*) &colorRectComp->color);
         ImGuiHelper::BeginColorEdit4(colorColorEdit4);
+
+        ImGui::Separator();
+    }
+}
+
+void DrawParallax(SceneNode* node) {
+    if (auto* parallaxComp = node->GetComponentSafe<ParallaxComp>()) {
+        ImGui::Text("Parallax Component");
+
+        ImGuiHelper::DragFloat2 scrollSpeedDragFloat2("Scroll Speed", (float*) &parallaxComp->scrollSpeed);
+        ImGuiHelper::BeginDragFloat2(scrollSpeedDragFloat2);
 
         ImGui::Separator();
     }
@@ -242,6 +253,7 @@ ImGuiHelper::Window OpenedProjectUI::Windows::GetDetailsWindow() {
                 ComponentDetailsDrawUtils::DrawScript(selectedNode);
                 ComponentDetailsDrawUtils::DrawCollider2D(selectedNode);
                 ComponentDetailsDrawUtils::DrawColorRect(selectedNode);
+                ComponentDetailsDrawUtils::DrawParallax(selectedNode);
             }
         },
         .position = ImVec2{ 400.0f, 100.0f },

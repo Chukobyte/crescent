@@ -13,6 +13,7 @@
 #include "system/color_rect_ec_system.h"
 #include "system/ec_system.h"
 #include "system/font_rendering_ec_system.h"
+#include "system/parallax_ec_system.h"
 #include "system/script_ec_system.h"
 #include "system/sprite_rendering_ec_system.h"
 #include "../scene/scene_manager.h"
@@ -33,6 +34,7 @@ void cre_ecs_manager_initialize() {
     cre_ec_system_register(script_ec_system_create());
     cre_ec_system_register(collision_ec_system_create());
     cre_ec_system_register(color_rect_ec_system_create());
+    cre_ec_system_register(parallax_ec_system_create());
 }
 
 void cre_ecs_manager_enable_fps_display_entity(bool enabled) {

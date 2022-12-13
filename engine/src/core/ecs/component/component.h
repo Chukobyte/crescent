@@ -8,7 +8,7 @@ extern "C" {
 
 #include "../entity/entity.h"
 
-#define MAX_COMPONENTS 8
+#define MAX_COMPONENTS 9
 
 typedef enum ComponentDataIndex {
     ComponentDataIndex_NONE = -1,
@@ -20,6 +20,7 @@ typedef enum ComponentDataIndex {
     ComponentDataIndex_SCRIPT = 5,
     ComponentDataIndex_COLLIDER_2D = 6,
     ComponentDataIndex_COLOR_RECT = 7,
+    ComponentDataIndex_PARALLAX = 8,
 } ComponentDataIndex;
 
 typedef enum ComponentType {
@@ -32,6 +33,7 @@ typedef enum ComponentType {
     ComponentType_SCRIPT = 1 << 5,
     ComponentType_COLLIDER_2D = 1 << 6,
     ComponentType_COLOR_RECT = 1 << 7,
+    ComponentType_PARALLAX = 1 << 8,
 } ComponentType;
 
 // Struct that is used to pass information to observers from events

@@ -386,6 +386,10 @@ class Engine:
     def set_fps_display_enabled(enabled: bool) -> None:
         crescent_api_internal.engine_set_fps_display_enabled(enabled=enabled)
 
+    @staticmethod
+    def get_global_physics_delta_time() -> float:
+        return crescent_api_internal.engine_get_global_physics_delta_time()
+
 
 # INPUT
 class Input:
@@ -532,6 +536,7 @@ class NodeType(str, Enum):
     TEXT_LABEL = "TextLabel"
     COLLIDER2D = "Collider2D"
     COLOR_RECT = "ColorRect"
+    PARALLAX = "Parallax"
 
 
 class Node:
@@ -995,6 +1000,16 @@ class ColorRect(Node2D):
         crescent_api_internal.color_rect_set_color(
             entity_id=self.entity_id, r=value.r, g=value.g, b=value.b, a=value.a
         )
+
+
+class Parallax(Node2D):
+    @property
+    def scroll_speed(self) -> Vector2:
+        return Vector2.ZERO()
+
+    @scroll_speed.setter
+    def scroll_speed(self, value: Vector2) -> None:
+        pass
 
 
 # SCENE TREE

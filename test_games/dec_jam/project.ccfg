@@ -1,15 +1,23 @@
 {
     "name": "DecJam",
     "window_width": 800,
-    "window_height": 600,
+    "window_height": 450,
     "resolution_width": 800,
-    "resolution_height": 600,
+    "resolution_height": 450,
     "target_fps": 66,
     "initial_node_path": "scenes/main.cscn",
     "colliders_visible": false,
     "assets": {
         "audio_sources": [],
-        "textures": [],
+        "textures": [
+            {
+                "file_path": "assets/images/mockup.png",
+                "wrap_s": "repeat",
+                "wrap_t": "repeat",
+                "filter_min": "nearest",
+                "filter_mag": "nearest"
+            }
+        ],
         "fonts": []
     },
     "inputs": [
@@ -37,6 +45,20 @@
             "name": "attack",
             "values": [
                 "space"
+            ]
+        },
+        {
+            "name": "crouch",
+            "values": [
+                "s",
+                "down"
+            ]
+        },
+        {
+            "name": "jump",
+            "values": [
+                "w",
+                "up"
             ]
         }
     ]

@@ -11,6 +11,7 @@ PyObject* cre_py_api_engine_set_target_fps(PyObject* self, PyObject* args, PyObj
 PyObject* cre_py_api_engine_get_target_fps(PyObject* self, PyObject* args);
 PyObject* cre_py_api_engine_get_average_fps(PyObject* self, PyObject* args);
 PyObject* cre_py_api_engine_set_fps_display_enabled(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_engine_get_global_physics_delta_time(PyObject* self, PyObject* args);
 
 // Input
 PyObject* cre_py_api_input_add_action(PyObject* self, PyObject* args, PyObject* kwargs);
@@ -148,6 +149,10 @@ static struct PyMethodDef crePyApiMethods[] = {
     {
         "engine_set_fps_display_enabled", (PyCFunction) cre_py_api_engine_set_fps_display_enabled,
         METH_VARARGS | METH_KEYWORDS, "If enabled will display the average fps."
+    },
+    {
+        "engine_get_global_physics_delta_time", cre_py_api_engine_get_global_physics_delta_time,
+        METH_VARARGS, "Gets the global physics delta time."
     },
     // INPUT
     {
