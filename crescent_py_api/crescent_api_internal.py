@@ -1,3 +1,6 @@
+from typing import Callable
+
+
 def engine_exit(code=0) -> None:
     pass
 
@@ -171,6 +174,20 @@ def node_get_children(entity_id: int) -> list:
 
 def node_get_parent(entity_id: int) -> tuple:
     return 1, "Node"
+
+
+def node_create_event(entity_id: int, event_id: str) -> None:
+    pass
+
+
+def node_subscribe_to_event(
+    entity_id: int, event_id: str, scoped_entity_id: int, callback_func: Callable
+) -> None:
+    pass
+
+
+def node_broadcast_event(entity_id: int, event_id: str, args) -> None:
+    pass
 
 
 def node_get_name(entity_id: int) -> str:

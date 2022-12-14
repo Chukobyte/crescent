@@ -567,6 +567,36 @@ PyObject* cre_py_api_node_get_full_time_dilation(PyObject* self, PyObject* args,
     return NULL;
 }
 
+PyObject* cre_py_api_node_create_event(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    char* eventId;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "is", crePyApiNodeCreateEventKWList, &entity, &eventId)) {
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_node_subscribe_to_event(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    char* eventId;
+    Entity scopedEntity;
+    PyObject* callbackFunc;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "isiO", crePyApiNodeSubscribeToEventKWList, &entity, &eventId, &scopedEntity, &callbackFunc)) {
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_node_broadcast_event(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    char* eventId;
+    PyObject* broadcastArgs;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "isO", crePyApiNodeBroadcastEventKWList, &entity, &eventId, &broadcastArgs)) {
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
 // Node2D
 PyObject* cre_py_api_node2D_set_position(PyObject* self, PyObject* args, PyObject* kwargs) {
     Entity entity;

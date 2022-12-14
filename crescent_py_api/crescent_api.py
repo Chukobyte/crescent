@@ -1,6 +1,7 @@
 import json
 from enum import Enum
 from json import JSONDecodeError
+from typing import Callable
 
 import crescent_api_internal
 
@@ -614,52 +615,72 @@ class Node:
     def queue_deletion(self) -> None:
         crescent_api_internal.node_queue_deletion(entity_id=self.entity_id)
 
-    def create_signal(self, signal_id: str) -> None:
-        crescent_api_internal.node_signal_create(
-            entity_id=self.entity_id, signal_id=signal_id
+    # def create_signal(self, signal_id: str) -> None:
+    #     crescent_api_internal.node_signal_create(
+    #         entity_id=self.entity_id, signal_id=signal_id
+    #     )
+    #
+    # def connect_signal(self, signal_id: str, listener_node, function_name: str) -> None:
+    #     crescent_api_internal.node_signal_connect(
+    #         entity_id=self.entity_id,
+    #         signal_id=signal_id,
+    #         listener_entity_id=listener_node.entity_id,
+    #         function_name=function_name,
+    #     )
+    #
+    # def emit_signal(self, signal_id: str, args=[]) -> None:
+    #     crescent_api_internal.node_signal_emit(
+    #         entity_id=self.entity_id, signal_id=signal_id, args=args
+    #     )
+
+    def create_event(self, event_id: str) -> None:
+        crescent_api_internal.node_create_event(
+            entity_id=self.entity_id, event_id=event_id
         )
 
-    def connect_signal(self, signal_id: str, listener_node, function_name: str) -> None:
-        crescent_api_internal.node_signal_connect(
+    def subscribe_to_event(
+        self, event_id: str, scoped_node, callback_func: Callable
+    ) -> None:
+        crescent_api_internal.node_subscribe_to_event(
             entity_id=self.entity_id,
-            signal_id=signal_id,
-            listener_entity_id=listener_node.entity_id,
-            function_name=function_name,
+            event_id=event_id,
+            scoped_entity_id=scoped_node.entity_id,
+            callback_func=callback_func,
         )
 
-    def emit_signal(self, signal_id: str, args=[]) -> None:
-        crescent_api_internal.node_signal_emit(
-            entity_id=self.entity_id, signal_id=signal_id, args=args
+    def broadcast_event(self, event_id: str, args=None) -> None:
+        crescent_api_internal.node_broadcast_event(
+            entity_id=self.entity_id, event_id=event_id, args=args
         )
 
     @property
     def name(self) -> str:
         return crescent_api_internal.node_get_name(entity_id=self.entity_id)
 
-    @property
-    def tags(self) -> list:
-        return crescent_api_internal.node_get_tags(entity_id=self.entity_id)
+    # @property
+    # def tags(self) -> list:
+    #     return crescent_api_internal.node_get_tags(entity_id=self.entity_id)
+    #
+    # @tags.setter
+    # def tags(self, value: list) -> None:
+    #     crescent_api_internal.node_set_tags(entity_id=self.entity_id, tags=value)
+    #
+    # def show(self) -> None:
+    #     crescent_api_internal.node_show(entity_id=self.entity_id)
+    #
+    # def hide(self) -> None:
+    #     crescent_api_internal.node_hide(entity_id=self.entity_id)
 
-    @tags.setter
-    def tags(self, value: list) -> None:
-        crescent_api_internal.node_set_tags(entity_id=self.entity_id, tags=value)
-
-    def show(self) -> None:
-        crescent_api_internal.node_show(entity_id=self.entity_id)
-
-    def hide(self) -> None:
-        crescent_api_internal.node_hide(entity_id=self.entity_id)
-
-    @property
-    def visibility(self) -> bool:
-        return crescent_api_internal.node_is_visible(entity_id=self.entity_id)
-
-    @visibility.setter
-    def visibility(self, value: bool) -> None:
-        if value:
-            self.show()
-        else:
-            self.hide()
+    # @property
+    # def visibility(self) -> bool:
+    #     return crescent_api_internal.node_is_visible(entity_id=self.entity_id)
+    #
+    # @visibility.setter
+    # def visibility(self, value: bool) -> None:
+    #     if value:
+    #         self.show()
+    #     else:
+    #         self.hide()
 
     @property
     def time_dilation(self) -> float:
