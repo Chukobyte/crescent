@@ -157,6 +157,7 @@ void cre_ec_system_entity_start(Entity entity) {
 
 void cre_ec_system_entity_end(Entity entity) {
     // Notify scene exit observers before calling it on systems
+    // TODO: Consider hooks for components instead of direct node component references
     NodeComponent* nodeComponent = (NodeComponent*) component_manager_get_component_unsafe(entity, ComponentDataIndex_NODE);
     if (nodeComponent != NULL) {
         se_event_notify_observers(&nodeComponent->onSceneTreeExit, &(SESubjectNotifyPayload) {
@@ -169,6 +170,8 @@ void cre_ec_system_entity_end(Entity entity) {
             entitySystemData.on_entity_end_systems[i]->on_entity_end_func(entity);
         }
     }
+    // TODO: Do this differently as I don't like this...
+    se_string_hash_map_destroy(nodeComponent->eventHashMap);
 }
 
 void cre_ec_system_entity_entered_scene(Entity entity) {

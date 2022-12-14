@@ -542,7 +542,7 @@ PyObject* cre_py_api_node_set_time_dilation(PyObject* self, PyObject* args, PyOb
     Entity entity;
     float timeDilation;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "if", crePyApiNodeSetTimeDilationKWList, &entity, &timeDilation)) {
-        NodeComponent* nodeComponent = component_manager_get_component(entity, ComponentDataIndex_NODE);
+        NodeComponent* nodeComponent = (NodeComponent*) component_manager_get_component(entity, ComponentDataIndex_NODE);
         nodeComponent->timeDilation.value = timeDilation;
         cre_invalidate_time_dilation_nodes_with_children(entity);
         Py_RETURN_NONE;
@@ -553,7 +553,7 @@ PyObject* cre_py_api_node_set_time_dilation(PyObject* self, PyObject* args, PyOb
 PyObject* cre_py_api_node_get_time_dilation(PyObject* self, PyObject* args, PyObject* kwargs) {
     Entity entity;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
-        NodeComponent* nodeComponent = component_manager_get_component(entity, ComponentDataIndex_NODE);
+        NodeComponent* nodeComponent = (NodeComponent*) component_manager_get_component(entity, ComponentDataIndex_NODE);
         return Py_BuildValue("f", nodeComponent->timeDilation.value);
     }
     return NULL;
@@ -571,9 +571,16 @@ PyObject* cre_py_api_node_create_event(PyObject* self, PyObject* args, PyObject*
     Entity entity;
     char* eventId;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "is", crePyApiNodeCreateEventKWList, &entity, &eventId)) {
+        NodeComponent* nodeComponent = (NodeComponent*) component_manager_get_component(entity, ComponentDataIndex_NODE);
+        node_component_create_event(nodeComponent, eventId);
         Py_RETURN_NONE;
     }
     return NULL;
+}
+
+void py_subscribe_to_event_on_notify(SESubjectNotifyPayload* payload) {
+    PyObject* args = (PyObject*) payload->data;
+    const int x = 0; // temp
 }
 
 PyObject* cre_py_api_node_subscribe_to_event(PyObject* self, PyObject* args, PyObject* kwargs) {
@@ -582,6 +589,9 @@ PyObject* cre_py_api_node_subscribe_to_event(PyObject* self, PyObject* args, PyO
     Entity scopedEntity;
     PyObject* callbackFunc;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "isiO", crePyApiNodeSubscribeToEventKWList, &entity, &eventId, &scopedEntity, &callbackFunc)) {
+        static SEObserver pySubscribeObserver = { .on_notify = py_subscribe_to_event_on_notify };
+        NodeComponent* nodeComponent = (NodeComponent*) component_manager_get_component(entity, ComponentDataIndex_NODE);
+        node_component_subscribe_to_event(nodeComponent, eventId, &pySubscribeObserver);
         Py_RETURN_NONE;
     }
     return NULL;
@@ -592,6 +602,8 @@ PyObject* cre_py_api_node_broadcast_event(PyObject* self, PyObject* args, PyObje
     char* eventId;
     PyObject* broadcastArgs;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "isO", crePyApiNodeBroadcastEventKWList, &entity, &eventId, &broadcastArgs)) {
+        NodeComponent* nodeComponent = (NodeComponent*) component_manager_get_component(entity, ComponentDataIndex_NODE);
+        node_component_broadcast_event(nodeComponent, eventId, &(SESubjectNotifyPayload){ .data = broadcastArgs, .type = 0 });
         Py_RETURN_NONE;
     }
     return NULL;
