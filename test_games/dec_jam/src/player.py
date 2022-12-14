@@ -1,5 +1,5 @@
 from crescent_api import *
-from src.task import *
+from src.utils.task import *
 
 
 def map_to_range(input, input_min, input_max, output_min, output_max):
