@@ -30,10 +30,7 @@ class Attack(Collider2D):
         # temp
         def is_attackable_collider(collider: Collider2D) -> bool:
             collision_parent = collider.get_parent()
-            return (
-                collision_parent.name == "TestThing"
-                or "GingerBreadMan" in type(collision_parent).__name__
-            )
+            return "GingerBreadMan" in type(collision_parent).__name__
 
         engine_delta_time = Engine.get_global_physics_delta_time()
         life_timer = Timer(self.life_time)
