@@ -1,28 +1,7 @@
 from crescent_api import *
 from src.utils.task import *
-
-
-def map_to_range(input, input_min, input_max, output_min, output_max):
-    return (input - input_min / (input_max - input_min)) * (
-        output_max - output_min
-    ) + output_min
-
-
-def map_to_unit_range(input, input_min, input_max):
-    return map_to_range(input, input_min, input_max, 0.0, 1.0)
-
-
-class Timer:
-    def __init__(self, time: float):
-        self.time = time
-        self.time_remaining = time
-
-    def tick(self, delta_time: float):
-        self.time_remaining = max(self.time_remaining - delta_time, 0.0)
-        return self
-
-    def reset(self) -> None:
-        self.time_remaining = self.time
+from src.utils.timer import Timer
+from src.utils.math import map_to_unit_range
 
 
 class Attack(Collider2D):

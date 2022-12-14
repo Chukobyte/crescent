@@ -2,13 +2,25 @@ import math
 from typing import Callable
 from crescent_api import Vector2
 
+# GENERAL
 PI = 3.141593
+
+
+def map_to_range(input, input_min, input_max, output_min, output_max):
+    return (input - input_min / (input_max - input_min)) * (
+        output_max - output_min
+    ) + output_min
+
+
+def map_to_unit_range(input, input_min, input_max):
+    return map_to_range(input, input_min, input_max, 0.0, 1.0)
 
 
 def lerp(source, dest, amount):
     return source + (dest - source) * amount
 
 
+# Easing
 class Ease:
     class Cubic:
         @staticmethod
