@@ -40,7 +40,7 @@
 //--- Helper Functions ---//
 // TODO: May want to move into another location...
 
-Vector2 se_mouse_get_global_position(SEMouse* mouse, Vector2* offset) {
+Vector2 py_api_mouse_get_global_position(SEMouse* mouse, Vector2* offset) {
     CRECamera2D* camera = cre_camera_manager_get_current_camera();
     SEMouse* globalMouse = se_mouse_get();
     CREGameProperties* gameProps = cre_game_props_get();
@@ -56,53 +56,35 @@ Vector2 se_mouse_get_global_position(SEMouse* mouse, Vector2* offset) {
     return mouseWorldPos;
 }
 
-void se_scene_notify_all_on_transform_children_events(Entity entity, Transform2DComponent* transformComp) {
-    se_event_notify_observers(&transformComp->onTransformChanged, &(SESubjectNotifyPayload) {
-            .data = &(ComponentEntityUpdatePayload) {.entity = entity, .component = transformComp, .componentType = ComponentType_TRANSFORM_2D},
-            .type = 0
-    });
-    // Notify children by recursion
-    if (cre_scene_manager_has_entity_tree_node(entity)) {
-        SceneTreeNode* sceneTreeNode = cre_scene_manager_get_entity_tree_node(entity);
-        for (size_t i = 0; i < sceneTreeNode->childCount; i++) {
-            const Entity childEntity = sceneTreeNode->children[i]->entity;
-            Transform2DComponent* childTransformComp = (Transform2DComponent*) component_manager_get_component_unsafe(childEntity, ComponentDataIndex_TRANSFORM_2D);
-            if (childTransformComp != NULL) {
-                se_scene_notify_all_on_transform_children_events(childEntity, childTransformComp);
-            }
-        }
-    }
-}
-
-void se_update_entity_local_position(Entity entity, Vector2* position) {
+void py_api_update_entity_local_position(Entity entity, Vector2* position) {
     Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
     const Vector2 prevPosition = transformComp->localTransform.position;
     transformComp->localTransform.position.x = position->x;
     transformComp->localTransform.position.y = position->y;
     transformComp->isGlobalTransformDirty = true;
     if (transformComp->localTransform.position.x != prevPosition.x || transformComp->localTransform.position.y != prevPosition.y) {
-        se_scene_notify_all_on_transform_children_events(entity, transformComp);
+        cre_scene_manager_notify_all_on_transform_events(entity, transformComp);
     }
 }
 
-void se_update_entity_local_scale(Entity entity, Vector2 * scale) {
+void py_api_update_entity_local_scale(Entity entity, Vector2 * scale) {
     Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
     const Vector2 prevScale = transformComp->localTransform.scale;
     transformComp->localTransform.scale.x = scale->x;
     transformComp->localTransform.scale.y = scale->y;
     transformComp->isGlobalTransformDirty = true;
     if (transformComp->localTransform.scale.x != prevScale.x || transformComp->localTransform.scale.y != prevScale.y) {
-        se_scene_notify_all_on_transform_children_events(entity, transformComp);
+        cre_scene_manager_notify_all_on_transform_events(entity, transformComp);
     }
 }
 
-void se_update_entity_local_rotation(Entity entity, float rotation) {
+void py_api_update_entity_local_rotation(Entity entity, float rotation) {
     Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
     const float prevRotation = transformComp->localTransform.rotation;
     transformComp->localTransform.rotation = rotation;
     transformComp->isGlobalTransformDirty = true;
     if (transformComp->localTransform.rotation != prevRotation) {
-        se_scene_notify_all_on_transform_children_events(entity, transformComp);
+        cre_scene_manager_notify_all_on_transform_events(entity, transformComp);
     }
 }
 
@@ -215,7 +197,7 @@ PyObject* cre_py_api_mouse_get_world_position(PyObject* self, PyObject* args) {
     const CREEngineContext* engineContext = cre_engine_context_get();
     SEMouse* globalMouse = se_mouse_get();
     static Vector2 zeroOffset = { 0.0f, 0.0f };
-    const Vector2 worldPosition = se_mouse_get_global_position(globalMouse, &zeroOffset);
+    const Vector2 worldPosition = py_api_mouse_get_global_position(globalMouse, &zeroOffset);
     return Py_BuildValue("(ff)", worldPosition.x, worldPosition.y);
 }
 
@@ -591,7 +573,7 @@ PyObject* cre_py_api_node2D_set_position(PyObject* self, PyObject* args, PyObjec
     float x;
     float y;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "iff", crePyApiNode2DSetXYKWList, &entity, &x, &y)) {
-        se_update_entity_local_position(entity, &(Vector2) {
+        py_api_update_entity_local_position(entity, &(Vector2) {
             x, y
         });
         Py_RETURN_NONE;
@@ -605,7 +587,7 @@ PyObject* cre_py_api_node2D_add_to_position(PyObject* self, PyObject* args, PyOb
     float y;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "iff", crePyApiNode2DSetXYKWList, &entity, &x, &y)) {
         Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
-        se_update_entity_local_position(entity, &(Vector2) {
+        py_api_update_entity_local_position(entity, &(Vector2) {
             x + transformComp->localTransform.position.x, y + transformComp->localTransform.position.y
         });
         Py_RETURN_NONE;
@@ -637,7 +619,7 @@ PyObject* cre_py_api_node2D_set_scale(PyObject* self, PyObject* args, PyObject* 
     float x;
     float y;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "iff", crePyApiNode2DSetXYKWList, &entity, &x, &y)) {
-        se_update_entity_local_scale(entity, &(Vector2) {
+        py_api_update_entity_local_scale(entity, &(Vector2) {
             x, y
         });
         Py_RETURN_NONE;
@@ -651,7 +633,7 @@ PyObject* cre_py_api_node2D_add_to_scale(PyObject* self, PyObject* args, PyObjec
     float y;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "iff", crePyApiNode2DSetXYKWList, &entity, &x, &y)) {
         Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
-        se_update_entity_local_scale(entity, &(Vector2) {
+        py_api_update_entity_local_scale(entity, &(Vector2) {
             x + transformComp->localTransform.scale.x, y + transformComp->localTransform.scale.y
         });
         Py_RETURN_NONE;
@@ -672,7 +654,7 @@ PyObject* cre_py_api_node2D_set_rotation(PyObject* self, PyObject* args, PyObjec
     Entity entity;
     float rotation;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "if", crePyApiNode2DSetRotationKWList, &entity, &rotation)) {
-        se_update_entity_local_rotation(entity, rotation);
+        py_api_update_entity_local_rotation(entity, rotation);
         Py_RETURN_NONE;
     }
     return NULL;
@@ -683,7 +665,7 @@ PyObject* cre_py_api_node2D_add_to_rotation(PyObject* self, PyObject* args, PyOb
     float rotation;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "if", crePyApiNode2DSetRotationKWList, &entity, &rotation)) {
         Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
-        se_update_entity_local_rotation(entity, rotation + transformComp->localTransform.rotation);
+        py_api_update_entity_local_rotation(entity, rotation + transformComp->localTransform.rotation);
         Py_RETURN_NONE;
     }
     return NULL;
@@ -1081,7 +1063,7 @@ PyObject* cre_py_api_collision_handler_process_mouse_collisions(PyObject* self, 
         // TODO: Transform mouse screen position into world position.
         SEMouse* globalMouse = se_mouse_get();
         Vector2 positionOffset = { positionOffsetX, positionOffsetY };
-        const Vector2 mouseWorldPos = se_mouse_get_global_position(globalMouse, &positionOffset);
+        const Vector2 mouseWorldPos = py_api_mouse_get_global_position(globalMouse, &positionOffset);
         Rect2 collisionRect = { mouseWorldPos.x, mouseWorldPos.y, collisionSizeW, collisionSizeH };
         CollisionResult collisionResult = cre_collision_process_mouse_collisions(&collisionRect);
         for (size_t i = 0; i < collisionResult.collidedEntityCount; i++) {

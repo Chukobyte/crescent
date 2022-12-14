@@ -43,6 +43,8 @@ Entity cre_scene_manager_get_entity_child_by_name(Entity parent, const char* chi
 SceneTreeNode* cre_scene_manager_get_entity_tree_node(Entity entity);
 bool cre_scene_manager_has_entity_tree_node(Entity entity);
 EntityArray cre_scene_manager_get_self_and_parent_nodes(Entity entity);
+// Helper function to call notify on entity and children node 'on transform changed' events.  Uses recursion.
+void cre_scene_manager_notify_all_on_transform_events(Entity entity, Transform2DComponent* transformComp);
 
 #ifdef __cplusplus
 }
