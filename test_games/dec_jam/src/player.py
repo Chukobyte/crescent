@@ -1,4 +1,5 @@
 from crescent_api import *
+from src.game_master import GameMaster
 from src.utils.task import *
 from src.utils.timer import Timer
 from src.utils.math import map_to_unit_range
@@ -26,6 +27,14 @@ class Attack(Collider2D):
         self._task_manager.update()
 
     async def _update_task(self) -> None:
+        # temp
+        def is_attackable_collider(collider: Collider2D) -> bool:
+            collision_parent = collider.get_parent()
+            return (
+                collision_parent.name == "TestThing"
+                or "GingerBreadMan" in type(collision_parent).__name__
+            )
+
         engine_delta_time = Engine.get_global_physics_delta_time()
         life_timer = Timer(self.life_time)
         try:
@@ -33,9 +42,9 @@ class Attack(Collider2D):
             # Might be enough just to have a reference to the node that spawned the attack and get that time dilation
             while life_timer.tick(engine_delta_time).time_remaining > 0:
                 collisions = CollisionHandler.process_collisions(self)
-                for collision in collisions:
-                    if collision.get_parent().name == "TestThing":
-                        collision.get_parent().queue_deletion()
+                for collider in collisions:
+                    if is_attackable_collider(collider):
+                        collider.get_parent().queue_deletion()
                         self.queue_deletion()
                         break
                 await co_suspend()
@@ -61,6 +70,7 @@ class Player(Node2D):
         self.speed = 200
         self.direction_facing = Vector2.RIGHT()
         self.stance = PlayerStance.STANDING
+        self._game_master = GameMaster(self)  # Temp
         self._physics_update_task_manager = TaskManager(
             tasks=[Task(self.physics_update_task())]
         )
@@ -89,6 +99,7 @@ class Player(Node2D):
 
     def _physics_update(self, delta_time: float) -> None:
         self._physics_update_task_manager.update()
+        self._game_master.update(delta_time)
 
     def _update_stance(self, stance: str) -> None:
         if self.stance == stance:
