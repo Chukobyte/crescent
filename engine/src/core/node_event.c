@@ -45,6 +45,7 @@ NodeEvent* node_event_create_event_internal(Entity entity, const char* eventId);
 NodeEventObserver* node_create_observer_internal(Entity entity, NodeEvent* event, NodeEventObserverCallback observerCallback, void* observerData);
 bool does_entity_have_observer_event_already(Entity observerEntity, NodeEvent* event);
 void register_entity_to_on_scene_exit_callback(Entity entity);
+void unregister_entity_to_on_scene_exit_callback(Entity entity);
 
 void cre_node_event_on_entity_exit_scene(SESubjectNotifyPayload* payload);
 
@@ -97,10 +98,6 @@ void node_event_destroy_all_entity_events_and_observers(Entity entity) {
                     NULL
                 );
             }
-            NodeComponent* nodeComp = component_manager_get_component_unsafe(entity, ComponentDataIndex_NODE);
-            if (nodeComp != NULL) {
-                se_event_unregister_observer(&nodeComp->onSceneTreeExit, &nodeEntityOnExitSceneObserver);
-            }
             // Delete event
             SE_MEM_FREE(nodeEvent->id);
             SE_MEM_FREE(nodeEvent);
@@ -108,7 +105,7 @@ void node_event_destroy_all_entity_events_and_observers(Entity entity) {
         se_string_hash_map_destroy(eventDatabase.entityEventMaps[entity]);
         eventDatabase.entityEventMaps[entity] = NULL;
     }
-    // Reset on exit callback bool
+    unregister_entity_to_on_scene_exit_callback(entity);
     eventDatabase.hasEntityRegisteredOnSceneExitCallback[entity] = false;
 }
 
@@ -175,6 +172,14 @@ void register_entity_to_on_scene_exit_callback(Entity entity) {
     if (!eventDatabase.hasEntityRegisteredOnSceneExitCallback[entity] && (nodeComp = component_manager_get_component_unsafe(entity, ComponentDataIndex_NODE))) {
         se_event_register_observer(&nodeComp->onSceneTreeExit, &nodeEntityOnExitSceneObserver);
         eventDatabase.hasEntityRegisteredOnSceneExitCallback[entity] = true;
+    }
+}
+
+void unregister_entity_to_on_scene_exit_callback(Entity entity) {
+    NodeComponent* nodeComp = NULL;
+    if (eventDatabase.hasEntityRegisteredOnSceneExitCallback[entity] && (nodeComp = component_manager_get_component_unsafe(entity, ComponentDataIndex_NODE))) {
+        se_event_unregister_observer(&nodeComp->onSceneTreeExit, &nodeEntityOnExitSceneObserver);
+        eventDatabase.hasEntityRegisteredOnSceneExitCallback[entity] = false;
     }
 }
 
