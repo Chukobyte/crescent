@@ -15,10 +15,11 @@ void parallax_system_physics_process(float deltaTime);
 
 void parallax_on_entity_transform_change(SESubjectNotifyPayload* payload);
 
-EntitySystem* parallaxSystem = NULL;
-SEObserver parallaxOnEntityTransformChangeObserver = { .on_notify = parallax_on_entity_transform_change };
-
 void parallax_system_update_entity(Entity entity, Transform2DComponent* transformComp, ParallaxComponent* parallaxComp, CRECamera2D* camera2D);
+
+EntitySystem* parallaxSystem = NULL;
+
+SEObserver parallaxOnEntityTransformChangeObserver = { .on_notify = parallax_on_entity_transform_change };
 
 struct EntitySystem* parallax_ec_system_create() {
     SE_ASSERT(parallaxSystem == NULL);

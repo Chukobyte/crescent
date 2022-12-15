@@ -567,20 +567,37 @@ PyObject* cre_py_api_node_get_full_time_dilation(PyObject* self, PyObject* args,
     return NULL;
 }
 
+// Event related stuff
+//typedef struct PyEventOnNotifyPayload {
+//    Entity entity;
+//    PyObject* args;
+//} PyEventOnNotifyPayload;
+//
+//void py_event_on_notify(SESubjectNotifyPayload* payload) {
+//    PyEventOnNotifyPayload* notifyPayload = (PyEventOnNotifyPayload*) payload->data;
+//
+//    const Entity entity =  notifyPayload->entity;
+//    PyObject* args = (PyObject*) notifyPayload->args;
+//    SE_ASSERT(args != NULL);
+//}
+//
+//void py_event_on_transform_changed(SESubjectNotifyPayload* payload) {
+//    ComponentEntityUpdatePayload* updatePayload = (ComponentEntityUpdatePayload*) payload->data;
+//
+//    const Entity entity =  updatePayload->entity;
+//    Transform2DComponent* transformComp = (Transform2DComponent*) updatePayload->component;
+//    SE_ASSERT(transformComp != NULL);
+//}
+
 PyObject* cre_py_api_node_create_event(PyObject* self, PyObject* args, PyObject* kwargs) {
     Entity entity;
     char* eventId;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "is", crePyApiNodeCreateEventKWList, &entity, &eventId)) {
         NodeComponent* nodeComponent = (NodeComponent*) component_manager_get_component(entity, ComponentDataIndex_NODE);
-        node_component_create_event(nodeComponent, eventId);
+//        node_component_create_event(nodeComponent, eventId);
         Py_RETURN_NONE;
     }
     return NULL;
-}
-
-void py_subscribe_to_event_on_notify(SESubjectNotifyPayload* payload) {
-    PyObject* args = (PyObject*) payload->data;
-    const int x = 0; // temp
 }
 
 PyObject* cre_py_api_node_subscribe_to_event(PyObject* self, PyObject* args, PyObject* kwargs) {
@@ -589,9 +606,12 @@ PyObject* cre_py_api_node_subscribe_to_event(PyObject* self, PyObject* args, PyO
     Entity scopedEntity;
     PyObject* callbackFunc;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "isiO", crePyApiNodeSubscribeToEventKWList, &entity, &eventId, &scopedEntity, &callbackFunc)) {
-        static SEObserver pySubscribeObserver = { .on_notify = py_subscribe_to_event_on_notify };
-        NodeComponent* nodeComponent = (NodeComponent*) component_manager_get_component(entity, ComponentDataIndex_NODE);
-        node_component_subscribe_to_event(nodeComponent, eventId, &pySubscribeObserver);
+        // TODO: Will need to filter by event id if we want to route to existing events
+//        static SEObserver pySubscribeObserver = { .on_notify = py_event_on_notify };
+//        static SEObserver pyTransformSubscribeObserver = { .on_notify = py_event_on_transform_changed }; // TODO: Use after checking event id
+//        NodeComponent* nodeComponent = (NodeComponent*) component_manager_get_component(entity, ComponentDataIndex_NODE);
+//        NodeComponent* scopedEntityNodeComp = (NodeComponent*) component_manager_get_component(scopedEntity, ComponentDataIndex_NODE);
+//        node_component_subscribe_to_event(nodeComponent, eventId, &pySubscribeObserver);
         Py_RETURN_NONE;
     }
     return NULL;
@@ -603,7 +623,9 @@ PyObject* cre_py_api_node_broadcast_event(PyObject* self, PyObject* args, PyObje
     PyObject* broadcastArgs;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "isO", crePyApiNodeBroadcastEventKWList, &entity, &eventId, &broadcastArgs)) {
         NodeComponent* nodeComponent = (NodeComponent*) component_manager_get_component(entity, ComponentDataIndex_NODE);
-        node_component_broadcast_event(nodeComponent, eventId, &(SESubjectNotifyPayload){ .data = broadcastArgs, .type = 0 });
+//        node_component_broadcast_event(nodeComponent, eventId, &(SESubjectNotifyPayload) {
+//            .data = &(PyEventOnNotifyPayload) { .entity = entity, .args = broadcastArgs }, .type = 0
+//        });
         Py_RETURN_NONE;
     }
     return NULL;

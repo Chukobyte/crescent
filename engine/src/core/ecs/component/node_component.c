@@ -13,7 +13,7 @@ NodeComponent* node_component_create() {
     };
     nodeComponent->onSceneTreeEnter.observerCount = 0;
     nodeComponent->onSceneTreeExit.observerCount = 0;
-    nodeComponent->eventHashMap = se_string_hash_map_create(SE_STRING_HASH_MAP_MIN_CAPACITY);
+    nodeComponent->observer.on_notify = NULL;
     return nodeComponent;
 }
 
@@ -94,32 +94,4 @@ const char* node_get_base_type_string(NodeBaseType type) {
         break;
     }
     return NULL;
-}
-
-// Events
-bool node_component_create_event(NodeComponent* nodeComponent, const char* eventId) {
-    if (!se_string_hash_map_has(nodeComponent->eventHashMap, eventId)) {
-        SEEvent event = { .observerCount = 0 };
-        se_string_hash_map_add(nodeComponent->eventHashMap, eventId, &event, sizeof(SEEvent));
-        return true;
-    }
-    return false;
-}
-
-bool node_component_subscribe_to_event(NodeComponent* nodeComponent, const char* eventId, SEObserver* observer) {
-    if (se_string_hash_map_has(nodeComponent->eventHashMap, eventId)) {
-        SEEvent* event = (SEEvent*) se_string_hash_map_get(nodeComponent->eventHashMap, eventId);
-        se_event_register_observer(event, observer);
-        return true;
-    }
-    return false;
-}
-
-bool node_component_broadcast_event(NodeComponent* nodeComponent, const char* eventId, SESubjectNotifyPayload* payload) {
-    if (se_string_hash_map_has(nodeComponent->eventHashMap, eventId)) {
-        SEEvent* event = (SEEvent*) se_string_hash_map_get(nodeComponent->eventHashMap, eventId);
-        se_event_notify_observers(event, payload);
-        return true;
-    }
-    return false;
 }

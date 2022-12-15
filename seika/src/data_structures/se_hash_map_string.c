@@ -30,6 +30,10 @@ SEStringHashMap* se_string_hash_map_create(size_t capacity) {
     return map;
 }
 
+SEStringHashMap* se_string_hash_map_create_default_capacity() {
+    return se_string_hash_map_create(SE_STRING_HASH_MAP_MIN_CAPACITY);
+}
+
 StringHashMapNode* hash_map_create_node_string(SEStringHashMap* hashMap, const char* key, void* value, size_t valueSize, StringHashMapNode* next) {
     StringHashMapNode* node = (StringHashMapNode*) SE_MEM_ALLOCATE_SIZE(sizeof(StringHashMapNode));
     node->key = se_strdup(key);

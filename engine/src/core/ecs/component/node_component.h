@@ -58,8 +58,8 @@ typedef struct NodeComponent {
     SEEvent onSceneTreeEnter; // { data = entity (unsigned int), type = 0 (not used) }
     // Called before '_end' is called on an entity
     SEEvent onSceneTreeExit; // { data = entity (unsigned int), type = 0 (not used) }
-    // Hashmap contains node events
-    SEStringHashMap* eventHashMap;
+    // Observer used for all node events.  Other objects can use this (from scripting) to scope a callback to an entity's lifetime.
+    SEObserver observer;
 } NodeComponent;
 
 NodeComponent* node_component_create();
@@ -68,15 +68,6 @@ NodeComponent* node_component_copy(const NodeComponent* nodeComponent);
 NodeBaseType node_get_base_type(const char* baseName);
 NodeBaseInheritanceType node_get_type_inheritance(NodeBaseType type);
 const char* node_get_base_type_string(NodeBaseType type);
-
-typedef struct NodeComponentEventCallback {
-    Entity scopedEntity;
-    SEObserver* observer;
-} NodeComponentEventCallback;
-// Events
-bool node_component_create_event(NodeComponent* nodeComponent, const char* eventId);
-bool node_component_subscribe_to_event(NodeComponent* nodeComponent, const char* eventId, SEObserver* observer);
-bool node_component_broadcast_event(NodeComponent* nodeComponent, const char* eventId, SESubjectNotifyPayload* payload);
 
 #ifdef __cplusplus
 }
