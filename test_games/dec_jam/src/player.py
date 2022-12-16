@@ -96,6 +96,11 @@ class Player(Node2D):
                 + Vector2(-16, -48)
                 + Vector2(self.direction_facing.x * 50, attack_y)
             )
+            new_attack.subscribe_to_event(
+                event_id="scene_exited",
+                scoped_node=self,
+                callback_func=lambda node: print(f"{node} exited the scene!"),
+            )
             self.get_parent().add_child(new_attack)
 
     def _physics_update(self, delta_time: float) -> None:

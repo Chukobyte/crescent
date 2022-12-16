@@ -10,6 +10,7 @@
 
 #include "py_cache.h"
 #include "../script_context.h"
+#include "../../node_event.h"
 
 //--- RBE Script Callback ---//
 typedef struct RBEScriptCallback {
@@ -110,6 +111,9 @@ void py_on_start(Entity entity) {
         PyObject_CallMethod(pScriptInstance, "_start", NULL);
         PyErr_Print();
     }
+    node_event_notify_observers(entity, "scene_entered", &(NodeEventNotifyPayload) {
+        .data = pScriptInstance
+    });
 }
 
 void py_on_pre_update_all() {
@@ -136,6 +140,9 @@ void py_on_end(Entity entity) {
     SE_ASSERT(se_hash_map_has(pythonInstanceHashMap, &entity));
     PyObject* pScriptInstance = (PyObject*) *(PyObject**) se_hash_map_get(pythonInstanceHashMap, &entity);
     SE_ASSERT(pScriptInstance != NULL);
+    node_event_notify_observers(entity, "scene_exited", &(NodeEventNotifyPayload) {
+        .data = pScriptInstance
+    });
     if (PyObject_HasAttrString(pScriptInstance, "_end")) {
         PyObject_CallMethod(pScriptInstance, "_end", NULL);
     }

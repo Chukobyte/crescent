@@ -13,7 +13,6 @@ NodeComponent* node_component_create() {
     };
     nodeComponent->onSceneTreeEnter.observerCount = 0;
     nodeComponent->onSceneTreeExit.observerCount = 0;
-    nodeComponent->observer.on_notify = NULL;
     return nodeComponent;
 }
 

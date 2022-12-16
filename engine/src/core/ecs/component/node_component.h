@@ -58,8 +58,6 @@ typedef struct NodeComponent {
     SEEvent onSceneTreeEnter; // { data = entity (unsigned int), type = 0 (not used) }
     // Called before '_end' is called on an entity
     SEEvent onSceneTreeExit; // { data = entity (unsigned int), type = 0 (not used) }
-    // Observer used for all node events.  Other objects can use this (from scripting) to scope a callback to an entity's lifetime.
-    SEObserver observer;
 } NodeComponent;
 
 NodeComponent* node_component_create();
