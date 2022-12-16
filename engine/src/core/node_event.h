@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stddef.h>
+
 #include "ecs/entity/entity.h"
 
 typedef struct NodeEventNotifyPayload {
