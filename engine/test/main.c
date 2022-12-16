@@ -22,9 +22,17 @@ int main(int argv, char** args) {
 
 // Node event test
 static bool hasBeenNotified = false;
+static int NODE_EVENT_TEST_NUMBER = 345;
 
 void node_event_callback(void* observerData, NodeEventNotifyPayload* notifyPayload) {
     hasBeenNotified = true;
+}
+
+void node_event_callback2(void* observerData, NodeEventNotifyPayload* notifyPayload) {
+    const int number = *(int*) notifyPayload->data;
+    if (number == NODE_EVENT_TEST_NUMBER) {
+        hasBeenNotified = true;
+    }
 }
 
 void cre_node_event_test(void) {
@@ -47,10 +55,13 @@ void cre_node_event_test(void) {
     // Test notify
     node_event_notify_observers(eventEntity, eventId, &(NodeEventNotifyPayload){ .data = NULL });
     TEST_ASSERT_TRUE(hasBeenNotified);
+    hasBeenNotified = false;
 
     const Entity anotherObserverEntity = 3;
-    node_event_subscribe_to_event(eventEntity, eventId, anotherObserverEntity, node_event_callback, NULL);
+    node_event_subscribe_to_event(eventEntity, eventId, anotherObserverEntity, node_event_callback2, NULL);
     TEST_ASSERT_EQUAL_UINT(2, node_event_get_event_observer_count(eventEntity, eventId));
+    node_event_notify_observers(eventEntity, eventId, &(NodeEventNotifyPayload){ .data = &NODE_EVENT_TEST_NUMBER });
+    TEST_ASSERT_TRUE(hasBeenNotified);
     node_event_destroy_all_entity_events_and_observers(anotherObserverEntity);
     TEST_ASSERT_EQUAL_UINT(1, node_event_get_event_observer_count(eventEntity, eventId));
 

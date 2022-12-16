@@ -145,7 +145,7 @@ void py_on_network_callback(const char* message) {
     if (current_network_script_callback != NULL) {
         // Ensuring gil state since this can be called outside of main processing loop
         PyGILState_STATE pyGilStateState = PyGILState_Ensure();
-        PyObject* listenerFuncArg = Py_BuildValue("(s)", message);
+        PyObject* listenerFuncArg = Py_BuildValue("s", message);
         PyObject_CallObject(current_network_script_callback->callback_func, listenerFuncArg);
         PyGILState_Release(pyGilStateState);
     }

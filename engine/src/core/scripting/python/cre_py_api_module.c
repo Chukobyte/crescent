@@ -17,6 +17,7 @@
 #include "py_script_context.h"
 #include "../../engine_context.h"
 #include "../../game_properties.h"
+#include "../../node_event.h"
 #include "../../world.h"
 #include "../../scripting/script_context.h"
 #include "../../physics/collision/collision.h"
@@ -568,33 +569,21 @@ PyObject* cre_py_api_node_get_full_time_dilation(PyObject* self, PyObject* args,
 }
 
 // Event related stuff
-//typedef struct PyEventOnNotifyPayload {
-//    Entity entity;
-//    PyObject* args;
-//} PyEventOnNotifyPayload;
-//
-//void py_event_on_notify(SESubjectNotifyPayload* payload) {
-//    PyEventOnNotifyPayload* notifyPayload = (PyEventOnNotifyPayload*) payload->data;
-//
-//    const Entity entity =  notifyPayload->entity;
-//    PyObject* args = (PyObject*) notifyPayload->args;
-//    SE_ASSERT(args != NULL);
-//}
-//
-//void py_event_on_transform_changed(SESubjectNotifyPayload* payload) {
-//    ComponentEntityUpdatePayload* updatePayload = (ComponentEntityUpdatePayload*) payload->data;
-//
-//    const Entity entity =  updatePayload->entity;
-//    Transform2DComponent* transformComp = (Transform2DComponent*) updatePayload->component;
-//    SE_ASSERT(transformComp != NULL);
-//}
+void py_api_node_event_callback(void* observerData, NodeEventNotifyPayload* notifyPayload) {
+    PyObject* pyCallbackFunc = (PyObject*) observerData;
+    PyObject* pyEventArgs = (PyObject*) notifyPayload->data;
+    SE_ASSERT(pyCallbackFunc != NULL);
+    SE_ASSERT(pyEventArgs != NULL);
+
+    PyObject* listenerFuncArg = Py_BuildValue("O", pyEventArgs);
+    PyObject_CallObject(pyCallbackFunc, listenerFuncArg);
+}
 
 PyObject* cre_py_api_node_create_event(PyObject* self, PyObject* args, PyObject* kwargs) {
     Entity entity;
     char* eventId;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "is", crePyApiNodeCreateEventKWList, &entity, &eventId)) {
-        NodeComponent* nodeComponent = (NodeComponent*) component_manager_get_component(entity, ComponentDataIndex_NODE);
-//        node_component_create_event(nodeComponent, eventId);
+        node_event_create_event(entity, eventId);
         Py_RETURN_NONE;
     }
     return NULL;
@@ -607,6 +596,7 @@ PyObject* cre_py_api_node_subscribe_to_event(PyObject* self, PyObject* args, PyO
     PyObject* callbackFunc;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "isiO", crePyApiNodeSubscribeToEventKWList, &entity, &eventId, &scopedEntity, &callbackFunc)) {
         // TODO: Will need to filter by event id if we want to route to existing events
+        node_event_subscribe_to_event(entity, eventId, scopedEntity, py_api_node_event_callback, callbackFunc);
 //        static SEObserver pySubscribeObserver = { .on_notify = py_event_on_notify };
 //        static SEObserver pyTransformSubscribeObserver = { .on_notify = py_event_on_transform_changed }; // TODO: Use after checking event id
 //        NodeComponent* nodeComponent = (NodeComponent*) component_manager_get_component(entity, ComponentDataIndex_NODE);
@@ -622,7 +612,8 @@ PyObject* cre_py_api_node_broadcast_event(PyObject* self, PyObject* args, PyObje
     char* eventId;
     PyObject* broadcastArgs;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "isO", crePyApiNodeBroadcastEventKWList, &entity, &eventId, &broadcastArgs)) {
-        NodeComponent* nodeComponent = (NodeComponent*) component_manager_get_component(entity, ComponentDataIndex_NODE);
+        node_event_notify_observers(entity, eventId, &(NodeEventNotifyPayload){ .data = broadcastArgs });
+//        NodeComponent* nodeComponent = (NodeComponent*) component_manager_get_component(entity, ComponentDataIndex_NODE);
 //        node_component_broadcast_event(nodeComponent, eventId, &(SESubjectNotifyPayload) {
 //            .data = &(PyEventOnNotifyPayload) { .entity = entity, .args = broadcastArgs }, .type = 0
 //        });
