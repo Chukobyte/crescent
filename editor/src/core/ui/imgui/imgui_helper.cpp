@@ -404,7 +404,6 @@ void ImGuiHelper::DockSpace::Run(bool runWindows) {
             ImGuiID dockId = dockSpaceId;
             switch (dockSpaceWindow.position) {
             case DockSpacePosition::Main: {
-                dockId = dockSpaceId;
                 break;
             }
             case DockSpacePosition::Left: {
