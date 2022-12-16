@@ -76,11 +76,6 @@ class Player(Node2D):
         self.color_rect = self.get_child("ColorRect")
         self.collider = self.get_child("Collider2D")
         Camera2D.follow_node(node=self)
-        self.subscribe_to_event(
-            event_id="test",
-            scoped_node=self,
-            callback_func=lambda args: print(f"callback called!  args = {args}"),
-        )
 
     def _update(self, delta_time: float) -> None:
         if Input.is_action_just_pressed(name="quit_game"):
@@ -95,11 +90,6 @@ class Player(Node2D):
                 self.position
                 + Vector2(-16, -48)
                 + Vector2(self.direction_facing.x * 50, attack_y)
-            )
-            new_attack.subscribe_to_event(
-                event_id="scene_exited",
-                scoped_node=self,
-                callback_func=lambda node: print(f"{node} exited the scene!"),
             )
             SceneTree.get_root().add_child(new_attack)
 
@@ -133,8 +123,6 @@ class Player(Node2D):
         # Doesn't change so no need to get every frame
         engine_delta_time = Engine.get_global_physics_delta_time()
 
-        # Test
-        self.broadcast_event(event_id="test", args=["hello", "world"])
         try:
             while True:
                 delta_time = self.get_full_time_dilation() * engine_delta_time

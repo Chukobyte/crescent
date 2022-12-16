@@ -1,4 +1,6 @@
-from crescent_api import Node2D, Vector2
+import random
+
+from crescent_api import Node2D, Vector2, SceneTree
 from src.enemy import GingerBreadMan
 
 # TODO: Need to add utilities to python api to query the scene tree for things (maybe by tags)
@@ -16,11 +18,28 @@ class GameMaster:
             self.spawn_enemy()
 
     def spawn_enemy(self) -> None:
+        if random.choice([0, 1]) == 0:
+            dir_vector = Vector2.RIGHT()
+        else:
+            dir_vector = Vector2.LEFT()
         ginger_bread_man = GingerBreadMan.new()
-        ginger_bread_man.position = self.player.position + Vector2(64, 0)
-        self.player.get_parent().add_child(ginger_bread_man)
+        ginger_bread_man.position = self.player.position + (
+            Vector2(128, 0) * dir_vector
+        )
+        ginger_bread_man.subscribe_to_event(
+            event_id="scene_exited",
+            scoped_node=self.player,
+            callback_func=lambda node: self._set_enemies_active(
+                value=self.enemies_active - 1, reset_spawn_time=True
+            ),
+        )
+        SceneTree.get_root().add_child(ginger_bread_man)
         self.enemies_active += 1
-        print("spawn_enemy")
+
+    def _set_enemies_active(self, value: int, reset_spawn_time=False) -> None:
+        self.enemies_active = value
+        if reset_spawn_time:
+            self.time_since_last_enemy_spawn = 0.0
 
 
 # TODO: Make a singleton when levels are added
