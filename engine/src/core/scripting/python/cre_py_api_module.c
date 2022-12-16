@@ -579,6 +579,13 @@ void py_api_node_event_callback(void* observerData, NodeEventNotifyPayload* noti
     PyObject_CallObject(pyCallbackFunc, listenerFuncArg);
 }
 
+void py_api_node_event_data_delete_callback(void* data) {
+    PyObject* pyCallbackFunc = (PyObject*) data;
+    if (Py_IsTrue(pyCallbackFunc)) {
+        Py_DecRef(pyCallbackFunc);
+    }
+}
+
 PyObject* cre_py_api_node_create_event(PyObject* self, PyObject* args, PyObject* kwargs) {
     Entity entity;
     char* eventId;
@@ -593,11 +600,11 @@ PyObject* cre_py_api_node_subscribe_to_event(PyObject* self, PyObject* args, PyO
     Entity entity;
     char* eventId;
     Entity scopedEntity;
-    PyObject* callbackFunc;
-    if (PyArg_ParseTupleAndKeywords(args, kwargs, "isiO", crePyApiNodeSubscribeToEventKWList, &entity, &eventId, &scopedEntity, &callbackFunc)) {
-        // TODO: Will need to filter by event id if we want to route to existing events
-        Py_IncRef(callbackFunc);
-        node_event_subscribe_to_event(entity, eventId, scopedEntity, py_api_node_event_callback, callbackFunc);
+    PyObject* pCallbackFunc;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "isiO", crePyApiNodeSubscribeToEventKWList, &entity, &eventId, &scopedEntity, &pCallbackFunc)) {
+        // Decreases ref in event data delete callback
+        Py_IncRef(pCallbackFunc);
+        node_event_subscribe_to_event(entity, eventId, scopedEntity, py_api_node_event_callback, pCallbackFunc, py_api_node_event_data_delete_callback);
         Py_RETURN_NONE;
     }
     return NULL;

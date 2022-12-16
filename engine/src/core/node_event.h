@@ -7,10 +7,11 @@ typedef struct NodeEventNotifyPayload {
 } NodeEventNotifyPayload;
 
 typedef void (*NodeEventObserverCallback)(void*, NodeEventNotifyPayload*); // (Event payload, observer data)
+typedef void (*NodeEventObserverDataDeleteCallback)(void*);
 
 // Will only create if it doesn't exist
 void node_event_create_event(Entity entity, const char* eventId);
-void node_event_subscribe_to_event(Entity entity, const char* eventId, Entity observerEntity, NodeEventObserverCallback observerCallback, void* observerData);
+void node_event_subscribe_to_event(Entity entity, const char* eventId, Entity observerEntity, NodeEventObserverCallback observerCallback, void* observerData, NodeEventObserverDataDeleteCallback dataDeleteCallback);
 void node_event_notify_observers(Entity entity, const char* eventId, NodeEventNotifyPayload* payload);
 void node_event_destroy_all_entity_events_and_observers(Entity entity);
 // Queries

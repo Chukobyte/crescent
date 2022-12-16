@@ -48,7 +48,7 @@ void cre_node_event_test(void) {
     node_event_create_event(eventEntity, eventId);
     TEST_ASSERT_EQUAL_UINT(1, node_event_get_event_count(eventEntity));
 
-    node_event_subscribe_to_event(eventEntity, eventId, observerEntity, node_event_callback, NULL);
+    node_event_subscribe_to_event(eventEntity, eventId, observerEntity, node_event_callback, NULL, NULL);
     TEST_ASSERT_EQUAL_UINT(1, node_event_get_event_observer_count(eventEntity, eventId));
     TEST_ASSERT_EQUAL_UINT(1, node_event_get_entity_observer_count(observerEntity));
 
@@ -58,7 +58,7 @@ void cre_node_event_test(void) {
     hasBeenNotified = false;
 
     const Entity anotherObserverEntity = 3;
-    node_event_subscribe_to_event(eventEntity, eventId, anotherObserverEntity, node_event_callback2, NULL);
+    node_event_subscribe_to_event(eventEntity, eventId, anotherObserverEntity, node_event_callback2, NULL, NULL);
     TEST_ASSERT_EQUAL_UINT(2, node_event_get_event_observer_count(eventEntity, eventId));
     node_event_notify_observers(eventEntity, eventId, &(NodeEventNotifyPayload){ .data = &NODE_EVENT_TEST_NUMBER });
     TEST_ASSERT_TRUE(hasBeenNotified);
@@ -72,8 +72,8 @@ void cre_node_event_test(void) {
 
     // Test to make sure entity event removal also removes observer entries
     node_event_create_event(eventEntity, eventId);
-    node_event_subscribe_to_event(eventEntity, eventId, observerEntity, node_event_callback, NULL);
-    node_event_subscribe_to_event(eventEntity, eventId, anotherObserverEntity, node_event_callback, NULL);
+    node_event_subscribe_to_event(eventEntity, eventId, observerEntity, node_event_callback, NULL, NULL);
+    node_event_subscribe_to_event(eventEntity, eventId, anotherObserverEntity, node_event_callback, NULL, NULL);
     TEST_ASSERT_EQUAL_UINT(2, node_event_get_event_observer_count(eventEntity, eventId));
     TEST_ASSERT_EQUAL_UINT(1, node_event_get_entity_observer_count(observerEntity));
     TEST_ASSERT_EQUAL_UINT(1, node_event_get_entity_observer_count(anotherObserverEntity));

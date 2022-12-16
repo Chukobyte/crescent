@@ -17,6 +17,7 @@ typedef struct NodeEventObserver {
     Entity entity;
     NodeEventObserverCallback callback;
     void* data; // Used to store misc data from the caller
+    NodeEventObserverDataDeleteCallback dataDeleteCallback;
     struct NodeEvent* event;
 } NodeEventObserver;
 
@@ -42,7 +43,8 @@ typedef struct NodeEventDatabase {
 } NodeEventDatabase;
 
 NodeEvent* node_event_create_event_internal(Entity entity, const char* eventId);
-NodeEventObserver* node_create_observer_internal(Entity entity, NodeEvent* event, NodeEventObserverCallback observerCallback, void* observerData);
+NodeEventObserver* node_create_observer_internal(Entity entity, NodeEvent* event, NodeEventObserverCallback observerCallback, void* observerData, NodeEventObserverDataDeleteCallback dataDeleteCallback);
+void node_observer_free(NodeEventObserver* observer);
 bool does_entity_have_observer_event_already(Entity observerEntity, NodeEvent* event);
 void register_entity_to_on_scene_exit_callback(Entity entity);
 void unregister_entity_to_on_scene_exit_callback(Entity entity);
@@ -60,10 +62,10 @@ void node_event_create_event(Entity entity, const char* eventId) {
     node_event_create_event_internal(entity, eventId);
 }
 
-void node_event_subscribe_to_event(Entity entity, const char* eventId, Entity observerEntity, NodeEventObserverCallback observerCallback, void* observerData) {
+void node_event_subscribe_to_event(Entity entity, const char* eventId, Entity observerEntity, NodeEventObserverCallback observerCallback, void* observerData, NodeEventObserverDataDeleteCallback dataDeleteCallback) {
     NodeEvent* event = node_event_create_event_internal(entity, eventId);
     if (!does_entity_have_observer_event_already(observerEntity, event)) {
-        event->observers[event->observerCount++] = node_create_observer_internal(observerEntity, event, observerCallback, observerData);
+        event->observers[event->observerCount++] = node_create_observer_internal(observerEntity, event, observerCallback, observerData, dataDeleteCallback);
     }
 }
 
@@ -80,7 +82,8 @@ void node_event_destroy_all_entity_events_and_observers(Entity entity) {
         NodeEventObserver* nodeEventObserver = eventDatabase.nodeEventObserverEntry[entity].observers[i];
         NodeEvent* nodeEvent = nodeEventObserver->event;
         SE_ARRAY_UTILS_REMOVE_ARRAY_ITEM(nodeEvent->observers, nodeEvent->observerCount, nodeEventObserver, NULL);
-        SE_MEM_FREE(nodeEventObserver);
+        node_observer_free(nodeEventObserver);
+        eventDatabase.nodeEventObserverEntry[entity].observers[i] = NULL;
     }
     eventDatabase.nodeEventObserverEntry[entity].entryCount = 0;
     // Remove all entity events
@@ -90,13 +93,13 @@ void node_event_destroy_all_entity_events_and_observers(Entity entity) {
             NodeEvent* nodeEvent = (NodeEvent*) *(NodeEvent**) node->value;
             // Remove all observers attached to event
             for (size_t i = 0; i < nodeEvent->observerCount; i++) {
-                eventDatabase.nodeEventObserverEntry[nodeEvent->observers[i]->entity].observers;
                 SE_ARRAY_UTILS_REMOVE_ARRAY_ITEM(
                     eventDatabase.nodeEventObserverEntry[nodeEvent->observers[i]->entity].observers,
                     eventDatabase.nodeEventObserverEntry[nodeEvent->observers[i]->entity].entryCount,
                     nodeEvent->observers[i],
                     NULL
                 );
+                node_observer_free(nodeEvent->observers[i]);
             }
             // Delete event
             SE_MEM_FREE(nodeEvent->id);
@@ -143,18 +146,25 @@ NodeEvent* node_event_create_event_internal(Entity entity, const char* eventId) 
     return event;
 }
 
-NodeEventObserver* node_create_observer_internal(Entity entity, NodeEvent* event, NodeEventObserverCallback observerCallback, void* observerData) {
-    // TODO: Check for duplicates
+NodeEventObserver* node_create_observer_internal(Entity entity, NodeEvent* event, NodeEventObserverCallback observerCallback, void* observerData, NodeEventObserverDataDeleteCallback dataDeleteCallback) {
     NodeEventObserver* eventObserver = SE_MEM_ALLOCATE(NodeEventObserver);
     eventObserver->entity = entity;
     eventObserver->callback = observerCallback;
     eventObserver->data = observerData;
+    eventObserver->dataDeleteCallback = dataDeleteCallback;
     eventObserver->event = event;
     // Get alias to shorten the expression
     NodeEventObserverEntry* observerEntry = &eventDatabase.nodeEventObserverEntry[entity];
     observerEntry->observers[observerEntry->entryCount++] = eventObserver;
     register_entity_to_on_scene_exit_callback(entity);
     return eventObserver;
+}
+
+void node_observer_free(NodeEventObserver* observer) {
+    if (observer->data != NULL && observer->dataDeleteCallback != NULL) {
+        observer->dataDeleteCallback(observer->data);
+    }
+    SE_MEM_FREE(observer);
 }
 
 bool does_entity_have_observer_event_already(Entity observerEntity, NodeEvent* event) {
