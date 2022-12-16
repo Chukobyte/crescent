@@ -14,6 +14,10 @@ target_link_libraries(seika_test seika unity)
 add_executable(${PROJECT_NAME} engine/src/main.c)
 target_link_libraries(${PROJECT_NAME} crescent_core seika)
 
+# Create test engine exe
+add_executable(${PROJECT_NAME}_test engine/test/main.c)
+target_link_libraries(${PROJECT_NAME}_test crescent_core seika unity)
+
 # Create editor exe
 add_executable(crescent_engine_editor editor/src/main.cpp)
 target_link_libraries(crescent_engine_editor crescent_editor crescent_core seika)

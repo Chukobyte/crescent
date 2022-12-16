@@ -60,6 +60,9 @@ PyObject* cre_py_api_node_get_name(PyObject* self, PyObject* args, PyObject* kwa
 PyObject* cre_py_api_node_set_time_dilation(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_node_get_time_dilation(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_node_get_full_time_dilation(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_node_create_event(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_node_subscribe_to_event(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_node_broadcast_event(PyObject* self, PyObject* args, PyObject* kwargs);
 
 // Node2D
 PyObject* cre_py_api_node2D_set_position(PyObject* self, PyObject* args, PyObject* kwargs);
@@ -297,6 +300,18 @@ static struct PyMethodDef crePyApiMethods[] = {
         "node_get_full_time_dilation", (PyCFunction) cre_py_api_node_get_full_time_dilation,
         METH_VARARGS | METH_KEYWORDS, "Returns a node's total time dilation, including global world and parents."
     },
+    {
+        "node_create_event", (PyCFunction) cre_py_api_node_create_event,
+        METH_VARARGS | METH_KEYWORDS, "Creates an event to be observed by others."
+    },
+    {
+        "node_subscribe_to_event", (PyCFunction) cre_py_api_node_subscribe_to_event,
+        METH_VARARGS | METH_KEYWORDS, "Subscribe to an existing event."
+    },
+    {
+        "node_broadcast_event", (PyCFunction) cre_py_api_node_broadcast_event,
+        METH_VARARGS | METH_KEYWORDS, "Broadcast an existing event to observers."
+    },
     // NODE2D
     {
         "node2D_set_position", (PyCFunction) cre_py_api_node2D_set_position,
@@ -520,6 +535,9 @@ static char* crePyApiNodeNewKWList[] = {"class_path", "class_name", "node_type",
 static char* crePyApiNodeAddChildKWList[] = {"parent_entity_id", "child_entity_id", NULL};
 static char* crePyApiNodeGetChildKWList[] = {"entity_id", "child_name", NULL};
 static char* crePyApiNodeSetTimeDilationKWList[] = {"entity_id", "time_dilation", NULL};
+static char* crePyApiNodeCreateEventKWList[] = {"entity_id", "event_id", NULL};
+static char* crePyApiNodeSubscribeToEventKWList[] = {"entity_id", "event_id", "scoped_entity_id", "callback_func", NULL};
+static char* crePyApiNodeBroadcastEventKWList[] = {"entity_id", "event_id", "args", NULL};
 
 static char* crePyApiNode2DSetXYKWList[] = {"entity_id", "x", "y", NULL};
 static char* crePyApiNode2DSetRotationKWList[] = {"entity_id", "rotation", NULL};

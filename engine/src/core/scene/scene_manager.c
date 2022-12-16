@@ -266,6 +266,24 @@ EntityArray cre_scene_manager_get_self_and_parent_nodes(Entity entity) {
     return combineModelResult;
 }
 
+void cre_scene_manager_notify_all_on_transform_events(Entity entity, Transform2DComponent* transformComp) {
+    se_event_notify_observers(&transformComp->onTransformChanged, &(SESubjectNotifyPayload) {
+        .data = &(ComponentEntityUpdatePayload) {.entity = entity, .component = transformComp, .componentType = ComponentType_TRANSFORM_2D},
+        .type = 0
+    });
+    // Notify children by recursion
+    if (cre_scene_manager_has_entity_tree_node(entity)) {
+        SceneTreeNode* sceneTreeNode = cre_scene_manager_get_entity_tree_node(entity);
+        for (size_t i = 0; i < sceneTreeNode->childCount; i++) {
+            const Entity childEntity = sceneTreeNode->children[i]->entity;
+            Transform2DComponent* childTransformComp = (Transform2DComponent*) component_manager_get_component_unsafe(childEntity, ComponentDataIndex_TRANSFORM_2D);
+            if (childTransformComp != NULL) {
+                cre_scene_manager_notify_all_on_transform_events(childEntity, childTransformComp);
+            }
+        }
+    }
+}
+
 // Scene node setup
 void cre_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneNode, SceneTreeNode* parent);
 

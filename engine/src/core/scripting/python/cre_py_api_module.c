@@ -17,6 +17,7 @@
 #include "py_script_context.h"
 #include "../../engine_context.h"
 #include "../../game_properties.h"
+#include "../../node_event.h"
 #include "../../world.h"
 #include "../../scripting/script_context.h"
 #include "../../physics/collision/collision.h"
@@ -38,9 +39,9 @@
 #endif
 
 //--- Helper Functions ---//
-
 // TODO: May want to move into another location...
-Vector2 se_mouse_get_global_position(SEMouse* mouse, Vector2* offset) {
+
+Vector2 py_api_mouse_get_global_position(SEMouse* mouse, Vector2* offset) {
     CRECamera2D* camera = cre_camera_manager_get_current_camera();
     SEMouse* globalMouse = se_mouse_get();
     CREGameProperties* gameProps = cre_game_props_get();
@@ -56,65 +57,35 @@ Vector2 se_mouse_get_global_position(SEMouse* mouse, Vector2* offset) {
     return mouseWorldPos;
 }
 
-void se_update_collision_data(Entity entity) {
-    Transform2DComponent* transformComp = (Transform2DComponent *) component_manager_get_component_unsafe(entity, ComponentDataIndex_TRANSFORM_2D);
-    if (transformComp != NULL && cre_scene_manager_has_entity_tree_node(entity)) {
-        Collider2DComponent* colliderComp = (Collider2DComponent*) component_manager_get_component_unsafe(entity, ComponentDataIndex_COLLIDER_2D);
-        if (colliderComp != NULL) {
-            Rect2 collisionRect = cre_get_collision_rectangle(entity, transformComp, colliderComp);
-            SESpatialHashMap* spatialHashMap = cre_collision_get_global_spatial_hash_map();
-            se_spatial_hash_map_insert_or_update(spatialHashMap, entity, &collisionRect);
-        }
-
-        SceneTreeNode* sceneTreeNode = cre_scene_manager_get_entity_tree_node(entity);
-        for (size_t i = 0; i < sceneTreeNode->childCount; i++) {
-            se_update_collision_data(sceneTreeNode->children[i]->entity);
-        }
-    }
-
-}
-
-void se_update_entity_local_position(Entity entity, Vector2* position) {
+void py_api_update_entity_local_position(Entity entity, Vector2* position) {
     Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
     const Vector2 prevPosition = transformComp->localTransform.position;
     transformComp->localTransform.position.x = position->x;
     transformComp->localTransform.position.y = position->y;
     transformComp->isGlobalTransformDirty = true;
     if (transformComp->localTransform.position.x != prevPosition.x || transformComp->localTransform.position.y != prevPosition.y) {
-        se_update_collision_data(entity);
-        se_event_notify_observers(&transformComp->onTransformChanged, &(SESubjectNotifyPayload) {
-            .data = &(ComponentEntityUpdatePayload) {.entity = entity, .component = transformComp, .componentType = ComponentType_TRANSFORM_2D},
-            .type = 0
-        });
+        cre_scene_manager_notify_all_on_transform_events(entity, transformComp);
     }
 }
 
-void se_update_entity_local_scale(Entity entity, Vector2 * scale) {
+void py_api_update_entity_local_scale(Entity entity, Vector2 * scale) {
     Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
     const Vector2 prevScale = transformComp->localTransform.scale;
     transformComp->localTransform.scale.x = scale->x;
     transformComp->localTransform.scale.y = scale->y;
     transformComp->isGlobalTransformDirty = true;
     if (transformComp->localTransform.scale.x != prevScale.x || transformComp->localTransform.scale.y != prevScale.y) {
-        se_update_collision_data(entity);
-        se_event_notify_observers(&transformComp->onTransformChanged, &(SESubjectNotifyPayload) {
-            .data = &(ComponentEntityUpdatePayload) {.entity = entity, .component = transformComp, .componentType = ComponentType_TRANSFORM_2D},
-            .type = 0
-        });
+        cre_scene_manager_notify_all_on_transform_events(entity, transformComp);
     }
 }
 
-void se_update_entity_local_rotation(Entity entity, float rotation) {
+void py_api_update_entity_local_rotation(Entity entity, float rotation) {
     Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
     const float prevRotation = transformComp->localTransform.rotation;
     transformComp->localTransform.rotation = rotation;
     transformComp->isGlobalTransformDirty = true;
     if (transformComp->localTransform.rotation != prevRotation) {
-        se_update_collision_data(entity);
-        se_event_notify_observers(&transformComp->onTransformChanged, &(SESubjectNotifyPayload) {
-            .data = &(ComponentEntityUpdatePayload) {.entity = entity, .component = transformComp, .componentType = ComponentType_TRANSFORM_2D},
-            .type = 0
-        });
+        cre_scene_manager_notify_all_on_transform_events(entity, transformComp);
     }
 }
 
@@ -227,7 +198,7 @@ PyObject* cre_py_api_mouse_get_world_position(PyObject* self, PyObject* args) {
     const CREEngineContext* engineContext = cre_engine_context_get();
     SEMouse* globalMouse = se_mouse_get();
     static Vector2 zeroOffset = { 0.0f, 0.0f };
-    const Vector2 worldPosition = se_mouse_get_global_position(globalMouse, &zeroOffset);
+    const Vector2 worldPosition = py_api_mouse_get_global_position(globalMouse, &zeroOffset);
     return Py_BuildValue("(ff)", worldPosition.x, worldPosition.y);
 }
 
@@ -572,7 +543,7 @@ PyObject* cre_py_api_node_set_time_dilation(PyObject* self, PyObject* args, PyOb
     Entity entity;
     float timeDilation;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "if", crePyApiNodeSetTimeDilationKWList, &entity, &timeDilation)) {
-        NodeComponent* nodeComponent = component_manager_get_component(entity, ComponentDataIndex_NODE);
+        NodeComponent* nodeComponent = (NodeComponent*) component_manager_get_component(entity, ComponentDataIndex_NODE);
         nodeComponent->timeDilation.value = timeDilation;
         cre_invalidate_time_dilation_nodes_with_children(entity);
         Py_RETURN_NONE;
@@ -583,7 +554,7 @@ PyObject* cre_py_api_node_set_time_dilation(PyObject* self, PyObject* args, PyOb
 PyObject* cre_py_api_node_get_time_dilation(PyObject* self, PyObject* args, PyObject* kwargs) {
     Entity entity;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
-        NodeComponent* nodeComponent = component_manager_get_component(entity, ComponentDataIndex_NODE);
+        NodeComponent* nodeComponent = (NodeComponent*) component_manager_get_component(entity, ComponentDataIndex_NODE);
         return Py_BuildValue("f", nodeComponent->timeDilation.value);
     }
     return NULL;
@@ -597,13 +568,68 @@ PyObject* cre_py_api_node_get_full_time_dilation(PyObject* self, PyObject* args,
     return NULL;
 }
 
+// Event related stuff
+void py_api_node_event_callback(void* observerData, NodeEventNotifyPayload* notifyPayload) {
+    PyObject* pyCallbackFunc = (PyObject*) observerData;
+    PyObject* pyEventArgs = (PyObject*) notifyPayload->data;
+    SE_ASSERT(pyCallbackFunc != NULL);
+    SE_ASSERT(pyEventArgs != NULL);
+
+    PyObject* listenerFuncArg = Py_BuildValue("(O)", pyEventArgs);
+    PyObject_CallObject(pyCallbackFunc, listenerFuncArg);
+}
+
+void py_api_node_event_data_delete_callback(void* data) {
+    PyObject* pyCallbackFunc = (PyObject*) data;
+    if (Py_IsTrue(pyCallbackFunc)) {
+        Py_DecRef(pyCallbackFunc);
+    }
+}
+
+PyObject* cre_py_api_node_create_event(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    char* eventId;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "is", crePyApiNodeCreateEventKWList, &entity, &eventId)) {
+        node_event_create_event(entity, eventId);
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_node_subscribe_to_event(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    char* eventId;
+    Entity scopedEntity;
+    PyObject* pCallbackFunc;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "isiO", crePyApiNodeSubscribeToEventKWList, &entity, &eventId, &scopedEntity, &pCallbackFunc)) {
+        // Decreases ref in event data delete callback
+        Py_IncRef(pCallbackFunc);
+        node_event_subscribe_to_event(entity, eventId, scopedEntity, py_api_node_event_callback, pCallbackFunc, py_api_node_event_data_delete_callback);
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_node_broadcast_event(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    char* eventId;
+    PyObject* broadcastArgs;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "isO", crePyApiNodeBroadcastEventKWList, &entity, &eventId, &broadcastArgs)) {
+        node_event_notify_observers(entity, eventId, &(NodeEventNotifyPayload) {
+            .data = broadcastArgs
+        });
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
 // Node2D
 PyObject* cre_py_api_node2D_set_position(PyObject* self, PyObject* args, PyObject* kwargs) {
     Entity entity;
     float x;
     float y;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "iff", crePyApiNode2DSetXYKWList, &entity, &x, &y)) {
-        se_update_entity_local_position(entity, &(Vector2) {
+        py_api_update_entity_local_position(entity, &(Vector2) {
             x, y
         });
         Py_RETURN_NONE;
@@ -617,7 +643,7 @@ PyObject* cre_py_api_node2D_add_to_position(PyObject* self, PyObject* args, PyOb
     float y;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "iff", crePyApiNode2DSetXYKWList, &entity, &x, &y)) {
         Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
-        se_update_entity_local_position(entity, &(Vector2) {
+        py_api_update_entity_local_position(entity, &(Vector2) {
             x + transformComp->localTransform.position.x, y + transformComp->localTransform.position.y
         });
         Py_RETURN_NONE;
@@ -649,7 +675,7 @@ PyObject* cre_py_api_node2D_set_scale(PyObject* self, PyObject* args, PyObject* 
     float x;
     float y;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "iff", crePyApiNode2DSetXYKWList, &entity, &x, &y)) {
-        se_update_entity_local_scale(entity, &(Vector2) {
+        py_api_update_entity_local_scale(entity, &(Vector2) {
             x, y
         });
         Py_RETURN_NONE;
@@ -663,7 +689,7 @@ PyObject* cre_py_api_node2D_add_to_scale(PyObject* self, PyObject* args, PyObjec
     float y;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "iff", crePyApiNode2DSetXYKWList, &entity, &x, &y)) {
         Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
-        se_update_entity_local_scale(entity, &(Vector2) {
+        py_api_update_entity_local_scale(entity, &(Vector2) {
             x + transformComp->localTransform.scale.x, y + transformComp->localTransform.scale.y
         });
         Py_RETURN_NONE;
@@ -684,7 +710,7 @@ PyObject* cre_py_api_node2D_set_rotation(PyObject* self, PyObject* args, PyObjec
     Entity entity;
     float rotation;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "if", crePyApiNode2DSetRotationKWList, &entity, &rotation)) {
-        se_update_entity_local_rotation(entity, rotation);
+        py_api_update_entity_local_rotation(entity, rotation);
         Py_RETURN_NONE;
     }
     return NULL;
@@ -695,7 +721,7 @@ PyObject* cre_py_api_node2D_add_to_rotation(PyObject* self, PyObject* args, PyOb
     float rotation;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "if", crePyApiNode2DSetRotationKWList, &entity, &rotation)) {
         Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
-        se_update_entity_local_rotation(entity, rotation + transformComp->localTransform.rotation);
+        py_api_update_entity_local_rotation(entity, rotation + transformComp->localTransform.rotation);
         Py_RETURN_NONE;
     }
     return NULL;
@@ -1093,7 +1119,7 @@ PyObject* cre_py_api_collision_handler_process_mouse_collisions(PyObject* self, 
         // TODO: Transform mouse screen position into world position.
         SEMouse* globalMouse = se_mouse_get();
         Vector2 positionOffset = { positionOffsetX, positionOffsetY };
-        const Vector2 mouseWorldPos = se_mouse_get_global_position(globalMouse, &positionOffset);
+        const Vector2 mouseWorldPos = py_api_mouse_get_global_position(globalMouse, &positionOffset);
         Rect2 collisionRect = { mouseWorldPos.x, mouseWorldPos.y, collisionSizeW, collisionSizeH };
         CollisionResult collisionResult = cre_collision_process_mouse_collisions(&collisionRect);
         for (size_t i = 0; i < collisionResult.collidedEntityCount; i++) {

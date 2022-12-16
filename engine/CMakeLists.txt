@@ -29,6 +29,7 @@ add_library(${PROJECT_NAME} STATIC
         src/core/core.c
         src/core/game_properties.c
         src/core/engine_context.c
+        src/core/node_event.c
         src/core/world.c
         src/core/scene/scene_manager.c
         src/core/scene/scene_utils.c
@@ -77,6 +78,10 @@ endif()
 if (NOT TARGET stb_image)
     add_library(stb_image ../include/stb_image/stb_image.c)
 endif()
+if (NOT TARGET unity)
+    add_library(unity ../include/unity.c)
+endif()
+
 add_library(cJSON ../include/cjson/cJSON.c)
 
 target_include_directories(${PROJECT_NAME} PUBLIC
@@ -92,6 +97,10 @@ target_include_directories(stb_image PUBLIC
         "../include"
         )
 
+target_include_directories(unity PUBLIC
+        "${PROJECT_BINARY_DIR}"
+        "../include"
+        )
 
 if (NOT freetype_from_find_package)
     target_include_directories(${PROJECT_NAME} PUBLIC ${freetype_INCLUDE_DIRS})

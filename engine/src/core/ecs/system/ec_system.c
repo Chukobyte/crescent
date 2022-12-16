@@ -157,17 +157,19 @@ void cre_ec_system_entity_start(Entity entity) {
 
 void cre_ec_system_entity_end(Entity entity) {
     // Notify scene exit observers before calling it on systems
-    NodeComponent* nodeComponent = (NodeComponent*) component_manager_get_component_unsafe(entity, ComponentDataIndex_NODE);
-    if (nodeComponent != NULL) {
-        se_event_notify_observers(&nodeComponent->onSceneTreeExit, &(SESubjectNotifyPayload) {
-            .data = &entity, .type = 0
-        });
-    }
+    // TODO: Consider hooks for components instead of direct node component references
     ComponentType entityComponentSignature = component_manager_get_component_signature(entity);
     for (size_t i = 0; i < entitySystemData.on_entity_end_systems_count; i++) {
         if ((entityComponentSignature & entitySystemData.on_entity_end_systems[i]->component_signature) == entitySystemData.on_entity_end_systems[i]->component_signature) {
             entitySystemData.on_entity_end_systems[i]->on_entity_end_func(entity);
         }
+    }
+    NodeComponent* nodeComponent = (NodeComponent*) component_manager_get_component_unsafe(entity, ComponentDataIndex_NODE);
+    if (nodeComponent != NULL) {
+        // Note: Node events should not be created during this time
+        se_event_notify_observers(&nodeComponent->onSceneTreeExit, &(SESubjectNotifyPayload) {
+            .data = &entity, .type = 0
+        });
     }
 }
 

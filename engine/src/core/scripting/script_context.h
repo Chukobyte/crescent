@@ -7,22 +7,22 @@
 typedef void (*OnCreateInstance) (Entity, const char*, const char*);
 typedef void (*OnDeleteInstance) (Entity);
 typedef void (*OnStart) (Entity);
+typedef void (*OnEnd) (Entity);
 
 typedef void (*OnPreUpdateAll) ();
 typedef void (*OnPostUpdateAll) ();
 typedef void (*OnUpdateInstance) (Entity, float);
 typedef void (*OnPhysicsUpdateInstance) (Entity, float);
 
-typedef void (*OnUpdateAllInstances) (float);
-typedef void (*OnPhysicsUpdateAllInstances) (float);
-typedef void (*OnEnd) (Entity);
 typedef void (*OnNetworkCallback) (const char*);
 
-// TODO: Make not specific to python
+// TODO: Make network callbacks not specific to python
 struct _object; // PyObject
 typedef void (*OnEntitySubscribeToNetworkCallback) (Entity, struct _object*, const char*);
 
-// TODO: Add pre and post update callbacks
+// Generic script context to be used as an interface for game scripting
+// Note: Node event logics must be handled manually within the script context, refer to 'node_event.h' for the api.
+// Also check out other script contexts for examples.
 typedef struct CREScriptContext {
     OnCreateInstance on_create_instance;
     OnDeleteInstance on_delete_instance;

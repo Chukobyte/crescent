@@ -24,6 +24,9 @@ void collision_system_render();
 
 void collision_system_on_node_entered_scene(Entity entity);
 
+void collision_system_on_transform_update(SESubjectNotifyPayload* payload);
+
+SEObserver collisionOnEntityTransformChangeObserver = { .on_notify = collision_system_on_transform_update };
 SESpatialHashMap* spatialHashMap = NULL;
 
 EntitySystem* collision_ec_system_create() {
@@ -62,6 +65,10 @@ EntitySystem* collision_ec_system_get() {
 
 void collision_system_entity_unregistered(Entity entity) {
     se_spatial_hash_map_remove(spatialHashMap, entity);
+    // Register to entity's 'on transform changed' event
+    Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
+    SE_ASSERT(transformComp != NULL);
+    se_event_unregister_observer(&transformComp->onTransformChanged, &collisionOnEntityTransformChangeObserver);
 }
 
 // TODO: Temp, figure out how we want to handle caching the global transform
@@ -104,6 +111,20 @@ void collision_system_render() {
 
 void collision_system_on_node_entered_scene(Entity entity) {
     Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component_unsafe(entity, ComponentDataIndex_TRANSFORM_2D);
+    Collider2DComponent* colliderComp = (Collider2DComponent*) component_manager_get_component_unsafe(entity, ComponentDataIndex_COLLIDER_2D);
+    if (transformComp != NULL && colliderComp != NULL) {
+        Rect2 collisionRect = cre_get_collision_rectangle(entity, transformComp, colliderComp);
+        se_spatial_hash_map_insert_or_update(spatialHashMap, entity, &collisionRect);
+        // Register to entity's 'on transform changed' event
+        se_event_register_observer(&transformComp->onTransformChanged, &collisionOnEntityTransformChangeObserver);
+    }
+}
+
+void collision_system_on_transform_update(SESubjectNotifyPayload* payload) {
+    ComponentEntityUpdatePayload* updatePayload = (ComponentEntityUpdatePayload*) payload->data;
+    Transform2DComponent* transformComp = (Transform2DComponent*) updatePayload->component;
+    const Entity entity = updatePayload->entity;
+
     Collider2DComponent* colliderComp = (Collider2DComponent*) component_manager_get_component_unsafe(entity, ComponentDataIndex_COLLIDER_2D);
     if (transformComp != NULL && colliderComp != NULL) {
         Rect2 collisionRect = cre_get_collision_rectangle(entity, transformComp, colliderComp);
