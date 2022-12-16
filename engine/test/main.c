@@ -2,6 +2,8 @@
 
 #include <stdbool.h>
 
+#include <SDL2/SDL_main.h>
+
 #include "../src/core/node_event.h"
 #include "../src/core/ecs/component/component.h"
 
