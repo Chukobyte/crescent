@@ -97,7 +97,6 @@ class Player(Node2D):
                 + Vector2(self.direction_facing.x * 50, attack_y)
             )
             self.get_parent().add_child(new_attack)
-            print("Attacked")
 
     def _physics_update(self, delta_time: float) -> None:
         self._physics_update_task_manager.update()
