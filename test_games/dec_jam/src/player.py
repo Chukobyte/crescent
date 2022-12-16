@@ -76,6 +76,11 @@ class Player(Node2D):
         self.color_rect = self.get_child("ColorRect")
         self.collider = self.get_child("Collider2D")
         Camera2D.follow_node(node=self)
+        self.subscribe_to_event(
+            event_id="test",
+            scoped_node=self,
+            callback_func=lambda args: print(f"callback called!  args = {args}"),
+        )
 
     def _update(self, delta_time: float) -> None:
         if Input.is_action_just_pressed(name="quit_game"):
@@ -123,6 +128,9 @@ class Player(Node2D):
     async def physics_update_task(self):
         # Doesn't change so no need to get every frame
         engine_delta_time = Engine.get_global_physics_delta_time()
+
+        # Test
+        self.broadcast_event(event_id="test", args=["hello", "world"])
         try:
             while True:
                 delta_time = self.get_full_time_dilation() * engine_delta_time

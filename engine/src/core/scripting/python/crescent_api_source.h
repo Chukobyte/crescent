@@ -652,24 +652,6 @@
 "    def queue_deletion(self) -> None:\n"\
 "        crescent_api_internal.node_queue_deletion(entity_id=self.entity_id)\n"\
 "\n"\
-"    # def create_signal(self, signal_id: str) -> None:\n"\
-"    #     crescent_api_internal.node_signal_create(\n"\
-"    #         entity_id=self.entity_id, signal_id=signal_id\n"\
-"    #     )\n"\
-"    #\n"\
-"    # def connect_signal(self, signal_id: str, listener_node, function_name: str) -> None:\n"\
-"    #     crescent_api_internal.node_signal_connect(\n"\
-"    #         entity_id=self.entity_id,\n"\
-"    #         signal_id=signal_id,\n"\
-"    #         listener_entity_id=listener_node.entity_id,\n"\
-"    #         function_name=function_name,\n"\
-"    #     )\n"\
-"    #\n"\
-"    # def emit_signal(self, signal_id: str, args=[]) -> None:\n"\
-"    #     crescent_api_internal.node_signal_emit(\n"\
-"    #         entity_id=self.entity_id, signal_id=signal_id, args=args\n"\
-"    #     )\n"\
-"\n"\
 "    def create_event(self, event_id: str) -> None:\n"\
 "        crescent_api_internal.node_create_event(\n"\
 "            entity_id=self.entity_id, event_id=event_id\n"\
@@ -693,31 +675,6 @@
 "    @property\n"\
 "    def name(self) -> str:\n"\
 "        return crescent_api_internal.node_get_name(entity_id=self.entity_id)\n"\
-"\n"\
-"    # @property\n"\
-"    # def tags(self) -> list:\n"\
-"    #     return crescent_api_internal.node_get_tags(entity_id=self.entity_id)\n"\
-"    #\n"\
-"    # @tags.setter\n"\
-"    # def tags(self, value: list) -> None:\n"\
-"    #     crescent_api_internal.node_set_tags(entity_id=self.entity_id, tags=value)\n"\
-"    #\n"\
-"    # def show(self) -> None:\n"\
-"    #     crescent_api_internal.node_show(entity_id=self.entity_id)\n"\
-"    #\n"\
-"    # def hide(self) -> None:\n"\
-"    #     crescent_api_internal.node_hide(entity_id=self.entity_id)\n"\
-"\n"\
-"    # @property\n"\
-"    # def visibility(self) -> bool:\n"\
-"    #     return crescent_api_internal.node_is_visible(entity_id=self.entity_id)\n"\
-"    #\n"\
-"    # @visibility.setter\n"\
-"    # def visibility(self, value: bool) -> None:\n"\
-"    #     if value:\n"\
-"    #         self.show()\n"\
-"    #     else:\n"\
-"    #         self.hide()\n"\
 "\n"\
 "    @property\n"\
 "    def time_dilation(self) -> float:\n"\

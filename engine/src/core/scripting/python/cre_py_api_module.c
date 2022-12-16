@@ -575,7 +575,7 @@ void py_api_node_event_callback(void* observerData, NodeEventNotifyPayload* noti
     SE_ASSERT(pyCallbackFunc != NULL);
     SE_ASSERT(pyEventArgs != NULL);
 
-    PyObject* listenerFuncArg = Py_BuildValue("O", pyEventArgs);
+    PyObject* listenerFuncArg = Py_BuildValue("(O)", pyEventArgs);
     PyObject_CallObject(pyCallbackFunc, listenerFuncArg);
 }
 
@@ -596,12 +596,8 @@ PyObject* cre_py_api_node_subscribe_to_event(PyObject* self, PyObject* args, PyO
     PyObject* callbackFunc;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "isiO", crePyApiNodeSubscribeToEventKWList, &entity, &eventId, &scopedEntity, &callbackFunc)) {
         // TODO: Will need to filter by event id if we want to route to existing events
+        Py_IncRef(callbackFunc);
         node_event_subscribe_to_event(entity, eventId, scopedEntity, py_api_node_event_callback, callbackFunc);
-//        static SEObserver pySubscribeObserver = { .on_notify = py_event_on_notify };
-//        static SEObserver pyTransformSubscribeObserver = { .on_notify = py_event_on_transform_changed }; // TODO: Use after checking event id
-//        NodeComponent* nodeComponent = (NodeComponent*) component_manager_get_component(entity, ComponentDataIndex_NODE);
-//        NodeComponent* scopedEntityNodeComp = (NodeComponent*) component_manager_get_component(scopedEntity, ComponentDataIndex_NODE);
-//        node_component_subscribe_to_event(nodeComponent, eventId, &pySubscribeObserver);
         Py_RETURN_NONE;
     }
     return NULL;
@@ -612,11 +608,9 @@ PyObject* cre_py_api_node_broadcast_event(PyObject* self, PyObject* args, PyObje
     char* eventId;
     PyObject* broadcastArgs;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "isO", crePyApiNodeBroadcastEventKWList, &entity, &eventId, &broadcastArgs)) {
-        node_event_notify_observers(entity, eventId, &(NodeEventNotifyPayload){ .data = broadcastArgs });
-//        NodeComponent* nodeComponent = (NodeComponent*) component_manager_get_component(entity, ComponentDataIndex_NODE);
-//        node_component_broadcast_event(nodeComponent, eventId, &(SESubjectNotifyPayload) {
-//            .data = &(PyEventOnNotifyPayload) { .entity = entity, .args = broadcastArgs }, .type = 0
-//        });
+        node_event_notify_observers(entity, eventId, &(NodeEventNotifyPayload) {
+            .data = broadcastArgs
+        });
         Py_RETURN_NONE;
     }
     return NULL;
