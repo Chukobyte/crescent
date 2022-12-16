@@ -101,7 +101,7 @@ class Player(Node2D):
                 scoped_node=self,
                 callback_func=lambda node: print(f"{node} exited the scene!"),
             )
-            self.get_parent().add_child(new_attack)
+            SceneTree.get_root().add_child(new_attack)
 
     def _physics_update(self, delta_time: float) -> None:
         self._physics_update_task_manager.update()

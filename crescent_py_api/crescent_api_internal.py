@@ -84,6 +84,10 @@ def scene_tree_change_scene(path: str) -> None:
     pass
 
 
+def scene_tree_get_root() -> tuple:
+    return 0, "Node"
+
+
 def world_set_time_dilation(time_dilation: float) -> None:
     pass
 

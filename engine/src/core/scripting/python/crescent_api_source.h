@@ -1033,6 +1033,11 @@
 "    def change_scene(path: str) -> None:\n"\
 "        crescent_api_internal.scene_tree_change_scene(path=path)\n"\
 "\n"\
+"    @staticmethod\n"\
+"    def get_root() -> Node:\n"\
+"        node = crescent_api_internal.scene_tree_get_root()\n"\
+"        return Node.parse_scene_node_from_engine(scene_node=node)\n"\
+"\n"\
 "\n"\
 "# WORLD\n"\
 "class World:\n"\

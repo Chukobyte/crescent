@@ -40,6 +40,7 @@ PyObject* cre_py_api_camera2D_unfollow_node(PyObject* self, PyObject* args, PyOb
 
 // SceneTree
 PyObject* cre_py_api_scene_tree_change_scene(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_scene_tree_get_root(PyObject* self, PyObject* args);
 
 // World
 PyObject* cre_py_api_world_set_time_dilation(PyObject* self, PyObject* args, PyObject* kwargs);
@@ -240,6 +241,10 @@ static struct PyMethodDef crePyApiMethods[] = {
     {
         "scene_tree_change_scene", (PyCFunction) cre_py_api_scene_tree_change_scene,
         METH_VARARGS | METH_KEYWORDS, "Change to a new scene."
+    },
+    {
+        "scene_tree_get_root", cre_py_api_scene_tree_get_root,
+        METH_VARARGS, "Returns the current scene's root node."
     },
     // WORLD
     {

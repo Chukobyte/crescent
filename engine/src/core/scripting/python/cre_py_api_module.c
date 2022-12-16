@@ -302,6 +302,12 @@ PyObject* cre_py_api_scene_tree_change_scene(PyObject* self, PyObject* args, PyO
     return NULL;
 }
 
+PyObject* cre_py_api_scene_tree_get_root(PyObject* self, PyObject* args) {
+    SceneTreeNode* rootNode = cre_scene_manager_get_active_scene_root();
+    SE_ASSERT(rootNode != NULL);
+    return cre_py_utils_get_entity_instance(rootNode->entity);
+}
+
 PyObject* cre_py_api_camera2D_set_boundary(PyObject* self, PyObject* args, PyObject* kwargs) {
     float x;
     float y;
@@ -467,6 +473,7 @@ PyObject* cre_py_utils_get_entity_instance(Entity entity) {
         Py_IncRef(scriptInstance);
         return scriptInstance;
     }
+    // If script instance doesn't exist, create a proxy to be used on the scripting side
     char typeBuffer[TYPE_BUFFER_SIZE];
     NodeComponent* nodeComponent = (NodeComponent*) component_manager_get_component(entity, ComponentDataIndex_NODE);
     strcpy(typeBuffer, node_get_base_type_string(nodeComponent->type));
