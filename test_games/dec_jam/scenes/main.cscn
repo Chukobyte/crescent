@@ -134,7 +134,7 @@
                 {
                     "type": "transform_2d",
                     "position": {
-                        "x": -3200.0,
+                        "x": -3600.0,
                         "y": -270.0
                     },
                     "scale": {
