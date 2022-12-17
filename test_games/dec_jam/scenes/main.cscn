@@ -30,15 +30,15 @@
                 {
                     "type": "transform_2d",
                     "position": {
-                        "x": 400.0,
-                        "y": 348.0
+                        "x": 0.0,
+                        "y": 0.0
                     },
                     "scale": {
                         "x": 1.0,
                         "y": 1.0
                     },
                     "rotation": 0.0,
-                    "z_index": 0,
+                    "z_index": 1,
                     "z_index_relative_to_parent": true,
                     "ignore_camera": false
                 },
@@ -134,8 +134,8 @@
                 {
                     "type": "transform_2d",
                     "position": {
-                        "x": -100.0,
-                        "y": 100.0
+                        "x": -3200.0,
+                        "y": -270.0
                     },
                     "scale": {
                         "x": 1.0,
@@ -182,7 +182,7 @@
                             "draw_source": {
                                 "x": 0.0,
                                 "y": 0.0,
-                                "w": 1600.0,
+                                "w": 9600.0,
                                 "h": 900.0
                             },
                             "origin": {
