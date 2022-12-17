@@ -1,7 +1,7 @@
 import random
 
 from crescent_api import Node2D, Vector2, SceneTree, Rect2
-from src.enemy import GingerBreadMan
+from src.enemy import GingerBreadMan, Elf
 from src.utils.math import clamp_pos_to_boundary
 
 
@@ -48,32 +48,28 @@ class GameMaster:
             dir_vector = Vector2.RIGHT()
         else:
             dir_vector = Vector2.LEFT()
-        # Determine the y position of the enemy
-        rand_num = random.choice([0, 2])
-        if rand_num == 0:
-            y_pos = 32
-        elif rand_num == 1:
-            y_pos = -64
-        else:
-            y_pos = -96
-        pos_offset = Vector2(0, y_pos)
 
-        ginger_bread_man = GingerBreadMan.new()
-        new_pos = (
-            Vector2(self.player.position.x, self.metadata.floor_y)
-            + (Vector2(128, y_pos) * dir_vector)
-            + pos_offset
+        pos_offset = Vector2(128.0, -16.0)
+        # if random.choice([0, 1]) == 0: # TODO: Fix Elf collision breaking
+        if random.choice([0]) == 0:
+            enemy_node = GingerBreadMan.new()
+        else:
+            enemy_node = Elf.new()
+            pos_offset += Vector2(0, 32)
+
+        new_pos = Vector2(self.player.position.x, self.metadata.floor_y) + Vector2(
+            pos_offset.x * dir_vector.x, pos_offset.y
         )
         new_pos = clamp_pos_to_boundary(new_pos, LEVEL_BOUNDARY)
-        ginger_bread_man.position = new_pos
-        ginger_bread_man.subscribe_to_event(
+        enemy_node.position = new_pos
+        enemy_node.subscribe_to_event(
             event_id="scene_exited",
             scoped_node=self.player,
             callback_func=lambda node: self._set_enemies_active(
                 value=self.enemies_active - 1,
             ),
         )
-        SceneTree.get_root().add_child(ginger_bread_man)
+        SceneTree.get_root().add_child(enemy_node)
         self.enemies_active += 1
 
     def _set_enemies_active(self, value: int) -> None:

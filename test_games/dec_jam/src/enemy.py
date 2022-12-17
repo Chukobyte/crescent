@@ -15,3 +15,8 @@ class Enemy(Node2D):
 class GingerBreadMan(Enemy):
     def _start(self) -> None:
         self._init_components(size=Size2D(48, 64))
+
+
+class Elf(Enemy):
+    def _start(self) -> None:
+        self._init_components(size=Size2D(48, 32))
