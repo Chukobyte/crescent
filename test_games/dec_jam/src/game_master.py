@@ -50,8 +50,7 @@ class GameMaster:
             dir_vector = Vector2.LEFT()
 
         pos_offset = Vector2(128.0, -16.0)
-        # if random.choice([0, 1]) == 0: # TODO: Fix Elf collision breaking
-        if random.choice([0]) == 0:
+        if random.choice([0, 1]) == 0:
             enemy_node = GingerBreadMan.new()
         else:
             enemy_node = Elf.new()

@@ -1,4 +1,5 @@
 from crescent_api import *
+from src.enemy import Enemy
 from src.game_master import GameMaster, LEVEL_BOUNDARY
 from src.utils.task import *
 from src.utils.timer import Timer
@@ -29,9 +30,9 @@ class Attack(Collider2D):
 
     async def _update_task(self) -> None:
         # temp
-        def is_attackable_collider(collider: Collider2D) -> bool:
-            collision_parent = collider.get_parent()
-            return "GingerBreadMan" in type(collision_parent).__name__
+        def is_attackable_collider(col: Collider2D) -> bool:
+            collision_parent = col.get_parent()
+            return issubclass(type(collision_parent), Enemy)
 
         engine_delta_time = Engine.get_global_physics_delta_time()
         life_timer = Timer(self.life_time)
@@ -44,7 +45,6 @@ class Attack(Collider2D):
                     if is_attackable_collider(collider):
                         collider.get_parent().queue_deletion()
                         self.queue_deletion()
-                        break
                 await co_suspend()
             self.queue_deletion()
         except GeneratorExit:
