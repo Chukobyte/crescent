@@ -65,7 +65,7 @@ class Player(Node2D):
         super().__init__(entity_id)
         self.color_rect = None
         self.collider = None
-        self.speed = 200
+        self.speed = 75
         self.direction_facing = Vector2.RIGHT()
         self.stance = PlayerStance.STANDING
         self._game_master = GameMaster(self)  # Temp
@@ -79,6 +79,11 @@ class Player(Node2D):
         # Camera
         Camera2D.set_boundary(boundary=LEVEL_BOUNDARY)
         Camera2D.follow_node(node=self)
+        # Temp spawn boundary indicator
+        boundary_color_rect = ColorRect.new()
+        boundary_color_rect.color = Color.linear_color(0.8, 0.1, 0.8)
+        boundary_color_rect.position = Vector2(LEVEL_BOUNDARY.x, self.position.y)
+        SceneTree.get_root().add_child(boundary_color_rect)
 
     def _update(self, delta_time: float) -> None:
         if Input.is_action_just_pressed(name="quit_game"):

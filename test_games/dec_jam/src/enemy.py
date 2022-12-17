@@ -1,7 +1,17 @@
-from crescent_api import Node2D, ColorRect, Collider2D, Size2D, Color
+from crescent_api import Node2D, ColorRect, Collider2D, Vector2, Size2D, Color
 
 
 class Enemy(Node2D):
+    def __init__(self, entity_id: int):
+        super().__init__(entity_id)
+        self.direction_facing = Vector2.RIGHT()
+        self.speed = 100
+
+    def _physics_update(self, delta_time: float) -> None:
+        self.add_to_position(
+            Vector2(self.speed * delta_time * self.direction_facing.x, 0)
+        )
+
     def _init_components(self, size: Size2D, color: Color = None) -> None:
         if not color:
             color = Color.linear_color(0.9, 0.9, 0.9)

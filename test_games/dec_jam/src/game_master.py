@@ -14,7 +14,7 @@ GAME_RESOLUTION = Vector2(800, 450)
 # Setting boundary to the right of the player, the player will need to move left.
 # Will update to reverse it once more levels are added.
 LEVEL_BOUNDARY = Rect2(
-    -3200.0,
+    -1600.0,
     -GAME_RESOLUTION.y / 2.0,
     GAME_RESOLUTION.x / 2.0,
     GAME_RESOLUTION.y / 2.0,
@@ -49,7 +49,7 @@ class GameMaster:
         else:
             dir_vector = Vector2.LEFT()
 
-        pos_offset = Vector2(128.0, -16.0)
+        pos_offset = Vector2(256.0, -16.0)
         if random.choice([0, 1]) == 0:
             enemy_node = GingerBreadMan.new()
         else:
@@ -59,8 +59,10 @@ class GameMaster:
         new_pos = Vector2(self.player.position.x, self.metadata.floor_y) + Vector2(
             pos_offset.x * dir_vector.x, pos_offset.y
         )
-        new_pos = clamp_pos_to_boundary(new_pos, LEVEL_BOUNDARY)
+        # new_pos = clamp_pos_to_boundary(new_pos, LEVEL_BOUNDARY)
         enemy_node.position = new_pos
+        # Invert the x to get direction facing
+        enemy_node.direction_facing = dir_vector * Vector2.LEFT()
         enemy_node.subscribe_to_event(
             event_id="scene_exited",
             scoped_node=self.player,
