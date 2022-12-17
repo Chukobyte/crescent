@@ -6,9 +6,18 @@ from src.enemy import GingerBreadMan
 # TODO: Need to add utilities to python api to query the scene tree for things (maybe by tags)
 
 
+# A class to hold game metadata for now...
+class GameMetadata:
+    def __init__(self, floor_y=0.0):
+        self.floor_y = floor_y
+
+
 class GameMaster:
     def __init__(self, player: Node2D):
         self.player = player
+        self.metadata = GameMetadata(
+            floor_y=player.position.y
+        )  # TODO: Replace with real value...
         self.time_since_last_enemy_spawn = 0.0
         self.enemies_active = 0
 
@@ -19,13 +28,26 @@ class GameMaster:
             self.time_since_last_enemy_spawn = 0.0
 
     def spawn_enemy(self) -> None:
+        # Determine which side the enemy spawns
         if random.choice([0, 1]) == 0:
             dir_vector = Vector2.RIGHT()
         else:
             dir_vector = Vector2.LEFT()
+        # Determine the y position of the enemy
+        rand_num = random.choice([0, 2])
+        if rand_num == 0:
+            y_pos = 32
+        elif rand_num == 1:
+            y_pos = -64
+        else:
+            y_pos = -96
+        pos_offset = Vector2(0, y_pos)
+
         ginger_bread_man = GingerBreadMan.new()
-        ginger_bread_man.position = self.player.position + (
-            Vector2(128, 0) * dir_vector
+        ginger_bread_man.position = (
+            Vector2(self.player.position.x, self.metadata.floor_y)
+            + (Vector2(128, y_pos) * dir_vector)
+            + pos_offset
         )
         ginger_bread_man.subscribe_to_event(
             event_id="scene_exited",

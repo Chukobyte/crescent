@@ -2,7 +2,7 @@ from crescent_api import *
 from src.game_master import GameMaster
 from src.utils.task import *
 from src.utils.timer import Timer
-from src.utils.math import map_to_unit_range
+from src.utils.math import map_to_unit_range, Ease
 
 
 class Attack(Collider2D):
@@ -164,6 +164,12 @@ class Player(Node2D):
                         alpha = 1.0 - map_to_unit_range(
                             timer.time_remaining, 0.0, timer.time
                         )
+                        alpha = Ease.Cubic.ease_out(
+                            elapsed_time=timer.time - timer.time_remaining,
+                            from_pos=alpha,
+                            to_pos=1.0,
+                            duration=timer.time,
+                        )
                         new_pos = Vector2.lerp(
                             position_before_jump, position_to_jump_to, alpha
                         )
@@ -174,6 +180,12 @@ class Player(Node2D):
                     while timer.tick(engine_delta_time).time_remaining > 0:
                         alpha = 1.0 - map_to_unit_range(
                             timer.time_remaining, 0.0, timer.time
+                        )
+                        alpha = Ease.Cubic.ease_in(
+                            elapsed_time=timer.time - timer.time_remaining,
+                            from_pos=alpha,
+                            to_pos=1.0,
+                            duration=timer.time,
                         )
                         new_pos = Vector2.lerp(
                             position_to_jump_to, position_before_jump, alpha
