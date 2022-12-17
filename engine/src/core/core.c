@@ -45,16 +45,6 @@ bool cre_initialize(int argv, char** args) {
     engineContext = cre_engine_context_initialize();
     engineContext->engineRootDir = se_fs_get_cwd();
 
-    // Load project archive if it exists
-    engineContext->projectArchivePath = se_str_trim_and_replace(args[0], '.', ".pck");
-    if (sf_asset_file_loader_load_archive(engineContext->projectArchivePath)) {
-        se_logger_debug("Setting asset read mode to 'archive', found pck file at '%s'", engineContext->projectArchivePath);
-        sf_asset_file_loader_set_read_mode(SEAssetFileLoaderReadMode_ARCHIVE);
-    } else {
-        se_logger_debug("Not able to find .pck file at '%s', setting asset read mode to 'disk'", engineContext->projectArchivePath);
-        sf_asset_file_loader_set_read_mode(SEAssetFileLoaderReadMode_DISK);
-    }
-
     // Handle command line flags
     CommandLineFlagResult commandLineFlagResult = cre_command_line_args_parse(argv, args);
     // log level
@@ -73,6 +63,15 @@ bool cre_initialize(int argv, char** args) {
         se_logger_debug("No directory override given and default project found.  Starting default project at '%s'", DEFAULT_START_PROJECT_PATH);
         se_fs_chdir(DEFAULT_START_PROJECT_PATH);
         se_fs_print_cwd();
+    }
+    // Load project archive if it exists
+    engineContext->projectArchivePath = se_str_trim_and_replace(args[0], '.', ".pck");
+    if (sf_asset_file_loader_load_archive(engineContext->projectArchivePath)) {
+        se_logger_debug("Setting asset read mode to 'archive', found pck file at '%s'", engineContext->projectArchivePath);
+        sf_asset_file_loader_set_read_mode(SEAssetFileLoaderReadMode_ARCHIVE);
+    } else {
+        se_logger_debug("Not able to find .pck file at '%s', setting asset read mode to 'disk'", engineContext->projectArchivePath);
+        sf_asset_file_loader_set_read_mode(SEAssetFileLoaderReadMode_DISK);
     }
     // Internal Assets Override
     if (strcmp(commandLineFlagResult.internalAssetsDirOverride, "") != 0) {
