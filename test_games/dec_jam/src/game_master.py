@@ -14,8 +14,9 @@ class GameMaster:
 
     def update(self, delta_time: float) -> None:
         self.time_since_last_enemy_spawn += delta_time
-        if self.time_since_last_enemy_spawn >= 2.0 and self.enemies_active == 0:
+        if self.time_since_last_enemy_spawn >= 2.0 and self.enemies_active < 4:
             self.spawn_enemy()
+            self.time_since_last_enemy_spawn = 0.0
 
     def spawn_enemy(self) -> None:
         if random.choice([0, 1]) == 0:
@@ -30,16 +31,14 @@ class GameMaster:
             event_id="scene_exited",
             scoped_node=self.player,
             callback_func=lambda node: self._set_enemies_active(
-                value=self.enemies_active - 1, reset_spawn_time=True
+                value=self.enemies_active - 1,
             ),
         )
         SceneTree.get_root().add_child(ginger_bread_man)
         self.enemies_active += 1
 
-    def _set_enemies_active(self, value: int, reset_spawn_time=False) -> None:
+    def _set_enemies_active(self, value: int) -> None:
         self.enemies_active = value
-        if reset_spawn_time:
-            self.time_since_last_enemy_spawn = 0.0
 
 
 # TODO: Make a singleton when levels are added

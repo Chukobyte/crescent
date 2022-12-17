@@ -4,12 +4,14 @@
 #include <string.h>
 
 #include "../memory/se_mem.h"
+#include "../utils/se_assert.h"
 
 #define SE_SPATIAL_HASH_NULL_ENTITY 4294967295
+#define SE_SPATIAL_HASH_MAX_POSITION_HASH 8
 
 typedef struct PositionHashes {
     size_t hashCount;
-    int32_t hashes[4];
+    int32_t hashes[SE_SPATIAL_HASH_MAX_POSITION_HASH];
 } PositionHashes;
 
 int32_t spatial_hash(SESpatialHashMap* hashMap, Vector2* position);
@@ -158,6 +160,8 @@ bool link_object_by_position_hash(SESpatialHashMap* hashMap, SESpatialHashMapGri
     SESpatialHashMapGridSpace* gridSpace = get_or_create_grid_space(hashMap, positionHash);
     gridSpace->entities[gridSpace->entityCount++] = value;
     object->gridSpaces[object->gridSpaceCount++] = gridSpace;
+    SE_ASSERT_FMT(hashes->hashCount + 1 < SE_SPATIAL_HASH_MAX_POSITION_HASH,
+                  "Current hash count for value '%d' exceeds 'SE_SPATIAL_HASH_MAX_POSITION_HASH (%d)', consider increasing SE_SPATIAL_HASH_MAX_POSITION_HASH!");
     hashes->hashes[hashes->hashCount++] = positionHash;
     return true;
 }
