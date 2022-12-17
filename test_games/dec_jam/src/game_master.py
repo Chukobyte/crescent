@@ -1,9 +1,24 @@
 import random
 
-from crescent_api import Node2D, Vector2, SceneTree
+from crescent_api import Node2D, Vector2, SceneTree, Rect2
 from src.enemy import GingerBreadMan
+from src.utils.math import clamp_pos_to_boundary
+
 
 # TODO: Need to add utilities to python api to query the scene tree for things (maybe by tags)
+
+
+# Need a place to store generic data about the game
+
+GAME_RESOLUTION = Vector2(800, 450)
+# Setting boundary to the right of the player, the player will need to move left.
+# Will update to reverse it once more levels are added.
+LEVEL_BOUNDARY = Rect2(
+    -3200.0,
+    -GAME_RESOLUTION.y / 2.0,
+    GAME_RESOLUTION.x / 2.0,
+    GAME_RESOLUTION.y / 2.0,
+)
 
 
 # A class to hold game metadata for now...
@@ -44,11 +59,13 @@ class GameMaster:
         pos_offset = Vector2(0, y_pos)
 
         ginger_bread_man = GingerBreadMan.new()
-        ginger_bread_man.position = (
+        new_pos = (
             Vector2(self.player.position.x, self.metadata.floor_y)
             + (Vector2(128, y_pos) * dir_vector)
             + pos_offset
         )
+        new_pos = clamp_pos_to_boundary(new_pos, LEVEL_BOUNDARY)
+        ginger_bread_man.position = new_pos
         ginger_bread_man.subscribe_to_event(
             event_id="scene_exited",
             scoped_node=self.player,

@@ -1,18 +1,8 @@
 from crescent_api import *
-from src.game_master import GameMaster
+from src.game_master import GameMaster, LEVEL_BOUNDARY
 from src.utils.task import *
 from src.utils.timer import Timer
 from src.utils.math import map_to_unit_range, Ease, clamp_pos_to_boundary
-
-GAME_RESOLUTION = Vector2(800, 450)
-# Setting boundary to the right of the player, the player will need to move left.
-# Will update to reverse it once more levels are added.
-LEVEL_BOUNDARY = Rect2(
-    -3200.0,
-    -GAME_RESOLUTION.y / 2.0,
-    GAME_RESOLUTION.x / 2.0,
-    GAME_RESOLUTION.y / 2.0,
-)
 
 
 class Attack(Collider2D):
