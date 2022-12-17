@@ -25,15 +25,13 @@ class Attack(Collider2D):
         self.add_child(color_square)
         self.z_index = 2
 
+    def _end(self) -> None:
+        self._task_manager.kill_tasks()
+
     def _physics_update(self, delta_time: float) -> None:
         self._task_manager.update()
 
     async def _update_task(self) -> None:
-        # temp
-        def is_attackable_collider(col: Collider2D) -> bool:
-            collision_parent = col.get_parent()
-            return issubclass(type(collision_parent), Enemy)
-
         engine_delta_time = Engine.get_global_physics_delta_time()
         life_timer = Timer(self.life_time)
         try:
@@ -42,8 +40,9 @@ class Attack(Collider2D):
             while life_timer.tick(engine_delta_time).time_remaining > 0:
                 collisions = CollisionHandler.process_collisions(self)
                 for collider in collisions:
-                    if is_attackable_collider(collider):
-                        collider.get_parent().queue_deletion()
+                    collider_parent = collider.get_parent()
+                    if issubclass(type(collider_parent), Enemy):
+                        collider_parent.queue_deletion()
                         self.queue_deletion()
                 await co_suspend()
             self.queue_deletion()
