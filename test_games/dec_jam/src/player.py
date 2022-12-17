@@ -2,7 +2,17 @@ from crescent_api import *
 from src.game_master import GameMaster
 from src.utils.task import *
 from src.utils.timer import Timer
-from src.utils.math import map_to_unit_range, Ease
+from src.utils.math import map_to_unit_range, Ease, clamp_pos_to_boundary
+
+GAME_RESOLUTION = Vector2(800, 450)
+# Setting boundary to the right of the player, the player will need to move left.
+# Will update to reverse it once more levels are added.
+LEVEL_BOUNDARY = Rect2(
+    -3200.0,
+    -GAME_RESOLUTION.y / 2.0,
+    GAME_RESOLUTION.x / 2.0,
+    GAME_RESOLUTION.y / 2.0,
+)
 
 
 class Attack(Collider2D):
@@ -22,6 +32,7 @@ class Attack(Collider2D):
         color_square.size = collider_size
         color_square.color = collider_color
         self.add_child(color_square)
+        self.z_index = 2
 
     def _physics_update(self, delta_time: float) -> None:
         self._task_manager.update()
@@ -75,6 +86,8 @@ class Player(Node2D):
     def _start(self) -> None:
         self.color_rect = self.get_child("ColorRect")
         self.collider = self.get_child("Collider2D")
+        # Camera
+        Camera2D.set_boundary(boundary=LEVEL_BOUNDARY)
         Camera2D.follow_node(node=self)
 
     def _update(self, delta_time: float) -> None:
@@ -135,10 +148,12 @@ class Player(Node2D):
                 # Determine movement (no air movement for now)
                 if input_dir != Vector2.ZERO():
                     if self.stance == PlayerStance.STANDING:
-                        self.add_to_position(
+                        new_pos = self.position + (
                             input_dir
                             * Vector2(delta_time * self.speed, delta_time * self.speed)
                         )
+                        new_pos = clamp_pos_to_boundary(new_pos, LEVEL_BOUNDARY)
+                        self.position = new_pos
                     self.direction_facing = input_dir
                 # Handle player stances
                 if self.stance == PlayerStance.STANDING:
