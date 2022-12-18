@@ -36,8 +36,6 @@ class Attack(Collider2D):
         engine_delta_time = Engine.get_global_physics_delta_time()
         life_timer = Timer(self.life_time)
         try:
-            # TODO: Get delta time and time dilation from engine python api.
-            # Might be enough just to have a reference to the node that spawned the attack and get that time dilation
             while life_timer.tick(engine_delta_time).time_remaining > 0:
                 collisions = CollisionHandler.process_collisions(self)
                 for collider in collisions:
