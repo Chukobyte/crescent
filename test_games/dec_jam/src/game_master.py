@@ -2,7 +2,7 @@ import random
 from typing import Tuple
 
 from crescent_api import Node2D, Vector2, SceneTree, Rect2
-from src.enemy import GingerBreadMan, Elf
+from src.enemy import GingerBreadMan, Elf, SnowMan
 
 
 # TODO: Need to add utilities to python api to query the scene tree for things (maybe by tags)
@@ -68,11 +68,14 @@ class GameMaster:
 
     def spawn_enemy(self) -> None:
         pos_offset = Vector2(256.0, -16.0)
-        if random.choice([0, 1]) == 0:
+        rand_n = random.choice([0, 1, 2])
+        if rand_n == 0:
             enemy_node = GingerBreadMan.new()
-        else:
+        elif rand_n == 1:
             enemy_node = Elf.new()
             pos_offset += Vector2(0, 32)
+        else:
+            enemy_node = SnowMan.new()
 
         new_pos, dir_vector = self._get_valid_enemy_spawn_pos_and_move_dir(pos_offset)
         enemy_node.position = new_pos

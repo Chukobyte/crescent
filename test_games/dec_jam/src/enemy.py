@@ -1,4 +1,8 @@
-from crescent_api import Node2D, ColorRect, Collider2D, Vector2, Size2D, Color
+from crescent_api import *
+
+
+def get_player() -> Node2D:
+    return SceneTree.get_root().get_child(name="Player")
 
 
 class Enemy(Node2D):
@@ -35,4 +39,16 @@ class Elf(Enemy):
     def _start(self) -> None:
         self._init_components(
             size=Size2D(48, 32), color=Color.linear_color(0.0, 0.7, 0.0)
+        )
+
+
+class SnowMan(Enemy):
+    def __init__(self, entity_id: int):
+        super().__init__(entity_id)
+        self.player = None
+
+    def _start(self) -> None:
+        self.player = get_player()
+        self._init_components(
+            size=Size2D(48, 64), color=Color.linear_color(0.7, 0.7, 0.7)
         )
