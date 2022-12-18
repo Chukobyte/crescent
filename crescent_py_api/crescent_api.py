@@ -1,7 +1,7 @@
 import json
 from enum import Enum
 from json import JSONDecodeError
-from typing import Callable
+from typing import Callable, Type, List
 
 import crescent_api_internal
 
@@ -24,27 +24,27 @@ class Color:
         return f"({self.r}, {self.g}, {self.b}, {self.a})"
 
     @staticmethod
-    def linear_color(r: float, g: float, b: float, a=1.0):
+    def linear_color(r: float, g: float, b: float, a=1.0) -> "Color":
         return Color(int(r * 255), int(g * 255), int(b * 255), int(a * 255))
 
     @staticmethod
-    def BLACK():
+    def BLACK() -> "Color":
         return Color(0, 0, 0)
 
     @staticmethod
-    def WHITE():
+    def WHITE() -> "Color":
         return Color(255, 255, 255)
 
     @staticmethod
-    def RED():
+    def RED() -> "Color":
         return Color(255, 0, 0)
 
     @staticmethod
-    def GREEN():
+    def GREEN() -> "Color":
         return Color(0, 255, 0)
 
     @staticmethod
-    def BLUE():
+    def BLUE() -> "Color":
         return Color(0, 0, 255)
 
 
@@ -108,37 +108,43 @@ class Vector2:
     def magnitude(self) -> float:
         return math.sqrt(self.x * self.x + self.y * self.y)
 
-    def normalized(self):
+    def normalized(self) -> "Vector2":
         mag = self.magnitude()
         self.x = self.x / mag
         self.y = self.y / mag
         return self
 
-    def direction_to(self, target):
+    def direction_to(self, target: "Vector2") -> "Vector2":
         return (target - self).normalized()
+
+    def distance_to(self, target: "Vector2") -> float:
+        return math.sqrt(
+            (self.x - target.x) * (self.x - target.x)
+            + (self.y - target.y) * (self.y - target.y)
+        )
 
     @staticmethod
     def lerp(source, destination, amount: float) -> float:
         return source + (destination - source) * Vector2(amount, amount)
 
     @staticmethod
-    def ZERO():
+    def ZERO() -> "Vector2":
         return Vector2(0.0, 0.0)
 
     @staticmethod
-    def LEFT():
+    def LEFT() -> "Vector2":
         return Vector2(-1.0, 0.0)
 
     @staticmethod
-    def RIGHT():
+    def RIGHT() -> "Vector2":
         return Vector2(1.0, 0.0)
 
     @staticmethod
-    def UP():
+    def UP() -> "Vector2":
         return Vector2(0.0, -1.0)
 
     @staticmethod
-    def DOWN():
+    def DOWN() -> "Vector2":
         return Vector2(0.0, 1.0)
 
 
@@ -309,6 +315,21 @@ class Rect2:
 
     def contains_point(self, point: Vector2) -> bool:
         return self.x <= point.x <= self.w and self.y <= point.y <= self.h
+
+
+class MinMax:
+    def __init__(self, value_min: float, value_max: float):
+        self.min = value_min
+        self.max = value_max
+
+    def contain(self, value: float) -> bool:
+        return self.min <= value <= self.max
+
+    def is_below(self, value: float) -> bool:
+        return value < self.min
+
+    def is_above(self, value: float) -> bool:
+        return value > self.max
 
 
 # ASSETS
@@ -560,13 +581,13 @@ class Node:
         return f"Node(entity_id: {self.entity_id}, type: {type(self).__name__})"
 
     # New API
-    def get_child(self, name: str):
+    def get_child(self, name: str) -> "Node":
         node = crescent_api_internal.node_get_child(
             entity_id=self.entity_id, child_name=name
         )
         return self.parse_scene_node_from_engine(scene_node=node)
 
-    def get_children(self) -> list:
+    def get_children(self) -> List["Node"]:
         children_nodes = []
         children = crescent_api_internal.node_get_children(entity_id=self.entity_id)
         for child_node in children:
@@ -575,7 +596,7 @@ class Node:
             )
         return children_nodes
 
-    def get_parent(self):
+    def get_parent(self) -> "Node":
         parent_node = crescent_api_internal.node_get_parent(entity_id=self.entity_id)
         return self.parse_scene_node_from_engine(scene_node=parent_node)
 
@@ -590,7 +611,7 @@ class Node:
         return ""
 
     @classmethod
-    def new(cls):
+    def new(cls) -> "Node":
         return crescent_api_internal.node_new(
             class_path=f"{cls.__module__}",
             class_name=f"{cls.__name__}",
