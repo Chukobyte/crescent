@@ -61,14 +61,22 @@ class PlayerStance:
 
 
 class PlayerStats:
-    def __init__(self):
-        self.hp = 0
+    def __init__(self, hp=0):
+        self._hp = hp
+
+    @property
+    def hp(self) -> int:
+        return self._hp
+
+    @hp.setter
+    def hp(self, value: int) -> None:
+        self._hp = max(value, 0)
 
 
 class Player(Node2D):
     def __init__(self, entity_id: int):
         super().__init__(entity_id)
-        self.stats = PlayerStats()
+        self.stats = PlayerStats(hp=100)
         self.color_rect = None
         self.collider = None
         self.speed = 75
@@ -78,6 +86,7 @@ class Player(Node2D):
         self._physics_update_task_manager = TaskManager(
             tasks=[Task(self.physics_update_task())]
         )
+        self.health_bar = None
 
     def _start(self) -> None:
         self.color_rect = self.get_child("ColorRect")
@@ -86,9 +95,9 @@ class Player(Node2D):
         Camera2D.set_boundary(boundary=LEVEL_BOUNDARY)
         Camera2D.follow_node(node=self)
         # Temp health bar
-        health_bar = HealthBar.new()
-        health_bar.position = self.position + Vector2(-50.0, -150.0)
-        self.add_child(health_bar)
+        self.health_bar = HealthBar.new()
+        self.health_bar.position = self.position + Vector2(-50.0, -150.0)
+        self.add_child(self.health_bar)
         # Temp spawn boundary indicator
         boundary_color_rect = ColorRect.new()
         boundary_color_rect.color = Color.linear_color(0.8, 0.1, 0.8)
@@ -113,6 +122,15 @@ class Player(Node2D):
 
     def _physics_update(self, delta_time: float) -> None:
         self._physics_update_task_manager.update()
+        # temp
+        collisions = CollisionHandler.process_collisions(self.collider)
+        for collider in collisions:
+            collider_parent = collider.get_parent()
+            if issubclass(type(collider_parent), Enemy):
+                self.stats.hp -= 10
+                self.health_bar.set_health_percentage(self.stats.hp)
+                collider_parent.queue_deletion()
+
         self._game_master.update(delta_time)
 
     def _update_stance(self, stance: str) -> None:
