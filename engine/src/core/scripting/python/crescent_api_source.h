@@ -344,6 +344,9 @@
 "    def total_length(self) -> float:\n"\
 "        return self.x + self.y + self.w + self.h\n"\
 "\n"\
+"    def contains_point(self, point: Vector2) -> bool:\n"\
+"        return self.x <= point.x <= self.w and self.y <= point.y <= self.h\n"\
+"\n"\
 "\n"\
 "# ASSETS\n"\
 "class AudioSource:\n"\

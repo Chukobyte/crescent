@@ -307,6 +307,9 @@ class Rect2:
     def total_length(self) -> float:
         return self.x + self.y + self.w + self.h
 
+    def contains_point(self, point: Vector2) -> bool:
+        return self.x <= point.x <= self.w and self.y <= point.y <= self.h
+
 
 # ASSETS
 class AudioSource:

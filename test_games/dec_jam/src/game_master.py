@@ -3,7 +3,6 @@ from typing import Tuple
 
 from crescent_api import Node2D, Vector2, SceneTree, Rect2
 from src.enemy import GingerBreadMan, Elf
-from src.utils.game_math import clamp_pos_to_boundary, does_rect_contain_point
 
 
 # TODO: Need to add utilities to python api to query the scene tree for things (maybe by tags)
@@ -53,13 +52,13 @@ class GameMaster:
             pos_offset.x * 1.0, pos_offset.y
         )
         positions = []
-        if does_rect_contain_point(LEVEL_BOUNDARY, left_pos):
+        if LEVEL_BOUNDARY.contains_point(left_pos):
             positions.append(left_pos)
-        if does_rect_contain_point(LEVEL_BOUNDARY, right_pos):
+        if LEVEL_BOUNDARY.contains_point(right_pos):
             positions.append(right_pos)
         if positions:
             new_pos = random.choice(positions)
-            if right_pos:
+            if new_pos == right_pos:
                 move_dir = Vector2.LEFT()
             else:
                 move_dir = Vector2.RIGHT()
