@@ -272,6 +272,9 @@
 "    def total_length(self) -> float:\n"\
 "        return self.w + self.h\n"\
 "\n"\
+"    def to_vec2(self) -> Vector2:\n"\
+"        return Vector2(self.w, self.h)\n"\
+"\n"\
 "\n"\
 "class Rect2:\n"\
 "    def __init__(self, x=0.0, y=0.0, w=0.0, h=0.0):\n"\

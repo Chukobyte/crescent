@@ -99,6 +99,7 @@ async def co_wait_seconds(seconds: float, time_func: Callable = None):
         if delta >= seconds:
             break
         await co_suspend()
+    await co_suspend()
 
 
 # Coroutine example
