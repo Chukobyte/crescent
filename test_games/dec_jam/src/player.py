@@ -54,6 +54,17 @@ class Attack(Collider2D):
         self._task_manager.kill_tasks()
 
 
+class LevelCompletionItem(ColorRect):
+    def __init__(self, entity_id: int):
+        super().__init__(entity_id)
+        self.collider = None
+
+    def _start(self) -> None:
+        self.collider = Collider2D.new()
+        self.collider.extents = self.size
+        self.add_child(self.collider)
+
+
 class PlayerStance:
     STANDING = "standing"
     CROUCHING = "crouching"
@@ -62,7 +73,11 @@ class PlayerStance:
 
 class PlayerStats:
     def __init__(self, hp=0):
+        self._max_hp = hp
         self._hp = hp
+
+    def reset(self) -> None:
+        self._hp = self._max_hp
 
     @property
     def hp(self) -> int:
@@ -99,10 +114,10 @@ class Player(Node2D):
         self.health_bar.position = self.position + Vector2(-50.0, -150.0)
         self.add_child(self.health_bar)
         # Temp spawn boundary indicator
-        boundary_color_rect = ColorRect.new()
-        boundary_color_rect.color = Color.linear_color(0.8, 0.1, 0.8)
-        boundary_color_rect.position = Vector2(LEVEL_BOUNDARY.x, self.position.y)
-        SceneTree.get_root().add_child(boundary_color_rect)
+        level_completion_item = LevelCompletionItem.new()
+        level_completion_item.color = Color.linear_color(0.8, 0.1, 0.8)
+        level_completion_item.position = Vector2(LEVEL_BOUNDARY.x, self.position.y)
+        SceneTree.get_root().add_child(level_completion_item)
 
     def _update(self, delta_time: float) -> None:
         if Input.is_action_just_pressed(name="quit_game"):
@@ -130,6 +145,8 @@ class Player(Node2D):
                 self.stats.hp -= 10
                 self.health_bar.set_health_percentage(self.stats.hp)
                 collider_parent.queue_deletion()
+            elif issubclass(type(collider_parent), LevelCompletionItem):
+                SceneTree.change_scene(path="scenes/main.cscn")
 
         self._game_master.update(delta_time)
 
