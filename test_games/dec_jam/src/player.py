@@ -3,7 +3,7 @@ from src.enemy import Enemy
 from src.game_master import GameMaster, LEVEL_BOUNDARY
 from src.utils.task import *
 from src.utils.timer import Timer
-from src.utils.math import map_to_unit_range, Ease, clamp_pos_to_boundary
+from src.utils.game_math import map_to_unit_range, Ease, clamp_pos_to_boundary
 
 
 class Attack(Collider2D):

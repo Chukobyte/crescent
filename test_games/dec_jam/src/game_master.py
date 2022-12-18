@@ -1,8 +1,9 @@
 import random
+from typing import Tuple
 
 from crescent_api import Node2D, Vector2, SceneTree, Rect2
 from src.enemy import GingerBreadMan, Elf
-from src.utils.math import clamp_pos_to_boundary
+from src.utils.game_math import clamp_pos_to_boundary, does_rect_contain_point
 
 
 # TODO: Need to add utilities to python api to query the scene tree for things (maybe by tags)
@@ -42,13 +43,31 @@ class GameMaster:
             self.spawn_enemy()
             self.time_since_last_enemy_spawn = 0.0
 
-    def spawn_enemy(self) -> None:
-        # Determine which side the enemy spawns
-        if random.choice([0, 1]) == 0:
-            dir_vector = Vector2.RIGHT()
-        else:
-            dir_vector = Vector2.LEFT()
+    def _get_valid_enemy_spawn_pos_and_move_dir(
+        self, pos_offset=Vector2.ZERO()
+    ) -> Tuple[Vector2, Vector2]:
+        left_pos = Vector2(self.player.position.x, self.metadata.floor_y) + Vector2(
+            pos_offset.x * -1.0, pos_offset.y
+        )
+        right_pos = Vector2(self.player.position.x, self.metadata.floor_y) + Vector2(
+            pos_offset.x * 1.0, pos_offset.y
+        )
+        positions = []
+        if does_rect_contain_point(LEVEL_BOUNDARY, left_pos):
+            positions.append(left_pos)
+        if does_rect_contain_point(LEVEL_BOUNDARY, right_pos):
+            positions.append(right_pos)
+        if positions:
+            new_pos = random.choice(positions)
+            if right_pos:
+                move_dir = Vector2.LEFT()
+            else:
+                move_dir = Vector2.RIGHT()
+            return new_pos, move_dir
+        print("***ERROR: didn't find a valid spawn position, returning the left pos!")
+        return left_pos, Vector2.RIGHT()
 
+    def spawn_enemy(self) -> None:
         pos_offset = Vector2(256.0, -16.0)
         if random.choice([0, 1]) == 0:
             enemy_node = GingerBreadMan.new()
@@ -56,13 +75,10 @@ class GameMaster:
             enemy_node = Elf.new()
             pos_offset += Vector2(0, 32)
 
-        new_pos = Vector2(self.player.position.x, self.metadata.floor_y) + Vector2(
-            pos_offset.x * dir_vector.x, pos_offset.y
-        )
-        # new_pos = clamp_pos_to_boundary(new_pos, LEVEL_BOUNDARY)
+        new_pos, dir_vector = self._get_valid_enemy_spawn_pos_and_move_dir(pos_offset)
         enemy_node.position = new_pos
         # Invert the x to get direction facing
-        enemy_node.direction_facing = dir_vector * Vector2.LEFT()
+        enemy_node.direction_facing = dir_vector
         enemy_node.subscribe_to_event(
             event_id="scene_exited",
             scoped_node=self.player,

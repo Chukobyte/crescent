@@ -30,6 +30,10 @@ def clamp_pos_to_boundary(pos: Vector2, boundary: Rect2) -> Vector2:
     )
 
 
+def does_rect_contain_point(rect: Rect2, point: Vector2) -> bool:
+    return rect.x <= point.x <= rect.w and rect.y <= point.y <= rect.h
+
+
 # Easing
 class Ease:
     class Cubic:
