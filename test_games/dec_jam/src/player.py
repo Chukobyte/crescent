@@ -1,6 +1,7 @@
 from crescent_api import *
 from src.enemy import Enemy
 from src.game_master import GameMaster, LEVEL_BOUNDARY
+from src.health_bar import HealthBar
 from src.utils.task import *
 from src.utils.timer import Timer
 from src.utils.game_math import map_to_unit_range, Ease, clamp_pos_to_boundary
@@ -59,9 +60,15 @@ class PlayerStance:
     IN_AIR = "in_air"
 
 
+class PlayerStats:
+    def __init__(self):
+        self.hp = 0
+
+
 class Player(Node2D):
     def __init__(self, entity_id: int):
         super().__init__(entity_id)
+        self.stats = PlayerStats()
         self.color_rect = None
         self.collider = None
         self.speed = 75
@@ -78,6 +85,10 @@ class Player(Node2D):
         # Camera
         Camera2D.set_boundary(boundary=LEVEL_BOUNDARY)
         Camera2D.follow_node(node=self)
+        # Temp health bar
+        health_bar = HealthBar.new()
+        health_bar.position = self.position + Vector2(-50.0, -150.0)
+        self.add_child(health_bar)
         # Temp spawn boundary indicator
         boundary_color_rect = ColorRect.new()
         boundary_color_rect.color = Color.linear_color(0.8, 0.1, 0.8)
