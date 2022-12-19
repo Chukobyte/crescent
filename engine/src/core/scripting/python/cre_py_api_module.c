@@ -361,7 +361,7 @@ PyObject* cre_py_api_world_set_time_dilation(PyObject* self, PyObject* args, PyO
 }
 
 PyObject* cre_py_api_world_get_time_dilation(PyObject* self, PyObject* args) {
-    return Py_BuildValue("f)", cre_world_get_time_dilation());
+    return Py_BuildValue("(f)", cre_world_get_time_dilation());
 }
 
 // Audio Manager
@@ -382,6 +382,15 @@ PyObject* cre_py_api_audio_manager_stop_sound(PyObject* self, PyObject* args, Py
         Py_RETURN_NONE;
     }
     return NULL;
+}
+
+// Game Properties
+PyObject* cre_py_api_game_properties_get(PyObject* self, PyObject* args) {
+    const CREGameProperties* gameProps = cre_game_props_get();
+    return Py_BuildValue("(siiiiisb)",
+                         gameProps->gameTitle, gameProps->resolutionWidth, gameProps->resolutionHeight,
+                         gameProps->windowWidth, gameProps->windowHeight, gameProps->targetFPS,
+                         gameProps->initialScenePath, gameProps->areCollidersVisible);
 }
 
 // Node

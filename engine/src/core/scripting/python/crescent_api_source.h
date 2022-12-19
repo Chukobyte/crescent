@@ -578,6 +578,38 @@
 "        AXIS_RIGHT_ANALOG_DOWN = \"joystick_right_analog_down\"\n"\
 "\n"\
 "\n"\
+"# Game Properties\n"\
+"class GameProperties:\n"\
+"    _instance = None\n"\
+"\n"\
+"    def __new__(cls, *args, **kwargs):\n"\
+"        if not cls._instance:\n"\
+"            cls._instance = object.__new__(cls)\n"\
+"            (\n"\
+"                game_title,\n"\
+"                res_w,\n"\
+"                res_h,\n"\
+"                window_w,\n"\
+"                window_h,\n"\
+"                target_fps,\n"\
+"                initial_scene_path,\n"\
+"                are_colliders_visible,\n"\
+"            ) = crescent_api_internal.game_properties_get()\n"\
+"            cls._instance.game_title = game_title\n"\
+"            cls._instance.game_resolution = Size2D(res_w, res_h)\n"\
+"            cls._instance.default_window_size = Size2D(window_w, window_h)\n"\
+"            cls._instance.target_fps = target_fps\n"\
+"            cls._instance.initial_scene_path = initial_scene_path\n"\
+"            cls._instance.are_colliders_visible = are_colliders_visible != 0\n"\
+"        return cls._instance\n"\
+"\n"\
+"    def __str__(self):\n"\
+"        return f\"GameProperties(game_title: {self.game_title}, game_resolution: {self.game_resolution}), default_window_size: {self.default_window_size}, target_fps: {self.target_fps}, initial_scene_path: {self.initial_scene_path}, are_colliders_visible: {self.are_colliders_visible})\"\n"\
+"\n"\
+"    def __repr__(self):\n"\
+"        return f\"GameProperties(game_title: {self.game_title}, game_resolution: {self.game_resolution}), default_window_size: {self.default_window_size}, target_fps: {self.target_fps}, initial_scene_path: {self.initial_scene_path}, are_colliders_visible: {self.are_colliders_visible})\"\n"\
+"\n"\
+"\n"\
 "# STAGE SETUP\n"\
 "class StageNode:\n"\
 "    def __init__(\n"\

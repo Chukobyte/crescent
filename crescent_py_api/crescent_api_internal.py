@@ -1,4 +1,4 @@
-from typing import Callable
+from typing import Callable, Tuple
 
 
 def engine_exit(code=0) -> None:
@@ -154,6 +154,11 @@ def camera2D_follow_node(entity_id: int) -> None:
 
 def camera2D_unfollow_node(entity_id: int) -> None:
     pass
+
+
+def game_properties_get() -> Tuple[str, float, float, float, float, int, str, bool]:
+    """returns GameProperties(game_title, res_w, res_h, window_w, window_h, target_fps, initial_scene_path, are_colliders_visible)."""
+    return "test", 800.0, 450.0, 800.0, 450.0, 66, "scenes/test.cscn", False
 
 
 def node_new(class_path: str, class_name: str, node_type: str):

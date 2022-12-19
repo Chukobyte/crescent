@@ -1,19 +1,18 @@
 import random
 from typing import Tuple
 
-from crescent_api import Node2D, Vector2, SceneTree, Rect2
+from crescent_api import Node2D, Vector2, SceneTree, Rect2, GameProperties
 from src.enemy import GingerBreadMan, Elf, SnowMan
 
-# Need a place to store generic data about the game
+game_properties = GameProperties()
 
-GAME_RESOLUTION = Vector2(144, 81)
 # Setting boundary to the right of the player, the player will need to move left.
 # Will update to reverse it once more levels are added.
 LEVEL_BOUNDARY = Rect2(
     -432.0,
-    -GAME_RESOLUTION.y / 2.0,
-    GAME_RESOLUTION.x / 2.0,
-    GAME_RESOLUTION.y / 2.0,
+    -game_properties.game_resolution.h / 2.0,
+    game_properties.game_resolution.w / 2.0,
+    game_properties.game_resolution.h / 2.0,
 )
 
 
@@ -89,12 +88,3 @@ class GameMaster:
 
     def _set_enemies_active(self, value: int) -> None:
         self.enemies_active = value
-
-
-# TODO: Make a singleton when levels are added
-# _instance = None
-#
-# def __new__(cls, *args, **kwargs):
-#     if not cls._instance:
-#         cls._instance = object.__new__(cls)
-#     return cls._instance

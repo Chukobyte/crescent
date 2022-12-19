@@ -50,6 +50,9 @@ PyObject* cre_py_api_world_get_time_dilation(PyObject* self, PyObject* args);
 PyObject* cre_py_api_audio_manager_play_sound(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_audio_manager_stop_sound(PyObject* self, PyObject* args, PyObject* kwargs);
 
+// Game Properties
+PyObject* cre_py_api_game_properties_get(PyObject* self, PyObject* args);
+
 // Node
 PyObject* cre_py_api_node_new(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_node_queue_deletion(PyObject* self, PyObject* args, PyObject* kwargs);
@@ -263,6 +266,11 @@ static struct PyMethodDef crePyApiMethods[] = {
     {
         "audio_manager_stop_sound", (PyCFunction) cre_py_api_audio_manager_stop_sound,
         METH_VARARGS | METH_KEYWORDS, "Stops a sound."
+    },
+    // GAME PROPERTIES
+    {
+        "game_properties_get", cre_py_api_game_properties_get,
+        METH_VARARGS, "returns GameProperties(game_title, res_w, res_h, window_w, window_h, target_fps, initial_scene_path, are_colliders_visible)."
     },
     // NODE
     {
