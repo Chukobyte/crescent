@@ -109,8 +109,8 @@ class Player(Node2D):
         Camera2D.follow_node(node=self)
         # Temp health bar
         self.health_bar = HealthBar.new()
-        self.health_bar.set_health_bar_size(Size2D(10, 10))
-        self.health_bar.position = self.position + Vector2(-5.0, -5.0)
+        self.health_bar.set_health_bar_size(Size2D(26, 6))
+        self.health_bar.position = self.position + Vector2(-12.0, -20.0)
         self.add_child(self.health_bar)
         # Temp spawn boundary indicator
         level_completion_item = LevelCompletionItem.new()
@@ -214,7 +214,7 @@ class Player(Node2D):
                     elif not Input.is_action_pressed(name="crouch"):
                         self._update_stance(PlayerStance.STANDING)
                 elif self.stance == PlayerStance.IN_AIR:
-                    jump_height = 48
+                    jump_height = 24
                     position_before_jump = self.position
                     position_to_jump_to = position_before_jump + Vector2(
                         0, -jump_height
