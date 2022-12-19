@@ -91,6 +91,7 @@ PyObject* cre_py_api_sprite_get_draw_source(PyObject* self, PyObject* args, PyOb
 // Animated Sprite
 PyObject* cre_py_api_animated_sprite_play(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_animated_sprite_stop(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_animated_sprite_add_animation(PyObject* self, PyObject* args, PyObject* kwargs);
 
 // Text Label
 PyObject* cre_py_api_text_label_set_text(PyObject* self, PyObject* args, PyObject* kwargs);
@@ -399,6 +400,10 @@ static struct PyMethodDef crePyApiMethods[] = {
     {
         "animated_sprite_stop", (PyCFunction) cre_py_api_animated_sprite_stop,
         METH_VARARGS | METH_KEYWORDS, "Will stop the currently playing animation."
+    },
+    {
+        "animated_sprite_add_animation", (PyCFunction) cre_py_api_animated_sprite_add_animation,
+        METH_VARARGS | METH_KEYWORDS, "Adds a new animation."
     },
     // TEXT LABEL
     {

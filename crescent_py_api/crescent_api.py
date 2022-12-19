@@ -898,6 +898,27 @@ class AnimatedSprite(Node2D):
     def stop(self) -> None:
         crescent_api_internal.animated_sprite_stop(entity_id=self.entity_id)
 
+    def add_animation(self, animation: Animation) -> None:
+        anim_frames = []
+        for frame in animation.frames:
+            anim_frames.append(
+                (
+                    frame.frame,
+                    frame.texture_path,
+                    frame.draw_source.x,
+                    frame.draw_source.y,
+                    frame.draw_source.w,
+                    frame.draw_source.h,
+                )
+            )
+        crescent_api_internal.animated_sprite_add_animation(
+            entity_id=self.entity_id,
+            name=animation.name,
+            speed=animation.speed,
+            loops=animation.loops,
+            frames=anim_frames,
+        )
+
 
 class TextLabel(Node2D):
     @property

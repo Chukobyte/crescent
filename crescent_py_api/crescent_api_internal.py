@@ -1,4 +1,4 @@
-from typing import Callable, Tuple
+from typing import Callable, Tuple, List
 
 
 def engine_exit(code=0) -> None:
@@ -292,6 +292,16 @@ def animated_sprite_play(entity_id: int, name: str) -> bool:
 
 
 def animated_sprite_stop(entity_id: int) -> None:
+    pass
+
+
+def animated_sprite_add_animation(
+    entity_id: int,
+    name: str,
+    speed: int,
+    loops: bool,
+    frames: List[Tuple[int, str, float, float, float, float]],
+) -> None:
     pass
 
 

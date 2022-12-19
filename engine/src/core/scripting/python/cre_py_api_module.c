@@ -845,6 +845,27 @@ PyObject* cre_py_api_animated_sprite_stop(PyObject* self, PyObject* args, PyObje
     return NULL;
 }
 
+void py_load_animated_sprite_anim_frames(Animation* anim, PyObject* pyFramesList) {
+    SE_ASSERT_FMT(PyList_Check(pyFramesList), "Didn't pass in a python list!");
+    for (Py_ssize_t i = 0; i < PyList_Size(pyFramesList); i++) {
+        PyObject* pyFrameTuple = PyList_GetItem(pyFramesList, i);
+        int frame;
+        char* texturePath;
+        float drawSourceX;
+        float drawSourceY;
+        float drawSourceW;
+        float drawSourceH;
+        if (PyArg_ParseTuple(pyFrameTuple, "isffff", &frame, &texturePath, &drawSourceX, &drawSourceY, &drawSourceW, &drawSourceH)) {
+            AnimationFrame animationFrame = { .frame = frame, .texture = NULL, .drawSource = { drawSourceX, drawSourceY, drawSourceW, drawSourceH } };
+            animationFrame.texture = se_asset_manager_get_texture(texturePath);
+            anim->animationFrames[anim->frameCount++] = animationFrame;
+        } else {
+            frame = (int) i;
+            se_logger_error("Failed to parse frame '%d' for anim '%s'", frame, anim->name);
+        }
+    }
+}
+
 PyObject* cre_py_api_animated_sprite_add_animation(PyObject* self, PyObject* args, PyObject* kwargs) {
     Entity entity;
     char* name;
@@ -852,6 +873,11 @@ PyObject* cre_py_api_animated_sprite_add_animation(PyObject* self, PyObject* arg
     bool loops;
     PyObject* framesList;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "isibO", crePyApiAnimatedSpriteAddAnimationKWList, &entity, &name, &speed, &loops, &framesList)) {
+        AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_ANIMATED_SPRITE);
+        Animation newAnim = { .frameCount = 0, .currentFrame = 0, .speed = speed, .name = {'\0'}, .doesLoop = loops };
+        strcpy(newAnim.name, name);
+        py_load_animated_sprite_anim_frames(&newAnim, framesList);
+        animated_sprite_component_add_animation(animatedSpriteComponent, newAnim);
         Py_RETURN_NONE;
     }
     return NULL;

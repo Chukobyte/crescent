@@ -935,6 +935,27 @@
 "    def stop(self) -> None:\n"\
 "        crescent_api_internal.animated_sprite_stop(entity_id=self.entity_id)\n"\
 "\n"\
+"    def add_animation(self, animation: Animation) -> None:\n"\
+"        anim_frames = []\n"\
+"        for frame in animation.frames:\n"\
+"            anim_frames.append(\n"\
+"                (\n"\
+"                    frame.frame,\n"\
+"                    frame.texture_path,\n"\
+"                    frame.draw_source.x,\n"\
+"                    frame.draw_source.y,\n"\
+"                    frame.draw_source.w,\n"\
+"                    frame.draw_source.h,\n"\
+"                )\n"\
+"            )\n"\
+"        crescent_api_internal.animated_sprite_add_animation(\n"\
+"            entity_id=self.entity_id,\n"\
+"            name=animation.name,\n"\
+"            speed=animation.speed,\n"\
+"            loops=animation.loops,\n"\
+"            frames=anim_frames,\n"\
+"        )\n"\
+"\n"\
 "\n"\
 "class TextLabel(Node2D):\n"\
 "    @property\n"\
