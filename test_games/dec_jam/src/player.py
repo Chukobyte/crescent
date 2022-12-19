@@ -90,7 +90,6 @@ class Player(Node2D):
     def __init__(self, entity_id: int):
         super().__init__(entity_id)
         self.stats = PlayerStats(hp=100)
-        # self.color_rect = None
         self.collider = None
         self.anim_sprite = None
         self.speed = 25
@@ -103,7 +102,6 @@ class Player(Node2D):
         self.health_bar = None
 
     def _start(self) -> None:
-        # self.color_rect = self.get_child("ColorRect")
         self.collider = self.get_child("Collider2D")
         self.anim_sprite: AnimatedSprite = AnimatedSprite.new()
         self.anim_sprite.add_animation(
