@@ -558,7 +558,8 @@ static char* crePyApiNode2DSetZIndexKWList[] = {"entity_id", "z_index", NULL};
 
 static char* crePyApiSpriteSetTextureKWList[] = {"entity_id", "file_path", NULL};
 
-static char* crePyApiAnimatedSpriteSetAnimationKWList[] = {"entity_id", "animation_name", NULL};
+static char* crePyApiAnimatedSpriteSetAnimationKWList[] = {"entity_id", "name", NULL};
+static char* crePyApiAnimatedSpriteAddAnimationKWList[] = {"entity_id", "name", "speed", "loops", "frames", NULL};
 
 static char* crePyApiTextLabelSetTextKWList[] = {"entity_id", "text", NULL};
 static char* crePyApiTextLabelSetFontUIDKWList[] = {"entity_id", "uid", NULL};

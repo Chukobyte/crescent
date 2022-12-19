@@ -845,6 +845,18 @@ PyObject* cre_py_api_animated_sprite_stop(PyObject* self, PyObject* args, PyObje
     return NULL;
 }
 
+PyObject* cre_py_api_animated_sprite_add_animation(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    char* name;
+    int speed;
+    bool loops;
+    PyObject* framesList;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "isibO", crePyApiAnimatedSpriteAddAnimationKWList, &entity, &name, &speed, &loops, &framesList)) {
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
 // Text Label
 PyObject* cre_py_api_text_label_set_text(PyObject* self, PyObject* args, PyObject* kwargs) {
     Entity entity;

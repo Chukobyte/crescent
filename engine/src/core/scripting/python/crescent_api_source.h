@@ -422,7 +422,9 @@
 "\n"\
 "\n"\
 "class Animation:\n"\
-"    def __init__(self, name: str, speed: int, loops: bool, frames: list):\n"\
+"    def __init__(\n"\
+"        self, name: str, speed: int, loops: bool, frames: List[AnimationFrame]\n"\
+"    ):\n"\
 "        self.name = name\n"\
 "        self.speed = speed\n"\
 "        self.loops = loops\n"\
@@ -925,9 +927,9 @@
 "\n"\
 "\n"\
 "class AnimatedSprite(Node2D):\n"\
-"    def play(self, animation_name: str) -> bool:\n"\
+"    def play(self, name: str) -> bool:\n"\
 "        return crescent_api_internal.animated_sprite_play(\n"\
-"            entity_id=self.entity_id, animation_name=animation_name\n"\
+"            entity_id=self.entity_id, name=name\n"\
 "        )\n"\
 "\n"\
 "    def stop(self) -> None:\n"\

@@ -287,7 +287,7 @@ def sprite_get_draw_source(entity_id: int) -> tuple:
     return 0.0, 0.0, 32.0, 32.0
 
 
-def animated_sprite_play(entity_id: int, animation_name: str) -> bool:
+def animated_sprite_play(entity_id: int, name: str) -> bool:
     return True
 
 
