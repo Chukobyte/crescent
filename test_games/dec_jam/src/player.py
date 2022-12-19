@@ -16,7 +16,7 @@ class Attack(Collider2D):
         self._task_manager = TaskManager(tasks=[Task(self._update_task())])
 
     def _start(self) -> None:
-        collider_size = Size2D(32, 32)
+        collider_size = Size2D(8, 8)
         collider_color = Color(0, 200, 0, 150)
         self.set_extents(collider_size)
         self.set_color(collider_color)
@@ -109,7 +109,8 @@ class Player(Node2D):
         Camera2D.follow_node(node=self)
         # Temp health bar
         self.health_bar = HealthBar.new()
-        self.health_bar.position = self.position + Vector2(-50.0, -150.0)
+        self.health_bar.set_health_bar_size(Size2D(10, 10))
+        self.health_bar.position = self.position + Vector2(-5.0, -5.0)
         self.add_child(self.health_bar)
         # Temp spawn boundary indicator
         level_completion_item = LevelCompletionItem.new()
@@ -123,13 +124,14 @@ class Player(Node2D):
 
         if Input.is_action_just_pressed(name="attack"):
             new_attack = Attack.new()
-            attack_y = 20
+            attack_y = 4
             if self.stance == PlayerStance.CROUCHING:
-                attack_y = 50
+                attack_y = 10
             new_attack.position = (
                 self.position
-                + Vector2(-16, -48)
-                + Vector2(self.direction_facing.x * 50, attack_y)
+                + self._center_pos()
+                + Vector2(4.0, 0.0)
+                + Vector2(self.direction_facing.x * 20, attack_y)
             )
             SceneTree.get_root().add_child(new_attack)
 
@@ -155,21 +157,26 @@ class Player(Node2D):
             return None
         self.stance = stance
         if stance == PlayerStance.STANDING:
-            stance_size = Size2D(48, 96)
-            stance_pos = Vector2.ZERO() + Vector2(-24, -48)
+            stance_size = Size2D(17, 17)
+            stance_pos = self._center_pos()
         elif stance == PlayerStance.CROUCHING:
-            stance_size = Size2D(48, 48)
-            stance_pos = Vector2(0, 48) + Vector2(-24, -48)
+            stance_size = Size2D(17, 8)
+            stance_pos = self._center_pos() + Vector2(0, 9)
         elif stance == PlayerStance.IN_AIR:
-            stance_size = Size2D(48, 96)
-            stance_pos = Vector2.ZERO() + Vector2(-24, -48)
+            stance_size = Size2D(17, 17)
+            stance_pos = self._center_pos()
         else:
+            print("***ERROR: invalid stance!")
             stance_size = Size2D()
             stance_pos = Vector2.ZERO()
         self.color_rect.size = stance_size
         self.color_rect.position = stance_pos
         self.collider.extents = stance_size
         self.collider.position = stance_pos
+
+    # Offsets the player's position so that the center is the real position
+    def _center_pos(self) -> Vector2:
+        return Vector2(-8, -8)
 
     # Tasks
     async def physics_update_task(self):

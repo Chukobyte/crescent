@@ -78,7 +78,9 @@ class SnowMan(Enemy):
 
         def determine_state(snowman: SnowMan, player_node: Node2D) -> int:
             attack_range = MinMax(200, 256)
-            distance_to_player = snowman.get_center_pos().distance_to(player_node.position)
+            distance_to_player = snowman.get_center_pos().distance_to(
+                player_node.position
+            )
             if attack_range.is_above(distance_to_player):
                 return SnowManState.FOLLOWING_PLAYER
             elif attack_range.is_below(distance_to_player):
