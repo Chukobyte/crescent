@@ -90,8 +90,9 @@ class Player(Node2D):
     def __init__(self, entity_id: int):
         super().__init__(entity_id)
         self.stats = PlayerStats(hp=100)
-        self.color_rect = None
+        # self.color_rect = None
         self.collider = None
+        self.anim_sprite = None
         self.speed = 25
         self.direction_facing = Vector2.RIGHT()
         self.stance = PlayerStance.STANDING
@@ -102,8 +103,39 @@ class Player(Node2D):
         self.health_bar = None
 
     def _start(self) -> None:
-        self.color_rect = self.get_child("ColorRect")
+        # self.color_rect = self.get_child("ColorRect")
         self.collider = self.get_child("Collider2D")
+        self.anim_sprite: AnimatedSprite = AnimatedSprite.new()
+        self.anim_sprite.add_animation(
+            Animation(
+                name="idle",
+                speed=100,
+                loops=True,
+                frames=[
+                    AnimationFrame(
+                        frame=0,
+                        texture_path="assets/images/player/player.png",
+                        draw_source=Rect2(0.0, 0.0, 17.0, 17.0),
+                    )
+                ],
+            )
+        )
+        self.anim_sprite.add_animation(
+            Animation(
+                name="crouch",
+                speed=100,
+                loops=True,
+                frames=[
+                    AnimationFrame(
+                        frame=0,
+                        texture_path="assets/images/player/player.png",
+                        draw_source=Rect2(0.0, 17.0, 17.0, 17.0),
+                    )
+                ],
+            )
+        )
+        self.anim_sprite.position = self._center_pos()
+        self.add_child(self.anim_sprite)
         # Camera
         Camera2D.set_boundary(boundary=LEVEL_BOUNDARY)
         Camera2D.follow_node(node=self)
@@ -170,8 +202,6 @@ class Player(Node2D):
             print("***ERROR: invalid stance!")
             stance_size = Size2D()
             stance_pos = Vector2.ZERO()
-        self.color_rect.size = stance_size
-        self.color_rect.position = stance_pos
         self.collider.extents = stance_size
         self.collider.position = stance_pos
 
@@ -203,18 +233,22 @@ class Player(Node2D):
                         new_pos = clamp_pos_to_boundary(new_pos, LEVEL_BOUNDARY)
                         self.position = new_pos
                     self.direction_facing = input_dir
+                    self.scale = Vector2(self.direction_facing.x, 1.0)
                 # Handle player stances
                 if self.stance == PlayerStance.STANDING:
+                    self.anim_sprite.play(name="idle")
                     if Input.is_action_pressed(name="jump"):
                         self._update_stance(PlayerStance.IN_AIR)
                     elif Input.is_action_pressed(name="crouch"):
                         self._update_stance(PlayerStance.CROUCHING)
                 elif self.stance == PlayerStance.CROUCHING:
+                    self.anim_sprite.play(name="crouch")
                     if Input.is_action_pressed(name="jump"):
                         self._update_stance(PlayerStance.IN_AIR)
                     elif not Input.is_action_pressed(name="crouch"):
                         self._update_stance(PlayerStance.STANDING)
                 elif self.stance == PlayerStance.IN_AIR:
+                    self.anim_sprite.play(name="idle")
                     jump_height = 12
                     position_before_jump = self.position
                     position_to_jump_to = position_before_jump + Vector2(

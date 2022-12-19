@@ -856,8 +856,11 @@ void py_load_animated_sprite_anim_frames(Animation* anim, PyObject* pyFramesList
         float drawSourceW;
         float drawSourceH;
         if (PyArg_ParseTuple(pyFrameTuple, "isffff", &frame, &texturePath, &drawSourceX, &drawSourceY, &drawSourceW, &drawSourceH)) {
-            AnimationFrame animationFrame = { .frame = frame, .texture = NULL, .drawSource = { drawSourceX, drawSourceY, drawSourceW, drawSourceH } };
-            animationFrame.texture = se_asset_manager_get_texture(texturePath);
+            AnimationFrame animationFrame = {
+                .frame = frame,
+                .texture = se_asset_manager_get_texture(texturePath),
+                .drawSource = { drawSourceX, drawSourceY, drawSourceW, drawSourceH }
+            };
             anim->animationFrames[anim->frameCount++] = animationFrame;
         } else {
             frame = (int) i;
@@ -874,10 +877,14 @@ PyObject* cre_py_api_animated_sprite_add_animation(PyObject* self, PyObject* arg
     PyObject* framesList;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "isibO", crePyApiAnimatedSpriteAddAnimationKWList, &entity, &name, &speed, &loops, &framesList)) {
         AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_ANIMATED_SPRITE);
-        Animation newAnim = { .frameCount = 0, .currentFrame = 0, .speed = speed, .name = {'\0'}, .doesLoop = loops };
+        Animation newAnim = { .frameCount = 0, .currentFrame = 0, .speed = speed, .name = {'\0'}, .doesLoop = loops, .isValid = true };
         strcpy(newAnim.name, name);
         py_load_animated_sprite_anim_frames(&newAnim, framesList);
         animated_sprite_component_add_animation(animatedSpriteComponent, newAnim);
+        // If the only animation set it to the current
+        if (animatedSpriteComponent->animationCount == 1) {
+            animated_sprite_component_set_animation(animatedSpriteComponent, newAnim.name);
+        }
         Py_RETURN_NONE;
     }
     return NULL;

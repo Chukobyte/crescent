@@ -16,6 +16,13 @@
                 "wrap_t": "repeat",
                 "filter_min": "nearest",
                 "filter_mag": "nearest"
+            },
+            {
+                "file_path": "assets/images/player/player.png",
+                "wrap_s": "clamp_to_border",
+                "wrap_t": "clamp_to_border",
+                "filter_min": "nearest",
+                "filter_mag": "nearest"
             }
         ],
         "fonts": []

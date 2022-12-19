@@ -50,43 +50,6 @@
             ],
             "children": [
                 {
-                    "name": "ColorRect",
-                    "type": "ColorRect",
-                    "tags": null,
-                    "external_node_source": null,
-                    "components": [
-                        {
-                            "type": "transform_2d",
-                            "position": {
-                                "x": -8.0,
-                                "y": -8.0
-                            },
-                            "scale": {
-                                "x": 1.0,
-                                "y": 1.0
-                            },
-                            "rotation": 0.0,
-                            "z_index": 0,
-                            "z_index_relative_to_parent": true,
-                            "ignore_camera": false
-                        },
-                        {
-                            "type": "color_rect",
-                            "size": {
-                                "w": 17.0,
-                                "h": 17.0
-                            },
-                            "color": {
-                                "r": 205,
-                                "g": 11,
-                                "b": 11,
-                                "a": 255
-                            }
-                        }
-                    ],
-                    "children": []
-                },
-                {
                     "name": "Collider2D",
                     "type": "Collider2D",
                     "tags": null,
