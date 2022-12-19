@@ -123,6 +123,7 @@ SESpatialHashMapCollisionResult se_spatial_hash_map_compute_collision(SESpatialH
                 SESpatialHashMapGridSpacesHandle* entityToCollideObjectHandle = (SESpatialHashMapGridSpacesHandle*) *(SESpatialHashMapGridSpacesHandle**) se_hash_map_get(hashMap->objectToGridMap, &entityToCollide);
                 // Now that we have passed all checks, actually check collision
                 if (se_rect2_does_rectangles_overlap(&objectHandle->collisionRect, &entityToCollideObjectHandle->collisionRect)) {
+                    SE_ASSERT_FMT(result.collisionCount + 1 <= SE_SPATIAL_HASH_GRID_MAX_COLLISIONS, "At limit of collisions '%d', consider increasing 'SE_SPATIAL_HASH_GRID_MAX_COLLISIONS'", SE_SPATIAL_HASH_GRID_MAX_COLLISIONS);
                     result.collisions[result.collisionCount++] = entityToCollide;
                 }
             }

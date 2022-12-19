@@ -8,14 +8,14 @@
 #include "../../ecs/component/transform2d_component.h"
 #include "../../ecs/component/collider2d_component.h"
 
-#define RBE_MAX_ENTITY_COLLISION 4
+#define CRE_MAX_ENTITY_COLLISION 8
 
 // TODO: Temp collision implementation, replace with a better one...
 
 typedef struct CollisionResult {
     Entity sourceEntity;
     size_t collidedEntityCount;
-    Entity collidedEntities[RBE_MAX_ENTITY_COLLISION];
+    Entity collidedEntities[CRE_MAX_ENTITY_COLLISION];
 } CollisionResult;
 
 CollisionResult cre_collision_process_entity_collisions(Entity entity);

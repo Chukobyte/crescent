@@ -3,7 +3,7 @@ class Timer:
         self.time = time
         self.time_remaining = time
 
-    def tick(self, delta_time: float):
+    def tick(self, delta_time: float) -> "Timer":
         self.time_remaining = max(self.time_remaining - delta_time, 0.0)
         return self
 

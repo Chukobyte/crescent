@@ -30,10 +30,14 @@ class GameMaster:
         )  # TODO: Replace with real value...
         self.time_since_last_enemy_spawn = 0.0
         self.enemies_active = 0
+        self.enemies_active_limit = 4
 
     def update(self, delta_time: float) -> None:
         self.time_since_last_enemy_spawn += delta_time
-        if self.time_since_last_enemy_spawn >= 2.0 and self.enemies_active < 4:
+        if (
+            self.time_since_last_enemy_spawn >= 2.0
+            and self.enemies_active < self.enemies_active_limit
+        ):
             self.spawn_enemy()
             self.time_since_last_enemy_spawn = 0.0
 

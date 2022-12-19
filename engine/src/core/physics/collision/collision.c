@@ -17,7 +17,7 @@ CollisionResult cre_collision_process_entity_collisions(Entity entity) {
     SESpatialHashMapCollisionResult hashMapCollisionResult = se_spatial_hash_map_compute_collision(globalSpatialHashMap, entity);
     for (size_t i = 0; i < hashMapCollisionResult.collisionCount; i++) {
         if (!is_entity_in_collision_exceptions(hashMapCollisionResult.collisions[i], colliderComponent)) {
-            SE_ASSERT_FMT(collisionResult.collidedEntityCount < RBE_MAX_ENTITY_COLLISION, "Collisions for entity '%d' beyond the limit of %d.  Consider increasing 'RBE_MAX_ENTITY_COLLISION'!", entity, RBE_MAX_ENTITY_COLLISION);
+            SE_ASSERT_FMT(collisionResult.collidedEntityCount < CRE_MAX_ENTITY_COLLISION, "Collisions for entity '%d' beyond the limit of %d.  Consider increasing 'CRE_MAX_ENTITY_COLLISION'!", entity, CRE_MAX_ENTITY_COLLISION);
             collisionResult.collidedEntities[collisionResult.collidedEntityCount++] = hashMapCollisionResult.collisions[i];
         }
     }
@@ -34,8 +34,8 @@ CollisionResult cre_collision_process_mouse_collisions(Rect2* collisionRect) {
         Rect2 otherCollisionRect = cre_get_collision_rectangle(otherEntity, otherTransformComponent, otherColliderComponent);
         if (se_rect2_does_rectangles_overlap(collisionRect, &otherCollisionRect)) {
             collisionResult.collidedEntities[collisionResult.collidedEntityCount++] = otherEntity;
-            if (collisionResult.collidedEntityCount >= RBE_MAX_ENTITY_COLLISION) {
-                se_logger_warn("Reached collided entity limit of '%d' (with mouse)", RBE_MAX_ENTITY_COLLISION);
+            if (collisionResult.collidedEntityCount >= CRE_MAX_ENTITY_COLLISION) {
+                se_logger_warn("Reached collided entity limit of '%d' (with mouse)", CRE_MAX_ENTITY_COLLISION);
                 break;
             }
         }

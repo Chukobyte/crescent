@@ -1,5 +1,8 @@
+import random
+
 from crescent_api import *
 from src.utils.task import TaskManager, co_suspend, Task, co_wait_seconds
+from src.utils.timer import Timer
 
 
 def get_player() -> Node2D:
@@ -33,8 +36,22 @@ class Enemy(Node2D):
     def get_center_pos(self) -> Vector2:
         center_pos = self.position
         if self.color_rect:
-            self.color_rect.size.to_vec2() / Vector2(2, 2)
+            center_pos += self.color_rect.size.to_vec2() / Vector2(2, 2)
         return center_pos
+
+
+class EnemyAttack(Collider2D):
+    def __init__(self, entity_id: int):
+        super().__init__(entity_id)
+        self.enemy: Type[Enemy, None] = None
+        self.damage = 10
+        self.speed = 40
+
+    @staticmethod
+    def spawn(attack_type: Type["EnemyAttack"], enemy: Enemy) -> "EnemyAttack":
+        attack = attack_type.new()
+        attack.enemy = enemy
+        return attack
 
 
 class GingerBreadMan(Enemy):
@@ -42,13 +59,45 @@ class GingerBreadMan(Enemy):
         self._init_components(
             size=Size2D(17, 17), color=Color.linear_color(0.8, 0.8, 0.1)
         )
+        self.speed = 35
 
 
 class Elf(Enemy):
     def _start(self) -> None:
         self._init_components(
-            size=Size2D(8, 6), color=Color.linear_color(0.0, 0.7, 0.0)
+            size=Size2D(4, 6), color=Color.linear_color(0.0, 0.7, 0.0)
         )
+
+
+class SnowManAttack(EnemyAttack):
+    def __init__(self, entity_id: int):
+        super().__init__(entity_id)
+        self.color_rect = None
+        self.collider = None
+        self.direction = Vector2.ZERO()
+        self.timer = Timer(5.0)
+
+    def _start(self) -> None:
+        size = Size2D(4, 4)
+        # Color Rect
+        self.color_rect = ColorRect.new()
+        self.color_rect.color = Color.WHITE()
+        self.color_rect.size = size
+        self.add_child(self.color_rect)
+        # Collider
+        self.collider = Collider2D.new()
+        self.collider.extents = size
+        self.add_child(self.collider)
+
+    def _physics_update(self, delta_time: float) -> None:
+        self.add_to_position(
+            Vector2(
+                self.direction.x * self.speed * delta_time,
+                self.direction.y * self.speed * delta_time,
+            )
+        )
+        if self.timer.tick(delta_time).time_remaining <= 0.0:
+            self.queue_deletion()
 
 
 class SnowMan(Enemy):
@@ -116,6 +165,20 @@ class SnowMan(Enemy):
                 elif current_state == SnowManState.ATTACKING_PLAYER:
                     await co_wait_seconds(1.5)
                     # Attack
+                    snowman_attack = EnemyAttack.spawn(SnowManAttack, self)
+                    # High Attack
+                    if random.choice([0, 1]) == 0:
+                        attack_offset = Vector2(0, -4)
+                    # Low attack
+                    else:
+                        attack_offset = Vector2(0, 3)
+                    snowman_attack.position = self.get_center_pos() + attack_offset
+                    dir_to_player = self.position.direction_to(player.position)
+                    if dir_to_player.x > 0:
+                        snowman_attack.direction = Vector2.RIGHT()
+                    else:
+                        snowman_attack.direction = Vector2.LEFT()
+                    SceneTree.get_root().add_child(snowman_attack)
                     # Delay after attack
                     await co_wait_seconds(1.0)
                 await co_suspend()

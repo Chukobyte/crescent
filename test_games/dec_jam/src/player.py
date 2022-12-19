@@ -1,5 +1,5 @@
 from crescent_api import *
-from src.enemy import Enemy
+from src.enemy import Enemy, EnemyAttack
 from src.game_master import GameMaster, LEVEL_BOUNDARY
 from src.health_bar import HealthBar
 from src.utils.task import *
@@ -173,29 +173,36 @@ class Player(Node2D):
         # temp
         collisions = CollisionHandler.process_collisions(self.collider)
         for collider in collisions:
-            collider_parent = collider.get_parent()
-            if issubclass(type(collider_parent), Enemy):
-                self.stats.hp -= 10
+            if issubclass(type(collider), EnemyAttack):
+                self.stats.hp -= collider.damage
                 self.health_bar.set_health_percentage(self.stats.hp)
-                collider_parent.queue_deletion()
+                collider.queue_deletion()
                 if self.stats.hp <= 0:
                     SceneTree.change_scene(path="scenes/main.cscn")
-            elif issubclass(type(collider_parent), LevelCompletionItem):
-                SceneTree.change_scene(path="scenes/main.cscn")
+            else:
+                collider_parent = collider.get_parent()
+                if issubclass(type(collider_parent), Enemy):
+                    self.stats.hp -= 10
+                    self.health_bar.set_health_percentage(self.stats.hp)
+                    collider_parent.queue_deletion()
+                    if self.stats.hp <= 0:
+                        SceneTree.change_scene(path="scenes/main.cscn")
+                elif issubclass(type(collider_parent), LevelCompletionItem):
+                    SceneTree.change_scene(path="scenes/main.cscn")
 
     def _update_stance(self, stance: str) -> None:
         if self.stance == stance:
             return None
         self.stance = stance
         if stance == PlayerStance.STANDING:
-            stance_size = Size2D(17, 17)
-            stance_pos = self._center_pos()
+            stance_size = Size2D(10, 12)
+            stance_pos = Vector2(-4, -6)
         elif stance == PlayerStance.CROUCHING:
-            stance_size = Size2D(17, 8)
-            stance_pos = self._center_pos() + Vector2(0, 9)
+            stance_size = Size2D(10, 6)
+            stance_pos = Vector2(-4, -6) + Vector2(0, 9)
         elif stance == PlayerStance.IN_AIR:
-            stance_size = Size2D(17, 17)
-            stance_pos = self._center_pos()
+            stance_size = Size2D(10, 12)
+            stance_pos = Vector2(-4, -6)
         else:
             print("***ERROR: invalid stance!")
             stance_size = Size2D()
