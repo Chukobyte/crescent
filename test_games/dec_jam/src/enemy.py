@@ -12,7 +12,7 @@ class Enemy(Node2D):
         self.direction_facing = Vector2.RIGHT()
         self.color_rect = None
         self.collider = None
-        self.speed = 100
+        self.speed = 30
 
     def _physics_update(self, delta_time: float) -> None:
         self.add_to_position(
@@ -40,14 +40,14 @@ class Enemy(Node2D):
 class GingerBreadMan(Enemy):
     def _start(self) -> None:
         self._init_components(
-            size=Size2D(48, 64), color=Color.linear_color(0.8, 0.8, 0.1)
+            size=Size2D(17, 17), color=Color.linear_color(0.8, 0.8, 0.1)
         )
 
 
 class Elf(Enemy):
     def _start(self) -> None:
         self._init_components(
-            size=Size2D(48, 32), color=Color.linear_color(0.0, 0.7, 0.0)
+            size=Size2D(8, 6), color=Color.linear_color(0.0, 0.7, 0.0)
         )
 
 
@@ -60,7 +60,7 @@ class SnowMan(Enemy):
 
     def _start(self) -> None:
         self._init_components(
-            size=Size2D(48, 64), color=Color.linear_color(0.7, 0.7, 0.7)
+            size=Size2D(17, 17), color=Color.linear_color(0.7, 0.7, 0.7)
         )
 
     def _end(self) -> None:
@@ -77,9 +77,9 @@ class SnowMan(Enemy):
             RETREATING = 2  # When player is too close, snow man will try to retreat
 
         def determine_state(snowman: SnowMan, player_node: Node2D) -> int:
-            attack_range = MinMax(200, 256)
+            attack_range = MinMax(36, 40)
             distance_to_player = snowman.get_center_pos().distance_to(
-                player_node.position
+                player_node.position + Vector2(-8, -8)
             )
             if attack_range.is_above(distance_to_player):
                 return SnowManState.FOLLOWING_PLAYER

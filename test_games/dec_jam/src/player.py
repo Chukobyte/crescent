@@ -16,7 +16,7 @@ class Attack(Collider2D):
         self._task_manager = TaskManager(tasks=[Task(self._update_task())])
 
     def _start(self) -> None:
-        collider_size = Size2D(8, 8)
+        collider_size = Size2D(6, 6)
         collider_color = Color(0, 200, 0, 150)
         self.set_extents(collider_size)
         self.set_color(collider_color)
@@ -92,7 +92,7 @@ class Player(Node2D):
         self.stats = PlayerStats(hp=100)
         self.color_rect = None
         self.collider = None
-        self.speed = 75
+        self.speed = 25
         self.direction_facing = Vector2.RIGHT()
         self.stance = PlayerStance.STANDING
         self._game_master = GameMaster(self)  # Temp
@@ -114,6 +114,7 @@ class Player(Node2D):
         self.add_child(self.health_bar)
         # Temp spawn boundary indicator
         level_completion_item = LevelCompletionItem.new()
+        level_completion_item.size = Size2D(4, 4)
         level_completion_item.color = Color.linear_color(0.8, 0.1, 0.8)
         level_completion_item.position = Vector2(LEVEL_BOUNDARY.x, self.position.y)
         SceneTree.get_root().add_child(level_completion_item)
@@ -214,7 +215,7 @@ class Player(Node2D):
                     elif not Input.is_action_pressed(name="crouch"):
                         self._update_stance(PlayerStance.STANDING)
                 elif self.stance == PlayerStance.IN_AIR:
-                    jump_height = 24
+                    jump_height = 12
                     position_before_jump = self.position
                     position_to_jump_to = position_before_jump + Vector2(
                         0, -jump_height

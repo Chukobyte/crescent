@@ -4,17 +4,13 @@ from typing import Tuple
 from crescent_api import Node2D, Vector2, SceneTree, Rect2
 from src.enemy import GingerBreadMan, Elf, SnowMan
 
-
-# TODO: Need to add utilities to python api to query the scene tree for things (maybe by tags)
-
-
 # Need a place to store generic data about the game
 
-GAME_RESOLUTION = Vector2(800, 450)
+GAME_RESOLUTION = Vector2(144, 81)
 # Setting boundary to the right of the player, the player will need to move left.
 # Will update to reverse it once more levels are added.
 LEVEL_BOUNDARY = Rect2(
-    -1600.0,
+    -432.0,
     -GAME_RESOLUTION.y / 2.0,
     GAME_RESOLUTION.x / 2.0,
     GAME_RESOLUTION.y / 2.0,
@@ -67,13 +63,13 @@ class GameMaster:
         return left_pos, Vector2.RIGHT()
 
     def spawn_enemy(self) -> None:
-        pos_offset = Vector2(256.0, -16.0)
+        pos_offset = Vector2(128.0, -8.0)
         rand_n = random.choice([0, 1, 2])
         if rand_n == 0:
             enemy_node = GingerBreadMan.new()
         elif rand_n == 1:
             enemy_node = Elf.new()
-            pos_offset += Vector2(0, 32)
+            pos_offset += Vector2(0, 11)
         else:
             enemy_node = SnowMan.new()
 
