@@ -385,7 +385,7 @@ class AnimationFrame:
 
 
 class Animation:
-    def __init__(self, name: str, speed: int, loops: bool, frames: list):
+    def __init__(self, name: str, speed: int, loops: bool, frames: List[AnimationFrame]):
         self.name = name
         self.speed = speed
         self.loops = loops

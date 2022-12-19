@@ -260,7 +260,7 @@ JsonSceneNode* cre_json_load_scene_node(cJSON* nodeJson, JsonSceneNode* parentNo
                                     frameData.drawSource.h);
                     animation.animationFrames[animation.frameCount++] = frameData;
                 }
-                animatedSpriteComponent->animations[animatedSpriteComponent->animationCount++] = animation;
+                animated_sprite_component_data_add_animation(animatedSpriteComponent, animation);
                 if (strcmp(currentAnimationName, animation.name) == 0) {
                     animatedSpriteComponent->currentAnimation = animation;
                 }
