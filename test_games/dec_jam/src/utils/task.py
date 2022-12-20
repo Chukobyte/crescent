@@ -21,6 +21,10 @@ class Task:
         self.coroutine = coroutine
         self.on_close_subscribers = []
         self.valid = True
+        self.parent_task = None
+
+    def __await__(self):
+        yield self
 
     def close(self) -> None:
         try:
@@ -51,19 +55,33 @@ class TaskManager:
         self.tasks.remove(task)
 
     def update(self) -> None:
-        for task in self.tasks[:]:
+        for i, task in enumerate(self.tasks[:]):
             if task.valid:
                 try:
-                    awaitable = task.coroutine.send(None)
-                    if awaitable.state == Awaitable.State.FINISHED:
-                        raise StopIteration
+                    task_return_value = task.coroutine.send(None)
+                    if issubclass(type(task_return_value), Awaitable):
+                        if task_return_value.state == Awaitable.State.FINISHED:
+                            raise StopIteration
+                    elif issubclass(type(task_return_value), Task):
+                        # Swap sub task in place
+                        task_return_value.parent_task = task
+                        self.tasks[i] = task_return_value
                 except StopIteration:
-                    self.remove_task(task)
+                    if task.parent_task:
+                        # Swap subtask with parent
+                        task.close()
+                        self.tasks[i] = task.parent_task
+                    else:
+                        self.remove_task(task)
 
     def kill_tasks(self) -> None:
         for task in self.tasks[:]:
             if task.valid:
                 task.close()
+            parent_task = task.parent_task
+            while parent_task:
+                parent_task.close()
+                parent_task = parent_task.parent_task
 
 
 def co_suspend() -> Awaitable:
@@ -75,37 +93,41 @@ def co_return() -> Awaitable:
 
 
 async def co_wait_until(predicate: [Callable, Coroutine]):
-    if isinstance(predicate, Callable):
-        while not predicate():
-            await co_suspend()
-    elif isinstance(predicate, Coroutine):
-        try:
-            while predicate.send(None).state == Awaitable.State.SUSPENDED:
+    async def co_wait_until_internal(_predicate: [Callable, Coroutine]):
+        if isinstance(_predicate, Callable):
+            while not _predicate():
                 await co_suspend()
-        except StopIteration:
-            pass
-    else:
-        raise Exception(
-            f"Didn't pass in a Callable or Coroutine into co_wait_until! predicate = {str(predicate)}"
-        )
+        elif isinstance(_predicate, Coroutine):
+            try:
+                while _predicate.send(None).state == Awaitable.State.SUSPENDED:
+                    await co_suspend()
+            except StopIteration:
+                pass
+        else:
+            raise Exception(
+                f"Didn't pass in a Callable or Coroutine into co_wait_until! predicate = {str(_predicate)}"
+            )
+    await Task(co_wait_until_internal(predicate))
 
 
 # TODO: Get current time from engine function to allow for time dilation changes
 async def co_wait_seconds(
     seconds: float, time_func: Callable = None, ignore_time_dilation=False
 ):
-    if not time_func:
-        time_func = time.time
-    start_time = time_func()
-    while True:
-        current_time = time_func()
-        if not ignore_time_dilation:
-            current_time *= World.get_time_dilation()
-        delta = current_time - start_time
-        if delta >= seconds:
-            break
+    async def co_wait_seconds_internal(_seconds: float, _time_func: Callable = None, _ignore_time_dilation=False):
+        if not _time_func:
+            _time_func = time.time
+        start_time = _time_func()
+        while True:
+            current_time = _time_func()
+            if not _ignore_time_dilation:
+                current_time *= World.get_time_dilation()
+            delta = current_time - start_time
+            if delta >= _seconds:
+                break
+            await co_suspend()
         await co_suspend()
-    await co_suspend()
+    await Task(co_wait_seconds_internal(seconds, time_func, ignore_time_dilation))
 
 
 # Coroutine example
