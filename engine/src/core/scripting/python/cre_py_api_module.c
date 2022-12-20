@@ -361,7 +361,7 @@ PyObject* cre_py_api_world_set_time_dilation(PyObject* self, PyObject* args, PyO
 }
 
 PyObject* cre_py_api_world_get_time_dilation(PyObject* self, PyObject* args) {
-    return Py_BuildValue("(f)", cre_world_get_time_dilation());
+    return Py_BuildValue("f", cre_world_get_time_dilation());
 }
 
 // Audio Manager

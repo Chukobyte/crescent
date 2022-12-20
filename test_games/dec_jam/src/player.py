@@ -41,6 +41,12 @@ class PlayerAttack(Collider2D):
                 for collider in collisions:
                     collider_parent = collider.get_parent()
                     if issubclass(type(collider_parent), Enemy):
+                        # Testing time dilation...
+                        World.set_time_dilation(0.01)
+                        await co_wait_seconds(
+                            0.0, time_func=None, ignore_time_dilation=True
+                        )
+                        World.set_time_dilation(1.0)
                         collider_parent.queue_deletion()
                         self.queue_deletion()
                 await co_suspend()
@@ -150,6 +156,9 @@ class Player(Node2D):
         level_completion_item.color = Color.linear_color(0.8, 0.1, 0.8)
         level_completion_item.position = Vector2(LEVEL_BOUNDARY.x, self.position.y)
         SceneTree.get_root().add_child(level_completion_item)
+        # TODO: Get dir of level completion item and face that dir
+        self.scale = Vector2(-1, 1)
+        self.direction_facing = Vector2.LEFT()
 
     def _update(self, delta_time: float) -> None:
         if Input.is_action_just_pressed(name="quit_game"):

@@ -1,6 +1,8 @@
 import time
 from typing import Coroutine, Callable, Optional, List
 
+from crescent_api import World
+
 
 class Awaitable:
     class State:
@@ -89,12 +91,16 @@ async def co_wait_until(predicate: [Callable, Coroutine]):
 
 
 # TODO: Get current time from engine function to allow for time dilation changes
-async def co_wait_seconds(seconds: float, time_func: Callable = None):
+async def co_wait_seconds(
+    seconds: float, time_func: Callable = None, ignore_time_dilation=False
+):
     if not time_func:
         time_func = time.time
     start_time = time_func()
     while True:
         current_time = time_func()
+        if not ignore_time_dilation:
+            current_time *= World.get_time_dilation()
         delta = current_time - start_time
         if delta >= seconds:
             break
