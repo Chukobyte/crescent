@@ -144,7 +144,6 @@ class Player(Node2D):
         self.health_bar.ignore_camera = True
         self.health_bar.inner_hp_bar.ignore_camera = True
         SceneTree.get_root().add_child(self.health_bar)
-        # self.add_child(self.health_bar)
         # Temp spawn boundary indicator
         level_completion_item = LevelCompletionItem.new()
         level_completion_item.size = Size2D(4, 4)
@@ -177,21 +176,21 @@ class Player(Node2D):
         collisions = CollisionHandler.process_collisions(self.collider)
         for collider in collisions:
             if issubclass(type(collider), EnemyAttack):
-                self.stats.hp -= collider.damage
-                self.health_bar.set_health_percentage(self.stats.hp)
+                self._take_damage(damage=10)
                 collider.queue_deletion()
-                if self.stats.hp <= 0:
-                    SceneTree.change_scene(path="scenes/main.cscn")
             else:
                 collider_parent = collider.get_parent()
                 if issubclass(type(collider_parent), Enemy):
-                    self.stats.hp -= 10
-                    self.health_bar.set_health_percentage(self.stats.hp)
+                    self._take_damage(damage=10)
                     collider_parent.queue_deletion()
-                    if self.stats.hp <= 0:
-                        SceneTree.change_scene(path="scenes/main.cscn")
                 elif issubclass(type(collider_parent), LevelCompletionItem):
                     SceneTree.change_scene(path="scenes/main.cscn")
+
+    def _take_damage(self, damage: int) -> None:
+        self.stats.hp -= damage
+        self.health_bar.set_health_percentage(self.stats.hp)
+        if self.stats.hp <= 0:
+            SceneTree.change_scene(path="scenes/main.cscn")
 
     def _update_stance(self, stance: str) -> None:
         if self.stance == stance:
