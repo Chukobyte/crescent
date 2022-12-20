@@ -42,7 +42,7 @@ class PlayerAttack(Collider2D):
                     collider_parent = collider.get_parent()
                     if issubclass(type(collider_parent), Enemy):
                         # Testing time dilation...
-                        World.set_time_dilation(0.01)
+                        World.set_time_dilation(0.0)
                         await co_wait_seconds(
                             0.1, time_func=None, ignore_time_dilation=True
                         )
@@ -273,7 +273,12 @@ class Player(Node2D):
                     jump_time = 1.0
                     timer = Timer(jump_time / 2.0)
                     # Go Up
-                    while timer.tick(engine_delta_time).time_remaining > 0:
+                    while (
+                        timer.tick(
+                            self.get_full_time_dilation() * engine_delta_time
+                        ).time_remaining
+                        > 0
+                    ):
                         alpha = 1.0 - map_to_unit_range(
                             timer.time_remaining, 0.0, timer.time
                         )
@@ -290,7 +295,12 @@ class Player(Node2D):
                         await co_suspend()
                     # Go Down
                     timer.reset()
-                    while timer.tick(engine_delta_time).time_remaining > 0:
+                    while (
+                        timer.tick(
+                            self.get_full_time_dilation() * engine_delta_time
+                        ).time_remaining
+                        > 0
+                    ):
                         alpha = 1.0 - map_to_unit_range(
                             timer.time_remaining, 0.0, timer.time
                         )

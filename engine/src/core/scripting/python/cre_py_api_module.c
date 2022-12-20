@@ -458,8 +458,13 @@ PyObject* cre_py_api_node_new(PyObject* self, PyObject* args, PyObject* kwargs) 
 PyObject* cre_py_api_node_queue_deletion(PyObject* self, PyObject* args, PyObject* kwargs) {
     Entity entity;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
-        SceneTreeNode* node = cre_scene_manager_get_entity_tree_node(entity);
-        cre_queue_destroy_tree_node_entity_all(node);
+        if (cre_scene_manager_has_entity_tree_node(entity)) {
+            SceneTreeNode* node = cre_scene_manager_get_entity_tree_node(entity);
+            cre_queue_destroy_tree_node_entity_all(node);
+        } else {
+            // TODO: May need to explicitly have an is 'being deleted' state for nodes
+            se_logger_warn("Entity not found in tree, skipping queue deletion.");
+        }
         Py_RETURN_NONE;
     }
     return NULL;
@@ -534,10 +539,10 @@ PyObject* cre_py_api_node_get_children(PyObject* self, PyObject* args, PyObject*
 PyObject* cre_py_api_node_get_parent(PyObject* self, PyObject* args, PyObject* kwargs) {
     Entity entity;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
-        SceneTreeNode* treeNode = cre_scene_manager_get_entity_tree_node(entity);
-        if (treeNode->parent == NULL) {
+        if (!cre_scene_manager_has_entity_tree_node(entity)) {
             Py_RETURN_NONE;
         }
+        SceneTreeNode* treeNode = cre_scene_manager_get_entity_tree_node(entity);
         return cre_py_utils_get_entity_instance(treeNode->parent->entity);
     }
     return NULL;
