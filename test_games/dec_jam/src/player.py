@@ -38,15 +38,19 @@ class PlayerAttack(Collider2D):
         try:
             while life_timer.tick(engine_delta_time).time_remaining > 0:
                 collisions = CollisionHandler.process_collisions(self)
+                enemies_collided = []
                 for collider in collisions:
                     collider_parent = collider.get_parent()
                     if issubclass(type(collider_parent), Enemy):
-                        # Single frame freeze by setting time dilation to 0.0 then back to 1.0
-                        World.set_time_dilation(0.0)
-                        await co_suspend()
-                        World.set_time_dilation(1.0)
-                        collider_parent.queue_deletion()
-                        self.queue_deletion()
+                        enemies_collided.append(collider_parent)
+                if enemies_collided:
+                    # Single frame freeze by setting time dilation to 0.0 then back to 1.0
+                    World.set_time_dilation(0.0)
+                    await co_suspend()
+                    World.set_time_dilation(1.0)
+                    for enemy in enemies_collided:
+                        enemy.queue_deletion()
+                    self.queue_deletion()
                 await co_suspend()
             self.queue_deletion()
         except GeneratorExit:
