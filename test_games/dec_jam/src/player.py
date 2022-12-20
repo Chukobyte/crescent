@@ -60,17 +60,6 @@ class PlayerAttack(Collider2D):
         self._task_manager.kill_tasks()
 
 
-class LevelCompletionItem(ColorRect):
-    def __init__(self, entity_id: int):
-        super().__init__(entity_id)
-        self.collider = None
-
-    def _start(self) -> None:
-        self.collider = Collider2D.new()
-        self.collider.extents = self.size
-        self.add_child(self.collider)
-
-
 class PlayerStance:
     STANDING = "standing"
     CROUCHING = "crouching"
@@ -153,11 +142,7 @@ class Player(Node2D):
         self.health_bar.inner_hp_bar.ignore_camera = True
         SceneTree.get_root().add_child(self.health_bar)
         # Temp spawn boundary indicator
-        level_completion_item = LevelCompletionItem.new()
-        level_completion_item.size = Size2D(4, 4)
-        level_completion_item.color = Color.linear_color(0.8, 0.1, 0.8)
-        level_completion_item.position = Vector2(LEVEL_BOUNDARY.x, self.position.y)
-        SceneTree.get_root().add_child(level_completion_item)
+        self._game_master.initialize_level()
         # TODO: Get dir of level completion item and face that dir
         self.scale = Vector2(-1, 1)
         self.direction_facing = Vector2.LEFT()

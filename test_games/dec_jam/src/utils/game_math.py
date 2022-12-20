@@ -7,7 +7,7 @@ PI = 3.141593
 
 
 def map_to_range(input, input_min, input_max, output_min, output_max):
-    return (input - input_min / (input_max - input_min)) * (
+    return ((input - input_min) / (input_max - input_min)) * (
         output_max - output_min
     ) + output_min
 
