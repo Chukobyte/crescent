@@ -46,14 +46,13 @@ class TaskManager:
 
     def remove_task(self, task: Task) -> None:
         if task.parent_task:
-            # Swap subtask with parent
             task.close()
             try:
+                # Swap subtask with parent
                 task_index = self.tasks.index(task)
                 self.tasks[task_index] = task.parent_task
-                print(f"task_index = {task_index}")
             except ValueError as e:
-                print(f"Task manage remove task error!\nValue error: {e}")
+                print(f"Task manager remove task error!\nValue error: {e}")
         else:
             self.tasks.remove(task)
 
@@ -70,7 +69,8 @@ class TaskManager:
                         task_return_value.parent_task = task
                         self.tasks[i] = task_return_value
                 except StopIteration:
-                    self.remove_task(task)
+                    if self.tasks:
+                        self.remove_task(task)
 
     def kill_tasks(self) -> None:
         for task in self.tasks[:]:
