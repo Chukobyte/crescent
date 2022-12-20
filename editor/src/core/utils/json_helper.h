@@ -14,8 +14,8 @@ inline bool HasKey(const nlohmann::json& json, const std::string& key) {
     try {
         json.at(key);
         return true;
-    } catch (nlohmann::json::type_error& te) {
-    } catch (nlohmann::json::out_of_range& oor) {
+    } catch (nlohmann::json::type_error&) {
+    } catch (nlohmann::json::out_of_range&) {
     }
     return false;
 }

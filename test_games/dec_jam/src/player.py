@@ -190,7 +190,7 @@ class Player(Node2D):
         self.stats.hp -= damage
         self.health_bar.set_health_percentage(self.stats.hp)
         if self.stats.hp <= 0:
-            SceneTree.change_scene(path="scenes/main.cscn")
+            SceneTree.change_scene(path="scenes/end_screen.cscn")
 
     def _update_stance(self, stance: str) -> None:
         if self.stance == stance:

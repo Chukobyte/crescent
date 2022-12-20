@@ -5,7 +5,7 @@
     "resolution_width": 144,
     "resolution_height": 81,
     "target_fps": 66,
-    "initial_node_path": "scenes/main.cscn",
+    "initial_node_path": "scenes/title_screen.cscn",
     "colliders_visible": false,
     "assets": {
         "audio_sources": [],
@@ -25,7 +25,13 @@
                 "filter_mag": "nearest"
             }
         ],
-        "fonts": []
+        "fonts": [
+            {
+                "file_path": "assets/fonts/fight_font.ttf",
+                "uid": "fight-16",
+                "size": 16
+            }
+        ]
     },
     "inputs": [
         {
