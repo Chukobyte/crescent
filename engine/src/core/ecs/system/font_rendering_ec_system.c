@@ -39,10 +39,8 @@ void font_rendering_system_render() {
         se_renderer_queue_font_draw_call(
             textLabelComponent->font,
             textLabelComponent->text,
-            (globalTransform->position.x - renderCamera->viewport.x + renderCamera->offset.x) *
-            renderCamera->zoom.x,
-            (globalTransform->position.y - renderCamera->viewport.y + renderCamera->offset.y) *
-            renderCamera->zoom.y,
+            (globalTransform->position.x - renderCamera->viewport.x + renderCamera->offset.x) * renderCamera->zoom.x,
+            (globalTransform->position.y - renderCamera->viewport.y + renderCamera->offset.y) * renderCamera->zoom.y,
             fontTransformComp->localTransform.scale.x * globalTransform->scale.x * renderCamera->zoom.x,
             textLabelComponent->color,
             globalTransform->zIndex

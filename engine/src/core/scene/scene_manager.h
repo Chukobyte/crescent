@@ -46,6 +46,9 @@ EntityArray cre_scene_manager_get_self_and_parent_nodes(Entity entity);
 // Helper function to call notify on entity and children node 'on transform changed' events.  Uses recursion.
 void cre_scene_manager_notify_all_on_transform_events(Entity entity, Transform2DComponent* transformComp);
 
+typedef void (*ExecuteOnAllTreeNodesFunc) (SceneTreeNode*);
+void cre_scene_manager_execute_on_root_and_child_nodes(ExecuteOnAllTreeNodesFunc func);
+
 #ifdef __cplusplus
 }
 #endif

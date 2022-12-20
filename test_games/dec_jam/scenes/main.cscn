@@ -30,15 +30,15 @@
                 {
                     "type": "transform_2d",
                     "position": {
-                        "x": 400.0,
-                        "y": 348.0
+                        "x": 0.0,
+                        "y": 0.0
                     },
                     "scale": {
                         "x": 1.0,
                         "y": 1.0
                     },
                     "rotation": 0.0,
-                    "z_index": 0,
+                    "z_index": 1,
                     "z_index_relative_to_parent": true,
                     "ignore_camera": false
                 },
@@ -50,43 +50,6 @@
             ],
             "children": [
                 {
-                    "name": "ColorRect",
-                    "type": "ColorRect",
-                    "tags": null,
-                    "external_node_source": null,
-                    "components": [
-                        {
-                            "type": "transform_2d",
-                            "position": {
-                                "x": -24.0,
-                                "y": -48.0
-                            },
-                            "scale": {
-                                "x": 1.0,
-                                "y": 1.0
-                            },
-                            "rotation": 0.0,
-                            "z_index": 0,
-                            "z_index_relative_to_parent": true,
-                            "ignore_camera": false
-                        },
-                        {
-                            "type": "color_rect",
-                            "size": {
-                                "w": 48.0,
-                                "h": 96.0
-                            },
-                            "color": {
-                                "r": 205,
-                                "g": 11,
-                                "b": 11,
-                                "a": 255
-                            }
-                        }
-                    ],
-                    "children": []
-                },
-                {
                     "name": "Collider2D",
                     "type": "Collider2D",
                     "tags": null,
@@ -95,8 +58,8 @@
                         {
                             "type": "transform_2d",
                             "position": {
-                                "x": -24.0,
-                                "y": -48.0
+                                "x": -4.0,
+                                "y": -6.0
                             },
                             "scale": {
                                 "x": 1.0,
@@ -110,14 +73,14 @@
                         {
                             "type": "collider_2d",
                             "extents": {
-                                "w": 48.0,
-                                "h": 96.0
+                                "w": 10.0,
+                                "h": 12.0
                             },
                             "color": {
                                 "r": 0,
                                 "g": 0,
                                 "b": 204,
-                                "a": 255
+                                "a": 150
                             }
                         }
                     ],
@@ -134,8 +97,8 @@
                 {
                     "type": "transform_2d",
                     "position": {
-                        "x": -100.0,
-                        "y": 100.0
+                        "x": -432.0,
+                        "y": -58.0
                     },
                     "scale": {
                         "x": 1.0,
@@ -182,7 +145,7 @@
                             "draw_source": {
                                 "x": 0.0,
                                 "y": 0.0,
-                                "w": 1600.0,
+                                "w": 9600.0,
                                 "h": 900.0
                             },
                             "origin": {

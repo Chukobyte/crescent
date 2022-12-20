@@ -53,7 +53,7 @@ void cre_node_event_on_entity_exit_scene(SESubjectNotifyPayload* payload);
 
 static NodeEventDatabase eventDatabase = {
     .entityEventMaps = {NULL},
-    .nodeEventObserverEntry = {0},
+    .nodeEventObserverEntry = {{0}},
     .hasEntityRegisteredOnSceneExitCallback = {false}
 };
 static SEObserver nodeEntityOnExitSceneObserver = { .on_notify = cre_node_event_on_entity_exit_scene };

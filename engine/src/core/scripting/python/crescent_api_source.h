@@ -38,7 +38,7 @@
 "import json\n"\
 "from enum import Enum\n"\
 "from json import JSONDecodeError\n"\
-"from typing import Callable\n"\
+"from typing import Callable, Type, List\n"\
 "\n"\
 "import crescent_api_internal\n"\
 "\n"\
@@ -61,27 +61,27 @@
 "        return f\"({self.r}, {self.g}, {self.b}, {self.a})\"\n"\
 "\n"\
 "    @staticmethod\n"\
-"    def linear_color(r: float, g: float, b: float, a=1.0):\n"\
+"    def linear_color(r: float, g: float, b: float, a=1.0) -> \"Color\":\n"\
 "        return Color(int(r * 255), int(g * 255), int(b * 255), int(a * 255))\n"\
 "\n"\
 "    @staticmethod\n"\
-"    def BLACK():\n"\
+"    def BLACK() -> \"Color\":\n"\
 "        return Color(0, 0, 0)\n"\
 "\n"\
 "    @staticmethod\n"\
-"    def WHITE():\n"\
+"    def WHITE() -> \"Color\":\n"\
 "        return Color(255, 255, 255)\n"\
 "\n"\
 "    @staticmethod\n"\
-"    def RED():\n"\
+"    def RED() -> \"Color\":\n"\
 "        return Color(255, 0, 0)\n"\
 "\n"\
 "    @staticmethod\n"\
-"    def GREEN():\n"\
+"    def GREEN() -> \"Color\":\n"\
 "        return Color(0, 255, 0)\n"\
 "\n"\
 "    @staticmethod\n"\
-"    def BLUE():\n"\
+"    def BLUE() -> \"Color\":\n"\
 "        return Color(0, 0, 255)\n"\
 "\n"\
 "\n"\
@@ -145,37 +145,43 @@
 "    def magnitude(self) -> float:\n"\
 "        return math.sqrt(self.x * self.x + self.y * self.y)\n"\
 "\n"\
-"    def normalized(self):\n"\
+"    def normalized(self) -> \"Vector2\":\n"\
 "        mag = self.magnitude()\n"\
 "        self.x = self.x / mag\n"\
 "        self.y = self.y / mag\n"\
 "        return self\n"\
 "\n"\
-"    def direction_to(self, target):\n"\
+"    def direction_to(self, target: \"Vector2\") -> \"Vector2\":\n"\
 "        return (target - self).normalized()\n"\
+"\n"\
+"    def distance_to(self, target: \"Vector2\") -> float:\n"\
+"        return math.sqrt(\n"\
+"            (self.x - target.x) * (self.x - target.x)\n"\
+"            + (self.y - target.y) * (self.y - target.y)\n"\
+"        )\n"\
 "\n"\
 "    @staticmethod\n"\
 "    def lerp(source, destination, amount: float) -> float:\n"\
 "        return source + (destination - source) * Vector2(amount, amount)\n"\
 "\n"\
 "    @staticmethod\n"\
-"    def ZERO():\n"\
+"    def ZERO() -> \"Vector2\":\n"\
 "        return Vector2(0.0, 0.0)\n"\
 "\n"\
 "    @staticmethod\n"\
-"    def LEFT():\n"\
+"    def LEFT() -> \"Vector2\":\n"\
 "        return Vector2(-1.0, 0.0)\n"\
 "\n"\
 "    @staticmethod\n"\
-"    def RIGHT():\n"\
+"    def RIGHT() -> \"Vector2\":\n"\
 "        return Vector2(1.0, 0.0)\n"\
 "\n"\
 "    @staticmethod\n"\
-"    def UP():\n"\
+"    def UP() -> \"Vector2\":\n"\
 "        return Vector2(0.0, -1.0)\n"\
 "\n"\
 "    @staticmethod\n"\
-"    def DOWN():\n"\
+"    def DOWN() -> \"Vector2\":\n"\
 "        return Vector2(0.0, 1.0)\n"\
 "\n"\
 "\n"\
@@ -266,6 +272,9 @@
 "    def total_length(self) -> float:\n"\
 "        return self.w + self.h\n"\
 "\n"\
+"    def to_vec2(self) -> Vector2:\n"\
+"        return Vector2(self.w, self.h)\n"\
+"\n"\
 "\n"\
 "class Rect2:\n"\
 "    def __init__(self, x=0.0, y=0.0, w=0.0, h=0.0):\n"\
@@ -344,6 +353,24 @@
 "    def total_length(self) -> float:\n"\
 "        return self.x + self.y + self.w + self.h\n"\
 "\n"\
+"    def contains_point(self, point: Vector2) -> bool:\n"\
+"        return self.x <= point.x <= self.w and self.y <= point.y <= self.h\n"\
+"\n"\
+"\n"\
+"class MinMax:\n"\
+"    def __init__(self, value_min: float, value_max: float):\n"\
+"        self.min = value_min\n"\
+"        self.max = value_max\n"\
+"\n"\
+"    def contain(self, value: float) -> bool:\n"\
+"        return self.min <= value <= self.max\n"\
+"\n"\
+"    def is_below(self, value: float) -> bool:\n"\
+"        return value < self.min\n"\
+"\n"\
+"    def is_above(self, value: float) -> bool:\n"\
+"        return value > self.max\n"\
+"\n"\
 "\n"\
 "# ASSETS\n"\
 "class AudioSource:\n"\
@@ -395,7 +422,9 @@
 "\n"\
 "\n"\
 "class Animation:\n"\
-"    def __init__(self, name: str, speed: int, loops: bool, frames: list):\n"\
+"    def __init__(\n"\
+"        self, name: str, speed: int, loops: bool, frames: List[AnimationFrame]\n"\
+"    ):\n"\
 "        self.name = name\n"\
 "        self.speed = speed\n"\
 "        self.loops = loops\n"\
@@ -551,6 +580,38 @@
 "        AXIS_RIGHT_ANALOG_DOWN = \"joystick_right_analog_down\"\n"\
 "\n"\
 "\n"\
+"# Game Properties\n"\
+"class GameProperties:\n"\
+"    _instance = None\n"\
+"\n"\
+"    def __new__(cls, *args, **kwargs):\n"\
+"        if not cls._instance:\n"\
+"            cls._instance = object.__new__(cls)\n"\
+"            (\n"\
+"                game_title,\n"\
+"                res_w,\n"\
+"                res_h,\n"\
+"                window_w,\n"\
+"                window_h,\n"\
+"                target_fps,\n"\
+"                initial_scene_path,\n"\
+"                are_colliders_visible,\n"\
+"            ) = crescent_api_internal.game_properties_get()\n"\
+"            cls._instance.game_title = game_title\n"\
+"            cls._instance.game_resolution = Size2D(res_w, res_h)\n"\
+"            cls._instance.default_window_size = Size2D(window_w, window_h)\n"\
+"            cls._instance.target_fps = target_fps\n"\
+"            cls._instance.initial_scene_path = initial_scene_path\n"\
+"            cls._instance.are_colliders_visible = are_colliders_visible != 0\n"\
+"        return cls._instance\n"\
+"\n"\
+"    def __str__(self):\n"\
+"        return f\"GameProperties(game_title: {self.game_title}, game_resolution: {self.game_resolution}), default_window_size: {self.default_window_size}, target_fps: {self.target_fps}, initial_scene_path: {self.initial_scene_path}, are_colliders_visible: {self.are_colliders_visible})\"\n"\
+"\n"\
+"    def __repr__(self):\n"\
+"        return f\"GameProperties(game_title: {self.game_title}, game_resolution: {self.game_resolution}), default_window_size: {self.default_window_size}, target_fps: {self.target_fps}, initial_scene_path: {self.initial_scene_path}, are_colliders_visible: {self.are_colliders_visible})\"\n"\
+"\n"\
+"\n"\
 "# STAGE SETUP\n"\
 "class StageNode:\n"\
 "    def __init__(\n"\
@@ -594,13 +655,13 @@
 "        return f\"Node(entity_id: {self.entity_id}, type: {type(self).__name__})\"\n"\
 "\n"\
 "    # New API\n"\
-"    def get_child(self, name: str):\n"\
+"    def get_child(self, name: str) -> \"Node\":\n"\
 "        node = crescent_api_internal.node_get_child(\n"\
 "            entity_id=self.entity_id, child_name=name\n"\
 "        )\n"\
 "        return self.parse_scene_node_from_engine(scene_node=node)\n"\
 "\n"\
-"    def get_children(self) -> list:\n"\
+"    def get_children(self) -> List[\"Node\"]:\n"\
 "        children_nodes = []\n"\
 "        children = crescent_api_internal.node_get_children(entity_id=self.entity_id)\n"\
 "        for child_node in children:\n"\
@@ -609,7 +670,7 @@
 "            )\n"\
 "        return children_nodes\n"\
 "\n"\
-"    def get_parent(self):\n"\
+"    def get_parent(self) -> \"Node\":\n"\
 "        parent_node = crescent_api_internal.node_get_parent(entity_id=self.entity_id)\n"\
 "        return self.parse_scene_node_from_engine(scene_node=parent_node)\n"\
 "\n"\
@@ -624,7 +685,7 @@
 "        return \"\"\n"\
 "\n"\
 "    @classmethod\n"\
-"    def new(cls):\n"\
+"    def new(cls) -> \"Node\":\n"\
 "        return crescent_api_internal.node_new(\n"\
 "            class_path=f\"{cls.__module__}\",\n"\
 "            class_name=f\"{cls.__name__}\",\n"\
@@ -790,6 +851,16 @@
 "            entity_id=self.entity_id, z_index=value\n"\
 "        )\n"\
 "\n"\
+"    @property\n"\
+"    def ignore_camera(self) -> bool:\n"\
+"        return crescent_api_internal.node2D_get_ignore_camera(entity_id=self.entity_id)\n"\
+"\n"\
+"    @ignore_camera.setter\n"\
+"    def ignore_camera(self, value: bool) -> None:\n"\
+"        crescent_api_internal.node2D_set_ignore_camera(\n"\
+"            entity_id=self.entity_id, ignore_camera=value\n"\
+"        )\n"\
+"\n"\
 "\n"\
 "class Sprite(Node2D):\n"\
 "    @property\n"\
@@ -866,13 +937,34 @@
 "\n"\
 "\n"\
 "class AnimatedSprite(Node2D):\n"\
-"    def play(self, animation_name: str) -> bool:\n"\
+"    def play(self, name: str) -> bool:\n"\
 "        return crescent_api_internal.animated_sprite_play(\n"\
-"            entity_id=self.entity_id, animation_name=animation_name\n"\
+"            entity_id=self.entity_id, name=name\n"\
 "        )\n"\
 "\n"\
 "    def stop(self) -> None:\n"\
 "        crescent_api_internal.animated_sprite_stop(entity_id=self.entity_id)\n"\
+"\n"\
+"    def add_animation(self, animation: Animation) -> None:\n"\
+"        anim_frames = []\n"\
+"        for frame in animation.frames:\n"\
+"            anim_frames.append(\n"\
+"                (\n"\
+"                    frame.frame,\n"\
+"                    frame.texture_path,\n"\
+"                    frame.draw_source.x,\n"\
+"                    frame.draw_source.y,\n"\
+"                    frame.draw_source.w,\n"\
+"                    frame.draw_source.h,\n"\
+"                )\n"\
+"            )\n"\
+"        crescent_api_internal.animated_sprite_add_animation(\n"\
+"            entity_id=self.entity_id,\n"\
+"            name=animation.name,\n"\
+"            speed=animation.speed,\n"\
+"            loops=animation.loops,\n"\
+"            frames=anim_frames,\n"\
+"        )\n"\
 "\n"\
 "\n"\
 "class TextLabel(Node2D):\n"\
@@ -1032,6 +1124,11 @@
 "    @staticmethod\n"\
 "    def change_scene(path: str) -> None:\n"\
 "        crescent_api_internal.scene_tree_change_scene(path=path)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def get_root() -> Node:\n"\
+"        node = crescent_api_internal.scene_tree_get_root()\n"\
+"        return Node.parse_scene_node_from_engine(scene_node=node)\n"\
 "\n"\
 "\n"\
 "# WORLD\n"\

@@ -195,7 +195,6 @@ std::string SceneManager::GetUniqueNodeName(const std::string& nameCandidate, Sc
     if (hasDuplicateName) {
         size_t endDigitIndex = nameCandidate.find_last_not_of("0123456789");
         std::string nameWithoutDigits = nameCandidate.substr(0, endDigitIndex + 1);
-        std::string endDigits = nameCandidate.substr(endDigitIndex + 1);
         int currentIndex = 0;
         currentCandidate = nameWithoutDigits + std::to_string(currentIndex);
 

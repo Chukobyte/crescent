@@ -23,8 +23,6 @@
 #include "../ecs/component/parallax_component.h"
 
 // --- Scene Tree --- //
-typedef void (*ExecuteOnAllTreeNodesFunc) (SceneTreeNode*);
-
 // Executes function on passed in tree node and all child tree nodes
 void cre_scene_execute_on_all_tree_nodes(SceneTreeNode* treeNode, ExecuteOnAllTreeNodesFunc func) {
     for (size_t i = 0; i < treeNode->childCount; i++) {
@@ -281,6 +279,13 @@ void cre_scene_manager_notify_all_on_transform_events(Entity entity, Transform2D
                 cre_scene_manager_notify_all_on_transform_events(childEntity, childTransformComp);
             }
         }
+    }
+}
+
+void cre_scene_manager_execute_on_root_and_child_nodes(ExecuteOnAllTreeNodesFunc func) {
+    SceneTreeNode* node = cre_scene_manager_get_active_scene_root();
+    if (node != NULL) {
+        cre_scene_execute_on_all_tree_nodes(node, func);
     }
 }
 

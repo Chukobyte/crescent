@@ -302,6 +302,12 @@ PyObject* cre_py_api_scene_tree_change_scene(PyObject* self, PyObject* args, PyO
     return NULL;
 }
 
+PyObject* cre_py_api_scene_tree_get_root(PyObject* self, PyObject* args) {
+    SceneTreeNode* rootNode = cre_scene_manager_get_active_scene_root();
+    SE_ASSERT(rootNode != NULL);
+    return cre_py_utils_get_entity_instance(rootNode->entity);
+}
+
 PyObject* cre_py_api_camera2D_set_boundary(PyObject* self, PyObject* args, PyObject* kwargs) {
     float x;
     float y;
@@ -345,17 +351,24 @@ PyObject* cre_py_api_camera2D_unfollow_node(PyObject* self, PyObject* args, PyOb
 }
 
 // World
+void py_mark_scene_nodes_time_dilation_flag_dirty(SceneTreeNode* node) {
+    NodeComponent* nodeComponent = (NodeComponent*) component_manager_get_component_unsafe(node->entity, ComponentDataIndex_NODE);
+    SE_ASSERT(nodeComponent != NULL);
+    nodeComponent->timeDilation.cacheInvalid = true;
+}
+
 PyObject* cre_py_api_world_set_time_dilation(PyObject* self, PyObject* args, PyObject* kwargs) {
     float timeDilation;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "f", crePyApiWorldSetTimeDilationKWList, &timeDilation)) {
         cre_world_set_time_dilation(timeDilation);
+        cre_scene_manager_execute_on_root_and_child_nodes(py_mark_scene_nodes_time_dilation_flag_dirty);
         Py_RETURN_NONE;
     }
     return NULL;
 }
 
 PyObject* cre_py_api_world_get_time_dilation(PyObject* self, PyObject* args) {
-    return Py_BuildValue("f)", cre_world_get_time_dilation());
+    return Py_BuildValue("f", cre_world_get_time_dilation());
 }
 
 // Audio Manager
@@ -376,6 +389,15 @@ PyObject* cre_py_api_audio_manager_stop_sound(PyObject* self, PyObject* args, Py
         Py_RETURN_NONE;
     }
     return NULL;
+}
+
+// Game Properties
+PyObject* cre_py_api_game_properties_get(PyObject* self, PyObject* args) {
+    const CREGameProperties* gameProps = cre_game_props_get();
+    return Py_BuildValue("(siiiiisb)",
+                         gameProps->gameTitle, gameProps->resolutionWidth, gameProps->resolutionHeight,
+                         gameProps->windowWidth, gameProps->windowHeight, gameProps->targetFPS,
+                         gameProps->initialScenePath, gameProps->areCollidersVisible);
 }
 
 // Node
@@ -436,8 +458,13 @@ PyObject* cre_py_api_node_new(PyObject* self, PyObject* args, PyObject* kwargs) 
 PyObject* cre_py_api_node_queue_deletion(PyObject* self, PyObject* args, PyObject* kwargs) {
     Entity entity;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
-        SceneTreeNode* node = cre_scene_manager_get_entity_tree_node(entity);
-        cre_queue_destroy_tree_node_entity_all(node);
+        if (cre_scene_manager_has_entity_tree_node(entity)) {
+            SceneTreeNode* node = cre_scene_manager_get_entity_tree_node(entity);
+            cre_queue_destroy_tree_node_entity_all(node);
+        } else {
+            // TODO: May need to explicitly have an is 'being deleted' state for nodes
+            se_logger_warn("Entity not found in tree, skipping queue deletion.");
+        }
         Py_RETURN_NONE;
     }
     return NULL;
@@ -467,6 +494,7 @@ PyObject* cre_py_utils_get_entity_instance(Entity entity) {
         Py_IncRef(scriptInstance);
         return scriptInstance;
     }
+    // If script instance doesn't exist, create a proxy to be used on the scripting side
     char typeBuffer[TYPE_BUFFER_SIZE];
     NodeComponent* nodeComponent = (NodeComponent*) component_manager_get_component(entity, ComponentDataIndex_NODE);
     strcpy(typeBuffer, node_get_base_type_string(nodeComponent->type));
@@ -511,10 +539,10 @@ PyObject* cre_py_api_node_get_children(PyObject* self, PyObject* args, PyObject*
 PyObject* cre_py_api_node_get_parent(PyObject* self, PyObject* args, PyObject* kwargs) {
     Entity entity;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
-        SceneTreeNode* treeNode = cre_scene_manager_get_entity_tree_node(entity);
-        if (treeNode->parent == NULL) {
+        if (!cre_scene_manager_has_entity_tree_node(entity)) {
             Py_RETURN_NONE;
         }
+        SceneTreeNode* treeNode = cre_scene_manager_get_entity_tree_node(entity);
         return cre_py_utils_get_entity_instance(treeNode->parent->entity);
     }
     return NULL;
@@ -756,6 +784,29 @@ PyObject* cre_py_api_node2D_get_z_index(PyObject* self, PyObject* args, PyObject
     return NULL;
 }
 
+PyObject* cre_py_api_node2D_set_ignore_camera(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    bool ignoreCamera;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "ib", crePyApiNode2DSetIgnoreCameraKWList, &entity, &ignoreCamera)) {
+        Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
+        transformComp->ignoreCamera = ignoreCamera;
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_node2D_get_ignore_camera(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
+        const Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
+        if (transformComp->ignoreCamera) {
+            Py_RETURN_TRUE;
+        }
+        Py_RETURN_FALSE;
+    }
+    return NULL;
+}
+
 // Sprite
 PyObject* cre_py_api_sprite_set_texture(PyObject* self, PyObject* args, PyObject* kwargs) {
     Entity entity;
@@ -825,6 +876,51 @@ PyObject* cre_py_api_animated_sprite_stop(PyObject* self, PyObject* args, PyObje
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "is", crePyApiGenericGetEntityKWList, &entity)) {
         AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent *) component_manager_get_component(entity, ComponentDataIndex_ANIMATED_SPRITE);
         animatedSpriteComponent->isPlaying = false;
+    }
+    return NULL;
+}
+
+void py_load_animated_sprite_anim_frames(Animation* anim, PyObject* pyFramesList) {
+    SE_ASSERT_FMT(PyList_Check(pyFramesList), "Didn't pass in a python list!");
+    for (Py_ssize_t i = 0; i < PyList_Size(pyFramesList); i++) {
+        PyObject* pyFrameTuple = PyList_GetItem(pyFramesList, i);
+        int frame;
+        char* texturePath;
+        float drawSourceX;
+        float drawSourceY;
+        float drawSourceW;
+        float drawSourceH;
+        if (PyArg_ParseTuple(pyFrameTuple, "isffff", &frame, &texturePath, &drawSourceX, &drawSourceY, &drawSourceW, &drawSourceH)) {
+            AnimationFrame animationFrame = {
+                .frame = frame,
+                .texture = se_asset_manager_get_texture(texturePath),
+                .drawSource = { drawSourceX, drawSourceY, drawSourceW, drawSourceH }
+            };
+            anim->animationFrames[anim->frameCount++] = animationFrame;
+        } else {
+            frame = (int) i;
+            se_logger_error("Failed to parse frame '%d' for anim '%s'", frame, anim->name);
+        }
+    }
+}
+
+PyObject* cre_py_api_animated_sprite_add_animation(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    char* name;
+    int speed;
+    bool loops;
+    PyObject* framesList;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "isibO", crePyApiAnimatedSpriteAddAnimationKWList, &entity, &name, &speed, &loops, &framesList)) {
+        AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_ANIMATED_SPRITE);
+        Animation newAnim = { .frameCount = 0, .currentFrame = 0, .speed = speed, .name = {'\0'}, .doesLoop = loops, .isValid = true };
+        strcpy(newAnim.name, name);
+        py_load_animated_sprite_anim_frames(&newAnim, framesList);
+        animated_sprite_component_add_animation(animatedSpriteComponent, newAnim);
+        // If the only animation set it to the current
+        if (animatedSpriteComponent->animationCount == 1) {
+            animated_sprite_component_set_animation(animatedSpriteComponent, newAnim.name);
+        }
+        Py_RETURN_NONE;
     }
     return NULL;
 }

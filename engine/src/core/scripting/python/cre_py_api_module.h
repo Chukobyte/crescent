@@ -40,6 +40,7 @@ PyObject* cre_py_api_camera2D_unfollow_node(PyObject* self, PyObject* args, PyOb
 
 // SceneTree
 PyObject* cre_py_api_scene_tree_change_scene(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_scene_tree_get_root(PyObject* self, PyObject* args);
 
 // World
 PyObject* cre_py_api_world_set_time_dilation(PyObject* self, PyObject* args, PyObject* kwargs);
@@ -48,6 +49,9 @@ PyObject* cre_py_api_world_get_time_dilation(PyObject* self, PyObject* args);
 // Audio Manager
 PyObject* cre_py_api_audio_manager_play_sound(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_audio_manager_stop_sound(PyObject* self, PyObject* args, PyObject* kwargs);
+
+// Game Properties
+PyObject* cre_py_api_game_properties_get(PyObject* self, PyObject* args);
 
 // Node
 PyObject* cre_py_api_node_new(PyObject* self, PyObject* args, PyObject* kwargs);
@@ -77,6 +81,8 @@ PyObject* cre_py_api_node2D_add_to_rotation(PyObject* self, PyObject* args, PyOb
 PyObject* cre_py_api_node2D_get_rotation(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_node2D_set_z_index(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_node2D_get_z_index(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_node2D_set_ignore_camera(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_node2D_get_ignore_camera(PyObject* self, PyObject* args, PyObject* kwargs);
 
 // Sprite
 PyObject* cre_py_api_sprite_set_texture(PyObject* self, PyObject* args, PyObject* kwargs);
@@ -87,6 +93,7 @@ PyObject* cre_py_api_sprite_get_draw_source(PyObject* self, PyObject* args, PyOb
 // Animated Sprite
 PyObject* cre_py_api_animated_sprite_play(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_animated_sprite_stop(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_animated_sprite_add_animation(PyObject* self, PyObject* args, PyObject* kwargs);
 
 // Text Label
 PyObject* cre_py_api_text_label_set_text(PyObject* self, PyObject* args, PyObject* kwargs);
@@ -241,6 +248,10 @@ static struct PyMethodDef crePyApiMethods[] = {
         "scene_tree_change_scene", (PyCFunction) cre_py_api_scene_tree_change_scene,
         METH_VARARGS | METH_KEYWORDS, "Change to a new scene."
     },
+    {
+        "scene_tree_get_root", cre_py_api_scene_tree_get_root,
+        METH_VARARGS, "Returns the current scene's root node."
+    },
     // WORLD
     {
         "world_set_time_dilation", (PyCFunction) cre_py_api_world_set_time_dilation,
@@ -258,6 +269,11 @@ static struct PyMethodDef crePyApiMethods[] = {
     {
         "audio_manager_stop_sound", (PyCFunction) cre_py_api_audio_manager_stop_sound,
         METH_VARARGS | METH_KEYWORDS, "Stops a sound."
+    },
+    // GAME PROPERTIES
+    {
+        "game_properties_get", cre_py_api_game_properties_get,
+        METH_VARARGS, "returns GameProperties(game_title, res_w, res_h, window_w, window_h, target_fps, initial_scene_path, are_colliders_visible)."
     },
     // NODE
     {
@@ -361,6 +377,14 @@ static struct PyMethodDef crePyApiMethods[] = {
         "node2D_get_z_index", (PyCFunction) cre_py_api_node2D_get_z_index,
         METH_VARARGS | METH_KEYWORDS, "Get the node's z index."
     },
+    {
+        "node2D_set_ignore_camera", (PyCFunction) cre_py_api_node2D_set_ignore_camera,
+        METH_VARARGS | METH_KEYWORDS, "Sets the value of ignore camera."
+    },
+    {
+        "node2D_get_ignore_camera", (PyCFunction) cre_py_api_node2D_get_ignore_camera,
+        METH_VARARGS | METH_KEYWORDS, "Gets the value of ignore camera."
+    },
     // SPRITE
     {
         "sprite_set_texture", (PyCFunction) cre_py_api_sprite_set_texture,
@@ -386,6 +410,10 @@ static struct PyMethodDef crePyApiMethods[] = {
     {
         "animated_sprite_stop", (PyCFunction) cre_py_api_animated_sprite_stop,
         METH_VARARGS | METH_KEYWORDS, "Will stop the currently playing animation."
+    },
+    {
+        "animated_sprite_add_animation", (PyCFunction) cre_py_api_animated_sprite_add_animation,
+        METH_VARARGS | METH_KEYWORDS, "Adds a new animation."
     },
     // TEXT LABEL
     {
@@ -542,10 +570,12 @@ static char* crePyApiNodeBroadcastEventKWList[] = {"entity_id", "event_id", "arg
 static char* crePyApiNode2DSetXYKWList[] = {"entity_id", "x", "y", NULL};
 static char* crePyApiNode2DSetRotationKWList[] = {"entity_id", "rotation", NULL};
 static char* crePyApiNode2DSetZIndexKWList[] = {"entity_id", "z_index", NULL};
+static char* crePyApiNode2DSetIgnoreCameraKWList[] = {"entity_id", "ignore_camera", NULL};
 
 static char* crePyApiSpriteSetTextureKWList[] = {"entity_id", "file_path", NULL};
 
-static char* crePyApiAnimatedSpriteSetAnimationKWList[] = {"entity_id", "animation_name", NULL};
+static char* crePyApiAnimatedSpriteSetAnimationKWList[] = {"entity_id", "name", NULL};
+static char* crePyApiAnimatedSpriteAddAnimationKWList[] = {"entity_id", "name", "speed", "loops", "frames", NULL};
 
 static char* crePyApiTextLabelSetTextKWList[] = {"entity_id", "text", NULL};
 static char* crePyApiTextLabelSetFontUIDKWList[] = {"entity_id", "uid", NULL};

@@ -1,6 +1,6 @@
 import math
 from typing import Callable
-from crescent_api import Vector2
+from crescent_api import Vector2, Rect2
 
 # GENERAL
 PI = 3.141593
@@ -18,6 +18,16 @@ def map_to_unit_range(input, input_min, input_max):
 
 def lerp(source, dest, amount):
     return source + (dest - source) * amount
+
+
+def clamp(value, v_min, v_max):
+    return max(min(value, v_max), v_min)
+
+
+def clamp_pos_to_boundary(pos: Vector2, boundary: Rect2) -> Vector2:
+    return Vector2(
+        clamp(pos.x, boundary.x, boundary.w), clamp(pos.y, boundary.y, boundary.h)
+    )
 
 
 # Easing
