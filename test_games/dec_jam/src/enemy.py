@@ -18,13 +18,9 @@ class Enemy(Node2D):
         self.speed = 30
 
     def _physics_update(self, delta_time: float) -> None:
-        # TODO: Look into world time dilation not being integrated into the delta time
         self.add_to_position(
             Vector2(
-                self.speed
-                * delta_time
-                * self.direction_facing.x
-                * World.get_time_dilation(),
+                self.speed * delta_time * self.direction_facing.x,
                 0,
             )
         )

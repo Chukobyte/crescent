@@ -44,7 +44,7 @@ class PlayerAttack(Collider2D):
                         # Testing time dilation...
                         World.set_time_dilation(0.01)
                         await co_wait_seconds(
-                            0.0, time_func=None, ignore_time_dilation=True
+                            0.1, time_func=None, ignore_time_dilation=True
                         )
                         World.set_time_dilation(1.0)
                         collider_parent.queue_deletion()

@@ -351,10 +351,17 @@ PyObject* cre_py_api_camera2D_unfollow_node(PyObject* self, PyObject* args, PyOb
 }
 
 // World
+void py_mark_scene_nodes_time_dilation_flag_dirty(SceneTreeNode* node) {
+    NodeComponent* nodeComponent = (NodeComponent*) component_manager_get_component_unsafe(node->entity, ComponentDataIndex_NODE);
+    SE_ASSERT(nodeComponent != NULL);
+    nodeComponent->timeDilation.cacheInvalid = true;
+}
+
 PyObject* cre_py_api_world_set_time_dilation(PyObject* self, PyObject* args, PyObject* kwargs) {
     float timeDilation;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "f", crePyApiWorldSetTimeDilationKWList, &timeDilation)) {
         cre_world_set_time_dilation(timeDilation);
+        cre_scene_manager_execute_on_root_and_child_nodes(py_mark_scene_nodes_time_dilation_flag_dirty);
         Py_RETURN_NONE;
     }
     return NULL;
