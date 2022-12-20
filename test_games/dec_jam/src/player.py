@@ -105,7 +105,7 @@ class Player(Node2D):
         self.stance = PlayerStance.STANDING
         self._game_master = GameMaster(self)  # Temp
         self._physics_update_task_manager = TaskManager(
-            tasks=[Task(self.physics_update_task())]
+            tasks=[Task(self.physics_update_task()), Task(self.collision_update_task())]
         )
         self.health_bar = None
 
@@ -162,6 +162,9 @@ class Player(Node2D):
         self.scale = Vector2(-1, 1)
         self.direction_facing = Vector2.LEFT()
 
+    def _end(self) -> None:
+        self._physics_update_task_manager.kill_tasks()
+
     def _update(self, delta_time: float) -> None:
         if Input.is_action_just_pressed(name="quit_game"):
             Engine.exit()
@@ -182,20 +185,6 @@ class Player(Node2D):
     def _physics_update(self, delta_time: float) -> None:
         self._game_master.update(delta_time)
         self._physics_update_task_manager.update()
-
-        # temp
-        collisions = CollisionHandler.process_collisions(self.collider)
-        for collider in collisions:
-            if issubclass(type(collider), EnemyAttack):
-                self._take_damage(damage=10)
-                collider.queue_deletion()
-            else:
-                collider_parent = collider.get_parent()
-                if issubclass(type(collider_parent), Enemy):
-                    self._take_damage(damage=10)
-                    collider_parent.queue_deletion()
-                elif issubclass(type(collider_parent), LevelCompletionItem):
-                    SceneTree.change_scene(path="scenes/main.cscn")
 
     def _take_damage(self, damage: int) -> None:
         self.stats.hp -= damage
@@ -323,3 +312,30 @@ class Player(Node2D):
                 await co_suspend()
         except GeneratorExit:
             pass
+
+    async def collision_update_task(self) -> None:
+        try:
+            while True:
+                collisions = CollisionHandler.process_collisions(self.collider)
+                for collider in collisions:
+                    if issubclass(type(collider), EnemyAttack):
+                        self._take_damage(damage=10)
+                        World.set_time_dilation(0.0)
+                        await co_suspend()
+                        World.set_time_dilation(1.0)
+                        collider.queue_deletion()
+                    else:
+                        collider_parent = collider.get_parent()
+                        if issubclass(type(collider_parent), Enemy):
+                            self._take_damage(damage=10)
+                            World.set_time_dilation(0.0)
+                            await co_suspend()
+                            World.set_time_dilation(1.0)
+                            collider_parent.queue_deletion()
+                        elif issubclass(type(collider_parent), LevelCompletionItem):
+                            SceneTree.change_scene(path="scenes/main.cscn")
+                await co_suspend()
+        except GeneratorExit:
+            pass
+        finally:
+            World.set_time_dilation(1.0)
