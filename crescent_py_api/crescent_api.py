@@ -814,6 +814,16 @@ class Node2D(Node):
             entity_id=self.entity_id, z_index=value
         )
 
+    @property
+    def ignore_camera(self) -> bool:
+        return crescent_api_internal.node2D_get_ignore_camera(entity_id=self.entity_id)
+
+    @ignore_camera.setter
+    def ignore_camera(self, value: bool) -> None:
+        crescent_api_internal.node2D_set_ignore_camera(
+            entity_id=self.entity_id, ignore_camera=value
+        )
+
 
 class Sprite(Node2D):
     @property

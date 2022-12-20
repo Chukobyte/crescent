@@ -772,6 +772,29 @@ PyObject* cre_py_api_node2D_get_z_index(PyObject* self, PyObject* args, PyObject
     return NULL;
 }
 
+PyObject* cre_py_api_node2D_set_ignore_camera(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    bool ignoreCamera;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "ib", crePyApiNode2DSetIgnoreCameraKWList, &entity, &ignoreCamera)) {
+        Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
+        transformComp->ignoreCamera = ignoreCamera;
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_node2D_get_ignore_camera(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
+        const Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
+        if (transformComp->ignoreCamera) {
+            Py_RETURN_TRUE;
+        }
+        Py_RETURN_FALSE;
+    }
+    return NULL;
+}
+
 // Sprite
 PyObject* cre_py_api_sprite_set_texture(PyObject* self, PyObject* args, PyObject* kwargs) {
     Entity entity;

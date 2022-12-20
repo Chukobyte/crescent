@@ -81,6 +81,8 @@ PyObject* cre_py_api_node2D_add_to_rotation(PyObject* self, PyObject* args, PyOb
 PyObject* cre_py_api_node2D_get_rotation(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_node2D_set_z_index(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_node2D_get_z_index(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_node2D_set_ignore_camera(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_node2D_get_ignore_camera(PyObject* self, PyObject* args, PyObject* kwargs);
 
 // Sprite
 PyObject* cre_py_api_sprite_set_texture(PyObject* self, PyObject* args, PyObject* kwargs);
@@ -375,6 +377,14 @@ static struct PyMethodDef crePyApiMethods[] = {
         "node2D_get_z_index", (PyCFunction) cre_py_api_node2D_get_z_index,
         METH_VARARGS | METH_KEYWORDS, "Get the node's z index."
     },
+    {
+        "node2D_set_ignore_camera", (PyCFunction) cre_py_api_node2D_set_ignore_camera,
+        METH_VARARGS | METH_KEYWORDS, "Sets the value of ignore camera."
+    },
+    {
+        "node2D_get_ignore_camera", (PyCFunction) cre_py_api_node2D_get_ignore_camera,
+        METH_VARARGS | METH_KEYWORDS, "Gets the value of ignore camera."
+    },
     // SPRITE
     {
         "sprite_set_texture", (PyCFunction) cre_py_api_sprite_set_texture,
@@ -560,6 +570,7 @@ static char* crePyApiNodeBroadcastEventKWList[] = {"entity_id", "event_id", "arg
 static char* crePyApiNode2DSetXYKWList[] = {"entity_id", "x", "y", NULL};
 static char* crePyApiNode2DSetRotationKWList[] = {"entity_id", "rotation", NULL};
 static char* crePyApiNode2DSetZIndexKWList[] = {"entity_id", "z_index", NULL};
+static char* crePyApiNode2DSetIgnoreCameraKWList[] = {"entity_id", "ignore_camera", NULL};
 
 static char* crePyApiSpriteSetTextureKWList[] = {"entity_id", "file_path", NULL};
 

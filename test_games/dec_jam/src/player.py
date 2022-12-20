@@ -141,6 +141,8 @@ class Player(Node2D):
         self.health_bar = HealthBar.new()
         self.health_bar.set_health_bar_size(Size2D(26, 6))
         self.health_bar.position = self.position + Vector2(-12.0, -20.0)
+        # self.ignore_camera = True
+        # SceneTree.get_root().add_child(self.health_bar)
         self.add_child(self.health_bar)
         # Temp spawn boundary indicator
         level_completion_item = LevelCompletionItem.new()

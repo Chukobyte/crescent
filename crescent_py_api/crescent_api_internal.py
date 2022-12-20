@@ -263,6 +263,14 @@ def node2D_set_z_index(entity_id: int, z_index: int) -> None:
     pass
 
 
+def node2D_get_ignore_camera(entity_id: int) -> bool:
+    return False
+
+
+def node2D_set_ignore_camera(entity_id: int, ignore_camera: bool) -> bool:
+    pass
+
+
 def sprite_set_texture(entity_id: int, file_path: str) -> None:
     pass
 

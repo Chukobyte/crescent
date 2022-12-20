@@ -6,7 +6,7 @@
     "resolution_height": 81,
     "target_fps": 66,
     "initial_node_path": "scenes/main.cscn",
-    "colliders_visible": true,
+    "colliders_visible": false,
     "assets": {
         "audio_sources": [],
         "textures": [
