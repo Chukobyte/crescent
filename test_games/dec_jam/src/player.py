@@ -7,7 +7,7 @@ from src.utils.timer import Timer
 from src.utils.game_math import map_to_unit_range, Ease, clamp_pos_to_boundary
 
 
-class Attack(Collider2D):
+class PlayerAttack(Collider2D):
     def __init__(self, entity_id: int):
         super().__init__(entity_id=entity_id)
         self.life_time = 0.25
@@ -154,7 +154,7 @@ class Player(Node2D):
             Engine.exit()
 
         if Input.is_action_just_pressed(name="attack"):
-            new_attack = Attack.new()
+            new_attack = PlayerAttack.new()
             attack_y = 4
             if self.stance == PlayerStance.CROUCHING:
                 attack_y = 10

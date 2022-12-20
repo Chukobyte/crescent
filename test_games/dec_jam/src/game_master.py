@@ -38,7 +38,7 @@ class GameMaster:
             self.time_since_last_enemy_spawn >= 2.0
             and self.enemies_active < self.enemies_active_limit
         ):
-            self.spawn_enemy()
+            self.spawn_random_enemy()
             self.time_since_last_enemy_spawn = 0.0
 
     def _get_valid_enemy_spawn_pos_and_move_dir(
@@ -65,7 +65,7 @@ class GameMaster:
         print("***ERROR: didn't find a valid spawn position, returning the left pos!")
         return left_pos, Vector2.RIGHT()
 
-    def spawn_enemy(self) -> None:
+    def spawn_random_enemy(self) -> None:
         pos_offset = Vector2(128.0, -8.0)
         rand_n = random.choice([0, 1, 2])
         if rand_n == 0:
