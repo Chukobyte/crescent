@@ -30,14 +30,8 @@ class Task:
         try:
             self.coroutine.close()
             self.valid = False
-            for func in self.on_close_subscribers:
-                func(self)
-            self.on_close_subscribers.clear()
         except ValueError:
             pass
-
-    def subscribe_to_on_close(self, func: Callable) -> None:
-        self.on_close_subscribers.append(func)
 
 
 class TaskManager:
@@ -48,11 +42,20 @@ class TaskManager:
                 self.add_task(task)
 
     def add_task(self, task: Task) -> None:
-        task.subscribe_to_on_close(lambda t: self.remove_task(t))
         self.tasks.append(task)
 
     def remove_task(self, task: Task) -> None:
-        self.tasks.remove(task)
+        if task.parent_task:
+            # Swap subtask with parent
+            task.close()
+            try:
+                task_index = self.tasks.index(task)
+                self.tasks[task_index] = task.parent_task
+                print(f"task_index = {task_index}")
+            except ValueError as e:
+                print(f"Task manage remove task error!\nValue error: {e}")
+        else:
+            self.tasks.remove(task)
 
     def update(self) -> None:
         for i, task in enumerate(self.tasks[:]):
@@ -63,16 +66,11 @@ class TaskManager:
                         if task_return_value.state == Awaitable.State.FINISHED:
                             raise StopIteration
                     elif issubclass(type(task_return_value), Task):
-                        # Swap sub task in place
+                        # Swap subtask in place
                         task_return_value.parent_task = task
                         self.tasks[i] = task_return_value
                 except StopIteration:
-                    if task.parent_task:
-                        # Swap subtask with parent
-                        task.close()
-                        self.tasks[i] = task.parent_task
-                    else:
-                        self.remove_task(task)
+                    self.remove_task(task)
 
     def kill_tasks(self) -> None:
         for task in self.tasks[:]:
@@ -82,6 +80,7 @@ class TaskManager:
             while parent_task:
                 parent_task.close()
                 parent_task = parent_task.parent_task
+        self.tasks.clear()
 
 
 def co_suspend() -> Awaitable:
@@ -107,6 +106,7 @@ async def co_wait_until(predicate: [Callable, Coroutine]):
             raise Exception(
                 f"Didn't pass in a Callable or Coroutine into co_wait_until! predicate = {str(_predicate)}"
             )
+
     await Task(co_wait_until_internal(predicate))
 
 
@@ -114,7 +114,9 @@ async def co_wait_until(predicate: [Callable, Coroutine]):
 async def co_wait_seconds(
     seconds: float, time_func: Callable = None, ignore_time_dilation=False
 ):
-    async def co_wait_seconds_internal(_seconds: float, _time_func: Callable = None, _ignore_time_dilation=False):
+    async def co_wait_seconds_internal(
+        _seconds: float, _time_func: Callable = None, _ignore_time_dilation=False
+    ):
         if not _time_func:
             _time_func = time.time
         start_time = _time_func()
@@ -127,6 +129,7 @@ async def co_wait_seconds(
                 break
             await co_suspend()
         await co_suspend()
+
     await Task(co_wait_seconds_internal(seconds, time_func, ignore_time_dilation))
 
 
