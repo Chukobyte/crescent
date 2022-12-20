@@ -41,11 +41,9 @@ class PlayerAttack(Collider2D):
                 for collider in collisions:
                     collider_parent = collider.get_parent()
                     if issubclass(type(collider_parent), Enemy):
-                        # Testing time dilation...
+                        # Single frame freeze by setting time dilation to 0.0 then back to 1.0
                         World.set_time_dilation(0.0)
-                        await co_wait_seconds(
-                            0.1, time_func=None, ignore_time_dilation=True
-                        )
+                        await co_suspend()
                         World.set_time_dilation(1.0)
                         collider_parent.queue_deletion()
                         self.queue_deletion()
