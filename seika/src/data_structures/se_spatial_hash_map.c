@@ -26,8 +26,8 @@ bool collision_result_has_entity(SESpatialHashMapCollisionResult* result, unsign
 SESpatialHashMap* se_spatial_hash_map_create(int cellSize) {
     SESpatialHashMap* map = SE_MEM_ALLOCATE(SESpatialHashMap);
     map->cellSize = cellSize;
-    map->gridMap = se_hash_map_create(sizeof(int32_t*), sizeof(SESpatialHashMapGridSpace**), SE_HASH_MAP_MIN_CAPACITY);
-    map->objectToGridMap = se_hash_map_create(sizeof(unsigned int*), sizeof(SESpatialHashMapGridSpacesHandle**), SE_HASH_MAP_MIN_CAPACITY);
+    map->gridMap = se_hash_map_create(sizeof(int32_t), sizeof(SESpatialHashMapGridSpace**), SE_HASH_MAP_MIN_CAPACITY);
+    map->objectToGridMap = se_hash_map_create(sizeof(unsigned int), sizeof(SESpatialHashMapGridSpacesHandle**), SE_HASH_MAP_MIN_CAPACITY);
     map->doesCollisionDataNeedUpdating = false;
     return map;
 }
@@ -120,6 +120,7 @@ SESpatialHashMapCollisionResult se_spatial_hash_map_compute_collision(SESpatialH
         for (size_t j = 0; j < gridSpace->entityCount; j++) {
             unsigned int entityToCollide = gridSpace->entities[j];
             if (entity != entityToCollide && !collision_result_has_entity(&result, entityToCollide)) {
+                SE_ASSERT(se_hash_map_has(hashMap->objectToGridMap, &entityToCollide));
                 SESpatialHashMapGridSpacesHandle* entityToCollideObjectHandle = (SESpatialHashMapGridSpacesHandle*) *(SESpatialHashMapGridSpacesHandle**) se_hash_map_get(hashMap->objectToGridMap, &entityToCollide);
                 // Now that we have passed all checks, actually check collision
                 if (se_rect2_does_rectangles_overlap(&objectHandle->collisionRect, &entityToCollideObjectHandle->collisionRect)) {

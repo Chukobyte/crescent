@@ -37,7 +37,7 @@ int main(int argv, char** args) {
 }
 
 void seika_hash_map_test(void) {
-    SEHashMap* hashMap = se_hash_map_create(sizeof(int*), sizeof(int*), SE_HASH_MAP_MIN_CAPACITY);
+    SEHashMap* hashMap = se_hash_map_create(sizeof(int), sizeof(int), SE_HASH_MAP_MIN_CAPACITY);
     TEST_ASSERT_TRUE(hashMap != NULL);
 
     int key1 = 0;
