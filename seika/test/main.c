@@ -2,6 +2,7 @@
 
 #include <SDL2/SDL_main.h>
 
+#include "../src/rendering/shader_instance.h"
 #include "../src/data_structures/se_array_utils.h"
 #include "../src/data_structures/se_spatial_hash_map.h"
 #include "../src/asset/asset_file_loader.h"
@@ -22,6 +23,7 @@ void seika_file_system_utils_test(void);
 void seika_string_utils_test(void);
 void seika_array_utils_test(void);
 void seika_asset_file_loader_test(void);
+void seika_shader_instance_test(void);
 void seika_observer_test(void);
 
 int main(int argv, char** args) {
@@ -32,6 +34,7 @@ int main(int argv, char** args) {
     RUN_TEST(seika_string_utils_test);
     RUN_TEST(seika_array_utils_test);
     RUN_TEST(seika_asset_file_loader_test);
+    RUN_TEST(seika_shader_instance_test);
     RUN_TEST(seika_observer_test);
     return UNITY_END();
 }
@@ -171,6 +174,12 @@ void seika_asset_file_loader_test(void) {
     TEST_ASSERT_TRUE(!sf_asset_file_loader_is_asset_valid(&nonExistingFileAsset));
 
     sf_asset_file_loader_finalize();
+}
+
+// Shader Instance Test
+void seika_shader_instance_test(void) {
+    ShaderInstance* shaderInstance = se_shader_instance_create("shaders");
+    se_shader_instance_destroy(shaderInstance);
 }
 
 // Observer Test
