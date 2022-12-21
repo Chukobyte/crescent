@@ -1,6 +1,6 @@
 from crescent_api import *
 from src.enemy import Enemy, EnemyAttack
-from src.game_master import GameMaster, LEVEL_BOUNDARY
+from src.game_master import GameMaster, LEVEL_BOUNDARY, LevelCompletionItem
 from src.health_bar import HealthBar
 from src.utils.task import *
 from src.utils.timer import Timer
@@ -16,7 +16,7 @@ class PlayerAttack(Collider2D):
         self._task_manager = TaskManager(tasks=[Task(self._update_task())])
 
     def _start(self) -> None:
-        collider_size = Size2D(6, 6)
+        collider_size = Size2D(12, 6)
         collider_color = Color(0, 200, 0, 150)
         self.set_extents(collider_size)
         self.set_color(collider_color)
