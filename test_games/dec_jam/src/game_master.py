@@ -4,6 +4,7 @@ from typing import Tuple
 from crescent_api import *
 from src.enemy import GingerBreadMan, Elf, SnowMan
 from src.utils.game_math import map_to_unit_range
+from src.utils.task import TaskManager, Task, co_suspend
 
 game_properties = GameProperties()
 
@@ -50,6 +51,7 @@ class GameMaster:
         self.enemies_active_limit = 4
         self.current_level = Level()
         self.level_completion_item: LevelCompletionItem = LevelCompletionItem.new()
+        self.task_manager = TaskManager(tasks=[Task(self.update_task())])
 
     def initialize_level(self) -> None:
         self.level_completion_item.size = Size2D(4, 4)
@@ -61,14 +63,23 @@ class GameMaster:
         self.current_level.player_start_position = self.player.position
 
     def update(self, delta_time: float) -> None:
+        self.task_manager.update()
+
+    async def update_task(self):
         # print(f"dist from end normalized = '{self._get_distance_to_end_value_normalized()}'")
-        self.time_since_last_enemy_spawn += delta_time
-        if (
-            self.time_since_last_enemy_spawn >= 2.0
-            and self.enemies_active < self.enemies_active_limit
-        ):
-            self.spawn_random_enemy()
-            self.time_since_last_enemy_spawn = 0.0
+        try:
+            while True:
+                delta_time = Engine.get_global_physics_delta_time()
+                self.time_since_last_enemy_spawn += delta_time
+                if (
+                        self.time_since_last_enemy_spawn >= 2.0
+                        and self.enemies_active < self.enemies_active_limit
+                ):
+                    self.spawn_random_enemy()
+                    self.time_since_last_enemy_spawn = 0.0
+                await co_suspend()
+        except GeneratorExit:
+            pass
 
     def spawn_random_enemy(self) -> None:
         pos_offset = Vector2(128.0, -8.0)
