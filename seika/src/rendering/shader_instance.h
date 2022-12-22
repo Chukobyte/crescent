@@ -23,5 +23,6 @@ typedef struct ShaderInstance {
 
 ShaderInstance* se_shader_instance_create(const char* shaderDefinitionPath);
 void se_shader_instance_destroy(ShaderInstance* shaderInstance);
+ShaderParam* se_shader_instance_create_param(ShaderInstance* shaderInstance, const char* name, void* value, ShaderParamType valueType);
 void se_shader_instance_set_param_value(ShaderInstance* shaderInstance, const char* name, void* value);
 void* se_shader_instance_get_param_value(ShaderInstance* shaderInstance, const char* name);
