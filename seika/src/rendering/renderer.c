@@ -203,7 +203,7 @@ void se_renderer_process_and_flush_batches(const Color* backgroundColor) {
     se_frame_buffer_unbind();
 
     // Clear screen texture background
-    static Color screenBackgroundColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+    static const Color screenBackgroundColor = { 1.0f, 1.0f, 1.0f, 1.0f };
     glClearColor(screenBackgroundColor.r, screenBackgroundColor.g, screenBackgroundColor.b, screenBackgroundColor.a);
     glClear(GL_COLOR_BUFFER_BIT);
     // Draw screen texture from framebuffer
