@@ -149,8 +149,7 @@ void se_renderer_queue_sprite_draw_call(Texture* texture, Rect2 sourceRect, Size
     }
     SpriteBatchItem item = { .texture = texture, .sourceRect = sourceRect, .destSize = destSize, .color = color, .flipX = flipX, .flipY = flipY, .globalTransform = globalTransform };
     const int arrayZIndex = se_math_clamp_int(zIndex + SE_RENDER_LAYER_BATCH_MAX / 2, 0, SE_RENDER_LAYER_BATCH_MAX - 1);
-    // Update texture batch item on render layer
-    // Get correct texture layer based on texture
+    // Get texture layer index for render texture
     size_t textureLayerIndex = render_layer_items[arrayZIndex].renderTextureLayerCount;
     for (size_t i = 0; i < render_layer_items[arrayZIndex].renderTextureLayerCount; i++) {
         if (texture == render_layer_items[arrayZIndex].renderTextureLayers[i].spriteBatchItems[0].texture) {
