@@ -1,5 +1,11 @@
 #pragma once
 
+/*
+ * Shader Instance
+ * ---------------------------------------------------------------------------------------------------------------------
+ * A work in progress api to create shader instances with parameters.
+ */
+
 #include <stddef.h>
 
 #include "shader.h"
