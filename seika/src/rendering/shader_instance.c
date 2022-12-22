@@ -67,19 +67,19 @@ void* se_shader_instance_get_param_value(ShaderInstance* shaderInstance, const c
 
 size_t get_shader_param_type_size(ShaderParamType type) {
     switch (type) {
-        case ShaderParamType_BOOL:
-            return sizeof(bool);
-        case ShaderParamType_INT:
-            return sizeof(int);
-        case ShaderParamType_FLOAT:
-            return sizeof(float);
-        case ShaderParamType_FLOAT2:
-            return sizeof(Vector2);
-        case ShaderParamType_FLOAT3:
-            return sizeof(Vector3);
-        case ShaderParamType_FLOAT4:
-            return sizeof(Vector4);
-        default:
-            return 0;
+    case ShaderParamType_BOOL:
+        return sizeof(bool);
+    case ShaderParamType_INT:
+        return sizeof(int);
+    case ShaderParamType_FLOAT:
+        return sizeof(float);
+    case ShaderParamType_FLOAT2:
+        return sizeof(Vector2);
+    case ShaderParamType_FLOAT3:
+        return sizeof(Vector3);
+    case ShaderParamType_FLOAT4:
+        return sizeof(Vector4);
+    default:
+        return 0;
     }
 }

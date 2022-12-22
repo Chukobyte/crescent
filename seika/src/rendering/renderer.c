@@ -351,7 +351,7 @@ void renderer_batching_draw_sprites(SpriteBatchItem items[], size_t spriteCount)
                 isSMin = j == 1 || j == 2 || j == 5 ? true : false;
                 isTMin = j == 0 || j == 2 || j == 3 ? true : false;
             }
-            const int row = (j * VERTS_STRIDE) + ((int) i * NUMBER_OF_VERTICES);
+            const int row = (j * VERTS_STRIDE) + ((int) i * (VERTS_STRIDE * NUMBER_OF_VERTICES));
             verts[row + 0] = spriteId;
             verts[row + 1] = isSMin ? 0.0f : 1.0f;
             verts[row + 2] = isTMin ? 0.0f : 1.0f;
