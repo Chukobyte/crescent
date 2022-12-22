@@ -8,7 +8,7 @@
 bool shader_check_compile_errors(unsigned int shaderId, const char* type);
 
 Shader* shader_compile_new_shader(const char* vertexSource, const char* fragmentSource) {
-    struct Shader* shader = SE_MEM_ALLOCATE(Shader);
+    Shader* shader = SE_MEM_ALLOCATE(Shader);
     GLuint vertex, fragment;
     // vertex
     vertex = glCreateShader(GL_VERTEX_SHADER);
@@ -33,6 +33,10 @@ Shader* shader_compile_new_shader(const char* vertexSource, const char* fragment
     glDeleteShader(vertex);
     glDeleteShader(fragment);
     return shader;
+}
+
+void shader_destroy(Shader* shader) {
+    SE_MEM_FREE(shader);
 }
 
 bool shader_check_compile_errors(unsigned int shaderId, const char* type) {

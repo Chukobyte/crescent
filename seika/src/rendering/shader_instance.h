@@ -1,5 +1,9 @@
 #pragma once
 
+#include <stddef.h>
+
+#include "shader.h"
+
 #include "../data_structures/se_hash_map_string.h"
 
 typedef enum ShaderParamType {
@@ -15,13 +19,15 @@ typedef struct ShaderParam {
     char* name;
     void* value;
     ShaderParamType type;
+    size_t valueSize; // Cached value applied on creation
 } ShaderParam;
 
 typedef struct ShaderInstance {
+    Shader* shader;
     SEStringHashMap* paramMap;
 } ShaderInstance;
 
-ShaderInstance* se_shader_instance_create(const char* shaderDefinitionPath);
+ShaderInstance* se_shader_instance_create(const char* vertexSource, const char* fragmentSource);
 void se_shader_instance_destroy(ShaderInstance* shaderInstance);
 ShaderParam* se_shader_instance_create_param(ShaderInstance* shaderInstance, const char* name, void* value, ShaderParamType valueType);
 void se_shader_instance_set_param_value(ShaderInstance* shaderInstance, const char* name, void* value);

@@ -178,7 +178,7 @@ void seika_asset_file_loader_test(void) {
 
 // Shader Instance Test
 void seika_shader_instance_test(void) {
-    ShaderInstance* shaderInstance = se_shader_instance_create("shaders");
+    ShaderInstance* shaderInstance = se_shader_instance_create("seika/test/resources/test_shader_def.cshd");
     se_shader_instance_destroy(shaderInstance);
 }
 

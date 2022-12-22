@@ -15,6 +15,7 @@ typedef struct Shader {
 } Shader;
 
 Shader* shader_compile_new_shader(const char* vertexSource, const char* fragmentSource);
+void shader_destroy(Shader* shader);
 void shader_use(Shader* shader);
 void shader_set_bool(Shader* shader, const char* name, bool value);
 void shader_set_int(Shader* shader, const char* name, int value);

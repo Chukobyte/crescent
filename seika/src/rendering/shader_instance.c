@@ -11,11 +11,15 @@
 
 size_t get_shader_param_type_size(ShaderParamType type);
 
-ShaderInstance* se_shader_instance_create(const char* shaderDefinitionPath) {
+ShaderInstance* se_shader_instance_create(const char* vertexSource, const char* fragmentSource) {
+    Shader* shader = shader_compile_new_shader(vertexSource, fragmentSource);
+    // Early out if shader fails to compile
+    if (shader == NULL) {
+        return NULL;
+    }
     ShaderInstance* instance = SE_MEM_ALLOCATE(ShaderInstance);
-    // TODO: Look for and compile vertex and fragment shaders from shader definition
+    instance->shader = shader;
     instance->paramMap = se_string_hash_map_create_default_capacity();
-    // TODO: Load shader params
     return instance;
 }
 
@@ -23,9 +27,12 @@ void se_shader_instance_destroy(ShaderInstance* shaderInstance) {
     SE_STRING_HASH_MAP_FOR_EACH(shaderInstance->paramMap, iter) {
         StringHashMapNode* node = iter.pair;
         ShaderParam* param = (ShaderParam*) *(ShaderParam**) node->value;
+        SE_MEM_FREE(param->name);
         SE_MEM_FREE(param->value);
+        SE_MEM_FREE(param);
     }
     se_string_hash_map_destroy(shaderInstance->paramMap);
+    shader_destroy(shaderInstance->shader);
     SE_MEM_FREE(shaderInstance);
 }
 
@@ -34,9 +41,9 @@ ShaderParam* se_shader_instance_create_param(ShaderInstance* shaderInstance, con
     ShaderParam* param = SE_MEM_ALLOCATE(ShaderParam);
     param->name = se_strdup(name);
     param->type = valueType;
-    const size_t paramSize = get_shader_param_type_size(param->type);
-    param->value = SE_MEM_ALLOCATE_SIZE(paramSize);
-    memcpy(param->value, value, paramSize);
+    param->valueSize = get_shader_param_type_size(param->type);
+    param->value = SE_MEM_ALLOCATE_SIZE(param->valueSize);
+    memcpy(param->value, value, param->valueSize);
     return param;
 }
 
@@ -46,7 +53,7 @@ void se_shader_instance_set_param_value(ShaderInstance* shaderInstance, const ch
         return;
     }
     ShaderParam* param = (ShaderParam*) *(ShaderParam**) se_string_hash_map_get(shaderInstance->paramMap, name);
-    memcpy(param->value, value, sizeof(param->value));
+    memcpy(param->value, value, param->valueSize);
 }
 
 void* se_shader_instance_get_param_value(ShaderInstance* shaderInstance, const char* name) {
