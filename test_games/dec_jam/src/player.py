@@ -110,7 +110,7 @@ class Player(Node2D):
                     AnimationFrame(
                         frame=0,
                         texture_path="assets/images/player/player.png",
-                        draw_source=Rect2(0.0, 0.0, 17.0, 17.0),
+                        draw_source=Rect2(0.0, 0.0, 22.0, 22.0),
                     )
                 ],
             )
@@ -124,7 +124,7 @@ class Player(Node2D):
                     AnimationFrame(
                         frame=0,
                         texture_path="assets/images/player/player.png",
-                        draw_source=Rect2(0.0, 17.0, 17.0, 17.0),
+                        draw_source=Rect2(0.0, 22.0, 22.0, 22.0),
                     )
                 ],
             )
