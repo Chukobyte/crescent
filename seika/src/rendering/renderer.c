@@ -46,7 +46,7 @@ static Shader* fontShader = NULL;
 static float resolutionWidth = 800.0f;
 static float resolutionHeight = 600.0f;
 
-// Batching
+// Sprite Batching
 typedef struct SpriteBatchItem {
     Texture* texture;
     Rect2 sourceRect;
