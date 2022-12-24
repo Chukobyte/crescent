@@ -31,7 +31,6 @@ void renderer_print_opengl_errors();
 void sprite_renderer_initialize();
 void sprite_renderer_finalize();
 void sprite_renderer_update_resolution();
-//void sprite_renderer_draw_sprite(const Texture* texture, const Rect2* sourceRect, const Size2D* destSize, const Color *color, bool flipX, bool flipY, TransformModel2D* globalTransform);
 
 void font_renderer_initialize();
 void font_renderer_finalize();
@@ -76,12 +75,10 @@ typedef struct RenderTextureLayer {
 } RenderTextureLayer;
 
 typedef struct RenderLayer {
-//    SpriteBatchItem spriteBatchItems[SE_RENDER_LAYER_BATCH_ITEM_MAX];
     RenderTextureLayer renderTextureLayers[SE_RENDER_TEXTURE_LAYER_TEXTURE_MAX];
     FontBatchItem fontBatchItems[SE_RENDER_LAYER_BATCH_ITEM_MAX];
-//    size_t spriteBatchItemCount;
-    size_t fontBatchItemCount;
     size_t renderTextureLayerCount;
+    size_t fontBatchItemCount;
 } RenderLayer;
 
 SE_STATIC_ARRAY_CREATE(RenderLayer, SE_RENDER_LAYER_BATCH_MAX, render_layer_items);
@@ -104,7 +101,6 @@ void se_renderer_initialize(int inWindowWidth, int inWindowHeight, int inResolut
 #endif
     // Set initial data for render layer
     for (size_t i = 0; i < SE_RENDER_LAYER_BATCH_MAX; i++) {
-//        render_layer_items[i].spriteBatchItemCount = 0;
         render_layer_items[i].renderTextureLayerCount = 0;
         render_layer_items[i].fontBatchItemCount = 0;
         for (size_t j = 0; j < SE_RENDER_TEXTURE_LAYER_TEXTURE_MAX; j++) {
