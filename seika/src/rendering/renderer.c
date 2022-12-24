@@ -12,7 +12,7 @@
 #define SE_RENDER_TO_FRAMEBUFFER
 #define SE_RENDER_LAYER_BATCH_MAX 200
 #define SE_RENDER_LAYER_BATCH_ITEM_MAX (SE_RENDER_LAYER_BATCH_MAX / 2)
-#define SE_RENDER_TEXTURE_LAYER_TEXTURE_MAX 32
+#define SE_RENDER_TEXTURE_LAYER_TEXTURE_MAX 64
 
 #ifdef SE_RENDER_TO_FRAMEBUFFER
 #include "frame_buffer.h"
@@ -304,7 +304,7 @@ void sprite_renderer_update_resolution() {
 }
 
 void renderer_batching_draw_sprites(SpriteBatchItem items[], size_t spriteCount) {
-#define MAX_SPRITE_COUNT 50
+#define MAX_SPRITE_COUNT 100
 #define VERTEX_BUFFER_SIZE (54 * MAX_SPRITE_COUNT)
 #define NUMBER_OF_VERTICES 6
 #define VERTS_STRIDE 9

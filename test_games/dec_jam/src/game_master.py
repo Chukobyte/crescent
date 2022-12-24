@@ -72,8 +72,8 @@ class GameMaster:
                 delta_time = Engine.get_global_physics_delta_time()
                 self.time_since_last_enemy_spawn += delta_time
                 if (
-                        self.time_since_last_enemy_spawn >= 2.0
-                        and self.enemies_active < self.enemies_active_limit
+                    self.time_since_last_enemy_spawn >= 2.0
+                    and self.enemies_active < self.enemies_active_limit
                 ):
                     self.spawn_random_enemy()
                     self.time_since_last_enemy_spawn = 0.0
