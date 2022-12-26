@@ -477,6 +477,7 @@ PyObject* cre_py_api_node_add_child(PyObject* self, PyObject* args, PyObject* kw
         SceneTreeNode* parentNode = cre_scene_manager_get_entity_tree_node(parentEntity);
         SceneTreeNode* node = cre_scene_tree_create_tree_node(entity, parentNode);
         if (parentNode != NULL) {
+            SE_ASSERT(parentNode->childCount + 1 < SCENE_TREE_NODE_MAX_CHILDREN);
             parentNode->children[parentNode->childCount++] = node;
         }
 

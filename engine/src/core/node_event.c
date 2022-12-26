@@ -9,9 +9,10 @@
 
 #include "ecs/component/node_component.h"
 #include "ecs/component/component.h"
+#include "../../../seika/src/utils/se_assert.h"
 
 #define CRE_NODE_EVENT_MAX_OBSERVERS 8
-#define MAX_EVENT_OBSERVER_ENTRY_COUNT 16
+#define MAX_EVENT_OBSERVER_ENTRY_COUNT 100
 
 typedef struct NodeEventObserver {
     Entity entity;
@@ -80,6 +81,9 @@ void node_event_destroy_all_entity_events_and_observers(Entity entity) {
     // Remove all entity observers
     for (size_t i = 0; i < eventDatabase.nodeEventObserverEntry[entity].entryCount; i++) {
         NodeEventObserver* nodeEventObserver = eventDatabase.nodeEventObserverEntry[entity].observers[i];
+        if (nodeEventObserver == NULL || nodeEventObserver->event == NULL) {
+            continue;
+        }
         NodeEvent* nodeEvent = nodeEventObserver->event;
         SE_ARRAY_UTILS_REMOVE_ARRAY_ITEM(nodeEvent->observers, nodeEvent->observerCount, nodeEventObserver, NULL);
         node_observer_free(nodeEventObserver);
@@ -155,6 +159,7 @@ NodeEventObserver* node_create_observer_internal(Entity entity, NodeEvent* event
     eventObserver->event = event;
     // Get alias to shorten the expression
     NodeEventObserverEntry* observerEntry = &eventDatabase.nodeEventObserverEntry[entity];
+    SE_ASSERT(observerEntry->entryCount + 1 < MAX_EVENT_OBSERVER_ENTRY_COUNT);
     observerEntry->observers[observerEntry->entryCount++] = eventObserver;
     register_entity_to_on_scene_exit_callback(entity);
     return eventObserver;

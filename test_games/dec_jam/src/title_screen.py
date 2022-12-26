@@ -85,8 +85,8 @@ class SnowManager:
 
 
 class TitleScreen(Node2D):
-    # def _start(self) -> None:
-    #     SnowManager().create_snow(50)
+    def _start(self) -> None:
+        SnowManager().create_snow(50)
 
     def _update(self, delta_time: float) -> None:
         if Input.is_action_just_pressed(name="quit_game"):
