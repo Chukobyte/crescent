@@ -70,7 +70,10 @@ class SnowManager:
             if not self.snow_pool:
                 break
             snow = self.snow_pool.pop()
-            new_pos = Vector2(props.game_resolution.w + random.uniform(0.0, 128.0), random.uniform(-8.0, -32.0))
+            new_pos = Vector2(
+                props.game_resolution.w + random.uniform(0.0, 128.0),
+                random.uniform(-8.0, -32.0),
+            )
             snow.position = new_pos
 
     def add_snow_to_queue(self, snow: Snow) -> None:
