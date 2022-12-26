@@ -16,7 +16,7 @@ from src.player.player_anims import (
 class PlayerAttack(Collider2D):
     def __init__(self, entity_id: int):
         super().__init__(entity_id=entity_id)
-        self.life_time = 0.5
+        self.life_time = 0.25
         self.targets = []
         self.direction = Vector2.RIGHT()
         self._task_manager = TaskManager(tasks=[Task(self._update_task())])
@@ -139,22 +139,24 @@ class Player(Node2D):
 
         if Input.is_action_just_pressed(name="attack") and not self.is_attacking:
             new_attack = PlayerAttack.new()
-            attack_y = 4
+            attack_y = 10
             if self.stance == PlayerStance.CROUCHING:
-                attack_y = 10
+                attack_y += 4
                 self.anim_sprite.play(name=CROUCH_PUNCH_ANIM.name)
-            elif self.stance == PlayerStance.STANDING:
+            elif (
+                self.stance == PlayerStance.STANDING
+                or self.stance == PlayerStance.IN_AIR
+            ):
                 self.anim_sprite.play(name=STAND_PUNCH_ANIM.name)
+
             new_attack.position = (
                 self.position
                 + self._center_pos()
                 + Vector2(4.0, 0.0)
                 + Vector2(self.direction_facing.x * 20, attack_y)
             )
-            new_attack.subscribe_to_event(
-                event_id="scene_exited",
-                scoped_node=self,
-                callback_func=lambda node: self._set_is_attacking(False),
+            self._physics_update_task_manager.add_task(
+                Task(self._reset_attack_task(new_attack))
             )
             SceneTree.get_root().add_child(new_attack)
             self.is_attacking = True
@@ -201,15 +203,17 @@ class Player(Node2D):
         # Doesn't change so no need to get every frame
         engine_delta_time = Engine.get_global_physics_delta_time()
 
+        # TODO: Do better state management and handle attacks differently...
         try:
             while True:
                 delta_time = self.get_full_time_dilation() * engine_delta_time
                 # Check horizontal movement inputs
                 input_dir = Vector2.ZERO()
-                if Input.is_action_pressed(name="move_left"):
-                    input_dir = Vector2.LEFT()
-                elif Input.is_action_pressed(name="move_right"):
-                    input_dir = Vector2.RIGHT()
+                if not self.is_attacking:
+                    if Input.is_action_pressed(name="move_left"):
+                        input_dir = Vector2.LEFT()
+                    elif Input.is_action_pressed(name="move_right"):
+                        input_dir = Vector2.RIGHT()
                 # Determine movement (no air movement for now)
                 if input_dir != Vector2.ZERO():
                     if self.stance == PlayerStance.STANDING and not self.is_attacking:
@@ -321,3 +325,11 @@ class Player(Node2D):
             pass
         finally:
             World.set_time_dilation(1.0)
+
+    async def _reset_attack_task(self, attack: PlayerAttack) -> None:
+        try:
+            await co_wait_seconds(attack.life_time - 0.05)
+            self.is_attacking = False
+            await co_return()
+        except GeneratorExit:
+            pass

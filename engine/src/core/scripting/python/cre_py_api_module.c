@@ -864,6 +864,7 @@ PyObject* cre_py_api_animated_sprite_play(PyObject* self, PyObject* args, PyObje
         const bool success = animated_sprite_component_set_animation(animatedSpriteComponent, animationName);
         animatedSpriteComponent->isPlaying = true;
         if (success) {
+            animatedSpriteComponent->startAnimationTickTime = SDL_GetTicks();
             Py_RETURN_TRUE;
         }
         Py_RETURN_FALSE;
