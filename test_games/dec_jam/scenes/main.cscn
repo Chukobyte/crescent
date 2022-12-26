@@ -44,7 +44,7 @@
                 },
                 {
                     "type": "script",
-                    "class_path": "src.player",
+                    "class_path": "src.player.player",
                     "class_name": "Player"
                 }
             ],

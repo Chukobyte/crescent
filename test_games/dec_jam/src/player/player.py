@@ -5,7 +5,7 @@ from src.health_bar import HealthBar
 from src.utils.task import *
 from src.utils.timer import Timer
 from src.utils.game_math import map_to_unit_range, Ease, clamp_pos_to_boundary
-from src.player_anims import IDLE_ANIMATION, CROUCH_ANIMATION
+from src.player.player_anims import IDLE_ANIM, CROUCH_ANIM
 
 
 class PlayerAttack(Collider2D):
@@ -102,8 +102,8 @@ class Player(Node2D):
     def _start(self) -> None:
         self.collider = self.get_child("Collider2D")
         self.anim_sprite: AnimatedSprite = AnimatedSprite.new()
-        self.anim_sprite.add_animation(IDLE_ANIMATION)
-        self.anim_sprite.add_animation(CROUCH_ANIMATION)
+        self.anim_sprite.add_animation(IDLE_ANIM)
+        self.anim_sprite.add_animation(CROUCH_ANIM)
         self.anim_sprite.position = self._center_pos()
         self.add_child(self.anim_sprite)
         # Camera
@@ -203,19 +203,19 @@ class Player(Node2D):
                     self.scale = Vector2(self.direction_facing.x, 1.0)
                 # Handle player stances
                 if self.stance == PlayerStance.STANDING:
-                    self.anim_sprite.play(name="idle")
+                    self.anim_sprite.play(name=IDLE_ANIM.name)
                     if Input.is_action_pressed(name="jump"):
                         self._update_stance(PlayerStance.IN_AIR)
                     elif Input.is_action_pressed(name="crouch"):
                         self._update_stance(PlayerStance.CROUCHING)
                 elif self.stance == PlayerStance.CROUCHING:
-                    self.anim_sprite.play(name="crouch")
+                    self.anim_sprite.play(name=CROUCH_ANIM.name)
                     if Input.is_action_pressed(name="jump"):
                         self._update_stance(PlayerStance.IN_AIR)
                     elif not Input.is_action_pressed(name="crouch"):
                         self._update_stance(PlayerStance.STANDING)
                 elif self.stance == PlayerStance.IN_AIR:
-                    self.anim_sprite.play(name="idle")
+                    self.anim_sprite.play(name=IDLE_ANIM.name)
                     jump_height = 12
                     position_before_jump = self.position
                     position_to_jump_to = position_before_jump + Vector2(
