@@ -5,13 +5,18 @@ from src.health_bar import HealthBar
 from src.utils.task import *
 from src.utils.timer import Timer
 from src.utils.game_math import map_to_unit_range, Ease, clamp_pos_to_boundary
-from src.player.player_anims import IDLE_ANIM, CROUCH_ANIM
+from src.player.player_anims import (
+    IDLE_ANIM,
+    CROUCH_ANIM,
+    CROUCH_PUNCH_ANIM,
+    STAND_PUNCH_ANIM,
+)
 
 
 class PlayerAttack(Collider2D):
     def __init__(self, entity_id: int):
         super().__init__(entity_id=entity_id)
-        self.life_time = 0.25
+        self.life_time = 0.5
         self.targets = []
         self.direction = Vector2.RIGHT()
         self._task_manager = TaskManager(tasks=[Task(self._update_task())])
@@ -93,6 +98,7 @@ class Player(Node2D):
         self.speed = 25
         self.direction_facing = Vector2.RIGHT()
         self.stance = PlayerStance.STANDING
+        self.is_attacking = False
         self._game_master = GameMaster(self)  # Temp
         self._physics_update_task_manager = TaskManager(
             tasks=[Task(self.physics_update_task()), Task(self.collision_update_task())]
@@ -104,6 +110,8 @@ class Player(Node2D):
         self.anim_sprite: AnimatedSprite = AnimatedSprite.new()
         self.anim_sprite.add_animation(IDLE_ANIM)
         self.anim_sprite.add_animation(CROUCH_ANIM)
+        self.anim_sprite.add_animation(STAND_PUNCH_ANIM)
+        self.anim_sprite.add_animation(CROUCH_PUNCH_ANIM)
         self.anim_sprite.position = self._center_pos()
         self.add_child(self.anim_sprite)
         # Camera
@@ -129,18 +137,27 @@ class Player(Node2D):
         if Input.is_action_just_pressed(name="quit_game"):
             Engine.exit()
 
-        if Input.is_action_just_pressed(name="attack"):
+        if Input.is_action_just_pressed(name="attack") and not self.is_attacking:
             new_attack = PlayerAttack.new()
             attack_y = 4
             if self.stance == PlayerStance.CROUCHING:
                 attack_y = 10
+                self.anim_sprite.play(name=CROUCH_PUNCH_ANIM.name)
+            elif self.stance == PlayerStance.STANDING:
+                self.anim_sprite.play(name=STAND_PUNCH_ANIM.name)
             new_attack.position = (
                 self.position
                 + self._center_pos()
                 + Vector2(4.0, 0.0)
                 + Vector2(self.direction_facing.x * 20, attack_y)
             )
+            new_attack.subscribe_to_event(
+                event_id="scene_exited",
+                scoped_node=self,
+                callback_func=lambda node: self._set_is_attacking(False),
+            )
             SceneTree.get_root().add_child(new_attack)
+            self.is_attacking = True
 
     def _physics_update(self, delta_time: float) -> None:
         self._game_master.update(delta_time)
@@ -151,6 +168,9 @@ class Player(Node2D):
         self.health_bar.set_health_percentage(self.stats.hp)
         if self.stats.hp <= 0:
             SceneTree.change_scene(path="scenes/end_screen.cscn")
+
+    def _set_is_attacking(self, value: bool) -> None:
+        self.is_attacking = value
 
     def _update_stance(self, stance: str) -> None:
         if self.stance == stance:
@@ -192,7 +212,7 @@ class Player(Node2D):
                     input_dir = Vector2.RIGHT()
                 # Determine movement (no air movement for now)
                 if input_dir != Vector2.ZERO():
-                    if self.stance == PlayerStance.STANDING:
+                    if self.stance == PlayerStance.STANDING and not self.is_attacking:
                         new_pos = self.position + (
                             input_dir
                             * Vector2(delta_time * self.speed, delta_time * self.speed)
@@ -203,13 +223,15 @@ class Player(Node2D):
                     self.scale = Vector2(self.direction_facing.x, 1.0)
                 # Handle player stances
                 if self.stance == PlayerStance.STANDING:
-                    self.anim_sprite.play(name=IDLE_ANIM.name)
+                    if not self.is_attacking:
+                        self.anim_sprite.play(name=IDLE_ANIM.name)
                     if Input.is_action_pressed(name="jump"):
                         self._update_stance(PlayerStance.IN_AIR)
                     elif Input.is_action_pressed(name="crouch"):
                         self._update_stance(PlayerStance.CROUCHING)
                 elif self.stance == PlayerStance.CROUCHING:
-                    self.anim_sprite.play(name=CROUCH_ANIM.name)
+                    if not self.is_attacking:
+                        self.anim_sprite.play(name=CROUCH_ANIM.name)
                     if Input.is_action_pressed(name="jump"):
                         self._update_stance(PlayerStance.IN_AIR)
                     elif not Input.is_action_pressed(name="crouch"):

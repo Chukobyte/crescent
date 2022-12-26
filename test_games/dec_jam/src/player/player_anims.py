@@ -80,7 +80,7 @@ CROUCH_ANIM = Animation(
 STAND_PUNCH_ANIM = Animation(
     name="stand_punch",
     speed=100,
-    loops=True,
+    loops=False,
     frames=[
         AnimationFrame(
             frame=0,
@@ -118,7 +118,7 @@ STAND_PUNCH_ANIM = Animation(
 CROUCH_PUNCH_ANIM = Animation(
     name="crouch_punch",
     speed=100,
-    loops=True,
+    loops=False,
     frames=[
         AnimationFrame(
             frame=0,
