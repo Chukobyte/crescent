@@ -178,15 +178,16 @@ class Player(Node2D):
         if self.stance == stance:
             return None
         self.stance = stance
+        collider_offset = Vector2(-2, 0)  # TODO: Store from player instance on start
         if stance == PlayerStance.STANDING:
             stance_size = Size2D(10, 12)
-            stance_pos = Vector2(-4, -6)
+            stance_pos = collider_offset
         elif stance == PlayerStance.CROUCHING:
             stance_size = Size2D(10, 6)
-            stance_pos = Vector2(-4, -6) + Vector2(0, 9)
+            stance_pos = collider_offset + Vector2(0, 9)
         elif stance == PlayerStance.IN_AIR:
             stance_size = Size2D(10, 12)
-            stance_pos = Vector2(-4, -6)
+            stance_pos = collider_offset
         else:
             print("***ERROR: invalid stance!")
             stance_size = Size2D()
