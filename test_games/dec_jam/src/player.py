@@ -5,6 +5,7 @@ from src.health_bar import HealthBar
 from src.utils.task import *
 from src.utils.timer import Timer
 from src.utils.game_math import map_to_unit_range, Ease, clamp_pos_to_boundary
+from src.player_anims import IDLE_ANIMATION, CROUCH_ANIMATION
 
 
 class PlayerAttack(Collider2D):
@@ -101,84 +102,8 @@ class Player(Node2D):
     def _start(self) -> None:
         self.collider = self.get_child("Collider2D")
         self.anim_sprite: AnimatedSprite = AnimatedSprite.new()
-        self.anim_sprite.add_animation(
-            Animation(
-                name="idle",
-                speed=100,
-                loops=True,
-                frames=[
-                    AnimationFrame(
-                        frame=0,
-                        texture_path="assets/images/player/snowman_stand_idle.png",
-                        draw_source=Rect2(0.0, 0.0, 36.0, 23.0),
-                    ),
-                    AnimationFrame(
-                        frame=1,
-                        texture_path="assets/images/player/snowman_stand_idle.png",
-                        draw_source=Rect2(36.0, 0.0, 36.0, 23.0),
-                    ),
-                    AnimationFrame(
-                        frame=2,
-                        texture_path="assets/images/player/snowman_stand_idle.png",
-                        draw_source=Rect2(72.0, 0.0, 36.0, 23.0),
-                    ),
-                    AnimationFrame(
-                        frame=3,
-                        texture_path="assets/images/player/snowman_stand_idle.png",
-                        draw_source=Rect2(108.0, 0.0, 36.0, 23.0),
-                    ),
-                    AnimationFrame(
-                        frame=4,
-                        texture_path="assets/images/player/snowman_stand_idle.png",
-                        draw_source=Rect2(144.0, 0.0, 36.0, 23.0),
-                    ),
-                    AnimationFrame(
-                        frame=5,
-                        texture_path="assets/images/player/snowman_stand_idle.png",
-                        draw_source=Rect2(180.0, 0.0, 36.0, 23.0),
-                    ),
-                ],
-            )
-        )
-        self.anim_sprite.add_animation(
-            Animation(
-                name="crouch",
-                speed=100,
-                loops=True,
-                frames=[
-                    AnimationFrame(
-                        frame=0,
-                        texture_path="assets/images/player/snowman_crouch_idle.png",
-                        draw_source=Rect2(0.0, 0.0, 36.0, 23.0),
-                    ),
-                    AnimationFrame(
-                        frame=1,
-                        texture_path="assets/images/player/snowman_crouch_idle.png",
-                        draw_source=Rect2(36.0, 0.0, 36.0, 23.0),
-                    ),
-                    AnimationFrame(
-                        frame=2,
-                        texture_path="assets/images/player/snowman_crouch_idle.png",
-                        draw_source=Rect2(72.0, 0.0, 36.0, 23.0),
-                    ),
-                    AnimationFrame(
-                        frame=3,
-                        texture_path="assets/images/player/snowman_crouch_idle.png",
-                        draw_source=Rect2(108.0, 0.0, 36.0, 23.0),
-                    ),
-                    AnimationFrame(
-                        frame=4,
-                        texture_path="assets/images/player/snowman_crouch_idle.png",
-                        draw_source=Rect2(144.0, 0.0, 36.0, 23.0),
-                    ),
-                    AnimationFrame(
-                        frame=5,
-                        texture_path="assets/images/player/snowman_crouch_idle.png",
-                        draw_source=Rect2(180.0, 0.0, 36.0, 23.0),
-                    ),
-                ],
-            )
-        )
+        self.anim_sprite.add_animation(IDLE_ANIMATION)
+        self.anim_sprite.add_animation(CROUCH_ANIMATION)
         self.anim_sprite.position = self._center_pos()
         self.add_child(self.anim_sprite)
         # Camera
