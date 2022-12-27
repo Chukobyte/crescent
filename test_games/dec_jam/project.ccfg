@@ -100,21 +100,24 @@
             "name": "move_left",
             "values": [
                 "a",
-                "left"
+                "left",
+                "joystick_left_analog_left"
             ]
         },
         {
             "name": "move_right",
             "values": [
                 "d",
-                "right"
+                "right",
+                "joystick_left_analog_right"
             ]
         },
         {
             "name": "attack",
             "values": [
                 "space",
-                "return"
+                "return",
+                "joystick_button_a"
             ]
         },
         {
