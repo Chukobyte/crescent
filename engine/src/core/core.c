@@ -199,7 +199,6 @@ void cre_process_game_update() {
     cre_ec_system_process_systems(variableDeltaTime);
 
     // Fixed Time Step
-    static float fixedTime = 0.0f;
     static uint32_t fixedCurrentTime = 0;
     static float accumulator = 0.0f;
     uint32_t newTime = SDL_GetTicks();
@@ -212,7 +211,6 @@ void cre_process_game_update() {
     accumulator += (float) frameTime / 1000.0f;
 
     while (accumulator >= CRE_GLOBAL_PHYSICS_DELTA_TIME) {
-        fixedTime += CRE_GLOBAL_PHYSICS_DELTA_TIME;
         accumulator -= CRE_GLOBAL_PHYSICS_DELTA_TIME;
         cre_ec_system_physics_process_systems(CRE_GLOBAL_PHYSICS_DELTA_TIME);
         se_input_clean_up_flags();
