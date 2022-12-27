@@ -166,7 +166,7 @@ class Player(Node2D):
             SceneTree.change_scene(path="scenes/end_screen.cscn")
 
     def _can_attack(self) -> bool:
-        return self.state == PlayerState.MOVE and self.stance != PlayerStance.IN_AIR
+        return self.state == PlayerState.MOVE
 
     def _update_stance(self, stance: str) -> None:
         if self.stance == stance:
@@ -199,7 +199,15 @@ class Player(Node2D):
 
     # Tasks
     async def physics_update_task(self):
+        def get_stance_task(stance: str) -> Task:
+            if stance == PlayerStance.STANDING:
+                return Task(self._stand_stance_task())
+            elif stance == PlayerStance.CROUCHING:
+                return Task(self._crouch_stance_task())
+            return Task(self._in_air_stance_task())
+
         state_task_manager = TaskManager(tasks=[Task(self._move_state_task())])
+        stance_task_manager = TaskManager(tasks=[get_stance_task(self.stance)])
 
         def process_queued_state_if_exists():
             if self._queued_state:
@@ -216,9 +224,18 @@ class Player(Node2D):
                 self._queued_state = None
 
         try:
+            self.anim_sprite.play(name=IDLE_ANIM.name)
+            prev_stance = self.stance
             while True:
+                # State
                 process_queued_state_if_exists()
                 state_task_manager.update()
+                # Stance
+                if prev_stance != self.stance:
+                    stance_task_manager.kill_tasks()
+                    stance_task_manager.add_task(get_stance_task(self.stance))
+                    prev_stance = self.stance
+                stance_task_manager.update()
                 await co_suspend()
         except GeneratorExit:
             pass
@@ -230,10 +247,11 @@ class Player(Node2D):
     async def _stand_stance_task(self):
         try:
             while True:
-                self.anim_sprite.play(name=IDLE_ANIM.name)
+                # self.anim_sprite.play(name=IDLE_ANIM.name)
                 if Input.is_action_pressed(name="jump"):
                     self._update_stance(PlayerStance.IN_AIR)
                 elif Input.is_action_pressed(name="crouch"):
+                    self.anim_sprite.play(name=CROUCH_ANIM.name)
                     self._update_stance(PlayerStance.CROUCHING)
                 await co_suspend()
         except GeneratorExit:
@@ -242,10 +260,14 @@ class Player(Node2D):
     async def _crouch_stance_task(self):
         try:
             while True:
-                self.anim_sprite.play(name=CROUCH_ANIM.name)
+                # self.anim_sprite.play(name=CROUCH_ANIM.name)
                 if Input.is_action_pressed(name="jump"):
                     self._update_stance(PlayerStance.IN_AIR)
-                elif not Input.is_action_pressed(name="crouch"):
+                elif (
+                    not Input.is_action_pressed(name="crouch")
+                    and self.state != PlayerState.ATTACKING
+                ):
+                    self.anim_sprite.play(name=IDLE_ANIM.name)
                     self._update_stance(PlayerStance.STANDING)
                 await co_suspend()
         except GeneratorExit:
@@ -258,9 +280,6 @@ class Player(Node2D):
             jump_height = 12
             position_before_jump = self.position
             position_to_jump_to = position_before_jump + Vector2(0, -jump_height)
-            print(
-                f"position_before_jump = {position_before_jump}, position_to_jump_to = {position_to_jump_to}"
-            )
             jump_time = 1.0
             timer = Timer(jump_time / 2.0)
             # Go Up
@@ -314,9 +333,7 @@ class Player(Node2D):
             return Task(self._in_air_stance_task())
 
         try:
-            stance_task_manager = TaskManager(tasks=[get_stance_task(self.stance)])
             engine_delta_time = Engine.get_global_physics_delta_time()
-            prev_stance = self.stance
             while True:
                 delta_time = self.get_full_time_dilation() * engine_delta_time
 
@@ -365,12 +382,6 @@ class Player(Node2D):
                         self.position = new_pos
                     self.direction_facing = input_dir
                     self.scale = Vector2(self.direction_facing.x, 1.0)
-                # Handle player stances
-                if prev_stance != self.stance:
-                    stance_task_manager.kill_tasks()
-                    stance_task_manager.add_task(get_stance_task(self.stance))
-                    prev_stance = self.stance
-                stance_task_manager.update()
 
                 await co_suspend()
         except GeneratorExit:
@@ -382,6 +393,10 @@ class Player(Node2D):
             self._queue_state_change(
                 new_state=QueuedPlayerState(state=PlayerState.MOVE)
             )
+            if self.stance == PlayerStance.CROUCHING:
+                self.anim_sprite.play(name=CROUCH_ANIM.name)
+            else:
+                self.anim_sprite.play(name=IDLE_ANIM.name)
             await co_return()
         except GeneratorExit:
             pass
