@@ -72,6 +72,18 @@ class PlayerStance:
     IN_AIR = "in_air"
 
 
+class PlayerState:
+    MOVE = "move"  # main
+    ATTACKING = "attacking"
+    HURT = "hurt"
+
+
+class QueuedPlayerState:
+    def __init__(self, state: str, data=None):
+        self.state = state
+        self.data = data
+
+
 class PlayerStats:
     def __init__(self, hp=0):
         self._max_hp = hp
@@ -98,7 +110,8 @@ class Player(Node2D):
         self.speed = 25
         self.direction_facing = Vector2.RIGHT()
         self.stance = PlayerStance.STANDING
-        self.is_attacking = False
+        self.state = PlayerState.MOVE
+        self._queued_state: QueuedPlayerState | None = None
         self._game_master = GameMaster(self)  # Temp
         self._physics_update_task_manager = TaskManager(
             tasks=[Task(self.physics_update_task()), Task(self.collision_update_task())]
@@ -137,30 +150,6 @@ class Player(Node2D):
         if Input.is_action_just_pressed(name="quit_game"):
             Engine.exit()
 
-        if Input.is_action_just_pressed(name="attack") and not self.is_attacking:
-            new_attack = PlayerAttack.new()
-            attack_y = 10
-            if self.stance == PlayerStance.CROUCHING:
-                attack_y += 4
-                self.anim_sprite.play(name=CROUCH_PUNCH_ANIM.name)
-            elif (
-                self.stance == PlayerStance.STANDING
-                or self.stance == PlayerStance.IN_AIR
-            ):
-                self.anim_sprite.play(name=STAND_PUNCH_ANIM.name)
-
-            new_attack.position = (
-                self.position
-                + self._center_pos()
-                + Vector2(4.0, 0.0)
-                + Vector2(self.direction_facing.x * 20, attack_y)
-            )
-            self._physics_update_task_manager.add_task(
-                Task(self._reset_attack_task(new_attack))
-            )
-            SceneTree.get_root().add_child(new_attack)
-            self.is_attacking = True
-
     def _physics_update(self, delta_time: float) -> None:
         self._game_master.update(delta_time)
         self._physics_update_task_manager.update()
@@ -170,9 +159,6 @@ class Player(Node2D):
         self.health_bar.set_health_percentage(self.stats.hp)
         if self.stats.hp <= 0:
             SceneTree.change_scene(path="scenes/end_screen.cscn")
-
-    def _set_is_attacking(self, value: bool) -> None:
-        self.is_attacking = value
 
     def _update_stance(self, stance: str) -> None:
         if self.stance == stance:
@@ -199,25 +185,80 @@ class Player(Node2D):
     def _center_pos(self) -> Vector2:
         return Vector2(-8, -8)
 
+    def _queue_state_change(self, new_state: QueuedPlayerState) -> None:
+        if new_state.state != self.state:
+            self._queued_state = new_state
+
     # Tasks
     async def physics_update_task(self):
-        # Doesn't change so no need to get every frame
-        engine_delta_time = Engine.get_global_physics_delta_time()
+        state_task_manager = TaskManager(tasks=[Task(self._move_state_task())])
 
-        # TODO: Do better state management and handle attacks differently...
+        def process_queued_state_if_exists():
+            if self._queued_state:
+                state_task_manager.kill_tasks()
+                self.state = self._queued_state.state
+                if self.state == PlayerState.MOVE:
+                    state_task_manager.add_task(Task(self._move_state_task()))
+                elif self.state == PlayerState.ATTACKING:
+                    state_task_manager.add_task(
+                        Task(self._attack_state_task(attack=self._queued_state.data))
+                    )
+                elif self.state == PlayerState.HURT:
+                    state_task_manager.add_task(Task(self._hurt_state_task()))
+                self._queued_state = None
+
         try:
             while True:
+                process_queued_state_if_exists()
+                state_task_manager.update()
+                await co_suspend()
+        except GeneratorExit:
+            pass
+        finally:
+            state_task_manager.kill_tasks()
+
+    # State tasks
+    async def _move_state_task(self):
+        try:
+            engine_delta_time = Engine.get_global_physics_delta_time()
+            while True:
                 delta_time = self.get_full_time_dilation() * engine_delta_time
+
+                # Check for attack first for now
+                # if Input.is_action_just_pressed(name="attack"):
+                if Input.is_action_pressed(name="attack"):
+                    new_attack = PlayerAttack.new()
+                    attack_y = 10
+                    if self.stance == PlayerStance.CROUCHING:
+                        attack_y += 4
+                        self.anim_sprite.play(name=CROUCH_PUNCH_ANIM.name)
+                    elif (
+                        self.stance == PlayerStance.STANDING
+                        or self.stance == PlayerStance.IN_AIR
+                    ):
+                        self.anim_sprite.play(name=STAND_PUNCH_ANIM.name)
+
+                    new_attack.position = (
+                        self.position
+                        + self._center_pos()
+                        + Vector2(4.0, 0.0)
+                        + Vector2(self.direction_facing.x * 20, attack_y)
+                    )
+                    SceneTree.get_root().add_child(new_attack)
+                    self._queue_state_change(
+                        QueuedPlayerState(state=PlayerState.ATTACKING, data=new_attack)
+                    )
+                    await co_return()
+
                 # Check horizontal movement inputs
                 input_dir = Vector2.ZERO()
-                if not self.is_attacking:
-                    if Input.is_action_pressed(name="move_left"):
-                        input_dir = Vector2.LEFT()
-                    elif Input.is_action_pressed(name="move_right"):
-                        input_dir = Vector2.RIGHT()
+                if Input.is_action_pressed(name="move_left"):
+                    input_dir = Vector2.LEFT()
+                elif Input.is_action_pressed(name="move_right"):
+                    input_dir = Vector2.RIGHT()
                 # Determine movement (no air movement for now)
                 if input_dir != Vector2.ZERO():
-                    if self.stance == PlayerStance.STANDING and not self.is_attacking:
+                    if self.stance == PlayerStance.STANDING:
                         new_pos = self.position + (
                             input_dir
                             * Vector2(delta_time * self.speed, delta_time * self.speed)
@@ -228,15 +269,13 @@ class Player(Node2D):
                     self.scale = Vector2(self.direction_facing.x, 1.0)
                 # Handle player stances
                 if self.stance == PlayerStance.STANDING:
-                    if not self.is_attacking:
-                        self.anim_sprite.play(name=IDLE_ANIM.name)
+                    self.anim_sprite.play(name=IDLE_ANIM.name)
                     if Input.is_action_pressed(name="jump"):
                         self._update_stance(PlayerStance.IN_AIR)
                     elif Input.is_action_pressed(name="crouch"):
                         self._update_stance(PlayerStance.CROUCHING)
                 elif self.stance == PlayerStance.CROUCHING:
-                    if not self.is_attacking:
-                        self.anim_sprite.play(name=CROUCH_ANIM.name)
+                    self.anim_sprite.play(name=CROUCH_ANIM.name)
                     if Input.is_action_pressed(name="jump"):
                         self._update_stance(PlayerStance.IN_AIR)
                     elif not Input.is_action_pressed(name="crouch"):
@@ -300,6 +339,27 @@ class Player(Node2D):
         except GeneratorExit:
             pass
 
+    async def _attack_state_task(self, attack: PlayerAttack):
+        try:
+            await co_wait_seconds(attack.life_time - 0.05)
+            self._queue_state_change(
+                new_state=QueuedPlayerState(state=PlayerState.MOVE)
+            )
+            await co_return()
+        except GeneratorExit:
+            pass
+
+    async def _hurt_state_task(self):
+        try:
+            print("***HURT_TASK")
+            while True:
+                self._queue_state_change(
+                    new_state=QueuedPlayerState(state=PlayerState.MOVE)
+                )
+                await co_return()
+        except GeneratorExit:
+            pass
+
     async def collision_update_task(self) -> None:
         try:
             while True:
@@ -326,11 +386,3 @@ class Player(Node2D):
             pass
         finally:
             World.set_time_dilation(1.0)
-
-    async def _reset_attack_task(self, attack: PlayerAttack) -> None:
-        try:
-            await co_wait_seconds(attack.life_time - 0.05)
-            self.is_attacking = False
-            await co_return()
-        except GeneratorExit:
-            pass

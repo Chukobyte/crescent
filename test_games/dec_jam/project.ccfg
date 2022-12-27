@@ -113,7 +113,8 @@
         {
             "name": "attack",
             "values": [
-                "space"
+                "space",
+                "return"
             ]
         },
         {
