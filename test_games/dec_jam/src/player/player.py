@@ -112,6 +112,7 @@ class Player(Node2D):
         self.stance = PlayerStance.STANDING
         self.state = PlayerState.MOVE
         self._queued_state: QueuedPlayerState | None = None
+        self._has_queued_attack = False
         self._game_master = GameMaster(self)  # Temp
         self._physics_update_task_manager = TaskManager(
             tasks=[Task(self.physics_update_task()), Task(self.collision_update_task())]
@@ -150,6 +151,10 @@ class Player(Node2D):
         if Input.is_action_just_pressed(name="quit_game"):
             Engine.exit()
 
+        # Work around for '_physics_update' not being called every frame.  TODO: Update inputs in the engine for this...
+        if Input.is_action_just_pressed(name="attack") and self._can_attack():
+            self._has_queued_attack = True
+
     def _physics_update(self, delta_time: float) -> None:
         self._game_master.update(delta_time)
         self._physics_update_task_manager.update()
@@ -159,6 +164,9 @@ class Player(Node2D):
         self.health_bar.set_health_percentage(self.stats.hp)
         if self.stats.hp <= 0:
             SceneTree.change_scene(path="scenes/end_screen.cscn")
+
+    def _can_attack(self) -> bool:
+        return self.state == PlayerState.MOVE and self.stance != PlayerStance.IN_AIR
 
     def _update_stance(self, stance: str) -> None:
         if self.stance == stance:
@@ -218,15 +226,105 @@ class Player(Node2D):
             state_task_manager.kill_tasks()
 
     # State tasks
-    async def _move_state_task(self):
+    # Stance funcs
+    async def _stand_stance_task(self):
+        try:
+            while True:
+                self.anim_sprite.play(name=IDLE_ANIM.name)
+                if Input.is_action_pressed(name="jump"):
+                    self._update_stance(PlayerStance.IN_AIR)
+                elif Input.is_action_pressed(name="crouch"):
+                    self._update_stance(PlayerStance.CROUCHING)
+                await co_suspend()
+        except GeneratorExit:
+            pass
+
+    async def _crouch_stance_task(self):
+        try:
+            while True:
+                self.anim_sprite.play(name=CROUCH_ANIM.name)
+                if Input.is_action_pressed(name="jump"):
+                    self._update_stance(PlayerStance.IN_AIR)
+                elif not Input.is_action_pressed(name="crouch"):
+                    self._update_stance(PlayerStance.STANDING)
+                await co_suspend()
+        except GeneratorExit:
+            pass
+
+    async def _in_air_stance_task(self):
         try:
             engine_delta_time = Engine.get_global_physics_delta_time()
+            self.anim_sprite.play(name=IDLE_ANIM.name)
+            jump_height = 12
+            position_before_jump = self.position
+            position_to_jump_to = position_before_jump + Vector2(0, -jump_height)
+            print(
+                f"position_before_jump = {position_before_jump}, position_to_jump_to = {position_to_jump_to}"
+            )
+            jump_time = 1.0
+            timer = Timer(jump_time / 2.0)
+            # Go Up
+            while (
+                timer.tick(
+                    self.get_full_time_dilation() * engine_delta_time
+                ).time_remaining
+                > 0
+            ):
+                alpha = 1.0 - map_to_unit_range(timer.time_remaining, 0.0, timer.time)
+                alpha = Ease.Cubic.ease_out(
+                    elapsed_time=timer.time - timer.time_remaining,
+                    from_pos=alpha,
+                    to_pos=1.0,
+                    duration=timer.time,
+                )
+                new_pos = Vector2.lerp(position_before_jump, position_to_jump_to, alpha)
+                self.position = new_pos
+                await co_suspend()
+            # Go Down
+            timer.reset()
+            while (
+                timer.tick(
+                    self.get_full_time_dilation() * engine_delta_time
+                ).time_remaining
+                > 0
+            ):
+                alpha = 1.0 - map_to_unit_range(timer.time_remaining, 0.0, timer.time)
+                alpha = Ease.Cubic.ease_in(
+                    elapsed_time=timer.time - timer.time_remaining,
+                    from_pos=alpha,
+                    to_pos=1.0,
+                    duration=timer.time,
+                )
+                new_pos = Vector2.lerp(position_to_jump_to, position_before_jump, alpha)
+                self.position = new_pos
+                await co_suspend()
+            # Finish landing
+            self.position = position_before_jump
+            self._update_stance(PlayerStance.STANDING)
+            await co_return()
+        except GeneratorExit:
+            pass
+
+    async def _move_state_task(self):
+        def get_stance_task(stance: str) -> Task:
+            if stance == PlayerStance.STANDING:
+                return Task(self._stand_stance_task())
+            elif stance == PlayerStance.CROUCHING:
+                return Task(self._crouch_stance_task())
+            return Task(self._in_air_stance_task())
+
+        try:
+            stance_task_manager = TaskManager(tasks=[get_stance_task(self.stance)])
+            engine_delta_time = Engine.get_global_physics_delta_time()
+            prev_stance = self.stance
             while True:
                 delta_time = self.get_full_time_dilation() * engine_delta_time
 
                 # Check for attack first for now
                 # if Input.is_action_just_pressed(name="attack"):
-                if Input.is_action_pressed(name="attack"):
+                # if Input.is_action_pressed(name="attack"):
+                if self._has_queued_attack:
+                    self._has_queued_attack = False
                     new_attack = PlayerAttack.new()
                     attack_y = 10
                     if self.stance == PlayerStance.CROUCHING:
@@ -268,73 +366,12 @@ class Player(Node2D):
                     self.direction_facing = input_dir
                     self.scale = Vector2(self.direction_facing.x, 1.0)
                 # Handle player stances
-                if self.stance == PlayerStance.STANDING:
-                    self.anim_sprite.play(name=IDLE_ANIM.name)
-                    if Input.is_action_pressed(name="jump"):
-                        self._update_stance(PlayerStance.IN_AIR)
-                    elif Input.is_action_pressed(name="crouch"):
-                        self._update_stance(PlayerStance.CROUCHING)
-                elif self.stance == PlayerStance.CROUCHING:
-                    self.anim_sprite.play(name=CROUCH_ANIM.name)
-                    if Input.is_action_pressed(name="jump"):
-                        self._update_stance(PlayerStance.IN_AIR)
-                    elif not Input.is_action_pressed(name="crouch"):
-                        self._update_stance(PlayerStance.STANDING)
-                elif self.stance == PlayerStance.IN_AIR:
-                    self.anim_sprite.play(name=IDLE_ANIM.name)
-                    jump_height = 12
-                    position_before_jump = self.position
-                    position_to_jump_to = position_before_jump + Vector2(
-                        0, -jump_height
-                    )
-                    jump_time = 1.0
-                    timer = Timer(jump_time / 2.0)
-                    # Go Up
-                    while (
-                        timer.tick(
-                            self.get_full_time_dilation() * engine_delta_time
-                        ).time_remaining
-                        > 0
-                    ):
-                        alpha = 1.0 - map_to_unit_range(
-                            timer.time_remaining, 0.0, timer.time
-                        )
-                        alpha = Ease.Cubic.ease_out(
-                            elapsed_time=timer.time - timer.time_remaining,
-                            from_pos=alpha,
-                            to_pos=1.0,
-                            duration=timer.time,
-                        )
-                        new_pos = Vector2.lerp(
-                            position_before_jump, position_to_jump_to, alpha
-                        )
-                        self.position = new_pos
-                        await co_suspend()
-                    # Go Down
-                    timer.reset()
-                    while (
-                        timer.tick(
-                            self.get_full_time_dilation() * engine_delta_time
-                        ).time_remaining
-                        > 0
-                    ):
-                        alpha = 1.0 - map_to_unit_range(
-                            timer.time_remaining, 0.0, timer.time
-                        )
-                        alpha = Ease.Cubic.ease_in(
-                            elapsed_time=timer.time - timer.time_remaining,
-                            from_pos=alpha,
-                            to_pos=1.0,
-                            duration=timer.time,
-                        )
-                        new_pos = Vector2.lerp(
-                            position_to_jump_to, position_before_jump, alpha
-                        )
-                        self.position = new_pos
-                        await co_suspend()
-                    # Finish landing
-                    self.position = position_before_jump
-                    self._update_stance(PlayerStance.STANDING)
+                if prev_stance != self.stance:
+                    stance_task_manager.kill_tasks()
+                    stance_task_manager.add_task(get_stance_task(self.stance))
+                    prev_stance = self.stance
+                stance_task_manager.update()
+
                 await co_suspend()
         except GeneratorExit:
             pass
