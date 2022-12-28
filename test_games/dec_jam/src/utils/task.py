@@ -82,6 +82,12 @@ class TaskManager:
                 parent_task = parent_task.parent_task
         self.tasks.clear()
 
+    def get_task_amount(self) -> int:
+        return len(self.tasks)
+
+    def has_tasks(self) -> bool:
+        return len(self.tasks) > 0
+
 
 def co_suspend() -> Awaitable:
     return Awaitable(Awaitable.State.SUSPENDED)

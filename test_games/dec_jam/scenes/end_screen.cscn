@@ -1,0 +1,65 @@
+{
+    "name": "EndScreen",
+    "type": "Node2D",
+    "tags": null,
+    "external_node_source": null,
+    "components": [
+        {
+            "type": "transform_2d",
+            "position": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0
+            },
+            "rotation": 0.0,
+            "z_index": 0,
+            "z_index_relative_to_parent": true,
+            "ignore_camera": false
+        },
+        {
+            "type": "script",
+            "class_path": "src.end_screen",
+            "class_name": "EndScreen"
+        }
+    ],
+    "children": [
+        {
+            "name": "TextLabel",
+            "type": "TextLabel",
+            "tags": null,
+            "external_node_source": null,
+            "components": [
+                {
+                    "type": "transform_2d",
+                    "position": {
+                        "x": 40.0,
+                        "y": 40.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0
+                    },
+                    "rotation": 0.0,
+                    "z_index": 0,
+                    "z_index_relative_to_parent": true,
+                    "ignore_camera": false
+                },
+                {
+                    "type": "text_label",
+                    "uid": "fight-16",
+                    "text": "End Game",
+                    "color": {
+                        "r": 255,
+                        "g": 255,
+                        "b": 255,
+                        "a": 255
+                    }
+                }
+            ],
+            "children": []
+        }
+    ]
+}

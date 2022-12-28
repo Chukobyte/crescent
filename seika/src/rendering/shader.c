@@ -5,8 +5,10 @@
 #include "../utils/logger.h"
 #include "../memory/se_mem.h"
 
+bool shader_check_compile_errors(unsigned int shaderId, const char* type);
+
 Shader* shader_compile_new_shader(const char* vertexSource, const char* fragmentSource) {
-    struct Shader* shader = SE_MEM_ALLOCATE(Shader);
+    Shader* shader = SE_MEM_ALLOCATE(Shader);
     GLuint vertex, fragment;
     // vertex
     vertex = glCreateShader(GL_VERTEX_SHADER);
@@ -17,20 +19,28 @@ Shader* shader_compile_new_shader(const char* vertexSource, const char* fragment
     fragment = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragment, 1, &fragmentSource, NULL);
     glCompileShader(fragment);
-    shader_check_compile_errors(vertex, SHADER_FRAGMENT_TYPE);
+    if (!shader_check_compile_errors(vertex, SHADER_FRAGMENT_TYPE)) {
+        return NULL;
+    }
     // attack and link shaders
     shader->id = glCreateProgram();
     glAttachShader(shader->id, vertex);
     glAttachShader(shader->id, fragment);
     glLinkProgram(shader->id);
-    shader_check_compile_errors(shader->id, SHADER_PROGRAM_TYPE);
+    if (!shader_check_compile_errors(shader->id, SHADER_PROGRAM_TYPE)) {
+        return NULL;
+    }
     glDeleteShader(vertex);
     glDeleteShader(fragment);
     return shader;
 }
 
-void shader_check_compile_errors(unsigned int shaderId, const char* type) {
-    int success;
+void shader_destroy(Shader* shader) {
+    SE_MEM_FREE(shader);
+}
+
+bool shader_check_compile_errors(unsigned int shaderId, const char* type) {
+    GLint success;
     char infoLog[1024];
     if(type == SHADER_PROGRAM_TYPE) {
         glGetProgramiv(shaderId, GL_LINK_STATUS, &success);
@@ -45,6 +55,7 @@ void shader_check_compile_errors(unsigned int shaderId, const char* type) {
             se_logger_error("Shader type '%s' compilation failed!InfoLog = \n%s", type, &infoLog);
         }
     }
+    return success;
 }
 
 void shader_use(Shader* shader) {

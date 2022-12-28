@@ -12,6 +12,7 @@
 #define SE_RENDER_TO_FRAMEBUFFER
 #define SE_RENDER_LAYER_BATCH_MAX 200
 #define SE_RENDER_LAYER_BATCH_ITEM_MAX (SE_RENDER_LAYER_BATCH_MAX / 2)
+#define SE_RENDER_TEXTURE_LAYER_TEXTURE_MAX 64
 
 #ifdef SE_RENDER_TO_FRAMEBUFFER
 #include "frame_buffer.h"
@@ -24,17 +25,17 @@ typedef struct TextureCoordinates {
     GLfloat tMax;
 } TextureCoordinates;
 
+TextureCoordinates renderer_get_texture_coordinates(const Texture* texture, const Rect2* drawSource, bool flipX, bool flipY);
+void renderer_print_opengl_errors();
+
 void sprite_renderer_initialize();
 void sprite_renderer_finalize();
 void sprite_renderer_update_resolution();
-void sprite_renderer_draw_sprite(const Texture* texture, const Rect2* sourceRect, const Size2D* destSize, const Color *color, bool flipX, bool flipY, TransformModel2D* globalTransform);
+
 void font_renderer_initialize();
 void font_renderer_finalize();
 void font_renderer_update_resolution();
 void font_renderer_draw_text(const Font* font, const char* text, float x, float y, float scale, const Color* color);
-
-TextureCoordinates renderer_get_texture_coordinates(const Texture* texture, const Rect2* drawSource, bool flipX, bool flipY);
-void renderer_print_opengl_errors();
 
 static GLuint spriteQuadVAO;
 static GLuint spriteQuadVBO;
@@ -65,11 +66,18 @@ typedef struct FontBatchItem {
     Color color;
 } FontBatchItem;
 
+void renderer_batching_draw_sprites(SpriteBatchItem items[], size_t spriteCount);
+
 // Render Layer - Arranges draw order by z index
-typedef struct RenderLayer {
+typedef struct RenderTextureLayer {
     SpriteBatchItem spriteBatchItems[SE_RENDER_LAYER_BATCH_ITEM_MAX];
-    FontBatchItem fontBatchItems[SE_RENDER_LAYER_BATCH_ITEM_MAX];
     size_t spriteBatchItemCount;
+} RenderTextureLayer;
+
+typedef struct RenderLayer {
+    RenderTextureLayer renderTextureLayers[SE_RENDER_TEXTURE_LAYER_TEXTURE_MAX];
+    FontBatchItem fontBatchItems[SE_RENDER_LAYER_BATCH_ITEM_MAX];
+    size_t renderTextureLayerCount;
     size_t fontBatchItemCount;
 } RenderLayer;
 
@@ -87,14 +95,17 @@ void se_renderer_initialize(int inWindowWidth, int inWindowHeight, int inResolut
     se_renderer_update_window_size((float) inWindowWidth, (float) inWindowHeight);
     sprite_renderer_initialize();
     font_renderer_initialize();
-    // Initialize framebuffer
 #ifdef SE_RENDER_TO_FRAMEBUFFER
+    // Initialize framebuffer
     SE_ASSERT_FMT(se_frame_buffer_initialize(inWindowWidth, inWindowHeight), "Framebuffer didn't initialize!");
 #endif
     // Set initial data for render layer
     for (size_t i = 0; i < SE_RENDER_LAYER_BATCH_MAX; i++) {
-        render_layer_items[i].spriteBatchItemCount = 0;
+        render_layer_items[i].renderTextureLayerCount = 0;
         render_layer_items[i].fontBatchItemCount = 0;
+        for (size_t j = 0; j < SE_RENDER_TEXTURE_LAYER_TEXTURE_MAX; j++) {
+            render_layer_items[i].renderTextureLayers[j].spriteBatchItemCount = 0;
+        }
     }
 }
 
@@ -134,8 +145,20 @@ void se_renderer_queue_sprite_draw_call(Texture* texture, Rect2 sourceRect, Size
     }
     SpriteBatchItem item = { .texture = texture, .sourceRect = sourceRect, .destSize = destSize, .color = color, .flipX = flipX, .flipY = flipY, .globalTransform = globalTransform };
     const int arrayZIndex = se_math_clamp_int(zIndex + SE_RENDER_LAYER_BATCH_MAX / 2, 0, SE_RENDER_LAYER_BATCH_MAX - 1);
-    // Update sprite batch item on render layer
-    render_layer_items[arrayZIndex].spriteBatchItems[render_layer_items[arrayZIndex].spriteBatchItemCount++] = item;
+    // Get texture layer index for render texture
+    size_t textureLayerIndex = render_layer_items[arrayZIndex].renderTextureLayerCount;
+    for (size_t i = 0; i < render_layer_items[arrayZIndex].renderTextureLayerCount; i++) {
+        if (texture == render_layer_items[arrayZIndex].renderTextureLayers[i].spriteBatchItems[0].texture) {
+            textureLayerIndex = i;
+            break;
+        }
+    }
+    RenderTextureLayer* textureLayer =  &render_layer_items[arrayZIndex].renderTextureLayers[textureLayerIndex];
+    // Increment render texture layer count if first sprite
+    if (textureLayer->spriteBatchItemCount == 0) {
+        render_layer_items[arrayZIndex].renderTextureLayerCount++;
+    }
+    textureLayer->spriteBatchItems[textureLayer->spriteBatchItemCount++] = item;
     // Update active render layer indices
     update_active_render_layer_index(arrayZIndex);
 }
@@ -158,18 +181,12 @@ void se_renderer_flush_batches() {
     for (size_t i = 0; i < active_render_layer_items_indices_count; i++) {
         const size_t layerIndex = active_render_layer_items_indices[i];
         // Sprite
-        for (size_t spriteIndex = 0; spriteIndex < render_layer_items[layerIndex].spriteBatchItemCount; spriteIndex++) {
-            sprite_renderer_draw_sprite(
-                render_layer_items[layerIndex].spriteBatchItems[spriteIndex].texture,
-                &render_layer_items[layerIndex].spriteBatchItems[spriteIndex].sourceRect,
-                &render_layer_items[layerIndex].spriteBatchItems[spriteIndex].destSize,
-                &render_layer_items[layerIndex].spriteBatchItems[spriteIndex].color,
-                render_layer_items[layerIndex].spriteBatchItems[spriteIndex].flipX,
-                render_layer_items[layerIndex].spriteBatchItems[spriteIndex].flipY,
-                render_layer_items[layerIndex].spriteBatchItems[spriteIndex].globalTransform
-            );
+        for (size_t renderTextureIndex = 0; renderTextureIndex < render_layer_items[layerIndex].renderTextureLayerCount; renderTextureIndex++) {
+            RenderTextureLayer* renderTextureLayer = &render_layer_items[layerIndex].renderTextureLayers[renderTextureIndex];
+            renderer_batching_draw_sprites(renderTextureLayer->spriteBatchItems, renderTextureLayer->spriteBatchItemCount);
+            renderTextureLayer->spriteBatchItemCount = 0;
         }
-        render_layer_items[layerIndex].spriteBatchItemCount = 0;
+        render_layer_items[layerIndex].renderTextureLayerCount = 0;
         // Font
         for (size_t fontIndex = 0; fontIndex < render_layer_items[layerIndex].fontBatchItemCount; fontIndex++) {
             font_renderer_draw_text(
@@ -203,7 +220,7 @@ void se_renderer_process_and_flush_batches(const Color* backgroundColor) {
     se_frame_buffer_unbind();
 
     // Clear screen texture background
-    static Color screenBackgroundColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+    static const Color screenBackgroundColor = { 1.0f, 1.0f, 1.0f, 1.0f };
     glClearColor(screenBackgroundColor.r, screenBackgroundColor.g, screenBackgroundColor.b, screenBackgroundColor.a);
     glClear(GL_COLOR_BUFFER_BIT);
     // Draw screen texture from framebuffer
@@ -286,59 +303,77 @@ void sprite_renderer_update_resolution() {
     shader_set_mat4_float(spriteShader, "projection", &proj);
 }
 
-// TODO: Just need to pass in destination size instead of rect2
-void sprite_renderer_draw_sprite(const Texture* texture, const Rect2* sourceRect, const Size2D* destSize, const Color* color, bool flipX, bool flipY, TransformModel2D* globalTransform) {
-    glDepthMask(false);
+void renderer_batching_draw_sprites(SpriteBatchItem items[], size_t spriteCount) {
+#define MAX_SPRITE_COUNT 100
+#define VERTEX_BUFFER_SIZE (54 * MAX_SPRITE_COUNT)
+#define NUMBER_OF_VERTICES 6
+#define VERTS_STRIDE 9
 
-    glm_scale(globalTransform->model, (vec3) {
-        destSize->w, destSize->h, 1.0f
-    });
+    if (spriteCount <= 0) {
+        return;
+    }
+
+    glDepthMask(false);
 
     glBindVertexArray(spriteQuadVAO);
     glBindBuffer(GL_ARRAY_BUFFER, spriteQuadVBO);
 
     shader_use(spriteShader);
-    shader_set_mat4_float(spriteShader, "models[0]", &globalTransform->model); // TODO: Batch models
-    const int VERTEX_ITEM_COUNT = 1;
-    const int NUMBER_OF_VERTICES = 6;
-    const float SPRITE_ID = 0.0f;
-    const TextureCoordinates textureCoords = renderer_get_texture_coordinates(texture, sourceRect, flipX, flipY);
 
-    const float determinate = glm_mat4_det(globalTransform->model);
-    const int vertsStride = 9;
-    GLfloat verts[54]; // TODO: fix magic number
-    for (int i = 0; i < VERTEX_ITEM_COUNT * NUMBER_OF_VERTICES; i++) {
-        bool isSMin;
-        bool isTMin;
-        if (determinate >= 0.0f) {
-            isSMin = i == 0 || i == 2 || i == 3 ? true : false;
-            isTMin = i == 1 || i == 2 || i == 5 ? true : false;
-        } else {
-            isSMin = i == 1 || i == 2 || i == 5 ? true : false;
-            isTMin = i == 0 || i == 2 || i == 3 ? true : false;
+    Texture* texture = items[0].texture;
+
+    GLfloat verts[VERTEX_BUFFER_SIZE];
+    for (size_t i = 0; i < spriteCount; i++) {
+        glm_scale(items[i].globalTransform->model, (vec3) {
+            items[i].destSize.w, items[i].destSize.h, 1.0f
+        });
+        const float spriteId = (float) i;
+        const float determinate = glm_mat4_det(items[i].globalTransform->model);
+        const TextureCoordinates textureCoords = renderer_get_texture_coordinates(texture, &items[i].sourceRect, items[i].flipX, items[i].flipY);
+        // concat models[] string for uniform param
+        char modelsBuffer[12];
+        sprintf(modelsBuffer, "models[%u]", i);
+        shader_set_mat4_float(spriteShader, modelsBuffer, &items[i].globalTransform->model);
+
+        // Loop over vertices
+        for (int j = 0; j < NUMBER_OF_VERTICES; j++) {
+            bool isSMin;
+            bool isTMin;
+            if (determinate >= 0.0f) {
+                isSMin = j == 0 || j == 2 || j == 3 ? true : false;
+                isTMin = j == 1 || j == 2 || j == 5 ? true : false;
+            } else {
+                isSMin = j == 1 || j == 2 || j == 5 ? true : false;
+                isTMin = j == 0 || j == 2 || j == 3 ? true : false;
+            }
+            const int row = (j * VERTS_STRIDE) + ((int) i * (VERTS_STRIDE * NUMBER_OF_VERTICES));
+            verts[row + 0] = spriteId;
+            verts[row + 1] = isSMin ? 0.0f : 1.0f;
+            verts[row + 2] = isTMin ? 0.0f : 1.0f;
+            verts[row + 3] = isSMin ? textureCoords.sMin : textureCoords.sMax;
+            verts[row + 4] = isTMin ? textureCoords.tMin : textureCoords.tMax;
+            verts[row + 5] = items[i].color.r;
+            verts[row + 6] = items[i].color.g;
+            verts[row + 7] = items[i].color.b;
+            verts[row + 8] = items[i].color.a;
         }
-        const int row = i * vertsStride;
-        verts[row + 0] = SPRITE_ID;
-        verts[row + 1] = isSMin ? 0.0f : 1.0f;
-        verts[row + 2] = isTMin ? 0.0f : 1.0f;
-        verts[row + 3] = isSMin ? textureCoords.sMin : textureCoords.sMax;
-        verts[row + 4] = isTMin ? textureCoords.tMin : textureCoords.tMax;
-        verts[row + 5] = color->r;
-        verts[row + 6] = color->g;
-        verts[row + 7] = color->b;
-        verts[row + 8] = color->a;
     }
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture->id);
 
     glBufferData(GL_ARRAY_BUFFER, (GLsizeiptr) sizeof(verts), verts, GL_DYNAMIC_DRAW);
-    glDrawArrays(GL_TRIANGLES, 0, VERTEX_ITEM_COUNT * NUMBER_OF_VERTICES);
+    glDrawArrays(GL_TRIANGLES, 0, (GLsizei) (spriteCount * NUMBER_OF_VERTICES));
 
     renderer_print_opengl_errors();
 
     glBindVertexArray(0);
     glDepthMask(true);
+
+#undef VERTS_STRIDE
+#undef MAX_SPRITE_COUNT
+#undef NUMBER_OF_VERTICES
+#undef VERTEX_BUFFER_SIZE
 }
 
 // --- Font Renderer --- //

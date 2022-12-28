@@ -24,7 +24,7 @@ class Main(Node2D):
         player_two_collider = player_two_node.get_child(name="Collider")
         print(f"[PYTHON_SCRIPT] p1 = {player_one_node}, p2 = {player_two_node}")
 
-        player_one_node.play(animation_name="crouch")
+        player_one_node.play(name="crouch")
 
         # Test time dilation
         # player_one_node.time_dilation = 0.1

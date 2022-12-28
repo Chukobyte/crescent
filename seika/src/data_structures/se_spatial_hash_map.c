@@ -26,8 +26,8 @@ bool collision_result_has_entity(SESpatialHashMapCollisionResult* result, unsign
 SESpatialHashMap* se_spatial_hash_map_create(int cellSize) {
     SESpatialHashMap* map = SE_MEM_ALLOCATE(SESpatialHashMap);
     map->cellSize = cellSize;
-    map->gridMap = se_hash_map_create(sizeof(int32_t*), sizeof(SESpatialHashMapGridSpace**), SE_HASH_MAP_MIN_CAPACITY);
-    map->objectToGridMap = se_hash_map_create(sizeof(unsigned int*), sizeof(SESpatialHashMapGridSpacesHandle**), SE_HASH_MAP_MIN_CAPACITY);
+    map->gridMap = se_hash_map_create(sizeof(int32_t), sizeof(SESpatialHashMapGridSpace**), SE_HASH_MAP_MIN_CAPACITY);
+    map->objectToGridMap = se_hash_map_create(sizeof(unsigned int), sizeof(SESpatialHashMapGridSpacesHandle**), SE_HASH_MAP_MIN_CAPACITY);
     map->doesCollisionDataNeedUpdating = false;
     return map;
 }

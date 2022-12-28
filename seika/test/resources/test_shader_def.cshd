@@ -1,0 +1,10 @@
+{
+  "vertex_file_path": "",
+  "fragment_file_path": "",
+  "params": [
+    {
+      "type": "float",
+      "value": 1.0
+    }
+  ]
+}

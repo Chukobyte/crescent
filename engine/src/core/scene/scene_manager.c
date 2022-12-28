@@ -303,6 +303,7 @@ void cre_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneNode, Scene
     if (isRoot) {
         cre_scene_manager_set_active_scene_root(node);
     }  else {
+        SE_ASSERT(parent->childCount + 1 < SCENE_TREE_NODE_MAX_CHILDREN);
         parent->children[parent->childCount++] = node;
     }
 
