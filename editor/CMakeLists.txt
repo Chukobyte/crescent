@@ -83,9 +83,9 @@ if (IS_CI_BUILD STREQUAL "false")
             )
     add_custom_command(TARGET ${PROJECT_NAME} PRE_BUILD
             COMMAND ${CMAKE_COMMAND} -E make_directory
-            $<TARGET_FILE_DIR:${PROJECT_NAME}>/../export
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/../export/crescent
             )
-    # TODO: Fina a better way to get exectable name..
+    # Copy files needed to run the engine within the editor
     add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy
             $<TARGET_FILE_DIR:${PROJECT_NAME}>/../crescent_engine${CMAKE_EXECUTABLE_SUFFIX}
@@ -95,6 +95,17 @@ if (IS_CI_BUILD STREQUAL "false")
             COMMAND ${CMAKE_COMMAND} -E copy_directory
             $<TARGET_FILE_DIR:${PROJECT_NAME}>/../assets
             $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/assets
+            )
+    # For export
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/../crescent_engine_editor${CMAKE_EXECUTABLE_SUFFIX}
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/../export/crescent/crescent${CMAKE_EXECUTABLE_SUFFIX}
+            )
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/../export/crescent/bin
             )
 endif()
 
