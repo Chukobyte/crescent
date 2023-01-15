@@ -1,11 +1,11 @@
 #include "bezier_curve.h"
 
 namespace {
-    BezierPoint LerpPoint(const BezierPoint& p1, const BezierPoint& p2, float t) {
-        const float x = std::lerp(p1.x, p2.x, t);
-        const float y = std::lerp(p1.y, p2.y, t);
-        return { x, y };
-    }
+BezierPoint LerpPoint(const BezierPoint& p1, const BezierPoint& p2, float t) {
+    const float x = std::lerp(p1.x, p2.x, t);
+    const float y = std::lerp(p1.y, p2.y, t);
+    return { x, y };
+}
 } // namespace
 
 BezierPoint CubicBezierCurve::Eval(float t) const {
