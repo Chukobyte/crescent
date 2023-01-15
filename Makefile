@@ -132,7 +132,7 @@ debug-build-editor: CORE_C_FLAGS +=  -g
 debug-build-editor: build-editor
 
 format-editor:
-	astyle -n --style=google --recursive editor/src/*.cpp editor/src/*.h
+	astyle -n --style=google --recursive editor/src/*.cpp editor/src/*.h editor/test/*.cpp
 
 clean-editor:
 ifneq ("$(wildcard $(EDITOR_BUILD_OBJECT))","")
