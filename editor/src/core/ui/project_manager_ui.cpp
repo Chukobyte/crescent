@@ -16,6 +16,7 @@
 #include "../math/bezier_curve.h"
 #include "../utils/file_system_helper.h"
 #include "../utils/console_logger.h"
+#include "../utils/curve_editor.h"
 
 static EditorContext* editorContext = EditorContext::Get();
 
@@ -220,6 +221,20 @@ void ProjectManagerUI::ProcessWindows() {
         .size = ImVec2{ 300.0f, 300.0f },
     };
     ImGuiHelper::BeginWindowWithEnd(curveWindow);
+
+    // Another curve editor test
+    {
+        const int numberOfPoints = 5;
+        ImVec2 points[numberOfPoints] = {
+            { 10.0f, 10.0f },
+            { 20.0f, 12.0f },
+            { 30.0f, 12.0f },
+            { 40.0f, 11.0f },
+            { 50.0f, 10.0f },
+        };
+        static int selectedPoint = -1;
+        CurveEditor("Curve Editor", (float*) points, numberOfPoints, { 200.0f, 150.0f }, (int) CurveEditorFlags::ALL, &selectedPoint);
+    }
 
 #ifdef _DEBUG
     if (isImguiDemoEnabled) {

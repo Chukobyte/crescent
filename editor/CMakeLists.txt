@@ -46,6 +46,7 @@ add_library(${PROJECT_NAME} STATIC
         src/core/ui/views/opened_project/windows/scene_outliner_ui.cpp
         src/core/ui/views/opened_project/windows/scene_view_ui.cpp
         src/core/utils/console_logger.cpp
+        src/core/utils/curve_editor.cpp
         src/core/utils/process_runner/process_runner.cpp
         src/core/utils/process_runner/process_context.cpp
         ../include/imgui.cpp
