@@ -32,6 +32,3 @@ class CompositeCubicBezierCurve {
   private:
     std::vector<CubicBezierCurve> points = {};
 };
-
-
-
