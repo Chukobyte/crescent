@@ -1,5 +1,9 @@
 #pragma once
 
+/*
+ * Helper macro to create operators for enum classes.
+ * '>>=' is used to check if a flag is contained within another (e.g. (EnumClass::One >>= EnumClass::OneAndTwo) == true)
+*/
 #define GENERATE_ENUM_CLASS_OPERATORS(EnumClass) \
 inline EnumClass operator | (EnumClass lhs, EnumClass rhs) { \
 using T = std::underlying_type_t <EnumClass>; \
