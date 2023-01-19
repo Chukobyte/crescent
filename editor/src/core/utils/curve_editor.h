@@ -13,3 +13,15 @@ enum class CurveEditorFlags {
 GENERATE_ENUM_CLASS_OPERATORS(CurveEditorFlags)
 
 int BeginCurveEditor(const char* label, float* values, int points_count, const ImVec2& editor_size, CurveEditorFlags flags, int* new_count);
+
+class CurveEditor {
+  public:
+    int Begin(int* newCount = nullptr);
+
+    std::string label;
+    CurveEditorFlags flags = CurveEditorFlags::ALL;
+    float* values = nullptr;
+    int valueCount = 0;
+    ImVec2 editorSize;
+  private:
+};

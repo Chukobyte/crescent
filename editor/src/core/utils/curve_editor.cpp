@@ -396,7 +396,7 @@ int BeginCurveEditor(const char* label, float* values, int points_count, const I
 
     ImGui::InvisibleButton("bg", inner_bb.Max - inner_bb.Min);
 
-    // WTH is this?
+    // WTH is this?  Seems like it adds a point if double clicked?
     if (ImGui::IsItemActive() && ImGui::IsMouseDoubleClicked(0) && new_count) {
         ImVec2 mp = ImGui::GetMousePos();
         ImVec2 new_p = Curve::InvTransform(mp, from_x, from_y, width, height, inner_bb);
@@ -430,7 +430,7 @@ int BeginCurveEditor(const char* label, float* values, int points_count, const I
         }
     }
 
-    // No idea what this is for yet...
+    // No idea what this is for yet...  Seems like it removes a point if double clicked?
     if (hovered_idx >= 0 && ImGui::IsMouseDoubleClicked(0) && new_count && points_count > 2) {
         ImVec2* points = (ImVec2*)values;
         --*new_count;
@@ -454,4 +454,8 @@ int BeginCurveEditor(const char* label, float* values, int points_count, const I
     selected_id = changed_idx;
 
     return changed_idx;
+}
+
+int CurveEditor::Begin(int* newCount) {
+    return BeginCurveEditor(label.c_str(), values, valueCount, editorSize, flags, newCount);
 }

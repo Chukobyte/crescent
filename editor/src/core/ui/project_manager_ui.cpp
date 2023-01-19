@@ -233,9 +233,16 @@ void ProjectManagerUI::ProcessWindows() {
             { 50.0f, 10.0f },
         };
         static int selectedPoint = -1;
-        const int changedId = BeginCurveEditor("Curve Editor", (float *) points, numberOfPoints, {200.0f, 150.0f}, CurveEditorFlags::ALL, &selectedPoint);
+        static CurveEditor curveEditor = {
+            .label = "Curve Editor",
+            .flags = CurveEditorFlags::ALL,
+            .values = (float*) points,
+            .valueCount = numberOfPoints,
+            .editorSize = { 200.0f, 150.0f }
+        };
+        const int changedId = curveEditor.Begin(&selectedPoint);
         if (changedId != -1) {
-            se_logger_debug("Curve with id '%d' is being dragged with the mouse", changedId);
+            se_logger_debug("Selected Point = '%d'.  Curve with id '%d' is being dragged with the mouse", selectedPoint, changedId);
         }
     }
 
