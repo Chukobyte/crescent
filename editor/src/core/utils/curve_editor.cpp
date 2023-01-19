@@ -179,8 +179,8 @@ int CurveEditor(const char* label, float* values, int points_count, const ImVec2
     const float HEIGHT = 100;
     static ImVec2 start_pan;
 
-    ImGuiContext& g = *ImGui::GetCurrentContext();
-    const ImGuiStyle& style = g.Style;
+    ImGuiContext& context = *ImGui::GetCurrentContext();
+    const ImGuiStyle& style = context.Style;
     ImVec2 size = editor_size;
     size.x = size.x < 0 ? ImGui::CalcItemWidth() + (style.FramePadding.x * 2) : size.x;
     size.y = size.y < 0 ? HEIGHT : size.y;
@@ -226,18 +226,16 @@ int CurveEditor(const char* label, float* values, int points_count, const ImVec2
     window->StateStorage.SetFloat((ImGuiID)StorageValues::WIDTH, width);
     window->StateStorage.SetFloat((ImGuiID)StorageValues::HEIGHT, height);
 
-    ImVec2 beg_pos = ImGui::GetCursorScreenPos();
-
     const ImRect inner_bb = window->InnerRect;
     const ImRect frame_bb(inner_bb.Min - style.FramePadding, inner_bb.Max + style.FramePadding);
 
     if (flags & (int)CurveEditorFlags::SHOW_GRID) {
         int exp;
         frexp(width / 5, &exp);
-        float step_x = (float)ldexp(1.0, exp);
-        int cell_cols = int(width / step_x);
+        const float step_x = (float) ldexp(1.0, exp);
+        const int cell_cols = int(width / step_x);
 
-        float x = step_x * int(from_x / step_x);
+        const float x = step_x * int(from_x / step_x);
         for (int i = -1; i < cell_cols + 2; ++i) {
             ImVec2 a = Curve::Transform({ x + i * step_x, from_y }, from_x, from_y, width, height, inner_bb);
             ImVec2 b = Curve::Transform({ x + i * step_x, from_y + height }, from_x, from_y, width, height, inner_bb);
@@ -252,10 +250,10 @@ int CurveEditor(const char* label, float* values, int points_count, const ImVec2
         }
 
         frexp(height / 5, &exp);
-        float step_y = (float)ldexp(1.0, exp);
-        int cell_rows = int(height / step_y);
+        const float step_y = (float) ldexp(1.0, exp);
+        const int cell_rows = int(height / step_y);
 
-        float y = step_y * int(from_y / step_y);
+        const float y = step_y * int(from_y / step_y);
         for (int i = -1; i < cell_rows + 2; ++i) {
             ImVec2 a = Curve::Transform({ from_x, y + i * step_y }, from_x, from_y, width, height, inner_bb);
             ImVec2 b = Curve::Transform({ from_x + width, y + i * step_y }, from_x, from_y, width, height, inner_bb);
@@ -271,7 +269,7 @@ int CurveEditor(const char* label, float* values, int points_count, const ImVec2
     }
 
     if (ImGui::GetIO().MouseWheel != 0 && ImGui::IsItemHovered()) {
-        float scale = powf(2, ImGui::GetIO().MouseWheel);
+        const float scale = powf(2, ImGui::GetIO().MouseWheel);
         width *= scale;
         height *= scale;
         window->StateStorage.SetFloat((ImGuiID)StorageValues::WIDTH, width);
@@ -281,7 +279,7 @@ int CurveEditor(const char* label, float* values, int points_count, const ImVec2
         window->StateStorage.SetBool((ImGuiID)StorageValues::IS_PANNING, false);
     }
     if (window->StateStorage.GetBool((ImGuiID)StorageValues::IS_PANNING, false)) {
-        ImVec2 drag_offset = ImGui::GetMouseDragDelta(1);
+        const ImVec2 drag_offset = ImGui::GetMouseDragDelta(1);
         from_x = start_pan.x;
         from_y = start_pan.y;
         from_x -= drag_offset.x * width / (inner_bb.Max.x - inner_bb.Min.x);
@@ -360,7 +358,9 @@ int CurveEditor(const char* label, float* values, int points_count, const ImVec2
         }
         if (point_idx == 0) {
             if (Curve::HandlePoint(p_prev, from_x, from_y, width, height, inner_bb, hovered_idx, point_idx, 0)) {
-                if (p.x <= p_prev.x) p_prev.x = p.x - 0.001f;
+                if (p.x <= p_prev.x) {
+                    p_prev.x = p.x - 0.001f;
+                }
                 points[0] = p_prev;
                 changed_idx = point_idx;
             }
@@ -384,8 +384,8 @@ int CurveEditor(const char* label, float* values, int points_count, const ImVec2
             ++*new_count;
 
             auto compare = [](const void* a, const void* b) -> int {
-                float fa = (((const ImVec2*)a) + 1)->x;
-                float fb = (((const ImVec2*)b) + 1)->x;
+                const float fa = (((const ImVec2*)a) + 1)->x;
+                const float fb = (((const ImVec2*)b) + 1)->x;
                 return fa < fb ? -1 : (fa > fb) ? 1 : 0;
             };
 
@@ -396,8 +396,8 @@ int CurveEditor(const char* label, float* values, int points_count, const ImVec2
             ++*new_count;
 
             auto compare = [](const void* a, const void* b) -> int {
-                float fa = ((const ImVec2*)a)->x;
-                float fb = ((const ImVec2*)b)->x;
+                const float fa = ((const ImVec2*)a)->x;
+                const float fb = ((const ImVec2*)b)->x;
                 return fa < fb ? -1 : (fa > fb) ? 1 : 0;
             };
 
