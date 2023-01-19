@@ -177,9 +177,24 @@ bool HandleTangent(ImVec2& t, const ImVec2& p, int idx, float from_x, float from
 }
 } // namespace Curve
 
-int CurveEditor(const char* label, float* values, int points_count, const ImVec2& editor_size, int flags, int* new_count) {
+int BeginCurveEditor(const char* label, float* values, int points_count, const ImVec2& editor_size, int flags, int* new_count) {
     const float HEIGHT = 100;
     static ImVec2 start_pan;
+
+    static int selected_id = -1;
+
+    // Display selected curve time and value
+    static float curveTime = 0.0f;
+    static float curveValue = 0.0f;
+    if (selected_id > -1) {
+        ImGuiHelper::DragFloat timeDragFloat("time", curveTime);
+        ImGuiHelper::DragFloat valueDragFloat("value", curveValue);
+        ImGui::PushItemWidth(100);
+        ImGuiHelper::BeginDragFloat(timeDragFloat);
+        ImGui::SameLine();
+        ImGui::PushItemWidth(100);
+        ImGuiHelper::BeginDragFloat(valueDragFloat);
+    }
 
     ImGuiContext& context = *ImGui::GetCurrentContext();
     const ImGuiStyle& style = context.Style;
@@ -434,5 +449,9 @@ int CurveEditor(const char* label, float* values, int points_count, const ImVec2
 
     ImGui::EndChildFrame();
 //    ImGui::RenderText(ImVec2(frame_bb.Max.x + style.ItemInnerSpacing.x, inner_bb.Min.y), label);
+
+    // Temp to cache the selected id to display params for curve points
+    selected_id = changed_idx;
+
     return changed_idx;
 }

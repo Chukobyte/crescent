@@ -12,4 +12,4 @@ enum class CurveEditorFlags {
 
 GENERATE_ENUM_CLASS_OPERATORS(CurveEditorFlags)
 
-int CurveEditor(const char* label, float* values, int points_count, const ImVec2& editor_size, int flags, int* new_count);
+int BeginCurveEditor(const char* label, float* values, int points_count, const ImVec2& editor_size, int flags, int* new_count);
