@@ -233,7 +233,10 @@ void ProjectManagerUI::ProcessWindows() {
             { 50.0f, 10.0f },
         };
         static int selectedPoint = -1;
-        CurveEditor("Curve Editor", (float*) points, numberOfPoints, { 200.0f, 150.0f }, (int) CurveEditorFlags::ALL, &selectedPoint);
+        const int changedId = CurveEditor("Curve Editor", (float*) points, numberOfPoints, { 200.0f, 150.0f }, (int) CurveEditorFlags::ALL, &selectedPoint);
+        if (changedId != -1) {
+            se_logger_debug("Curve with id '%d' is being dragged with the mouse", changedId);
+        }
     }
 
 #ifdef _DEBUG

@@ -1,5 +1,7 @@
 #include "curve_editor.h"
 
+// TODO: Refactor once minimal functionality is met...
+
 static const float NODE_SLOT_RADIUS = 4.0f;
 
 ImVec2 operator+(const ImVec2 &thisVector, const ImVec2 &otherVector) {
@@ -121,7 +123,7 @@ bool HandlePoint(ImVec2& p, float from_x, float from_y, float width, float heigh
         pos.x = window->StateStorage.GetFloat((ImGuiID)StorageValues::POINT_START_X, pos.x);
         pos.y = window->StateStorage.GetFloat((ImGuiID)StorageValues::POINT_START_Y, pos.y);
         pos += ImGui::GetMouseDragDelta();
-        ImVec2 v = InvTransform(pos, from_x, from_y, width, height, inner_bb);
+        const ImVec2 v = InvTransform(pos, from_x, from_y, width, height, inner_bb);
 
         p = v;
         changed = true;
@@ -203,6 +205,7 @@ int CurveEditor(const char* label, float* values, int points_count, const ImVec2
         return -1;
     }
 
+    // Calculate points min and max
     ImVec2 points_min(FLT_MAX, FLT_MAX);
     ImVec2 points_max(-FLT_MAX, -FLT_MAX);
     for (int point_idx = 0; point_idx < points_count; ++point_idx) {
@@ -229,12 +232,14 @@ int CurveEditor(const char* label, float* values, int points_count, const ImVec2
     const ImRect inner_bb = window->InnerRect;
     const ImRect frame_bb(inner_bb.Min - style.FramePadding, inner_bb.Max + style.FramePadding);
 
+    // Show grid
     if (flags & (int)CurveEditorFlags::SHOW_GRID) {
         int exp;
         frexp(width / 5, &exp);
         const float step_x = (float) ldexp(1.0, exp);
         const int cell_cols = int(width / step_x);
 
+        // Horizontal Lines
         const float x = step_x * int(from_x / step_x);
         for (int i = -1; i < cell_cols + 2; ++i) {
             ImVec2 a = Curve::Transform({ x + i * step_x, from_y }, from_x, from_y, width, height, inner_bb);
@@ -253,6 +258,7 @@ int CurveEditor(const char* label, float* values, int points_count, const ImVec2
         const float step_y = (float) ldexp(1.0, exp);
         const int cell_rows = int(height / step_y);
 
+        // Vertical Lines
         const float y = step_y * int(from_y / step_y);
         for (int i = -1; i < cell_rows + 2; ++i) {
             ImVec2 a = Curve::Transform({ from_x, y + i * step_y }, from_x, from_y, width, height, inner_bb);
@@ -268,6 +274,7 @@ int CurveEditor(const char* label, float* values, int points_count, const ImVec2
         }
     }
 
+    // Zoom with mouse wheel
     if (ImGui::GetIO().MouseWheel != 0 && ImGui::IsItemHovered()) {
         const float scale = powf(2, ImGui::GetIO().MouseWheel);
         width *= scale;
@@ -275,6 +282,7 @@ int CurveEditor(const char* label, float* values, int points_count, const ImVec2
         window->StateStorage.SetFloat((ImGuiID)StorageValues::WIDTH, width);
         window->StateStorage.SetFloat((ImGuiID)StorageValues::HEIGHT, height);
     }
+    // Handle panning
     if (ImGui::IsMouseReleased(1)) {
         window->StateStorage.SetBool((ImGuiID)StorageValues::IS_PANNING, false);
     }
@@ -292,6 +300,7 @@ int CurveEditor(const char* label, float* values, int points_count, const ImVec2
         start_pan.y = from_y;
     }
 
+    // Curves
     int changed_idx = -1;
     for (int point_idx = points_count - 2; point_idx >= 0; --point_idx) {
         ImVec2* points;
@@ -372,6 +381,7 @@ int CurveEditor(const char* label, float* values, int points_count, const ImVec2
 
     ImGui::InvisibleButton("bg", inner_bb.Max - inner_bb.Min);
 
+    // WTH is this?
     if (ImGui::IsItemActive() && ImGui::IsMouseDoubleClicked(0) && new_count) {
         ImVec2 mp = ImGui::GetMousePos();
         ImVec2 new_p = Curve::InvTransform(mp, from_x, from_y, width, height, inner_bb);
@@ -405,6 +415,7 @@ int CurveEditor(const char* label, float* values, int points_count, const ImVec2
         }
     }
 
+    // No idea what this is for yet...
     if (hovered_idx >= 0 && ImGui::IsMouseDoubleClicked(0) && new_count && points_count > 2) {
         ImVec2* points = (ImVec2*)values;
         --*new_count;
@@ -422,6 +433,6 @@ int CurveEditor(const char* label, float* values, int points_count, const ImVec2
     }
 
     ImGui::EndChildFrame();
-    ImGui::RenderText(ImVec2(frame_bb.Max.x + style.ItemInnerSpacing.x, inner_bb.Min.y), label);
+//    ImGui::RenderText(ImVec2(frame_bb.Max.x + style.ItemInnerSpacing.x, inner_bb.Min.y), label);
     return changed_idx;
 }
