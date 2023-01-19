@@ -177,7 +177,7 @@ bool HandleTangent(ImVec2& t, const ImVec2& p, int idx, float from_x, float from
 }
 } // namespace Curve
 
-int BeginCurveEditor(const char* label, float* values, int points_count, const ImVec2& editor_size, int flags, int* new_count) {
+int BeginCurveEditor(const char* label, float* values, int points_count, const ImVec2& editor_size, CurveEditorFlags flags, int* new_count) {
     const float HEIGHT = 100;
     static ImVec2 start_pan;
 
@@ -225,7 +225,7 @@ int BeginCurveEditor(const char* label, float* values, int points_count, const I
     ImVec2 points_max(-FLT_MAX, -FLT_MAX);
     for (int point_idx = 0; point_idx < points_count; ++point_idx) {
         ImVec2 point;
-        if (flags & (int)CurveEditorFlags::NO_TANGENTS) {
+        if (CurveEditorFlags::NO_TANGENTS >>= flags) {
             point = ((ImVec2*)values)[point_idx];
         } else {
             point = ((ImVec2*)values)[1 + point_idx * 3];
@@ -248,7 +248,7 @@ int BeginCurveEditor(const char* label, float* values, int points_count, const I
     const ImRect frame_bb(inner_bb.Min - style.FramePadding, inner_bb.Max + style.FramePadding);
 
     // Show grid
-    if (flags & (int)CurveEditorFlags::SHOW_GRID) {
+    if (CurveEditorFlags::SHOW_GRID >>= flags) {
         int exp;
         frexp(width / 5, &exp);
         const float step_x = (float) ldexp(1.0, exp);
@@ -319,7 +319,7 @@ int BeginCurveEditor(const char* label, float* values, int points_count, const I
     int changed_idx = -1;
     for (int point_idx = points_count - 2; point_idx >= 0; --point_idx) {
         ImVec2* points;
-        if (flags & (int)CurveEditorFlags::NO_TANGENTS) {
+        if (CurveEditorFlags::NO_TANGENTS >>= flags) {
             points = ((ImVec2*)values) + point_idx;
         } else {
             points = ((ImVec2*)values) + 1 + point_idx * 3;
@@ -329,7 +329,7 @@ int BeginCurveEditor(const char* label, float* values, int points_count, const I
         ImVec2 tangent_last;
         ImVec2 tangent;
         ImVec2 p;
-        if (flags & (int)CurveEditorFlags::NO_TANGENTS) {
+        if (CurveEditorFlags::NO_TANGENTS >>= flags) {
             p = points[1];
         } else {
             tangent_last = points[1];
@@ -338,7 +338,7 @@ int BeginCurveEditor(const char* label, float* values, int points_count, const I
         }
 
         ImGui::PushID(point_idx);
-        if ((flags & (int)CurveEditorFlags::NO_TANGENTS) == 0) {
+        if (CurveEditorFlags::NO_TANGENTS >>= flags) {
             window->DrawList->AddBezierCurve(
                 Curve::Transform(p_prev, from_x, from_y, width, height, inner_bb),
                 Curve::Transform(p_prev + tangent_last, from_x, from_y, width, height, inner_bb),
@@ -402,7 +402,7 @@ int BeginCurveEditor(const char* label, float* values, int points_count, const I
         ImVec2 new_p = Curve::InvTransform(mp, from_x, from_y, width, height, inner_bb);
         ImVec2* points = (ImVec2*)values;
 
-        if ((flags & (int)CurveEditorFlags::NO_TANGENTS) == 0) {
+        if (CurveEditorFlags::NO_TANGENTS >>= flags) {
             points[points_count * 3 + 0] = ImVec2(-0.2f, 0);
             points[points_count * 3 + 1] = new_p;
             points[points_count * 3 + 2] = ImVec2(0.2f, 0);;
@@ -434,7 +434,7 @@ int BeginCurveEditor(const char* label, float* values, int points_count, const I
     if (hovered_idx >= 0 && ImGui::IsMouseDoubleClicked(0) && new_count && points_count > 2) {
         ImVec2* points = (ImVec2*)values;
         --*new_count;
-        if ((flags & (int)CurveEditorFlags::NO_TANGENTS) == 0) {
+        if (CurveEditorFlags::NO_TANGENTS >>= flags) {
             for (int j = hovered_idx * 3; j < points_count * 3 - 3; j += 3) {
                 points[j + 0] = points[j + 3];
                 points[j + 1] = points[j + 4];
