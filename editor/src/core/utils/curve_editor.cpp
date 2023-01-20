@@ -177,8 +177,11 @@ bool HandleTangent(ImVec2& t, const ImVec2& p, int idx, float from_x, float from
 }
 } // namespace Curve
 
-int BeginCurveEditor(const char* label, float* values, int points_count, const ImVec2& editor_size, CurveEditorFlags flags, int* new_count) {
-    const float HEIGHT = 100;
+int CurveEditor::Begin(int* newCount) {
+    return BeginInternal(newCount);
+}
+
+int CurveEditor::BeginInternal(int *newCount) {
     static ImVec2 start_pan;
 
     static int selected_id = -1;
@@ -198,20 +201,21 @@ int BeginCurveEditor(const char* label, float* values, int points_count, const I
 
     ImGuiContext& context = *ImGui::GetCurrentContext();
     const ImGuiStyle& style = context.Style;
-    ImVec2 size = editor_size;
-    size.x = size.x < 0 ? ImGui::CalcItemWidth() + (style.FramePadding.x * 2) : size.x;
-    size.y = size.y < 0 ? HEIGHT : size.y;
+    static const float DEFAULT_HEIGHT = 100.0f;
+    ImVec2 size = editorSize;
+    size.x = size.x < 0.0f ? ImGui::CalcItemWidth() + (style.FramePadding.x * 2.0f) : size.x;
+    size.y = size.y < 0.0f ? DEFAULT_HEIGHT : size.y;
 
     ImGuiWindow* parent_window = ImGui::GetCurrentWindow();
-    ImGuiID id = parent_window->GetID(label);
+    ImGuiID id = parent_window->GetID(label.c_str());
     if (!ImGui::BeginChildFrame(id, size, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse)) {
         ImGui::EndChild();
         return -1;
     }
 
     int hovered_idx = -1;
-    if (new_count) {
-        *new_count = points_count;
+    if (newCount) {
+        *newCount = valueCount;
     }
 
     ImGuiWindow* window = ImGui::GetCurrentWindow();
@@ -223,7 +227,7 @@ int BeginCurveEditor(const char* label, float* values, int points_count, const I
     // Calculate points min and max
     ImVec2 points_min(FLT_MAX, FLT_MAX);
     ImVec2 points_max(-FLT_MAX, -FLT_MAX);
-    for (int point_idx = 0; point_idx < points_count; ++point_idx) {
+    for (int point_idx = 0; point_idx < valueCount; ++point_idx) {
         ImVec2 point;
         if (CurveEditorFlags::NO_TANGENTS >>= flags) {
             point = ((ImVec2*)values)[point_idx];
@@ -317,7 +321,7 @@ int BeginCurveEditor(const char* label, float* values, int points_count, const I
 
     // Curves
     int changed_idx = -1;
-    for (int point_idx = points_count - 2; point_idx >= 0; --point_idx) {
+    for (int point_idx = valueCount - 2; point_idx >= 0; --point_idx) {
         ImVec2* points;
         if (CurveEditorFlags::NO_TANGENTS >>= flags) {
             points = ((ImVec2*)values) + point_idx;
@@ -357,7 +361,7 @@ int BeginCurveEditor(const char* label, float* values, int points_count, const I
             }
             if (Curve::HandlePoint(p, from_x, from_y, width, height, inner_bb, hovered_idx, point_idx, 1)) {
                 if (p.x <= p_prev.x) p.x = p_prev.x + 0.001f;
-                if (point_idx < points_count - 2 && p.x >= points[6].x) {
+                if (point_idx < valueCount - 2 && p.x >= points[6].x) {
                     p.x = points[6].x - 0.001f;
                 }
                 points[3] = p;
@@ -373,7 +377,7 @@ int BeginCurveEditor(const char* label, float* values, int points_count, const I
             );
             if (Curve::HandlePoint(p, from_x, from_y, width, height, inner_bb, hovered_idx, point_idx, 1)) {
                 if (p.x <= p_prev.x) p.x = p_prev.x + 0.001f;
-                if (point_idx < points_count - 2 && p.x >= points[2].x) {
+                if (point_idx < valueCount - 2 && p.x >= points[2].x) {
                     p.x = points[2].x - 0.001f;
                 }
                 points[1] = p;
@@ -397,16 +401,16 @@ int BeginCurveEditor(const char* label, float* values, int points_count, const I
     ImGui::InvisibleButton("bg", inner_bb.Max - inner_bb.Min);
 
     // WTH is this?  Seems like it adds a point if double clicked?
-    if (ImGui::IsItemActive() && ImGui::IsMouseDoubleClicked(0) && new_count) {
+    if (ImGui::IsItemActive() && ImGui::IsMouseDoubleClicked(0) && newCount) {
         ImVec2 mp = ImGui::GetMousePos();
         ImVec2 new_p = Curve::InvTransform(mp, from_x, from_y, width, height, inner_bb);
         ImVec2* points = (ImVec2*)values;
 
         if (CurveEditorFlags::NO_TANGENTS >>= flags) {
-            points[points_count * 3 + 0] = ImVec2(-0.2f, 0);
-            points[points_count * 3 + 1] = new_p;
-            points[points_count * 3 + 2] = ImVec2(0.2f, 0);;
-            ++*new_count;
+            points[valueCount * 3 + 0] = ImVec2(-0.2f, 0);
+            points[valueCount * 3 + 1] = new_p;
+            points[valueCount * 3 + 2] = ImVec2(0.2f, 0);;
+            ++*newCount;
 
             auto compare = [](const void* a, const void* b) -> int {
                 const float fa = (((const ImVec2*)a) + 1)->x;
@@ -414,11 +418,11 @@ int BeginCurveEditor(const char* label, float* values, int points_count, const I
                 return fa < fb ? -1 : (fa > fb) ? 1 : 0;
             };
 
-            qsort(values, points_count + 1, sizeof(ImVec2) * 3, compare);
+            qsort(values, valueCount + 1, sizeof(ImVec2) * 3, compare);
 
         } else {
-            points[points_count] = new_p;
-            ++*new_count;
+            points[valueCount] = new_p;
+            ++*newCount;
 
             auto compare = [](const void* a, const void* b) -> int {
                 const float fa = ((const ImVec2*)a)->x;
@@ -426,22 +430,22 @@ int BeginCurveEditor(const char* label, float* values, int points_count, const I
                 return fa < fb ? -1 : (fa > fb) ? 1 : 0;
             };
 
-            qsort(values, points_count + 1, sizeof(ImVec2), compare);
+            qsort(values, valueCount + 1, sizeof(ImVec2), compare);
         }
     }
 
     // No idea what this is for yet...  Seems like it removes a point if double clicked?
-    if (hovered_idx >= 0 && ImGui::IsMouseDoubleClicked(0) && new_count && points_count > 2) {
+    if (hovered_idx >= 0 && ImGui::IsMouseDoubleClicked(0) && newCount && valueCount > 2) {
         ImVec2* points = (ImVec2*)values;
-        --*new_count;
+        --*newCount;
         if (CurveEditorFlags::NO_TANGENTS >>= flags) {
-            for (int j = hovered_idx * 3; j < points_count * 3 - 3; j += 3) {
+            for (int j = hovered_idx * 3; j < valueCount * 3 - 3; j += 3) {
                 points[j + 0] = points[j + 3];
                 points[j + 1] = points[j + 4];
                 points[j + 2] = points[j + 5];
             }
         } else {
-            for (int j = hovered_idx; j < points_count - 1; ++j) {
+            for (int j = hovered_idx; j < valueCount - 1; ++j) {
                 points[j] = points[j + 1];
             }
         }
@@ -454,8 +458,4 @@ int BeginCurveEditor(const char* label, float* values, int points_count, const I
     selected_id = changed_idx;
 
     return changed_idx;
-}
-
-int CurveEditor::Begin(int* newCount) {
-    return BeginCurveEditor(label.c_str(), values, valueCount, editorSize, flags, newCount);
 }

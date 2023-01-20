@@ -9,10 +9,7 @@ enum class CurveEditorFlags {
     SHOW_GRID = 1 << 1,
     ALL = NO_TANGENTS | SHOW_GRID,
 };
-
 GENERATE_ENUM_CLASS_OPERATORS(CurveEditorFlags)
-
-int BeginCurveEditor(const char* label, float* values, int points_count, const ImVec2& editor_size, CurveEditorFlags flags, int* new_count);
 
 class CurveEditor {
   public:
@@ -23,5 +20,7 @@ class CurveEditor {
     float* values = nullptr;
     int valueCount = 0;
     ImVec2 editorSize;
+
   private:
+    int BeginInternal(int* newCount);
 };
