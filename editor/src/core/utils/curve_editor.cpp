@@ -182,16 +182,10 @@ int CurveEditor::Begin(int* newCount) {
 }
 
 int CurveEditor::BeginInternal(int *newCount) {
-    static ImVec2 start_pan;
-
-    static int selected_id = -1;
-
     // Display selected curve time and value
-    static float curveTime = 0.0f;
-    static float curveValue = 0.0f;
-    if (selected_id > -1) {
-        ImGuiHelper::DragFloat timeDragFloat("time", curveTime);
-        ImGuiHelper::DragFloat valueDragFloat("value", curveValue);
+    if (selectedId > -1) {
+        ImGuiHelper::DragFloat timeDragFloat("time", selectedCurveTime);
+        ImGuiHelper::DragFloat valueDragFloat("value", selectedCurveValue);
         ImGui::PushItemWidth(100);
         ImGuiHelper::BeginDragFloat(timeDragFloat);
         ImGui::SameLine();
@@ -307,16 +301,16 @@ int CurveEditor::BeginInternal(int *newCount) {
     }
     if (window->StateStorage.GetBool((ImGuiID)StorageValues::IS_PANNING, false)) {
         const ImVec2 drag_offset = ImGui::GetMouseDragDelta(1);
-        from_x = start_pan.x;
-        from_y = start_pan.y;
+        from_x = startPan.x;
+        from_y = startPan.y;
         from_x -= drag_offset.x * width / (inner_bb.Max.x - inner_bb.Min.x);
         from_y += drag_offset.y * height / (inner_bb.Max.y - inner_bb.Min.y);
         window->StateStorage.SetFloat((ImGuiID)StorageValues::FROM_X, from_x);
         window->StateStorage.SetFloat((ImGuiID)StorageValues::FROM_Y, from_y);
     } else if (ImGui::IsMouseDragging(1) && ImGui::IsItemHovered()) {
         window->StateStorage.SetBool((ImGuiID)StorageValues::IS_PANNING, true);
-        start_pan.x = from_x;
-        start_pan.y = from_y;
+        startPan.x = from_x;
+        startPan.y = from_y;
     }
 
     // Curves
@@ -455,7 +449,7 @@ int CurveEditor::BeginInternal(int *newCount) {
 //    ImGui::RenderText(ImVec2(frame_bb.Max.x + style.ItemInnerSpacing.x, inner_bb.Min.y), label);
 
     // Temp to cache the selected id to display params for curve points
-    selected_id = changed_idx;
+    selectedId = changed_idx;
 
     return changed_idx;
 }

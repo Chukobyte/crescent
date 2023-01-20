@@ -23,4 +23,10 @@ class CurveEditor {
 
   private:
     int BeginInternal(int* newCount);
+
+    ImVec2 startPan;
+    // Testing out selected curve
+    int selectedId = -1;
+    float selectedCurveTime = 0.0f;
+    float selectedCurveValue = 0.0f;
 };
