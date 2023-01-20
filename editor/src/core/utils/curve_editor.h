@@ -9,7 +9,7 @@ enum class CurveEditorFlags {
     SHOW_GRID = 1 << 1,
     ALL = NO_TANGENTS | SHOW_GRID,
 };
-GENERATE_ENUM_CLASS_OPERATORS(CurveEditorFlags)
+ENUM_CLASS_FLAG_OPERATORS(CurveEditorFlags)
 
 class CurveEditor {
   public:
