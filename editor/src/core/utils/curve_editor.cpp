@@ -489,7 +489,7 @@ void SimpleCurveEditor::Begin() {
             const ImVec2 windowP1 = {p1.x + windowPos.x, p1.y + windowPos.y };
             const ImVec2 windowP2 = {p2.x + windowPos.x, p2.y + windowPos.y };
             const ImVec2 windowP3 = {p3.x + windowPos.x, p3.y + windowPos.y };
-            drawList->AddBezierCubic(windowP0, windowP1, windowP2, windowP3, ImColor(255, 0, 0), 20, 0);
+            drawList->AddBezierCubic(windowP0, windowP1, windowP2, windowP3, ImColor(255, 0, 0), 10, 0);
             ImGui::EndChild();
         },
         .position = ImVec2{ 200.0f, 100.0f },

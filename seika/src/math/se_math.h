@@ -1,5 +1,9 @@
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifdef _MSC_VER
 #define CGLM_ALL_UNALIGNED
 #endif
@@ -85,3 +89,7 @@ float se_math_map_to_unit(float input, float inputMin, float inputMax);
 float se_math_signf(float value);
 Vector2 se_math_signvec2(Vector2* value);
 int se_math_clamp_int(int value, int min, int max);
+
+#ifdef __cplusplus
+}
+#endif
