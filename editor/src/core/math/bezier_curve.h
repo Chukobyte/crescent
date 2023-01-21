@@ -7,6 +7,7 @@
 using BezierPoint = Vector2;
 
 namespace BezierMath {
+float Lerp(float a, const float b, float t);
 BezierPoint Lerp(const BezierPoint& p1, const BezierPoint& p2, float t);
 BezierPoint Linear(const BezierPoint& p1, const BezierPoint& p2, float t);
 BezierPoint Quadratic(const BezierPoint& p0, const BezierPoint& p1, const BezierPoint& p2, float t);
