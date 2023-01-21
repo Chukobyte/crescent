@@ -7,15 +7,15 @@
 using BezierPoint = Vector2;
 
 struct CubicBezierCurve {
-    BezierPoint p0 = { 0.0f, 0.0f };
-    BezierPoint p1 = { 0.0f, 0.0f };
-    BezierPoint p2 = { 0.0f, 0.0f };
-    BezierPoint p3 = { 0.0f, 0.0f };
+    BezierPoint p0 = { 0.0f, 0.0f }; // Anchor Point 1
+    BezierPoint p1 = { 0.0f, 0.0f }; // Control Point 1
+    BezierPoint p2 = { 0.0f, 0.0f }; // Control Point 2
+    BezierPoint p3 = { 0.0f, 0.0f }; // Anchor Point 2
 
     [[nodiscard]] BezierPoint Eval(float t) const;
 };
 
-class CompositeCubicBezierCurve {
+class BezierSpline {
   public:
     [[nodiscard]] const std::vector<CubicBezierCurve>& GetPoints() const {
         return points;

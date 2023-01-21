@@ -180,6 +180,16 @@ void ProjectManagerUI::ProcessWindows() {
     };
     ImGuiHelper::BeginWindowWithEnd(window);
 
+    // Single cubic bezier curve editor
+    static SimpleCurveEditor curveEditor = {
+        .label = "Curve Editor",
+        .flags = CurveEditorFlags::ALL,
+        .editorSize = { 200.0f, 200.0f },
+        .curve = {}
+    };
+    curveEditor.Begin();
+
+
     // Test curve editor
 //    static ImGuiHelper::Window curveWindow = {
 //        .name = "Curve Editor Window",
@@ -223,28 +233,28 @@ void ProjectManagerUI::ProcessWindows() {
 //    ImGuiHelper::BeginWindowWithEnd(curveWindow);
 
     // Another curve editor test
-    {
-        const int numberOfPoints = 5;
-        ImVec2 points[numberOfPoints] = {
-            { 10.0f, 10.0f },
-            { 20.0f, 12.0f },
-            { 30.0f, 12.0f },
-            { 40.0f, 11.0f },
-            { 50.0f, 10.0f },
-        };
-        static int selectedPoint = -1;
-        static CurveEditor curveEditor = {
-            .label = "Curve Editor",
-            .flags = CurveEditorFlags::ALL,
-            .values = (float*) points,
-            .valueCount = numberOfPoints,
-            .editorSize = { 200.0f, 150.0f }
-        };
-        const int changedId = curveEditor.Begin(&selectedPoint);
-        if (changedId != -1) {
-            se_logger_debug("Selected Point = '%d'.  Curve with id '%d' is being dragged with the mouse", selectedPoint, changedId);
-        }
-    }
+//    {
+//        const int numberOfPoints = 5;
+//        ImVec2 points[numberOfPoints] = {
+//            { 10.0f, 10.0f },
+//            { 20.0f, 12.0f },
+//            { 30.0f, 12.0f },
+//            { 40.0f, 11.0f },
+//            { 50.0f, 10.0f },
+//        };
+//        static int selectedPoint = -1;
+//        static CurveEditor curveEditor = {
+//            .label = "Curve Editor",
+//            .flags = CurveEditorFlags::ALL,
+//            .values = (float*) points,
+//            .valueCount = numberOfPoints,
+//            .editorSize = { 200.0f, 150.0f }
+//        };
+//        const int changedId = curveEditor.Begin(&selectedPoint);
+//        if (changedId != -1) {
+//            se_logger_debug("Selected Point = '%d'.  Curve with id '%d' is being dragged with the mouse", selectedPoint, changedId);
+//        }
+//    }
 
 #ifdef _DEBUG
     if (isImguiDemoEnabled) {

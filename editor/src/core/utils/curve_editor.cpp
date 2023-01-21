@@ -453,3 +453,47 @@ int CurveEditor::BeginInternal(int *newCount) {
 
     return changed_idx;
 }
+
+//--- SimpleCurveEditor ---//
+void SimpleCurveEditor::Begin() {
+    ImGuiHelper::Window curveWindow = {
+        .name = "Curve Editor Window",
+        .open = nullptr,
+        .windowFlags = ImGuiWindowFlags_None,
+        .callbackFunc = [] (ImGuiHelper::Context* context) {
+            static const CubicBezierCurve curve = {
+                .p0 = { 50.0f, 47.0f },
+                .p1 = { 175.0f, 225.0f },
+                .p2 = { 310.0f, -41.0f },
+                .p3 = { 400.0f, 109.0f }
+            };
+            static ImVec2 p0 = { curve.p0.x, curve.p0.y };
+            static ImVec2 p1 = { curve.p1.x, curve.p1.y };
+            static ImVec2 p2 = { curve.p2.x, curve.p2.y };
+            static ImVec2 p3 = { curve.p3.x, curve.p3.y };
+
+            // Control Point Drag Floats
+            ImGuiHelper::DragFloat2 p0DragFloat2("p0", (float*) &p0);
+            ImGuiHelper::DragFloat2 p1DragFloat2("p1", (float*) &p1);
+            ImGuiHelper::DragFloat2 p2DragFloat2("p2", (float*) &p2);
+            ImGuiHelper::DragFloat2 p3DragFloat2("p3", (float*) &p3);
+            ImGuiHelper::BeginDragFloat2(p0DragFloat2);
+            ImGuiHelper::BeginDragFloat2(p1DragFloat2);
+            ImGuiHelper::BeginDragFloat2(p2DragFloat2);
+            ImGuiHelper::BeginDragFloat2(p3DragFloat2);
+
+            ImGui::BeginChild("Curve", ImGui::GetContentRegionAvail(), false, ImGuiWindowFlags_HorizontalScrollbar);
+            const ImVec2 windowPos = ImGui::GetWindowPos();
+            ImDrawList* drawList = ImGui::GetWindowDrawList();
+            const ImVec2 windowP0 = {p0.x + windowPos.x, p0.y + windowPos.y };
+            const ImVec2 windowP1 = {p1.x + windowPos.x, p1.y + windowPos.y };
+            const ImVec2 windowP2 = {p2.x + windowPos.x, p2.y + windowPos.y };
+            const ImVec2 windowP3 = {p3.x + windowPos.x, p3.y + windowPos.y };
+            drawList->AddBezierCubic(windowP0, windowP1, windowP2, windowP3, ImColor(255, 0, 0), 20, 0);
+            ImGui::EndChild();
+        },
+        .position = ImVec2{ 200.0f, 100.0f },
+        .size = ImVec2{ 300.0f, 300.0f },
+    };
+    ImGuiHelper::BeginWindowWithEnd(curveWindow);
+}
