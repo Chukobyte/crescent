@@ -6,6 +6,13 @@
 
 using BezierPoint = Vector2;
 
+namespace BezierMath {
+BezierPoint Lerp(const BezierPoint& p1, const BezierPoint& p2, float t);
+BezierPoint Linear(const BezierPoint& p1, const BezierPoint& p2, float t);
+BezierPoint Quadratic(const BezierPoint& p0, const BezierPoint& p1, const BezierPoint& p2, float t);
+BezierPoint Cubic(const BezierPoint& p0, const BezierPoint& p1, const BezierPoint& p2, const BezierPoint& p3, float t);
+} // BezierMath
+
 struct CubicBezierCurve {
     BezierPoint p0 = { 0.0f, 0.0f }; // Anchor Point 1
     BezierPoint p1 = { 0.0f, 0.0f }; // Control Point 1
