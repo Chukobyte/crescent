@@ -1,30 +1,20 @@
 #include "bezier_curve.h"
 
 //--- BezierMath ---//
-float BezierMath::Lerp(float a, const float b, float t) {
-    return a + (b - a) * t;
-}
-
-BezierPoint BezierMath::Lerp(const BezierPoint& p1, const BezierPoint& p2, float t) {
-    const float x = Lerp(p1.x, p2.x, t);
-    const float y = Lerp(p1.y, p2.y, t);
-    return { x, y };
-}
-
 BezierPoint BezierMath::Linear(const BezierPoint& p1, const BezierPoint& p2, float t) {
-    return Lerp(p1, p2, t);
+    return se_math_vec2_lerp(&p1, &p2, t);
 }
 
 BezierPoint BezierMath::Quadratic(const BezierPoint& p0, const BezierPoint& p1, const BezierPoint& p2, float t) {
-    return Lerp(
-               Lerp(p0, p1, t),
-               Lerp(p1, p2, t),
+    return Linear(
+               Linear(p0, p1, t),
+               Linear(p1, p2, t),
                t
            );
 }
 
 BezierPoint BezierMath::Cubic(const BezierPoint& p0, const BezierPoint& p1, const BezierPoint& p2, const BezierPoint& p3, float t) {
-    return Lerp(
+    return Linear(
                Quadratic(p0, p1, p2, t),
                Quadratic(p1, p2, p3, t),
                t
@@ -38,12 +28,12 @@ BezierPoint CubicBezierCurve::Eval(float t) const {
     const BezierPoint p02 = p2;
     const BezierPoint p03 = p3;
 
-    const BezierPoint p10 = BezierMath::Lerp(p00, p01, t);
-    const BezierPoint p11 = BezierMath::Lerp(p01, p02, t);
-    const BezierPoint p12 = BezierMath::Lerp(p02, p03, t);
-    const BezierPoint p20 = BezierMath::Lerp(p10, p11, t);
-    const BezierPoint p21 = BezierMath::Lerp(p11, p12, t);
-    const BezierPoint p30 = BezierMath::Lerp(p20, p21, t);
+    const BezierPoint p10 = BezierMath::Linear(p00, p01, t);
+    const BezierPoint p11 = BezierMath::Linear(p01, p02, t);
+    const BezierPoint p12 = BezierMath::Linear(p02, p03, t);
+    const BezierPoint p20 = BezierMath::Linear(p10, p11, t);
+    const BezierPoint p21 = BezierMath::Linear(p11, p12, t);
+    const BezierPoint p30 = BezierMath::Linear(p20, p21, t);
 
     return p30;
 }
