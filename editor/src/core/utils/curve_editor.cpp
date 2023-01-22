@@ -86,10 +86,10 @@ void SimpleCurveEditor::Begin() {
         .windowFlags = ImGuiWindowFlags_None,
         .callbackFunc = [] (ImGuiHelper::Context* context) {
             static CurveFloat curveFloat = CurveFloat( {
-                { .position = 0.0f, .value = 10.0f, .tangentIn = 0.0f, .tangentOut = 0.0f },
-                { .position = 5.0f, .value = 20.0f, .tangentIn = 0.0f, .tangentOut = 0.0f },
-                { .position = 10.0f, .value = 30.0f, .tangentIn = 0.0f, .tangentOut = 0.0f },
-                { .position = 12.0f, .value = 0.0f, .tangentIn = 0.0f, .tangentOut = 0.0f },
+                { .position = 0.0, .value = 10.0, .tangentIn = 0.0, .tangentOut = 0.0 },
+                { .position = 5.0, .value = 20.0, .tangentIn = 0.0, .tangentOut = 0.0 },
+                { .position = 10.0, .value = 30.0, .tangentIn = 0.0, .tangentOut = 0.0 },
+                { .position = 12.0, .value = 0.0, .tangentIn = 0.0, .tangentOut = 0.0 },
             });
 
             if (ImPlot::BeginPlot("Curve Float")) {
@@ -97,7 +97,7 @@ void SimpleCurveEditor::Begin() {
                 ImPlot::SetupAxes("time", "value", axeFlags, axeFlags);
                 if (ImPlot::IsPlotHovered() && ImGui::IsMouseClicked(0) && ImGui::GetIO().KeyCtrl) {
                     ImPlotPoint pt = ImPlot::GetPlotMousePos();
-                    curveFloat.AddControlPoint((float) pt.x, (float) pt.y, 0.0f, 0.0f);
+                    curveFloat.AddControlPoint(pt.x, pt.y, 0.0, 0.0);
                 }
 
                 DrawCurve(curveFloat, "Curve Float");
