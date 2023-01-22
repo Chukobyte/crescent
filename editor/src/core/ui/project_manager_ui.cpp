@@ -1,5 +1,7 @@
 #include "project_manager_ui.h"
 
+#include <implot.h>
+
 #include "../seika/src/utils/se_file_system_utils.h"
 #include "../seika/src/utils/logger.h"
 
@@ -259,6 +261,7 @@ void ProjectManagerUI::ProcessWindows() {
 #ifdef _DEBUG
     if (isImguiDemoEnabled) {
         ImGui::ShowDemoWindow();
+        ImPlot::ShowDemoWindow();
     }
 #endif
 }

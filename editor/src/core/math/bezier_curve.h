@@ -59,6 +59,14 @@ class CurveFloat {
         return a * leftPoint.value + b * rightPoint.value + c * leftPoint.tangentOut + d * rightPoint.tangentIn;
     }
 
+    std::vector<ControlPoint> GetControlPoints() const {
+        return controlPoints;
+    }
+
+    [[nodiscard]] size_t GetPointCount() const {
+        return controlPoints.size();
+    }
+
   private:
     std::vector<ControlPoint> controlPoints;
 };
@@ -93,7 +101,7 @@ class BezierSpline {
     }
 
     bool RemovePoint(const BezierPoint& curvePoint) {
-        for (int i = 0; i < points.size(); i++) {
+        for (size_t i = 0; i < points.size(); i++) {
             const auto& point = points[i];
             if (point.x == curvePoint.x && point.y == curvePoint.y) {
                 points.erase(points.begin() + i);
@@ -110,7 +118,7 @@ class BezierSpline {
     BezierPoint Eval(float t) {
 #define POINT_STRIDE 3
         SE_ASSERT(points.size() >= 4);
-        int numCurves = points.size() / POINT_STRIDE;
+        const int numCurves = points.size() / POINT_STRIDE;
         for (int i = 0; i < numCurves; i++) {
             const float pointIndex = (float) i;
             // t is within the range of this curve, so we evaluate it

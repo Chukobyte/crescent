@@ -13,6 +13,15 @@
     {
       "name": "python3",
       "version>=": "3.10.5"
+    },
+    {
+      "name": "implot",
+      "version>=": "0.13"
+    },
+    {
+      "name": "imgui",
+      "version>=": "1.87",
+      "features": ["docking-experimental", "opengl3-binding", "sdl2-binding", "sdl2-renderer-binding"]
     }
   ],
   "builtin-baseline": "91393faf123c4f1d22ef3dbfb4ec03531bac907a"
