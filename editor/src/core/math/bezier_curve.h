@@ -62,6 +62,10 @@ class CurveFloat {
         return controlPoints;
     }
 
+    std::vector<ControlPoint>& GetControlPointsRef() {
+        return controlPoints;
+    }
+
     [[nodiscard]] size_t GetPointCount() const {
         return controlPoints.size();
     }

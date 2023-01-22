@@ -105,8 +105,8 @@ void SimpleCurveEditor::Begin() {
                 // Draw movable control points
                 ImPlot::SetNextMarkerStyle(ImPlotMarker_Circle);
                 int pointId = 0;
-                for (auto& point : curveFloat.GetControlPoints()) {
-                    ImPlot::DragPoint(pointId++, (double*) &point.position, (double*) &point.value, ImVec4(0.0f, 0.9f, 0,1), 4, ImPlotDragToolFlags_None);
+                for (auto& point : curveFloat.GetControlPointsRef()) {
+                    ImPlot::DragPoint(pointId++, &point.position, &point.value, ImVec4(0.0f, 0.9f, 0,1), 4, ImPlotDragToolFlags_None);
                 }
                 ImPlot::EndPlot();
             }
