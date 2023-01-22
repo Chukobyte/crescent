@@ -9,22 +9,22 @@
 class CurveFloat {
   public:
     struct ControlPoint {
-        float position; // x
-        float value; // y
-        float tangentIn;
-        float tangentOut;
+        double position; // x
+        double value; // y
+        double tangentIn;
+        double tangentOut;
     };
 
     CurveFloat() = default;
 
     explicit CurveFloat(std::vector<ControlPoint> points) : controlPoints(std::move(points)) {}
 
-    void AddControlPoint(float position, float value, float tangentIn, float tangentOut) {
+    void AddControlPoint(double position, double value, double tangentIn, double tangentOut) {
         ControlPoint point = { position, value, tangentIn, tangentOut };
         controlPoints.push_back(point);
     }
 
-    [[nodiscard]] float Eval(float position) const {
+    [[nodiscard]] double Eval(double position) const {
         const int numPoints = (int) controlPoints.size();
         if (numPoints == 0) {
             return 0.0f;
@@ -46,14 +46,14 @@ class CurveFloat {
         const ControlPoint& leftPoint = controlPoints[leftIndex];
         const ControlPoint& rightPoint = controlPoints[rightIndex];
 
-        const float t = (position - leftPoint.position) / (rightPoint.position - leftPoint.position);
-        const float t2 = t * t;
-        const float t3 = t2 * t;
+        const double t = (position - leftPoint.position) / (rightPoint.position - leftPoint.position);
+        const double t2 = t * t;
+        const double t3 = t2 * t;
 
-        const float a = 2.0f * t3 - 3.0f * t2 + 1.0f;
-        const float b = -2.0f * t3 + 3.0f * t2;
-        const float c = t3 - 2.0f * t2 + t;
-        const float d = t3 - t2;
+        const double a = 2.0f * t3 - 3.0f * t2 + 1.0f;
+        const double b = -2.0f * t3 + 3.0f * t2;
+        const double c = t3 - 2.0f * t2 + t;
+        const double d = t3 - t2;
 
         return a * leftPoint.value + b * rightPoint.value + c * leftPoint.tangentOut + d * rightPoint.tangentIn;
     }
@@ -66,9 +66,9 @@ class CurveFloat {
         return controlPoints.size();
     }
 
-    [[nodiscard]] float GetFirstPosition() const {
+    [[nodiscard]] double GetFirstPosition() const {
         SE_ASSERT_FMT(controlPoints.size() > 0, "Control points are empty!");
-        float smallestPosition = 9999999.0f;
+        double smallestPosition = 9999999.0f;
         for (const auto& point : controlPoints) {
             if (point.position < smallestPosition) {
                 smallestPosition = point.position;
@@ -77,9 +77,9 @@ class CurveFloat {
         return smallestPosition;
     }
 
-    [[nodiscard]] float GetLastPosition() const {
+    [[nodiscard]] double GetLastPosition() const {
         SE_ASSERT_FMT(controlPoints.size() > 0, "Control points are empty!");
-        float largestPosition = 0.0f;
+        double largestPosition = 0.0f;
         for (const auto& point : controlPoints) {
             if (point.position > largestPosition) {
                 largestPosition = point.position;
@@ -97,9 +97,9 @@ class CurveFloat {
 using BezierPoint = Vector2;
 
 namespace BezierMath {
-BezierPoint Linear(const BezierPoint& p1, const BezierPoint& p2, float t);
-BezierPoint Quadratic(const BezierPoint& p0, const BezierPoint& p1, const BezierPoint& p2, float t);
-BezierPoint Cubic(const BezierPoint& p0, const BezierPoint& p1, const BezierPoint& p2, const BezierPoint& p3, float t);
+BezierPoint Linear(const BezierPoint& p1, const BezierPoint& p2, double t);
+BezierPoint Quadratic(const BezierPoint& p0, const BezierPoint& p1, const BezierPoint& p2, double t);
+BezierPoint Cubic(const BezierPoint& p0, const BezierPoint& p1, const BezierPoint& p2, const BezierPoint& p3, double t);
 } // BezierMath
 
 struct CubicBezierCurve {
@@ -108,7 +108,7 @@ struct CubicBezierCurve {
     BezierPoint p2 = { 0.0f, 0.0f }; // Control Point 2
     BezierPoint p3 = { 0.0f, 0.0f }; // Anchor Point 2
 
-    [[nodiscard]] BezierPoint Eval(float t) const;
+    [[nodiscard]] BezierPoint Eval(double t) const;
 };
 
 class BezierSpline {
@@ -136,12 +136,12 @@ class BezierSpline {
         points.clear();
     }
 
-    BezierPoint Eval(float t) {
+    BezierPoint Eval(double t) {
 #define POINT_STRIDE 3
         SE_ASSERT(points.size() >= 4);
         const int numCurves = points.size() / POINT_STRIDE;
         for (int i = 0; i < numCurves; i++) {
-            const float pointIndex = (float) i;
+            const double pointIndex = (double) i;
             // t is within the range of this curve, so we evaluate it
             if (t >= pointIndex && t < pointIndex + 1) {
                 const BezierPoint& p0 = points[i * POINT_STRIDE];
