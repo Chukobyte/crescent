@@ -58,35 +58,23 @@ bool operator!=(const ImVec2 &thisVector, const ImVec2 &otherVector) {
 
 //--- SimpleCurveEditor ---//
 namespace {
-void DrawCurve(const CurveFloat& curve, const char* label, float min, float max) {
-//    float xData[4];
-//    float yData[4];
-//    for (size_t i = 0; i < curve.GetPointCount(); i++) {
-//        const auto& point = points[i];
-//        xData[i] = point.position;
-//        yData[i] = point.value;
-//    }
-
-//    const int numSamples = 100;
-//    std::vector<float> samplesX(numSamples);
-//    std::vector<float> samplesY(numSamples);
-//    for (int i = 0; i < numSamples; i++) {
-//        float position = (float)i / (float)(numSamples - 1);
-//        samplesX[i] = position * (max - min) + min;
-//        samplesY[i] = curve.Eval(position);
-//    }
-
-    std::vector<float> samplesX;
-    std::vector<float> samplesY;
-    const auto points = curve.GetControlPoints();
-    int i = 0;
-    for (auto& point : curve.GetControlPoints()) {
-//        samplesX.emplace_back(point.position);
-//        samplesY.emplace_back(point.value);
-        ImPlot::DragPoint(i, (double*) &point.position, (double*) &point.value, ImVec4(0,0.9f,0,1));
+void DrawCurve(const CurveFloat& curve, const char* label) {
+    const float firstPosition = curve.GetFirstPosition();
+    const float lastPosition = curve.GetLastPosition();
+    SE_ASSERT_FMT(firstPosition != lastPosition, "first position '%f' equals last position '%f'", firstPosition, lastPosition);
+    // Derive sample increments by calculating from positions and number of samples
+    const int numSamples = 100;
+    const float sampleIncrement = (lastPosition - firstPosition) / numSamples;
+    std::vector<float> samplesX(numSamples);
+    std::vector<float> samplesY(numSamples);
+    float currentPosition = firstPosition;
+    for (int i = 0; i < numSamples; i++) {
+        samplesX[i] = currentPosition;
+        samplesY[i] = curve.Eval(currentPosition);
+        currentPosition += sampleIncrement;
     }
-//    ImPlot::SetNextMarkerStyle(ImPlotMarker_Circle);
-//    ImPlot::PlotLine(label, samplesX.data(), samplesY.data(), 200);
+
+    ImPlot::PlotLine(label, samplesX.data(), samplesY.data(), numSamples);
 }
 
 } // namespace
@@ -97,24 +85,6 @@ void SimpleCurveEditor::Begin() {
         .open = nullptr,
         .windowFlags = ImGuiWindowFlags_None,
         .callbackFunc = [] (ImGuiHelper::Context* context) {
-            // Control Point Drag Floats
-//            ImGuiHelper::DragFloat2 p0DragFloat2("p0", (float*) &p0);
-//            ImGuiHelper::DragFloat2 p1DragFloat2("p1", (float*) &p1);
-//            ImGuiHelper::DragFloat2 p2DragFloat2("p2", (float*) &p2);
-//            ImGuiHelper::DragFloat2 p3DragFloat2("p3", (float*) &p3);
-//            ImGuiHelper::BeginDragFloat2(p0DragFloat2);
-//            ImGuiHelper::BeginDragFloat2(p1DragFloat2);
-//            ImGuiHelper::BeginDragFloat2(p2DragFloat2);
-//            ImGuiHelper::BeginDragFloat2(p3DragFloat2);
-//
-//            const ImVec2 windowPos = ImGui::GetWindowPos();
-//            ImDrawList* drawList = ImGui::GetWindowDrawList();
-//            const ImVec2 windowP0 = {p0.x + windowPos.x, p0.y + windowPos.y };
-//            const ImVec2 windowP1 = {p1.x + windowPos.x, p1.y + windowPos.y };
-//            const ImVec2 windowP2 = {p2.x + windowPos.x, p2.y + windowPos.y };
-//            const ImVec2 windowP3 = {p3.x + windowPos.x, p3.y + windowPos.y };
-//            drawList->AddBezierCubic(windowP0, windowP1, windowP2, windowP3, ImColor(255, 0, 0), 10, 0);
-//            ImGui::BeginChild("Curve", ImGui::GetContentRegionAvail(), false, ImGuiWindowFlags_HorizontalScrollbar);
             static CurveFloat curveFloat = CurveFloat( {
                 { .position = 0.0f, .value = 10.0f, .tangentIn = 0.0f, .tangentOut = 0.0f },
                 { .position = 5.0f, .value = 20.0f, .tangentIn = 0.0f, .tangentOut = 0.0f },
@@ -123,18 +93,16 @@ void SimpleCurveEditor::Begin() {
             });
 
             if (ImPlot::BeginPlot("Curve Float")) {
-                const ImPlotAxisFlags axeFlags = ImPlotAxisFlags_NoTickLabels | ImPlotAxisFlags_NoTickMarks;
+                const ImPlotAxisFlags axeFlags = ImPlotAxisFlags_None;
                 ImPlot::SetupAxes("time", "value", axeFlags, axeFlags);
-//                ImPlot::SetupAxesLimits(0, 1, 0, 1);
                 if (ImPlot::IsPlotHovered() && ImGui::IsMouseClicked(0) && ImGui::GetIO().KeyCtrl) {
                     ImPlotPoint pt = ImPlot::GetPlotMousePos();
                     curveFloat.AddControlPoint((float) pt.x, (float) pt.y, 0.0f, 0.0f);
                 }
 
-                DrawCurve(curveFloat, "Curve Float", 0.0f, 30.0f);
+                DrawCurve(curveFloat, "Curve Float");
                 ImPlot::EndPlot();
             }
-//            ImGui::EndChild();
         },
         .position = ImVec2{ 200.0f, 100.0f },
         .size = ImVec2{ 300.0f, 300.0f },

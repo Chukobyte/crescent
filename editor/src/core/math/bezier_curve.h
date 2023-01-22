@@ -3,7 +3,6 @@
 #include <vector>
 
 #include "../seika/src/utils/se_assert.h"
-
 #include "../seika/src/math/se_math.h"
 
 // Curve Float
@@ -65,6 +64,28 @@ class CurveFloat {
 
     [[nodiscard]] size_t GetPointCount() const {
         return controlPoints.size();
+    }
+
+    [[nodiscard]] float GetFirstPosition() const {
+        SE_ASSERT_FMT(controlPoints.size() > 0, "Control points are empty!");
+        float smallestPosition = 9999999.0f;
+        for (const auto& point : controlPoints) {
+            if (point.position < smallestPosition) {
+                smallestPosition = point.position;
+            }
+        }
+        return smallestPosition;
+    }
+
+    [[nodiscard]] float GetLastPosition() const {
+        SE_ASSERT_FMT(controlPoints.size() > 0, "Control points are empty!");
+        float largestPosition = 0.0f;
+        for (const auto& point : controlPoints) {
+            if (point.position > largestPosition) {
+                largestPosition = point.position;
+            }
+        }
+        return largestPosition;
     }
 
   private:
