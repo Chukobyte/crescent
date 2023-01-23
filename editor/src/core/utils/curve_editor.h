@@ -14,26 +14,6 @@ ENUM_CLASS_FLAG_OPERATORS(CurveEditorFlags)
 
 class CurveEditor {
   public:
-    int Begin(int* newCount = nullptr);
-
-    std::string label;
-    CurveEditorFlags flags = CurveEditorFlags::ALL;
-    float* values = nullptr;
-    int valueCount = 0;
-    ImVec2 editorSize;
-
-  private:
-    int BeginInternal(int* newCount);
-
-    ImVec2 startPan;
-    // Testing out selected curve
-    int selectedId = -1;
-    float selectedCurveTime = 0.0f;
-    float selectedCurveValue = 0.0f;
-};
-
-class SimpleCurveEditor {
-  public:
     void Begin();
 
     std::string label;

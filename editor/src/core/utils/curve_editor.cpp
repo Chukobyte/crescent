@@ -56,7 +56,7 @@ bool operator!=(const ImVec2 &thisVector, const ImVec2 &otherVector) {
     return !(thisVector == otherVector);
 }
 
-//--- SimpleCurveEditor ---//
+//--- CurveEditor ---//
 namespace {
 void DrawCurve(const CurveFloat& curve, const char* label) {
     const double firstPosition = curve.GetFirstPosition();
@@ -79,7 +79,7 @@ void DrawCurve(const CurveFloat& curve, const char* label) {
 
 } // namespace
 
-void SimpleCurveEditor::Begin() {
+void CurveEditor::Begin() {
     ImGuiHelper::Window curveWindow = {
         .name = "Curve Editor Window",
         .open = nullptr,
