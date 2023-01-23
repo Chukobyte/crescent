@@ -59,15 +59,15 @@ bool operator!=(const ImVec2 &thisVector, const ImVec2 &otherVector) {
 //--- SimpleCurveEditor ---//
 namespace {
 void DrawCurve(const CurveFloat& curve, const char* label) {
-    const float firstPosition = curve.GetFirstPosition();
-    const float lastPosition = curve.GetLastPosition();
+    const double firstPosition = curve.GetFirstPosition();
+    const double lastPosition = curve.GetLastPosition();
     SE_ASSERT_FMT(firstPosition != lastPosition, "first position '%f' equals last position '%f'", firstPosition, lastPosition);
     // Derive sample increments by calculating from positions and number of samples
     const int numSamples = 100;
-    const float sampleIncrement = (lastPosition - firstPosition) / numSamples;
-    std::vector<float> samplesX(numSamples);
-    std::vector<float> samplesY(numSamples);
-    float currentPosition = firstPosition;
+    const double sampleIncrement = (lastPosition - firstPosition) / numSamples;
+    std::vector<double> samplesX(numSamples);
+    std::vector<double> samplesY(numSamples);
+    double currentPosition = firstPosition;
     for (int i = 0; i < numSamples; i++) {
         samplesX[i] = currentPosition;
         samplesY[i] = curve.Eval(currentPosition);

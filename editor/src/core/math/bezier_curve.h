@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <algorithm>
 
 #include "../seika/src/utils/se_assert.h"
 #include "../seika/src/math/se_math.h"
@@ -17,11 +18,14 @@ class CurveFloat {
 
     CurveFloat() = default;
 
-    explicit CurveFloat(std::vector<ControlPoint> points) : controlPoints(std::move(points)) {}
+    explicit CurveFloat(std::vector<ControlPoint> points) : controlPoints(std::move(points)) {
+        SortControlPointsByPosition();
+    }
 
     void AddControlPoint(double position, double value, double tangentIn, double tangentOut) {
         ControlPoint point = { position, value, tangentIn, tangentOut };
         controlPoints.push_back(point);
+        SortControlPointsByPosition();
     }
 
     [[nodiscard]] double Eval(double position) const {
@@ -93,6 +97,12 @@ class CurveFloat {
     }
 
   private:
+    void SortControlPointsByPosition() {
+        std::sort(controlPoints.begin(), controlPoints.end(), [](const ControlPoint& p1, const ControlPoint& p2) {
+            return p1.position < p2.position;
+        });
+    }
+
     std::vector<ControlPoint> controlPoints;
 };
 
