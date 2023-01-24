@@ -58,4 +58,4 @@ class FileNodeCache {
     unsigned int nodeIndexCount = 0;
 };
 
-GENERATE_ENUM_CLASS_OPERATORS(FileNodeCache::LoadFlag)
+ENUM_CLASS_FLAG_OPERATORS(FileNodeCache::LoadFlag)

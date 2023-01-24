@@ -135,7 +135,7 @@ ImGuiHelper::PopupModal& OpenedProjectUI::Windows::AnimationEditor::GetPopup(Ani
             static AssetManager* assetManager = AssetManager::Get();
             ImVec2 indexContentSize = ImVec2(ImGui::GetContentRegionAvail().x, 100);
             ImGui::BeginChild("AnimationIndexDisplay", indexContentSize, false, ImGuiWindowFlags_HorizontalScrollbar);
-            for (int i = 0; i < frameCount; i++) {
+            for (int i = 0; i < (int) frameCount; i++) {
                 const ImVec2 framePaddingSize = selectedAnimFrameIndex == i ? ImVec2(4.0f, 4.0f) : ImVec2(1.0f, 1.0f);
                 ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, framePaddingSize);
                 ImGui::PushID(i);
@@ -151,7 +151,7 @@ ImGuiHelper::PopupModal& OpenedProjectUI::Windows::AnimationEditor::GetPopup(Ani
                     const ImVec4 tint_col = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
                     ImGui::Text("%d:", i);
                     ImGui::SameLine();
-                    if (ImGui::ImageButton("", (ImTextureID) texture->id, buttonSize, uv0, uv1, bg_col, tint_col)) {
+                    if (ImGui::ImageButton((ImTextureID) texture->id, buttonSize, uv0, uv1, -1, bg_col, tint_col)) {
                         selectedAnimFrameIndex = i;
                     }
                 } else {

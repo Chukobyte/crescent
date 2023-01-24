@@ -5,6 +5,13 @@ bool se_math_vec2_equals(const Vector2* v1, const Vector2* v2) {
     return v1->x == v2->x && v1->y == v2->y;
 }
 
+Vector2 se_math_vec2_lerp(const Vector2* v1, const Vector2* v2, float t) {
+    return (Vector2) {
+        .x = se_math_lerpf(v1->x, v2->x, t),
+        .y = se_math_lerpf(v1->y, v2->y, t)
+    };
+}
+
 // --- Rect2 --- //
 bool se_rect2_does_rectangles_overlap(Rect2* sourceRect, Rect2* targetRect) {
     return (sourceRect->x + sourceRect->w >= targetRect->x) &&
@@ -50,6 +57,10 @@ Color se_color_get_white() {
 }
 
 // --- Misc --- //
+float se_math_lerpf(float a, float b, float t) {
+    return a + (b - a) * t;
+}
+
 float se_math_map_to_range(float input, float inputMin, float inputMax, float outputMin, float outputMax) {
     return (((input - inputMin) / (inputMax - inputMin)) * (outputMax - outputMin) + outputMin);
 }

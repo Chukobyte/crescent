@@ -1,13 +1,15 @@
 #include "editor.h"
 
-#include <imgui/imgui_impl_sdl.h>
-#include <imgui/imgui_impl_opengl3.h>
+#include <imgui_impl_sdl.h>
+#include <imgui_impl_opengl3.h>
+
+#include <implot.h>
 
 #include "../seika/src/rendering/renderer.h"
+
 #include "../seika/src/utils/logger.h"
 
 #include "../engine/src/core/scripting/python/cre_py.h"
-
 #include "editor_context.h"
 #include "editor_background_tasks.h"
 #include "scene/scene_manager.h"
@@ -102,6 +104,7 @@ bool Editor::InitializeSDL() {
 bool Editor::InitializeImGui() {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
+    ImPlot::CreateContext();
     ImGuiIO &io = ImGui::GetIO();
     (void)io;
     io.IniFilename = nullptr;

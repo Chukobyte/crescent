@@ -14,8 +14,27 @@ endif ()
 
 find_package(SDL2 CONFIG REQUIRED)
 
+add_library(imgui STATIC
+        ../include/imgui.cpp
+        ../include/imgui_demo.cpp
+        ../include/imgui_draw.cpp
+        ../include/imgui_tables.cpp
+        ../include/imgui_widgets.cpp
+        ../include/imgui_impl_opengl3.cpp
+        ../include/imgui_impl_sdl.cpp
+        )
+
+target_include_directories(imgui PRIVATE
+        ${SDL2_INCLUDE_DIRS}
+        )
+
+add_library(implot STATIC
+        ../include/implot.cpp
+        ../include/implot_demo.cpp
+        ../include/implot_items.cpp
+        )
+
 add_library(${PROJECT_NAME} STATIC
-        # C++
         src/core/asset_manager.cpp
         src/core/file_node.cpp
         src/core/editor.cpp
@@ -28,6 +47,7 @@ add_library(${PROJECT_NAME} STATIC
         src/core/game_exporter.cpp
         src/core/file_creation/config_file_creator.cpp
         src/core/file_creation/scene_file_creator.cpp
+        src/core/math/bezier_curve.cpp
         src/core/scene/scene_manager.cpp
         src/core/ui/opened_project_ui.cpp
         src/core/ui/project_manager_ui.cpp
@@ -45,15 +65,9 @@ add_library(${PROJECT_NAME} STATIC
         src/core/ui/views/opened_project/windows/scene_outliner_ui.cpp
         src/core/ui/views/opened_project/windows/scene_view_ui.cpp
         src/core/utils/console_logger.cpp
+        src/core/utils/curve_editor.cpp
         src/core/utils/process_runner/process_runner.cpp
         src/core/utils/process_runner/process_context.cpp
-        ../include/imgui.cpp
-        ../include/imgui_demo.cpp
-        ../include/imgui_draw.cpp
-        ../include/imgui_tables.cpp
-        ../include/imgui_widgets.cpp
-        ../include/imgui/imgui_impl_opengl3.cpp
-        ../include/imgui/imgui_impl_sdl.cpp
         )
 
 target_include_directories(${PROJECT_NAME} PUBLIC
@@ -62,11 +76,11 @@ target_include_directories(${PROJECT_NAME} PUBLIC
         )
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image SDL2::SDL2main SDL2::SDL2)
+    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image SDL2::SDL2main SDL2::SDL2 imgui implot)
 elseif(WIN32)
-    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image -lmingw32 -static-libgcc -fcoroutines SDL2::SDL2main SDL2::SDL2)
+    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image -lmingw32 -static-libgcc -fcoroutines SDL2::SDL2main SDL2::SDL2 imgui implot)
 else ()
-    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image -static-libgcc -Xlinker -export-dynamic SDL2::SDL2main SDL2::SDL2)
+    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image -static-libgcc -Xlinker -export-dynamic SDL2::SDL2main SDL2::SDL2 imgui implot)
 endif ()
 
 target_compile_options(${PROJECT_NAME} PUBLIC ${flags})
@@ -83,9 +97,9 @@ if (IS_CI_BUILD STREQUAL "false")
             )
     add_custom_command(TARGET ${PROJECT_NAME} PRE_BUILD
             COMMAND ${CMAKE_COMMAND} -E make_directory
-            $<TARGET_FILE_DIR:${PROJECT_NAME}>/../export
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/../export/crescent
             )
-    # TODO: Fina a better way to get exectable name..
+    # Copy files needed to run the engine within the editor
     add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy
             $<TARGET_FILE_DIR:${PROJECT_NAME}>/../crescent_engine${CMAKE_EXECUTABLE_SUFFIX}
@@ -95,6 +109,18 @@ if (IS_CI_BUILD STREQUAL "false")
             COMMAND ${CMAKE_COMMAND} -E copy_directory
             $<TARGET_FILE_DIR:${PROJECT_NAME}>/../assets
             $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/assets
+            )
+    # For export
+    # TODO: Fix this
+#    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+#            COMMAND ${CMAKE_COMMAND} -E copy
+#            $<TARGET_FILE_DIR:${PROJECT_NAME}>/../crescent_engine_editor${CMAKE_EXECUTABLE_SUFFIX}
+#            $<TARGET_FILE_DIR:${PROJECT_NAME}>/../export/crescent/crescent${CMAKE_EXECUTABLE_SUFFIX}
+#            )
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/../export/crescent/bin
             )
 endif()
 

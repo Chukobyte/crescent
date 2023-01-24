@@ -10,8 +10,6 @@
 
 #include "../../editor_context.h"
 
-static bool isImGuiDemoEnabled = false;
-
 void ImGuiHandler::Process() {
     static EditorContext* editorContext = EditorContext::Get();
     switch (editorContext->projectState) {
@@ -29,9 +27,5 @@ void ImGuiHandler::Process() {
     }
     default:
         break;
-    }
-    // standard demo window
-    if (isImGuiDemoEnabled) {
-        ImGui::ShowDemoWindow(&isImGuiDemoEnabled);
     }
 }
