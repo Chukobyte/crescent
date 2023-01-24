@@ -23,5 +23,6 @@ add_executable(${PROJECT_NAME}_editor editor/src/main.cpp)
 target_link_libraries(${PROJECT_NAME}_editor crescent_editor crescent_core seika)
 
 # Create test editor exe
+find_package(SDL2 CONFIG REQUIRED)
 add_executable(${PROJECT_NAME}_editor_test editor/test/main.cpp editor/test/unit/bezier_curve_test.cpp)
-target_link_libraries(${PROJECT_NAME}_editor_test crescent_editor crescent_core seika)
+target_link_libraries(${PROJECT_NAME}_editor_test crescent_editor crescent_core seika SDL2::SDL2main SDL2::SDL2)
