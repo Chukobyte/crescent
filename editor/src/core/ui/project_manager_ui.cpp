@@ -182,14 +182,19 @@ void ProjectManagerUI::ProcessWindows() {
     };
     ImGuiHelper::BeginWindowWithEnd(window);
 
-    // Single cubic bezier curve editor
-    static CurveEditor curveEditor = {
-        .label = "Curve Editor",
-        .flags = CurveEditorFlags::ALL,
-        .editorSize = { 200.0f, 200.0f },
-        .curve = {}
-    };
-    curveEditor.Begin();
+    // TODO: Testing curve editor, should implement 'CurveFloat' within seika and implement on the engine side.
+//    static CurveEditor curveEditor = {
+//        .label = "Curve Editor",
+//        .flags = CurveEditorFlags::ALL,
+//        .editorSize = { 200.0f, 200.0f },
+//        .curve = CurveFloat({
+//            {.position = 0.0, .value = 10.0, .tangentIn = 0.0, .tangentOut = 0.0},
+//            {.position = 5.0, .value = 20.0, .tangentIn = 0.0, .tangentOut = 0.0},
+//            {.position = 10.0, .value = 30.0, .tangentIn = 0.0, .tangentOut = 0.0},
+//            {.position = 12.0, .value = 0.0, .tangentIn = 0.0, .tangentOut = 0.0}
+//        })
+//    };
+//    curveEditor.Begin();
 
 #ifdef _DEBUG
     if (isImguiDemoEnabled) {

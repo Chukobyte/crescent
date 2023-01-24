@@ -19,7 +19,7 @@ class CurveEditor {
     std::string label;
     CurveEditorFlags flags = CurveEditorFlags::ALL;
     ImVec2 editorSize;
-    CubicBezierCurve curve;
+    CurveFloat curve;
 
   private:
 };

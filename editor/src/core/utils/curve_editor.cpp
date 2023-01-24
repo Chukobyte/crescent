@@ -84,28 +84,21 @@ void CurveEditor::Begin() {
         .name = "Curve Editor Window",
         .open = nullptr,
         .windowFlags = ImGuiWindowFlags_None,
-        .callbackFunc = [] (ImGuiHelper::Context* context) {
-            static CurveFloat curveFloat = CurveFloat( {
-                { .position = 0.0, .value = 10.0, .tangentIn = 0.0, .tangentOut = 0.0 },
-                { .position = 5.0, .value = 20.0, .tangentIn = 0.0, .tangentOut = 0.0 },
-                { .position = 10.0, .value = 30.0, .tangentIn = 0.0, .tangentOut = 0.0 },
-                { .position = 12.0, .value = 0.0, .tangentIn = 0.0, .tangentOut = 0.0 },
-            });
-
+        .callbackFunc = [this] (ImGuiHelper::Context* context) {
             if (ImPlot::BeginPlot("Curve Float")) {
                 const ImPlotAxisFlags axeFlags = ImPlotAxisFlags_None;
                 ImPlot::SetupAxes("time", "value", axeFlags, axeFlags);
                 if (ImPlot::IsPlotHovered() && ImGui::IsMouseClicked(0) && ImGui::GetIO().KeyCtrl) {
                     ImPlotPoint pt = ImPlot::GetPlotMousePos();
-                    curveFloat.AddControlPoint(pt.x, pt.y, 0.0, 0.0);
+                    curve.AddControlPoint(pt.x, pt.y, 0.0, 0.0);
                 }
 
-                DrawCurve(curveFloat, "Curve Float");
+                DrawCurve(curve, "Curve Float");
 
                 // Draw movable control points
                 ImPlot::SetNextMarkerStyle(ImPlotMarker_Circle);
                 int pointId = 0;
-                for (auto& point : curveFloat.GetControlPointsRef()) {
+                for (auto& point : curve.GetControlPointsRef()) {
                     ImPlot::DragPoint(pointId++, &point.position, &point.value, ImVec4(0.0f, 0.9f, 0,1), 4, ImPlotDragToolFlags_None);
                 }
                 ImPlot::EndPlot();
