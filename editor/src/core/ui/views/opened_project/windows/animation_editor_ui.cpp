@@ -151,7 +151,6 @@ ImGuiHelper::PopupModal& OpenedProjectUI::Windows::AnimationEditor::GetPopup(Ani
                     const ImVec4 tint_col = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
                     ImGui::Text("%d:", i);
                     ImGui::SameLine();
-//                    if (ImGui::ImageButton("", (ImTextureID) texture->id, buttonSize, uv0, uv1, bg_col, tint_col)) {
                     if (ImGui::ImageButton((ImTextureID) texture->id, buttonSize, uv0, uv1, -1, bg_col, tint_col)) {
                         selectedAnimFrameIndex = i;
                     }
