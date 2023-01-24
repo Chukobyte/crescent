@@ -13,8 +13,22 @@ else ()
 endif ()
 
 find_package(SDL2 CONFIG REQUIRED)
-find_package(imgui CONFIG REQUIRED)
-find_package(implot CONFIG REQUIRED)
+
+#add_library(imgui
+#        ../include/imgui.cpp
+#        ../include/imgui_demo.cpp
+#        ../include/imgui_draw.cpp
+#        ../include/imgui_tables.cpp
+#        ../include/imgui_widgets.cpp
+#        ../include/imgui_impl_opengl3.cpp
+#        ../include/imgui_impl_sdl.cpp
+#        )
+#
+#add_library(implot STATIC
+#        ../include/implot.cpp
+#        ../include/implot_demo.cpp
+#        ../include/implot_items.cpp
+#        )
 
 add_library(${PROJECT_NAME} STATIC
         # C++
@@ -51,13 +65,17 @@ add_library(${PROJECT_NAME} STATIC
         src/core/utils/curve_editor.cpp
         src/core/utils/process_runner/process_runner.cpp
         src/core/utils/process_runner/process_context.cpp
-#        ../include/imgui.cpp
-#        ../include/imgui_demo.cpp
-#        ../include/imgui_draw.cpp
-#        ../include/imgui_tables.cpp
-#        ../include/imgui_widgets.cpp
-#        ../include/imgui/imgui_impl_opengl3.cpp
-#        ../include/imgui/imgui_impl_sdl.cpp
+        # Make separate libs
+        ../include/implot.cpp
+        ../include/implot_demo.cpp
+        ../include/implot_items.cpp
+        ../include/imgui.cpp
+        ../include/imgui_demo.cpp
+        ../include/imgui_draw.cpp
+        ../include/imgui_tables.cpp
+        ../include/imgui_widgets.cpp
+        ../include/imgui_impl_opengl3.cpp
+        ../include/imgui_impl_sdl.cpp
         )
 
 target_include_directories(${PROJECT_NAME} PUBLIC
@@ -66,11 +84,11 @@ target_include_directories(${PROJECT_NAME} PUBLIC
         )
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image SDL2::SDL2main SDL2::SDL2 imgui::imgui implot::implot)
+    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image SDL2::SDL2main SDL2::SDL2)
 elseif(WIN32)
-    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image -lmingw32 -static-libgcc -fcoroutines SDL2::SDL2main SDL2::SDL2 imgui::imgui implot::implot)
+    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image -lmingw32 -static-libgcc -fcoroutines SDL2::SDL2main SDL2::SDL2)
 else ()
-    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image -static-libgcc -Xlinker -export-dynamic SDL2::SDL2main SDL2::SDL2 imgui::imgui implot::implot)
+    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image -static-libgcc -Xlinker -export-dynamic SDL2::SDL2main SDL2::SDL2)
 endif ()
 
 target_compile_options(${PROJECT_NAME} PUBLIC ${flags})

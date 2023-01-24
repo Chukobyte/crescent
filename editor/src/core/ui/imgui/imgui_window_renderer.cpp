@@ -1,8 +1,8 @@
 #include "imgui_window_renderer.h"
 
 #include "imgui.h"
-#include "imgui/imgui_impl_opengl3.h"
-#include "imgui/imgui_impl_sdl.h"
+#include "imgui_impl_opengl3.h"
+#include "imgui_impl_sdl.h"
 
 #include "../seika/src/rendering/renderer.h"
 #include "../seika/src/rendering/frame_buffer.h"
