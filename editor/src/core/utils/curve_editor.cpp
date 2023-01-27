@@ -59,9 +59,15 @@ bool operator!=(const ImVec2 &thisVector, const ImVec2 &otherVector) {
 //--- CurveEditor ---//
 namespace {
 void DrawCurve(const CurveFloat& curve, const char* label) {
+    // Early out when no points exist
+    if (!curve.HasControlPoints()) {
+        static double x[0];
+        static double y[0];
+        ImPlot::PlotLine(label, x, y, 0);
+        return;
+    }
     const double firstPosition = curve.GetFirstPosition();
     const double lastPosition = curve.GetLastPosition();
-    SE_ASSERT_FMT(firstPosition != lastPosition, "first position '%f' equals last position '%f'", firstPosition, lastPosition);
     // Derive sample increments by calculating from positions and number of samples
     const int numSamples = 100;
     const double sampleIncrement = (lastPosition - firstPosition) / numSamples;

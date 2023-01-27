@@ -74,6 +74,10 @@ class CurveFloat {
         return controlPoints.size();
     }
 
+    [[nodiscard]] bool HasControlPoints() const {
+        return controlPoints.size() > 0;
+    }
+
     [[nodiscard]] double GetFirstPosition() const {
         SE_ASSERT_FMT(controlPoints.size() > 0, "Control points are empty!");
         double smallestPosition = 9999999.0f;
