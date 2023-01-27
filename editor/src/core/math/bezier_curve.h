@@ -28,6 +28,20 @@ class CurveFloat {
         SortControlPointsByPosition();
     }
 
+    // Removes a control points.  Returns 'true' if a control point has been removed.
+    bool RemoveControlPoint(double position, double value) {
+        // TODO: Need to get the close point (x) and value (y)
+        for (size_t i = 0; i < controlPoints.size(); i++) {
+            const auto& point = controlPoints[i];
+            if (se_math_is_almost_equal_double(point.position, position, 0.1) && se_math_is_almost_equal_double(point.value, value, 0.1)) {
+                controlPoints.erase(controlPoints.begin() + i);
+                SortControlPointsByPosition();
+                return true;
+            }
+        }
+        return false;
+    }
+
     [[nodiscard]] double Eval(double position) const {
         const int numPoints = (int) controlPoints.size();
         if (numPoints == 0) {
@@ -62,11 +76,11 @@ class CurveFloat {
         return a * leftPoint.value + b * rightPoint.value + c * leftPoint.tangentOut + d * rightPoint.tangentIn;
     }
 
-    std::vector<ControlPoint> GetControlPoints() const {
+    [[nodiscard]] std::vector<ControlPoint> GetControlPoints() const {
         return controlPoints;
     }
 
-    std::vector<ControlPoint>& GetControlPointsRef() {
+    [[nodiscard]] std::vector<ControlPoint>& GetControlPointsRef() {
         return controlPoints;
     }
 
@@ -100,13 +114,13 @@ class CurveFloat {
         return largestPosition;
     }
 
-  private:
     void SortControlPointsByPosition() {
         std::sort(controlPoints.begin(), controlPoints.end(), [](const ControlPoint& p1, const ControlPoint& p2) {
             return p1.position < p2.position;
         });
     }
 
+  private:
     std::vector<ControlPoint> controlPoints;
 };
 

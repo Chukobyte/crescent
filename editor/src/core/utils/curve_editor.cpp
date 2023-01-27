@@ -94,18 +94,30 @@ void CurveEditor::Begin() {
             if (ImPlot::BeginPlot("Curve Float")) {
                 const ImPlotAxisFlags axeFlags = ImPlotAxisFlags_None;
                 ImPlot::SetupAxes("time", "value", axeFlags, axeFlags);
-                if (ImPlot::IsPlotHovered() && ImGui::IsMouseClicked(0) && ImGui::GetIO().KeyCtrl) {
-                    ImPlotPoint pt = ImPlot::GetPlotMousePos();
-                    curve.AddControlPoint(pt.x, pt.y, 0.0, 0.0);
+                ImPlotDragToolFlags dragPointFlags = ImPlotDragToolFlags_None;
+                // Control Point add/remove inputs
+                if (ImPlot::IsPlotHovered()) {
+                    const bool isShiftHeld = ImGui::GetIO().KeyShift;
+                    if (isShiftHeld) {
+                        dragPointFlags = ImPlotDragToolFlags_NoInputs;
+                    }
+                    if (ImGui::GetIO().KeyCtrl && ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
+                        ImPlotPoint pt = ImPlot::GetPlotMousePos();
+                        curve.AddControlPoint(pt.x, pt.y, 0.0, 0.0);
+                    } else if (isShiftHeld && ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
+                        ImPlotPoint pt = ImPlot::GetPlotMousePos();
+                        curve.RemoveControlPoint(pt.x, pt.y);
+                    }
                 }
 
                 DrawCurve(curve, "Curve Float");
 
                 // Draw movable control points
+                // TODO: Need to handle case when position order changes from dragging
                 ImPlot::SetNextMarkerStyle(ImPlotMarker_Circle);
                 int pointId = 0;
                 for (auto& point : curve.GetControlPointsRef()) {
-                    ImPlot::DragPoint(pointId++, &point.position, &point.value, ImVec4(0.0f, 0.9f, 0,1), 4, ImPlotDragToolFlags_None);
+                    ImPlot::DragPoint(pointId++, &point.position, &point.value, ImVec4(0.0f, 0.9f, 0,1), 4, dragPointFlags);
                 }
                 ImPlot::EndPlot();
             }

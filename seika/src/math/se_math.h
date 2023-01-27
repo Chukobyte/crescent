@@ -89,6 +89,10 @@ float se_math_map_to_unit(float input, float inputMin, float inputMax);
 float se_math_signf(float value);
 Vector2 se_math_signvec2(Vector2* value);
 int se_math_clamp_int(int value, int min, int max);
+bool se_math_is_almost_equal_float(float v1, float v2, float epsilon);
+bool se_math_is_almost_equal_float_default(float v1, float v2);
+bool se_math_is_almost_equal_double(double v1, double v2, double epsilon);
+bool se_math_is_almost_equal_double_default(double v1, double v2);
 
 #ifdef __cplusplus
 }

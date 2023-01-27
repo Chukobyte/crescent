@@ -89,3 +89,21 @@ Vector2 se_math_signvec2(Vector2* value) {
 int se_math_clamp_int(int value, int min, int max) {
     return value < min ? min : (value > max ? max : value);
 }
+
+bool se_math_is_almost_equal_float(float v1, float v2, float epsilon) {
+    return fabsf(v1 - v2) <= epsilon;
+}
+
+bool se_math_is_almost_equal_float_default(float v1, float v2) {
+    static const double epsilon = 0.001f;
+    return fabsf(v1 - v2) <= epsilon;
+}
+
+bool se_math_is_almost_equal_double(double v1, double v2, double epsilon) {
+    return fabs(v1 - v2) <= epsilon;
+}
+
+bool se_math_is_almost_equal_double_default(double v1, double v2) {
+    static const double epsilon = 0.001;
+    return fabs(v1 - v2) <= epsilon;
+}
