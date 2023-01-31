@@ -82,7 +82,6 @@ void DrawCurve(const CurveFloat& curve, const char* label) {
 
     ImPlot::PlotLine(label, samplesX.data(), samplesY.data(), numSamples);
 }
-
 } // namespace
 
 void CurveEditor::Begin() {
@@ -135,6 +134,16 @@ void CurveEditor::Begin() {
                         double outTangentValue = point.value;
                         ImPlot::DragPoint(pointId++, &outTangentPos, &outTangentValue, ImVec4(0.75f, 0.0f, 0.25f, 1.0f), 4, dragPointFlags);
                         point.tangentOut = point.value + outTangentValue;
+                        // Draw tangent lines
+                        double x[3];
+                        double y[3];
+                        x[0] = inTangentPos;
+                        y[0] = inTangentValue;
+                        x[1] = point.position;
+                        y[1] = point.value;
+                        x[2] = outTangentPos;
+                        y[2] = outTangentValue;
+                        ImPlot::PlotLine("Tangent", x, y, 3);
                     }
                 }
                 ImPlot::EndPlot();
