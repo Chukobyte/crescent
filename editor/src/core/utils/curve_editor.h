@@ -17,9 +17,7 @@ class CurveEditor {
     void Begin();
 
     std::string label;
-    CurveEditorFlags flags = CurveEditorFlags::ALL;
     ImVec2 editorSize;
     CurveFloat curve;
-
-  private:
+    bool showTangents = false;
 };

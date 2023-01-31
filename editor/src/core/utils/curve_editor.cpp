@@ -91,6 +91,9 @@ void CurveEditor::Begin() {
         .open = nullptr,
         .windowFlags = ImGuiWindowFlags_None,
         .callbackFunc = [this] (ImGuiHelper::Context* context) {
+            ImGuiHelper::CheckBox showTangentsCheckBox("Show Tangents", showTangents);
+            ImGuiHelper::BeginCheckBox(showTangentsCheckBox);
+
             if (ImPlot::BeginPlot("Curve Float")) {
                 const ImPlotAxisFlags axeFlags = ImPlotAxisFlags_None;
                 ImPlot::SetupAxes("time", "value", axeFlags, axeFlags);
@@ -118,16 +121,21 @@ void CurveEditor::Begin() {
                 int pointId = 0;
                 for (auto& point : curve.GetControlPointsRef()) {
                     ImPlot::DragPoint(pointId++, &point.position, &point.value, ImVec4(0.0f, 0.9f, 0.0f, 1.0f), 4, dragPointFlags);
-                    // Incoming Tangent
-                    double inTangentPos = point.position - 0.1;
-                    double inTangentValue = point.value;
-                    ImPlot::DragPoint(pointId++, &inTangentPos, &inTangentValue, ImVec4(0.75f, 0.0f, 0.25f, 1.0f), 4, dragPointFlags);
-                    point.tangentIn = point.value - inTangentValue;
-                    // Outgoing Tangent
-                    double outTangentPos = point.position + 0.1;
-                    double outTangentValue = point.value;
-                    ImPlot::DragPoint(pointId++, &outTangentPos, &outTangentValue, ImVec4(0.75f, 0.0f, 0.25f, 1.0f), 4, dragPointFlags);
-                    point.tangentOut = point.value + outTangentValue;
+                }
+                // Draw Tangents
+                if (showTangents) {
+                    for (auto& point : curve.GetControlPointsRef()) {
+                        // Incoming Tangent
+                        double inTangentPos = point.position - 0.1;
+                        double inTangentValue = point.value;
+                        ImPlot::DragPoint(pointId++, &inTangentPos, &inTangentValue, ImVec4(0.75f, 0.0f, 0.25f, 1.0f), 4, dragPointFlags);
+                        point.tangentIn = point.value - inTangentValue;
+                        // Outgoing Tangent
+                        double outTangentPos = point.position + 0.1;
+                        double outTangentValue = point.value;
+                        ImPlot::DragPoint(pointId++, &outTangentPos, &outTangentValue, ImVec4(0.75f, 0.0f, 0.25f, 1.0f), 4, dragPointFlags);
+                        point.tangentOut = point.value + outTangentValue;
+                    }
                 }
                 ImPlot::EndPlot();
             }

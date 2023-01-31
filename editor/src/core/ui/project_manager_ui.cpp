@@ -185,9 +185,9 @@ void ProjectManagerUI::ProcessWindows() {
     // TODO: Testing curve editor, should implement 'CurveFloat' within seika and implement on the engine side.
     static CurveEditor curveEditor = {
         .label = "Curve Editor",
-        .flags = CurveEditorFlags::ALL,
         .editorSize = { 200.0f, 200.0f },
-        .curve = CurveFloat()
+        .curve = CurveFloat(),
+        .showTangents = true
     };
     curveEditor.Begin();
 
