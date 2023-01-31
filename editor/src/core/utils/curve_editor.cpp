@@ -103,10 +103,10 @@ void CurveEditor::Begin() {
                         dragPointFlags = ImPlotDragToolFlags_NoInputs;
                     }
                     if (ImGui::GetIO().KeyCtrl && ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
-                        ImPlotPoint pt = ImPlot::GetPlotMousePos();
+                        const ImPlotPoint pt = ImPlot::GetPlotMousePos();
                         curve.AddControlPoint(pt.x, pt.y, 0.0, 0.0);
                     } else if (isShiftHeld && ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
-                        ImPlotPoint pt = ImPlot::GetPlotMousePos();
+                        const ImPlotPoint pt = ImPlot::GetPlotMousePos();
                         curve.RemoveControlPoint(pt.x, pt.y);
                     }
                 }
