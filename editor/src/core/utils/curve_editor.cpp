@@ -61,8 +61,8 @@ namespace {
 void DrawCurve(const CurveFloat& curve, const char* label) {
     // Early out when no points exist
     if (!curve.HasControlPoints()) {
-        static double x[0];
-        static double y[0];
+        static double x[1];
+        static double y[1];
         ImPlot::PlotLine(label, x, y, 0);
         return;
     }
@@ -117,7 +117,17 @@ void CurveEditor::Begin() {
                 ImPlot::SetNextMarkerStyle(ImPlotMarker_Circle);
                 int pointId = 0;
                 for (auto& point : curve.GetControlPointsRef()) {
-                    ImPlot::DragPoint(pointId++, &point.position, &point.value, ImVec4(0.0f, 0.9f, 0,1), 4, dragPointFlags);
+                    ImPlot::DragPoint(pointId++, &point.position, &point.value, ImVec4(0.0f, 0.9f, 0.0f, 1.0f), 4, dragPointFlags);
+                    // Incoming Tangent
+                    double inTangentPos = point.position - 0.1;
+                    double inTangentValue = point.value;
+                    ImPlot::DragPoint(pointId++, &inTangentPos, &inTangentValue, ImVec4(0.75f, 0.0f, 0.25f, 1.0f), 4, dragPointFlags);
+                    point.tangentIn = point.value - inTangentValue;
+                    // Outgoing Tangent
+                    double outTangentPos = point.position + 0.1;
+                    double outTangentValue = point.value;
+                    ImPlot::DragPoint(pointId++, &outTangentPos, &outTangentValue, ImVec4(0.75f, 0.0f, 0.25f, 1.0f), 4, dragPointFlags);
+                    point.tangentOut = point.value + outTangentValue;
                 }
                 ImPlot::EndPlot();
             }
