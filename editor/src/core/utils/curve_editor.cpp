@@ -111,16 +111,8 @@ void CurveEditor::Begin() {
                     }
                 }
 
-                DrawCurve(curve);
-
-                // Draw movable control points
-                // TODO: Need to handle case when position order changes from dragging
-                ImPlot::SetNextMarkerStyle(ImPlotMarker_Circle);
+                // Draw tangents first
                 int pointId = 0;
-                for (auto& point : curve.GetControlPointsRef()) {
-                    ImPlot::DragPoint(pointId++, &point.position, &point.value, ImVec4(0.0f, 0.9f, 0.0f, 1.0f), 4, dragPointFlags);
-                }
-                // Draw Tangents
                 if (showTangents) {
                     for (auto& point : curve.GetControlPointsRef()) {
                         // Incoming Tangent
@@ -144,6 +136,15 @@ void CurveEditor::Begin() {
                         y[2] = outTangentValue;
                         ImPlot::PlotLine("##Tangent", x, y, 3, ImPlotLineFlags_None);
                     }
+                }
+
+                DrawCurve(curve);
+
+                // Draw movable control points
+                // TODO: Need to handle case when position order changes from dragging
+                ImPlot::SetNextMarkerStyle(ImPlotMarker_Circle);
+                for (auto& point : curve.GetControlPointsRef()) {
+                    ImPlot::DragPoint(pointId++, &point.position, &point.value, ImVec4(0.0f, 0.9f, 0.0f, 1.0f), 4, dragPointFlags);
                 }
                 ImPlot::EndPlot();
             }

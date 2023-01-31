@@ -187,7 +187,7 @@ void ProjectManagerUI::ProcessWindows() {
         .label = "Curve Editor",
         .editorSize = { 200.0f, 200.0f },
         .curve = CurveFloat(),
-        .showTangents = true
+        .showTangents = false
     };
     curveEditor.Begin();
 
