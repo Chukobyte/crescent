@@ -118,13 +118,17 @@ void CurveEditor::Begin() {
                         // Incoming Tangent
                         double inTangentPos = point.position - 0.1;
                         double inTangentValue = point.value;
+                        const double prevInTangentValue = inTangentValue;
                         ImPlot::DragPoint(pointId++, &inTangentPos, &inTangentValue, ImVec4(0.75f, 0.0f, 0.25f, 1.0f), 4, ImPlotDragToolFlags_None);
-                        point.tangentIn = point.value - inTangentValue;
+                        const double inTangentDelta = prevInTangentValue - inTangentValue;
+                        point.tangentIn = inTangentDelta;
                         // Outgoing Tangent
                         double outTangentPos = point.position + 0.1;
                         double outTangentValue = point.value;
+                        const double prevOutTangentValue = outTangentValue;
                         ImPlot::DragPoint(pointId++, &outTangentPos, &outTangentValue, ImVec4(0.75f, 0.0f, 0.25f, 1.0f), 4, ImPlotDragToolFlags_None);
-                        point.tangentOut = point.value + outTangentValue;
+                        const double outTangentDelta = prevOutTangentValue - outTangentValue;
+                        point.tangentOut = outTangentDelta;
                         // Draw tangent lines
                         double x[3];
                         double y[3];
