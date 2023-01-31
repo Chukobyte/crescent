@@ -63,9 +63,6 @@ namespace {
 void DrawCurve(const CurveFloat& curve) {
     // Early out when no points exist
     if (!curve.HasControlPoints()) {
-        static double x[1];
-        static double y[1];
-        ImPlot::PlotLine(CURVE_FLOAT_LABEL, x, y, 0);
         return;
     }
     const double firstPosition = curve.GetFirstPosition();
