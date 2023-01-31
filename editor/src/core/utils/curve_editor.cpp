@@ -57,13 +57,15 @@ bool operator!=(const ImVec2 &thisVector, const ImVec2 &otherVector) {
 }
 
 //--- CurveEditor ---//
+#define CURVE_FLOAT_LABEL "##CurveFloat"
+
 namespace {
-void DrawCurve(const CurveFloat& curve, const char* label) {
+void DrawCurve(const CurveFloat& curve) {
     // Early out when no points exist
     if (!curve.HasControlPoints()) {
         static double x[1];
         static double y[1];
-        ImPlot::PlotLine(label, x, y, 0);
+        ImPlot::PlotLine(CURVE_FLOAT_LABEL, x, y, 0);
         return;
     }
     const double firstPosition = curve.GetFirstPosition();
@@ -80,7 +82,7 @@ void DrawCurve(const CurveFloat& curve, const char* label) {
         currentPosition += sampleIncrement;
     }
 
-    ImPlot::PlotLine(label, samplesX.data(), samplesY.data(), numSamples);
+    ImPlot::PlotLine(CURVE_FLOAT_LABEL, samplesX.data(), samplesY.data(), numSamples);
 }
 } // namespace
 
@@ -93,7 +95,7 @@ void CurveEditor::Begin() {
             ImGuiHelper::CheckBox showTangentsCheckBox("Show Tangents", showTangents);
             ImGuiHelper::BeginCheckBox(showTangentsCheckBox);
 
-            if (ImPlot::BeginPlot("Curve Float")) {
+            if (ImPlot::BeginPlot(CURVE_FLOAT_LABEL)) {
                 const ImPlotAxisFlags axeFlags = ImPlotAxisFlags_None;
                 ImPlot::SetupAxes("time", "value", axeFlags, axeFlags);
                 ImPlotDragToolFlags dragPointFlags = ImPlotDragToolFlags_None;
@@ -112,7 +114,7 @@ void CurveEditor::Begin() {
                     }
                 }
 
-                DrawCurve(curve, "Curve Float");
+                DrawCurve(curve);
 
                 // Draw movable control points
                 // TODO: Need to handle case when position order changes from dragging
@@ -127,12 +129,12 @@ void CurveEditor::Begin() {
                         // Incoming Tangent
                         double inTangentPos = point.position - 0.1;
                         double inTangentValue = point.value;
-                        ImPlot::DragPoint(pointId++, &inTangentPos, &inTangentValue, ImVec4(0.75f, 0.0f, 0.25f, 1.0f), 4, dragPointFlags);
+                        ImPlot::DragPoint(pointId++, &inTangentPos, &inTangentValue, ImVec4(0.75f, 0.0f, 0.25f, 1.0f), 4, ImPlotDragToolFlags_None);
                         point.tangentIn = point.value - inTangentValue;
                         // Outgoing Tangent
                         double outTangentPos = point.position + 0.1;
                         double outTangentValue = point.value;
-                        ImPlot::DragPoint(pointId++, &outTangentPos, &outTangentValue, ImVec4(0.75f, 0.0f, 0.25f, 1.0f), 4, dragPointFlags);
+                        ImPlot::DragPoint(pointId++, &outTangentPos, &outTangentValue, ImVec4(0.75f, 0.0f, 0.25f, 1.0f), 4, ImPlotDragToolFlags_None);
                         point.tangentOut = point.value + outTangentValue;
                         // Draw tangent lines
                         double x[3];
@@ -143,7 +145,7 @@ void CurveEditor::Begin() {
                         y[1] = point.value;
                         x[2] = outTangentPos;
                         y[2] = outTangentValue;
-                        ImPlot::PlotLine("Tangent", x, y, 3);
+                        ImPlot::PlotLine("##Tangent", x, y, 3, ImPlotLineFlags_None);
                     }
                 }
                 ImPlot::EndPlot();
