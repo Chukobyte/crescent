@@ -169,12 +169,13 @@ void CurveEditor::Begin() {
                 int pointId = 0;
                 // TODO: Tangents should be the same position regardless of zoom level
                 if (showTangents) {
+                    static const ImVec4 tangentPointColor = ImVec4(0.75f, 0.0f, 0.25f, 0.8f);
                     for (auto& point : curve.GetControlPointsRef()) {
                         // Incoming Tangent
                         double inTangentPos = point.position - 0.1;
                         double inTangentValue = point.value - point.tangentIn;
                         const double prevInTangentValue = inTangentValue;
-                        if (DragPointEx(pointId++, &inTangentPos, &inTangentValue, ImVec4(0.75f, 0.0f, 0.25f, 1.0f), 4, ImPlotDragToolFlags_None, true)) {
+                        if (DragPointEx(pointId++, &inTangentPos, &inTangentValue, tangentPointColor, 4, ImPlotDragToolFlags_None, true)) {
                             const double inTangentDelta = prevInTangentValue - inTangentValue;
                             point.tangentIn = inTangentDelta;
                         }
@@ -182,7 +183,7 @@ void CurveEditor::Begin() {
                         double outTangentPos = point.position + 0.1;
                         double outTangentValue = point.value + point.tangentOut;
                         const double prevOutTangentValue = outTangentValue;
-                        if (DragPointEx(pointId++, &outTangentPos, &outTangentValue, ImVec4(0.75f, 0.0f, 0.25f, 1.0f), 4, ImPlotDragToolFlags_None, true)) {
+                        if (DragPointEx(pointId++, &outTangentPos, &outTangentValue, tangentPointColor, 4, ImPlotDragToolFlags_None, true)) {
                             const double outTangentDelta = outTangentValue - prevOutTangentValue;
                             point.tangentOut = outTangentDelta;
                         }
