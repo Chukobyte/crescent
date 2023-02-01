@@ -1,6 +1,7 @@
 #include "curve_editor.h"
 
 #include <implot.h>
+#include <implot_internal.h>
 
 // TODO: Refactor once minimal functionality is met...
 
@@ -55,6 +56,59 @@ bool operator==(const ImVec2 &thisVector, const ImVec2 &otherVector) {
 bool operator!=(const ImVec2 &thisVector, const ImVec2 &otherVector) {
     return !(thisVector == otherVector);
 }
+
+namespace {
+bool DragPointEx(int n_id, double* x, double* y, const ImVec4& col, float radius, ImPlotDragToolFlags flags, bool blockXInput = false, bool blockYInput = false) {
+    ImGui::PushID("#IMPLOT_DRAG_POINT");
+    IM_ASSERT_USER_ERROR(GImPlot->CurrentPlot != nullptr, "DragPoint() needs to be called between BeginPlot() and EndPlot()!");
+
+    ImPlot::SetupLock();
+
+    if (!ImHasFlag(flags,ImPlotDragToolFlags_NoFit) && ImPlot::FitThisFrame()) {
+        ImPlot::FitPoint(ImPlotPoint(*x,*y));
+    }
+
+    const bool input = !ImHasFlag(flags, ImPlotDragToolFlags_NoInputs);
+    const bool show_curs = !ImHasFlag(flags, ImPlotDragToolFlags_NoCursors);
+    const bool no_delay = !ImHasFlag(flags, ImPlotDragToolFlags_Delayed);
+    static const float DRAG_GRAB_HALF_SIZE = 4.0f;
+    const float grab_half_size = ImMax(DRAG_GRAB_HALF_SIZE, radius);
+    const ImVec4 color = ImPlot::IsColorAuto(col) ? ImGui::GetStyleColorVec4(ImGuiCol_Text) : col;
+    const ImU32 col32 = ImGui::ColorConvertFloat4ToU32(color);
+
+    ImVec2 pos = ImPlot::PlotToPixels(*x, *y, IMPLOT_AUTO,IMPLOT_AUTO);
+    const ImGuiID id = ImGui::GetCurrentWindow()->GetID(n_id);
+    ImRect rect(pos.x-grab_half_size,pos.y-grab_half_size,pos.x+grab_half_size,pos.y+grab_half_size);
+    bool hovered = false, held = false;
+
+    ImGui::KeepAliveID(id);
+    if (input)
+        ImGui::ButtonBehavior(rect,id,&hovered,&held);
+
+    bool dragging = false;
+    if (held && ImGui::IsMouseDragging(0)) {
+        if (!blockXInput) {
+            *x = ImPlot::GetPlotMousePos(IMPLOT_AUTO,IMPLOT_AUTO).x;
+        }
+        if (!blockYInput) {
+            *y = ImPlot::GetPlotMousePos(IMPLOT_AUTO,IMPLOT_AUTO).y;
+        }
+        dragging = true;
+    }
+
+    ImPlot::PushPlotClipRect();
+    ImDrawList& DrawList = *ImPlot::GetPlotDrawList();
+    if ((hovered || held) && show_curs)
+        ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+    if (dragging && no_delay)
+        pos = ImPlot::PlotToPixels(*x, *y, IMPLOT_AUTO,IMPLOT_AUTO);
+    DrawList.AddCircleFilled(pos, radius, col32);
+    ImPlot::PopPlotClipRect();
+
+    ImGui::PopID();
+    return dragging;
+}
+} // namespace
 
 //--- CurveEditor ---//
 #define CURVE_FLOAT_LABEL "##CurveFloat"
@@ -120,7 +174,7 @@ void CurveEditor::Begin() {
                         double inTangentPos = point.position - 0.1;
                         double inTangentValue = point.value - point.tangentIn;
                         const double prevInTangentValue = inTangentValue;
-                        if (ImPlot::DragPoint(pointId++, &inTangentPos, &inTangentValue, ImVec4(0.75f, 0.0f, 0.25f, 1.0f), 4, ImPlotDragToolFlags_None)) {
+                        if (DragPointEx(pointId++, &inTangentPos, &inTangentValue, ImVec4(0.75f, 0.0f, 0.25f, 1.0f), 4, ImPlotDragToolFlags_None, true)) {
                             const double inTangentDelta = prevInTangentValue - inTangentValue;
                             point.tangentIn = inTangentDelta;
                         }
@@ -128,7 +182,7 @@ void CurveEditor::Begin() {
                         double outTangentPos = point.position + 0.1;
                         double outTangentValue = point.value + point.tangentOut;
                         const double prevOutTangentValue = outTangentValue;
-                        if (ImPlot::DragPoint(pointId++, &outTangentPos, &outTangentValue, ImVec4(0.75f, 0.0f, 0.25f, 1.0f), 4, ImPlotDragToolFlags_None)) {
+                        if (DragPointEx(pointId++, &outTangentPos, &outTangentValue, ImVec4(0.75f, 0.0f, 0.25f, 1.0f), 4, ImPlotDragToolFlags_None, true)) {
                             const double outTangentDelta = outTangentValue - prevOutTangentValue;
                             point.tangentOut = outTangentDelta;
                         }
