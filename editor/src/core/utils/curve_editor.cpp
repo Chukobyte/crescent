@@ -113,6 +113,7 @@ void CurveEditor::Begin() {
 
                 // Draw tangents first
                 int pointId = 0;
+                // TODO: Tangents should be the same position regardless of zoom level
                 if (showTangents) {
                     for (auto& point : curve.GetControlPointsRef()) {
                         // Incoming Tangent
@@ -127,7 +128,7 @@ void CurveEditor::Begin() {
                         double outTangentValue = point.value;
                         const double prevOutTangentValue = outTangentValue;
                         ImPlot::DragPoint(pointId++, &outTangentPos, &outTangentValue, ImVec4(0.75f, 0.0f, 0.25f, 1.0f), 4, ImPlotDragToolFlags_None);
-                        const double outTangentDelta = prevOutTangentValue - outTangentValue;
+                        const double outTangentDelta = outTangentValue - prevOutTangentValue;
                         point.tangentOut = outTangentDelta;
                         // Draw tangent lines
                         double x[3];
