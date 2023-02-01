@@ -69,6 +69,14 @@ float se_math_map_to_unit(float input, float inputMin, float inputMax) {
     return se_math_map_to_range(input, inputMin, inputMax, 0.0f, 1.0f);
 }
 
+double se_math_map_to_range_double(double input, double inputMin, double inputMax, double outputMin, double outputMax) {
+    return (((input - inputMin) / (inputMax - inputMin)) * (outputMax - outputMin) + outputMin);
+}
+
+double se_math_map_to_unit_double(double input, double inputMin, double inputMax) {
+    return se_math_map_to_range_double(input, inputMin, inputMax, 0.0, 1.0);
+}
+
 float se_math_signf(float value) {
     if (value > 0.0f) {
         return 1.0f;
