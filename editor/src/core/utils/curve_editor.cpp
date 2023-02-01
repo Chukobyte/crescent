@@ -118,18 +118,20 @@ void CurveEditor::Begin() {
                     for (auto& point : curve.GetControlPointsRef()) {
                         // Incoming Tangent
                         double inTangentPos = point.position - 0.1;
-                        double inTangentValue = point.value;
+                        double inTangentValue = point.value - point.tangentIn;
                         const double prevInTangentValue = inTangentValue;
-                        ImPlot::DragPoint(pointId++, &inTangentPos, &inTangentValue, ImVec4(0.75f, 0.0f, 0.25f, 1.0f), 4, ImPlotDragToolFlags_None);
-                        const double inTangentDelta = prevInTangentValue - inTangentValue;
-                        point.tangentIn = inTangentDelta;
+                        if (ImPlot::DragPoint(pointId++, &inTangentPos, &inTangentValue, ImVec4(0.75f, 0.0f, 0.25f, 1.0f), 4, ImPlotDragToolFlags_None)) {
+                            const double inTangentDelta = prevInTangentValue - inTangentValue;
+                            point.tangentIn = inTangentDelta;
+                        }
                         // Outgoing Tangent
                         double outTangentPos = point.position + 0.1;
-                        double outTangentValue = point.value;
+                        double outTangentValue = point.value + point.tangentOut;
                         const double prevOutTangentValue = outTangentValue;
-                        ImPlot::DragPoint(pointId++, &outTangentPos, &outTangentValue, ImVec4(0.75f, 0.0f, 0.25f, 1.0f), 4, ImPlotDragToolFlags_None);
-                        const double outTangentDelta = outTangentValue - prevOutTangentValue;
-                        point.tangentOut = outTangentDelta;
+                        if (ImPlot::DragPoint(pointId++, &outTangentPos, &outTangentValue, ImVec4(0.75f, 0.0f, 0.25f, 1.0f), 4, ImPlotDragToolFlags_None)) {
+                            const double outTangentDelta = outTangentValue - prevOutTangentValue;
+                            point.tangentOut = outTangentDelta;
+                        }
                         // Draw tangent lines
                         double x[3];
                         double y[3];
