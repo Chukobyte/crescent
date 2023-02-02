@@ -59,7 +59,7 @@ bool se_curve_float_remove_control_point(SECurveFloat* curve, double x, double y
     return false;
 }
 
-double se_curve_float_eval(SECurveFloat* curve, double t) {
+double se_curve_float_eval(const SECurveFloat* curve, double t) {
     if (curve->controlPointCount == 0) {
         return 0.0;
     } else if (curve->controlPointCount == 1) {

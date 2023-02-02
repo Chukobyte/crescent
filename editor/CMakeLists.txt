@@ -47,7 +47,7 @@ add_library(${PROJECT_NAME} STATIC
         src/core/game_exporter.cpp
         src/core/file_creation/config_file_creator.cpp
         src/core/file_creation/scene_file_creator.cpp
-        src/core/math/bezier_curve.cpp
+        src/core/math/curve_float.cpp
         src/core/scene/scene_manager.cpp
         src/core/ui/opened_project_ui.cpp
         src/core/ui/project_manager_ui.cpp

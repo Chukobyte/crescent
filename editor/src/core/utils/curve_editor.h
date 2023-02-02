@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../math/bezier_curve.h"
+#include "../math/curve_float.h"
 #include "../ui/imgui/imgui_helper.h"
 #include "enum_class_utils.h"
 #include "imgui_internal.h"

@@ -178,30 +178,30 @@ void CurveEditor::Begin() {
 
                     const double tangentPosModifier = GetTangentPosModifier();
                     static const ImVec4 tangentPointColor = ImVec4(0.75f, 0.0f, 0.25f, 0.8f);
-                    for (auto& point : curve.GetControlPointsRef()) {
+                    for (auto* point : curve.GetControlPoints()) {
                         // Incoming Tangent
-                        double inTangentPos = point.position - tangentPosModifier;
-                        double inTangentValue = point.value - point.tangentIn;
+                        double inTangentPos = point->x - tangentPosModifier;
+                        double inTangentValue = point->y - point->tangentIn;
                         const double prevInTangentValue = inTangentValue;
                         if (DragPointEx(pointId++, &inTangentPos, &inTangentValue, tangentPointColor, 4, ImPlotDragToolFlags_None, true)) {
                             const double inTangentDelta = prevInTangentValue - inTangentValue;
-                            point.tangentIn = inTangentDelta;
+                            point->tangentIn = inTangentDelta;
                         }
                         // Outgoing Tangent
-                        double outTangentPos = point.position + tangentPosModifier;
-                        double outTangentValue = point.value + point.tangentOut;
+                        double outTangentPos = point->x + tangentPosModifier;
+                        double outTangentValue = point->y + point->tangentOut;
                         const double prevOutTangentValue = outTangentValue;
                         if (DragPointEx(pointId++, &outTangentPos, &outTangentValue, tangentPointColor, 4, ImPlotDragToolFlags_None, true)) {
                             const double outTangentDelta = outTangentValue - prevOutTangentValue;
-                            point.tangentOut = outTangentDelta;
+                            point->tangentOut = outTangentDelta;
                         }
                         // Draw tangent lines
                         double x[3];
                         double y[3];
                         x[0] = inTangentPos;
                         y[0] = inTangentValue;
-                        x[1] = point.position;
-                        y[1] = point.value;
+                        x[1] = point->x;
+                        y[1] = point->y;
                         x[2] = outTangentPos;
                         y[2] = outTangentValue;
                         ImPlot::PlotLine("##Tangent", x, y, 3, ImPlotLineFlags_None);
@@ -213,8 +213,8 @@ void CurveEditor::Begin() {
                 // Draw movable control points
                 // TODO: Need to handle case when position order changes from dragging
                 ImPlot::SetNextMarkerStyle(ImPlotMarker_Circle);
-                for (auto& point : curve.GetControlPointsRef()) {
-                    ImPlot::DragPoint(pointId++, &point.position, &point.value, ImVec4(0.0f, 0.9f, 0.0f, 1.0f), 4, dragPointFlags);
+                for (auto* point : curve.GetControlPoints()) {
+                    ImPlot::DragPoint(pointId++, &point->x, &point->y, ImVec4(0.0f, 0.9f, 0.0f, 1.0f), 4, dragPointFlags);
                 }
                 ImPlot::EndPlot();
             }
