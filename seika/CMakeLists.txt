@@ -27,6 +27,7 @@ add_library(${PROJECT_NAME} STATIC
         src/asset/asset_manager.c
         src/asset/asset_file_loader.c
         src/memory/se_mem.c
+        src/math/se_curve_float.c
         src/math/se_math.c
         src/input/input.c
         src/input/input_action.c
