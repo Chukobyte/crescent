@@ -102,6 +102,12 @@ void OpenedProjectUI::ProcessWindows() {
         }
     };
     dockSpace.Run(true);
+
+    // TODO: Make a window handler mechanism to spawn windows
+    std::optional<CurveEditor>& curveEditor = MenuBar::Tools::GetCurveEditor();
+    if (curveEditor.has_value()) {
+        curveEditor->Begin();
+    }
 }
 
 Task<> OpenedProjectUI::ManageOpenedProject() {

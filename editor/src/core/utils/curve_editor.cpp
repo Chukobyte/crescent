@@ -3,6 +3,8 @@
 #include <implot.h>
 #include <implot_internal.h>
 
+#include "../ui/views/opened_project/menu_bar_ui.h"
+
 // TODO: Refactor once minimal functionality is met...
 
 static const float NODE_SLOT_RADIUS = 4.0f;
@@ -143,8 +145,21 @@ void CurveEditor::Begin() {
         .open = nullptr,
         .windowFlags = ImGuiWindowFlags_None,
         .callbackFunc = [this] (ImGuiHelper::Context* context) {
+            if (isGlobalCurveEditor) {
+                if (ImGui::Button("Close")) {
+                    std::optional<CurveEditor>& projectCurveEditor = OpenedProjectUI::MenuBar::Tools::GetCurveEditor();
+                    projectCurveEditor.reset();
+                }
+            }
+
             ImGuiHelper::CheckBox showTangentsCheckBox("Show Tangents", showTangents);
             ImGuiHelper::BeginCheckBox(showTangentsCheckBox);
+
+            if (ImGui::Button("Save")) {}
+
+            ImGui::SameLine();
+
+            if (ImGui::Button("Load")) {}
 
             if (ImPlot::BeginPlot(CURVE_FLOAT_LABEL)) {
                 const ImPlotAxisFlags axeFlags = ImPlotAxisFlags_None;

@@ -16,8 +16,12 @@ class CurveEditor {
   public:
     void Begin();
 
-    std::string label;
-    ImVec2 editorSize;
+    std::string label = "Curve Editor";
+    ImVec2 editorSize = { 200.0f, 200.0f };
     CurveFloat curve;
     bool showTangents = false;
+    bool isGlobalCurveEditor = false;
+
+  private:
+    bool hasBeenSaved = false;
 };
