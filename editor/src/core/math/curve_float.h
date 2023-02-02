@@ -5,6 +5,7 @@
 #include "../seika/src/math/se_curve_float.h"
 #include "../seika/src/utils/se_assert.h"
 
+// A c++ wrapper class for seika curve float api
 class CurveFloat {
   public:
     CurveFloat() = default;
