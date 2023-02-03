@@ -66,6 +66,7 @@ add_library(${PROJECT_NAME} STATIC
         src/core/ecs/system/script_ec_system.c
         src/core/ecs/system/sprite_rendering_ec_system.c
         src/core/json/json_file_loader.c
+        src/core/math/curve_float_manager.c
         )
 
 if (NOT DEFINED IS_CI_BUILD)

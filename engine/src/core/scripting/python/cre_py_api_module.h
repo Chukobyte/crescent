@@ -13,6 +13,14 @@ PyObject* cre_py_api_engine_get_average_fps(PyObject* self, PyObject* args);
 PyObject* cre_py_api_engine_set_fps_display_enabled(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_engine_get_global_physics_delta_time(PyObject* self, PyObject* args);
 
+// Curve Float
+PyObject* cre_py_api_curve_float_create_new(PyObject* self, PyObject* args);
+PyObject* cre_py_api_curve_float_delete(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_curve_float_load_from_file(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_curve_float_add_point(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_curve_float_remove_point(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_curve_float_eval(PyObject* self, PyObject* args, PyObject* kwargs);
+
 // Input
 PyObject* cre_py_api_input_add_action(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_input_is_action_pressed(PyObject* self, PyObject* args, PyObject* kwargs);
@@ -163,6 +171,31 @@ static struct PyMethodDef crePyApiMethods[] = {
     {
         "engine_get_global_physics_delta_time", cre_py_api_engine_get_global_physics_delta_time,
         METH_VARARGS, "Gets the global physics delta time."
+    },
+    // CURVE FLOAT
+    {
+        "curve_float_create_new", cre_py_api_curve_float_create_new,
+        METH_VARARGS, "Creates a new curve float to be managed by the engine."
+    },
+    {
+        "curve_float_delete", (PyCFunction) cre_py_api_curve_float_delete,
+        METH_VARARGS | METH_KEYWORDS, "Deletes a curve float."
+    },
+    {
+        "curve_float_load_from_file", (PyCFunction) cre_py_api_curve_float_load_from_file,
+        METH_VARARGS | METH_KEYWORDS, "Load from file."
+    },
+    {
+        "curve_float_add_point", (PyCFunction) cre_py_api_curve_float_add_point,
+        METH_VARARGS | METH_KEYWORDS, "Adds a control point to the curve."
+    },
+    {
+        "curve_float_remove_point", (PyCFunction) cre_py_api_curve_float_remove_point,
+        METH_VARARGS | METH_KEYWORDS, "Removes a control point from the curve."
+    },
+    {
+        "curve_float_eval", (PyCFunction) cre_py_api_curve_float_eval,
+        METH_VARARGS | METH_KEYWORDS, "Evaluates a curve at an x (t) position."
     },
     // INPUT
     {
@@ -553,6 +586,12 @@ static char* crePyApiGenericSetEntityColorKWList[] = {"entity_id", "r", "g", "b"
 
 static char* crePyApiEngineExitKWList[] = {"code", NULL};
 static char* crePyApiEngineSetTargetFPSKWList[] = {"fps", NULL};
+
+static char* crePyApiCurveFloatDeleteKWList[] = {"curve_id", NULL};
+static char* crePyApiCurveFloatLoadFromFileKWList[] = {"curve_id", "file_path", NULL};
+static char* crePyApiCurveFloatAddPointKWList[] = {"curve_id", "x", "y", "tangent_in", "tangent_out", NULL};
+static char* crePyApiCurveFloatRemovePointKWList[] = {"curve_id", "x", "y", NULL};
+static char* crePyApiCurveFloatEvalKWList[] = {"curve_id", "t", NULL};
 
 static char* crePyApiInputAddActionKWList[] = {"name", "value", "device_id", NULL};
 static char* crePyApiInputActionInputCheckKWList[] = {"name", NULL};

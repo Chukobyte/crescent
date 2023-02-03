@@ -24,6 +24,7 @@
 #include "ecs/system/ec_system.h"
 #include "scene/scene_manager.h"
 #include "json/json_file_loader.h"
+#include "math/curve_float_manager.h"
 
 // The default project path if no directory override is provided
 #define CRE_PROJECT_CONFIG_FILE_NAME "project.ccfg"
@@ -82,6 +83,8 @@ bool cre_initialize(int argv, char** args) {
 
     // TODO: Determine if python needs to be initialized programmatically
     cre_py_initialize();
+
+    cre_curve_float_manager_init();
 
     gameProperties = cre_json_load_config_file(CRE_PROJECT_CONFIG_FILE_NAME);
     cre_game_props_initialize(gameProperties);
@@ -239,6 +242,7 @@ void cre_shutdown() {
     cre_scene_manager_finalize();
     cre_ecs_manager_finalize();
     cre_py_finalize();
+    cre_curve_float_manager_finalize();
     SDL_Quit();
     se_logger_info("RBE Engine shutdown!");
 }

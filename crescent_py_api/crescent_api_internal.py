@@ -60,12 +60,12 @@ def curve_float_create_new() -> int:
     return 0
 
 
-def curve_float_load_from_file(file_path: str) -> bool:
-    return True
-
-
-def curve_float_create_delete(curve_id: int) -> None:
+def curve_float_delete(curve_id: int) -> None:
     pass
+
+
+def curve_float_load_from_file(curve_id: int, file_path: str) -> bool:
+    return True
 
 
 def curve_float_add_point(

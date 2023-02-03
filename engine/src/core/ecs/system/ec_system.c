@@ -38,7 +38,7 @@ void cre_ec_system_insert_entity_into_system(Entity entity, EntitySystem* system
 void cre_ec_system_remove_entity_from_system(Entity entity, EntitySystem* system);
 
 EntitySystemData entitySystemData;
-CREQueue* entityIdQueue = NULL;
+SEQueue* entityIdQueue = NULL;
 
 void cre_ec_system_initialize() {
     for (size_t i = 0; i < MAX_COMPONENTS; i++) {

@@ -385,7 +385,9 @@
 "        self._valid = False\n"\
 "        self._id = crescent_api_internal.curve_float_create_new()\n"\
 "        if file_path:\n"\
-"            if crescent_api_internal.curve_float_load_from_file(file_path=file_path):\n"\
+"            if crescent_api_internal.curve_float_load_from_file(\n"\
+"                curve_id=self._id, file_path=file_path\n"\
+"            ):\n"\
 "                self._valid = True\n"\
 "        else:\n"\
 "            self._id = crescent_api_internal.curve_float_create_new()\n"\
@@ -414,7 +416,7 @@
 "\n"\
 "    def cleanup(self) -> None:\n"\
 "        if self._valid:\n"\
-"            crescent_api_internal.curve_float_create_delete(curve_id=self._id)\n"\
+"            crescent_api_internal.curve_float_delete(curve_id=self._id)\n"\
 "            self._valid = False\n"\
 "\n"\
 "    def __del__(self):\n"\

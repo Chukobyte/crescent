@@ -33,6 +33,7 @@
 #include "../../ecs/component/node_component.h"
 #include "../../scene/scene_manager.h"
 #include "../../ecs/component/parallax_component.h"
+#include "../../math/curve_float_manager.h"
 
 #ifdef _MSC_VER
 #pragma warning(disable : 4996) // for strcpy
@@ -140,6 +141,65 @@ PyObject* cre_py_api_engine_get_global_physics_delta_time(PyObject* self, PyObje
 
 PyObject* PyInit_cre_py_API(void) {
     return PyModule_Create(&crePyAPIModDef);
+}
+
+// Curve Float
+PyObject* cre_py_api_curve_float_create_new(PyObject* self, PyObject* args) {
+    return Py_BuildValue("i", cre_curve_float_manager_create_new());
+}
+
+PyObject* cre_py_api_curve_float_delete(PyObject* self, PyObject* args, PyObject* kwargs) {
+    CurveFloatId curveId;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiCurveFloatDeleteKWList, &curveId)) {
+        cre_curve_float_manager_delete(curveId);
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_curve_float_load_from_file(PyObject* self, PyObject* args, PyObject* kwargs) {
+    CurveFloatId curveId;
+    char* filePath;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "is", crePyApiCurveFloatLoadFromFileKWList, &curveId, &filePath)) {
+        cre_curve_float_manager_load_from_file(curveId, filePath);
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_curve_float_add_point(PyObject* self, PyObject* args, PyObject* kwargs) {
+    CurveFloatId curveId;
+    double x;
+    double y;
+    double tangentIn;
+    double tangentOut;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "iffff", crePyApiCurveFloatAddPointKWList, &curveId, &x, &y, &tangentIn, &tangentOut)) {
+        cre_curve_float_manager_add_point(curveId, x, y, tangentIn, tangentOut);
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_curve_float_remove_point(PyObject* self, PyObject* args, PyObject* kwargs) {
+    CurveFloatId curveId;
+    double x;
+    double y;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "iff", crePyApiCurveFloatRemovePointKWList, &curveId, &x, &y)) {
+        if (cre_curve_float_manager_remove_point(curveId, x, y)) {
+            Py_RETURN_TRUE;
+        }
+        Py_RETURN_FALSE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_curve_float_eval(PyObject* self, PyObject* args, PyObject* kwargs) {
+    CurveFloatId curveId;
+    double t;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "if", crePyApiCurveFloatEvalKWList, &curveId, &t)) {
+        return Py_BuildValue("f", cre_curve_float_manager_eval(curveId, t));
+    }
+    return NULL;
 }
 
 // Input
