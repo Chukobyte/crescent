@@ -25,7 +25,7 @@ class CurveFloat {
         UpdateInternalPointsCache();
     }
 
-    [[nodiscard]] bool RemoveControlPoint(double position, double value) {
+    bool RemoveControlPoint(double position, double value) {
         const bool hasRemovedPoint = se_curve_float_remove_control_point(&curve, position, value);
         if (hasRemovedPoint) {
             UpdateInternalPointsCache();

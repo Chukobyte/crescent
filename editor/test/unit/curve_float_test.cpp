@@ -14,8 +14,8 @@ TEST_CASE("Curve Float", "[curve_float]") {
         const std::vector<SECurveControlPoint> controlPoints = {
             { .x = 0.3f, .y = 10.0f, .tangentIn = 0.0f, .tangentOut = 0.0f },
         };
-//        CurveFloat curveFloat = CurveFloat(controlPoints);
-//        REQUIRE(curveFloat.Eval(0.3f) == 10.0f);
+        CurveFloat curveFloat = CurveFloat(controlPoints);
+        REQUIRE(curveFloat.Eval(0.3f) == 10.0f);
     }
 
     SECTION("Curve Float two points") {

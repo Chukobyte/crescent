@@ -227,7 +227,7 @@ void CurveEditor::Begin() {
                 // TODO: Tangents should be the same position regardless of zoom level
                 if (showTangents) {
                     // Get current x-axis range to determine the position of the tangents.
-                    static auto GetTangentPosModifier = [] -> double {
+                    static auto GetTangentPosModifier = [] {
                         ImPlotPlot* currentPlot = ImPlot::GetCurrentPlot();
                         auto& xAxis = currentPlot->Axes[currentPlot->CurrentX];
                         return 0.1 * (xAxis.Range.Max - xAxis.Range.Min);
