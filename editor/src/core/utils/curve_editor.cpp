@@ -4,6 +4,7 @@
 #include <implot_internal.h>
 
 #include "../ui/views/opened_project/menu_bar_ui.h"
+#include "../ui/imgui/imgui_file_browser.h"
 
 // TODO: Refactor once minimal functionality is met...
 
@@ -155,11 +156,51 @@ void CurveEditor::Begin() {
             ImGuiHelper::CheckBox showTangentsCheckBox("Show Tangents", showTangents);
             ImGuiHelper::BeginCheckBox(showTangentsCheckBox);
 
-            if (ImGui::Button("Save")) {}
+            static ImGuiHelper::FileBrowser saveCurveFileBrowser = {
+                .name = "Save Curve Browser",
+                .open = nullptr,
+                .windowFlags = ImGuiWindowFlags_NoResize,
+                .callbackFunc = nullptr,
+                .position = ImVec2{ 100.0f, 100.0f },
+                .size = ImVec2{ 600.0f, 320.0f },
+                .rootPath = {},
+                .mode = ImGuiHelper::FileBrowser::Mode::SaveFile,
+                .validExtensions = { ".ccrv" }
+            };
+            saveCurveFileBrowser.onModeCompletedFunc  = [this](const std::filesystem::path& fullPath) {
+                const nlohmann::ordered_json curveJson = curve.ToJson();
+                const std::string curveFilePath = fullPath.generic_string();
+                JsonHelper::SaveFile(curveFilePath, curveJson);
+                se_logger_debug("Saving curve file = '%s'", curveFilePath.c_str());
+            };
+            ImGuiHelper::BeginFileBrowser(saveCurveFileBrowser);
+            if (ImGui::Button("Save")) {
+                ImGui::OpenPopup(saveCurveFileBrowser.name.c_str());
+            }
 
             ImGui::SameLine();
 
-            if (ImGui::Button("Load")) {}
+            static ImGuiHelper::FileBrowser loadCurveFileBrowser = {
+                .name = "Load Curve Browser",
+                .open = nullptr,
+                .windowFlags = ImGuiWindowFlags_NoResize,
+                .callbackFunc = nullptr,
+                .position = ImVec2{ 100.0f, 100.0f },
+                .size = ImVec2{ 600.0f, 320.0f },
+                .rootPath = {},
+                .mode = ImGuiHelper::FileBrowser::Mode::OpenFile,
+                .validExtensions = { ".ccrv" }
+            };
+            loadCurveFileBrowser.onModeCompletedFunc = [this](const std::filesystem::path& fullPath) {
+                const std::string curveFilePath = fullPath.generic_string();
+                const nlohmann::ordered_json curveJson = JsonHelper::LoadFile<nlohmann::ordered_json>(curveFilePath);
+                curve.SetFromJson(curveJson);
+                se_logger_debug("Loading curve file path = '%s'", curveFilePath.c_str());
+            };
+            ImGuiHelper::BeginFileBrowser(loadCurveFileBrowser);
+            if (ImGui::Button("Load")) {
+                ImGui::OpenPopup(loadCurveFileBrowser.name.c_str());
+            }
 
             if (ImPlot::BeginPlot(CURVE_FLOAT_LABEL)) {
                 const ImPlotAxisFlags axeFlags = ImPlotAxisFlags_None;
