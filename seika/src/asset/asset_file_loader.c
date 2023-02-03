@@ -83,7 +83,9 @@ char* sf_asset_file_loader_read_file_contents_as_string(const char* filePath, si
     char* fileString = NULL;
     size_t len = 0;
     if (globalReadMode == SEAssetFileLoaderReadMode_DISK) {
-        fileString = se_fs_read_file_contents(filePath, &len);
+        if (se_fs_does_file_exist(filePath)) {
+            fileString = se_fs_read_file_contents(filePath, &len);
+        }
     } else if (globalReadMode == SEAssetFileLoaderReadMode_ARCHIVE) {
         SEArchiveFileAsset fileAsset = sf_asset_file_loader_get_asset(filePath);
         if (sf_asset_file_loader_is_asset_valid(&fileAsset)) {

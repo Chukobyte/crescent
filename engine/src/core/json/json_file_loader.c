@@ -383,7 +383,6 @@ void cre_json_delete_json_scene_node(JsonSceneNode* node) {
 
 SECurveFloat cre_json_load_curve_float_file(const char* filePath, bool *isSuccessful) {
     SECurveFloat newCurve = { .controlPointCount = 0 };
-
     char* fileContent = sf_asset_file_loader_read_file_contents_as_string(filePath, NULL);
     se_logger_debug("Loading curve file from path '%s'", filePath);
     cJSON* curveJson = cJSON_Parse(fileContent);
@@ -418,10 +417,9 @@ SECurveFloat cre_json_load_curve_float_file(const char* filePath, bool *isSucces
         const double y = json_get_double(pointJson, "y");
         const double tangentIn = json_get_double(pointJson, "tangent_in");
         const double tangentOut = json_get_double(pointJson, "tangent_out");
-        controlPoints[controlPointCount] = (SECurveControlPoint) {
+        controlPoints[controlPointCount++] = (SECurveControlPoint) {
             .x = x, .y = y, .tangentIn = tangentIn, .tangentOut = tangentOut
         };
-        controlPointCount++;
     }
     se_curve_float_add_control_points(&newCurve, controlPoints, controlPointCount);
 

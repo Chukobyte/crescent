@@ -173,7 +173,7 @@ PyObject* cre_py_api_curve_float_add_point(PyObject* self, PyObject* args, PyObj
     double y;
     double tangentIn;
     double tangentOut;
-    if (PyArg_ParseTupleAndKeywords(args, kwargs, "iffff", crePyApiCurveFloatAddPointKWList, &curveId, &x, &y, &tangentIn, &tangentOut)) {
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "idddd", crePyApiCurveFloatAddPointKWList, &curveId, &x, &y, &tangentIn, &tangentOut)) {
         cre_curve_float_manager_add_point(curveId, x, y, tangentIn, tangentOut);
         Py_RETURN_NONE;
     }
@@ -184,7 +184,7 @@ PyObject* cre_py_api_curve_float_remove_point(PyObject* self, PyObject* args, Py
     CurveFloatId curveId;
     double x;
     double y;
-    if (PyArg_ParseTupleAndKeywords(args, kwargs, "iff", crePyApiCurveFloatRemovePointKWList, &curveId, &x, &y)) {
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "idd", crePyApiCurveFloatRemovePointKWList, &curveId, &x, &y)) {
         if (cre_curve_float_manager_remove_point(curveId, x, y)) {
             Py_RETURN_TRUE;
         }
@@ -196,8 +196,8 @@ PyObject* cre_py_api_curve_float_remove_point(PyObject* self, PyObject* args, Py
 PyObject* cre_py_api_curve_float_eval(PyObject* self, PyObject* args, PyObject* kwargs) {
     CurveFloatId curveId;
     double t;
-    if (PyArg_ParseTupleAndKeywords(args, kwargs, "if", crePyApiCurveFloatEvalKWList, &curveId, &t)) {
-        return Py_BuildValue("f", cre_curve_float_manager_eval(curveId, t));
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "id", crePyApiCurveFloatEvalKWList, &curveId, &t)) {
+        return Py_BuildValue("d", cre_curve_float_manager_eval(curveId, t));
     }
     return NULL;
 }
