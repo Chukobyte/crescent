@@ -4,6 +4,8 @@
 #include "../seika/src/data_structures/se_queue.h"
 #include "../seika/src/utils/se_assert.h"
 
+#include "../json/json_file_loader.h"
+
 static SECurveFloat curves[CRE_MAX_CURVE_FLOATS] = {0};
 static SEQueue* idQueue = NULL;
 
@@ -36,7 +38,9 @@ void cre_curve_float_manager_delete(CurveFloatId curveId) {
 }
 
 bool cre_curve_float_manager_load_from_file(CurveFloatId curveId, const char* filePath) {
-    return false;
+    bool hasLoaded = false;
+    curves[curveId] = cre_json_load_curve_float_file(filePath, &hasLoaded);
+    return hasLoaded;
 }
 
 void cre_curve_float_manager_add_point(CurveFloatId curveId, double x, double y, double tangentIn, double tangentOut) {

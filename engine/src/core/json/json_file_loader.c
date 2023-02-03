@@ -380,3 +380,53 @@ void cre_json_delete_json_scene_node(JsonSceneNode* node) {
     SE_MEM_FREE(node->fontUID);
     SE_MEM_FREE(node->spriteTexturePath);
 }
+
+SECurveFloat cre_json_load_curve_float_file(const char* filePath, bool *isSuccessful) {
+    SECurveFloat newCurve = { .controlPointCount = 0 };
+
+    char* fileContent = sf_asset_file_loader_read_file_contents_as_string(filePath, NULL);
+    se_logger_debug("Loading curve file from path '%s'", filePath);
+    cJSON* curveJson = cJSON_Parse(fileContent);
+    SE_MEM_FREE(fileContent);
+
+    // Make sure curve file is valid json
+    if (curveJson == NULL) {
+        if (isSuccessful != NULL) {
+            *isSuccessful = false;
+        }
+        return newCurve;
+    }
+
+    // Test if valid asset type
+    char* assetType = json_get_string_new(curveJson, "type");
+    if (strcmp(assetType, "curve") != 0) {
+        if (isSuccessful != NULL) {
+            *isSuccessful = false;
+        }
+        return newCurve;
+    }
+    SE_MEM_FREE(assetType);
+
+    // Now we know it's a valid file, read in the control points
+    SECurveControlPoint controlPoints[SE_CURVE_MAX_CONTROL_POINTS];
+    size_t controlPointCount = 0;
+    cJSON* controlPointsJsonArray = cJSON_GetObjectItemCaseSensitive(curveJson, "control_points");
+    SE_ASSERT_FMT(controlPointsJsonArray != NULL, "Failed to read in control points json!");
+    cJSON* pointJson = NULL;
+    cJSON_ArrayForEach(pointJson, controlPointsJsonArray) {
+        const double x = json_get_double(pointJson, "x");
+        const double y = json_get_double(pointJson, "y");
+        const double tangentIn = json_get_double(pointJson, "tangent_in");
+        const double tangentOut = json_get_double(pointJson, "tangent_out");
+        controlPoints[controlPointCount] = (SECurveControlPoint) {
+            .x = x, .y = y, .tangentIn = tangentIn, .tangentOut = tangentOut
+        };
+        controlPointCount++;
+    }
+    se_curve_float_add_control_points(&newCurve, controlPoints, controlPointCount);
+
+    if (isSuccessful != NULL) {
+        *isSuccessful = true;
+    }
+    return newCurve;
+}
