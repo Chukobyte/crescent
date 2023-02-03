@@ -15,3 +15,5 @@ Controls:
 
 - [Ctrl + Left Click] - Add point
 - [Shift + Left Click] - Remove point
+- [Double Left Click] - Size the editor view to fit all control points
+- [Mouse Wheel] - Zoom
