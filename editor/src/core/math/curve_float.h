@@ -95,7 +95,7 @@ class CurveFloat {
   private:
     void UpdateInternalPointsCache() {
         internalPointsCache.clear();
-        for (size_t i; i < curve.controlPointCount; i++) {
+        for (size_t i = 0; i < curve.controlPointCount; i++) {
             internalPointsCache.emplace_back(&curve.controlPoints[i]);
         }
     }

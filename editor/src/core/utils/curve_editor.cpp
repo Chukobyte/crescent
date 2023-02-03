@@ -150,11 +150,9 @@ void CurveEditor::Begin() {
                 if (ImGui::Button("Close")) {
                     std::optional<CurveEditor>& projectCurveEditor = OpenedProjectUI::MenuBar::Tools::GetCurveEditor();
                     projectCurveEditor.reset();
+                    return;
                 }
             }
-
-            ImGuiHelper::CheckBox showTangentsCheckBox("Show Tangents", showTangents);
-            ImGuiHelper::BeginCheckBox(showTangentsCheckBox);
 
             static ImGuiHelper::FileBrowser saveCurveFileBrowser = {
                 .name = "Save Curve Browser",
@@ -201,6 +199,9 @@ void CurveEditor::Begin() {
             if (ImGui::Button("Load")) {
                 ImGui::OpenPopup(loadCurveFileBrowser.name.c_str());
             }
+
+            ImGuiHelper::CheckBox showTangentsCheckBox("Show Tangents", showTangents);
+            ImGuiHelper::BeginCheckBox(showTangentsCheckBox);
 
             if (ImPlot::BeginPlot(CURVE_FLOAT_LABEL)) {
                 const ImPlotAxisFlags axeFlags = ImPlotAxisFlags_None;
