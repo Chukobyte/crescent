@@ -10,7 +10,8 @@
 
 namespace JsonHelper {
 // General
-inline bool HasKey(const nlohmann::json& json, const std::string& key) {
+template<typename JsonType = nlohmann::json>
+inline bool HasKey(JsonType& json, const std::string& key) {
     try {
         json.at(key);
         return true;
@@ -20,8 +21,8 @@ inline bool HasKey(const nlohmann::json& json, const std::string& key) {
     return false;
 }
 
-template<typename T>
-inline T Get(const nlohmann::json& json, const std::string& key) {
+template<typename T, typename JsonType = nlohmann::json>
+inline T Get(const JsonType& json, const std::string& key) {
     if (HasKey(json, key)) {
         return json.at(key);
     }
@@ -29,8 +30,8 @@ inline T Get(const nlohmann::json& json, const std::string& key) {
     return T();
 }
 
-template<typename T>
-inline T GetDefault(const nlohmann::json& json, const std::string& key, T defaultValue) {
+template<typename T, typename JsonType = nlohmann::json>
+inline T GetDefault(const JsonType& json, const std::string& key, T defaultValue) {
     if (HasKey(json, key)) {
         return json.at(key);
     }

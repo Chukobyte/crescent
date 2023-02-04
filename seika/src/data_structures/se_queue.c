@@ -2,8 +2,8 @@
 
 #include "../memory/se_mem.h"
 
-CREQueue* se_queue_create(size_t capacity, uint32_t invalidValue) {
-    CREQueue* queue = SE_MEM_ALLOCATE(CREQueue);
+SEQueue* se_queue_create(size_t capacity, uint32_t invalidValue) {
+    SEQueue* queue = SE_MEM_ALLOCATE(SEQueue);
     queue->capacity = capacity;
     queue->invalidValue = invalidValue;
     queue->size = 0;
@@ -13,20 +13,20 @@ CREQueue* se_queue_create(size_t capacity, uint32_t invalidValue) {
     return queue;
 }
 
-void se_queue_destroy(CREQueue* queue) {
+void se_queue_destroy(SEQueue* queue) {
     SE_MEM_FREE(queue->array);
     SE_MEM_FREE(queue);
 }
 
-bool se_queue_is_full(CREQueue* queue) {
+bool se_queue_is_full(SEQueue* queue) {
     return queue->size == queue->capacity;
 }
 
-bool se_queue_is_empty(CREQueue* queue) {
+bool se_queue_is_empty(SEQueue* queue) {
     return queue->size == 0;
 }
 
-void se_queue_enqueue(CREQueue* queue, uint32_t item) {
+void se_queue_enqueue(SEQueue* queue, uint32_t item) {
     if (se_queue_is_full(queue)) {
         return;
     }
@@ -35,7 +35,7 @@ void se_queue_enqueue(CREQueue* queue, uint32_t item) {
     queue->size++;
 }
 
-uint32_t se_queue_dequeue(CREQueue* queue) {
+uint32_t se_queue_dequeue(SEQueue* queue) {
     if (se_queue_is_empty(queue)) {
         return queue->invalidValue;
     }
@@ -45,14 +45,14 @@ uint32_t se_queue_dequeue(CREQueue* queue) {
     return value;
 }
 
-uint32_t se_queue_front(CREQueue* queue) {
+uint32_t se_queue_front(SEQueue* queue) {
     if (se_queue_is_empty(queue)) {
         return queue->invalidValue;
     }
     return queue->array[queue->front];
 }
 
-uint32_t se_queue_rear(CREQueue* queue) {
+uint32_t se_queue_rear(SEQueue* queue) {
     if (se_queue_is_empty(queue)) {
         return queue->invalidValue;
     }

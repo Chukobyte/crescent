@@ -56,6 +56,32 @@ def create_stage_nodes(stage_nodes: list) -> None:
     pass
 
 
+def curve_float_create_new() -> int:
+    return 0
+
+
+def curve_float_delete(curve_id: int) -> None:
+    pass
+
+
+def curve_float_load_from_file(curve_id: int, file_path: str) -> bool:
+    return True
+
+
+def curve_float_add_point(
+    curve_id: int, x: float, y: float, tangent_in: float, tangent_out: float
+) -> None:
+    pass
+
+
+def curve_float_remove_point(curve_id: int, x: float, y: float) -> bool:
+    return True
+
+
+def curve_float_eval(curve_id: int, t: float) -> float:
+    return 0.0
+
+
 def input_add_action(name: str, value: str, device_id: int) -> None:
     pass
 

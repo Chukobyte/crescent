@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../math/bezier_curve.h"
+#include "../math/curve_float.h"
 #include "../ui/imgui/imgui_helper.h"
 #include "enum_class_utils.h"
 #include "imgui_internal.h"
@@ -16,10 +16,12 @@ class CurveEditor {
   public:
     void Begin();
 
-    std::string label;
-    CurveEditorFlags flags = CurveEditorFlags::ALL;
-    ImVec2 editorSize;
+    std::string label = "Curve Editor";
+    ImVec2 editorSize = { 200.0f, 200.0f };
     CurveFloat curve;
+    bool showTangents = false;
+    bool isGlobalCurveEditor = false;
 
   private:
+    bool hasBeenSaved = false;
 };

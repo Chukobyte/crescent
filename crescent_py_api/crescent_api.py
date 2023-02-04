@@ -335,6 +335,57 @@ class MinMax:
         return value > self.max
 
 
+class CurveFloatPoint:
+    def __init__(self, x: float, y: float, tangent_in: float, tangent_out: float):
+        self.x = x
+        self.y = y
+        self.tangent_in = tangent_in
+        self.tangent_out = tangent_out
+
+
+class CurveFloat:
+    def __init__(self, file_path: str = None):
+        self._valid = False
+        self._id = crescent_api_internal.curve_float_create_new()
+        if file_path:
+            if crescent_api_internal.curve_float_load_from_file(
+                curve_id=self._id, file_path=file_path
+            ):
+                self._valid = True
+        else:
+            self._id = crescent_api_internal.curve_float_create_new()
+            self._valid = True
+
+    @property
+    def valid(self) -> bool:
+        return self._valid
+
+    def add_point(self, point: CurveFloatPoint) -> None:
+        crescent_api_internal.curve_float_add_point(
+            curve_id=self._id,
+            x=point.x,
+            y=point.y,
+            tangent_in=point.tangent_in,
+            tangent_out=point.tangent_out,
+        )
+
+    def remove_point(self, x: float, y: float) -> bool:
+        return crescent_api_internal.curve_float_remove_point(
+            curve_id=self._id, x=x, y=y
+        )
+
+    def eval(self, t: float) -> float:
+        return crescent_api_internal.curve_float_eval(curve_id=self._id, t=t)
+
+    def cleanup(self) -> None:
+        if self._valid:
+            crescent_api_internal.curve_float_delete(curve_id=self._id)
+            self._valid = False
+
+    def __del__(self):
+        self.cleanup()
+
+
 # ASSETS
 class AudioSource:
     def __init__(self, file_path: str):

@@ -86,9 +86,15 @@ Color se_color_get_white();
 float se_math_lerpf(float a, float b, float t);
 float se_math_map_to_range(float input, float inputMin, float inputMax, float outputMin, float outputMax);
 float se_math_map_to_unit(float input, float inputMin, float inputMax);
+double se_math_map_to_range_double(double input, double inputMin, double inputMax, double outputMin, double outputMax);
+double se_math_map_to_unit_double(double input, double inputMin, double inputMax);
 float se_math_signf(float value);
 Vector2 se_math_signvec2(Vector2* value);
 int se_math_clamp_int(int value, int min, int max);
+bool se_math_is_almost_equal_float(float v1, float v2, float epsilon);
+bool se_math_is_almost_equal_float_default(float v1, float v2);
+bool se_math_is_almost_equal_double(double v1, double v2, double epsilon);
+bool se_math_is_almost_equal_double_default(double v1, double v2);
 
 #ifdef __cplusplus
 }

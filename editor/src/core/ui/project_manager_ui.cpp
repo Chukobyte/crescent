@@ -15,10 +15,8 @@
 #include "../asset_manager.h"
 #include "../scene/scene_manager.h"
 #include "../file_creation/config_file_creator.h"
-#include "../math/bezier_curve.h"
 #include "../utils/file_system_helper.h"
 #include "../utils/console_logger.h"
-#include "../utils/curve_editor.h"
 
 static EditorContext* editorContext = EditorContext::Get();
 
@@ -181,20 +179,6 @@ void ProjectManagerUI::ProcessWindows() {
         .size = ImVec2{ 600.0f, 300.0f },
     };
     ImGuiHelper::BeginWindowWithEnd(window);
-
-    // TODO: Testing curve editor, should implement 'CurveFloat' within seika and implement on the engine side.
-//    static CurveEditor curveEditor = {
-//        .label = "Curve Editor",
-//        .flags = CurveEditorFlags::ALL,
-//        .editorSize = { 200.0f, 200.0f },
-//        .curve = CurveFloat({
-//            {.position = 0.0, .value = 10.0, .tangentIn = 0.0, .tangentOut = 0.0},
-//            {.position = 5.0, .value = 20.0, .tangentIn = 0.0, .tangentOut = 0.0},
-//            {.position = 10.0, .value = 30.0, .tangentIn = 0.0, .tangentOut = 0.0},
-//            {.position = 12.0, .value = 0.0, .tangentIn = 0.0, .tangentOut = 0.0}
-//        })
-//    };
-//    curveEditor.Begin();
 
 #ifdef _DEBUG
     if (isImguiDemoEnabled) {

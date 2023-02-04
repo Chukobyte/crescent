@@ -12,6 +12,7 @@
 #include "../../../asset_manager.h"
 #include "../../../file_creation/config_file_creator.h"
 #include "../../../game_exporter.h"
+#include "../../../utils/curve_editor.h"
 
 ImGuiHelper::MenuBar OpenedProjectUI::MenuBar::GetMenuBar() {
     static ProjectProperties* projectProperties = ProjectProperties::Get();
@@ -366,6 +367,22 @@ ImGuiHelper::MenuBar OpenedProjectUI::MenuBar::GetMenuBar() {
                 },
             },
             {
+                .name = "Tools",
+                .menuItems = {
+                    {
+                        .name = "Curve Editor",
+                        .keyboardShortcut = "",
+                        .callbackFunc = [] (ImGuiHelper::Context* context) {
+                            std::optional<CurveEditor>& curveEditorOptional = Tools::GetCurveEditor();
+                            if (!curveEditorOptional.has_value()) {
+                                curveEditorOptional = CurveEditor();
+                                curveEditorOptional->isGlobalCurveEditor = true;
+                            }
+                        },
+                    },
+                },
+            },
+            {
                 .name = "Export",
                 .menuItems = {
                     {
@@ -435,3 +452,7 @@ ImGuiHelper::MenuBar OpenedProjectUI::MenuBar::GetMenuBar() {
     return menuBar;
 }
 
+std::optional<CurveEditor>& OpenedProjectUI::MenuBar::Tools::GetCurveEditor() {
+    static std::optional<CurveEditor> projectCurveEditor;
+    return projectCurveEditor;
+}

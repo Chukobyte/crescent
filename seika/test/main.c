@@ -9,6 +9,7 @@
 #include "../src/utils/se_string_util.h"
 #include "../src/utils/se_file_system_utils.h"
 #include "../src/utils/observer.h"
+#include "../src/math/se_curve_float.h"
 
 #define RESOURCES_PATH "seika/test/resources"
 #define RESOURCES_PACK_PATH "seika/test/resources/test.pck"
@@ -23,6 +24,7 @@ void seika_string_utils_test(void);
 void seika_array_utils_test(void);
 void seika_asset_file_loader_test(void);
 void seika_observer_test(void);
+void seika_curve_float_test(void);
 
 int main(int argv, char** args) {
     UNITY_BEGIN();
@@ -33,6 +35,7 @@ int main(int argv, char** args) {
     RUN_TEST(seika_array_utils_test);
     RUN_TEST(seika_asset_file_loader_test);
     RUN_TEST(seika_observer_test);
+    RUN_TEST(seika_curve_float_test);
     return UNITY_END();
 }
 
@@ -212,4 +215,19 @@ void seika_observer_test(void) {
     // Clean up
     se_event_delete(event);
     se_observer_delete(observer);
+}
+
+void seika_curve_float_test(void) {
+    SECurveFloat curve = { .controlPointCount = 0 };
+    SECurveControlPoint point1 = { .x = 0.0, .y = 0.0, .tangentIn = 0.0, .tangentOut = 0.0 };
+    se_curve_float_add_control_point(&curve, point1);
+    TEST_ASSERT_EQUAL_UINT(curve.controlPointCount, 1);
+    TEST_ASSERT_EQUAL_DOUBLE(se_curve_float_eval(&curve, 1.0), 0.0);
+    SECurveControlPoint point2 = { .x = 1.0, .y = 1.0, .tangentIn = 0.0, .tangentOut = 0.0 };
+    se_curve_float_add_control_point(&curve, point2);
+    TEST_ASSERT_EQUAL_DOUBLE(se_curve_float_eval(&curve, 0.0), 0.0);
+    TEST_ASSERT_EQUAL_DOUBLE(se_curve_float_eval(&curve, 0.5), 0.5);
+    TEST_ASSERT_EQUAL_DOUBLE(se_curve_float_eval(&curve, 1.0), 1.0);
+    se_curve_float_remove_control_point(&curve, point2.x, point2.y);
+    TEST_ASSERT_EQUAL_UINT(curve.controlPointCount, 1);
 }

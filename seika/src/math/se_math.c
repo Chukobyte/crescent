@@ -69,6 +69,14 @@ float se_math_map_to_unit(float input, float inputMin, float inputMax) {
     return se_math_map_to_range(input, inputMin, inputMax, 0.0f, 1.0f);
 }
 
+double se_math_map_to_range_double(double input, double inputMin, double inputMax, double outputMin, double outputMax) {
+    return (((input - inputMin) / (inputMax - inputMin)) * (outputMax - outputMin) + outputMin);
+}
+
+double se_math_map_to_unit_double(double input, double inputMin, double inputMax) {
+    return se_math_map_to_range_double(input, inputMin, inputMax, 0.0, 1.0);
+}
+
 float se_math_signf(float value) {
     if (value > 0.0f) {
         return 1.0f;
@@ -88,4 +96,22 @@ Vector2 se_math_signvec2(Vector2* value) {
 
 int se_math_clamp_int(int value, int min, int max) {
     return value < min ? min : (value > max ? max : value);
+}
+
+bool se_math_is_almost_equal_float(float v1, float v2, float epsilon) {
+    return fabsf(v1 - v2) <= epsilon;
+}
+
+bool se_math_is_almost_equal_float_default(float v1, float v2) {
+    static const double epsilon = 0.001f;
+    return fabsf(v1 - v2) <= epsilon;
+}
+
+bool se_math_is_almost_equal_double(double v1, double v2, double epsilon) {
+    return fabs(v1 - v2) <= epsilon;
+}
+
+bool se_math_is_almost_equal_double_default(double v1, double v2) {
+    static const double epsilon = 0.001;
+    return fabs(v1 - v2) <= epsilon;
 }

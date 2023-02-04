@@ -13,6 +13,9 @@
 #define UNITY_VERSION_BUILD    4
 #define UNITY_VERSION          ((UNITY_VERSION_MAJOR << 16) | (UNITY_VERSION_MINOR << 8) | UNITY_VERSION_BUILD)
 
+#define UNITY_INCLUDE_DOUBLE
+#define UNITY_DOUBLE_PRECISION 1e-12
+
 #ifdef __cplusplus
 extern "C"
 {

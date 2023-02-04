@@ -7,17 +7,17 @@
 // TODO: If other types are needed, create a macro to simplify queues by type
 
 // Unsigned int queue
-typedef struct CREQueue {
+typedef struct SEQueue {
     uint32_t front, rear, size, invalidValue;
     size_t capacity;
     uint32_t* array;
-} CREQueue;
+} SEQueue;
 
-CREQueue* se_queue_create(size_t capacity, uint32_t invalidValue);
-void se_queue_destroy(CREQueue* queue);
-bool se_queue_is_full(CREQueue* queue);
-bool se_queue_is_empty(CREQueue* queue);
-void se_queue_enqueue(CREQueue* queue, uint32_t item);
-uint32_t se_queue_dequeue(CREQueue* queue);
-uint32_t se_queue_front(CREQueue* queue);
-uint32_t se_queue_rear(CREQueue* queue);
+SEQueue* se_queue_create(size_t capacity, uint32_t invalidValue);
+void se_queue_destroy(SEQueue* queue);
+bool se_queue_is_full(SEQueue* queue);
+bool se_queue_is_empty(SEQueue* queue);
+void se_queue_enqueue(SEQueue* queue, uint32_t item);
+uint32_t se_queue_dequeue(SEQueue* queue);
+uint32_t se_queue_front(SEQueue* queue);
+uint32_t se_queue_rear(SEQueue* queue);
