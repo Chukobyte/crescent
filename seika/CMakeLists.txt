@@ -7,6 +7,9 @@ project(seika C)
 if (CMAKE_C_COMPILER_ID STREQUAL "MSVC")
 #    list(APPEND flags "/std:c11" "/W3" "/Zc:preprocessor") # TODO: Adding "/std:c11" breaks editor, fix later...
     list(APPEND flags "/W3" "/Zc:preprocessor")
+elseif (APPLE)
+    list(APPEND flags "-Wfatal-errors" "-Wall" "-Wextra" "-Wno-write-strings" "-Wno-deprecated-declarations"
+            "-Wno-unused-variable" "-Wno-bad-function-cast" "-Wno-unused-parameter" "-Wno-missing-field-initializers")
 else ()
     list(APPEND flags "-std=c11" "-Wfatal-errors" "-Wall" "-Wextra" "-Wno-write-strings" "-Wno-deprecated-declarations"
             "-Wno-unused-variable" "-Wno-cast-function-type" "-Wno-unused-parameter" "-Wno-missing-field-initializers")
@@ -85,8 +88,10 @@ endif()
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image kuba_zip SDL2::SDL2main SDL2::SDL2 freetype Ws2_32)
-elseif(WIN32)
+elseif (WIN32)
     target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image kuba_zip -lmingw32 -static-libgcc SDL2::SDL2main SDL2::SDL2 freetype -lws2_32)
+elseif (APPLE)
+    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image kuba_zip -Xlinker SDL2::SDL2main SDL2::SDL2 freetype m)
 else ()
     target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image kuba_zip -static-libgcc -Xlinker -export-dynamic SDL2::SDL2main SDL2::SDL2 freetype m)
 endif ()

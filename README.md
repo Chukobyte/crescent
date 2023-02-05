@@ -1,8 +1,9 @@
 # Crescent
 
 [![windows-msvc-build Actions Status](https://github.com/Chukobyte/crescent/workflows/windows-msvc-build/badge.svg)](https://github.com/Chukobyte/crescent/actions)
-[![ubuntu-gcc-build Actions Status](https://github.com/Chukobyte/crescent/workflows/ubuntu-gcc-build/badge.svg)](https://github.com/Chukobyte/crescent/actions)
 [![windows-mingw-build Actions Status](https://github.com/Chukobyte/crescent/workflows/windows-mingw-build/badge.svg)](https://github.com/Chukobyte/crescent/actions)
+[![ubuntu-gcc-build Actions Status](https://github.com/Chukobyte/crescent/workflows/ubuntu-gcc-build/badge.svg)](https://github.com/Chukobyte/crescent/actions)
+[![macosx-clang-build Actions Status](https://github.com/Chukobyte/crescent/workflows/macosx-clang-build/badge.svg)](https://github.com/Chukobyte/crescent/actions)
 [![pvs-studio Actions Status](https://github.com/Chukobyte/crescent/workflows/pvs-studio/badge.svg)](https://github.com/Chukobyte/crescent/actions)
 
 <p align="center">
@@ -11,7 +12,7 @@
   </a>
 </p>
 
-A work in progress fighting game engine for Windows and Linux with the core written in C11.  To get an idea of what's planned and what's actively in development checkout the [project page](https://github.com/users/Chukobyte/projects/1).  There is also documentation (not complete) which can be found [here](https://chukobyte.github.io/crescent/).
+A work in progress fighting game engine for windows, linux, and macos with the core written in C11.  To get an idea of what's planned and what's actively in development checkout the [project page](https://github.com/users/Chukobyte/projects/1).  There is also documentation (not complete) which can be found [here](https://chukobyte.github.io/crescent/).
 
 ## Tech Stack
 
@@ -32,7 +33,7 @@ A work in progress fighting game engine for Windows and Linux with the core writ
 
 ## Building
 
-Supports Windows and linux builds at the moment.  Crescent engine can be either built with cmake or make.  All build commands should be executed from the project's root directory.
+Supports windows, linux, and macos builds at the moment.  The editor currently doesn't work on macos.  Crescent engine can be either built with cmake or make.  All build commands should be executed from the project's root directory.
 
 ### CMake
 

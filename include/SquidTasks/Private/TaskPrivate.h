@@ -27,7 +27,7 @@ struct SuspendIf
 	{
 	}
 	bool await_ready() noexcept { return !m_suspend; }
-	void await_suspend(std::coroutine_handle<>) noexcept {}
+	void await_suspend(std_coroutine_handle) noexcept {}
 	void await_resume() noexcept {}
 
 private:
@@ -162,7 +162,7 @@ struct TaskAwaiterBase
 		return false;
 	}
 	template <eTaskResumable UResumable = Resumable, typename std::enable_if_t<UResumable == eTaskResumable::Yes>* = nullptr>
-	bool await_suspend(std::coroutine_handle<promise_type> in_coroHandle) noexcept
+	bool await_suspend(std_coroutine_handle_promise<promise_type> in_coroHandle) noexcept
 	{
 		// Set the sub-task on the suspending task
 		auto& promise = in_coroHandle.promise();
@@ -183,7 +183,7 @@ struct TaskAwaiterBase
 		return true; // Suspend, because the task is not done
 	}
 	template <eTaskResumable UResumable = Resumable, typename std::enable_if_t<UResumable == eTaskResumable::No>* = nullptr>
-	bool await_suspend(std::coroutine_handle<promise_type> in_coroHandle) noexcept
+	bool await_suspend(std_coroutine_handle_promise<promise_type> in_coroHandle) noexcept
 	{
 		auto& promise = in_coroHandle.promise();
 		if(!m_task.IsDone())
@@ -243,7 +243,7 @@ struct FutureAwaiter
 		bool isReady = m_future.wait_for(std::chrono::seconds(0)) == std::future_status::ready;
 		return isReady;
 	}
-	bool await_suspend(std::coroutine_handle<promise_type> in_coroHandle) noexcept
+	bool await_suspend(std_coroutine_handle_promise<promise_type> in_coroHandle) noexcept
 	{
 		// Set the ready function
 		auto& promise = in_coroHandle.promise();
@@ -289,7 +289,7 @@ struct SharedFutureAwaiter
 		bool isReady = m_sharedFuture.wait_for(std::chrono::seconds(0)) == std::future_status::ready;
 		return isReady;
 	}
-	bool await_suspend(std::coroutine_handle<promise_type> in_coroHandle) noexcept
+	bool await_suspend(std_coroutine_handle_promise<promise_type> in_coroHandle) noexcept
 	{
 		// Set the ready function
 		auto& promise = in_coroHandle.promise();
@@ -341,15 +341,15 @@ public:
 	// Coroutine interface functions
 	auto initial_suspend() noexcept
 	{
-		return std::suspend_always();
+		return std_suspend_always();
 	}
 	auto final_suspend() noexcept
 	{
-		return std::suspend_always();
+		return std_suspend_always();
 	}
 	auto get_return_object()
 	{
-		return std::coroutine_handle<promise_type>::from_promise(*static_cast<promise_type*>(this));
+		return std_coroutine_handle_promise<promise_type>::from_promise(*static_cast<promise_type*>(this));
 	}
 	static std::shared_ptr<tTaskInternal> get_return_object_on_allocation_failure()
 	{
@@ -389,7 +389,7 @@ public:
 	{
 		return in_awaiter;
 	}
-	auto await_transform(std::suspend_never in_awaiter)
+	auto await_transform(std_suspend_never in_awaiter)
 	{
 		return in_awaiter;
 	}
@@ -399,7 +399,7 @@ public:
 	{
 		m_taskInternal->SetDebugName(in_awaiter.m_name);
 		m_taskInternal->SetDebugDataFn(in_awaiter.m_dataFn);
-		return std::suspend_never();
+		return std_suspend_never();
 	}
 #endif //SQUID_ENABLE_TASK_DEBUG
 
@@ -407,19 +407,19 @@ public:
 	auto await_transform(AddStopTaskAwaiter<tInnerRet, RefType, Resumable> in_awaiter)
 	{
 		m_taskInternal->AddStopTask(*in_awaiter.m_taskToStop);
-		return std::suspend_never();
+		return std_suspend_never();
 	}
 
 	template <typename tInnerRet, eTaskRef RefType, eTaskResumable Resumable>
 	auto await_transform(RemoveStopTaskAwaiter<tInnerRet, RefType, Resumable> in_awaiter)
 	{
 		m_taskInternal->RemoveStopTask(*in_awaiter.m_taskToStop);
-		return std::suspend_never();
+		return std_suspend_never();
 	}
 
 	auto await_transform(GetStopContext in_awaiter)
 	{
-		struct GetStopContextAwaiter : public std::suspend_never
+		struct GetStopContextAwaiter : public std_suspend_never
 		{
 			GetStopContextAwaiter(StopContext in_stopCtx)
 				: stopCtx(in_stopCtx)
@@ -513,7 +513,7 @@ public:
 class TaskInternalBase
 {
 public:
-	TaskInternalBase(std::coroutine_handle<> in_coroHandle)
+	TaskInternalBase(std_coroutine_handle in_coroHandle)
 		: m_coroHandle(in_coroHandle)
 	{
 		SQUID_RUNTIME_CHECK(m_coroHandle, "Invalid coroutine handle passed into Task");
@@ -768,7 +768,7 @@ private:
 	int32_t m_refCount = 0; // Number of (strong) non-weak tasks referencing the internal task
 
 	// C++ std::coroutine_handle
-	std::coroutine_handle<> m_coroHandle;
+	std_coroutine_handle m_coroHandle;
 
 	// Stop request
 	bool m_isStopRequested = false;
@@ -788,7 +788,7 @@ class TaskInternal : public TaskInternalBase
 public:
 	using promise_type = TaskPromise<tRet>;
 
-	TaskInternal(std::coroutine_handle<promise_type> in_handle)
+	TaskInternal(std_coroutine_handle_promise<promise_type> in_handle)
 		: TaskInternalBase(in_handle)
 	{
 		auto& promisePtr = in_handle.promise();
@@ -863,7 +863,7 @@ class TaskInternal<void> : public TaskInternalBase
 public:
 	using promise_type = TaskPromise<void>;
 
-	TaskInternal(std::coroutine_handle<promise_type> in_handle)
+	TaskInternal(std_coroutine_handle_promise<promise_type> in_handle)
 		: TaskInternalBase(in_handle)
 	{
 		auto& promisePtr = in_handle.promise();
