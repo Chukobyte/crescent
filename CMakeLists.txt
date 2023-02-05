@@ -4,7 +4,10 @@ project(crescent_engine)
 
 add_subdirectory(seika)
 add_subdirectory(engine)
+
+if (NOT APPLE)
 add_subdirectory(editor)
+endif()
 
 # Create seika test exe
 add_executable(seika_test seika/test/main.c)
@@ -18,7 +21,7 @@ target_link_libraries(${PROJECT_NAME} crescent_core seika)
 add_executable(${PROJECT_NAME}_test engine/test/main.c)
 target_link_libraries(${PROJECT_NAME}_test crescent_core seika unity)
 
-if (NOT ${CMAKE_SYSTEM_NAME} MATCHES Darwin)
+if (NOT APPLE)
 # Create editor exe
 add_executable(${PROJECT_NAME}_editor editor/src/main.cpp)
 target_link_libraries(${PROJECT_NAME}_editor crescent_editor crescent_core seika)
