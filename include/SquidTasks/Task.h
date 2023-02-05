@@ -87,7 +87,7 @@ using WeakTaskHandle = Task<void, eTaskRef::Weak, eTaskResumable::No>; ///< Non-
 
 //--- Suspend Awaiter ---//
 /// Awaiter class that suspends unconditionally
-struct Suspend : public std::suspend_always
+struct Suspend : public std_suspend_always
 {
 };
 
@@ -224,7 +224,7 @@ public:
 	{
 		AddRef();
 	}
-	Task(std::coroutine_handle<promise_type> in_coroHandle) /// @private
+	Task(std_coroutine_handle_promise<promise_type> in_coroHandle) /// @private
 		: m_taskInternal(std::make_shared<tTaskInternal>(in_coroHandle))
 	{
 		AddRef();

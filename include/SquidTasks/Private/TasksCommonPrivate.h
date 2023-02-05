@@ -172,11 +172,29 @@ namespace std {
 		}
 	}
 }
+#elif defined(__APPLE__)
+#include <experimental/coroutine>
 #elif HAS_CXX20 || defined(SQUID_HAS_AWAIT_STRICT) // Built-in C++20 coroutines implementation
 #include <coroutine>
 #else // Built-in experimental coroutines implementation
 #define USING_EXPERIMENTAL_COROUTINES
 #include <experimental/coroutine>
+#endif
+
+#if defined(__APPLE__)
+using std_suspend_always = std::experimental::suspend_always;
+using std_suspend_never = std::experimental::suspend_never;
+using std_coroutine_handle = std::experimental::coroutine_handle<>;
+
+template<typename T>
+using std_coroutine_handle_promise = std::experimental::coroutine_handle<T>;
+#else
+using std_suspend_always = std::suspend_always;
+using std_suspend_never = std::suspend_never;
+using std_coroutine_handle = std::coroutine_handle<>;
+
+template<typename T>
+using std_coroutine_handle_promise = std::coroutine_handle<T>;
 #endif
 
 // Pull experimental coroutines implementation into the main ::std:: namspace

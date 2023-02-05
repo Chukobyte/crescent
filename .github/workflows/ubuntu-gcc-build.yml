@@ -22,7 +22,7 @@ jobs:
           export PATH=/usr/local/bin:$PATH
           cmake --version
 
-      - name: Installing vcpkg (windows)
+      - name: Installing vcpkg (linux)
         run: |
           cd ..
           git clone https://github.com/Microsoft/vcpkg.git

@@ -139,12 +139,13 @@ void sf_process_inputs() {
         case SDL_WINDOWEVENT:
             switch (event.window.event) {
             case SDL_WINDOWEVENT_RESIZED:
-            case SDL_WINDOWEVENT_SIZE_CHANGED:
+            case SDL_WINDOWEVENT_SIZE_CHANGED: {
                 const Sint32 windowWidth = event.window.data1;
                 const Sint32 windowHeight = event.window.data2;
                 se_renderer_update_window_size((float) windowWidth, (float) windowHeight);
                 glViewport(0, 0, windowWidth, windowHeight);
                 break;
+            }
             }
             break;
         default:
