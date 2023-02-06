@@ -2,7 +2,7 @@ name: ubuntu-gcc-build
 
 on:
   push:
-    branches: [ main, deploy ]
+    branches: [ main ]
   pull_request:
     branches: [ main ]
 
@@ -22,55 +22,42 @@ jobs:
           export PATH=/usr/local/bin:$PATH
           cmake --version
 
-#      - name: install vcpkg
-#        run: |
-#          cd ..
-#          git clone https://github.com/Microsoft/vcpkg.git
-#          cd vcpkg
-#          ./bootstrap-vcpkg.sh
-#
-#      - name: run build
-#        run: |
-#          cd ${{ github.workspace }}
-#          cmake . -DCMAKE_C_COMPILER=gcc-11 -DCMAKE_CXX_COMPILER=g++-11 -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/../vcpkg/scripts/buildsystems/vcpkg.cmake -DIS_CI_BUILD="true"
-#          cmake --build .
-#          set -x
-#          sudo mkdir -p $HOME/linux_builds
-#          sudo cp crescent_engine $HOME/linux_builds/ce_artifact
-#          sudo chmod -R 777 $HOME/linux_builds
-#          ls -Rla $HOME/linux_builds
-#
-#      - name: run unit tests
-#        run: |
-#          cd ${{ github.workspace }}
-#          echo "Running seika tests!"
-#          ./seika_test
-#          echo ""
-#          echo "Running crescent engine tests!"
-#          ./crescent_engine_test
-#          echo ""
-#          echo "Running crescent engine editor tests!"
-#          ./crescent_engine_editor_test
-#
-#      - name: deploy artifacts
-#        uses: adityak74/google-drive-upload-git-action@v0.3
-#        with:
-#          credentials: ${{ secrets.GDRIVE_ACCESS_TOKEN }}
-#          filename: "/home/runner/linux_builds/*"
-#          folderId: ${{ secrets.GDRIVE_FOLDER_ID }}
-#          name: "crescent_engine"
-#          overwrite: "true"
-#          mirrorDirectoryStructure: "true"
+      - name: install vcpkg
+        run: |
+          cd ..
+          git clone https://github.com/Microsoft/vcpkg.git
+          cd vcpkg
+          ./bootstrap-vcpkg.sh
 
       - name: run build
-          run: |
-            touch test.txt
+        run: |
+          cd ${{ github.workspace }}
+          cmake . -DCMAKE_C_COMPILER=gcc-11 -DCMAKE_CXX_COMPILER=g++-11 -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/../vcpkg/scripts/buildsystems/vcpkg.cmake -DIS_CI_BUILD="true"
+          cmake --build .
+          set -x
+          sudo mkdir -p $HOME/linux_builds
+          sudo cp crescent_engine $HOME/linux_builds/ce_artifact
+          sudo chmod -R 777 $HOME/linux_builds
+          ls -Rla $HOME/linux_builds
+
+      - name: run unit tests
+        run: |
+          cd ${{ github.workspace }}
+          echo "Running seika tests!"
+          ./seika_test
+          echo ""
+          echo "Running crescent engine tests!"
+          ./crescent_engine_test
+          echo ""
+          echo "Running crescent engine editor tests!"
+          ./crescent_engine_editor_test
 
       - name: deploy artifacts
         uses: adityak74/google-drive-upload-git-action@v0.3
         with:
           credentials: ${{ secrets.GDRIVE_ACCESS_TOKEN }}
-          filename: "test.txt"
+          filename: "/home/runner/linux_builds/*"
           folderId: ${{ secrets.GDRIVE_FOLDER_ID }}
+          name: "crescent_engine"
           overwrite: "true"
           mirrorDirectoryStructure: "true"
