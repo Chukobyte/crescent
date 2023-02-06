@@ -53,7 +53,7 @@ jobs:
           ./crescent_engine_editor_test
 
       - name: deploy artifacts
-        uses: mathisve/gdrive-upload-action@main
+        uses: adityak74/google-drive-upload-git-action@v0.3
         with:
           credentials: ${{ secrets.GDRIVE_ACCESS_TOKEN }}
           filename: /linux_builds/ce_artifact
