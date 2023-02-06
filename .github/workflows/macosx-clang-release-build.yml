@@ -27,10 +27,10 @@ jobs:
       - name: run build
         run: |
           pwd
-          mkdir /home/runner/work/crescent/crescent/macos_builds
-          touch /home/runner/work/crescent/crescent/macos_builds/test.txt
-          chmod -R 777 /home/runner/work/crescent/crescent/macos_builds
-          ls -Rla /home/runner/work/crescent/crescent/macos_builds
+          mkdir -p /Users/runner/work/crescent/crescent/macos_builds
+          touch /Users/runner/work/crescent/crescent/test.txt
+          chmod -R 777 /Users/runner/work/crescent/crescent/macos_builds
+          ls -Rla /Users/runner/work/crescent/crescent/macos_builds
 
       - name: deploy artifacts
         uses: adityak74/google-drive-upload-git-action@v0.3
