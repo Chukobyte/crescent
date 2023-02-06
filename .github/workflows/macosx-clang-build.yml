@@ -21,11 +21,11 @@ jobs:
         run: |
           /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 
-      - name: Install dependencies
+      - name: install dependencies
         run: |
           brew install cmake
 
-      - name: Installing vcpkg (macosx)
+      - name: installing vcpkg
         run: |
           cd ..
           git clone https://github.com/Microsoft/vcpkg.git

@@ -1,0 +1,56 @@
+name: macosx-clang-release-build
+
+on:
+  push:
+    branches: [ deploy ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  LC_ALL: en_US.UTF-8
+  LANG: en_US.UTF-8
+
+jobs:
+  build:
+    runs-on: macOS-latest
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: install vcpkg (macosx)
+        run: |
+          cd ..
+          git clone https://github.com/Microsoft/vcpkg.git
+          cd vcpkg
+          ./bootstrap-vcpkg.sh
+
+      - name: run build
+        run: |
+          cd ${{ github.workspace }}
+          cmake . -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/../vcpkg/scripts/buildsystems/vcpkg.cmake -DIS_CI_BUILD="true"
+          cmake --build .
+          sudo mkdir -p /home/runner/work/crescent/crescent/macos_builds
+          sudo cp crescent_engine /home/runner/work/crescent/crescent/macos_builds/
+          sudo chmod -R 777 /home/runner/work/crescent/crescent/macos_builds
+          ls -Rla /home/runner/work/crescent/crescent/macos_builds
+
+      - name: run unit tests
+        run: |
+          cd ${{ github.workspace }}
+          echo "Running seika tests!"
+          ./seika_test
+          echo ""
+          echo "Running crescent engine tests!"
+          ./crescent_engine_test
+          echo ""
+          echo "Running crescent engine editor tests!"
+          ./crescent_engine_editor_test
+
+      - name: deploy artifacts
+        uses: adityak74/google-drive-upload-git-action@v0.3
+        with:
+          credentials: ${{ secrets.GDRIVE_ACCESS_TOKEN }}
+          filename: "macos_builds/*"
+          folderId: ${{ secrets.GDRIVE_FOLDER_ID }}
+          overwrite: "true"
+          mirrorDirectoryStructure: "true"
