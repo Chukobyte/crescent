@@ -217,7 +217,7 @@ bool se_array_list_is_empty(SEArrayList* list) {
     return list->size == 0;
 }
 
-void se_array_list_sort(SEArrayList* list, SeArrayListSortFunc isGreaterThanFunc) {
+void se_array_list_sort(SEArrayList* list, SeArrayListIsGreaterThanFunc isGreaterThanFunc) {
     if (list->head == NULL) {
         return;
     }

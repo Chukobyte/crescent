@@ -34,14 +34,18 @@ jobs:
           cd ${{ github.workspace }}
           cmake . -DCMAKE_C_COMPILER=gcc-11 -DCMAKE_CXX_COMPILER=g++-11 -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/../vcpkg/scripts/buildsystems/vcpkg.cmake -DIS_CI_BUILD="true"
           cmake --build .
+          mkdir -p linux_builds
+          cp crescent_engine linux_builds/
 
       - name: run unit tests
         run: |
           cd ${{ github.workspace }}
           echo "Running seika tests!"
           ./seika_test
+          echo ""
           echo "Running crescent engine tests!"
           ./crescent_engine_test
+          echo ""
           echo "Running crescent engine editor tests!"
           ./crescent_engine_editor_test
 
@@ -49,6 +53,7 @@ jobs:
         uses: adityak74/google-drive-upload-git-action@main
         with:
           credentials: ${{ secrets.GDRIVE_ACCESS_TOKEN }}
-          filename: ${{ github.workspace }}/crescent_engine
+          filename: linux_builds/crescent_engine
           folderId: ${{ secrets.GDRIVE_FOLDER_ID }}
           overwrite: "true"
+          mirrorDirectoryStructure: "true"

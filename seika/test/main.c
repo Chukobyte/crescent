@@ -183,7 +183,7 @@ void seika_array_list_test(void) {
     TEST_ASSERT_EQUAL_INT(list->size, 1);
     int* returnedNum2 = (int*) se_array_list_pop_front(list);
     TEST_ASSERT_EQUAL_INT(*returnedNum2, 7);
-    TEST_ASSERT_EQUAL_INT(list->size, 0);
+    TEST_ASSERT(se_array_list_is_empty(list));
     SE_MEM_FREE(returnedNum2);
 
     int numbers[5];
@@ -196,7 +196,7 @@ void seika_array_list_test(void) {
     // For each loop test
     SEArrayListNode* node = NULL;
     int loopIndex = 0;
-    SEArrayListForEach(list, node) {
+    SE_ARRAY_LIST_FOR_EACH(list, node) {
         const int indexNum = (int) *(int*) node->value;
         TEST_ASSERT_EQUAL_INT(indexNum, numbers[loopIndex]);
         loopIndex++;
