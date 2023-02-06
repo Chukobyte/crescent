@@ -22,7 +22,7 @@ jobs:
           export PATH=/usr/local/bin:$PATH
           cmake --version
 
-      - name: Installing vcpkg (linux)
+      - name: install vcpkg
         run: |
           cd ..
           git clone https://github.com/Microsoft/vcpkg.git
@@ -52,11 +52,11 @@ jobs:
           echo "Running crescent engine editor tests!"
           ./crescent_engine_editor_test
 
-      - name: Upload to gdrive
+      - name: deploy artifacts
         uses: adityak74/google-drive-upload-git-action@main
         with:
           credentials: ${{ secrets.GDRIVE_ACCESS_TOKEN }}
-          filename: "/linux_builds"
+          filename: "/linux_builds/*"
           folderId: ${{ secrets.GDRIVE_FOLDER_ID }}
           overwrite: "true"
           mirrorDirectoryStructure: "true"
