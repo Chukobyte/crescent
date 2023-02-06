@@ -36,7 +36,7 @@ jobs:
           cmake --build .
           set -x
           sudo mkdir -p /linux_builds
-          sudo cp crescent_engine /linux_builds/
+          sudo cp crescent_engine /linux_builds/ce_artifact
           sudo chmod -R 777 /linux_builds
           ls -Rla /linux_builds
 
@@ -56,7 +56,8 @@ jobs:
         uses: adityak74/google-drive-upload-git-action@main
         with:
           credentials: ${{ secrets.GDRIVE_ACCESS_TOKEN }}
-          filename: "/linux_builds/crescent_engine"
+          filename: "/linux_builds/ce_artifact"
           folderId: ${{ secrets.GDRIVE_FOLDER_ID }}
+          name: "crescent_engine"
           overwrite: "true"
           mirrorDirectoryStructure: "true"
