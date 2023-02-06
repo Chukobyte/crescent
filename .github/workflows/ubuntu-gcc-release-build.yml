@@ -2,7 +2,7 @@ name: ubuntu-gcc-release-build
 
 on:
   push:
-    branches: [ deploy ]
+    branches: [ main ]
   pull_request:
     branches: [ main ]
 
