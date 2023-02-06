@@ -28,4 +28,15 @@ jobs:
           echo "y" | pacman -S mingw-w64-x86_64-python
           cmake -G "MinGW Makefiles" . -DIS_CI_BUILD="true"
           cmake --build .
- 
+
+      - name: run unit tests
+        run: |
+          cd ${{ github.workspace }}
+          echo "Running seika tests!"
+          ./seika_test.exe
+          echo ""
+          echo "Running crescent engine tests!"
+          ./crescent_engine_test.exe
+          echo ""
+          echo "Running crescent engine editor tests!"
+          ./crescent_engine_editor_test.exe

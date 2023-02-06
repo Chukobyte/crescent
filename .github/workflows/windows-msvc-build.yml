@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
-      - name: Installing vcpkg (windows)
+      - name: installing vcpkg
         run: |
           cd ..
           git clone https://github.com/Microsoft/vcpkg.git
@@ -25,3 +25,15 @@ jobs:
           cd ${{ github.workspace }}
           cmake . -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/../vcpkg/scripts/buildsystems/vcpkg.cmake -DIS_CI_BUILD="true"
           cmake --build .
+
+      - name: run unit tests
+        run: |
+          cd ${{ github.workspace }}
+          echo "Running seika tests!"
+          ./seika_test.exe
+          echo ""
+          echo "Running crescent engine tests!"
+          ./crescent_engine_test.exe
+          echo ""
+          echo "Running crescent engine editor tests!"
+          ./crescent_engine_editor_test.exe

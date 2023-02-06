@@ -34,11 +34,6 @@ jobs:
           cd ${{ github.workspace }}
           cmake . -DCMAKE_C_COMPILER=gcc-11 -DCMAKE_CXX_COMPILER=g++-11 -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/../vcpkg/scripts/buildsystems/vcpkg.cmake -DIS_CI_BUILD="true"
           cmake --build .
-          set -x
-          sudo mkdir -p $HOME/linux_builds
-          sudo cp crescent_engine $HOME/linux_builds/ce_artifact
-          sudo chmod -R 777 $HOME/linux_builds
-          ls -Rla $HOME/linux_builds
 
       - name: run unit tests
         run: |
@@ -51,13 +46,3 @@ jobs:
           echo ""
           echo "Running crescent engine editor tests!"
           ./crescent_engine_editor_test
-
-      - name: deploy artifacts
-        uses: adityak74/google-drive-upload-git-action@v0.3
-        with:
-          credentials: ${{ secrets.GDRIVE_ACCESS_TOKEN }}
-          filename: "/home/runner/linux_builds/*"
-          folderId: ${{ secrets.GDRIVE_FOLDER_ID }}
-          name: "crescent_engine"
-          overwrite: "true"
-          mirrorDirectoryStructure: "true"

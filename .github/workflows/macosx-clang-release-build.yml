@@ -17,7 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
-      - name: install vcpkg (macosx)
+      - name: install vcpkg
         run: |
           cd ..
           git clone https://github.com/Microsoft/vcpkg.git
@@ -42,9 +42,6 @@ jobs:
           echo ""
           echo "Running crescent engine tests!"
           ./crescent_engine_test
-          echo ""
-          echo "Running crescent engine editor tests!"
-          ./crescent_engine_editor_test
 
       - name: deploy artifacts
         uses: adityak74/google-drive-upload-git-action@v0.3

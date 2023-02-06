@@ -17,14 +17,6 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
-      - name: Set up Homebrew
-        run: |
-          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
-
-      - name: install dependencies
-        run: |
-          brew install cmake
-
       - name: installing vcpkg
         run: |
           cd ..
@@ -37,3 +29,12 @@ jobs:
           cd ${{ github.workspace }}
           cmake . -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/../vcpkg/scripts/buildsystems/vcpkg.cmake -DIS_CI_BUILD="true"
           cmake --build .
+
+      - name: run unit tests
+        run: |
+          cd ${{ github.workspace }}
+          echo "Running seika tests!"
+          ./seika_test
+          echo ""
+          echo "Running crescent engine tests!"
+          ./crescent_engine_test
