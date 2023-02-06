@@ -23,13 +23,14 @@ jobs:
       - name: run build
         run: |
           pwd
-          touch test.txt
+          mkdir -p linux_builds
+          touch linux_builds/test.txt
 
       - name: deploy artifacts
         uses: adityak74/google-drive-upload-git-action@v0.3
         with:
           credentials: ${{ secrets.GDRIVE_ACCESS_TOKEN }}
-          filename: "test.txt"
+          filename: "linux_builds/*"
           folderId: ${{ secrets.GDRIVE_FOLDER_ID }}
           overwrite: "true"
-          mirrorDirectoryStructure: "false"
+          mirrorDirectoryStructure: "true"
