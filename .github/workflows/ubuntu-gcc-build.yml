@@ -36,8 +36,8 @@ jobs:
           cmake --build .
           set -x
           sudo mkdir -p /linux_builds
-          sudo cp crescent_engine linux_builds/ce_artifact
-          sudo chmod -R 777 linux_builds
+          sudo cp crescent_engine /linux_builds/ce_artifact
+          sudo chmod -R 777 /linux_builds
           ls -Rla /linux_builds
 
       - name: run unit tests
