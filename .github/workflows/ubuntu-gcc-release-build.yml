@@ -3,6 +3,8 @@ name: ubuntu-gcc-release-build
 on:
   push:
     branches: [ deploy ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   build:
@@ -20,11 +22,34 @@ jobs:
           export PATH=/usr/local/bin:$PATH
           cmake --version
 
+      - name: install vcpkg
+        run: |
+          cd ..
+          git clone https://github.com/Microsoft/vcpkg.git
+          cd vcpkg
+          ./bootstrap-vcpkg.sh
+
       - name: run build
         run: |
-          pwd
-          mkdir -p linux_builds
-          touch linux_builds/test.txt
+          cd ${{ github.workspace }}
+          cmake . -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=gcc-11 -DCMAKE_CXX_COMPILER=g++-11 -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/../vcpkg/scripts/buildsystems/vcpkg.cmake -DIS_CI_BUILD="true"
+          cmake --build .
+          sudo mkdir -p /home/runner/work/crescent/crescent/linux_builds
+          sudo cp crescent_engine /home/runner/work/crescent/crescent/linux_builds/
+          sudo chmod -R 777 /home/runner/work/crescent/crescent/linux_builds
+          ls -Rla /home/runner/work/crescent/crescent/linux_builds
+
+      - name: run unit tests
+        run: |
+          cd ${{ github.workspace }}
+          echo "Running seika tests!"
+          ./seika_test
+          echo ""
+          echo "Running crescent engine tests!"
+          ./crescent_engine_test
+          echo ""
+          echo "Running crescent engine editor tests!"
+          ./crescent_engine_editor_test
 
       - name: deploy artifacts
         uses: adityak74/google-drive-upload-git-action@v0.3
