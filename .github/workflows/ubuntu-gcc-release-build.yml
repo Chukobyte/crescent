@@ -32,4 +32,4 @@ jobs:
           filename: "test.txt"
           folderId: ${{ secrets.GDRIVE_FOLDER_ID }}
           overwrite: "true"
-          mirrorDirectoryStructure: "true"
+          mirrorDirectoryStructure: "false"
