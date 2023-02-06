@@ -162,6 +162,12 @@ void seika_array_utils_test(void) {
 #undef ARRAY_SIZE
 }
 
+bool array_list_test_sort(void* a, void* b) {
+    int numA = (int) *(int*) a;
+    int numB = (int) *(int*) b;
+    return numA > numB;
+}
+
 void seika_array_list_test(void) {
     SEArrayList* list = se_array_list_create(sizeof(int));
     // Test prepend
@@ -210,6 +216,12 @@ void seika_array_list_test(void) {
     TEST_ASSERT_EQUAL_INT(insertNumThree, 10);
     const int insertNumOne = (int) *(int*) se_array_list_get(list, 1);
     TEST_ASSERT_EQUAL_INT(insertNumOne, 20);
+
+    se_array_list_sort(list, array_list_test_sort);
+    const int smallestNum = (int) *(int*) se_array_list_get_front(list);
+    const int highestNum = (int) *(int*) se_array_list_get_back(list);
+    TEST_ASSERT_EQUAL_INT(smallestNum, 0);
+    TEST_ASSERT_EQUAL_INT(highestNum, 20);
 
     // Clear test
     se_array_list_clear(list);

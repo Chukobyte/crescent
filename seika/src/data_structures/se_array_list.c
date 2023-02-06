@@ -223,7 +223,7 @@ void se_array_list_sort(SEArrayList* list, SeArrayListSortFunc isGreaterThanFunc
     }
     for (SEArrayListNode* current = list->head; current->next != NULL; current = current->next) {
         for (SEArrayListNode* next = current->next; next != NULL; next = next->next) {
-            if (isGreaterThanFunc(current, next)) {
+            if (isGreaterThanFunc(current->value, next->value)) {
                 void* temp = current->value;
                 current->value = next->value;
                 next->value = temp;
