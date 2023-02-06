@@ -56,7 +56,7 @@ jobs:
         uses: adityak74/google-drive-upload-git-action@v0.3
         with:
           credentials: ${{ secrets.GDRIVE_ACCESS_TOKEN }}
-          filename: "$HOME/linux_builds/*"
+          filename: "/home/runner/linux_builds/*"
           folderId: ${{ secrets.GDRIVE_FOLDER_ID }}
           name: crescent_engine"
           overwrite: "true"
