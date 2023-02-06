@@ -31,3 +31,5 @@ find_package(SDL2 CONFIG REQUIRED)
 add_executable(${PROJECT_NAME}_editor_test editor/test/main.cpp editor/test/unit/curve_float_test.cpp)
 target_link_libraries(${PROJECT_NAME}_editor_test crescent_editor crescent_core seika SDL2::SDL2main SDL2::SDL2)
 endif()
+
+message("CMAKE_BINARY_DIR: ${CMAKE_BINARY_DIR}")
