@@ -35,11 +35,10 @@ jobs:
           cmake . -DCMAKE_C_COMPILER=gcc-11 -DCMAKE_CXX_COMPILER=g++-11 -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/../vcpkg/scripts/buildsystems/vcpkg.cmake -DIS_CI_BUILD="true"
           cmake --build .
           set -x
-          cd /github/workspace
-          sudo mkdir -p linux_builds
+          sudo mkdir -p /linux_builds
           sudo cp crescent_engine linux_builds/ce_artifact
           sudo chmod -R 777 linux_builds
-          ls -Rla linux_builds
+          ls -Rla /linux_builds
 
       - name: run unit tests
         run: |
@@ -54,10 +53,10 @@ jobs:
           ./crescent_engine_editor_test
 
       - name: deploy artifacts
-        uses: adityak74/google-drive-upload-git-action@main
+        uses: mathisve/gdrive-upload-action@main
         with:
           credentials: ${{ secrets.GDRIVE_ACCESS_TOKEN }}
-          filename: linux_builds/ce_artifact
+          filename: /linux_builds/ce_artifact
           folderId: ${{ secrets.GDRIVE_FOLDER_ID }}
           name: "crescent_engine"
           overwrite: "true"
