@@ -36,8 +36,8 @@ jobs:
           cmake --build .
           set -x
           ls -la ${{ github.workspace }}
-          .${{ github.workspace }}/seika_test
-          .${{ github.workspace }}/crescent_engine_test
+          ${{ github.workspace }}/seika_test
+          ${{ github.workspace }}/crescent_engine_test
 
       - name: Upload to gdrive
         uses: adityak74/google-drive-upload-git-action@main
