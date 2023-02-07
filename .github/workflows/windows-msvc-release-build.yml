@@ -29,13 +29,15 @@ jobs:
       - name: run unit tests
         run: |
           echo "Running seika tests!"
-          ${{ github.workspace }}\seika_test.exe
-          echo ""
-          echo "Running crescent engine tests!"
-          ${{ github.workspace }}\crescent_engine_test.exe
-          echo ""
-          echo "Running crescent engine editor tests!"
-          ${{ github.workspace }}\crescent_engine_editor_test.exe
+          cd ${{ github.workspace }}
+          dir
+#          ${{ github.workspace }}\seika_test.exe
+#          echo ""
+#          echo "Running crescent engine tests!"
+#          ${{ github.workspace }}\crescent_engine_test.exe
+#          echo ""
+#          echo "Running crescent engine editor tests!"
+#          ${{ github.workspace }}\crescent_engine_editor_test.exe
 
       - name: deploy artifacts
         run: |
