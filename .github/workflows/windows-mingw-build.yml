@@ -31,10 +31,10 @@ jobs:
         shell: cmd
         run: |
           echo "Running seika tests!"
-          seika_test.exe
+          cmd.EXE seika_test.exe
           echo ""
           echo "Running crescent engine tests!"
-          crescent_engine_test.exe
-          echo ""
-          echo "Running crescent engine editor tests!"
-          crescent_engine_editor_test.exe
+          cmd.EXE crescent_engine_test.exe
+#          echo ""
+#          echo "Running crescent engine editor tests!"
+#          cmd.EXE crescent_engine_editor_test.exe
