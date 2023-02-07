@@ -27,10 +27,14 @@ jobs:
           cmake -G "MinGW Makefiles" . -DIS_CI_BUILD="true"
           cmake --build .
 
-      - name: run unit tests
+      - name: add mingw64 bin to path
         run: |
           $env:Path += ";C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\bin"
           echo $env:Path
+
+      - name: run unit tests
+        shell: cmd
+        run: |
           echo "Running seika tests!"
           seika_test.exe
           echo ""
