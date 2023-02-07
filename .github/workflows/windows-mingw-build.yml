@@ -9,9 +9,9 @@ on:
 jobs:
   build:
     runs-on: windows-latest
-    defaults:
-      run:
-        shell: msys2 {0}
+#    defaults:
+#      run:
+#        shell: msys2 {0}
 
     steps:
       - uses: actions/checkout@v1
@@ -20,6 +20,7 @@ jobs:
           install: gcc make
 
       - name: run build
+        shell: msys2 {0}
         run: |
           (echo ""; echo "y") | pacman -S mingw-w64-x86_64-toolchain
           echo "y" | pacman -S mingw-w64-x86_64-cmake
@@ -31,12 +32,11 @@ jobs:
 
       - name: run unit tests
         run: |
-          dir
           echo "Running seika tests!"
-          start seika_test.exe
+          seika_test.exe
           echo ""
           echo "Running crescent engine tests!"
-          start crescent_engine_test.exe
+          crescent_engine_test.exe
           echo ""
           echo "Running crescent engine editor tests!"
-          start crescent_engine_editor_test.exe
+          crescent_engine_editor_test.exe
