@@ -16,10 +16,11 @@ jobs:
       - name: installing vcpkg
         run: |
           python --version
-          cd ..
-          git clone https://github.com/Microsoft/vcpkg.git
-          cd vcpkg
-          .\bootstrap-vcpkg.bat
+          python -m pip install google-auth google-api-python-client
+#          cd ..
+#          git clone https://github.com/Microsoft/vcpkg.git
+#          cd vcpkg
+#          .\bootstrap-vcpkg.bat
 
 #      - name: run build
 #        run: |
