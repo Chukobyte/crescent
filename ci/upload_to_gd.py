@@ -123,6 +123,7 @@ if len(sys.argv) >= 4:
     new_file_name = None
     if len(sys.argv) >= 5:
         new_file_name = sys.argv[4]
+    print(sys.argv)
 
     drive_service = GoogleDriveService(credential_file_path=cred_file_path)
     # drive_service.delete_all_files()
