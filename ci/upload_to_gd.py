@@ -77,13 +77,21 @@ class GoogleDriveService:
         except Exception as e:
             print(f"Error getting file '{file_name}': {e}")
 
-    def upload_file(self, file_path: str, folder_id: str, new_file_name: str = None):
+    def upload_file(
+        self,
+        file_path: str,
+        folder_id: str,
+        new_file_name: str = None,
+        mime_type="application/octet-stream",
+    ):
         service = self.get_service()
         try:
             valid_file_path = pathlib.Path(file_path)
             if not valid_file_path.exists():
                 print(f"Error file '{file_path}' doesn't exist, not uploading!")
-                return None
+                raise Exception(
+                    f"Error file '{file_path}' doesn't exist, not uploading!"
+                )
 
             if new_file_name:
                 file_name = new_file_name
@@ -91,7 +99,7 @@ class GoogleDriveService:
                 file_name = valid_file_path.name
             file_metadata = {"name": file_name, "parents": [folder_id]}
             media = MediaFileUpload(
-                str(valid_file_path), resumable=True
+                str(valid_file_path), mimetype=mime_type, resumable=True
             )
 
             # Update existing file if it exists
