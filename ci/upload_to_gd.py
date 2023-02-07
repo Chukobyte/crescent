@@ -16,6 +16,7 @@ class GoogleDriveFile:
 
 class GoogleDriveService:
     def __init__(self, credential_file_path: str):
+        # TODO: Validate cred file path
         self.credential_file_path = credential_file_path
         self.service = None
 
