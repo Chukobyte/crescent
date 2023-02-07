@@ -30,10 +30,10 @@ jobs:
       - name: run unit tests
         run: |
           echo "Running seika tests!"
-          Start-Process seika_test.exe
+          Start-Process seika_test.exe -NoNewWindow -Wait -PassThru | Select-Object -Property * | Format-List | Write-Output
           echo ""
           echo "Running crescent engine tests!"
-          Start-Process crescent_engine_test.exe
+          Start-Process crescent_engine_test.exe -NoNewWindow -Wait -PassThru | Select-Object -Property * | Format-List | Write-Output
           echo ""
           echo "Running crescent engine editor tests!"
-          Start-Process crescent_engine_editor_test.exe
+          Start-Process crescent_engine_editor_test.exe -NoNewWindow -Wait -PassThru | Select-Object -Property * | Format-List | Write-Output
