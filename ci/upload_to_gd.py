@@ -1,10 +1,12 @@
-from google.oauth2.credentials import Credentials
+import sys
+import pathlib
+
 from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
 from google.oauth2 import service_account
+from googleapiclient.http import MediaFileUpload
 
 
-def get_service(api_name: str, api_version, scopes: list, key_file_location: str):
+def get_service(api_name: str, api_version: str, scopes: list, key_file_location: str):
     credentials = service_account.Credentials.from_service_account_file(
         key_file_location
     )
@@ -16,26 +18,38 @@ def get_service(api_name: str, api_version, scopes: list, key_file_location: str
     return service
 
 
-def upload_file(file_path: str):
-    scope = "https://www.googleapis.com/auth/drive.metadata.readonly"
-    key_file_location = "c:\\Users\\chuko\\Downloads\\crescent-376920-9612570cbb44.json"
+def upload_file(file_path: str, key_file_location: str, folder_id: str):
+    scopes = [
+        "https://www.googleapis.com/auth/drive",
+    ]
 
     try:
         service = get_service(
             api_name="drive",
             api_version="v3",
-            scopes=[scope],
+            scopes=scopes,
             key_file_location=key_file_location,
         )
-        results = (
+
+        file_name = pathlib.Path(file_path)
+        file_metadata = {"name": file_name.name, "parents": [folder_id]}
+        media = MediaFileUpload(file_path, mimetype="text/plain")
+
+        file = (
             service.files()
-            .list(pageSize=10, fields="nextPageToken, files(id, name)")
+            .create(body=file_metadata, media_body=media, fields="id")
             .execute()
         )
-        items = results.get("files", [])
-        print(f"items = {items}")
+        print(f"File ID: {file.get('id')}")
     except Exception as e:
         print(f"Exception: {e}")
 
 
-upload_file("test.txxt")
+if len(sys.argv) >= 4:
+    print("Hey")
+    artifact_file_path = sys.argv[1]
+    cred_file_path = sys.argv[2]
+    gd_folder_id = sys.argv[3]
+    upload_file(artifact_file_path, cred_file_path, gd_folder_id)
+else:
+    print("ERROR: Didn't pass in 3 args!")
