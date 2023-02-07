@@ -15,54 +15,37 @@ jobs:
 
       - name: installing vcpkg
         run: |
+          cd ..
+          git clone https://github.com/Microsoft/vcpkg.git
+          cd vcpkg
+          .\bootstrap-vcpkg.bat
+
+      - name: run build
+        run: |
+          cd ${{ github.workspace }}
+          cmake . -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/../vcpkg/scripts/buildsystems/vcpkg.cmake -DIS_CI_BUILD="true"
+          cmake --build .
+
+      - name: run unit tests
+        run: |
+          cd ${{ github.workspace }}
+          echo "Running seika tests!"
+          ./seika_test.exe
+          echo ""
+          echo "Running crescent engine tests!"
+          ./crescent_engine_test.exe
+          echo ""
+          echo "Running crescent engine editor tests!"
+          ./crescent_engine_editor_test.exe
+
+      - name: deploy artifacts
+        run: |
           python --version
           python -m pip install google-auth google-api-python-client
           cd ${{ github.workspace }}
           echo "${{ secrets.GDRIVE_CREDENTIALS_WINDOWS }}" > creds.json
-          echo ""> test.txt
-          python ci/upload_to_gd.py ${{ github.workspace }}\test.txt ${{ github.workspace }}\creds.json ${{ secrets.GDRIVE_FOLDER_ID }} test_windows.txt
-#          cd ..
-#          git clone https://github.com/Microsoft/vcpkg.git
-#          cd vcpkg
-#          .\bootstrap-vcpkg.bat
+          python ci/upload_to_gd.py ${{ github.workspace }}\crescent_engine.exe ${{ github.workspace }}\creds.json ${{ secrets.GDRIVE_FOLDER_ID }} crescent_engine_windows.exe
 
-#      - name: run build
-#        run: |
-#          cd
-#          mkdir D:\a\crescent\crescent\windows_build
-#          echo "yeah"> D:\a\crescent\crescent\windows_build\test.txt
-#
-#      - name: deploy artifacts
-#        uses: adityak74/google-drive-upload-git-action@v0.3
-#        with:
-#          credentials: ${{ secrets.GDRIVE_ACCESS_TOKEN }}
-#          filename: "windows_builds/*"
-#          folderId: ${{ secrets.GDRIVE_FOLDER_ID }}
-#          overwrite: "true"
-#          mirrorDirectoryStructure: "true"
-
-#      - name: run build
-#        run: |
-#          cd ${{ github.workspace }}
-#          cmake . -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/../vcpkg/scripts/buildsystems/vcpkg.cmake -DIS_CI_BUILD="true"
-#          cmake --build .
-#          sudo mkdir -p /home/runner/work/crescent/crescent/windows_builds
-#          sudo cp crescent_engine.exe /home/runner/work/crescent/crescent/windows_builds/
-#          sudo chmod -R 777 /home/runner/work/crescent/crescent/windows_builds
-#          ls -Rla /home/runner/work/crescent/crescent/windows_builds
-#
-#      - name: run unit tests
-#        run: |
-#          cd ${{ github.workspace }}
-#          echo "Running seika tests!"
-#          ./seika_test.exe
-#          echo ""
-#          echo "Running crescent engine tests!"
-#          ./crescent_engine_test.exe
-#          echo ""
-#          echo "Running crescent engine editor tests!"
-#          ./crescent_engine_editor_test.exe
-#
 #      - name: deploy artifacts
 #        uses: adityak74/google-drive-upload-git-action@v0.3
 #        with:

@@ -19,53 +19,38 @@ jobs:
 
       - name: install vcpkg
         run: |
+          cd ..
+          git clone https://github.com/Microsoft/vcpkg.git
+          cd vcpkg
+          ./bootstrap-vcpkg.sh
+
+      - name: run build
+        run: |
+          cd ${{ github.workspace }}
+          cmake . -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/../vcpkg/scripts/buildsystems/vcpkg.cmake -DIS_CI_BUILD="true"
+          cmake --build .
+          sudo mkdir -p /home/runner/work/crescent/crescent/macos_builds
+          sudo cp crescent_engine /home/runner/work/crescent/crescent/macos_builds/
+          sudo chmod -R 777 /home/runner/work/crescent/crescent/macos_builds
+          ls -Rla /home/runner/work/crescent/crescent/macos_builds
+
+      - name: run unit tests
+        run: |
+          cd ${{ github.workspace }}
+          echo "Running seika tests!"
+          ./seika_test
+          echo ""
+          echo "Running crescent engine tests!"
+          ./crescent_engine_test
+
+      - name: deploy artifacts
+        run: |
           python3 --version
           python3 -m pip install google-auth google-api-python-client
           cd ${{ github.workspace }}
           echo "${{ secrets.GDRIVE_CREDENTIALS }}" >> creds.json
-          touch test.txt
-          python3 ci/upload_to_gd.py ${{ github.workspace }}/test.txt ${{ github.workspace }}/creds.json ${{ secrets.GDRIVE_FOLDER_ID }} test_macos.txt
-#          cd ..
-#          git clone https://github.com/Microsoft/vcpkg.git
-#          cd vcpkg
-#          ./bootstrap-vcpkg.sh
+          python3 ci/upload_to_gd.py /home/runner/work/crescent/crescent/macos_builds/crescent_engine ${{ github.workspace }}/creds.json ${{ secrets.GDRIVE_FOLDER_ID }} crescent_engine_macos
 
-#      - name: run build
-#        run: |
-#          pwd
-#          mkdir -p /Users/runner/work/crescent/crescent/macos_builds
-#          touch /Users/runner/work/crescent/crescent/test.txt
-#          chmod -R 777 /Users/runner/work/crescent/crescent/macos_builds
-#          ls -Rla /Users/runner/work/crescent/crescent/macos_builds
-#
-#      - name: deploy artifacts
-#        uses: adityak74/google-drive-upload-git-action@v0.3
-#        with:
-#          credentials: ${{ secrets.GDRIVE_ACCESS_TOKEN }}
-#          filename: "macos_builds/*"
-#          folderId: ${{ secrets.GDRIVE_FOLDER_ID }}
-#          overwrite: "true"
-#          mirrorDirectoryStructure: "true"
-
-#      - name: run build
-#        run: |
-#          cd ${{ github.workspace }}
-#          cmake . -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/../vcpkg/scripts/buildsystems/vcpkg.cmake -DIS_CI_BUILD="true"
-#          cmake --build .
-#          sudo mkdir -p /home/runner/work/crescent/crescent/macos_builds
-#          sudo cp crescent_engine /home/runner/work/crescent/crescent/macos_builds/
-#          sudo chmod -R 777 /home/runner/work/crescent/crescent/macos_builds
-#          ls -Rla /home/runner/work/crescent/crescent/macos_builds
-#
-#      - name: run unit tests
-#        run: |
-#          cd ${{ github.workspace }}
-#          echo "Running seika tests!"
-#          ./seika_test
-#          echo ""
-#          echo "Running crescent engine tests!"
-#          ./crescent_engine_test
-#
 #      - name: deploy artifacts
 #        uses: adityak74/google-drive-upload-git-action@v0.3
 #        with:
