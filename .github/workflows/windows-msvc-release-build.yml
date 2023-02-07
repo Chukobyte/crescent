@@ -18,12 +18,9 @@ jobs:
           python --version
           python -m pip install google-auth google-api-python-client
           cd ${{ github.workspace }}
-          echo "${{ secrets.TEST_CREDS_WINDOWS }}" > creds.json
-          type creds.json
-
-#          echo "${{ secrets.GDRIVE_CREDENTIALS }}" > creds.json
-#          echo ""> test.txt
-#          python ci/upload_to_gd.py ${{ github.workspace }}\test.txt ${{ github.workspace }}\creds.json ${{ secrets.GDRIVE_FOLDER_ID }} test_windows.txt
+          echo "${{ secrets.GDRIVE_CREDENTIALS_WINDOWS }}" > creds.json
+          echo ""> test.txt
+          python ci/upload_to_gd.py ${{ github.workspace }}\test.txt ${{ github.workspace }}\creds.json ${{ secrets.GDRIVE_FOLDER_ID }} test_windows.txt
 #          cd ..
 #          git clone https://github.com/Microsoft/vcpkg.git
 #          cd vcpkg
