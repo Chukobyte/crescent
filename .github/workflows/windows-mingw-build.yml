@@ -33,10 +33,10 @@ jobs:
       - name: run unit tests
         run: |
           echo "Running seika tests!"
-          seika_test.exe
+          .\seika_test.exe
           echo ""
           echo "Running crescent engine tests!"
-          crescent_engine_test.exe
+          .\crescent_engine_test.exe
           echo ""
           echo "Running crescent engine editor tests!"
-          crescent_engine_editor_test.exe
+          .\crescent_engine_editor_test.exe
