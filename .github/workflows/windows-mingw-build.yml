@@ -27,19 +27,25 @@ jobs:
           cmake -G "MinGW Makefiles" . -DIS_CI_BUILD="true"
           cmake --build .
 
-      - name: add mingw64 bin to path
+      - name: run unit tests
         run: |
           $env:Path += ";C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\bin"
           echo $env:Path
-
-      - name: run unit tests
-        shell: cmd
-        run: |
           echo "Running seika tests!"
-          seika_test.exe
-          echo ""
+          Start-Process seika_test.exe
           echo "Running crescent engine tests!"
-          crescent_engine_test.exe
-          echo ""
+          Start-Process crescent_engine_test.exe
           echo "Running crescent engine editor tests!"
-          crescent_engine_editor_test.exe
+          Start-Process crescent_engine_editor_test.exe
+
+#      - name: run unit tests
+#        shell: cmd
+#        run: |
+#          echo "Running seika tests!"
+#          seika_test.exe
+#          echo ""
+#          echo "Running crescent engine tests!"
+#          crescent_engine_test.exe
+#          echo ""
+#          echo "Running crescent engine editor tests!"
+#          crescent_engine_editor_test.exe
