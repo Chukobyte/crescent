@@ -29,7 +29,6 @@ jobs:
 
       - name: run unit tests
         run: |
-          @echo on
           echo "Running seika tests!"
           Start-Process seika_test.exe
           echo ""
