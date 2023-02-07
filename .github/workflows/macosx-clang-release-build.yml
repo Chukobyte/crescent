@@ -24,7 +24,7 @@ jobs:
           cd ${{ github.workspace }}
           echo "${{ secrets.GDRIVE_CREDENTIALS }}" >> creds.json
           touch test.txt
-          python ci/upload_to_gd.py ${{ github.workspace }}/test.txt ${{ github.workspace }}/creds.json ${{ secrets.GDRIVE_FOLDER_ID }} test_macos.txt
+          python3 ci/upload_to_gd.py ${{ github.workspace }}/test.txt ${{ github.workspace }}/creds.json ${{ secrets.GDRIVE_FOLDER_ID }} test_macos.txt
 #          cd ..
 #          git clone https://github.com/Microsoft/vcpkg.git
 #          cd vcpkg

@@ -18,7 +18,7 @@ jobs:
           python --version
           python -m pip install google-auth google-api-python-client
           cd ${{ github.workspace }}
-          echo "${{ secrets.TEST_CREDS }}" > creds.json
+          echo "${{ secrets.TEST_CREDS_WINDOWS }}" > creds.json
           type creds.json
 
 #          echo "${{ secrets.GDRIVE_CREDENTIALS }}" > creds.json
