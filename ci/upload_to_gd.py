@@ -41,10 +41,6 @@ class GoogleDriveService:
                 if page_token:
                     param["pageToken"] = page_token
                 files = service.files().list(**param).execute()
-
-                # print(f"files = {files}")
-                # result.extend(files['items'])
-                # result.extend(files)
                 result.extend(files["files"])
                 page_token = files.get("nextPageToken")
                 if not page_token:
