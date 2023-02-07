@@ -7,11 +7,11 @@ from googleapiclient.http import MediaFileUpload
 
 
 class GoogleDriveFile:
-    def __init__(self, file: dict):
-        self.id = file["id"]
-        self.name = file["name"]
-        self.mime_type = file["mimeType"]
-        self.kind = file["kind"]
+    def __init__(self, drive_file: dict):
+        self.id = drive_file["id"]
+        self.name = drive_file["name"]
+        self.mime_type = drive_file["mimeType"]
+        self.kind = drive_file["kind"]
 
 
 class GoogleDriveService:
