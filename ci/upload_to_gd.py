@@ -91,7 +91,7 @@ class GoogleDriveService:
                 file_name = valid_file_path.name
             file_metadata = {"name": file_name, "parents": [folder_id]}
             media = MediaFileUpload(
-                str(valid_file_path), mimetype="text/plain", resumable=True
+                str(valid_file_path), resumable=True
             )
 
             # Update existing file if it exists
@@ -124,7 +124,6 @@ if len(sys.argv) >= 4:
     if len(sys.argv) >= 5:
         new_file_name = sys.argv[4]
     print(f"artifact_file_path = {artifact_file_path}")
-    print(f"cred_file_path = {cred_file_path}")
     print(f"new_file_name = {new_file_name}")
 
     drive_service = GoogleDriveService(credential_file_path=cred_file_path)
