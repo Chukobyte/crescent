@@ -16,10 +16,13 @@ class GoogleDriveFile:
 
 class GoogleDriveService:
     def __init__(self, credential_file_path: str):
-        # TODO: Validate cred file path
-        self.credential_file_path = credential_file_path
         self.service = None
-        if not pathlib.Path(credential_file_path).exists():
+        self.credential_file_path = ""
+
+        valid_credential_file_path = pathlib.Path(credential_file_path)
+        if valid_credential_file_path.exists():
+            self.credential_file_path = str(valid_credential_file_path)
+        else:
             raise Exception(f"credential file '{credential_file_path}' not found!")
 
     def get_service(self):
@@ -87,7 +90,9 @@ class GoogleDriveService:
             else:
                 file_name = valid_file_path.name
             file_metadata = {"name": file_name, "parents": [folder_id]}
-            media = MediaFileUpload(file_path, mimetype="text/plain", resumable=True)
+            media = MediaFileUpload(
+                str(valid_file_path), mimetype="text/plain", resumable=True
+            )
 
             # Update existing file if it exists
             existing_file = self.get_file(file_name=file_name)
