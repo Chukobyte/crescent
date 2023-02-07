@@ -28,15 +28,14 @@ jobs:
 
       - name: run unit tests
         run: |
-          cd ${{ github.workspace }}
           echo "Running seika tests!"
-          seika_test.exe
+          ${{ github.workspace }}\seika_test.exe
           echo ""
           echo "Running crescent engine tests!"
-          crescent_engine_test.exe
+          ${{ github.workspace }}\crescent_engine_test.exe
           echo ""
           echo "Running crescent engine editor tests!"
-          crescent_engine_editor_test.exe
+          ${{ github.workspace }}\crescent_engine_editor_test.exe
 
       - name: deploy artifacts
         run: |
@@ -45,12 +44,3 @@ jobs:
           cd ${{ github.workspace }}
           echo "${{ secrets.GDRIVE_CREDENTIALS_WINDOWS }}" > creds.json
           python ci/upload_to_gd.py ${{ github.workspace }}\crescent_engine.exe ${{ github.workspace }}\creds.json ${{ secrets.GDRIVE_FOLDER_ID }} crescent_engine_windows.exe
-
-#      - name: deploy artifacts
-#        uses: adityak74/google-drive-upload-git-action@v0.3
-#        with:
-#          credentials: ${{ secrets.GDRIVE_ACCESS_TOKEN }}
-#          filename: "windows_builds/*"
-#          folderId: ${{ secrets.GDRIVE_FOLDER_ID }}
-#          overwrite: "true"
-#          mirrorDirectoryStructure: "true"
