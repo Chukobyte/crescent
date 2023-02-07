@@ -20,6 +20,7 @@ jobs:
           cd ${{ github.workspace }}
           echo "${{ secrets.TEST_CREDS }}" >> creds.json
           cat creds.json
+
 #          echo "${{ secrets.GDRIVE_CREDENTIALS }}" >> creds.json
 #          touch test.txt
 #          ls -la
