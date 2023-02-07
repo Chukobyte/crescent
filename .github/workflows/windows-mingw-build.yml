@@ -9,6 +9,9 @@ on:
 jobs:
   build:
     runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
 
     steps:
       - uses: actions/checkout@v1
@@ -17,7 +20,6 @@ jobs:
           install: gcc make
 
       - name: run build
-        shell: msys2 {0}
         run: |
           (echo ""; echo "y") | pacman -S mingw-w64-x86_64-toolchain
           echo "y" | pacman -S mingw-w64-x86_64-cmake
@@ -30,11 +32,12 @@ jobs:
       - name: run unit tests
         shell: cmd
         run: |
+          set MSYS2_PATH_TYPE=inherit
           echo "Running seika tests!"
-          seika_test.exe
+          bash --login -c "./seika_test.exe"
           echo ""
           echo "Running crescent engine tests!"
-          crescent_engine_test.exe
-#          echo ""
-#          echo "Running crescent engine editor tests!"
-#          crescent_engine_editor_test.exe
+          bash --login -c "./crescent_engine_test.exe"
+          echo ""
+          echo "Running crescent engine editor tests!"
+          bash --login -c "./crescent_engine_editor_test.exe"
