@@ -27,26 +27,20 @@ jobs:
           cmake -G "MinGW Makefiles" . -DIS_CI_BUILD="true"
           cmake --build .
 
-      - name: run unit tests
+      - name: add dll locations to path
         run: |
           $env:Path += ";C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\bin"
           echo $env:Path
           Get-ChildItem C:\*.dll
-          echo "Running seika tests!"
-          Start-Process seika_test.exe
-          echo "Running crescent engine tests!"
-          Start-Process crescent_engine_test.exe
-          echo "Running crescent engine editor tests!"
-          Start-Process crescent_engine_editor_test.exe
 
-#      - name: run unit tests
-#        shell: cmd
-#        run: |
-#          echo "Running seika tests!"
-#          seika_test.exe
-#          echo ""
-#          echo "Running crescent engine tests!"
-#          crescent_engine_test.exe
-#          echo ""
-#          echo "Running crescent engine editor tests!"
-#          crescent_engine_editor_test.exe
+      - name: run unit tests
+        shell: cmd
+        run: |
+          echo "Running seika tests!"
+          seika_test.exe
+          echo ""
+          echo "Running crescent engine tests!"
+          crescent_engine_test.exe
+          echo ""
+          echo "Running crescent engine editor tests!"
+          crescent_engine_editor_test.exe
