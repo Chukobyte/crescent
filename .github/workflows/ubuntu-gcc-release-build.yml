@@ -15,14 +15,14 @@ jobs:
 
       - name: install updates
         run: |
+          python --version
+          python -m pip install google-auth google-api-python-client
 #          sudo apt install gcc-11
 #          sudo apt install g++-11
 #          wget -O cmake.sh https://cmake.org/files/v3.20/cmake-3.20.1-linux-x86_64.sh
 #          sudo sh cmake.sh --skip-license --exclude-subdir --prefix=/usr/local
 #          export PATH=/usr/local/bin:$PATH
 #          cmake --version
-          python --version
-          python -m pip install google-auth google-api-python-client
 
 #      - name: install vcpkg
 #        run: |
