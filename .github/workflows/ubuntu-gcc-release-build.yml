@@ -34,10 +34,6 @@ jobs:
           cd ${{ github.workspace }}
           cmake . -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=gcc-11 -DCMAKE_CXX_COMPILER=g++-11 -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/../vcpkg/scripts/buildsystems/vcpkg.cmake -DIS_CI_BUILD="true"
           cmake --build .
-          sudo mkdir -p /home/runner/work/crescent/crescent/linux_builds
-          sudo cp crescent_engine /home/runner/work/crescent/crescent/linux_builds/
-          sudo chmod -R 777 /home/runner/work/crescent/crescent/linux_builds
-          ls -Rla /home/runner/work/crescent/crescent/linux_builds
 
       - name: run unit tests
         run: |
@@ -58,13 +54,4 @@ jobs:
           cd ${{ github.workspace }}
           echo "${{ secrets.GDRIVE_CREDENTIALS }}" >> creds.json
           touch test.txt
-          python ci/upload_to_gd.py /home/runner/work/crescent/crescent/linux_builds/crescent_engine ${{ github.workspace }}/creds.json ${{ secrets.GDRIVE_FOLDER_ID }} crescent_engine_linux
-
-#      - name: deploy artifacts
-#        uses: adityak74/google-drive-upload-git-action@v0.3
-#        with:
-#          credentials: ${{ secrets.GDRIVE_ACCESS_TOKEN }}
-#          filename: "linux_builds/*"
-#          folderId: ${{ secrets.GDRIVE_FOLDER_ID }}
-#          overwrite: "true"
-#          mirrorDirectoryStructure: "true"
+          python ci/upload_to_gd.py ${{ github.workspace }}/crescent_engine ${{ github.workspace }}/creds.json ${{ secrets.GDRIVE_FOLDER_ID }} crescent_engine_linux
