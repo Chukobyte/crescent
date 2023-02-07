@@ -84,7 +84,7 @@ class GoogleDriveService:
             else:
                 file_name = valid_file_path.name
             file_metadata = {"name": file_name, "parents": [folder_id]}
-            media = MediaFileUpload(file_path, mimetype="text/plain")
+            media = MediaFileUpload(file_path, mimetype="text/plain", resumable=True)
 
             # Update existing file if it exists
             existing_file = self.get_file(file_name=file_name)
