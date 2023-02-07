@@ -2,8 +2,6 @@ name: windows-msvc-release-build
 
 on:
   push:
-    branches: [ deploy ]
-  pull_request:
     branches: [ main ]
 
 jobs:

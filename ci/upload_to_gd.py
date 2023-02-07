@@ -5,6 +5,8 @@ from googleapiclient.discovery import build
 from google.oauth2 import service_account
 from googleapiclient.http import MediaFileUpload
 
+# TODO: Separate GoogleDriveFile and GoogleDriveService classes into a separate file
+
 
 class GoogleDriveFile:
     def __init__(self, drive_file: dict):
@@ -135,7 +137,6 @@ if len(sys.argv) >= 4:
     print(f"new_file_name = {new_file_name}")
 
     drive_service = GoogleDriveService(credential_file_path=cred_file_path)
-    # drive_service.delete_all_files()
     drive_service.upload_file(
         file_path=artifact_file_path,
         folder_id=gd_folder_id,
