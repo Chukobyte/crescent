@@ -31,6 +31,7 @@ jobs:
         run: |
           $env:Path += ";C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\bin"
           echo $env:Path
+          Get-ChildItem C:\*.dll
           echo "Running seika tests!"
           Start-Process seika_test.exe
           echo "Running crescent engine tests!"
