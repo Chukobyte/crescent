@@ -19,27 +19,28 @@ jobs:
 
       - name: install vcpkg
         run: |
+          python --version
           cd ..
           git clone https://github.com/Microsoft/vcpkg.git
           cd vcpkg
           ./bootstrap-vcpkg.sh
 
-      - name: run build
-        run: |
-          pwd
-          mkdir -p /Users/runner/work/crescent/crescent/macos_builds
-          touch /Users/runner/work/crescent/crescent/test.txt
-          chmod -R 777 /Users/runner/work/crescent/crescent/macos_builds
-          ls -Rla /Users/runner/work/crescent/crescent/macos_builds
-
-      - name: deploy artifacts
-        uses: adityak74/google-drive-upload-git-action@v0.3
-        with:
-          credentials: ${{ secrets.GDRIVE_ACCESS_TOKEN }}
-          filename: "macos_builds/*"
-          folderId: ${{ secrets.GDRIVE_FOLDER_ID }}
-          overwrite: "true"
-          mirrorDirectoryStructure: "true"
+#      - name: run build
+#        run: |
+#          pwd
+#          mkdir -p /Users/runner/work/crescent/crescent/macos_builds
+#          touch /Users/runner/work/crescent/crescent/test.txt
+#          chmod -R 777 /Users/runner/work/crescent/crescent/macos_builds
+#          ls -Rla /Users/runner/work/crescent/crescent/macos_builds
+#
+#      - name: deploy artifacts
+#        uses: adityak74/google-drive-upload-git-action@v0.3
+#        with:
+#          credentials: ${{ secrets.GDRIVE_ACCESS_TOKEN }}
+#          filename: "macos_builds/*"
+#          folderId: ${{ secrets.GDRIVE_FOLDER_ID }}
+#          overwrite: "true"
+#          mirrorDirectoryStructure: "true"
 
 #      - name: run build
 #        run: |

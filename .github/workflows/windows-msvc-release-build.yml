@@ -15,25 +15,26 @@ jobs:
 
       - name: installing vcpkg
         run: |
+          python --version
           cd ..
           git clone https://github.com/Microsoft/vcpkg.git
           cd vcpkg
           .\bootstrap-vcpkg.bat
 
-      - name: run build
-        run: |
-          cd
-          mkdir D:\a\crescent\crescent\windows_build
-          echo "yeah"> D:\a\crescent\crescent\windows_build\test.txt
-
-      - name: deploy artifacts
-        uses: adityak74/google-drive-upload-git-action@v0.3
-        with:
-          credentials: ${{ secrets.GDRIVE_ACCESS_TOKEN }}
-          filename: "windows_builds/*"
-          folderId: ${{ secrets.GDRIVE_FOLDER_ID }}
-          overwrite: "true"
-          mirrorDirectoryStructure: "true"
+#      - name: run build
+#        run: |
+#          cd
+#          mkdir D:\a\crescent\crescent\windows_build
+#          echo "yeah"> D:\a\crescent\crescent\windows_build\test.txt
+#
+#      - name: deploy artifacts
+#        uses: adityak74/google-drive-upload-git-action@v0.3
+#        with:
+#          credentials: ${{ secrets.GDRIVE_ACCESS_TOKEN }}
+#          filename: "windows_builds/*"
+#          folderId: ${{ secrets.GDRIVE_FOLDER_ID }}
+#          overwrite: "true"
+#          mirrorDirectoryStructure: "true"
 
 #      - name: run build
 #        run: |
