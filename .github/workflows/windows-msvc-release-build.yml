@@ -2,7 +2,7 @@ name: windows-msvc-release-build
 
 on:
   push:
-    branches: [ main ]
+    branches: [ deploy ]
   pull_request:
     branches: [ main ]
 
@@ -20,8 +20,7 @@ jobs:
           cd ${{ github.workspace }}
           echo "${{ secrets.GDRIVE_CREDENTIALS }}" > creds.json
           echo ""> test.txt
-          dir
-          python ci/upload_to_gd.py ${{ github.workspace }}\test.txt ${{ secrets.GDRIVE_FOLDER_ID }} ${{ github.workspace }}\creds.json test_windows.txt
+          python ci/upload_to_gd.py ${{ github.workspace }}\test.txt ${{ github.workspace }}\creds.json ${{ secrets.GDRIVE_FOLDER_ID }} test_windows.txt
 #          cd ..
 #          git clone https://github.com/Microsoft/vcpkg.git
 #          cd vcpkg

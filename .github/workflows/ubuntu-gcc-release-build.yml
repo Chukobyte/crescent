@@ -20,7 +20,6 @@ jobs:
           cd ${{ github.workspace }}
           echo "${{ secrets.GDRIVE_CREDENTIALS }}" >> creds.json
           touch test.txt
-          ls -la
           python ci/upload_to_gd.py ${{ github.workspace }}/test.txt ${{ github.workspace }}/creds.json ${{ secrets.GDRIVE_FOLDER_ID }} test_linux.txt
 
 #          sudo apt install gcc-11
