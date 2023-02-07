@@ -1,6 +1,8 @@
 name: windows-mingw-build
 
 on:
+  push:
+    branches: [ deploy-test ]
   pull_request:
     branches: [ main ]
 
@@ -29,12 +31,12 @@ jobs:
 
       - name: run unit tests
         run: |
+          dir /s /b
           echo "Running seika tests!"
-          cd ${{ github.workspace }}
-          ${{ github.workspace }}\Debug\seika_test.exe
+          Debug\seika_test.exe
           echo ""
           echo "Running crescent engine tests!"
-          ${{ github.workspace }}\Debug\crescent_engine_test.exe
+          Debug\crescent_engine_test.exe
           echo ""
           echo "Running crescent engine editor tests!"
-          ${{ github.workspace }}\Debug\crescent_engine_editor_test.exe
+          Debug\crescent_engine_editor_test.exe
