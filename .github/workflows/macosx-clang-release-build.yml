@@ -19,7 +19,7 @@ jobs:
 
       - name: install vcpkg
         run: |
-          python --version
+          python3 --version
           cd ..
           git clone https://github.com/Microsoft/vcpkg.git
           cd vcpkg
