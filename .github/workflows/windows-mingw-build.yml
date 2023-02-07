@@ -33,10 +33,10 @@ jobs:
         run: |
           dir
           echo "Running seika tests!"
-          seika_test.exe
+          start seika_test.exe
           echo ""
           echo "Running crescent engine tests!"
-          crescent_engine_test.exe
+          start crescent_engine_test.exe
           echo ""
           echo "Running crescent engine editor tests!"
-          crescent_engine_editor_test.exe
+          start crescent_engine_editor_test.exe
