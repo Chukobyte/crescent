@@ -19,6 +19,8 @@ class GoogleDriveService:
         # TODO: Validate cred file path
         self.credential_file_path = credential_file_path
         self.service = None
+        if not pathlib.Path(credential_file_path).exists():
+            raise Exception(f"credential file '{credential_file_path}' not found!")
 
     def get_service(self):
         if not self.service:
