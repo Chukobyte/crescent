@@ -44,6 +44,11 @@ jobs:
           cd ${{ github.workspace }}
           echo "${{ secrets.GDRIVE_CREDENTIALS_WINDOWS }}" > creds.json
           python ci/upload_to_gd.py ${{ github.workspace }}\Debug\crescent_engine.exe ${{ github.workspace }}\creds.json ${{ secrets.GDRIVE_FOLDER_ID }} crescent_engine_windows.exe
+          python ci/upload_to_gd.py ${{ github.workspace }}\Debug\crescent_engine_editor.exe ${{ github.workspace }}\creds.json ${{ secrets.GDRIVE_FOLDER_ID }} crescent_engine_editor_windows.exe
+
+      - name: print dlls
+        run: |
+          Get-ChildItem -Recurse C:\*.dll
 
   # LINUX BUILD
   linux-build:
@@ -94,6 +99,7 @@ jobs:
           echo "${{ secrets.GDRIVE_CREDENTIALS }}" >> creds.json
           touch test.txt
           python ci/upload_to_gd.py ${{ github.workspace }}/crescent_engine ${{ github.workspace }}/creds.json ${{ secrets.GDRIVE_FOLDER_ID }} crescent_engine_linux
+          python ci/upload_to_gd.py ${{ github.workspace }}/crescent_engine_editor ${{ github.workspace }}/creds.json ${{ secrets.GDRIVE_FOLDER_ID }} crescent_engine_editor_linux
 
   # MACOSX BUILD
   macosx-build:
@@ -130,7 +136,7 @@ jobs:
           python3 -m pip install google-auth google-api-python-client
           cd ${{ github.workspace }}
           echo "${{ secrets.GDRIVE_CREDENTIALS }}" >> creds.json
-          python3 ci/upload_to_gd.py ${{ github.workspace }}/crescent_engine ${{ github.workspace }}/creds.json ${{ secrets.GDRIVE_FOLDER_ID }} crescent_engine_macos
+          python3 ci/upload_to_gd.py ${{ github.workspace }}/crescent_engine ${{ github.workspace }}/creds.json ${{ secrets.GDRIVE_FOLDER_ID }} crescent_engine_macosx
 
   package-all:
     runs-on: ubuntu-latest
@@ -145,9 +151,18 @@ jobs:
 
       - name: setup directories
         run: |
-          mkdir -p crescent_windows/bin
-          mkdir -p crescent_linux/bin
-          mkdir -p crescent_macosx/bin
+          # Windows
+          mkdir -p crescent_windows/bin/windows
+          mkdir -p crescent_windows/bin/linux
+          mkdir -p crescent_windows/bin/macosx
+          # Linux
+          mkdir -p crescent_linux/bin/windows
+          mkdir -p crescent_linux/bin/linux
+          mkdir -p crescent_linux/bin/macosx
+          # Macosx
+          mkdir -p crescent_macosx/bin/windows
+          mkdir -p crescent_macosx/bin/linux
+          mkdir -p crescent_macosx/bin/macosx
 
       - name: download dependencies
         run: |
@@ -158,15 +173,36 @@ jobs:
       - name: build packages
         run: |
           echo "building windows package"
-          mv crescent_engine_windows.exe crescent_windows/bin/crescent.exe
+          # Copy engine binaries
+          cp crescent_engine_windows.exe crescent_windows/bin/windows/crescent_engine.exe
+          cp crescent_engine_linux crescent_windows/bin/linux/crescent_engine
+          cp crescent_engine_macosx crescent_windows/bin/macosx/crescent_engine
+          # Move editor
+          mv crescent_engine_editor_windows.exe crescent_windows/crescent.exe
           zip -r crescent_windows.zip crescent_windows/
 
           echo "building linux package"
-          mv crescent_engine_linux crescent_linux/bin/crescent
+          # Copy engine binaries
+          cp crescent_engine_windows.exe crescent_linux/bin/windows/crescent_engine.exe
+          cp crescent_engine_linux crescent_linux/bin/linux/crescent_engine
+          cp crescent_engine_macosx crescent_linux/bin/macosx/crescent_engine
+          mv crescent_engine_editor_linux crescent_linux/crescent
           zip -r crescent_linux.zip crescent_linux/
 
           echo "building macosx package"
-          mv crescent_engine_macos crescent_macosx/bin/crescent
+          # Copy engine binaries
+          cp crescent_engine_windows.exe crescent_macosx/bin/windows/crescent_engine.exe
+          cp crescent_engine_linux crescent_macosx/bin/linux/crescent_engine
+          cp crescent_engine_macos crescent_macosx/bin/macosx/crescent_engine
           zip -r crescent_macosx.zip crescent_macosx/
           
           ls -la
+
+      - name: deploy packages
+        run: |
+          echo "deploying windows package"
+          python ci/upload_to_gd.py crescent_windows.zip ${{ github.workspace }}/creds.json ${{ secrets.GDRIVE_FOLDER_ID }}
+          echo "deploying linux package"
+          python ci/upload_to_gd.py crescent_linux.zip ${{ github.workspace }}/creds.json ${{ secrets.GDRIVE_FOLDER_ID }}
+          echo "deploying macosx package"
+          python ci/upload_to_gd.py crescent_macosx.zip ${{ github.workspace }}/creds.json ${{ secrets.GDRIVE_FOLDER_ID }}

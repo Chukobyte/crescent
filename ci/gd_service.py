@@ -3,6 +3,7 @@ import pathlib
 import shutil
 from typing import List
 
+import googleapiclient.discovery
 from googleapiclient.discovery import build
 from google.oauth2 import service_account
 from googleapiclient.http import MediaFileUpload, MediaIoBaseDownload
@@ -39,7 +40,7 @@ class GoogleDriveService:
             self.service = build("drive", "v3", credentials=scope_credentials)
         return self.service
 
-    def get_all_files(self) -> list:
+    def get_all_files(self) -> List[dict]:
         result = []
         page_token = None
         while True:
@@ -78,7 +79,7 @@ class GoogleDriveService:
             print(f"Error getting files '{file_names}': {e}")
         return matching_files
 
-    def get_file(self, file_name: str):
+    def get_file(self, file_name: str) -> GoogleDriveFile | None:
         files = self.get_all_files()
         try:
             for file in files:
