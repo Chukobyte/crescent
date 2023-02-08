@@ -53,6 +53,7 @@ add_library(${PROJECT_NAME} STATIC
         src/utils/se_string_util.c
         src/utils/observer.c
         src/data_structures/se_array_utils.c
+        src/data_structures/se_array_list.c
         src/data_structures/se_queue.c
         src/data_structures/se_hash_map.c
         src/data_structures/se_hash_map_string.c

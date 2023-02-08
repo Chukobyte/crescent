@@ -15,18 +15,16 @@ bool hash_map_push_front(SEHashMap* hashMap, size_t index, void* key, void* valu
 void hash_map_grow_if_needed(SEHashMap* hashMap);
 void hash_map_shrink_if_needed(SEHashMap* hashMap);
 void hash_map_allocate(SEHashMap* hashMap, size_t capacity);
-void hash_map_resize(SEHashMap* hashMap, size_t newCapacity);
+void hash_map_resize(SEHashMap* hashMap, size_t capacity);
 
 SEHashMap* se_hash_map_create(size_t keySize, size_t valueSize, size_t capacity) {
     SEHashMap* map = (SEHashMap*) SE_MEM_ALLOCATE_SIZE(sizeof(SEHashMap));
     map->keySize = keySize;
     map->valueSize = valueSize;
-    map->capacity = capacity;
     map->size = 0;
     map->hashFunc = se_default_hash;
     map->compareFunc = se_default_compare;
-    map->nodes = (HashMapNode**) SE_MEM_ALLOCATE_SIZE(capacity * sizeof(HashMapNode*));
-    memset(map->nodes, 0, capacity * sizeof(HashMapNode*)); // TODO: fix
+    hash_map_allocate(map, capacity);
     return map;
 }
 
@@ -149,7 +147,7 @@ void hash_map_shrink_if_needed(SEHashMap* hashMap) {
 }
 
 void hash_map_allocate(SEHashMap* hashMap, size_t capacity) {
-    hashMap->nodes = SE_MEM_ALLOCATE_SIZE(capacity * sizeof(HashMapNode*));
+    hashMap->nodes = (HashMapNode**) SE_MEM_ALLOCATE_SIZE(capacity * sizeof(HashMapNode*));
     memset(hashMap->nodes, 0, capacity * sizeof(HashMapNode*));
 
     hashMap->capacity = capacity;
@@ -169,10 +167,10 @@ void hash_map_rehash(SEHashMap* hashMap, HashMapNode** oldNode, size_t oldCapaci
     }
 }
 
-void hash_map_resize(SEHashMap* hashMap, size_t newCapacity) {
-    if (newCapacity < SE_HASH_MAP_MIN_CAPACITY) {
+void hash_map_resize(SEHashMap* hashMap, size_t capacity) {
+    if (capacity < SE_HASH_MAP_MIN_CAPACITY) {
         if (hashMap->capacity > SE_HASH_MAP_MIN_CAPACITY) {
-            newCapacity = SE_HASH_MAP_MIN_CAPACITY;
+            capacity = SE_HASH_MAP_MIN_CAPACITY;
         } else {
             // Do nothing since the passed in capacity is too low and the current map's capacity is already at min limit
             return;
@@ -181,7 +179,7 @@ void hash_map_resize(SEHashMap* hashMap, size_t newCapacity) {
 
     HashMapNode** oldNode = hashMap->nodes;
     size_t oldCapacity = hashMap->capacity;
-    hash_map_allocate(hashMap, newCapacity);
+    hash_map_allocate(hashMap, capacity);
 
     hash_map_rehash(hashMap, oldNode, oldCapacity);
 

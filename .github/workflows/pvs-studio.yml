@@ -22,14 +22,14 @@ jobs:
           export PATH=/usr/local/bin:$PATH
           cmake --version
 
-      - name: Installing vcpkg
+      - name: installing vcpkg
         run: |
           cd ..
           git clone https://github.com/Microsoft/vcpkg.git
           cd vcpkg
           ./bootstrap-vcpkg.sh
 
-      - name: Installing PVS-Studio
+      - name: installing pvs-studio
         env:
           # The Secret variable setup in GitHub must be in format: "name_or_email key", on a single line
           PVS_STUDIO_LICENSE: ${{ secrets.PVS_STUDIO_LICENSE }}

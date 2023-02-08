@@ -332,7 +332,7 @@ void renderer_batching_draw_sprites(SpriteBatchItem items[], size_t spriteCount)
         const TextureCoordinates textureCoords = renderer_get_texture_coordinates(texture, &items[i].sourceRect, items[i].flipX, items[i].flipY);
         // concat models[] string for uniform param
         char modelsBuffer[12];
-        sprintf(modelsBuffer, "models[%lu]", i);
+        sprintf(modelsBuffer, "models[%zu]", i);
         shader_set_mat4_float(spriteShader, modelsBuffer, &items[i].globalTransform->model);
 
         // Loop over vertices

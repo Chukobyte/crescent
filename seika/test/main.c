@@ -3,6 +3,7 @@
 #include <SDL2/SDL_main.h>
 
 #include "../src/data_structures/se_array_utils.h"
+#include "../src/data_structures/se_array_list.h"
 #include "../src/data_structures/se_spatial_hash_map.h"
 #include "../src/asset/asset_file_loader.h"
 #include "../src/memory/se_mem.h"
@@ -22,6 +23,7 @@ void seika_spatial_hash_map_test(void);
 void seika_file_system_utils_test(void);
 void seika_string_utils_test(void);
 void seika_array_utils_test(void);
+void seika_array_list_test(void);
 void seika_asset_file_loader_test(void);
 void seika_observer_test(void);
 void seika_curve_float_test(void);
@@ -33,6 +35,7 @@ int main(int argv, char** args) {
     RUN_TEST(seika_file_system_utils_test);
     RUN_TEST(seika_string_utils_test);
     RUN_TEST(seika_array_utils_test);
+    RUN_TEST(seika_array_list_test);
     RUN_TEST(seika_asset_file_loader_test);
     RUN_TEST(seika_observer_test);
     RUN_TEST(seika_curve_float_test);
@@ -157,6 +160,74 @@ void seika_array_utils_test(void) {
     TEST_ASSERT_EQUAL_INT(ARRAY_SIZE - 1, arraySize);
 
 #undef ARRAY_SIZE
+}
+
+bool array_list_test_sort(void* a, void* b) {
+    int numA = (int) *(int*) a;
+    int numB = (int) *(int*) b;
+    return numA > numB;
+}
+
+void seika_array_list_test(void) {
+    SEArrayList* list = se_array_list_create(sizeof(int));
+    // Test prepend
+    int num1 = 9;
+    int num2 = 7;
+    se_array_list_prepend(list, &num1);
+    const int returnedNum = (int) *(int*) se_array_list_get_front(list);
+    TEST_ASSERT_EQUAL_INT(list->size, 1);
+    TEST_ASSERT_EQUAL_INT(returnedNum, num1);
+    se_array_list_prepend(list, &num2);
+    TEST_ASSERT_EQUAL_INT(list->size, 2);
+    se_array_list_remove(list, &num1);
+    TEST_ASSERT_EQUAL_INT(list->size, 1);
+    int* returnedNum2 = (int*) se_array_list_pop_front(list);
+    TEST_ASSERT_EQUAL_INT(*returnedNum2, 7);
+    TEST_ASSERT(se_array_list_is_empty(list));
+    SE_MEM_FREE(returnedNum2);
+
+    int numbers[5];
+    for (int i = 0; i < 5; i++) {
+        numbers[i] = i;
+        se_array_list_append(list, &i);
+    }
+    TEST_ASSERT_EQUAL_INT(list->size, 5);
+
+    // For each loop test
+    SEArrayListNode* node = NULL;
+    int loopIndex = 0;
+    SE_ARRAY_LIST_FOR_EACH(list, node) {
+        const int indexNum = (int) *(int*) node->value;
+        TEST_ASSERT_EQUAL_INT(indexNum, numbers[loopIndex]);
+        loopIndex++;
+    }
+
+    const int indexThreeNum = (int) *(int*) se_array_list_get(list, 3);
+    TEST_ASSERT_EQUAL_INT(indexThreeNum, 3);
+
+    // Insert Test
+    int insertNum1 = 10;
+    int insertNum2 = 20;
+    se_array_list_insert(list, &insertNum1, 3);
+    TEST_ASSERT_EQUAL_INT(list->size, 6);
+    se_array_list_insert(list, &insertNum2, 1);
+    TEST_ASSERT_EQUAL_INT(list->size, 7);
+    const int insertNumThree = (int) *(int*) se_array_list_get(list, 3);
+    TEST_ASSERT_EQUAL_INT(insertNumThree, 10);
+    const int insertNumOne = (int) *(int*) se_array_list_get(list, 1);
+    TEST_ASSERT_EQUAL_INT(insertNumOne, 20);
+
+    se_array_list_sort(list, array_list_test_sort);
+    const int smallestNum = (int) *(int*) se_array_list_get_front(list);
+    const int highestNum = (int) *(int*) se_array_list_get_back(list);
+    TEST_ASSERT_EQUAL_INT(smallestNum, 0);
+    TEST_ASSERT_EQUAL_INT(highestNum, 20);
+
+    // Clear test
+    se_array_list_clear(list);
+    TEST_ASSERT_EQUAL_INT(list->size, 0);
+
+    se_array_list_destroy(list);
 }
 
 void seika_asset_file_loader_test(void) {

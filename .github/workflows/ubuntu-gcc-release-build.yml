@@ -1,7 +1,7 @@
-name: ubuntu-gcc-build
+name: ubuntu-gcc-release-build
 
 on:
-  pull_request:
+  push:
     branches: [ main ]
 
 jobs:
@@ -30,7 +30,7 @@ jobs:
       - name: run build
         run: |
           cd ${{ github.workspace }}
-          cmake . -DCMAKE_C_COMPILER=gcc-11 -DCMAKE_CXX_COMPILER=g++-11 -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/../vcpkg/scripts/buildsystems/vcpkg.cmake -DIS_CI_BUILD="true"
+          cmake . -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=gcc-11 -DCMAKE_CXX_COMPILER=g++-11 -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/../vcpkg/scripts/buildsystems/vcpkg.cmake -DIS_CI_BUILD="true"
           cmake --build .
 
       - name: run unit tests
@@ -44,3 +44,12 @@ jobs:
           echo ""
           echo "Running crescent engine editor tests!"
           ./crescent_engine_editor_test
+
+      - name: deploy artifacts
+        run: |
+          python --version
+          python -m pip install google-auth google-api-python-client
+          cd ${{ github.workspace }}
+          echo "${{ secrets.GDRIVE_CREDENTIALS }}" >> creds.json
+          touch test.txt
+          python ci/upload_to_gd.py ${{ github.workspace }}/crescent_engine ${{ github.workspace }}/creds.json ${{ secrets.GDRIVE_FOLDER_ID }} crescent_engine_linux

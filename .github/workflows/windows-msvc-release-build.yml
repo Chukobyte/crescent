@@ -1,7 +1,7 @@
-name: windows-msvc-build
+name: windows-msvc-release-build
 
 on:
-  pull_request:
+  push:
     branches: [ main ]
 
 jobs:
@@ -21,7 +21,7 @@ jobs:
       - name: run build
         run: |
           cd ${{ github.workspace }}
-          cmake . -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/../vcpkg/scripts/buildsystems/vcpkg.cmake -DIS_CI_BUILD="true"
+          cmake . -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/../vcpkg/scripts/buildsystems/vcpkg.cmake -DIS_CI_BUILD="true"
           cmake --build .
 
       - name: run unit tests
@@ -35,3 +35,11 @@ jobs:
           echo ""
           echo "Running crescent engine editor tests!"
           ${{ github.workspace }}\Debug\crescent_engine_editor_test.exe
+
+      - name: deploy artifacts
+        run: |
+          python --version
+          python -m pip install google-auth google-api-python-client
+          cd ${{ github.workspace }}
+          echo "${{ secrets.GDRIVE_CREDENTIALS_WINDOWS }}" > creds.json
+          python ci/upload_to_gd.py ${{ github.workspace }}\Debug\crescent_engine.exe ${{ github.workspace }}\creds.json ${{ secrets.GDRIVE_FOLDER_ID }} crescent_engine_windows.exe

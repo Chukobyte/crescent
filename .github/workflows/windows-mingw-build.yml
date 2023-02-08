@@ -1,17 +1,12 @@
 name: windows-mingw-build
 
 on:
-  push:
-    branches: [ main ]
   pull_request:
     branches: [ main ]
 
 jobs:
   build:
     runs-on: windows-latest
-    defaults:
-      run:
-        shell: msys2 {0}
 
     steps:
       - uses: actions/checkout@v1
@@ -20,6 +15,7 @@ jobs:
           install: gcc make
 
       - name: run build
+        shell: msys2 {0}
         run: |
           (echo ""; echo "y") | pacman -S mingw-w64-x86_64-toolchain
           echo "y" | pacman -S mingw-w64-x86_64-cmake
@@ -28,4 +24,3 @@ jobs:
           echo "y" | pacman -S mingw-w64-x86_64-python
           cmake -G "MinGW Makefiles" . -DIS_CI_BUILD="true"
           cmake --build .
- 
