@@ -23,7 +23,7 @@ jobs:
         run: |
           cd ${{ github.workspace }}
           cmake -DCMAKE_BUILD_TYPE=Release . -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/../vcpkg/scripts/buildsystems/vcpkg.cmake -DIS_CI_BUILD="true"
-          cmake --build .
+          cmake --build . --config Release
 
       - name: run unit tests
         run: |
@@ -99,7 +99,7 @@ jobs:
         run: |
           cd ${{ github.workspace }}
           cmake -DCMAKE_BUILD_TYPE=Release . -DCMAKE_C_COMPILER=gcc-11 -DCMAKE_CXX_COMPILER=g++-11 -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/../vcpkg/scripts/buildsystems/vcpkg.cmake -DIS_CI_BUILD="true"
-          cmake --build .
+          cmake --build . --config Release
 
       - name: run unit tests
         run: |
@@ -141,7 +141,7 @@ jobs:
         run: |
           cd ${{ github.workspace }}
           cmake -DCMAKE_BUILD_TYPE=Release . -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/../vcpkg/scripts/buildsystems/vcpkg.cmake -DIS_CI_BUILD="true"
-          cmake --build .
+          cmake --build . --config Release
 
       - name: run unit tests
         run: |
