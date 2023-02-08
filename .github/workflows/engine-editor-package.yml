@@ -147,7 +147,9 @@ jobs:
 
       - name: download dependencies
         run: |
-          python ci/download_package_deps.py
+          cd ${{ github.workspace }}
+          echo "${{ secrets.GDRIVE_CREDENTIALS }}" >> creds.json
+          python ci/download_package_deps.py ${{ github.workspace }}/creds.json
 
       - name: build packages
         run: |
