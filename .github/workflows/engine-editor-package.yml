@@ -139,6 +139,10 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
+      - name: install pip packages
+        run: |
+          python3 -m pip install google-auth google-api-python-client
+
       - name: setup directories
         run: |
           mkdir -p crescent_windows/bin
