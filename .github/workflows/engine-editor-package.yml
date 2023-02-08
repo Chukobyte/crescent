@@ -48,10 +48,12 @@ jobs:
 
       - name: print vcpkg dlls
         run: |
+          cd ..
           Get-ChildItem -Recurse vcpkg\*.dll
 
       - name: print vcpkg zips
         run: |
+          cd ..
           Get-ChildItem -Recurse vcpkg\*.zip
 
   # LINUX BUILD
