@@ -5,6 +5,7 @@ from gd_service import GoogleDriveService
 
 WINDOWS_ENGINE_BINARY = "crescent_engine_windows.exe"
 WINDOWS_ENGINE_EDITOR_BINARY = "crescent_engine_editor_windows.exe"
+WINDOWS_RUN_DEPS_ZIP = "windows_run_dependencies.zip"
 LINUX_ENGINE_BINARY = "crescent_engine_linux"
 LINUX_ENGINE_EDITOR_BINARY = "crescent_engine_editor_linux"
 MACOSX_ENGINE_BINARY = "crescent_engine_macosx"
@@ -16,6 +17,7 @@ if len(sys.argv) >= 2:
         [
             WINDOWS_ENGINE_BINARY,
             WINDOWS_ENGINE_EDITOR_BINARY,
+            WINDOWS_RUN_DEPS_ZIP,
             LINUX_ENGINE_BINARY,
             LINUX_ENGINE_EDITOR_BINARY,
             MACOSX_ENGINE_BINARY,
@@ -25,6 +27,7 @@ if len(sys.argv) >= 2:
     for binary_path in [
         WINDOWS_ENGINE_BINARY,
         WINDOWS_ENGINE_EDITOR_BINARY,
+        WINDOWS_RUN_DEPS_ZIP,
         LINUX_ENGINE_BINARY,
         LINUX_ENGINE_EDITOR_BINARY,
         MACOSX_ENGINE_BINARY,

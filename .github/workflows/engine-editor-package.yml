@@ -203,6 +203,10 @@ jobs:
           cp crescent_engine_macosx crescent_windows/bin/macosx/crescent_engine
           # Move editor
           mv crescent_engine_editor_windows.exe crescent_windows/crescent.exe
+          # Copy windows runtime deps
+          unzip windows_run_dependencies.zip
+          cp windows_run_dependencies/*  crescent_windows/
+          cp windows_run_dependencies/*  crescent_windows/bin/windows/
           zip -r crescent_windows.zip crescent_windows/
 
           echo "building linux package"
@@ -210,7 +214,11 @@ jobs:
           cp crescent_engine_windows.exe crescent_linux/bin/windows/crescent_engine.exe
           cp crescent_engine_linux crescent_linux/bin/linux/crescent_engine
           cp crescent_engine_macosx crescent_linux/bin/macosx/crescent_engine
+          # Move editor
           mv crescent_engine_editor_linux crescent_linux/crescent
+          # Copy windows runtime deps
+          cp windows_run_dependencies/*  crescent_linux/
+          cp windows_run_dependencies/*  crescent_linux/bin/windows/
           zip -r crescent_linux.zip crescent_linux/
 
           echo "building macosx package"
@@ -218,10 +226,11 @@ jobs:
           cp crescent_engine_windows.exe crescent_macosx/bin/windows/crescent_engine.exe
           cp crescent_engine_linux crescent_macosx/bin/linux/crescent_engine
           cp crescent_engine_macosx crescent_macosx/bin/macosx/crescent_engine
+          # Copy windows runtime deps
+          cp windows_run_dependencies/*  crescent_macosx/
+          cp windows_run_dependencies/*  crescent_macosx/bin/windows/
           zip -r crescent_macosx.zip crescent_macosx/
           
-          ls -la
-
       - name: deploy packages
         run: |
           echo "deploying windows package"
