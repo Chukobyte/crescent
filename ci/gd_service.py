@@ -1,7 +1,7 @@
 import io
 import pathlib
 import shutil
-from typing import List
+from typing import List, Union
 
 import googleapiclient.discovery
 from googleapiclient.discovery import build
@@ -79,7 +79,7 @@ class GoogleDriveService:
             print(f"Error getting files '{file_names}': {e}")
         return matching_files
 
-    def get_file(self, file_name: str) -> GoogleDriveFile | None:
+    def get_file(self, file_name: str) -> Union[GoogleDriveFile, None]:
         files = self.get_all_files()
         try:
             for file in files:
