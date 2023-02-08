@@ -49,7 +49,9 @@ jobs:
           copy vcpkg\packages\python3_x64-windows\bin\python310.dll windows_run_dependencies\
           copy vcpkg\buildtrees\sdl2\x64-windows-rel\SDL2.dll windows_run_dependencies\
           copy vcpkg\buildtrees\zlib\x64-windows-rel\zlib1.dll windows_run_dependencies\
-          Invoke-WebRequest -URI "https://www.python.org/ftp/python/3.10.0/python-3.10.0-embed-win32.zip" -OutFile windows_run_dependencies\python310.zip
+          Invoke-WebRequest -URI "https://www.python.org/ftp/python/3.10.5/python-3.10.5-embed-win32.zip" -OutFile python-3.10.5-embed-win32.zip
+          Expand-Archive -Path python-3.10.5-embed-win32.zip -DestinationPath python-310_5_embed
+          copy python-310_5_embed\python310.zip windows_run_dependencies\
           Compress-Archive -Path windows_run_dependencies -DestinationPath ${{ github.workspace }}\windows_run_dependencies.zip
 
       - name: deploy artifacts
