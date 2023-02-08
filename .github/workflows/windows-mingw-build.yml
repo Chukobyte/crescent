@@ -30,12 +30,12 @@ jobs:
       - name: add dll locations to path
         run: |
           $env:Path += ";C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\bin"
-          echo $env:Path
-          Get-ChildItem C:\*.dll
+          Get-ChildItem -Recurse C:\*.dll
 
       - name: run unit tests
         shell: cmd
         run: |
+          echo $PATH
           echo "Running seika tests!"
           seika_test.exe
           echo ""
