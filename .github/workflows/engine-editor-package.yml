@@ -37,14 +37,30 @@ jobs:
           echo "Running crescent engine editor tests!"
           ${{ github.workspace }}\Debug\crescent_engine_editor_test.exe
 
+      - name: package dlls (and python zip)
+        run: |
+          cd ..
+          mkdir -p windows_run_dependencies
+          copy vcpkg\buildtrees\brotli\x64-windows-rel\brotlicommon.dll windows_run_dependencies\
+          copy vcpkg\buildtrees\brotli\x64-windows-rel\brotlidec.dll windows_run_dependencies\
+          copy vcpkg\buildtrees\bzip2\x64-windows-rel\bz2.dll windows_run_dependencies\
+          copy vcpkg\buildtrees\freetype\x64-windows-rel\freetype.dll windows_run_dependencies\
+          copy vcpkg\buildtrees\libpng\x64-windows-rel\libpng16.dll windows_run_dependencies\
+          copy vcpkg\packages\python3_x64-windows\bin\python310.dll windows_run_dependencies\
+          copy vcpkg\buildtrees\sdl2\x64-windows-rel\SDL2.dll windows_run_dependencies\
+          copy vcpkg\buildtrees\zlib\x64-windows-rel\zlib1.dll windows_run_dependencies\
+          Invoke-WebRequest -URI "https://www.python.org/ftp/python/3.10.0/python-3.10.0-embed-win32.zip" -OutFile windows_run_dependencies\python310.zip
+          Compress-Archive -Path windows_run_dependencies -DestinationPath ${{ github.workspace }}\windows_run_dependencies.zip
+
       - name: deploy artifacts
         run: |
           python --version
           python -m pip install google-auth google-api-python-client
           cd ${{ github.workspace }}
           echo "${{ secrets.GDRIVE_CREDENTIALS_WINDOWS }}" > creds.json
-          python ci/upload_to_gd.py ${{ github.workspace }}\Debug\crescent_engine.exe ${{ github.workspace }}\creds.json ${{ secrets.GDRIVE_FOLDER_ID }} crescent_engine_windows.exe
-          python ci/upload_to_gd.py ${{ github.workspace }}\Debug\crescent_engine_editor.exe ${{ github.workspace }}\creds.json ${{ secrets.GDRIVE_FOLDER_ID }} crescent_engine_editor_windows.exe
+          python ci\upload_to_gd.py ${{ github.workspace }}\Debug\crescent_engine.exe ${{ github.workspace }}\creds.json ${{ secrets.GDRIVE_FOLDER_ID }} crescent_engine_windows.exe
+          python ci\upload_to_gd.py ${{ github.workspace }}\Debug\crescent_engine_editor.exe ${{ github.workspace }}\creds.json ${{ secrets.GDRIVE_FOLDER_ID }} crescent_engine_editor_windows.exe
+          python ci\upload_to_gd.py ${{ github.workspace }}\windows_run_dependencies.zip ${{ github.workspace }}\creds.json ${{ secrets.GDRIVE_FOLDER_ID }}
 
       - name: print vcpkg dlls
         run: |
@@ -199,7 +215,7 @@ jobs:
           # Copy engine binaries
           cp crescent_engine_windows.exe crescent_macosx/bin/windows/crescent_engine.exe
           cp crescent_engine_linux crescent_macosx/bin/linux/crescent_engine
-          cp crescent_engine_macos crescent_macosx/bin/macosx/crescent_engine
+          cp crescent_engine_macosx crescent_macosx/bin/macosx/crescent_engine
           zip -r crescent_macosx.zip crescent_macosx/
           
           ls -la
