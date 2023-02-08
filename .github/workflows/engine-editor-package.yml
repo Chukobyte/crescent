@@ -48,7 +48,7 @@ jobs:
 
       - name: print dlls
         run: |
-          Get-ChildItem -Recurse C:\*.dll
+          Get-ChildItem -Recurse vcpkg\*.dll
 
   # LINUX BUILD
   linux-build:

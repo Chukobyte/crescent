@@ -157,6 +157,5 @@ class GoogleDriveService:
                     .create(body=file_metadata, media_body=media, fields="id")
                     .execute()
                 )
-            print(f"File ID: {file.get('id')}")
         except Exception as e:
             print(f"Exception: {e}")
