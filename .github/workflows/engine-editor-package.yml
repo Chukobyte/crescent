@@ -29,13 +29,13 @@ jobs:
         run: |
           echo "Running seika tests!"
           cd ${{ github.workspace }}
-          ${{ github.workspace }}\Debug\seika_test.exe
+          ${{ github.workspace }}\Release\seika_test.exe
           echo ""
           echo "Running crescent engine tests!"
-          ${{ github.workspace }}\Debug\crescent_engine_test.exe
+          ${{ github.workspace }}\Release\crescent_engine_test.exe
           echo ""
           echo "Running crescent engine editor tests!"
-          ${{ github.workspace }}\Debug\crescent_engine_editor_test.exe
+          ${{ github.workspace }}\Release\crescent_engine_editor_test.exe
 
       - name: package dlls (and python zip)
         run: |
@@ -58,8 +58,8 @@ jobs:
           python -m pip install google-auth google-api-python-client
           cd ${{ github.workspace }}
           echo "${{ secrets.GDRIVE_CREDENTIALS_WINDOWS }}" > creds.json
-          python ci\upload_to_gd.py ${{ github.workspace }}\Debug\crescent_engine.exe ${{ github.workspace }}\creds.json ${{ secrets.GDRIVE_FOLDER_ID }} crescent_engine_windows.exe
-          python ci\upload_to_gd.py ${{ github.workspace }}\Debug\crescent_engine_editor.exe ${{ github.workspace }}\creds.json ${{ secrets.GDRIVE_FOLDER_ID }} crescent_engine_editor_windows.exe
+          python ci\upload_to_gd.py ${{ github.workspace }}\Release\crescent_engine.exe ${{ github.workspace }}\creds.json ${{ secrets.GDRIVE_FOLDER_ID }} crescent_engine_windows.exe
+          python ci\upload_to_gd.py ${{ github.workspace }}\Release\crescent_engine_editor.exe ${{ github.workspace }}\creds.json ${{ secrets.GDRIVE_FOLDER_ID }} crescent_engine_editor_windows.exe
           python ci\upload_to_gd.py ${{ github.workspace }}\windows_run_dependencies.zip ${{ github.workspace }}\creds.json ${{ secrets.GDRIVE_FOLDER_ID }}
 
       - name: print vcpkg dlls
