@@ -46,9 +46,13 @@ jobs:
           python ci/upload_to_gd.py ${{ github.workspace }}\Debug\crescent_engine.exe ${{ github.workspace }}\creds.json ${{ secrets.GDRIVE_FOLDER_ID }} crescent_engine_windows.exe
           python ci/upload_to_gd.py ${{ github.workspace }}\Debug\crescent_engine_editor.exe ${{ github.workspace }}\creds.json ${{ secrets.GDRIVE_FOLDER_ID }} crescent_engine_editor_windows.exe
 
-      - name: print dlls
+      - name: print vcpkg dlls
         run: |
           Get-ChildItem -Recurse vcpkg\*.dll
+
+      - name: print vcpkg zips
+        run: |
+          Get-ChildItem -Recurse vcpkg\*.zip
 
   # LINUX BUILD
   linux-build:
