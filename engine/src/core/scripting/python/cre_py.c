@@ -3,6 +3,8 @@
 #include <Python.h>
 
 #include "../seika/src/asset/asset_file_loader.h"
+#include "../seika/src/memory/se_mem.h"
+#include "../seika/src/utils/se_file_system_utils.h"
 #include "../seika/src/utils/se_assert.h"
 
 #include "py_cache.h"
@@ -11,6 +13,13 @@
 #include "../../engine_context.h"
 
 void cre_py_initialize() {
+    // Update python path
+    char* cwd = se_fs_get_cwd();
+    char path[1024];
+    snprintf(path, sizeof(path), "PYTHONPATH=%s/python310.zip", cwd);
+    putenv(path);
+    SE_MEM_FREE(cwd);
+
     cre_py_cache_initialize();
     Py_SetProgramName(L"crescent_engine_python");
     PyImport_AppendInittab("crescent_api_internal", &PyInit_cre_py_API); // Load engine modules
