@@ -102,6 +102,8 @@ jobs:
           cd ${{ github.workspace }}
           cmake -DCMAKE_BUILD_TYPE=Release . -DCMAKE_C_COMPILER=gcc-11 -DCMAKE_CXX_COMPILER=g++-11 -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/../vcpkg/scripts/buildsystems/vcpkg.cmake -DIS_CI_BUILD="true"
           cmake --build . --config Release
+          chmod +x crescent_engine
+          chmod +x crescent_engine_editor
 
       - name: run unit tests
         run: |
@@ -160,6 +162,7 @@ jobs:
           python3 -m pip install google-auth google-api-python-client
           cd ${{ github.workspace }}
           echo "${{ secrets.GDRIVE_CREDENTIALS }}" >> creds.json
+          chmod +x ${{ github.workspace }}/crescent_engine
           python3 ci/upload_to_gd.py ${{ github.workspace }}/crescent_engine ${{ github.workspace }}/creds.json ${{ secrets.GDRIVE_FOLDER_ID }} crescent_engine_macosx
 
   package-all:
