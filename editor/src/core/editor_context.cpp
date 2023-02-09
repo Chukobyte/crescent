@@ -1,10 +1,18 @@
 #include "editor_context.h"
 #include "utils/file_system_helper.h"
 
+#ifdef _WINDOWS
+#define CRESCENT_OS_BIN_DIR "windows"
+#elif __APPLE__
+#define CRESCENT_OS_BIN_DIR "macosx"
+#else
+#define CRESCENT_OS_BIN_DIR "linux"
+#endif
+
 EditorContext::EditorContext(singleton) {}
 
 std::string EditorContext::GetEngineBinPath() const {
-    return initialDir + "/bin";
+    return initialDir + "/bin/" + CRESCENT_OS_BIN_DIR;
 }
 
 std::string EditorContext::GetEngineBinaryPath() const {
