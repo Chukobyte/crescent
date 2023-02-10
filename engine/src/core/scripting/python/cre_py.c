@@ -16,10 +16,9 @@ void cre_py_initialize() {
     // Update python path
     char* cwd = se_fs_get_cwd();
     char path[1024];
-    char* currentPythonPath = getenv("PYTHONPATH");
+    const char* currentPythonPath = getenv("PYTHONPATH"); // Seems like we don't need to free pointer?
     if (currentPythonPath != NULL) {
         snprintf(path, sizeof(path), "PYTHONPATH=%s:%s/python310.zip", currentPythonPath, cwd);
-        SE_MEM_FREE(currentPythonPath);
     } else {
         snprintf(path, sizeof(path), "PYTHONPATH=%s/python310.zip", cwd);
     }
