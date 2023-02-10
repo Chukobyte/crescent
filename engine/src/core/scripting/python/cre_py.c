@@ -16,10 +16,16 @@ void cre_py_initialize() {
     // Update python path
     char* cwd = se_fs_get_cwd();
     char path[1024];
-    snprintf(path, sizeof(path), "PYTHONPATH=%s/python310.zip", cwd);
+    char* currentPythonPath = getenv("PYTHONPATH");
+    if (currentPythonPath != NULL) {
+        snprintf(path, sizeof(path), "PYTHONPATH=%s:%s/python310.zip", currentPythonPath, cwd);
+        SE_MEM_FREE(currentPythonPath);
+    } else {
+        snprintf(path, sizeof(path), "PYTHONPATH=%s/python310.zip", cwd);
+    }
     putenv(path);
     SE_MEM_FREE(cwd);
-
+    // Initialize python
     cre_py_cache_initialize();
     Py_SetProgramName(L"crescent_engine_python");
     PyImport_AppendInittab("crescent_api_internal", &PyInit_cre_py_API); // Load engine modules
