@@ -82,7 +82,7 @@ bool cre_initialize(int argv, char** args) {
     }
 
     // TODO: Determine if python needs to be initialized programmatically
-    cre_py_initialize();
+//    cre_py_initialize();
 
     cre_curve_float_manager_init();
 
@@ -241,7 +241,7 @@ void cre_shutdown() {
     cre_game_props_finalize();
     cre_scene_manager_finalize();
     cre_ecs_manager_finalize();
-    cre_py_finalize();
+//    cre_py_finalize();
     cre_curve_float_manager_finalize();
     SDL_Quit();
     se_logger_info("RBE Engine shutdown!");
