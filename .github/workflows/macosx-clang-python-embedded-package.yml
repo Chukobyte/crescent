@@ -36,7 +36,7 @@ jobs:
         run: |
           mkdir -p build
           cd Python-${{ env.PYTHON_VERSION }}
-          ./configure --prefix=${{ github.workspace }}/build --enable-ipv6 --enable-shared --without-ensurepip 2>&1 | tee -a ../python-${{ env.PYTHON_VERSION }}.config.log
+          ./configure --prefix=${{ github.workspace }}/build --enable-optimizations --enable-ipv6 --enable-shared --without-ensurepip 2>&1 | tee -a ../python-${{ env.PYTHON_VERSION }}.config.log
           echo "config log"
           cat ../python-${{ env.PYTHON_VERSION }}.config.log
           echo "printout our dir"
@@ -47,10 +47,15 @@ jobs:
           cd Python-${{ env.PYTHON_VERSION }}
           make
 
+      - name: install-python
+        run: |
+          cd Python-${{ env.PYTHON_VERSION }}
+          make install
+
       - name: deploy-python
         run: |
           echo "printout our build dir"
           ls -la build
-          tar -czvf python-build-${{ env.PYTHON_VERSION }}.tar.gz
+          tar -czvf python-build-${{ env.PYTHON_VERSION }}.tar.gz build
           echo "${{ secrets.GDRIVE_CREDENTIALS }}" >> creds.json
           python3 ci/upload_to_gd.py python-build-${{ env.PYTHON_VERSION }}.tar.gz ${{ github.workspace }}/creds.json ${{ secrets.GDRIVE_FOLDER_ID }} python-macosx-build-${{ env.PYTHON_VERSION }}.tar.gz
