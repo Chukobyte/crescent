@@ -7,9 +7,6 @@ on:
 env:
   BUILD_NUMBER: custom
   PYTHON_VERSION: 3.10.5
-  PYTHON_MICRO_VERSION: ${{ env.PYTHON_VERSION | regex_replace("\\d+\\.\\d+\\.\\d+") }}
-  PYTHON_VER: ${{ env.PYTHON_VERSION | basename }}
-  ARCH: ${{ env.RUNNER_OS }}
 
 jobs:
   build:
@@ -17,6 +14,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v1
+
+      - name: configure-env-vars
+        run: |
+          echo "PYTHON_MICRO_VERSION=${{ env.PYTHON_VERSION | regex_replace("\\d+\\.\\d+\\.\\d+") }}" >> $GITHUB_ENV
+          echo "ARCH=${{ env.RUNNER_OS }}" >> $GITHUB_ENV
 
       - name: setup-dependencies
         run: |
