@@ -21,6 +21,10 @@ jobs:
           echo "PYTHON_MICRO_VERSION=$temp_py_version" >> $GITHUB_ENV
           echo "ARCH=${{ env.RUNNER_OS }}" >> $GITHUB_ENV
 
+      - name: setup-dependencies
+        run: |
+          sudo apt install zlib1g-dev
+
       - name: download-python-source
         run: |
           curl --fail -L https://www.python.org/ftp/python/${{ env.PYTHON_MICRO_VERSION }}/Python-${{ env.PYTHON_VERSION }}.tgz -o Python-${{ env.PYTHON_VERSION }}.tgz
@@ -85,6 +89,8 @@ jobs:
         run: |
           mkdir -p build
           cd Python-${{ env.PYTHON_VERSION }}
+          export CPPFLAGS="-I$(brew --prefix zlib)/include"
+          export LDFLAGS="-I$(brew --prefix zlib)/lib"
           ./configure --prefix=${{ github.workspace }}/build --enable-optimizations --enable-ipv6 --enable-shared --without-ensurepip 2>&1 | tee -a ../python-${{ env.PYTHON_VERSION }}.config.log
           echo "config log"
           cat ../python-${{ env.PYTHON_VERSION }}.config.log
