@@ -10,6 +10,7 @@ LINUX_ENGINE_BINARY = "crescent_engine_linux"
 LINUX_ENGINE_EDITOR_BINARY = "crescent_engine_editor_linux"
 LINUX_PYTHON_ZIP = "python310_linux.zip"
 MACOSX_ENGINE_BINARY = "crescent_engine_macosx"
+MACOSX_PYTHON_ZIP = "python310_macosx.zip"
 
 ALL_DEP_FILES = [
     WINDOWS_ENGINE_BINARY,
@@ -19,6 +20,7 @@ ALL_DEP_FILES = [
     LINUX_ENGINE_EDITOR_BINARY,
     LINUX_PYTHON_ZIP,
     MACOSX_ENGINE_BINARY,
+    MACOSX_PYTHON_ZIP,
 ]
 
 if len(sys.argv) >= 2:

@@ -217,7 +217,7 @@ jobs:
           cp windows_run_dependencies/*  crescent_windows/
           cp windows_run_dependencies/*  crescent_windows/bin/windows/
           cp python310_linux.zip  crescent_windows/bin/linux/python310.zip
-          cp python310_linux.zip  crescent_windows/bin/macosx/python310.zip
+          cp python310_macosx.zip  crescent_windows/bin/macosx/python310.zip
           zip -r crescent_windows.zip crescent_windows/
 
           echo "building linux package"
@@ -236,7 +236,7 @@ jobs:
           # Copy windows runtime deps
           cp python310_linux.zip  crescent_linux/python310.zip
           cp python310_linux.zip  crescent_linux/bin/linux/python310.zip
-          cp python310_linux.zip  crescent_linux/bin/macosx/python310.zip
+          cp python310_macosx.zip  crescent_linux/bin/macosx/python310.zip
           cp windows_run_dependencies/*  crescent_linux/bin/windows/
           zip -r crescent_linux.zip crescent_linux/
 
@@ -252,9 +252,9 @@ jobs:
           cp -r assets crescent_macosx/bin/macosx
           cp -r test_games crescent_macosx/bin/macosx
           # Copy windows runtime deps
-          cp python310_linux.zip  crescent_macosx/python310.zip
+          cp python310_macosx.zip  crescent_macosx/python310.zip
           cp python310_linux.zip  crescent_macosx/bin/linux/python310.zip
-          cp python310_linux.zip  crescent_macosx/bin/macosx/python310.zip
+          cp python310_macosx.zip  crescent_macosx/bin/macosx/python310.zip
           cp windows_run_dependencies/*  crescent_macosx/bin/windows/
           zip -r crescent_macosx.zip crescent_macosx/
           
