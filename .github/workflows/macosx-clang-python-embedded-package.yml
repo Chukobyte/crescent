@@ -56,8 +56,7 @@ jobs:
         run: |
           python3 --version
           python3 -m pip install google-auth google-api-python-client
-          echo "printout our build dir"
-          ls -la build
-          tar -czvf python-build-${{ env.PYTHON_VERSION }}.tar.gz build
+          cd build/lib/python3.10
+          zip -r ${{ github.workspace }}/python310_macosx.zip *          
           echo "${{ secrets.GDRIVE_CREDENTIALS }}" >> creds.json
-          python3 ci/upload_to_gd.py python-build-${{ env.PYTHON_VERSION }}.tar.gz ${{ github.workspace }}/creds.json ${{ secrets.GDRIVE_FOLDER_ID }} python-macosx-build-${{ env.PYTHON_VERSION }}.tar.gz
+          python3 ci/upload_to_gd.py ${{ github.workspace }}/python310_macosx.zip ${{ github.workspace }}/creds.json ${{ secrets.GDRIVE_FOLDER_ID }}
