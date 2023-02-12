@@ -32,7 +32,7 @@ jobs:
           echo "current dir"
           ls -la
 
-      - name: build-python
+      - name: configure-python
         run: |
           mkdir -p build
           cd Python-${{ env.PYTHON_VERSION }}
@@ -41,5 +41,15 @@ jobs:
           cat ../python-${{ env.PYTHON_VERSION }}.config.log
           echo "printout our dir"
           ls -la
+
+      - name: compile-python
+        run: |
+          cd Python-${{ env.PYTHON_VERSION }}
+          make
+
+      - name: install-python
+        run: |
+          cd Python-${{ env.PYTHON_VERSION }}
+          make install
           echo "printout our build dir"
           ls -la ../build
