@@ -36,7 +36,7 @@ jobs:
         run: |
           mkdir -p build
           cd Python-${{ env.PYTHON_VERSION }}
-          ./configure --prefix=${{ github.workspace }}/build --with-pydebug --enable-optimizations --enable-ipv6 --enable-shared --without-ensurepip 2>&1 | tee -a ../python-${{ env.PYTHON_VERSION }}.config.log
+          ./configure --prefix=${{ github.workspace }}/build --enable-optimizations --enable-ipv6 --enable-shared --without-ensurepip 2>&1 | tee -a ../python-${{ env.PYTHON_VERSION }}.config.log
           echo "config log"
           cat ../python-${{ env.PYTHON_VERSION }}.config.log
           echo "printout our dir"
@@ -57,6 +57,7 @@ jobs:
           python3 --version
           python3 -m pip install google-auth google-api-python-client
           cd build/lib/python3.10
-          zip -r ${{ github.workspace }}/python310_macosx.zip *          
-          echo "${{ secrets.GDRIVE_CREDENTIALS }}" >> ${{ github.workspace }}/creds.json
-          python3 ci/upload_to_gd.py ${{ github.workspace }}/python310_macosx.zip ${{ github.workspace }}/creds.json ${{ secrets.GDRIVE_FOLDER_ID }}
+          zip -r ${{ github.workspace }}/python310_macosx.zip *
+          cd ${{ github.workspace }}
+          echo "${{ secrets.GDRIVE_CREDENTIALS }}" >> creds.json
+          python3 ci/upload_to_gd.py build/lib/python3.10/python310_macosx.zip creds.json ${{ secrets.GDRIVE_FOLDER_ID }}
