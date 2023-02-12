@@ -53,7 +53,7 @@ jobs:
           python --version
           python -m pip install google-auth google-api-python-client
           cd build/lib/python3.10
-          zip -r ${{ github.workspace }}/python310_macosx.zip *
+          zip -r ${{ github.workspace }}/python310_linux.zip *
           cd ${{ github.workspace }}
           echo "${{ secrets.GDRIVE_CREDENTIALS }}" >> creds.json
           python ci/upload_to_gd.py python310_linux.zip creds.json ${{ secrets.GDRIVE_FOLDER_ID }}
