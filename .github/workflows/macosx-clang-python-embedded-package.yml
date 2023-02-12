@@ -23,7 +23,9 @@ jobs:
 
       - name: setup-dependencies
         run: |
-          brew install dpkg bzip2 libffi gdbm ncurses sqlite zlib openssl -q
+          xcode-select --install
+          xcode-select -p
+          brew install dpkg bzip2 libffi gdbm ncurses sqlite zlib openssl wget pkg-config -q
 
       - name: download-python-source
         run: |
