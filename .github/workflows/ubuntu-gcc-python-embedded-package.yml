@@ -1,8 +1,7 @@
 name: ubuntu-gcc-python-embedded-package
 
 on:
-  push:
-    branches: []
+  workflow_dispatch:
 
 jobs:
   build:
