@@ -50,7 +50,7 @@ jobs:
       - name: install-python
         run: |
           cd Python-${{ env.PYTHON_VERSION }}
-          make install
+          sudo make install
 
       - name: deploy-python
         run: |
