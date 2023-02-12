@@ -17,7 +17,7 @@ jobs:
 
       - name: configure-env-vars
         run: |
-          temp_py_version=$(echo ${{ env.PYTHON_VERSION }} |  grep -Po "\d+\.\d+\.\d+")
+          temp_py_version=$(echo ${{ env.PYTHON_VERSION }} |  grep -Eo "\d+\.\d+\.\d+")
           echo "PYTHON_MICRO_VERSION=$temp_py_version" >> $GITHUB_ENV
           echo "ARCH=${{ env.RUNNER_OS }}" >> $GITHUB_ENV
 
