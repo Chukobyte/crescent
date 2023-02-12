@@ -31,7 +31,7 @@ void cre_ecs_manager_initialize() {
     cre_ec_system_register(sprite_rendering_ec_system_create());
     cre_ec_system_register(animated_sprite_rendering_ec_system_create());
     cre_ec_system_register(font_rendering_ec_system_create());
-//    cre_ec_system_register(script_ec_system_create());
+    cre_ec_system_register(script_ec_system_create());
     cre_ec_system_register(collision_ec_system_create());
     cre_ec_system_register(color_rect_ec_system_create());
     cre_ec_system_register(parallax_ec_system_create());
