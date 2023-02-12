@@ -23,7 +23,7 @@ jobs:
 
       - name: setup-dependencies
         run: |
-          sudo apt install zlib1g-dev build-dep pkg-config lcov gdb build-essentials libbz2-dev libffi-dev libgdbm-dev libgdbm-compat-dev liblzma-dev libncurses5-dev libreadline6-dev libsqlite3-dev libssl-dev lzma lzma-dev tk-dev uuid-de
+          sudo apt install zlib1g-dev pkg-config lcov gdb libbz2-dev libffi-dev libgdbm-dev libgdbm-compat-dev liblzma-dev libncurses5-dev libreadline6-dev libsqlite3-dev libssl-dev lzma lzma-dev tk-dev
 
       - name: download-python-source
         run: |
