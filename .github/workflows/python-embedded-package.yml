@@ -93,7 +93,7 @@ jobs:
           export CPPFLAGS="-I$(brew --prefix zlib)/include -I$(brew --prefix gdbm)/include -I$(brew --prefix xz)/include"
           export LDFLAGS="-L$(brew --prefix zlib)/lib -L$(brew --prefix gdbm)/lib -L$(brew --prefix xz)/lib"
           export PKG_CONFIG_PATH="-I$(brew --prefix tcl-tk)/lib/pkgconfig"
-          ./configure --prefix=${{ github.workspace }}/build --enable-optimizations --enable-ipv6 --enable-shared --without-ensurepip 2>&1 | tee -a ../python-${{ env.PYTHON_VERSION }}.config.log
+          ./configure --prefix=${{ github.workspace }}/build --enable-optimizations --with-openssl=$(brew --prefix openssl) --enable-ipv6 --enable-shared --without-ensurepip 2>&1 | tee -a ../python-${{ env.PYTHON_VERSION }}.config.log
           echo "config log"
           cat ../python-${{ env.PYTHON_VERSION }}.config.log
           echo "printout our dir"
