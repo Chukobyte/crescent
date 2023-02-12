@@ -28,4 +28,18 @@ jobs:
       - name: download-python-source
         run: |
           curl --fail -L https://www.python.org/ftp/python/${{ env.PYTHON_MICRO_VERSION }}/Python-${{ env.PYTHON_VERSION }}.tgz -o Python-${{ env.PYTHON_VERSION }}.tgz
+          tar zxf Python-${{ env.PYTHON_VERSION }}.tgz
+          echo "current dir"
           ls -la
+
+      - name: build-python
+        run: |
+          mkdir -p build
+          cd Python-${{ env.PYTHON_VERSION }}
+          ./configure --prefix=../build --enable-ipv6 --enable-shared --without-ensurepip 2>&1 | tee -a ../python-${{ env.PYTHON_VERSION }}.config.log
+          echo "config log"
+          cat ../python-${{ env.PYTHON_VERSION }}.config.log
+          echo "printout our dir"
+          ls -la
+          echo "printout our build dir"
+          ls -la ../build
