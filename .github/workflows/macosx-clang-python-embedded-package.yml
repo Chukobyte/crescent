@@ -54,6 +54,8 @@ jobs:
 
       - name: deploy-python
         run: |
+          python3 --version
+          python3 -m pip install google-auth google-api-python-client
           echo "printout our build dir"
           ls -la build
           tar -czvf python-build-${{ env.PYTHON_VERSION }}.tar.gz build
