@@ -23,7 +23,7 @@ jobs:
 
       - name: setup-dependencies
         run: |
-          brew install dpkg bzip2 libffi gdbm ncurses sqlite libuuid zlib  -q
+          brew install dpkg bzip2 libffi gdbm ncurses sqlite zlib  -q
 
       - name: download-python-source
         run: |
@@ -36,7 +36,7 @@ jobs:
         run: |
           mkdir -p build
           cd Python-${{ env.PYTHON_VERSION }}
-          ./configure --prefix=../build --enable-ipv6 --enable-shared --without-ensurepip 2>&1 | tee -a ../python-${{ env.PYTHON_VERSION }}.config.log
+          ./configure --prefix=${{ github.workspace }}/build --enable-ipv6 --enable-shared --without-ensurepip 2>&1 | tee -a ../python-${{ env.PYTHON_VERSION }}.config.log
           echo "config log"
           cat ../python-${{ env.PYTHON_VERSION }}.config.log
           echo "printout our dir"
