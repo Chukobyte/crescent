@@ -23,7 +23,7 @@ jobs:
 
       - name: setup-dependencies
         run: |
-          brew install dpkg bzip2 libffi gdbm ncurses sqlite zlib  -q
+          brew install dpkg bzip2 libffi gdbm ncurses sqlite zlib openssl -q
 
       - name: download-python-source
         run: |
@@ -47,9 +47,10 @@ jobs:
           cd Python-${{ env.PYTHON_VERSION }}
           make
 
-      - name: install-python
+      - name: deploy-python
         run: |
-          cd Python-${{ env.PYTHON_VERSION }}
-          make install
           echo "printout our build dir"
-          ls -la ../build
+          ls -la build
+          tar -czvf python-build-${{ env.PYTHON_VERSION }}.tar.gz
+          echo "${{ secrets.GDRIVE_CREDENTIALS }}" >> creds.json
+          python3 ci/upload_to_gd.py python-build-${{ env.PYTHON_VERSION }}.tar.gz ${{ github.workspace }}/creds.json ${{ secrets.GDRIVE_FOLDER_ID }} python-macosx-build-${{ env.PYTHON_VERSION }}.tar.gz
