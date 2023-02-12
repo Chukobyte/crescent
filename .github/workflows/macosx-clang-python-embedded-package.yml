@@ -60,4 +60,4 @@ jobs:
           zip -r ${{ github.workspace }}/python310_macosx.zip *
           cd ${{ github.workspace }}
           echo "${{ secrets.GDRIVE_CREDENTIALS }}" >> creds.json
-          python3 ci/upload_to_gd.py build/lib/python3.10/python310_macosx.zip creds.json ${{ secrets.GDRIVE_FOLDER_ID }}
+          python3 ci/upload_to_gd.py python310_macosx.zip creds.json ${{ secrets.GDRIVE_FOLDER_ID }}
