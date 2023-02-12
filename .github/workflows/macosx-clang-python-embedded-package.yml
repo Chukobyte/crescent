@@ -4,6 +4,13 @@ on:
   push:
     branches: [ package_em ]
 
+env:
+  BUILD_NUMBER: custom
+  PYTHON_VERSION: 3.10.5
+  PYTHON_MICRO_VERSION: ${{ env.PYTHON_VERSION | regex_replace("\\d+\\.\\d+\\.\\d+") }}
+  PYTHON_VER: ${{ env.PYTHON_VERSION | basename }}
+  ARCH: ${{ env.RUNNER_OS }}
+
 jobs:
   build:
     runs-on: macOS-latest
@@ -11,7 +18,11 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
-      - name: run-setup-macosx
+      - name: setup-dependencies
         run: |
-          chmod +x ci/setup_macos.sh
-          ./ci/setup_macos.sh
+          brew install dpkg bzip2 libffi gdbm ncurses sqlite libuuid zlib  -y
+
+      - name: download-python-source
+        run: |
+          curl --fail -L https://www.python.org/ftp/python/${{ env.PYTHON_MICRO_VERSION }}/Python-${{ env.PYTHON_VERSION }}.tgz -o Python-${{ env.PYTHON_VERSION }}.tgz
+          ls -la
