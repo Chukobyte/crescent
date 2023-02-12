@@ -1,4 +1,4 @@
-name: macosx-clang-python-embedded-package
+name: python-embedded-package
 
 on:
   push:
@@ -9,7 +9,56 @@ env:
   PYTHON_VERSION: 3.10.5
 
 jobs:
-  build:
+  compile-linux-python:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: configure-env-vars
+        run: |
+          temp_py_version=$(echo ${{ env.PYTHON_VERSION }} |  grep -Eo "\d+\.\d+\.\d+")
+          echo "PYTHON_MICRO_VERSION=$temp_py_version" >> $GITHUB_ENV
+          echo "ARCH=${{ env.RUNNER_OS }}" >> $GITHUB_ENV
+
+      - name: download-python-source
+        run: |
+          curl --fail -L https://www.python.org/ftp/python/${{ env.PYTHON_MICRO_VERSION }}/Python-${{ env.PYTHON_VERSION }}.tgz -o Python-${{ env.PYTHON_VERSION }}.tgz
+          tar zxf Python-${{ env.PYTHON_VERSION }}.tgz
+          echo "current dir"
+          ls -la
+
+      - name: configure-python
+        run: |
+          mkdir -p build
+          cd Python-${{ env.PYTHON_VERSION }}
+          ./configure --prefix=${{ github.workspace }}/build --enable-optimizations --enable-ipv6 --enable-shared --without-ensurepip 2>&1 | tee -a ../python-${{ env.PYTHON_VERSION }}.config.log
+          echo "config log"
+          cat ../python-${{ env.PYTHON_VERSION }}.config.log
+          echo "printout our dir"
+          ls -la
+
+      - name: compile-python
+        run: |
+          cd Python-${{ env.PYTHON_VERSION }}
+          make
+
+      - name: install-python
+        run: |
+          cd Python-${{ env.PYTHON_VERSION }}
+          sudo make install
+
+      - name: deploy-python
+        run: |
+          python --version
+          python -m pip install google-auth google-api-python-client
+          cd build/lib/python3.10
+          zip -r ${{ github.workspace }}/python310_macosx.zip *
+          cd ${{ github.workspace }}
+          echo "${{ secrets.GDRIVE_CREDENTIALS }}" >> creds.json
+          python ci/upload_to_gd.py python310_linux.zip creds.json ${{ secrets.GDRIVE_FOLDER_ID }}
+
+  compile-macos-python:
     runs-on: macOS-latest
 
     steps:
