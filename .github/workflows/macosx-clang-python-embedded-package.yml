@@ -1,0 +1,17 @@
+name: macosx-clang-python-embedded-package
+
+on:
+  push:
+    branches: [ package_em ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: run-setup-macosx
+        run: |
+          chmod +x ci/setup_macos.sh
+          ./ci/setup_macos.sh
