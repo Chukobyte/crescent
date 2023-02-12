@@ -23,7 +23,8 @@ jobs:
 
       - name: setup-dependencies
         run: |
-          sudo apt install zlib1g-dev
+          deb-src http://archive.ubuntu.com/ubuntu/ jammy main
+          sudo apt install zlib1g-dev build-dep pkg-config lcov gdb build-essentials libbz2-dev libffi-dev libgdbm-dev libgdbm-compat-dev liblzma-dev libncurses5-dev libreadline6-dev libsqlite3-dev libssl-dev lzma lzma-dev tk-dev uuid-de
 
       - name: download-python-source
         run: |
@@ -89,8 +90,9 @@ jobs:
         run: |
           mkdir -p build
           cd Python-${{ env.PYTHON_VERSION }}
-          export CPPFLAGS="-I$(brew --prefix zlib)/include"
-          export LDFLAGS="-I$(brew --prefix zlib)/lib"
+          export CPPFLAGS="-I$(brew --prefix zlib)/include -I$(brew --prefix gdbm)/include -I$(brew --prefix xz)/include"
+          export LDFLAGS="-L$(brew --prefix zlib)/lib -L$(brew --prefix gdbm)/lib -L$(brew --prefix xz)/lib"
+          export PKG_CONFIG_PATH="-I$(brew --prefix tcl-tk)/lib/pkgconfig"
           ./configure --prefix=${{ github.workspace }}/build --enable-optimizations --enable-ipv6 --enable-shared --without-ensurepip 2>&1 | tee -a ../python-${{ env.PYTHON_VERSION }}.config.log
           echo "config log"
           cat ../python-${{ env.PYTHON_VERSION }}.config.log
