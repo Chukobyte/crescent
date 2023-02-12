@@ -17,12 +17,13 @@ jobs:
 
       - name: configure-env-vars
         run: |
-          echo "PYTHON_MICRO_VERSION=$(echo ${{ env.PYTHON_VERSION }} |  grep -Po "\d+\.\d+\.\d+")" >> $GITHUB_ENV
+          temp_py_version=$(echo ${{ env.PYTHON_VERSION }} |  grep -Po "\d+\.\d+\.\d+")
+          echo "PYTHON_MICRO_VERSION=$temp_py_version" >> $GITHUB_ENV
           echo "ARCH=${{ env.RUNNER_OS }}" >> $GITHUB_ENV
 
       - name: setup-dependencies
         run: |
-          brew install dpkg bzip2 libffi gdbm ncurses sqlite libuuid zlib  -y
+          brew install dpkg bzip2 libffi gdbm ncurses sqlite libuuid zlib  -q
 
       - name: download-python-source
         run: |
