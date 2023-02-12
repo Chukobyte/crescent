@@ -23,7 +23,7 @@ jobs:
 
       - name: setup-dependencies
         run: |
-          brew install dpkg bzip2 libffi gdbm ncurses sqlite zlib openssl@1.1 wget pkg-config tcl-tk xz -q
+          brew install dpkg bzip2 libffi gdbm ncurses sqlite3 zlib openssl@1.1 wget pkg-config tcl-tk xz readline -q
 
       - name: download-python-source
         run: |
