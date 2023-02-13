@@ -13,7 +13,7 @@
 #include "../../engine_context.h"
 
 void cre_py_initialize() {
-    // Update python path
+    // Update python path (TODO: Use 'Py_SetPythonHome' and 'Py_SetPath' functions)
     char* cwd = se_fs_get_cwd();
     char path[1024];
     const char* currentPythonPath = getenv("PYTHONPATH"); // Seems like we don't need to free pointer?
