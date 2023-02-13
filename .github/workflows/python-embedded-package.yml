@@ -9,58 +9,53 @@ env:
   PYTHON_VERSION: 3.10.5
 
 jobs:
-#  compile-linux-python:
-#    runs-on: ubuntu-latest
-#
-#    steps:
-#      - uses: actions/checkout@v1
-#
-#      - name: configure-env-vars
-#        run: |
-#          temp_py_version=$(echo ${{ env.PYTHON_VERSION }} |  grep -Po "\d+\.\d+\.\d+")
-#          echo "PYTHON_MICRO_VERSION=$temp_py_version" >> $GITHUB_ENV
-#          echo "ARCH=${{ env.RUNNER_OS }}" >> $GITHUB_ENV
-#
-#      - name: setup-dependencies
-#        run: |
-#          sudo apt install zlib1g-dev pkg-config lcov gdb libbz2-dev libffi-dev libgdbm-dev libgdbm-compat-dev liblzma-dev libncurses5-dev libreadline6-dev libsqlite3-dev libssl-dev lzma lzma-dev tk-dev
-#
-#      - name: download-python-source
-#        run: |
-#          curl --fail -L https://www.python.org/ftp/python/${{ env.PYTHON_MICRO_VERSION }}/Python-${{ env.PYTHON_VERSION }}.tgz -o Python-${{ env.PYTHON_VERSION }}.tgz
-#          tar zxf Python-${{ env.PYTHON_VERSION }}.tgz
-#          echo "current dir"
-#          ls -la
-#
-#      - name: configure-python
-#        run: |
-#          mkdir -p build
-#          cd Python-${{ env.PYTHON_VERSION }}
-#          ./configure --prefix=${{ github.workspace }}/build --enable-optimizations --enable-ipv6 --enable-shared --without-ensurepip 2>&1 | tee -a ../python-${{ env.PYTHON_VERSION }}.config.log
-#          echo "config log"
-#          cat ../python-${{ env.PYTHON_VERSION }}.config.log
-#          echo "printout our dir"
-#          ls -la
-#
-#      - name: compile-python
-#        run: |
-#          cd Python-${{ env.PYTHON_VERSION }}
-#          make
-#
-#      - name: install-python
-#        run: |
-#          cd Python-${{ env.PYTHON_VERSION }}
-#          sudo make install
-#
-#      - name: deploy-python
-#        run: |
-#          python --version
-#          python -m pip install google-auth google-api-python-client
-#          cd build/lib/python3.10
-#          zip -r ${{ github.workspace }}/python310_linux.zip *
-#          cd ${{ github.workspace }}
-#          echo "${{ secrets.GDRIVE_CREDENTIALS }}" >> creds.json
-#          python ci/upload_to_gd.py python310_linux.zip creds.json ${{ secrets.GDRIVE_FOLDER_ID }}
+  compile-linux-python:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: configure-env-vars
+        run: |
+          temp_py_version=$(echo ${{ env.PYTHON_VERSION }} |  grep -Po "\d+\.\d+\.\d+")
+          echo "PYTHON_MICRO_VERSION=$temp_py_version" >> $GITHUB_ENV
+          echo "ARCH=${{ env.RUNNER_OS }}" >> $GITHUB_ENV
+
+      - name: setup-dependencies
+        run: |
+          sudo apt install zlib1g-dev pkg-config lcov gdb libbz2-dev libffi-dev libgdbm-dev libgdbm-compat-dev liblzma-dev libncurses5-dev libreadline6-dev libsqlite3-dev libssl-dev lzma lzma-dev tk-dev
+
+      - name: download-python-source
+        run: |
+          git clone --branch v${{ env.PYTHON_VERSION }} https://github.com/python/cpython.git
+
+
+      - name: configure-python
+        run: |
+          mkdir -p build
+          cd cpython
+          ./configure --prefix=${{ github.workspace }}/build --enable-optimizations --enable-ipv6 --enable-shared --without-ensurepip 2>&1 | tee -a ../python-${{ env.PYTHON_VERSION }}.config.log
+          echo "config log"
+          cat ../python-${{ env.PYTHON_VERSION }}.config.log
+
+      - name: compile-python
+        run: |
+          cd cpython
+          make
+
+      - name: install-python
+        run: |
+          cd cpython
+          sudo make install
+
+      - name: deploy-python
+        run: |
+          python -m pip install google-auth google-api-python-client
+          cd build/lib/python3.10
+          zip -r ${{ github.workspace }}/python310_linux.zip *
+          cd ${{ github.workspace }}
+          echo "${{ secrets.GDRIVE_CREDENTIALS }}" >> creds.json
+          python ci/upload_to_gd.py python310_linux.zip creds.json ${{ secrets.GDRIVE_FOLDER_ID }}
 
   compile-macos-python:
     runs-on: macOS-latest
@@ -81,7 +76,6 @@ jobs:
       - name: download-python-source
         run: |
           git clone --branch v${{ env.PYTHON_VERSION }} https://github.com/python/cpython.git
-          cd cpython
 
       - name: configure-python
         run: |
@@ -93,8 +87,6 @@ jobs:
           ./configure CC=clang --prefix=${{ github.workspace }}/build --enable-optimizations --with-openssl=$(brew --prefix openssl) --enable-ipv6 --enable-shared --without-ensurepip 2>&1 | tee -a ../python-${{ env.PYTHON_VERSION }}.config.log
           echo "config log"
           cat ../python-${{ env.PYTHON_VERSION }}.config.log
-          echo "printout our dir"
-          ls -la
 
       - name: compile-python
         run: |
