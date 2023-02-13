@@ -80,15 +80,18 @@ jobs:
 
       - name: download-python-source
         run: |
-          curl --fail -L https://www.python.org/ftp/python/${{ env.PYTHON_MICRO_VERSION }}/Python-${{ env.PYTHON_VERSION }}.tgz -o Python-${{ env.PYTHON_VERSION }}.tgz
-          tar zxf Python-${{ env.PYTHON_VERSION }}.tgz
-          echo "current dir"
-          ls -la
+#          curl --fail -L https://www.python.org/ftp/python/${{ env.PYTHON_MICRO_VERSION }}/Python-${{ env.PYTHON_VERSION }}.tgz -o Python-${{ env.PYTHON_VERSION }}.tgz
+#          tar zxf Python-${{ env.PYTHON_VERSION }}.tgz
+#          echo "current dir"
+#          ls -la
+          git clone https://github.com/python/cpython.git
+          cd cpython
+          git checkout tags/${{ env.PYTHON_VERSION }}
 
       - name: configure-python
         run: |
           mkdir -p build
-          cd Python-${{ env.PYTHON_VERSION }}
+          cd cpython
           export CPPFLAGS="-I$(brew --prefix zlib)/include -I$(brew --prefix gdbm)/include -I$(brew --prefix xz)/include -I/usr/include"
           export LDFLAGS="-L$(brew --prefix zlib)/lib -L$(brew --prefix gdbm)/lib -L$(brew --prefix xz)/lib -L/usr/lib"
           export PKG_CONFIG_PATH="-I$(brew --prefix tcl-tk)/lib/pkgconfig"
@@ -100,12 +103,12 @@ jobs:
 
       - name: compile-python
         run: |
-          cd Python-${{ env.PYTHON_VERSION }}
+          cd cpython
           make
 
       - name: install-python
         run: |
-          cd Python-${{ env.PYTHON_VERSION }}
+          cd cpython
           sudo make install
 
       - name: deploy-python
