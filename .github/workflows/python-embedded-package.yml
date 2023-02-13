@@ -52,6 +52,9 @@ jobs:
         run: |
           python -m pip install google-auth google-api-python-client
           cd build/lib/python3.10
+          # Remove stuff
+          rm -rf venv config.*
+          # Zip up the package
           zip -r ${{ github.workspace }}/python310_linux.zip *
           cd ${{ github.workspace }}
           echo "${{ secrets.GDRIVE_CREDENTIALS }}" >> creds.json
@@ -103,6 +106,9 @@ jobs:
           python3 --version
           python3 -m pip install google-auth google-api-python-client
           cd build/lib/python3.10
+          # Remove files
+          rm -rf venv config.*
+          # Zip up packages
           zip -r ${{ github.workspace }}/python310_macosx.zip *
           cd ${{ github.workspace }}
           echo "${{ secrets.GDRIVE_CREDENTIALS }}" >> creds.json
