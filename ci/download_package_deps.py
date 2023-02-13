@@ -26,6 +26,7 @@ ALL_DEP_FILES = [
 if len(sys.argv) >= 2:
     cred_file_path = sys.argv[1]
     drive_service = GoogleDriveService(credential_file_path=cred_file_path)
+    print(f"Beginning to download the following dependencies: {ALL_DEP_FILES}")
     drive_service.download_files(ALL_DEP_FILES)
     files_not_downloaded = []
     for binary_path in ALL_DEP_FILES:
