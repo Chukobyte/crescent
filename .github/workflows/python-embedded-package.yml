@@ -80,10 +80,6 @@ jobs:
 
       - name: download-python-source
         run: |
-#          curl --fail -L https://www.python.org/ftp/python/${{ env.PYTHON_MICRO_VERSION }}/Python-${{ env.PYTHON_VERSION }}.tgz -o Python-${{ env.PYTHON_VERSION }}.tgz
-#          tar zxf Python-${{ env.PYTHON_VERSION }}.tgz
-#          echo "current dir"
-#          ls -la
           git clone https://github.com/python/cpython.git
           cd cpython
           git checkout tags/${{ env.PYTHON_VERSION }}
