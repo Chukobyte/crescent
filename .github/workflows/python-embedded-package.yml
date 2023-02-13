@@ -9,7 +9,7 @@ env:
   PYTHON_VERSION: 3.10.5
 
 jobs:
-  compile-linux-python:
+  compile-linux-gcc-python:
     runs-on: ubuntu-latest
 
     steps:
@@ -57,7 +57,7 @@ jobs:
           echo "${{ secrets.GDRIVE_CREDENTIALS }}" >> creds.json
           python ci/upload_to_gd.py python-${{ env.PYTHON_VERSION }}-embed-linux.zip creds.json ${{ secrets.GDRIVE_FOLDER_ID }}
 
-  compile-macos-python:
+  compile-macos-clang-python:
     runs-on: macOS-latest
 
     steps:
