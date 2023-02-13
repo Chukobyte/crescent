@@ -3,14 +3,16 @@ import sys
 
 from gd_service import GoogleDriveService
 
+PYTHON_VERSION = "3.10.5"
+
 WINDOWS_ENGINE_BINARY = "crescent_engine_windows.exe"
 WINDOWS_ENGINE_EDITOR_BINARY = "crescent_engine_editor_windows.exe"
 WINDOWS_RUN_DEPS_ZIP = "windows_run_dependencies.zip"
 LINUX_ENGINE_BINARY = "crescent_engine_linux"
 LINUX_ENGINE_EDITOR_BINARY = "crescent_engine_editor_linux"
-LINUX_PYTHON_ZIP = "python310_linux.zip"
+LINUX_PYTHON_ZIP = f"python-{PYTHON_VERSION}-embed-macosx.zip"
 MACOSX_ENGINE_BINARY = "crescent_engine_macosx"
-MACOSX_PYTHON_ZIP = "python310_macosx.zip"
+MACOSX_PYTHON_ZIP = f"python-{PYTHON_VERSION}-embed-macosx.zip"
 
 ALL_DEP_FILES = [
     WINDOWS_ENGINE_BINARY,
