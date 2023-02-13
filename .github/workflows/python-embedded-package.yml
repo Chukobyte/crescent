@@ -15,22 +15,22 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
-      - name: configure-env-vars
+      - name: configure env vars
         run: |
           temp_py_version=$(echo ${{ env.PYTHON_VERSION }} |  grep -Po "\d+\.\d+\.\d+")
           echo "PYTHON_MICRO_VERSION=$temp_py_version" >> $GITHUB_ENV
           echo "ARCH=${{ env.RUNNER_OS }}" >> $GITHUB_ENV
 
-      - name: setup-dependencies
+      - name: setup dependencies
         run: |
           sudo apt install zlib1g-dev pkg-config lcov gdb libbz2-dev libffi-dev libgdbm-dev libgdbm-compat-dev liblzma-dev libncurses5-dev libreadline6-dev libsqlite3-dev libssl-dev lzma lzma-dev tk-dev
 
-      - name: download-python-source
+      - name: download python source
         run: |
           git clone --branch v${{ env.PYTHON_VERSION }} https://github.com/python/cpython.git
 
 
-      - name: configure-python
+      - name: configure python
         run: |
           mkdir -p build
           cd cpython
@@ -38,17 +38,17 @@ jobs:
           echo "config log"
           cat ../python-${{ env.PYTHON_VERSION }}.config.log
 
-      - name: compile-python
+      - name: compile python
         run: |
           cd cpython
           make
 
-      - name: install-python
+      - name: install python
         run: |
           cd cpython
           sudo make install
 
-      - name: deploy-python
+      - name: deploy embedded python package
         run: |
           python -m pip install google-auth google-api-python-client
           cd build/
@@ -69,15 +69,15 @@ jobs:
           echo "PYTHON_MICRO_VERSION=$temp_py_version" >> $GITHUB_ENV
           echo "ARCH=${{ env.RUNNER_OS }}" >> $GITHUB_ENV
 
-      - name: setup-dependencies
+      - name: setup dependencies
         run: |
           brew install dpkg bzip2 libffi gdbm ncurses sqlite3 zlib openssl@1.1 wget pkg-config tcl-tk xz readline -q
 
-      - name: download-python-source
+      - name: download python source
         run: |
           git clone --branch v${{ env.PYTHON_VERSION }} https://github.com/python/cpython.git
 
-      - name: configure-python
+      - name: configure python
         run: |
           mkdir -p build
           cd cpython
@@ -88,17 +88,17 @@ jobs:
           echo "config log"
           cat ../python-${{ env.PYTHON_VERSION }}.config.log
 
-      - name: compile-python
+      - name: compile python
         run: |
           cd cpython
           make
 
-      - name: install-python
+      - name: install python
         run: |
           cd cpython
           sudo make install
 
-      - name: deploy-python
+      - name: deploy python
         run: |
           python3 --version
           python3 -m pip install google-auth google-api-python-client

@@ -197,6 +197,18 @@ jobs:
           echo "${{ secrets.GDRIVE_CREDENTIALS }}" >> creds.json
           python ci/download_package_deps.py ${{ github.workspace }}/creds.json
 
+      - name: setup python dependencies
+        run: |
+          cd ${{ github.workspace }}
+          # Linux
+          unzip python-3.10.5-embed-linux.zip -d embed_python_linux
+          mv embed_python_linux/lib/python3.10/* embed_python_linux/lib
+          rm -rf embed_python_linux/lib/python3.10
+          # MacOSX
+          unzip python-3.10.5-embed-macosx.zip -d embed_python_macosx
+          mv embed_python_macosx/lib/python3.10/* embed_python_macosx/lib
+          rm -rf embed_python_macosx/lib/python3.10
+
       - name: build packages
         run: |
           echo "building windows package"
@@ -216,6 +228,8 @@ jobs:
           unzip windows_run_dependencies.zip
           cp windows_run_dependencies/*  crescent_windows/
           cp windows_run_dependencies/*  crescent_windows/bin/windows/
+          cp -r embed_python_linux crescent_windows/bin/linux/embed_python
+          cp -r embed_python_macosx crescent_windows/bin/macosx/embed_python
           zip -r crescent_windows.zip crescent_windows/
 
           echo "building linux package"
@@ -233,6 +247,8 @@ jobs:
           mv crescent_engine_editor_linux crescent_linux/crescent
           # Copy windows runtime deps
           cp windows_run_dependencies/*  crescent_linux/bin/windows/
+          cp -r embed_python_linux crescent_linux/bin/linux/embed_python
+          cp -r embed_python_macosx crescent_linux/bin/macosx/embed_python
           zip -r crescent_linux.zip crescent_linux/
 
           echo "building macosx package"
@@ -248,6 +264,8 @@ jobs:
           cp -r test_games crescent_macosx/bin/macosx
           # Copy windows runtime deps
           cp windows_run_dependencies/*  crescent_macosx/bin/windows/
+          cp -r embed_python_linux crescent_macosx/bin/linux/embed_python
+          cp -r embed_python_macosx crescent_macosx/bin/macosx/embed_python
           zip -r crescent_macosx.zip crescent_macosx/
           
       - name: deploy packages
