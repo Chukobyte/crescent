@@ -2,7 +2,7 @@ name: engine-editor-package
 
 on:
   push:
-    branches: [ main ]
+    branches: [ package ]
 
 jobs:
   # WINDOWS BUILD
@@ -202,11 +202,11 @@ jobs:
           cd ${{ github.workspace }}
           # Linux
           unzip python-3.10.5-embed-linux.zip -d embed_python_linux
-          mv embed_python_linux/lib/python3.10/* embed_python_linux/lib
+          mv embed_python_linux/lib/python3.10 embed_python_linux/lib/modules
           rm -rf embed_python_linux/lib/python3.10
           # MacOSX
           unzip python-3.10.5-embed-macosx.zip -d embed_python_macosx
-          mv embed_python_macosx/lib/python3.10/* embed_python_macosx/lib
+          mv embed_python_macosx/lib/python3.10 embed_python_macosx/lib/modules
           rm -rf embed_python_macosx/lib/python3.10
 
       - name: build packages

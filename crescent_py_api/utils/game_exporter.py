@@ -167,13 +167,18 @@ class GameExporter:
                 FileUtils.delete_file(file_to_delete_path.as_posix())
 
         # Copy dlls
-        for file in FileUtils.get_dir_file_paths(
-            engine_bin_dir_path.as_posix(),
-            filter_func=lambda file: file.endswith(".dll"),
-        ):
-            file_path = Path(file)
-            dest_path = temp_file_path / file_path.name
-            FileUtils.copy_file(file, dest_path.as_posix())
+        if "Windows" in platform.system():
+            for file in FileUtils.get_dir_file_paths(
+                engine_bin_dir_path.as_posix(),
+                filter_func=lambda file: file.endswith(".dll"),
+            ):
+                file_path = Path(file)
+                dest_path = temp_file_path / file_path.name
+                FileUtils.copy_file(file, dest_path.as_posix())
+        else:
+            embed_python_path = Path(f"{engine_bin_dir}/embed_python")
+            dest_path = temp_file_path / embed_python_path.name
+            FileUtils.copy_file(embed_python_path.as_posix(), dest_path.as_posix())
         # Copy Engine Binary
         if "Windows" in platform.system():
             engine_binary_extension = ".exe"
