@@ -80,9 +80,8 @@ jobs:
 
       - name: download-python-source
         run: |
-          git clone https://github.com/python/cpython.git
+          git clone --branch v${{ env.PYTHON_VERSION }} https://github.com/python/cpython.git
           cd cpython
-          git checkout tags/${{ env.PYTHON_VERSION }}
 
       - name: configure-python
         run: |
