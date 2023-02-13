@@ -44,9 +44,11 @@ void cre_py_initialize() {
     }
     // Disable writing compiled python files if they are imported as python files
     PyRun_SimpleString("sys.dont_write_bytecode = True"); // TODO: Make this an advanced setting within the editor
+#ifdef _DEBUG
     // Enable tracemalloc for more information on stack traces
     PyRun_SimpleString("import tracemalloc\n");
     PyRun_SimpleString("tracemalloc.start()");
+#endif
     // Import custom python source importer
     PyRun_SimpleString(RBE_PY_API_SOURCE_IMPORTER);
     // Import other custom python modules
