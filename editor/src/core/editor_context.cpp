@@ -15,6 +15,14 @@ std::string EditorContext::GetEngineBinPath() const {
     return initialDir + "/bin/" + CRESCENT_OS_BIN_DIR;
 }
 
+std::string EditorContext::GetEngineBinPathByOS(const std::string &osType) const {
+    if (osType == "windows" || osType == "macosx" || osType == "linux") {
+        return initialDir + "/bin/" + osType;
+    }
+    se_logger_error("osType '%s' is invalid!", osType.c_str());
+    return std::string();
+}
+
 std::string EditorContext::GetEngineBinaryPath() const {
     return GetEngineBinPath() + "/" + EDITOR_ENGINE_BINARY_NAME;
 }

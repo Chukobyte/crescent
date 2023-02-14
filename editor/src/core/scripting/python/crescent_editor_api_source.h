@@ -171,14 +171,22 @@
 "            if file_to_delete_path != project_pack_path:\n"\
 "                FileUtils.delete_file(file_to_delete_path.as_posix())\n"\
 "\n"\
-"        # Copy dlls\n"\
-"        for file in FileUtils.get_dir_file_paths(\n"\
-"            engine_bin_dir_path.as_posix(),\n"\
-"            filter_func=lambda file: file.endswith(\".dll\"),\n"\
-"        ):\n"\
-"            file_path = Path(file)\n"\
-"            dest_path = temp_file_path / file_path.name\n"\
-"            FileUtils.copy_file(file, dest_path.as_posix())\n"\
+"        # Get OS type by inferring from bin path\n"\
+"        export_os_type = engine_bin_dir_path.as_posix().split(\"/\")[-1]\n"\
+"        if export_os_type == \"windows\":\n"\
+"            # Copy dlls\n"\
+"            for file in FileUtils.get_dir_file_paths(\n"\
+"                engine_bin_dir_path.as_posix(),\n"\
+"                filter_func=lambda file: file.endswith(\".dll\"),\n"\
+"            ):\n"\
+"                file_path = Path(file)\n"\
+"                dest_path = temp_file_path / file_path.name\n"\
+"                FileUtils.copy_file(file, dest_path.as_posix())\n"\
+"        else:\n"\
+"            # Copy embedded python files\n"\
+"            embed_python_path = Path(f\"{engine_bin_dir}/embed_python\")\n"\
+"            dest_path = temp_file_path / embed_python_path.name\n"\
+"            FileUtils.copy_file(embed_python_path.as_posix(), dest_path.as_posix())\n"\
 "        # Copy Engine Binary\n"\
 "        if \"Windows\" in platform.system():\n"\
 "            engine_binary_extension = \".exe\"\n"\

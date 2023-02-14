@@ -396,6 +396,19 @@ ImGuiHelper::MenuBar OpenedProjectUI::MenuBar::GetMenuBar() {
                                 .callbackFunc = [] (ImGuiHelper::Context* context) {
                                     static std::string exportFileName;
                                     static ImGuiHelper::InputText exportPathInputText("Folder Path", exportFileName);
+
+                                    // Defaults initial os type to current os
+#ifdef _WINDOWS
+                                    static std::string osType = "windows";
+#elif __APPLE__
+                                    static std::string osType = "macosx";
+#else
+                                    static std::string osType = "linux";
+#endif
+                                    static ImGuiHelper::ComboBox osTypeComboBox("OS", { "windows", "linux", "macosx" }, [](const char* newItem) {
+                                        osType = newItem;
+                                    });
+
                                     if (ImGui::Button("Cancel")) {
                                         exportPathInputText.SetValue("");
                                         ImGui::CloseCurrentPopup();
@@ -407,7 +420,7 @@ ImGuiHelper::MenuBar OpenedProjectUI::MenuBar::GetMenuBar() {
                                             .gameTitle = projectProperties->gameTitle,
                                             .exportArchivePath = exportFileName,
                                             .projectPath = FileSystemHelper::GetCurrentDir(),
-                                            .binPath = editorContext->GetEngineBinPath(),
+                                            .binPath = editorContext->GetEngineBinPathByOS(osType),
                                             .tempPath = editorContext->GetProjectTempPath()
                                         };
                                         GameExporter::Export(exportProps);
@@ -415,6 +428,8 @@ ImGuiHelper::MenuBar OpenedProjectUI::MenuBar::GetMenuBar() {
                                         ImGui::CloseCurrentPopup();
                                     }
                                     ImGui::Separator();
+
+                                    ImGuiHelper::BeginComboBox(osTypeComboBox);
 
                                     ImGuiHelper::BeginInputText(exportPathInputText);
                                     ImGui::SameLine();

@@ -166,8 +166,10 @@ class GameExporter:
             if file_to_delete_path != project_pack_path:
                 FileUtils.delete_file(file_to_delete_path.as_posix())
 
-        # Copy dlls
-        if "Windows" in platform.system():
+        # Get OS type by inferring from bin path
+        export_os_type = engine_bin_dir_path.as_posix().split("/")[-1]
+        if export_os_type == "windows":
+            # Copy dlls
             for file in FileUtils.get_dir_file_paths(
                 engine_bin_dir_path.as_posix(),
                 filter_func=lambda file: file.endswith(".dll"),
@@ -176,6 +178,7 @@ class GameExporter:
                 dest_path = temp_file_path / file_path.name
                 FileUtils.copy_file(file, dest_path.as_posix())
         else:
+            # Copy embedded python files
             embed_python_path = Path(f"{engine_bin_dir}/embed_python")
             dest_path = temp_file_path / embed_python_path.name
             FileUtils.copy_file(embed_python_path.as_posix(), dest_path.as_posix())
