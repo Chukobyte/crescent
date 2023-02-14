@@ -217,9 +217,10 @@ jobs:
           name: crescent_engine_editor_linux
 
       - name: download linux python embed
-        uses: actions/download-artifact@v2
+        uses: dawidd6/action-download-artifact@v2
+        id: python-3.10.5-embed-linux.zip
         with:
-          name: python-3.10.5-embed-linux.zip
+          workflow: python-embedded-package.yml
 
       - name: download macosx engine binary
         uses: actions/download-artifact@v2
@@ -227,9 +228,10 @@ jobs:
           name: crescent_engine_macosx
 
       - name: download macosx python embed
-        uses: actions/download-artifact@v2
+        uses: dawidd6/action-download-artifact@v2
+        id: python-3.10.5-embed-macosx.zip
         with:
-          name: python-3.10.5-embed-macosx.zip
+          workflow: python-embedded-package.yml
 
       - name: setup python dependencies
         run: |
