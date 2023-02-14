@@ -55,10 +55,10 @@ jobs:
           zip -r ${{ github.workspace }}/python-${{ env.PYTHON_VERSION }}-embed-linux.zip *
 
       - name: store python embed file
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
-          name: python-${{ env.PYTHON_VERSION }}-embed-linux.zip
           path: python-${{ env.PYTHON_VERSION }}-embed-linux.zip
+          if-no-files-found: error
 
   compile-macos-clang-python:
     runs-on: macOS-latest
@@ -107,7 +107,7 @@ jobs:
           zip -r ${{ github.workspace }}/python-${{ env.PYTHON_VERSION }}-embed-macosx.zip *
 
       - name: store python embed file
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
-          name: python-${{ env.PYTHON_VERSION }}-embed-macosx.zip
           path: python-${{ env.PYTHON_VERSION }}-embed-macosx.zip
+          if-no-files-found: error

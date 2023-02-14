@@ -24,6 +24,8 @@ jobs:
           cd ${{ github.workspace }}
           cmake -DCMAKE_BUILD_TYPE=Release . -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/../vcpkg/scripts/buildsystems/vcpkg.cmake -DIS_CI_BUILD="true"
           cmake --build . --config Release
+          ren Release\crescent_engine.exe Release\crescent_engine_windows.exe
+          ren Release\crescent_engine_editor.exe Release\crescent_engine_editor_windows.exe
 
       - name: run unit tests
         run: |
@@ -55,22 +57,24 @@ jobs:
           Compress-Archive -Path windows_run_dependencies -DestinationPath ${{ github.workspace }}\windows_run_dependencies.zip
 
       - name: store engine binary
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: crescent_engine_windows.exe
-          path: Release\crescent_engine.exe
+          path: Release\crescent_engine_windows.exe
+          if-no-files-found: error
 
       - name: store editor binary
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: crescent_engine_editor_windows.exe
-          path: Release\crescent_engine_editor.exe
+          path: Release\crescent_engine_editor_windows.exe
+          if-no-files-found: error
 
       - name: store windows deps
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
-          name: windows_run_dependencies.zip
           path: windows_run_dependencies.zip
+          if-no-files-found: error
 
   # LINUX BUILD
   linux-build:
@@ -100,8 +104,10 @@ jobs:
           cd ${{ github.workspace }}
           cmake -DCMAKE_BUILD_TYPE=Release . -DCMAKE_C_COMPILER=gcc-11 -DCMAKE_CXX_COMPILER=g++-11 -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/../vcpkg/scripts/buildsystems/vcpkg.cmake -DIS_CI_BUILD="true"
           cmake --build . --config Release
-          chmod +x crescent_engine
-          chmod +x crescent_engine_editor
+          mv crescent_engine crescent_engine_linux
+          mv crescent_engine_editor crescent_engine_editor_linux
+          chmod +x crescent_engine_linux
+          chmod +x crescent_engine_editor_linux
 
       - name: run unit tests
         run: |
@@ -116,16 +122,16 @@ jobs:
           ./crescent_engine_editor_test
 
       - name: store engine binary
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
-          name: crescent_engine_linux
-          path: crescent_engine
+          path: crescent_engine_linux
+          if-no-files-found: error
 
       - name: store editor binary
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
-          name: crescent_engine_editor_linux
-          path: crescent_engine_editor
+          path: crescent_engine_editor_linux
+          if-no-files-found: error
 
   # MACOSX BUILD
   macosx-build:
@@ -146,6 +152,8 @@ jobs:
           cd ${{ github.workspace }}
           cmake -DCMAKE_BUILD_TYPE=Release . -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/../vcpkg/scripts/buildsystems/vcpkg.cmake -DIS_CI_BUILD="true"
           cmake --build . --config Release
+          mv crescent_engine crescent_engine_macosx
+          chmod +x crescent_engine_macosx
 
       - name: run unit tests
         run: |
@@ -157,10 +165,10 @@ jobs:
           ./crescent_engine_test
 
       - name: store engine binary
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
-          name: crescent_engine_macosx
-          path: crescent_engine
+          path: crescent_engine_macosx
+          if-no-files-found: error
 
   package-all:
     runs-on: ubuntu-latest
