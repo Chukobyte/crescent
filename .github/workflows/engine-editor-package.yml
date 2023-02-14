@@ -302,13 +302,13 @@ jobs:
           cp -r embed_python_macosx crescent_macosx/bin/macosx/embed_python
           zip -r crescent_macosx.zip crescent_macosx/
 
-    - name: deploy packages
-      run: |
-        python -m pip install google-auth google-api-python-client
-        echo "${{ secrets.GDRIVE_CREDENTIALS }}" > creds.json
-        echo "deploying windows package"
-        python ci/upload_to_gd.py crescent_windows.zip ${{ github.workspace }}/creds.json ${{ secrets.GDRIVE_FOLDER_ID }}
-        echo "deploying linux package"
-        python ci/upload_to_gd.py crescent_linux.zip ${{ github.workspace }}/creds.json ${{ secrets.GDRIVE_FOLDER_ID }}
-        echo "deploying macosx package"
-        python ci/upload_to_gd.py crescent_macosx.zip ${{ github.workspace }}/creds.json ${{ secrets.GDRIVE_FOLDER_ID }}
+      - name: deploy packages
+        run: |
+          python -m pip install google-auth google-api-python-client
+          echo "${{ secrets.GDRIVE_CREDENTIALS }}" > creds.json
+          echo "deploying windows package"
+          python ci/upload_to_gd.py crescent_windows.zip ${{ github.workspace }}/creds.json ${{ secrets.GDRIVE_FOLDER_ID }}
+          echo "deploying linux package"
+          python ci/upload_to_gd.py crescent_linux.zip ${{ github.workspace }}/creds.json ${{ secrets.GDRIVE_FOLDER_ID }}
+          echo "deploying macosx package"
+          python ci/upload_to_gd.py crescent_macosx.zip ${{ github.workspace }}/creds.json ${{ secrets.GDRIVE_FOLDER_ID }}
