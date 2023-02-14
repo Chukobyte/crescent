@@ -56,7 +56,7 @@ jobs:
       - name: store python embed file
         uses: actions/upload-artifact@v2
         with:
-          name: python-embed-linux
+          name: python-${{ env.PYTHON_VERSION }}-embed-linux.zip
           path: python-${{ env.PYTHON_VERSION }}-embed-linux.zip
 
   compile-macos-clang-python:
@@ -108,5 +108,5 @@ jobs:
       - name: store python embed file
         uses: actions/upload-artifact@v2
         with:
-          name: python-embed-macosx
+          name: python-${{ env.PYTHON_VERSION }}-embed-macosx.zip
           path: python-${{ env.PYTHON_VERSION }}-embed-macosx.zip
