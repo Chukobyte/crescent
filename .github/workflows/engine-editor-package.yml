@@ -24,8 +24,8 @@ jobs:
           cd ${{ github.workspace }}
           cmake -DCMAKE_BUILD_TYPE=Release . -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/../vcpkg/scripts/buildsystems/vcpkg.cmake -DIS_CI_BUILD="true"
           cmake --build . --config Release
-          ren Release\crescent_engine.exe Release\crescent_engine_windows.exe
-          ren Release\crescent_engine_editor.exe Release\crescent_engine_editor_windows.exe
+          ren Release\crescent_engine.exe crescent_engine_windows.exe
+          ren Release\crescent_engine_editor.exe crescent_engine_editor_windows.exe
 
       - name: run unit tests
         run: |
