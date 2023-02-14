@@ -64,7 +64,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: crescent_engine_editor_windows.exe
-          path: Release\crescent_engine_editor_windows.exe
+          path: Release\crescent_engine_editor.exe
 
       - name: store windows deps
         uses: actions/upload-artifact@v2
