@@ -192,27 +192,27 @@ jobs:
           echo "${{ secrets.GDRIVE_CREDENTIALS }}" >> creds.json
 
       - name: download windows engine binary
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: crescent_engine_windows.exe
 
       - name: download windows editor binary
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: crescent_engine_editor_windows.exe
 
       - name: download windows deps
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: windows_run_dependencies.zip
 
       - name: download linux engine binary
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: crescent_engine_linux
 
       - name: download linux editor binary
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: crescent_engine_editor_linux
 
@@ -223,7 +223,7 @@ jobs:
           workflow: python-embedded-package.yml
 
       - name: download macosx engine binary
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: crescent_engine_macosx
 
@@ -235,7 +235,6 @@ jobs:
 
       - name: setup python dependencies
         run: |
-          cd ${{ github.workspace }}
           # Linux
           unzip python-3.10.5-embed-linux.zip -d embed_python_linux
           mv embed_python_linux/lib/python3.10 embed_python_linux/lib/modules
@@ -247,6 +246,8 @@ jobs:
 
       - name: build packages
         run: |
+          cd ${{ github.workspace }}
+          ls -la *
           echo "building windows package"
           # Copy engine binaries
           cp crescent_engine_windows.exe crescent_windows/bin/windows/crescent_engine.exe
