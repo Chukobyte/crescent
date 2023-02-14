@@ -26,6 +26,7 @@ void cre_py_initialize() {
             snprintf(path, sizeof(path), "PYTHONHOME=%s/%s", cwd, embedded_package_folder);
         }
         putenv(path);
+        se_logger_debug("Setting PYTHONHOME=%s", path);
         // Set PYTHONPATH
         const char* currentPythonPath = getenv("PYTHONPATH"); // Seems like we don't need to free pointer?
         if (currentPythonPath != NULL) {
@@ -34,6 +35,7 @@ void cre_py_initialize() {
             snprintf(path, sizeof(path), "PYTHONPATH=%s/%s/lib/modules", cwd, embedded_package_folder);
         }
         putenv(path);
+        se_logger_debug("Setting PYTHONPATH=%s", path);
         SE_MEM_FREE(cwd);
     }
     // Initialize python
