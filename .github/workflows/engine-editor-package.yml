@@ -73,6 +73,7 @@ jobs:
       - name: store windows deps
         uses: actions/upload-artifact@v3
         with:
+          name: windows_run_dependencies.zip
           path: windows_run_dependencies.zip
           if-no-files-found: error
 
@@ -124,12 +125,14 @@ jobs:
       - name: store engine binary
         uses: actions/upload-artifact@v3
         with:
+          name: crescent_engine_linux
           path: crescent_engine_linux
           if-no-files-found: error
 
       - name: store editor binary
         uses: actions/upload-artifact@v3
         with:
+          name: crescent_engine_editor_linux
           path: crescent_engine_editor_linux
           if-no-files-found: error
 
@@ -167,6 +170,7 @@ jobs:
       - name: store engine binary
         uses: actions/upload-artifact@v3
         with:
+          name: crescent_engine_macosx
           path: crescent_engine_macosx
           if-no-files-found: error
 

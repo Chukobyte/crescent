@@ -57,6 +57,7 @@ jobs:
       - name: store python embed file
         uses: actions/upload-artifact@v3
         with:
+          name: python-${{ env.PYTHON_VERSION }}-embed-linux.zip
           path: python-${{ env.PYTHON_VERSION }}-embed-linux.zip
           if-no-files-found: error
 
@@ -109,5 +110,6 @@ jobs:
       - name: store python embed file
         uses: actions/upload-artifact@v3
         with:
+          name: python-${{ env.PYTHON_VERSION }}-embed-macosx.zip
           path: python-${{ env.PYTHON_VERSION }}-embed-macosx.zip
           if-no-files-found: error
