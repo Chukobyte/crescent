@@ -218,8 +218,8 @@ jobs:
 
       - name: download linux python embed
         uses: dawidd6/action-download-artifact@v2
-        id: python-3.10.5-embed-linux.zip
         with:
+          name: python-3.10.5-embed-linux.zip
           workflow: python-embedded-package.yml
 
       - name: download macosx engine binary
@@ -229,8 +229,8 @@ jobs:
 
       - name: download macosx python embed
         uses: dawidd6/action-download-artifact@v2
-        id: python-3.10.5-embed-macosx.zip
         with:
+          name: python-3.10.5-embed-macosx.zip
           workflow: python-embedded-package.yml
 
       - name: setup python dependencies
