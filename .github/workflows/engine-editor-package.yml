@@ -197,7 +197,7 @@ jobs:
       - name: download windows binaries
         run: |
           cd ${{ github.workspace }}
-          python ci/download_from_gd.py ${{ github.workspace }}/creds.json crescent_engine_windows.exe crescent_engine_editor_windows.exe windows_run_dependencies.zip
+          python ci/download_from_gd.py ${{ github.workspace }}/creds.json crescent_engine_windows.exe crescent_engine_editor_windows.exe
 
       - name: download windows package dependencies
         run: |

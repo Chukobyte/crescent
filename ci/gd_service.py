@@ -102,6 +102,7 @@ class GoogleDriveService:
                 print(f"downloading file '{file.name}'...")
                 while not done:
                     status, done = downloader.next_chunk()
+                    print(f"progress: {int(status.progress() * 100)}%")
 
                 fh.seek(0)
 
