@@ -194,20 +194,35 @@ jobs:
           cd ${{ github.workspace }}
           echo "${{ secrets.GDRIVE_CREDENTIALS }}" >> creds.json
 
-      - name: download windows packages
+      - name: download windows binaries
         run: |
           cd ${{ github.workspace }}
           python ci/download_from_gd.py ${{ github.workspace }}/creds.json crescent_engine_windows.exe crescent_engine_editor_windows.exe windows_run_dependencies.zip
 
-      - name: download linux packages
+      - name: download windows package dependencies
         run: |
           cd ${{ github.workspace }}
-          python ci/download_from_gd.py ${{ github.workspace }}/creds.json crescent_engine_linux crescent_engine_editor_linux python-3.10.5-embed-linux.zip
+          python ci/download_from_gd.py ${{ github.workspace }}/creds.json windows_run_dependencies.zip
+
+      - name: download linux binaries
+        run: |
+          cd ${{ github.workspace }}
+          python ci/download_from_gd.py ${{ github.workspace }}/creds.json crescent_engine_linux crescent_engine_editor_linux
+
+      - name: download linux package dependencies
+        run: |
+          cd ${{ github.workspace }}
+          python ci/download_from_gd.py ${{ github.workspace }}/creds.json python-3.10.5-embed-linux.zip
 
       - name: download macosx packages
         run: |
           cd ${{ github.workspace }}
           python ci/download_from_gd.py ${{ github.workspace }}/creds.json crescent_engine_macosx python-3.10.5-embed-macosx.zip
+
+      - name: download macosx package dependencies
+        run: |
+          cd ${{ github.workspace }}
+          python ci/download_from_gd.py ${{ github.workspace }}/creds.json python-3.10.5-embed-macosx.zip
 
       - name: setup python dependencies
         run: |
