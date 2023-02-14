@@ -190,15 +190,24 @@ jobs:
           mkdir -p crescent_macosx/bin/windows
           mkdir -p crescent_macosx/bin/linux
           mkdir -p crescent_macosx/bin/macosx
-
-      - name: download dependencies
-        run: |
+          # Create creds file
           cd ${{ github.workspace }}
           echo "${{ secrets.GDRIVE_CREDENTIALS }}" >> creds.json
-          echo "Downloading binaries"
-          python ci/download_from_gd.py ${{ github.workspace }}/creds.json crescent_engine_windows.exe crescent_engine_editor_windows.exe crescent_engine_linux crescent_engine_editor_linux crescent_engine_macosx
-          echo "Downloading dependencies"
-          python ci/download_from_gd.py ${{ github.workspace }}/creds.json windows_run_dependencies.zip python-3.10.5-embed-linux.zip python-3.10.5-embed-macosx.zip
+
+      - name: download windows packages
+        run: |
+          cd ${{ github.workspace }}
+          python ci/download_from_gd.py ${{ github.workspace }}/creds.json crescent_engine_windows.exe crescent_engine_editor_windows.exe windows_run_dependencies.zip
+
+      - name: download linux packages
+        run: |
+          cd ${{ github.workspace }}
+          python ci/download_from_gd.py ${{ github.workspace }}/creds.json crescent_engine_linux crescent_engine_editor_linux python-3.10.5-embed-linux.zip
+
+      - name: download macosx packages
+        run: |
+          cd ${{ github.workspace }}
+          python ci/download_from_gd.py ${{ github.workspace }}/creds.json crescent_engine_macosx python-3.10.5-embed-macosx.zip
 
       - name: setup python dependencies
         run: |
