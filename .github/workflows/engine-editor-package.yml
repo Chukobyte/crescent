@@ -54,25 +54,23 @@ jobs:
           copy python-310_5_embed\python310.zip windows_run_dependencies\
           Compress-Archive -Path windows_run_dependencies -DestinationPath ${{ github.workspace }}\windows_run_dependencies.zip
 
-      - name: deploy artifacts
-        run: |
-          python --version
-          python -m pip install google-auth google-api-python-client
-          cd ${{ github.workspace }}
-          echo "${{ secrets.GDRIVE_CREDENTIALS_WINDOWS }}" > creds.json
-          python ci\upload_to_gd.py ${{ github.workspace }}\Release\crescent_engine.exe ${{ github.workspace }}\creds.json ${{ secrets.GDRIVE_FOLDER_ID }} crescent_engine_windows.exe
-          python ci\upload_to_gd.py ${{ github.workspace }}\Release\crescent_engine_editor.exe ${{ github.workspace }}\creds.json ${{ secrets.GDRIVE_FOLDER_ID }} crescent_engine_editor_windows.exe
-          python ci\upload_to_gd.py ${{ github.workspace }}\windows_run_dependencies.zip ${{ github.workspace }}\creds.json ${{ secrets.GDRIVE_FOLDER_ID }}
+      - name: store engine binary
+        uses: actions/upload-artifact@v2
+        with:
+          name: crescent_engine_windows.exe
+          path: Release\crescent_engine.exe
 
-      - name: print vcpkg dlls
-        run: |
-          cd ..
-          Get-ChildItem -Recurse vcpkg\*.dll
+      - name: store editor binary
+        uses: actions/upload-artifact@v2
+        with:
+          name: crescent_engine_editor_windows.exe
+          path: Release\crescent_engine_editor_windows.exe
 
-      - name: print vcpkg zips
-        run: |
-          cd ..
-          Get-ChildItem -Recurse vcpkg\*.zip
+      - name: store windows deps
+        uses: actions/upload-artifact@v2
+        with:
+          name: windows_run_dependencies.zip
+          path: windows_run_dependencies.zip
 
   # LINUX BUILD
   linux-build:
@@ -117,15 +115,17 @@ jobs:
           echo "Running crescent engine editor tests!"
           ./crescent_engine_editor_test
 
-      - name: deploy artifacts
-        run: |
-          python --version
-          python -m pip install google-auth google-api-python-client
-          cd ${{ github.workspace }}
-          echo "${{ secrets.GDRIVE_CREDENTIALS }}" >> creds.json
-          touch test.txt
-          python ci/upload_to_gd.py ${{ github.workspace }}/crescent_engine ${{ github.workspace }}/creds.json ${{ secrets.GDRIVE_FOLDER_ID }} crescent_engine_linux
-          python ci/upload_to_gd.py ${{ github.workspace }}/crescent_engine_editor ${{ github.workspace }}/creds.json ${{ secrets.GDRIVE_FOLDER_ID }} crescent_engine_editor_linux
+      - name: store engine binary
+        uses: actions/upload-artifact@v2
+        with:
+          name: crescent_engine_linux
+          path: crescent_engine
+
+      - name: store editor binary
+        uses: actions/upload-artifact@v2
+        with:
+          name: crescent_engine_editor_linux
+          path: crescent_engine_editor
 
   # MACOSX BUILD
   macosx-build:
@@ -156,14 +156,11 @@ jobs:
           echo "Running crescent engine tests!"
           ./crescent_engine_test
 
-      - name: deploy artifacts
-        run: |
-          python3 --version
-          python3 -m pip install google-auth google-api-python-client
-          cd ${{ github.workspace }}
-          echo "${{ secrets.GDRIVE_CREDENTIALS }}" >> creds.json
-          chmod +x ${{ github.workspace }}/crescent_engine
-          python3 ci/upload_to_gd.py ${{ github.workspace }}/crescent_engine ${{ github.workspace }}/creds.json ${{ secrets.GDRIVE_FOLDER_ID }} crescent_engine_macosx
+      - name: store engine binary
+        uses: actions/upload-artifact@v2
+        with:
+          name: crescent_engine_macosx
+          path: crescent_engine
 
   package-all:
     runs-on: ubuntu-latest
@@ -194,35 +191,45 @@ jobs:
           cd ${{ github.workspace }}
           echo "${{ secrets.GDRIVE_CREDENTIALS }}" >> creds.json
 
-      - name: download windows binaries
-        run: |
-          cd ${{ github.workspace }}
-          python ci/download_from_gd.py ${{ github.workspace }}/creds.json crescent_engine_windows.exe crescent_engine_editor_windows.exe
+      - name: download windows engine binary
+        uses: actions/download-artifact@v2
+        with:
+          name: crescent_engine_windows.exe
 
-      - name: download windows package dependencies
-        run: |
-          cd ${{ github.workspace }}
-          python ci/download_from_gd.py ${{ github.workspace }}/creds.json windows_run_dependencies.zip
+      - name: download windows editor binary
+        uses: actions/download-artifact@v2
+        with:
+          name: crescent_engine_editor_windows.exe
 
-      - name: download linux binaries
-        run: |
-          cd ${{ github.workspace }}
-          python ci/download_from_gd.py ${{ github.workspace }}/creds.json crescent_engine_linux crescent_engine_editor_linux
+      - name: download windows deps
+        uses: actions/download-artifact@v2
+        with:
+          name: windows_run_dependencies.zip
 
-      - name: download linux package dependencies
-        run: |
-          cd ${{ github.workspace }}
-          python ci/download_from_gd.py ${{ github.workspace }}/creds.json python-3.10.5-embed-linux.zip
+      - name: download linux engine binary
+        uses: actions/download-artifact@v2
+        with:
+          name: crescent_engine_linux
 
-      - name: download macosx packages
-        run: |
-          cd ${{ github.workspace }}
-          python ci/download_from_gd.py ${{ github.workspace }}/creds.json crescent_engine_macosx python-3.10.5-embed-macosx.zip
+      - name: download linux editor binary
+        uses: actions/download-artifact@v2
+        with:
+          name: crescent_engine_editor_linux
 
-      - name: download macosx package dependencies
-        run: |
-          cd ${{ github.workspace }}
-          python ci/download_from_gd.py ${{ github.workspace }}/creds.json python-3.10.5-embed-macosx.zip
+      - name: download linux python embed
+        uses: actions/download-artifact@v2
+        with:
+          name: python-3.10.5-embed-linux.zip
+
+      - name: download macosx engine binary
+        uses: actions/download-artifact@v2
+        with:
+          name: crescent_engine_macosx
+
+      - name: download macosx python embed
+        uses: actions/download-artifact@v2
+        with:
+          name: python-3.10.5-embed-macosx.zip
 
       - name: setup python dependencies
         run: |
@@ -294,12 +301,14 @@ jobs:
           cp -r embed_python_linux crescent_macosx/bin/linux/embed_python
           cp -r embed_python_macosx crescent_macosx/bin/macosx/embed_python
           zip -r crescent_macosx.zip crescent_macosx/
-          
-      - name: deploy packages
-        run: |
-          echo "deploying windows package"
-          python ci/upload_to_gd.py crescent_windows.zip ${{ github.workspace }}/creds.json ${{ secrets.GDRIVE_FOLDER_ID }}
-          echo "deploying linux package"
-          python ci/upload_to_gd.py crescent_linux.zip ${{ github.workspace }}/creds.json ${{ secrets.GDRIVE_FOLDER_ID }}
-          echo "deploying macosx package"
-          python ci/upload_to_gd.py crescent_macosx.zip ${{ github.workspace }}/creds.json ${{ secrets.GDRIVE_FOLDER_ID }}
+
+    - name: deploy packages
+      run: |
+        python -m pip install google-auth google-api-python-client
+        echo "${{ secrets.GDRIVE_CREDENTIALS }}" > creds.json
+        echo "deploying windows package"
+        python ci/upload_to_gd.py crescent_windows.zip ${{ github.workspace }}/creds.json ${{ secrets.GDRIVE_FOLDER_ID }}
+        echo "deploying linux package"
+        python ci/upload_to_gd.py crescent_linux.zip ${{ github.workspace }}/creds.json ${{ secrets.GDRIVE_FOLDER_ID }}
+        echo "deploying macosx package"
+        python ci/upload_to_gd.py crescent_macosx.zip ${{ github.workspace }}/creds.json ${{ secrets.GDRIVE_FOLDER_ID }}
