@@ -2,8 +2,10 @@ name: python-embedded-package
 
 # Compiles python and builds embedded packages for linux and macosx every 60 days
 on:
-  schedule:
-    - cron: '0 0 */60 * *'
+  push:
+    branches: [ package_em ]
+#  schedule:
+#    - cron: '0 0 */60 * *'
 
 env:
   PYTHON_VERSION: 3.10.5
