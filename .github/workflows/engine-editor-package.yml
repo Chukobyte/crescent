@@ -4,7 +4,122 @@ on:
   push:
     branches: [ package ]
 
+env:
+  PYTHON_VERSION: 3.10.5
+
 jobs:
+  compile-linux-gcc-python:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: configure env vars
+        run: |
+          temp_py_version=$(echo ${{ env.PYTHON_VERSION }} |  grep -Po "\d+\.\d+\.\d+")
+          echo "PYTHON_MICRO_VERSION=$temp_py_version" >> $GITHUB_ENV
+          echo "ARCH=${{ env.RUNNER_OS }}" >> $GITHUB_ENV
+
+      - name: setup dependencies
+        run: |
+          sudo apt install zlib1g-dev pkg-config lcov gdb libbz2-dev libffi-dev libgdbm-dev libgdbm-compat-dev liblzma-dev libncurses5-dev libreadline6-dev libsqlite3-dev libssl-dev lzma lzma-dev tk-dev
+
+      - name: download python source
+        run: |
+          git clone --branch v${{ env.PYTHON_VERSION }} https://github.com/python/cpython.git
+
+
+      - name: configure python
+        run: |
+          mkdir -p build
+          cd cpython
+          ./configure --prefix=${{ github.workspace }}/build --enable-optimizations --enable-ipv6 --enable-shared --without-ensurepip 2>&1 | tee -a ../python-${{ env.PYTHON_VERSION }}.config.log
+          echo "config log"
+          cat ../python-${{ env.PYTHON_VERSION }}.config.log
+
+      - name: compile python
+        run: |
+          cd cpython
+          make
+
+      - name: install python
+        run: |
+          cd cpython
+          sudo make install
+
+      - name: verify python installation
+        run: |
+          build/bin/python3.10 --version
+
+      - name: package python embedded
+        run: |
+          cd build/
+          zip -r ${{ github.workspace }}/python-${{ env.PYTHON_VERSION }}-embed-linux.zip *
+
+      - name: store python embed file
+        uses: actions/upload-artifact@v3
+        with:
+          name: python-${{ env.PYTHON_VERSION }}-embed-linux.zip
+          path: python-${{ env.PYTHON_VERSION }}-embed-linux.zip
+          if-no-files-found: error
+
+    compile-macos-clang-python:
+      runs-on: macOS-latest
+
+      steps:
+        - uses: actions/checkout@v1
+
+        - name: configure-env-vars
+          run: |
+            temp_py_version=$(echo ${{ env.PYTHON_VERSION }} |  grep -Eo "\d+\.\d+\.\d+")
+            echo "PYTHON_MICRO_VERSION=$temp_py_version" >> $GITHUB_ENV
+            echo "ARCH=${{ env.RUNNER_OS }}" >> $GITHUB_ENV
+
+        - name: setup dependencies
+          run: |
+            brew install dpkg bzip2 libffi gdbm ncurses sqlite3 zlib openssl@1.1 wget pkg-config tcl-tk xz readline -q
+
+        - name: download python source
+          run: |
+            git clone --branch v${{ env.PYTHON_VERSION }} https://github.com/python/cpython.git
+
+        - name: configure python
+          run: |
+            mkdir -p build
+            cd cpython
+            export CPPFLAGS="-I$(brew --prefix zlib)/include -I$(brew --prefix gdbm)/include -I$(brew --prefix xz)/include -I/usr/include"
+            export LDFLAGS="-L$(brew --prefix zlib)/lib -L$(brew --prefix gdbm)/lib -L$(brew --prefix xz)/lib -L/usr/lib"
+            export PKG_CONFIG_PATH="-I$(brew --prefix tcl-tk)/lib/pkgconfig"
+            ./configure CC=clang --prefix=${{ github.workspace }}/build --enable-optimizations --with-openssl=$(brew --prefix openssl) --enable-ipv6 --enable-shared --without-ensurepip 2>&1 | tee -a ../python-${{ env.PYTHON_VERSION }}.config.log
+            echo "config log"
+            cat ../python-${{ env.PYTHON_VERSION }}.config.log
+
+        - name: compile python
+          run: |
+            cd cpython
+            make
+
+        - name: install python
+          run: |
+            cd cpython
+            sudo make install
+
+        - name: verify python installation
+          run: |
+            build/bin/python3.10 --version
+
+        - name: package python embedded
+          run: |
+            cd build/
+            zip -r ${{ github.workspace }}/python-${{ env.PYTHON_VERSION }}-embed-macosx.zip *
+
+        - name: store python embed file
+          uses: actions/upload-artifact@v3
+          with:
+            name: python-${{ env.PYTHON_VERSION }}-embed-macosx.zip
+            path: python-${{ env.PYTHON_VERSION }}-embed-macosx.zip
+            if-no-files-found: error
+
   # WINDOWS BUILD
   windows-build:
     runs-on: windows-latest
@@ -51,8 +166,8 @@ jobs:
           copy vcpkg\packages\python3_x64-windows\bin\python310.dll windows_run_dependencies\
           copy vcpkg\buildtrees\sdl2\x64-windows-rel\SDL2.dll windows_run_dependencies\
           copy vcpkg\buildtrees\zlib\x64-windows-rel\zlib1.dll windows_run_dependencies\
-          Invoke-WebRequest -URI "https://www.python.org/ftp/python/3.10.5/python-3.10.5-embed-win32.zip" -OutFile python-3.10.5-embed-win32.zip
-          Expand-Archive -Path python-3.10.5-embed-win32.zip -DestinationPath python-310_5_embed
+          Invoke-WebRequest -URI "https://www.python.org/ftp/python/${{ env.PYTHON_VERSION }}/python-${{ env.PYTHON_VERSION }}-embed-win32.zip" -OutFile python-${{ env.PYTHON_VERSION }}-embed-win32.zip
+          Expand-Archive -Path python-${{ env.PYTHON_VERSION }}-embed-win32.zip -DestinationPath python-310_5_embed
           copy python-310_5_embed\python310.zip windows_run_dependencies\
           Compress-Archive -Path windows_run_dependencies -DestinationPath ${{ github.workspace }}\windows_run_dependencies.zip
 
@@ -176,7 +291,7 @@ jobs:
 
   package-all:
     runs-on: ubuntu-latest
-    needs: [windows-build, linux-build, macosx-build]
+    needs: [compile-linux-gcc-python, compile-macos-clang-python, windows-build, linux-build, macosx-build]
 
     steps:
       - uses: actions/checkout@v1
@@ -229,12 +344,9 @@ jobs:
           name: crescent_engine_editor_linux
 
       - name: download linux python embed
-        uses: dawidd6/action-download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
-          name: python-3.10.5-embed-linux.zip
-          workflow: python-embedded-package.yml
-          search_artifacts: true
-          if_no_artifact_found: fail
+          name: python-${{ env.PYTHON_VERSION }}-embed-linux.zip
 
       - name: download macosx engine binary
         uses: actions/download-artifact@v3
@@ -242,23 +354,22 @@ jobs:
           name: crescent_engine_macosx
 
       - name: download macosx python embed
-        uses: dawidd6/action-download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
-          name: python-3.10.5-embed-macosx.zip
-          workflow: python-embedded-package.yml
-          search_artifacts: true
-          if_no_artifact_found: fail
+          name: python-${{ env.PYTHON_VERSION }}-embed-macosx.zip
 
       - name: setup python dependencies
         run: |
           # Linux
-          unzip python-3.10.5-embed-linux.zip -d embed_python_linux
+          unzip python-${{ env.PYTHON_VERSION }}-embed-linux.zip -d embed_python_linux
           mv embed_python_linux/lib/python3.10 embed_python_linux/lib/modules
           rm -rf embed_python_linux/lib/python3.10
+          embed_python_linux/bin/python3.10 --version
           # MacOSX
-          unzip python-3.10.5-embed-macosx.zip -d embed_python_macosx
+          unzip python-${{ env.PYTHON_VERSION }}-embed-macosx.zip -d embed_python_macosx
           mv embed_python_macosx/lib/python3.10 embed_python_macosx/lib/modules
           rm -rf embed_python_macosx/lib/python3.10
+          embed_python_macosx/bin/python3.10 --version
 
       - name: build packages
         run: |

@@ -6,7 +6,6 @@ on:
     - cron: '0 0 */60 * *'
 
 env:
-  BUILD_NUMBER: custom
   PYTHON_VERSION: 3.10.5
 
 jobs:
