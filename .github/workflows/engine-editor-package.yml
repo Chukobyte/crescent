@@ -54,8 +54,6 @@ jobs:
       - name: package python embedded
         run: |
           mv build ${{ github.workspace }}/python-${{ env.PYTHON_VERSION }}-embed-linux
-#          cd build/
-#          zip -r ${{ github.workspace }}/python-${{ env.PYTHON_VERSION }}-embed-linux.zip *
 
       - name: store python embed file
         uses: actions/upload-artifact@v3
@@ -112,8 +110,6 @@ jobs:
       - name: package python embedded
         run: |
           mv build ${{ github.workspace }}/python-${{ env.PYTHON_VERSION }}-embed-macosx
-#          cd build/
-#          zip -r ${{ github.workspace }}/python-${{ env.PYTHON_VERSION }}-embed-macosx.zip *
 
       - name: store python embed file
         uses: actions/upload-artifact@v3
@@ -364,12 +360,10 @@ jobs:
         run: |
           # Linux
           cp -r python-${{ env.PYTHON_VERSION }}-embed-linux embed_python_linux
-#          unzip python-${{ env.PYTHON_VERSION }}-embed-linux.zip -d embed_python_linux
           mv embed_python_linux/lib/python3.10 embed_python_linux/lib/modules
           rm -rf embed_python_linux/lib/python3.10
           # MacOSX
           cp -r python-${{ env.PYTHON_VERSION }}-embed-macosx embed_python_macosx
-#          unzip python-${{ env.PYTHON_VERSION }}-embed-macosx.zip -d embed_python_macosx
           mv embed_python_macosx/lib/python3.10 embed_python_macosx/lib/modules
           rm -rf embed_python_macosx/lib/python3.10
 
