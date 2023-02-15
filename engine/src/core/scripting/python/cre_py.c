@@ -36,6 +36,15 @@ void cre_py_initialize() {
         }
         putenv(path);
         se_logger_debug("Setting %s", path);
+        // Set DYLD_LIBRARY_PATH
+        const char* currentDynLibPath = getenv("DYLD_LIBRARY_PATH"); // Seems like we don't need to free pointer?
+        if (currentDynLibPath != NULL) {
+            snprintf(path, sizeof(path), "DYLD_LIBRARY_PATH=%s:%s/%s/lib", currentDynLibPath, cwd, embedded_package_folder);
+        } else {
+            snprintf(path, sizeof(path), "DYLD_LIBRARY_PATH=%s/%s/lib", cwd, embedded_package_folder);
+        }
+        putenv(path);
+        se_logger_debug("Setting %s", path);
         SE_MEM_FREE(cwd);
     }
     // Initialize python
