@@ -6,10 +6,10 @@
 #include "../src/data_structures/se_array_list.h"
 #include "../src/data_structures/se_spatial_hash_map.h"
 #include "../src/asset/asset_file_loader.h"
-#include "../src/memory/se_mem.h"
 #include "../src/utils/se_string_util.h"
 #include "../src/utils/se_file_system_utils.h"
 #include "../src/utils/observer.h"
+#include "../src/utils/se_profile_code.h"
 #include "../src/math/se_curve_float.h"
 
 #define RESOURCES_PATH "seika/test/resources"
@@ -301,4 +301,13 @@ void seika_curve_float_test(void) {
     TEST_ASSERT_EQUAL_DOUBLE(se_curve_float_eval(&curve, 1.0), 1.0);
     se_curve_float_remove_control_point(&curve, point2.x, point2.y);
     TEST_ASSERT_EQUAL_UINT(curve.controlPointCount, 1);
+
+    // TODO: Write performance tests
+//    SE_PROFILE_CODE(
+//            for (int i = 0; i < 10000000; i++) {}
+//    )
+//
+//    double cpu_time_used;
+//    SE_PROFILE_CODE_WITH_VAR(cpu_time_used, for (int i = 0; i < 10000000; i++) {})
+//    printf("Time taken: %f seconds\n", cpu_time_used);
 }
