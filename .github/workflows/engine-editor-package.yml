@@ -358,6 +358,7 @@ jobs:
 
       - name: setup python dependencies
         run: |
+          ls -la *
           # Linux
           cp -r python-${{ env.PYTHON_VERSION }}-embed-linux embed_python_linux
           mv embed_python_linux/lib/python3.10 embed_python_linux/lib/modules
