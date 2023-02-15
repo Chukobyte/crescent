@@ -14,30 +14,30 @@
 
 void cre_py_initialize() {
     // Update python path if embedded package exists (TODO: Use 'Py_SetPythonHome' and 'Py_SetPath' functions)
-//    static const char* embedded_package_folder = "embed_python";
-//    if (se_fs_does_dir_exist(embedded_package_folder)) {
-//        char* cwd = se_fs_get_cwd();
-//        char path[1024];
-//        // Set PYTHONHOME
-//        const char* currentPythonHOME = getenv("PYTHONHOME"); // Seems like we don't need to free pointer?
-//        if (currentPythonHOME != NULL) {
-//            snprintf(path, sizeof(path), "PYTHONHOME=%s:%s/%s", currentPythonHOME, cwd, embedded_package_folder);
-//        } else {
-//            snprintf(path, sizeof(path), "PYTHONHOME=%s/%s", cwd, embedded_package_folder);
-//        }
-//        putenv(path);
-//        se_logger_debug("Setting %s", path);
-//        // Set PYTHONPATH
-//        const char* currentPythonPath = getenv("PYTHONPATH"); // Seems like we don't need to free pointer?
-//        if (currentPythonPath != NULL) {
-//            snprintf(path, sizeof(path), "PYTHONPATH=%s:%s/%s/lib/modules", currentPythonPath, cwd, embedded_package_folder);
-//        } else {
-//            snprintf(path, sizeof(path), "PYTHONPATH=%s/%s/lib/modules", cwd, embedded_package_folder);
-//        }
-//        putenv(path);
-//        se_logger_debug("Setting %s", path);
-//        SE_MEM_FREE(cwd);
-//    }
+    static const char* embedded_package_folder = "embed_python";
+    if (se_fs_does_dir_exist(embedded_package_folder)) {
+        char* cwd = se_fs_get_cwd();
+        char path[1024];
+        // Set PYTHONHOME
+        const char* currentPythonHOME = getenv("PYTHONHOME"); // Seems like we don't need to free pointer?
+        if (currentPythonHOME != NULL) {
+            snprintf(path, sizeof(path), "PYTHONHOME=%s:%s/%s", currentPythonHOME, cwd, embedded_package_folder);
+        } else {
+            snprintf(path, sizeof(path), "PYTHONHOME=%s/%s", cwd, embedded_package_folder);
+        }
+        putenv(path);
+        se_logger_debug("Setting %s", path);
+        // Set PYTHONPATH
+        const char* currentPythonPath = getenv("PYTHONPATH"); // Seems like we don't need to free pointer?
+        if (currentPythonPath != NULL) {
+            snprintf(path, sizeof(path), "PYTHONPATH=%s:%s/%s/lib/modules", currentPythonPath, cwd, embedded_package_folder);
+        } else {
+            snprintf(path, sizeof(path), "PYTHONPATH=%s/%s/lib/modules", cwd, embedded_package_folder);
+        }
+        putenv(path);
+        se_logger_debug("Setting %s", path);
+        SE_MEM_FREE(cwd);
+    }
     // Initialize python
     cre_py_cache_initialize();
     Py_SetProgramName(L"crescent_engine_python");

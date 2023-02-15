@@ -2,7 +2,7 @@ name: engine-editor-package
 
 on:
   push:
-    branches: [ package ]
+    branches: [ package_em ]
 
 jobs:
   # WINDOWS BUILD

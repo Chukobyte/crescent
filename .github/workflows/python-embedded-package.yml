@@ -2,8 +2,10 @@ name: python-embedded-package
 
 # Compiles python and builds embedded packages for linux and macosx every 60 days
 on:
-  schedule:
-    - cron: '0 0 */60 * *'
+  push:
+    branches: [ package ]
+#  schedule:
+#    - cron: '0 0 */60 * *'
 
 env:
   BUILD_NUMBER: custom
@@ -48,6 +50,10 @@ jobs:
         run: |
           cd cpython
           sudo make install
+
+      - name: verify python installation
+        run: |
+          build/bin/python3.10 --version
 
       - name: package python embedded
         run: |
@@ -101,6 +107,10 @@ jobs:
         run: |
           cd cpython
           sudo make install
+
+      - name: verify python installation
+        run: |
+          build/bin/python3.10 --version
 
       - name: package python embedded
         run: |
