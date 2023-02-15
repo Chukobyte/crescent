@@ -4,6 +4,9 @@ on:
   push:
     branches: [ package ]
 
+env:
+  PYTHON_VERSION: 3.10.5
+
 jobs:
   # WINDOWS BUILD
   windows-build:
@@ -51,8 +54,8 @@ jobs:
           copy vcpkg\packages\python3_x64-windows\bin\python310.dll windows_run_dependencies\
           copy vcpkg\buildtrees\sdl2\x64-windows-rel\SDL2.dll windows_run_dependencies\
           copy vcpkg\buildtrees\zlib\x64-windows-rel\zlib1.dll windows_run_dependencies\
-          Invoke-WebRequest -URI "https://www.python.org/ftp/python/3.10.5/python-3.10.5-embed-win32.zip" -OutFile python-3.10.5-embed-win32.zip
-          Expand-Archive -Path python-3.10.5-embed-win32.zip -DestinationPath python-310_5_embed
+          Invoke-WebRequest -URI "https://www.python.org/ftp/python/${{ env.PYTHON_VERSION }}/python-${{ env.PYTHON_VERSION }}-embed-win32.zip" -OutFile python-${{ env.PYTHON_VERSION }}-embed-win32.zip
+          Expand-Archive -Path python-${{ env.PYTHON_VERSION }}-embed-win32.zip -DestinationPath python-310_5_embed
           copy python-310_5_embed\python310.zip windows_run_dependencies\
           Compress-Archive -Path windows_run_dependencies -DestinationPath ${{ github.workspace }}\windows_run_dependencies.zip
 
@@ -231,7 +234,7 @@ jobs:
       - name: download linux python embed
         uses: dawidd6/action-download-artifact@v2
         with:
-          name: python-3.10.5-embed-linux.zip
+          name: python-${{ env.PYTHON_VERSION }}-embed-linux.zip
           workflow: python-embedded-package.yml
           search_artifacts: true
           if_no_artifact_found: fail
@@ -244,7 +247,7 @@ jobs:
       - name: download macosx python embed
         uses: dawidd6/action-download-artifact@v2
         with:
-          name: python-3.10.5-embed-macosx.zip
+          name: python-${{ env.PYTHON_VERSION }}-embed-macosx.zip
           workflow: python-embedded-package.yml
           search_artifacts: true
           if_no_artifact_found: fail
@@ -252,13 +255,9 @@ jobs:
       - name: setup python dependencies
         run: |
           # Linux
-          unzip python-3.10.5-embed-linux.zip -d embed_python_linux
-          mv embed_python_linux/lib/python3.10 embed_python_linux/lib/modules
-          rm -rf embed_python_linux/lib/python3.10
+          unzip python-${{ env.PYTHON_VERSION }}-embed-linux.zip -d embed_python_linux
           # MacOSX
-          unzip python-3.10.5-embed-macosx.zip -d embed_python_macosx
-          mv embed_python_macosx/lib/python3.10 embed_python_macosx/lib/modules
-          rm -rf embed_python_macosx/lib/python3.10
+          unzip python-${{ env.PYTHON_VERSION }}-embed-macosx.zip -d embed_python_macosx
 
       - name: build packages
         run: |
@@ -283,6 +282,7 @@ jobs:
           cp windows_run_dependencies/*  crescent_windows/bin/windows/
           cp -r embed_python_linux crescent_windows/bin/linux/embed_python
           cp -r embed_python_macosx crescent_windows/bin/macosx/embed_python
+          chmod -R 755 crescent_windows
           zip -r crescent_windows.zip crescent_windows/
 
           echo "building linux package"
@@ -302,6 +302,7 @@ jobs:
           cp windows_run_dependencies/*  crescent_linux/bin/windows/
           cp -r embed_python_linux crescent_linux/bin/linux/embed_python
           cp -r embed_python_macosx crescent_linux/bin/macosx/embed_python
+          chmod -R 755 crescent_linux
           zip -r crescent_linux.zip crescent_linux/
 
           echo "building macosx package"
@@ -319,6 +320,7 @@ jobs:
           cp windows_run_dependencies/*  crescent_macosx/bin/windows/
           cp -r embed_python_linux crescent_macosx/bin/linux/embed_python
           cp -r embed_python_macosx crescent_macosx/bin/macosx/embed_python
+          chmod -R 755 crescent_macosx
           zip -r crescent_macosx.zip crescent_macosx/
 
       - name: deploy packages
