@@ -25,8 +25,10 @@ void cre_py_initialize() {
         } else {
             snprintf(path, sizeof(path), "PYTHONHOME=%s/%s", cwd, embedded_package_folder);
         }
-        putenv(path);
         se_logger_debug("Setting %s", path);
+        if (putenv(path) == -1) {
+            se_logger_error("Failed to set env: '%s'", path);
+        }
         // Set PYTHONPATH
         const char* currentPythonPath = getenv("PYTHONPATH"); // Seems like we don't need to free pointer?
         if (currentPythonPath != NULL) {
@@ -34,8 +36,10 @@ void cre_py_initialize() {
         } else {
             snprintf(path, sizeof(path), "PYTHONPATH=%s/%s/lib/modules", cwd, embedded_package_folder);
         }
-        putenv(path);
         se_logger_debug("Setting %s", path);
+        if (putenv(path) == -1) {
+            se_logger_error("Failed to set env: '%s'", path);
+        }
         // Set DYLD_LIBRARY_PATH
         const char* currentDynLibPath = getenv("DYLD_LIBRARY_PATH"); // Seems like we don't need to free pointer?
         if (currentDynLibPath != NULL) {
@@ -43,8 +47,10 @@ void cre_py_initialize() {
         } else {
             snprintf(path, sizeof(path), "DYLD_LIBRARY_PATH=%s/%s/lib", cwd, embedded_package_folder);
         }
-        putenv(path);
         se_logger_debug("Setting %s", path);
+        if (putenv(path) == -1) {
+            se_logger_error("Failed to set env: '%s'", path);
+        }
         SE_MEM_FREE(cwd);
     }
     // Initialize python
