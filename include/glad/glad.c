@@ -173,7 +173,7 @@ static int get_exts(void) {
 #ifdef _GLAD_IS_SOME_NEW_VERSION
     if(max_loaded_major < 3) {
 #endif
-    exts = (const char *)glGetString(GL_EXTENSIONS);
+        exts = (const char *)glGetString(GL_EXTENSIONS);
 #ifdef _GLAD_IS_SOME_NEW_VERSION
     } else {
         unsigned int index;
@@ -218,27 +218,27 @@ static int has_ext(const char *ext) {
 #ifdef _GLAD_IS_SOME_NEW_VERSION
     if(max_loaded_major < 3) {
 #endif
-    const char *extensions;
-    const char *loc;
-    const char *terminator;
-    extensions = exts;
-    if(extensions == NULL || ext == NULL) {
-        return 0;
-    }
-
-    while(1) {
-        loc = strstr(extensions, ext);
-        if(loc == NULL) {
+        const char *extensions;
+        const char *loc;
+        const char *terminator;
+        extensions = exts;
+        if(extensions == NULL || ext == NULL) {
             return 0;
         }
 
-        terminator = loc + strlen(ext);
-        if((loc == extensions || *(loc - 1) == ' ') &&
-           (*terminator == ' ' || *terminator == '\0')) {
-            return 1;
+        while(1) {
+            loc = strstr(extensions, ext);
+            if(loc == NULL) {
+                return 0;
+            }
+
+            terminator = loc + strlen(ext);
+            if((loc == extensions || *(loc - 1) == ' ') &&
+               (*terminator == ' ' || *terminator == '\0')) {
+                return 1;
+            }
+            extensions = terminator;
         }
-        extensions = terminator;
-    }
 #ifdef _GLAD_IS_SOME_NEW_VERSION
     } else {
         int index;
@@ -1116,13 +1116,10 @@ static void find_coreGL(void) {
 }
 
 int gladLoadGLLoader(GLADloadproc load) {
-    printf("Loading glad\n");
     GLVersion.major = 0; GLVersion.minor = 0;
     glGetString = (PFNGLGETSTRINGPROC)load("glGetString");
     if(glGetString == NULL) return 0;
-    printf("Got gl string\n");
     if(glGetString(GL_VERSION) == NULL) return 0;
-    printf("GL_VERSION = %s\n", glGetString(GL_VERSION));
     find_coreGL();
     load_GL_VERSION_1_0(load);
     load_GL_VERSION_1_1(load);
@@ -1138,7 +1135,6 @@ int gladLoadGLLoader(GLADloadproc load) {
     load_GL_VERSION_3_3(load);
 
     if (!find_extensionsGL()) return 0;
-    printf("found extension\n");
     return GLVersion.major != 0 || GLVersion.minor != 0;
 }
 

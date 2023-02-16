@@ -34,6 +34,8 @@ bool Editor::Initialize() {
         return false;
     }
 
+    editorContext->initialDir = FileSystemHelper::GetCurrentDir();
+
     // Initialize Python Instance
     cre_py_initialize(editorContext->GetEngineBinPath().c_str());
 
@@ -43,7 +45,6 @@ bool Editor::Initialize() {
     // TODO: Figure out window stuff dimensions...
     se_renderer_initialize(800, 600, 800, 600);
 
-    editorContext->initialDir = FileSystemHelper::GetCurrentDir();
     editorContext->isRunning = true;
     se_logger_info("Crescent Engine Editor has started!");
 
