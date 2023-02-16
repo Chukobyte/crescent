@@ -2,7 +2,7 @@ name: engine-editor-package
 
 on:
   push:
-    branches: [ package ]
+    branches: [ main ]
 
 env:
   PYTHON_VERSION: 3.10.5

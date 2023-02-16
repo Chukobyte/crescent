@@ -102,12 +102,16 @@ bool cre_initialize(int argv, char** args) {
     }
 
     // Initialize seika framework
-    sf_initialize(gameProperties->gameTitle,
+    const bool hasSeikaInitialized = sf_initialize(gameProperties->gameTitle,
                   gameProperties->windowWidth,
                   gameProperties->windowHeight,
                   gameProperties->resolutionWidth,
                   gameProperties->resolutionHeight,
                   controllerMappingFilePath);
+    if (!hasSeikaInitialized) {
+        se_logger_error("Failed to initialize seika framework!");
+        return false;
+    }
 
     // Initialize sub systems
     if (!cre_initialize_ecs()) {
