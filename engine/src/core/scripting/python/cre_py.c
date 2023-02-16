@@ -12,26 +12,11 @@
 #include "crescent_api_source.h"
 #include "../../engine_context.h"
 
+void cre_py_set_python_home(const char* embeddedPythonPath);
+
 void cre_py_initialize(const char* embeddedPythonPath) {
-    // Update python path if embedded package exists (TODO: Use 'Py_SetPythonHome' and 'Py_SetPath' functions)
-    static const char* embedded_package_folder = "embed_python";
-    if (se_fs_does_dir_exist(embedded_package_folder)) {
-        if (embeddedPythonPath == NULL) {
-            embeddedPythonPath = cre_engine_context_get()->internalAssetsDir;
-        }
-        char pythonHomeEnvVar[2048];
-        // Set PYTHONHOME
-        const char* currentPythonHOME = getenv("PYTHONHOME"); // Seems like we don't need to free pointer?
-        if (currentPythonHOME != NULL) {
-            snprintf(pythonHomeEnvVar, sizeof(pythonHomeEnvVar), "PYTHONHOME=%s:%s/%s", currentPythonHOME, embeddedPythonPath, embedded_package_folder);
-        } else {
-            snprintf(pythonHomeEnvVar, sizeof(pythonHomeEnvVar), "PYTHONHOME=%s/%s", embeddedPythonPath, embedded_package_folder);
-        }
-        if (putenv(pythonHomeEnvVar) == 0) {
-            se_logger_debug("Setting environment var: '%s'", pythonHomeEnvVar);
-        } else {
-            se_logger_error("Failed to set environment var: '%s'", pythonHomeEnvVar);
-        }
+    if (embeddedPythonPath != NULL) {
+        cre_py_set_python_home(embeddedPythonPath);
     }
     // Initialize python
     cre_py_cache_initialize();
@@ -110,4 +95,25 @@ void cre_py_export_game_project(const char* gameTitle, const char* archivePath, 
     strcat(exportGameCommandBuffer, ")");
     PyRun_SimpleString(exportGameCommandBuffer);
 #undef EXPORT_GAME_COMMAND_BUFFER_SIZE
+}
+
+void cre_py_set_python_home(const char* embeddedPythonPath) {
+    char fullEmbeddedPythonPath[1024];
+    snprintf(fullEmbeddedPythonPath, sizeof(fullEmbeddedPythonPath), "%s/embed_python", embeddedPythonPath);
+    if (se_fs_does_dir_exist(fullEmbeddedPythonPath)) {
+        se_logger_debug("Found embedded python package at '%s'", fullEmbeddedPythonPath);
+        char pythonHomeEnvVar[2048];
+        // Set PYTHONHOME
+        const char* currentPythonHOME = getenv("PYTHONHOME"); // Seems like we don't need to free pointer?
+        if (currentPythonHOME != NULL) {
+            snprintf(pythonHomeEnvVar, sizeof(pythonHomeEnvVar), "PYTHONHOME=%s:%s", currentPythonHOME, fullEmbeddedPythonPath);
+        } else {
+            snprintf(pythonHomeEnvVar, sizeof(pythonHomeEnvVar), "PYTHONHOME=%s", fullEmbeddedPythonPath);
+        }
+        if (putenv(pythonHomeEnvVar) == 0) {
+            se_logger_debug("Setting environment var: '%s'", pythonHomeEnvVar);
+        } else {
+            se_logger_error("Failed to set environment var: '%s'", pythonHomeEnvVar);
+        }
+    }
 }

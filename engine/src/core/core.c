@@ -82,7 +82,7 @@ bool cre_initialize(int argv, char** args) {
     }
 
     // TODO: Determine if python needs to be initialized programmatically
-    cre_py_initialize(NULL);
+    cre_py_initialize(engineContext->internalAssetsDir);
 
     cre_curve_float_manager_init();
 
