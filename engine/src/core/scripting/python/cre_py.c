@@ -14,45 +14,24 @@
 
 void cre_py_initialize() {
     // Update python path if embedded package exists (TODO: Use 'Py_SetPythonHome' and 'Py_SetPath' functions)
-//    static const char* embedded_package_folder = "embed_python";
-//    if (se_fs_does_dir_exist(embedded_package_folder)) {
-//        char* cwd = se_fs_get_cwd();
-//        char path[1024];
-//        // Set PYTHONHOME
-//        const char* currentPythonHOME = getenv("PYTHONHOME"); // Seems like we don't need to free pointer?
-//        if (currentPythonHOME != NULL) {
-//            snprintf(path, sizeof(path), "PYTHONHOME=%s:%s/%s", currentPythonHOME, cwd, embedded_package_folder);
-//        } else {
-//            snprintf(path, sizeof(path), "PYTHONHOME=%s/%s", cwd, embedded_package_folder);
-//        }
-//        se_logger_debug("Setting %s", path);
-//        if (putenv(path) == -1) {
-//            se_logger_error("Failed to set env: '%s'", path);
-//        }
-//        // Set PYTHONPATH
-//        const char* currentPythonPath = getenv("PYTHONPATH"); // Seems like we don't need to free pointer?
-//        if (currentPythonPath != NULL) {
-//            snprintf(path, sizeof(path), "PYTHONPATH=%s:%s/%s/lib/modules", currentPythonPath, cwd, embedded_package_folder);
-//        } else {
-//            snprintf(path, sizeof(path), "PYTHONPATH=%s/%s/lib/modules", cwd, embedded_package_folder);
-//        }
-//        se_logger_debug("Setting %s", path);
-//        if (putenv(path) == -1) {
-//            se_logger_error("Failed to set env: '%s'", path);
-//        }
-//        // Set DYLD_LIBRARY_PATH
-//        const char* currentDynLibPath = getenv("DYLD_LIBRARY_PATH"); // Seems like we don't need to free pointer?
-//        if (currentDynLibPath != NULL) {
-//            snprintf(path, sizeof(path), "DYLD_LIBRARY_PATH=%s:%s/%s/lib", currentDynLibPath, cwd, embedded_package_folder);
-//        } else {
-//            snprintf(path, sizeof(path), "DYLD_LIBRARY_PATH=%s/%s/lib", cwd, embedded_package_folder);
-//        }
-//        se_logger_debug("Setting %s", path);
-//        if (putenv(path) == -1) {
-//            se_logger_error("Failed to set env: '%s'", path);
-//        }
-//        SE_MEM_FREE(cwd);
-//    }
+    static const char* embedded_package_folder = "embed_python";
+    if (se_fs_does_dir_exist(embedded_package_folder)) {
+        char* cwd = se_fs_get_cwd();
+        char pythonHomeEnvVar[2048];
+        // Set PYTHONHOME
+        const char* currentPythonHOME = getenv("PYTHONHOME"); // Seems like we don't need to free pointer?
+        if (currentPythonHOME != NULL) {
+            snprintf(pythonHomeEnvVar, sizeof(pythonHomeEnvVar), "PYTHONHOME=%s:%s/%s", currentPythonHOME, cwd, embedded_package_folder);
+        } else {
+            snprintf(pythonHomeEnvVar, sizeof(pythonHomeEnvVar), "PYTHONHOME=%s/%s", cwd, embedded_package_folder);
+        }
+        if (putenv(pythonHomeEnvVar) == 0) {
+            se_logger_debug("Setting environment var: '%s'", pythonHomeEnvVar);
+        } else {
+            se_logger_error("Failed to set environment var: '%s'", pythonHomeEnvVar);
+        }
+        SE_MEM_FREE(cwd);
+    }
     // Initialize python
     cre_py_cache_initialize();
     Py_SetProgramName(L"crescent_engine_python");
