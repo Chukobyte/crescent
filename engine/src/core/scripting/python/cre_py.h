@@ -6,7 +6,7 @@ extern "C" {
 
 #include <stdbool.h>
 
-void cre_py_initialize();
+void cre_py_initialize(const char* embeddedPythonPath);
 void cre_py_finalize();
 void cre_py_import_module_source(const char* moduleName, const char* moduleText);
 // Exports game, will probably put in another place as this is needed by the editor and abstracts python usage

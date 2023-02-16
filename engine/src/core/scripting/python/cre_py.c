@@ -12,18 +12,20 @@
 #include "crescent_api_source.h"
 #include "../../engine_context.h"
 
-void cre_py_initialize() {
+void cre_py_initialize(const char* embeddedPythonPath) {
     // Update python path if embedded package exists (TODO: Use 'Py_SetPythonHome' and 'Py_SetPath' functions)
     static const char* embedded_package_folder = "embed_python";
     if (se_fs_does_dir_exist(embedded_package_folder)) {
-        CREEngineContext* engineContext = cre_engine_context_get();
+        if (embeddedPythonPath == NULL) {
+            embeddedPythonPath = cre_engine_context_get()->internalAssetsDir;
+        }
         char pythonHomeEnvVar[2048];
         // Set PYTHONHOME
         const char* currentPythonHOME = getenv("PYTHONHOME"); // Seems like we don't need to free pointer?
         if (currentPythonHOME != NULL) {
-            snprintf(pythonHomeEnvVar, sizeof(pythonHomeEnvVar), "PYTHONHOME=%s:%s/%s", currentPythonHOME, engineContext->internalAssetsDir, embedded_package_folder);
+            snprintf(pythonHomeEnvVar, sizeof(pythonHomeEnvVar), "PYTHONHOME=%s:%s/%s", currentPythonHOME, embeddedPythonPath, embedded_package_folder);
         } else {
-            snprintf(pythonHomeEnvVar, sizeof(pythonHomeEnvVar), "PYTHONHOME=%s/%s", engineContext->internalAssetsDir, embedded_package_folder);
+            snprintf(pythonHomeEnvVar, sizeof(pythonHomeEnvVar), "PYTHONHOME=%s/%s", embeddedPythonPath, embedded_package_folder);
         }
         if (putenv(pythonHomeEnvVar) == 0) {
             se_logger_debug("Setting environment var: '%s'", pythonHomeEnvVar);

@@ -35,7 +35,7 @@ bool Editor::Initialize() {
     }
 
     // Initialize Python Instance
-    cre_py_initialize();
+    cre_py_initialize(editorContext->GetEngineBinPath().c_str());
 
     // Initialize Asset Manager
     AssetManager::Get()->Initialize();
