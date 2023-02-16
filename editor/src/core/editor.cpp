@@ -61,7 +61,7 @@ void Editor::Update() {
 
 bool Editor::InitializeSDL() {
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-        se_logger_error(SDL_GetError());
+        se_logger_error("Failed to initialize SDL!  Error: '%s'", SDL_GetError());
         return false;
     }
 
