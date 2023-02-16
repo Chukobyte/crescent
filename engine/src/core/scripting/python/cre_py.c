@@ -98,7 +98,8 @@ void cre_py_export_game_project(const char* gameTitle, const char* archivePath, 
 }
 
 void cre_py_set_python_home(const char* embeddedPythonPath) {
-    char fullEmbeddedPythonPath[1024];
+    // The string needs to stay in memory for the PYTHONHOME environment variable to keep its value
+    static char fullEmbeddedPythonPath[1024];
     snprintf(fullEmbeddedPythonPath, sizeof(fullEmbeddedPythonPath), "%s/embed_python", embeddedPythonPath);
     if (se_fs_does_dir_exist(fullEmbeddedPythonPath)) {
         se_logger_debug("Found embedded python package at '%s'", fullEmbeddedPythonPath);
@@ -111,7 +112,7 @@ void cre_py_set_python_home(const char* embeddedPythonPath) {
             snprintf(pythonHomeEnvVar, sizeof(pythonHomeEnvVar), "PYTHONHOME=%s", fullEmbeddedPythonPath);
         }
         if (putenv(pythonHomeEnvVar) == 0) {
-            se_logger_debug("Setting environment var: '%s'", pythonHomeEnvVar);
+            se_logger_debug("Has set environment var: '%s'", pythonHomeEnvVar);
         } else {
             se_logger_error("Failed to set environment var: '%s'", pythonHomeEnvVar);
         }

@@ -38,6 +38,6 @@ class EditorSettings {
     std::vector<RecentlyLoadedProjectData> recentlyLoadedProjects;
 
   private:
-    LogLevel editorLogLevel = LogLevel_DEBUG;
-    LogLevel gameLogLevel = LogLevel_DEBUG;
+    LogLevel editorLogLevel = LogLevel_ERROR;
+    LogLevel gameLogLevel = LogLevel_ERROR;
 };
