@@ -154,6 +154,10 @@ jobs:
           cd vcpkg
           ./bootstrap-vcpkg.sh
 
+      - name: install dependencies
+        run: |
+          brew install pkg-config
+
       - name: run build
         run: |
           cd ${{ github.workspace }}
