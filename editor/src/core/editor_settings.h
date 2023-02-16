@@ -39,5 +39,5 @@ class EditorSettings {
 
   private:
     LogLevel editorLogLevel = LogLevel_ERROR;
-    LogLevel gameLogLevel = LogLevel_ERROR;
+    LogLevel gameLogLevel = LogLevel_DEBUG;
 };

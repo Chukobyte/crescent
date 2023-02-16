@@ -115,5 +115,7 @@ void cre_py_set_python_home(const char* embeddedPythonPath) {
         } else {
             se_logger_error("Failed to set environment var: '%s'", pythonHomeEnvVar);
         }
+    } else {
+        se_logger_debug("Didn't find embedded python package at '%s'", fullEmbeddedPythonPath);
     }
 }
