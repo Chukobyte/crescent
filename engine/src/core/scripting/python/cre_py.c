@@ -16,21 +16,20 @@ void cre_py_initialize() {
     // Update python path if embedded package exists (TODO: Use 'Py_SetPythonHome' and 'Py_SetPath' functions)
     static const char* embedded_package_folder = "embed_python";
     if (se_fs_does_dir_exist(embedded_package_folder)) {
-        char* cwd = se_fs_get_cwd();
+        CREEngineContext* engineContext = cre_engine_context_get();
         char pythonHomeEnvVar[2048];
         // Set PYTHONHOME
         const char* currentPythonHOME = getenv("PYTHONHOME"); // Seems like we don't need to free pointer?
         if (currentPythonHOME != NULL) {
-            snprintf(pythonHomeEnvVar, sizeof(pythonHomeEnvVar), "PYTHONHOME=%s:%s/%s", currentPythonHOME, cwd, embedded_package_folder);
+            snprintf(pythonHomeEnvVar, sizeof(pythonHomeEnvVar), "PYTHONHOME=%s:%s/%s", currentPythonHOME, engineContext->internalAssetsDir, embedded_package_folder);
         } else {
-            snprintf(pythonHomeEnvVar, sizeof(pythonHomeEnvVar), "PYTHONHOME=%s/%s", cwd, embedded_package_folder);
+            snprintf(pythonHomeEnvVar, sizeof(pythonHomeEnvVar), "PYTHONHOME=%s/%s", engineContext->internalAssetsDir, embedded_package_folder);
         }
         if (putenv(pythonHomeEnvVar) == 0) {
             se_logger_debug("Setting environment var: '%s'", pythonHomeEnvVar);
         } else {
             se_logger_error("Failed to set environment var: '%s'", pythonHomeEnvVar);
         }
-        SE_MEM_FREE(cwd);
     }
     // Initialize python
     cre_py_cache_initialize();

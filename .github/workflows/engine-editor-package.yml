@@ -299,7 +299,8 @@ jobs:
           cp -r test_games crescent_linux/bin/macosx
           # Move editor
           mv crescent_engine_editor_linux crescent_linux/crescent
-          # Copy windows runtime deps
+          # Copy runtime deps
+          cp -r embed_python_linux crescent_linux/embed_python
           cp windows_run_dependencies/*  crescent_linux/bin/windows/
           cp -r embed_python_linux crescent_linux/bin/linux/embed_python
           cp -r embed_python_macosx crescent_linux/bin/macosx/embed_python

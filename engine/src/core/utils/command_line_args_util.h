@@ -5,8 +5,8 @@
 #define CRE_COMMAND_LINE_FLAG_LOG_LEVEL "-l"
 
 typedef struct CommandLineFlagResult {
-    char workingDirOverride[128];
-    char internalAssetsDirOverride[128];
+    char workingDirOverride[256];
+    char internalAssetsDirOverride[256];
     char logLevel[8];
     int flagCount;
 } CommandLineFlagResult;
