@@ -25,7 +25,7 @@ jobs:
       - name: run build
         run: |
           cd ${{ github.workspace }}
-          cmake -DCMAKE_BUILD_TYPE=Release . -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/../vcpkg/scripts/buildsystems/vcpkg.cmake -DIS_CI_BUILD="true"
+          cmake . -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/../vcpkg/scripts/buildsystems/vcpkg.cmake -DIS_CI_BUILD="true"
           cmake --build . --config Release
           ren Release\crescent_engine.exe crescent_engine_windows.exe
           ren Release\crescent_engine_editor.exe crescent_engine_editor_windows.exe
@@ -87,10 +87,11 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
-      - name: install updates
+      - name: install dependencies
         run: |
           sudo apt install gcc-11
           sudo apt install g++-11
+          sudo apt install libgl1-mesa-dev libglu1-mesa-dev
           wget -O cmake.sh https://cmake.org/files/v3.20/cmake-3.20.1-linux-x86_64.sh
           sudo sh cmake.sh --skip-license --exclude-subdir --prefix=/usr/local
           export PATH=/usr/local/bin:$PATH
@@ -106,7 +107,7 @@ jobs:
       - name: run build
         run: |
           cd ${{ github.workspace }}
-          cmake -DCMAKE_BUILD_TYPE=Release . -DCMAKE_C_COMPILER=gcc-11 -DCMAKE_CXX_COMPILER=g++-11 -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/../vcpkg/scripts/buildsystems/vcpkg.cmake -DIS_CI_BUILD="true"
+          cmake . -DCMAKE_BUILD_TYPE=Release -DVIDEO_OPENGL=ON -DVIDEO_X11=ON -DCMAKE_C_COMPILER=gcc-11 -DCMAKE_CXX_COMPILER=g++-11 -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/../vcpkg/scripts/buildsystems/vcpkg.cmake -DIS_CI_BUILD="true"
           cmake --build . --config Release
           mv crescent_engine crescent_engine_linux
           mv crescent_engine_editor crescent_engine_editor_linux
@@ -156,7 +157,7 @@ jobs:
       - name: run build
         run: |
           cd ${{ github.workspace }}
-          cmake -DCMAKE_BUILD_TYPE=Release . -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/../vcpkg/scripts/buildsystems/vcpkg.cmake -DIS_CI_BUILD="true"
+          cmake . -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/../vcpkg/scripts/buildsystems/vcpkg.cmake -DIS_CI_BUILD="true"
           cmake --build . --config Release
           mv crescent_engine crescent_engine_macosx
           chmod +x crescent_engine_macosx
