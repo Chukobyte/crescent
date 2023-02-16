@@ -83,6 +83,10 @@ bool Editor::InitializeSDL() {
                                 windowHeight,
                                 editorContext->windowFlags
                             );
+    if (!editorContext->window) {
+        se_logger_error("Failed to create window!  SDL error: '%s'", SDL_GetError());
+        return false;
+    }
 
     SDL_SetWindowMinimumSize(editorContext->window, windowWidth, windowHeight);
 

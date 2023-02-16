@@ -99,7 +99,7 @@ bool initialize_rendering(const char* title, int windowWidth, int windowHeight, 
                  windowFlags
              );
     if (!window) {
-        se_logger_error("Failed to create window!");
+        se_logger_error("Failed to create window!  SDL error: '%s'", SDL_GetError());
         return false;
     }
 
