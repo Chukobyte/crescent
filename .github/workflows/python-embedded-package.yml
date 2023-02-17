@@ -1,0 +1,122 @@
+name: python-embedded-package
+
+# Compiles python and builds embedded packages for linux and macosx every 60 days
+on:
+  schedule:
+    - cron: '0 0 */60 * *'
+
+env:
+  PYTHON_VERSION: 3.10.5
+
+jobs:
+  compile-linux-gcc-python:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: configure env vars
+        run: |
+          temp_py_version=$(echo ${{ env.PYTHON_VERSION }} |  grep -Po "\d+\.\d+\.\d+")
+          echo "PYTHON_MICRO_VERSION=$temp_py_version" >> $GITHUB_ENV
+          echo "ARCH=${{ env.RUNNER_OS }}" >> $GITHUB_ENV
+
+      - name: setup dependencies
+        run: |
+          sudo apt install zlib1g-dev pkg-config lcov gdb libbz2-dev libffi-dev libgdbm-dev libgdbm-compat-dev liblzma-dev libncurses5-dev libreadline6-dev libsqlite3-dev libssl-dev lzma lzma-dev tk-dev
+
+      - name: download python source
+        run: |
+          git clone --branch v${{ env.PYTHON_VERSION }} https://github.com/python/cpython.git
+
+
+      - name: configure python
+        run: |
+          mkdir -p build
+          cd cpython
+          ./configure --prefix=${{ github.workspace }}/build --enable-optimizations --enable-ipv6 --enable-shared --without-ensurepip 2>&1 | tee -a ../python-${{ env.PYTHON_VERSION }}.config.log
+          echo "config log"
+          cat ../python-${{ env.PYTHON_VERSION }}.config.log
+
+      - name: compile python
+        run: |
+          cd cpython
+          make
+
+      - name: install python
+        run: |
+          cd cpython
+          sudo make install
+
+      - name: verify python installation
+        run: |
+          build/bin/python3.10 --version
+
+      - name: package python embedded
+        run: |
+          cd build/
+          zip -r ${{ github.workspace }}/python-${{ env.PYTHON_VERSION }}-embed-linux.zip *
+
+      - name: store python embed file
+        uses: actions/upload-artifact@v3
+        with:
+          name: python-${{ env.PYTHON_VERSION }}-embed-linux.zip
+          path: python-${{ env.PYTHON_VERSION }}-embed-linux.zip
+          if-no-files-found: error
+
+  compile-macos-clang-python:
+    runs-on: macOS-latest
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: configure-env-vars
+        run: |
+          temp_py_version=$(echo ${{ env.PYTHON_VERSION }} |  grep -Eo "\d+\.\d+\.\d+")
+          echo "PYTHON_MICRO_VERSION=$temp_py_version" >> $GITHUB_ENV
+          echo "ARCH=${{ env.RUNNER_OS }}" >> $GITHUB_ENV
+
+      - name: setup dependencies
+        run: |
+          brew install dpkg bzip2 libffi gdbm ncurses sqlite3 zlib openssl@1.1 wget pkg-config tcl-tk xz readline -q
+
+      - name: download python source
+        run: |
+          git clone --branch v${{ env.PYTHON_VERSION }} https://github.com/python/cpython.git
+
+      - name: configure python
+        run: |
+          mkdir -p build
+          cd cpython
+          export CPPFLAGS="-I$(brew --prefix zlib)/include -I$(brew --prefix gdbm)/include -I$(brew --prefix xz)/include -I/usr/include"
+          export LDFLAGS="-L$(brew --prefix zlib)/lib -L$(brew --prefix gdbm)/lib -L$(brew --prefix xz)/lib -L/usr/lib"
+          export PKG_CONFIG_PATH="-I$(brew --prefix tcl-tk)/lib/pkgconfig"
+          ./configure CC=clang --prefix=${{ github.workspace }}/build --enable-optimizations --with-openssl=$(brew --prefix openssl) --enable-ipv6 --enable-shared --without-ensurepip 2>&1 | tee -a ../python-${{ env.PYTHON_VERSION }}.config.log
+          echo "config log"
+          cat ../python-${{ env.PYTHON_VERSION }}.config.log
+
+      - name: compile python
+        run: |
+          cd cpython
+          make
+
+      - name: install python
+        run: |
+          cd cpython
+          sudo make install
+
+      - name: verify python installation
+        run: |
+          build/bin/python3.10 --version
+
+      - name: package python embedded
+        run: |
+          cd build/
+          zip -r ${{ github.workspace }}/python-${{ env.PYTHON_VERSION }}-embed-macosx.zip *
+
+      - name: store python embed file
+        uses: actions/upload-artifact@v3
+        with:
+          name: python-${{ env.PYTHON_VERSION }}-embed-macosx.zip
+          path: python-${{ env.PYTHON_VERSION }}-embed-macosx.zip
+          if-no-files-found: error

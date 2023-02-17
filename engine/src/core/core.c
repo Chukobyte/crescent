@@ -66,7 +66,13 @@ bool cre_initialize(int argv, char** args) {
         se_fs_print_cwd();
     }
     // Load project archive if it exists
+#ifdef _WIN32
     engineContext->projectArchivePath = se_str_trim_and_replace(args[0], '.', ".pck");
+#else
+    char packArchivePath[1024];
+    snprintf(packArchivePath, sizeof(packArchivePath), "%s.pck", args[0]);
+    engineContext->projectArchivePath = se_strdup(packArchivePath);
+#endif
     if (sf_asset_file_loader_load_archive(engineContext->projectArchivePath)) {
         se_logger_debug("Setting asset read mode to 'archive', found pck file at '%s'", engineContext->projectArchivePath);
         sf_asset_file_loader_set_read_mode(SEAssetFileLoaderReadMode_ARCHIVE);
@@ -82,7 +88,7 @@ bool cre_initialize(int argv, char** args) {
     }
 
     // TODO: Determine if python needs to be initialized programmatically
-    cre_py_initialize();
+    cre_py_initialize(engineContext->internalAssetsDir);
 
     cre_curve_float_manager_init();
 
@@ -102,12 +108,18 @@ bool cre_initialize(int argv, char** args) {
     }
 
     // Initialize seika framework
-    sf_initialize(gameProperties->gameTitle,
-                  gameProperties->windowWidth,
-                  gameProperties->windowHeight,
-                  gameProperties->resolutionWidth,
-                  gameProperties->resolutionHeight,
-                  controllerMappingFilePath);
+    const bool hasSeikaInitialized = sf_initialize(
+                                         gameProperties->gameTitle,
+                                         gameProperties->windowWidth,
+                                         gameProperties->windowHeight,
+                                         gameProperties->resolutionWidth,
+                                         gameProperties->resolutionHeight,
+                                         controllerMappingFilePath
+                                     );
+    if (!hasSeikaInitialized) {
+        se_logger_error("Failed to initialize seika framework!");
+        return false;
+    }
 
     // Initialize sub systems
     if (!cre_initialize_ecs()) {

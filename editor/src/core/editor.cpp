@@ -34,8 +34,10 @@ bool Editor::Initialize() {
         return false;
     }
 
+    editorContext->initialDir = FileSystemHelper::GetCurrentDir();
+
     // Initialize Python Instance
-    cre_py_initialize();
+    cre_py_initialize(editorContext->GetEngineBinPath().c_str());
 
     // Initialize Asset Manager
     AssetManager::Get()->Initialize();
@@ -43,7 +45,6 @@ bool Editor::Initialize() {
     // TODO: Figure out window stuff dimensions...
     se_renderer_initialize(800, 600, 800, 600);
 
-    editorContext->initialDir = FileSystemHelper::GetCurrentDir();
     editorContext->isRunning = true;
     se_logger_info("Crescent Engine Editor has started!");
 
@@ -61,7 +62,7 @@ void Editor::Update() {
 
 bool Editor::InitializeSDL() {
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-        se_logger_error(SDL_GetError());
+        se_logger_error("Failed to initialize SDL!  Error: '%s'", SDL_GetError());
         return false;
     }
 
@@ -83,6 +84,10 @@ bool Editor::InitializeSDL() {
                                 windowHeight,
                                 editorContext->windowFlags
                             );
+    if (!editorContext->window) {
+        se_logger_error("Failed to create window!  SDL error: '%s'", SDL_GetError());
+        return false;
+    }
 
     SDL_SetWindowMinimumSize(editorContext->window, windowWidth, windowHeight);
 

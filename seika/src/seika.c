@@ -67,8 +67,8 @@ bool sf_initialize(const char* title,
 }
 
 bool initialize_sdl() {
-    if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
-        se_logger_error("Failed to initialize sdl!");
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER ) != 0) {
+        se_logger_error("Failed to initialize SDL!  Error: '%s'", SDL_GetError());
         return false;
     }
     return true;
@@ -99,7 +99,7 @@ bool initialize_rendering(const char* title, int windowWidth, int windowHeight, 
                  windowFlags
              );
     if (!window) {
-        se_logger_error("Failed to create window!");
+        se_logger_error("Failed to create window!  SDL error: '%s'", SDL_GetError());
         return false;
     }
 

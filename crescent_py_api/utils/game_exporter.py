@@ -2,6 +2,7 @@ import os
 import platform
 import compileall
 import shutil
+import stat
 import zipfile
 from pathlib import Path, PurePath
 from typing import Optional, Callable
@@ -166,19 +167,25 @@ class GameExporter:
             if file_to_delete_path != project_pack_path:
                 FileUtils.delete_file(file_to_delete_path.as_posix())
 
-        # Copy dlls
-        for file in FileUtils.get_dir_file_paths(
-            engine_bin_dir_path.as_posix(),
-            filter_func=lambda file: file.endswith(".dll"),
-        ):
-            file_path = Path(file)
-            dest_path = temp_file_path / file_path.name
-            FileUtils.copy_file(file, dest_path.as_posix())
-        # Copy Engine Binary
-        if "Windows" in platform.system():
+        # Get OS type by inferring from bin path
+        export_os_type = engine_bin_dir_path.as_posix().split("/")[-1]
+        engine_binary_extension = ""
+        if export_os_type == "windows":
+            # Copy dlls
+            for file in FileUtils.get_dir_file_paths(
+                engine_bin_dir_path.as_posix(),
+                filter_func=lambda file: file.endswith(".dll"),
+            ):
+                file_path = Path(file)
+                dest_path = temp_file_path / file_path.name
+                FileUtils.copy_file(file, dest_path.as_posix())
             engine_binary_extension = ".exe"
         else:
-            engine_binary_extension = ""
+            # Copy embedded python files
+            embed_python_path = Path(f"{engine_bin_dir}/embed_python")
+            dest_path = temp_file_path / embed_python_path.name
+            FileUtils.copy_dir(embed_python_path.as_posix(), dest_path.as_posix())
+        # Copy Engine Binary
         engine_binary_name = f"crescent_engine{engine_binary_extension}"
         engine_binary_path = engine_bin_dir_path / engine_binary_name
         engine_binary_dest_path = (

@@ -29,6 +29,7 @@ class EditorContext : public Singleton<EditorContext> {
     EditorContext(singleton);
 
     std::string GetEngineBinPath() const;
+    std::string GetEngineBinPathByOS(const std::string& osType) const;
     std::string GetEngineBinaryPath() const;
     std::string GetEngineBinaryProgramArgs() const;
     std::string GetProjectExportPath() const;
