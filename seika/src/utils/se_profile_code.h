@@ -4,7 +4,7 @@
 #include <time.h>
 
 #define SE_PROFILE_CODE(CodeBlock)                                   \
-do {                                                                    \
+do {                                                                 \
 clock_t start_time, end_time;                                        \
 double cpu_time_used;                                                \
 start_time = clock();                                                \
@@ -22,7 +22,7 @@ printf("Time taken: %f seconds\n", cpu_time_used);                   \
  */
 
 #define SE_PROFILE_CODE_WITH_VAR(CpuTimeVar, CodeBlock)             \
-do {                                                                   \
+do {                                                                \
 clock_t start_time, end_time;                                       \
 start_time = clock();                                               \
 CodeBlock                                                           \
