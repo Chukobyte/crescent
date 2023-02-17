@@ -1,4 +1,4 @@
-name: engine-editor-package
+name: ci-package-and-deploy
 
 on:
   push:

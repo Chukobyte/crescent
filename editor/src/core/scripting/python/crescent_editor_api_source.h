@@ -7,6 +7,7 @@
 "import platform\n"\
 "import compileall\n"\
 "import shutil\n"\
+"import stat\n"\
 "import zipfile\n"\
 "from pathlib import Path, PurePath\n"\
 "from typing import Optional, Callable\n"\
@@ -173,6 +174,7 @@
 "\n"\
 "        # Get OS type by inferring from bin path\n"\
 "        export_os_type = engine_bin_dir_path.as_posix().split(\"/\")[-1]\n"\
+"        engine_binary_extension = \"\"\n"\
 "        if export_os_type == \"windows\":\n"\
 "            # Copy dlls\n"\
 "            for file in FileUtils.get_dir_file_paths(\n"\
@@ -181,17 +183,15 @@
 "            ):\n"\
 "                file_path = Path(file)\n"\
 "                dest_path = temp_file_path / file_path.name\n"\
-"                FileUtils.copy_file(file, dest_path.as_posix())\n"\
+"                FileUtils.copy_dir(file, dest_path.as_posix())\n"\
+"            engine_binary_extension = \".exe\"\n"\
 "        else:\n"\
 "            # Copy embedded python files\n"\
 "            embed_python_path = Path(f\"{engine_bin_dir}/embed_python\")\n"\
 "            dest_path = temp_file_path / embed_python_path.name\n"\
-"            FileUtils.copy_file(embed_python_path.as_posix(), dest_path.as_posix())\n"\
+"            print(f\"embed_python_path = {embed_python_path}, dest_path = {dest_path}\")\n"\
+"            FileUtils.copy_dir(embed_python_path.as_posix(), dest_path.as_posix())\n"\
 "        # Copy Engine Binary\n"\
-"        if \"Windows\" in platform.system():\n"\
-"            engine_binary_extension = \".exe\"\n"\
-"        else:\n"\
-"            engine_binary_extension = \"\"\n"\
 "        engine_binary_name = f\"crescent_engine{engine_binary_extension}\"\n"\
 "        engine_binary_path = engine_bin_dir_path / engine_binary_name\n"\
 "        engine_binary_dest_path = (\n"\
