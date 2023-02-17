@@ -183,7 +183,7 @@
 "            ):\n"\
 "                file_path = Path(file)\n"\
 "                dest_path = temp_file_path / file_path.name\n"\
-"                FileUtils.copy_dir(file, dest_path.as_posix())\n"\
+"                FileUtils.copy_file(file, dest_path.as_posix())\n"\
 "            engine_binary_extension = \".exe\"\n"\
 "        else:\n"\
 "            # Copy embedded python files\n"\

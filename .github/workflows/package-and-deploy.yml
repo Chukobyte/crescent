@@ -1,4 +1,4 @@
-name: ci-package-and-deploy
+name: package-and-deploy
 
 on:
   push:

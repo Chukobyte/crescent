@@ -178,7 +178,7 @@ class GameExporter:
             ):
                 file_path = Path(file)
                 dest_path = temp_file_path / file_path.name
-                FileUtils.copy_dir(file, dest_path.as_posix())
+                FileUtils.copy_file(file, dest_path.as_posix())
             engine_binary_extension = ".exe"
         else:
             # Copy embedded python files
