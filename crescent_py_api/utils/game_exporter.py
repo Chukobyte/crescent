@@ -184,7 +184,6 @@ class GameExporter:
             # Copy embedded python files
             embed_python_path = Path(f"{engine_bin_dir}/embed_python")
             dest_path = temp_file_path / embed_python_path.name
-            print(f"embed_python_path = {embed_python_path}, dest_path = {dest_path}")
             FileUtils.copy_dir(embed_python_path.as_posix(), dest_path.as_posix())
         # Copy Engine Binary
         engine_binary_name = f"crescent_engine{engine_binary_extension}"
