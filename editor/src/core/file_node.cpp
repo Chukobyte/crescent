@@ -1,3 +1,4 @@
+#include <fstream>
 #include "file_node.h"
 
 #include "../seika/src/utils/logger.h"
@@ -69,19 +70,24 @@ void FileNodeCache::LoadFileNodeEntries(FileNode &fileNode, LoadFlag loadFlag) {
         if (fileName == "__pycache__" || fileName[0] == '.') {
             continue;
         }
-        if (std::filesystem::is_directory(dir_entry.path())) {
+        std::error_code errorCode;
+        if (std::filesystem::is_directory(dir_entry.path(), errorCode)) {
             FileNode dirNode = { dir_entry.path(), FileNodeType::Directory, nodeIndexCount++ };
             if (isRecursive) {
                 LoadFileNodeEntries(dirNode, loadFlag);
             }
             fileNode.directories.emplace_back(dirNode);
-        } else if (std::filesystem::is_regular_file(dir_entry.path())) {
+        } else if (std::filesystem::is_regular_file(dir_entry.path(), errorCode)) {
             FileNode regularFileNode = { dir_entry.path(), FileNodeType::File, nodeIndexCount++, FileNode::GetRegularFileType(dir_entry.path().filename().string()) };
             fileNode.files.emplace_back(regularFileNode);
             if (includeExtensions) {
                 const std::string extension = regularFileNode.path.extension().string();
                 AddFile(extension, regularFileNode);
             }
+        } else {
+            // Can print out error code here if we want...
+//            se_logger_debug("Not able to open up path '%s', skipping!  Error code: %s", dir_entry.path().c_str(), errorCode.message().c_str());
         }
+
     }
 }
