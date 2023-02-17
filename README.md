@@ -5,7 +5,7 @@
 [![ubuntu-gcc-build Actions Status](https://github.com/Chukobyte/crescent/workflows/ubuntu-gcc-build/badge.svg)](https://github.com/Chukobyte/crescent/actions)
 [![macosx-clang-build Actions Status](https://github.com/Chukobyte/crescent/workflows/macosx-clang-build/badge.svg)](https://github.com/Chukobyte/crescent/actions)
 [![pvs-studio Actions Status](https://github.com/Chukobyte/crescent/workflows/pvs-studio/badge.svg)](https://github.com/Chukobyte/crescent/actions)
-[![ci-package-and-deploy Actions Status](https://github.com/Chukobyte/crescent/workflows/ci-package-and-deploy/badge.svg)](https://github.com/Chukobyte/crescent/actions)
+[![package-and-deploy Actions Status](https://github.com/Chukobyte/crescent/workflows/package-and-deploy/badge.svg)](https://github.com/Chukobyte/crescent/actions)
 
 <p align="center">
   <a href="https://chukobyte.github.io/crescent">
