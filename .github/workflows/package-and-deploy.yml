@@ -2,7 +2,7 @@ name: package-and-deploy
 
 on:
   push:
-    branches: [ main ]
+    branches: [ targz ]
 
 env:
   PYTHON_VERSION: 3.10.5
