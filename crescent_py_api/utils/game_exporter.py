@@ -1,9 +1,8 @@
 import os
-import platform
 import compileall
 import shutil
-import stat
 import zipfile
+import tarfile
 from pathlib import Path, PurePath
 from typing import Optional, Callable
 
@@ -96,21 +95,31 @@ class PythonCompiler:
 class ProjectArchiver:
     @staticmethod
     def create_archive(name: str, source_dir: str) -> None:
-        with zipfile.ZipFile(name, "w") as export_zip_file:
-            current_cwd = os.getcwd()
-            os.chdir(source_dir)
-            name_path = PurePath(name)
+        # Check if tarball first
+        if name.endswith(".tar.gz"):
+            with tarfile.open(name, "w:gz") as tar:
+                for root, dirs, files in os.walk(source_dir):
+                    for file in files:
+                        file_path = os.path.join(root, file)
+                        tar.add(
+                            file_path, arcname=os.path.relpath(file_path, source_dir)
+                        )
+        else:
+            with zipfile.ZipFile(name, "w") as export_zip_file:
+                current_cwd = os.getcwd()
+                os.chdir(source_dir)
+                name_path = PurePath(name)
 
-            # TODO: Clean code up
-            for root, dirs, files in os.walk("."):
-                for dir in dirs:
-                    export_zip_file.write(os.path.join(root, dir))
-                for file in files:
-                    file_path_text = os.path.join(root, file)
-                    file_path = PurePath(file_path_text)
-                    if not name_path.as_posix().endswith(file_path.as_posix()):
-                        export_zip_file.write(file_path_text)
-            os.chdir(current_cwd)
+                # TODO: Clean code up
+                for root, dirs, files in os.walk("."):
+                    for dir in dirs:
+                        export_zip_file.write(os.path.join(root, dir))
+                    for file in files:
+                        file_path_text = os.path.join(root, file)
+                        file_path = PurePath(file_path_text)
+                        if not name_path.as_posix().endswith(file_path.as_posix()):
+                            export_zip_file.write(file_path_text)
+                os.chdir(current_cwd)
 
 
 class GameExporter:
@@ -195,7 +204,7 @@ class GameExporter:
             engine_binary_path.as_posix(), engine_binary_dest_path.as_posix()
         )
 
-        # Create export zip
+        # Create export '.tar.gz' or '.zip'
         ProjectArchiver.create_archive(
             name=archive_name,
             source_dir=temp_file_path.as_posix(),

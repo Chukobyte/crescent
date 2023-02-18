@@ -4,11 +4,10 @@
 
 #define CRE_PY_EDITOR_API_GAME_EXPORTER_SOURCE ""\
 "import os\n"\
-"import platform\n"\
 "import compileall\n"\
 "import shutil\n"\
-"import stat\n"\
 "import zipfile\n"\
+"import tarfile\n"\
 "from pathlib import Path, PurePath\n"\
 "from typing import Optional, Callable\n"\
 "\n"\
@@ -101,21 +100,31 @@
 "class ProjectArchiver:\n"\
 "    @staticmethod\n"\
 "    def create_archive(name: str, source_dir: str) -> None:\n"\
-"        with zipfile.ZipFile(name, \"w\") as export_zip_file:\n"\
-"            current_cwd = os.getcwd()\n"\
-"            os.chdir(source_dir)\n"\
-"            name_path = PurePath(name)\n"\
+"        # Check if tarball first\n"\
+"        if name.endswith(\".tar.gz\"):\n"\
+"            with tarfile.open(name, \"w:gz\") as tar:\n"\
+"                for root, dirs, files in os.walk(source_dir):\n"\
+"                    for file in files:\n"\
+"                        file_path = os.path.join(root, file)\n"\
+"                        tar.add(\n"\
+"                            file_path, arcname=os.path.relpath(file_path, source_dir)\n"\
+"                        )\n"\
+"        else:\n"\
+"            with zipfile.ZipFile(name, \"w\") as export_zip_file:\n"\
+"                current_cwd = os.getcwd()\n"\
+"                os.chdir(source_dir)\n"\
+"                name_path = PurePath(name)\n"\
 "\n"\
-"            # TODO: Clean code up\n"\
-"            for root, dirs, files in os.walk(\".\"):\n"\
-"                for dir in dirs:\n"\
-"                    export_zip_file.write(os.path.join(root, dir))\n"\
-"                for file in files:\n"\
-"                    file_path_text = os.path.join(root, file)\n"\
-"                    file_path = PurePath(file_path_text)\n"\
-"                    if not name_path.as_posix().endswith(file_path.as_posix()):\n"\
-"                        export_zip_file.write(file_path_text)\n"\
-"            os.chdir(current_cwd)\n"\
+"                # TODO: Clean code up\n"\
+"                for root, dirs, files in os.walk(\".\"):\n"\
+"                    for dir in dirs:\n"\
+"                        export_zip_file.write(os.path.join(root, dir))\n"\
+"                    for file in files:\n"\
+"                        file_path_text = os.path.join(root, file)\n"\
+"                        file_path = PurePath(file_path_text)\n"\
+"                        if not name_path.as_posix().endswith(file_path.as_posix()):\n"\
+"                            export_zip_file.write(file_path_text)\n"\
+"                os.chdir(current_cwd)\n"\
 "\n"\
 "\n"\
 "class GameExporter:\n"\
@@ -200,7 +209,7 @@
 "            engine_binary_path.as_posix(), engine_binary_dest_path.as_posix()\n"\
 "        )\n"\
 "\n"\
-"        # Create export zip\n"\
+"        # Create export '.tar.gz' or '.zip'\n"\
 "        ProjectArchiver.create_archive(\n"\
 "            name=archive_name,\n"\
 "            source_dir=temp_file_path.as_posix(),\n"\
