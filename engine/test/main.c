@@ -6,6 +6,7 @@
 
 #include "../src/core/node_event.h"
 #include "../src/core/ecs/component/component.h"
+#include "../src/core/json/json_file_loader.h"
 
 void setUp() {
     component_manager_initialize();
@@ -15,10 +16,12 @@ void tearDown() {
 }
 
 void cre_node_event_test(void);
+void cre_json_file_loader_scene_test(void);
 
 int main(int argv, char** args) {
     UNITY_BEGIN();
     RUN_TEST(cre_node_event_test);
+    RUN_TEST(cre_json_file_loader_scene_test);
     return UNITY_END();
 }
 
@@ -84,3 +87,8 @@ void cre_node_event_test(void) {
     TEST_ASSERT_EQUAL_UINT(0, node_event_get_entity_observer_count(observerEntity));
     TEST_ASSERT_EQUAL_UINT(0, node_event_get_entity_observer_count(anotherObserverEntity));
 }
+
+// Json File Loader Tests
+#define TEST_SCENE_1_PATH "engine/test/resources/test_scene1.cscn"
+
+void cre_json_file_loader_scene_test(void) {}

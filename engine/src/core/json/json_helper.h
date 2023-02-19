@@ -33,6 +33,9 @@ char* json_get_string_default_new(cJSON* json, const char* key, const char* defa
     if (cJSON_IsString(stringJson) && (stringJson->valuestring != NULL)) {
         return se_strdup(stringJson->valuestring);
     }
+    if (defaultValue == NULL) {
+        return NULL;
+    }
     return se_strdup(defaultValue);
 }
 

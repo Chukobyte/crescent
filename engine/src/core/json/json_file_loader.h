@@ -17,7 +17,7 @@ typedef struct JsonSceneNode {
     NodeBaseType type;
     void* components[MAX_COMPONENTS];
     struct JsonSceneNode* parent;
-    struct JsonSceneNode* children[MAX_ENTITIES / 4];
+    struct JsonSceneNode* children[MAX_ENTITIES / 4]; // TODO: Change to an array list
     size_t childrenCount;
     char* spriteTexturePath;
     char* fontUID;

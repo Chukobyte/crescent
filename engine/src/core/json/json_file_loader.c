@@ -153,6 +153,12 @@ JsonSceneNode* cre_json_create_new_node() {
 }
 
 JsonSceneNode* cre_json_load_scene_node(cJSON* nodeJson, JsonSceneNode* parentNode) {
+    // Check if external scene file
+    char* externalSceneNodeString = json_get_string_default_new(nodeJson, "external_node_source", NULL);
+    if (externalSceneNodeString != NULL) {
+
+    }
+
     JsonSceneNode* node = cre_json_create_new_node();
     node->parent = parentNode;
     node->name = json_get_string_new(nodeJson, "name");

@@ -1,0 +1,87 @@
+{
+  "name": "Main",
+  "type": "Node2D",
+  "tags": null,
+  "external_node_source": null,
+  "components": [
+    {
+      "type": "transform_2d",
+      "position": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0
+      },
+      "rotation": 0.0,
+      "z_index": 0,
+      "z_index_relative_to_parent": true,
+      "ignore_camera": false
+    }
+  ],
+  "children": [
+    {
+      "name": "Player",
+      "type": "Node2D",
+      "tags": null,
+      "external_node_source": null,
+      "components": [
+        {
+          "type": "transform_2d",
+          "position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "scale": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "rotation": 0.0,
+          "z_index": 1,
+          "z_index_relative_to_parent": true,
+          "ignore_camera": false
+        }
+      ],
+      "children": [
+        {
+          "name": "Collider2D",
+          "type": "Collider2D",
+          "tags": null,
+          "external_node_source": null,
+          "components": [
+            {
+              "type": "transform_2d",
+              "position": {
+                "x": -2.0,
+                "y": 0.0
+              },
+              "scale": {
+                "x": 1.0,
+                "y": 1.0
+              },
+              "rotation": 0.0,
+              "z_index": 0,
+              "z_index_relative_to_parent": true,
+              "ignore_camera": false
+            },
+            {
+              "type": "collider_2d",
+              "extents": {
+                "w": 10.0,
+                "h": 12.0
+              },
+              "color": {
+                "r": 0,
+                "g": 0,
+                "b": 204,
+                "a": 150
+              }
+            }
+          ],
+          "children": []
+        }
+      ]
+    }
+  ]
+}
