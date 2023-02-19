@@ -1,0 +1,26 @@
+#pragma once
+
+#define DEFAULT_COMPONENT_TRANSFORM2D_POSITION (Vector2) { .x = 0.0f, .y = 0.0f }
+#define DEFAULT_COMPONENT_TRANSFORM2D_SCALE (Vector2) { .x = 1.0f, .y = 1.0f }
+#define DEFAULT_COMPONENT_TRANSFORM2D_ROTATION 0.0f
+#define DEFAULT_COMPONENT_TRANSFORM2D_Z_INDEX 0
+#define DEFAULT_COMPONENT_TRANSFORM2D_Z_INDEX_RELATIVE_TO_PARENT true
+#define DEFAULT_COMPONENT_TRANSFORM2D_IGNORE_CAMERA false
+
+#define DEFAULT_COMPONENT_SPRITE_ORIGIN (Vector2) { .x = 0.0f, .y = 0.0f }
+#define DEFAULT_COMPONENT_SPRITE_FLIP_X false
+#define DEFAULT_COMPONENT_SPRITE_FLIP_Y false
+#define DEFAULT_COMPONENT_SPRITE_MODULATE (Color) { .r = 1.0f, .g = 1.0f, .b = 1.0f, .a = 1.0f }
+
+#define DEFAULT_COMPONENT_ANIMATED_SPRITE_ORIGIN (Vector2) { .x = 0.0f, .y = 0.0f }
+#define DEFAULT_COMPONENT_ANIMATED_SPRITE_MODULATE (Color) { .r = 1.0f, .g = 1.0f, .b = 1.0f, .a = 1.0f }
+#define DEFAULT_COMPONENT_ANIMATED_SPRITE_FLIP_X false
+#define DEFAULT_COMPONENT_ANIMATED_SPRITE_FLIP_Y false
+
+#define DEFAULT_COMPONENT_TEXT_LABEL_MODULATE (Color) { .r = 1.0f, .g = 1.0f, .b = 1.0f, .a = 1.0f }
+
+#define DEFAULT_COMPONENT_COLLIDER2D_COLOR (Color) { .r = 1.0f, .g = 1.0f, .b = 1.0f, .a = 1.0f }
+
+#define DEFAULT_COMPONENT_COLOR_RECT_COLOR (Color) { .r = 1.0f, .g = 1.0f, .b = 1.0f, .a = 1.0f }
+
+#define DEFAULT_COMPONENT_PARALLAX_SCROLL_SPEED (Vector2) { .x = 0.0f, .y = 0.0f }

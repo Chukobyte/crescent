@@ -4,6 +4,7 @@
 #include "../seika/src/utils/se_string_util.h"
 
 #include "json_helper.h"
+#include "../ecs/component/component_defaults.h"
 #include "../ecs/component/transform2d_component.h"
 #include "../ecs/component/sprite_component.h"
 #include "../ecs/component/animated_sprite_component.h"
@@ -33,7 +34,7 @@ JsonSceneNode* cre_json_load_scene_node(cJSON* nodeJson, JsonSceneNode* parentNo
     // Check if external scene file
     char* externalSceneNodeString = json_get_string_default_new(nodeJson, "external_node_source", NULL);
     if (externalSceneNodeString != NULL) {
-
+        JsonSceneNode* externalNode = cre_json_load_scene_file(externalSceneNodeString);
     }
 
     JsonSceneNode* node = cre_json_create_new_node();
@@ -48,8 +49,6 @@ JsonSceneNode* cre_json_load_scene_node(cJSON* nodeJson, JsonSceneNode* parentNo
     if (parentNode) {
         parentNode->children[parentNode->childrenCount++] = node;
     }
-    // TODO: Load tags
-    // TODO: Load external scene file
 
     // Load Components
     se_logger_debug("Loading components for '%'s", node->name);
@@ -59,16 +58,12 @@ JsonSceneNode* cre_json_load_scene_node(cJSON* nodeJson, JsonSceneNode* parentNo
         const char* componentType = json_get_string(componentJson, "type");
         if (strcmp(componentType, "transform_2d") == 0) {
             Transform2DComponent* transform2DComponent = transform2d_component_create();
-            transform2DComponent->localTransform.position = json_get_vec2_default(componentJson, "position", (Vector2) {
-                .x = 0.0f, .y = 0.0f
-            });
-            transform2DComponent->localTransform.scale = json_get_vec2_default(componentJson, "scale", (Vector2) {
-                .x = 1.0f, .y = 1.0f
-            });
-            transform2DComponent->localTransform.rotation = (float) json_get_double_default(componentJson, "rotation", 0.0);
-            transform2DComponent->zIndex = json_get_int_default(componentJson, "z_index", 0);
-            transform2DComponent->isZIndexRelativeToParent = json_get_bool_default(componentJson, "z_index_relative_to_parent", true);
-            transform2DComponent->ignoreCamera = json_get_bool_default(componentJson, "ignore_camera", false);
+            transform2DComponent->localTransform.position = json_get_vec2_default(componentJson, "position", DEFAULT_COMPONENT_TRANSFORM2D_POSITION);
+            transform2DComponent->localTransform.scale = json_get_vec2_default(componentJson, "scale", DEFAULT_COMPONENT_TRANSFORM2D_SCALE);
+            transform2DComponent->localTransform.rotation = (float) json_get_double_default(componentJson, "rotation", DEFAULT_COMPONENT_TRANSFORM2D_ROTATION);
+            transform2DComponent->zIndex = json_get_int_default(componentJson, "z_index", DEFAULT_COMPONENT_TRANSFORM2D_Z_INDEX);
+            transform2DComponent->isZIndexRelativeToParent = json_get_bool_default(componentJson, "z_index_relative_to_parent", DEFAULT_COMPONENT_TRANSFORM2D_Z_INDEX_RELATIVE_TO_PARENT);
+            transform2DComponent->ignoreCamera = json_get_bool_default(componentJson, "ignore_camera", DEFAULT_COMPONENT_TRANSFORM2D_IGNORE_CAMERA);
             se_logger_debug(
                 "Transform2D\nposition: (%f, %f)\nscale: (%f, %f)\nrotation: %f\nz_index: %d\nz_index_relative_to_parent: %s\nignore_camera: %s",
                 transform2DComponent->localTransform.position.x, transform2DComponent->localTransform.position.y,
@@ -81,14 +76,10 @@ JsonSceneNode* cre_json_load_scene_node(cJSON* nodeJson, JsonSceneNode* parentNo
             SpriteComponent* spriteComponent = sprite_component_create();
             node->spriteTexturePath = json_get_string_new(componentJson, "texture_path");
             spriteComponent->drawSource = json_get_rect2(componentJson, "draw_source");
-            spriteComponent->origin = json_get_vec2_default(componentJson, "origin", (Vector2) {
-                .x = 0.0f, .y = 0.0f
-            });
-            spriteComponent->flipX = json_get_bool_default(componentJson, "flip_x", false);
-            spriteComponent->flipY = json_get_bool_default(componentJson, "flip_y", false);
-            spriteComponent->modulate = json_get_linear_color_default(componentJson, "modulate", (Color) {
-                .r = 1.0f, .g = 1.0f, .b = 1.0f, .a = 1.0f
-            });
+            spriteComponent->origin = json_get_vec2_default(componentJson, "origin", DEFAULT_COMPONENT_SPRITE_ORIGIN);
+            spriteComponent->flipX = json_get_bool_default(componentJson, "flip_x", DEFAULT_COMPONENT_SPRITE_FLIP_X);
+            spriteComponent->flipY = json_get_bool_default(componentJson, "flip_y", DEFAULT_COMPONENT_SPRITE_FLIP_Y);
+            spriteComponent->modulate = json_get_linear_color_default(componentJson, "modulate", DEFAULT_COMPONENT_SPRITE_MODULATE);
             se_logger_debug(
                 "Sprite\ntexture_path: '%s'\ndraw_source = (%f, %f, %f, %f)\norigin: (%f, %f)\nflip_x: %s\nflip_y: %s\nmodulate: (%f, %f, %f, %f)",
                 node->spriteTexturePath,
@@ -103,14 +94,10 @@ JsonSceneNode* cre_json_load_scene_node(cJSON* nodeJson, JsonSceneNode* parentNo
             AnimatedSpriteComponentData* animatedSpriteComponent = animated_sprite_component_data_create();
             const char* currentAnimationName = json_get_string(componentJson, "current_animation_name");
             animatedSpriteComponent->isPlaying = json_get_bool(componentJson, "is_playing");
-            animatedSpriteComponent->origin = json_get_vec2_default(componentJson, "origin", (Vector2) {
-                .x = 0.0f, .y = 0.0f
-            });
-            animatedSpriteComponent->modulate = json_get_linear_color_default(componentJson, "modulate", (Color) {
-                .r = 1.0f, .g = 1.0f, .b = 1.0f, .a = 1.0f
-            });
-            animatedSpriteComponent->flipX = json_get_bool_default(componentJson, "flip_x", false);
-            animatedSpriteComponent->flipY = json_get_bool_default(componentJson, "flip_y", false);
+            animatedSpriteComponent->origin = json_get_vec2_default(componentJson, "origin", DEFAULT_COMPONENT_ANIMATED_SPRITE_ORIGIN);
+            animatedSpriteComponent->modulate = json_get_linear_color_default(componentJson, "modulate", DEFAULT_COMPONENT_ANIMATED_SPRITE_MODULATE);
+            animatedSpriteComponent->flipX = json_get_bool_default(componentJson, "flip_x", DEFAULT_COMPONENT_ANIMATED_SPRITE_FLIP_X);
+            animatedSpriteComponent->flipY = json_get_bool_default(componentJson, "flip_y", DEFAULT_COMPONENT_ANIMATED_SPRITE_FLIP_Y);
             se_logger_debug(
                 "Animated Sprite\ncurrent animation name: '%s'\nis playing: %s\norigin: (%f, %f)\nmodulate: (%f, %f, %f, %f)\nflip x: %s\nflip y: %s",
                 currentAnimationName, se_bool_to_string(animatedSpriteComponent->isPlaying),
@@ -155,9 +142,7 @@ JsonSceneNode* cre_json_load_scene_node(cJSON* nodeJson, JsonSceneNode* parentNo
             TextLabelComponent* textLabelComponent = text_label_component_create();
             node->fontUID = json_get_string_new(componentJson, "uid");
             strcpy(textLabelComponent->text, json_get_string(componentJson, "text"));
-            textLabelComponent->color = json_get_linear_color_default(componentJson, "color", (Color) {
-                .r = 1.0f, .g = 1.0f, .b = 1.0f, .a = 1.0f
-            });
+            textLabelComponent->color = json_get_linear_color_default(componentJson, "color", DEFAULT_COMPONENT_TEXT_LABEL_MODULATE);
             se_logger_debug("Text Label\nuid: '%s'\ntext: '%s'\ncolor: (%f, %f, %f, %f)",
                             node->fontUID,
                             textLabelComponent->text,
@@ -167,9 +152,7 @@ JsonSceneNode* cre_json_load_scene_node(cJSON* nodeJson, JsonSceneNode* parentNo
         } else if (strcmp(componentType, "collider_2d") == 0) {
             Collider2DComponent* collider2DComponent = collider2d_component_create();
             collider2DComponent->extents = json_get_size2d(componentJson, "extents");
-            collider2DComponent->color = json_get_linear_color_default(componentJson, "color", (Color) {
-                .r = 1.0f, .g = 1.0f, .b = 1.0f, .a = 1.0f
-            });
+            collider2DComponent->color = json_get_linear_color_default(componentJson, "color", DEFAULT_COMPONENT_COLLIDER2D_COLOR);
             se_logger_debug("Collider2D\nextents: (%f, %f)\ncolor: (%f, %f, %f, %f)",
                             collider2DComponent->extents.w, collider2DComponent->extents.h,
                             collider2DComponent->color.r, collider2DComponent->color.g, collider2DComponent->color.b,
@@ -178,9 +161,7 @@ JsonSceneNode* cre_json_load_scene_node(cJSON* nodeJson, JsonSceneNode* parentNo
         } else if (strcmp(componentType, "color_rect") == 0) {
             ColorRectComponent* colorRectComponent = color_rect_component_create();
             colorRectComponent->size = json_get_size2d(componentJson, "size");
-            colorRectComponent->color = json_get_linear_color_default(componentJson, "color", (Color) {
-                .r = 1.0f, .g = 1.0f, .b = 1.0f, .a = 1.0f
-            });
+            colorRectComponent->color = json_get_linear_color_default(componentJson, "color", DEFAULT_COMPONENT_COLOR_RECT_COLOR);
             se_logger_debug("Color Rext\nsize: (%f, %f)\ncolor: (%f, %f, %f, %f)",
                             colorRectComponent->size.w, colorRectComponent->size.h,
                             colorRectComponent->color.r, colorRectComponent->color.g, colorRectComponent->color.b,
@@ -197,9 +178,7 @@ JsonSceneNode* cre_json_load_scene_node(cJSON* nodeJson, JsonSceneNode* parentNo
             node->components[ComponentDataIndex_SCRIPT] = scriptComponent;
         } else if (strcmp(componentType, "parallax") == 0) {
             ParallaxComponent* parallaxComponent = parallax_component_create();
-            parallaxComponent->scrollSpeed =  json_get_vec2_default(componentJson, "scroll_speed", (Vector2) {
-                .x = 0.0f, .y = 0.0f
-            });
+            parallaxComponent->scrollSpeed =  json_get_vec2_default(componentJson, "scroll_speed", DEFAULT_COMPONENT_PARALLAX_SCROLL_SPEED);
             se_logger_debug("Parallax\nscroll_speed: (%f, %f)", parallaxComponent->scrollSpeed.x, parallaxComponent->scrollSpeed.y);
             node->components[ComponentDataIndex_PARALLAX] = parallaxComponent;
         } else {
