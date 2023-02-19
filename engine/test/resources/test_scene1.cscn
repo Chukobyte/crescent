@@ -44,6 +44,14 @@
         }
       ],
       "children": []
+    },
+    {
+      "name": "TestBall",
+      "type": "Node2D",
+      "tags": null,
+      "external_node_source": "engine/test/resources/ball.cscn",
+      "components": [],
+      "children": []
     }
   ]
 }

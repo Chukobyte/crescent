@@ -100,7 +100,7 @@ void cre_json_file_loader_scene_test(void) {
     TEST_ASSERT_EQUAL_INT(NodeBaseType_NODE2D, rootNode->type);
     TEST_ASSERT_NULL(rootNode->tags);
     TEST_ASSERT_NULL(rootNode->externalNodeSource);
-    TEST_ASSERT_EQUAL_UINT(1, rootNode->childrenCount);
+    TEST_ASSERT_EQUAL_UINT(2, rootNode->childrenCount);
     // Root components
     TEST_ASSERT_NOT_NULL(rootNode->components[ComponentDataIndex_TRANSFORM_2D]);
     Transform2DComponent* rootTransformComp = (Transform2DComponent*) rootNode->components[ComponentDataIndex_TRANSFORM_2D];
@@ -132,6 +132,26 @@ void cre_json_file_loader_scene_test(void) {
     TEST_ASSERT_EQUAL_INT(1, playerTransformComp->zIndex);
     TEST_ASSERT_TRUE(playerTransformComp->isZIndexRelativeToParent);
     TEST_ASSERT_FALSE(playerTransformComp->ignoreCamera);
+
+    // BALL NODE (External scene child)
+    JsonSceneNode* ballNode = rootNode->children[1];
+    TEST_ASSERT_NOT_NULL(ballNode);
+    TEST_ASSERT_EQUAL_STRING("TestBall", ballNode->name);
+    TEST_ASSERT_EQUAL_INT(NodeBaseType_NODE2D, ballNode->type);
+    TEST_ASSERT_NULL(ballNode->tags);
+    TEST_ASSERT_EQUAL_STRING("engine/test/resources/ball.cscn", ballNode->externalNodeSource);
+    TEST_ASSERT_EQUAL_INT(0, ballNode->childrenCount);
+    // Ball components
+    TEST_ASSERT_NOT_NULL(ballNode->components[ComponentDataIndex_TRANSFORM_2D]);
+    Transform2DComponent* ballTransformComp = (Transform2DComponent*) ballNode->components[ComponentDataIndex_TRANSFORM_2D];
+    TEST_ASSERT_EQUAL_FLOAT(0.0f, ballTransformComp->localTransform.position.x);
+    TEST_ASSERT_EQUAL_FLOAT(0.0f, ballTransformComp->localTransform.position.y);
+    TEST_ASSERT_EQUAL_FLOAT(5.0f, ballTransformComp->localTransform.scale.x);
+    TEST_ASSERT_EQUAL_FLOAT(5.0f, ballTransformComp->localTransform.scale.y);
+    TEST_ASSERT_EQUAL_FLOAT(0.0f, ballTransformComp->localTransform.rotation);
+    TEST_ASSERT_EQUAL_INT(0, ballTransformComp->zIndex);
+    TEST_ASSERT_TRUE(ballTransformComp->isZIndexRelativeToParent);
+    TEST_ASSERT_FALSE(ballTransformComp->ignoreCamera);
 
     cre_json_delete_json_scene_node(rootNode);
 }
