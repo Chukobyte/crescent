@@ -25,6 +25,14 @@ char* json_get_string_new(cJSON* json, const char* key) {
     return se_strdup(stringJson->valuestring);
 }
 
+char* json_get_string_new_unchecked(cJSON* json, const char* key) {
+    cJSON* stringJson = cJSON_GetObjectItemCaseSensitive(json, key);
+    if (cJSON_IsString(stringJson) && (stringJson->valuestring != NULL)) {
+        se_strdup(stringJson->valuestring);
+    }
+    return NULL;
+}
+
 char* json_get_string_default_new(cJSON* json, const char* key, const char* defaultValue) {
     cJSON* stringJson = cJSON_GetObjectItemCaseSensitive(json, key);
     if (cJSON_IsString(stringJson) && (stringJson->valuestring != NULL)) {

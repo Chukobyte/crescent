@@ -11,6 +11,7 @@
 const char* json_get_string(cJSON* json, const char* key);
 const char* json_get_string_default(cJSON* json, const char* key, const char* defaultValue);
 char* json_get_string_new(cJSON* json, const char* key);
+char* json_get_string_new_unchecked(cJSON* json, const char* key);
 char* json_get_string_default_new(cJSON* json, const char* key, const char* defaultValue);
 
 int json_get_int(cJSON* json, const char* key);
