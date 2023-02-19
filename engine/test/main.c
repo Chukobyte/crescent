@@ -8,6 +8,7 @@
 #include "../src/core/ecs/component/component.h"
 #include "../src/core/ecs/component/transform2d_component.h"
 #include "../src/core/json/json_file_loader.h"
+#include "../src/core/ecs/component/collider2d_component.h"
 
 void setUp() {
     component_manager_initialize();
@@ -140,7 +141,7 @@ void cre_json_file_loader_scene_test(void) {
     TEST_ASSERT_EQUAL_INT(NodeBaseType_NODE2D, ballNode->type);
     TEST_ASSERT_NULL(ballNode->tags);
     TEST_ASSERT_EQUAL_STRING("engine/test/resources/ball.cscn", ballNode->externalNodeSource);
-    TEST_ASSERT_EQUAL_INT(0, ballNode->childrenCount);
+    TEST_ASSERT_EQUAL_INT(1, ballNode->childrenCount);
     // Ball components
     TEST_ASSERT_NOT_NULL(ballNode->components[ComponentDataIndex_TRANSFORM_2D]);
     Transform2DComponent* ballTransformComp = (Transform2DComponent*) ballNode->components[ComponentDataIndex_TRANSFORM_2D];
@@ -152,6 +153,13 @@ void cre_json_file_loader_scene_test(void) {
     TEST_ASSERT_EQUAL_INT(0, ballTransformComp->zIndex);
     TEST_ASSERT_TRUE(ballTransformComp->isZIndexRelativeToParent);
     TEST_ASSERT_FALSE(ballTransformComp->ignoreCamera);
+    // BALL NODE CHILD COLLIDER
+    JsonSceneNode* ballColliderNode = ballNode->children[0];
+    TEST_ASSERT_NOT_NULL(ballColliderNode);
+    Transform2DComponent* ballColliderTransformComp = (Transform2DComponent*) ballColliderNode->components[ComponentDataIndex_TRANSFORM_2D];
+    TEST_ASSERT_NOT_NULL(ballColliderTransformComp);
+    Collider2DComponent* ballColliderCollider2DComp = (Collider2DComponent*) ballColliderNode->components[ComponentDataIndex_COLLIDER_2D];
+    TEST_ASSERT_NOT_NULL(ballColliderCollider2DComp);
 
     cre_json_delete_json_scene_node(rootNode);
 }

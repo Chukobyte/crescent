@@ -90,6 +90,8 @@ void cre_json_delete_json_scene_node(JsonSceneNode* node) {
 // Recursive
 JsonSceneNode* cre_json_load_scene_node(cJSON* nodeJson, JsonSceneNode* parentNode) {
     JsonSceneNode* node = NULL;
+    // Store local file children before loading ones from external scene
+    cJSON* childrenJsonArray = cJSON_GetObjectItemCaseSensitive(nodeJson, "children");
     // Check if external scene file, use a different code path, and exit out
     char* externalSceneNodeString = json_get_string_default_new(nodeJson, "external_node_source", NULL);
     if (externalSceneNodeString != NULL) {
@@ -247,7 +249,6 @@ JsonSceneNode* cre_json_load_scene_node(cJSON* nodeJson, JsonSceneNode* parentNo
         }
     }
     // Load Children
-    cJSON* childrenJsonArray = cJSON_GetObjectItemCaseSensitive(nodeJson, "children");
     cJSON* childNodeJson = NULL;
     cJSON_ArrayForEach(childNodeJson, childrenJsonArray) {
         cre_json_load_scene_node(childNodeJson, node);
