@@ -102,7 +102,7 @@ JsonSceneNode* cre_json_load_scene_node(cJSON* nodeJson, JsonSceneNode* parentNo
         node = cre_json_create_new_node();
     }
     node->name = json_get_string_new(nodeJson, "name");
-    node->type = node_get_base_type(json_get_string_new(nodeJson, "type"));
+    node->type = node_get_base_type(json_get_string(nodeJson, "type"));
     node->tags = NULL;
     node->parent = parentNode;
     node->externalNodeSource = externalSceneNodeString;

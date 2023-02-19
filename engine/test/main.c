@@ -7,8 +7,9 @@
 #include "../src/core/node_event.h"
 #include "../src/core/ecs/component/component.h"
 #include "../src/core/ecs/component/transform2d_component.h"
-#include "../src/core/json/json_file_loader.h"
 #include "../src/core/ecs/component/collider2d_component.h"
+#include "../src/core/ecs/component/text_label_component.h"
+#include "../src/core/json/json_file_loader.h"
 
 void setUp() {
     component_manager_initialize();
@@ -91,6 +92,8 @@ void cre_node_event_test(void) {
 }
 
 // Json File Loader Tests
+// Note: If making changes to scene file make sure cmake runs steps to copy test dependency resources
+
 #define TEST_SCENE_1_PATH "engine/test/resources/test_scene1.cscn"
 
 void cre_json_file_loader_scene_test(void) {
@@ -141,7 +144,7 @@ void cre_json_file_loader_scene_test(void) {
     TEST_ASSERT_EQUAL_INT(NodeBaseType_NODE2D, ballNode->type);
     TEST_ASSERT_NULL(ballNode->tags);
     TEST_ASSERT_EQUAL_STRING("engine/test/resources/ball.cscn", ballNode->externalNodeSource);
-    TEST_ASSERT_EQUAL_INT(1, ballNode->childrenCount);
+    TEST_ASSERT_EQUAL_INT(2, ballNode->childrenCount);
     // Ball components
     TEST_ASSERT_NOT_NULL(ballNode->components[ComponentDataIndex_TRANSFORM_2D]);
     Transform2DComponent* ballTransformComp = (Transform2DComponent*) ballNode->components[ComponentDataIndex_TRANSFORM_2D];
@@ -160,6 +163,14 @@ void cre_json_file_loader_scene_test(void) {
     TEST_ASSERT_NOT_NULL(ballColliderTransformComp);
     Collider2DComponent* ballColliderCollider2DComp = (Collider2DComponent*) ballColliderNode->components[ComponentDataIndex_COLLIDER_2D];
     TEST_ASSERT_NOT_NULL(ballColliderCollider2DComp);
+    // BALL TEXT LABEL (Not in external scene but added as a child to the local scene)
+    JsonSceneNode* ballTextLabel = ballNode->children[1];
+    TEST_ASSERT_NOT_NULL(ballTextLabel);
+    Transform2DComponent * ballTextTransform2DComp = (Transform2DComponent*) ballTextLabel->components[ComponentDataIndex_TRANSFORM_2D];
+    TEST_ASSERT_NOT_NULL(ballTextTransform2DComp);
+    TextLabelComponent* ballTextLabelComp = (TextLabelComponent*) ballTextLabel->components[ComponentDataIndex_TEXT_LABEL];
+    TEST_ASSERT_NOT_NULL(ballTextLabelComp);
+
 
     cre_json_delete_json_scene_node(rootNode);
 }
