@@ -62,12 +62,12 @@ class GoogleDriveService:
     def delete_all_files(self):
         service = self.get_service()
         files = self.get_all_files()
-        try:
-            for file in files:
+        for file in files:
+            try:
                 service.files().delete(fileId=file["id"]).execute()
                 print(f"deleted file {file['name']}!")
-        except Exception as e:
-            print(f"Error deleting files: {e}")
+            except Exception as e:
+                print(f"Error deleting file {file}, skipping...  Error: {e}")
 
     def get_files(self, file_names: list) -> List[GoogleDriveFile]:
         matching_files = []

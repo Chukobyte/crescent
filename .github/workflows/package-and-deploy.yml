@@ -309,6 +309,7 @@ jobs:
           cp -r embed_python_macosx crescent_linux/bin/macosx/embed_python
           chmod -R 755 crescent_linux
           zip -r crescent_linux.zip crescent_linux/
+          tar -czvf crescent_linux.tar.gz crescent_linux/
 
           echo "building macosx package"
           # Copy engine binaries
@@ -327,6 +328,7 @@ jobs:
           cp -r embed_python_macosx crescent_macosx/bin/macosx/embed_python
           chmod -R 755 crescent_macosx
           zip -r crescent_macosx.zip crescent_macosx/
+          tar -czvf crescent_macosx.tar.gz crescent_macosx/
 
       - name: deploy packages
         run: |
@@ -334,7 +336,9 @@ jobs:
           echo "${{ secrets.GDRIVE_CREDENTIALS }}" > creds.json
           echo "deploying windows package"
           python ci/upload_to_gd.py crescent_windows.zip ${{ github.workspace }}/creds.json ${{ secrets.GDRIVE_FOLDER_ID }}
-          echo "deploying linux package"
+          echo "deploying linux packages"
           python ci/upload_to_gd.py crescent_linux.zip ${{ github.workspace }}/creds.json ${{ secrets.GDRIVE_FOLDER_ID }}
-          echo "deploying macosx package"
+          python ci/upload_to_gd.py crescent_linux.tar.gz ${{ github.workspace }}/creds.json ${{ secrets.GDRIVE_FOLDER_ID }}
+          echo "deploying macosx packages"
           python ci/upload_to_gd.py crescent_macosx.zip ${{ github.workspace }}/creds.json ${{ secrets.GDRIVE_FOLDER_ID }}
+          python ci/upload_to_gd.py crescent_macosx.tar.gz ${{ github.workspace }}/creds.json ${{ secrets.GDRIVE_FOLDER_ID }}

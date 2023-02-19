@@ -13,9 +13,31 @@ inline std::string BoolToStringCapital(bool value) {
     return value == true ? "True" : "False";
 }
 
+inline bool IsFileTarball(const std::string& filePath) {
+    return filePath.size() >= 7 && filePath.substr(filePath.size() - 7) == ".tar.gz";
+}
+
+inline std::string GetFileExtension(const std::string& filePath) {
+    // Check if tarball first
+    if (IsFileTarball(filePath)) {
+        return "tar.gz";
+    }
+    const size_t lastDotPos = filePath.find_last_of('.');
+    if (lastDotPos == std::string::npos) {
+        return ""; // no file extension found
+    } else {
+        return filePath.substr(lastDotPos + 1);
+    }
+}
+
 inline std::string RemoveExtensionFromFilePath(const std::string& filePath) {
-    const size_t fileExtensionIndex = filePath.find_last_of('.');
+    size_t fileExtensionIndex = filePath.find_last_of('.');
     std::string newFilePath = filePath.substr(0, fileExtensionIndex);
+    // Additional tarball check
+    if (IsFileTarball(filePath)) {
+        fileExtensionIndex = newFilePath.find_last_of('.');
+        newFilePath = filePath.substr(0, fileExtensionIndex);
+    }
     return newFilePath;
 }
 
