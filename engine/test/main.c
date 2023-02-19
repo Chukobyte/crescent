@@ -91,4 +91,11 @@ void cre_node_event_test(void) {
 // Json File Loader Tests
 #define TEST_SCENE_1_PATH "engine/test/resources/test_scene1.cscn"
 
-void cre_json_file_loader_scene_test(void) {}
+void cre_json_file_loader_scene_test(void) {
+    JsonSceneNode* rootNode = cre_json_load_scene_file(TEST_SCENE_1_PATH);
+    TEST_ASSERT_NOT_NULL(rootNode);
+    TEST_ASSERT_EQUAL_STRING("Main", rootNode->name);
+    TEST_ASSERT_EQUAL_INT(NodeBaseType_NODE2D, rootNode->type);
+
+    cre_json_delete_json_scene_node(rootNode);
+}
