@@ -148,8 +148,8 @@ void cre_json_file_loader_scene_test(void) {
     // Ball components
     TEST_ASSERT_NOT_NULL(ballNode->components[ComponentDataIndex_TRANSFORM_2D]);
     Transform2DComponent* ballTransformComp = (Transform2DComponent*) ballNode->components[ComponentDataIndex_TRANSFORM_2D];
-    TEST_ASSERT_EQUAL_FLOAT(0.0f, ballTransformComp->localTransform.position.x);
-    TEST_ASSERT_EQUAL_FLOAT(0.0f, ballTransformComp->localTransform.position.y);
+    TEST_ASSERT_EQUAL_FLOAT(100.0f, ballTransformComp->localTransform.position.x);
+    TEST_ASSERT_EQUAL_FLOAT(110.0f, ballTransformComp->localTransform.position.y);
     TEST_ASSERT_EQUAL_FLOAT(5.0f, ballTransformComp->localTransform.scale.x);
     TEST_ASSERT_EQUAL_FLOAT(5.0f, ballTransformComp->localTransform.scale.y);
     TEST_ASSERT_EQUAL_FLOAT(0.0f, ballTransformComp->localTransform.rotation);

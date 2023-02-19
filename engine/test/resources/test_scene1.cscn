@@ -50,7 +50,15 @@
       "type": "Node2D",
       "tags": null,
       "external_node_source": "engine/test/resources/ball.cscn",
-      "components": [],
+      "components": [
+        {
+          "type": "transform_2d",
+          "position": {
+            "x": 100.0,
+            "y": 110.0
+          }
+        }
+      ],
       "children": [
         {
           "name": "BallLabel",
