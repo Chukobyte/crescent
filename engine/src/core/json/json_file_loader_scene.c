@@ -19,6 +19,12 @@ JsonSceneNode* cre_json_load_scene_node(cJSON* nodeJson, JsonSceneNode* parentNo
 //JsonSceneNode* cre_json_load_scene_file_external(const char* filePath);
 
 //--- Scene Files ---//
+
+/*
+ * Currently supports scene templates.  Can override default values with the ones currently within the scene.
+ * Not currently supporting overriding children nodes values.
+ */
+
 JsonSceneNode* cre_json_create_new_node() {
     JsonSceneNode* node = SE_MEM_ALLOCATE(JsonSceneNode);
     node->name = NULL;
