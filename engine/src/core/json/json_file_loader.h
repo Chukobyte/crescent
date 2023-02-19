@@ -7,6 +7,7 @@ extern "C" {
 #include <stddef.h>
 
 #include "../seika/src/math/se_curve_float.h"
+#include "../seika/src/data_structures/se_array_list.h"
 
 #include "../ecs/entity/entity.h"
 #include "../ecs/component/component.h"
@@ -15,6 +16,8 @@ extern "C" {
 typedef struct JsonSceneNode {
     char* name;
     NodeBaseType type;
+    char* externalNodeSource;
+    SEArrayList* tags;
     void* components[MAX_COMPONENTS];
     struct JsonSceneNode* parent;
     struct JsonSceneNode* children[MAX_ENTITIES / 4]; // TODO: Change to an array list

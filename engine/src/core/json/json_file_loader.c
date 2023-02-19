@@ -163,6 +163,8 @@ JsonSceneNode* cre_json_load_scene_node(cJSON* nodeJson, JsonSceneNode* parentNo
     node->parent = parentNode;
     node->name = json_get_string_new(nodeJson, "name");
     node->type = node_get_base_type(json_get_string_new(nodeJson, "type"));
+    node->tags = NULL;
+    node->externalNodeSource = NULL;
     se_logger_debug("Node Name: '%s', Base Type: '%s'", node->name, node_get_base_type_string(node->type));
 
     // Checking if not root
