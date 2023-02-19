@@ -17,7 +17,7 @@
 #define DEFAULT_COMPONENT_ANIMATED_SPRITE_FLIP_X false
 #define DEFAULT_COMPONENT_ANIMATED_SPRITE_FLIP_Y false
 
-#define DEFAULT_COMPONENT_TEXT_LABEL_MODULATE (Color) { .r = 1.0f, .g = 1.0f, .b = 1.0f, .a = 1.0f }
+#define DEFAULT_COMPONENT_TEXT_LABEL_COLOR (Color) { .r = 1.0f, .g = 1.0f, .b = 1.0f, .a = 1.0f }
 
 #define DEFAULT_COMPONENT_COLLIDER2D_COLOR (Color) { .r = 1.0f, .g = 1.0f, .b = 1.0f, .a = 1.0f }
 

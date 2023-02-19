@@ -229,7 +229,7 @@ void cre_json_text_label_create_or_set_default(JsonSceneNode* node, cJSON* compo
         textLabelComponent = text_label_component_create();
         node->fontUID = json_get_string_new(componentJson, "uid");
         strcpy(textLabelComponent->text, json_get_string(componentJson, "text"));
-        textLabelComponent->color = json_get_linear_color_default(componentJson, "color", DEFAULT_COMPONENT_TEXT_LABEL_MODULATE);
+        textLabelComponent->color = json_get_linear_color_default(componentJson, "color", DEFAULT_COMPONENT_TEXT_LABEL_COLOR);
         node->components[ComponentDataIndex_TEXT_LABEL] = textLabelComponent;
     } else {
         textLabelComponent = (TextLabelComponent*) node->components[ComponentDataIndex_TEXT_LABEL];
