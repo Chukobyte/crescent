@@ -3,8 +3,9 @@
 #include <stdlib.h>
 
 #include "render_context.h"
-#include "shader.h"
-#include "shader_source.h"
+#include "shader/shader.h"
+#include "shader/shader_cache.h"
+#include "shader/shader_source.h"
 #include "../data_structures/se_hash_map.h"
 #include "../data_structures/se_static_array.h"
 #include "../utils/se_assert.h"
@@ -95,6 +96,7 @@ void se_renderer_initialize(int inWindowWidth, int inWindowHeight, int inResolut
     se_renderer_update_window_size((float) inWindowWidth, (float) inWindowHeight);
     sprite_renderer_initialize();
     font_renderer_initialize();
+    shader_cache_initialize();
 #ifdef SE_RENDER_TO_FRAMEBUFFER
     // Initialize framebuffer
     SE_ASSERT_FMT(se_frame_buffer_initialize(inWindowWidth, inWindowHeight), "Framebuffer didn't initialize!");
@@ -113,6 +115,7 @@ void se_renderer_finalize() {
     font_renderer_finalize();
     sprite_renderer_finalize();
     se_render_context_finalize();
+    shader_cache_finalize();
 #ifdef SE_RENDER_TO_FRAMEBUFFER
     se_frame_buffer_finalize();
 #endif

@@ -10,7 +10,7 @@
 
 #include "shader.h"
 
-#include "../data_structures/se_hash_map_string.h"
+#include "../../data_structures/se_hash_map_string.h"
 
 typedef enum ShaderParamType {
     ShaderParamType_BOOL = 0,

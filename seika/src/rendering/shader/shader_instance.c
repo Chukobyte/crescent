@@ -3,11 +3,11 @@
 #include <string.h>
 #include <stdbool.h>
 
-#include "../memory/se_mem.h"
-#include "../utils/logger.h"
-#include "../utils/se_assert.h"
-#include "../utils/se_string_util.h"
-#include "../math/se_math.h"
+#include "../../memory/se_mem.h"
+#include "../../utils/logger.h"
+#include "../../utils/se_assert.h"
+#include "../../utils/se_string_util.h"
+#include "../../math/se_math.h"
 
 ShaderInstance* se_shader_instance_create(const char* vertexSource, const char* fragmentSource) {
     Shader* shader = shader_compile_new_shader(vertexSource, fragmentSource);

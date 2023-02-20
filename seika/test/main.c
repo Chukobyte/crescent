@@ -11,7 +11,7 @@
 #include "../src/utils/observer.h"
 #include "../src/utils/se_profile_code.h"
 #include "../src/math/se_curve_float.h"
-#include "../src/rendering/shader_instance.h"
+#include "../src/rendering/shader/shader_instance.h"
 
 #define RESOURCES_PATH "seika/test/resources"
 #define RESOURCES_PACK_PATH "seika/test/resources/test.pck"
