@@ -56,10 +56,10 @@ nlohmann::ordered_json GetComponentsJsonArray(SceneNode* sceneNode) {
             transform2dJson["z_index"] = transform2DComp->zIndex;
         }
         if (transform2DComp->isZIndexRelativeToParent != DEFAULT_COMPONENT_TRANSFORM2D_Z_INDEX_RELATIVE_TO_PARENT) {
-            transform2dJson["z_index_relative_to_parent"] = (bool) transform2DComp->isZIndexRelativeToParent;
+            transform2dJson["z_index_relative_to_parent"] = transform2DComp->isZIndexRelativeToParent;
         }
         if (transform2DComp->ignoreCamera != DEFAULT_COMPONENT_TRANSFORM2D_IGNORE_CAMERA) {
-            transform2dJson["ignore_camera"] = (bool) transform2DComp->ignoreCamera;
+            transform2dJson["ignore_camera"] = transform2DComp->ignoreCamera;
         }
         componentsJsonArray.emplace_back(transform2dJson);
     }
