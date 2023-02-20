@@ -183,7 +183,7 @@ nlohmann::ordered_json GetSceneNodeJson(SceneNode* sceneNode) {
     // Children
     nlohmann::ordered_json childrenJsonArray = nlohmann::ordered_json::array();
     for (const auto& childNode : sceneNode->children) {
-        if (!childNode->doesOriginateFromExternalScene) {
+        if (!childNode->doesOriginateFromExternalScene || childNode->IsExternalSceneNode()) {
             const nlohmann::ordered_json& childSceneNode = GetSceneNodeJson(childNode);
             childrenJsonArray.emplace_back(childSceneNode);
         }

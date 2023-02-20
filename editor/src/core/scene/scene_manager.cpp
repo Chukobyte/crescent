@@ -93,6 +93,9 @@ void SceneNodeUtils::DisplayTreeNodeLeaf(SceneNode *sceneNode) {
                         const std::string relativePath = projectProperties->GetPathRelativeToProjectPath(fullPathString);
                         externalSceneFile->rootNode->parent = sceneNode;
                         externalSceneFile->rootNode->externalNodeSource = relativePath;
+                        sceneManager->IterateAllSceneNodes(externalSceneFile->rootNode, [](SceneNode* node, size_t index) {
+                            node->doesOriginateFromExternalScene = true;
+                        });
                         sceneNode->children.emplace_back(externalSceneFile->rootNode);
                     }
                 };
