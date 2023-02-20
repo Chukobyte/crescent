@@ -87,10 +87,10 @@ void SceneNodeUtils::DisplayTreeNodeLeaf(SceneNode *sceneNode) {
                 externalNodeFileBrowser.rootPath = projectProperties->projectPath;
                 externalNodeFileBrowser.onModeCompletedFunc = [sceneNode](const std::filesystem::path& fullPath) {
                     const std::string fullPathString = fullPath.generic_string();
+                    const std::string relativePath = projectProperties->GetPathRelativeToProjectPath(fullPathString);
                     // Make sure we aren't adding current scene as external scene
-                    if (fullPathString != sceneManager->selectedSceneFile->filePath) {
+                    if (relativePath != sceneManager->selectedSceneFile->filePath) {
                         SceneNodeFile* externalSceneFile = sceneManager->LoadSceneFromFile(fullPathString.c_str());
-                        const std::string relativePath = projectProperties->GetPathRelativeToProjectPath(fullPathString);
                         externalSceneFile->rootNode->parent = sceneNode;
                         externalSceneFile->rootNode->externalNodeSource = relativePath;
                         sceneManager->IterateAllSceneNodes(externalSceneFile->rootNode, [](SceneNode* node, size_t index) {
