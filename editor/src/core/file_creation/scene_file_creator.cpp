@@ -171,8 +171,13 @@ nlohmann::ordered_json GetSceneNodeJson(SceneNode* sceneNode) {
     nlohmann::ordered_json sceneJson;
     sceneJson["name"] = sceneNode->name;
     sceneJson["type"] = sceneNode->GetTypeString();
-    sceneJson["tags"] = nullptr;
-    sceneJson["external_node_source"] = sceneNode->IsExternalSceneNode() ? sceneNode->externalNodeSource : nullptr;
+    if (!sceneNode->tags.empty()) {
+        // TODO: Create tag array
+        sceneJson["tags"] = nullptr;
+    }
+    if (sceneNode->IsExternalSceneNode()) {
+        sceneJson["external_node_source"] = sceneNode->externalNodeSource;
+    }
     //Components
     sceneJson["components"] = GetComponentsJsonArray(sceneNode);
     // Children

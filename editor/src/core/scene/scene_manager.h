@@ -98,6 +98,7 @@ class SceneNode {
     bool doesOriginateFromExternalScene = false;
     SceneNode* parent = nullptr;
     std::vector<SceneNode*> children;
+    std::vector<std::string> tags;
 
   private:
     unsigned int uid;
