@@ -17,6 +17,7 @@ typedef struct JsonSceneNode {
     char* name;
     NodeBaseType type;
     char* externalNodeSource;
+    bool fromExternalNodeSource;
     SEArrayList* tags;
     void* components[MAX_COMPONENTS];
     struct JsonSceneNode* parent;

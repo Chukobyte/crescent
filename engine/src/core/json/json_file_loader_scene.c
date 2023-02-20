@@ -29,6 +29,7 @@ JsonSceneNode* cre_json_create_new_node() {
     node->fontUID = NULL;
     node->spriteTexturePath = NULL;
     node->externalNodeSource = NULL;
+    node->fromExternalNodeSource = false;
     node->parent = NULL;
     node->childrenCount = 0;
     node->type = NodeBaseType_INVALID;
@@ -315,6 +316,14 @@ void cre_json_parallax_create_or_set_default(JsonSceneNode* node, cJSON* compone
 }
 
 // Recursive
+void cre_json_set_all_child_nodes_from_external_source(JsonSceneNode* node) {
+    node->fromExternalNodeSource = true;
+    for (size_t i = 0; i < node->childrenCount; i++) {
+        cre_json_set_all_child_nodes_from_external_source(node->children[i]);
+    }
+}
+
+// Recursive
 JsonSceneNode* cre_json_load_scene_node(cJSON* nodeJson, JsonSceneNode* parentNode) {
     JsonSceneNode* node = NULL;
     // Store local file children before loading ones from external scene
@@ -324,6 +333,7 @@ JsonSceneNode* cre_json_load_scene_node(cJSON* nodeJson, JsonSceneNode* parentNo
     if (externalSceneNodeString != NULL) {
         node = cre_json_load_scene_file(externalSceneNodeString);
         SE_MEM_FREE(node->name);
+        cre_json_set_all_child_nodes_from_external_source(node);
     } else {
         node = cre_json_create_new_node();
     }

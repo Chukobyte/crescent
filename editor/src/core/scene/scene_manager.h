@@ -95,6 +95,7 @@ class SceneNode {
     std::string name;
     NodeBaseType type = NodeBaseType_INVALID;
     std::string externalNodeSource;
+    bool doesOriginateFromExternalScene = false;
     SceneNode* parent = nullptr;
     std::vector<SceneNode*> children;
 

@@ -270,6 +270,7 @@ SceneNode* SceneManager::LoadSceneTreeJson(JsonSceneNode* node, SceneNode* paren
     if (node->externalNodeSource != nullptr) {
         sceneNode->externalNodeSource = std::string(node->externalNodeSource);
     }
+    sceneNode->doesOriginateFromExternalScene = node->fromExternalNodeSource;
 
     // Components
     if (node->components[ComponentDataIndex_TRANSFORM_2D] != nullptr) {

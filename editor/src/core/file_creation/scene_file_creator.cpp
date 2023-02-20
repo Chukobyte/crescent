@@ -172,14 +172,16 @@ nlohmann::ordered_json GetSceneNodeJson(SceneNode* sceneNode) {
     sceneJson["name"] = sceneNode->name;
     sceneJson["type"] = sceneNode->GetTypeString();
     sceneJson["tags"] = nullptr;
-    sceneJson["external_node_source"] = nullptr;
+    sceneJson["external_node_source"] = sceneNode->IsExternalSceneNode() ? sceneNode->externalNodeSource : nullptr;
     //Components
     sceneJson["components"] = GetComponentsJsonArray(sceneNode);
     // Children
     nlohmann::ordered_json childrenJsonArray = nlohmann::ordered_json::array();
     for (const auto& childNode : sceneNode->children) {
-        const nlohmann::ordered_json& childSceneNode = GetSceneNodeJson(childNode);
-        childrenJsonArray.emplace_back(childSceneNode);
+        if (!childNode->doesOriginateFromExternalScene) {
+            const nlohmann::ordered_json& childSceneNode = GetSceneNodeJson(childNode);
+            childrenJsonArray.emplace_back(childSceneNode);
+        }
     }
     sceneJson["children"] = childrenJsonArray;
     return sceneJson;
