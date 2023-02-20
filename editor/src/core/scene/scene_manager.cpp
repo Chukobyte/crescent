@@ -3,8 +3,11 @@
 #include "../seika/src/utils/se_assert.h"
 
 #include "../engine/src/core/json/json_file_loader.h"
+
 #include "../ui/imgui/imgui_helper.h"
+#include "../ui/imgui/imgui_file_browser.h"
 #include "../editor_callbacks.h"
+#include "../project_properties.h"
 
 //--- Scene Node Utils ---//
 // TODO: Fix issue with not registering 'Right Click' logic because tree node is closed...
@@ -12,7 +15,7 @@ void SceneNodeUtils::DisplayTreeNodeLeaf(SceneNode *sceneNode) {
     static SceneManager* sceneManager = SceneManager::Get();
     static ImGuiTreeNodeFlags defaultFlags = ImGuiTreeNodeFlags_DefaultOpen;
     static EditorCallbacks* editorCallbacks = EditorCallbacks::Get();
-    const ImGuiTreeNodeFlags currentFlags = sceneNode->children.empty() ? defaultFlags | ImGuiTreeNodeFlags_Leaf : defaultFlags;
+    const ImGuiTreeNodeFlags currentFlags = sceneNode->children.empty() || sceneNode->IsExternalSceneNode() ? defaultFlags | ImGuiTreeNodeFlags_Leaf : defaultFlags;
     ImGuiHelper::TreeNode treeNode = {
         .label = sceneNode->name,
         .flags = sceneManager->selectedSceneNode == sceneNode ? ImGuiTreeNodeFlags_Selected | currentFlags : currentFlags,
@@ -62,6 +65,37 @@ void SceneNodeUtils::DisplayTreeNodeLeaf(SceneNode *sceneNode) {
                     };
                     ImGuiHelper::StaticPopupModalManager::Get()->QueueOpenPopop(&renameNodePopup);
                 }
+                // TODO: Move somewhere else (like make it a button on top of the scene outliner instead)
+                static ImGuiHelper::FileBrowser externalNodeFileBrowser = {
+                    .name = "External Scene Browser",
+                    .open = nullptr,
+                    .windowFlags = ImGuiWindowFlags_NoResize,
+                    .callbackFunc = nullptr,
+                    .position = ImVec2{ 100.0f, 100.0f },
+                    .size = ImVec2{ 600.0f, 320.0f },
+                    .rootPath = {},
+                    .mode = ImGuiHelper::FileBrowser::Mode::OpenFile,
+                    .validExtensions = { ".cscn" }
+                };
+                if (sceneNode->IsExternalSceneNode() && ImGui::MenuItem("Make external scene local")) {
+                    sceneNode->externalNodeSource.clear();
+                } else if (!sceneNode->IsExternalSceneNode() && ImGui::MenuItem("Add external scene")) {
+                    ImGuiHelper::FileBrowserPopupManager::Get()->QueueOpenPopop(&externalNodeFileBrowser);
+                }
+
+                static ProjectProperties* projectProperties = ProjectProperties::Get();
+                externalNodeFileBrowser.rootPath = projectProperties->projectPath;
+                externalNodeFileBrowser.onModeCompletedFunc = [sceneNode](const std::filesystem::path& fullPath) {
+                    const std::string fullPathString = fullPath.generic_string();
+                    // Make sure we aren't adding current scene as external scene
+                    if (fullPathString != sceneManager->selectedSceneFile->filePath) {
+                        SceneNodeFile* externalSceneFile = sceneManager->LoadSceneFromFile(fullPathString.c_str());
+                        const std::string relativePath = projectProperties->GetPathRelativeToProjectPath(fullPathString);
+                        externalSceneFile->rootNode->externalNodeSource = relativePath;
+                        sceneNode->children.emplace_back(externalSceneFile->rootNode);
+                    }
+                };
+
                 if (sceneNode->parent != nullptr && ImGui::MenuItem("Delete")) {
                     // TODO: Delete Node
                     sceneManager->QueueNodeForDeletion(sceneNode);
@@ -70,7 +104,10 @@ void SceneNodeUtils::DisplayTreeNodeLeaf(SceneNode *sceneNode) {
             }
 
             for (auto* sceneNodeChild : sceneNode->children) {
-                DisplayTreeNodeLeaf(sceneNodeChild);
+                // Don't display children external scenes for now
+                if (!sceneNodeChild->AreParentsInExternalScene()) {
+                    DisplayTreeNodeLeaf(sceneNodeChild);
+                }
             }
         }
     };
@@ -230,6 +267,9 @@ SceneNode* SceneManager::LoadSceneTreeJson(JsonSceneNode* node, SceneNode* paren
     sceneNode->parent = parent;
     sceneNode->name = node->name;
     sceneNode->type = node->type;
+    if (node->externalNodeSource != nullptr) {
+        sceneNode->externalNodeSource = std::string(node->externalNodeSource);
+    }
 
     // Components
     if (node->components[ComponentDataIndex_TRANSFORM_2D] != nullptr) {

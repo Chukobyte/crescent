@@ -28,6 +28,7 @@ JsonSceneNode* cre_json_create_new_node() {
     node->name = NULL;
     node->fontUID = NULL;
     node->spriteTexturePath = NULL;
+    node->externalNodeSource = NULL;
     node->parent = NULL;
     node->childrenCount = 0;
     node->type = NodeBaseType_INVALID;
