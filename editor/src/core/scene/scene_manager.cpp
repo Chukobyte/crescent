@@ -17,7 +17,7 @@ void SceneNodeUtils::DisplayTreeNodeLeaf(SceneNode *sceneNode) {
     static EditorCallbacks* editorCallbacks = EditorCallbacks::Get();
     const ImGuiTreeNodeFlags currentFlags = sceneNode->children.empty() || sceneNode->IsExternalSceneNode() ? defaultFlags | ImGuiTreeNodeFlags_Leaf : defaultFlags;
     ImGuiHelper::TreeNode treeNode = {
-        .label = sceneNode->name,
+        .label = !sceneNode->IsExternalSceneNode() ? sceneNode->name : sceneNode->name + " (e)", // TODO: Add proper image for external scene nodes
         .flags = sceneManager->selectedSceneNode == sceneNode ? ImGuiTreeNodeFlags_Selected | currentFlags : currentFlags,
         .callbackFunc = [sceneNode] (ImGuiHelper::Context* context) {
             // Left Click
