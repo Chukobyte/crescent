@@ -1,8 +1,6 @@
 {
     "name": "TitleScreen",
     "type": "Node2D",
-    "tags": null,
-    "external_node_source": null,
     "components": [
         {
             "type": "transform_2d"
@@ -17,8 +15,6 @@
         {
             "name": "TextLabel",
             "type": "TextLabel",
-            "tags": null,
-            "external_node_source": null,
             "components": [
                 {
                     "type": "transform_2d",

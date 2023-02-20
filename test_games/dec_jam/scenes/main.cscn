@@ -1,8 +1,6 @@
 {
     "name": "Main",
     "type": "Node2D",
-    "tags": null,
-    "external_node_source": null,
     "components": [
         {
             "type": "transform_2d"
@@ -12,8 +10,6 @@
         {
             "name": "Player",
             "type": "Node2D",
-            "tags": null,
-            "external_node_source": null,
             "components": [
                 {
                     "type": "transform_2d",
@@ -29,8 +25,6 @@
                 {
                     "name": "Collider2D",
                     "type": "Collider2D",
-                    "tags": null,
-                    "external_node_source": null,
                     "components": [
                         {
                             "type": "transform_2d",
@@ -60,8 +54,6 @@
         {
             "name": "Parallax",
             "type": "Parallax",
-            "tags": null,
-            "external_node_source": null,
             "components": [
                 {
                     "type": "transform_2d",
@@ -82,8 +74,6 @@
                 {
                     "name": "Background",
                     "type": "Sprite",
-                    "tags": null,
-                    "external_node_source": null,
                     "components": [
                         {
                             "type": "transform_2d"
