@@ -23,9 +23,15 @@ typedef enum ShaderParamType {
 
 typedef struct ShaderParam {
     char* name;
-    void* value;
     ShaderParamType type;
-    size_t valueSize; // Cached value applied on creation
+    union {
+        bool boolValue;
+        int intValue;
+        float floatValue;
+        Vector2 float2Value;
+        Vector3 float3Value;
+        Vector4 float4Value;
+    } value;
 } ShaderParam;
 
 typedef struct ShaderInstance {
@@ -35,6 +41,24 @@ typedef struct ShaderInstance {
 
 ShaderInstance* se_shader_instance_create(const char* vertexSource, const char* fragmentSource);
 void se_shader_instance_destroy(ShaderInstance* shaderInstance);
-ShaderParam* se_shader_instance_create_param(ShaderInstance* shaderInstance, const char* name, void* value, ShaderParamType valueType);
-void se_shader_instance_set_param_value(ShaderInstance* shaderInstance, const char* name, void* value);
-void* se_shader_instance_get_param_value(ShaderInstance* shaderInstance, const char* name);
+
+ShaderParam* se_shader_instance_param_create_bool(ShaderInstance* shaderInstance, const char* name, bool value);
+ShaderParam* se_shader_instance_param_create_int(ShaderInstance* shaderInstance, const char* name, int value);
+ShaderParam* se_shader_instance_param_create_float(ShaderInstance* shaderInstance, const char* name, float value);
+ShaderParam* se_shader_instance_param_create_float2(ShaderInstance* shaderInstance, const char* name, Vector2 value);
+ShaderParam* se_shader_instance_param_create_float3(ShaderInstance* shaderInstance, const char* name, Vector3 value);
+ShaderParam* se_shader_instance_param_create_float4(ShaderInstance* shaderInstance, const char* name, Vector4 value);
+
+void se_shader_instance_param_update_bool(ShaderInstance* shaderInstance, const char* name, bool value);
+void se_shader_instance_param_update_int(ShaderInstance* shaderInstance, const char* name, int value);
+void se_shader_instance_param_update_float(ShaderInstance* shaderInstance, const char* name, float value);
+void se_shader_instance_param_update_float2(ShaderInstance* shaderInstance, const char* name, Vector2 value);
+void se_shader_instance_param_update_float3(ShaderInstance* shaderInstance, const char* name, Vector3 value);
+void se_shader_instance_param_update_float4(ShaderInstance* shaderInstance, const char* name, Vector4 value);
+
+bool se_shader_instance_param_get_bool(ShaderInstance* shaderInstance, const char* name);
+int se_shader_instance_param_get_int(ShaderInstance* shaderInstance, const char* name);
+float se_shader_instance_param_get_float(ShaderInstance* shaderInstance, const char* name);
+Vector2 se_shader_instance_param_get_float2(ShaderInstance* shaderInstance, const char* name);
+Vector3 se_shader_instance_param_get_float3(ShaderInstance* shaderInstance, const char* name);
+Vector4 se_shader_instance_param_get_float4(ShaderInstance* shaderInstance, const char* name);

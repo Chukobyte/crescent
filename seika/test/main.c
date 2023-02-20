@@ -11,6 +11,7 @@
 #include "../src/utils/observer.h"
 #include "../src/utils/se_profile_code.h"
 #include "../src/math/se_curve_float.h"
+#include "../src/rendering/shader_instance.h"
 
 #define RESOURCES_PATH "seika/test/resources"
 #define RESOURCES_PACK_PATH "seika/test/resources/test.pck"
@@ -27,6 +28,7 @@ void seika_array_list_test(void);
 void seika_asset_file_loader_test(void);
 void seika_observer_test(void);
 void seika_curve_float_test(void);
+void seika_shader_instance_test(void);
 
 int main(int argv, char** args) {
     UNITY_BEGIN();
@@ -39,6 +41,7 @@ int main(int argv, char** args) {
     RUN_TEST(seika_asset_file_loader_test);
     RUN_TEST(seika_observer_test);
     RUN_TEST(seika_curve_float_test);
+    RUN_TEST(seika_shader_instance_test);
     return UNITY_END();
 }
 
@@ -310,4 +313,22 @@ void seika_curve_float_test(void) {
 //    double cpu_time_used;
 //    SE_PROFILE_CODE_WITH_VAR(cpu_time_used, for (int i = 0; i < 10000000; i++) {})
 //    printf("Time taken: %f seconds\n", cpu_time_used);
+}
+
+void seika_shader_instance_test(void) {
+    // Shader instance param tests
+    ShaderInstance shaderInstance = { .shader = NULL, .paramMap = se_string_hash_map_create_default_capacity() };
+
+    se_shader_instance_param_create_bool(&shaderInstance, "is_active", false);
+    TEST_ASSERT_FALSE(se_shader_instance_param_get_bool(&shaderInstance, "is_active"));
+    se_shader_instance_param_update_bool(&shaderInstance, "is_active", true);
+    TEST_ASSERT_TRUE(se_shader_instance_param_get_bool(&shaderInstance, "is_active"));
+
+    // Clean up
+    SE_STRING_HASH_MAP_FOR_EACH(shaderInstance.paramMap, iter) {
+        StringHashMapNode* node = iter.pair;
+        ShaderParam* param = (ShaderParam*) node->value;
+        SE_MEM_FREE(param->name);
+    }
+    se_string_hash_map_destroy(shaderInstance.paramMap);
 }
