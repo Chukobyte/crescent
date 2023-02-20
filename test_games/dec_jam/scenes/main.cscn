@@ -1,46 +1,19 @@
 {
     "name": "Main",
     "type": "Node2D",
-    "tags": null,
-    "external_node_source": null,
     "components": [
         {
-            "type": "transform_2d",
-            "position": {
-                "x": 0.0,
-                "y": 0.0
-            },
-            "scale": {
-                "x": 1.0,
-                "y": 1.0
-            },
-            "rotation": 0.0,
-            "z_index": 0,
-            "z_index_relative_to_parent": true,
-            "ignore_camera": false
+            "type": "transform_2d"
         }
     ],
     "children": [
         {
             "name": "Player",
             "type": "Node2D",
-            "tags": null,
-            "external_node_source": null,
             "components": [
                 {
                     "type": "transform_2d",
-                    "position": {
-                        "x": 0.0,
-                        "y": 0.0
-                    },
-                    "scale": {
-                        "x": 1.0,
-                        "y": 1.0
-                    },
-                    "rotation": 0.0,
-                    "z_index": 1,
-                    "z_index_relative_to_parent": true,
-                    "ignore_camera": false
+                    "z_index": 1
                 },
                 {
                     "type": "script",
@@ -52,23 +25,13 @@
                 {
                     "name": "Collider2D",
                     "type": "Collider2D",
-                    "tags": null,
-                    "external_node_source": null,
                     "components": [
                         {
                             "type": "transform_2d",
                             "position": {
                                 "x": -2.0,
                                 "y": 0.0
-                            },
-                            "scale": {
-                                "x": 1.0,
-                                "y": 1.0
-                            },
-                            "rotation": 0.0,
-                            "z_index": 0,
-                            "z_index_relative_to_parent": true,
-                            "ignore_camera": false
+                            }
                         },
                         {
                             "type": "collider_2d",
@@ -91,23 +54,13 @@
         {
             "name": "Parallax",
             "type": "Parallax",
-            "tags": null,
-            "external_node_source": null,
             "components": [
                 {
                     "type": "transform_2d",
                     "position": {
                         "x": -432.0,
                         "y": -58.0
-                    },
-                    "scale": {
-                        "x": 1.0,
-                        "y": 1.0
-                    },
-                    "rotation": 0.0,
-                    "z_index": 0,
-                    "z_index_relative_to_parent": true,
-                    "ignore_camera": false
+                    }
                 },
                 {
                     "type": "parallax",
@@ -121,23 +74,9 @@
                 {
                     "name": "Background",
                     "type": "Sprite",
-                    "tags": null,
-                    "external_node_source": null,
                     "components": [
                         {
-                            "type": "transform_2d",
-                            "position": {
-                                "x": 0.0,
-                                "y": 0.0
-                            },
-                            "scale": {
-                                "x": 1.0,
-                                "y": 1.0
-                            },
-                            "rotation": 0.0,
-                            "z_index": 0,
-                            "z_index_relative_to_parent": true,
-                            "ignore_camera": false
+                            "type": "transform_2d"
                         },
                         {
                             "type": "sprite",
@@ -147,19 +86,7 @@
                                 "y": 0.0,
                                 "w": 9600.0,
                                 "h": 900.0
-                            },
-                            "origin": {
-                                "x": 0.0,
-                                "y": 0.0
-                            },
-                            "modulate": {
-                                "r": 255,
-                                "g": 255,
-                                "b": 255,
-                                "a": 255
-                            },
-                            "flip_x": false,
-                            "flip_y": false
+                            }
                         }
                     ],
                     "children": []

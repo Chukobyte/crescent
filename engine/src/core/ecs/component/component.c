@@ -60,7 +60,7 @@ static ComponentManager* componentManager = NULL;
 ComponentType component_manager_translate_index_to_type(ComponentDataIndex index);
 
 void component_manager_initialize() {
-    SE_ASSERT(componentManager == NULL);
+    SE_ASSERT_FMT(componentManager == NULL, "Component Manager is not NULL when trying to initialize");
     componentManager = SE_MEM_ALLOCATE(ComponentManager);
     for (int i = 0; i < MAX_ENTITIES; i++) {
         componentManager->entityComponentArrays[i] = SE_MEM_ALLOCATE(ComponentArray);
@@ -69,7 +69,12 @@ void component_manager_initialize() {
     }
 }
 
-void component_manager_finalize() {}
+// Assumes component data was already deleted previously
+void component_manager_finalize() {
+    SE_ASSERT_FMT(componentManager != NULL, "Component Manager is NULL when trying to finalize...");
+    SE_MEM_FREE(componentManager);
+    componentManager = NULL;
+}
 
 void* component_manager_get_component(Entity entity, ComponentDataIndex index) {
     void* component = component_array_get_component(componentManager->entityComponentArrays[entity], index);

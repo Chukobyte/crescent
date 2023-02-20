@@ -69,6 +69,8 @@ add_library(${PROJECT_NAME} STATIC
         src/core/ecs/system/script_ec_system.c
         src/core/ecs/system/sprite_rendering_ec_system.c
         src/core/json/json_file_loader.c
+        src/core/json/json_file_loader_scene.c
+        src/core/json/json_helper.c
         src/core/math/curve_float_manager.c
         )
 
@@ -140,5 +142,12 @@ if (IS_CI_BUILD STREQUAL "false")
             COMMAND ${CMAKE_COMMAND} -E copy_directory
             ${PROJECT_SOURCE_DIR}/../crescent_py_api
             $<TARGET_FILE_DIR:${PROJECT_NAME}>/../crescent_py_api
+            )
+
+    # Copy directories over that are needed to test
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${PROJECT_SOURCE_DIR}/../engine/test
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/../engine/test
             )
 endif()

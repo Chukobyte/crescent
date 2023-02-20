@@ -1,5 +1,7 @@
 #include "scene_file_creator.h"
 
+#include "../engine/src/core/ecs/component/component_defaults.h"
+
 #include "../scene/scene_manager.h"
 #include "../utils/json_helper.h"
 
@@ -41,12 +43,24 @@ nlohmann::ordered_json GetComponentsJsonArray(SceneNode* sceneNode) {
     if (const Transform2DComp* transform2DComp = sceneNode->GetComponentSafe<Transform2DComp>()) {
         nlohmann::ordered_json transform2dJson;
         transform2dJson["type"] = "transform_2d";
-        transform2dJson["position"] = Vector2ToJson(transform2DComp->transform2D.position);
-        transform2dJson["scale"] = Vector2ToJson(transform2DComp->transform2D.scale);
-        transform2dJson["rotation"] = transform2DComp->transform2D.rotation;
-        transform2dJson["z_index"] = transform2DComp->zIndex;
-        transform2dJson["z_index_relative_to_parent"] = transform2DComp->isZIndexRelativeToParent;
-        transform2dJson["ignore_camera"] = transform2DComp->ignoreCamera;
+        if (transform2DComp->transform2D.position.x != 0.0f || transform2DComp->transform2D.position.y != 0.0f) {
+            transform2dJson["position"] = Vector2ToJson(transform2DComp->transform2D.position);
+        }
+        if (transform2DComp->transform2D.scale.x != 1.0f || transform2DComp->transform2D.scale.y != 1.0f) {
+            transform2dJson["scale"] = Vector2ToJson(transform2DComp->transform2D.scale);
+        }
+        if (transform2DComp->transform2D.rotation != 0.0f) {
+            transform2dJson["rotation"] = transform2DComp->transform2D.rotation;
+        }
+        if (transform2DComp->zIndex != 0) {
+            transform2dJson["z_index"] = transform2DComp->zIndex;
+        }
+        if (transform2DComp->isZIndexRelativeToParent != DEFAULT_COMPONENT_TRANSFORM2D_Z_INDEX_RELATIVE_TO_PARENT) {
+            transform2dJson["z_index_relative_to_parent"] = transform2DComp->isZIndexRelativeToParent;
+        }
+        if (transform2DComp->ignoreCamera != DEFAULT_COMPONENT_TRANSFORM2D_IGNORE_CAMERA) {
+            transform2dJson["ignore_camera"] = transform2DComp->ignoreCamera;
+        }
         componentsJsonArray.emplace_back(transform2dJson);
     }
     if (const SpriteComp* spriteComp = sceneNode->GetComponentSafe<SpriteComp>()) {
@@ -54,10 +68,18 @@ nlohmann::ordered_json GetComponentsJsonArray(SceneNode* sceneNode) {
         spriteJson["type"] = "sprite";
         spriteJson["texture_path"] = spriteComp->texturePath;
         spriteJson["draw_source"] = Rect2ToJson(spriteComp->drawSource);
-        spriteJson["origin"] = Vector2ToJson(spriteComp->origin);
-        spriteJson["modulate"] = ColorToJson(spriteComp->modulate);
-        spriteJson["flip_x"] = spriteComp->flipX;
-        spriteJson["flip_y"] = spriteComp->flipY;
+        if (spriteComp->origin.x != 0.0f || spriteComp->origin.y != 0.0f) {
+            spriteJson["origin"] = Vector2ToJson(spriteComp->origin);
+        }
+        if (spriteComp->modulate.r != 1.0f || spriteComp->modulate.g != 1.0f || spriteComp->modulate.b != 1.0f || spriteComp->modulate.a != 1.0f) {
+            spriteJson["modulate"] = ColorToJson(spriteComp->modulate);
+        }
+        if (spriteComp->flipX != DEFAULT_COMPONENT_SPRITE_FLIP_X) {
+            spriteJson["flip_x"] = spriteComp->flipX;
+        }
+        if (spriteComp->flipY != DEFAULT_COMPONENT_SPRITE_FLIP_Y) {
+            spriteJson["flip_y"] = spriteComp->flipY;
+        }
         componentsJsonArray.emplace_back(spriteJson);
     }
     if (const AnimatedSpriteComp* animatedSpriteComp = sceneNode->GetComponentSafe<AnimatedSpriteComp>()) {
@@ -65,10 +87,18 @@ nlohmann::ordered_json GetComponentsJsonArray(SceneNode* sceneNode) {
         animSpriteJson["type"] = "animated_sprite";
         animSpriteJson["current_animation_name"] = animatedSpriteComp->currentAnimationName;
         animSpriteJson["is_playing"] = animatedSpriteComp->isPlaying;
-        animSpriteJson["origin"] = Vector2ToJson(animatedSpriteComp->origin);
-        animSpriteJson["modulate"] = ColorToJson(animatedSpriteComp->modulate);
-        animSpriteJson["flip_x"] = animatedSpriteComp->flipX;
-        animSpriteJson["flip_y"] = animatedSpriteComp->flipY;
+        if (animatedSpriteComp->origin.x != 0.0f || animatedSpriteComp->origin.y != 0.0f) {
+            animSpriteJson["origin"] = Vector2ToJson(animatedSpriteComp->origin);
+        }
+        if (animatedSpriteComp->modulate.r != 1.0f || animatedSpriteComp->modulate.g != 1.0f || animatedSpriteComp->modulate.b != 1.0f || animatedSpriteComp->modulate.a != 1.0f) {
+            animSpriteJson["modulate"] = ColorToJson(animatedSpriteComp->modulate);
+        }
+        if (animatedSpriteComp->flipX != DEFAULT_COMPONENT_ANIMATED_SPRITE_FLIP_X) {
+            animSpriteJson["flip_x"] = animatedSpriteComp->flipX;
+        }
+        if (animatedSpriteComp->flipY != DEFAULT_COMPONENT_ANIMATED_SPRITE_FLIP_Y) {
+            animSpriteJson["flip_y"] = animatedSpriteComp->flipY;
+        }
         // Animations
         nlohmann::ordered_json animationsJsonArray = nlohmann::ordered_json::array();
         for (const auto& animation : animatedSpriteComp->animations) {
@@ -96,7 +126,9 @@ nlohmann::ordered_json GetComponentsJsonArray(SceneNode* sceneNode) {
         textLabelJson["type"] = "text_label";
         textLabelJson["uid"] = textLabelComp->fontUID;
         textLabelJson["text"] = textLabelComp->text;
-        textLabelJson["color"] = ColorToJson(textLabelComp->color);
+        if (textLabelComp->color.r != 1.0f || textLabelComp->color.g != 1.0f || textLabelComp->color.b != 1.0f || textLabelComp->color.a != 1.0f) {
+            textLabelJson["color"] = ColorToJson(textLabelComp->color);
+        }
         componentsJsonArray.emplace_back(textLabelJson);
     }
     if (const ScriptComp* scriptComp = sceneNode->GetComponentSafe<ScriptComp>()) {
@@ -110,20 +142,26 @@ nlohmann::ordered_json GetComponentsJsonArray(SceneNode* sceneNode) {
         nlohmann::ordered_json collider2DJson;
         collider2DJson["type"] = "collider_2d";
         collider2DJson["extents"] = Size2DToJson(collider2DComp->extents);
-        collider2DJson["color"] = ColorToJson(collider2DComp->color);
+        if (collider2DComp->color.r != 1.0f || collider2DComp->color.g != 1.0f || collider2DComp->color.b != 1.0f || collider2DComp->color.a != 1.0f) {
+            collider2DJson["color"] = ColorToJson(collider2DComp->color);
+        }
         componentsJsonArray.emplace_back(collider2DJson);
     }
     if (const ColorRectComp* colorRectComp = sceneNode->GetComponentSafe<ColorRectComp>()) {
         nlohmann::ordered_json colorRectJson;
         colorRectJson["type"] = "color_rect";
         colorRectJson["size"] = Size2DToJson(colorRectComp->size);
-        colorRectJson["color"] = ColorToJson(colorRectComp->color);
+        if (colorRectComp->color.r != 1.0f || colorRectComp->color.g != 1.0f || colorRectComp->color.b != 1.0f || colorRectComp->color.a != 1.0f) {
+            colorRectJson["color"] = ColorToJson(colorRectComp->color);
+        }
         componentsJsonArray.emplace_back(colorRectJson);
     }
     if (const ParallaxComp* parallaxComp = sceneNode->GetComponentSafe<ParallaxComp>()) {
         nlohmann::ordered_json parallaxJson;
         parallaxJson["type"] = "parallax";
-        parallaxJson["scroll_speed"] = Vector2ToJson(parallaxComp->scrollSpeed);
+        if (parallaxComp->scrollSpeed.x != 0.0f || parallaxComp->scrollSpeed.y != 0.0f) {
+            parallaxJson["scroll_speed"] = Vector2ToJson(parallaxComp->scrollSpeed);
+        }
         componentsJsonArray.emplace_back(parallaxJson);
     }
     return componentsJsonArray;
@@ -133,15 +171,22 @@ nlohmann::ordered_json GetSceneNodeJson(SceneNode* sceneNode) {
     nlohmann::ordered_json sceneJson;
     sceneJson["name"] = sceneNode->name;
     sceneJson["type"] = sceneNode->GetTypeString();
-    sceneJson["tags"] = nullptr;
-    sceneJson["external_node_source"] = nullptr;
+    if (!sceneNode->tags.empty()) {
+        // TODO: Create tag array
+        sceneJson["tags"] = nullptr;
+    }
+    if (sceneNode->IsExternalSceneNode()) {
+        sceneJson["external_node_source"] = sceneNode->externalNodeSource;
+    }
     //Components
     sceneJson["components"] = GetComponentsJsonArray(sceneNode);
     // Children
     nlohmann::ordered_json childrenJsonArray = nlohmann::ordered_json::array();
     for (const auto& childNode : sceneNode->children) {
-        const nlohmann::ordered_json& childSceneNode = GetSceneNodeJson(childNode);
-        childrenJsonArray.emplace_back(childSceneNode);
+        if (!childNode->doesOriginateFromExternalScene || childNode->IsExternalSceneNode()) {
+            const nlohmann::ordered_json& childSceneNode = GetSceneNodeJson(childNode);
+            childrenJsonArray.emplace_back(childSceneNode);
+        }
     }
     sceneJson["children"] = childrenJsonArray;
     return sceneJson;

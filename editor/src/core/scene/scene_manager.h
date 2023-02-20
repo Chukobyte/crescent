@@ -58,16 +58,32 @@ class SceneNode {
     }
 
     template <typename T>
-    bool HasComponent() const {
+    [[nodiscard]] bool HasComponent() const {
         return components.count(&typeid(T));
     }
 
-    size_t GetComponentCount() const {
+    [[nodiscard]] size_t GetComponentCount() const {
         return components.size();
     }
 
-    bool HasComponents() const {
+    [[nodiscard]] bool HasComponents() const {
         return GetComponentCount() > 0;
+    }
+
+    [[nodiscard]] bool IsExternalSceneNode() const {
+        return !externalNodeSource.empty();
+    }
+
+    // Useful for hiding child nodes of external scenes
+    [[nodiscard]] bool AreParentsInExternalScene() const {
+        SceneNode* currentParent = parent;
+        while (currentParent != nullptr) {
+            if (currentParent->IsExternalSceneNode()) {
+                return true;
+            }
+            currentParent = currentParent->parent;
+        }
+        return false;
     }
 
     void RemoveChild(SceneNode* childNode) {
@@ -78,8 +94,11 @@ class SceneNode {
 
     std::string name;
     NodeBaseType type = NodeBaseType_INVALID;
+    std::string externalNodeSource;
+    bool doesOriginateFromExternalScene = false;
     SceneNode* parent = nullptr;
     std::vector<SceneNode*> children;
+    std::vector<std::string> tags;
 
   private:
     unsigned int uid;

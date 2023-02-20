@@ -44,7 +44,7 @@ int main(int argv, char** args) {
 
 void seika_hash_map_test(void) {
     SEHashMap* hashMap = se_hash_map_create(sizeof(int), sizeof(int), SE_HASH_MAP_MIN_CAPACITY);
-    TEST_ASSERT_TRUE(hashMap != NULL);
+    TEST_ASSERT_NOT_NULL(hashMap);
 
     int key1 = 0;
     int value1 = 11;
@@ -77,7 +77,7 @@ void seika_hash_map_test(void) {
 void seika_spatial_hash_map_test(void) {
     const int maxSpriteSize = 32;
     SESpatialHashMap* spatialHashMap = se_spatial_hash_map_create(maxSpriteSize * 2);
-    TEST_ASSERT_TRUE(spatialHashMap != NULL);
+    TEST_ASSERT_NOT_NULL(spatialHashMap);
 
     // Create two entities and insert them into hash map
     const unsigned int entity = 1;
@@ -107,9 +107,9 @@ void seika_spatial_hash_map_test(void) {
     }
 
     se_spatial_hash_map_remove(spatialHashMap, entity);
-    TEST_ASSERT_EQUAL(NULL, se_spatial_hash_map_get(spatialHashMap, entity));
+    TEST_ASSERT_NULL(se_spatial_hash_map_get(spatialHashMap, entity));
     se_spatial_hash_map_remove(spatialHashMap, entityTwo);
-    TEST_ASSERT_EQUAL(NULL, se_spatial_hash_map_get(spatialHashMap, entityTwo));
+    TEST_ASSERT_NULL(se_spatial_hash_map_get(spatialHashMap, entityTwo));
 
     se_spatial_hash_map_destroy(spatialHashMap);
 }
@@ -175,15 +175,15 @@ void seika_array_list_test(void) {
     int num2 = 7;
     se_array_list_prepend(list, &num1);
     const int returnedNum = (int) *(int*) se_array_list_get_front(list);
-    TEST_ASSERT_EQUAL_INT(list->size, 1);
-    TEST_ASSERT_EQUAL_INT(returnedNum, num1);
+    TEST_ASSERT_EQUAL_INT(1, list->size);
+    TEST_ASSERT_EQUAL_INT(num1, returnedNum);
     se_array_list_prepend(list, &num2);
-    TEST_ASSERT_EQUAL_INT(list->size, 2);
+    TEST_ASSERT_EQUAL_INT(2, list->size);
     se_array_list_remove(list, &num1);
-    TEST_ASSERT_EQUAL_INT(list->size, 1);
+    TEST_ASSERT_EQUAL_INT(1, list->size);
     int* returnedNum2 = (int*) se_array_list_pop_front(list);
-    TEST_ASSERT_EQUAL_INT(*returnedNum2, 7);
-    TEST_ASSERT(se_array_list_is_empty(list));
+    TEST_ASSERT_EQUAL_INT(7, *returnedNum2);
+    TEST_ASSERT_TRUE(se_array_list_is_empty(list));
     SE_MEM_FREE(returnedNum2);
 
     int numbers[5];
@@ -191,7 +191,7 @@ void seika_array_list_test(void) {
         numbers[i] = i;
         se_array_list_append(list, &i);
     }
-    TEST_ASSERT_EQUAL_INT(list->size, 5);
+    TEST_ASSERT_EQUAL_INT(5, list->size);
 
     // For each loop test
     SEArrayListNode* node = NULL;
@@ -203,29 +203,29 @@ void seika_array_list_test(void) {
     }
 
     const int indexThreeNum = (int) *(int*) se_array_list_get(list, 3);
-    TEST_ASSERT_EQUAL_INT(indexThreeNum, 3);
+    TEST_ASSERT_EQUAL_INT(3, indexThreeNum);
 
     // Insert Test
     int insertNum1 = 10;
     int insertNum2 = 20;
     se_array_list_insert(list, &insertNum1, 3);
-    TEST_ASSERT_EQUAL_INT(list->size, 6);
+    TEST_ASSERT_EQUAL_INT(6, list->size);
     se_array_list_insert(list, &insertNum2, 1);
-    TEST_ASSERT_EQUAL_INT(list->size, 7);
+    TEST_ASSERT_EQUAL_INT(7, list->size);
     const int insertNumThree = (int) *(int*) se_array_list_get(list, 3);
-    TEST_ASSERT_EQUAL_INT(insertNumThree, 10);
+    TEST_ASSERT_EQUAL_INT(10, insertNumThree);
     const int insertNumOne = (int) *(int*) se_array_list_get(list, 1);
-    TEST_ASSERT_EQUAL_INT(insertNumOne, 20);
+    TEST_ASSERT_EQUAL_INT(20, insertNumOne);
 
     se_array_list_sort(list, array_list_test_sort);
     const int smallestNum = (int) *(int*) se_array_list_get_front(list);
     const int highestNum = (int) *(int*) se_array_list_get_back(list);
-    TEST_ASSERT_EQUAL_INT(smallestNum, 0);
-    TEST_ASSERT_EQUAL_INT(highestNum, 20);
+    TEST_ASSERT_EQUAL_INT(0, smallestNum);
+    TEST_ASSERT_EQUAL_INT(20, highestNum);
 
     // Clear test
     se_array_list_clear(list);
-    TEST_ASSERT_EQUAL_INT(list->size, 0);
+    TEST_ASSERT_EQUAL_INT(0, list->size);
 
     se_array_list_destroy(list);
 }
@@ -292,15 +292,15 @@ void seika_curve_float_test(void) {
     SECurveFloat curve = { .controlPointCount = 0 };
     SECurveControlPoint point1 = { .x = 0.0, .y = 0.0, .tangentIn = 0.0, .tangentOut = 0.0 };
     se_curve_float_add_control_point(&curve, point1);
-    TEST_ASSERT_EQUAL_UINT(curve.controlPointCount, 1);
-    TEST_ASSERT_EQUAL_DOUBLE(se_curve_float_eval(&curve, 1.0), 0.0);
+    TEST_ASSERT_EQUAL_UINT(1, curve.controlPointCount);
+    TEST_ASSERT_EQUAL_DOUBLE(0.0, se_curve_float_eval(&curve, 1.0));
     SECurveControlPoint point2 = { .x = 1.0, .y = 1.0, .tangentIn = 0.0, .tangentOut = 0.0 };
     se_curve_float_add_control_point(&curve, point2);
-    TEST_ASSERT_EQUAL_DOUBLE(se_curve_float_eval(&curve, 0.0), 0.0);
-    TEST_ASSERT_EQUAL_DOUBLE(se_curve_float_eval(&curve, 0.5), 0.5);
-    TEST_ASSERT_EQUAL_DOUBLE(se_curve_float_eval(&curve, 1.0), 1.0);
+    TEST_ASSERT_EQUAL_DOUBLE(0.0, se_curve_float_eval(&curve, 0.0));
+    TEST_ASSERT_EQUAL_DOUBLE(0.5, se_curve_float_eval(&curve, 0.5));
+    TEST_ASSERT_EQUAL_DOUBLE(1.0, se_curve_float_eval(&curve, 1.0));
     se_curve_float_remove_control_point(&curve, point2.x, point2.y);
-    TEST_ASSERT_EQUAL_UINT(curve.controlPointCount, 1);
+    TEST_ASSERT_EQUAL_UINT(1, curve.controlPointCount);
 
     // TODO: Write performance tests
 //    SE_PROFILE_CODE(
