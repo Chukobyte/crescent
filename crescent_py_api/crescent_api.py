@@ -445,6 +445,26 @@ class Animation:
         self.frames = frames
 
 
+class ShaderUtil:
+    @staticmethod
+    def compile_shader(shader_id: str, vertex_path: str, fragment_path: str) -> None:
+        crescent_api_internal.shader_util_compile_shader(
+            shader_id=shader_id, vertex_path=vertex_path, fragment_path=fragment_path
+        )
+
+    @staticmethod
+    def delete_shader(shader_id: str) -> None:
+        crescent_api_internal.shader_util_delete_shader(shader_id=shader_id)
+
+    @staticmethod
+    def set_screen_shader(shader_id: str) -> None:
+        crescent_api_internal.shader_util_set_screen_shader(shader_id=shader_id)
+
+    @staticmethod
+    def reset_screen_shader_to_default() -> None:
+        crescent_api_internal.shader_util_reset_screen_shader_to_default()
+
+
 # ENGINE
 class Engine:
     @staticmethod
