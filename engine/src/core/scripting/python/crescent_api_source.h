@@ -482,6 +482,26 @@
 "        self.frames = frames\n"\
 "\n"\
 "\n"\
+"class ShaderUtil:\n"\
+"    @staticmethod\n"\
+"    def compile_shader(shader_id: str, vertex_path: str, fragment_path: str) -> None:\n"\
+"        crescent_api_internal.shader_util_compile_shader(\n"\
+"            shader_id=shader_id, vertex_path=vertex_path, fragment_path=fragment_path\n"\
+"        )\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def delete_shader(shader_id: str) -> None:\n"\
+"        crescent_api_internal.shader_util_delete_shader(shader_id=shader_id)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def set_screen_shader(shader_id: str) -> None:\n"\
+"        crescent_api_internal.shader_util_set_screen_shader(shader_id=shader_id)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def reset_screen_shader_to_default() -> None:\n"\
+"        crescent_api_internal.shader_util_reset_screen_shader_to_default()\n"\
+"\n"\
+"\n"\
 "# ENGINE\n"\
 "class Engine:\n"\
 "    @staticmethod\n"\

@@ -12,6 +12,7 @@ from crescent_api import (
     Color,
     Size2D,
     GameProperties,
+    ShaderUtil,
 )
 
 SPEED = 5
@@ -86,7 +87,12 @@ class SnowManager:
 
 class TitleScreen(Node2D):
     def _start(self) -> None:
-        SnowManager().create_snow(50)
+        # SnowManager().create_snow(50)
+        ShaderUtil.compile_shader(
+            shader_id="screen",
+            vertex_path="shaders/screen.vsh",
+            fragment_path="shaders/screen.fsh",
+        )
 
     def _update(self, delta_time: float) -> None:
         if Input.is_action_just_pressed(name="quit_game"):

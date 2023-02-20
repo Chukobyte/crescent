@@ -7,6 +7,7 @@
 #include "../seika/src/input/mouse.h"
 #include "../seika/src/audio/audio_manager.h"
 #include "../seika/src/networking/se_network.h"
+#include "../seika/src/asset/asset_file_loader.h"
 #include "../seika/src/memory/se_mem.h"
 #include "../seika/src/rendering/frame_buffer.h"
 #include "../seika/src/rendering/render_context.h"
@@ -210,8 +211,12 @@ PyObject* cre_py_api_shader_util_compile_shader(PyObject* self, PyObject* args, 
     char* vertexPath;
     char* fragmentPath;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "sss", crePyApiShaderUtilCompileShaderKWList, &shaderId, &vertexPath, &fragmentPath)) {
-        ShaderInstance* instance = se_shader_instance_create(vertexPath, fragmentPath);
+        char* vertexSource = sf_asset_file_loader_read_file_contents_as_string(vertexPath, NULL);
+        char* fragmentSource = sf_asset_file_loader_read_file_contents_as_string(fragmentPath, NULL);
+        ShaderInstance* instance = se_shader_instance_create(vertexSource, fragmentSource);
         shader_cache_add_instance(instance, shaderId);
+        SE_MEM_FREE(vertexSource);
+        SE_MEM_FREE(fragmentSource);
         Py_RETURN_NONE;
     }
     return NULL;
