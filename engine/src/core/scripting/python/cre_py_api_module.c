@@ -247,7 +247,7 @@ PyObject* cre_py_api_shader_instance_set_float_param(PyObject* self, PyObject* a
 PyObject* cre_py_api_shader_instance_get_float_param(PyObject* self, PyObject* args, PyObject* kwargs) {
     ShaderInstanceId shaderId;
     char* name;
-    if (PyArg_ParseTupleAndKeywords(args, kwargs, "isf", crePyApiShaderInstanceGetParamKWList, &shaderId, &name)) {
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "is", crePyApiShaderInstanceGetParamKWList, &shaderId, &name)) {
         ShaderInstance* shaderInstance = shader_cache_get_instance(shaderId);
         const float paramValue = se_shader_instance_param_get_float(shaderInstance, name);
         return Py_BuildValue("f", paramValue);
@@ -276,7 +276,7 @@ PyObject* cre_py_api_shader_util_set_screen_shader(PyObject* self, PyObject* arg
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericShaderIdKWList, &shaderId)) {
         ShaderInstance* shaderInstance = shader_cache_get_instance(shaderId);
         if (shaderInstance != NULL) {
-            se_frame_buffer_set_screen_shader(shaderInstance->shader);
+            se_frame_buffer_set_screen_shader(shaderInstance);
             Py_RETURN_TRUE;
         }
         Py_RETURN_FALSE;

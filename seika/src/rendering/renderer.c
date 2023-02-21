@@ -227,8 +227,19 @@ void se_renderer_process_and_flush_batches(const Color* backgroundColor) {
     glClearColor(screenBackgroundColor.r, screenBackgroundColor.g, screenBackgroundColor.b, screenBackgroundColor.a);
     glClear(GL_COLOR_BUFFER_BIT);
     // Draw screen texture from framebuffer
-    Shader* screenShader = se_frame_buffer_get_screen_shader();
-    shader_use(screenShader);
+    ShaderInstance* screenShaderInstance = se_frame_buffer_get_screen_shader();
+    shader_use(screenShaderInstance->shader);
+    // Update params
+    if (screenShaderInstance->paramMap->size > 0) {
+        SE_STRING_HASH_MAP_FOR_EACH(screenShaderInstance->paramMap, iter) {
+            StringHashMapNode* node = iter.pair;
+            ShaderParam* param = (ShaderParam*) node->value;
+            // TODO: Do a switch for all types
+            if (param->type == ShaderParamType_FLOAT) {
+                shader_set_float(screenShaderInstance->shader, param->name, param->value.floatValue);
+            }
+        }
+    }
     glBindVertexArray(se_frame_buffer_get_quad_vao());
     glBindTexture(GL_TEXTURE_2D, se_frame_buffer_get_color_buffer_texture());	// use the color attachment texture as the texture of the quad plane
     glDrawArrays(GL_TRIANGLES, 0, 6);
