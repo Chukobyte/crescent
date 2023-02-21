@@ -11,4 +11,5 @@ void shader_cache_finalize();
 ShaderInstanceId shader_cache_add_instance(ShaderInstance* instance);
 void shader_cache_remove_instance(ShaderInstanceId instanceId);
 ShaderInstance* shader_cache_get_instance(ShaderInstanceId instanceId);
+ShaderInstance* shader_cache_get_instance_checked(ShaderInstanceId instanceId);
 ShaderInstanceId shader_cache_create_instance_and_add(const char* vertexPath, const char* fragmentPath);

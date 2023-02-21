@@ -92,7 +92,8 @@ class TitleScreen(Node2D):
             vertex_path="shaders/screen.vsh",
             fragment_path="shaders/screen.fsh",
         )
-        shader_instance.create_float_param(name="brightness", initial_value=0.5)
+        # shader_instance.create_float_param(name="brightness", initial_value=0.5)
+        shader_instance.create_float_param(name="brightness", initial_value=1.0)
         brightness_param_value = shader_instance.get_float_param(name="brightness")
         print(f"brightness shader param value = {brightness_param_value}")
         ShaderUtil.set_screen_shader(shader_instance=shader_instance)

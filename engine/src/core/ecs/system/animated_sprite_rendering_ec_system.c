@@ -1,10 +1,9 @@
 #include "animated_sprite_rendering_ec_system.h"
 
-#include <string.h>
-
 #include <SDL2/SDL.h>
 
 #include "../seika/src/rendering/renderer.h"
+#include "../seika/src/rendering/shader/shader_cache.h"
 #include "../seika/src/utils/se_string_util.h"
 #include "../seika/src/utils/se_assert.h"
 
@@ -72,7 +71,7 @@ void animated_sprite_rendering_system_render() {
             animatedSpriteComponent->flipY,
             globalTransform,
             globalTransform->zIndex,
-            NULL
+            shader_cache_get_instance_checked(animatedSpriteComponent->shaderInstanceId)
         );
     }
 }

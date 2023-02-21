@@ -38,6 +38,13 @@ ShaderInstance* shader_cache_get_instance(ShaderInstanceId instanceId) {
     return instanceCache[instanceId];
 }
 
+ShaderInstance* shader_cache_get_instance_checked(ShaderInstanceId instanceId) {
+    if (instanceId != SHADER_INSTANCE_INVALID_ID) {
+        return instanceCache[instanceId];
+    }
+    return NULL;
+}
+
 ShaderInstanceId shader_cache_create_instance_and_add(const char* vertexPath, const char* fragmentPath) {
     char* vertexSource = sf_asset_file_loader_read_file_contents_as_string(vertexPath, NULL);
     char* fragmentSource = sf_asset_file_loader_read_file_contents_as_string(fragmentPath, NULL);
