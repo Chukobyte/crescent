@@ -47,6 +47,12 @@ static Shader* fontShader = NULL;
 
 static float resolutionWidth = 800.0f;
 static float resolutionHeight = 600.0f;
+static mat4 spriteProjection = {
+    {1.0f, 0.0f, 0.0f, 0.0f},
+    {0.0f, 1.0f, 0.0f, 0.0f},
+    {0.0f, 0.0f, 1.0f, 0.0f},
+    {0.0f, 0.0f, 0.0f, 1.0f}
+};
 
 // Sprite Batching
 typedef struct SpriteBatchItem {
@@ -148,7 +154,7 @@ void se_renderer_queue_sprite_draw_call(Texture* texture, Rect2 sourceRect, Size
         se_logger_error("NULL texture, not submitting draw call!");
         return;
     }
-    SpriteBatchItem item = { .texture = texture, .sourceRect = sourceRect, .destSize = destSize, .color = color, .flipX = flipX, .flipY = flipY, .globalTransform = globalTransform, .shaderInstance = NULL };
+    SpriteBatchItem item = { .texture = texture, .sourceRect = sourceRect, .destSize = destSize, .color = color, .flipX = flipX, .flipY = flipY, .globalTransform = globalTransform, .shaderInstance = shaderInstance };
     const int arrayZIndex = se_math_clamp_int(zIndex + SE_RENDER_LAYER_BATCH_MAX / 2, 0, SE_RENDER_LAYER_BATCH_MAX - 1);
     // Get texture layer index for render texture
     size_t textureLayerIndex = render_layer_items[arrayZIndex].renderTextureLayerCount;
@@ -301,15 +307,10 @@ void sprite_renderer_initialize() {
 void sprite_renderer_finalize() {}
 
 void sprite_renderer_update_resolution() {
-    mat4 proj = {
-        {1.0f, 0.0f, 0.0f, 0.0f},
-        {0.0f, 1.0f, 0.0f, 0.0f},
-        {0.0f, 0.0f, 1.0f, 0.0f},
-        {0.0f, 0.0f, 0.0f, 1.0f}
-    };
-    glm_ortho(0.0f, resolutionWidth, resolutionHeight, 0.0f, -1.0f, 1.0f, proj);
+    glm_mat4_identity(spriteProjection);
+    glm_ortho(0.0f, resolutionWidth, resolutionHeight, 0.0f, -1.0f, 1.0f, spriteProjection);
     shader_use(spriteShader);
-    shader_set_mat4_float(spriteShader, "projection", &proj);
+    shader_set_mat4_float(spriteShader, "projection", &spriteProjection);
 }
 
 void renderer_batching_draw_sprites(SpriteBatchItem items[], size_t spriteCount) {
@@ -327,12 +328,19 @@ void renderer_batching_draw_sprites(SpriteBatchItem items[], size_t spriteCount)
     glBindVertexArray(spriteQuadVAO);
     glBindBuffer(GL_ARRAY_BUFFER, spriteQuadVBO);
 
-    shader_use(spriteShader);
-
     Texture* texture = items[0].texture;
 
     GLfloat verts[VERTEX_BUFFER_SIZE];
     for (size_t i = 0; i < spriteCount; i++) {
+        if (items[i].shaderInstance != NULL) {
+            shader_use(items[i].shaderInstance->shader);
+            // TODO: Do this in another place, as we don't need to set project each render frame...
+            shader_set_int(items[i].shaderInstance->shader, "sprite", 0);
+            shader_set_mat4_float(items[i].shaderInstance->shader, "projection", &spriteProjection);
+        } else {
+            shader_use(spriteShader);
+        }
+
         glm_scale(items[i].globalTransform->model, (vec3) {
             items[i].destSize.w, items[i].destSize.h, 1.0f
         });

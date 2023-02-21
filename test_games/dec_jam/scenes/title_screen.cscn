@@ -30,6 +30,31 @@
                 }
             ],
             "children": []
+        },
+        {
+            "name": "Snowman",
+            "type": "Sprite",
+            "external_node_source": "scenes/snowman_template.cscn",
+            "components": [
+                {
+                    "type": "transform_2d",
+                    "position": {
+                        "x": 20.0,
+                        "y": 20.0
+                    }
+                },
+                {
+                    "type": "sprite",
+                    "texture_path": "assets/images/player/snowman_crouch_idle.png",
+                    "draw_source": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "w": 36.0,
+                        "h": 23.0
+                    }
+                }
+            ],
+            "children": []
         }
     ]
 }

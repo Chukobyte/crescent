@@ -9,6 +9,6 @@ out vec4 color;
 uniform sampler2D sprite;
 
 void main() {
-    float brightness = 0.25f;
+    float brightness = 0.5f;
     color = spriteColor * texture(sprite, texCoord) * brightness;
 }
