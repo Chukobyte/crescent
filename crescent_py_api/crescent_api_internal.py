@@ -82,16 +82,16 @@ def curve_float_eval(curve_id: int, t: float) -> float:
     return 0.0
 
 
-def shader_instance_delete(shader_id: int) -> None:
-    pass
+def shader_instance_delete(shader_id: int) -> bool:
+    return True
 
 
 def shader_util_compile_shader(vertex_path: str, fragment_path: str) -> int:
     pass
 
 
-def shader_util_set_screen_shader(shader_id: int) -> None:
-    pass
+def shader_util_set_screen_shader(shader_id: int) -> bool:
+    return True
 
 
 def shader_util_reset_screen_shader_to_default() -> None:

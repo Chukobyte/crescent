@@ -450,10 +450,15 @@ class ShaderInstance:
         self.shader_id = shader_id
         self._is_active = True
 
-    def delete(self) -> None:
+    def delete(self) -> bool:
         if self._is_active:
-            crescent_api_internal.shader_instance_delete(shader_id=self.shader_id)
-            self._is_active = False
+            has_deleted = crescent_api_internal.shader_instance_delete(
+                shader_id=self.shader_id
+            )
+            if has_deleted:
+                self._is_active = False
+            return has_deleted
+        return False
 
 
 class ShaderUtil:
@@ -465,8 +470,8 @@ class ShaderUtil:
         return ShaderInstance(shader_id=shader_id)
 
     @staticmethod
-    def set_screen_shader(shader_instance: ShaderInstance) -> None:
-        crescent_api_internal.shader_util_set_screen_shader(
+    def set_screen_shader(shader_instance: ShaderInstance) -> bool:
+        return crescent_api_internal.shader_util_set_screen_shader(
             shader_id=shader_instance.shader_id
         )
 

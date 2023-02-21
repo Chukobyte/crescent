@@ -487,10 +487,15 @@
 "        self.shader_id = shader_id\n"\
 "        self._is_active = True\n"\
 "\n"\
-"    def delete(self) -> None:\n"\
+"    def delete(self) -> bool:\n"\
 "        if self._is_active:\n"\
-"            crescent_api_internal.shader_instance_delete(shader_id=self.shader_id)\n"\
-"            self._is_active = False\n"\
+"            has_deleted = crescent_api_internal.shader_instance_delete(\n"\
+"                shader_id=self.shader_id\n"\
+"            )\n"\
+"            if has_deleted:\n"\
+"                self._is_active = False\n"\
+"            return has_deleted\n"\
+"        return False\n"\
 "\n"\
 "\n"\
 "class ShaderUtil:\n"\
@@ -502,8 +507,8 @@
 "        return ShaderInstance(shader_id=shader_id)\n"\
 "\n"\
 "    @staticmethod\n"\
-"    def set_screen_shader(shader_instance: ShaderInstance) -> None:\n"\
-"        crescent_api_internal.shader_util_set_screen_shader(\n"\
+"    def set_screen_shader(shader_instance: ShaderInstance) -> bool:\n"\
+"        return crescent_api_internal.shader_util_set_screen_shader(\n"\
 "            shader_id=shader_instance.shader_id\n"\
 "        )\n"\
 "\n"\

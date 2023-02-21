@@ -213,8 +213,9 @@ PyObject* cre_py_api_shader_instance_delete(PyObject* self, PyObject* args, PyOb
         if (shaderInstance != NULL) {
             shader_cache_remove_instance(shaderId);
             SE_MEM_FREE(shaderInstance);
+            Py_RETURN_TRUE;
         }
-        Py_RETURN_NONE;
+        Py_RETURN_FALSE;
     }
     return NULL;
 }
@@ -241,8 +242,9 @@ PyObject* cre_py_api_shader_util_set_screen_shader(PyObject* self, PyObject* arg
         ShaderInstance* shaderInstance = shader_cache_get_instance(shaderId);
         if (shaderInstance != NULL) {
             se_frame_buffer_set_screen_shader(shaderInstance->shader);
+            Py_RETURN_TRUE;
         }
-        Py_RETURN_NONE;
+        Py_RETURN_FALSE;
     }
     return NULL;
 }
