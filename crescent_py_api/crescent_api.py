@@ -460,6 +460,21 @@ class ShaderInstance:
             return has_deleted
         return False
 
+    def create_float_param(self, name: str, initial_value: float) -> None:
+        crescent_api_internal.shader_instance_create_float_param(
+            shader_id=self.shader_id, name=name, initial_value=initial_value
+        )
+
+    def set_float_param(self, name: str, value: float) -> None:
+        crescent_api_internal.shader_instance_set_float_param(
+            shader_id=self.shader_id, name=name, value=value
+        )
+
+    def get_float_param(self, name: str) -> float:
+        return crescent_api_internal.shader_instance_get_float_param(
+            shader_id=self.shader_id, name=name
+        )
+
 
 class ShaderUtil:
     @staticmethod

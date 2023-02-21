@@ -23,6 +23,9 @@ PyObject* cre_py_api_curve_float_eval(PyObject* self, PyObject* args, PyObject* 
 
 // Shader Instance
 PyObject* cre_py_api_shader_instance_delete(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_shader_instance_create_float_param(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_shader_instance_set_float_param(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_shader_instance_get_float_param(PyObject* self, PyObject* args, PyObject* kwargs);
 
 // Shader Util
 PyObject* cre_py_api_shader_util_compile_shader(PyObject* self, PyObject* args, PyObject* kwargs);
@@ -209,6 +212,18 @@ static struct PyMethodDef crePyApiMethods[] = {
     {
         "shader_instance_delete", (PyCFunction) cre_py_api_shader_instance_delete,
         METH_VARARGS | METH_KEYWORDS, "Deletes a shader from the shader instance cache."
+    },
+    {
+        "shader_instance_create_float_param", (PyCFunction) cre_py_api_shader_instance_create_float_param,
+        METH_VARARGS | METH_KEYWORDS, "Creates a float parameter."
+    },
+    {
+        "shader_instance_set_float_param", (PyCFunction) cre_py_api_shader_instance_set_float_param,
+        METH_VARARGS | METH_KEYWORDS, "Sets a float parameter."
+    },
+    {
+        "shader_instance_get_float_param", (PyCFunction) cre_py_api_shader_instance_get_float_param,
+        METH_VARARGS | METH_KEYWORDS, "Returns a float parameter."
     },
     // SHADER UTIL
     {
@@ -620,6 +635,10 @@ static char* crePyApiCurveFloatRemovePointKWList[] = {"curve_id", "x", "y", NULL
 static char* crePyApiCurveFloatEvalKWList[] = {"curve_id", "t", NULL};
 
 static char* crePyApiGenericShaderIdKWList[] = {"shader_id", NULL};
+
+static char* crePyApiShaderInstanceCreateParamKWList[] = {"shader_id", "name", "initial_value", NULL};
+static char* crePyApiShaderInstanceSetParamKWList[] = {"shader_id", "name", "value", NULL};
+static char* crePyApiShaderInstanceGetParamKWList[] = {"shader_id", "name", NULL};
 
 static char* crePyApiShaderUtilCompileShaderKWList[] = {"vertex_path", "fragment_path", NULL};
 

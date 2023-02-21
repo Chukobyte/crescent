@@ -86,6 +86,20 @@ def shader_instance_delete(shader_id: int) -> bool:
     return True
 
 
+def shader_instance_create_float_param(
+    shader_id: int, name: str, initial_value: float
+) -> None:
+    pass
+
+
+def shader_instance_set_float_param(shader_id: int, name: str, value: float) -> None:
+    pass
+
+
+def shader_instance_get_float_param(shader_id: int, name: str) -> float:
+    return 0.0
+
+
 def shader_util_compile_shader(vertex_path: str, fragment_path: str) -> int:
     pass
 

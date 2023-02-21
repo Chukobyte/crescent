@@ -220,6 +220,41 @@ PyObject* cre_py_api_shader_instance_delete(PyObject* self, PyObject* args, PyOb
     return NULL;
 }
 
+PyObject* cre_py_api_shader_instance_create_float_param(PyObject* self, PyObject* args, PyObject* kwargs) {
+    ShaderInstanceId shaderId;
+    char* name;
+    float initialValue;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "isf", crePyApiShaderInstanceCreateParamKWList, &shaderId, &name, &initialValue)) {
+        ShaderInstance* shaderInstance = shader_cache_get_instance(shaderId);
+        se_shader_instance_param_create_float(shaderInstance, name, initialValue);
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_shader_instance_set_float_param(PyObject* self, PyObject* args, PyObject* kwargs) {
+    ShaderInstanceId shaderId;
+    char* name;
+    float value;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "isf", crePyApiShaderInstanceSetParamKWList, &shaderId, &name, &value)) {
+        ShaderInstance* shaderInstance = shader_cache_get_instance(shaderId);
+        se_shader_instance_param_update_float(shaderInstance, name, value);
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_shader_instance_get_float_param(PyObject* self, PyObject* args, PyObject* kwargs) {
+    ShaderInstanceId shaderId;
+    char* name;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "isf", crePyApiShaderInstanceGetParamKWList, &shaderId, &name)) {
+        ShaderInstance* shaderInstance = shader_cache_get_instance(shaderId);
+        const float paramValue = se_shader_instance_param_get_float(shaderInstance, name);
+        return Py_BuildValue("f", paramValue);
+    }
+    return NULL;
+}
+
 // Shader Util
 PyObject* cre_py_api_shader_util_compile_shader(PyObject* self, PyObject* args, PyObject* kwargs) {
     char* vertexPath;
