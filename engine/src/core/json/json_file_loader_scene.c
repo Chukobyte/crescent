@@ -32,6 +32,10 @@ ShaderInstancePaths json_get_shader_instance_paths(cJSON* json, const char* key)
 void json_node_set_shader_instance_paths(JsonSceneNode* node, cJSON* componentJson, const char* key) {
     ShaderInstancePaths shaderInstancePaths = json_get_shader_instance_paths(componentJson, key);
     if (shaderInstancePaths.vertex != NULL && shaderInstancePaths.fragment != NULL) {
+        if (node->shaderInstanceVertexPath != NULL && node->shaderInstanceFragmentPath != NULL) {
+            SE_MEM_FREE(node->shaderInstanceVertexPath);
+            SE_MEM_FREE(node->shaderInstanceFragmentPath);
+        }
         node->shaderInstanceVertexPath = shaderInstancePaths.vertex;
         node->shaderInstanceFragmentPath = shaderInstancePaths.fragment;
     }
