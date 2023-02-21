@@ -104,7 +104,8 @@ void collision_system_render() {
             false,
             false,
             globalTransform,
-            globalTransform->zIndex // Do we just want to make this the max z index?
+            globalTransform->zIndex, // Do we just want to make this the max z index?
+            NULL
         );
     }
 }

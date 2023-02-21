@@ -27,6 +27,7 @@ typedef struct TextureCoordinates {
 } TextureCoordinates;
 
 TextureCoordinates renderer_get_texture_coordinates(const Texture* texture, const Rect2* drawSource, bool flipX, bool flipY);
+void renderer_set_shader_instance_params(ShaderInstance* shaderInstance);
 void renderer_print_opengl_errors();
 
 void sprite_renderer_initialize();
@@ -56,6 +57,7 @@ typedef struct SpriteBatchItem {
     bool flipX;
     bool flipY;
     TransformModel2D* globalTransform;
+    ShaderInstance* shaderInstance;
 } SpriteBatchItem;
 
 typedef struct FontBatchItem {
@@ -146,7 +148,7 @@ void se_renderer_queue_sprite_draw_call(Texture* texture, Rect2 sourceRect, Size
         se_logger_error("NULL texture, not submitting draw call!");
         return;
     }
-    SpriteBatchItem item = { .texture = texture, .sourceRect = sourceRect, .destSize = destSize, .color = color, .flipX = flipX, .flipY = flipY, .globalTransform = globalTransform };
+    SpriteBatchItem item = { .texture = texture, .sourceRect = sourceRect, .destSize = destSize, .color = color, .flipX = flipX, .flipY = flipY, .globalTransform = globalTransform, .shaderInstance = NULL };
     const int arrayZIndex = se_math_clamp_int(zIndex + SE_RENDER_LAYER_BATCH_MAX / 2, 0, SE_RENDER_LAYER_BATCH_MAX - 1);
     // Get texture layer index for render texture
     size_t textureLayerIndex = render_layer_items[arrayZIndex].renderTextureLayerCount;
@@ -229,17 +231,10 @@ void se_renderer_process_and_flush_batches(const Color* backgroundColor) {
     // Draw screen texture from framebuffer
     ShaderInstance* screenShaderInstance = se_frame_buffer_get_screen_shader();
     shader_use(screenShaderInstance->shader);
-    // Update params
-    if (screenShaderInstance->paramMap->size > 0) {
-        SE_STRING_HASH_MAP_FOR_EACH(screenShaderInstance->paramMap, iter) {
-            StringHashMapNode* node = iter.pair;
-            ShaderParam* param = (ShaderParam*) node->value;
-            // TODO: Do a switch for all types
-            if (param->type == ShaderParamType_FLOAT) {
-                shader_set_float(screenShaderInstance->shader, param->name, param->value.floatValue);
-            }
-        }
-    }
+
+    // Apply shader instance params
+    renderer_set_shader_instance_params(screenShaderInstance);
+
     glBindVertexArray(se_frame_buffer_get_quad_vao());
     glBindTexture(GL_TEXTURE_2D, se_frame_buffer_get_color_buffer_texture());	// use the color attachment texture as the texture of the quad plane
     glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -348,6 +343,11 @@ void renderer_batching_draw_sprites(SpriteBatchItem items[], size_t spriteCount)
         char modelsBuffer[12];
         sprintf(modelsBuffer, "models[%zu]", i);
         shader_set_mat4_float(spriteShader, modelsBuffer, &items[i].globalTransform->model);
+
+        // Set shader instance uniform params
+        if (items[i].shaderInstance != NULL) {
+            renderer_set_shader_instance_params(items[i].shaderInstance);
+        }
 
         // Loop over vertices
         for (int j = 0; j < NUMBER_OF_VERTICES; j++) {
@@ -479,6 +479,25 @@ TextureCoordinates renderer_get_texture_coordinates(const Texture* texture, cons
     }
     TextureCoordinates textureCoords = { sMin, sMax, tMin, tMax };
     return textureCoords;
+}
+
+void renderer_set_shader_instance_params(ShaderInstance* shaderInstance) {
+    if (shaderInstance->paramMap->size > 0) {
+        SE_STRING_HASH_MAP_FOR_EACH(shaderInstance->paramMap, iter) {
+            StringHashMapNode* node = iter.pair;
+            ShaderParam* param = (ShaderParam*) node->value;
+            // TODO: Do a switch for all types
+            switch (param->type) {
+            case ShaderParamType_FLOAT: {
+                shader_set_float(shaderInstance->shader, param->name, param->value.floatValue);
+                break;
+            }
+            default:
+                break;
+
+            }
+        }
+    }
 }
 
 void renderer_print_opengl_errors() {

@@ -20,7 +20,8 @@ void ImGuiHelper::WindowRenderer::Render(const std::vector<TextureRenderTarget>&
     for (auto& target : textureRenderTargets) {
         if (target.texture) {
             se_renderer_queue_sprite_draw_call(target.texture, target.sourceRect, target.destSize, target.color,
-                                               target.flipX, target.flipY, target.globalTransform, target.zIndex);
+                                               target.flipX, target.flipY, target.globalTransform, target.zIndex,
+                                               nullptr);
         }
     }
     // Fonts
