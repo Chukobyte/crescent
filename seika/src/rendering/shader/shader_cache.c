@@ -1,30 +1,37 @@
 #include "shader_cache.h"
+
+#include "../../data_structures/se_queue.h"
 #include "../../utils/se_assert.h"
 
-SEStringHashMap* shaderInstanceMap = NULL;
+static ShaderInstance* instanceCache[SHADER_CACHE_MAX_INSTANCES];
+static SEQueue* shaderInstanceIdQueue = NULL;
 
 void shader_cache_initialize() {
-    SE_ASSERT(shaderInstanceMap == NULL);
-    shaderInstanceMap = se_string_hash_map_create_default_capacity();
+    SE_ASSERT(shaderInstanceIdQueue == NULL);
+    shaderInstanceIdQueue = se_queue_create(SHADER_CACHE_MAX_INSTANCES, SHADER_CACHE_INVALID_ID);
+    for (size_t i = 0; i < SHADER_CACHE_MAX_INSTANCES; i++) {
+        se_queue_enqueue(shaderInstanceIdQueue, i);
+        instanceCache[i] = NULL;
+    }
 }
 
 void shader_cache_finalize() {
-    SE_ASSERT(shaderInstanceMap != NULL);
-    se_string_hash_map_destroy(shaderInstanceMap);
-    shaderInstanceMap = NULL;
+    SE_ASSERT(shaderInstanceIdQueue != NULL);
+    se_queue_destroy(shaderInstanceIdQueue);
+    shaderInstanceIdQueue = NULL;
 }
 
-void shader_cache_add_instance(ShaderInstance* instance, const char* id) {
-    SE_ASSERT(shaderInstanceMap != NULL);
-    se_string_hash_map_add(shaderInstanceMap, id, &instance, sizeof(ShaderInstance**));
+ShaderInstanceId shader_cache_add_instance(ShaderInstance* instance) {
+    const ShaderInstanceId newId = se_queue_dequeue(shaderInstanceIdQueue);
+    instanceCache[newId] = instance;
+    return newId;
 }
 
-void shader_cache_remove_instance(const char* id) {
-    SE_ASSERT(shaderInstanceMap != NULL);
-    se_string_hash_map_erase(shaderInstanceMap, id);
+void shader_cache_remove_instance(ShaderInstanceId instanceId) {
+    instanceCache[instanceId] = NULL;
+    se_queue_enqueue(shaderInstanceIdQueue, instanceId);
 }
 
-ShaderInstance* shader_cache_get_instance(const char* id) {
-    ShaderInstance* instance = (ShaderInstance*) *(ShaderInstance**) se_string_hash_map_get(shaderInstanceMap, id);
-    return instance;
+ShaderInstance* shader_cache_get_instance(ShaderInstanceId instanceId) {
+    return instanceCache[instanceId];
 }

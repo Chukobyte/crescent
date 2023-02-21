@@ -21,9 +21,11 @@ PyObject* cre_py_api_curve_float_add_point(PyObject* self, PyObject* args, PyObj
 PyObject* cre_py_api_curve_float_remove_point(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_curve_float_eval(PyObject* self, PyObject* args, PyObject* kwargs);
 
+// Shader Instance
+PyObject* cre_py_api_shader_instance_delete(PyObject* self, PyObject* args, PyObject* kwargs);
+
 // Shader Util
 PyObject* cre_py_api_shader_util_compile_shader(PyObject* self, PyObject* args, PyObject* kwargs);
-PyObject* cre_py_api_shader_util_delete_shader(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_shader_util_set_screen_shader(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_shader_util_reset_screen_shader_to_default(PyObject* self, PyObject* args);
 
@@ -203,14 +205,15 @@ static struct PyMethodDef crePyApiMethods[] = {
         "curve_float_eval", (PyCFunction) cre_py_api_curve_float_eval,
         METH_VARARGS | METH_KEYWORDS, "Evaluates a curve at an x (t) position."
     },
+    // SHADER INSTANCE
+    {
+        "shader_instance_delete", (PyCFunction) cre_py_api_shader_instance_delete,
+        METH_VARARGS | METH_KEYWORDS, "Deletes a shader from the shader instance cache."
+    },
     // SHADER UTIL
     {
         "shader_util_compile_shader", (PyCFunction) cre_py_api_shader_util_compile_shader,
         METH_VARARGS | METH_KEYWORDS, "Compiles new shader and adds it to the shader instance cache."
-    },
-    {
-        "shader_util_delete_shader", (PyCFunction) cre_py_api_shader_util_delete_shader,
-        METH_VARARGS | METH_KEYWORDS, "Deletes a shader from the shader instance cache."
     },
     {
         "shader_util_set_screen_shader", (PyCFunction) cre_py_api_shader_util_set_screen_shader,
@@ -616,8 +619,9 @@ static char* crePyApiCurveFloatAddPointKWList[] = {"curve_id", "x", "y", "tangen
 static char* crePyApiCurveFloatRemovePointKWList[] = {"curve_id", "x", "y", NULL};
 static char* crePyApiCurveFloatEvalKWList[] = {"curve_id", "t", NULL};
 
-static char* crePyApiShaderUtilShaderIdKWList[] = {"shader_id", NULL};
-static char* crePyApiShaderUtilCompileShaderKWList[] = {"shader_id", "vertex_path", "fragment_path", NULL};
+static char* crePyApiGenericShaderIdKWList[] = {"shader_id", NULL};
+
+static char* crePyApiShaderUtilCompileShaderKWList[] = {"vertex_path", "fragment_path", NULL};
 
 static char* crePyApiInputAddActionKWList[] = {"name", "value", "device_id", NULL};
 static char* crePyApiInputActionInputCheckKWList[] = {"name", NULL};

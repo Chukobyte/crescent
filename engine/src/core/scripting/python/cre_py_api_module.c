@@ -205,26 +205,10 @@ PyObject* cre_py_api_curve_float_eval(PyObject* self, PyObject* args, PyObject* 
     return NULL;
 }
 
-// Shader Util
-PyObject* cre_py_api_shader_util_compile_shader(PyObject* self, PyObject* args, PyObject* kwargs) {
-    char* shaderId;
-    char* vertexPath;
-    char* fragmentPath;
-    if (PyArg_ParseTupleAndKeywords(args, kwargs, "sss", crePyApiShaderUtilCompileShaderKWList, &shaderId, &vertexPath, &fragmentPath)) {
-        char* vertexSource = sf_asset_file_loader_read_file_contents_as_string(vertexPath, NULL);
-        char* fragmentSource = sf_asset_file_loader_read_file_contents_as_string(fragmentPath, NULL);
-        ShaderInstance* instance = se_shader_instance_create(vertexSource, fragmentSource);
-        shader_cache_add_instance(instance, shaderId);
-        SE_MEM_FREE(vertexSource);
-        SE_MEM_FREE(fragmentSource);
-        Py_RETURN_NONE;
-    }
-    return NULL;
-}
-
-PyObject* cre_py_api_shader_util_delete_shader(PyObject* self, PyObject* args, PyObject* kwargs) {
-    char* shaderId;
-    if (PyArg_ParseTupleAndKeywords(args, kwargs, "s", crePyApiShaderUtilShaderIdKWList, &shaderId)) {
+// Shader Instance
+PyObject* cre_py_api_shader_instance_delete(PyObject* self, PyObject* args, PyObject* kwargs) {
+    ShaderInstanceId shaderId;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericShaderIdKWList, &shaderId)) {
         ShaderInstance* shaderInstance = shader_cache_get_instance(shaderId);
         if (shaderInstance != NULL) {
             shader_cache_remove_instance(shaderId);
@@ -235,9 +219,25 @@ PyObject* cre_py_api_shader_util_delete_shader(PyObject* self, PyObject* args, P
     return NULL;
 }
 
+// Shader Util
+PyObject* cre_py_api_shader_util_compile_shader(PyObject* self, PyObject* args, PyObject* kwargs) {
+    char* vertexPath;
+    char* fragmentPath;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "ss", crePyApiShaderUtilCompileShaderKWList, &vertexPath, &fragmentPath)) {
+        char* vertexSource = sf_asset_file_loader_read_file_contents_as_string(vertexPath, NULL);
+        char* fragmentSource = sf_asset_file_loader_read_file_contents_as_string(fragmentPath, NULL);
+        ShaderInstance* instance = se_shader_instance_create(vertexSource, fragmentSource);
+        const ShaderInstanceId newId = shader_cache_add_instance(instance);
+        SE_MEM_FREE(vertexSource);
+        SE_MEM_FREE(fragmentSource);
+        return Py_BuildValue("i", newId);
+    }
+    return NULL;
+}
+
 PyObject* cre_py_api_shader_util_set_screen_shader(PyObject* self, PyObject* args, PyObject* kwargs) {
-    char* shaderId;
-    if (PyArg_ParseTupleAndKeywords(args, kwargs, "s", crePyApiShaderUtilShaderIdKWList, &shaderId)) {
+    ShaderInstanceId shaderId;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericShaderIdKWList, &shaderId)) {
         ShaderInstance* shaderInstance = shader_cache_get_instance(shaderId);
         if (shaderInstance != NULL) {
             se_frame_buffer_set_screen_shader(shaderInstance->shader);

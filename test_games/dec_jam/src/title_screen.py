@@ -88,12 +88,12 @@ class SnowManager:
 class TitleScreen(Node2D):
     def _start(self) -> None:
         # SnowManager().create_snow(50)
-        ShaderUtil.compile_shader(
-            shader_id="screen",
+        shader_instance = ShaderUtil.compile_shader(
             vertex_path="shaders/screen.vsh",
             fragment_path="shaders/screen.fsh",
         )
-        ShaderUtil.set_screen_shader(shader_id="screen")
+        print(f"shader_instance id = {shader_instance.shader_id}")
+        ShaderUtil.set_screen_shader(shader_instance=shader_instance)
 
     def _update(self, delta_time: float) -> None:
         if Input.is_action_just_pressed(name="quit_game"):

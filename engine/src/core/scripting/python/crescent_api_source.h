@@ -482,20 +482,30 @@
 "        self.frames = frames\n"\
 "\n"\
 "\n"\
+"class ShaderInstance:\n"\
+"    def __init__(self, shader_id: int):\n"\
+"        self.shader_id = shader_id\n"\
+"        self._is_active = True\n"\
+"\n"\
+"    def delete(self) -> None:\n"\
+"        if self._is_active:\n"\
+"            crescent_api_internal.shader_instance_delete(shader_id=self.shader_id)\n"\
+"            self._is_active = False\n"\
+"\n"\
+"\n"\
 "class ShaderUtil:\n"\
 "    @staticmethod\n"\
-"    def compile_shader(shader_id: str, vertex_path: str, fragment_path: str) -> None:\n"\
-"        crescent_api_internal.shader_util_compile_shader(\n"\
-"            shader_id=shader_id, vertex_path=vertex_path, fragment_path=fragment_path\n"\
+"    def compile_shader(vertex_path: str, fragment_path: str) -> ShaderInstance:\n"\
+"        shader_id = crescent_api_internal.shader_util_compile_shader(\n"\
+"            vertex_path=vertex_path, fragment_path=fragment_path\n"\
 "        )\n"\
+"        return ShaderInstance(shader_id=shader_id)\n"\
 "\n"\
 "    @staticmethod\n"\
-"    def delete_shader(shader_id: str) -> None:\n"\
-"        crescent_api_internal.shader_util_delete_shader(shader_id=shader_id)\n"\
-"\n"\
-"    @staticmethod\n"\
-"    def set_screen_shader(shader_id: str) -> None:\n"\
-"        crescent_api_internal.shader_util_set_screen_shader(shader_id=shader_id)\n"\
+"    def set_screen_shader(shader_instance: ShaderInstance) -> None:\n"\
+"        crescent_api_internal.shader_util_set_screen_shader(\n"\
+"            shader_id=shader_instance.shader_id\n"\
+"        )\n"\
 "\n"\
 "    @staticmethod\n"\
 "    def reset_screen_shader_to_default() -> None:\n"\
