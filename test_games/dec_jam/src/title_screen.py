@@ -93,6 +93,7 @@ class TitleScreen(Node2D):
             vertex_path="shaders/screen.vsh",
             fragment_path="shaders/screen.fsh",
         )
+        ShaderUtil.set_screen_shader(shader_id="screen")
 
     def _update(self, delta_time: float) -> None:
         if Input.is_action_just_pressed(name="quit_game"):
