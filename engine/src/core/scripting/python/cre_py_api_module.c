@@ -260,12 +260,8 @@ PyObject* cre_py_api_shader_util_compile_shader(PyObject* self, PyObject* args, 
     char* vertexPath;
     char* fragmentPath;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "ss", crePyApiShaderUtilCompileShaderKWList, &vertexPath, &fragmentPath)) {
-        char* vertexSource = sf_asset_file_loader_read_file_contents_as_string(vertexPath, NULL);
-        char* fragmentSource = sf_asset_file_loader_read_file_contents_as_string(fragmentPath, NULL);
-        ShaderInstance* instance = se_shader_instance_create(vertexSource, fragmentSource);
-        const ShaderInstanceId newId = shader_cache_add_instance(instance);
-        SE_MEM_FREE(vertexSource);
-        SE_MEM_FREE(fragmentSource);
+        const ShaderInstanceId newId = shader_cache_create_instance_and_add(vertexPath, fragmentPath);
+        SE_ASSERT_FMT(newId != SHADER_INSTANCE_INVALID_ID, "Invalid shader id reading from paths: vertex = '%s', fragment = '%s'", vertexPath, fragmentPath);
         return Py_BuildValue("i", newId);
     }
     return NULL;

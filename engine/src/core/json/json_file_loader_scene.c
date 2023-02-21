@@ -111,6 +111,14 @@ void cre_json_delete_json_scene_node(JsonSceneNode* node) {
     if (node->components[ComponentDataIndex_PARALLAX] != NULL) {
         parallax_component_delete(node->components[ComponentDataIndex_PARALLAX]);
     }
+
+    if (node->shaderInstanceVertexPath != NULL) {
+        SE_MEM_FREE(node->shaderInstanceVertexPath);
+    }
+    if (node->shaderInstanceFragmentPath != NULL) {
+        SE_MEM_FREE(node->shaderInstanceFragmentPath);
+    }
+
     // String Arrays
     SE_MEM_FREE(node->name);
     SE_MEM_FREE(node->fontUID);
