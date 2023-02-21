@@ -22,6 +22,7 @@ AnimatedSpriteComponent* animated_sprite_component_create() {
     animatedSpriteComponent->flipX = false;
     animatedSpriteComponent->flipY = false;
     animatedSpriteComponent->startAnimationTickTime = 0;
+    animatedSpriteComponent->shaderInstanceId = SHADER_INSTANCE_INVALID_ID;
 
     return animatedSpriteComponent;
 }

@@ -6,8 +6,6 @@
  * A work in progress api to create shader instances with parameters.
  */
 
-#include <stddef.h>
-
 #include "shader.h"
 
 #include "../../data_structures/se_hash_map_string.h"

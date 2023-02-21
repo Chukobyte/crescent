@@ -21,6 +21,7 @@
 #include "../camera/camera_manager.h"
 #include "../json/json_file_loader.h"
 #include "../ecs/component/parallax_component.h"
+#include "../../../../seika/src/rendering/shader/shader_cache.h"
 
 // --- Scene Tree --- //
 // Executes function on passed in tree node and all child tree nodes
@@ -129,6 +130,19 @@ void cre_scene_manager_process_queued_deletion_entities() {
         se_hash_map_erase(entityToTreeNodeMap, &entityToDelete);
         // Remove entity from systems
         cre_ec_system_remove_entity_from_all_systems(entityToDelete);
+        // Remove shader instance if applicable
+        SpriteComponent* spriteComponent = component_manager_get_component_unsafe(entityToDelete, ComponentDataIndex_SPRITE);
+        if (spriteComponent != NULL && spriteComponent->shaderInstanceId != SHADER_INSTANCE_INVALID_ID) {
+            ShaderInstance* shaderInstance = shader_cache_get_instance(spriteComponent->shaderInstanceId);
+            shader_cache_remove_instance(spriteComponent->shaderInstanceId);
+            SE_MEM_FREE(shaderInstance);
+        }
+        AnimatedSpriteComponent* animatedSpriteComponent = component_manager_get_component_unsafe(entityToDelete, ComponentDataIndex_ANIMATED_SPRITE);
+        if (animatedSpriteComponent != NULL && animatedSpriteComponent->shaderInstanceId != SHADER_INSTANCE_INVALID_ID) {
+            ShaderInstance* shaderInstance = shader_cache_get_instance(animatedSpriteComponent->shaderInstanceId);
+            shader_cache_remove_instance(animatedSpriteComponent->shaderInstanceId);
+            SE_MEM_FREE(shaderInstance);
+        }
         // Remove all components
         component_manager_remove_all_components(entityToDelete);
         // Return entity id to pool

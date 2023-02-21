@@ -143,7 +143,7 @@ void update_active_render_layer_index(int zIndex) {
     }
 }
 
-void se_renderer_queue_sprite_draw_call(Texture* texture, Rect2 sourceRect, Size2D destSize, Color color, bool flipX, bool flipY, TransformModel2D* globalTransform, int zIndex) {
+void se_renderer_queue_sprite_draw_call(Texture* texture, Rect2 sourceRect, Size2D destSize, Color color, bool flipX, bool flipY, TransformModel2D* globalTransform, int zIndex, ShaderInstance* shaderInstance) {
     if (texture == NULL) {
         se_logger_error("NULL texture, not submitting draw call!");
         return;

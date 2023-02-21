@@ -7,6 +7,7 @@ extern "C" {
 #include <stdbool.h>
 
 #include "../seika/src/rendering/texture.h"
+#include "../seika/src/rendering/shader/shader_instance_minimal.h"
 #include "../seika/src/math/se_math.h"
 
 typedef struct SpriteComponent {
@@ -16,6 +17,7 @@ typedef struct SpriteComponent {
     bool flipX;
     bool flipY;
     Color modulate;
+    ShaderInstanceId shaderInstanceId;
 } SpriteComponent;
 
 SpriteComponent* sprite_component_create();

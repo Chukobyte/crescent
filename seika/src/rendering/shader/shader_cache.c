@@ -3,13 +3,13 @@
 #include "../../data_structures/se_queue.h"
 #include "../../utils/se_assert.h"
 
-static ShaderInstance* instanceCache[SHADER_CACHE_MAX_INSTANCES];
+static ShaderInstance* instanceCache[SHADER_INSTANCE_MAX_INSTANCES];
 static SEQueue* shaderInstanceIdQueue = NULL;
 
 void shader_cache_initialize() {
     SE_ASSERT(shaderInstanceIdQueue == NULL);
-    shaderInstanceIdQueue = se_queue_create(SHADER_CACHE_MAX_INSTANCES, SHADER_CACHE_INVALID_ID);
-    for (size_t i = 0; i < SHADER_CACHE_MAX_INSTANCES; i++) {
+    shaderInstanceIdQueue = se_queue_create(SHADER_INSTANCE_MAX_INSTANCES, SHADER_INSTANCE_INVALID_ID);
+    for (size_t i = 0; i < SHADER_INSTANCE_MAX_INSTANCES; i++) {
         se_queue_enqueue(shaderInstanceIdQueue, i);
         instanceCache[i] = NULL;
     }

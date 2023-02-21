@@ -7,6 +7,7 @@ extern "C" {
 #include <stdint.h>
 #include <stdbool.h>
 
+#include "../seika/src/rendering/shader/shader_instance_minimal.h"
 #include "../seika/src/math/se_math.h"
 #include "../seika/src/data_structures/se_hash_map_string.h"
 
@@ -24,6 +25,7 @@ typedef struct AnimatedSpriteComponent {
     bool flipX;
     bool flipY;
     uint32_t startAnimationTickTime;
+    ShaderInstanceId shaderInstanceId;
 } AnimatedSpriteComponent;
 
 typedef struct AnimationQueryResult {
