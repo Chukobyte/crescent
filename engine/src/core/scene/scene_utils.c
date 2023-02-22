@@ -27,7 +27,7 @@ SETransform2D default_get_local_transform(Entity entity, int* zIndex, bool* succ
 void cre_scene_utils_update_global_transform_model(Entity entity, SETransformModel2D* globalTransform) {
     glm_mat4_identity(globalTransform->model);
     EntityArray combineModelResult = onGetSelfAndParentEntitiesFunc(entity);
-    SEVector2 scaleTotal = {1.0f, 1.0f };
+    SEVector2 scaleTotal = { 1.0f, 1.0f };
     globalTransform->zIndex = 0;
     for (int i = combineModelResult.entityCount - 1; i >= 0; i--) {
         Entity currentEntity = combineModelResult.entities[i];
