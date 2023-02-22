@@ -52,7 +52,7 @@ ImGuiHelper::Window OpenedProjectUI::Windows::GetSceneViewWindow() {
                 SEColor color = { 1.0f, 1.0f, 1.0f, 1.0f };
                 bool flipX = false;
                 bool flipY = false;
-                SEVector2 origin = {0.0f, 0.0f };
+                SEVector2 origin = { 0.0f, 0.0f };
                 hasTexture = true;
                 if (auto* spriteComp = node->GetComponentSafe<SpriteComp>()) {
                     renderTargetTexture = assetManager->GetTexture(spriteComp->texturePath.c_str());
