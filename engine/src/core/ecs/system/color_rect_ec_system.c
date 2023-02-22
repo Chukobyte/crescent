@@ -42,7 +42,7 @@ void color_rect_system_render() {
         const ColorRectComponent* colorRectComponent = (ColorRectComponent *) component_manager_get_component(entity, ComponentDataIndex_COLOR_RECT);
         const CRECamera2D* renderCamera = transformComp->ignoreCamera ? defaultCamera : camera2D;
         SETransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity, transformComp);
-        static SEVector2 origin = {0.0f, 0.0f };
+        static SEVector2 origin = { 0.0f, 0.0f };
         cre_scene_utils_apply_camera_and_origin_translation(globalTransform, &origin, transformComp->ignoreCamera);
         transformComp->isGlobalTransformDirty = true; // TODO: Make global transform const
         const SESize2D destinationSize = {

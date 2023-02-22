@@ -47,9 +47,9 @@ ImGuiHelper::Window OpenedProjectUI::Windows::GetSceneViewWindow() {
                 static SETexture* whiteRectTexture = se_texture_create_solid_colored_texture(1, 1, 255);
                 SETexture* renderTargetTexture = nullptr;
                 cre_scene_utils_update_global_transform_model(node->GetUID(), &globalTransforms[index]);
-                SERect2 sourceRect = {0.0f, 0.0f, 0.0f, 0.0f };
-                SESize2D destSize = {0.0f, 0.0f };
-                SEColor color = {1.0f, 1.0f, 1.0f, 1.0f };
+                SERect2 sourceRect = { 0.0f, 0.0f, 0.0f, 0.0f };
+                SESize2D destSize = { 0.0f, 0.0f };
+                SEColor color = { 1.0f, 1.0f, 1.0f, 1.0f };
                 bool flipX = false;
                 bool flipY = false;
                 SEVector2 origin = {0.0f, 0.0f };
@@ -116,9 +116,9 @@ ImGuiHelper::Window OpenedProjectUI::Windows::GetSceneViewWindow() {
                 sceneManager->IterateAllSceneNodes(sceneManager->selectedSceneFile->rootNode, [&textureRenderTargets, &fontRenderTargets](SceneNode* node, size_t i) {
                     if (auto* transformComp = node->GetComponentSafe<Transform2DComp>()) {
                         if (auto* textLabelComp = node->GetComponentSafe<TextLabelComp>()) {
-                            SETransformModel2D globalTransform = {transformComp->transform2D.position, transformComp->transform2D.scale, transformComp->transform2D.rotation };
+                            SETransformModel2D globalTransform = { transformComp->transform2D.position, transformComp->transform2D.scale, transformComp->transform2D.rotation };
                             cre_scene_utils_update_global_transform_model(node->GetUID(), &globalTransform);
-                            static SEVector2 textLabelOrigin = {0.0f, 0.0f };
+                            static SEVector2 textLabelOrigin = { 0.0f, 0.0f };
                             cre_scene_utils_apply_camera_and_origin_translation(&globalTransform, &textLabelOrigin, transformComp->ignoreCamera);
                             const ImGuiHelper::FontRenderTarget renderTarget = {
                                 .font = assetManager->GetFont(textLabelComp->fontUID.c_str()),

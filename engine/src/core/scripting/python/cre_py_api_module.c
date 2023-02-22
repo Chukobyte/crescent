@@ -542,7 +542,7 @@ PyObject* cre_py_api_mouse_get_position(PyObject* self, PyObject* args) {
 PyObject* cre_py_api_mouse_get_world_position(PyObject* self, PyObject* args) {
     const CREEngineContext* engineContext = cre_engine_context_get();
     SEMouse* globalMouse = se_mouse_get();
-    static SEVector2 zeroOffset = {0.0f, 0.0f };
+    static SEVector2 zeroOffset = { 0.0f, 0.0f };
     const SEVector2 worldPosition = py_api_mouse_get_global_position(globalMouse, &zeroOffset);
     return Py_BuildValue("(ff)", worldPosition.x, worldPosition.y);
 }
@@ -1605,9 +1605,9 @@ PyObject* cre_py_api_collision_handler_process_mouse_collisions(PyObject* self, 
         PyObject* pyCollidedEntityList = PyList_New(0);
         // TODO: Transform mouse screen position into world position.
         SEMouse* globalMouse = se_mouse_get();
-        SEVector2 positionOffset = {positionOffsetX, positionOffsetY };
+        SEVector2 positionOffset = { positionOffsetX, positionOffsetY };
         const SEVector2 mouseWorldPos = py_api_mouse_get_global_position(globalMouse, &positionOffset);
-        SERect2 collisionRect = {mouseWorldPos.x, mouseWorldPos.y, collisionSizeW, collisionSizeH };
+        SERect2 collisionRect = { mouseWorldPos.x, mouseWorldPos.y, collisionSizeW, collisionSizeH };
         CollisionResult collisionResult = cre_collision_process_mouse_collisions(&collisionRect);
         for (size_t i = 0; i < collisionResult.collidedEntityCount; i++) {
             const Entity collidedEntity = collisionResult.collidedEntities[i];
