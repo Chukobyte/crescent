@@ -1,7 +1,7 @@
 import json
 from enum import Enum
 from json import JSONDecodeError
-from typing import Callable, Type, List
+from typing import Callable, Type, List, Optional
 
 import crescent_api_internal
 
@@ -1155,6 +1155,21 @@ class Sprite(Node2D):
             entity_id=self.entity_id, x=value.x, y=value.y, w=value.w, h=value.h
         )
 
+    @property
+    def shader_instance(self) -> Optional[ShaderInstance]:
+        shader_instance_id = crescent_api_internal.sprite_get_shader_instance(
+            entity_id=self.entity_id
+        )
+        if shader_instance_id >= 0:
+            return ShaderInstance(shader_id=shader_instance_id)
+        return None
+
+    @shader_instance.setter
+    def shader_instance(self, value: ShaderInstance) -> None:
+        crescent_api_internal.sprite_set_shader_instance(
+            entity_id=self.entity_id, shader_instance_id=value.shader_id
+        )
+
 
 class AnimatedSprite(Node2D):
     def play(self, name: str) -> bool:
@@ -1184,6 +1199,21 @@ class AnimatedSprite(Node2D):
             speed=animation.speed,
             loops=animation.loops,
             frames=anim_frames,
+        )
+
+    @property
+    def shader_instance(self) -> Optional[ShaderInstance]:
+        shader_instance_id = crescent_api_internal.animated_sprite_get_shader_instance(
+            entity_id=self.entity_id
+        )
+        if shader_instance_id >= 0:
+            return ShaderInstance(shader_id=shader_instance_id)
+        return None
+
+    @shader_instance.setter
+    def shader_instance(self, value: ShaderInstance) -> None:
+        crescent_api_internal.animated_sprite_set_shader_instance(
+            entity_id=self.entity_id, shader_instance_id=value.shader_id
         )
 
 

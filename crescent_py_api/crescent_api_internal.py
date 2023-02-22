@@ -445,6 +445,14 @@ def sprite_get_draw_source(entity_id: int) -> Tuple[float, float, float, float]:
     return 0.0, 0.0, 32.0, 32.0
 
 
+def sprite_get_shader_instance(entity_id: int) -> int:
+    return 0
+
+
+def sprite_set_shader_instance(entity_id: int, shader_instance_id: int) -> None:
+    pass
+
+
 def animated_sprite_play(entity_id: int, name: str) -> bool:
     return True
 
@@ -459,6 +467,16 @@ def animated_sprite_add_animation(
     speed: int,
     loops: bool,
     frames: List[Tuple[int, str, float, float, float, float]],
+) -> None:
+    pass
+
+
+def animated_sprite_get_shader_instance(entity_id: int) -> int:
+    return 0
+
+
+def animated_sprite_set_shader_instance(
+    entity_id: int, shader_instance_id: int
 ) -> None:
     pass
 

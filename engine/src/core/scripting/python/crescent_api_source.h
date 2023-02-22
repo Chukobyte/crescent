@@ -38,7 +38,7 @@
 "import json\n"\
 "from enum import Enum\n"\
 "from json import JSONDecodeError\n"\
-"from typing import Callable, Type, List\n"\
+"from typing import Callable, Type, List, Optional\n"\
 "\n"\
 "import crescent_api_internal\n"\
 "\n"\
@@ -1192,6 +1192,21 @@
 "            entity_id=self.entity_id, x=value.x, y=value.y, w=value.w, h=value.h\n"\
 "        )\n"\
 "\n"\
+"    @property\n"\
+"    def shader_instance(self) -> Optional[ShaderInstance]:\n"\
+"        shader_instance_id = crescent_api_internal.sprite_get_shader_instance(\n"\
+"            entity_id=self.entity_id\n"\
+"        )\n"\
+"        if shader_instance_id >= 0:\n"\
+"            return ShaderInstance(shader_id=shader_instance_id)\n"\
+"        return None\n"\
+"\n"\
+"    @shader_instance.setter\n"\
+"    def shader_instance(self, value: ShaderInstance) -> None:\n"\
+"        crescent_api_internal.sprite_set_shader_instance(\n"\
+"            entity_id=self.entity_id, shader_instance_id=value.shader_id\n"\
+"        )\n"\
+"\n"\
 "\n"\
 "class AnimatedSprite(Node2D):\n"\
 "    def play(self, name: str) -> bool:\n"\
@@ -1221,6 +1236,21 @@
 "            speed=animation.speed,\n"\
 "            loops=animation.loops,\n"\
 "            frames=anim_frames,\n"\
+"        )\n"\
+"\n"\
+"    @property\n"\
+"    def shader_instance(self) -> Optional[ShaderInstance]:\n"\
+"        shader_instance_id = crescent_api_internal.animated_sprite_get_shader_instance(\n"\
+"            entity_id=self.entity_id\n"\
+"        )\n"\
+"        if shader_instance_id >= 0:\n"\
+"            return ShaderInstance(shader_id=shader_instance_id)\n"\
+"        return None\n"\
+"\n"\
+"    @shader_instance.setter\n"\
+"    def shader_instance(self, value: ShaderInstance) -> None:\n"\
+"        crescent_api_internal.animated_sprite_set_shader_instance(\n"\
+"            entity_id=self.entity_id, shader_instance_id=value.shader_id\n"\
 "        )\n"\
 "\n"\
 "\n"\

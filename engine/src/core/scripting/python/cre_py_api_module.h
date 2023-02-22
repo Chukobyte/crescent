@@ -123,11 +123,15 @@ PyObject* cre_py_api_sprite_set_texture(PyObject* self, PyObject* args, PyObject
 PyObject* cre_py_api_sprite_get_texture(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_sprite_set_draw_source(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_sprite_get_draw_source(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_sprite_set_shader_instance(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_sprite_get_shader_instance(PyObject* self, PyObject* args, PyObject* kwargs);
 
 // Animated Sprite
 PyObject* cre_py_api_animated_sprite_play(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_animated_sprite_stop(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_animated_sprite_add_animation(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_animated_sprite_set_shader_instance(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_animated_sprite_get_shader_instance(PyObject* self, PyObject* args, PyObject* kwargs);
 
 // Text Label
 PyObject* cre_py_api_text_label_set_text(PyObject* self, PyObject* args, PyObject* kwargs);
@@ -551,6 +555,14 @@ static struct PyMethodDef crePyApiMethods[] = {
         "sprite_get_draw_source", (PyCFunction) cre_py_api_sprite_get_draw_source,
         METH_VARARGS | METH_KEYWORDS, "Gets the draw source for a sprite."
     },
+    {
+        "sprite_set_shader_instance", (PyCFunction) cre_py_api_sprite_set_shader_instance,
+        METH_VARARGS | METH_KEYWORDS, "Sets the shader instance for the sprite."
+    },
+    {
+        "sprite_get_shader_instance", (PyCFunction) cre_py_api_sprite_get_shader_instance,
+        METH_VARARGS | METH_KEYWORDS, "Gets the shader instance for the sprite."
+    },
     // ANIMATED SPRITE
     {
         "animated_sprite_play", (PyCFunction) cre_py_api_animated_sprite_play,
@@ -563,6 +575,14 @@ static struct PyMethodDef crePyApiMethods[] = {
     {
         "animated_sprite_add_animation", (PyCFunction) cre_py_api_animated_sprite_add_animation,
         METH_VARARGS | METH_KEYWORDS, "Adds a new animation."
+    },
+    {
+        "animated_sprite_set_shader_instance", (PyCFunction) cre_py_api_animated_sprite_set_shader_instance,
+        METH_VARARGS | METH_KEYWORDS, "Sets the shader instance for the animated sprite."
+    },
+    {
+        "animated_sprite_get_shader_instance", (PyCFunction) cre_py_api_animated_sprite_get_shader_instance,
+        METH_VARARGS | METH_KEYWORDS, "Gets the shader instance for the animated sprite."
     },
     // TEXT LABEL
     {
@@ -699,6 +719,7 @@ static char* crePyApiGenericXYWHKWList[] = {"x", "y", "w", "h", NULL};
 static char* crePyApiGenericSetEntitySize2DKWList[] = {"entity_id", "w", "h", NULL};
 static char* crePyApiGenericSetEntityRectKWList[] = {"entity_id", "x", "y", "w", "h", NULL};
 static char* crePyApiGenericSetEntityColorKWList[] = {"entity_id", "r", "g", "b", "a", NULL};
+static char* crePyApiGenericSetShaderInstanceKWList[] = {"entity_id", "shader_instance_id", NULL};
 
 static char* crePyApiEngineExitKWList[] = {"code", NULL};
 static char* crePyApiEngineSetTargetFPSKWList[] = {"fps", NULL};
