@@ -2,8 +2,10 @@
 
 #include <string.h>
 
-#include "../seika/src/utils/logger.h"
+#include "../seika/src/rendering/shader/shader_cache.h"
+#include "../seika/src/rendering/renderer.h"
 #include "../seika/src/asset/asset_manager.h"
+#include "../seika/src/utils/logger.h"
 #include "../seika/src/utils/se_assert.h"
 #include "../seika/src/memory/se_mem.h"
 #include "../seika/src/data_structures/se_hash_map.h"
@@ -21,7 +23,6 @@
 #include "../camera/camera_manager.h"
 #include "../json/json_file_loader.h"
 #include "../ecs/component/parallax_component.h"
-#include "../../../../seika/src/rendering/shader/shader_cache.h"
 
 // --- Scene Tree --- //
 // Executes function on passed in tree node and all child tree nodes
@@ -341,6 +342,8 @@ void cre_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneNode, Scene
         component_manager_set_component(node->entity, ComponentDataIndex_SPRITE, spriteComponent);
         if (jsonSceneNode->shaderInstanceVertexPath != NULL && jsonSceneNode->shaderInstanceFragmentPath != NULL) {
             spriteComponent->shaderInstanceId = shader_cache_create_instance_and_add(jsonSceneNode->shaderInstanceVertexPath, jsonSceneNode->shaderInstanceFragmentPath);
+            ShaderInstance* shaderInstance = shader_cache_get_instance(spriteComponent->shaderInstanceId);
+            se_renderer_set_sprite_shader_default_params(shaderInstance->shader);
         }
     }
     if (jsonSceneNode->components[ComponentDataIndex_ANIMATED_SPRITE] != NULL) {
@@ -348,6 +351,8 @@ void cre_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneNode, Scene
         component_manager_set_component(node->entity, ComponentDataIndex_ANIMATED_SPRITE, animatedSpriteComponent);
         if (jsonSceneNode->shaderInstanceVertexPath != NULL && jsonSceneNode->shaderInstanceFragmentPath != NULL) {
             animatedSpriteComponent->shaderInstanceId = shader_cache_create_instance_and_add(jsonSceneNode->shaderInstanceVertexPath, jsonSceneNode->shaderInstanceFragmentPath);
+            ShaderInstance* shaderInstance = shader_cache_get_instance(animatedSpriteComponent->shaderInstanceId);
+            se_renderer_set_sprite_shader_default_params(shaderInstance->shader);
         }
     }
     if (jsonSceneNode->components[ComponentDataIndex_TEXT_LABEL] != NULL) {

@@ -301,16 +301,20 @@ void sprite_renderer_initialize() {
     // compile shaders
     spriteShader = shader_compile_new_shader(OPENGL_SHADER_SOURCE_VERTEX_SPRITE, OPENGL_SHADER_SOURCE_FRAGMENT_SPRITE);
     sprite_renderer_update_resolution();
-    shader_set_int(spriteShader, "sprite", 0);
+    se_renderer_set_sprite_shader_default_params(spriteShader);
 }
 
 void sprite_renderer_finalize() {}
 
+void se_renderer_set_sprite_shader_default_params(Shader* shader) {
+    shader_use(shader);
+    shader_set_int(shader, "sprite", 0);
+    shader_set_mat4_float(shader, "projection", &spriteProjection);
+}
+
 void sprite_renderer_update_resolution() {
     glm_mat4_identity(spriteProjection);
     glm_ortho(0.0f, resolutionWidth, resolutionHeight, 0.0f, -1.0f, 1.0f, spriteProjection);
-    shader_use(spriteShader);
-    shader_set_mat4_float(spriteShader, "projection", &spriteProjection);
 }
 
 void renderer_batching_draw_sprites(SpriteBatchItem items[], size_t spriteCount) {
@@ -334,9 +338,7 @@ void renderer_batching_draw_sprites(SpriteBatchItem items[], size_t spriteCount)
     for (size_t i = 0; i < spriteCount; i++) {
         if (items[i].shaderInstance != NULL) {
             shader_use(items[i].shaderInstance->shader);
-            // TODO: Do this in another place, as we don't need to set project each render frame...
-            shader_set_int(items[i].shaderInstance->shader, "sprite", 0);
-            shader_set_mat4_float(items[i].shaderInstance->shader, "projection", &spriteProjection);
+            renderer_set_shader_instance_params(items[i].shaderInstance);
         } else {
             shader_use(spriteShader);
         }
