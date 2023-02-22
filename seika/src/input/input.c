@@ -26,14 +26,14 @@ void input_gamepad_cleanup_flags();
 
 //--- Input ---//
 SEStringHashMap* inputActionMap = NULL;
-char* inputActionNames[MAX_INPUT_ACTIONS];
+char* inputActionNames[SE_MAX_INPUT_ACTIONS];
 size_t inputActionNamesCount = 0;
 
 SEStringHashMap* keyboardStringValuesMap = NULL;
 SEStringHashMap* gamepadStringValuesMap = NULL;
 
 typedef struct InputFlagCleaner {
-    InputAction* inputActions[MAX_INPUT_ACTIONS];
+    SEInputAction* inputActions[SE_MAX_INPUT_ACTIONS];
     size_t count;
 } InputFlagCleaner;
 
@@ -45,65 +45,65 @@ bool se_input_initialize(const char* controllerDBFilePath) {
     // SETUP INPUT STRING VALUES
     // Keyboard
     keyboardStringValuesMap = se_string_hash_map_create(80);
-    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_ZERO, SDL_SCANCODE_0);
-    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_ONE, SDL_SCANCODE_1);
-    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_TWO, SDL_SCANCODE_2);
-    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_THREE, SDL_SCANCODE_3);
-    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_FOUR, SDL_SCANCODE_4);
-    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_FIVE, SDL_SCANCODE_5);
-    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_SIX, SDL_SCANCODE_6);
-    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_SEVEN, SDL_SCANCODE_7);
-    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_EIGHT, SDL_SCANCODE_8);
-    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_NINE, SDL_SCANCODE_9);
+    se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_ZERO, SDL_SCANCODE_0);
+    se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_ONE, SDL_SCANCODE_1);
+    se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_TWO, SDL_SCANCODE_2);
+    se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_THREE, SDL_SCANCODE_3);
+    se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_FOUR, SDL_SCANCODE_4);
+    se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_FIVE, SDL_SCANCODE_5);
+    se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_SIX, SDL_SCANCODE_6);
+    se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_SEVEN, SDL_SCANCODE_7);
+    se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_EIGHT, SDL_SCANCODE_8);
+    se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_NINE, SDL_SCANCODE_9);
 
-    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_A, SDL_SCANCODE_A);
-    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_B, SDL_SCANCODE_B);
-    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_C, SDL_SCANCODE_C);
-    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_D, SDL_SCANCODE_D);
-    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_E, SDL_SCANCODE_E);
-    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_F, SDL_SCANCODE_F);
-    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_G, SDL_SCANCODE_G);
-    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_H, SDL_SCANCODE_H);
-    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_I, SDL_SCANCODE_I);
-    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_J, SDL_SCANCODE_J);
-    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_K, SDL_SCANCODE_K);
-    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_L, SDL_SCANCODE_L);
-    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_M, SDL_SCANCODE_M);
-    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_N, SDL_SCANCODE_N);
-    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_O, SDL_SCANCODE_O);
-    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_P, SDL_SCANCODE_P);
-    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_Q, SDL_SCANCODE_Q);
-    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_R, SDL_SCANCODE_R);
-    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_S, SDL_SCANCODE_S);
-    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_T, SDL_SCANCODE_T);
-    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_U, SDL_SCANCODE_U);
-    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_V, SDL_SCANCODE_V);
-    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_W, SDL_SCANCODE_W);
-    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_X, SDL_SCANCODE_X);
-    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_Y, SDL_SCANCODE_Y);
-    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_Z, SDL_SCANCODE_Z);
+    se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_A, SDL_SCANCODE_A);
+    se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_B, SDL_SCANCODE_B);
+    se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_C, SDL_SCANCODE_C);
+    se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_D, SDL_SCANCODE_D);
+    se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_E, SDL_SCANCODE_E);
+    se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_F, SDL_SCANCODE_F);
+    se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_G, SDL_SCANCODE_G);
+    se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_H, SDL_SCANCODE_H);
+    se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_I, SDL_SCANCODE_I);
+    se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_J, SDL_SCANCODE_J);
+    se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_K, SDL_SCANCODE_K);
+    se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_L, SDL_SCANCODE_L);
+    se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_M, SDL_SCANCODE_M);
+    se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_N, SDL_SCANCODE_N);
+    se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_O, SDL_SCANCODE_O);
+    se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_P, SDL_SCANCODE_P);
+    se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_Q, SDL_SCANCODE_Q);
+    se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_R, SDL_SCANCODE_R);
+    se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_S, SDL_SCANCODE_S);
+    se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_T, SDL_SCANCODE_T);
+    se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_U, SDL_SCANCODE_U);
+    se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_V, SDL_SCANCODE_V);
+    se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_W, SDL_SCANCODE_W);
+    se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_X, SDL_SCANCODE_X);
+    se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_Y, SDL_SCANCODE_Y);
+    se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_Z, SDL_SCANCODE_Z);
 
-    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_LEFT, SDL_SCANCODE_LEFT);
-    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_RIGHT, SDL_SCANCODE_RIGHT);
-    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_UP, SDL_SCANCODE_UP);
-    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_DOWN, SDL_SCANCODE_DOWN);
+    se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_LEFT, SDL_SCANCODE_LEFT);
+    se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_RIGHT, SDL_SCANCODE_RIGHT);
+    se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_UP, SDL_SCANCODE_UP);
+    se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_DOWN, SDL_SCANCODE_DOWN);
 
-    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_RETURN, SDL_SCANCODE_RETURN);
-    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_SPACE, SDL_SCANCODE_SPACE);
-    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_ESCAPE, SDL_SCANCODE_ESCAPE);
+    se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_RETURN, SDL_SCANCODE_RETURN);
+    se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_SPACE, SDL_SCANCODE_SPACE);
+    se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_ESCAPE, SDL_SCANCODE_ESCAPE);
 
-    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_F1, SDL_SCANCODE_F1);
-    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_F2, SDL_SCANCODE_F2);
-    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_F3, SDL_SCANCODE_F3);
-    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_F4, SDL_SCANCODE_F4);
-    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_F5, SDL_SCANCODE_F5);
-    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_F6, SDL_SCANCODE_F6);
-    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_F7, SDL_SCANCODE_F7);
-    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_F8, SDL_SCANCODE_F8);
-    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_F9, SDL_SCANCODE_F9);
-    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_F10, SDL_SCANCODE_F10);
-    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_F11, SDL_SCANCODE_F11);
-    se_string_hash_map_add_int(keyboardStringValuesMap, INPUT_VALUE_F12, SDL_SCANCODE_F12);
+    se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_F1, SDL_SCANCODE_F1);
+    se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_F2, SDL_SCANCODE_F2);
+    se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_F3, SDL_SCANCODE_F3);
+    se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_F4, SDL_SCANCODE_F4);
+    se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_F5, SDL_SCANCODE_F5);
+    se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_F6, SDL_SCANCODE_F6);
+    se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_F7, SDL_SCANCODE_F7);
+    se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_F8, SDL_SCANCODE_F8);
+    se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_F9, SDL_SCANCODE_F9);
+    se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_F10, SDL_SCANCODE_F10);
+    se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_F11, SDL_SCANCODE_F11);
+    se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_F12, SDL_SCANCODE_F12);
 
     // Gamepad
     input_initialize_gamepad_system(controllerDBFilePath);
@@ -116,10 +116,10 @@ void se_input_finalize() {}
 void se_input_add_action_value(const char* actionName, const char* actionValue, int deviceId) {
     if (!se_string_hash_map_has(inputActionMap, actionName)) {
         se_string_hash_map_add(inputActionMap, actionName,
-                               se_input_action_create_new_input_action(actionName, deviceId), sizeof(InputAction));
+                               se_input_action_create_new_input_action(actionName, deviceId), sizeof(SEInputAction));
         inputActionNames[inputActionNamesCount++] = se_strdup(actionName);
     }
-    InputAction* inputAction = (InputAction*) se_string_hash_map_get(inputActionMap, actionName);
+    SEInputAction* inputAction = (SEInputAction*) se_string_hash_map_get(inputActionMap, actionName);
     // TODO: Remember to properly delete char* from se_strdup
     if (se_string_hash_map_has(keyboardStringValuesMap, actionValue)) {
         inputAction->keyboardValues[inputAction->keyboardValueCount] = se_string_hash_map_get_int(
@@ -169,7 +169,7 @@ void se_input_clean_up_flags() {
 // Queries
 bool se_input_is_action_pressed(const char* actionName) {
     if (se_string_hash_map_has(inputActionMap, actionName)) {
-        InputAction* inputAction = (InputAction*) se_string_hash_map_get(inputActionMap, actionName);
+        SEInputAction* inputAction = (SEInputAction*) se_string_hash_map_get(inputActionMap, actionName);
         return inputAction->isActionPressed;
     }
     return false;
@@ -177,7 +177,7 @@ bool se_input_is_action_pressed(const char* actionName) {
 
 bool se_input_is_action_just_pressed(const char* actionName) {
     if (se_string_hash_map_has(inputActionMap, actionName)) {
-        InputAction* inputAction = (InputAction*) se_string_hash_map_get(inputActionMap, actionName);
+        SEInputAction* inputAction = (SEInputAction*) se_string_hash_map_get(inputActionMap, actionName);
         return inputAction->isActionJustPressed;
     }
     return false;
@@ -185,7 +185,7 @@ bool se_input_is_action_just_pressed(const char* actionName) {
 
 bool se_input_is_action_just_released(const char* actionName) {
     if (se_string_hash_map_has(inputActionMap, actionName)) {
-        InputAction* inputAction = (InputAction*) se_string_hash_map_get(inputActionMap, actionName);
+        SEInputAction* inputAction = (SEInputAction*) se_string_hash_map_get(inputActionMap, actionName);
         return inputAction->isActionJustReleased;
     }
     return false;
@@ -196,7 +196,7 @@ bool se_input_is_action_just_released(const char* actionName) {
 void input_process_keyboard() {
     const Uint8* keyboardState = SDL_GetKeyboardState(NULL);
     for (size_t i = 0; i < inputActionNamesCount; i++) {
-        InputAction* inputAction = (InputAction*) se_string_hash_map_get(inputActionMap, inputActionNames[i]);
+        SEInputAction* inputAction = (SEInputAction*) se_string_hash_map_get(inputActionMap, inputActionNames[i]);
         for (size_t j = 0; j < inputAction->keyboardValueCount; j++) {
             SDL_Scancode scancode = (SDL_Scancode) inputAction->keyboardValues[j];
             bool isKeyboardValuePressed = keyboardState[scancode];
@@ -246,7 +246,7 @@ void input_process_mouse(SDL_Event event) {
     }
     if (isMouseEvent) {
         for (size_t i = 0; i < inputActionNamesCount; i++) {
-            InputAction* inputAction = (InputAction*) se_string_hash_map_get(inputActionMap, inputActionNames[i]);
+            SEInputAction* inputAction = (SEInputAction*) se_string_hash_map_get(inputActionMap, inputActionNames[i]);
             for (size_t j = 0; j < inputAction->mouseValueCount; j++) {
                 const bool isLeftMouseButton = strcmp((const char*) inputAction->mouseValues[j], "mb_left") == 0 && mouseButton == SDL_BUTTON_LEFT;
                 const bool isRightMouseButton = strcmp((const char*) inputAction->mouseValues[j], "mb_right") == 0 && mouseButton == SDL_BUTTON_RIGHT;
@@ -517,7 +517,7 @@ void input_process_gamepad(SDL_Event event) {
     // Update actions
     if (buttonInputUpdated) {
         for (size_t i = 0; i < inputActionNamesCount; i++) {
-            InputAction* inputAction = (InputAction*) se_string_hash_map_get(inputActionMap, inputActionNames[i]);
+            SEInputAction* inputAction = (SEInputAction*) se_string_hash_map_get(inputActionMap, inputActionNames[i]);
             for (size_t j = 0; j < inputAction->gamepadValueCount; j++) {
                 const char* gamepadValue = inputAction->gamepadValues[j];
                 const uint8_t buttonScancode = se_string_hash_map_get_int(gamepadStringValuesMap, gamepadValue);
