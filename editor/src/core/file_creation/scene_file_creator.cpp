@@ -80,6 +80,10 @@ nlohmann::ordered_json GetComponentsJsonArray(SceneNode* sceneNode) {
         if (spriteComp->flipY != DEFAULT_COMPONENT_SPRITE_FLIP_Y) {
             spriteJson["flip_y"] = spriteComp->flipY;
         }
+        if (!spriteComp->vertexShaderPath.empty() && !spriteComp->fragmentShaderPath.empty()) {
+            spriteJson["shader_instance"]["vertex_path"] = spriteComp->vertexShaderPath;
+            spriteJson["shader_instance"]["fragment_path"] = spriteComp->fragmentShaderPath;
+        }
         componentsJsonArray.emplace_back(spriteJson);
     }
     if (const AnimatedSpriteComp* animatedSpriteComp = sceneNode->GetComponentSafe<AnimatedSpriteComp>()) {
@@ -98,6 +102,10 @@ nlohmann::ordered_json GetComponentsJsonArray(SceneNode* sceneNode) {
         }
         if (animatedSpriteComp->flipY != DEFAULT_COMPONENT_ANIMATED_SPRITE_FLIP_Y) {
             animSpriteJson["flip_y"] = animatedSpriteComp->flipY;
+        }
+        if (!animatedSpriteComp->vertexShaderPath.empty() && !animatedSpriteComp->fragmentShaderPath.empty()) {
+            animSpriteJson["shader_instance"]["vertex_path"] = animatedSpriteComp->vertexShaderPath;
+            animSpriteJson["shader_instance"]["fragment_path"] = animatedSpriteComp->fragmentShaderPath;
         }
         // Animations
         nlohmann::ordered_json animationsJsonArray = nlohmann::ordered_json::array();
