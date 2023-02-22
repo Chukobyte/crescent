@@ -3,7 +3,7 @@
 #include "../memory/se_mem.h"
 
 // --- Thread Pool Worker --- //
-static SEThreadPoolWork* tpool_work_create(ThreadFunc func, void *arg) {
+static SEThreadPoolWork* tpool_work_create(SEThreadFunc func, void *arg) {
     SEThreadPoolWork* work;
 
     if (func == NULL) {
@@ -140,7 +140,7 @@ void se_tpool_destroy(SEThreadPool* tp) {
     SE_MEM_FREE(tp);
 }
 
-bool se_tpool_add_work(SEThreadPool* tp, ThreadFunc func, void* arg) {
+bool se_tpool_add_work(SEThreadPool* tp, SEThreadFunc func, void* arg) {
     SEThreadPoolWork* work;
 
     if (tp == NULL) {

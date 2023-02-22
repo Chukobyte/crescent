@@ -5,10 +5,10 @@
 
 #include "se_pthread.h"
 
-typedef void (*ThreadFunc)(void* arg);
+typedef void (*SEThreadFunc)(void* arg);
 
 typedef struct SEThreadPoolWork {
-    ThreadFunc func;
+    SEThreadFunc func;
     void* arg;
     struct SEThreadPoolWork* next;
 } SEThreadPoolWork;
@@ -27,6 +27,6 @@ typedef struct SEThreadPool {
 SEThreadPool* se_tpool_create(size_t num);
 void se_tpool_destroy(SEThreadPool* tp);
 // Adds worker (or job) to the thread pool.
-bool se_tpool_add_work(SEThreadPool* tp, ThreadFunc func, void* arg);
+bool se_tpool_add_work(SEThreadPool* tp, SEThreadFunc func, void* arg);
 // Blocking function that finishes once all work is completed.
 void se_tpool_wait(SEThreadPool* tp);
