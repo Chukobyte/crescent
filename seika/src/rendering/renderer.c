@@ -496,15 +496,31 @@ void renderer_set_shader_instance_params(ShaderInstance* shaderInstance) {
         SE_STRING_HASH_MAP_FOR_EACH(shaderInstance->paramMap, iter) {
             StringHashMapNode* node = iter.pair;
             ShaderParam* param = (ShaderParam*) node->value;
-            // TODO: Do a switch for all types
             switch (param->type) {
+            case ShaderParamType_BOOL: {
+                shader_set_bool(shaderInstance->shader, param->name, param->value.boolValue);
+                break;
+            }
+            case ShaderParamType_INT: {
+                shader_set_int(shaderInstance->shader, param->name, param->value.intValue);
+                break;
+            }
             case ShaderParamType_FLOAT: {
                 shader_set_float(shaderInstance->shader, param->name, param->value.floatValue);
                 break;
             }
-            default:
+            case ShaderParamType_FLOAT2: {
+                shader_set_vec2_float(shaderInstance->shader, param->name, param->value.float2Value.x, param->value.float2Value.y);
                 break;
-
+            }
+            case ShaderParamType_FLOAT3: {
+                shader_set_vec3_float(shaderInstance->shader, param->name, param->value.float3Value.x, param->value.float3Value.y, param->value.float3Value.z);
+                break;
+            }
+            case ShaderParamType_FLOAT4: {
+                shader_set_vec4_float(shaderInstance->shader, param->name, param->value.float4Value.x, param->value.float4Value.y, param->value.float4Value.z, param->value.float4Value.w);
+                break;
+            }
             }
         }
     }

@@ -23,9 +23,24 @@ PyObject* cre_py_api_curve_float_eval(PyObject* self, PyObject* args, PyObject* 
 
 // Shader Instance
 PyObject* cre_py_api_shader_instance_delete(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_shader_instance_create_bool_param(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_shader_instance_set_bool_param(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_shader_instance_get_bool_param(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_shader_instance_create_int_param(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_shader_instance_set_int_param(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_shader_instance_get_int_param(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_shader_instance_create_float_param(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_shader_instance_set_float_param(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_shader_instance_get_float_param(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_shader_instance_create_float2_param(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_shader_instance_set_float2_param(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_shader_instance_get_float2_param(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_shader_instance_create_float3_param(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_shader_instance_set_float3_param(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_shader_instance_get_float3_param(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_shader_instance_create_float4_param(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_shader_instance_set_float4_param(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_shader_instance_get_float4_param(PyObject* self, PyObject* args, PyObject* kwargs);
 
 // Shader Util
 PyObject* cre_py_api_shader_util_compile_shader(PyObject* self, PyObject* args, PyObject* kwargs);
@@ -214,6 +229,30 @@ static struct PyMethodDef crePyApiMethods[] = {
         METH_VARARGS | METH_KEYWORDS, "Deletes a shader from the shader instance cache."
     },
     {
+        "shader_instance_create_bool_param", (PyCFunction) cre_py_api_shader_instance_create_bool_param,
+        METH_VARARGS | METH_KEYWORDS, "Creates a bool parameter."
+    },
+    {
+        "shader_instance_set_bool_param", (PyCFunction) cre_py_api_shader_instance_set_bool_param,
+        METH_VARARGS | METH_KEYWORDS, "Sets a bool parameter."
+    },
+    {
+        "shader_instance_get_bool_param", (PyCFunction) cre_py_api_shader_instance_get_bool_param,
+        METH_VARARGS | METH_KEYWORDS, "Returns a bool parameter."
+    },
+    {
+        "shader_instance_create_int_param", (PyCFunction) cre_py_api_shader_instance_create_int_param,
+        METH_VARARGS | METH_KEYWORDS, "Creates a int parameter."
+    },
+    {
+        "shader_instance_set_int_param", (PyCFunction) cre_py_api_shader_instance_set_int_param,
+        METH_VARARGS | METH_KEYWORDS, "Sets a int parameter."
+    },
+    {
+        "shader_instance_get_int_param", (PyCFunction) cre_py_api_shader_instance_get_int_param,
+        METH_VARARGS | METH_KEYWORDS, "Returns a int parameter."
+    },
+    {
         "shader_instance_create_float_param", (PyCFunction) cre_py_api_shader_instance_create_float_param,
         METH_VARARGS | METH_KEYWORDS, "Creates a float parameter."
     },
@@ -224,6 +263,42 @@ static struct PyMethodDef crePyApiMethods[] = {
     {
         "shader_instance_get_float_param", (PyCFunction) cre_py_api_shader_instance_get_float_param,
         METH_VARARGS | METH_KEYWORDS, "Returns a float parameter."
+    },
+    {
+        "shader_instance_create_float2_param", (PyCFunction) cre_py_api_shader_instance_create_float2_param,
+        METH_VARARGS | METH_KEYWORDS, "Creates a float2 parameter."
+    },
+    {
+        "shader_instance_set_float2_param", (PyCFunction) cre_py_api_shader_instance_set_float2_param,
+        METH_VARARGS | METH_KEYWORDS, "Sets a float2 parameter."
+    },
+    {
+        "shader_instance_get_float2_param", (PyCFunction) cre_py_api_shader_instance_get_float2_param,
+        METH_VARARGS | METH_KEYWORDS, "Returns a float2 parameter."
+    },
+    {
+        "shader_instance_create_float3_param", (PyCFunction) cre_py_api_shader_instance_create_float3_param,
+        METH_VARARGS | METH_KEYWORDS, "Creates a float3 parameter."
+    },
+    {
+        "shader_instance_set_float3_param", (PyCFunction) cre_py_api_shader_instance_set_float3_param,
+        METH_VARARGS | METH_KEYWORDS, "Sets a float3 parameter."
+    },
+    {
+        "shader_instance_get_float3_param", (PyCFunction) cre_py_api_shader_instance_get_float3_param,
+        METH_VARARGS | METH_KEYWORDS, "Returns a float3 parameter."
+    },
+    {
+        "shader_instance_create_float4_param", (PyCFunction) cre_py_api_shader_instance_create_float4_param,
+        METH_VARARGS | METH_KEYWORDS, "Creates a float4 parameter."
+    },
+    {
+        "shader_instance_set_float4_param", (PyCFunction) cre_py_api_shader_instance_set_float4_param,
+        METH_VARARGS | METH_KEYWORDS, "Sets a float4 parameter."
+    },
+    {
+        "shader_instance_get_float4_param", (PyCFunction) cre_py_api_shader_instance_get_float4_param,
+        METH_VARARGS | METH_KEYWORDS, "Returns a float4 parameter."
     },
     // SHADER UTIL
     {
@@ -639,6 +714,12 @@ static char* crePyApiGenericShaderIdKWList[] = {"shader_id", NULL};
 static char* crePyApiShaderInstanceCreateParamKWList[] = {"shader_id", "name", "initial_value", NULL};
 static char* crePyApiShaderInstanceSetParamKWList[] = {"shader_id", "name", "value", NULL};
 static char* crePyApiShaderInstanceGetParamKWList[] = {"shader_id", "name", NULL};
+static char* crePyApiShaderInstanceCreateFloat2ParamKWList[] = {"shader_id", "name", "initial_value_x", "initial_value_y", NULL};
+static char* crePyApiShaderInstanceSetFloat2ParamKWList[] = {"shader_id", "name", "value_x", "value_y", NULL};
+static char* crePyApiShaderInstanceCreateFloat3ParamKWList[] = {"shader_id", "name", "initial_value_x", "initial_value_y", "initial_value_z", NULL};
+static char* crePyApiShaderInstanceSetFloat3ParamKWList[] = {"shader_id", "name", "value_x", "value_y", "value_z", NULL};
+static char* crePyApiShaderInstanceCreateFloat4ParamKWList[] = {"shader_id", "name", "initial_value_x", "initial_value_y", "initial_value_z", "initial_value_w", NULL};
+static char* crePyApiShaderInstanceSetFloat4ParamKWList[] = {"shader_id", "name", "value_x", "value_y", "value_z", "value_w", NULL};
 
 static char* crePyApiShaderUtilCompileShaderKWList[] = {"vertex_path", "fragment_path", NULL};
 
