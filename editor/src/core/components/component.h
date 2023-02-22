@@ -63,7 +63,7 @@ struct SpriteComp : public EditorComponent {
 // TODO: Put editor animation stuff in another file...
 struct EditorAnimationFrame {
     std::string texturePath;
-    SERect2 drawSource = {0.0f, 0.0f, 0.0f, 0.0f };
+    SERect2 drawSource = { 0.0f, 0.0f, 0.0f, 0.0f };
     int frame = -1;
 };
 
