@@ -228,6 +228,63 @@
 "        return f\"({self.x}, {self.y}, {self.z})\"\n"\
 "\n"\
 "\n"\
+"class Vector4:\n"\
+"    def __init__(self, x=0.0, y=0.0, z=0.0, w=0.0):\n"\
+"        self.x = x\n"\
+"        self.y = y\n"\
+"        self.z = z\n"\
+"        self.w = w\n"\
+"\n"\
+"    def __eq__(self, other) -> bool:\n"\
+"        if (\n"\
+"            self.x == other.x\n"\
+"            and self.y == other.y\n"\
+"            and self.z == other.z\n"\
+"            and self.w == other.w\n"\
+"        ):\n"\
+"            return True\n"\
+"        else:\n"\
+"            return False\n"\
+"\n"\
+"    def __gt__(self, other) -> bool:\n"\
+"        if self.x + self.y + self.z + self.w > other.x + other.y + other.z + other.w:\n"\
+"            return True\n"\
+"        else:\n"\
+"            return False\n"\
+"\n"\
+"    def __lt__(self, other) -> bool:\n"\
+"        if self.x + self.y + self.z + self.w < other.x + other.y + other.z + other.w:\n"\
+"            return True\n"\
+"        else:\n"\
+"            return False\n"\
+"\n"\
+"    def __sub__(self, other):\n"\
+"        return Vector4(\n"\
+"            self.x - other.x, self.y - other.y, self.z - other.z, self.w - other.w\n"\
+"        )\n"\
+"\n"\
+"    def __add__(self, other):\n"\
+"        return Vector4(\n"\
+"            self.x + other.x, self.y + other.y, self.z + other.z, self.w + other.w\n"\
+"        )\n"\
+"\n"\
+"    def __mul__(self, other):\n"\
+"        return Vector4(\n"\
+"            self.x * other.x, self.y * other.y, self.z * other.z, self.w * other.w\n"\
+"        )\n"\
+"\n"\
+"    def __truediv__(self, other):\n"\
+"        return Vector4(\n"\
+"            self.x / other.x, self.y / other.y, self.z / other.z, self.w / other.w\n"\
+"        )\n"\
+"\n"\
+"    def __str__(self):\n"\
+"        return f\"({self.x}, {self.y}, {self.z}, {self.w})\"\n"\
+"\n"\
+"    def __repr__(self):\n"\
+"        return f\"({self.x}, {self.y}, {self.z}, {self.w})\"\n"\
+"\n"\
+"\n"\
 "class Size2D:\n"\
 "    def __init__(self, w=0.0, h=0.0):\n"\
 "        self.w = w\n"\
@@ -497,6 +554,36 @@
 "            return has_deleted\n"\
 "        return False\n"\
 "\n"\
+"    def create_bool_param(self, name: str, initial_value: bool) -> None:\n"\
+"        crescent_api_internal.shader_instance_create_bool_param(\n"\
+"            shader_id=self.shader_id, name=name, initial_value=initial_value\n"\
+"        )\n"\
+"\n"\
+"    def set_bool_param(self, name: str, value: bool) -> None:\n"\
+"        crescent_api_internal.shader_instance_set_bool_param(\n"\
+"            shader_id=self.shader_id, name=name, value=value\n"\
+"        )\n"\
+"\n"\
+"    def get_bool_param(self, name: str) -> bool:\n"\
+"        return crescent_api_internal.shader_instance_get_bool_param(\n"\
+"            shader_id=self.shader_id, name=name\n"\
+"        )\n"\
+"\n"\
+"    def create_int_param(self, name: str, initial_value: int) -> None:\n"\
+"        crescent_api_internal.shader_instance_create_int_param(\n"\
+"            shader_id=self.shader_id, name=name, initial_value=initial_value\n"\
+"        )\n"\
+"\n"\
+"    def set_int_param(self, name: str, value: int) -> None:\n"\
+"        crescent_api_internal.shader_instance_set_int_param(\n"\
+"            shader_id=self.shader_id, name=name, value=value\n"\
+"        )\n"\
+"\n"\
+"    def get_int_param(self, name: str) -> int:\n"\
+"        return crescent_api_internal.shader_instance_get_int_param(\n"\
+"            shader_id=self.shader_id, name=name\n"\
+"        )\n"\
+"\n"\
 "    def create_float_param(self, name: str, initial_value: float) -> None:\n"\
 "        crescent_api_internal.shader_instance_create_float_param(\n"\
 "            shader_id=self.shader_id, name=name, initial_value=initial_value\n"\
@@ -511,6 +598,75 @@
 "        return crescent_api_internal.shader_instance_get_float_param(\n"\
 "            shader_id=self.shader_id, name=name\n"\
 "        )\n"\
+"\n"\
+"    def create_float2_param(self, name: str, initial_value: Vector2) -> None:\n"\
+"        crescent_api_internal.shader_instance_create_float2_param(\n"\
+"            shader_id=self.shader_id,\n"\
+"            name=name,\n"\
+"            initial_value_x=initial_value.x,\n"\
+"            initial_value_y=initial_value.y,\n"\
+"        )\n"\
+"\n"\
+"    def set_float2_param(self, name: str, value: Vector2) -> None:\n"\
+"        crescent_api_internal.shader_instance_set_float2_param(\n"\
+"            shader_id=self.shader_id, name=name, value_x=value.x, value_y=value.y\n"\
+"        )\n"\
+"\n"\
+"    def get_float2_param(self, name: str) -> Vector2:\n"\
+"        x, y = crescent_api_internal.shader_instance_get_float2_param(\n"\
+"            shader_id=self.shader_id, name=name\n"\
+"        )\n"\
+"        return Vector2(x, y)\n"\
+"\n"\
+"    def create_float3_param(self, name: str, initial_value: Vector3) -> None:\n"\
+"        crescent_api_internal.shader_instance_create_float3_param(\n"\
+"            shader_id=self.shader_id,\n"\
+"            name=name,\n"\
+"            initial_value_x=initial_value.x,\n"\
+"            initial_value_y=initial_value.y,\n"\
+"            initial_value_z=initial_value.z,\n"\
+"        )\n"\
+"\n"\
+"    def set_float3_param(self, name: str, value: Vector3) -> None:\n"\
+"        crescent_api_internal.shader_instance_set_float3_param(\n"\
+"            shader_id=self.shader_id,\n"\
+"            name=name,\n"\
+"            value_x=value.x,\n"\
+"            value_y=value.y,\n"\
+"            value_z=value.z,\n"\
+"        )\n"\
+"\n"\
+"    def get_float3_param(self, name: str) -> Vector3:\n"\
+"        x, y, z = crescent_api_internal.shader_instance_get_float3_param(\n"\
+"            shader_id=self.shader_id, name=name\n"\
+"        )\n"\
+"        return Vector3(x, y, z)\n"\
+"\n"\
+"    def create_float4_param(self, name: str, initial_value: Vector4) -> None:\n"\
+"        crescent_api_internal.shader_instance_create_float4_param(\n"\
+"            shader_id=self.shader_id,\n"\
+"            name=name,\n"\
+"            initial_value_x=initial_value.x,\n"\
+"            initial_value_y=initial_value.y,\n"\
+"            initial_value_z=initial_value.z,\n"\
+"            initial_value_w=initial_value.w,\n"\
+"        )\n"\
+"\n"\
+"    def set_float4_param(self, name: str, value: Vector4) -> None:\n"\
+"        crescent_api_internal.shader_instance_set_float4_param(\n"\
+"            shader_id=self.shader_id,\n"\
+"            name=name,\n"\
+"            value_x=value.x,\n"\
+"            value_y=value.y,\n"\
+"            value_z=value.z,\n"\
+"            value_w=value.w,\n"\
+"        )\n"\
+"\n"\
+"    def get_float4_param(self, name: str) -> Vector4:\n"\
+"        x, y, z, w = crescent_api_internal.shader_instance_get_float4_param(\n"\
+"            shader_id=self.shader_id, name=name\n"\
+"        )\n"\
+"        return Vector4(x, y, z, w)\n"\
 "\n"\
 "\n"\
 "class ShaderUtil:\n"\
