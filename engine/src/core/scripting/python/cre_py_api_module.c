@@ -7,10 +7,10 @@
 #include "../seika/src/input/mouse.h"
 #include "../seika/src/audio/audio_manager.h"
 #include "../seika/src/networking/se_network.h"
-#include "../seika/src/asset/asset_file_loader.h"
 #include "../seika/src/memory/se_mem.h"
 #include "../seika/src/rendering/frame_buffer.h"
 #include "../seika/src/rendering/render_context.h"
+#include "../seika/src/rendering/renderer.h"
 #include "../seika/src/rendering/shader/shader_cache.h"
 #include "../seika/src/utils/se_assert.h"
 #include "../seika/src/utils/se_file_system_utils.h"
@@ -1207,6 +1207,8 @@ PyObject* cre_py_api_sprite_set_shader_instance(PyObject* self, PyObject* args, 
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "ii", crePyApiGenericSetShaderInstanceKWList, &entity, &shaderInstanceId)) {
         SpriteComponent* spriteComponent = (SpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_SPRITE);
         spriteComponent->shaderInstanceId = shaderInstanceId;
+        ShaderInstance* shaderInstance = shader_cache_get_instance(spriteComponent->shaderInstanceId);
+        se_renderer_set_sprite_shader_default_params(shaderInstance->shader);
         Py_RETURN_NONE;
     }
     return NULL;
@@ -1298,6 +1300,8 @@ PyObject* cre_py_api_animated_sprite_set_shader_instance(PyObject* self, PyObjec
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "ii", crePyApiGenericSetShaderInstanceKWList, &entity, &shaderInstanceId)) {
         AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent *) component_manager_get_component(entity, ComponentDataIndex_ANIMATED_SPRITE);
         animatedSpriteComponent->shaderInstanceId = shaderInstanceId;
+        ShaderInstance* shaderInstance = shader_cache_get_instance(animatedSpriteComponent->shaderInstanceId);
+        se_renderer_set_sprite_shader_default_params(shaderInstance->shader);
         Py_RETURN_NONE;
     }
     return NULL;
