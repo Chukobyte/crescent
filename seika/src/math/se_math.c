@@ -52,7 +52,7 @@ SEColor se_color_get_normalized_color_from_color(const SEColor* color) {
 }
 
 SEColor se_color_get_white() {
-    SEColor white = {1.0f, 1.0f, 1.0f, 1.0f};
+    SEColor white = { 1.0f, 1.0f, 1.0f, 1.0f };
     return white;
 }
 

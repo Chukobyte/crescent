@@ -231,7 +231,7 @@ void se_renderer_process_and_flush_batches(const SEColor* backgroundColor) {
     se_frame_buffer_unbind();
 
     // Clear screen texture background
-    static const SEColor screenBackgroundColor = {1.0f, 1.0f, 1.0f, 1.0f };
+    static const SEColor screenBackgroundColor = { 1.0f, 1.0f, 1.0f, 1.0f };
     glClearColor(screenBackgroundColor.r, screenBackgroundColor.g, screenBackgroundColor.b, screenBackgroundColor.a);
     glClear(GL_COLOR_BUFFER_BIT);
     // Draw screen texture from framebuffer
@@ -427,7 +427,7 @@ void font_renderer_update_resolution() {
 }
 
 void font_renderer_draw_text(const SEFont* font, const char* text, float x, float y, float scale, const SEColor* color) {
-    SEVector2 currentScale = {scale, scale };
+    SEVector2 currentScale = { scale, scale };
     se_shader_use(fontShader);
     se_shader_set_vec4_float(fontShader, "textColor", color->r, color->g, color->b, color->a);
     glActiveTexture(GL_TEXTURE0);
