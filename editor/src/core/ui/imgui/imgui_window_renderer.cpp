@@ -9,7 +9,7 @@
 
 #include "../../editor_context.h"
 
-const Color WINDOW_BACKGROUND_COLOR = {0.1f, 0.1f, 0.1f, 1.0f };
+const SEColor WINDOW_BACKGROUND_COLOR = { 0.1f, 0.1f, 0.1f, 1.0f };
 
 void ImGuiHelper::WindowRenderer::Render(const std::vector<TextureRenderTarget>& textureRenderTargets, const std::vector<FontRenderTarget>& fontRenderTargets) {
     // New frame

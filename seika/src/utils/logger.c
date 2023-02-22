@@ -7,16 +7,16 @@
 #pragma warning(disable : 4996) // for strcpy and strncat
 #endif
 
-static enum LogLevel currentLogLevel = LogLevel_ERROR;
+static SELogLevel currentLogLevel = SELogLevel_ERROR;
 
-void se_logger_set_level(enum LogLevel level) {
+void se_logger_set_level(SELogLevel level) {
     currentLogLevel = level;
 }
 
 void se_logger_error(const char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
-    if (currentLogLevel <= LogLevel_ERROR) {
+    if (currentLogLevel <= SELogLevel_ERROR) {
         char str[SE_LOG_BUFFER_SIZE];
         const char* logLevelText = "[ERROR] ";
         strcpy(str, logLevelText);
@@ -30,7 +30,7 @@ void se_logger_error(const char* fmt, ...) {
 void se_logger_warn(const char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
-    if (currentLogLevel <= LogLevel_WARN) {
+    if (currentLogLevel <= SELogLevel_WARN) {
         char str[SE_LOG_BUFFER_SIZE];
         const char* logLevelText = "[WARN] ";
         strcpy(str, logLevelText);
@@ -44,7 +44,7 @@ void se_logger_warn(const char* fmt, ...) {
 void se_logger_info(const char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
-    if (currentLogLevel <= LogLevel_INFO) {
+    if (currentLogLevel <= SELogLevel_INFO) {
         char str[SE_LOG_BUFFER_SIZE];
         const char* logLevelText = "[INFO] ";
         strcpy(str, logLevelText);
@@ -58,7 +58,7 @@ void se_logger_info(const char* fmt, ...) {
 void se_logger_debug(const char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
-    if (currentLogLevel <= LogLevel_DEBUG) {
+    if (currentLogLevel <= SELogLevel_DEBUG) {
         char str[SE_LOG_BUFFER_SIZE];
         const char* logLevelText = "[DEBUG] ";
         strcpy(str, logLevelText);
@@ -80,29 +80,29 @@ void se_logger_print_err(const char* fmt, ...) {
     va_end(args);
 }
 
-const char* se_logger_get_log_level_string(enum LogLevel level) {
+const char* se_logger_get_log_level_string(SELogLevel level) {
     switch (level) {
-    case LogLevel_DEBUG:
+    case SELogLevel_DEBUG:
         return "debug";
-    case LogLevel_INFO:
+    case SELogLevel_INFO:
         return "info";
-    case LogLevel_WARN:
+    case SELogLevel_WARN:
         return "warn";
-    case LogLevel_ERROR:
+    case SELogLevel_ERROR:
         return "error";
     }
     return NULL;
 }
 
-enum LogLevel se_logger_get_log_level_enum(const char* level) {
+SELogLevel se_logger_get_log_level_enum(const char* level) {
     if (strcmp(level, "debug") == 0) {
-        return LogLevel_DEBUG;
+        return SELogLevel_DEBUG;
     } else if (strcmp(level, "info") == 0) {
-        return LogLevel_INFO;
+        return SELogLevel_INFO;
     } else if (strcmp(level, "warn") == 0) {
-        return LogLevel_WARN;
+        return SELogLevel_WARN;
     } else if (strcmp(level, "error") == 0) {
-        return LogLevel_ERROR;
+        return SELogLevel_ERROR;
     }
-    return LogLevel_ERROR;
+    return SELogLevel_ERROR;
 }

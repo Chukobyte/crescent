@@ -24,14 +24,14 @@ CollisionResult cre_collision_process_entity_collisions(Entity entity) {
     return collisionResult;
 }
 
-CollisionResult cre_collision_process_mouse_collisions(Rect2* collisionRect) {
+CollisionResult cre_collision_process_mouse_collisions(SERect2* collisionRect) {
     CollisionResult collisionResult = { .sourceEntity = NULL_ENTITY, .collidedEntityCount = 0 };
     const EntitySystem* collisionSystem = collision_ec_system_get();
     for (size_t i = 0; i < collisionSystem->entity_count; i++) {
         const Entity otherEntity = collisionSystem->entities[i];
         Transform2DComponent* otherTransformComponent = component_manager_get_component(otherEntity, ComponentDataIndex_TRANSFORM_2D);
         Collider2DComponent* otherColliderComponent = component_manager_get_component(otherEntity, ComponentDataIndex_COLLIDER_2D);
-        Rect2 otherCollisionRect = cre_get_collision_rectangle(otherEntity, otherTransformComponent, otherColliderComponent);
+        SERect2 otherCollisionRect = cre_get_collision_rectangle(otherEntity, otherTransformComponent, otherColliderComponent);
         if (se_rect2_does_rectangles_overlap(collisionRect, &otherCollisionRect)) {
             collisionResult.collidedEntities[collisionResult.collidedEntityCount++] = otherEntity;
             if (collisionResult.collidedEntityCount >= CRE_MAX_ENTITY_COLLISION) {
@@ -61,10 +61,10 @@ bool is_entity_in_collision_exceptions(Entity entity, Collider2DComponent* colli
     return false;
 }
 
-Rect2 cre_get_collision_rectangle(Entity entity, Transform2DComponent* transform2DComponent, Collider2DComponent* collider2DComponent) {
-    const TransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity,
+SERect2 cre_get_collision_rectangle(Entity entity, Transform2DComponent* transform2DComponent, Collider2DComponent* collider2DComponent) {
+    const SETransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity,
             transform2DComponent);
-    Rect2 collisionRect = {
+    SERect2 collisionRect = {
         .x = globalTransform->position.x,
         .y = globalTransform->position.y,
         .w = globalTransform->scale.x * collider2DComponent->extents.w,

@@ -5,17 +5,17 @@
 #include "../camera/camera.h"
 #include "../camera/camera_manager.h"
 
-Transform2D default_get_local_transform(Entity entity, int* zIndex, bool* success);
+SETransform2D default_get_local_transform(Entity entity, int* zIndex, bool* success);
 
 on_get_self_and_parent_entities onGetSelfAndParentEntitiesFunc = &cre_scene_manager_get_self_and_parent_nodes;
 on_get_local_transform onGetLocalTransformFunc = &default_get_local_transform;
 
 // Default engine callbacks
-Transform2D default_get_local_transform(Entity entity, int* zIndex, bool* success) {
+SETransform2D default_get_local_transform(Entity entity, int* zIndex, bool* success) {
     Transform2DComponent* transform2DComponent = component_manager_get_component_unsafe(entity, ComponentDataIndex_TRANSFORM_2D);
     if (transform2DComponent == NULL) {
         *success = false;
-        return (Transform2D) {
+        return (SETransform2D) {
             .position = { 0.0f, 0.0f }, .scale = { 1.0f, 1.0f }, .rotation = 0.0f
         };
     }
@@ -24,16 +24,16 @@ Transform2D default_get_local_transform(Entity entity, int* zIndex, bool* succes
     return transform2DComponent->localTransform;
 }
 
-void cre_scene_utils_update_global_transform_model(Entity entity, TransformModel2D* globalTransform) {
+void cre_scene_utils_update_global_transform_model(Entity entity, SETransformModel2D* globalTransform) {
     glm_mat4_identity(globalTransform->model);
     EntityArray combineModelResult = onGetSelfAndParentEntitiesFunc(entity);
-    Vector2 scaleTotal = { 1.0f, 1.0f };
+    SEVector2 scaleTotal = { 1.0f, 1.0f };
     globalTransform->zIndex = 0;
     for (int i = combineModelResult.entityCount - 1; i >= 0; i--) {
         Entity currentEntity = combineModelResult.entities[i];
         bool hasLocalTransform = false;
         int localZIndex = 0;
-        const Transform2D localTransform = onGetLocalTransformFunc(currentEntity, &localZIndex, &hasLocalTransform);
+        const SETransform2D localTransform = onGetLocalTransformFunc(currentEntity, &localZIndex, &hasLocalTransform);
         if (!hasLocalTransform) {
             continue;
         }
@@ -59,7 +59,7 @@ void cre_scene_utils_update_global_transform_model(Entity entity, TransformModel
     globalTransform->rotation = transform2d_component_get_rotation_deg_from_model(rotation);
 }
 
-void cre_scene_utils_apply_camera_and_origin_translation(TransformModel2D* globalTransform, Vector2* origin, bool ignoreCamera) {
+void cre_scene_utils_apply_camera_and_origin_translation(SETransformModel2D* globalTransform, SEVector2* origin, bool ignoreCamera) {
     const CRECamera2D* renderCamera = ignoreCamera ? cre_camera_manager_get_default_camera() : cre_camera_manager_get_current_camera();
     glm_translate(globalTransform->model, (vec3) {
         (renderCamera->offset.x - (renderCamera->viewport.x * globalTransform->scaleSign.x) - origin->x) * renderCamera->zoom.x,

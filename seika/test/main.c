@@ -84,20 +84,20 @@ void seika_spatial_hash_map_test(void) {
 
     // Create two entities and insert them into hash map
     const unsigned int entity = 1;
-    SESpatialHashMapGridSpacesHandle* handle = se_spatial_hash_map_insert_or_update(spatialHashMap, entity, &(Rect2) {
+    SESpatialHashMapGridSpacesHandle* handle = se_spatial_hash_map_insert_or_update(spatialHashMap, entity, &(SERect2) {
         0.0f, 0.0f, 32.0f, 32.0f
     });
     TEST_ASSERT_EQUAL(handle, se_spatial_hash_map_get(spatialHashMap, entity));
 
     const unsigned int entityTwo = 2;
-    SESpatialHashMapGridSpacesHandle* handleTwo = se_spatial_hash_map_insert_or_update(spatialHashMap, entityTwo, &(Rect2) {
+    SESpatialHashMapGridSpacesHandle* handleTwo = se_spatial_hash_map_insert_or_update(spatialHashMap, entityTwo, &(SERect2) {
         16.0f, 16.0f, 48.0f, 48.0f
     });
     TEST_ASSERT_EQUAL(handleTwo, se_spatial_hash_map_get(spatialHashMap, entityTwo));
 
     // An entity that should not be collided with
     const unsigned int entityNotCollided = 3;
-    se_spatial_hash_map_insert_or_update(spatialHashMap, entityNotCollided, &(Rect2) {
+    se_spatial_hash_map_insert_or_update(spatialHashMap, entityNotCollided, &(SERect2) {
         64.0f, 64.0f, 96.0f, 96.0f
     });
 
@@ -317,7 +317,7 @@ void seika_curve_float_test(void) {
 
 void seika_shader_instance_test(void) {
     // Shader instance param tests
-    ShaderInstance shaderInstance = { .shader = NULL, .paramMap = se_string_hash_map_create_default_capacity() };
+    SEShaderInstance shaderInstance = { .shader = NULL, .paramMap = se_string_hash_map_create_default_capacity() };
 
     se_shader_instance_param_create_bool(&shaderInstance, "is_active", false);
     TEST_ASSERT_FALSE(se_shader_instance_param_get_bool(&shaderInstance, "is_active"));
@@ -327,7 +327,7 @@ void seika_shader_instance_test(void) {
     // Clean up
     SE_STRING_HASH_MAP_FOR_EACH(shaderInstance.paramMap, iter) {
         StringHashMapNode* node = iter.pair;
-        ShaderParam* param = (ShaderParam*) node->value;
+        SEShaderParam* param = (SEShaderParam*) node->value;
         SE_MEM_FREE(param->name);
     }
     se_string_hash_map_destroy(shaderInstance.paramMap);

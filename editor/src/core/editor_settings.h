@@ -17,17 +17,17 @@ class EditorSettings {
     bool Load();
     void Save() const;
     void AddToRecentlyLoadedProjectsList(const std::string& name, const std::string& path);
-    void SetEditorLogLevel(LogLevel level);
+    void SetEditorLogLevel(SELogLevel level);
     void SetEditorLogLevel(const std::string& level);
-    void SetGameLogLevel(LogLevel level);
+    void SetGameLogLevel(SELogLevel level);
     void SetGameLogLevel(const std::string& level);
-    [[nodiscard]] LogLevel GetEditorLogLevel() const {
+    [[nodiscard]] SELogLevel GetEditorLogLevel() const {
         return editorLogLevel;
     }
     [[nodiscard]] std::string GetEditorLogLevelString() const {
         return se_logger_get_log_level_string(editorLogLevel);
     }
-    [[nodiscard]] LogLevel GetGameLogLevel() const {
+    [[nodiscard]] SELogLevel GetGameLogLevel() const {
         return gameLogLevel;
     }
     [[nodiscard]] std::string GetGameLogLevelString() const {
@@ -38,6 +38,6 @@ class EditorSettings {
     std::vector<RecentlyLoadedProjectData> recentlyLoadedProjects;
 
   private:
-    LogLevel editorLogLevel = LogLevel_ERROR;
-    LogLevel gameLogLevel = LogLevel_ERROR;
+    SELogLevel editorLogLevel = SELogLevel_ERROR;
+    SELogLevel gameLogLevel = SELogLevel_ERROR;
 };

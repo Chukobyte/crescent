@@ -27,7 +27,7 @@ struct Transform2DComp : public EditorComponent {
           isZIndexRelativeToParent(transform2DComponent->isZIndexRelativeToParent),
           ignoreCamera(transform2DComponent->ignoreCamera) {}
 
-    Transform2D transform2D = {
+    SETransform2D transform2D = {
         .position = { 0.0f, 0.0f },
         .scale = { 1.0f, 1.0f },
         .rotation = 0.0f
@@ -51,11 +51,11 @@ struct SpriteComp : public EditorComponent {
           fragmentShaderPath(std::move(fragmentShaderPath)) {}
 
     std::string texturePath;
-    Rect2 drawSource = { .x = 0.0f, .y = 0.0f, .w = 0.0f, .h = 0.0f };
-    Vector2 origin = { .x = 0.0f, .y = 0.0f };
+    SERect2 drawSource = { .x = 0.0f, .y = 0.0f, .w = 0.0f, .h = 0.0f };
+    SEVector2 origin = { .x = 0.0f, .y = 0.0f };
     bool flipX = false;
     bool flipY = false;
-    Color modulate = { .r = 1.0f, .g = 1.0f, .b = 1.0f, .a = 1.0f };
+    SEColor modulate = { .r = 1.0f, .g = 1.0f, .b = 1.0f, .a = 1.0f };
     std::string vertexShaderPath;
     std::string fragmentShaderPath;
 };
@@ -63,7 +63,7 @@ struct SpriteComp : public EditorComponent {
 // TODO: Put editor animation stuff in another file...
 struct EditorAnimationFrame {
     std::string texturePath;
-    Rect2 drawSource = { 0.0f, 0.0f, 0.0f, 0.0f };
+    SERect2 drawSource = { 0.0f, 0.0f, 0.0f, 0.0f };
     int frame = -1;
 };
 
@@ -179,9 +179,9 @@ struct AnimatedSpriteComp : public EditorComponent {
 
     std::string currentAnimationName;
     std::vector<EditorAnimation> animations;
-    Color modulate = { .r = 1.0f, .g = 1.0f, .b = 1.0f, .a = 1.0f };
+    SEColor modulate = { .r = 1.0f, .g = 1.0f, .b = 1.0f, .a = 1.0f };
     bool isPlaying = false;
-    Vector2 origin = { .x = 0.0f, .y = 0.0f };
+    SEVector2 origin = { .x = 0.0f, .y = 0.0f };
     bool flipX = false;
     bool flipY = false;
     std::string vertexShaderPath;
@@ -198,7 +198,7 @@ struct TextLabelComp : public EditorComponent {
 
     std::string text;
     std::string fontUID;
-    Color color = { .r = 1.0f, .g = 1.0f, .b = 1.0f, .a = 1.0f };
+    SEColor color = { .r = 1.0f, .g = 1.0f, .b = 1.0f, .a = 1.0f };
 };
 
 struct ScriptComp : public EditorComponent {
@@ -219,8 +219,8 @@ struct Collider2DComp : public EditorComponent {
         : extents(collider2DComponent->extents),
           color(collider2DComponent->color) {}
 
-    Size2D extents = { .w = 0.0f, .h = 0.0f };
-    Color color = { .r = 0.0f, .g = 0.0f, .b = 0.8f, .a = 1.0f };
+    SESize2D extents = { .w = 0.0f, .h = 0.0f };
+    SEColor color = { .r = 0.0f, .g = 0.0f, .b = 0.8f, .a = 1.0f };
 };
 
 struct ColorRectComp : public EditorComponent {
@@ -230,8 +230,8 @@ struct ColorRectComp : public EditorComponent {
         : size(colorSquareComp->size),
           color(colorSquareComp->color) {}
 
-    Size2D size = { .w = 32.0f, .h = 32.0f };
-    Color color = { .r = 1.0f, .g = 1.0f, .b = 1.0f, .a = 1.0f };
+    SESize2D size = { .w = 32.0f, .h = 32.0f };
+    SEColor color = { .r = 1.0f, .g = 1.0f, .b = 1.0f, .a = 1.0f };
 };
 
 struct ParallaxComp : public EditorComponent {
@@ -240,5 +240,5 @@ struct ParallaxComp : public EditorComponent {
     explicit ParallaxComp(const ParallaxComponent* parallaxComponent)
         : scrollSpeed(parallaxComponent->scrollSpeed) {}
 
-    Vector2 scrollSpeed = { .x = 0.0f, .y = 0.0f };
+    SEVector2 scrollSpeed = { .x = 0.0f, .y = 0.0f };
 };

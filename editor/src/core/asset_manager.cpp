@@ -66,15 +66,15 @@ void AssetManager::RefreshFromProperties(ProjectProperties* projectProperties) {
 }
 
 // Texture
-Texture* AssetManager::LoadTexture(const char* fileName, const char* key) {
+SETexture* AssetManager::LoadTexture(const char* fileName, const char* key) {
     return se_asset_manager_load_texture(fileName, key);
 }
 
-Texture* AssetManager::GetTexture(const char* key) {
+SETexture* AssetManager::GetTexture(const char* key) {
     return se_asset_manager_get_texture(key);
 }
 
-Texture* AssetManager::GetTextureSafe(const char *key) {
+SETexture* AssetManager::GetTextureSafe(const char *key) {
     return se_asset_manager_has_texture(key) ? se_asset_manager_get_texture(key) : nullptr;
 }
 
@@ -83,11 +83,11 @@ bool AssetManager::HasTexture(const char* key) const {
 }
 
 // Font
-Font* AssetManager::LoadFont(const char* fileName, const char* key, int size) {
+SEFont* AssetManager::LoadFont(const char* fileName, const char* key, int size) {
     return se_asset_manager_load_font(fileName, key, size);
 }
 
-Font* AssetManager::GetFont(const char* key) {
+SEFont* AssetManager::GetFont(const char* key) {
     return se_asset_manager_get_font(key);
 }
 

@@ -14,7 +14,7 @@ typedef struct PositionHashes {
     int32_t hashes[SE_SPATIAL_HASH_MAX_POSITION_HASH];
 } PositionHashes;
 
-int32_t spatial_hash(SESpatialHashMap* hashMap, Vector2* position);
+int32_t spatial_hash(SESpatialHashMap* hashMap, SEVector2* position);
 void spatial_hash_map_destroy_node(SESpatialHashMap* hashMap);
 SESpatialHashMapGridSpace* get_or_create_grid_space(SESpatialHashMap* hashMap, int32_t positionHash);
 bool link_object_by_position_hash(SESpatialHashMap* hashMap, SESpatialHashMapGridSpacesHandle* object, unsigned int value, int32_t positionHash, PositionHashes* hashes);
@@ -51,7 +51,7 @@ void se_spatial_hash_map_destroy(SESpatialHashMap* hashMap) {
     SE_MEM_FREE(hashMap);
 }
 
-SESpatialHashMapGridSpacesHandle* se_spatial_hash_map_insert_or_update(SESpatialHashMap* hashMap, unsigned int entity, Rect2* collisionRect) {
+SESpatialHashMapGridSpacesHandle* se_spatial_hash_map_insert_or_update(SESpatialHashMap* hashMap, unsigned int entity, SERect2* collisionRect) {
     // Create new object handle if it doesn't exist
     if (!se_hash_map_has(hashMap->objectToGridMap, &entity)) {
         SESpatialHashMapGridSpacesHandle* newHandle = SE_MEM_ALLOCATE(SESpatialHashMapGridSpacesHandle);
@@ -59,7 +59,7 @@ SESpatialHashMapGridSpacesHandle* se_spatial_hash_map_insert_or_update(SESpatial
         se_hash_map_add(hashMap->objectToGridMap, &entity, &newHandle);
     }
     SESpatialHashMapGridSpacesHandle* objectHandle = (SESpatialHashMapGridSpacesHandle*) *(SESpatialHashMapGridSpacesHandle**) se_hash_map_get(hashMap->objectToGridMap, &entity);
-    memcpy(&objectHandle->collisionRect, collisionRect, sizeof(Rect2));
+    memcpy(&objectHandle->collisionRect, collisionRect, sizeof(SERect2));
 
     // Unlink all previous spaces and objects
     unlink_all_objects_by_entity(hashMap, objectHandle, entity);
@@ -67,22 +67,22 @@ SESpatialHashMapGridSpacesHandle* se_spatial_hash_map_insert_or_update(SESpatial
     // Add values to spaces and spaces to object handles (moving clockwise starting from top-left)
     PositionHashes hashes = { .hashCount = 0 };
     // Top left
-    const int32_t topLeftHash = spatial_hash(hashMap, &(Vector2) {
+    const int32_t topLeftHash = spatial_hash(hashMap, &(SEVector2) {
         collisionRect->x, collisionRect->y
     });
     link_object_by_position_hash(hashMap, objectHandle, entity, topLeftHash, &hashes);
     // Top right
-    const int32_t topRightHash = spatial_hash(hashMap, &(Vector2) {
+    const int32_t topRightHash = spatial_hash(hashMap, &(SEVector2) {
         collisionRect->x + collisionRect->w, collisionRect->y
     });
     link_object_by_position_hash(hashMap, objectHandle, entity, topRightHash, &hashes);
     // Bottom Left
-    const int32_t bottomLeftHash = spatial_hash(hashMap, &(Vector2) {
+    const int32_t bottomLeftHash = spatial_hash(hashMap, &(SEVector2) {
         collisionRect->x, collisionRect->y + collisionRect->h
     });
     link_object_by_position_hash(hashMap, objectHandle, entity, bottomLeftHash, &hashes);
     // Bottom Right
-    const int32_t bottomRightHash = spatial_hash(hashMap, &(Vector2) {
+    const int32_t bottomRightHash = spatial_hash(hashMap, &(SEVector2) {
         collisionRect->x + collisionRect->w, collisionRect->y + collisionRect->h
     });
     link_object_by_position_hash(hashMap, objectHandle, entity, bottomRightHash, &hashes);
@@ -133,7 +133,7 @@ SESpatialHashMapCollisionResult se_spatial_hash_map_compute_collision(SESpatialH
 }
 
 // Internal Functions
-int32_t spatial_hash(SESpatialHashMap* hashMap, Vector2* position) {
+int32_t spatial_hash(SESpatialHashMap* hashMap, SEVector2* position) {
     const int32_t x = (int32_t) position->x / hashMap->cellSize;
     const int32_t y = (int32_t) position->y / hashMap->cellSize;
     const int32_t hash = ((x * x) ^ (y * y)) % INT32_MAX;

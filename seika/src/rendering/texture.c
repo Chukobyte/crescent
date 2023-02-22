@@ -9,7 +9,7 @@
 #include "../memory/se_mem.h"
 #include "../utils/se_assert.h"
 
-static const struct Texture DEFAULT_TEXTURE_REF = {
+static const struct SETexture DEFAULT_TEXTURE_REF = {
     .id = 0,
     .data = NULL,
     .width = 0,
@@ -23,10 +23,10 @@ static const struct Texture DEFAULT_TEXTURE_REF = {
     .filterMag = GL_NEAREST
 };
 
-bool se_texture_is_texture_valid(Texture* texture);
+bool se_texture_is_texture_valid(SETexture* texture);
 
-Texture* se_texture_create_default_texture() {
-    Texture* texture = SE_MEM_ALLOCATE(Texture);
+SETexture* se_texture_create_default_texture() {
+    SETexture* texture = SE_MEM_ALLOCATE(SETexture);
     texture->fileName = NULL;
     texture->data = NULL;
     texture->internalFormat = DEFAULT_TEXTURE_REF.internalFormat;
@@ -38,14 +38,14 @@ Texture* se_texture_create_default_texture() {
     return texture;
 }
 
-void se_texture_generate(Texture* texture);
+void se_texture_generate(SETexture* texture);
 
-Texture* se_texture_create_texture(const char* filePath) {
+SETexture* se_texture_create_texture(const char* filePath) {
     return se_texture_create_texture_ex(filePath, DEFAULT_TEXTURE_REF.wrapS, DEFAULT_TEXTURE_REF.wrapT, DEFAULT_TEXTURE_REF.filterMin, DEFAULT_TEXTURE_REF.filterMag);
 }
 
-Texture* se_texture_create_texture_ex(const char* filePath, GLint wrapS, GLint wrapT, GLint filterMin, GLint filterMag) {
-    Texture* texture = se_texture_create_default_texture();
+SETexture* se_texture_create_texture_ex(const char* filePath, GLint wrapS, GLint wrapT, GLint filterMin, GLint filterMag) {
+    SETexture* texture = se_texture_create_default_texture();
     texture->fileName = filePath;
     texture->wrapS = wrapS;
     texture->wrapT = wrapT;
@@ -69,8 +69,8 @@ Texture* se_texture_create_texture_ex(const char* filePath, GLint wrapS, GLint w
     return texture;
 }
 
-Texture* se_texture_create_solid_colored_texture(GLsizei width, GLsizei height, GLuint colorValue) {
-    Texture* texture = se_texture_create_default_texture();
+SETexture* se_texture_create_solid_colored_texture(GLsizei width, GLsizei height, GLuint colorValue) {
+    SETexture* texture = se_texture_create_default_texture();
     texture->nrChannels = 4;
     texture->width = width;
     texture->height = height;
@@ -86,7 +86,7 @@ Texture* se_texture_create_solid_colored_texture(GLsizei width, GLsizei height, 
     return texture;
 }
 
-void se_texture_generate(Texture* texture) {
+void se_texture_generate(SETexture* texture) {
     // OpenGL Stuff
     if (texture->nrChannels == 1) {
         texture->imageFormat = GL_RED;
@@ -112,7 +112,7 @@ void se_texture_generate(Texture* texture) {
     SE_ASSERT_FMT(se_texture_is_texture_valid(texture), "Texture at file path '%s' is not valid!", texture->fileName);
 }
 
-bool se_texture_is_texture_valid(Texture* texture) {
+bool se_texture_is_texture_valid(SETexture* texture) {
     return texture != NULL;
 }
 

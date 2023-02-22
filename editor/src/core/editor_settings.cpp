@@ -78,7 +78,7 @@ void EditorSettings::AddToRecentlyLoadedProjectsList(const std::string& name, co
     }
 }
 
-void EditorSettings::SetEditorLogLevel(LogLevel level) {
+void EditorSettings::SetEditorLogLevel(SELogLevel level) {
     editorLogLevel = level;
     se_logger_set_level(editorLogLevel);
 }
@@ -88,7 +88,7 @@ void EditorSettings::SetEditorLogLevel(const std::string& level) {
     SetEditorLogLevel(logLevel);
 }
 
-void EditorSettings::SetGameLogLevel(LogLevel level) {
+void EditorSettings::SetGameLogLevel(SELogLevel level) {
     gameLogLevel = level;
 }
 

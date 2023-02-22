@@ -3,27 +3,27 @@
 #include <stddef.h>
 #include <stdbool.h>
 
-#define MAX_INPUT_ACTIONS 32
-#define MAX_INPUT_VALUES 4
+#define SE_MAX_INPUT_ACTIONS 32
+#define SE_MAX_INPUT_VALUES 4
 
-typedef enum InputActionType {
-    InputActionType_KEYBOARD,
-    InputActionType_MOUSE,
-    InputActionType_GAMEPAD
-} InputActionType;
+typedef enum SEInputActionType {
+    SEInputActionType_KEYBOARD,
+    SEInputActionType_MOUSE,
+    SEInputActionType_GAMEPAD
+} SEInputActionType;
 
-typedef struct InputAction {
+typedef struct SEInputAction {
     size_t keyboardValueCount;
     size_t mouseValueCount;
     size_t gamepadValueCount;
-    int keyboardValues[MAX_INPUT_VALUES];
-    char* mouseValues[MAX_INPUT_VALUES];
-    char* gamepadValues[MAX_INPUT_VALUES];
+    int keyboardValues[SE_MAX_INPUT_VALUES];
+    char* mouseValues[SE_MAX_INPUT_VALUES];
+    char* gamepadValues[SE_MAX_INPUT_VALUES];
     int lastScancodePressed;
     bool isActionPressed;
     bool isActionJustPressed;
     bool isActionJustReleased;
     int deviceId;
-} InputAction;
+} SEInputAction;
 
-InputAction* se_input_action_create_new_input_action(const char* actionName, int deviceId);
+SEInputAction* se_input_action_create_new_input_action(const char* actionName, int deviceId);

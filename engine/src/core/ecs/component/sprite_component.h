@@ -11,13 +11,13 @@ extern "C" {
 #include "../seika/src/math/se_math.h"
 
 typedef struct SpriteComponent {
-    Texture* texture;
-    Rect2 drawSource;
-    Vector2 origin;
+    SETexture* texture;
+    SERect2 drawSource;
+    SEVector2 origin;
     bool flipX;
     bool flipY;
-    Color modulate;
-    ShaderInstanceId shaderInstanceId;
+    SEColor modulate;
+    SEShaderInstanceId shaderInstanceId;
 } SpriteComponent;
 
 SpriteComponent* sprite_component_create();

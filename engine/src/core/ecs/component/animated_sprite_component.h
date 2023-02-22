@@ -19,13 +19,13 @@ typedef struct AnimatedSpriteComponent {
     Animation animations[ANIMATED_SPRITE_COMPONENT_MAX_ANIMATIONS];
     Animation currentAnimation;
     size_t animationCount;
-    Color modulate;
+    SEColor modulate;
     bool isPlaying;
-    Vector2 origin;
+    SEVector2 origin;
     bool flipX;
     bool flipY;
     uint32_t startAnimationTickTime;
-    ShaderInstanceId shaderInstanceId;
+    SEShaderInstanceId shaderInstanceId;
 } AnimatedSpriteComponent;
 
 typedef struct AnimationQueryResult {
@@ -35,7 +35,7 @@ typedef struct AnimationQueryResult {
 
 typedef struct AnimationFrameData {
     char texturePath[64];
-    Rect2 drawSource;
+    SERect2 drawSource;
     int frame;
 } AnimationFrameData;
 
@@ -53,9 +53,9 @@ typedef struct AnimatedSpriteComponentData {
     AnimationData animations[ANIMATED_SPRITE_COMPONENT_MAX_ANIMATIONS];
     AnimationData currentAnimation;
     size_t animationCount;
-    Color modulate;
+    SEColor modulate;
     bool isPlaying;
-    Vector2 origin;
+    SEVector2 origin;
     bool flipX;
     bool flipY;
     uint32_t startAnimationTickTime;

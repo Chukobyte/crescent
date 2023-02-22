@@ -5,28 +5,28 @@
 
 #include "se_pthread.h"
 
-typedef void (*ThreadFunc)(void* arg);
+typedef void (*SEThreadFunc)(void* arg);
 
-typedef struct ThreadPoolWork {
-    ThreadFunc func;
+typedef struct SEThreadPoolWork {
+    SEThreadFunc func;
     void* arg;
-    struct ThreadPoolWork* next;
-} ThreadPoolWork;
+    struct SEThreadPoolWork* next;
+} SEThreadPoolWork;
 
-typedef struct ThreadPool {
-    ThreadPoolWork* workFirst;
-    ThreadPoolWork* workLast;
+typedef struct SEThreadPool {
+    SEThreadPoolWork* workFirst;
+    SEThreadPoolWork* workLast;
     pthread_mutex_t workMutex;
     pthread_cond_t workCond;
     pthread_cond_t workingCond;
     size_t workingCount;
     size_t threadCount;
     bool shouldStop;
-} ThreadPool;
+} SEThreadPool;
 
-ThreadPool* tpool_create(size_t num);
-void tpool_destroy(ThreadPool* tp);
+SEThreadPool* se_tpool_create(size_t num);
+void se_tpool_destroy(SEThreadPool* tp);
 // Adds worker (or job) to the thread pool.
-bool tpool_add_work(ThreadPool* tp, ThreadFunc func, void* arg);
+bool se_tpool_add_work(SEThreadPool* tp, SEThreadFunc func, void* arg);
 // Blocking function that finishes once all work is completed.
-void tpool_wait(ThreadPool* tp);
+void se_tpool_wait(SEThreadPool* tp);

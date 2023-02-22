@@ -15,8 +15,8 @@
 #include "../../scene/scene_utils.h"
 
 EntitySystem* collisionSystem = NULL;
-Texture* collisionOutlineTexture = NULL;
-Rect2 colliderDrawSource = { .x=0.0f, .y=0.0f, .w=1.0f, .h=1.0f };
+SETexture* collisionOutlineTexture = NULL;
+SERect2 colliderDrawSource = { .x=0.0f, .y=0.0f, .w=1.0f, .h=1.0f };
 
 void collision_system_entity_unregistered(Entity entity);
 void collision_system_physics_update(float deltaTime);
@@ -88,11 +88,11 @@ void collision_system_render() {
         Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
         const Collider2DComponent* colliderComp = (Collider2DComponent*) component_manager_get_component(entity, ComponentDataIndex_COLLIDER_2D);
         const CRECamera2D* renderCamera = transformComp->ignoreCamera ? defaultCamera : camera2D;
-        TransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity, transformComp);
-        static Vector2 origin = { 0.0f, 0.0f };
+        SETransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity, transformComp);
+        static SEVector2 origin = { 0.0f, 0.0f };
         cre_scene_utils_apply_camera_and_origin_translation(globalTransform, &origin, transformComp->ignoreCamera);
         transformComp->isGlobalTransformDirty = true; // TODO: Make global transform const
-        const Size2D colliderDrawSize = {
+        const SESize2D colliderDrawSize = {
             colliderComp->extents.w * renderCamera->zoom.x,
             colliderComp->extents.h * renderCamera->zoom.y
         };
@@ -114,7 +114,7 @@ void collision_system_on_node_entered_scene(Entity entity) {
     Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component_unsafe(entity, ComponentDataIndex_TRANSFORM_2D);
     Collider2DComponent* colliderComp = (Collider2DComponent*) component_manager_get_component_unsafe(entity, ComponentDataIndex_COLLIDER_2D);
     if (transformComp != NULL && colliderComp != NULL) {
-        Rect2 collisionRect = cre_get_collision_rectangle(entity, transformComp, colliderComp);
+        SERect2 collisionRect = cre_get_collision_rectangle(entity, transformComp, colliderComp);
         se_spatial_hash_map_insert_or_update(spatialHashMap, entity, &collisionRect);
         // Register to entity's 'on transform changed' event
         se_event_register_observer(&transformComp->onTransformChanged, &collisionOnEntityTransformChangeObserver);
@@ -128,7 +128,7 @@ void collision_system_on_transform_update(SESubjectNotifyPayload* payload) {
 
     Collider2DComponent* colliderComp = (Collider2DComponent*) component_manager_get_component_unsafe(entity, ComponentDataIndex_COLLIDER_2D);
     if (transformComp != NULL && colliderComp != NULL) {
-        Rect2 collisionRect = cre_get_collision_rectangle(entity, transformComp, colliderComp);
+        SERect2 collisionRect = cre_get_collision_rectangle(entity, transformComp, colliderComp);
         se_spatial_hash_map_insert_or_update(spatialHashMap, entity, &collisionRect);
     }
 }

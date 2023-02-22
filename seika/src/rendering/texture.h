@@ -6,7 +6,7 @@ extern "C" {
 
 #include <glad/glad.h>
 
-typedef struct Texture {
+typedef struct SETexture {
     GLuint id;
     unsigned char* data;
     GLsizei width;
@@ -21,11 +21,11 @@ typedef struct Texture {
     GLint filterMin;
     GLint filterMag;
     const char* fileName;
-} Texture;
+} SETexture;
 
-Texture* se_texture_create_texture(const char* filePath);
-Texture* se_texture_create_texture_ex(const char* filePath, GLint wrapS, GLint wrapT, GLint filterMin, GLint filterMag);
-Texture* se_texture_create_solid_colored_texture(GLsizei width, GLsizei height, GLuint colorValue);
+SETexture* se_texture_create_texture(const char* filePath);
+SETexture* se_texture_create_texture_ex(const char* filePath, GLint wrapS, GLint wrapT, GLint filterMin, GLint filterMag);
+SETexture* se_texture_create_solid_colored_texture(GLsizei width, GLsizei height, GLuint colorValue);
 GLint se_texture_wrap_string_to_int(const char* wrap);
 GLint se_texture_filter_string_to_int(const char* filter);
 
