@@ -8,7 +8,7 @@
 #define RBE_MAX_ANIMATION_FRAMES 16
 
 typedef struct AnimationFrame {
-    Texture* texture;
+    SETexture* texture;
     SERect2 drawSource;
     int frame;
 } AnimationFrame;

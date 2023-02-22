@@ -140,7 +140,7 @@ ImGuiHelper::PopupModal& OpenedProjectUI::Windows::AnimationEditor::GetPopup(Ani
                 ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, framePaddingSize);
                 ImGui::PushID(i);
                 const auto& animFrame = selectedAnim.GetAnimationFrame(i);
-                if (Texture* texture = assetManager->GetTextureSafe(animFrame.texturePath.c_str())) {
+                if (SETexture* texture = assetManager->GetTextureSafe(animFrame.texturePath.c_str())) {
                     // TODO: Fix up stuff with rendering to image button...
                     static ImVec2 buttonSize = ImVec2(64.0f, 64.0f);
                     const SESize2D imageSize = {animFrame.drawSource.w, animFrame.drawSource.h };

@@ -3,8 +3,8 @@
 #include "../memory/se_mem.h"
 
 // --- Thread Pool Worker --- //
-static ThreadPoolWork* tpool_work_create(ThreadFunc func, void *arg) {
-    ThreadPoolWork* work;
+static SEThreadPoolWork* tpool_work_create(ThreadFunc func, void *arg) {
+    SEThreadPoolWork* work;
 
     if (func == NULL) {
         return NULL;
@@ -17,7 +17,7 @@ static ThreadPoolWork* tpool_work_create(ThreadFunc func, void *arg) {
     return work;
 }
 
-static void tpool_work_destroy(ThreadPoolWork* work) {
+static void tpool_work_destroy(SEThreadPoolWork* work) {
     if (work == NULL) {
         return;
     }
@@ -25,8 +25,8 @@ static void tpool_work_destroy(ThreadPoolWork* work) {
 }
 
 
-static ThreadPoolWork* tpool_work_get(ThreadPool* tp) {
-    ThreadPoolWork* work;
+static SEThreadPoolWork* tpool_work_get(SEThreadPool* tp) {
+    SEThreadPoolWork* work;
 
     if (tp == NULL) {
         return NULL;
@@ -48,8 +48,8 @@ static ThreadPoolWork* tpool_work_get(ThreadPool* tp) {
 }
 
 static void* tpool_worker(void *arg) {
-    ThreadPool* tp = arg;
-    ThreadPoolWork* work;
+    SEThreadPool* tp = arg;
+    SEThreadPoolWork* work;
 
     while (true) {
         pthread_mutex_lock(&(tp->workMutex));
@@ -87,8 +87,8 @@ static void* tpool_worker(void *arg) {
 
 
 // --- Thread Pool --- //
-ThreadPool* tpool_create(size_t num) {
-    ThreadPool* tp;
+SEThreadPool* se_tpool_create(size_t num) {
+    SEThreadPool* tp;
     pthread_t thread;
 
     if (num == 0) {
@@ -113,9 +113,9 @@ ThreadPool* tpool_create(size_t num) {
     return tp;
 }
 
-void tpool_destroy(ThreadPool* tp) {
-    ThreadPoolWork* work;
-    ThreadPoolWork* work2;
+void se_tpool_destroy(SEThreadPool* tp) {
+    SEThreadPoolWork* work;
+    SEThreadPoolWork* work2;
 
     if (tp == NULL)
         return;
@@ -131,7 +131,7 @@ void tpool_destroy(ThreadPool* tp) {
     pthread_cond_broadcast(&(tp->workCond));
     pthread_mutex_unlock(&(tp->workMutex));
 
-    tpool_wait(tp);
+    se_tpool_wait(tp);
 
     pthread_mutex_destroy(&(tp->workMutex));
     pthread_cond_destroy(&(tp->workCond));
@@ -140,8 +140,8 @@ void tpool_destroy(ThreadPool* tp) {
     SE_MEM_FREE(tp);
 }
 
-bool tpool_add_work(ThreadPool* tp, ThreadFunc func, void* arg) {
-    ThreadPoolWork* work;
+bool se_tpool_add_work(SEThreadPool* tp, ThreadFunc func, void* arg) {
+    SEThreadPoolWork* work;
 
     if (tp == NULL) {
         return false;
@@ -167,7 +167,7 @@ bool tpool_add_work(ThreadPool* tp, ThreadFunc func, void* arg) {
     return true;
 }
 
-void tpool_wait(ThreadPool* tp) {
+void se_tpool_wait(SEThreadPool* tp) {
     if (tp == NULL) {
         return;
     }

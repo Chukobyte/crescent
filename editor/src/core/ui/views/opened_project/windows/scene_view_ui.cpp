@@ -44,8 +44,8 @@ ImGuiHelper::Window OpenedProjectUI::Windows::GetSceneViewWindow() {
             static auto GetNodeTextureRenderTarget = [](SceneNode* node, size_t index, Transform2DComp* transformComp, bool& hasTexture) {
                 static AssetManager* assetManager = AssetManager::Get();
                 static SETransformModel2D globalTransforms[MAX_ENTITIES];
-                static Texture* whiteRectTexture = se_texture_create_solid_colored_texture(1, 1, 255);
-                Texture* renderTargetTexture = nullptr;
+                static SETexture* whiteRectTexture = se_texture_create_solid_colored_texture(1, 1, 255);
+                SETexture* renderTargetTexture = nullptr;
                 cre_scene_utils_update_global_transform_model(node->GetUID(), &globalTransforms[index]);
                 SERect2 sourceRect = {0.0f, 0.0f, 0.0f, 0.0f };
                 SESize2D destSize = {0.0f, 0.0f };

@@ -15,7 +15,7 @@
 #include "../../scene/scene_utils.h"
 
 EntitySystem* colorRectSystem = NULL;
-Texture* colorRectTexture = NULL;
+SETexture* colorRectTexture = NULL;
 SERect2 colorRectDrawSource = {0.0f, 0.0f, 1.0f, 1.0f };
 
 void color_rect_system_render();

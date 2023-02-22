@@ -15,7 +15,7 @@
 #include "../../scene/scene_utils.h"
 
 EntitySystem* collisionSystem = NULL;
-Texture* collisionOutlineTexture = NULL;
+SETexture* collisionOutlineTexture = NULL;
 SERect2 colliderDrawSource = { .x=0.0f, .y=0.0f, .w=1.0f, .h=1.0f };
 
 void collision_system_entity_unregistered(Entity entity);

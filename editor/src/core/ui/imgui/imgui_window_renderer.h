@@ -5,12 +5,12 @@
 
 #include "../seika/src/math/se_math.h"
 
-struct Texture;
+struct SETexture;
 struct SEFont;
 
 namespace ImGuiHelper {
 struct TextureRenderTarget {
-    Texture *texture = nullptr;
+    SETexture *texture = nullptr;
     SERect2 sourceRect{0.0f, 0.0f, 0.0f, 0.0f};
     SESize2D destSize = {0.0f, 0.0f};
     SEColor color = {1.0f, 1.0f, 1.0f, 1.0f};

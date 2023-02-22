@@ -11,7 +11,7 @@ extern "C" {
 #include "../seika/src/math/se_math.h"
 
 typedef struct SpriteComponent {
-    Texture* texture;
+    SETexture* texture;
     SERect2 drawSource;
     SEVector2 origin;
     bool flipX;

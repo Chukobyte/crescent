@@ -49,7 +49,7 @@ SEVector2 py_api_mouse_get_global_position(SEMouse* mouse, SEVector2* offset) {
     CRECamera2D* camera = cre_camera_manager_get_current_camera();
     SEMouse* globalMouse = se_mouse_get();
     CREGameProperties* gameProps = cre_game_props_get();
-    RenderContext* renderContext = se_render_context_get();
+    SERenderContext* renderContext = se_render_context_get();
     const SEVector2 mouse_pixel_coord = {
         se_math_map_to_range(globalMouse->position.x, 0.0f, (float) renderContext->windowWidth, 0.0f, (float) gameProps->resolutionWidth),
         se_math_map_to_range(globalMouse->position.y, 0.0f, (float) renderContext->windowHeight, 0.0f, (float) gameProps->resolutionHeight)

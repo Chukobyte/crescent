@@ -26,34 +26,34 @@ void se_asset_manager_finalize() {
 }
 
 // --- Texture --- //
-Texture* se_asset_manager_load_texture(const char* fileName, const char* key) {
+SETexture* se_asset_manager_load_texture(const char* fileName, const char* key) {
     SE_ASSERT(texturesMap != NULL);
     SE_ASSERT_FMT(!se_string_hash_map_has(texturesMap, fileName), "Already loaded texture at file path '%'s!  Has key '%s'.", fileName, key);
-    Texture* texture = se_texture_create_texture(fileName);
-    se_string_hash_map_add(texturesMap, key, texture, sizeof(Texture));
+    SETexture* texture = se_texture_create_texture(fileName);
+    se_string_hash_map_add(texturesMap, key, texture, sizeof(SETexture));
     SE_MEM_FREE(texture);
-    texture = (Texture*) se_string_hash_map_get(texturesMap, key);
+    texture = (SETexture*) se_string_hash_map_get(texturesMap, key);
     return texture;
 }
 
-Texture* se_asset_manager_load_texture_ex(const char* fileName, const char* key, const char* wrap_s, const char* wrap_t, const char* filter_min, const char* filter_mag) {
+SETexture* se_asset_manager_load_texture_ex(const char* fileName, const char* key, const char* wrap_s, const char* wrap_t, const char* filter_min, const char* filter_mag) {
     SE_ASSERT(texturesMap != NULL);
     SE_ASSERT_FMT(!se_string_hash_map_has(texturesMap, fileName), "Already loaded texture at file path '%'s!  Has key '%s'.", fileName, key);
-    Texture* texture = se_texture_create_texture_ex(
-                           fileName,
-                           se_texture_wrap_string_to_int(wrap_s),
-                           se_texture_wrap_string_to_int(wrap_t),
-                           se_texture_filter_string_to_int(filter_min),
-                           se_texture_filter_string_to_int(filter_mag)
-                       );
-    se_string_hash_map_add(texturesMap, key, texture, sizeof(Texture));
+    SETexture* texture = se_texture_create_texture_ex(
+                             fileName,
+                             se_texture_wrap_string_to_int(wrap_s),
+                             se_texture_wrap_string_to_int(wrap_t),
+                             se_texture_filter_string_to_int(filter_min),
+                             se_texture_filter_string_to_int(filter_mag)
+                         );
+    se_string_hash_map_add(texturesMap, key, texture, sizeof(SETexture));
     SE_MEM_FREE(texture);
-    texture = (Texture*) se_string_hash_map_get(texturesMap, key);
+    texture = (SETexture*) se_string_hash_map_get(texturesMap, key);
     return texture;
 }
 
-Texture* se_asset_manager_get_texture(const char* key) {
-    return (Texture*) se_string_hash_map_get(texturesMap, key);
+SETexture* se_asset_manager_get_texture(const char* key) {
+    return (SETexture*) se_string_hash_map_get(texturesMap, key);
 }
 
 bool se_asset_manager_has_texture(const char* key) {

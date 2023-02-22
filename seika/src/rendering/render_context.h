@@ -3,12 +3,12 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
-typedef struct RenderContext {
+typedef struct SERenderContext {
     FT_Library freeTypeLibrary;
     int windowWidth;
     int windowHeight;
-} RenderContext;
+} SERenderContext;
 
 void se_render_context_initialize();
 void se_render_context_finalize();
-RenderContext* se_render_context_get();
+SERenderContext* se_render_context_get();

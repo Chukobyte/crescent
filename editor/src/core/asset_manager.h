@@ -16,9 +16,9 @@ class AssetManager : public Singleton<AssetManager> {
     void ClearContents();
     void RefreshFromProperties(class ProjectProperties* projectProperties);
     // Texture
-    Texture* LoadTexture(const char* fileName, const char* key);
-    Texture* GetTexture(const char* key);
-    Texture* GetTextureSafe(const char* key);
+    SETexture* LoadTexture(const char* fileName, const char* key);
+    SETexture* GetTexture(const char* key);
+    SETexture* GetTextureSafe(const char* key);
     bool HasTexture(const char* key) const;
     // Font
     SEFont* LoadFont(const char* fileName, const char* key, int size);

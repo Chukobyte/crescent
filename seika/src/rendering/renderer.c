@@ -26,7 +26,7 @@ typedef struct TextureCoordinates {
     GLfloat tMax;
 } TextureCoordinates;
 
-TextureCoordinates renderer_get_texture_coordinates(const Texture* texture, const SERect2* drawSource, bool flipX, bool flipY);
+TextureCoordinates renderer_get_texture_coordinates(const SETexture* texture, const SERect2* drawSource, bool flipX, bool flipY);
 void renderer_set_shader_instance_params(SEShaderInstance* shaderInstance);
 void renderer_print_opengl_errors();
 
@@ -56,7 +56,7 @@ static mat4 spriteProjection = {
 
 // Sprite Batching
 typedef struct SpriteBatchItem {
-    Texture* texture;
+    SETexture* texture;
     SERect2 sourceRect;
     SESize2D destSize;
     SEColor color;
@@ -132,7 +132,7 @@ void se_renderer_finalize() {
 void se_renderer_update_window_size(float windowWidth, float windowHeight) {
     const int width = (int) windowWidth;
     const int height = (int) windowHeight;
-    RenderContext* renderContext = se_render_context_get();
+    SERenderContext* renderContext = se_render_context_get();
     renderContext->windowWidth = width;
     renderContext->windowHeight = height;
 #ifdef SE_RENDER_TO_FRAMEBUFFER
@@ -149,7 +149,7 @@ void update_active_render_layer_index(int zIndex) {
     }
 }
 
-void se_renderer_queue_sprite_draw_call(Texture* texture, SERect2 sourceRect, SESize2D destSize, SEColor color, bool flipX, bool flipY, SETransformModel2D* globalTransform, int zIndex, SEShaderInstance* shaderInstance) {
+void se_renderer_queue_sprite_draw_call(SETexture* texture, SERect2 sourceRect, SESize2D destSize, SEColor color, bool flipX, bool flipY, SETransformModel2D* globalTransform, int zIndex, SEShaderInstance* shaderInstance) {
     if (texture == NULL) {
         se_logger_error("NULL texture, not submitting draw call!");
         return;
@@ -333,7 +333,7 @@ void renderer_batching_draw_sprites(SpriteBatchItem items[], size_t spriteCount)
     glBindVertexArray(spriteQuadVAO);
     glBindBuffer(GL_ARRAY_BUFFER, spriteQuadVBO);
 
-    Texture* texture = items[0].texture;
+    SETexture* texture = items[0].texture;
 
     GLfloat verts[VERTEX_BUFFER_SIZE];
     for (size_t i = 0; i < spriteCount; i++) {
@@ -469,7 +469,7 @@ void font_renderer_draw_text(const SEFont* font, const char* text, float x, floa
 }
 
 // --- Misc --- //
-TextureCoordinates renderer_get_texture_coordinates(const Texture* texture, const SERect2* drawSource, bool flipX, bool flipY) {
+TextureCoordinates renderer_get_texture_coordinates(const SETexture* texture, const SERect2* drawSource, bool flipX, bool flipY) {
     // S
     GLfloat sMin, sMax;
     if (flipX) {
