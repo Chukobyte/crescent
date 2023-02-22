@@ -10,8 +10,8 @@ extern "C" {
 #define TEXT_LABEL_BUFFER_SIZE 64
 
 typedef struct TextLabelComponent {
-    Font* font;
-    Color color;
+    SEFont* font;
+    SEColor color;
     char text[TEXT_LABEL_BUFFER_SIZE];
 } TextLabelComponent;
 

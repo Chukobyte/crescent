@@ -45,25 +45,25 @@
 //--- Helper Functions ---//
 // TODO: May want to move into another location...
 
-Vector2 py_api_mouse_get_global_position(SEMouse* mouse, Vector2* offset) {
+SEVector2 py_api_mouse_get_global_position(SEMouse* mouse, SEVector2* offset) {
     CRECamera2D* camera = cre_camera_manager_get_current_camera();
     SEMouse* globalMouse = se_mouse_get();
     CREGameProperties* gameProps = cre_game_props_get();
     RenderContext* renderContext = se_render_context_get();
-    const Vector2 mouse_pixel_coord = {
+    const SEVector2 mouse_pixel_coord = {
         se_math_map_to_range(globalMouse->position.x, 0.0f, (float) renderContext->windowWidth, 0.0f, (float) gameProps->resolutionWidth),
         se_math_map_to_range(globalMouse->position.y, 0.0f, (float) renderContext->windowHeight, 0.0f, (float) gameProps->resolutionHeight)
     };
-    const Vector2 mouseWorldPos = {
+    const SEVector2 mouseWorldPos = {
         (camera->viewport.x + camera->offset.x + mouse_pixel_coord.x + offset->x) * camera->zoom.x,
         (camera->viewport.y + camera->offset.y + mouse_pixel_coord.y + offset->y) * camera->zoom.y
     };
     return mouseWorldPos;
 }
 
-void py_api_update_entity_local_position(Entity entity, Vector2* position) {
+void py_api_update_entity_local_position(Entity entity, SEVector2* position) {
     Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
-    const Vector2 prevPosition = transformComp->localTransform.position;
+    const SEVector2 prevPosition = transformComp->localTransform.position;
     transformComp->localTransform.position.x = position->x;
     transformComp->localTransform.position.y = position->y;
     transformComp->isGlobalTransformDirty = true;
@@ -72,9 +72,9 @@ void py_api_update_entity_local_position(Entity entity, Vector2* position) {
     }
 }
 
-void py_api_update_entity_local_scale(Entity entity, Vector2 * scale) {
+void py_api_update_entity_local_scale(Entity entity, SEVector2 * scale) {
     Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
-    const Vector2 prevScale = transformComp->localTransform.scale;
+    const SEVector2 prevScale = transformComp->localTransform.scale;
     transformComp->localTransform.scale.x = scale->x;
     transformComp->localTransform.scale.y = scale->y;
     transformComp->isGlobalTransformDirty = true;
@@ -207,11 +207,11 @@ PyObject* cre_py_api_curve_float_eval(PyObject* self, PyObject* args, PyObject* 
 
 // Shader Instance
 PyObject* cre_py_api_shader_instance_delete(PyObject* self, PyObject* args, PyObject* kwargs) {
-    ShaderInstanceId shaderId;
+    SEShaderInstanceId shaderId;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericShaderIdKWList, &shaderId)) {
-        ShaderInstance* shaderInstance = shader_cache_get_instance(shaderId);
+        SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
         if (shaderInstance != NULL) {
-            shader_cache_remove_instance(shaderId);
+            se_shader_cache_remove_instance(shaderId);
             SE_MEM_FREE(shaderInstance);
             Py_RETURN_TRUE;
         }
@@ -221,11 +221,11 @@ PyObject* cre_py_api_shader_instance_delete(PyObject* self, PyObject* args, PyOb
 }
 
 PyObject* cre_py_api_shader_instance_create_bool_param(PyObject* self, PyObject* args, PyObject* kwargs) {
-    ShaderInstanceId shaderId;
+    SEShaderInstanceId shaderId;
     char* name;
     bool initialValue;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "isb", crePyApiShaderInstanceCreateParamKWList, &shaderId, &name, &initialValue)) {
-        ShaderInstance* shaderInstance = shader_cache_get_instance(shaderId);
+        SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
         se_shader_instance_param_create_bool(shaderInstance, name, initialValue);
         Py_RETURN_NONE;
     }
@@ -233,11 +233,11 @@ PyObject* cre_py_api_shader_instance_create_bool_param(PyObject* self, PyObject*
 }
 
 PyObject* cre_py_api_shader_instance_set_bool_param(PyObject* self, PyObject* args, PyObject* kwargs) {
-    ShaderInstanceId shaderId;
+    SEShaderInstanceId shaderId;
     char* name;
     bool value;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "isb", crePyApiShaderInstanceSetParamKWList, &shaderId, &name, &value)) {
-        ShaderInstance* shaderInstance = shader_cache_get_instance(shaderId);
+        SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
         se_shader_instance_param_update_bool(shaderInstance, name, value);
         Py_RETURN_NONE;
     }
@@ -245,10 +245,10 @@ PyObject* cre_py_api_shader_instance_set_bool_param(PyObject* self, PyObject* ar
 }
 
 PyObject* cre_py_api_shader_instance_get_bool_param(PyObject* self, PyObject* args, PyObject* kwargs) {
-    ShaderInstanceId shaderId;
+    SEShaderInstanceId shaderId;
     char* name;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "is", crePyApiShaderInstanceGetParamKWList, &shaderId, &name)) {
-        ShaderInstance* shaderInstance = shader_cache_get_instance(shaderId);
+        SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
         const bool paramValue = se_shader_instance_param_get_bool(shaderInstance, name);
         if (paramValue) {
             Py_RETURN_TRUE;
@@ -259,11 +259,11 @@ PyObject* cre_py_api_shader_instance_get_bool_param(PyObject* self, PyObject* ar
 }
 
 PyObject* cre_py_api_shader_instance_create_int_param(PyObject* self, PyObject* args, PyObject* kwargs) {
-    ShaderInstanceId shaderId;
+    SEShaderInstanceId shaderId;
     char* name;
     int initialValue;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "isi", crePyApiShaderInstanceCreateParamKWList, &shaderId, &name, &initialValue)) {
-        ShaderInstance* shaderInstance = shader_cache_get_instance(shaderId);
+        SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
         se_shader_instance_param_create_int(shaderInstance, name, initialValue);
         Py_RETURN_NONE;
     }
@@ -271,11 +271,11 @@ PyObject* cre_py_api_shader_instance_create_int_param(PyObject* self, PyObject* 
 }
 
 PyObject* cre_py_api_shader_instance_set_int_param(PyObject* self, PyObject* args, PyObject* kwargs) {
-    ShaderInstanceId shaderId;
+    SEShaderInstanceId shaderId;
     char* name;
     int value;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "isi", crePyApiShaderInstanceSetParamKWList, &shaderId, &name, &value)) {
-        ShaderInstance* shaderInstance = shader_cache_get_instance(shaderId);
+        SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
         se_shader_instance_param_update_int(shaderInstance, name, value);
         Py_RETURN_NONE;
     }
@@ -283,10 +283,10 @@ PyObject* cre_py_api_shader_instance_set_int_param(PyObject* self, PyObject* arg
 }
 
 PyObject* cre_py_api_shader_instance_get_int_param(PyObject* self, PyObject* args, PyObject* kwargs) {
-    ShaderInstanceId shaderId;
+    SEShaderInstanceId shaderId;
     char* name;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "is", crePyApiShaderInstanceGetParamKWList, &shaderId, &name)) {
-        ShaderInstance* shaderInstance = shader_cache_get_instance(shaderId);
+        SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
         const int paramValue = se_shader_instance_param_get_int(shaderInstance, name);
         return Py_BuildValue("i", paramValue);
     }
@@ -294,11 +294,11 @@ PyObject* cre_py_api_shader_instance_get_int_param(PyObject* self, PyObject* arg
 }
 
 PyObject* cre_py_api_shader_instance_create_float_param(PyObject* self, PyObject* args, PyObject* kwargs) {
-    ShaderInstanceId shaderId;
+    SEShaderInstanceId shaderId;
     char* name;
     float initialValue;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "isf", crePyApiShaderInstanceCreateParamKWList, &shaderId, &name, &initialValue)) {
-        ShaderInstance* shaderInstance = shader_cache_get_instance(shaderId);
+        SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
         se_shader_instance_param_create_float(shaderInstance, name, initialValue);
         Py_RETURN_NONE;
     }
@@ -306,11 +306,11 @@ PyObject* cre_py_api_shader_instance_create_float_param(PyObject* self, PyObject
 }
 
 PyObject* cre_py_api_shader_instance_set_float_param(PyObject* self, PyObject* args, PyObject* kwargs) {
-    ShaderInstanceId shaderId;
+    SEShaderInstanceId shaderId;
     char* name;
     float value;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "isf", crePyApiShaderInstanceSetParamKWList, &shaderId, &name, &value)) {
-        ShaderInstance* shaderInstance = shader_cache_get_instance(shaderId);
+        SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
         se_shader_instance_param_update_float(shaderInstance, name, value);
         Py_RETURN_NONE;
     }
@@ -318,10 +318,10 @@ PyObject* cre_py_api_shader_instance_set_float_param(PyObject* self, PyObject* a
 }
 
 PyObject* cre_py_api_shader_instance_get_float_param(PyObject* self, PyObject* args, PyObject* kwargs) {
-    ShaderInstanceId shaderId;
+    SEShaderInstanceId shaderId;
     char* name;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "is", crePyApiShaderInstanceGetParamKWList, &shaderId, &name)) {
-        ShaderInstance* shaderInstance = shader_cache_get_instance(shaderId);
+        SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
         const float paramValue = se_shader_instance_param_get_float(shaderInstance, name);
         return Py_BuildValue("f", paramValue);
     }
@@ -329,13 +329,13 @@ PyObject* cre_py_api_shader_instance_get_float_param(PyObject* self, PyObject* a
 }
 
 PyObject* cre_py_api_shader_instance_create_float2_param(PyObject* self, PyObject* args, PyObject* kwargs) {
-    ShaderInstanceId shaderId;
+    SEShaderInstanceId shaderId;
     char* name;
     float initialValueX;
     float initialValueY;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "isff", crePyApiShaderInstanceCreateFloat2ParamKWList, &shaderId, &name, &initialValueX, &initialValueY)) {
-        ShaderInstance* shaderInstance = shader_cache_get_instance(shaderId);
-        se_shader_instance_param_create_float2(shaderInstance, name, (Vector2) {
+        SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
+        se_shader_instance_param_create_float2(shaderInstance, name, (SEVector2) {
             initialValueX, initialValueY
         });
         Py_RETURN_NONE;
@@ -344,13 +344,13 @@ PyObject* cre_py_api_shader_instance_create_float2_param(PyObject* self, PyObjec
 }
 
 PyObject* cre_py_api_shader_instance_set_float2_param(PyObject* self, PyObject* args, PyObject* kwargs) {
-    ShaderInstanceId shaderId;
+    SEShaderInstanceId shaderId;
     char* name;
     float valueX;
     float valueY;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "isff", crePyApiShaderInstanceSetFloat2ParamKWList, &shaderId, &name, &valueX, &valueY)) {
-        ShaderInstance* shaderInstance = shader_cache_get_instance(shaderId);
-        se_shader_instance_param_update_float2(shaderInstance, name, (Vector2) {
+        SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
+        se_shader_instance_param_update_float2(shaderInstance, name, (SEVector2) {
             valueX, valueY
         });
         Py_RETURN_NONE;
@@ -359,25 +359,25 @@ PyObject* cre_py_api_shader_instance_set_float2_param(PyObject* self, PyObject* 
 }
 
 PyObject* cre_py_api_shader_instance_get_float2_param(PyObject* self, PyObject* args, PyObject* kwargs) {
-    ShaderInstanceId shaderId;
+    SEShaderInstanceId shaderId;
     char* name;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "is", crePyApiShaderInstanceGetParamKWList, &shaderId, &name)) {
-        ShaderInstance* shaderInstance = shader_cache_get_instance(shaderId);
-        const Vector2 paramValue = se_shader_instance_param_get_float2(shaderInstance, name);
+        SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
+        const SEVector2 paramValue = se_shader_instance_param_get_float2(shaderInstance, name);
         return Py_BuildValue("(ff)", paramValue.x, paramValue.y);
     }
     return NULL;
 }
 
 PyObject* cre_py_api_shader_instance_create_float3_param(PyObject* self, PyObject* args, PyObject* kwargs) {
-    ShaderInstanceId shaderId;
+    SEShaderInstanceId shaderId;
     char* name;
     float initialValueX;
     float initialValueY;
     float initialValueZ;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "isfff", crePyApiShaderInstanceCreateFloat3ParamKWList, &shaderId, &name, &initialValueX, &initialValueY, &initialValueZ)) {
-        ShaderInstance* shaderInstance = shader_cache_get_instance(shaderId);
-        se_shader_instance_param_create_float3(shaderInstance, name, (Vector3) {
+        SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
+        se_shader_instance_param_create_float3(shaderInstance, name, (SEVector3) {
             initialValueX, initialValueY, initialValueZ
         });
         Py_RETURN_NONE;
@@ -386,14 +386,14 @@ PyObject* cre_py_api_shader_instance_create_float3_param(PyObject* self, PyObjec
 }
 
 PyObject* cre_py_api_shader_instance_set_float3_param(PyObject* self, PyObject* args, PyObject* kwargs) {
-    ShaderInstanceId shaderId;
+    SEShaderInstanceId shaderId;
     char* name;
     float valueX;
     float valueY;
     float valueZ;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "isfff", crePyApiShaderInstanceSetFloat3ParamKWList, &shaderId, &name, &valueX, &valueY, &valueZ)) {
-        ShaderInstance* shaderInstance = shader_cache_get_instance(shaderId);
-        se_shader_instance_param_update_float3(shaderInstance, name, (Vector3) {
+        SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
+        se_shader_instance_param_update_float3(shaderInstance, name, (SEVector3) {
             valueX, valueY, valueZ
         });
         Py_RETURN_NONE;
@@ -402,26 +402,26 @@ PyObject* cre_py_api_shader_instance_set_float3_param(PyObject* self, PyObject* 
 }
 
 PyObject* cre_py_api_shader_instance_get_float3_param(PyObject* self, PyObject* args, PyObject* kwargs) {
-    ShaderInstanceId shaderId;
+    SEShaderInstanceId shaderId;
     char* name;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "is", crePyApiShaderInstanceGetParamKWList, &shaderId, &name)) {
-        ShaderInstance* shaderInstance = shader_cache_get_instance(shaderId);
-        const Vector3 paramValue = se_shader_instance_param_get_float3(shaderInstance, name);
+        SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
+        const SEVector3 paramValue = se_shader_instance_param_get_float3(shaderInstance, name);
         return Py_BuildValue("(fff)", paramValue.x, paramValue.y, paramValue.z);
     }
     return NULL;
 }
 
 PyObject* cre_py_api_shader_instance_create_float4_param(PyObject* self, PyObject* args, PyObject* kwargs) {
-    ShaderInstanceId shaderId;
+    SEShaderInstanceId shaderId;
     char* name;
     float initialValueX;
     float initialValueY;
     float initialValueZ;
     float initialValueW;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "isffff", crePyApiShaderInstanceCreateFloat4ParamKWList, &shaderId, &name, &initialValueX, &initialValueY, &initialValueZ, &initialValueW)) {
-        ShaderInstance* shaderInstance = shader_cache_get_instance(shaderId);
-        se_shader_instance_param_create_float4(shaderInstance, name, (Vector4) {
+        SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
+        se_shader_instance_param_create_float4(shaderInstance, name, (SEVector4) {
             initialValueX, initialValueY, initialValueZ, initialValueW
         });
         Py_RETURN_NONE;
@@ -430,15 +430,15 @@ PyObject* cre_py_api_shader_instance_create_float4_param(PyObject* self, PyObjec
 }
 
 PyObject* cre_py_api_shader_instance_set_float4_param(PyObject* self, PyObject* args, PyObject* kwargs) {
-    ShaderInstanceId shaderId;
+    SEShaderInstanceId shaderId;
     char* name;
     float valueX;
     float valueY;
     float valueZ;
     float valueW;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "isffff", crePyApiShaderInstanceSetFloat4ParamKWList, &shaderId, &name, &valueX, &valueY, &valueZ, &valueW)) {
-        ShaderInstance* shaderInstance = shader_cache_get_instance(shaderId);
-        se_shader_instance_param_update_float4(shaderInstance, name, (Vector4) {
+        SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
+        se_shader_instance_param_update_float4(shaderInstance, name, (SEVector4) {
             valueX, valueY, valueZ, valueW
         });
         Py_RETURN_NONE;
@@ -447,11 +447,11 @@ PyObject* cre_py_api_shader_instance_set_float4_param(PyObject* self, PyObject* 
 }
 
 PyObject* cre_py_api_shader_instance_get_float4_param(PyObject* self, PyObject* args, PyObject* kwargs) {
-    ShaderInstanceId shaderId;
+    SEShaderInstanceId shaderId;
     char* name;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "is", crePyApiShaderInstanceGetParamKWList, &shaderId, &name)) {
-        ShaderInstance* shaderInstance = shader_cache_get_instance(shaderId);
-        const Vector4 paramValue = se_shader_instance_param_get_float4(shaderInstance, name);
+        SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
+        const SEVector4 paramValue = se_shader_instance_param_get_float4(shaderInstance, name);
         return Py_BuildValue("(ffff)", paramValue.x, paramValue.y, paramValue.z, paramValue.w);
     }
     return NULL;
@@ -462,17 +462,17 @@ PyObject* cre_py_api_shader_util_compile_shader(PyObject* self, PyObject* args, 
     char* vertexPath;
     char* fragmentPath;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "ss", crePyApiShaderUtilCompileShaderKWList, &vertexPath, &fragmentPath)) {
-        const ShaderInstanceId newId = shader_cache_create_instance_and_add(vertexPath, fragmentPath);
-        SE_ASSERT_FMT(newId != SHADER_INSTANCE_INVALID_ID, "Invalid shader id reading from paths: vertex = '%s', fragment = '%s'", vertexPath, fragmentPath);
+        const SEShaderInstanceId newId = se_shader_cache_create_instance_and_add(vertexPath, fragmentPath);
+        SE_ASSERT_FMT(newId != SE_SHADER_INSTANCE_INVALID_ID, "Invalid shader id reading from paths: vertex = '%s', fragment = '%s'", vertexPath, fragmentPath);
         return Py_BuildValue("i", newId);
     }
     return NULL;
 }
 
 PyObject* cre_py_api_shader_util_set_screen_shader(PyObject* self, PyObject* args, PyObject* kwargs) {
-    ShaderInstanceId shaderId;
+    SEShaderInstanceId shaderId;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericShaderIdKWList, &shaderId)) {
-        ShaderInstance* shaderInstance = shader_cache_get_instance(shaderId);
+        SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
         if (shaderInstance != NULL) {
             se_frame_buffer_set_screen_shader(shaderInstance);
             Py_RETURN_TRUE;
@@ -542,8 +542,8 @@ PyObject* cre_py_api_mouse_get_position(PyObject* self, PyObject* args) {
 PyObject* cre_py_api_mouse_get_world_position(PyObject* self, PyObject* args) {
     const CREEngineContext* engineContext = cre_engine_context_get();
     SEMouse* globalMouse = se_mouse_get();
-    static Vector2 zeroOffset = { 0.0f, 0.0f };
-    const Vector2 worldPosition = py_api_mouse_get_global_position(globalMouse, &zeroOffset);
+    static SEVector2 zeroOffset = {0.0f, 0.0f };
+    const SEVector2 worldPosition = py_api_mouse_get_global_position(globalMouse, &zeroOffset);
     return Py_BuildValue("(ff)", worldPosition.x, worldPosition.y);
 }
 
@@ -1003,7 +1003,7 @@ PyObject* cre_py_api_node2D_set_position(PyObject* self, PyObject* args, PyObjec
     float x;
     float y;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "iff", crePyApiNode2DSetXYKWList, &entity, &x, &y)) {
-        py_api_update_entity_local_position(entity, &(Vector2) {
+        py_api_update_entity_local_position(entity, &(SEVector2) {
             x, y
         });
         Py_RETURN_NONE;
@@ -1017,7 +1017,7 @@ PyObject* cre_py_api_node2D_add_to_position(PyObject* self, PyObject* args, PyOb
     float y;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "iff", crePyApiNode2DSetXYKWList, &entity, &x, &y)) {
         Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
-        py_api_update_entity_local_position(entity, &(Vector2) {
+        py_api_update_entity_local_position(entity, &(SEVector2) {
             x + transformComp->localTransform.position.x, y + transformComp->localTransform.position.y
         });
         Py_RETURN_NONE;
@@ -1038,7 +1038,7 @@ PyObject* cre_py_api_node2D_get_global_position(PyObject* self, PyObject* args, 
     Entity entity;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
         Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
-        TransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity, transformComp);
+        SETransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity, transformComp);
         return Py_BuildValue("(ff)", globalTransform->position.x, globalTransform->position.y);
     }
     return NULL;
@@ -1049,7 +1049,7 @@ PyObject* cre_py_api_node2D_set_scale(PyObject* self, PyObject* args, PyObject* 
     float x;
     float y;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "iff", crePyApiNode2DSetXYKWList, &entity, &x, &y)) {
-        py_api_update_entity_local_scale(entity, &(Vector2) {
+        py_api_update_entity_local_scale(entity, &(SEVector2) {
             x, y
         });
         Py_RETURN_NONE;
@@ -1063,7 +1063,7 @@ PyObject* cre_py_api_node2D_add_to_scale(PyObject* self, PyObject* args, PyObjec
     float y;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "iff", crePyApiNode2DSetXYKWList, &entity, &x, &y)) {
         Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
-        py_api_update_entity_local_scale(entity, &(Vector2) {
+        py_api_update_entity_local_scale(entity, &(SEVector2) {
             x + transformComp->localTransform.scale.x, y + transformComp->localTransform.scale.y
         });
         Py_RETURN_NONE;
@@ -1203,11 +1203,11 @@ PyObject* cre_py_api_sprite_get_draw_source(PyObject* self, PyObject* args, PyOb
 
 PyObject* cre_py_api_sprite_set_shader_instance(PyObject* self, PyObject* args, PyObject* kwargs) {
     Entity entity;
-    ShaderInstanceId shaderInstanceId;
+    SEShaderInstanceId shaderInstanceId;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "ii", crePyApiGenericSetShaderInstanceKWList, &entity, &shaderInstanceId)) {
         SpriteComponent* spriteComponent = (SpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_SPRITE);
         spriteComponent->shaderInstanceId = shaderInstanceId;
-        ShaderInstance* shaderInstance = shader_cache_get_instance(spriteComponent->shaderInstanceId);
+        SEShaderInstance* shaderInstance = se_shader_cache_get_instance(spriteComponent->shaderInstanceId);
         se_renderer_set_sprite_shader_default_params(shaderInstance->shader);
         Py_RETURN_NONE;
     }
@@ -1218,7 +1218,7 @@ PyObject* cre_py_api_sprite_get_shader_instance(PyObject* self, PyObject* args, 
     Entity entity;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
         const SpriteComponent* spriteComponent = (SpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_SPRITE);
-        return Py_BuildValue("i", spriteComponent->shaderInstanceId != SHADER_INSTANCE_INVALID_ID ? spriteComponent->shaderInstanceId : -1);
+        return Py_BuildValue("i", spriteComponent->shaderInstanceId != SE_SHADER_INSTANCE_INVALID_ID ? spriteComponent->shaderInstanceId : -1);
     }
     return NULL;
 }
@@ -1296,11 +1296,11 @@ PyObject* cre_py_api_animated_sprite_add_animation(PyObject* self, PyObject* arg
 
 PyObject* cre_py_api_animated_sprite_set_shader_instance(PyObject* self, PyObject* args, PyObject* kwargs) {
     Entity entity;
-    ShaderInstanceId shaderInstanceId;
+    SEShaderInstanceId shaderInstanceId;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "ii", crePyApiGenericSetShaderInstanceKWList, &entity, &shaderInstanceId)) {
         AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent *) component_manager_get_component(entity, ComponentDataIndex_ANIMATED_SPRITE);
         animatedSpriteComponent->shaderInstanceId = shaderInstanceId;
-        ShaderInstance* shaderInstance = shader_cache_get_instance(animatedSpriteComponent->shaderInstanceId);
+        SEShaderInstance* shaderInstance = se_shader_cache_get_instance(animatedSpriteComponent->shaderInstanceId);
         se_renderer_set_sprite_shader_default_params(shaderInstance->shader);
         Py_RETURN_NONE;
     }
@@ -1311,7 +1311,7 @@ PyObject* cre_py_api_animated_sprite_get_shader_instance(PyObject* self, PyObjec
     Entity entity;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
         const AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent *) component_manager_get_component(entity, ComponentDataIndex_ANIMATED_SPRITE);
-        return Py_BuildValue("i", animatedSpriteComponent->shaderInstanceId != SHADER_INSTANCE_INVALID_ID ? animatedSpriteComponent->shaderInstanceId : -1);
+        return Py_BuildValue("i", animatedSpriteComponent->shaderInstanceId != SE_SHADER_INSTANCE_INVALID_ID ? animatedSpriteComponent->shaderInstanceId : -1);
     }
     return NULL;
 }
@@ -1605,9 +1605,9 @@ PyObject* cre_py_api_collision_handler_process_mouse_collisions(PyObject* self, 
         PyObject* pyCollidedEntityList = PyList_New(0);
         // TODO: Transform mouse screen position into world position.
         SEMouse* globalMouse = se_mouse_get();
-        Vector2 positionOffset = { positionOffsetX, positionOffsetY };
-        const Vector2 mouseWorldPos = py_api_mouse_get_global_position(globalMouse, &positionOffset);
-        Rect2 collisionRect = { mouseWorldPos.x, mouseWorldPos.y, collisionSizeW, collisionSizeH };
+        SEVector2 positionOffset = {positionOffsetX, positionOffsetY };
+        const SEVector2 mouseWorldPos = py_api_mouse_get_global_position(globalMouse, &positionOffset);
+        SERect2 collisionRect = {mouseWorldPos.x, mouseWorldPos.y, collisionSizeW, collisionSizeH };
         CollisionResult collisionResult = cre_collision_process_mouse_collisions(&collisionRect);
         for (size_t i = 0; i < collisionResult.collidedEntityCount; i++) {
             const Entity collidedEntity = collisionResult.collidedEntities[i];

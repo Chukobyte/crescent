@@ -83,11 +83,11 @@ bool AssetManager::HasTexture(const char* key) const {
 }
 
 // Font
-Font* AssetManager::LoadFont(const char* fileName, const char* key, int size) {
+SEFont* AssetManager::LoadFont(const char* fileName, const char* key, int size) {
     return se_asset_manager_load_font(fileName, key, size);
 }
 
-Font* AssetManager::GetFont(const char* key) {
+SEFont* AssetManager::GetFont(const char* key) {
     return se_asset_manager_get_font(key);
 }
 

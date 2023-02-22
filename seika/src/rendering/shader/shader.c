@@ -7,19 +7,19 @@
 
 bool shader_check_compile_errors(unsigned int shaderId, const char* type);
 
-Shader* shader_compile_new_shader(const char* vertexSource, const char* fragmentSource) {
-    Shader* shader = SE_MEM_ALLOCATE(Shader);
+SEShader* se_shader_compile_new_shader(const char* vertexSource, const char* fragmentSource) {
+    SEShader* shader = SE_MEM_ALLOCATE(SEShader);
     GLuint vertex, fragment;
     // vertex
     vertex = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertex, 1, &vertexSource, NULL);
     glCompileShader(vertex);
-    shader_check_compile_errors(vertex, SHADER_VERTEX_TYPE);
+    shader_check_compile_errors(vertex, SE_SHADER_VERTEX_TYPE);
     // fragment
     fragment = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragment, 1, &fragmentSource, NULL);
     glCompileShader(fragment);
-    if (!shader_check_compile_errors(vertex, SHADER_FRAGMENT_TYPE)) {
+    if (!shader_check_compile_errors(vertex, SE_SHADER_FRAGMENT_TYPE)) {
         return NULL;
     }
     // attack and link shaders
@@ -27,7 +27,7 @@ Shader* shader_compile_new_shader(const char* vertexSource, const char* fragment
     glAttachShader(shader->id, vertex);
     glAttachShader(shader->id, fragment);
     glLinkProgram(shader->id);
-    if (!shader_check_compile_errors(shader->id, SHADER_PROGRAM_TYPE)) {
+    if (!shader_check_compile_errors(shader->id, SE_SHADER_PROGRAM_TYPE)) {
         return NULL;
     }
     glDeleteShader(vertex);
@@ -35,14 +35,14 @@ Shader* shader_compile_new_shader(const char* vertexSource, const char* fragment
     return shader;
 }
 
-void shader_destroy(Shader* shader) {
+void se_shader_destroy(SEShader* shader) {
     SE_MEM_FREE(shader);
 }
 
 bool shader_check_compile_errors(unsigned int shaderId, const char* type) {
     GLint success;
     char infoLog[1024];
-    if(type == SHADER_PROGRAM_TYPE) {
+    if(type == SE_SHADER_PROGRAM_TYPE) {
         glGetProgramiv(shaderId, GL_LINK_STATUS, &success);
         if(!success) {
             glGetProgramInfoLog(shaderId, 1024, NULL, infoLog);
@@ -58,34 +58,34 @@ bool shader_check_compile_errors(unsigned int shaderId, const char* type) {
     return success;
 }
 
-void shader_use(Shader* shader) {
+void se_shader_use(SEShader* shader) {
     glUseProgram(shader->id);
 }
 
-void shader_set_bool(Shader* shader, const char* name, bool value) {
+void se_shader_set_bool(SEShader* shader, const char* name, bool value) {
     glUniform1i(glGetUniformLocation(shader->id, name), (int)value);
 }
 
-void shader_set_int(Shader* shader, const char* name, int value) {
+void se_shader_set_int(SEShader* shader, const char* name, int value) {
     glUniform1i(glGetUniformLocation(shader->id, name), value);
 }
 
-void shader_set_float(Shader* shader, const char* name, float value) {
+void se_shader_set_float(SEShader* shader, const char* name, float value) {
     glUniform1f(glGetUniformLocation(shader->id, name), value);
 }
 
-void shader_set_vec2_float(Shader* shader, const char* name, float v1, float v2) {
+void se_shader_set_vec2_float(SEShader* shader, const char* name, float v1, float v2) {
     glUniform2f(glGetUniformLocation(shader->id, name), v1, v2);
 }
 
-void shader_set_vec3_float(Shader* shader, const char* name, float v1, float v2, float v3) {
+void se_shader_set_vec3_float(SEShader* shader, const char* name, float v1, float v2, float v3) {
     glUniform3f(glGetUniformLocation(shader->id, name), v1, v2, v3);
 }
 
-void shader_set_vec4_float(Shader* shader, const char* name, float v1, float v2, float v3, float v4) {
+void se_shader_set_vec4_float(SEShader* shader, const char* name, float v1, float v2, float v3, float v4) {
     glUniform4f(glGetUniformLocation(shader->id, name), v1, v2, v3, v4);
 }
 
-void shader_set_mat4_float(Shader* shader, const char* name, mat4* value) {
+void se_shader_set_mat4_float(SEShader* shader, const char* name, mat4* value) {
     glUniformMatrix4fv(glGetUniformLocation(shader->id, name), 1, GL_FALSE, (float*)value);
 }

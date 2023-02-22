@@ -11,8 +11,8 @@ GLuint textureColorBuffer = -1;
 GLuint rbo = -1;
 bool hasBeenInitialized = false;
 
-static ShaderInstance defaultScreenShader;
-static ShaderInstance* currentScreenShader = NULL;
+static SEShaderInstance defaultScreenShader;
+static SEShaderInstance* currentScreenShader = NULL;
 static GLuint screenVAO = -1;
 static GLuint screenVBO = -1;
 
@@ -78,8 +78,9 @@ bool se_frame_buffer_initialize(int inWindowWidth, int inWindowHeight) {
     bool success = recreate_frame_buffer_object();
 
     // compile shaders
-    Shader* screenShader = shader_compile_new_shader(OPENGL_SHADER_SOURCE_VERTEX_SCREEN, OPENGL_SHADER_SOURCE_FRAGMENT_SCREEN);
-    defaultScreenShader = (ShaderInstance) {
+    SEShader* screenShader = se_shader_compile_new_shader(SE_OPENGL_SHADER_SOURCE_VERTEX_SCREEN,
+                                                          SE_OPENGL_SHADER_SOURCE_FRAGMENT_SCREEN);
+    defaultScreenShader = (SEShaderInstance) {
         .shader = screenShader, .paramMap = se_string_hash_map_create_default_capacity()
     };
     se_frame_buffer_set_screen_shader(&defaultScreenShader);
@@ -117,15 +118,15 @@ void se_frame_buffer_resize_texture(int newWidth, int newHeight) {
     recreate_frame_buffer_object();
 }
 
-ShaderInstance* se_frame_buffer_get_screen_shader() {
+SEShaderInstance* se_frame_buffer_get_screen_shader() {
     return currentScreenShader;
 }
 
-void se_frame_buffer_set_screen_shader(ShaderInstance* shaderInstance) {
+void se_frame_buffer_set_screen_shader(SEShaderInstance* shaderInstance) {
     SE_ASSERT_FMT(shaderInstance != NULL, "Trying to set screen shader to NULL!");
     currentScreenShader = shaderInstance;
-    shader_use(currentScreenShader->shader);
-    shader_set_int(currentScreenShader->shader, "screenTexture", 0);
+    se_shader_use(currentScreenShader->shader);
+    se_shader_set_int(currentScreenShader->shader, "screenTexture", 0);
 }
 
 void se_frame_buffer_reset_to_default_screen_shader() {

@@ -9,7 +9,7 @@
 
 typedef struct AnimationFrame {
     Texture* texture;
-    Rect2 drawSource;
+    SERect2 drawSource;
     int frame;
 } AnimationFrame;
 

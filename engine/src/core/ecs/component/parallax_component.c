@@ -6,13 +6,13 @@
 
 ParallaxComponent* parallax_component_create() {
     ParallaxComponent* parallaxComponent = SE_MEM_ALLOCATE(ParallaxComponent);
-    parallaxComponent->scrollSpeed = (Vector2) {
+    parallaxComponent->scrollSpeed = (SEVector2) {
         0.0f, 0.0f
     };
-    parallaxComponent->cachedScrollSpeed = (Vector2) {
+    parallaxComponent->cachedScrollSpeed = (SEVector2) {
         0.0f, 0.0f
     };
-    parallaxComponent->cachedLocalPosition = (Vector2) {
+    parallaxComponent->cachedLocalPosition = (SEVector2) {
         0.0f, 0.0f
     };
     return parallaxComponent;

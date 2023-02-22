@@ -35,24 +35,24 @@ void sprite_rendering_system_render() {
         Transform2DComponent* spriteTransformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
         SpriteComponent* spriteComponent = (SpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_SPRITE);
         const CRECamera2D* renderCamera = spriteTransformComp->ignoreCamera ? defaultCamera : camera2D;
-        TransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity,
-                                            spriteTransformComp);
+        SETransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity,
+                                                                                                spriteTransformComp);
         cre_scene_utils_apply_camera_and_origin_translation(globalTransform, &spriteComponent->origin, spriteTransformComp->ignoreCamera);
         spriteTransformComp->isGlobalTransformDirty = true; // TODO: Make global transform const
-        const Size2D destinationSize = {
+        const SESize2D destinationSize = {
             spriteComponent->drawSource.w * renderCamera->zoom.x,
             spriteComponent->drawSource.h * renderCamera->zoom.y
         };
         se_renderer_queue_sprite_draw_call(
-            spriteComponent->texture,
-            spriteComponent->drawSource,
-            destinationSize,
-            spriteComponent->modulate,
-            spriteComponent->flipX,
-            spriteComponent->flipY,
-            globalTransform,
-            globalTransform->zIndex,
-            shader_cache_get_instance_checked(spriteComponent->shaderInstanceId)
+                spriteComponent->texture,
+                spriteComponent->drawSource,
+                destinationSize,
+                spriteComponent->modulate,
+                spriteComponent->flipX,
+                spriteComponent->flipY,
+                globalTransform,
+                globalTransform->zIndex,
+                se_shader_cache_get_instance_checked(spriteComponent->shaderInstanceId)
         );
     }
 }

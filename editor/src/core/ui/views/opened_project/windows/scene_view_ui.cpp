@@ -21,7 +21,7 @@ EntityArray OnGetSelfAndParentEntitiesFunc(Entity entity) {
     return combineModelResult;
 }
 
-Transform2D OnGetLocalTransformFunc(Entity entity, int* zIndex, bool* success) {
+SETransform2D OnGetLocalTransformFunc(Entity entity, int* zIndex, bool* success) {
     static auto* sceneManager = SceneManager::Get();
     if (auto* node = sceneManager->GetNode(sceneManager->selectedSceneFile, entity)) {
         if (auto* transformComp = node->GetComponentSafe<Transform2DComp>()) {
@@ -43,16 +43,16 @@ ImGuiHelper::Window OpenedProjectUI::Windows::GetSceneViewWindow() {
         .callbackFunc = [] (ImGuiHelper::Context* context) {
             static auto GetNodeTextureRenderTarget = [](SceneNode* node, size_t index, Transform2DComp* transformComp, bool& hasTexture) {
                 static AssetManager* assetManager = AssetManager::Get();
-                static TransformModel2D globalTransforms[MAX_ENTITIES];
+                static SETransformModel2D globalTransforms[MAX_ENTITIES];
                 static Texture* whiteRectTexture = se_texture_create_solid_colored_texture(1, 1, 255);
                 Texture* renderTargetTexture = nullptr;
                 cre_scene_utils_update_global_transform_model(node->GetUID(), &globalTransforms[index]);
-                Rect2 sourceRect = { 0.0f, 0.0f, 0.0f, 0.0f };
-                Size2D destSize = { 0.0f, 0.0f };
-                Color color = { 1.0f, 1.0f, 1.0f, 1.0f };
+                SERect2 sourceRect = {0.0f, 0.0f, 0.0f, 0.0f };
+                SESize2D destSize = {0.0f, 0.0f };
+                SEColor color = {1.0f, 1.0f, 1.0f, 1.0f };
                 bool flipX = false;
                 bool flipY = false;
-                Vector2 origin = { 0.0f, 0.0f };
+                SEVector2 origin = {0.0f, 0.0f };
                 hasTexture = true;
                 if (auto* spriteComp = node->GetComponentSafe<SpriteComp>()) {
                     renderTargetTexture = assetManager->GetTexture(spriteComp->texturePath.c_str());
@@ -116,9 +116,9 @@ ImGuiHelper::Window OpenedProjectUI::Windows::GetSceneViewWindow() {
                 sceneManager->IterateAllSceneNodes(sceneManager->selectedSceneFile->rootNode, [&textureRenderTargets, &fontRenderTargets](SceneNode* node, size_t i) {
                     if (auto* transformComp = node->GetComponentSafe<Transform2DComp>()) {
                         if (auto* textLabelComp = node->GetComponentSafe<TextLabelComp>()) {
-                            TransformModel2D globalTransform = { transformComp->transform2D.position, transformComp->transform2D.scale, transformComp->transform2D.rotation };
+                            SETransformModel2D globalTransform = {transformComp->transform2D.position, transformComp->transform2D.scale, transformComp->transform2D.rotation };
                             cre_scene_utils_update_global_transform_model(node->GetUID(), &globalTransform);
-                            static Vector2 textLabelOrigin = { 0.0f, 0.0f };
+                            static SEVector2 textLabelOrigin = {0.0f, 0.0f };
                             cre_scene_utils_apply_camera_and_origin_translation(&globalTransform, &textLabelOrigin, transformComp->ignoreCamera);
                             const ImGuiHelper::FontRenderTarget renderTarget = {
                                 .font = assetManager->GetFont(textLabelComp->fontUID.c_str()),

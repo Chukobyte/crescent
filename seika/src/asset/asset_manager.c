@@ -61,18 +61,18 @@ bool se_asset_manager_has_texture(const char* key) {
 }
 
 // --- Font --- //
-Font* se_asset_manager_load_font(const char* fileName, const char* key, int size) {
+SEFont* se_asset_manager_load_font(const char* fileName, const char* key, int size) {
     SE_ASSERT_FMT(!se_asset_manager_has_font(key), "Font key '%s' already exists!", key);
-    Font* font = font_create_font(fileName, size);
+    SEFont* font = se_font_create_font(fileName, size);
     SE_ASSERT_FMT(font != NULL, "Failed to load font! file_name: '%s', key: '%s', size: '%d'", fileName, key, size);
-    se_string_hash_map_add(fontMap, key, font, sizeof(Font));
+    se_string_hash_map_add(fontMap, key, font, sizeof(SEFont));
     SE_MEM_FREE(font);
-    font = (Font*) se_string_hash_map_get(fontMap, key);
+    font = (SEFont*) se_string_hash_map_get(fontMap, key);
     return font;
 }
 
-Font* se_asset_manager_get_font(const char* key) {
-    return (Font*) se_string_hash_map_get(fontMap, key);
+SEFont* se_asset_manager_get_font(const char* key) {
+    return (SEFont*) se_string_hash_map_get(fontMap, key);
 }
 
 bool se_asset_manager_has_font(const char* key) {

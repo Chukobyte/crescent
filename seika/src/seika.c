@@ -156,7 +156,7 @@ void sf_process_inputs() {
 }
 
 void sf_render() {
-    static const Color backgroundColor = { 33.0f / 255.0f, 33.0f / 255.0f, 33.0f / 255.0f, 1.0f };
+    static const SEColor backgroundColor = {33.0f / 255.0f, 33.0f / 255.0f, 33.0f / 255.0f, 1.0f };
     se_renderer_process_and_flush_batches(&backgroundColor);
 
     // TODO: Pass window to renderer and swap there?

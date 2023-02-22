@@ -6,19 +6,19 @@
 
 #include "../math/se_math.h"
 
-typedef struct Character {
+typedef struct SECharacter {
     GLuint textureId;
-    Vector2 size;
-    Vector2 bearing;
+    SEVector2 size;
+    SEVector2 bearing;
     unsigned int advance;
-} Character;
+} SECharacter;
 
-typedef struct Font {
+typedef struct SEFont {
     bool isValid;
     GLuint VAO;
     GLuint VBO;
     int size;
-    Character characters[128]; // First 128 of ASCII set
-} Font;
+    SECharacter characters[128]; // First 128 of ASCII set
+} SEFont;
 
-Font* font_create_font(const char* fileName, int size);
+SEFont* se_font_create_font(const char* fileName, int size);

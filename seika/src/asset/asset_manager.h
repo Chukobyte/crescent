@@ -14,8 +14,8 @@ struct Texture* se_asset_manager_load_texture_ex(const char* fileName, const cha
 struct Texture* se_asset_manager_get_texture(const char* key);
 bool se_asset_manager_has_texture(const char* key);
 // --- Font --- //
-struct Font* se_asset_manager_load_font(const char* fileName, const char* key, int size);
-struct Font* se_asset_manager_get_font(const char* key);
+struct SEFont* se_asset_manager_load_font(const char* fileName, const char* key, int size);
+struct SEFont* se_asset_manager_get_font(const char* key);
 bool se_asset_manager_has_font(const char* key);
 // -- Audio Source --- //
 struct SEAudioSource* se_asset_manager_load_audio_source_wav(const char* fileName, const char* key);

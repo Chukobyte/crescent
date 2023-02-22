@@ -6,21 +6,21 @@
 
 #include "../../math/se_math.h"
 
-static const char* SHADER_VERTEX_TYPE = "VERTEX";
-static const char* SHADER_FRAGMENT_TYPE = "FRAGMENT";
-static const char* SHADER_PROGRAM_TYPE = "PROGRAM";
+static const char* SE_SHADER_VERTEX_TYPE = "VERTEX";
+static const char* SE_SHADER_FRAGMENT_TYPE = "FRAGMENT";
+static const char* SE_SHADER_PROGRAM_TYPE = "PROGRAM";
 
-typedef struct Shader {
+typedef struct SEShader {
     GLuint id;
-} Shader;
+} SEShader;
 
-Shader* shader_compile_new_shader(const char* vertexSource, const char* fragmentSource);
-void shader_destroy(Shader* shader);
-void shader_use(Shader* shader);
-void shader_set_bool(Shader* shader, const char* name, bool value);
-void shader_set_int(Shader* shader, const char* name, int value);
-void shader_set_float(Shader* shader, const char* name, float value);
-void shader_set_vec2_float(Shader* shader, const char* name, float v1, float v2);
-void shader_set_vec3_float(Shader* shader, const char* name, float v1, float v2, float v3);
-void shader_set_vec4_float(Shader* shader, const char* name, float v1, float v2, float v3, float v4);
-void shader_set_mat4_float(Shader* shader, const char* name, mat4* value);
+SEShader* se_shader_compile_new_shader(const char* vertexSource, const char* fragmentSource);
+void se_shader_destroy(SEShader* shader);
+void se_shader_use(SEShader* shader);
+void se_shader_set_bool(SEShader* shader, const char* name, bool value);
+void se_shader_set_int(SEShader* shader, const char* name, int value);
+void se_shader_set_float(SEShader* shader, const char* name, float value);
+void se_shader_set_vec2_float(SEShader* shader, const char* name, float v1, float v2);
+void se_shader_set_vec3_float(SEShader* shader, const char* name, float v1, float v2, float v3);
+void se_shader_set_vec4_float(SEShader* shader, const char* name, float v1, float v2, float v3, float v4);
+void se_shader_set_mat4_float(SEShader* shader, const char* name, mat4* value);

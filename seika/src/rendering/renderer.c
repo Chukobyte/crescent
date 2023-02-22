@@ -26,8 +26,8 @@ typedef struct TextureCoordinates {
     GLfloat tMax;
 } TextureCoordinates;
 
-TextureCoordinates renderer_get_texture_coordinates(const Texture* texture, const Rect2* drawSource, bool flipX, bool flipY);
-void renderer_set_shader_instance_params(ShaderInstance* shaderInstance);
+TextureCoordinates renderer_get_texture_coordinates(const Texture* texture, const SERect2* drawSource, bool flipX, bool flipY);
+void renderer_set_shader_instance_params(SEShaderInstance* shaderInstance);
 void renderer_print_opengl_errors();
 
 void sprite_renderer_initialize();
@@ -37,13 +37,13 @@ void sprite_renderer_update_resolution();
 void font_renderer_initialize();
 void font_renderer_finalize();
 void font_renderer_update_resolution();
-void font_renderer_draw_text(const Font* font, const char* text, float x, float y, float scale, const Color* color);
+void font_renderer_draw_text(const SEFont* font, const char* text, float x, float y, float scale, const SEColor* color);
 
 static GLuint spriteQuadVAO;
 static GLuint spriteQuadVBO;
 
-static Shader* spriteShader = NULL;
-static Shader* fontShader = NULL;
+static SEShader* spriteShader = NULL;
+static SEShader* fontShader = NULL;
 
 static float resolutionWidth = 800.0f;
 static float resolutionHeight = 600.0f;
@@ -57,22 +57,22 @@ static mat4 spriteProjection = {
 // Sprite Batching
 typedef struct SpriteBatchItem {
     Texture* texture;
-    Rect2 sourceRect;
-    Size2D destSize;
-    Color color;
+    SERect2 sourceRect;
+    SESize2D destSize;
+    SEColor color;
     bool flipX;
     bool flipY;
-    TransformModel2D* globalTransform;
-    ShaderInstance* shaderInstance;
+    SETransformModel2D* globalTransform;
+    SEShaderInstance* shaderInstance;
 } SpriteBatchItem;
 
 typedef struct FontBatchItem {
-    Font* font;
+    SEFont* font;
     const char* text;
     float x;
     float y;
     float scale;
-    Color color;
+    SEColor color;
 } FontBatchItem;
 
 void renderer_batching_draw_sprites(SpriteBatchItem items[], size_t spriteCount);
@@ -104,7 +104,7 @@ void se_renderer_initialize(int inWindowWidth, int inWindowHeight, int inResolut
     se_renderer_update_window_size((float) inWindowWidth, (float) inWindowHeight);
     sprite_renderer_initialize();
     font_renderer_initialize();
-    shader_cache_initialize();
+    se_shader_cache_initialize();
 #ifdef SE_RENDER_TO_FRAMEBUFFER
     // Initialize framebuffer
     SE_ASSERT_FMT(se_frame_buffer_initialize(inWindowWidth, inWindowHeight), "Framebuffer didn't initialize!");
@@ -123,7 +123,7 @@ void se_renderer_finalize() {
     font_renderer_finalize();
     sprite_renderer_finalize();
     se_render_context_finalize();
-    shader_cache_finalize();
+    se_shader_cache_finalize();
 #ifdef SE_RENDER_TO_FRAMEBUFFER
     se_frame_buffer_finalize();
 #endif
@@ -149,7 +149,7 @@ void update_active_render_layer_index(int zIndex) {
     }
 }
 
-void se_renderer_queue_sprite_draw_call(Texture* texture, Rect2 sourceRect, Size2D destSize, Color color, bool flipX, bool flipY, TransformModel2D* globalTransform, int zIndex, ShaderInstance* shaderInstance) {
+void se_renderer_queue_sprite_draw_call(Texture* texture, SERect2 sourceRect, SESize2D destSize, SEColor color, bool flipX, bool flipY, SETransformModel2D* globalTransform, int zIndex, SEShaderInstance* shaderInstance) {
     if (texture == NULL) {
         se_logger_error("NULL texture, not submitting draw call!");
         return;
@@ -174,7 +174,7 @@ void se_renderer_queue_sprite_draw_call(Texture* texture, Rect2 sourceRect, Size
     update_active_render_layer_index(arrayZIndex);
 }
 
-void se_renderer_queue_font_draw_call(Font* font, const char* text, float x, float y, float scale, Color color, int zIndex) {
+void se_renderer_queue_font_draw_call(SEFont* font, const char* text, float x, float y, float scale, SEColor color, int zIndex) {
     if (font == NULL) {
         se_logger_error("NULL font, not submitting draw call!");
         return;
@@ -216,7 +216,7 @@ void se_renderer_flush_batches() {
     SE_STATIC_ARRAY_EMPTY(active_render_layer_items_indices);
 }
 
-void se_renderer_process_and_flush_batches(const Color* backgroundColor) {
+void se_renderer_process_and_flush_batches(const SEColor* backgroundColor) {
 #ifdef SE_RENDER_TO_FRAMEBUFFER
     se_frame_buffer_bind();
 #endif
@@ -231,12 +231,12 @@ void se_renderer_process_and_flush_batches(const Color* backgroundColor) {
     se_frame_buffer_unbind();
 
     // Clear screen texture background
-    static const Color screenBackgroundColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+    static const SEColor screenBackgroundColor = {1.0f, 1.0f, 1.0f, 1.0f };
     glClearColor(screenBackgroundColor.r, screenBackgroundColor.g, screenBackgroundColor.b, screenBackgroundColor.a);
     glClear(GL_COLOR_BUFFER_BIT);
     // Draw screen texture from framebuffer
-    ShaderInstance* screenShaderInstance = se_frame_buffer_get_screen_shader();
-    shader_use(screenShaderInstance->shader);
+    SEShaderInstance* screenShaderInstance = se_frame_buffer_get_screen_shader();
+    se_shader_use(screenShaderInstance->shader);
 
     // Apply shader instance params
     renderer_set_shader_instance_params(screenShaderInstance);
@@ -248,7 +248,7 @@ void se_renderer_process_and_flush_batches(const Color* backgroundColor) {
 }
 
 #ifdef SE_RENDER_TO_FRAMEBUFFER
-void se_renderer_process_and_flush_batches_just_framebuffer(const Color* backgroundColor) {
+void se_renderer_process_and_flush_batches_just_framebuffer(const SEColor* backgroundColor) {
     se_frame_buffer_bind();
 
     // Clear framebuffer with background color
@@ -299,17 +299,18 @@ void sprite_renderer_initialize() {
     glBindVertexArray(0);
 
     // compile shaders
-    spriteShader = shader_compile_new_shader(OPENGL_SHADER_SOURCE_VERTEX_SPRITE, OPENGL_SHADER_SOURCE_FRAGMENT_SPRITE);
+    spriteShader = se_shader_compile_new_shader(SE_OPENGL_SHADER_SOURCE_VERTEX_SPRITE,
+                                                SE_OPENGL_SHADER_SOURCE_FRAGMENT_SPRITE);
     sprite_renderer_update_resolution();
     se_renderer_set_sprite_shader_default_params(spriteShader);
 }
 
 void sprite_renderer_finalize() {}
 
-void se_renderer_set_sprite_shader_default_params(Shader* shader) {
-    shader_use(shader);
-    shader_set_int(shader, "sprite", 0);
-    shader_set_mat4_float(shader, "projection", &spriteProjection);
+void se_renderer_set_sprite_shader_default_params(SEShader* shader) {
+    se_shader_use(shader);
+    se_shader_set_int(shader, "sprite", 0);
+    se_shader_set_mat4_float(shader, "projection", &spriteProjection);
 }
 
 void sprite_renderer_update_resolution() {
@@ -337,10 +338,10 @@ void renderer_batching_draw_sprites(SpriteBatchItem items[], size_t spriteCount)
     GLfloat verts[VERTEX_BUFFER_SIZE];
     for (size_t i = 0; i < spriteCount; i++) {
         if (items[i].shaderInstance != NULL) {
-            shader_use(items[i].shaderInstance->shader);
+            se_shader_use(items[i].shaderInstance->shader);
             renderer_set_shader_instance_params(items[i].shaderInstance);
         } else {
-            shader_use(spriteShader);
+            se_shader_use(spriteShader);
         }
 
         glm_scale(items[i].globalTransform->model, (vec3) {
@@ -352,7 +353,7 @@ void renderer_batching_draw_sprites(SpriteBatchItem items[], size_t spriteCount)
         // concat models[] string for uniform param
         char modelsBuffer[12];
         sprintf(modelsBuffer, "models[%zu]", i);
-        shader_set_mat4_float(spriteShader, modelsBuffer, &items[i].globalTransform->model);
+        se_shader_set_mat4_float(spriteShader, modelsBuffer, &items[i].globalTransform->model);
 
         // Set shader instance uniform params
         if (items[i].shaderInstance != NULL) {
@@ -405,7 +406,7 @@ void font_renderer_initialize() {
     if (FT_Init_FreeType(&se_render_context_get()->freeTypeLibrary)) {
         se_logger_error("Unable to initialize FreeType library!");
     }
-    fontShader = shader_compile_new_shader(OPENGL_SHADER_SOURCE_VERTEX_FONT, OPENGL_SHADER_SOURCE_FRAGMENT_FONT);
+    fontShader = se_shader_compile_new_shader(SE_OPENGL_SHADER_SOURCE_VERTEX_FONT, SE_OPENGL_SHADER_SOURCE_FRAGMENT_FONT);
     font_renderer_update_resolution();
 }
 
@@ -421,14 +422,14 @@ void font_renderer_update_resolution() {
         {0.0f, 0.0f, 0.0f, 1.0f}
     };
     glm_ortho(0.0f, resolutionWidth, -resolutionHeight, 0.0f, -1.0f, 1.0f, proj);
-    shader_use(fontShader);
-    shader_set_mat4_float(fontShader, "projection", &proj);
+    se_shader_use(fontShader);
+    se_shader_set_mat4_float(fontShader, "projection", &proj);
 }
 
-void font_renderer_draw_text(const Font* font, const char* text, float x, float y, float scale, const Color* color) {
-    Vector2 currentScale = { scale, scale };
-    shader_use(fontShader);
-    shader_set_vec4_float(fontShader, "textColor", color->r, color->g, color->b, color->a);
+void font_renderer_draw_text(const SEFont* font, const char* text, float x, float y, float scale, const SEColor* color) {
+    SEVector2 currentScale = {scale, scale };
+    se_shader_use(fontShader);
+    se_shader_set_vec4_float(fontShader, "textColor", color->r, color->g, color->b, color->a);
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(font->VAO);
 
@@ -436,7 +437,7 @@ void font_renderer_draw_text(const Font* font, const char* text, float x, float 
     char* c = (char*) &text[0];
     const size_t textLength = strlen(text);
     for (size_t i = 0; i < textLength; i++) {
-        Character ch = font->characters[(int) *c];
+        SECharacter ch = font->characters[(int) *c];
         const float xPos = x + (ch.bearing.x * currentScale.x);
         const float yPos = -y - (ch.size.y - ch.bearing.y) * currentScale.x; // Invert Y because othographic projection is flipped
         const float w = ch.size.x * currentScale.x;
@@ -468,7 +469,7 @@ void font_renderer_draw_text(const Font* font, const char* text, float x, float 
 }
 
 // --- Misc --- //
-TextureCoordinates renderer_get_texture_coordinates(const Texture* texture, const Rect2* drawSource, bool flipX, bool flipY) {
+TextureCoordinates renderer_get_texture_coordinates(const Texture* texture, const SERect2* drawSource, bool flipX, bool flipY) {
     // S
     GLfloat sMin, sMax;
     if (flipX) {
@@ -491,34 +492,38 @@ TextureCoordinates renderer_get_texture_coordinates(const Texture* texture, cons
     return textureCoords;
 }
 
-void renderer_set_shader_instance_params(ShaderInstance* shaderInstance) {
+void renderer_set_shader_instance_params(SEShaderInstance* shaderInstance) {
     if (shaderInstance->paramMap->size > 0) {
         SE_STRING_HASH_MAP_FOR_EACH(shaderInstance->paramMap, iter) {
             StringHashMapNode* node = iter.pair;
-            ShaderParam* param = (ShaderParam*) node->value;
+            SEShaderParam* param = (SEShaderParam*) node->value;
             switch (param->type) {
             case ShaderParamType_BOOL: {
-                shader_set_bool(shaderInstance->shader, param->name, param->value.boolValue);
+                se_shader_set_bool(shaderInstance->shader, param->name, param->value.boolValue);
                 break;
             }
             case ShaderParamType_INT: {
-                shader_set_int(shaderInstance->shader, param->name, param->value.intValue);
+                se_shader_set_int(shaderInstance->shader, param->name, param->value.intValue);
                 break;
             }
             case ShaderParamType_FLOAT: {
-                shader_set_float(shaderInstance->shader, param->name, param->value.floatValue);
+                se_shader_set_float(shaderInstance->shader, param->name, param->value.floatValue);
                 break;
             }
             case ShaderParamType_FLOAT2: {
-                shader_set_vec2_float(shaderInstance->shader, param->name, param->value.float2Value.x, param->value.float2Value.y);
+                se_shader_set_vec2_float(shaderInstance->shader, param->name, param->value.float2Value.x,
+                                         param->value.float2Value.y);
                 break;
             }
             case ShaderParamType_FLOAT3: {
-                shader_set_vec3_float(shaderInstance->shader, param->name, param->value.float3Value.x, param->value.float3Value.y, param->value.float3Value.z);
+                se_shader_set_vec3_float(shaderInstance->shader, param->name, param->value.float3Value.x,
+                                         param->value.float3Value.y, param->value.float3Value.z);
                 break;
             }
             case ShaderParamType_FLOAT4: {
-                shader_set_vec4_float(shaderInstance->shader, param->name, param->value.float4Value.x, param->value.float4Value.y, param->value.float4Value.z, param->value.float4Value.w);
+                se_shader_set_vec4_float(shaderInstance->shader, param->name, param->value.float4Value.x,
+                                         param->value.float4Value.y, param->value.float4Value.z,
+                                         param->value.float4Value.w);
                 break;
             }
             }

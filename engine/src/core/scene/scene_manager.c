@@ -133,15 +133,15 @@ void cre_scene_manager_process_queued_deletion_entities() {
         cre_ec_system_remove_entity_from_all_systems(entityToDelete);
         // Remove shader instance if applicable
         SpriteComponent* spriteComponent = component_manager_get_component_unsafe(entityToDelete, ComponentDataIndex_SPRITE);
-        if (spriteComponent != NULL && spriteComponent->shaderInstanceId != SHADER_INSTANCE_INVALID_ID) {
-            ShaderInstance* shaderInstance = shader_cache_get_instance(spriteComponent->shaderInstanceId);
-            shader_cache_remove_instance(spriteComponent->shaderInstanceId);
+        if (spriteComponent != NULL && spriteComponent->shaderInstanceId != SE_SHADER_INSTANCE_INVALID_ID) {
+            SEShaderInstance* shaderInstance = se_shader_cache_get_instance(spriteComponent->shaderInstanceId);
+            se_shader_cache_remove_instance(spriteComponent->shaderInstanceId);
             SE_MEM_FREE(shaderInstance);
         }
         AnimatedSpriteComponent* animatedSpriteComponent = component_manager_get_component_unsafe(entityToDelete, ComponentDataIndex_ANIMATED_SPRITE);
-        if (animatedSpriteComponent != NULL && animatedSpriteComponent->shaderInstanceId != SHADER_INSTANCE_INVALID_ID) {
-            ShaderInstance* shaderInstance = shader_cache_get_instance(animatedSpriteComponent->shaderInstanceId);
-            shader_cache_remove_instance(animatedSpriteComponent->shaderInstanceId);
+        if (animatedSpriteComponent != NULL && animatedSpriteComponent->shaderInstanceId != SE_SHADER_INSTANCE_INVALID_ID) {
+            SEShaderInstance* shaderInstance = se_shader_cache_get_instance(animatedSpriteComponent->shaderInstanceId);
+            se_shader_cache_remove_instance(animatedSpriteComponent->shaderInstanceId);
             SE_MEM_FREE(shaderInstance);
         }
         // Remove all components
@@ -208,7 +208,7 @@ SceneTreeNode* cre_scene_manager_get_active_scene_root() {
 }
 
 // TODO: Make function to update flags for all children
-TransformModel2D* cre_scene_manager_get_scene_node_global_transform(Entity entity, Transform2DComponent* transform2DComponent) {
+SETransformModel2D* cre_scene_manager_get_scene_node_global_transform(Entity entity, Transform2DComponent* transform2DComponent) {
     SE_ASSERT_FMT(transform2DComponent != NULL, "Transform Model is NULL for entity '%d'", entity);
     if (transform2DComponent->isGlobalTransformDirty) {
         // Walk up scene to root node and calculate global transform
@@ -341,8 +341,9 @@ void cre_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneNode, Scene
         spriteComponent->texture = se_asset_manager_get_texture(jsonSceneNode->spriteTexturePath);
         component_manager_set_component(node->entity, ComponentDataIndex_SPRITE, spriteComponent);
         if (jsonSceneNode->shaderInstanceVertexPath != NULL && jsonSceneNode->shaderInstanceFragmentPath != NULL) {
-            spriteComponent->shaderInstanceId = shader_cache_create_instance_and_add(jsonSceneNode->shaderInstanceVertexPath, jsonSceneNode->shaderInstanceFragmentPath);
-            ShaderInstance* shaderInstance = shader_cache_get_instance(spriteComponent->shaderInstanceId);
+            spriteComponent->shaderInstanceId = se_shader_cache_create_instance_and_add(
+                    jsonSceneNode->shaderInstanceVertexPath, jsonSceneNode->shaderInstanceFragmentPath);
+            SEShaderInstance* shaderInstance = se_shader_cache_get_instance(spriteComponent->shaderInstanceId);
             se_renderer_set_sprite_shader_default_params(shaderInstance->shader);
         }
     }
@@ -350,8 +351,9 @@ void cre_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneNode, Scene
         AnimatedSpriteComponent* animatedSpriteComponent = animated_sprite_component_data_copy_to_animated_sprite((AnimatedSpriteComponentData*) jsonSceneNode->components[ComponentDataIndex_ANIMATED_SPRITE]);
         component_manager_set_component(node->entity, ComponentDataIndex_ANIMATED_SPRITE, animatedSpriteComponent);
         if (jsonSceneNode->shaderInstanceVertexPath != NULL && jsonSceneNode->shaderInstanceFragmentPath != NULL) {
-            animatedSpriteComponent->shaderInstanceId = shader_cache_create_instance_and_add(jsonSceneNode->shaderInstanceVertexPath, jsonSceneNode->shaderInstanceFragmentPath);
-            ShaderInstance* shaderInstance = shader_cache_get_instance(animatedSpriteComponent->shaderInstanceId);
+            animatedSpriteComponent->shaderInstanceId = se_shader_cache_create_instance_and_add(
+                    jsonSceneNode->shaderInstanceVertexPath, jsonSceneNode->shaderInstanceFragmentPath);
+            SEShaderInstance* shaderInstance = se_shader_cache_get_instance(animatedSpriteComponent->shaderInstanceId);
             se_renderer_set_sprite_shader_default_params(shaderInstance->shader);
         }
     }

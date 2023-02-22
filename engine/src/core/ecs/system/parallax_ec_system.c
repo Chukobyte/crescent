@@ -62,7 +62,7 @@ void parallax_system_physics_process(float deltaTime) {
 }
 
 void parallax_system_update_entity(Entity entity, Transform2DComponent* transformComp, ParallaxComponent* parallaxComp, CRECamera2D* camera2D) {
-    const Vector2 offset = {
+    const SEVector2 offset = {
         .x = (parallaxComp->cachedLocalPosition.x - (camera2D->viewport.x + camera2D->offset.x)) * camera2D->zoom.x * parallaxComp->scrollSpeed.x,
         .y = (parallaxComp->cachedLocalPosition.y - (camera2D->viewport.y + camera2D->offset.y)) * camera2D->zoom.y * parallaxComp->scrollSpeed.y
     };

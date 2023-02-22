@@ -54,24 +54,24 @@ void animated_sprite_rendering_system_render() {
             }
         }
         const CRECamera2D* renderCamera = spriteTransformComp->ignoreCamera ? defaultCamera : camera2D;
-        TransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity,
-                                            spriteTransformComp);
+        SETransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity,
+                                                                                                spriteTransformComp);
         cre_scene_utils_apply_camera_and_origin_translation(globalTransform, &animatedSpriteComponent->origin, spriteTransformComp->ignoreCamera);
         spriteTransformComp->isGlobalTransformDirty = true; // TODO: Make global transform const
-        const Size2D destinationSize = {
+        const SESize2D destinationSize = {
             currentFrame.drawSource.w * renderCamera->zoom.x,
             currentFrame.drawSource.h * renderCamera->zoom.y
         };
         se_renderer_queue_sprite_draw_call(
-            currentFrame.texture,
-            currentFrame.drawSource,
-            destinationSize,
-            animatedSpriteComponent->modulate,
-            animatedSpriteComponent->flipX,
-            animatedSpriteComponent->flipY,
-            globalTransform,
-            globalTransform->zIndex,
-            shader_cache_get_instance_checked(animatedSpriteComponent->shaderInstanceId)
+                currentFrame.texture,
+                currentFrame.drawSource,
+                destinationSize,
+                animatedSpriteComponent->modulate,
+                animatedSpriteComponent->flipX,
+                animatedSpriteComponent->flipY,
+                globalTransform,
+                globalTransform->zIndex,
+                se_shader_cache_get_instance_checked(animatedSpriteComponent->shaderInstanceId)
         );
     }
 }

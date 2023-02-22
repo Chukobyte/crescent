@@ -1,19 +1,19 @@
 #include "se_math.h"
 
 // --- Vector2 --- //
-bool se_math_vec2_equals(const Vector2* v1, const Vector2* v2) {
+bool se_math_vec2_equals(const SEVector2* v1, const SEVector2* v2) {
     return v1->x == v2->x && v1->y == v2->y;
 }
 
-Vector2 se_math_vec2_lerp(const Vector2* v1, const Vector2* v2, float t) {
-    return (Vector2) {
+SEVector2 se_math_vec2_lerp(const SEVector2* v1, const SEVector2* v2, float t) {
+    return (SEVector2) {
         .x = se_math_lerpf(v1->x, v2->x, t),
         .y = se_math_lerpf(v1->y, v2->y, t)
     };
 }
 
 // --- Rect2 --- //
-bool se_rect2_does_rectangles_overlap(Rect2* sourceRect, Rect2* targetRect) {
+bool se_rect2_does_rectangles_overlap(SERect2* sourceRect, SERect2* targetRect) {
     return (sourceRect->x + sourceRect->w >= targetRect->x) &&
            (targetRect->x + targetRect->w >= sourceRect->x) &&
            (sourceRect->y + sourceRect->h >= targetRect->y) &&
@@ -21,8 +21,8 @@ bool se_rect2_does_rectangles_overlap(Rect2* sourceRect, Rect2* targetRect) {
 }
 
 // --- Color --- //
-Color se_color_get_normalized_color_default_alpha(unsigned int r, unsigned int g, unsigned int b) {
-    Color color = {
+SEColor se_color_get_normalized_color_default_alpha(unsigned int r, unsigned int g, unsigned int b) {
+    SEColor color = {
         .r = (float) r / 255.0f,
         .g = (float) g / 255.0f,
         .b = (float) b / 255.0f,
@@ -31,8 +31,8 @@ Color se_color_get_normalized_color_default_alpha(unsigned int r, unsigned int g
     return color;
 }
 
-Color se_color_get_normalized_color(unsigned int r, unsigned int g, unsigned int b, unsigned int a) {
-    Color color = {
+SEColor se_color_get_normalized_color(unsigned int r, unsigned int g, unsigned int b, unsigned int a) {
+    SEColor color = {
         .r = (float) r / 255.0f,
         .g = (float) g / 255.0f,
         .b = (float) b / 255.0f,
@@ -41,8 +41,8 @@ Color se_color_get_normalized_color(unsigned int r, unsigned int g, unsigned int
     return color;
 }
 
-Color se_color_get_normalized_color_from_color(const Color* color) {
-    Color newColor = {
+SEColor se_color_get_normalized_color_from_color(const SEColor* color) {
+    SEColor newColor = {
         .r = color->r / 255.0f,
         .g = color->g / 255.0f,
         .b = color->b / 255.0f,
@@ -51,8 +51,8 @@ Color se_color_get_normalized_color_from_color(const Color* color) {
     return newColor;
 }
 
-Color se_color_get_white() {
-    Color white = { 1.0f, 1.0f, 1.0f, 1.0f};
+SEColor se_color_get_white() {
+    SEColor white = {1.0f, 1.0f, 1.0f, 1.0f};
     return white;
 }
 
@@ -86,8 +86,8 @@ float se_math_signf(float value) {
     return 0.0f;
 }
 
-Vector2 se_math_signvec2(Vector2* value) {
-    Vector2 sign_vec = {
+SEVector2 se_math_signvec2(SEVector2* value) {
+    SEVector2 sign_vec = {
         .x = se_math_signf(value->x),
         .y = se_math_signf(value->y)
     };

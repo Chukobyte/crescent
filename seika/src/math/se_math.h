@@ -13,74 +13,74 @@ extern "C" {
 #define SE_PI 3.14159265358979323846f
 #define SE_RAD_2_DEG (180.0f / SE_PI)
 
-// --- Vector2 --- //
-typedef struct Vector2 {
+// --- SEVector2 --- //
+typedef struct SEVector2 {
     float x;
     float y;
-} Vector2;
+} SEVector2;
 
-bool se_math_vec2_equals(const Vector2* v1, const Vector2* v2);
-Vector2 se_math_vec2_lerp(const Vector2* v1, const Vector2* v2, float t);
+bool se_math_vec2_equals(const SEVector2* v1, const SEVector2* v2);
+SEVector2 se_math_vec2_lerp(const SEVector2* v1, const SEVector2* v2, float t);
 
-// --- Size2D --- //
-typedef struct Size2D {
+// --- SESize2D --- //
+typedef struct SESize2D {
     float w;
     float h;
-} Size2D;
+} SESize2D;
 
-// --- Rect2 --- //
-typedef struct Rect2 {
+// --- SERect2 --- //
+typedef struct SERect2 {
     float x;
     float y;
     float w;
     float h;
-} Rect2;
+} SERect2;
 
-bool se_rect2_does_rectangles_overlap(Rect2* sourceRect, Rect2* targetRect);
+bool se_rect2_does_rectangles_overlap(SERect2* sourceRect, SERect2* targetRect);
 
-//--- Transform2D ---//
-typedef struct Transform2D {
-    Vector2 position;
-    Vector2 scale;
+//--- SETransform2D ---//
+typedef struct SETransform2D {
+    SEVector2 position;
+    SEVector2 scale;
     float rotation; // degrees
-} Transform2D;
+} SETransform2D;
 
-typedef struct TransformModel2D {
-    Vector2 position;
-    Vector2 scale;
+typedef struct SETransformModel2D {
+    SEVector2 position;
+    SEVector2 scale;
     float rotation; // degrees
     int zIndex;
-    Vector2 scaleSign;
+    SEVector2 scaleSign;
     mat4 model;
-} TransformModel2D;
+} SETransformModel2D;
 
-// --- Vector3 --- //
-typedef struct Vector3 {
+// --- SEVector3 --- //
+typedef struct SEVector3 {
     float x;
     float y;
     float z;
-} Vector3;
+} SEVector3;
 
-// --- Vector4 --- //
-typedef struct Vector4 {
+// --- SEVector4 --- //
+typedef struct SEVector4 {
     float x;
     float y;
     float z;
     float w;
-} Vector4;
+} SEVector4;
 
-// --- Color --- //
-typedef struct Color {
+// --- SEColor --- //
+typedef struct SEColor {
     float r;
     float g;
     float b;
     float a;
-} Color;
+} SEColor;
 
-Color se_color_get_normalized_color_default_alpha(unsigned int r, unsigned int g, unsigned int b);
-Color se_color_get_normalized_color(unsigned int r, unsigned int g, unsigned int b, unsigned int a);
-Color se_color_get_normalized_color_from_color(const Color* color);
-Color se_color_get_white();
+SEColor se_color_get_normalized_color_default_alpha(unsigned int r, unsigned int g, unsigned int b);
+SEColor se_color_get_normalized_color(unsigned int r, unsigned int g, unsigned int b, unsigned int a);
+SEColor se_color_get_normalized_color_from_color(const SEColor* color);
+SEColor se_color_get_white();
 
 // --- Misc --- //
 float se_math_lerpf(float a, float b, float t);
@@ -89,7 +89,7 @@ float se_math_map_to_unit(float input, float inputMin, float inputMax);
 double se_math_map_to_range_double(double input, double inputMin, double inputMax, double outputMin, double outputMax);
 double se_math_map_to_unit_double(double input, double inputMin, double inputMax);
 float se_math_signf(float value);
-Vector2 se_math_signvec2(Vector2* value);
+SEVector2 se_math_signvec2(SEVector2* value);
 int se_math_clamp_int(int value, int min, int max);
 bool se_math_is_almost_equal_float(float v1, float v2, float epsilon);
 bool se_math_is_almost_equal_float_default(float v1, float v2);

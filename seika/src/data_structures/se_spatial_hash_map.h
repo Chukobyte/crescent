@@ -17,7 +17,7 @@ typedef struct SESpatialHashMapGridSpace {
 // Contains all grid spaces an object is assigned to
 typedef struct SESpatialHashMapGridSpacesHandle {
     size_t gridSpaceCount;
-    Rect2 collisionRect;
+    SERect2 collisionRect;
     SESpatialHashMapGridSpace* gridSpaces[4];
 } SESpatialHashMapGridSpacesHandle;
 
@@ -36,7 +36,7 @@ typedef struct SESpatialHashMapCollisionResult {
 
 SESpatialHashMap* se_spatial_hash_map_create(int cellSize);
 void se_spatial_hash_map_destroy(SESpatialHashMap* hashMap);
-SESpatialHashMapGridSpacesHandle* se_spatial_hash_map_insert_or_update(SESpatialHashMap* hashMap, unsigned int entity, Rect2* collisionRect);
+SESpatialHashMapGridSpacesHandle* se_spatial_hash_map_insert_or_update(SESpatialHashMap* hashMap, unsigned int entity, SERect2* collisionRect);
 void se_spatial_hash_map_remove(SESpatialHashMap* hashMap, unsigned int entity);
 SESpatialHashMapGridSpacesHandle* se_spatial_hash_map_get(SESpatialHashMap* hashMap, unsigned int entity);
 SESpatialHashMapCollisionResult se_spatial_hash_map_compute_collision(SESpatialHashMap* hashMap, unsigned int entity);

@@ -19,7 +19,7 @@ typedef struct CollisionResult {
 } CollisionResult;
 
 CollisionResult cre_collision_process_entity_collisions(Entity entity);
-CollisionResult cre_collision_process_mouse_collisions(Rect2* collisionRect);
+CollisionResult cre_collision_process_mouse_collisions(SERect2* collisionRect);
 void cre_collision_set_global_spatial_hash_map(SESpatialHashMap* hashMap);
 SESpatialHashMap* cre_collision_get_global_spatial_hash_map();
-Rect2 cre_get_collision_rectangle(Entity entity, Transform2DComponent* transform2DComponent, Collider2DComponent* collider2DComponent);
+SERect2 cre_get_collision_rectangle(Entity entity, Transform2DComponent* transform2DComponent, Collider2DComponent* collider2DComponent);

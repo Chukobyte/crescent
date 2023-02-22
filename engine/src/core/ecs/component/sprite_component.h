@@ -12,12 +12,12 @@ extern "C" {
 
 typedef struct SpriteComponent {
     Texture* texture;
-    Rect2 drawSource;
-    Vector2 origin;
+    SERect2 drawSource;
+    SEVector2 origin;
     bool flipX;
     bool flipY;
-    Color modulate;
-    ShaderInstanceId shaderInstanceId;
+    SEColor modulate;
+    SEShaderInstanceId shaderInstanceId;
 } SpriteComponent;
 
 SpriteComponent* sprite_component_create();

@@ -10,9 +10,9 @@
 
 bool generate_new_font_face(const char* fileName, FT_Face* face);
 
-Font* font_create_font(const char* fileName, int size) {
+SEFont* se_font_create_font(const char* fileName, int size) {
     FT_Face face;
-    Font* font = SE_MEM_ALLOCATE(Font);
+    SEFont* font = SE_MEM_ALLOCATE(SEFont);
     font->size = size;
 
     // Failed to create font, exit out early
@@ -55,7 +55,7 @@ Font* font_create_font(const char* fileName, int size) {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         // Create character struct
-        Character character = {
+        SECharacter character = {
             .textureId = textTexture,
             .size = { (float) face->glyph->bitmap.width, (float) face->glyph->bitmap.rows },
             .bearing = { (float) face->glyph->bitmap_left, (float) face->glyph->bitmap_top },
