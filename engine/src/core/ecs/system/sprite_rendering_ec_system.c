@@ -36,7 +36,7 @@ void sprite_rendering_system_render() {
         SpriteComponent* spriteComponent = (SpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_SPRITE);
         const CRECamera2D* renderCamera = spriteTransformComp->ignoreCamera ? defaultCamera : camera2D;
         SETransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity,
-                                                                                                spriteTransformComp);
+                                              spriteTransformComp);
         cre_scene_utils_apply_camera_and_origin_translation(globalTransform, &spriteComponent->origin, spriteTransformComp->ignoreCamera);
         spriteTransformComp->isGlobalTransformDirty = true; // TODO: Make global transform const
         const SESize2D destinationSize = {
@@ -44,15 +44,15 @@ void sprite_rendering_system_render() {
             spriteComponent->drawSource.h * renderCamera->zoom.y
         };
         se_renderer_queue_sprite_draw_call(
-                spriteComponent->texture,
-                spriteComponent->drawSource,
-                destinationSize,
-                spriteComponent->modulate,
-                spriteComponent->flipX,
-                spriteComponent->flipY,
-                globalTransform,
-                globalTransform->zIndex,
-                se_shader_cache_get_instance_checked(spriteComponent->shaderInstanceId)
+            spriteComponent->texture,
+            spriteComponent->drawSource,
+            destinationSize,
+            spriteComponent->modulate,
+            spriteComponent->flipX,
+            spriteComponent->flipY,
+            globalTransform,
+            globalTransform->zIndex,
+            se_shader_cache_get_instance_checked(spriteComponent->shaderInstanceId)
         );
     }
 }

@@ -79,7 +79,7 @@ bool se_frame_buffer_initialize(int inWindowWidth, int inWindowHeight) {
 
     // compile shaders
     SEShader* screenShader = se_shader_compile_new_shader(SE_OPENGL_SHADER_SOURCE_VERTEX_SCREEN,
-                                                          SE_OPENGL_SHADER_SOURCE_FRAGMENT_SCREEN);
+                             SE_OPENGL_SHADER_SOURCE_FRAGMENT_SCREEN);
     defaultScreenShader = (SEShaderInstance) {
         .shader = screenShader, .paramMap = se_string_hash_map_create_default_capacity()
     };

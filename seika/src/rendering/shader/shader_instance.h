@@ -11,12 +11,12 @@
 #include "../../data_structures/se_hash_map_string.h"
 
 typedef enum SEShaderParamType {
-    ShaderParamType_BOOL = 0,
-    ShaderParamType_INT = 1,
-    ShaderParamType_FLOAT = 2,
-    ShaderParamType_FLOAT2 = 3,
-    ShaderParamType_FLOAT3 = 4,
-    ShaderParamType_FLOAT4 = 5,
+    SEShaderParamType_BOOL = 0,
+    SEShaderParamType_INT = 1,
+    SEShaderParamType_FLOAT = 2,
+    SEShaderParamType_FLOAT2 = 3,
+    SEShaderParamType_FLOAT3 = 4,
+    SEShaderParamType_FLOAT4 = 5,
 } SEShaderParamType;
 
 typedef struct SEShaderParam {

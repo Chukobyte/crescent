@@ -63,7 +63,7 @@ bool is_entity_in_collision_exceptions(Entity entity, Collider2DComponent* colli
 
 SERect2 cre_get_collision_rectangle(Entity entity, Transform2DComponent* transform2DComponent, Collider2DComponent* collider2DComponent) {
     const SETransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity,
-                                                                                                  transform2DComponent);
+            transform2DComponent);
     SERect2 collisionRect = {
         .x = globalTransform->position.x,
         .y = globalTransform->position.y,

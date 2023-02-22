@@ -300,7 +300,7 @@ void sprite_renderer_initialize() {
 
     // compile shaders
     spriteShader = se_shader_compile_new_shader(SE_OPENGL_SHADER_SOURCE_VERTEX_SPRITE,
-                                                SE_OPENGL_SHADER_SOURCE_FRAGMENT_SPRITE);
+                   SE_OPENGL_SHADER_SOURCE_FRAGMENT_SPRITE);
     sprite_renderer_update_resolution();
     se_renderer_set_sprite_shader_default_params(spriteShader);
 }
@@ -498,29 +498,29 @@ void renderer_set_shader_instance_params(SEShaderInstance* shaderInstance) {
             StringHashMapNode* node = iter.pair;
             SEShaderParam* param = (SEShaderParam*) node->value;
             switch (param->type) {
-            case ShaderParamType_BOOL: {
+            case SEShaderParamType_BOOL: {
                 se_shader_set_bool(shaderInstance->shader, param->name, param->value.boolValue);
                 break;
             }
-            case ShaderParamType_INT: {
+            case SEShaderParamType_INT: {
                 se_shader_set_int(shaderInstance->shader, param->name, param->value.intValue);
                 break;
             }
-            case ShaderParamType_FLOAT: {
+            case SEShaderParamType_FLOAT: {
                 se_shader_set_float(shaderInstance->shader, param->name, param->value.floatValue);
                 break;
             }
-            case ShaderParamType_FLOAT2: {
+            case SEShaderParamType_FLOAT2: {
                 se_shader_set_vec2_float(shaderInstance->shader, param->name, param->value.float2Value.x,
                                          param->value.float2Value.y);
                 break;
             }
-            case ShaderParamType_FLOAT3: {
+            case SEShaderParamType_FLOAT3: {
                 se_shader_set_vec3_float(shaderInstance->shader, param->name, param->value.float3Value.x,
                                          param->value.float3Value.y, param->value.float3Value.z);
                 break;
             }
-            case ShaderParamType_FLOAT4: {
+            case SEShaderParamType_FLOAT4: {
                 se_shader_set_vec4_float(shaderInstance->shader, param->name, param->value.float4Value.x,
                                          param->value.float4Value.y, param->value.float4Value.z,
                                          param->value.float4Value.w);

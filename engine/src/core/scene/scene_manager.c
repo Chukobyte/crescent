@@ -342,7 +342,7 @@ void cre_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneNode, Scene
         component_manager_set_component(node->entity, ComponentDataIndex_SPRITE, spriteComponent);
         if (jsonSceneNode->shaderInstanceVertexPath != NULL && jsonSceneNode->shaderInstanceFragmentPath != NULL) {
             spriteComponent->shaderInstanceId = se_shader_cache_create_instance_and_add(
-                    jsonSceneNode->shaderInstanceVertexPath, jsonSceneNode->shaderInstanceFragmentPath);
+                                                    jsonSceneNode->shaderInstanceVertexPath, jsonSceneNode->shaderInstanceFragmentPath);
             SEShaderInstance* shaderInstance = se_shader_cache_get_instance(spriteComponent->shaderInstanceId);
             se_renderer_set_sprite_shader_default_params(shaderInstance->shader);
         }
@@ -352,7 +352,7 @@ void cre_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneNode, Scene
         component_manager_set_component(node->entity, ComponentDataIndex_ANIMATED_SPRITE, animatedSpriteComponent);
         if (jsonSceneNode->shaderInstanceVertexPath != NULL && jsonSceneNode->shaderInstanceFragmentPath != NULL) {
             animatedSpriteComponent->shaderInstanceId = se_shader_cache_create_instance_and_add(
-                    jsonSceneNode->shaderInstanceVertexPath, jsonSceneNode->shaderInstanceFragmentPath);
+                        jsonSceneNode->shaderInstanceVertexPath, jsonSceneNode->shaderInstanceFragmentPath);
             SEShaderInstance* shaderInstance = se_shader_cache_get_instance(animatedSpriteComponent->shaderInstanceId);
             se_renderer_set_sprite_shader_default_params(shaderInstance->shader);
         }
