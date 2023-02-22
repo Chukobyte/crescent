@@ -8,7 +8,10 @@
 #include "../seika/src/audio/audio_manager.h"
 #include "../seika/src/networking/se_network.h"
 #include "../seika/src/memory/se_mem.h"
+#include "../seika/src/rendering/frame_buffer.h"
 #include "../seika/src/rendering/render_context.h"
+#include "../seika/src/rendering/renderer.h"
+#include "../seika/src/rendering/shader/shader_cache.h"
 #include "../seika/src/utils/se_assert.h"
 #include "../seika/src/utils/se_file_system_utils.h"
 #include "../seika/src/utils/se_string_util.h"
@@ -200,6 +203,288 @@ PyObject* cre_py_api_curve_float_eval(PyObject* self, PyObject* args, PyObject* 
         return Py_BuildValue("d", cre_curve_float_manager_eval(curveId, t));
     }
     return NULL;
+}
+
+// Shader Instance
+PyObject* cre_py_api_shader_instance_delete(PyObject* self, PyObject* args, PyObject* kwargs) {
+    ShaderInstanceId shaderId;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericShaderIdKWList, &shaderId)) {
+        ShaderInstance* shaderInstance = shader_cache_get_instance(shaderId);
+        if (shaderInstance != NULL) {
+            shader_cache_remove_instance(shaderId);
+            SE_MEM_FREE(shaderInstance);
+            Py_RETURN_TRUE;
+        }
+        Py_RETURN_FALSE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_shader_instance_create_bool_param(PyObject* self, PyObject* args, PyObject* kwargs) {
+    ShaderInstanceId shaderId;
+    char* name;
+    bool initialValue;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "isb", crePyApiShaderInstanceCreateParamKWList, &shaderId, &name, &initialValue)) {
+        ShaderInstance* shaderInstance = shader_cache_get_instance(shaderId);
+        se_shader_instance_param_create_bool(shaderInstance, name, initialValue);
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_shader_instance_set_bool_param(PyObject* self, PyObject* args, PyObject* kwargs) {
+    ShaderInstanceId shaderId;
+    char* name;
+    bool value;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "isb", crePyApiShaderInstanceSetParamKWList, &shaderId, &name, &value)) {
+        ShaderInstance* shaderInstance = shader_cache_get_instance(shaderId);
+        se_shader_instance_param_update_bool(shaderInstance, name, value);
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_shader_instance_get_bool_param(PyObject* self, PyObject* args, PyObject* kwargs) {
+    ShaderInstanceId shaderId;
+    char* name;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "is", crePyApiShaderInstanceGetParamKWList, &shaderId, &name)) {
+        ShaderInstance* shaderInstance = shader_cache_get_instance(shaderId);
+        const bool paramValue = se_shader_instance_param_get_bool(shaderInstance, name);
+        if (paramValue) {
+            Py_RETURN_TRUE;
+        }
+        Py_RETURN_FALSE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_shader_instance_create_int_param(PyObject* self, PyObject* args, PyObject* kwargs) {
+    ShaderInstanceId shaderId;
+    char* name;
+    int initialValue;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "isi", crePyApiShaderInstanceCreateParamKWList, &shaderId, &name, &initialValue)) {
+        ShaderInstance* shaderInstance = shader_cache_get_instance(shaderId);
+        se_shader_instance_param_create_int(shaderInstance, name, initialValue);
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_shader_instance_set_int_param(PyObject* self, PyObject* args, PyObject* kwargs) {
+    ShaderInstanceId shaderId;
+    char* name;
+    int value;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "isi", crePyApiShaderInstanceSetParamKWList, &shaderId, &name, &value)) {
+        ShaderInstance* shaderInstance = shader_cache_get_instance(shaderId);
+        se_shader_instance_param_update_int(shaderInstance, name, value);
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_shader_instance_get_int_param(PyObject* self, PyObject* args, PyObject* kwargs) {
+    ShaderInstanceId shaderId;
+    char* name;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "is", crePyApiShaderInstanceGetParamKWList, &shaderId, &name)) {
+        ShaderInstance* shaderInstance = shader_cache_get_instance(shaderId);
+        const int paramValue = se_shader_instance_param_get_int(shaderInstance, name);
+        return Py_BuildValue("i", paramValue);
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_shader_instance_create_float_param(PyObject* self, PyObject* args, PyObject* kwargs) {
+    ShaderInstanceId shaderId;
+    char* name;
+    float initialValue;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "isf", crePyApiShaderInstanceCreateParamKWList, &shaderId, &name, &initialValue)) {
+        ShaderInstance* shaderInstance = shader_cache_get_instance(shaderId);
+        se_shader_instance_param_create_float(shaderInstance, name, initialValue);
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_shader_instance_set_float_param(PyObject* self, PyObject* args, PyObject* kwargs) {
+    ShaderInstanceId shaderId;
+    char* name;
+    float value;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "isf", crePyApiShaderInstanceSetParamKWList, &shaderId, &name, &value)) {
+        ShaderInstance* shaderInstance = shader_cache_get_instance(shaderId);
+        se_shader_instance_param_update_float(shaderInstance, name, value);
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_shader_instance_get_float_param(PyObject* self, PyObject* args, PyObject* kwargs) {
+    ShaderInstanceId shaderId;
+    char* name;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "is", crePyApiShaderInstanceGetParamKWList, &shaderId, &name)) {
+        ShaderInstance* shaderInstance = shader_cache_get_instance(shaderId);
+        const float paramValue = se_shader_instance_param_get_float(shaderInstance, name);
+        return Py_BuildValue("f", paramValue);
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_shader_instance_create_float2_param(PyObject* self, PyObject* args, PyObject* kwargs) {
+    ShaderInstanceId shaderId;
+    char* name;
+    float initialValueX;
+    float initialValueY;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "isff", crePyApiShaderInstanceCreateFloat2ParamKWList, &shaderId, &name, &initialValueX, &initialValueY)) {
+        ShaderInstance* shaderInstance = shader_cache_get_instance(shaderId);
+        se_shader_instance_param_create_float2(shaderInstance, name, (Vector2) {
+            initialValueX, initialValueY
+        });
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_shader_instance_set_float2_param(PyObject* self, PyObject* args, PyObject* kwargs) {
+    ShaderInstanceId shaderId;
+    char* name;
+    float valueX;
+    float valueY;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "isff", crePyApiShaderInstanceSetFloat2ParamKWList, &shaderId, &name, &valueX, &valueY)) {
+        ShaderInstance* shaderInstance = shader_cache_get_instance(shaderId);
+        se_shader_instance_param_update_float2(shaderInstance, name, (Vector2) {
+            valueX, valueY
+        });
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_shader_instance_get_float2_param(PyObject* self, PyObject* args, PyObject* kwargs) {
+    ShaderInstanceId shaderId;
+    char* name;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "is", crePyApiShaderInstanceGetParamKWList, &shaderId, &name)) {
+        ShaderInstance* shaderInstance = shader_cache_get_instance(shaderId);
+        const Vector2 paramValue = se_shader_instance_param_get_float2(shaderInstance, name);
+        return Py_BuildValue("(ff)", paramValue.x, paramValue.y);
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_shader_instance_create_float3_param(PyObject* self, PyObject* args, PyObject* kwargs) {
+    ShaderInstanceId shaderId;
+    char* name;
+    float initialValueX;
+    float initialValueY;
+    float initialValueZ;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "isfff", crePyApiShaderInstanceCreateFloat3ParamKWList, &shaderId, &name, &initialValueX, &initialValueY, &initialValueZ)) {
+        ShaderInstance* shaderInstance = shader_cache_get_instance(shaderId);
+        se_shader_instance_param_create_float3(shaderInstance, name, (Vector3) {
+            initialValueX, initialValueY, initialValueZ
+        });
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_shader_instance_set_float3_param(PyObject* self, PyObject* args, PyObject* kwargs) {
+    ShaderInstanceId shaderId;
+    char* name;
+    float valueX;
+    float valueY;
+    float valueZ;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "isfff", crePyApiShaderInstanceSetFloat3ParamKWList, &shaderId, &name, &valueX, &valueY, &valueZ)) {
+        ShaderInstance* shaderInstance = shader_cache_get_instance(shaderId);
+        se_shader_instance_param_update_float3(shaderInstance, name, (Vector3) {
+            valueX, valueY, valueZ
+        });
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_shader_instance_get_float3_param(PyObject* self, PyObject* args, PyObject* kwargs) {
+    ShaderInstanceId shaderId;
+    char* name;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "is", crePyApiShaderInstanceGetParamKWList, &shaderId, &name)) {
+        ShaderInstance* shaderInstance = shader_cache_get_instance(shaderId);
+        const Vector3 paramValue = se_shader_instance_param_get_float3(shaderInstance, name);
+        return Py_BuildValue("(fff)", paramValue.x, paramValue.y, paramValue.z);
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_shader_instance_create_float4_param(PyObject* self, PyObject* args, PyObject* kwargs) {
+    ShaderInstanceId shaderId;
+    char* name;
+    float initialValueX;
+    float initialValueY;
+    float initialValueZ;
+    float initialValueW;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "isffff", crePyApiShaderInstanceCreateFloat4ParamKWList, &shaderId, &name, &initialValueX, &initialValueY, &initialValueZ, &initialValueW)) {
+        ShaderInstance* shaderInstance = shader_cache_get_instance(shaderId);
+        se_shader_instance_param_create_float4(shaderInstance, name, (Vector4) {
+            initialValueX, initialValueY, initialValueZ, initialValueW
+        });
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_shader_instance_set_float4_param(PyObject* self, PyObject* args, PyObject* kwargs) {
+    ShaderInstanceId shaderId;
+    char* name;
+    float valueX;
+    float valueY;
+    float valueZ;
+    float valueW;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "isffff", crePyApiShaderInstanceSetFloat4ParamKWList, &shaderId, &name, &valueX, &valueY, &valueZ, &valueW)) {
+        ShaderInstance* shaderInstance = shader_cache_get_instance(shaderId);
+        se_shader_instance_param_update_float4(shaderInstance, name, (Vector4) {
+            valueX, valueY, valueZ, valueW
+        });
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_shader_instance_get_float4_param(PyObject* self, PyObject* args, PyObject* kwargs) {
+    ShaderInstanceId shaderId;
+    char* name;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "is", crePyApiShaderInstanceGetParamKWList, &shaderId, &name)) {
+        ShaderInstance* shaderInstance = shader_cache_get_instance(shaderId);
+        const Vector4 paramValue = se_shader_instance_param_get_float4(shaderInstance, name);
+        return Py_BuildValue("(ffff)", paramValue.x, paramValue.y, paramValue.z, paramValue.w);
+    }
+    return NULL;
+}
+
+// Shader Util
+PyObject* cre_py_api_shader_util_compile_shader(PyObject* self, PyObject* args, PyObject* kwargs) {
+    char* vertexPath;
+    char* fragmentPath;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "ss", crePyApiShaderUtilCompileShaderKWList, &vertexPath, &fragmentPath)) {
+        const ShaderInstanceId newId = shader_cache_create_instance_and_add(vertexPath, fragmentPath);
+        SE_ASSERT_FMT(newId != SHADER_INSTANCE_INVALID_ID, "Invalid shader id reading from paths: vertex = '%s', fragment = '%s'", vertexPath, fragmentPath);
+        return Py_BuildValue("i", newId);
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_shader_util_set_screen_shader(PyObject* self, PyObject* args, PyObject* kwargs) {
+    ShaderInstanceId shaderId;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericShaderIdKWList, &shaderId)) {
+        ShaderInstance* shaderInstance = shader_cache_get_instance(shaderId);
+        if (shaderInstance != NULL) {
+            se_frame_buffer_set_screen_shader(shaderInstance);
+            Py_RETURN_TRUE;
+        }
+        Py_RETURN_FALSE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_shader_util_reset_screen_shader_to_default(PyObject* self, PyObject* args) {
+    se_frame_buffer_reset_to_default_screen_shader();
+    Py_RETURN_NONE;
 }
 
 // Input
@@ -916,6 +1201,28 @@ PyObject* cre_py_api_sprite_get_draw_source(PyObject* self, PyObject* args, PyOb
     return NULL;
 }
 
+PyObject* cre_py_api_sprite_set_shader_instance(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    ShaderInstanceId shaderInstanceId;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "ii", crePyApiGenericSetShaderInstanceKWList, &entity, &shaderInstanceId)) {
+        SpriteComponent* spriteComponent = (SpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_SPRITE);
+        spriteComponent->shaderInstanceId = shaderInstanceId;
+        ShaderInstance* shaderInstance = shader_cache_get_instance(spriteComponent->shaderInstanceId);
+        se_renderer_set_sprite_shader_default_params(shaderInstance->shader);
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_sprite_get_shader_instance(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
+        const SpriteComponent* spriteComponent = (SpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_SPRITE);
+        return Py_BuildValue("i", spriteComponent->shaderInstanceId != SHADER_INSTANCE_INVALID_ID ? spriteComponent->shaderInstanceId : -1);
+    }
+    return NULL;
+}
+
 // Animated Sprite
 PyObject* cre_py_api_animated_sprite_play(PyObject* self, PyObject* args, PyObject* kwargs) {
     Entity entity;
@@ -983,6 +1290,28 @@ PyObject* cre_py_api_animated_sprite_add_animation(PyObject* self, PyObject* arg
             animated_sprite_component_set_animation(animatedSpriteComponent, newAnim.name);
         }
         Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_animated_sprite_set_shader_instance(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    ShaderInstanceId shaderInstanceId;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "ii", crePyApiGenericSetShaderInstanceKWList, &entity, &shaderInstanceId)) {
+        AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent *) component_manager_get_component(entity, ComponentDataIndex_ANIMATED_SPRITE);
+        animatedSpriteComponent->shaderInstanceId = shaderInstanceId;
+        ShaderInstance* shaderInstance = shader_cache_get_instance(animatedSpriteComponent->shaderInstanceId);
+        se_renderer_set_sprite_shader_default_params(shaderInstance->shader);
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_animated_sprite_get_shader_instance(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
+        const AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent *) component_manager_get_component(entity, ComponentDataIndex_ANIMATED_SPRITE);
+        return Py_BuildValue("i", animatedSpriteComponent->shaderInstanceId != SHADER_INSTANCE_INVALID_ID ? animatedSpriteComponent->shaderInstanceId : -1);
     }
     return NULL;
 }

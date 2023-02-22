@@ -281,10 +281,10 @@ SceneNode* SceneManager::LoadSceneTreeJson(JsonSceneNode* node, SceneNode* paren
         sceneNode->AddComponent<Transform2DComp>((Transform2DComponent*) node->components[ComponentDataIndex_TRANSFORM_2D]);
     }
     if (node->components[ComponentDataIndex_SPRITE] != nullptr) {
-        sceneNode->AddComponent<SpriteComp>((SpriteComponent*) node->components[ComponentDataIndex_SPRITE], node->spriteTexturePath);
+        sceneNode->AddComponent<SpriteComp>((SpriteComponent*) node->components[ComponentDataIndex_SPRITE], node->spriteTexturePath, node->shaderInstanceVertexPath, node->shaderInstanceFragmentPath);
     }
     if (node->components[ComponentDataIndex_ANIMATED_SPRITE] != nullptr) {
-        sceneNode->AddComponent<AnimatedSpriteComp>((AnimatedSpriteComponentData*) node->components[ComponentDataIndex_ANIMATED_SPRITE]);
+        sceneNode->AddComponent<AnimatedSpriteComp>((AnimatedSpriteComponentData*) node->components[ComponentDataIndex_ANIMATED_SPRITE], node->shaderInstanceVertexPath, node->shaderInstanceFragmentPath);
     }
     if (node->components[ComponentDataIndex_TEXT_LABEL] != nullptr) {
         sceneNode->AddComponent<TextLabelComp>((TextLabelComponent*) node->components[ComponentDataIndex_TEXT_LABEL], node->fontUID);

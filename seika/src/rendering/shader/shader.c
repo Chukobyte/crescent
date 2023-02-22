@@ -2,8 +2,8 @@
 
 #include <stdio.h>
 
-#include "../utils/logger.h"
-#include "../memory/se_mem.h"
+#include "../../utils/logger.h"
+#include "../../memory/se_mem.h"
 
 bool shader_check_compile_errors(unsigned int shaderId, const char* type);
 

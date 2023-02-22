@@ -82,6 +82,130 @@ def curve_float_eval(curve_id: int, t: float) -> float:
     return 0.0
 
 
+def shader_instance_delete(shader_id: int) -> bool:
+    return True
+
+
+def shader_instance_create_bool_param(
+    shader_id: int, name: str, initial_value: bool
+) -> None:
+    pass
+
+
+def shader_instance_set_bool_param(shader_id: int, name: str, value: bool) -> None:
+    pass
+
+
+def shader_instance_get_bool_param(shader_id: int, name: str) -> bool:
+    return False
+
+
+def shader_instance_create_int_param(
+    shader_id: int, name: str, initial_value: int
+) -> None:
+    pass
+
+
+def shader_instance_set_int_param(shader_id: int, name: str, value: int) -> None:
+    pass
+
+
+def shader_instance_get_int_param(shader_id: int, name: str) -> int:
+    return 0
+
+
+def shader_instance_create_float_param(
+    shader_id: int, name: str, initial_value: float
+) -> None:
+    pass
+
+
+def shader_instance_set_float_param(shader_id: int, name: str, value: float) -> None:
+    pass
+
+
+def shader_instance_get_float_param(shader_id: int, name: str) -> float:
+    return 0.0
+
+
+def shader_instance_create_float2_param(
+    shader_id: int, name: str, initial_value_x: float, initial_value_y: float
+) -> None:
+    pass
+
+
+def shader_instance_set_float2_param(
+    shader_id: int, name: str, value_x: float, value_y: float
+) -> None:
+    pass
+
+
+def shader_instance_get_float2_param(shader_id: int, name: str) -> Tuple[float, float]:
+    return 0.0, 0.0
+
+
+def shader_instance_create_float3_param(
+    shader_id: int,
+    name: str,
+    initial_value_x: float,
+    initial_value_y: float,
+    initial_value_z: float,
+) -> None:
+    pass
+
+
+def shader_instance_set_float3_param(
+    shader_id: int, name: str, value_x: float, value_y: float, value_z: float
+) -> None:
+    pass
+
+
+def shader_instance_get_float3_param(
+    shader_id: int, name: str
+) -> Tuple[float, float, float]:
+    return 0.0, 0.0, 0.0
+
+
+def shader_instance_create_float4_param(
+    shader_id: int,
+    name: str,
+    initial_value_x: float,
+    initial_value_y: float,
+    initial_value_z: float,
+    initial_value_w: float,
+) -> None:
+    pass
+
+
+def shader_instance_set_float4_param(
+    shader_id: int,
+    name: str,
+    value_x: float,
+    value_y: float,
+    value_z: float,
+    value_w: float,
+) -> None:
+    pass
+
+
+def shader_instance_get_float4_param(
+    shader_id: int, name: str
+) -> Tuple[float, float, float, float]:
+    return 0.0, 0.0, 0.0, 0.0
+
+
+def shader_util_compile_shader(vertex_path: str, fragment_path: str) -> int:
+    pass
+
+
+def shader_util_set_screen_shader(shader_id: int) -> bool:
+    return True
+
+
+def shader_util_reset_screen_shader_to_default() -> None:
+    pass
+
+
 def input_add_action(name: str, value: str, device_id: int) -> None:
     pass
 
@@ -98,11 +222,11 @@ def input_is_action_just_released(name: str) -> bool:
     return False
 
 
-def mouse_get_position() -> tuple:
+def mouse_get_position() -> Tuple[float, float]:
     return 0.0, 0.0
 
 
-def mouse_get_world_position() -> tuple:
+def mouse_get_world_position() -> Tuple[float, float]:
     return 0.0, 0.0
 
 
@@ -110,7 +234,7 @@ def scene_tree_change_scene(path: str) -> None:
     pass
 
 
-def scene_tree_get_root() -> tuple:
+def scene_tree_get_root() -> Tuple[int, str]:
     return 0, "Node"
 
 
@@ -138,7 +262,7 @@ def camera2D_add_to_position(x: float, y: float) -> None:
     pass
 
 
-def camera2D_get_position() -> tuple:
+def camera2D_get_position() -> Tuple[float, float]:
     return 0.0, 0.0
 
 
@@ -150,7 +274,7 @@ def camera2D_add_to_offset(x: float, y: float) -> None:
     pass
 
 
-def camera2D_get_offset() -> tuple:
+def camera2D_get_offset() -> Tuple[float, float]:
     return 0.0, 0.0
 
 
@@ -162,7 +286,7 @@ def camera2D_add_to_zoom(x: float, y: float) -> None:
     pass
 
 
-def camera2D_get_zoom() -> tuple:
+def camera2D_get_zoom() -> Tuple[float, float]:
     return 0.0, 0.0
 
 
@@ -170,7 +294,7 @@ def camera2D_set_boundary(x: float, y: float, w: float, h: float) -> None:
     pass
 
 
-def camera2D_get_boundary() -> tuple:
+def camera2D_get_boundary() -> Tuple[float, float, float, float]:
     return -1000000.0, -1000000.0, 1000000.0, 1000000.0
 
 
@@ -199,7 +323,7 @@ def node_add_child(parent_entity_id: int, child_entity_id: int) -> None:
     pass
 
 
-def node_get_child(entity_id: int, child_name: str) -> tuple:
+def node_get_child(entity_id: int, child_name: str) -> Tuple[int, str]:
     return 2, "Node"
 
 
@@ -207,7 +331,7 @@ def node_get_children(entity_id: int) -> list:
     return [(2, "Node"), (3, "Node")]
 
 
-def node_get_parent(entity_id: int) -> tuple:
+def node_get_parent(entity_id: int) -> Tuple[int, str]:
     return 1, "Node"
 
 
@@ -249,11 +373,11 @@ def node2D_add_to_position(entity_id: int, x: float, y: float) -> None:
     pass
 
 
-def node2D_get_position(entity_id: int) -> tuple:
+def node2D_get_position(entity_id: int) -> Tuple[float, float]:
     return 0.0, 0.0
 
 
-def node2D_get_global_position(entity_id: int) -> tuple:
+def node2D_get_global_position(entity_id: int) -> Tuple[float, float]:
     return 0.0, 0.0
 
 
@@ -265,7 +389,7 @@ def node2D_add_to_scale(entity_id: int, x: float, y: float) -> None:
     pass
 
 
-def node2D_get_scale(entity_id: int) -> tuple:
+def node2D_get_scale(entity_id: int) -> Tuple[float, float]:
     return 0.0, 0.0
 
 
@@ -301,7 +425,7 @@ def sprite_set_texture(entity_id: int, file_path: str) -> None:
     pass
 
 
-def sprite_get_texture(entity_id: int) -> tuple:
+def sprite_get_texture(entity_id: int) -> Tuple[str, str, str, str, str]:
     return (
         "assets/texture.png",
         "clamp_to_border",
@@ -317,8 +441,16 @@ def sprite_set_draw_source(
     pass
 
 
-def sprite_get_draw_source(entity_id: int) -> tuple:
+def sprite_get_draw_source(entity_id: int) -> Tuple[float, float, float, float]:
     return 0.0, 0.0, 32.0, 32.0
+
+
+def sprite_get_shader_instance(entity_id: int) -> int:
+    return 0
+
+
+def sprite_set_shader_instance(entity_id: int, shader_instance_id: int) -> None:
+    pass
 
 
 def animated_sprite_play(entity_id: int, name: str) -> bool:
@@ -339,6 +471,16 @@ def animated_sprite_add_animation(
     pass
 
 
+def animated_sprite_get_shader_instance(entity_id: int) -> int:
+    return 0
+
+
+def animated_sprite_set_shader_instance(
+    entity_id: int, shader_instance_id: int
+) -> None:
+    pass
+
+
 def text_label_set_text(entity_id: int, text: str) -> None:
     pass
 
@@ -351,7 +493,7 @@ def text_label_set_color(entity_id: int, r: int, g: int, b: int, a: int) -> None
     pass
 
 
-def text_label_get_color(entity_id: int) -> tuple:
+def text_label_get_color(entity_id: int) -> Tuple[int, int, int, int]:
     return 255, 255, 255, 255
 
 
@@ -367,7 +509,7 @@ def collider2D_set_extents(entity_id: int, w: float, h: float) -> None:
     pass
 
 
-def collider2D_get_extents(entity_id: int) -> tuple:
+def collider2D_get_extents(entity_id: int) -> Tuple[float, float]:
     return 0.0, 0.0
 
 
@@ -377,7 +519,7 @@ def collider2D_set_color(
     pass
 
 
-def collider2D_get_color(entity_id: int) -> tuple:
+def collider2D_get_color(entity_id: int) -> Tuple[float, float, float, float]:
     return 0.2, 0.2, 0.2, 1.0
 
 
@@ -385,7 +527,7 @@ def color_rect_set_size(entity_id: int, w: float, h: float) -> None:
     pass
 
 
-def color_rect_get_size(entity_id: int) -> tuple:
+def color_rect_get_size(entity_id: int) -> Tuple[float, float]:
     return 32.0, 32.0
 
 
@@ -395,7 +537,7 @@ def color_rect_set_color(
     pass
 
 
-def color_rect_get_color(entity_id: int) -> tuple:
+def color_rect_get_color(entity_id: int) -> Tuple[float, float, float, float]:
     return 0.2, 0.2, 0.2, 1.0
 
 

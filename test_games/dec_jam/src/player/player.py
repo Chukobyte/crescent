@@ -128,6 +128,12 @@ class Player(Node2D):
         self.anim_sprite.add_animation(CROUCH_PUNCH_ANIM)
         self.anim_sprite.position = self._center_pos()
         self.add_child(self.anim_sprite)
+        # Example of setting shader
+        # self.anim_sprite.shader_instance = ShaderUtil.compile_shader(
+        #     vertex_path="shaders/sprite.vsh",
+        #     fragment_path="shaders/sprite.fsh",
+        # )
+
         # Camera
         Camera2D.set_boundary(boundary=LEVEL_BOUNDARY)
         Camera2D.follow_node(node=self)

@@ -19,6 +19,8 @@ SpriteComponent* sprite_component_create() {
     spriteComponent->modulate.g = 1.0f;
     spriteComponent->modulate.b = 1.0f;
     spriteComponent->modulate.a = 1.0f;
+    spriteComponent->shaderInstanceId = SHADER_INSTANCE_INVALID_ID;
+
     return spriteComponent;
 }
 

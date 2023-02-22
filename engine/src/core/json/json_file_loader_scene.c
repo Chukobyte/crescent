@@ -14,6 +14,33 @@
 #include "../ecs/component/color_rect_component.h"
 #include "../ecs/component/parallax_component.h"
 
+typedef struct ShaderInstancePaths {
+    char* vertex;
+    char* fragment;
+} ShaderInstancePaths;
+
+ShaderInstancePaths json_get_shader_instance_paths(cJSON* json, const char* key) {
+    ShaderInstancePaths shaderInstancePaths = { .vertex = NULL, .fragment = NULL };
+    cJSON* shaderInstanceJson = cJSON_GetObjectItemCaseSensitive(json, key);
+    if (shaderInstanceJson != NULL) {
+        shaderInstancePaths.vertex = json_get_string_new(shaderInstanceJson, "vertex_path");
+        shaderInstancePaths.fragment = json_get_string_new(shaderInstanceJson, "fragment_path");
+    }
+    return shaderInstancePaths;
+}
+
+void json_node_set_shader_instance_paths(JsonSceneNode* node, cJSON* componentJson, const char* key) {
+    ShaderInstancePaths shaderInstancePaths = json_get_shader_instance_paths(componentJson, key);
+    if (shaderInstancePaths.vertex != NULL && shaderInstancePaths.fragment != NULL) {
+        if (node->shaderInstanceVertexPath != NULL && node->shaderInstanceFragmentPath != NULL) {
+            SE_MEM_FREE(node->shaderInstanceVertexPath);
+            SE_MEM_FREE(node->shaderInstanceFragmentPath);
+        }
+        node->shaderInstanceVertexPath = shaderInstancePaths.vertex;
+        node->shaderInstanceFragmentPath = shaderInstancePaths.fragment;
+    }
+}
+
 //--- Scene Files ---//
 
 /*
@@ -28,6 +55,8 @@ JsonSceneNode* cre_json_create_new_node() {
     node->name = NULL;
     node->fontUID = NULL;
     node->spriteTexturePath = NULL;
+    node->shaderInstanceVertexPath = NULL;
+    node->shaderInstanceFragmentPath = NULL;
     node->externalNodeSource = NULL;
     node->fromExternalNodeSource = false;
     node->parent = NULL;
@@ -86,6 +115,14 @@ void cre_json_delete_json_scene_node(JsonSceneNode* node) {
     if (node->components[ComponentDataIndex_PARALLAX] != NULL) {
         parallax_component_delete(node->components[ComponentDataIndex_PARALLAX]);
     }
+
+    if (node->shaderInstanceVertexPath != NULL) {
+        SE_MEM_FREE(node->shaderInstanceVertexPath);
+    }
+    if (node->shaderInstanceFragmentPath != NULL) {
+        SE_MEM_FREE(node->shaderInstanceFragmentPath);
+    }
+
     // String Arrays
     SE_MEM_FREE(node->name);
     SE_MEM_FREE(node->fontUID);
@@ -134,6 +171,7 @@ void cre_json_sprite_create_or_set_default(JsonSceneNode* node, cJSON* component
         spriteComponent->flipX = json_get_bool_default(componentJson, "flip_x", DEFAULT_COMPONENT_SPRITE_FLIP_X);
         spriteComponent->flipY = json_get_bool_default(componentJson, "flip_y", DEFAULT_COMPONENT_SPRITE_FLIP_Y);
         spriteComponent->modulate = json_get_linear_color_default(componentJson, "modulate", DEFAULT_COMPONENT_SPRITE_MODULATE);
+        json_node_set_shader_instance_paths(node, componentJson, "shader_instance");
         node->components[ComponentDataIndex_SPRITE] = spriteComponent;
     } else {
         spriteComponent = node->components[ComponentDataIndex_SPRITE];
@@ -147,6 +185,7 @@ void cre_json_sprite_create_or_set_default(JsonSceneNode* node, cJSON* component
         spriteComponent->flipX = json_get_bool_default(componentJson, "flip_x", spriteComponent->flipX);
         spriteComponent->flipY = json_get_bool_default(componentJson, "flip_y", spriteComponent->flipY);
         spriteComponent->modulate = json_get_linear_color_default(componentJson, "modulate", spriteComponent->modulate);
+        json_node_set_shader_instance_paths(node, componentJson, "shader_instance");
     }
     se_logger_debug(
         "Sprite\ntexture_path: '%s'\ndraw_source = (%f, %f, %f, %f)\norigin: (%f, %f)\nflip_x: %s\nflip_y: %s\nmodulate: (%f, %f, %f, %f)",
@@ -170,6 +209,7 @@ void cre_json_animated_sprite_create_or_set_default(JsonSceneNode* node, cJSON* 
         animatedSpriteComponent->modulate = json_get_linear_color_default(componentJson, "modulate", DEFAULT_COMPONENT_ANIMATED_SPRITE_MODULATE);
         animatedSpriteComponent->flipX = json_get_bool_default(componentJson, "flip_x", DEFAULT_COMPONENT_ANIMATED_SPRITE_FLIP_X);
         animatedSpriteComponent->flipY = json_get_bool_default(componentJson, "flip_y", DEFAULT_COMPONENT_ANIMATED_SPRITE_FLIP_Y);
+        json_node_set_shader_instance_paths(node, componentJson, "shader_instance");
         // Animation (Won't look at local anims for now)
         cJSON* animationsJsonArray = cJSON_GetObjectItemCaseSensitive(componentJson, "animations");
         cJSON* animationJson = NULL;
@@ -210,6 +250,7 @@ void cre_json_animated_sprite_create_or_set_default(JsonSceneNode* node, cJSON* 
         animatedSpriteComponent->modulate = json_get_linear_color_default(componentJson, "modulate", animatedSpriteComponent->modulate);
         animatedSpriteComponent->flipX = json_get_bool_default(componentJson, "flip_x", animatedSpriteComponent->flipX);
         animatedSpriteComponent->flipY = json_get_bool_default(componentJson, "flip_y", animatedSpriteComponent->flipY);
+        json_node_set_shader_instance_paths(node, componentJson, "shader_instance");
     }
     se_logger_debug(
         "Animated Sprite\ncurrent animation name: '%s'\nis playing: %s\norigin: (%f, %f)\nmodulate: (%f, %f, %f, %f)\nflip x: %s\nflip y: %s",

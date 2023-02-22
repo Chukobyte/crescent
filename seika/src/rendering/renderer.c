@@ -3,8 +3,9 @@
 #include <stdlib.h>
 
 #include "render_context.h"
-#include "shader.h"
-#include "shader_source.h"
+#include "shader/shader.h"
+#include "shader/shader_cache.h"
+#include "shader/shader_source.h"
 #include "../data_structures/se_hash_map.h"
 #include "../data_structures/se_static_array.h"
 #include "../utils/se_assert.h"
@@ -26,6 +27,7 @@ typedef struct TextureCoordinates {
 } TextureCoordinates;
 
 TextureCoordinates renderer_get_texture_coordinates(const Texture* texture, const Rect2* drawSource, bool flipX, bool flipY);
+void renderer_set_shader_instance_params(ShaderInstance* shaderInstance);
 void renderer_print_opengl_errors();
 
 void sprite_renderer_initialize();
@@ -45,6 +47,12 @@ static Shader* fontShader = NULL;
 
 static float resolutionWidth = 800.0f;
 static float resolutionHeight = 600.0f;
+static mat4 spriteProjection = {
+    {1.0f, 0.0f, 0.0f, 0.0f},
+    {0.0f, 1.0f, 0.0f, 0.0f},
+    {0.0f, 0.0f, 1.0f, 0.0f},
+    {0.0f, 0.0f, 0.0f, 1.0f}
+};
 
 // Sprite Batching
 typedef struct SpriteBatchItem {
@@ -55,6 +63,7 @@ typedef struct SpriteBatchItem {
     bool flipX;
     bool flipY;
     TransformModel2D* globalTransform;
+    ShaderInstance* shaderInstance;
 } SpriteBatchItem;
 
 typedef struct FontBatchItem {
@@ -95,6 +104,7 @@ void se_renderer_initialize(int inWindowWidth, int inWindowHeight, int inResolut
     se_renderer_update_window_size((float) inWindowWidth, (float) inWindowHeight);
     sprite_renderer_initialize();
     font_renderer_initialize();
+    shader_cache_initialize();
 #ifdef SE_RENDER_TO_FRAMEBUFFER
     // Initialize framebuffer
     SE_ASSERT_FMT(se_frame_buffer_initialize(inWindowWidth, inWindowHeight), "Framebuffer didn't initialize!");
@@ -113,6 +123,7 @@ void se_renderer_finalize() {
     font_renderer_finalize();
     sprite_renderer_finalize();
     se_render_context_finalize();
+    shader_cache_finalize();
 #ifdef SE_RENDER_TO_FRAMEBUFFER
     se_frame_buffer_finalize();
 #endif
@@ -138,12 +149,12 @@ void update_active_render_layer_index(int zIndex) {
     }
 }
 
-void se_renderer_queue_sprite_draw_call(Texture* texture, Rect2 sourceRect, Size2D destSize, Color color, bool flipX, bool flipY, TransformModel2D* globalTransform, int zIndex) {
+void se_renderer_queue_sprite_draw_call(Texture* texture, Rect2 sourceRect, Size2D destSize, Color color, bool flipX, bool flipY, TransformModel2D* globalTransform, int zIndex, ShaderInstance* shaderInstance) {
     if (texture == NULL) {
         se_logger_error("NULL texture, not submitting draw call!");
         return;
     }
-    SpriteBatchItem item = { .texture = texture, .sourceRect = sourceRect, .destSize = destSize, .color = color, .flipX = flipX, .flipY = flipY, .globalTransform = globalTransform };
+    SpriteBatchItem item = { .texture = texture, .sourceRect = sourceRect, .destSize = destSize, .color = color, .flipX = flipX, .flipY = flipY, .globalTransform = globalTransform, .shaderInstance = shaderInstance };
     const int arrayZIndex = se_math_clamp_int(zIndex + SE_RENDER_LAYER_BATCH_MAX / 2, 0, SE_RENDER_LAYER_BATCH_MAX - 1);
     // Get texture layer index for render texture
     size_t textureLayerIndex = render_layer_items[arrayZIndex].renderTextureLayerCount;
@@ -224,8 +235,12 @@ void se_renderer_process_and_flush_batches(const Color* backgroundColor) {
     glClearColor(screenBackgroundColor.r, screenBackgroundColor.g, screenBackgroundColor.b, screenBackgroundColor.a);
     glClear(GL_COLOR_BUFFER_BIT);
     // Draw screen texture from framebuffer
-    Shader* screenShader = se_frame_buffer_get_screen_shader();
-    shader_use(screenShader);
+    ShaderInstance* screenShaderInstance = se_frame_buffer_get_screen_shader();
+    shader_use(screenShaderInstance->shader);
+
+    // Apply shader instance params
+    renderer_set_shader_instance_params(screenShaderInstance);
+
     glBindVertexArray(se_frame_buffer_get_quad_vao());
     glBindTexture(GL_TEXTURE_2D, se_frame_buffer_get_color_buffer_texture());	// use the color attachment texture as the texture of the quad plane
     glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -286,21 +301,20 @@ void sprite_renderer_initialize() {
     // compile shaders
     spriteShader = shader_compile_new_shader(OPENGL_SHADER_SOURCE_VERTEX_SPRITE, OPENGL_SHADER_SOURCE_FRAGMENT_SPRITE);
     sprite_renderer_update_resolution();
-    shader_set_int(spriteShader, "sprite", 0);
+    se_renderer_set_sprite_shader_default_params(spriteShader);
 }
 
 void sprite_renderer_finalize() {}
 
+void se_renderer_set_sprite_shader_default_params(Shader* shader) {
+    shader_use(shader);
+    shader_set_int(shader, "sprite", 0);
+    shader_set_mat4_float(shader, "projection", &spriteProjection);
+}
+
 void sprite_renderer_update_resolution() {
-    mat4 proj = {
-        {1.0f, 0.0f, 0.0f, 0.0f},
-        {0.0f, 1.0f, 0.0f, 0.0f},
-        {0.0f, 0.0f, 1.0f, 0.0f},
-        {0.0f, 0.0f, 0.0f, 1.0f}
-    };
-    glm_ortho(0.0f, resolutionWidth, resolutionHeight, 0.0f, -1.0f, 1.0f, proj);
-    shader_use(spriteShader);
-    shader_set_mat4_float(spriteShader, "projection", &proj);
+    glm_mat4_identity(spriteProjection);
+    glm_ortho(0.0f, resolutionWidth, resolutionHeight, 0.0f, -1.0f, 1.0f, spriteProjection);
 }
 
 void renderer_batching_draw_sprites(SpriteBatchItem items[], size_t spriteCount) {
@@ -318,12 +332,17 @@ void renderer_batching_draw_sprites(SpriteBatchItem items[], size_t spriteCount)
     glBindVertexArray(spriteQuadVAO);
     glBindBuffer(GL_ARRAY_BUFFER, spriteQuadVBO);
 
-    shader_use(spriteShader);
-
     Texture* texture = items[0].texture;
 
     GLfloat verts[VERTEX_BUFFER_SIZE];
     for (size_t i = 0; i < spriteCount; i++) {
+        if (items[i].shaderInstance != NULL) {
+            shader_use(items[i].shaderInstance->shader);
+            renderer_set_shader_instance_params(items[i].shaderInstance);
+        } else {
+            shader_use(spriteShader);
+        }
+
         glm_scale(items[i].globalTransform->model, (vec3) {
             items[i].destSize.w, items[i].destSize.h, 1.0f
         });
@@ -334,6 +353,11 @@ void renderer_batching_draw_sprites(SpriteBatchItem items[], size_t spriteCount)
         char modelsBuffer[12];
         sprintf(modelsBuffer, "models[%zu]", i);
         shader_set_mat4_float(spriteShader, modelsBuffer, &items[i].globalTransform->model);
+
+        // Set shader instance uniform params
+        if (items[i].shaderInstance != NULL) {
+            renderer_set_shader_instance_params(items[i].shaderInstance);
+        }
 
         // Loop over vertices
         for (int j = 0; j < NUMBER_OF_VERTICES; j++) {
@@ -465,6 +489,41 @@ TextureCoordinates renderer_get_texture_coordinates(const Texture* texture, cons
     }
     TextureCoordinates textureCoords = { sMin, sMax, tMin, tMax };
     return textureCoords;
+}
+
+void renderer_set_shader_instance_params(ShaderInstance* shaderInstance) {
+    if (shaderInstance->paramMap->size > 0) {
+        SE_STRING_HASH_MAP_FOR_EACH(shaderInstance->paramMap, iter) {
+            StringHashMapNode* node = iter.pair;
+            ShaderParam* param = (ShaderParam*) node->value;
+            switch (param->type) {
+            case ShaderParamType_BOOL: {
+                shader_set_bool(shaderInstance->shader, param->name, param->value.boolValue);
+                break;
+            }
+            case ShaderParamType_INT: {
+                shader_set_int(shaderInstance->shader, param->name, param->value.intValue);
+                break;
+            }
+            case ShaderParamType_FLOAT: {
+                shader_set_float(shaderInstance->shader, param->name, param->value.floatValue);
+                break;
+            }
+            case ShaderParamType_FLOAT2: {
+                shader_set_vec2_float(shaderInstance->shader, param->name, param->value.float2Value.x, param->value.float2Value.y);
+                break;
+            }
+            case ShaderParamType_FLOAT3: {
+                shader_set_vec3_float(shaderInstance->shader, param->name, param->value.float3Value.x, param->value.float3Value.y, param->value.float3Value.z);
+                break;
+            }
+            case ShaderParamType_FLOAT4: {
+                shader_set_vec4_float(shaderInstance->shader, param->name, param->value.float4Value.x, param->value.float4Value.y, param->value.float4Value.z, param->value.float4Value.w);
+                break;
+            }
+            }
+        }
+    }
 }
 
 void renderer_print_opengl_errors() {

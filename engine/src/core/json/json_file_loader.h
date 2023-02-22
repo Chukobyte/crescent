@@ -6,6 +6,7 @@ extern "C" {
 
 #include <stddef.h>
 
+#include "../seika/src/rendering/shader/shader_instance_minimal.h"
 #include "../seika/src/math/se_curve_float.h"
 #include "../seika/src/data_structures/se_array_list.h"
 
@@ -25,6 +26,8 @@ typedef struct JsonSceneNode {
     size_t childrenCount;
     char* spriteTexturePath;
     char* fontUID;
+    char* shaderInstanceVertexPath;
+    char* shaderInstanceFragmentPath;
 } JsonSceneNode;
 
 struct CREGameProperties* cre_json_load_config_file(const char* filePath);

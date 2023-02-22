@@ -2,8 +2,10 @@
 
 #include <string.h>
 
-#include "../seika/src/utils/logger.h"
+#include "../seika/src/rendering/shader/shader_cache.h"
+#include "../seika/src/rendering/renderer.h"
 #include "../seika/src/asset/asset_manager.h"
+#include "../seika/src/utils/logger.h"
 #include "../seika/src/utils/se_assert.h"
 #include "../seika/src/memory/se_mem.h"
 #include "../seika/src/data_structures/se_hash_map.h"
@@ -129,6 +131,19 @@ void cre_scene_manager_process_queued_deletion_entities() {
         se_hash_map_erase(entityToTreeNodeMap, &entityToDelete);
         // Remove entity from systems
         cre_ec_system_remove_entity_from_all_systems(entityToDelete);
+        // Remove shader instance if applicable
+        SpriteComponent* spriteComponent = component_manager_get_component_unsafe(entityToDelete, ComponentDataIndex_SPRITE);
+        if (spriteComponent != NULL && spriteComponent->shaderInstanceId != SHADER_INSTANCE_INVALID_ID) {
+            ShaderInstance* shaderInstance = shader_cache_get_instance(spriteComponent->shaderInstanceId);
+            shader_cache_remove_instance(spriteComponent->shaderInstanceId);
+            SE_MEM_FREE(shaderInstance);
+        }
+        AnimatedSpriteComponent* animatedSpriteComponent = component_manager_get_component_unsafe(entityToDelete, ComponentDataIndex_ANIMATED_SPRITE);
+        if (animatedSpriteComponent != NULL && animatedSpriteComponent->shaderInstanceId != SHADER_INSTANCE_INVALID_ID) {
+            ShaderInstance* shaderInstance = shader_cache_get_instance(animatedSpriteComponent->shaderInstanceId);
+            shader_cache_remove_instance(animatedSpriteComponent->shaderInstanceId);
+            SE_MEM_FREE(shaderInstance);
+        }
         // Remove all components
         component_manager_remove_all_components(entityToDelete);
         // Return entity id to pool
@@ -296,6 +311,7 @@ void cre_scene_manager_setup_scene_nodes_from_json(JsonSceneNode* jsonSceneNode)
     cre_scene_manager_setup_json_scene_node(jsonSceneNode, NULL);
 }
 
+// Recursive
 void cre_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneNode, SceneTreeNode* parent) {
     SceneTreeNode* node = cre_scene_tree_create_tree_node(cre_ec_system_create_entity_uid(), parent);
 
@@ -324,10 +340,20 @@ void cre_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneNode, Scene
         SpriteComponent* spriteComponent = sprite_component_copy((SpriteComponent*) jsonSceneNode->components[ComponentDataIndex_SPRITE]);
         spriteComponent->texture = se_asset_manager_get_texture(jsonSceneNode->spriteTexturePath);
         component_manager_set_component(node->entity, ComponentDataIndex_SPRITE, spriteComponent);
+        if (jsonSceneNode->shaderInstanceVertexPath != NULL && jsonSceneNode->shaderInstanceFragmentPath != NULL) {
+            spriteComponent->shaderInstanceId = shader_cache_create_instance_and_add(jsonSceneNode->shaderInstanceVertexPath, jsonSceneNode->shaderInstanceFragmentPath);
+            ShaderInstance* shaderInstance = shader_cache_get_instance(spriteComponent->shaderInstanceId);
+            se_renderer_set_sprite_shader_default_params(shaderInstance->shader);
+        }
     }
     if (jsonSceneNode->components[ComponentDataIndex_ANIMATED_SPRITE] != NULL) {
         AnimatedSpriteComponent* animatedSpriteComponent = animated_sprite_component_data_copy_to_animated_sprite((AnimatedSpriteComponentData*) jsonSceneNode->components[ComponentDataIndex_ANIMATED_SPRITE]);
         component_manager_set_component(node->entity, ComponentDataIndex_ANIMATED_SPRITE, animatedSpriteComponent);
+        if (jsonSceneNode->shaderInstanceVertexPath != NULL && jsonSceneNode->shaderInstanceFragmentPath != NULL) {
+            animatedSpriteComponent->shaderInstanceId = shader_cache_create_instance_and_add(jsonSceneNode->shaderInstanceVertexPath, jsonSceneNode->shaderInstanceFragmentPath);
+            ShaderInstance* shaderInstance = shader_cache_get_instance(animatedSpriteComponent->shaderInstanceId);
+            se_renderer_set_sprite_shader_default_params(shaderInstance->shader);
+        }
     }
     if (jsonSceneNode->components[ComponentDataIndex_TEXT_LABEL] != NULL) {
         TextLabelComponent* textLabelComponent = text_label_component_copy((TextLabelComponent*) jsonSceneNode->components[ComponentDataIndex_TEXT_LABEL]);

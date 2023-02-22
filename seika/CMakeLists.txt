@@ -41,8 +41,9 @@ add_library(${PROJECT_NAME} STATIC
         src/rendering/frame_buffer.c
         src/rendering/renderer.c
         src/rendering/render_context.c
-        src/rendering/shader.c
-        src/rendering/shader_instance.c
+        src/rendering/shader/shader.c
+        src/rendering/shader/shader_cache.c
+        src/rendering/shader/shader_instance.c
         src/rendering/texture.c
         src/audio/audio_manager.c
         src/audio/audio.c

@@ -2,9 +2,9 @@
 
 #include <stdbool.h>
 
-#include <glad/glad.h>
+#include "glad/glad.h"
 
-#include "../math/se_math.h"
+#include "../../math/se_math.h"
 
 static const char* SHADER_VERTEX_TYPE = "VERTEX";
 static const char* SHADER_FRAGMENT_TYPE = "FRAGMENT";
