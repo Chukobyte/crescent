@@ -122,7 +122,7 @@ bool Editor::InitializeImGui() {
     ImFontConfig icons_config;
     icons_config.MergeMode = true;
     icons_config.PixelSnapH = true;
-    io.Fonts->AddFontFromFileTTF( FONT_ICON_FILE_NAME_FAS, 16.0f, &icons_config, icons_ranges );
+    io.Fonts->AddFontFromFileTTF(FONT_ICON_FILE_NAME_FAS, 12.0f, &icons_config, icons_ranges);
 
     ImGui_ImplSDL2_InitForOpenGL(editorContext->window, editorContext->openGLContext);
     ImGui_ImplOpenGL3_Init("#version 130");

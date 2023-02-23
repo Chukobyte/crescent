@@ -121,7 +121,7 @@ void SceneNodeUtils::DisplayTreeNodeLeaf(SceneNode *sceneNode) {
     if (sceneNode->IsExternalSceneNode()) {
         ImGui::SameLine();
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() - 3.0f);
-        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 2.0f);
+        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 1.0f);
         ImGui::Text(ICON_FA_LINK);
     }
 }
