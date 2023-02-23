@@ -4,6 +4,7 @@
 #include <imgui_impl_opengl3.h>
 
 #include <implot.h>
+#include <IconsFontAwesome6.h>
 
 #include "../seika/src/rendering/renderer.h"
 
@@ -114,6 +115,14 @@ bool Editor::InitializeImGui() {
     (void)io;
     io.IniFilename = nullptr;
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+    io.Fonts->AddFontFromFileTTF("assets/fonts/verdana.ttf", 16.0f, nullptr, nullptr);
+
+    // Merge in icons from Font Awesome
+    static const ImWchar icons_ranges[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };
+    ImFontConfig icons_config;
+    icons_config.MergeMode = true;
+    icons_config.PixelSnapH = true;
+    io.Fonts->AddFontFromFileTTF( FONT_ICON_FILE_NAME_FAS, 16.0f, &icons_config, icons_ranges );
 
     ImGui_ImplSDL2_InitForOpenGL(editorContext->window, editorContext->openGLContext);
     ImGui_ImplOpenGL3_Init("#version 130");

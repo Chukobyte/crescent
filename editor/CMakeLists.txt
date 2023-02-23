@@ -105,6 +105,19 @@ endif()
 
 # Create bin and export directories to be used by the editor
 if (IS_CI_BUILD STREQUAL "false")
+    # Copy files for font awesome
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy
+            ${PROJECT_SOURCE_DIR}/../icons.yml
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/../icons.yml
+            )
+
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy
+            ${PROJECT_SOURCE_DIR}/../fa-solid-900.ttf
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/../fa-solid-900.ttf
+            )
+
     add_custom_command(TARGET ${PROJECT_NAME} PRE_BUILD
             COMMAND ${CMAKE_COMMAND} -E make_directory
             $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin
