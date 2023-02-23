@@ -13,6 +13,7 @@
 
 #include "scene_utils.h"
 #include "../world.h"
+#include "../game_properties.h"
 #include "../ecs/system/ec_system.h"
 #include "../ecs/component/sprite_component.h"
 #include "../ecs/component/animated_sprite_component.h"
@@ -359,7 +360,11 @@ void cre_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneNode, Scene
     }
     if (jsonSceneNode->components[ComponentDataIndex_TEXT_LABEL] != NULL) {
         TextLabelComponent* textLabelComponent = text_label_component_copy((TextLabelComponent*) jsonSceneNode->components[ComponentDataIndex_TEXT_LABEL]);
-        textLabelComponent->font = se_asset_manager_get_font(jsonSceneNode->fontUID);
+        if (jsonSceneNode->fontUID != NULL) {
+            textLabelComponent->font = se_asset_manager_get_font(jsonSceneNode->fontUID);
+        } else {
+            textLabelComponent->font = se_asset_manager_get_font(CRE_DEFAULT_FONT_ASSET.uid);
+        }
         component_manager_set_component(node->entity, ComponentDataIndex_TEXT_LABEL, textLabelComponent);
     }
     if (jsonSceneNode->components[ComponentDataIndex_SCRIPT] != NULL) {

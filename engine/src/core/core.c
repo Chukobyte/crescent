@@ -30,6 +30,7 @@
 #define CRE_PROJECT_CONFIG_FILE_NAME "project.ccfg"
 
 bool cre_initialize_ecs();
+bool cre_load_built_in_assets();
 bool cre_load_assets_from_configuration();
 void cre_process_game_update();
 void cre_render();
@@ -129,6 +130,7 @@ bool cre_initialize(int argv, char** args) {
 
     cre_scene_manager_initialize();
 
+    cre_load_built_in_assets();
     cre_load_assets_from_configuration();
 
     se_logger_info("Crescent Engine v%s initialized!", CRE_CORE_VERSION);
@@ -143,6 +145,13 @@ bool cre_initialize(int argv, char** args) {
 
 bool cre_initialize_ecs() {
     cre_ecs_manager_initialize();
+    return true;
+}
+
+bool cre_load_built_in_assets() {
+    // Load default font
+    se_asset_manager_load_font(CRE_DEFAULT_FONT_ASSET.file_path, CRE_DEFAULT_FONT_ASSET.uid, CRE_DEFAULT_FONT_ASSET.size);
+
     return true;
 }
 

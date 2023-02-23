@@ -1,4 +1,7 @@
 #include "asset_manager.h"
+
+#include "../engine/src/core/game_properties.h"
+
 #include "asset_browser.h"
 #include "project_properties.h"
 
@@ -30,6 +33,9 @@ void AssetManager::Initialize() {
     if (!isInitialized) {
         se_asset_manager_initialize();
         AssetBrowser* assetBrowser = AssetBrowser::Get();
+        // Load default font
+        LoadFont(CRE_DEFAULT_FONT_ASSET.file_path, CRE_DEFAULT_FONT_ASSET.uid, CRE_DEFAULT_FONT_ASSET.size);
+
         subscriberHandle = assetBrowser->RegisterRefreshCallback([this, assetBrowser](const FileNode& rootNode) {
             // Textures
             if (assetBrowser->fileCache.HasFilesWithExtension(".png")) {

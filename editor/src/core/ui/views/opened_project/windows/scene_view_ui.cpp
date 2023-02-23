@@ -1,6 +1,7 @@
 #include "scene_view_ui.h"
 
 #include "../engine/src/core/scene/scene_utils.h"
+#include "../engine/src/core/game_properties.h"
 
 #include "../../../imgui/imgui_window_renderer.h"
 #include "../../../../asset_manager.h"
@@ -120,8 +121,9 @@ ImGuiHelper::Window OpenedProjectUI::Windows::GetSceneViewWindow() {
                             cre_scene_utils_update_global_transform_model(node->GetUID(), &globalTransform);
                             static SEVector2 textLabelOrigin = { 0.0f, 0.0f };
                             cre_scene_utils_apply_camera_and_origin_translation(&globalTransform, &textLabelOrigin, transformComp->ignoreCamera);
+                            const char* renderFontUID = !textLabelComp->fontUID.empty() ? textLabelComp->fontUID.c_str() : CRE_DEFAULT_FONT_ASSET.uid;
                             const ImGuiHelper::FontRenderTarget renderTarget = {
-                                .font = assetManager->GetFont(textLabelComp->fontUID.c_str()),
+                                .font = assetManager->GetFont(renderFontUID),
                                 .text = textLabelComp->text,
                                 .position = globalTransform.position,
                                 .scale = globalTransform.scale.x,

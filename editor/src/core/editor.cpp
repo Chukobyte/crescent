@@ -40,11 +40,11 @@ bool Editor::Initialize() {
     // Initialize Python Instance
     cre_py_initialize(editorContext->GetEngineBinPath().c_str());
 
-    // Initialize Asset Manager
-    AssetManager::Get()->Initialize();
-
     // TODO: Figure out window stuff dimensions...
     se_renderer_initialize(800, 600, 800, 600);
+
+    // Initialize Asset Manager
+    AssetManager::Get()->Initialize();
 
     editorContext->isRunning = true;
     se_logger_info("Crescent Engine Editor has started!");
