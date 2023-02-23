@@ -1,5 +1,7 @@
 #include "asset_browser.h"
 
+#include <IconsFontAwesome6.h>
+
 #include "../seika/src/utils/logger.h"
 
 #include "ui/imgui/imgui_helper.h"
@@ -105,6 +107,15 @@ void FileNodeUtils::DisplayFileNodeTree(FileNode &fileNode, const bool isRoot) {
             }
         }
     };
+    float treeNodeSpace = -5.0f;
+    if (fileNode.type == FileNodeType::Directory) {
+        ImGui::Text(ICON_FA_FOLDER);
+    } else {
+        ImGui::Text(ICON_FA_FILE);
+        treeNodeSpace = -25.0f;
+    }
+    ImGui::SameLine();
+    ImGui::SetCursorPosX(ImGui::GetCursorPosX() + treeNodeSpace);
     ImGuiHelper::BeginTreeNode(treeNode);
 }
 

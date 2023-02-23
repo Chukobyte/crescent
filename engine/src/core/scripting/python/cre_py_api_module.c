@@ -1218,7 +1218,8 @@ PyObject* cre_py_api_sprite_get_shader_instance(PyObject* self, PyObject* args, 
     Entity entity;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
         const SpriteComponent* spriteComponent = (SpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_SPRITE);
-        return Py_BuildValue("i", spriteComponent->shaderInstanceId != SE_SHADER_INSTANCE_INVALID_ID ? spriteComponent->shaderInstanceId : -1);
+        const int spriteShaderInstanceId = spriteComponent->shaderInstanceId != SE_SHADER_INSTANCE_INVALID_ID ? (int)spriteComponent->shaderInstanceId : -1;
+        return Py_BuildValue("i", spriteShaderInstanceId);
     }
     return NULL;
 }
@@ -1311,7 +1312,8 @@ PyObject* cre_py_api_animated_sprite_get_shader_instance(PyObject* self, PyObjec
     Entity entity;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
         const AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent *) component_manager_get_component(entity, ComponentDataIndex_ANIMATED_SPRITE);
-        return Py_BuildValue("i", animatedSpriteComponent->shaderInstanceId != SE_SHADER_INSTANCE_INVALID_ID ? animatedSpriteComponent->shaderInstanceId : -1);
+        const int animatedSpriteShaderInstanceId = animatedSpriteComponent->shaderInstanceId != SE_SHADER_INSTANCE_INVALID_ID ? (int)animatedSpriteComponent->shaderInstanceId : -1;
+        return Py_BuildValue("i", animatedSpriteShaderInstanceId);
     }
     return NULL;
 }
