@@ -125,7 +125,9 @@ void cre_json_delete_json_scene_node(JsonSceneNode* node) {
 
     // String Arrays
     SE_MEM_FREE(node->name);
-    SE_MEM_FREE(node->fontUID);
+    if (node->fontUID) {
+        SE_MEM_FREE(node->fontUID);
+    }
     SE_MEM_FREE(node->spriteTexturePath);
 }
 
@@ -269,7 +271,7 @@ void cre_json_text_label_create_or_set_default(JsonSceneNode* node, cJSON* compo
     TextLabelComponent* textLabelComponent = NULL;
     if (node->components[ComponentDataIndex_TEXT_LABEL] == NULL) {
         textLabelComponent = text_label_component_create();
-        node->fontUID = json_get_string_new(componentJson, "uid");
+        node->fontUID = json_get_string_new_unchecked(componentJson, "uid");
         strcpy(textLabelComponent->text, json_get_string(componentJson, "text"));
         textLabelComponent->color = json_get_linear_color_default(componentJson, "color", DEFAULT_COMPONENT_TEXT_LABEL_COLOR);
         node->components[ComponentDataIndex_TEXT_LABEL] = textLabelComponent;

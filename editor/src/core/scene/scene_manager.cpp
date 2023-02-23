@@ -5,6 +5,7 @@
 #include "../seika/src/utils/se_assert.h"
 
 #include "../engine/src/core/json/json_file_loader.h"
+#include "../engine/src/core/game_properties.h"
 
 #include "../ui/imgui/imgui_helper.h"
 #include "../ui/imgui/imgui_file_browser.h"
@@ -295,7 +296,11 @@ SceneNode* SceneManager::LoadSceneTreeJson(JsonSceneNode* node, SceneNode* paren
         sceneNode->AddComponent<AnimatedSpriteComp>((AnimatedSpriteComponentData*) node->components[ComponentDataIndex_ANIMATED_SPRITE], node->shaderInstanceVertexPath, node->shaderInstanceFragmentPath);
     }
     if (node->components[ComponentDataIndex_TEXT_LABEL] != nullptr) {
-        sceneNode->AddComponent<TextLabelComp>((TextLabelComponent*) node->components[ComponentDataIndex_TEXT_LABEL], node->fontUID);
+        std::string nodeFontUID = std::string(node->fontUID);
+        if (nodeFontUID == CRE_DEFAULT_FONT_ASSET.uid) {
+            nodeFontUID.clear();
+        }
+        sceneNode->AddComponent<TextLabelComp>((TextLabelComponent*) node->components[ComponentDataIndex_TEXT_LABEL], nodeFontUID);
     }
     if (node->components[ComponentDataIndex_SCRIPT] != nullptr) {
         sceneNode->AddComponent<ScriptComp>((ScriptComponent*) node->components[ComponentDataIndex_SCRIPT]);

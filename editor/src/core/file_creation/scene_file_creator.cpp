@@ -132,7 +132,9 @@ nlohmann::ordered_json GetComponentsJsonArray(SceneNode* sceneNode) {
     if (const TextLabelComp* textLabelComp = sceneNode->GetComponentSafe<TextLabelComp>()) {
         nlohmann::ordered_json textLabelJson;
         textLabelJson["type"] = "text_label";
-        textLabelJson["uid"] = textLabelComp->fontUID;
+        if (!textLabelComp->fontUID.empty()) {
+            textLabelJson["uid"] = textLabelComp->fontUID;
+        }
         textLabelJson["text"] = textLabelComp->text;
         if (textLabelComp->color.r != 1.0f || textLabelComp->color.g != 1.0f || textLabelComp->color.b != 1.0f || textLabelComp->color.a != 1.0f) {
             textLabelJson["color"] = ColorToJson(textLabelComp->color);

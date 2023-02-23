@@ -256,8 +256,12 @@ void DrawTextLabel(SceneNode* node) {
             }
             fontUIDComboBox.onSelectionChangeCallback = [textLabelComp] (const char* newItem) {
                 textLabelComp->fontUID = newItem;
+                if (textLabelComp->fontUID == "default") {
+                    textLabelComp->fontUID.clear();
+                }
             };
-            fontUIDComboBox.SetSelected(textLabelComp->fontUID);
+            const std::string selectedFontUID = !textLabelComp->fontUID.empty() ? textLabelComp->fontUID : "default";
+            fontUIDComboBox.SetSelected(selectedFontUID);
         }
         ImGuiHelper::BeginComboBox(fontUIDComboBox);
 
