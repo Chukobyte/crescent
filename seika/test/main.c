@@ -154,7 +154,7 @@ void seika_array_utils_test(void) {
     uint32_t array[ARRAY_SIZE];
 
     for (size_t i = 0; i < arraySize; i++) {
-        array[i] = i;
+        array[i] = (uint32_t)i;
     }
 
     TEST_ASSERT_EQUAL_INT(4, array[4]);
