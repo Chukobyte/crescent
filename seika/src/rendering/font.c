@@ -17,7 +17,7 @@ SEFont* se_font_create_font(const char* fileName, int size) {
 
     // Failed to create font, exit out early
     if (!generate_new_font_face(fileName, &face)) {
-        se_logger_error("Freetype failed to load font!");
+        se_logger_error("Freetype failed to load font '%s' with size '%d'!", fileName, size);
         font->isValid = false;
         FT_Done_Face(face);
         return font;
