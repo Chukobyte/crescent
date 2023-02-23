@@ -7,8 +7,6 @@ extern "C" {
 #include <stdbool.h>
 #include <stddef.h>
 
-
-
 typedef struct CREAssetAudioSource {
     char* file_path;
 } CREAssetAudioSource;
@@ -27,7 +25,13 @@ typedef struct CREAssetFont {
     int size;
 } CREAssetFont;
 
-static CREAssetFont CRE_DEFAULT_FONT_ASSET = {
+// Only used for having a default font struct
+struct CreAssetFontDefault {
+    const char* file_path;
+    const char* uid;
+    int size;
+};
+static struct CreAssetFontDefault CRE_DEFAULT_FONT_ASSET = {
     .file_path = "assets/fonts/verdana.ttf",
     .uid = "_cre_default",
     .size = 16
