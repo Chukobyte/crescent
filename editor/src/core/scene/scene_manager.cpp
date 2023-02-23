@@ -1,5 +1,7 @@
 #include "scene_manager.h"
 
+#include <IconsFontAwesome6.h>
+
 #include "../seika/src/utils/se_assert.h"
 
 #include "../engine/src/core/json/json_file_loader.h"
@@ -17,7 +19,7 @@ void SceneNodeUtils::DisplayTreeNodeLeaf(SceneNode *sceneNode) {
     static EditorCallbacks* editorCallbacks = EditorCallbacks::Get();
     const ImGuiTreeNodeFlags currentFlags = sceneNode->children.empty() || sceneNode->IsExternalSceneNode() ? defaultFlags | ImGuiTreeNodeFlags_Leaf : defaultFlags;
     ImGuiHelper::TreeNode treeNode = {
-        .label = !sceneNode->IsExternalSceneNode() ? sceneNode->name : sceneNode->name + " (e)", // TODO: Add proper image for external scene nodes
+        .label = sceneNode->name,
         .flags = sceneManager->selectedSceneNode == sceneNode ? ImGuiTreeNodeFlags_Selected | currentFlags : currentFlags,
         .callbackFunc = [sceneNode] (ImGuiHelper::Context* context) {
             // Left Click
@@ -116,6 +118,12 @@ void SceneNodeUtils::DisplayTreeNodeLeaf(SceneNode *sceneNode) {
         }
     };
     ImGuiHelper::BeginTreeNode(treeNode);
+    if (sceneNode->IsExternalSceneNode()) {
+        ImGui::SameLine();
+        ImGui::SetCursorPosX(ImGui::GetCursorPosX() - 3.0f);
+        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 1.0f);
+        ImGui::Text(ICON_FA_LINK);
+    }
 }
 
 //--- Scene Manager ---//
