@@ -150,11 +150,15 @@ bool cre_initialize_ecs() {
 
 bool cre_load_built_in_assets() {
     // Load default font
-    char defaultFontFilePath[512];
-    strcpy(defaultFontFilePath, engineContext->internalAssetsDir);
-    strcat(defaultFontFilePath, "/");
-    strcat(defaultFontFilePath, CRE_DEFAULT_FONT_ASSET.file_path);
-    se_asset_manager_load_font(defaultFontFilePath, CRE_DEFAULT_FONT_ASSET.uid, CRE_DEFAULT_FONT_ASSET.size);
+    if (sf_asset_file_loader_get_read_mode() == SEAssetFileLoaderReadMode_DISK) {
+        char defaultFontFilePath[512];
+        strcpy(defaultFontFilePath, engineContext->internalAssetsDir);
+        strcat(defaultFontFilePath, "/");
+        strcat(defaultFontFilePath, CRE_DEFAULT_FONT_ASSET.file_path);
+        se_asset_manager_load_font(defaultFontFilePath, CRE_DEFAULT_FONT_ASSET.uid, CRE_DEFAULT_FONT_ASSET.size);
+    } else {
+        se_asset_manager_load_font(CRE_DEFAULT_FONT_ASSET.file_path, CRE_DEFAULT_FONT_ASSET.uid, CRE_DEFAULT_FONT_ASSET.size);
+    }
 
     return true;
 }
