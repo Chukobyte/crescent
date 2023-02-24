@@ -26,7 +26,7 @@
                     "animations": [
                         {
                             "name": "idle",
-                            "speed": 100,
+                            "speed": 200,
                             "loops": true,
                             "frames": [
                                 {

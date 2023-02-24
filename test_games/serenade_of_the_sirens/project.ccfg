@@ -9,7 +9,36 @@
     "colliders_visible": false,
     "assets": {
         "audio_sources": [],
-        "textures": [],
+        "textures": [
+            {
+                "file_path": "assets/images/seika/seika_idle0.png",
+                "wrap_s": "clamp_to_border",
+                "wrap_t": "clamp_to_border",
+                "filter_min": "nearest",
+                "filter_mag": "nearest"
+            },
+            {
+                "file_path": "assets/images/seika/seika_idle1.png",
+                "wrap_s": "clamp_to_border",
+                "wrap_t": "clamp_to_border",
+                "filter_min": "nearest",
+                "filter_mag": "nearest"
+            },
+            {
+                "file_path": "assets/images/seika/seika_idle2.png",
+                "wrap_s": "clamp_to_border",
+                "wrap_t": "clamp_to_border",
+                "filter_min": "nearest",
+                "filter_mag": "nearest"
+            },
+            {
+                "file_path": "assets/images/seika/seika_idle3.png",
+                "wrap_s": "clamp_to_border",
+                "wrap_t": "clamp_to_border",
+                "filter_min": "nearest",
+                "filter_mag": "nearest"
+            }
+        ],
         "fonts": []
     },
     "inputs": []

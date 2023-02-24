@@ -13,7 +13,11 @@
             "external_node_source": "scenes/characters/seika.cscn",
             "components": [
                 {
-                    "type": "transform_2d"
+                    "type": "transform_2d",
+                    "position": {
+                        "x": 100.0,
+                        "y": 100.0
+                    }
                 },
                 {
                     "type": "script",
