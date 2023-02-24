@@ -170,6 +170,12 @@ ImGuiHelper::MenuBar OpenedProjectUI::MenuBar::GetMenuBar() {
                                     static ImGuiHelper::DragInt windowHeightInt("Window Height", projectProperties->windowHeight);
                                     ImGuiHelper::BeginDragInt(windowHeightInt);
 
+                                    static ImGuiHelper::DragInt resolutionWidthInt("Resolution Width", projectProperties->resolutionWidth);
+                                    ImGuiHelper::BeginDragInt(resolutionWidthInt);
+
+                                    static ImGuiHelper::DragInt resolutionHeightInt("Resolution Height", projectProperties->resolutionHeight);
+                                    ImGuiHelper::BeginDragInt(resolutionHeightInt);
+
                                     static ImGuiHelper::DragInt targetFPSInt("Target FPS", projectProperties->targetFPS);
                                     ImGuiHelper::BeginDragInt(targetFPSInt);
 

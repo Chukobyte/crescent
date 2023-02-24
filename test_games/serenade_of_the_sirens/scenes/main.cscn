@@ -1,0 +1,10 @@
+{
+    "name": "Main",
+    "type": "Node2D",
+    "components": [
+        {
+            "type": "transform_2d"
+        }
+    ],
+    "children": []
+}
