@@ -285,15 +285,19 @@ SceneNode* SceneManager::LoadSceneTreeJson(JsonSceneNode* node, SceneNode* paren
     }
     sceneNode->doesOriginateFromExternalScene = node->fromExternalNodeSource;
 
+    // Shader Paths
+    const std::string shaderVertexPath = node->shaderInstanceVertexPath != nullptr ? std::string(node->shaderInstanceVertexPath) : "";
+    const std::string shaderFragmentPath = node->shaderInstanceFragmentPath != nullptr ? std::string(node->shaderInstanceFragmentPath) : "";
+
     // Components
     if (node->components[ComponentDataIndex_TRANSFORM_2D] != nullptr) {
         sceneNode->AddComponent<Transform2DComp>((Transform2DComponent*) node->components[ComponentDataIndex_TRANSFORM_2D]);
     }
     if (node->components[ComponentDataIndex_SPRITE] != nullptr) {
-        sceneNode->AddComponent<SpriteComp>((SpriteComponent*) node->components[ComponentDataIndex_SPRITE], node->spriteTexturePath, node->shaderInstanceVertexPath, node->shaderInstanceFragmentPath);
+        sceneNode->AddComponent<SpriteComp>((SpriteComponent*) node->components[ComponentDataIndex_SPRITE], node->spriteTexturePath, shaderVertexPath, shaderFragmentPath);
     }
     if (node->components[ComponentDataIndex_ANIMATED_SPRITE] != nullptr) {
-        sceneNode->AddComponent<AnimatedSpriteComp>((AnimatedSpriteComponentData*) node->components[ComponentDataIndex_ANIMATED_SPRITE], node->shaderInstanceVertexPath, node->shaderInstanceFragmentPath);
+        sceneNode->AddComponent<AnimatedSpriteComp>((AnimatedSpriteComponentData*) node->components[ComponentDataIndex_ANIMATED_SPRITE], shaderVertexPath, shaderFragmentPath);
     }
     if (node->components[ComponentDataIndex_TEXT_LABEL] != nullptr) {
         std::string nodeFontUID = std::string(node->fontUID);

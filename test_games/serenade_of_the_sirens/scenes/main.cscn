@@ -6,5 +6,22 @@
             "type": "transform_2d"
         }
     ],
-    "children": []
+    "children": [
+        {
+            "name": "Seika",
+            "type": "Node2D",
+            "external_node_source": "scenes/characters/seika.cscn",
+            "components": [
+                {
+                    "type": "transform_2d"
+                },
+                {
+                    "type": "script",
+                    "class_path": "src.characters.seika",
+                    "class_name": "Seika"
+                }
+            ],
+            "children": []
+        }
+    ]
 }
