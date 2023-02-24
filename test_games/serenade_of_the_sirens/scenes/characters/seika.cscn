@@ -23,10 +23,14 @@
                     "type": "animated_sprite",
                     "current_animation_name": "idle",
                     "is_playing": true,
+                    "shader_instance": {
+                        "vertex_path": "shaders/sprite.vsh",
+                        "fragment_path": "shaders/sprite.fsh"
+                    },
                     "animations": [
                         {
                             "name": "idle",
-                            "speed": 200,
+                            "speed": 1000,
                             "loops": true,
                             "frames": [
                                 {
