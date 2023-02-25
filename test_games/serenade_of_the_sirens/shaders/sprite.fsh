@@ -8,7 +8,7 @@ out vec4 color;
 
 uniform sampler2D sprite;
 
-vec2 uv_iq(vec2 uv, vec2 texture_size) {
+vec2 apply_nearest_neighbor(vec2 uv, vec2 texture_size) {
     vec2 pixel = uv * texture_size;
 
     vec2 seam = floor(pixel + 0.5);
@@ -21,6 +21,6 @@ vec2 uv_iq(vec2 uv, vec2 texture_size) {
 void main() {
     float isPixelArt = 1.0f;
     vec2 drawSource = vec2(32.0f, 32.0f);
-    vec2 uv = mix(texCoord, uv_iq(texCoord, drawSource), isPixelArt);
+    vec2 uv = mix(texCoord, apply_nearest_neighbor(texCoord, drawSource), isPixelArt);
     color = spriteColor * texture(sprite, uv);
 }
