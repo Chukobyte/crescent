@@ -18,8 +18,20 @@ vec2 uv_cstantos(vec2 uv, vec2 res) {
     return pixels / res;
 }
 
+vec2 uv_iq(vec2 uv, vec2 texture_size) {
+    vec2 pixel = uv * texture_size;
+
+    vec2 seam = floor(pixel + 0.5);
+    vec2 dudv = fwidth(pixel);
+    pixel = seam + clamp( (pixel - seam) / dudv, -0.5, 0.5);
+
+    return pixel / texture_size;
+}
+
 void main() {
-    vec2 uv = uv_cstantos(texCoord, vec2(400.0f, 225.0f));
+    vec2 res = vec2(400.0f, 225.0f);
+//     vec2 uv = uv_cstantos(texCoord, res);
+    vec2 uv = uv_iq(texCoord, res);
     color = spriteColor * texture(sprite, uv);
 //     color = spriteColor * texture(sprite, texCoord);
 }
