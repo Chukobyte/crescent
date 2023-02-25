@@ -23,5 +23,5 @@ vec2 apply_nearest_neighbor(vec2 uv, vec2 texture_size) {
 void main() {
     float brightness = 0.5f;
     vec2 uv = mix(texCoord, apply_nearest_neighbor(texCoord, spriteDrawSource), isSpritePixelArt);
-    color = spriteColor * texture(sprite, texCoord) * brightness;
+    color = spriteColor * texture(sprite, uv) * brightness;
 }
