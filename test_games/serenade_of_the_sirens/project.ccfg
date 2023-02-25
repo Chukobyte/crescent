@@ -14,29 +14,29 @@
                 "file_path": "assets/images/seika/seika_idle0.png",
                 "wrap_s": "clamp_to_border",
                 "wrap_t": "clamp_to_border",
-                "filter_min": "nearest",
-                "filter_mag": "nearest"
+                "filter_min": "linear",
+                "filter_mag": "linear"
             },
             {
                 "file_path": "assets/images/seika/seika_idle1.png",
                 "wrap_s": "clamp_to_border",
                 "wrap_t": "clamp_to_border",
-                "filter_min": "nearest",
-                "filter_mag": "nearest"
+                "filter_min": "linear",
+                "filter_mag": "linear"
             },
             {
                 "file_path": "assets/images/seika/seika_idle2.png",
                 "wrap_s": "clamp_to_border",
                 "wrap_t": "clamp_to_border",
-                "filter_min": "nearest",
-                "filter_mag": "nearest"
+                "filter_min": "linear",
+                "filter_mag": "linear"
             },
             {
                 "file_path": "assets/images/seika/seika_idle3.png",
                 "wrap_s": "clamp_to_border",
                 "wrap_t": "clamp_to_border",
-                "filter_min": "nearest",
-                "filter_mag": "nearest"
+                "filter_min": "linear",
+                "filter_mag": "linear"
             }
         ],
         "fonts": []
