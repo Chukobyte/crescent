@@ -387,8 +387,8 @@ void renderer_batching_draw_sprites(SpriteBatchItem items[], size_t spriteCount)
             verts[row + 6] = items[i].color.g;
             verts[row + 7] = items[i].color.b;
             verts[row + 8] = items[i].color.a;
-            verts[row + 9] = items[i].sourceRect.w;
-            verts[row + 10] = items[i].sourceRect.h;
+            verts[row + 9] = (float)items[i].texture->width;
+            verts[row + 10] = (float)items[i].texture->height;
             verts[row + 11] = 1.0f; // TODO: Determine if a pixel art sprite
         }
     }
