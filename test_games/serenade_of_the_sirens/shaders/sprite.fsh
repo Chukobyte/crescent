@@ -3,6 +3,8 @@
 in float spriteId;
 in vec2 texCoord;
 in vec4 spriteColor;
+in vec2 spriteDrawSource;
+in float isSpritePixelArt;
 
 out vec4 color;
 
@@ -19,8 +21,6 @@ vec2 apply_nearest_neighbor(vec2 uv, vec2 texture_size) {
 }
 
 void main() {
-    float isPixelArt = 1.0f;
-    vec2 drawSource = vec2(32.0f, 32.0f);
-    vec2 uv = mix(texCoord, apply_nearest_neighbor(texCoord, drawSource), isPixelArt);
+    vec2 uv = mix(texCoord, apply_nearest_neighbor(texCoord, spriteDrawSource), isSpritePixelArt);
     color = spriteColor * texture(sprite, uv);
 }

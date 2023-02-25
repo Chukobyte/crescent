@@ -262,16 +262,17 @@ void se_renderer_process_and_flush_batches_just_framebuffer(const SEColor* backg
 #endif
 
 // --- Sprite Renderer --- //
+#define VERTS_STRIDE 12
 void sprite_renderer_initialize() {
     GLfloat vertices[] = {
-        //id          // positions       // texture coordinates // color
-        0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
-        0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f,
-        0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f,
+        //id (1) // positions (2) // texture coordinates (2) // color (4) // draw source (2) // is pixel art (1)
+        0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
 
-        0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
-        0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
-        0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f
+        0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f
     };
 
     // Initialize render data
@@ -283,17 +284,23 @@ void sprite_renderer_initialize() {
 
     glBindVertexArray(spriteQuadVAO);
     // id attribute
-    glVertexAttribPointer(0, 1, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), (void*) NULL);
+    glVertexAttribPointer(0, 1, GL_FLOAT, GL_FALSE, VERTS_STRIDE * sizeof(GLfloat), (void*) NULL);
     glEnableVertexAttribArray(0);
     // position attribute
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), (GLvoid*)(sizeof(GLfloat)));
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, VERTS_STRIDE * sizeof(GLfloat), (GLvoid*)(sizeof(GLfloat)));
     glEnableVertexAttribArray(1);
     // texture coords attribute
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, VERTS_STRIDE * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
     glEnableVertexAttribArray(2);
     // color attribute
-    glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), (GLvoid*)(5 * sizeof(GLfloat)));
+    glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, VERTS_STRIDE * sizeof(GLfloat), (GLvoid*)(5 * sizeof(GLfloat)));
     glEnableVertexAttribArray(3);
+    // draw source size attribute
+    glVertexAttribPointer(4, 2, GL_FLOAT, GL_FALSE, VERTS_STRIDE * sizeof(GLfloat), (GLvoid*)(9 * sizeof(GLfloat)));
+    glEnableVertexAttribArray(4);
+    // is pixel art attribute
+    glVertexAttribPointer(5, 1, GL_FLOAT, GL_FALSE, VERTS_STRIDE * sizeof(GLfloat), (GLvoid*)(11 * sizeof(GLfloat)));
+    glEnableVertexAttribArray(5);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
@@ -320,9 +327,8 @@ void sprite_renderer_update_resolution() {
 
 void renderer_batching_draw_sprites(SpriteBatchItem items[], size_t spriteCount) {
 #define MAX_SPRITE_COUNT 100
-#define VERTEX_BUFFER_SIZE (54 * MAX_SPRITE_COUNT)
 #define NUMBER_OF_VERTICES 6
-#define VERTS_STRIDE 9
+#define VERTEX_BUFFER_SIZE (VERTS_STRIDE * NUMBER_OF_VERTICES * MAX_SPRITE_COUNT)
 
     if (spriteCount <= 0) {
         return;
@@ -381,6 +387,9 @@ void renderer_batching_draw_sprites(SpriteBatchItem items[], size_t spriteCount)
             verts[row + 6] = items[i].color.g;
             verts[row + 7] = items[i].color.b;
             verts[row + 8] = items[i].color.a;
+            verts[row + 9] = items[i].sourceRect.w;
+            verts[row + 10] = items[i].sourceRect.h;
+            verts[row + 11] = 1.0f; // TODO: Determine if a pixel art sprite
         }
     }
 
@@ -395,11 +404,11 @@ void renderer_batching_draw_sprites(SpriteBatchItem items[], size_t spriteCount)
     glBindVertexArray(0);
     glDepthMask(true);
 
-#undef VERTS_STRIDE
 #undef MAX_SPRITE_COUNT
 #undef NUMBER_OF_VERTICES
 #undef VERTEX_BUFFER_SIZE
 }
+#undef VERTS_STRIDE
 
 // --- Font Renderer --- //
 void font_renderer_initialize() {
