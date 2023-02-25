@@ -11,7 +11,7 @@ out vec4 spriteColor;
     
 uniform mat4 models[100];
 uniform mat4 projection;
-    
+
 void main() {
     spriteId = id;
     int spriteIntId = int(id);
