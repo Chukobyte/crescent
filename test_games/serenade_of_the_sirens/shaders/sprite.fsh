@@ -8,16 +8,6 @@ out vec4 color;
 
 uniform sampler2D sprite;
 
-vec2 uv_cstantos(vec2 uv, vec2 res) {
-    vec2 pixels = uv * res;
-    vec2 alpha = 0.7f * fwidth(pixels);
-    vec2 pixels_fract = fract(pixels);
-    vec2 pixels_diff = clamp(0.5f / alpha * pixels_fract, 0.0f, 0.5f) +
-                       clamp(0.5f / alpha * (pixels_fract - 1) + 0.5f, 0.0f, 0.5f);
-    pixels = floor(pixels) + pixels_diff;
-    return pixels / res;
-}
-
 vec2 uv_iq(vec2 uv, vec2 texture_size) {
     vec2 pixel = uv * texture_size;
 
@@ -28,26 +18,9 @@ vec2 uv_iq(vec2 uv, vec2 texture_size) {
     return pixel / texture_size;
 }
 
-vec2 uv_klems( vec2 uv, vec2 texture_size ) {
-
-    vec2 pixels = uv * texture_size + 0.5;
-
-    // tweak fractional value of the texture coordinate
-    vec2 fl = floor(pixels);
-    vec2 fr = fract(pixels);
-    vec2 aa = fwidth(pixels) * 0.75;
-
-    fr = smoothstep( vec2(0.5) - aa, vec2(0.5) + aa, fr);
-
-    return (fl + fr - 0.5) / texture_size;
-}
-
 void main() {
-//     vec2 res = vec2(400.0f, 225.0f);
-    vec2 res = vec2(32.0f, 32.0f);
-//     vec2 uv = uv_cstantos(texCoord, res);
-    vec2 uv = uv_iq(texCoord, res);
-//     vec2 uv = uv_klems(texCoord, res);
+    float isPixelArt = 1.0f;
+    vec2 drawSource = vec2(32.0f, 32.0f);
+    vec2 uv = mix(texCoord, uv_iq(texCoord, drawSource), isPixelArt);
     color = spriteColor * texture(sprite, uv);
-//     color = spriteColor * texture(sprite, texCoord);
 }
