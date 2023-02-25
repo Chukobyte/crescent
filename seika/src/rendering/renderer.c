@@ -439,7 +439,7 @@ void font_renderer_draw_text(const SEFont* font, const char* text, float x, floa
     for (size_t i = 0; i < textLength; i++) {
         SECharacter ch = font->characters[(int) *c];
         const float xPos = x + (ch.bearing.x * currentScale.x);
-        const float yPos = -y - (ch.size.y - ch.bearing.y) * currentScale.x; // Invert Y because othographic projection is flipped
+        const float yPos = -y - (ch.size.y - ch.bearing.y) * currentScale.x; // Invert Y because orthographic projection is flipped
         const float w = ch.size.x * currentScale.x;
         const float h = ch.size.y * currentScale.y;
         // Update VBO for each characters
