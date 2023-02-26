@@ -347,4 +347,4 @@ jobs:
         run: |
           python -m pip install PyGithub urllib3 Brotli
           echo "Creating or updating release draft stub"
-          python ci/create_or_update_release_draft ${{ secrets.CI_ACCESS_TOKEN }} crescent_windows.zip crescent_linux.zip crescent_linux.tar.gz crescent_macosx.zip crescent_macosx.tar.gz
+          python ci/create_or_update_release_draft.py ${{ secrets.CI_ACCESS_TOKEN }} crescent_windows.zip crescent_linux.zip crescent_linux.tar.gz crescent_macosx.zip crescent_macosx.tar.gz
