@@ -1,6 +1,8 @@
 name: macosx-clang-build
 
 on:
+  push:
+    branches: [ dev ]
   pull_request:
     branches: [ main ]
 
@@ -40,3 +42,15 @@ jobs:
           echo ""
           echo "Running crescent engine tests!"
           ./crescent_engine_test
+
+      - uses: actions/checkout@v2
+      - name: Set up keychain
+        uses: devbotsxyz/keychain-setup@v1
+        with:
+          name: codesign
+          keychain-password: ${{ secrets.MAC_KEY_PASS }}
+          certificate-and-key: ${{ secrets.MAC_CERT_AND_KEY }}
+
+      - name: Sign app
+        run: |
+          codesign -s "${{ secrets.MAC_ID }}" .
