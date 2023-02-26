@@ -125,7 +125,7 @@ TextureAsset& ProjectProperties::GetTextureAsset(const std::string &texturePath)
         }
     }
     se_logger_error("Couldn't find texture at path '%s'", texturePath.c_str());
-    static TextureAsset invalid("invalid", "invalid", "invalid", "invalid", "invalid");
+    static TextureAsset invalid("invalid", "invalid", "invalid", true);
     return invalid;
 }
 
@@ -175,8 +175,7 @@ nlohmann::ordered_json ProjectProperties::ToJson() const {
         textureJson["file_path"] = texture.file_path;
         textureJson["wrap_s"] = texture.wrap_s;
         textureJson["wrap_t"] = texture.wrap_t;
-        textureJson["filter_min"] = texture.filter_min;
-        textureJson["filter_mag"] = texture.filter_mag;
+        textureJson["nearest_neighbor"] = texture.nearestNeighbor;
         textureJsonArray.emplace_back(textureJson);
     }
     assetJson["textures"] = textureJsonArray;

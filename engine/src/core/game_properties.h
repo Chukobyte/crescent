@@ -15,8 +15,7 @@ typedef struct CREAssetTexture {
     char* file_path;
     char* wrap_s;
     char* wrap_t;
-    char* filter_min;
-    char* filter_mag;
+    bool applyNearestNeighbor;
 } CREAssetTexture;
 
 typedef struct CREAssetFont {

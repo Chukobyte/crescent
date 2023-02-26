@@ -14,71 +14,61 @@
                 "file_path": "assets/images/mockup.png",
                 "wrap_s": "repeat",
                 "wrap_t": "repeat",
-                "filter_min": "nearest",
-                "filter_mag": "nearest"
+                "nearest_neighbor": true
             },
             {
                 "file_path": "assets/images/player/snowman_crouch_idle.png",
                 "wrap_s": "clamp_to_border",
                 "wrap_t": "clamp_to_border",
-                "filter_min": "nearest",
-                "filter_mag": "nearest"
+                "nearest_neighbor": true
             },
             {
                 "file_path": "assets/images/player/snowman_crouch_punch.png",
                 "wrap_s": "clamp_to_border",
                 "wrap_t": "clamp_to_border",
-                "filter_min": "nearest",
-                "filter_mag": "nearest"
+                "nearest_neighbor": true
             },
             {
                 "file_path": "assets/images/player/snowman_crouch_snowball.png",
                 "wrap_s": "clamp_to_border",
                 "wrap_t": "clamp_to_border",
-                "filter_min": "nearest",
-                "filter_mag": "nearest"
+                "nearest_neighbor": true
             },
             {
                 "file_path": "assets/images/player/snowman_crouch_transition.png",
                 "wrap_s": "clamp_to_border",
                 "wrap_t": "clamp_to_border",
-                "filter_min": "nearest",
-                "filter_mag": "nearest"
+                "nearest_neighbor": true
             },
             {
                 "file_path": "assets/images/player/snowman_hurt.png",
                 "wrap_s": "clamp_to_border",
                 "wrap_t": "clamp_to_border",
-                "filter_min": "nearest",
-                "filter_mag": "nearest"
+                "nearest_neighbor": true
             },
             {
                 "file_path": "assets/images/player/snowman_stand_idle.png",
                 "wrap_s": "clamp_to_border",
                 "wrap_t": "clamp_to_border",
-                "filter_min": "nearest",
-                "filter_mag": "nearest"
+                "nearest_neighbor": true
             },
             {
                 "file_path": "assets/images/player/snowman_stand_punch.png",
                 "wrap_s": "clamp_to_border",
                 "wrap_t": "clamp_to_border",
-                "filter_min": "nearest",
-                "filter_mag": "nearest"
+                "nearest_neighbor": true
             },
             {
                 "file_path": "assets/images/player/snowman_stand_snowball.png",
                 "wrap_s": "clamp_to_border",
                 "wrap_t": "clamp_to_border",
-                "filter_min": "nearest",
-                "filter_mag": "nearest"
+                "nearest_neighbor": true
             },
             {
                 "file_path": "assets/images/player/snowman_walk_jump.png",
                 "wrap_s": "clamp_to_border",
                 "wrap_t": "clamp_to_border",
-                "filter_min": "nearest",
-                "filter_mag": "nearest"
+                "nearest_neighbor": true
             }
         ],
         "fonts": [

@@ -36,15 +36,14 @@ SETexture* se_asset_manager_load_texture(const char* fileName, const char* key) 
     return texture;
 }
 
-SETexture* se_asset_manager_load_texture_ex(const char* fileName, const char* key, const char* wrap_s, const char* wrap_t, const char* filter_min, const char* filter_mag) {
+SETexture* se_asset_manager_load_texture_ex(const char* fileName, const char* key, const char* wrap_s, const char* wrap_t, bool applyNearestNeighbor) {
     SE_ASSERT(texturesMap != NULL);
     SE_ASSERT_FMT(!se_string_hash_map_has(texturesMap, fileName), "Already loaded texture at file path '%'s!  Has key '%s'.", fileName, key);
     SETexture* texture = se_texture_create_texture_ex(
                              fileName,
                              se_texture_wrap_string_to_int(wrap_s),
                              se_texture_wrap_string_to_int(wrap_t),
-                             se_texture_filter_string_to_int(filter_min),
-                             se_texture_filter_string_to_int(filter_mag)
+                             applyNearestNeighbor
                          );
     se_string_hash_map_add(texturesMap, key, texture, sizeof(SETexture));
     SE_MEM_FREE(texture);

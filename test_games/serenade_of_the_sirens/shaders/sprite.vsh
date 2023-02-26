@@ -10,7 +10,7 @@ out float spriteId;
 out vec2 texCoord;
 out vec4 spriteColor;
 out float spriteApplyNearestNeighbor;
-
+    
 uniform mat4 models[100];
 uniform mat4 projection;
 

@@ -1,0 +1,84 @@
+{
+    "name": "Seika",
+    "type": "Node2D",
+    "components": [
+        {
+            "type": "transform_2d"
+        },
+        {
+            "type": "script",
+            "class_path": "src.characters.seika",
+            "class_name": "Seika"
+        }
+    ],
+    "children": [
+        {
+            "name": "AnimatedSprite",
+            "type": "AnimatedSprite",
+            "components": [
+                {
+                    "type": "transform_2d"
+                },
+                {
+                    "type": "animated_sprite",
+                    "current_animation_name": "idle",
+                    "is_playing": true,
+                    "shader_instance": {
+                        "vertex_path": "shaders/sprite.vsh",
+                        "fragment_path": "shaders/sprite.fsh"
+                    },
+                    "animations": [
+                        {
+                            "name": "idle",
+                            "speed": 1000,
+                            "loops": true,
+                            "frames": [
+                                {
+                                    "frame": 0,
+                                    "texture_path": "assets/images/seika/seika_idle0.png",
+                                    "draw_source": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "w": 32.0,
+                                        "h": 32.0
+                                    }
+                                },
+                                {
+                                    "frame": 1,
+                                    "texture_path": "assets/images/seika/seika_idle1.png",
+                                    "draw_source": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "w": 32.0,
+                                        "h": 32.0
+                                    }
+                                },
+                                {
+                                    "frame": 2,
+                                    "texture_path": "assets/images/seika/seika_idle2.png",
+                                    "draw_source": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "w": 32.0,
+                                        "h": 32.0
+                                    }
+                                },
+                                {
+                                    "frame": 3,
+                                    "texture_path": "assets/images/seika/seika_idle3.png",
+                                    "draw_source": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "w": 32.0,
+                                        "h": 32.0
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "children": []
+        }
+    ]
+}

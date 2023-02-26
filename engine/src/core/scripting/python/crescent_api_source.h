@@ -492,20 +492,18 @@
 "        file_path: str,\n"\
 "        wrap_s=\"clamp_to_border\",\n"\
 "        wrap_t=\"clamp_to_border\",\n"\
-"        filter_min=\"nearest\",\n"\
-"        filter_mag=\"nearest\",\n"\
+"        nearest_neighbor=True,\n"\
 "    ):\n"\
 "        self.file_path = file_path\n"\
 "        self.wrap_s = wrap_s\n"\
 "        self.wrap_t = wrap_t\n"\
-"        self.filter_min = filter_min\n"\
-"        self.filter_mag = filter_mag\n"\
+"        self.nearest_neighbor = nearest_neighbor\n"\
 "\n"\
 "    def __str__(self):\n"\
-"        return f\"Texture(file_path: {self.file_path}, wrap_s: {self.wrap_s}, wrap_s: {self.wrap_t}, filter_min: {self.filter_min}, filter_mag: {self.filter_mag})\"\n"\
+"        return f\"Texture(file_path: {self.file_path}, wrap_s: {self.wrap_s}, wrap_s: {self.wrap_t}, nearest_neighbor: {self.nearest_neighbor})\"\n"\
 "\n"\
 "    def __repr__(self):\n"\
-"        return f\"Texture(file_path: {self.file_path}, wrap_s: {self.wrap_s}, wrap_s: {self.wrap_t}, filter_min: {self.filter_min}, filter_mag: {self.filter_mag})\"\n"\
+"        return f\"Texture(file_path: {self.file_path}, wrap_s: {self.wrap_s}, wrap_s: {self.wrap_t}, nearest_neighbor: {self.nearest_neighbor})\"\n"\
 "\n"\
 "\n"\
 "class Font:\n"\
@@ -1159,15 +1157,13 @@
 "            file_path,\n"\
 "            wrap_s,\n"\
 "            wrap_t,\n"\
-"            filter_min,\n"\
-"            filter_mag,\n"\
+"            nearest_neighbor,\n"\
 "        ) = crescent_api_internal.sprite_get_texture(entity_id=self.entity_id)\n"\
 "        return Texture(\n"\
 "            file_path=file_path,\n"\
 "            wrap_s=wrap_s,\n"\
 "            wrap_t=wrap_t,\n"\
-"            filter_min=filter_min,\n"\
-"            filter_mag=filter_mag,\n"\
+"            nearest_neighbor=nearest_neighbor,\n"\
 "        )\n"\
 "\n"\
 "    @texture.setter\n"\

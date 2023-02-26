@@ -38,10 +38,8 @@ void cre_json_configure_assets(cJSON* configJson, CREGameProperties* properties)
         se_logger_debug("Texture Wrap S: '%s'", properties->textures[properties->textureCount].wrap_s);
         properties->textures[properties->textureCount].wrap_t = json_get_string_default_new(textureJson, "wrap_t", "clamp_to_border");
         se_logger_debug("Texture Wrap T: '%s'", properties->textures[properties->textureCount].wrap_t);
-        properties->textures[properties->textureCount].filter_min = json_get_string_default_new(textureJson, "filter_min", "nearest");
-        se_logger_debug("Texture Filter Min: '%s'", properties->textures[properties->textureCount].filter_min);
-        properties->textures[properties->textureCount].filter_mag = json_get_string_default_new(textureJson, "filter_mag", "nearest");
-        se_logger_debug("Texture Filter Mag: '%s'", properties->textures[properties->textureCount].filter_mag);
+        properties->textures[properties->textureCount].applyNearestNeighbor = json_get_bool_default(textureJson, "nearest_neighbor", true);
+        se_logger_debug("Texture Nearest Neighbor: '%s'", se_bool_to_string(properties->textures[properties->textureCount].applyNearestNeighbor));
         properties->textureCount++;
     }
     // Fonts

@@ -7,6 +7,7 @@
 
 #include "../asset/asset_file_loader.h"
 #include "../memory/se_mem.h"
+#include "../utils/se_string_util.h"
 #include "../utils/se_assert.h"
 
 static const struct SETexture DEFAULT_TEXTURE_REF = {
@@ -19,38 +20,30 @@ static const struct SETexture DEFAULT_TEXTURE_REF = {
     .imageFormat = GL_RGBA,
     .wrapS = GL_CLAMP_TO_BORDER,
     .wrapT = GL_CLAMP_TO_BORDER,
-    .filterMin = GL_NEAREST,
-    .filterMag = GL_NEAREST
+    .applyNearestNeighbor = true,
+    .fileName = NULL
 };
 
 bool se_texture_is_texture_valid(SETexture* texture);
 
 SETexture* se_texture_create_default_texture() {
     SETexture* texture = SE_MEM_ALLOCATE(SETexture);
-    texture->fileName = NULL;
-    texture->data = NULL;
-    texture->internalFormat = DEFAULT_TEXTURE_REF.internalFormat;
-    texture->imageFormat = DEFAULT_TEXTURE_REF.imageFormat;
-    texture->wrapS = DEFAULT_TEXTURE_REF.wrapS;
-    texture->wrapT = DEFAULT_TEXTURE_REF.wrapT;
-    texture->filterMin = DEFAULT_TEXTURE_REF.filterMin;
-    texture->filterMag = DEFAULT_TEXTURE_REF.filterMag;
+    memcpy(texture, &DEFAULT_TEXTURE_REF, sizeof(SETexture));
     return texture;
 }
 
 void se_texture_generate(SETexture* texture);
 
 SETexture* se_texture_create_texture(const char* filePath) {
-    return se_texture_create_texture_ex(filePath, DEFAULT_TEXTURE_REF.wrapS, DEFAULT_TEXTURE_REF.wrapT, DEFAULT_TEXTURE_REF.filterMin, DEFAULT_TEXTURE_REF.filterMag);
+    return se_texture_create_texture_ex(filePath, DEFAULT_TEXTURE_REF.wrapS, DEFAULT_TEXTURE_REF.wrapT, DEFAULT_TEXTURE_REF.applyNearestNeighbor);
 }
 
-SETexture* se_texture_create_texture_ex(const char* filePath, GLint wrapS, GLint wrapT, GLint filterMin, GLint filterMag) {
+SETexture* se_texture_create_texture_ex(const char* filePath, GLint wrapS, GLint wrapT, bool applyNearestNeighbor) {
     SETexture* texture = se_texture_create_default_texture();
-    texture->fileName = filePath;
+    texture->fileName = se_strdup(filePath);
     texture->wrapS = wrapS;
     texture->wrapT = wrapT;
-    texture->filterMin = filterMin;
-    texture->filterMag = filterMag;
+    texture->applyNearestNeighbor = applyNearestNeighbor;
     // Load image data
     SEAssetFileImageData* fileImageData = sf_asset_file_loader_load_image_data(filePath);
     SE_ASSERT_FMT(fileImageData != NULL, "Failed to load texture image at file path '%s'", filePath);
@@ -104,8 +97,9 @@ void se_texture_generate(SETexture* texture) {
     // Wrap and filter modes
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, texture->wrapS);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, texture->wrapT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texture->filterMin);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, texture->filterMag);
+    // Defaults to bilinear interpolation
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     // Unbind texture
     glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -114,6 +108,11 @@ void se_texture_generate(SETexture* texture) {
 
 bool se_texture_is_texture_valid(SETexture* texture) {
     return texture != NULL;
+}
+
+void se_texture_delete(SETexture* texture) {
+    SE_MEM_FREE(texture->fileName);
+    SE_MEM_FREE(texture);
 }
 
 GLint se_texture_wrap_string_to_int(const char* wrap) {
@@ -125,11 +124,10 @@ GLint se_texture_wrap_string_to_int(const char* wrap) {
     return GL_CLAMP_TO_BORDER;
 }
 
-GLint se_texture_filter_string_to_int(const char* filter) {
-    if (strcmp(filter, "nearest") == 0) {
-        return GL_NEAREST;
-    } else if (strcmp(filter, "linear") == 0) {
-        return GL_LINEAR;
-    }
-    return GL_NEAREST;
+const char* se_texture_get_wrap_s_string(SETexture* texture) {
+    return texture->wrapS == GL_REPEAT ? "repeat" : "clamp_to_border";
+}
+
+const char* se_texture_get_wrap_t_string(SETexture* texture) {
+    return texture->wrapT == GL_REPEAT ? "repeat" : "clamp_to_border";
 }

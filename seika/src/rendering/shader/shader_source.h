@@ -2,14 +2,17 @@
 
 static const char* SE_OPENGL_SHADER_SOURCE_VERTEX_SPRITE =
     "#version 330 core\n"
+    "\n"
     "layout (location = 0) in float id;\n"
     "layout (location = 1) in vec2 position;\n"
     "layout (location = 2) in vec2 textureCoordinates;\n"
     "layout (location = 3) in vec4 textureColor;\n"
+    "layout (location = 4) in float applyNearestNeighbor;\n"
     "\n"
     "out float spriteId;\n"
     "out vec2 texCoord;\n"
     "out vec4 spriteColor;\n"
+    "out float spriteApplyNearestNeighbor;\n"
     "\n"
     "uniform mat4 models[100];\n"
     "uniform mat4 projection;\n"
@@ -19,6 +22,7 @@ static const char* SE_OPENGL_SHADER_SOURCE_VERTEX_SPRITE =
     "    int spriteIntId = int(id);\n"
     "    texCoord = textureCoordinates;\n"
     "    spriteColor = textureColor;\n"
+    "    spriteApplyNearestNeighbor = applyNearestNeighbor;\n"
     "    gl_Position = projection * models[spriteIntId] * vec4(position, 0.0f, 1.0f);\n"
     "}\n";
 
@@ -28,12 +32,23 @@ static const char* SE_OPENGL_SHADER_SOURCE_FRAGMENT_SPRITE =
     "in float spriteId;\n"
     "in vec2 texCoord;\n"
     "in vec4 spriteColor;\n"
+    "in float spriteApplyNearestNeighbor;\n"
     "out vec4 color;\n"
     "\n"
     "uniform sampler2D sprite;\n"
     "\n"
+    "vec2 apply_nearest_neighbor(vec2 uv, vec2 texture_size) {\n"
+    "    vec2 pixel = uv * texture_size;\n"
+    "    vec2 seam = floor(pixel + 0.5);\n"
+    "    vec2 dudv = fwidth(pixel);\n"
+    "    pixel = seam + clamp( (pixel - seam) / dudv, -0.5, 0.5);\n"
+    "    return pixel / texture_size;\n"
+    "}\n"
+    "\n"
     "void main() {\n"
-    "    color = spriteColor * texture(sprite, texCoord);\n"
+    "    vec2 spriteTextureSize = textureSize(sprite, 0);\n"
+    "    vec2 uv = mix(texCoord, apply_nearest_neighbor(texCoord, spriteTextureSize), spriteApplyNearestNeighbor);\n"
+    "    color = spriteColor * texture(sprite, uv);\n"
     "}\n";
 
 static const char* SE_OPENGL_SHADER_SOURCE_VERTEX_FONT =

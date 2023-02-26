@@ -230,6 +230,9 @@ void DrawAnimatedSprite(SceneNode* node) {
             });
         });
 
+        ImGuiHelper::BeginAssetBrowserComboBox(vertexShaderPathComboBox);
+        ImGuiHelper::BeginAssetBrowserComboBox(fragmentShaderPathComboBox);
+
         ImGui::Separator();
     }
 }
