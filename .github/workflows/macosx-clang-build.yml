@@ -22,7 +22,7 @@ jobs:
           echo "${{ secrets.MAC_CERT_KEY }}" >> cert.txt
           base64 -D -i cert.txt -o cert.cer
           security create-keychain -p '${{ secrets.MAC_KEYCHAIN_PASS }}' build.keychain
-          security import cert.cer -k build.keychain -P '${{ secrets.MAC_KEY_PASS }}'
+          security import cert.cer -k build.keychain -P '${{ secrets.MAC_KEYCHAIN_PASS }}'
           security unlock-keychain -p '${{ secrets.MAC_KEYCHAIN_PASS }}' build.keychain
           codesign --deep -s "${{ secrets.MAC_SIGNING_ID }}" --keychain build.keychain .
 
