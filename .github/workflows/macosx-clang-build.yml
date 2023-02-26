@@ -43,14 +43,8 @@ jobs:
           echo "Running crescent engine tests!"
           ./crescent_engine_test
 
-      - uses: actions/checkout@v2
-      - name: Set up keychain
-        uses: devbotsxyz/keychain-setup@v1
-        with:
-          name: codesign
-          keychain-password: ${{ secrets.MAC_KEY_PASS }}
-          certificate-and-key: ${{ secrets.MAC_CERT_AND_KEY }}
-
       - name: Sign app
         run: |
+          echo "${{ secrets.MAC_CERT_AND_KEY }}" >> cert.p12
+          security import cert.p12 -k login.keychain -P '${{ secrets.MAC_KEY_PASS }}'
           codesign -s "${{ secrets.MAC_ID }}" .
