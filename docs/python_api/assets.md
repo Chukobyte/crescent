@@ -64,16 +64,10 @@ wrap_t: str
 The wrap t of the texture.  Defaults to `clamp_to_border`.
 
 ```python
-filter_min: str
+nearest_neighbor: bool
 ```
 
-The filter min of the texture.  Defaults to `nearest`.
-
-```python
-filter_mag: str
-```
-
-The filter mag of the texture.  Defaults to `nearest`.
+Determines if nearest neighbor is applied to the texture.  Useful for pixel art.
 
 ## Methods
 

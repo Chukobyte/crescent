@@ -18,50 +18,43 @@
                 "file_path": "assets/images/characters/mor/mor_idle_sheet.png",
                 "wrap_s": "clamp_to_border",
                 "wrap_t": "clamp_to_border",
-                "filter_min": "nearest",
-                "filter_mag": "nearest"
+                "nearest_neighbor": true
             },
             {
                 "file_path": "assets/images/characters/mor/mor_crouch_idle_sheet.png",
                 "wrap_s": "clamp_to_border",
                 "wrap_t": "clamp_to_border",
-                "filter_min": "nearest",
-                "filter_mag": "nearest"
+                "nearest_neighbor": true
             },
             {
                 "file_path": "assets/images/characters/mor/mor_jump_up_sheet.png",
                 "wrap_s": "clamp_to_border",
                 "wrap_t": "clamp_to_border",
-                "filter_min": "nearest",
-                "filter_mag": "nearest"
+                "nearest_neighbor": true
             },
             {
                 "file_path": "assets/images/characters/mor/mor_still.png",
                 "wrap_s": "clamp_to_border",
                 "wrap_t": "clamp_to_border",
-                "filter_min": "nearest",
-                "filter_mag": "nearest"
+                "nearest_neighbor": true
             },
             {
                 "file_path": "assets/images/characters/mor/mor_walk_forward_sheet.png",
                 "wrap_s": "clamp_to_border",
                 "wrap_t": "clamp_to_border",
-                "filter_min": "nearest",
-                "filter_mag": "nearest"
+                "nearest_neighbor": true
             },
             {
                 "file_path": "assets/images/characters/mor/mor_walk_backward_sheet.png",
                 "wrap_s": "clamp_to_border",
                 "wrap_t": "clamp_to_border",
-                "filter_min": "nearest",
-                "filter_mag": "nearest"
+                "nearest_neighbor": true
             },
             {
                 "file_path": "assets/images/characters/mor/mor_standing_block.png",
                 "wrap_s": "clamp_to_border",
                 "wrap_t": "clamp_to_border",
-                "filter_min": "nearest",
-                "filter_mag": "nearest"
+                "nearest_neighbor": true
             }
         ],
         "fonts": [

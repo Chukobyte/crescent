@@ -25,15 +25,8 @@ ImGuiHelper::Window OpenedProjectUI::Windows::GetAssetImportWindow() {
                         selectedWrapT = newItem;
                     });
 
-                    static std::string selectedFilterMin = "nearest";
-                    static ImGuiHelper::ComboBox filterMinComboBox("Filter Min", { "nearest", "linear" }, [](const char* newItem) {
-                        selectedFilterMin = newItem;
-                    });
-
-                    static std::string selectedFilterMag = "nearest";
-                    static ImGuiHelper::ComboBox filterMagComboBox("Filter Mag", { "nearest", "linear" }, [](const char* newItem) {
-                        selectedFilterMag = newItem;
-                    });
+                    static bool selectedNearestNeighbor = true;
+                    static ImGuiHelper::CheckBox nearestNeighborCheckBox("Nearest Neighbor", selectedNearestNeighbor);
 
                     // TODO: Use something else other than index since things can be thrown off if a file is added, deleted, renamed/replaced
                     if (selectedIndex != assetBrowser->selectedFileNode->index) {
@@ -42,19 +35,17 @@ ImGuiHelper::Window OpenedProjectUI::Windows::GetAssetImportWindow() {
                         auto& textureAsset = properties->GetTextureAsset(selectedFileNode.GetRelativePath());
                         wrapSComboBox.SetSelected(textureAsset.wrap_s);
                         wrapTComboBox.SetSelected(textureAsset.wrap_t);
-                        filterMinComboBox.SetSelected(textureAsset.filter_min);
-                        filterMagComboBox.SetSelected(textureAsset.filter_mag);
+                        selectedNearestNeighbor = textureAsset.nearestNeighbor;
                     }
 
                     ImGuiHelper::BeginComboBox(wrapSComboBox);
                     ImGuiHelper::BeginComboBox(wrapTComboBox);
-                    ImGuiHelper::BeginComboBox(filterMinComboBox);
-                    ImGuiHelper::BeginComboBox(filterMagComboBox);
+                    ImGuiHelper::BeginCheckBox(nearestNeighborCheckBox);
 
                     ImGui::Separator();
                     if (ImGui::Button("Reimport")) {
                         ProjectProperties* projectProperties = ProjectProperties::Get();
-                        const TextureAsset updatedTextureAsset = TextureAsset(selectedFileNode.GetRelativePath(), selectedWrapS, selectedWrapT, selectedFilterMin, selectedFilterMag);
+                        const TextureAsset updatedTextureAsset = TextureAsset(selectedFileNode.GetRelativePath(), selectedWrapS, selectedWrapT, selectedNearestNeighbor);
                         projectProperties->UpdateTextureAsset(updatedTextureAsset);
                         ConfigFileCreator::GenerateConfigFile(ProjectProperties::Get());
                     }

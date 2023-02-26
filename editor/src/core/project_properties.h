@@ -14,25 +14,21 @@ struct TextureAsset {
         : file_path(JsonHelper::Get<std::string>(texture, "file_path")),
           wrap_s(JsonHelper::Get<std::string>(texture, "wrap_s")),
           wrap_t(JsonHelper::Get<std::string>(texture, "wrap_t")),
-          filter_min(JsonHelper::Get<std::string>(texture, "filter_min")),
-          filter_mag(JsonHelper::Get<std::string>(texture, "filter_mag")) {}
+          nearestNeighbor(JsonHelper::GetDefault<bool>(texture, "nearest_neighbor", true)) {}
 
     TextureAsset(std::string filePath,
                  std::string wrapS = "clamp_to_border",
                  std::string wrapT = "clamp_to_border",
-                 std::string filterMin = "nearest",
-                 std::string filterMag = "nearest")
+                 bool nearestNeighbor = true)
         : file_path(std::move(filePath)),
           wrap_s(std::move(wrapS)),
           wrap_t(std::move(wrapT)),
-          filter_min(std::move(filterMin)),
-          filter_mag(std::move(filterMag)) {}
+          nearestNeighbor(nearestNeighbor) {}
 
     std::string file_path;
     std::string wrap_s;
     std::string wrap_t;
-    std::string filter_min;
-    std::string filter_mag;
+    bool nearestNeighbor = true;
 };
 
 struct AudioSourceAsset {
