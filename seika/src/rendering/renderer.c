@@ -262,7 +262,7 @@ void se_renderer_process_and_flush_batches_just_framebuffer(const SEColor* backg
 #endif
 
 // --- Sprite Renderer --- //
-#define VERTS_STRIDE 12
+#define VERTS_STRIDE 10
 void sprite_renderer_initialize() {
     GLfloat vertices[] = {
         //id (1) // positions (2) // texture coordinates (2) // color (4) // draw source (2) // is pixel art (1)
@@ -295,12 +295,9 @@ void sprite_renderer_initialize() {
     // color attribute
     glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, VERTS_STRIDE * sizeof(GLfloat), (GLvoid*)(5 * sizeof(GLfloat)));
     glEnableVertexAttribArray(3);
-    // draw source size attribute
-    glVertexAttribPointer(4, 2, GL_FLOAT, GL_FALSE, VERTS_STRIDE * sizeof(GLfloat), (GLvoid*)(9 * sizeof(GLfloat)));
-    glEnableVertexAttribArray(4);
     // is pixel art attribute
-    glVertexAttribPointer(5, 1, GL_FLOAT, GL_FALSE, VERTS_STRIDE * sizeof(GLfloat), (GLvoid*)(11 * sizeof(GLfloat)));
-    glEnableVertexAttribArray(5);
+    glVertexAttribPointer(4, 1, GL_FLOAT, GL_FALSE, VERTS_STRIDE * sizeof(GLfloat), (GLvoid*)(9 * sizeof(GLfloat)));
+    glEnableVertexAttribArray(4);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
@@ -387,9 +384,7 @@ void renderer_batching_draw_sprites(SpriteBatchItem items[], size_t spriteCount)
             verts[row + 6] = items[i].color.g;
             verts[row + 7] = items[i].color.b;
             verts[row + 8] = items[i].color.a;
-            verts[row + 9] = (float)items[i].texture->width;
-            verts[row + 10] = (float)items[i].texture->height;
-            verts[row + 11] = 1.0f; // TODO: Determine if a pixel art sprite
+            verts[row + 9] = 1.0f; // TODO: Determine if a pixel art sprite
         }
     }
 
