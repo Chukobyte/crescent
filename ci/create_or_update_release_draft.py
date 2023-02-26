@@ -20,6 +20,9 @@ class GithubRepoInstance:
             pass
         return None
 
+    def does_full_release_exist(self, release_name: str) -> bool:
+        return self.get_release(release_name) is not None
+
     def get_release_draft(self, release_name: str):
         for release in self.repo.get_releases():
             if release_name == release.title and release.draft:
@@ -35,6 +38,10 @@ def create_release_draft_stub(token: str, files_to_upload: list):
         json_data = json.load(f)
         release_version = json_data["version"]
         tag_name = f"v{release_version}"
+
+    if repo_instance.does_full_release_exist(release_name=tag_name):
+        print("Release already exists, skipping!  Consider incrementing the version number in vcpkg.json!")
+        return None
 
     current_release = repo_instance.get_release_draft(tag_name)
     if not current_release:
