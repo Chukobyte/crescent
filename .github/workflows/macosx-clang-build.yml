@@ -24,7 +24,7 @@ jobs:
           base64 -D -i cert.txt -o cert.cer
           base64 -D -i pkey.txt -o pkey.p12
           security create-keychain -p '${{ secrets.MAC_KEYCHAIN_PASS }}' build.keychain
-          security add-trusted-cert -d -r trustRoot -k build.keychain -P '${{ secrets.MAC_KEYCHAIN_PASS }}' cert.cer
+          security add-trusted-cert -d -r trustRoot -k build.keychain cert.cer
           security import pkey.p12 -k build.keychain -P '${{ secrets.MAC_KEYCHAIN_PASS }}'
           security unlock-keychain -p '${{ secrets.MAC_KEYCHAIN_PASS }}' build.keychain
           security find-identity -p codesigning -v
