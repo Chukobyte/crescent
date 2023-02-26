@@ -425,13 +425,12 @@ def sprite_set_texture(entity_id: int, file_path: str) -> None:
     pass
 
 
-def sprite_get_texture(entity_id: int) -> Tuple[str, str, str, str, str]:
+def sprite_get_texture(entity_id: int) -> Tuple[str, str, str, bool]:
     return (
         "assets/texture.png",
         "clamp_to_border",
         "clamp_to_border",
-        "nearest",
-        "nearest",
+        True,
     )
 
 

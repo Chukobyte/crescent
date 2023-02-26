@@ -123,3 +123,11 @@ GLint se_texture_wrap_string_to_int(const char* wrap) {
     }
     return GL_CLAMP_TO_BORDER;
 }
+
+const char* se_texture_get_wrap_s_string(SETexture* texture) {
+    return texture->wrapS == GL_REPEAT ? "repeat" : "clamp_to_border";
+}
+
+const char* se_texture_get_wrap_t_string(SETexture* texture) {
+    return texture->wrapT == GL_REPEAT ? "repeat" : "clamp_to_border";
+}

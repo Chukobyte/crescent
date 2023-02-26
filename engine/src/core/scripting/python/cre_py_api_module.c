@@ -1170,7 +1170,12 @@ PyObject* cre_py_api_sprite_get_texture(PyObject* self, PyObject* args, PyObject
     Entity entity;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
         const SpriteComponent* spriteComponent = (SpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_SPRITE);
-        return Py_BuildValue("(sssss)", spriteComponent->texture->fileName, "clamp_to_border", "clamp_to_border", "nearest", "nearest");
+        SETexture* texture = spriteComponent->texture;
+        return Py_BuildValue("(sssb)",
+                             texture->fileName,
+                             se_texture_get_wrap_s_string(texture),
+                             se_texture_get_wrap_t_string(texture),
+                             texture->applyNearestNeighbor);
     }
     return NULL;
 }

@@ -455,20 +455,18 @@ class Texture:
         file_path: str,
         wrap_s="clamp_to_border",
         wrap_t="clamp_to_border",
-        filter_min="nearest",
-        filter_mag="nearest",
+        nearest_neighbor=True,
     ):
         self.file_path = file_path
         self.wrap_s = wrap_s
         self.wrap_t = wrap_t
-        self.filter_min = filter_min
-        self.filter_mag = filter_mag
+        self.nearest_neighbor = nearest_neighbor
 
     def __str__(self):
-        return f"Texture(file_path: {self.file_path}, wrap_s: {self.wrap_s}, wrap_s: {self.wrap_t}, filter_min: {self.filter_min}, filter_mag: {self.filter_mag})"
+        return f"Texture(file_path: {self.file_path}, wrap_s: {self.wrap_s}, wrap_s: {self.wrap_t}, nearest_neighbor: {self.nearest_neighbor})"
 
     def __repr__(self):
-        return f"Texture(file_path: {self.file_path}, wrap_s: {self.wrap_s}, wrap_s: {self.wrap_t}, filter_min: {self.filter_min}, filter_mag: {self.filter_mag})"
+        return f"Texture(file_path: {self.file_path}, wrap_s: {self.wrap_s}, wrap_s: {self.wrap_t}, nearest_neighbor: {self.nearest_neighbor})"
 
 
 class Font:
@@ -1122,15 +1120,13 @@ class Sprite(Node2D):
             file_path,
             wrap_s,
             wrap_t,
-            filter_min,
-            filter_mag,
+            nearest_neighbor,
         ) = crescent_api_internal.sprite_get_texture(entity_id=self.entity_id)
         return Texture(
             file_path=file_path,
             wrap_s=wrap_s,
             wrap_t=wrap_t,
-            filter_min=filter_min,
-            filter_mag=filter_mag,
+            nearest_neighbor=nearest_neighbor,
         )
 
     @texture.setter
