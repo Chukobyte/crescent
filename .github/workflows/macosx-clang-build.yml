@@ -17,6 +17,12 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
+      - name: Sign app
+        run: |
+          echo "${{ secrets.MAC_CERT_AND_KEY }}" >> cert.pem
+          security import cert.pem -k login.keychain -P '${{ secrets.MAC_KEY_PASS }}'
+          codesign -s "${{ secrets.MAC_ID }}" .
+
       - name: installing vcpkg
         run: |
           cd ..
