@@ -384,7 +384,7 @@ void renderer_batching_draw_sprites(SpriteBatchItem items[], size_t spriteCount)
             verts[row + 6] = items[i].color.g;
             verts[row + 7] = items[i].color.b;
             verts[row + 8] = items[i].color.a;
-            verts[row + 9] = 1.0f; // TODO: Determine if a pixel art sprite
+            verts[row + 9] = (float)texture->applyNearestNeighbor;
         }
     }
 
