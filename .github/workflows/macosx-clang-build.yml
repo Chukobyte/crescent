@@ -20,9 +20,12 @@ jobs:
       - name: Sign app
         run: |
           echo "${{ secrets.MAC_CERT_KEY }}" >> cert.txt
+          echo "${{ secrets.MAC_PKEY }}" >> pkey.txt
           base64 -D -i cert.txt -o cert.cer
+          base64 -D -i pkey.txt -o pkey.cer
           security create-keychain -p '${{ secrets.MAC_KEYCHAIN_PASS }}' build.keychain
           security import cert.cer -k build.keychain -P '${{ secrets.MAC_KEYCHAIN_PASS }}'
+          security import pkey.cer -k build.keychain -P '${{ secrets.MAC_KEYCHAIN_PASS }}'
           security unlock-keychain -p '${{ secrets.MAC_KEYCHAIN_PASS }}' build.keychain
           security find-identity -p codesigning -v
           codesign --deep -s "${{ secrets.MAC_SIGNING_ID }}" --keychain build.keychain .
