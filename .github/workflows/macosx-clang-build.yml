@@ -1,8 +1,8 @@
 name: macosx-clang-build
 
 on:
-#  push:
-#    branches: [ dev ]
+  push:
+    branches: [ dev ]
   pull_request:
     branches: [ main ]
 
@@ -17,34 +17,37 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
-#      - name: Sign app
+      - name: Sign app
+        run: |
+          echo "${{ secrets.MAC_CERT_KEY }}" >> cert.txt
+          base64 -D -i cert.txt -o cert.cer
+          security create-keychain -p '${{ secrets.MAC_KEYCHAIN_PASS }}' build.keychain
+          security import cert.cer -k build.keychain -P '${{ secrets.MAC_KEY_PASS }}'
+          security unlock-keychain -p '${{ secrets.MAC_KEYCHAIN_PASS }}' build.keychain
+          codesign --deep -s "${{ secrets.MAC_SIGNING_ID }}" --keychain build.keychain .
+
+#      - name: installing vcpkg
 #        run: |
-#          echo "${{ secrets.MAC_CERT_AND_KEY }}" >> cert.pem
-#          security import cert.pem -k login.keychain -P '${{ secrets.MAC_KEY_PASS }}'
-#          codesign -s "${{ secrets.MAC_ID }}" .
-
-      - name: installing vcpkg
-        run: |
-          cd ..
-          git clone https://github.com/Microsoft/vcpkg.git
-          cd vcpkg
-          ./bootstrap-vcpkg.sh
-
-      - name: install dependencies
-        run: |
-          brew install pkg-config
-
-      - name: run build
-        run: |
-          cd ${{ github.workspace }}
-          cmake . -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/../vcpkg/scripts/buildsystems/vcpkg.cmake -DIS_CI_BUILD="true"
-          cmake --build .
-
-      - name: run unit tests
-        run: |
-          cd ${{ github.workspace }}
-          echo "Running seika tests!"
-          ./seika_test
-          echo ""
-          echo "Running crescent engine tests!"
-          ./crescent_engine_test
+#          cd ..
+#          git clone https://github.com/Microsoft/vcpkg.git
+#          cd vcpkg
+#          ./bootstrap-vcpkg.sh
+#
+#      - name: install dependencies
+#        run: |
+#          brew install pkg-config
+#
+#      - name: run build
+#        run: |
+#          cd ${{ github.workspace }}
+#          cmake . -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/../vcpkg/scripts/buildsystems/vcpkg.cmake -DIS_CI_BUILD="true"
+#          cmake --build .
+#
+#      - name: run unit tests
+#        run: |
+#          cd ${{ github.workspace }}
+#          echo "Running seika tests!"
+#          ./seika_test
+#          echo ""
+#          echo "Running crescent engine tests!"
+#          ./crescent_engine_test
