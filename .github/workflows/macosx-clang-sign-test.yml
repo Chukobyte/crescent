@@ -16,26 +16,26 @@ jobs:
       - uses: actions/checkout@v1
 
       - name: installing vcpkg
-          run: |
-            echo "${{ secrets.MAC_CERT_KEY }}" >> cert.txt
-            echo "${{ secrets.MAC_PKEY }}" >> pkey.txt
-            base64 -D -i cert.txt -o cert.cer
-            base64 -D -i pkey.txt -o private.key
-            # Setup keychain stuff
-            security create-keychain -p '${{ secrets.MAC_KEYCHAIN_PASS }}' build.keychain
-            security default-keychain -s build.keychain
-            security unlock-keychain -p '${{ secrets.MAC_KEYCHAIN_PASS }}' build.keychain
-            security set-keychain-settings -t 3600 -u build.keychain
-            # Import Private Key
-            security import private.key -P "${{ secrets.PRIVATE_KEY_PASSWORD }}" -A -t rsa -k build.keychain
-            # Import Cert
-            security import cert.cer -P "${{ secrets.CERTIFICATE_PASSWORD }}" -A -t cert -k build.keychain
-            # Set up code signing
-            security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "${{ secrets.MAC_KEYCHAIN_PASS }}" build.keychain
-            security find-identity -v -p codesigning build.keychain
-            # Sign app
-            touch text.txt
-            codesign -s "${{ secrets.DEVELOPER_IDENTITY }}" -v test.txt
+        run: |
+          echo "${{ secrets.MAC_CERT_KEY }}" >> cert.txt
+          echo "${{ secrets.MAC_PKEY }}" >> pkey.txt
+          base64 -D -i cert.txt -o cert.cer
+          base64 -D -i pkey.txt -o private.key
+          # Setup keychain stuff
+          security create-keychain -p '${{ secrets.MAC_KEYCHAIN_PASS }}' build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p '${{ secrets.MAC_KEYCHAIN_PASS }}' build.keychain
+          security set-keychain-settings -t 3600 -u build.keychain
+          # Import Private Key
+          security import private.key -P "${{ secrets.PRIVATE_KEY_PASSWORD }}" -A -t rsa -k build.keychain
+          # Import Cert
+          security import cert.cer -P "${{ secrets.CERTIFICATE_PASSWORD }}" -A -t cert -k build.keychain
+          # Set up code signing
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "${{ secrets.MAC_KEYCHAIN_PASS }}" build.keychain
+          security find-identity -v -p codesigning build.keychain
+          # Sign app
+          touch text.txt
+          codesign -s "${{ secrets.DEVELOPER_IDENTITY }}" -v test.txt
 
 #      - name: installing vcpkg
 #        run: |
