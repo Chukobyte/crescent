@@ -1,0 +1,26 @@
+name: macosx-create-csr
+
+on:
+  pull_request:
+    branches: [ dev ]
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Create CSR
+        run: |
+          openssl req -new -newkey rsa:2048 -nodes -keyout private.key -out certificate.csr
+          mkdir csr
+          mv private.key csr/private.key
+          mv certificate.csr csr/certificate.csr
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: csr
+          path: csr
