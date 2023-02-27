@@ -14,10 +14,11 @@ jobs:
 
       - name: Create CSR
         run: |
-          openssl req -new -newkey rsa:2048 -nodes -keyout private.key -out certificate.csr
+          openssl genrsa -out private.key 2048
+          openssl req -new -sha256 -key private.key -out cert.csr
           mkdir csr
           mv private.key csr/private.key
-          mv certificate.csr csr/certificate.csr
+          mv cert.csr csr/cert.csr
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
