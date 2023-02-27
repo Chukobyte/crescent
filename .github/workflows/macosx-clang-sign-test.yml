@@ -27,15 +27,15 @@ jobs:
           security unlock-keychain -p '${{ secrets.MAC_KEYCHAIN_PASS }}' build.keychain
           security set-keychain-settings -t 3600 -u build.keychain
           # Import Private Key
-          security import private.key -P "${{ secrets.PRIVATE_KEY_PASSWORD }}" -A -t rsa -k build.keychain
+          security import private.key -P "${{ secrets.MAC_KEYCHAIN_PASS }}" -A -t rsa -k build.keychain
           # Import Cert
-          security import cert.cer -P "${{ secrets.CERTIFICATE_PASSWORD }}" -A -t cert -k build.keychain
+          security import cert.cer -P "${{ secrets.MAC_KEYCHAIN_PASS }}" -A -t cert -k build.keychain
           # Set up code signing
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "${{ secrets.MAC_KEYCHAIN_PASS }}" build.keychain
           security find-identity -v -p codesigning build.keychain
           # Sign app
           touch text.txt
-          codesign -s "${{ secrets.DEVELOPER_IDENTITY }}" -v test.txt
+          codesign -s "${{ secrets.MAC_SIGNING_ID }}" -v test.txt
 
 #      - name: installing vcpkg
 #        run: |
