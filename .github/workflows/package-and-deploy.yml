@@ -175,6 +175,18 @@ jobs:
           echo "Running crescent engine tests!"
           ./crescent_engine_test
 
+      - name: download macosx python embed
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          name: python-${{ env.PYTHON_VERSION }}-embed-macosx.zip
+          workflow: python-embedded-package.yml
+          search_artifacts: true
+          if_no_artifact_found: fail
+
+      - name: prepare macosx python package
+        run: |
+          unzip python-${{ env.PYTHON_VERSION }}-embed-macosx.zip -d embed_python_macosx
+
       - name: decode private key and cert
         run: |
           echo "${{ secrets.MAC_CERT_KEY }}" >> cert.txt
@@ -204,14 +216,23 @@ jobs:
 
       - name: sign app
         run: |
-          touch test.txt
           codesign -s "${{ secrets.MAC_SIGNING_ID }}" -v crescent_engine_macosx
+          codesign --deep -s "${{ secrets.MAC_SIGNING_ID }}" -v embed_python_macosx
+          cd embed_python_macosx
+          zip -r ${{ github.workspace }}/embed_python_macosx.zip *
 
       - name: store engine binary
         uses: actions/upload-artifact@v3
         with:
           name: crescent_engine_macosx
           path: crescent_engine_macosx
+          if-no-files-found: error
+
+      - name: store signed embedded python package
+        uses: actions/upload-artifact@v3
+        with:
+          name: embed_python_macosx.zip
+          path: embed_python_macosx.zip
           if-no-files-found: error
 
   package-all:
@@ -281,20 +302,26 @@ jobs:
         with:
           name: crescent_engine_macosx
 
-      - name: download macosx python embed
-        uses: dawidd6/action-download-artifact@v2
+#      - name: download macosx python embed
+#        uses: dawidd6/action-download-artifact@v2
+#        with:
+#          name: python-${{ env.PYTHON_VERSION }}-embed-macosx.zip
+#          workflow: python-embedded-package.yml
+#          search_artifacts: true
+#          if_no_artifact_found: fail
+
+      - name: download macosx signed python package
+        uses: actions/download-artifact@v3
         with:
-          name: python-${{ env.PYTHON_VERSION }}-embed-macosx.zip
-          workflow: python-embedded-package.yml
-          search_artifacts: true
-          if_no_artifact_found: fail
+          name: embed_python_macosx.zip
 
       - name: setup python dependencies
         run: |
           # Linux
           unzip python-${{ env.PYTHON_VERSION }}-embed-linux.zip -d embed_python_linux
           # MacOSX
-          unzip python-${{ env.PYTHON_VERSION }}-embed-macosx.zip -d embed_python_macosx
+#          unzip python-${{ env.PYTHON_VERSION }}-embed-macosx.zip -d embed_python_macosx
+          unzip embed_python_macosx.zip -d embed_python_macosx
 
       - name: build packages
         run: |
