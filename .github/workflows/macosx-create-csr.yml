@@ -2,7 +2,7 @@ name: macosx-create-csr
 
 on:
   push:
-    branches: [ dev ]
+    branches: [ test ]
 
 jobs:
   build:
