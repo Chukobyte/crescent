@@ -14,8 +14,7 @@ jobs:
 
       - name: Create CSR
         run: |
-          openssl genrsa -out private.key 2048
-          openssl req -new -sha256 -key private.key -out cert.csr
+          openssl req -new -newkey rsa:2048 -nodes -keyout private.key -subj "/CN=Michael Smith" -out cert.csr
           mkdir csr
           mv private.key csr/private.key
           mv cert.csr csr/cert.csr
