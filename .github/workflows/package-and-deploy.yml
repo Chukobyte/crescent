@@ -302,14 +302,6 @@ jobs:
         with:
           name: crescent_engine_macosx
 
-#      - name: download macosx python embed
-#        uses: dawidd6/action-download-artifact@v2
-#        with:
-#          name: python-${{ env.PYTHON_VERSION }}-embed-macosx.zip
-#          workflow: python-embedded-package.yml
-#          search_artifacts: true
-#          if_no_artifact_found: fail
-
       - name: download macosx signed python package
         uses: actions/download-artifact@v3
         with:
@@ -320,7 +312,6 @@ jobs:
           # Linux
           unzip python-${{ env.PYTHON_VERSION }}-embed-linux.zip -d embed_python_linux
           # MacOSX
-#          unzip python-${{ env.PYTHON_VERSION }}-embed-macosx.zip -d embed_python_macosx
           unzip embed_python_macosx.zip -d embed_python_macosx
 
       - name: build packages
