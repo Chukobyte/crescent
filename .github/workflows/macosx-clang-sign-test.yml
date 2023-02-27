@@ -44,5 +44,5 @@ jobs:
 
       - name: sign app
         run: |
-          touch text.txt
+          touch test.txt
           codesign -s "${{ secrets.MAC_SIGNING_ID }}" -v test.txt
