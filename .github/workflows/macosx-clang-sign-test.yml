@@ -31,11 +31,11 @@ jobs:
 
       - name: import private key
         run: |
-          security import private.key -A -t rsa -k build.keychain
+          security import private.key -A -k build.keychain
 
       - name: import cert
         run: |
-          security import cert.cer -A -t cert -k build.keychain
+          security import cert.cer -A -k build.keychain
 
       - name: set up code signing
         run: |
