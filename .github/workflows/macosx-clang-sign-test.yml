@@ -2,7 +2,7 @@ name: macosx-clang-sign-test
 
 on:
   push:
-    branches: [ dev ]
+    branches: [ test ]
 
 env:
   LC_ALL: en_US.UTF-8
