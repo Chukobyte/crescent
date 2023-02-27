@@ -226,12 +226,12 @@ jobs:
           zip -r ${{ github.workspace }}/embed_python_macosx.zip *
 
       - name: verify signed app
-          run: |
-            codesign --verify --strict crescent_engine_macosx
-            codesign --verify --strict embed_python_macosx/lib/python3.10/lib-dynload/_struct.cpython-310-darwin.so
-            codesign --verify --strict embed_python_macosx/lib/python3.10/lib-dynload/_json.cpython-310-darwin.so
-            codesign --verify --strict embed_python_macosx/lib/python3.10/lib-dynload/_pickle.cpython-310-darwin.so
-            codesign --verify --strict embed_python_macosx/lib/python3.10/lib-dynload/math.cpython-310-darwin.so
+        run: |
+          codesign --verify --strict crescent_engine_macosx
+          codesign --verify --strict embed_python_macosx/lib/python3.10/lib-dynload/_struct.cpython-310-darwin.so
+          codesign --verify --strict embed_python_macosx/lib/python3.10/lib-dynload/_json.cpython-310-darwin.so
+          codesign --verify --strict embed_python_macosx/lib/python3.10/lib-dynload/_pickle.cpython-310-darwin.so
+          codesign --verify --strict embed_python_macosx/lib/python3.10/lib-dynload/math.cpython-310-darwin.so
 
       - name: store engine binary
         uses: actions/upload-artifact@v3
