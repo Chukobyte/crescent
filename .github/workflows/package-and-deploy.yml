@@ -217,7 +217,7 @@ jobs:
       - name: sign app
         run: |
           codesign -s "${{ secrets.MAC_SIGNING_ID }}" -v crescent_engine_macosx
-          codesign --deep -s "${{ secrets.MAC_SIGNING_ID }}" -v embed_python_macosx/lib/python3.10/lib-dynload
+          codesign --deep -s "${{ secrets.MAC_SIGNING_ID }}" -v embed_python_macosx/lib/python3.10/lib-dynload/
           cd embed_python_macosx
           zip -r ${{ github.workspace }}/embed_python_macosx.zip *
 
