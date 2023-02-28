@@ -225,6 +225,14 @@ jobs:
           cd embed_python_macosx
           zip -r ${{ github.workspace }}/embed_python_macosx.zip *
 
+      - name: create macos export template
+        run: |
+          mkdir -p crescent.app/Contents/MacOS
+          mkdir -p crescent.app/Contents/Resources
+          echo "${{ secrets.MAC_PLIST_CONTENT }}" >> crescent.app/Contents/Info.plist
+          chmod -R 755 crescent.app
+          zip -r crescent_macosx_export_template.zip crescent.app/
+
       - name: store engine binary
         uses: actions/upload-artifact@v3
         with:
@@ -237,6 +245,13 @@ jobs:
         with:
           name: embed_python_macosx.zip
           path: embed_python_macosx.zip
+          if-no-files-found: error
+
+      - name: store macosx export template
+        uses: actions/upload-artifact@v3
+        with:
+          name: crescent_macosx_export_template.zip
+          path: crescent_macosx_export_template.zip
           if-no-files-found: error
 
   package-all:
@@ -311,6 +326,11 @@ jobs:
         with:
           name: embed_python_macosx.zip
 
+      - name: download macosx export template
+        uses: actions/download-artifact@v3
+        with:
+          name: crescent_macosx_export_template.zip
+
       - name: setup python dependencies
         run: |
           # Linux
@@ -367,14 +387,14 @@ jobs:
 
           echo "building macosx package"
           # Just build app bundle for engine as editor doesn't exist yet
-          mkdir -p crescent.app/Contents/MacOS
-          mkdir -p crescent.app/Contents/Resources
-          echo "${{ secrets.MAC_PLIST_CONTENT }}" >> crescent.app/Contents/Info.plist
+          unzip crescent_macosx_export_template.zip
+          chmod 755 crescent_engine_macosx
+          chmod -R 755 embed_python_macosx
+          # Copy over files to export template
           cp crescent_engine_macosx crescent.app/Contents/MacOS/crescent_engine
           cp -r embed_python_macosx crescent.app/Contents/MacOS/embed_python
           cp -r assets crescent.app/Contents/MacOS/assets
           cp -r test_games crescent.app/Contents/MacOS/test_games
-          chmod -R 755 crescent.app
           zip -r crescent_macosx.zip crescent.app/
           tar -czvf crescent_macosx.tar.gz crescent.app/
 
