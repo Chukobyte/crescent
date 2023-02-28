@@ -216,6 +216,7 @@ jobs:
 
       - name: sign app
         run: |
+          cp crescent_engine_macosx crescent_engine
           codesign -s "${{ secrets.MAC_SIGNING_ID }}" -v crescent_engine_macosx
           codesign -s "${{ secrets.MAC_SIGNING_ID }}" -v embed_python_macosx/lib/python3.10/lib-dynload/_struct.cpython-310-darwin.so
           codesign -s "${{ secrets.MAC_SIGNING_ID }}" -v embed_python_macosx/lib/python3.10/lib-dynload/_json.cpython-310-darwin.so
@@ -231,7 +232,7 @@ jobs:
           mkdir -p crescent_engine.app/Contents/MacOS
           mkdir -p crescent_engine.app/Contents/Resources
           echo "${{ secrets.MAC_PLIST_CONTENT }}" >> crescent_engine.app/Contents/Info.plist
-          cp crescent_engine_macosx crescent_engine.app/Contents/MacOS/crescent_engine
+          cp crescent_engine crescent_engine.app/Contents/MacOS/crescent_engine
           cp -r embed_python_macosx crescent_engine.app/Contents/MacOS/embed_python
           codesign --verify --deep --strict crescent_engine.app
           mkdir -p crescent_engine_macosx_bundle
