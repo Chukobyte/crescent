@@ -399,11 +399,10 @@ jobs:
           cp -r embed_python_macosx crescent.app/Contents/MacOS/embed_python
           cp -r assets crescent.app/Contents/MacOS/assets
           cp -r test_games crescent.app/Contents/MacOS/test_games
-          xattr -rc crescent.app
           zip -r crescent_macosx.zip crescent.app/
           tar -czvf crescent_macosx.tar.gz crescent.app/
-          xattr -c crescent_macosx.zip
-          xattr -c crescent_macosx.tar.gz
+          xattr -d com.apple.quarantine crescent_macosx.zip
+          xattr -d com.apple.quarantine crescent_macosx.tar.gz
 
       - name: deploy packages
         run: |
