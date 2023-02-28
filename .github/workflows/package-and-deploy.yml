@@ -231,8 +231,8 @@ jobs:
           mkdir -p crescent_engine.app/Contents/MacOS
           mkdir -p crescent_engine.app/Contents/Resources
           echo "${{ secrets.MAC_PLIST_CONTENT }}" >> crescent_engine.app/Contents/Info.plist
-          cp crescent_engine_macosx crescent_engine.app/Contents/MacOS
-          cp embed_python_macosx crescent_engine.app/Contents/MacOS
+          cp crescent_engine_macosx crescent_engine.app/Contents/MacOS/crescent_engine
+          cp -r embed_python_macosx crescent_engine.app/Contents/MacOS/embed_python
           codesign --verify --deep --strict crescent_engine.app
           mkdir -p crescent_engine_macosx_bundle
           mv crescent_engine.app crescent_engine_macosx_bundle/
