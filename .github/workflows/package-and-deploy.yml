@@ -224,13 +224,27 @@ jobs:
           cd embed_python_macosx
           zip -r ${{ github.workspace }}/embed_python_macosx.zip *
 
-      - name: verify signed app
+      - name: testing macos bundle
         run: |
-          codesign --verify --strict crescent_engine_macosx
-          codesign --verify --strict embed_python_macosx/lib/python3.10/lib-dynload/_struct.cpython-310-darwin.so
-          codesign --verify --strict embed_python_macosx/lib/python3.10/lib-dynload/_json.cpython-310-darwin.so
-          codesign --verify --strict embed_python_macosx/lib/python3.10/lib-dynload/_pickle.cpython-310-darwin.so
-          codesign --verify --strict embed_python_macosx/lib/python3.10/lib-dynload/math.cpython-310-darwin.so
+          mkdir -p crescent_engine.app
+          mkdir -p crescent_engine.app/Contents
+          mkdir -p crescent_engine.app/Contents/MacOS
+          mkdir -p crescent_engine.app/Contents/Resources
+          echo "${{ secrets.MAC_PLIST_CONTENT }}" >> crescent_engine.app/Contents/Info.plist
+          cp crescent_engine_macosx crescent_engine.app/Contents/MacOS
+          cp embed_python_macosx crescent_engine.app/Contents/MacOS
+          codesign --verify --deep --strict crescent_engine.app
+          mkdir -p crescent_engine_macosx_bundle
+          mv crescent_engine.app crescent_engine_macosx_bundle/
+          cd crescent_engine_macosx_bundle
+          zip -r crescent_engine_macosx_bundle.zip *
+
+      - name: store macosx bundle
+        uses: actions/upload-artifact@v3
+        with:
+          name: crescent_engine_macosx_bundle.zip
+          path: crescent_engine_macosx_bundle.zip
+          if-no-files-found: error
 
       - name: store engine binary
         uses: actions/upload-artifact@v3
