@@ -267,7 +267,7 @@ jobs:
 
       - name: install dependencies
         run: |
-          sudo apt install attr
+          sudo apt install xattr
 
       - name: setup directories
         run: |
