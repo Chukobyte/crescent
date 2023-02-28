@@ -265,6 +265,10 @@ jobs:
         run: |
           python3 -m pip install google-auth google-api-python-client
 
+      - name: install dependencies
+        run: |
+          sudo apt install attr
+
       - name: setup directories
         run: |
           # Windows
