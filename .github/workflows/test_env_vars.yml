@@ -19,7 +19,7 @@ jobs:
 
       - name: set env vars
         run: |
-          echo "CRESCENT_VERSION=$(jq -r '.version' vcpkg.json)" >> $GITHUB_ENV
+          "CRESCENT_VERSION=$(jq -r '.version' vcpkg.json)" >> $GITHUB_ENV
 #          $env:CRESCENT_VERSION="$(jq -r '.version' vcpkg.json)"
 #          $env:PYTHON_PATH=$(jq -r '.dependencies[] | select(.name == "python3") | ."version>="' vcpkg.json)
 
