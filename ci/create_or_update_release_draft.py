@@ -40,7 +40,9 @@ def create_release_draft_stub(token: str, files_to_upload: list):
         tag_name = f"v{release_version}"
 
     if repo_instance.does_full_release_exist(release_name=tag_name):
-        print("Release already exists, skipping!  Consider incrementing the version number in vcpkg.json!")
+        print(
+            "Release already exists, skipping!  Consider incrementing the version number in vcpkg.json!"
+        )
         return None
 
     current_release = repo_instance.get_release_draft(tag_name)

@@ -3,6 +3,7 @@ import compileall
 import shutil
 import zipfile
 import tarfile
+import plistlib
 from pathlib import Path, PurePath
 from typing import Optional, Callable
 
@@ -22,6 +23,10 @@ class FileUtils:
     @staticmethod
     def copy_dir(source: str, destination: str, dirs_exist_ok=True) -> None:
         shutil.copytree(source, destination, dirs_exist_ok=dirs_exist_ok)
+
+    @staticmethod
+    def move_dir(source: str, destination: str):
+        shutil.move(source, destination)
 
     @staticmethod
     def get_dir_file_paths(
@@ -56,6 +61,20 @@ class FileUtils:
             os.remove(path)
         elif os.path.isdir(path):
             FileUtils.remove_dir(path)
+
+    @staticmethod
+    def move_file(source: str, destination: str):
+        shutil.move(source, destination)
+
+    @staticmethod
+    def write_file(path: str, content: str) -> None:
+        with open(path, "w") as file:
+            file.write(content)
+
+    @staticmethod
+    def write_info_plist_file(path: str, info: dict) -> None:
+        with open(path, "wb") as file:
+            plistlib.dump(info, file)
 
 
 class PythonCompiler:
@@ -203,6 +222,39 @@ class GameExporter:
         FileUtils.copy_file(
             engine_binary_path.as_posix(), engine_binary_dest_path.as_posix()
         )
+
+        # Create app bundle if macosx
+        if export_os_type == "macosx":
+            app_bundle_path = temp_file_path / f"{game_title}.app"
+            FileUtils.create_dir(app_bundle_path.as_posix())
+            contents_path = app_bundle_path / "Contents"
+            FileUtils.create_dir(contents_path.as_posix())
+            contents_macos_path = contents_path / "MacOS"
+            FileUtils.create_dir(contents_macos_path.as_posix())
+            contents_resources_path = contents_path / "Resources"
+            FileUtils.create_dir(contents_resources_path.as_posix())
+            contents_info_plist_path = contents_path / "Info.plist"
+            plist_info = {
+                "CFBundleName": game_title,
+                "CFBundleVersion": "0.0.1",
+                "CFBundleExecutable": f"{game_title}{engine_binary_extension}",
+                "LSMinimumSystemVersion": "10.15.0",
+            }
+            FileUtils.write_info_plist_file(
+                contents_info_plist_path.as_posix(), plist_info
+            )
+            # Move all files and folders to MacOS dir
+            files = os.listdir(temp_file_path.as_posix())
+            for file_name in files:
+                full_path = os.path.join(temp_file_path.as_posix(), file_name)
+                if os.path.isfile(full_path):
+                    file_move_path = contents_macos_path / file_name
+                    FileUtils.move_file(full_path, file_move_path.as_posix())
+                elif os.path.isdir(full_path):
+                    full_dir_path = Path(full_path)
+                    if full_dir_path != app_bundle_path:
+                        dir_move_path = contents_macos_path / file_name
+                        FileUtils.move_dir(full_path, dir_move_path.as_posix())
 
         # Create export '.tar.gz' or '.zip'
         ProjectArchiver.create_archive(
