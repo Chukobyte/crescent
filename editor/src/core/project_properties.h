@@ -86,6 +86,7 @@ class ProjectProperties : public Singleton<ProjectProperties> {
     int resolutionHeight;
     int targetFPS;
     bool areCollidersVisible = false;
+    std::string version;
     ProjectAssets assets;
     ProjectInputs inputs;
     std::string projectPath;

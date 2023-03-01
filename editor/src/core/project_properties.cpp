@@ -90,6 +90,7 @@ void ProjectProperties::LoadPropertiesFromConfig(const char* filePath) {
     resolutionHeight = JsonHelper::Get<int>(propertyJson, "resolution_height");
     targetFPS = JsonHelper::Get<int>(propertyJson, "target_fps");
     areCollidersVisible = JsonHelper::Get<bool>(propertyJson, "colliders_visible");
+    version = JsonHelper::GetDefault<std::string>(propertyJson, "version", "0.0.1");
     assets.SetAssets(JsonHelper::Get<nlohmann::json>(propertyJson, "assets"));
     inputs.SetInputs(JsonHelper::Get<nlohmann::json>(propertyJson, "inputs"));
     se_logger_debug("Loading game properties finished");
@@ -157,6 +158,7 @@ nlohmann::ordered_json ProjectProperties::ToJson() const {
     configJson["target_fps"] = targetFPS;
     configJson["initial_node_path"] = initialNodePath;
     configJson["colliders_visible"] = areCollidersVisible;
+    configJson["version"] = version;
 
     // Assets
     nlohmann::ordered_json assetJson;
