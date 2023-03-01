@@ -12,7 +12,6 @@
 #include "../../../asset_manager.h"
 #include "../../../file_creation/config_file_creator.h"
 #include "../../../game_exporter.h"
-#include "../../../utils/curve_editor.h"
 
 ImGuiHelper::MenuBar OpenedProjectUI::MenuBar::GetMenuBar() {
     static ProjectProperties* projectProperties = ProjectProperties::Get();
@@ -181,6 +180,9 @@ ImGuiHelper::MenuBar OpenedProjectUI::MenuBar::GetMenuBar() {
 
                                     static ImGuiHelper::CheckBox areCollidersVisibleCheckBox("Are Colliders Visible", projectProperties->areCollidersVisible);
                                     ImGuiHelper::BeginCheckBox(areCollidersVisibleCheckBox);
+
+                                    static ImGuiHelper::InputText versionText("Version", projectProperties->version);
+                                    ImGuiHelper::BeginInputText(versionText);
                                 },
                                 .position = ImVec2{ 100.0f, 100.0f },
                                 .size = ImVec2{ 600.0f, 200.0f },

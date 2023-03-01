@@ -19,4 +19,4 @@ if len(sys.argv) >= 4:
         new_file_name=new_file_name,
     )
 else:
-    print("ERROR: Didn't pass in 3 or more args!")
+    raise Exception("Didn't pass in 3 or more args!")

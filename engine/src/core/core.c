@@ -273,5 +273,5 @@ void cre_shutdown() {
     cre_py_finalize();
     cre_curve_float_manager_finalize();
     SDL_Quit();
-    se_logger_info("RBE Engine shutdown!");
+    se_logger_info("Crescent Engine shutdown!");
 }

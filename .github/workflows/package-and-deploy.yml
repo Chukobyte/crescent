@@ -4,9 +4,6 @@ on:
   push:
     branches: [ main ]
 
-env:
-  PYTHON_VERSION: 3.10.5
-
 jobs:
   # WINDOWS BUILD
   windows-build:
@@ -14,6 +11,19 @@ jobs:
 
     steps:
       - uses: actions/checkout@v1
+
+      - name: install dependencies (just jq for now)
+        run: |
+          Invoke-WebRequest https://github.com/stedolan/jq/releases/download/jq-1.6/jq-win64.exe -OutFile jq.exe
+          Move-Item jq.exe C:\Windows\System32\WindowsPowerShell\v1.0\
+          $env:PATH += ';C:\Windows\System32\WindowsPowerShell\v1.0\'
+
+      - name: set env vars
+        run: |
+          $crescent_version = jq -r '.version' vcpkg.json
+          "CRESCENT_VERSION=$crescent_version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          $python_version = jq -r '.dependencies[] | select(.name == \"python3\") | .\"version>=\"' vcpkg.json
+          "PYTHON_VERSION=$python_version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
       - name: installing vcpkg
         run: |
@@ -91,11 +101,19 @@ jobs:
         run: |
           sudo apt install gcc-11
           sudo apt install g++-11
-          sudo apt install libgl1-mesa-dev libglu1-mesa-dev
+          sudo apt install libgl1-mesa-dev libglu1-mesa-dev jq
           wget -O cmake.sh https://cmake.org/files/v3.20/cmake-3.20.1-linux-x86_64.sh
           sudo sh cmake.sh --skip-license --exclude-subdir --prefix=/usr/local
           export PATH=/usr/local/bin:$PATH
           cmake --version
+
+      - name: set env vars
+        run: |
+          echo "CRESCENT_VERSION=$(jq -r '.version' vcpkg.json)" >> $GITHUB_ENV
+          python_version=$(jq -r '.dependencies[] | select(.name == "python3") | ."version>="' vcpkg.json)
+          echo "PYTHON_VERSION=$python_version" >> $GITHUB_ENV
+          python_major_minor=$(echo $python_version | grep -Po "\d+.\d+")
+          echo "PYTHON_MAJOR_MINOR_VERSION=$python_major_minor" >> $GITHUB_ENV
 
       - name: install vcpkg
         run: |
@@ -156,7 +174,15 @@ jobs:
 
       - name: install dependencies
         run: |
-          brew install pkg-config
+          brew install pkg-config jq
+
+      - name: set env vars
+        run: |
+          echo "CRESCENT_VERSION=$(jq -r '.version' vcpkg.json)" >> $GITHUB_ENV
+          python_version=$(jq -r '.dependencies[] | select(.name == "python3") | ."version>="' vcpkg.json)
+          echo "PYTHON_VERSION=$python_version" >> $GITHUB_ENV
+          python_major_minor=$(echo $python_version | grep -Eo "\d+.\d+")
+          echo "PYTHON_MAJOR_MINOR_VERSION=$python_major_minor" >> $GITHUB_ENV
 
       - name: run build
         run: |
@@ -175,11 +201,68 @@ jobs:
           echo "Running crescent engine tests!"
           ./crescent_engine_test
 
+      - name: download macosx python embed
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          name: python-${{ env.PYTHON_VERSION }}-embed-macosx.zip
+          workflow: python-embedded-package.yml
+          search_artifacts: true
+          if_no_artifact_found: fail
+
+      - name: prepare macosx python package
+        run: |
+          unzip python-${{ env.PYTHON_VERSION }}-embed-macosx.zip -d embed_python_macosx
+
+      - name: decode private key and cert
+        run: |
+          echo "${{ secrets.MAC_CERT_KEY }}" >> cert.txt
+          echo "${{ secrets.MAC_PKEY }}" >> pkey.txt
+          base64 -D -i cert.txt -o cert.cer
+          base64 -D -i pkey.txt -o private.key
+
+      - name: setup keychain
+        run: |
+          security create-keychain -p '${{ secrets.MAC_KEYCHAIN_PASS }}' build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p '${{ secrets.MAC_KEYCHAIN_PASS }}' build.keychain
+          security set-keychain-settings -t 3600 -u build.keychain
+
+      - name: import private key
+        run: |
+          security import private.key -A -k build.keychain
+
+      - name: import cert
+        run: |
+          security import cert.cer -A -k build.keychain
+
+      - name: set up code signing
+        run: |
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "${{ secrets.MAC_KEYCHAIN_PASS }}" build.keychain
+          security find-identity -v -p codesigning build.keychain
+
+      - name: sign app
+        run: |
+          codesign -s "${{ secrets.MAC_SIGNING_ID }}" -v crescent_engine_macosx
+          # Will probably need to sign other embedded python files, but only doing these for now...
+          codesign -s "${{ secrets.MAC_SIGNING_ID }}" -v embed_python_macosx/lib/python3.10/lib-dynload/_struct.cpython-310-darwin.so
+          codesign -s "${{ secrets.MAC_SIGNING_ID }}" -v embed_python_macosx/lib/python3.10/lib-dynload/_json.cpython-310-darwin.so
+          codesign -s "${{ secrets.MAC_SIGNING_ID }}" -v embed_python_macosx/lib/python3.10/lib-dynload/_pickle.cpython-310-darwin.so
+          codesign -s "${{ secrets.MAC_SIGNING_ID }}" -v embed_python_macosx/lib/python3.10/lib-dynload/math.cpython-310-darwin.so
+          cd embed_python_macosx
+          zip -r ${{ github.workspace }}/embed_python_macosx.zip *
+
       - name: store engine binary
         uses: actions/upload-artifact@v3
         with:
           name: crescent_engine_macosx
           path: crescent_engine_macosx
+          if-no-files-found: error
+
+      - name: store signed embedded python package
+        uses: actions/upload-artifact@v3
+        with:
+          name: embed_python_macosx.zip
+          path: embed_python_macosx.zip
           if-no-files-found: error
 
   package-all:
@@ -188,6 +271,18 @@ jobs:
 
     steps:
       - uses: actions/checkout@v1
+
+      - name: install dependencies
+        run: |
+          sudo apt install jq
+
+      - name: set env vars
+        run: |
+          echo "CRESCENT_VERSION=$(jq -r '.version' vcpkg.json)" >> $GITHUB_ENV
+          python_version=$(jq -r '.dependencies[] | select(.name == "python3") | ."version>="' vcpkg.json)
+          echo "PYTHON_VERSION=$python_version" >> $GITHUB_ENV
+          python_major_minor=$(echo $python_version | grep -Po "\d+.\d+")
+          echo "PYTHON_MAJOR_MINOR_VERSION=$python_major_minor" >> $GITHUB_ENV
 
       - name: install pip packages
         run: |
@@ -244,31 +339,25 @@ jobs:
           search_artifacts: true
           if_no_artifact_found: fail
 
-      - name: download macosx engine binary
+      - name: download macosx signed engine binary
         uses: actions/download-artifact@v3
         with:
           name: crescent_engine_macosx
 
-      - name: download macosx python embed
-        uses: dawidd6/action-download-artifact@v2
+      - name: download macosx signed python package
+        uses: actions/download-artifact@v3
         with:
-          name: python-${{ env.PYTHON_VERSION }}-embed-macosx.zip
-          workflow: python-embedded-package.yml
-          search_artifacts: true
-          if_no_artifact_found: fail
+          name: embed_python_macosx.zip
 
       - name: setup python dependencies
         run: |
           # Linux
           unzip python-${{ env.PYTHON_VERSION }}-embed-linux.zip -d embed_python_linux
           # MacOSX
-          unzip python-${{ env.PYTHON_VERSION }}-embed-macosx.zip -d embed_python_macosx
+          unzip embed_python_macosx.zip -d embed_python_macosx
 
-      - name: build packages
+      - name: build windows package
         run: |
-          cd ${{ github.workspace }}
-          ls -la *
-          echo "building windows package"
           # Copy engine binaries
           cp crescent_engine_windows.exe crescent_windows/bin/windows/crescent_engine.exe
           cp crescent_engine_linux crescent_windows/bin/linux/crescent_engine
@@ -290,7 +379,8 @@ jobs:
           chmod -R 755 crescent_windows
           zip -r crescent_windows.zip crescent_windows/
 
-          echo "building linux package"
+      - name: build linux package
+        run: |
           # Copy engine binaries
           cp crescent_engine_windows.exe crescent_linux/bin/windows/crescent_engine.exe
           cp crescent_engine_linux crescent_linux/bin/linux/crescent_engine
@@ -311,24 +401,21 @@ jobs:
           zip -r crescent_linux.zip crescent_linux/
           tar -czvf crescent_linux.tar.gz crescent_linux/
 
-          echo "building macosx package"
-          # Copy engine binaries
-          cp crescent_engine_windows.exe crescent_macosx/bin/windows/crescent_engine.exe
-          cp crescent_engine_linux crescent_macosx/bin/linux/crescent_engine
-          cp crescent_engine_macosx crescent_macosx/bin/macosx/crescent_engine
-          cp -r assets crescent_macosx/bin/windows
-          cp -r test_games crescent_macosx/bin/windows
-          cp -r assets crescent_macosx/bin/linux
-          cp -r test_games crescent_macosx/bin/linux
-          cp -r assets crescent_macosx/bin/macosx
-          cp -r test_games crescent_macosx/bin/macosx
-          # Copy windows runtime deps
-          cp windows_run_dependencies/*  crescent_macosx/bin/windows/
-          cp -r embed_python_linux crescent_macosx/bin/linux/embed_python
-          cp -r embed_python_macosx crescent_macosx/bin/macosx/embed_python
-          chmod -R 755 crescent_macosx
-          zip -r crescent_macosx.zip crescent_macosx/
-          tar -czvf crescent_macosx.tar.gz crescent_macosx/
+      - name: build macosx package
+        run: |
+          # Just build app bundle for engine as editor doesn't exist yet
+          # Create export template
+          mkdir -p crescent.app/Contents/MacOS
+          mkdir -p crescent.app/Contents/Resources
+          python ci/generate_macos_plist_info.py crescent.app/Contents/Info.plist crescent ${{ env.CRESCENT_VERSION }} crescent
+          # Copy over files to export template
+          cp crescent_engine_macosx crescent.app/Contents/MacOS/crescent_engine
+          cp -r embed_python_macosx crescent.app/Contents/MacOS/embed_python
+          cp -r assets crescent.app/Contents/MacOS/assets
+          cp -r test_games crescent.app/Contents/MacOS/test_games
+          chmod -R 755 crescent.app
+          zip -r crescent_macosx.zip crescent.app/
+          tar -czvf crescent_macosx.tar.gz crescent.app/
 
       - name: deploy packages
         run: |
