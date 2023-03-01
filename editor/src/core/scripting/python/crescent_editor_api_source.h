@@ -5,9 +5,11 @@
 #define CRE_PY_EDITOR_API_GAME_EXPORTER_SOURCE ""\
 "import os\n"\
 "import compileall\n"\
+"import json\n"\
 "import shutil\n"\
 "import zipfile\n"\
 "import tarfile\n"\
+"import plistlib\n"\
 "from pathlib import Path, PurePath\n"\
 "from typing import Optional, Callable\n"\
 "\n"\
@@ -27,6 +29,10 @@
 "    @staticmethod\n"\
 "    def copy_dir(source: str, destination: str, dirs_exist_ok=True) -> None:\n"\
 "        shutil.copytree(source, destination, dirs_exist_ok=dirs_exist_ok)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def move_dir(source: str, destination: str):\n"\
+"        shutil.move(source, destination)\n"\
 "\n"\
 "    @staticmethod\n"\
 "    def get_dir_file_paths(\n"\
@@ -61,6 +67,20 @@
 "            os.remove(path)\n"\
 "        elif os.path.isdir(path):\n"\
 "            FileUtils.remove_dir(path)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def move_file(source: str, destination: str):\n"\
+"        shutil.move(source, destination)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def write_file(path: str, content: str) -> None:\n"\
+"        with open(path, \"w\") as file:\n"\
+"            file.write(content)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def write_info_plist_file(path: str, info: dict) -> None:\n"\
+"        with open(path, \"wb\") as file:\n"\
+"            plistlib.dump(info, file)\n"\
 "\n"\
 "\n"\
 "class PythonCompiler:\n"\
@@ -208,6 +228,44 @@
 "        FileUtils.copy_file(\n"\
 "            engine_binary_path.as_posix(), engine_binary_dest_path.as_posix()\n"\
 "        )\n"\
+"\n"\
+"        # Create app bundle if macosx\n"\
+"        if export_os_type == \"macosx\":\n"\
+"            app_bundle_path = temp_file_path / f\"{game_title}.app\"\n"\
+"            FileUtils.create_dir(app_bundle_path.as_posix())\n"\
+"            contents_path = app_bundle_path / \"Contents\"\n"\
+"            FileUtils.create_dir(contents_path.as_posix())\n"\
+"            contents_macos_path = contents_path / \"MacOS\"\n"\
+"            FileUtils.create_dir(contents_macos_path.as_posix())\n"\
+"            contents_resources_path = contents_path / \"Resources\"\n"\
+"            FileUtils.create_dir(contents_resources_path.as_posix())\n"\
+"            contents_info_plist_path = contents_path / \"Info.plist\"\n"\
+"            # Get version from project json file\n"\
+"            project_config_file_path = Path(project_dir) / \"project.ccfg\"\n"\
+"            with open(project_config_file_path.as_posix(), \"r\") as f:\n"\
+"                json_data = json.load(f)\n"\
+"                build_version = json_data.get(\"version\", \"0.0.1\")\n"\
+"            plist_info = {\n"\
+"                \"CFBundleName\": game_title,\n"\
+"                \"CFBundleVersion\": build_version,\n"\
+"                \"CFBundleExecutable\": f\"{game_title}{engine_binary_extension}\",\n"\
+"                \"LSMinimumSystemVersion\": \"10.15.0\",\n"\
+"            }\n"\
+"            FileUtils.write_info_plist_file(\n"\
+"                contents_info_plist_path.as_posix(), plist_info\n"\
+"            )\n"\
+"            # Move all files and folders to MacOS dir\n"\
+"            files = os.listdir(temp_file_path.as_posix())\n"\
+"            for file_name in files:\n"\
+"                full_path = os.path.join(temp_file_path.as_posix(), file_name)\n"\
+"                if os.path.isfile(full_path):\n"\
+"                    file_move_path = contents_macos_path / file_name\n"\
+"                    FileUtils.move_file(full_path, file_move_path.as_posix())\n"\
+"                elif os.path.isdir(full_path):\n"\
+"                    full_dir_path = Path(full_path)\n"\
+"                    if full_dir_path != app_bundle_path:\n"\
+"                        dir_move_path = contents_macos_path / file_name\n"\
+"                        FileUtils.move_dir(full_path, dir_move_path.as_posix())\n"\
 "\n"\
 "        # Create export '.tar.gz' or '.zip'\n"\
 "        ProjectArchiver.create_archive(\n"\

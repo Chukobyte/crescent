@@ -1,5 +1,6 @@
 import os
 import compileall
+import json
 import shutil
 import zipfile
 import tarfile
@@ -234,9 +235,14 @@ class GameExporter:
             contents_resources_path = contents_path / "Resources"
             FileUtils.create_dir(contents_resources_path.as_posix())
             contents_info_plist_path = contents_path / "Info.plist"
+            # Get version from project json file
+            project_config_file_path = Path(project_dir) / "project.ccfg"
+            with open(project_config_file_path.as_posix(), "r") as f:
+                json_data = json.load(f)
+                build_version = json_data.get("version", "0.0.1")
             plist_info = {
                 "CFBundleName": game_title,
-                "CFBundleVersion": "0.0.1",
+                "CFBundleVersion": build_version,
                 "CFBundleExecutable": f"{game_title}{engine_binary_extension}",
                 "LSMinimumSystemVersion": "10.15.0",
             }
