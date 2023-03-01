@@ -19,7 +19,7 @@ jobs:
         run: |
           echo "CRESCENT_VERSION=$(jq -r '.version' vcpkg.json)" >> $GITHUB_ENV
           echo "PYTHON_VERSION=$(jq -r '.dependencies[] | select(.name == "python3") | ."version>="' vcpkg.json)" >> $GITHUB_ENV
-          echo "PYTHON_MAJOR_MINOR_VERSION=$(echo ${{ env.PYTHON_VERSION }} | grep -Po "\d+.\d+")" >> $GITHUB_ENV
+          echo "PYTHON_MAJOR_MINOR_VERSION=$(echo $PYTHON_VERSION | grep -Po "\d+.\d+")" >> $GITHUB_ENV
 
       - name: print env vars
         run: |
