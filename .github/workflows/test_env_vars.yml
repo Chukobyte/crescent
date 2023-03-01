@@ -21,7 +21,7 @@ jobs:
         run: |
           $crescent_version = jq -r '.version' vcpkg.json
           "CRESCENT_VERSION=$crescent_version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-          $python_version = jq -r '.dependencies[] | select(.name == "python3") | ."version>="' vcpkg.json
+          $python_version = jq -r '.dependencies[] | select(.name == \"python3\") | .\"version>=\"' vcpkg.json
           "PYTHON_VERSION=$python_version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append      
 
       - name: print env vars
