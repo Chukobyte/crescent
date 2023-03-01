@@ -2,11 +2,10 @@ name: python-embedded-package
 
 # Compiles python and builds embedded packages for linux and macosx every 60 days
 on:
-  schedule:
-    - cron: '0 0 */60 * *'
-
-env:
-  PYTHON_VERSION: 3.10.5
+  push:
+    branches: [ dev ]
+#  schedule:
+#    - cron: '0 0 */60 * *'
 
 jobs:
   compile-linux-gcc-python:
@@ -21,12 +20,14 @@ jobs:
 
       - name: configure env vars
         run: |
-          echo "Replace"
+          python_version=$(jq -r '.dependencies[] | select(.name == "python3") | ."version>="' vcpkg.json)
+          echo "PYTHON_VERSION=$python_version" >> $GITHUB_ENV
+          python_major_minor=$(echo $python_version | grep -Po "\d+.\d+")
+          echo "PYTHON_MAJOR_MINOR_VERSION=$python_major_minor" >> $GITHUB_ENV
 
       - name: download python source
         run: |
           git clone --branch v${{ env.PYTHON_VERSION }} https://github.com/python/cpython.git
-
 
       - name: configure python
         run: |
@@ -74,7 +75,10 @@ jobs:
 
       - name: configure-env-vars
         run: |
-          echo "Replace"
+          python_version=$(jq -r '.dependencies[] | select(.name == "python3") | ."version>="' vcpkg.json)
+          echo "PYTHON_VERSION=$python_version" >> $GITHUB_ENV
+          python_major_minor=$(echo $python_version | grep -Eo "\d+.\d+")
+          echo "PYTHON_MAJOR_MINOR_VERSION=$python_major_minor" >> $GITHUB_ENV
 
       - name: download python source
         run: |

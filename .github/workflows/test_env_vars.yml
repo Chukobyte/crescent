@@ -2,7 +2,7 @@ name: test-env-vars
 
 on:
   push:
-    branches: [ dev ]
+    branches: [ test ]
 
 jobs:
   windows-env-vars:
