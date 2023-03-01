@@ -5,6 +5,29 @@ on:
     branches: [ dev ]
 
 jobs:
+  windows-env-vars:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: install dependencies
+        run: |
+          Invoke-WebRequest https://github.com/stedolan/jq/releases/download/jq-1.6/jq-win64.exe -OutFile jq.exe
+          Move-Item jq.exe C:\Windows\System32\WindowsPowerShell\v1.0\
+          $env:PATH += ';C:\Windows\System32\WindowsPowerShell\v1.0\'
+
+      - name: set env vars
+        run: |
+          $env:CRESCENT_VERSION=$(jq -r '.version' vcpkg.json)
+          python_version=$(jq -r '.dependencies[] | select(.name == "python3") | ."version>="' vcpkg.json)
+          $env:PYTHON_PATH=$python_version
+
+      - name: print env vars
+        run: |
+          echo "CRESCENT_VERSION = ${{ env.CRESCENT_VERSION }}"
+          echo "PYTHON_VERSION = ${{ env.PYTHON_VERSION }}"
+
   ubuntu-env-vars:
     runs-on: ubuntu-latest
 
