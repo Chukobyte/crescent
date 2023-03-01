@@ -265,10 +265,6 @@ jobs:
         run: |
           python3 -m pip install google-auth google-api-python-client
 
-      - name: install dependencies
-        run: |
-          sudo apt install xattr
-
       - name: setup directories
         run: |
           # Windows
@@ -342,11 +338,8 @@ jobs:
           # MacOSX
           unzip embed_python_macosx.zip -d embed_python_macosx
 
-      - name: build packages
+      - name: build windows package
         run: |
-          cd ${{ github.workspace }}
-          ls -la *
-          echo "building windows package"
           # Copy engine binaries
           cp crescent_engine_windows.exe crescent_windows/bin/windows/crescent_engine.exe
           cp crescent_engine_linux crescent_windows/bin/linux/crescent_engine
@@ -368,7 +361,8 @@ jobs:
           chmod -R 755 crescent_windows
           zip -r crescent_windows.zip crescent_windows/
 
-          echo "building linux package"
+      - name: build linux package
+        run: |
           # Copy engine binaries
           cp crescent_engine_windows.exe crescent_linux/bin/windows/crescent_engine.exe
           cp crescent_engine_linux crescent_linux/bin/linux/crescent_engine
@@ -389,7 +383,8 @@ jobs:
           zip -r crescent_linux.zip crescent_linux/
           tar -czvf crescent_linux.tar.gz crescent_linux/
 
-          echo "building macosx package"
+      - name: build macosx package
+        run: |
           # Just build app bundle for engine as editor doesn't exist yet
           unzip crescent_macosx_export_template.zip
           chmod 755 crescent_engine_macosx
@@ -401,8 +396,6 @@ jobs:
           cp -r test_games crescent.app/Contents/MacOS/test_games
           zip -r crescent_macosx.zip crescent.app/
           tar -czvf crescent_macosx.tar.gz crescent.app/
-          xattr -d com.apple.quarantine crescent_macosx.zip
-          xattr -d com.apple.quarantine crescent_macosx.tar.gz
 
       - name: deploy packages
         run: |
