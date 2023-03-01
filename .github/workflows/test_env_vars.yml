@@ -20,8 +20,7 @@ jobs:
       - name: set env vars
         run: |
           $env:CRESCENT_VERSION=$(jq -r '.version' vcpkg.json)
-          python_version=$(jq -r '.dependencies[] | select(.name == "python3") | ."version>="' vcpkg.json)
-          $env:PYTHON_PATH=$python_version
+          $env:PYTHON_PATH=$(jq -r '.dependencies[] | select(.name == "python3") | ."version>="' vcpkg.json)
 
       - name: print env vars
         run: |
