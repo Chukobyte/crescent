@@ -19,4 +19,4 @@ if len(sys.argv) >= 3:
     if files_not_downloaded:
         raise Exception(f"Wasn't able to download file/s '{files_not_downloaded}'")
 else:
-    print("ERROR: Didn't pass in file cred path and/or files to download!")
+    raise Exception("Didn't pass in file cred path and/or files to download!")
