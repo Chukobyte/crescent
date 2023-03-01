@@ -4,9 +4,6 @@ on:
   push:
     branches: [ main ]
 
-env:
-  PYTHON_VERSION: 3.10.5
-
 jobs:
   # WINDOWS BUILD
   windows-build:
@@ -14,6 +11,19 @@ jobs:
 
     steps:
       - uses: actions/checkout@v1
+
+      - name: install dependencies (just jq for now)
+        run: |
+          Invoke-WebRequest https://github.com/stedolan/jq/releases/download/jq-1.6/jq-win64.exe -OutFile jq.exe
+          Move-Item jq.exe C:\Windows\System32\WindowsPowerShell\v1.0\
+          $env:PATH += ';C:\Windows\System32\WindowsPowerShell\v1.0\'
+
+      - name: set env vars
+        run: |
+          $crescent_version = jq -r '.version' vcpkg.json
+          "CRESCENT_VERSION=$crescent_version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          $python_version = jq -r '.dependencies[] | select(.name == \"python3\") | .\"version>=\"' vcpkg.json
+          "PYTHON_VERSION=$python_version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append  
 
       - name: installing vcpkg
         run: |
@@ -91,11 +101,19 @@ jobs:
         run: |
           sudo apt install gcc-11
           sudo apt install g++-11
-          sudo apt install libgl1-mesa-dev libglu1-mesa-dev
+          sudo apt install libgl1-mesa-dev libglu1-mesa-dev jq
           wget -O cmake.sh https://cmake.org/files/v3.20/cmake-3.20.1-linux-x86_64.sh
           sudo sh cmake.sh --skip-license --exclude-subdir --prefix=/usr/local
           export PATH=/usr/local/bin:$PATH
           cmake --version
+
+      - name: set env vars
+        run: |
+          echo "CRESCENT_VERSION=$(jq -r '.version' vcpkg.json)" >> $GITHUB_ENV
+          python_version=$(jq -r '.dependencies[] | select(.name == "python3") | ."version>="' vcpkg.json)
+          echo "PYTHON_VERSION=$python_version" >> $GITHUB_ENV
+          python_major_minor=$(echo $python_version | grep -Po "\d+.\d+")
+          echo "PYTHON_MAJOR_MINOR_VERSION=$python_major_minor" >> $GITHUB_ENV
 
       - name: install vcpkg
         run: |
@@ -156,7 +174,15 @@ jobs:
 
       - name: install dependencies
         run: |
-          brew install pkg-config
+          brew install pkg-config jq
+
+      - name: set env vars
+        run: |
+          echo "CRESCENT_VERSION=$(jq -r '.version' vcpkg.json)" >> $GITHUB_ENV
+          python_version=$(jq -r '.dependencies[] | select(.name == "python3") | ."version>="' vcpkg.json)
+          echo "PYTHON_VERSION=$python_version" >> $GITHUB_ENV
+          python_major_minor=$(echo $python_version | grep -Eo "\d+.\d+")
+          echo "PYTHON_MAJOR_MINOR_VERSION=$python_major_minor" >> $GITHUB_ENV
 
       - name: run build
         run: |
@@ -260,6 +286,18 @@ jobs:
 
     steps:
       - uses: actions/checkout@v1
+
+      - name: install dependencies
+        run: |
+          sudo apt install jq
+
+      - name: set env vars
+        run: |
+          echo "CRESCENT_VERSION=$(jq -r '.version' vcpkg.json)" >> $GITHUB_ENV
+          python_version=$(jq -r '.dependencies[] | select(.name == "python3") | ."version>="' vcpkg.json)
+          echo "PYTHON_VERSION=$python_version" >> $GITHUB_ENV
+          python_major_minor=$(echo $python_version | grep -Po "\d+.\d+")
+          echo "PYTHON_MAJOR_MINOR_VERSION=$python_major_minor" >> $GITHUB_ENV
 
       - name: install pip packages
         run: |
