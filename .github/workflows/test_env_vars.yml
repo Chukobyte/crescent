@@ -19,16 +19,15 @@ jobs:
 
       - name: set env vars
         run: |
-          $json_version = jq -r '.version' vcpkg.json
-          "CRESCENT_VERSION=$json_version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-#          "CRESCENT_VERSION=$(jq -r '.version' vcpkg.json)" >> $GITHUB_ENV
-#          $env:CRESCENT_VERSION="$(jq -r '.version' vcpkg.json)"
-#          $env:PYTHON_PATH=$(jq -r '.dependencies[] | select(.name == "python3") | ."version>="' vcpkg.json)
+          $crescent_version = jq -r '.version' vcpkg.json
+          "CRESCENT_VERSION=$crescent_version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          $python_version = jq -r '.dependencies[] | select(.name == "python3") | ."version>="' vcpkg.json
+          "PYTHON_VERSION=$python_version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append      
 
       - name: print env vars
         run: |
           echo "CRESCENT_VERSION = ${{ env.CRESCENT_VERSION }}"
-#          echo "PYTHON_VERSION = ${{ env.PYTHON_VERSION }}"
+          echo "PYTHON_VERSION = ${{ env.PYTHON_VERSION }}"
 
   ubuntu-env-vars:
     runs-on: ubuntu-latest
