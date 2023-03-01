@@ -15,15 +15,13 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
-      - name: configure env vars
-        run: |
-          temp_py_version=$(echo ${{ env.PYTHON_VERSION }} |  grep -Po "\d+\.\d+\.\d+")
-          echo "PYTHON_MICRO_VERSION=$temp_py_version" >> $GITHUB_ENV
-          echo "ARCH=${{ env.RUNNER_OS }}" >> $GITHUB_ENV
-
       - name: setup dependencies
         run: |
-          sudo apt install zlib1g-dev pkg-config lcov gdb libbz2-dev libffi-dev libgdbm-dev libgdbm-compat-dev liblzma-dev libncurses5-dev libreadline6-dev libsqlite3-dev libssl-dev lzma lzma-dev tk-dev
+          sudo apt install zlib1g-dev pkg-config lcov gdb libbz2-dev libffi-dev libgdbm-dev libgdbm-compat-dev liblzma-dev libncurses5-dev libreadline6-dev libsqlite3-dev libssl-dev lzma lzma-dev tk-dev jq
+
+      - name: configure env vars
+        run: |
+          echo "Replace"
 
       - name: download python source
         run: |
@@ -70,15 +68,13 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
-      - name: configure-env-vars
-        run: |
-          temp_py_version=$(echo ${{ env.PYTHON_VERSION }} |  grep -Eo "\d+\.\d+\.\d+")
-          echo "PYTHON_MICRO_VERSION=$temp_py_version" >> $GITHUB_ENV
-          echo "ARCH=${{ env.RUNNER_OS }}" >> $GITHUB_ENV
-
       - name: setup dependencies
         run: |
-          brew install dpkg bzip2 libffi gdbm ncurses sqlite3 zlib openssl@1.1 wget pkg-config tcl-tk xz readline -q
+          brew install dpkg bzip2 libffi gdbm ncurses sqlite3 zlib openssl@1.1 wget pkg-config tcl-tk xz readline jq -q
+
+      - name: configure-env-vars
+        run: |
+          echo "Replace"
 
       - name: download python source
         run: |
