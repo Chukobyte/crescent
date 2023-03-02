@@ -21,9 +21,10 @@ typedef struct SESpatialHashMapGridSpacesHandle {
     SESpatialHashMapGridSpace* gridSpaces[4];
 } SESpatialHashMapGridSpacesHandle;
 
-// Contains a hash map of buckets that correspond to spaces on a grid
+// Contains a hash map of buckets that correspond to a space on a grid
 typedef struct SESpatialHashMap {
     int cellSize;  // Cell size should be 2x the size of the largest object
+    int largestObjectSize; // Used to keep track of the largest object size.  If size is 8x less than cell size, we should resize spatial hash.
     SEHashMap* gridMap; // Contains objects within a grid.
     SEHashMap* objectToGridMap; // Contains contains all grid spaces an object is assigned to.
     bool doesCollisionDataNeedUpdating;
@@ -34,7 +35,7 @@ typedef struct SESpatialHashMapCollisionResult {
     unsigned int collisions[SE_SPATIAL_HASH_GRID_MAX_COLLISIONS];
 } SESpatialHashMapCollisionResult;
 
-SESpatialHashMap* se_spatial_hash_map_create(int cellSize);
+SESpatialHashMap* se_spatial_hash_map_create(int initialCellSize);
 void se_spatial_hash_map_destroy(SESpatialHashMap* hashMap);
 SESpatialHashMapGridSpacesHandle* se_spatial_hash_map_insert_or_update(SESpatialHashMap* hashMap, unsigned int entity, SERect2* collisionRect);
 void se_spatial_hash_map_remove(SESpatialHashMap* hashMap, unsigned int entity);
