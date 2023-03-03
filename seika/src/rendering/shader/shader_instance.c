@@ -89,6 +89,7 @@ void se_shader_instance_param_update_int(SEShaderInstance* shaderInstance, const
 
 void se_shader_instance_param_update_float(SEShaderInstance* shaderInstance, const char* name, float value) {
     SEShaderParam* param = (SEShaderParam*) se_string_hash_map_get(shaderInstance->paramMap, name);
+    SE_ASSERT_FMT(param != NULL, "Shader param for '%s' is null!", name);
     SE_ASSERT(param->type == SEShaderParamType_FLOAT);
     param->value.floatValue = value;
 }
