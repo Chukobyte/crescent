@@ -14,6 +14,8 @@ typedef struct PositionHashes {
     int32_t hashes[SE_SPATIAL_HASH_MAX_POSITION_HASH];
 } PositionHashes;
 
+void spatial_hash_map_update(SESpatialHashMap* hashMap, unsigned int entity, SESpatialHashMapGridSpacesHandle* handle, SERect2* collisionRect);
+bool change_cell_size_if_needed(SESpatialHashMap* hashMap, SERect2* collisionRectToCheck);
 int32_t spatial_hash(SESpatialHashMap* hashMap, SEVector2* position);
 void spatial_hash_map_destroy_node(SESpatialHashMap* hashMap);
 SESpatialHashMapGridSpace* get_or_create_grid_space(SESpatialHashMap* hashMap, int32_t positionHash);
@@ -23,9 +25,10 @@ void unlink_all_objects_by_entity(SESpatialHashMap* hashMap, SESpatialHashMapGri
 bool collision_result_has_entity(SESpatialHashMapCollisionResult* result, unsigned int entity);
 
 // Public facing functions
-SESpatialHashMap* se_spatial_hash_map_create(int cellSize) {
+SESpatialHashMap* se_spatial_hash_map_create(int initialCellSize) {
     SESpatialHashMap* map = SE_MEM_ALLOCATE(SESpatialHashMap);
-    map->cellSize = cellSize;
+    map->cellSize = initialCellSize;
+    map->largestObjectSize = initialCellSize;
     map->gridMap = se_hash_map_create(sizeof(int32_t), sizeof(SESpatialHashMapGridSpace**), SE_HASH_MAP_MIN_CAPACITY);
     map->objectToGridMap = se_hash_map_create(sizeof(unsigned int), sizeof(SESpatialHashMapGridSpacesHandle**), SE_HASH_MAP_MIN_CAPACITY);
     map->doesCollisionDataNeedUpdating = false;
@@ -51,18 +54,55 @@ void se_spatial_hash_map_destroy(SESpatialHashMap* hashMap) {
     SE_MEM_FREE(hashMap);
 }
 
+// The purpose of this function is to make sure that 'cellSize' is twice as big as the largest object
+bool change_cell_size_if_needed(SESpatialHashMap* hashMap, SERect2* collisionRectToCheck) {
+    const int objectMaxSize = collisionRectToCheck->h > collisionRectToCheck->w ? (int)collisionRectToCheck->h : (int)collisionRectToCheck->w;
+    // Update largest object size of hashmap if applicable
+    if (objectMaxSize > hashMap->largestObjectSize) {
+        hashMap->largestObjectSize = objectMaxSize;
+    }
+    // Check if cell size needs to grow or shrink
+    if (objectMaxSize > hashMap->cellSize * 2 || hashMap->largestObjectSize < hashMap->cellSize / 8) {
+        hashMap->cellSize = objectMaxSize * 2;
+        return true;
+    }
+
+    return false;
+}
+
 SESpatialHashMapGridSpacesHandle* se_spatial_hash_map_insert_or_update(SESpatialHashMap* hashMap, unsigned int entity, SERect2* collisionRect) {
     // Create new object handle if it doesn't exist
     if (!se_hash_map_has(hashMap->objectToGridMap, &entity)) {
         SESpatialHashMapGridSpacesHandle* newHandle = SE_MEM_ALLOCATE(SESpatialHashMapGridSpacesHandle);
         newHandle->gridSpaceCount = 0;
+        newHandle->collisionRect = (SERect2) {
+            0.0f, 0.0f, 0.0f, 0.0f
+        };
         se_hash_map_add(hashMap->objectToGridMap, &entity, &newHandle);
     }
+
+    // Update cell size and rebuild map if an object is bigger than the cell size
+    if (change_cell_size_if_needed(hashMap, collisionRect)) {
+        // Since we have changed cell size and largest object size, rebuild spatial hash
+        SE_HASH_MAP_FOR_EACH(hashMap->objectToGridMap, iter) {
+            const unsigned int updatedEntity = *(unsigned int*) iter.pair->key;
+            if (entity != updatedEntity) {
+                SESpatialHashMapGridSpacesHandle* updatedHandle = (SESpatialHashMapGridSpacesHandle*) iter.pair->value;
+                spatial_hash_map_update(hashMap, updatedEntity, updatedHandle, &updatedHandle->collisionRect);
+            }
+        }
+    }
+
     SESpatialHashMapGridSpacesHandle* objectHandle = (SESpatialHashMapGridSpacesHandle*) *(SESpatialHashMapGridSpacesHandle**) se_hash_map_get(hashMap->objectToGridMap, &entity);
-    memcpy(&objectHandle->collisionRect, collisionRect, sizeof(SERect2));
+    spatial_hash_map_update(hashMap, entity, objectHandle, collisionRect);
+    return objectHandle;
+}
+
+void spatial_hash_map_update(SESpatialHashMap* hashMap, unsigned int entity, SESpatialHashMapGridSpacesHandle* handle, SERect2* collisionRect) {
+    memcpy(&handle->collisionRect, collisionRect, sizeof(SERect2));
 
     // Unlink all previous spaces and objects
-    unlink_all_objects_by_entity(hashMap, objectHandle, entity);
+    unlink_all_objects_by_entity(hashMap, handle, entity);
 
     // Add values to spaces and spaces to object handles (moving clockwise starting from top-left)
     PositionHashes hashes = { .hashCount = 0 };
@@ -70,24 +110,22 @@ SESpatialHashMapGridSpacesHandle* se_spatial_hash_map_insert_or_update(SESpatial
     const int32_t topLeftHash = spatial_hash(hashMap, &(SEVector2) {
         collisionRect->x, collisionRect->y
     });
-    link_object_by_position_hash(hashMap, objectHandle, entity, topLeftHash, &hashes);
+    link_object_by_position_hash(hashMap, handle, entity, topLeftHash, &hashes);
     // Top right
     const int32_t topRightHash = spatial_hash(hashMap, &(SEVector2) {
         collisionRect->x + collisionRect->w, collisionRect->y
     });
-    link_object_by_position_hash(hashMap, objectHandle, entity, topRightHash, &hashes);
+    link_object_by_position_hash(hashMap, handle, entity, topRightHash, &hashes);
     // Bottom Left
     const int32_t bottomLeftHash = spatial_hash(hashMap, &(SEVector2) {
         collisionRect->x, collisionRect->y + collisionRect->h
     });
-    link_object_by_position_hash(hashMap, objectHandle, entity, bottomLeftHash, &hashes);
+    link_object_by_position_hash(hashMap, handle, entity, bottomLeftHash, &hashes);
     // Bottom Right
     const int32_t bottomRightHash = spatial_hash(hashMap, &(SEVector2) {
         collisionRect->x + collisionRect->w, collisionRect->y + collisionRect->h
     });
-    link_object_by_position_hash(hashMap, objectHandle, entity, bottomRightHash, &hashes);
-
-    return objectHandle;
+    link_object_by_position_hash(hashMap, handle, entity, bottomRightHash, &hashes);
 }
 
 void se_spatial_hash_map_remove(SESpatialHashMap* hashMap, unsigned int entity) {
@@ -96,8 +134,27 @@ void se_spatial_hash_map_remove(SESpatialHashMap* hashMap, unsigned int entity) 
     }
     SESpatialHashMapGridSpacesHandle* objectHandle = (SESpatialHashMapGridSpacesHandle*) *(SESpatialHashMapGridSpacesHandle**) se_hash_map_get(hashMap->objectToGridMap, &entity);
     unlink_all_objects_by_entity(hashMap, objectHandle, entity);
-    SE_MEM_FREE(objectHandle);
     se_hash_map_erase(hashMap->objectToGridMap, &entity);
+    // TODO: Use something more efficient than looping through the entire hashmap to find the largest object size
+    const int MaxObjectSize = objectHandle->collisionRect.h > objectHandle->collisionRect.w ? (int)objectHandle->collisionRect.h : (int)objectHandle->collisionRect.w;
+    if (MaxObjectSize == hashMap->largestObjectSize) {
+        int foundLargestObjectSize = -1;
+        SE_HASH_MAP_FOR_EACH(hashMap->objectToGridMap, iter) {
+            SESpatialHashMapGridSpacesHandle* nodeObjectHandle = (SESpatialHashMapGridSpacesHandle*) iter.pair->value;
+            const int nodeMaxObjectSize = nodeObjectHandle->collisionRect.h > nodeObjectHandle->collisionRect.w ? (int)nodeObjectHandle->collisionRect.h : (int)nodeObjectHandle->collisionRect.w;
+            // Early out if we find another object with the same size
+            if (nodeMaxObjectSize == hashMap->largestObjectSize) {
+                foundLargestObjectSize = -1;
+                break;
+            } else if(nodeMaxObjectSize > foundLargestObjectSize) {
+                foundLargestObjectSize = nodeMaxObjectSize;
+            }
+        }
+        if (foundLargestObjectSize > 0) {
+            hashMap->largestObjectSize = foundLargestObjectSize;
+        }
+    }
+    SE_MEM_FREE(objectHandle);
 }
 
 SESpatialHashMapGridSpacesHandle* se_spatial_hash_map_get(SESpatialHashMap* hashMap, unsigned int entity) {

@@ -50,8 +50,8 @@ EntitySystem* collision_ec_system_create() {
     // One time init of global spatial hash map
     static bool isGlobalSpatialHashMapInitialized = false;
     if (!isGlobalSpatialHashMapInitialized) {
-        const int maxSpriteSize = 32;
-        spatialHashMap = se_spatial_hash_map_create(maxSpriteSize * 2);
+        const int initialCellSize = 64;
+        spatialHashMap = se_spatial_hash_map_create(initialCellSize);
         cre_collision_set_global_spatial_hash_map(spatialHashMap);
         isGlobalSpatialHashMapInitialized = true;
     }
