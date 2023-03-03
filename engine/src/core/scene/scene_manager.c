@@ -346,6 +346,8 @@ void cre_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneNode, Scene
                                                     jsonSceneNode->shaderInstanceVertexPath, jsonSceneNode->shaderInstanceFragmentPath);
             SEShaderInstance* shaderInstance = se_shader_cache_get_instance(spriteComponent->shaderInstanceId);
             se_renderer_set_sprite_shader_default_params(shaderInstance->shader);
+        } else {
+            spriteComponent->shaderInstanceId = SE_SHADER_INSTANCE_INVALID_ID;
         }
     }
     if (jsonSceneNode->components[ComponentDataIndex_ANIMATED_SPRITE] != NULL) {
@@ -356,6 +358,8 @@ void cre_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneNode, Scene
                         jsonSceneNode->shaderInstanceVertexPath, jsonSceneNode->shaderInstanceFragmentPath);
             SEShaderInstance* shaderInstance = se_shader_cache_get_instance(animatedSpriteComponent->shaderInstanceId);
             se_renderer_set_sprite_shader_default_params(shaderInstance->shader);
+        } else {
+            animatedSpriteComponent->shaderInstanceId = SE_SHADER_INSTANCE_INVALID_ID;
         }
     }
     if (jsonSceneNode->components[ComponentDataIndex_TEXT_LABEL] != NULL) {
