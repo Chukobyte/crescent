@@ -380,7 +380,7 @@ SEShaderFileParseResult se_shader_file_parser_parse_shader(const char* shaderSou
                         foundUniformsToken + SHADER_UNIFORMS_REPLACE_TOKEN_LENGTH,
                         strlen(foundUniformsToken + SHADER_UNIFORMS_REPLACE_TOKEN_LENGTH) + 1);
                 memcpy(foundUniformsToken, uniformsSource, uniformsReplaceLength);
-                printf("vertexSourceWithUniformsReplaced = \n%s\n", fullShaderBuffer);
+//                printf("vertexSourceWithUniformsReplaced = \n%s\n", fullShaderBuffer);
                 SE_MEM_FREE(uniformsSource);
             }
             // Vertex functions
@@ -397,7 +397,7 @@ SEShaderFileParseResult se_shader_file_parser_parse_shader(const char* shaderSou
                         foundFunctionsToken + SHADER_FUNCTIONS_REPLACE_TOKEN_LENGTH,
                         strlen(foundFunctionsToken + SHADER_FUNCTIONS_REPLACE_TOKEN_LENGTH) + 1);
                 memcpy(foundFunctionsToken, functionsSource, functionsReplaceLength);
-                printf("vertexSourceWithFunctionsReplaced = \n%s\n", fullShaderBuffer);
+//                printf("vertexSourceWithFunctionsReplaced = \n%s\n", fullShaderBuffer);
                 SE_MEM_FREE(functionsSource);
             }
             // Vertex body
@@ -414,12 +414,66 @@ SEShaderFileParseResult se_shader_file_parser_parse_shader(const char* shaderSou
             memcpy(foundVertexToken, parseData.vertexFunctionSource, vertexBodyReplaceLength);
             printf("vertexSourceWithVertexBodyReplaced = \n%s\n", fullShaderBuffer);
         }
-        if (parseData.fragmentFunctionSource) {}
+        parseData.fullVertexSource = se_strdup(fullShaderBuffer);
+
+        strcpy(fullShaderBuffer, SE_OPENGL_SHADER_SOURCE_FRAGMENT_SCREEN);
+        if (parseData.fragmentFunctionSource) {
+            // Fragment uniforms
+            char* foundUniformsToken = strstr(fullShaderBuffer, SHADER_UNIFORMS_REPLACE_TOKEN);
+            if (!foundUniformsToken) {
+                strcpy(result.errorMessage, "Unable to find uniforms token in fragment shader!");
+                SE_MEM_FREE(originalSource);
+                return result;
+            }
+            char* uniformsSource = shader_file_parse_data_get_full_uniforms_source(&parseData);
+            if (uniformsSource) {
+                const unsigned int uniformsReplaceLength = strlen(uniformsSource);
+                memmove(foundUniformsToken + uniformsReplaceLength,
+                        foundUniformsToken + SHADER_UNIFORMS_REPLACE_TOKEN_LENGTH,
+                        strlen(foundUniformsToken + SHADER_UNIFORMS_REPLACE_TOKEN_LENGTH) + 1);
+                memcpy(foundUniformsToken, uniformsSource, uniformsReplaceLength);
+//                printf("vertexSourceWithUniformsReplaced = \n%s\n", fullShaderBuffer);
+                SE_MEM_FREE(uniformsSource);
+            }
+            // Fragment functions
+            char* foundFunctionsToken = strstr(fullShaderBuffer, SHADER_FUNCTIONS_REPLACE_TOKEN);
+            if (!foundFunctionsToken) {
+                strcpy(result.errorMessage, "Unable to find functions token in fragment shader!");
+                SE_MEM_FREE(originalSource);
+                return result;
+            }
+            char* functionsSource = shader_file_parse_data_get_full_functions_source(&parseData);
+            if (functionsSource) {
+                const unsigned int functionsReplaceLength = strlen(functionsSource);
+                memmove(foundFunctionsToken + functionsReplaceLength,
+                        foundFunctionsToken + SHADER_FUNCTIONS_REPLACE_TOKEN_LENGTH,
+                        strlen(foundFunctionsToken + SHADER_FUNCTIONS_REPLACE_TOKEN_LENGTH) + 1);
+                memcpy(foundFunctionsToken, functionsSource, functionsReplaceLength);
+//                printf("vertexSourceWithFunctionsReplaced = \n%s\n", fullShaderBuffer);
+                SE_MEM_FREE(functionsSource);
+            }
+            // Fragment body
+            char* foundFragmentToken = strstr(fullShaderBuffer, SHADER_FRAGMENT_BODY_REPLACE_TOKEN);
+            if (!foundFragmentToken) {
+                strcpy(result.errorMessage, "Unable to find fragment() token in fragment shader!");
+                SE_MEM_FREE(originalSource);
+                return result;
+            }
+            const unsigned int fragmentBodyReplaceLength = strlen(parseData.fragmentFunctionSource);
+            memmove(foundFragmentToken + fragmentBodyReplaceLength,
+                    foundFragmentToken + SHADER_FRAGMENT_BODY_REPLACE_TOKEN_LENGTH,
+                    strlen(foundFragmentToken + SHADER_FRAGMENT_BODY_REPLACE_TOKEN_LENGTH) + 1);
+            memcpy(foundFragmentToken, parseData.fragmentFunctionSource, fragmentBodyReplaceLength);
+            printf("fragmentSourceWithVertexBodyReplaced = \n%s\n", fullShaderBuffer);
+        }
+        parseData.fullFragmentSource = se_strdup(fullShaderBuffer);
         break;
     }
     default:
         break;
     }
+
+    // Now compile and create shader instance
 
 
     SE_MEM_FREE(originalSource);
