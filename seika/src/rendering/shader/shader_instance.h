@@ -10,6 +10,7 @@
 
 #include "../../data_structures/se_hash_map_string.h"
 
+// Shader Param - Shader instance representation of uniform parameters
 typedef enum SEShaderParamType {
     SEShaderParamType_BOOL = 0,
     SEShaderParamType_INT = 1,
@@ -31,6 +32,12 @@ typedef struct SEShaderParam {
         SEVector4 float4Value;
     } value;
 } SEShaderParam;
+
+// Shader Instance
+typedef enum SEShaderInstanceType {
+    SEShaderInstanceType_SCREEN = 0,
+    SEShaderInstanceType_INVALID = 1,
+} SEShaderInstanceType;
 
 typedef struct SEShaderInstance {
     SEShader* shader;
