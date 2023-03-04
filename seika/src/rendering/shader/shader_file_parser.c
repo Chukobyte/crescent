@@ -21,6 +21,15 @@ typedef struct SEShaderFileParseData {
     SEShaderFileParserFunction functions[32];
 } SEShaderFileParseData;
 
+void shader_file_parse_data_delete_internal_memory(SEShaderFileParseData* parseData) {
+    SE_MEM_FREE(parseData->vertexSource);
+    SE_MEM_FREE(parseData->fragmentSource);
+    for (size_t i = 0; i < parseData->functionCount; i++) {
+        SE_MEM_FREE(parseData->functions[i].name);
+        SE_MEM_FREE(parseData->functions[i].fullFunctionSource);
+    }
+}
+
 // Will parse the next token, returns true if there is more source to parse
 bool shader_file_find_next_token(char** shaderSource, char* tokenOut, bool* semiColonFound) {
     tokenOut[0] = '\0';
@@ -82,6 +91,17 @@ bool shader_file_find_next_uniform_default_value(char** shaderSource, char* toke
         (*shaderSource)++;
     }
     return false;
+}
+
+char* shader_file_find_next_function(char** shaderSource) {
+    while (*(*shaderSource) != '\0') {
+        if (*(*shaderSource) == '}') {
+            (*shaderSource)++;
+            break;
+        }
+        (*shaderSource)++;
+    }
+    return NULL;
 }
 
 bool shader_file_is_function_return_type_token(const char* token) {
@@ -189,7 +209,16 @@ SEShaderFileParseResult se_shader_file_parser_parse_shader(const char* shaderSou
             // Finally after all validation checks, add new uniform to array
             parseData.uniforms[parseData.uniformCount++] = shaderUniform;
         } else if (shader_file_is_function_return_type_token(shaderToken)) {
-
+            char* functionFullSource = shader_file_find_next_function(&currentSource);
+//            if (functionFullSource == NULL) {
+//                strcpy(result.errorMessage, "Expected to find a valid function definition!");
+//                SE_MEM_FREE(originalSource);
+//                return result;
+//            }
+        } else {
+            strcpy(result.errorMessage, "Unexpected token!");
+            SE_MEM_FREE(originalSource);
+            return result;
         }
     }
 

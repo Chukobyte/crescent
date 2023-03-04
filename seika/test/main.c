@@ -344,6 +344,12 @@ void seika_shader_file_parser_test(void) {
             "uniform vec2 size;\n"
             "uniform float brightness = 1.0f;\n"
             "uniform int spriteCount = 1;\n"
+            "\n"
+            "void testFunc() {}\n"
+            "\n"
+            "void vertex() {}\n"
+            "\n"
+            "void fragment() {}\n"
             "\n";
     SEShaderFileParseResult result = se_shader_file_parser_parse_shader(shader);
     // Shouldn't be an error message
