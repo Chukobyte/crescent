@@ -2,27 +2,9 @@
 
 #include <string.h>
 
-#include "shader_instance.h"
 #include "shader_source.h"
 #include "../../utils/se_string_util.h"
 #include "../../memory/se_mem.h"
-
-typedef struct SEShaderFileParserFunction {
-    char* name;
-    char* fullFunctionSource;
-} SEShaderFileParserFunction;
-
-typedef struct SEShaderFileParseData {
-    SEShaderInstanceType shaderType;
-    char* fullVertexSource;
-    char* fullFragmentSource;
-    char* vertexFunctionSource;
-    char* fragmentFunctionSource;
-    size_t uniformCount;
-    size_t functionCount;
-    SEShaderParam uniforms[32];
-    SEShaderFileParserFunction functions[32];
-} SEShaderFileParseData;
 
 char* shader_file_parse_data_get_full_uniforms_source(SEShaderFileParseData* parseData) {
     if (parseData->uniformCount == 0) {
@@ -217,12 +199,12 @@ bool shader_file_is_function_return_type_token(const char* token) {
 
 // TODO: Make a macro for error returns
 SEShaderFileParseResult se_shader_file_parser_parse_shader(const char* shaderSource) {
-    SEShaderFileParseResult result = {.errorMessage = {0}, .parsedInstance = NULL};
+    SEShaderFileParseResult result = { .errorMessage = {0} };
     char* originalSource = se_strdup(shaderSource);
     char* currentSource = originalSource;
     char shaderToken[32];
     bool isSemicolonFound;
-    SEShaderFileParseData parseData = { .shaderType = SEShaderInstanceType_INVALID,
+    result.parseData = (SEShaderFileParseData){ .shaderType = SEShaderInstanceType_INVALID,
                                         .fullVertexSource = NULL,
                                         .fullFragmentSource = NULL, .vertexFunctionSource = NULL,
                                         .fragmentFunctionSource = NULL,
@@ -241,7 +223,7 @@ SEShaderFileParseResult se_shader_file_parser_parse_shader(const char* shaderSou
     // Parse shader type value
     shader_file_find_next_token(&currentSource, shaderToken, &isSemicolonFound);
     if (strcmp(shaderToken, "screen") == 0) {
-        parseData.shaderType = SEShaderInstanceType_SCREEN;
+        result.parseData.shaderType = SEShaderInstanceType_SCREEN;
     } else {
         strcpy(result.errorMessage, "Didn't find 'shader_type' value on first line!");
         SE_MEM_FREE(originalSource);
@@ -322,7 +304,7 @@ SEShaderFileParseResult se_shader_file_parser_parse_shader(const char* shaderSou
                 }
             }
             // Finally after all validation checks, add new uniform to array
-            parseData.uniforms[parseData.uniformCount++] = shaderUniform;
+            result.parseData.uniforms[result.parseData.uniformCount++] = shaderUniform;
         } else if (shader_file_is_function_return_type_token(shaderToken)) {
             SEShaderFileParserFunction parsedFunction = shader_file_find_next_function(&currentSource, shaderToken);
             if (parsedFunction.name == NULL || parsedFunction.fullFunctionSource == NULL) {
@@ -334,16 +316,16 @@ SEShaderFileParseResult se_shader_file_parser_parse_shader(const char* shaderSou
             printf("function source = '%s'\n", parsedFunction.fullFunctionSource);
             // Check for vertex and fragment shader functions
             if (strcmp(parsedFunction.name, "vertex") == 0) {
-                parseData.vertexFunctionSource = shader_file_parse_function_body(parsedFunction.fullFunctionSource);
+                result.parseData.vertexFunctionSource = shader_file_parse_function_body(parsedFunction.fullFunctionSource);
                 SE_MEM_FREE(parsedFunction.name);
                 SE_MEM_FREE(parsedFunction.fullFunctionSource);
             } else if (strcmp(parsedFunction.name, "fragment") == 0) {
-                parseData.fragmentFunctionSource = shader_file_parse_function_body(parsedFunction.fullFunctionSource);
+                result.parseData.fragmentFunctionSource = shader_file_parse_function_body(parsedFunction.fullFunctionSource);
                 SE_MEM_FREE(parsedFunction.name);
                 SE_MEM_FREE(parsedFunction.fullFunctionSource);
             } else {
                 // Add non vertex and fragment functions to our array
-                parseData.functions[parseData.functionCount++] = parsedFunction;
+                result.parseData.functions[result.parseData.functionCount++] = parsedFunction;
             }
         } else {
             strcpy(result.errorMessage, "Unexpected token!");
@@ -362,10 +344,10 @@ SEShaderFileParseResult se_shader_file_parser_parse_shader(const char* shaderSou
     const unsigned int SHADER_VERTEX_BODY_REPLACE_TOKEN_LENGTH = strlen(SHADER_VERTEX_BODY_REPLACE_TOKEN);
     const unsigned int SHADER_FRAGMENT_BODY_REPLACE_TOKEN_LENGTH = strlen(SHADER_FRAGMENT_BODY_REPLACE_TOKEN);
     char fullShaderBuffer[4096];
-    switch (parseData.shaderType) {
+    switch (result.parseData.shaderType) {
     case SEShaderInstanceType_SCREEN: {
         strcpy(fullShaderBuffer, SE_OPENGL_SHADER_SOURCE_VERTEX_SCREEN);
-        if (parseData.vertexFunctionSource) {
+        if (result.parseData.vertexFunctionSource) {
             // Vertex uniforms
             char* foundUniformsToken = strstr(fullShaderBuffer, SHADER_UNIFORMS_REPLACE_TOKEN);
             if (!foundUniformsToken) {
@@ -373,7 +355,7 @@ SEShaderFileParseResult se_shader_file_parser_parse_shader(const char* shaderSou
                 SE_MEM_FREE(originalSource);
                 return result;
             }
-            char* uniformsSource = shader_file_parse_data_get_full_uniforms_source(&parseData);
+            char* uniformsSource = shader_file_parse_data_get_full_uniforms_source(&result.parseData);
             if (uniformsSource) {
                 const unsigned int uniformsReplaceLength = strlen(uniformsSource);
                 memmove(foundUniformsToken + uniformsReplaceLength,
@@ -390,7 +372,7 @@ SEShaderFileParseResult se_shader_file_parser_parse_shader(const char* shaderSou
                 SE_MEM_FREE(originalSource);
                 return result;
             }
-            char* functionsSource = shader_file_parse_data_get_full_functions_source(&parseData);
+            char* functionsSource = shader_file_parse_data_get_full_functions_source(&result.parseData);
             if (functionsSource) {
                 const unsigned int functionsReplaceLength = strlen(functionsSource);
                 memmove(foundFunctionsToken + functionsReplaceLength,
@@ -407,17 +389,17 @@ SEShaderFileParseResult se_shader_file_parser_parse_shader(const char* shaderSou
                 SE_MEM_FREE(originalSource);
                 return result;
             }
-            const unsigned int vertexBodyReplaceLength = strlen(parseData.vertexFunctionSource);
+            const unsigned int vertexBodyReplaceLength = strlen(result.parseData.vertexFunctionSource);
             memmove(foundVertexToken + vertexBodyReplaceLength,
                     foundVertexToken + SHADER_VERTEX_BODY_REPLACE_TOKEN_LENGTH,
                     strlen(foundVertexToken + SHADER_VERTEX_BODY_REPLACE_TOKEN_LENGTH) + 1);
-            memcpy(foundVertexToken, parseData.vertexFunctionSource, vertexBodyReplaceLength);
+            memcpy(foundVertexToken, result.parseData.vertexFunctionSource, vertexBodyReplaceLength);
             printf("vertexSourceWithVertexBodyReplaced = \n%s\n", fullShaderBuffer);
         }
-        parseData.fullVertexSource = se_strdup(fullShaderBuffer);
+        result.parseData.fullVertexSource = se_strdup(fullShaderBuffer);
 
         strcpy(fullShaderBuffer, SE_OPENGL_SHADER_SOURCE_FRAGMENT_SCREEN);
-        if (parseData.fragmentFunctionSource) {
+        if (result.parseData.fragmentFunctionSource) {
             // Fragment uniforms
             char* foundUniformsToken = strstr(fullShaderBuffer, SHADER_UNIFORMS_REPLACE_TOKEN);
             if (!foundUniformsToken) {
@@ -425,7 +407,7 @@ SEShaderFileParseResult se_shader_file_parser_parse_shader(const char* shaderSou
                 SE_MEM_FREE(originalSource);
                 return result;
             }
-            char* uniformsSource = shader_file_parse_data_get_full_uniforms_source(&parseData);
+            char* uniformsSource = shader_file_parse_data_get_full_uniforms_source(&result.parseData);
             if (uniformsSource) {
                 const unsigned int uniformsReplaceLength = strlen(uniformsSource);
                 memmove(foundUniformsToken + uniformsReplaceLength,
@@ -442,7 +424,7 @@ SEShaderFileParseResult se_shader_file_parser_parse_shader(const char* shaderSou
                 SE_MEM_FREE(originalSource);
                 return result;
             }
-            char* functionsSource = shader_file_parse_data_get_full_functions_source(&parseData);
+            char* functionsSource = shader_file_parse_data_get_full_functions_source(&result.parseData);
             if (functionsSource) {
                 const unsigned int functionsReplaceLength = strlen(functionsSource);
                 memmove(foundFunctionsToken + functionsReplaceLength,
@@ -459,24 +441,26 @@ SEShaderFileParseResult se_shader_file_parser_parse_shader(const char* shaderSou
                 SE_MEM_FREE(originalSource);
                 return result;
             }
-            const unsigned int fragmentBodyReplaceLength = strlen(parseData.fragmentFunctionSource);
+            const unsigned int fragmentBodyReplaceLength = strlen(result.parseData.fragmentFunctionSource);
             memmove(foundFragmentToken + fragmentBodyReplaceLength,
                     foundFragmentToken + SHADER_FRAGMENT_BODY_REPLACE_TOKEN_LENGTH,
                     strlen(foundFragmentToken + SHADER_FRAGMENT_BODY_REPLACE_TOKEN_LENGTH) + 1);
-            memcpy(foundFragmentToken, parseData.fragmentFunctionSource, fragmentBodyReplaceLength);
+            memcpy(foundFragmentToken, result.parseData.fragmentFunctionSource, fragmentBodyReplaceLength);
             printf("fragmentSourceWithVertexBodyReplaced = \n%s\n", fullShaderBuffer);
         }
-        parseData.fullFragmentSource = se_strdup(fullShaderBuffer);
+        result.parseData.fullFragmentSource = se_strdup(fullShaderBuffer);
         break;
     }
     default:
         break;
     }
 
-    // Now compile and create shader instance
-
+    // Now compile and create shader instance (TODO: Put in separate function maybe?)
+//    se_shader_cache_create_instance_and_add_from_source(result.parseData.fullVertexSource, result.parseData.fullFragmentSource);
 
     SE_MEM_FREE(originalSource);
 
     return result;
 }
+
+void se_shader_file_parse_clear_parse_result(SEShaderFileParseResult* result) {}

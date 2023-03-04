@@ -48,9 +48,14 @@ SEShaderInstance* se_shader_cache_get_instance_checked(SEShaderInstanceId instan
 SEShaderInstanceId se_shader_cache_create_instance_and_add(const char* vertexPath, const char* fragmentPath) {
     char* vertexSource = sf_asset_file_loader_read_file_contents_as_string(vertexPath, NULL);
     char* fragmentSource = sf_asset_file_loader_read_file_contents_as_string(fragmentPath, NULL);
-    SEShaderInstance* instance = se_shader_instance_create(vertexSource, fragmentSource);
-    const SEShaderInstanceId newId = se_shader_cache_add_instance(instance);
+    const SEShaderInstanceId newId = se_shader_cache_create_instance_and_add_from_source(vertexSource, fragmentSource);
     SE_MEM_FREE(vertexSource);
     SE_MEM_FREE(fragmentSource);
+    return newId;
+}
+
+SEShaderInstanceId se_shader_cache_create_instance_and_add_from_source(const char* vertexSource, const char* fragmentSource) {
+    SEShaderInstance* instance = se_shader_instance_create(vertexSource, fragmentSource);
+    const SEShaderInstanceId newId = se_shader_cache_add_instance(instance);
     return newId;
 }

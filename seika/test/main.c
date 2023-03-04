@@ -362,4 +362,5 @@ void seika_shader_file_parser_test(void) {
         printf("Shader parse error = '%s'\n", result.errorMessage);
     }
     TEST_ASSERT_FALSE(hasErrorMessage);
+    se_shader_file_parse_clear_parse_result(&result);
 }
