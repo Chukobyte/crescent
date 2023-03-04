@@ -338,19 +338,21 @@ void seika_shader_instance_test(void) {
 
 void seika_shader_file_parser_test(void) {
     char shader[] =
-            "shader_type screen;\n"
-            "\n"
-            "uniform float time;\n"
-            "uniform vec2 size;\n"
-            "uniform float brightness = 1.0f;\n"
-            "uniform int spriteCount = 1;\n"
-            "\n"
-            "void testFunc() {}\n"
-            "\n"
-            "void vertex() {}\n"
-            "\n"
-            "void fragment() {}\n"
-            "\n";
+        "shader_type screen;\n"
+        "\n"
+        "uniform float time;\n"
+        "uniform vec2 size;\n"
+        "uniform float brightness = 1.0f;\n"
+        "uniform int spriteCount = 1;\n"
+        "\n"
+        "void testFunc() {}\n"
+        "\n"
+        "void vertex() {}\n"
+        "\n"
+        "void fragment() {\n"
+        "    COLOR *= brightness;\n"
+        "}\n"
+        "\n";
     SEShaderFileParseResult result = se_shader_file_parser_parse_shader(shader);
     // Shouldn't be an error message
     const bool hasErrorMessage = strlen(result.errorMessage) > 0;
