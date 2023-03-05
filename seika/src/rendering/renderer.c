@@ -313,7 +313,7 @@ void sprite_renderer_finalize() {}
 
 void se_renderer_set_sprite_shader_default_params(SEShader* shader) {
     se_shader_use(shader);
-    se_shader_set_int(shader, "sprite", 0);
+    se_shader_set_int(shader, "TEXTURE", 0);
     se_shader_set_mat4_float(shader, "CRE_PROJECTION", &spriteProjection);
 }
 
