@@ -35,8 +35,9 @@ typedef struct SEShaderParam {
 
 // Shader Instance
 typedef enum SEShaderInstanceType {
+    SEShaderInstanceType_INVALID = -1,
     SEShaderInstanceType_SCREEN = 0,
-    SEShaderInstanceType_INVALID = 1,
+    SEShaderInstanceType_SPRITE = 1,
 } SEShaderInstanceType;
 
 typedef struct SEShaderInstance {
