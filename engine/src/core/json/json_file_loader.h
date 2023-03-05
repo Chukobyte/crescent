@@ -26,6 +26,7 @@ typedef struct JsonSceneNode {
     size_t childrenCount;
     char* spriteTexturePath;
     char* fontUID;
+    char* shaderInstanceShaderPath;
     char* shaderInstanceVertexPath;
     char* shaderInstanceFragmentPath;
 } JsonSceneNode;
