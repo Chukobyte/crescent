@@ -335,6 +335,7 @@ SEShaderFileParseResult se_shader_file_parser_parse_shader(const char* shaderSou
     const unsigned int SHADER_FUNCTIONS_REPLACE_TOKEN_LENGTH = strlen(SHADER_FUNCTIONS_REPLACE_TOKEN);
     const unsigned int SHADER_VERTEX_BODY_REPLACE_TOKEN_LENGTH = strlen(SHADER_VERTEX_BODY_REPLACE_TOKEN);
     const unsigned int SHADER_FRAGMENT_BODY_REPLACE_TOKEN_LENGTH = strlen(SHADER_FRAGMENT_BODY_REPLACE_TOKEN);
+
     char fullShaderBuffer[4096];
     switch (result.parseData.shaderType) {
     case SEShaderInstanceType_SCREEN: {
