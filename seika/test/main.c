@@ -34,16 +34,16 @@ void seika_shader_file_parser_test(void);
 
 int main(int argv, char** args) {
     UNITY_BEGIN();
-//    RUN_TEST(seika_hash_map_test);
-//    RUN_TEST(seika_spatial_hash_map_test);
-//    RUN_TEST(seika_file_system_utils_test);
-//    RUN_TEST(seika_string_utils_test);
-//    RUN_TEST(seika_array_utils_test);
-//    RUN_TEST(seika_array_list_test);
-//    RUN_TEST(seika_asset_file_loader_test);
-//    RUN_TEST(seika_observer_test);
-//    RUN_TEST(seika_curve_float_test);
-//    RUN_TEST(seika_shader_instance_test);
+    RUN_TEST(seika_hash_map_test);
+    RUN_TEST(seika_spatial_hash_map_test);
+    RUN_TEST(seika_file_system_utils_test);
+    RUN_TEST(seika_string_utils_test);
+    RUN_TEST(seika_array_utils_test);
+    RUN_TEST(seika_array_list_test);
+    RUN_TEST(seika_asset_file_loader_test);
+    RUN_TEST(seika_observer_test);
+    RUN_TEST(seika_curve_float_test);
+    RUN_TEST(seika_shader_instance_test);
     RUN_TEST(seika_shader_file_parser_test);
     return UNITY_END();
 }
