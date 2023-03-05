@@ -209,6 +209,71 @@ char* shader_file_parse_function_body(const char* functionSource) {
     return se_strdup(functionBodyBuffer);
 }
 
+typedef struct ShaderFileParseVecParseResult {
+    SEVector4 vector;
+    char errorMessage[64];
+} ShaderFileParseVecParseResult;
+
+// TODO: Refactor and make shorter...
+ShaderFileParseVecParseResult shader_file_parse_vec_default_value_token(const char* token) {
+    ShaderFileParseVecParseResult result = { .vector = { .x = 0.0f, .y = 0.0f, .z = 0.0f, .w = 0.0f },
+                                             .errorMessage = {0}
+                                           };
+    unsigned int sourceTokenIndex = 4;
+    char currentFloat2Token = token[sourceTokenIndex];
+    // TODO: Add more validation
+    if (currentFloat2Token != '(') {
+        strcpy(result.errorMessage, "Didn't find '(' where expected for vec default value!");
+        return result;
+    }
+
+    // Now parse the first vector value
+    char float2Buffer[16];
+    unsigned int float2BufferIndex = 0;
+    currentFloat2Token = token[++sourceTokenIndex];
+    bool hasMoreThanOneValue = false;
+    while (currentFloat2Token != ')') {
+        if (currentFloat2Token == ',') {
+            hasMoreThanOneValue = true;
+            break;
+        }
+        float2Buffer[float2BufferIndex++] = currentFloat2Token;
+        currentFloat2Token = token[++sourceTokenIndex];
+    }
+    float2Buffer[float2BufferIndex] = '\0';
+    result.vector.x = strtof(float2Buffer, NULL);
+
+    // Early out if one value
+    if (!hasMoreThanOneValue) {
+        result.vector.y = result.vector.x;
+        result.vector.z = result.vector.x;
+        result.vector.w = result.vector.x;
+        return result;
+    }
+
+    // Now parse the rest of the values
+    float* vectorValues[3] = { &result.vector.y, &result.vector.z, &result.vector.w };
+    unsigned int vectorValuesIndex = 0;
+    float2BufferIndex = 0;
+    currentFloat2Token = token[++sourceTokenIndex];
+    // Probably should limit this and have a better termination criterion for loop
+    while (true) {
+        if (currentFloat2Token == ',' || currentFloat2Token == ')') {
+            float2Buffer[float2BufferIndex] = '\0';
+            *vectorValues[vectorValuesIndex++] = strtof(float2Buffer, NULL);
+            if (currentFloat2Token == ')') {
+                break;
+            }
+            float2BufferIndex = 0;
+            currentFloat2Token = token[++sourceTokenIndex];
+        }
+        float2Buffer[float2BufferIndex++] = currentFloat2Token;
+        currentFloat2Token = token[++sourceTokenIndex];
+    }
+
+    return result;
+}
+
 bool shader_file_is_function_return_type_token(const char* token) {
     return strcmp(token, "void") == 0 || strcmp(token, "bool") == 0 || strcmp(token, "int") == 0
            || strcmp(token, "float") == 0 || strcmp(token, "vec2") == 0 || strcmp(token, "vec3") == 0
@@ -332,18 +397,42 @@ SEShaderFileParseResult se_shader_file_parser_parse_shader(const char* shaderSou
                 }
 //                printf("shader uniform default value = '%s'\n", shaderUniformDefaultValue);
                 switch (shaderUniform.type) {
+                case SEShaderParamType_BOOL: {
+                    // xor to set to false if default value is either 'false' or '0'
+                    shaderUniform.value.boolValue = !(strcmp(shaderUniformDefaultValue, "false") == 0 || strcmp(shaderUniformDefaultValue, "0") == 0);
+                    break;
+                }
                 case SEShaderParamType_INT: {
                     char* endptr = NULL;
                     shaderUniform.value.intValue = (int) strtol(shaderUniformDefaultValue, &endptr, 10);
                     if (*endptr != '\0') {
                         SHADER_FILE_PARSER_ERROR_FMT_RETURN(result, originalSource, "Not a valid uniform int default value, found '%s'!", shaderToken);
                     }
-//                    printf("Set int default value to '%d'\n", shaderUniform.value.intValue);
                     break;
                 }
                 case SEShaderParamType_FLOAT: {
                     shaderUniform.value.floatValue = strtof(shaderUniformDefaultValue, NULL);
-//                    printf("Set float default value to '%f'\n", shaderUniform.value.floatValue);
+                    break;
+                }
+                case SEShaderParamType_FLOAT2: {
+                    const ShaderFileParseVecParseResult vectorResult = shader_file_parse_vec_default_value_token(shaderUniformDefaultValue);
+                    shaderUniform.value.float2Value.x = vectorResult.vector.x;
+                    shaderUniform.value.float2Value.y = vectorResult.vector.y;
+                    break;
+                }
+                case SEShaderParamType_FLOAT3: {
+                    const ShaderFileParseVecParseResult vectorResult = shader_file_parse_vec_default_value_token(shaderUniformDefaultValue);
+                    shaderUniform.value.float3Value.x = vectorResult.vector.x;
+                    shaderUniform.value.float3Value.y = vectorResult.vector.y;
+                    shaderUniform.value.float3Value.z = vectorResult.vector.z;
+                    break;
+                }
+                case SEShaderParamType_FLOAT4: {
+                    const ShaderFileParseVecParseResult vectorResult = shader_file_parse_vec_default_value_token(shaderUniformDefaultValue);
+                    shaderUniform.value.float4Value.x = vectorResult.vector.x;
+                    shaderUniform.value.float4Value.y = vectorResult.vector.y;
+                    shaderUniform.value.float4Value.z = vectorResult.vector.z;
+                    shaderUniform.value.float4Value.w = vectorResult.vector.w;
                     break;
                 }
                 default:
