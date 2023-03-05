@@ -12,6 +12,7 @@
 #include "../seika/src/rendering/render_context.h"
 #include "../seika/src/rendering/renderer.h"
 #include "../seika/src/rendering/shader/shader_cache.h"
+#include "../seika/src/asset/asset_file_loader.h"
 #include "../seika/src/utils/se_assert.h"
 #include "../seika/src/utils/se_file_system_utils.h"
 #include "../seika/src/utils/se_string_util.h"
@@ -37,8 +38,6 @@
 #include "../../scene/scene_manager.h"
 #include "../../ecs/component/parallax_component.h"
 #include "../../math/curve_float_manager.h"
-#include "../../../../../seika/src/rendering/shader/shader_file_parser.h"
-#include "../../../../../seika/src/asset/asset_file_loader.h"
 
 #ifdef _MSC_VER
 #pragma warning(disable : 4996) // for strcpy
