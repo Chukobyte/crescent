@@ -228,7 +228,6 @@ SEShaderFileParseResult se_shader_file_parser_parse_shader(const char* shaderSou
     if (strcmp(shaderToken, "shader_type") != 0) {
         SHADER_FILE_PARSER_ERROR_FMT_RETURN(result, originalSource, "Didn't find 'shader_type' first line!  Found '%s'", shaderToken);
     }
-//    printf("shader token = %s\n", shaderToken);
     // Parse shader type value
     shader_file_find_next_token(&currentSource, shaderToken, &isSemicolonFound);
     if (strcmp(shaderToken, "screen") == 0) {
@@ -236,14 +235,12 @@ SEShaderFileParseResult se_shader_file_parser_parse_shader(const char* shaderSou
     } else {
         SHADER_FILE_PARSER_ERROR_FMT_RETURN(result, originalSource, "Didn't find 'shader_type' value on first line, instead found '%s'!", shaderToken);
     }
-//    printf("shader token = %s\n", shaderToken);
 
     // Parse the rest
     while (shader_file_find_next_token(&currentSource, shaderToken, &isSemicolonFound)) {
-//        printf("\nshader token = '%s'\n\n", shaderToken);
         // UNIFORM VARIABLE
         if (strcmp(shaderToken, "uniform") == 0) {
-            printf("Parsing shader uniform variable\n");
+//            printf("Parsing shader uniform variable\n");
             SEShaderParam shaderUniform;
             // Parse uniform type
             char shaderUniformTypeName[32];
@@ -262,27 +259,27 @@ SEShaderFileParseResult se_shader_file_parser_parse_shader(const char* shaderSou
             } else {
                 SHADER_FILE_PARSER_ERROR_FMT_RETURN(result, originalSource, "Expected to find uniform shader type, instead found '%s'!", shaderToken);
             }
-            printf("type = '%s'\n", shaderUniformTypeName);
+//            printf("type = '%s'\n", shaderUniformTypeName);
             // Parse uniform name
             char shaderUniformName[32];
             shader_file_find_next_token(&currentSource, shaderUniformName, &isSemicolonFound);
             shaderUniform.name = se_strdup(shaderUniformName);
-            printf("name = '%s'\n", shaderUniformName);
+//            printf("name = '%s'\n", shaderUniformName);
             // If we didn't find the semicolon, parse for default value
             if (!isSemicolonFound) {
-                printf("Parsing shader default value\n");
+//                printf("Parsing shader default value\n");
                 // Look for '='
                 if (!shader_file_find_next_uniform_equals_token(&currentSource)) {
                     SHADER_FILE_PARSER_ERROR_FMT_RETURN(result, originalSource, "Expected to find an '=' when declaring a uniform variable, instead found '%s'!", shaderToken);
                 }
-                printf("Found '='!\n");
+//                printf("Found '='!\n");
                 // Now parse default value
                 char shaderUniformDefaultValue[32];
                 shader_file_find_next_uniform_default_value(&currentSource, shaderUniformDefaultValue, &isSemicolonFound);
                 if (!isSemicolonFound) {
                     SHADER_FILE_PARSER_ERROR_FMT_RETURN(result, originalSource, "Expected to find a ';' after declaring a uniform variable's default value, found '%s'!", shaderToken);
                 }
-                printf("shader uniform default value = '%s'\n", shaderUniformDefaultValue);
+//                printf("shader uniform default value = '%s'\n", shaderUniformDefaultValue);
                 switch (shaderUniform.type) {
                 case SEShaderParamType_INT: {
                     char* endptr = NULL;
@@ -290,12 +287,12 @@ SEShaderFileParseResult se_shader_file_parser_parse_shader(const char* shaderSou
                     if (*endptr != '\0') {
                         SHADER_FILE_PARSER_ERROR_FMT_RETURN(result, originalSource, "Not a valid uniform int default value, found '%s'!", shaderToken);
                     }
-                    printf("Set int default value to '%d'\n", shaderUniform.value.intValue);
+//                    printf("Set int default value to '%d'\n", shaderUniform.value.intValue);
                     break;
                 }
                 case SEShaderParamType_FLOAT: {
                     shaderUniform.value.floatValue = strtof(shaderUniformDefaultValue, NULL);
-                    printf("Set float default value to '%f'\n", shaderUniform.value.floatValue);
+//                    printf("Set float default value to '%f'\n", shaderUniform.value.floatValue);
                     break;
                 }
                 default:
@@ -309,8 +306,8 @@ SEShaderFileParseResult se_shader_file_parser_parse_shader(const char* shaderSou
             if (parsedFunction.name == NULL || parsedFunction.fullFunctionSource == NULL) {
                 SHADER_FILE_PARSER_ERROR_RETURN(result, originalSource, "Didn't successfully parse shader function!");
             }
-            printf("function name = '%s'\n", parsedFunction.name);
-            printf("function source = '%s'\n", parsedFunction.fullFunctionSource);
+//            printf("function name = '%s'\n", parsedFunction.name);
+//            printf("function source = '%s'\n", parsedFunction.fullFunctionSource);
             // Check for vertex and fragment shader functions
             if (strcmp(parsedFunction.name, "vertex") == 0) {
                 result.parseData.vertexFunctionSource = shader_file_parse_function_body(parsedFunction.fullFunctionSource);
@@ -355,7 +352,6 @@ SEShaderFileParseResult se_shader_file_parser_parse_shader(const char* shaderSou
                         foundUniformsToken + SHADER_UNIFORMS_REPLACE_TOKEN_LENGTH,
                         strlen(foundUniformsToken + SHADER_UNIFORMS_REPLACE_TOKEN_LENGTH) + 1);
                 memcpy(foundUniformsToken, uniformsSource, uniformsReplaceLength);
-//                printf("vertexSourceWithUniformsReplaced = \n%s\n", fullShaderBuffer);
                 SE_MEM_FREE(uniformsSource);
             }
             // Vertex functions
@@ -370,7 +366,6 @@ SEShaderFileParseResult se_shader_file_parser_parse_shader(const char* shaderSou
                         foundFunctionsToken + SHADER_FUNCTIONS_REPLACE_TOKEN_LENGTH,
                         strlen(foundFunctionsToken + SHADER_FUNCTIONS_REPLACE_TOKEN_LENGTH) + 1);
                 memcpy(foundFunctionsToken, functionsSource, functionsReplaceLength);
-//                printf("vertexSourceWithFunctionsReplaced = \n%s\n", fullShaderBuffer);
                 SE_MEM_FREE(functionsSource);
             }
             // Vertex body
@@ -384,7 +379,7 @@ SEShaderFileParseResult se_shader_file_parser_parse_shader(const char* shaderSou
                     strlen(foundVertexToken + SHADER_VERTEX_BODY_REPLACE_TOKEN_LENGTH) + 1);
             memcpy(foundVertexToken, result.parseData.vertexFunctionSource, vertexBodyReplaceLength);
         }
-        printf("FULL VERTEX SOURCE = \n%s\n", fullShaderBuffer);
+//        printf("FULL VERTEX SOURCE = \n%s\n", fullShaderBuffer);
         result.parseData.fullVertexSource = se_strdup(fullShaderBuffer);
 
         strcpy(fullShaderBuffer, SE_OPENGL_SHADER_SOURCE_FRAGMENT_SCREEN);
@@ -401,7 +396,6 @@ SEShaderFileParseResult se_shader_file_parser_parse_shader(const char* shaderSou
                         foundUniformsToken + SHADER_UNIFORMS_REPLACE_TOKEN_LENGTH,
                         strlen(foundUniformsToken + SHADER_UNIFORMS_REPLACE_TOKEN_LENGTH) + 1);
                 memcpy(foundUniformsToken, uniformsSource, uniformsReplaceLength);
-//                printf("vertexSourceWithUniformsReplaced = \n%s\n", fullShaderBuffer);
                 SE_MEM_FREE(uniformsSource);
             }
             // Fragment functions
@@ -416,7 +410,6 @@ SEShaderFileParseResult se_shader_file_parser_parse_shader(const char* shaderSou
                         foundFunctionsToken + SHADER_FUNCTIONS_REPLACE_TOKEN_LENGTH,
                         strlen(foundFunctionsToken + SHADER_FUNCTIONS_REPLACE_TOKEN_LENGTH) + 1);
                 memcpy(foundFunctionsToken, functionsSource, functionsReplaceLength);
-//                printf("vertexSourceWithFunctionsReplaced = \n%s\n", fullShaderBuffer);
                 SE_MEM_FREE(functionsSource);
             }
             // Fragment body
@@ -430,7 +423,7 @@ SEShaderFileParseResult se_shader_file_parser_parse_shader(const char* shaderSou
                     strlen(foundFragmentToken + SHADER_FRAGMENT_BODY_REPLACE_TOKEN_LENGTH) + 1);
             memcpy(foundFragmentToken, result.parseData.fragmentFunctionSource, fragmentBodyReplaceLength);
         }
-        printf("FULL FRAGMENT SOURCE = \n%s\n", fullShaderBuffer);
+//        printf("FULL FRAGMENT SOURCE = \n%s\n", fullShaderBuffer);
         result.parseData.fullFragmentSource = se_strdup(fullShaderBuffer);
         break;
     }

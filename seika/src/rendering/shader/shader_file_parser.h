@@ -1,6 +1,6 @@
 #pragma once
 
-#include "shader_cache.h"
+#include "shader_instance.h"
 
 typedef struct SEShaderFileParserFunction {
     char* name;

@@ -93,13 +93,13 @@ char* sf_asset_file_loader_read_file_contents_as_string(const char* filePath, si
             len = fileAsset.bufferSize;
         }
     }
-    if (size != NULL) {
+    if (size) {
         *size = len;
     }
     return fileString;
 }
 
-char* sf_asset_file_loader_read_file_contents_as_string_without_raw(const char* filePath) {
+char* sf_asset_file_loader_read_file_contents_as_string_without_raw(const char* filePath, size_t* size) {
     char* fileString = NULL;
     size_t len = 0;
     if (globalReadMode == SEAssetFileLoaderReadMode_DISK) {
@@ -112,6 +112,9 @@ char* sf_asset_file_loader_read_file_contents_as_string_without_raw(const char* 
             fileString = se_strdup((char*) fileAsset.buffer);
             len = fileAsset.bufferSize;
         }
+    }
+    if (size) {
+        *size = len;
     }
     return fileString;
 }

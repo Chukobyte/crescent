@@ -34,4 +34,4 @@ bool sf_asset_file_loader_is_asset_valid(SEArchiveFileAsset* fileAsset);
 SEAssetFileImageData* sf_asset_file_loader_load_image_data(const char* filePath);
 void sf_asset_file_loader_free_image_data(SEAssetFileImageData* data);
 char* sf_asset_file_loader_read_file_contents_as_string(const char* filePath, size_t* size);
-char* sf_asset_file_loader_read_file_contents_as_string_without_raw(const char* filePath);
+char* sf_asset_file_loader_read_file_contents_as_string_without_raw(const char* filePath, size_t* size);

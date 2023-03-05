@@ -1,5 +1,8 @@
 #include "shader_cache.h"
 
+#include <string.h>
+
+#include "shader_file_parser.h"
 #include "../../data_structures/se_queue.h"
 #include "../../asset/asset_file_loader.h"
 #include "../../utils/se_assert.h"
@@ -45,7 +48,31 @@ SEShaderInstance* se_shader_cache_get_instance_checked(SEShaderInstanceId instan
     return NULL;
 }
 
-SEShaderInstanceId se_shader_cache_create_instance_and_add(const char* vertexPath, const char* fragmentPath) {
+SEShaderInstanceId se_shader_cache_create_instance_and_add(const char* shaderPath) {
+    SEShaderInstanceId newId = SE_SHADER_INSTANCE_INVALID_ID;
+    char* shaderSource = sf_asset_file_loader_read_file_contents_as_string_without_raw(shaderPath, NULL);
+    // Uncomment when needing to debug shaders
+//    se_logger_debug("shader source = \n%s", shaderSource);
+    if (shaderSource) {
+        SEShaderFileParseResult result = se_shader_file_parser_parse_shader(shaderSource);
+        const bool hasErrorMessage = strlen(result.errorMessage) > 0;
+        if (!hasErrorMessage) {
+            newId = se_shader_cache_create_instance_and_add_from_source(result.parseData.fullVertexSource, result.parseData.fullFragmentSource);
+            SEShaderInstance* shaderInstance = se_shader_cache_get_instance(newId);
+            if (shaderInstance) {
+                for (size_t i = 0; i < result.parseData.uniformCount; i++) {
+                    se_shader_instance_param_create(shaderInstance, result.parseData.uniforms[i]);
+                }
+            }
+            se_shader_file_parse_clear_parse_result(&result);
+        } else {
+            se_logger_error("Shader parse error = '%s'\n", result.errorMessage);
+        }
+    }
+    return newId;
+}
+
+SEShaderInstanceId se_shader_cache_create_instance_and_add_from_raw(const char* vertexPath, const char* fragmentPath) {
     char* vertexSource = sf_asset_file_loader_read_file_contents_as_string(vertexPath, NULL);
     char* fragmentSource = sf_asset_file_loader_read_file_contents_as_string(fragmentPath, NULL);
     const SEShaderInstanceId newId = se_shader_cache_create_instance_and_add_from_source(vertexSource, fragmentSource);

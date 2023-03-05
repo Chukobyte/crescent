@@ -463,26 +463,7 @@ PyObject* cre_py_api_shader_instance_get_float4_param(PyObject* self, PyObject* 
 PyObject* cre_py_api_shader_util_compile_shader(PyObject* self, PyObject* args, PyObject* kwargs) {
     char* shaderPath;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "s", crePyApiShaderUtilCompileShaderKWList, &shaderPath)) {
-        // TODO: Wrap this functionality into a function
-        SEShaderInstanceId newId = SE_SHADER_INSTANCE_INVALID_ID;
-        char* shaderSource = sf_asset_file_loader_read_file_contents_as_string_without_raw(shaderPath, NULL);
-        se_logger_debug("shader source = \n%s", shaderSource);
-        if (shaderSource) {
-            SEShaderFileParseResult result = se_shader_file_parser_parse_shader(shaderSource);
-            const bool hasErrorMessage = strlen(result.errorMessage) > 0;
-            if (!hasErrorMessage) {
-                newId = se_shader_cache_create_instance_and_add_from_source(result.parseData.fullVertexSource, result.parseData.fullFragmentSource);
-                SEShaderInstance* shaderInstance = se_shader_cache_get_instance(newId);
-                if (shaderInstance) {
-                    for (size_t i = 0; i < result.parseData.uniformCount; i++) {
-                        se_shader_instance_param_create(shaderInstance, result.parseData.uniforms[i]);
-                    }
-                }
-                se_shader_file_parse_clear_parse_result(&result);
-            } else {
-                se_logger_error("Shader parse error = '%s'\n", result.errorMessage);
-            }
-        }
+        const SEShaderInstanceId newId = se_shader_cache_create_instance_and_add(shaderPath);
         SE_ASSERT_FMT(newId != SE_SHADER_INSTANCE_INVALID_ID, "Invalid shader id reading from path '%s'", shaderPath);
         return Py_BuildValue("i", newId);
     }
@@ -493,7 +474,7 @@ PyObject* cre_py_api_shader_util_compile_shader_raw(PyObject* self, PyObject* ar
     char* vertexPath;
     char* fragmentPath;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "ss", crePyApiShaderUtilCompileShaderRawKWList, &vertexPath, &fragmentPath)) {
-        const SEShaderInstanceId newId = se_shader_cache_create_instance_and_add(vertexPath, fragmentPath);
+        const SEShaderInstanceId newId = se_shader_cache_create_instance_and_add_from_raw(vertexPath, fragmentPath);
         SE_ASSERT_FMT(newId != SE_SHADER_INSTANCE_INVALID_ID, "Invalid shader id reading from paths: vertex = '%s', fragment = '%s'", vertexPath, fragmentPath);
         return Py_BuildValue("i", newId);
     }
