@@ -35,6 +35,7 @@ static const char* SE_OPENGL_SHADER_SOURCE_FRAGMENT_SPRITE =
     "in vec2 UV;\n"
     "in vec4 TEXTURE_MODULATE;\n"
     "in float USING_NEAREST_NEIGHBOR;\n"
+    "\n"
     "out vec4 COLOR;\n"
     "\n"
     "uniform sampler2D TEXTURE;\n"

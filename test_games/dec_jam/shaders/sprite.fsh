@@ -10,17 +10,15 @@ uniform sampler2D TEXTURE;
 
 //@@UNIFORMS
 
-//@@FUNCTIONS
-
 vec2 CRE_APPLY_NEAREST_NEIGHBOR(vec2 uv, vec2 texture_size) {
     vec2 pixel = uv * texture_size;
-
     vec2 seam = floor(pixel + 0.5);
     vec2 dudv = fwidth(pixel);
     pixel = seam + clamp( (pixel - seam) / dudv, -0.5, 0.5);
-
     return pixel / texture_size;
 }
+
+//@@FUNCTIONS
 
 void main() {
     vec2 CRE_SPRITE_TEXTURE_SIZE = textureSize(TEXTURE, 0);
