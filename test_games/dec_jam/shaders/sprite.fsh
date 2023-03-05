@@ -25,6 +25,6 @@ void main() {
     vec2 CRE_SPRITE_UV = mix(UV, CRE_APPLY_NEAREST_NEIGHBOR(UV, CRE_SPRITE_TEXTURE_SIZE), USING_NEAREST_NEIGHBOR);
     COLOR = TEXTURE_MODULATE * texture(TEXTURE, CRE_SPRITE_UV);
     //@@fragment()
-    // float brightness = 0.5f;
-    // COLOR *= brightness;
+    float brightness = 0.5f;
+    COLOR *= brightness;
 }
