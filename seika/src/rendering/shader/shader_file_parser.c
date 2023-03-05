@@ -220,6 +220,12 @@ SEShaderFileParseBaseText shader_file_get_base_shader_text(SEShaderInstanceType 
             .fragment = SE_OPENGL_SHADER_SOURCE_FRAGMENT_SCREEN
         };
     }
+    case SEShaderInstanceType_SPRITE: {
+        return (SEShaderFileParseBaseText) {
+            .vertex = SE_OPENGL_SHADER_SOURCE_VERTEX_SPRITE,
+            .fragment = SE_OPENGL_SHADER_SOURCE_FRAGMENT_SPRITE
+        };
+    }
     default:
         break;
     }
@@ -230,9 +236,9 @@ SEShaderFileParseBaseText shader_file_get_base_shader_text(SEShaderInstanceType 
 
 // TODO: Check to make sure memory is cleaned up on errors
 SEShaderFileParseResult se_shader_file_parser_parse_shader(const char* shaderSource) {
-    SEShaderFileParseResult result = { .errorMessage = {0} };
-    char* originalSource = se_strdup(shaderSource);
-    char* currentSource = originalSource;
+    SEShaderFileParseResult result = {.errorMessage = {0}};
+    char *originalSource = se_strdup(shaderSource);
+    char *currentSource = originalSource;
     char shaderToken[32];
     bool isSemicolonFound;
     result.parseData = (SEShaderFileParseData) {
@@ -247,12 +253,15 @@ SEShaderFileParseResult se_shader_file_parser_parse_shader(const char* shaderSou
     // Parse shader type
     shader_file_find_next_token(&currentSource, shaderToken, &isSemicolonFound);
     if (strcmp(shaderToken, "shader_type") != 0) {
-        SHADER_FILE_PARSER_ERROR_FMT_RETURN(result, originalSource, "Didn't find 'shader_type' first line!  Found '%s'", shaderToken);
+        SHADER_FILE_PARSER_ERROR_FMT_RETURN(result, originalSource, "Didn't find 'shader_type' first line!  Found '%s'",
+                                            shaderToken);
     }
     // Parse shader type value
     shader_file_find_next_token(&currentSource, shaderToken, &isSemicolonFound);
     if (strcmp(shaderToken, "screen") == 0) {
         result.parseData.shaderType = SEShaderInstanceType_SCREEN;
+    } else if (strcmp(shaderToken, "sprite") == 0) {
+        result.parseData.shaderType = SEShaderInstanceType_SPRITE;
     } else {
         SHADER_FILE_PARSER_ERROR_FMT_RETURN(result, originalSource, "Didn't find 'shader_type' value on first line, instead found '%s'!", shaderToken);
     }
