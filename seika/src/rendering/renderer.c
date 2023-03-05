@@ -314,7 +314,7 @@ void sprite_renderer_finalize() {}
 void se_renderer_set_sprite_shader_default_params(SEShader* shader) {
     se_shader_use(shader);
     se_shader_set_int(shader, "sprite", 0);
-    se_shader_set_mat4_float(shader, "projection", &spriteProjection);
+    se_shader_set_mat4_float(shader, "CRE_PROJECTION", &spriteProjection);
 }
 
 void sprite_renderer_update_resolution() {
@@ -353,9 +353,9 @@ void renderer_batching_draw_sprites(SpriteBatchItem items[], size_t spriteCount)
         const float spriteId = (float) i;
         const float determinate = glm_mat4_det(items[i].globalTransform->model);
         const TextureCoordinates textureCoords = renderer_get_texture_coordinates(texture, &items[i].sourceRect, items[i].flipX, items[i].flipY);
-        // concat models[] string for uniform param
-        char modelsBuffer[12];
-        sprintf(modelsBuffer, "models[%zu]", i);
+        // concat CRE_MODELS[] string for uniform param
+        char modelsBuffer[24];
+        sprintf(modelsBuffer, "CRE_MODELS[%zu]", i);
         se_shader_set_mat4_float(spriteShader, modelsBuffer, &items[i].globalTransform->model);
 
         // Set shader instance uniform params

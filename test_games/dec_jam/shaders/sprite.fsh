@@ -1,6 +1,5 @@
 #version 330 core
 
-in float spriteId;
 in vec2 texCoord;
 in vec4 spriteColor;
 in float spriteApplyNearestNeighbor;
