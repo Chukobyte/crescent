@@ -41,6 +41,14 @@ char* shader_file_parse_data_get_full_uniforms_source(SEShaderFileParseData* par
             strcat(uniformsBuffer, "vec2 ");
             break;
         }
+        case SEShaderParamType_FLOAT3: {
+            strcat(uniformsBuffer, "vec3 ");
+            break;
+        }
+        case SEShaderParamType_FLOAT4: {
+            strcat(uniformsBuffer, "vec4 ");
+            break;
+        }
         default:
             break;
         }
@@ -275,7 +283,10 @@ SEShaderFileParseResult se_shader_file_parser_parse_shader(const char* shaderSou
             // Parse uniform type
             char shaderUniformTypeName[32];
             shader_file_find_next_token(&currentSource, shaderUniformTypeName, &isSemicolonFound);
-            if (strcmp(shaderUniformTypeName, "int") == 0) {
+            if (strcmp(shaderUniformTypeName, "bool") == 0) {
+                shaderUniform.type = SEShaderParamType_BOOL;
+                shaderUniform.value.boolValue = false;
+            } else if (strcmp(shaderUniformTypeName, "int") == 0) {
                 shaderUniform.type = SEShaderParamType_INT;
                 shaderUniform.value.intValue = 0;
             } else if (strcmp(shaderUniformTypeName, "float") == 0) {
@@ -285,6 +296,16 @@ SEShaderFileParseResult se_shader_file_parser_parse_shader(const char* shaderSou
                 shaderUniform.type = SEShaderParamType_FLOAT2;
                 shaderUniform.value.float2Value = (SEVector2) {
                     0.0f, 0.0f
+                };
+            } else if (strcmp(shaderUniformTypeName, "vec3") == 0) {
+                shaderUniform.type = SEShaderParamType_FLOAT3;
+                shaderUniform.value.float3Value = (SEVector3) {
+                    0.0f, 0.0f, 0.0f
+                };
+            } else if (strcmp(shaderUniformTypeName, "vec4") == 0) {
+                shaderUniform.type = SEShaderParamType_FLOAT4;
+                shaderUniform.value.float4Value = (SEVector4) {
+                    0.0f, 0.0f, 0.0f, 0.0f
                 };
             } else {
                 SHADER_FILE_PARSER_ERROR_FMT_RETURN(result, originalSource, "Expected to find uniform shader type, instead found '%s'!", shaderToken);
