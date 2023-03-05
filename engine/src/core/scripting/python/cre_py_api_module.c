@@ -458,7 +458,7 @@ PyObject* cre_py_api_shader_instance_get_float4_param(PyObject* self, PyObject* 
 }
 
 // Shader Util
-PyObject* cre_py_api_shader_util_compile_shader(PyObject* self, PyObject* args, PyObject* kwargs) {
+PyObject* cre_py_api_shader_util_compile_shader_raw(PyObject* self, PyObject* args, PyObject* kwargs) {
     char* vertexPath;
     char* fragmentPath;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "ss", crePyApiShaderUtilCompileShaderKWList, &vertexPath, &fragmentPath)) {

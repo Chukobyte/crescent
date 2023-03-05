@@ -43,7 +43,7 @@ PyObject* cre_py_api_shader_instance_set_float4_param(PyObject* self, PyObject* 
 PyObject* cre_py_api_shader_instance_get_float4_param(PyObject* self, PyObject* args, PyObject* kwargs);
 
 // Shader Util
-PyObject* cre_py_api_shader_util_compile_shader(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_shader_util_compile_shader_raw(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_shader_util_set_screen_shader(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_shader_util_reset_screen_shader_to_default(PyObject* self, PyObject* args);
 
@@ -306,7 +306,7 @@ static struct PyMethodDef crePyApiMethods[] = {
     },
     // SHADER UTIL
     {
-        "shader_util_compile_shader", (PyCFunction) cre_py_api_shader_util_compile_shader,
+        "shader_util_compile_shader_raw", (PyCFunction) cre_py_api_shader_util_compile_shader_raw,
         METH_VARARGS | METH_KEYWORDS, "Compiles new shader and adds it to the shader instance cache."
     },
     {

@@ -632,8 +632,8 @@ class ShaderInstance:
 
 class ShaderUtil:
     @staticmethod
-    def compile_shader(vertex_path: str, fragment_path: str) -> ShaderInstance:
-        shader_id = crescent_api_internal.shader_util_compile_shader(
+    def compile_shader_raw(vertex_path: str, fragment_path: str) -> ShaderInstance:
+        shader_id = crescent_api_internal.shader_util_compile_shader_raw(
             vertex_path=vertex_path, fragment_path=fragment_path
         )
         return ShaderInstance(shader_id=shader_id)

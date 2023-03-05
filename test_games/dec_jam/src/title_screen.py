@@ -88,7 +88,7 @@ class SnowManager:
 class TitleScreen(Node2D):
     def _start(self) -> None:
         # SnowManager().create_snow(50)
-        shader_instance = ShaderUtil.compile_shader(
+        shader_instance = ShaderUtil.compile_shader_raw(
             vertex_path="shaders/screen.vsh",
             fragment_path="shaders/screen.fsh",
         )
