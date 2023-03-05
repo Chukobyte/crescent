@@ -47,6 +47,7 @@ typedef struct SEShaderInstance {
 SEShaderInstance* se_shader_instance_create(const char* vertexSource, const char* fragmentSource);
 void se_shader_instance_destroy(SEShaderInstance* shaderInstance);
 
+void se_shader_instance_param_create(SEShaderInstance* shaderInstance, SEShaderParam param);
 SEShaderParam* se_shader_instance_param_create_bool(SEShaderInstance* shaderInstance, const char* name, bool value);
 SEShaderParam* se_shader_instance_param_create_int(SEShaderInstance* shaderInstance, const char* name, int value);
 SEShaderParam* se_shader_instance_param_create_float(SEShaderInstance* shaderInstance, const char* name, float value);

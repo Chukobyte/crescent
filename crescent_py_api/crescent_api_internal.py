@@ -194,8 +194,12 @@ def shader_instance_get_float4_param(
     return 0.0, 0.0, 0.0, 0.0
 
 
+def shader_util_compile_shader(shader_path: str) -> int:
+    return 0
+
+
 def shader_util_compile_shader_raw(vertex_path: str, fragment_path: str) -> int:
-    pass
+    return 0
 
 
 def shader_util_set_screen_shader(shader_id: int) -> bool:

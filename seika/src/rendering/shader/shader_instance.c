@@ -32,6 +32,10 @@ void se_shader_instance_destroy(SEShaderInstance* shaderInstance) {
 }
 
 // Creation functions
+void se_shader_instance_param_create(SEShaderInstance* shaderInstance, SEShaderParam param) {
+    se_string_hash_map_add(shaderInstance->paramMap, param.name, &param, sizeof(SEShaderParam));
+}
+
 SEShaderParam* se_shader_instance_param_create_bool(SEShaderInstance* shaderInstance, const char* name, bool value) {
     SEShaderParam params = { .name = se_strdup(name), .type = SEShaderParamType_BOOL };
     params.value.boolValue = value;

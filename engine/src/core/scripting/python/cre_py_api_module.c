@@ -37,6 +37,8 @@
 #include "../../scene/scene_manager.h"
 #include "../../ecs/component/parallax_component.h"
 #include "../../math/curve_float_manager.h"
+#include "../../../../../seika/src/rendering/shader/shader_file_parser.h"
+#include "../../../../../seika/src/asset/asset_file_loader.h"
 
 #ifdef _MSC_VER
 #pragma warning(disable : 4996) // for strcpy
@@ -458,10 +460,39 @@ PyObject* cre_py_api_shader_instance_get_float4_param(PyObject* self, PyObject* 
 }
 
 // Shader Util
+PyObject* cre_py_api_shader_util_compile_shader(PyObject* self, PyObject* args, PyObject* kwargs) {
+    char* shaderPath;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "s", crePyApiShaderUtilCompileShaderKWList, &shaderPath)) {
+        // TODO: Wrap this functionality into a function
+        SEShaderInstanceId newId = SE_SHADER_INSTANCE_INVALID_ID;
+        char* shaderSource = sf_asset_file_loader_read_file_contents_as_string_without_raw(shaderPath, NULL);
+        se_logger_debug("shader source = \n%s", shaderSource);
+        if (shaderSource) {
+            SEShaderFileParseResult result = se_shader_file_parser_parse_shader(shaderSource);
+            const bool hasErrorMessage = strlen(result.errorMessage) > 0;
+            if (!hasErrorMessage) {
+                newId = se_shader_cache_create_instance_and_add_from_source(result.parseData.fullVertexSource, result.parseData.fullFragmentSource);
+                SEShaderInstance* shaderInstance = se_shader_cache_get_instance(newId);
+                if (shaderInstance) {
+                    for (size_t i = 0; i < result.parseData.uniformCount; i++) {
+                        se_shader_instance_param_create(shaderInstance, result.parseData.uniforms[i]);
+                    }
+                }
+                se_shader_file_parse_clear_parse_result(&result);
+            } else {
+                se_logger_error("Shader parse error = '%s'\n", result.errorMessage);
+            }
+        }
+        SE_ASSERT_FMT(newId != SE_SHADER_INSTANCE_INVALID_ID, "Invalid shader id reading from path '%s'", shaderPath);
+        return Py_BuildValue("i", newId);
+    }
+    return NULL;
+}
+
 PyObject* cre_py_api_shader_util_compile_shader_raw(PyObject* self, PyObject* args, PyObject* kwargs) {
     char* vertexPath;
     char* fragmentPath;
-    if (PyArg_ParseTupleAndKeywords(args, kwargs, "ss", crePyApiShaderUtilCompileShaderKWList, &vertexPath, &fragmentPath)) {
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "ss", crePyApiShaderUtilCompileShaderRawKWList, &vertexPath, &fragmentPath)) {
         const SEShaderInstanceId newId = se_shader_cache_create_instance_and_add(vertexPath, fragmentPath);
         SE_ASSERT_FMT(newId != SE_SHADER_INSTANCE_INVALID_ID, "Invalid shader id reading from paths: vertex = '%s', fragment = '%s'", vertexPath, fragmentPath);
         return Py_BuildValue("i", newId);
@@ -1657,7 +1688,7 @@ PyObject* cre_py_api_game_config_load(PyObject* self, PyObject* args, PyObject* 
         char* validGameTitle = se_strdup(gameProps->gameTitle);
         se_str_to_lower_and_underscore_whitespace(validGameTitle);
         char* fullSavePath = se_fs_get_user_save_path("crescent", validGameTitle, path);
-        char* fileContents = se_fs_read_file_contents(fullSavePath, NULL);
+        char* fileContents = sf_asset_file_loader_read_file_contents_as_string(fullSavePath, NULL);
         PyObject* returnValue =  Py_BuildValue("s", fileContents);
         SE_MEM_FREE(validGameTitle);
         SE_MEM_FREE(fullSavePath);

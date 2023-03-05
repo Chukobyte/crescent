@@ -204,18 +204,19 @@ SEShaderFileParseResult se_shader_file_parser_parse_shader(const char* shaderSou
     char* currentSource = originalSource;
     char shaderToken[32];
     bool isSemicolonFound;
-    result.parseData = (SEShaderFileParseData){ .shaderType = SEShaderInstanceType_INVALID,
-                                        .fullVertexSource = NULL,
-                                        .fullFragmentSource = NULL, .vertexFunctionSource = NULL,
-                                        .fragmentFunctionSource = NULL,
-                                        .uniformCount = 0,
-                                        .functionCount = 0
-                                      };
+    result.parseData = (SEShaderFileParseData) {
+        .shaderType = SEShaderInstanceType_INVALID,
+        .fullVertexSource = NULL,
+        .fullFragmentSource = NULL, .vertexFunctionSource = NULL,
+        .fragmentFunctionSource = NULL,
+        .uniformCount = 0,
+        .functionCount = 0
+    };
 
     // Parse shader type
     shader_file_find_next_token(&currentSource, shaderToken, &isSemicolonFound);
     if (strcmp(shaderToken, "shader_type") != 0) {
-        strcpy(result.errorMessage, "Didn't find 'shader_type' first line!");
+        sprintf(result.errorMessage, "Didn't find 'shader_type' first line!  Found '%s'", shaderToken);
         SE_MEM_FREE(originalSource);
         return result;
     }
@@ -233,7 +234,7 @@ SEShaderFileParseResult se_shader_file_parser_parse_shader(const char* shaderSou
 
     // Parse the rest
     while (shader_file_find_next_token(&currentSource, shaderToken, &isSemicolonFound)) {
-        printf("\nshader token = '%s'\n\n", shaderToken);
+//        printf("\nshader token = '%s'\n\n", shaderToken);
         // UNIFORM VARIABLE
         if (strcmp(shaderToken, "uniform") == 0) {
             printf("Parsing shader uniform variable\n");
@@ -328,7 +329,8 @@ SEShaderFileParseResult se_shader_file_parser_parse_shader(const char* shaderSou
                 result.parseData.functions[result.parseData.functionCount++] = parsedFunction;
             }
         } else {
-            strcpy(result.errorMessage, "Unexpected token!");
+//            strcpy(result.errorMessage, "Unexpected token!");
+            sprintf(result.errorMessage, "Unexpected token '%s'!", shaderToken);
             SE_MEM_FREE(originalSource);
             return result;
         }
@@ -394,8 +396,8 @@ SEShaderFileParseResult se_shader_file_parser_parse_shader(const char* shaderSou
                     foundVertexToken + SHADER_VERTEX_BODY_REPLACE_TOKEN_LENGTH,
                     strlen(foundVertexToken + SHADER_VERTEX_BODY_REPLACE_TOKEN_LENGTH) + 1);
             memcpy(foundVertexToken, result.parseData.vertexFunctionSource, vertexBodyReplaceLength);
-            printf("vertexSourceWithVertexBodyReplaced = \n%s\n", fullShaderBuffer);
         }
+        printf("FULL VERTEX SOURCE = \n%s\n", fullShaderBuffer);
         result.parseData.fullVertexSource = se_strdup(fullShaderBuffer);
 
         strcpy(fullShaderBuffer, SE_OPENGL_SHADER_SOURCE_FRAGMENT_SCREEN);
@@ -446,8 +448,8 @@ SEShaderFileParseResult se_shader_file_parser_parse_shader(const char* shaderSou
                     foundFragmentToken + SHADER_FRAGMENT_BODY_REPLACE_TOKEN_LENGTH,
                     strlen(foundFragmentToken + SHADER_FRAGMENT_BODY_REPLACE_TOKEN_LENGTH) + 1);
             memcpy(foundFragmentToken, result.parseData.fragmentFunctionSource, fragmentBodyReplaceLength);
-            printf("fragmentSourceWithVertexBodyReplaced = \n%s\n", fullShaderBuffer);
         }
+        printf("FULL FRAGMENT SOURCE = \n%s\n", fullShaderBuffer);
         result.parseData.fullFragmentSource = se_strdup(fullShaderBuffer);
         break;
     }
