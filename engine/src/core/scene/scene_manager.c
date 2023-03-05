@@ -340,7 +340,6 @@ void cre_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneNode, Scene
     if (jsonSceneNode->components[ComponentDataIndex_SPRITE] != NULL) {
         SpriteComponent* spriteComponent = sprite_component_copy((SpriteComponent*) jsonSceneNode->components[ComponentDataIndex_SPRITE]);
         spriteComponent->texture = se_asset_manager_get_texture(jsonSceneNode->spriteTexturePath);
-        component_manager_set_component(node->entity, ComponentDataIndex_SPRITE, spriteComponent);
         if (jsonSceneNode->shaderInstanceVertexPath != NULL && jsonSceneNode->shaderInstanceFragmentPath != NULL) {
             spriteComponent->shaderInstanceId = se_shader_cache_create_instance_and_add_from_raw(
                                                     jsonSceneNode->shaderInstanceVertexPath, jsonSceneNode->shaderInstanceFragmentPath);
@@ -349,10 +348,10 @@ void cre_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneNode, Scene
         } else {
             spriteComponent->shaderInstanceId = SE_SHADER_INSTANCE_INVALID_ID;
         }
+        component_manager_set_component(node->entity, ComponentDataIndex_SPRITE, spriteComponent);
     }
     if (jsonSceneNode->components[ComponentDataIndex_ANIMATED_SPRITE] != NULL) {
         AnimatedSpriteComponent* animatedSpriteComponent = animated_sprite_component_data_copy_to_animated_sprite((AnimatedSpriteComponentData*) jsonSceneNode->components[ComponentDataIndex_ANIMATED_SPRITE]);
-        component_manager_set_component(node->entity, ComponentDataIndex_ANIMATED_SPRITE, animatedSpriteComponent);
         if (jsonSceneNode->shaderInstanceVertexPath != NULL && jsonSceneNode->shaderInstanceFragmentPath != NULL) {
             animatedSpriteComponent->shaderInstanceId = se_shader_cache_create_instance_and_add_from_raw(
                         jsonSceneNode->shaderInstanceVertexPath, jsonSceneNode->shaderInstanceFragmentPath);
@@ -361,6 +360,7 @@ void cre_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneNode, Scene
         } else {
             animatedSpriteComponent->shaderInstanceId = SE_SHADER_INSTANCE_INVALID_ID;
         }
+        component_manager_set_component(node->entity, ComponentDataIndex_ANIMATED_SPRITE, animatedSpriteComponent);
     }
     if (jsonSceneNode->components[ComponentDataIndex_TEXT_LABEL] != NULL) {
         TextLabelComponent* textLabelComponent = text_label_component_copy((TextLabelComponent*) jsonSceneNode->components[ComponentDataIndex_TEXT_LABEL]);

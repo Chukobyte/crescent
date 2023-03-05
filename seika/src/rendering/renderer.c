@@ -358,11 +358,6 @@ void renderer_batching_draw_sprites(SpriteBatchItem items[], size_t spriteCount)
         sprintf(modelsBuffer, "CRE_MODELS[%zu]", i);
         se_shader_set_mat4_float(spriteShader, modelsBuffer, &items[i].globalTransform->model);
 
-        // Set shader instance uniform params
-        if (items[i].shaderInstance != NULL) {
-            renderer_set_shader_instance_params(items[i].shaderInstance);
-        }
-
         // Loop over vertices
         for (int j = 0; j < NUMBER_OF_VERTICES; j++) {
             bool isSMin;
