@@ -14,8 +14,8 @@ typedef struct SpriteComponent {
     SETexture* texture;
     SERect2 drawSource;
     SEVector2 origin;
-    bool flipX;
-    bool flipY;
+    bool flipH;
+    bool flipV;
     SEColor modulate;
     SEShaderInstanceId shaderInstanceId;
 } SpriteComponent;

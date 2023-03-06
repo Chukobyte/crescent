@@ -13,8 +13,8 @@ SpriteComponent* sprite_component_create() {
     spriteComponent->drawSource.h = 0.0f;
     spriteComponent->origin.x = 0.0f;
     spriteComponent->origin.y = 0.0f;
-    spriteComponent->flipX = false;
-    spriteComponent->flipY = false;
+    spriteComponent->flipH = false;
+    spriteComponent->flipV = false;
     spriteComponent->modulate.r = 1.0f;
     spriteComponent->modulate.g = 1.0f;
     spriteComponent->modulate.b = 1.0f;

@@ -67,8 +67,8 @@ void animated_sprite_rendering_system_render() {
             currentFrame.drawSource,
             destinationSize,
             animatedSpriteComponent->modulate,
-            animatedSpriteComponent->flipX,
-            animatedSpriteComponent->flipY,
+            animatedSpriteComponent->flipH,
+            animatedSpriteComponent->flipV,
             globalTransform,
             globalTransform->zIndex,
             se_shader_cache_get_instance_checked(animatedSpriteComponent->shaderInstanceId)

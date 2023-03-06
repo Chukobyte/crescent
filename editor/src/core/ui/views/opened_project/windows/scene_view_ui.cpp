@@ -51,8 +51,8 @@ ImGuiHelper::Window OpenedProjectUI::Windows::GetSceneViewWindow() {
                 SERect2 sourceRect = { 0.0f, 0.0f, 0.0f, 0.0f };
                 SESize2D destSize = { 0.0f, 0.0f };
                 SEColor color = { 1.0f, 1.0f, 1.0f, 1.0f };
-                bool flipX = false;
-                bool flipY = false;
+                bool flipH = false;
+                bool flipV = false;
                 SEVector2 origin = { 0.0f, 0.0f };
                 hasTexture = true;
                 if (auto* spriteComp = node->GetComponentSafe<SpriteComp>()) {
@@ -60,8 +60,8 @@ ImGuiHelper::Window OpenedProjectUI::Windows::GetSceneViewWindow() {
                     sourceRect = spriteComp->drawSource;
                     destSize = { sourceRect.w, sourceRect.h };
                     color = spriteComp->modulate;
-                    flipX = spriteComp->flipX;
-                    flipY = spriteComp->flipY;
+                    flipH = spriteComp->flipH;
+                    flipV = spriteComp->flipV;
                     origin = spriteComp->origin;
                 } else if (auto* animSpriteComp = node->GetComponentSafe<AnimatedSpriteComp>()) {
                     if (!animSpriteComp->currentAnimationName.empty()) {
@@ -73,8 +73,8 @@ ImGuiHelper::Window OpenedProjectUI::Windows::GetSceneViewWindow() {
                             sourceRect = animFrame.drawSource;
                             destSize = { sourceRect.w, sourceRect.h };
                             color = animSpriteComp->modulate;
-                            flipX = animSpriteComp->flipX;
-                            flipY = animSpriteComp->flipY;
+                            flipH = animSpriteComp->flipH;
+                            flipV = animSpriteComp->flipV;
                             origin = animSpriteComp->origin;
                         }
                     }
@@ -97,8 +97,8 @@ ImGuiHelper::Window OpenedProjectUI::Windows::GetSceneViewWindow() {
                     .sourceRect = sourceRect,
                     .destSize = destSize,
                     .color = color,
-                    .flipX = flipX,
-                    .flipY = flipY,
+                    .flipH = flipH,
+                    .flipV = flipV,
                     .globalTransform = &globalTransforms[index]
                 };
             };

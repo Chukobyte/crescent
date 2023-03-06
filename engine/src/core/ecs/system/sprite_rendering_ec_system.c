@@ -48,8 +48,8 @@ void sprite_rendering_system_render() {
             spriteComponent->drawSource,
             destinationSize,
             spriteComponent->modulate,
-            spriteComponent->flipX,
-            spriteComponent->flipY,
+            spriteComponent->flipH,
+            spriteComponent->flipV,
             globalTransform,
             globalTransform->zIndex,
             se_shader_cache_get_instance_checked(spriteComponent->shaderInstanceId)

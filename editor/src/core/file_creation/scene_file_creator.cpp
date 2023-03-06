@@ -74,11 +74,11 @@ nlohmann::ordered_json GetComponentsJsonArray(SceneNode* sceneNode) {
         if (spriteComp->modulate.r != 1.0f || spriteComp->modulate.g != 1.0f || spriteComp->modulate.b != 1.0f || spriteComp->modulate.a != 1.0f) {
             spriteJson["modulate"] = ColorToJson(spriteComp->modulate);
         }
-        if (spriteComp->flipX != DEFAULT_COMPONENT_SPRITE_FLIP_X) {
-            spriteJson["flip_x"] = spriteComp->flipX;
+        if (spriteComp->flipH != DEFAULT_COMPONENT_SPRITE_FLIP_H) {
+            spriteJson["flip_h"] = spriteComp->flipH;
         }
-        if (spriteComp->flipY != DEFAULT_COMPONENT_SPRITE_FLIP_Y) {
-            spriteJson["flip_y"] = spriteComp->flipY;
+        if (spriteComp->flipV != DEFAULT_COMPONENT_SPRITE_FLIP_V) {
+            spriteJson["flip_v"] = spriteComp->flipV;
         }
         if (!spriteComp->shaderPath.empty()) {
             spriteJson["shader_instance"]["shader_path"] = spriteComp->shaderPath;
@@ -96,11 +96,11 @@ nlohmann::ordered_json GetComponentsJsonArray(SceneNode* sceneNode) {
         if (animatedSpriteComp->modulate.r != 1.0f || animatedSpriteComp->modulate.g != 1.0f || animatedSpriteComp->modulate.b != 1.0f || animatedSpriteComp->modulate.a != 1.0f) {
             animSpriteJson["modulate"] = ColorToJson(animatedSpriteComp->modulate);
         }
-        if (animatedSpriteComp->flipX != DEFAULT_COMPONENT_ANIMATED_SPRITE_FLIP_X) {
-            animSpriteJson["flip_x"] = animatedSpriteComp->flipX;
+        if (animatedSpriteComp->flipH != DEFAULT_COMPONENT_ANIMATED_SPRITE_FLIP_H) {
+            animSpriteJson["flip_h"] = animatedSpriteComp->flipH;
         }
-        if (animatedSpriteComp->flipY != DEFAULT_COMPONENT_ANIMATED_SPRITE_FLIP_Y) {
-            animSpriteJson["flip_y"] = animatedSpriteComp->flipY;
+        if (animatedSpriteComp->flipV != DEFAULT_COMPONENT_ANIMATED_SPRITE_FLIP_V) {
+            animSpriteJson["flip_v"] = animatedSpriteComp->flipV;
         }
         if (!animatedSpriteComp->shaderPath.empty()) {
             animSpriteJson["shader_instance"]["shader_path"] = animatedSpriteComp->shaderPath;

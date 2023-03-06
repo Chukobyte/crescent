@@ -22,8 +22,8 @@ typedef struct AnimatedSpriteComponent {
     SEColor modulate;
     bool isPlaying;
     SEVector2 origin;
-    bool flipX;
-    bool flipY;
+    bool flipH;
+    bool flipV;
     uint32_t startAnimationTickTime;
     SEShaderInstanceId shaderInstanceId;
 } AnimatedSpriteComponent;
@@ -56,8 +56,8 @@ typedef struct AnimatedSpriteComponentData {
     SEColor modulate;
     bool isPlaying;
     SEVector2 origin;
-    bool flipX;
-    bool flipY;
+    bool flipH;
+    bool flipV;
     uint32_t startAnimationTickTime;
 } AnimatedSpriteComponentData;
 

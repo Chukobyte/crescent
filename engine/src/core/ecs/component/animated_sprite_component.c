@@ -19,8 +19,8 @@ AnimatedSpriteComponent* animated_sprite_component_create() {
     animatedSpriteComponent->origin.x = 0.0f;
     animatedSpriteComponent->origin.y = 0.0f;
     animatedSpriteComponent->isPlaying = false;
-    animatedSpriteComponent->flipX = false;
-    animatedSpriteComponent->flipY = false;
+    animatedSpriteComponent->flipH = false;
+    animatedSpriteComponent->flipV = false;
     animatedSpriteComponent->startAnimationTickTime = 0;
     animatedSpriteComponent->shaderInstanceId = SE_SHADER_INSTANCE_INVALID_ID;
 
@@ -78,8 +78,8 @@ AnimatedSpriteComponentData* animated_sprite_component_data_create() {
     animatedSpriteComponent->origin.x = 0.0f;
     animatedSpriteComponent->origin.y = 0.0f;
     animatedSpriteComponent->isPlaying = false;
-    animatedSpriteComponent->flipX = false;
-    animatedSpriteComponent->flipY = false;
+    animatedSpriteComponent->flipH = false;
+    animatedSpriteComponent->flipV = false;
     animatedSpriteComponent->startAnimationTickTime = 0;
 
     return animatedSpriteComponent;
@@ -95,8 +95,8 @@ AnimatedSpriteComponent* animated_sprite_component_data_copy_to_animated_sprite(
     copiedNode->modulate = animatedSpriteComponentData->modulate;
     copiedNode->origin = animatedSpriteComponentData->origin;
     copiedNode->isPlaying = animatedSpriteComponentData->isPlaying;
-    copiedNode->flipX = animatedSpriteComponentData->flipX;
-    copiedNode->flipY = animatedSpriteComponentData->flipY;
+    copiedNode->flipH = animatedSpriteComponentData->flipH;
+    copiedNode->flipV = animatedSpriteComponentData->flipV;
     copiedNode->startAnimationTickTime = 0;
     strcpy(copiedNode->currentAnimation.name, animatedSpriteComponentData->currentAnimation.name);
     for (size_t animationIndex = 0; animationIndex < animatedSpriteComponentData->animationCount; animationIndex++) {

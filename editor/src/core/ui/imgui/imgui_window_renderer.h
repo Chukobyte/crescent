@@ -14,8 +14,8 @@ struct TextureRenderTarget {
     SERect2 sourceRect = { 0.0f, 0.0f, 0.0f, 0.0f };
     SESize2D destSize = { 0.0f, 0.0f };
     SEColor color = { 1.0f, 1.0f, 1.0f, 1.0f };
-    bool flipX = false;
-    bool flipY = false;
+    bool flipH = false;
+    bool flipV = false;
     SETransformModel2D *globalTransform = nullptr;
     int zIndex = 0;
 };

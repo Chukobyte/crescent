@@ -106,11 +106,11 @@ void DrawSprite(SceneNode* node) {
         ImGuiHelper::ColorEdit4 modulateColorEdit4("Modulate", (float*) &spriteComp->modulate);
         ImGuiHelper::BeginColorEdit4(modulateColorEdit4);
 
-        ImGuiHelper::CheckBox flipXCheckBox("Flix X", spriteComp->flipX);
-        ImGuiHelper::BeginCheckBox(flipXCheckBox);
+        ImGuiHelper::CheckBox flipHCheckBox("Flip H", spriteComp->flipH);
+        ImGuiHelper::BeginCheckBox(flipHCheckBox);
 
-        ImGuiHelper::CheckBox flipYCheckBox("Flix Y", spriteComp->flipY);
-        ImGuiHelper::BeginCheckBox(flipYCheckBox);
+        ImGuiHelper::CheckBox flipVCheckBox("Flip V", spriteComp->flipV);
+        ImGuiHelper::BeginCheckBox(flipVCheckBox);
 
         ImGuiHelper::BeginAssetBrowserComboBox(shaderPathComboBox);
 
@@ -157,11 +157,11 @@ void DrawAnimatedSprite(SceneNode* node) {
         ImGuiHelper::ColorEdit4 modulateColorEdit4("Modulate", (float*) &animatedSpriteComp->modulate);
         ImGuiHelper::BeginColorEdit4(modulateColorEdit4);
 
-        ImGuiHelper::CheckBox flipXCheckBox("Flix X", animatedSpriteComp->flipX);
-        ImGuiHelper::BeginCheckBox(flipXCheckBox);
+        ImGuiHelper::CheckBox flipHCheckBox("Flip H", animatedSpriteComp->flipH);
+        ImGuiHelper::BeginCheckBox(flipHCheckBox);
 
-        ImGuiHelper::CheckBox flipYCheckBox("Flix Y", animatedSpriteComp->flipY);
-        ImGuiHelper::BeginCheckBox(flipYCheckBox);
+        ImGuiHelper::CheckBox flipVCheckBox("Flip V", animatedSpriteComp->flipV);
+        ImGuiHelper::BeginCheckBox(flipVCheckBox);
 
         static ImGuiHelper::AssetBrowserComboBox shaderPathComboBox("Shader Path", ".shader");
         shaderPathComboBox.onSelectionChangeCallback = [animatedSpriteComp](const char* newItem) {

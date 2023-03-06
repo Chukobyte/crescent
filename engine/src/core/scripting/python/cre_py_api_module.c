@@ -1222,7 +1222,7 @@ PyObject* cre_py_api_sprite_set_flip_h(PyObject* self, PyObject* args, PyObject*
     bool flipH;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "ib", crePyApiGenericSetEntityFlipHKWList, &entity, &flipH)) {
         SpriteComponent* spriteComponent = (SpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_SPRITE);
-        spriteComponent->flipX = flipH;
+        spriteComponent->flipH = flipH;
         Py_RETURN_NONE;
     }
     return NULL;
@@ -1232,7 +1232,7 @@ PyObject* cre_py_api_sprite_get_flip_h(PyObject* self, PyObject* args, PyObject*
     Entity entity;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
         const SpriteComponent* spriteComponent = (SpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_SPRITE);
-        if (spriteComponent->flipX) {
+        if (spriteComponent->flipH) {
             Py_RETURN_TRUE;
         }
         Py_RETURN_FALSE;
@@ -1245,7 +1245,7 @@ PyObject* cre_py_api_sprite_set_flip_v(PyObject* self, PyObject* args, PyObject*
     bool flipV;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "ib", crePyApiGenericSetEntityFlipVKWList, &entity, &flipV)) {
         SpriteComponent* spriteComponent = (SpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_SPRITE);
-        spriteComponent->flipY = flipV;
+        spriteComponent->flipV = flipV;
         Py_RETURN_NONE;
     }
     return NULL;
@@ -1255,7 +1255,7 @@ PyObject* cre_py_api_sprite_get_flip_v(PyObject* self, PyObject* args, PyObject*
     Entity entity;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
         const SpriteComponent* spriteComponent = (SpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_SPRITE);
-        if (spriteComponent->flipY) {
+        if (spriteComponent->flipV) {
             Py_RETURN_TRUE;
         }
         Py_RETURN_FALSE;
@@ -1389,7 +1389,7 @@ PyObject* cre_py_api_animated_sprite_set_flip_h(PyObject* self, PyObject* args, 
     bool flipH;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "ib", crePyApiGenericSetEntityFlipHKWList, &entity, &flipH)) {
         AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_ANIMATED_SPRITE);
-        animatedSpriteComponent->flipX = flipH;
+        animatedSpriteComponent->flipH = flipH;
         Py_RETURN_NONE;
     }
     return NULL;
@@ -1399,7 +1399,7 @@ PyObject* cre_py_api_animated_sprite_get_flip_h(PyObject* self, PyObject* args, 
     Entity entity;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
         const AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_ANIMATED_SPRITE);
-        if (animatedSpriteComponent->flipX) {
+        if (animatedSpriteComponent->flipH) {
             Py_RETURN_TRUE;
         }
         Py_RETURN_FALSE;
@@ -1412,7 +1412,7 @@ PyObject* cre_py_api_animated_sprite_set_flip_v(PyObject* self, PyObject* args, 
     bool flipV;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "ib", crePyApiGenericSetEntityFlipVKWList, &entity, &flipV)) {
         AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_ANIMATED_SPRITE);
-        animatedSpriteComponent->flipY = flipV;
+        animatedSpriteComponent->flipV = flipV;
         Py_RETURN_NONE;
     }
     return NULL;
@@ -1422,7 +1422,7 @@ PyObject* cre_py_api_animated_sprite_get_flip_v(PyObject* self, PyObject* args, 
     Entity entity;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
         const AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_ANIMATED_SPRITE);
-        if (animatedSpriteComponent->flipY) {
+        if (animatedSpriteComponent->flipV) {
             Py_RETURN_TRUE;
         }
         Py_RETURN_FALSE;
