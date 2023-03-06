@@ -56,19 +56,11 @@ void DrawSprite(SceneNode* node) {
             }
         };
 
-        static ImGuiHelper::AssetBrowserComboBox vertexShaderPathComboBox("Vertex Shader Path", ".vsh");
-        vertexShaderPathComboBox.onSelectionChangeCallback = [spriteComp](const char* newItem) {
-            spriteComp->vertexShaderPath = newItem;
-            if (spriteComp->vertexShaderPath == ImGuiHelper::COMBO_BOX_LIST_NONE) {
-                spriteComp->vertexShaderPath.clear();
-            }
-        };
-
-        static ImGuiHelper::AssetBrowserComboBox fragmentShaderPathComboBox("Fragment Shader Path", ".fsh");
-        fragmentShaderPathComboBox.onSelectionChangeCallback = [spriteComp](const char* newItem) {
-            spriteComp->fragmentShaderPath = newItem;
-            if (spriteComp->fragmentShaderPath == ImGuiHelper::COMBO_BOX_LIST_NONE) {
-                spriteComp->fragmentShaderPath.clear();
+        static ImGuiHelper::AssetBrowserComboBox shaderPathComboBox("Shader Path", ".shader");
+        shaderPathComboBox.onSelectionChangeCallback = [spriteComp](const char* newItem) {
+            spriteComp->shaderPath = newItem;
+            if (spriteComp->shaderPath == ImGuiHelper::COMBO_BOX_LIST_NONE) {
+                spriteComp->shaderPath.clear();
             }
         };
 
@@ -78,36 +70,25 @@ void DrawSprite(SceneNode* node) {
             } else {
                 spriteTexturePathComboBox.SetSelected(spriteComp->texturePath);
             }
-            if (spriteComp->vertexShaderPath.empty()) {
-                vertexShaderPathComboBox.SetSelected(ImGuiHelper::COMBO_BOX_LIST_NONE);
+            if (spriteComp->shaderPath.empty()) {
+                shaderPathComboBox.SetSelected(ImGuiHelper::COMBO_BOX_LIST_NONE);
             } else {
-                vertexShaderPathComboBox.SetSelected(spriteComp->vertexShaderPath);
-            }
-            if (spriteComp->fragmentShaderPath.empty()) {
-                fragmentShaderPathComboBox.SetSelected(ImGuiHelper::COMBO_BOX_LIST_NONE);
-            } else {
-                fragmentShaderPathComboBox.SetSelected(spriteComp->fragmentShaderPath);
+                shaderPathComboBox.SetSelected(spriteComp->shaderPath);
             }
             EditorCallbacks::Get()->RegisterOnSceneNodeSelected([](SceneNode* sceneNode) {
                 // Disable on selection call back while switching nodes to prevent previous node from being set
                 spriteTexturePathComboBox.onSelectionChangeCallback = nullptr;
-                vertexShaderPathComboBox.onSelectionChangeCallback = nullptr;
-                fragmentShaderPathComboBox.onSelectionChangeCallback = nullptr;
+                shaderPathComboBox.onSelectionChangeCallback = nullptr;
                 if (auto spriteC = sceneNode->GetComponentSafe<SpriteComp>()) {
                     if (spriteC->texturePath.empty()) {
                         spriteTexturePathComboBox.SetSelected(ImGuiHelper::COMBO_BOX_LIST_NONE);
                     } else {
                         spriteTexturePathComboBox.SetSelected(spriteC->texturePath);
                     }
-                    if (spriteC->vertexShaderPath.empty()) {
-                        vertexShaderPathComboBox.SetSelected(ImGuiHelper::COMBO_BOX_LIST_NONE);
+                    if (spriteC->shaderPath.empty()) {
+                        shaderPathComboBox.SetSelected(ImGuiHelper::COMBO_BOX_LIST_NONE);
                     } else {
-                        vertexShaderPathComboBox.SetSelected(spriteC->vertexShaderPath);
-                    }
-                    if (spriteC->fragmentShaderPath.empty()) {
-                        fragmentShaderPathComboBox.SetSelected(ImGuiHelper::COMBO_BOX_LIST_NONE);
-                    } else {
-                        fragmentShaderPathComboBox.SetSelected(spriteC->fragmentShaderPath);
+                        shaderPathComboBox.SetSelected(spriteC->shaderPath);
                     }
                 }
             });
@@ -131,9 +112,7 @@ void DrawSprite(SceneNode* node) {
         ImGuiHelper::CheckBox flipYCheckBox("Flix Y", spriteComp->flipY);
         ImGuiHelper::BeginCheckBox(flipYCheckBox);
 
-        ImGuiHelper::BeginAssetBrowserComboBox(vertexShaderPathComboBox);
-        ImGuiHelper::BeginAssetBrowserComboBox(fragmentShaderPathComboBox);
-
+        ImGuiHelper::BeginAssetBrowserComboBox(shaderPathComboBox);
 
         ImGui::Separator();
     }
@@ -184,54 +163,34 @@ void DrawAnimatedSprite(SceneNode* node) {
         ImGuiHelper::CheckBox flipYCheckBox("Flix Y", animatedSpriteComp->flipY);
         ImGuiHelper::BeginCheckBox(flipYCheckBox);
 
-        static ImGuiHelper::AssetBrowserComboBox vertexShaderPathComboBox("Vertex Shader Path", ".vsh");
-        vertexShaderPathComboBox.onSelectionChangeCallback = [animatedSpriteComp](const char* newItem) {
-            animatedSpriteComp->vertexShaderPath = newItem;
-            if (animatedSpriteComp->vertexShaderPath == ImGuiHelper::COMBO_BOX_LIST_NONE) {
-                animatedSpriteComp->vertexShaderPath.clear();
-            }
-        };
-
-        static ImGuiHelper::AssetBrowserComboBox fragmentShaderPathComboBox("Fragment Shader Path", ".fsh");
-        fragmentShaderPathComboBox.onSelectionChangeCallback = [animatedSpriteComp](const char* newItem) {
-            animatedSpriteComp->fragmentShaderPath = newItem;
-            if (animatedSpriteComp->fragmentShaderPath == ImGuiHelper::COMBO_BOX_LIST_NONE) {
-                animatedSpriteComp->fragmentShaderPath.clear();
+        static ImGuiHelper::AssetBrowserComboBox shaderPathComboBox("Shader Path", ".shader");
+        shaderPathComboBox.onSelectionChangeCallback = [animatedSpriteComp](const char* newItem) {
+            animatedSpriteComp->shaderPath = newItem;
+            if (animatedSpriteComp->shaderPath == ImGuiHelper::COMBO_BOX_LIST_NONE) {
+                animatedSpriteComp->shaderPath.clear();
             }
         };
 
         static FuncObject initializeFunc = FuncObject([animatedSpriteComp] {
-            if (animatedSpriteComp->vertexShaderPath.empty()) {
-                vertexShaderPathComboBox.SetSelected(ImGuiHelper::COMBO_BOX_LIST_NONE);
+            if (animatedSpriteComp->shaderPath.empty()) {
+                shaderPathComboBox.SetSelected(ImGuiHelper::COMBO_BOX_LIST_NONE);
             } else {
-                vertexShaderPathComboBox.SetSelected(animatedSpriteComp->vertexShaderPath);
-            }
-            if (animatedSpriteComp->fragmentShaderPath.empty()) {
-                fragmentShaderPathComboBox.SetSelected(ImGuiHelper::COMBO_BOX_LIST_NONE);
-            } else {
-                fragmentShaderPathComboBox.SetSelected(animatedSpriteComp->fragmentShaderPath);
+                shaderPathComboBox.SetSelected(animatedSpriteComp->shaderPath);
             }
             EditorCallbacks::Get()->RegisterOnSceneNodeSelected([](SceneNode* sceneNode) {
                 // Disable on selection call back while switching nodes to prevent previous node from being set
-                vertexShaderPathComboBox.onSelectionChangeCallback = nullptr;
-                fragmentShaderPathComboBox.onSelectionChangeCallback = nullptr;
+                shaderPathComboBox.onSelectionChangeCallback = nullptr;
                 if (auto animatedSpriteC = sceneNode->GetComponentSafe<AnimatedSpriteComp>()) {
-                    if (animatedSpriteC->vertexShaderPath.empty()) {
-                        vertexShaderPathComboBox.SetSelected(ImGuiHelper::COMBO_BOX_LIST_NONE);
+                    if (animatedSpriteC->shaderPath.empty()) {
+                        shaderPathComboBox.SetSelected(ImGuiHelper::COMBO_BOX_LIST_NONE);
                     } else {
-                        vertexShaderPathComboBox.SetSelected(animatedSpriteC->vertexShaderPath);
-                    }
-                    if (animatedSpriteC->fragmentShaderPath.empty()) {
-                        fragmentShaderPathComboBox.SetSelected(ImGuiHelper::COMBO_BOX_LIST_NONE);
-                    } else {
-                        fragmentShaderPathComboBox.SetSelected(animatedSpriteC->fragmentShaderPath);
+                        shaderPathComboBox.SetSelected(animatedSpriteC->shaderPath);
                     }
                 }
             });
         });
 
-        ImGuiHelper::BeginAssetBrowserComboBox(vertexShaderPathComboBox);
-        ImGuiHelper::BeginAssetBrowserComboBox(fragmentShaderPathComboBox);
+        ImGuiHelper::BeginAssetBrowserComboBox(shaderPathComboBox);
 
         ImGui::Separator();
     }

@@ -40,15 +40,14 @@ struct Transform2DComp : public EditorComponent {
 struct SpriteComp : public EditorComponent {
     SpriteComp() = default;
 
-    explicit SpriteComp(const SpriteComponent* spriteComponent, std::string texturePath, std::string vertexShaderPath, std::string fragmentShaderPath)
+    explicit SpriteComp(const SpriteComponent* spriteComponent, std::string texturePath, std::string shaderPath)
         : texturePath(std::move(texturePath)),
           drawSource(spriteComponent->drawSource),
           origin(spriteComponent->origin),
           flipX(spriteComponent->flipX),
           flipY(spriteComponent->flipY),
           modulate(spriteComponent->modulate),
-          vertexShaderPath(std::move(vertexShaderPath)),
-          fragmentShaderPath(std::move(fragmentShaderPath)) {}
+          shaderPath(std::move(shaderPath)) {}
 
     std::string texturePath;
     SERect2 drawSource = { .x = 0.0f, .y = 0.0f, .w = 0.0f, .h = 0.0f };
@@ -56,8 +55,7 @@ struct SpriteComp : public EditorComponent {
     bool flipX = false;
     bool flipY = false;
     SEColor modulate = { .r = 1.0f, .g = 1.0f, .b = 1.0f, .a = 1.0f };
-    std::string vertexShaderPath;
-    std::string fragmentShaderPath;
+    std::string shaderPath;
 };
 
 // TODO: Put editor animation stuff in another file...
@@ -120,15 +118,14 @@ struct EditorAnimation {
 struct AnimatedSpriteComp : public EditorComponent {
     AnimatedSpriteComp() = default;
 
-    explicit AnimatedSpriteComp(const AnimatedSpriteComponentData* animatedSpriteComponentData, std::string vertexShaderPath, std::string fragmentShaderPath)
+    explicit AnimatedSpriteComp(const AnimatedSpriteComponentData* animatedSpriteComponentData, std::string shaderPath)
         : currentAnimationName(animatedSpriteComponentData->currentAnimation.name),
           modulate(animatedSpriteComponentData->modulate),
           isPlaying(animatedSpriteComponentData->isPlaying),
           origin(animatedSpriteComponentData->origin),
           flipX(animatedSpriteComponentData->flipX),
           flipY(animatedSpriteComponentData->flipY),
-          vertexShaderPath(std::move(vertexShaderPath)),
-          fragmentShaderPath(std::move(fragmentShaderPath)) {
+          shaderPath(std::move(shaderPath)) {
         for (size_t animationIndex = 0; animationIndex < animatedSpriteComponentData->animationCount; animationIndex++) {
             const AnimationData& animData = animatedSpriteComponentData->animations[animationIndex];
             EditorAnimation animation = { animData.name, animData.speed, animData.doesLoop };
@@ -184,16 +181,15 @@ struct AnimatedSpriteComp : public EditorComponent {
     SEVector2 origin = { .x = 0.0f, .y = 0.0f };
     bool flipX = false;
     bool flipY = false;
-    std::string vertexShaderPath;
-    std::string fragmentShaderPath;
+    std::string shaderPath;
 };
 
 struct TextLabelComp : public EditorComponent {
     TextLabelComp() = default;
 
-    explicit TextLabelComp(const TextLabelComponent* textLabelComponent, const std::string& fontUID)
+    explicit TextLabelComp(const TextLabelComponent* textLabelComponent, std::string fontUID)
         : text(textLabelComponent->text),
-          fontUID(fontUID),
+          fontUID(std::move(fontUID)),
           color(textLabelComponent->color) {}
 
     std::string text;
