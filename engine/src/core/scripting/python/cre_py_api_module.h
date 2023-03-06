@@ -124,6 +124,12 @@ PyObject* cre_py_api_sprite_set_texture(PyObject* self, PyObject* args, PyObject
 PyObject* cre_py_api_sprite_get_texture(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_sprite_set_draw_source(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_sprite_get_draw_source(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_sprite_set_flip_h(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_sprite_get_flip_h(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_sprite_set_flip_v(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_sprite_get_flip_v(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_sprite_set_modulate(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_sprite_get_modulate(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_sprite_set_shader_instance(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_sprite_get_shader_instance(PyObject* self, PyObject* args, PyObject* kwargs);
 
@@ -131,6 +137,12 @@ PyObject* cre_py_api_sprite_get_shader_instance(PyObject* self, PyObject* args, 
 PyObject* cre_py_api_animated_sprite_play(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_animated_sprite_stop(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_animated_sprite_add_animation(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_animated_sprite_set_flip_h(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_animated_sprite_get_flip_h(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_animated_sprite_set_flip_v(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_animated_sprite_get_flip_v(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_animated_sprite_set_modulate(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_animated_sprite_get_modulate(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_animated_sprite_set_shader_instance(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_animated_sprite_get_shader_instance(PyObject* self, PyObject* args, PyObject* kwargs);
 
@@ -561,6 +573,30 @@ static struct PyMethodDef crePyApiMethods[] = {
         METH_VARARGS | METH_KEYWORDS, "Gets the draw source for a sprite."
     },
     {
+        "sprite_set_flip_h", (PyCFunction) cre_py_api_sprite_set_flip_h,
+        METH_VARARGS | METH_KEYWORDS, "Sets the sprite's flip h."
+    },
+    {
+        "sprite_get_flip_h", (PyCFunction) cre_py_api_sprite_get_flip_h,
+        METH_VARARGS | METH_KEYWORDS, "Gets the sprite's flip h."
+    },
+    {
+        "sprite_set_flip_v", (PyCFunction) cre_py_api_sprite_set_flip_v,
+        METH_VARARGS | METH_KEYWORDS, "Sets the sprite's flip v."
+    },
+    {
+        "sprite_get_flip_v", (PyCFunction) cre_py_api_sprite_get_flip_v,
+        METH_VARARGS | METH_KEYWORDS, "Gets the sprite's flip v."
+    },
+    {
+        "sprite_set_modulate", (PyCFunction) cre_py_api_sprite_set_modulate,
+        METH_VARARGS | METH_KEYWORDS, "Sets the sprite's modulate."
+    },
+    {
+        "sprite_get_modulate", (PyCFunction) cre_py_api_sprite_get_modulate,
+        METH_VARARGS | METH_KEYWORDS, "Gets the sprite's modulate."
+    },
+    {
         "sprite_set_shader_instance", (PyCFunction) cre_py_api_sprite_set_shader_instance,
         METH_VARARGS | METH_KEYWORDS, "Sets the shader instance for the sprite."
     },
@@ -580,6 +616,30 @@ static struct PyMethodDef crePyApiMethods[] = {
     {
         "animated_sprite_add_animation", (PyCFunction) cre_py_api_animated_sprite_add_animation,
         METH_VARARGS | METH_KEYWORDS, "Adds a new animation."
+    },
+    {
+        "animated_sprite_set_flip_h", (PyCFunction) cre_py_api_animated_sprite_set_flip_h,
+        METH_VARARGS | METH_KEYWORDS, "Sets the animated sprite's flip h."
+    },
+    {
+        "animated_sprite_get_flip_h", (PyCFunction) cre_py_api_animated_sprite_get_flip_h,
+        METH_VARARGS | METH_KEYWORDS, "Gets the animated sprite's flip h."
+    },
+    {
+        "animated_sprite_set_flip_v", (PyCFunction) cre_py_api_animated_sprite_set_flip_v,
+        METH_VARARGS | METH_KEYWORDS, "Sets the animated sprite's flip v."
+    },
+    {
+        "animated_sprite_get_flip_v", (PyCFunction) cre_py_api_animated_sprite_get_flip_v,
+        METH_VARARGS | METH_KEYWORDS, "Gets the animated sprite's flip v."
+    },
+    {
+        "animated_sprite_set_modulate", (PyCFunction) cre_py_api_animated_sprite_set_modulate,
+        METH_VARARGS | METH_KEYWORDS, "Sets the animated sprite's modulate."
+    },
+    {
+        "animated_sprite_get_modulate", (PyCFunction) cre_py_api_animated_sprite_get_modulate,
+        METH_VARARGS | METH_KEYWORDS, "Gets the animated sprite's modulate."
     },
     {
         "animated_sprite_set_shader_instance", (PyCFunction) cre_py_api_animated_sprite_set_shader_instance,
@@ -724,6 +784,8 @@ static char* crePyApiGenericXYWHKWList[] = {"x", "y", "w", "h", NULL};
 static char* crePyApiGenericSetEntitySize2DKWList[] = {"entity_id", "w", "h", NULL};
 static char* crePyApiGenericSetEntityRectKWList[] = {"entity_id", "x", "y", "w", "h", NULL};
 static char* crePyApiGenericSetEntityColorKWList[] = {"entity_id", "r", "g", "b", "a", NULL};
+static char* crePyApiGenericSetEntityFlipHKWList[] = {"entity_id", "flip_h", NULL};
+static char* crePyApiGenericSetEntityFlipVKWList[] = {"entity_id", "flip_v", NULL};
 static char* crePyApiGenericSetShaderInstanceKWList[] = {"entity_id", "shader_instance_id", NULL};
 
 static char* crePyApiEngineExitKWList[] = {"code", NULL};

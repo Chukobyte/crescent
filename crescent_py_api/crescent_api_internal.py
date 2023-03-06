@@ -448,6 +448,30 @@ def sprite_get_draw_source(entity_id: int) -> Tuple[float, float, float, float]:
     return 0.0, 0.0, 32.0, 32.0
 
 
+def sprite_set_modulate(entity_id: int, r: int, g: int, b: int, a: int) -> None:
+    pass
+
+
+def sprite_get_modulate(entity_id: int) -> Tuple[int, int, int, int]:
+    return 0, 0, 0, 255
+
+
+def sprite_set_flip_h(entity_id: int, flip_h: bool) -> None:
+    pass
+
+
+def sprite_get_flip_h(entity_id: int) -> bool:
+    return False
+
+
+def sprite_set_flip_v(entity_id: int, flip_v: bool) -> None:
+    pass
+
+
+def sprite_get_flip_v(entity_id: int) -> bool:
+    return False
+
+
 def sprite_get_shader_instance(entity_id: int) -> int:
     return 0
 
@@ -472,6 +496,32 @@ def animated_sprite_add_animation(
     frames: List[Tuple[int, str, float, float, float, float]],
 ) -> None:
     pass
+
+
+def animated_sprite_set_modulate(
+    entity_id: int, r: int, g: int, b: int, a: int
+) -> None:
+    pass
+
+
+def animated_sprite_get_modulate(entity_id: int) -> Tuple[int, int, int, int]:
+    return 0, 0, 0, 255
+
+
+def animated_sprite_set_flip_h(entity_id: int, flip_h: bool) -> None:
+    pass
+
+
+def animated_sprite_get_flip_h(entity_id: int) -> bool:
+    return False
+
+
+def animated_sprite_set_flip_v(entity_id: int, flip_v: bool) -> None:
+    pass
+
+
+def animated_sprite_get_flip_v(entity_id: int) -> bool:
+    return False
 
 
 def animated_sprite_get_shader_instance(entity_id: int) -> int:

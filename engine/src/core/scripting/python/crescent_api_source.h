@@ -1126,39 +1126,6 @@
 "\n"\
 "class Sprite(Node2D):\n"\
 "    @property\n"\
-"    def flip_h(self) -> bool:\n"\
-"        return crescent_api_internal.sprite_get_flip_h(entity_id=self.entity_id)\n"\
-"\n"\
-"    @flip_h.setter\n"\
-"    def flip_h(self, value: bool) -> None:\n"\
-"        crescent_api_internal.sprite_set_flip_h(entity_id=self.entity_id, flip_h=value)\n"\
-"\n"\
-"    @property\n"\
-"    def flip_v(self) -> bool:\n"\
-"        return crescent_api_internal.sprite_get_flip_v(entity_id=self.entity_id)\n"\
-"\n"\
-"    @flip_v.setter\n"\
-"    def flip_v(self, value: bool) -> None:\n"\
-"        crescent_api_internal.sprite_set_flip_v(entity_id=self.entity_id, flip_h=value)\n"\
-"\n"\
-"    @property\n"\
-"    def modulate(self) -> Color:\n"\
-"        red, green, blue, alpha = crescent_api_internal.sprite_get_modulate(\n"\
-"            entity_id=self.entity_id\n"\
-"        )\n"\
-"        return Color(r=red, g=green, b=blue, a=alpha)\n"\
-"\n"\
-"    @modulate.setter\n"\
-"    def modulate(self, color: Color) -> None:\n"\
-"        crescent_api_internal.sprite_set_modulate(\n"\
-"            entity_id=self.entity_id,\n"\
-"            red=color.r,\n"\
-"            green=color.g,\n"\
-"            blue=color.b,\n"\
-"            alpha=color.a,\n"\
-"        )\n"\
-"\n"\
-"    @property\n"\
 "    def texture(self) -> Texture:\n"\
 "        (\n"\
 "            file_path,\n"\
@@ -1193,6 +1160,39 @@
 "    def draw_source(self, value: Rect2) -> None:\n"\
 "        crescent_api_internal.sprite_set_draw_source(\n"\
 "            entity_id=self.entity_id, x=value.x, y=value.y, w=value.w, h=value.h\n"\
+"        )\n"\
+"\n"\
+"    @property\n"\
+"    def flip_h(self) -> bool:\n"\
+"        return crescent_api_internal.sprite_get_flip_h(entity_id=self.entity_id)\n"\
+"\n"\
+"    @flip_h.setter\n"\
+"    def flip_h(self, value: bool) -> None:\n"\
+"        crescent_api_internal.sprite_set_flip_h(entity_id=self.entity_id, flip_h=value)\n"\
+"\n"\
+"    @property\n"\
+"    def flip_v(self) -> bool:\n"\
+"        return crescent_api_internal.sprite_get_flip_v(entity_id=self.entity_id)\n"\
+"\n"\
+"    @flip_v.setter\n"\
+"    def flip_v(self, value: bool) -> None:\n"\
+"        crescent_api_internal.sprite_set_flip_v(entity_id=self.entity_id, flip_v=value)\n"\
+"\n"\
+"    @property\n"\
+"    def modulate(self) -> Color:\n"\
+"        red, green, blue, alpha = crescent_api_internal.sprite_get_modulate(\n"\
+"            entity_id=self.entity_id\n"\
+"        )\n"\
+"        return Color(r=red, g=green, b=blue, a=alpha)\n"\
+"\n"\
+"    @modulate.setter\n"\
+"    def modulate(self, color: Color) -> None:\n"\
+"        crescent_api_internal.sprite_set_modulate(\n"\
+"            entity_id=self.entity_id,\n"\
+"            r=color.r,\n"\
+"            g=color.g,\n"\
+"            b=color.b,\n"\
+"            a=color.a,\n"\
 "        )\n"\
 "\n"\
 "    @property\n"\
@@ -1239,6 +1239,47 @@
 "            speed=animation.speed,\n"\
 "            loops=animation.loops,\n"\
 "            frames=anim_frames,\n"\
+"        )\n"\
+"\n"\
+"    @property\n"\
+"    def flip_h(self) -> bool:\n"\
+"        return crescent_api_internal.animated_sprite_get_flip_h(\n"\
+"            entity_id=self.entity_id\n"\
+"        )\n"\
+"\n"\
+"    @flip_h.setter\n"\
+"    def flip_h(self, value: bool) -> None:\n"\
+"        crescent_api_internal.animated_sprite_set_flip_h(\n"\
+"            entity_id=self.entity_id, flip_h=value\n"\
+"        )\n"\
+"\n"\
+"    @property\n"\
+"    def flip_v(self) -> bool:\n"\
+"        return crescent_api_internal.animated_sprite_get_flip_v(\n"\
+"            entity_id=self.entity_id\n"\
+"        )\n"\
+"\n"\
+"    @flip_v.setter\n"\
+"    def flip_v(self, value: bool) -> None:\n"\
+"        crescent_api_internal.animated_sprite_set_flip_v(\n"\
+"            entity_id=self.entity_id, flip_v=value\n"\
+"        )\n"\
+"\n"\
+"    @property\n"\
+"    def modulate(self) -> Color:\n"\
+"        red, green, blue, alpha = crescent_api_internal.animated_sprite_get_modulate(\n"\
+"            entity_id=self.entity_id\n"\
+"        )\n"\
+"        return Color(r=red, g=green, b=blue, a=alpha)\n"\
+"\n"\
+"    @modulate.setter\n"\
+"    def modulate(self, color: Color) -> None:\n"\
+"        crescent_api_internal.animated_sprite_set_modulate(\n"\
+"            entity_id=self.entity_id,\n"\
+"            r=color.r,\n"\
+"            g=color.g,\n"\
+"            b=color.b,\n"\
+"            a=color.a,\n"\
 "        )\n"\
 "\n"\
 "    @property\n"\
