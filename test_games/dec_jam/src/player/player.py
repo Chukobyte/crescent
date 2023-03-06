@@ -129,7 +129,7 @@ class Player(Node2D):
         self.anim_sprite.position = self._center_pos()
         self.add_child(self.anim_sprite)
         # Example of setting shader
-        # self.anim_sprite.shader_instance = ShaderUtil.compile_shader(
+        # self.anim_sprite.shader_instance = ShaderUtil.compile_shader_raw(
         #     vertex_path="shaders/sprite.vsh",
         #     fragment_path="shaders/sprite.fsh",
         # )

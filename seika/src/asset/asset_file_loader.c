@@ -93,7 +93,27 @@ char* sf_asset_file_loader_read_file_contents_as_string(const char* filePath, si
             len = fileAsset.bufferSize;
         }
     }
-    if (size != NULL) {
+    if (size) {
+        *size = len;
+    }
+    return fileString;
+}
+
+char* sf_asset_file_loader_read_file_contents_as_string_without_raw(const char* filePath, size_t* size) {
+    char* fileString = NULL;
+    size_t len = 0;
+    if (globalReadMode == SEAssetFileLoaderReadMode_DISK) {
+        if (se_fs_does_file_exist(filePath)) {
+            fileString = se_fs_read_file_contents_without_raw(filePath, &len);
+        }
+    } else if (globalReadMode == SEAssetFileLoaderReadMode_ARCHIVE) {
+        SEArchiveFileAsset fileAsset = sf_asset_file_loader_get_asset(filePath);
+        if (sf_asset_file_loader_is_asset_valid(&fileAsset)) {
+            fileString = se_strdup((char*) fileAsset.buffer);
+            len = fileAsset.bufferSize;
+        }
+    }
+    if (size) {
         *size = len;
     }
     return fileString;

@@ -15,24 +15,34 @@
 #include "../ecs/component/parallax_component.h"
 
 typedef struct ShaderInstancePaths {
+    char* shader;
     char* vertex;
     char* fragment;
 } ShaderInstancePaths;
 
 ShaderInstancePaths json_get_shader_instance_paths(cJSON* json, const char* key) {
-    ShaderInstancePaths shaderInstancePaths = { .vertex = NULL, .fragment = NULL };
+    ShaderInstancePaths shaderInstancePaths = { .shader = NULL, .vertex = NULL, .fragment = NULL };
     cJSON* shaderInstanceJson = cJSON_GetObjectItemCaseSensitive(json, key);
     if (shaderInstanceJson != NULL) {
-        shaderInstancePaths.vertex = json_get_string_new(shaderInstanceJson, "vertex_path");
-        shaderInstancePaths.fragment = json_get_string_new(shaderInstanceJson, "fragment_path");
+        // First check for shader file, if it doesn't exist check for 'raw' shader files (that copy and paste base shaders)
+        shaderInstancePaths.shader = json_get_string_new_unchecked(shaderInstanceJson, "shader_path");
+        if (!shaderInstancePaths.shader) {
+            shaderInstancePaths.vertex = json_get_string_new(shaderInstanceJson, "vertex_path");
+            shaderInstancePaths.fragment = json_get_string_new(shaderInstanceJson, "fragment_path");
+        }
     }
     return shaderInstancePaths;
 }
 
 void json_node_set_shader_instance_paths(JsonSceneNode* node, cJSON* componentJson, const char* key) {
     ShaderInstancePaths shaderInstancePaths = json_get_shader_instance_paths(componentJson, key);
-    if (shaderInstancePaths.vertex != NULL && shaderInstancePaths.fragment != NULL) {
-        if (node->shaderInstanceVertexPath != NULL && node->shaderInstanceFragmentPath != NULL) {
+    if (shaderInstancePaths.shader) {
+        if (node->shaderInstanceShaderPath) {
+            SE_MEM_FREE(node->shaderInstanceShaderPath);
+        }
+        node->shaderInstanceShaderPath = shaderInstancePaths.shader;
+    } else if (shaderInstancePaths.vertex && shaderInstancePaths.fragment) {
+        if (node->shaderInstanceVertexPath && node->shaderInstanceFragmentPath) {
             SE_MEM_FREE(node->shaderInstanceVertexPath);
             SE_MEM_FREE(node->shaderInstanceFragmentPath);
         }
@@ -55,6 +65,7 @@ JsonSceneNode* cre_json_create_new_node() {
     node->name = NULL;
     node->fontUID = NULL;
     node->spriteTexturePath = NULL;
+    node->shaderInstanceShaderPath = NULL;
     node->shaderInstanceVertexPath = NULL;
     node->shaderInstanceFragmentPath = NULL;
     node->externalNodeSource = NULL;
@@ -91,35 +102,38 @@ void cre_json_delete_json_scene_node(JsonSceneNode* node) {
         cre_json_delete_json_scene_node(node->children[i]);
     }
     // Components
-    if (node->components[ComponentDataIndex_TRANSFORM_2D] != NULL) {
+    if (node->components[ComponentDataIndex_TRANSFORM_2D]) {
         transform2d_component_delete(node->components[ComponentDataIndex_TRANSFORM_2D]);
     }
-    if (node->components[ComponentDataIndex_SPRITE] != NULL) {
+    if (node->components[ComponentDataIndex_SPRITE]) {
         sprite_component_delete(node->components[ComponentDataIndex_SPRITE]);
     }
-    if (node->components[ComponentDataIndex_ANIMATED_SPRITE] != NULL) {
+    if (node->components[ComponentDataIndex_ANIMATED_SPRITE]) {
         animated_sprite_component_data_delete(node->components[ComponentDataIndex_ANIMATED_SPRITE]);
     }
-    if (node->components[ComponentDataIndex_TEXT_LABEL] != NULL) {
+    if (node->components[ComponentDataIndex_TEXT_LABEL]) {
         text_label_component_delete(node->components[ComponentDataIndex_TEXT_LABEL]);
     }
-    if (node->components[ComponentDataIndex_SCRIPT] != NULL) {
+    if (node->components[ComponentDataIndex_SCRIPT]) {
         script_component_delete(node->components[ComponentDataIndex_SCRIPT]);
     }
-    if (node->components[ComponentDataIndex_COLLIDER_2D] != NULL) {
+    if (node->components[ComponentDataIndex_COLLIDER_2D]) {
         collider2d_component_delete(node->components[ComponentDataIndex_COLLIDER_2D]);
     }
-    if (node->components[ComponentDataIndex_COLOR_RECT] != NULL) {
+    if (node->components[ComponentDataIndex_COLOR_RECT]) {
         color_rect_component_delete(node->components[ComponentDataIndex_COLOR_RECT]);
     }
-    if (node->components[ComponentDataIndex_PARALLAX] != NULL) {
+    if (node->components[ComponentDataIndex_PARALLAX]) {
         parallax_component_delete(node->components[ComponentDataIndex_PARALLAX]);
     }
 
-    if (node->shaderInstanceVertexPath != NULL) {
+    if (node->shaderInstanceShaderPath) {
+        SE_MEM_FREE(node->shaderInstanceShaderPath);
+    }
+    if (node->shaderInstanceVertexPath) {
         SE_MEM_FREE(node->shaderInstanceVertexPath);
     }
-    if (node->shaderInstanceFragmentPath != NULL) {
+    if (node->shaderInstanceFragmentPath) {
         SE_MEM_FREE(node->shaderInstanceFragmentPath);
     }
 

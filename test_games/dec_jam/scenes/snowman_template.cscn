@@ -15,8 +15,7 @@
                 "h": 23.0
             },
             "shader_instance": {
-                "vertex_path": "shaders/sprite.vsh",
-                "fragment_path": "shaders/sprite.fsh"
+                "shader_path": "shaders/sprite.shader"
             }
         }
     ],

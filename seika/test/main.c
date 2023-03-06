@@ -12,6 +12,7 @@
 #include "../src/utils/se_profile_code.h"
 #include "../src/math/se_curve_float.h"
 #include "../src/rendering/shader/shader_instance.h"
+#include "../src/rendering/shader/shader_file_parser.h"
 
 #define RESOURCES_PATH "seika/test/resources"
 #define RESOURCES_PACK_PATH "seika/test/resources/test.pck"
@@ -29,6 +30,7 @@ void seika_asset_file_loader_test(void);
 void seika_observer_test(void);
 void seika_curve_float_test(void);
 void seika_shader_instance_test(void);
+void seika_shader_file_parser_test(void);
 
 int main(int argv, char** args) {
     UNITY_BEGIN();
@@ -42,6 +44,7 @@ int main(int argv, char** args) {
     RUN_TEST(seika_observer_test);
     RUN_TEST(seika_curve_float_test);
     RUN_TEST(seika_shader_instance_test);
+    RUN_TEST(seika_shader_file_parser_test);
     return UNITY_END();
 }
 
@@ -331,4 +334,35 @@ void seika_shader_instance_test(void) {
         SE_MEM_FREE(param->name);
     }
     se_string_hash_map_destroy(shaderInstance.paramMap);
+}
+
+void seika_shader_file_parser_test(void) {
+    char shader[] =
+        "shader_type screen;\n"
+        "\n"
+        "uniform float time;\n"
+        "uniform vec2 size;\n"
+        "uniform float brightness = 1.0f;\n"
+        "uniform int spriteCount = 1;\n"
+        "\n"
+        "vec3 testFunc() {\n"
+        "    return vec3(1.0f);\n"
+        "}\n"
+        "\n"
+        "void vertex() {\n"
+        "    VERTEX.x += 0.1f;"
+        "}\n"
+        "\n"
+        "void fragment() {\n"
+        "    COLOR *= brightness;\n"
+        "}\n"
+        "\n";
+    SEShaderFileParseResult result = se_shader_file_parser_parse_shader(shader);
+    // Shouldn't be an error message
+    const bool hasErrorMessage = strlen(result.errorMessage) > 0;
+    if (hasErrorMessage) {
+        printf("Shader parse error = '%s'\n", result.errorMessage);
+    }
+    TEST_ASSERT_FALSE(hasErrorMessage);
+    se_shader_file_parse_clear_parse_result(&result);
 }

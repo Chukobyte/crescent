@@ -122,6 +122,36 @@ char* se_fs_read_file_contents(const char* filePath, size_t* sz) {
     return buffer;
 }
 
+char* se_fs_read_file_contents_without_raw(const char* filePath, size_t* sz) {
+    char* buffer = NULL;
+    FILE* fp = fopen(filePath, "r");
+    size_t readSize = 0;
+    if (fp) {
+        readSize = se_fs_get_file_size(filePath);
+        // Update buffer
+        buffer = (char*) SE_MEM_ALLOCATE_SIZE(readSize + 1);
+        if (buffer != NULL) {
+            size_t bytesRead = 0;
+            while (bytesRead < readSize) {
+                if (fgets(buffer + bytesRead, readSize - bytesRead + 1, fp) == NULL) {
+                    break;
+                }
+                bytesRead += strlen(buffer + bytesRead);
+                if (bytesRead > readSize) {
+                    // Handle error: file contains more data than expected
+                    break;
+                }
+            }
+            buffer[readSize] = '\0';
+        }
+        fclose(fp);
+    }
+    if (sz != NULL) {
+        *sz = readSize;
+    }
+    return buffer;
+}
+
 bool se_fs_does_file_exist(const char* filePath) {
     FILE* fp = fopen(filePath, "r");
     if (fp) {

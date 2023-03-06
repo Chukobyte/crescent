@@ -126,7 +126,7 @@ void se_frame_buffer_set_screen_shader(SEShaderInstance* shaderInstance) {
     SE_ASSERT_FMT(shaderInstance != NULL, "Trying to set screen shader to NULL!");
     currentScreenShader = shaderInstance;
     se_shader_use(currentScreenShader->shader);
-    se_shader_set_int(currentScreenShader->shader, "screenTexture", 0);
+    se_shader_set_int(currentScreenShader->shader, "TEXTURE", 0);
 }
 
 void se_frame_buffer_reset_to_default_screen_shader() {
