@@ -44,16 +44,16 @@ struct SpriteComp : public EditorComponent {
         : texturePath(std::move(texturePath)),
           drawSource(spriteComponent->drawSource),
           origin(spriteComponent->origin),
-          flipX(spriteComponent->flipX),
-          flipY(spriteComponent->flipY),
+          flipH(spriteComponent->flipH),
+          flipV(spriteComponent->flipV),
           modulate(spriteComponent->modulate),
           shaderPath(std::move(shaderPath)) {}
 
     std::string texturePath;
     SERect2 drawSource = { .x = 0.0f, .y = 0.0f, .w = 0.0f, .h = 0.0f };
     SEVector2 origin = { .x = 0.0f, .y = 0.0f };
-    bool flipX = false;
-    bool flipY = false;
+    bool flipH = false;
+    bool flipV = false;
     SEColor modulate = { .r = 1.0f, .g = 1.0f, .b = 1.0f, .a = 1.0f };
     std::string shaderPath;
 };
@@ -123,8 +123,8 @@ struct AnimatedSpriteComp : public EditorComponent {
           modulate(animatedSpriteComponentData->modulate),
           isPlaying(animatedSpriteComponentData->isPlaying),
           origin(animatedSpriteComponentData->origin),
-          flipX(animatedSpriteComponentData->flipX),
-          flipY(animatedSpriteComponentData->flipY),
+          flipH(animatedSpriteComponentData->flipH),
+          flipV(animatedSpriteComponentData->flipV),
           shaderPath(std::move(shaderPath)) {
         for (size_t animationIndex = 0; animationIndex < animatedSpriteComponentData->animationCount; animationIndex++) {
             const AnimationData& animData = animatedSpriteComponentData->animations[animationIndex];
@@ -179,8 +179,8 @@ struct AnimatedSpriteComp : public EditorComponent {
     SEColor modulate = { .r = 1.0f, .g = 1.0f, .b = 1.0f, .a = 1.0f };
     bool isPlaying = false;
     SEVector2 origin = { .x = 0.0f, .y = 0.0f };
-    bool flipX = false;
-    bool flipY = false;
+    bool flipH = false;
+    bool flipV = false;
     std::string shaderPath;
 };
 

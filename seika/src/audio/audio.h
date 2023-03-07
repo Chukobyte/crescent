@@ -3,8 +3,11 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#define SE_AUDIO_SOURCE_EXPECTED_SAMPLE_RATE 44100
+
 typedef struct SEAudioSource {
     const char* file_path;
+    double pitch;
     int32_t channels;
     int32_t sample_rate;
     void* samples;

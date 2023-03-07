@@ -38,7 +38,7 @@
 "import json\n"\
 "from enum import Enum\n"\
 "from json import JSONDecodeError\n"\
-"from typing import Callable, Type, List, Optional\n"\
+"from typing import Callable, List, Optional, Union\n"\
 "\n"\
 "import crescent_api_internal\n"\
 "\n"\
@@ -482,8 +482,16 @@
 "\n"\
 "# ASSETS\n"\
 "class AudioSource:\n"\
-"    def __init__(self, file_path: str):\n"\
-"        self.file_path = file_path\n"\
+"    def __init__(self, path: str):\n"\
+"        self.path = path\n"\
+"\n"\
+"    @property\n"\
+"    def pitch(self) -> float:\n"\
+"        return crescent_api_internal.audio_source_get_pitch(path=self.path)\n"\
+"\n"\
+"    @pitch.setter\n"\
+"    def pitch(self, value: float) -> None:\n"\
+"        crescent_api_internal.audio_source_set_pitch(path=self.path, pitch=value)\n"\
 "\n"\
 "\n"\
 "class Texture:\n"\
@@ -1126,39 +1134,6 @@
 "\n"\
 "class Sprite(Node2D):\n"\
 "    @property\n"\
-"    def flip_h(self) -> bool:\n"\
-"        return crescent_api_internal.sprite_get_flip_h(entity_id=self.entity_id)\n"\
-"\n"\
-"    @flip_h.setter\n"\
-"    def flip_h(self, value: bool) -> None:\n"\
-"        crescent_api_internal.sprite_set_flip_h(entity_id=self.entity_id, flip_h=value)\n"\
-"\n"\
-"    @property\n"\
-"    def flip_v(self) -> bool:\n"\
-"        return crescent_api_internal.sprite_get_flip_v(entity_id=self.entity_id)\n"\
-"\n"\
-"    @flip_v.setter\n"\
-"    def flip_v(self, value: bool) -> None:\n"\
-"        crescent_api_internal.sprite_set_flip_v(entity_id=self.entity_id, flip_h=value)\n"\
-"\n"\
-"    @property\n"\
-"    def modulate(self) -> Color:\n"\
-"        red, green, blue, alpha = crescent_api_internal.sprite_get_modulate(\n"\
-"            entity_id=self.entity_id\n"\
-"        )\n"\
-"        return Color(r=red, g=green, b=blue, a=alpha)\n"\
-"\n"\
-"    @modulate.setter\n"\
-"    def modulate(self, color: Color) -> None:\n"\
-"        crescent_api_internal.sprite_set_modulate(\n"\
-"            entity_id=self.entity_id,\n"\
-"            red=color.r,\n"\
-"            green=color.g,\n"\
-"            blue=color.b,\n"\
-"            alpha=color.a,\n"\
-"        )\n"\
-"\n"\
-"    @property\n"\
 "    def texture(self) -> Texture:\n"\
 "        (\n"\
 "            file_path,\n"\
@@ -1193,6 +1168,39 @@
 "    def draw_source(self, value: Rect2) -> None:\n"\
 "        crescent_api_internal.sprite_set_draw_source(\n"\
 "            entity_id=self.entity_id, x=value.x, y=value.y, w=value.w, h=value.h\n"\
+"        )\n"\
+"\n"\
+"    @property\n"\
+"    def flip_h(self) -> bool:\n"\
+"        return crescent_api_internal.sprite_get_flip_h(entity_id=self.entity_id)\n"\
+"\n"\
+"    @flip_h.setter\n"\
+"    def flip_h(self, value: bool) -> None:\n"\
+"        crescent_api_internal.sprite_set_flip_h(entity_id=self.entity_id, flip_h=value)\n"\
+"\n"\
+"    @property\n"\
+"    def flip_v(self) -> bool:\n"\
+"        return crescent_api_internal.sprite_get_flip_v(entity_id=self.entity_id)\n"\
+"\n"\
+"    @flip_v.setter\n"\
+"    def flip_v(self, value: bool) -> None:\n"\
+"        crescent_api_internal.sprite_set_flip_v(entity_id=self.entity_id, flip_v=value)\n"\
+"\n"\
+"    @property\n"\
+"    def modulate(self) -> Color:\n"\
+"        red, green, blue, alpha = crescent_api_internal.sprite_get_modulate(\n"\
+"            entity_id=self.entity_id\n"\
+"        )\n"\
+"        return Color(r=red, g=green, b=blue, a=alpha)\n"\
+"\n"\
+"    @modulate.setter\n"\
+"    def modulate(self, color: Color) -> None:\n"\
+"        crescent_api_internal.sprite_set_modulate(\n"\
+"            entity_id=self.entity_id,\n"\
+"            r=color.r,\n"\
+"            g=color.g,\n"\
+"            b=color.b,\n"\
+"            a=color.a,\n"\
 "        )\n"\
 "\n"\
 "    @property\n"\
@@ -1239,6 +1247,47 @@
 "            speed=animation.speed,\n"\
 "            loops=animation.loops,\n"\
 "            frames=anim_frames,\n"\
+"        )\n"\
+"\n"\
+"    @property\n"\
+"    def flip_h(self) -> bool:\n"\
+"        return crescent_api_internal.animated_sprite_get_flip_h(\n"\
+"            entity_id=self.entity_id\n"\
+"        )\n"\
+"\n"\
+"    @flip_h.setter\n"\
+"    def flip_h(self, value: bool) -> None:\n"\
+"        crescent_api_internal.animated_sprite_set_flip_h(\n"\
+"            entity_id=self.entity_id, flip_h=value\n"\
+"        )\n"\
+"\n"\
+"    @property\n"\
+"    def flip_v(self) -> bool:\n"\
+"        return crescent_api_internal.animated_sprite_get_flip_v(\n"\
+"            entity_id=self.entity_id\n"\
+"        )\n"\
+"\n"\
+"    @flip_v.setter\n"\
+"    def flip_v(self, value: bool) -> None:\n"\
+"        crescent_api_internal.animated_sprite_set_flip_v(\n"\
+"            entity_id=self.entity_id, flip_v=value\n"\
+"        )\n"\
+"\n"\
+"    @property\n"\
+"    def modulate(self) -> Color:\n"\
+"        red, green, blue, alpha = crescent_api_internal.animated_sprite_get_modulate(\n"\
+"            entity_id=self.entity_id\n"\
+"        )\n"\
+"        return Color(r=red, g=green, b=blue, a=alpha)\n"\
+"\n"\
+"    @modulate.setter\n"\
+"    def modulate(self, color: Color) -> None:\n"\
+"        crescent_api_internal.animated_sprite_set_modulate(\n"\
+"            entity_id=self.entity_id,\n"\
+"            r=color.r,\n"\
+"            g=color.g,\n"\
+"            b=color.b,\n"\
+"            a=color.a,\n"\
 "        )\n"\
 "\n"\
 "    @property\n"\
@@ -1435,12 +1484,20 @@
 "# AUDIO MANAGER\n"\
 "class AudioManager:\n"\
 "    @staticmethod\n"\
-"    def play_sound(path: str, loops=False):\n"\
-"        crescent_api_internal.audio_manager_play_sound(path=path, loops=loops)\n"\
+"    def get_audio_source(path: str) -> AudioSource:\n"\
+"        return AudioSource(path)\n"\
 "\n"\
 "    @staticmethod\n"\
-"    def stop_sound(path: str):\n"\
-"        crescent_api_internal.audio_manager_stop_sound(path=path)\n"\
+"    def play_sound(source: Union[AudioSource, str], loops=False):\n"\
+"        if isinstance(source, AudioSource):\n"\
+"            source = source.path\n"\
+"        crescent_api_internal.audio_manager_play_sound(path=source, loops=loops)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def stop_sound(source: Union[AudioSource, str]):\n"\
+"        if isinstance(source, AudioSource):\n"\
+"            source = source.path\n"\
+"        crescent_api_internal.audio_manager_stop_sound(path=source)\n"\
 "\n"\
 "\n"\
 "# PHYSICS\n"\

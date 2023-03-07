@@ -184,8 +184,8 @@ void cre_json_sprite_create_or_set_default(JsonSceneNode* node, cJSON* component
         node->spriteTexturePath = json_get_string_new(componentJson, "texture_path");
         spriteComponent->drawSource = json_get_rect2(componentJson, "draw_source");
         spriteComponent->origin = json_get_vec2_default(componentJson, "origin", DEFAULT_COMPONENT_SPRITE_ORIGIN);
-        spriteComponent->flipX = json_get_bool_default(componentJson, "flip_x", DEFAULT_COMPONENT_SPRITE_FLIP_X);
-        spriteComponent->flipY = json_get_bool_default(componentJson, "flip_y", DEFAULT_COMPONENT_SPRITE_FLIP_Y);
+        spriteComponent->flipH = json_get_bool_default(componentJson, "flip_h", DEFAULT_COMPONENT_SPRITE_FLIP_H);
+        spriteComponent->flipV = json_get_bool_default(componentJson, "flip_v", DEFAULT_COMPONENT_SPRITE_FLIP_V);
         spriteComponent->modulate = json_get_linear_color_default(componentJson, "modulate", DEFAULT_COMPONENT_SPRITE_MODULATE);
         json_node_set_shader_instance_paths(node, componentJson, "shader_instance");
         node->components[ComponentDataIndex_SPRITE] = spriteComponent;
@@ -198,18 +198,18 @@ void cre_json_sprite_create_or_set_default(JsonSceneNode* node, cJSON* component
         }
         spriteComponent->drawSource = json_get_rect2_default(componentJson, "draw_source", spriteComponent->drawSource);
         spriteComponent->origin = json_get_vec2_default(componentJson, "origin", spriteComponent->origin);
-        spriteComponent->flipX = json_get_bool_default(componentJson, "flip_x", spriteComponent->flipX);
-        spriteComponent->flipY = json_get_bool_default(componentJson, "flip_y", spriteComponent->flipY);
+        spriteComponent->flipH = json_get_bool_default(componentJson, "flip_h", spriteComponent->flipH);
+        spriteComponent->flipV = json_get_bool_default(componentJson, "flip_v", spriteComponent->flipV);
         spriteComponent->modulate = json_get_linear_color_default(componentJson, "modulate", spriteComponent->modulate);
         json_node_set_shader_instance_paths(node, componentJson, "shader_instance");
     }
     se_logger_debug(
-        "Sprite\ntexture_path: '%s'\ndraw_source = (%f, %f, %f, %f)\norigin: (%f, %f)\nflip_x: %s\nflip_y: %s\nmodulate: (%f, %f, %f, %f)",
+        "Sprite\ntexture_path: '%s'\ndraw_source = (%f, %f, %f, %f)\norigin: (%f, %f)\nflip_h: %s\nflip_v: %s\nmodulate: (%f, %f, %f, %f)",
         node->spriteTexturePath,
         spriteComponent->drawSource.x, spriteComponent->drawSource.y, spriteComponent->drawSource.w,
         spriteComponent->drawSource.h,
         spriteComponent->origin.x, spriteComponent->origin.y,
-        se_bool_to_string(spriteComponent->flipX), se_bool_to_string(spriteComponent->flipY),
+        se_bool_to_string(spriteComponent->flipH), se_bool_to_string(spriteComponent->flipV),
         spriteComponent->modulate.r, spriteComponent->modulate.g, spriteComponent->modulate.b,
         spriteComponent->modulate.a);
 }
@@ -223,8 +223,8 @@ void cre_json_animated_sprite_create_or_set_default(JsonSceneNode* node, cJSON* 
         animatedSpriteComponent->isPlaying = json_get_bool(componentJson, "is_playing");
         animatedSpriteComponent->origin = json_get_vec2_default(componentJson, "origin", DEFAULT_COMPONENT_ANIMATED_SPRITE_ORIGIN);
         animatedSpriteComponent->modulate = json_get_linear_color_default(componentJson, "modulate", DEFAULT_COMPONENT_ANIMATED_SPRITE_MODULATE);
-        animatedSpriteComponent->flipX = json_get_bool_default(componentJson, "flip_x", DEFAULT_COMPONENT_ANIMATED_SPRITE_FLIP_X);
-        animatedSpriteComponent->flipY = json_get_bool_default(componentJson, "flip_y", DEFAULT_COMPONENT_ANIMATED_SPRITE_FLIP_Y);
+        animatedSpriteComponent->flipH = json_get_bool_default(componentJson, "flip_h", DEFAULT_COMPONENT_ANIMATED_SPRITE_FLIP_H);
+        animatedSpriteComponent->flipV = json_get_bool_default(componentJson, "flip_v", DEFAULT_COMPONENT_ANIMATED_SPRITE_FLIP_V);
         json_node_set_shader_instance_paths(node, componentJson, "shader_instance");
         // Animation (Won't look at local anims for now)
         cJSON* animationsJsonArray = cJSON_GetObjectItemCaseSensitive(componentJson, "animations");
@@ -264,8 +264,8 @@ void cre_json_animated_sprite_create_or_set_default(JsonSceneNode* node, cJSON* 
         animatedSpriteComponent->isPlaying = json_get_bool_default(componentJson, "is_playing", animatedSpriteComponent->isPlaying);
         animatedSpriteComponent->origin = json_get_vec2_default(componentJson, "origin", animatedSpriteComponent->origin);
         animatedSpriteComponent->modulate = json_get_linear_color_default(componentJson, "modulate", animatedSpriteComponent->modulate);
-        animatedSpriteComponent->flipX = json_get_bool_default(componentJson, "flip_x", animatedSpriteComponent->flipX);
-        animatedSpriteComponent->flipY = json_get_bool_default(componentJson, "flip_y", animatedSpriteComponent->flipY);
+        animatedSpriteComponent->flipH = json_get_bool_default(componentJson, "flip_h", animatedSpriteComponent->flipH);
+        animatedSpriteComponent->flipV = json_get_bool_default(componentJson, "flip_v", animatedSpriteComponent->flipV);
         json_node_set_shader_instance_paths(node, componentJson, "shader_instance");
     }
     se_logger_debug(
@@ -274,8 +274,8 @@ void cre_json_animated_sprite_create_or_set_default(JsonSceneNode* node, cJSON* 
         animatedSpriteComponent->origin.x, animatedSpriteComponent->origin.y,
         animatedSpriteComponent->modulate.r, animatedSpriteComponent->modulate.g,
         animatedSpriteComponent->modulate.b, animatedSpriteComponent->modulate.a,
-        se_bool_to_string(animatedSpriteComponent->flipX),
-        se_bool_to_string(animatedSpriteComponent->flipY));
+        se_bool_to_string(animatedSpriteComponent->flipH),
+        se_bool_to_string(animatedSpriteComponent->flipV));
     if (currentAnimationName != NULL) {
         SE_MEM_FREE(currentAnimationName);
     }

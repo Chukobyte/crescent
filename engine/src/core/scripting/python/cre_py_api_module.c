@@ -5,6 +5,7 @@
 #include "../seika/src/asset/asset_manager.h"
 #include "../seika/src/input/input.h"
 #include "../seika/src/input/mouse.h"
+#include "../seika/src/audio/audio.h"
 #include "../seika/src/audio/audio_manager.h"
 #include "../seika/src/networking/se_network.h"
 #include "../seika/src/memory/se_mem.h"
@@ -747,6 +748,35 @@ PyObject* cre_py_api_audio_manager_stop_sound(PyObject* self, PyObject* args, Py
     return NULL;
 }
 
+// Audio Source
+PyObject* cre_py_api_audio_source_set_pitch(PyObject* self, PyObject* args, PyObject* kwargs) {
+    char* audioPath;
+    float pitch;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "sf", crePyApiAudioSourceSetPitchKWList, &audioPath, &pitch)) {
+        if (se_asset_manager_has_audio_source(audioPath)) {
+            SEAudioSource* audioSource = se_asset_manager_get_audio_source(audioPath);
+            audioSource->pitch = (double)pitch;
+        } else {
+            se_logger_error("Tried to set non-existent audio source's pitch at '%s'", audioPath);
+        }
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_audio_source_get_pitch(PyObject* self, PyObject* args, PyObject* kwargs) {
+    char* audioPath;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "s", crePyApiGenericPathKWList, &audioPath)) {
+        if (se_asset_manager_has_audio_source(audioPath)) {
+            SEAudioSource* audioSource = se_asset_manager_get_audio_source(audioPath);
+            return Py_BuildValue("f", (float)audioSource->pitch);
+        }
+        se_logger_error("Tried to get non-existent audio source's pitch at '%s'", audioPath);
+        return Py_BuildValue("f", 1.0f);
+    }
+    return NULL;
+}
+
 // Game Properties
 PyObject* cre_py_api_game_properties_get(PyObject* self, PyObject* args) {
     const CREGameProperties* gameProps = cre_game_props_get();
@@ -1217,6 +1247,79 @@ PyObject* cre_py_api_sprite_get_draw_source(PyObject* self, PyObject* args, PyOb
     return NULL;
 }
 
+PyObject* cre_py_api_sprite_set_flip_h(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    bool flipH;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "ib", crePyApiGenericSetEntityFlipHKWList, &entity, &flipH)) {
+        SpriteComponent* spriteComponent = (SpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_SPRITE);
+        spriteComponent->flipH = flipH;
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_sprite_get_flip_h(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
+        const SpriteComponent* spriteComponent = (SpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_SPRITE);
+        if (spriteComponent->flipH) {
+            Py_RETURN_TRUE;
+        }
+        Py_RETURN_FALSE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_sprite_set_flip_v(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    bool flipV;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "ib", crePyApiGenericSetEntityFlipVKWList, &entity, &flipV)) {
+        SpriteComponent* spriteComponent = (SpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_SPRITE);
+        spriteComponent->flipV = flipV;
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_sprite_get_flip_v(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
+        const SpriteComponent* spriteComponent = (SpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_SPRITE);
+        if (spriteComponent->flipV) {
+            Py_RETURN_TRUE;
+        }
+        Py_RETURN_FALSE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_sprite_set_modulate(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    int r;
+    int g;
+    int b;
+    int a;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "iiiii", crePyApiGenericSetEntityRectKWList, &entity, &r, &g, &b, &a)) {
+        SpriteComponent* spriteComponent = (SpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_SPRITE);
+        spriteComponent->modulate = se_color_get_normalized_color(r, g, b, a);
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_sprite_get_modulate(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
+        const SpriteComponent* spriteComponent = (SpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_SPRITE);
+        const int red = (int) (spriteComponent->modulate.r * 255.0f);
+        const int green = (int) (spriteComponent->modulate.g * 255.0f);
+        const int blue = (int) (spriteComponent->modulate.b * 255.0f);
+        const int alpha = (int) (spriteComponent->modulate.a * 255.0f);
+        return Py_BuildValue("(iiii)", red, green, blue, alpha);
+    }
+    return NULL;
+}
+
 PyObject* cre_py_api_sprite_set_shader_instance(PyObject* self, PyObject* args, PyObject* kwargs) {
     Entity entity;
     SEShaderInstanceId shaderInstanceId;
@@ -1311,6 +1414,79 @@ PyObject* cre_py_api_animated_sprite_add_animation(PyObject* self, PyObject* arg
     return NULL;
 }
 
+PyObject* cre_py_api_animated_sprite_set_flip_h(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    bool flipH;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "ib", crePyApiGenericSetEntityFlipHKWList, &entity, &flipH)) {
+        AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_ANIMATED_SPRITE);
+        animatedSpriteComponent->flipH = flipH;
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_animated_sprite_get_flip_h(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
+        const AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_ANIMATED_SPRITE);
+        if (animatedSpriteComponent->flipH) {
+            Py_RETURN_TRUE;
+        }
+        Py_RETURN_FALSE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_animated_sprite_set_flip_v(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    bool flipV;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "ib", crePyApiGenericSetEntityFlipVKWList, &entity, &flipV)) {
+        AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_ANIMATED_SPRITE);
+        animatedSpriteComponent->flipV = flipV;
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_animated_sprite_get_flip_v(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
+        const AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_ANIMATED_SPRITE);
+        if (animatedSpriteComponent->flipV) {
+            Py_RETURN_TRUE;
+        }
+        Py_RETURN_FALSE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_animated_sprite_set_modulate(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    int r;
+    int g;
+    int b;
+    int a;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "iiiii", crePyApiGenericSetEntityRectKWList, &entity, &r, &g, &b, &a)) {
+        AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_ANIMATED_SPRITE);
+        animatedSpriteComponent->modulate = se_color_get_normalized_color(r, g, b, a);
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_animated_sprite_get_modulate(PyObject* self, PyObject* args, PyObject* kwargs) {
+    Entity entity;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
+        const AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_ANIMATED_SPRITE);
+        const int red = (int) (animatedSpriteComponent->modulate.r * 255.0f);
+        const int green = (int) (animatedSpriteComponent->modulate.g * 255.0f);
+        const int blue = (int) (animatedSpriteComponent->modulate.b * 255.0f);
+        const int alpha = (int) (animatedSpriteComponent->modulate.a * 255.0f);
+        return Py_BuildValue("(iiii)", red, green, blue, alpha);
+    }
+    return NULL;
+}
+
 PyObject* cre_py_api_animated_sprite_set_shader_instance(PyObject* self, PyObject* args, PyObject* kwargs) {
     Entity entity;
     SEShaderInstanceId shaderInstanceId;
@@ -1374,9 +1550,9 @@ PyObject* cre_py_api_text_label_get_color(PyObject* self, PyObject* args, PyObje
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
         TextLabelComponent* textLabelComponent = (TextLabelComponent*) component_manager_get_component(entity, ComponentDataIndex_TEXT_LABEL);
         const int red = (int) (textLabelComponent->color.r * 255.0f);
-        const int green = (int) (textLabelComponent->color.r * 255.0f);
-        const int blue = (int) (textLabelComponent->color.r * 255.0f);
-        const int alpha = (int) (textLabelComponent->color.r * 255.0f);
+        const int green = (int) (textLabelComponent->color.g * 255.0f);
+        const int blue = (int) (textLabelComponent->color.b * 255.0f);
+        const int alpha = (int) (textLabelComponent->color.a * 255.0f);
         return Py_BuildValue("(iiii)", red, green, blue, alpha);
     }
     return NULL;

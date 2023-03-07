@@ -1,7 +1,7 @@
 import json
 from enum import Enum
 from json import JSONDecodeError
-from typing import Callable, Type, List, Optional
+from typing import Callable, List, Optional, Union
 
 import crescent_api_internal
 
@@ -445,8 +445,16 @@ class CurveFloat:
 
 # ASSETS
 class AudioSource:
-    def __init__(self, file_path: str):
-        self.file_path = file_path
+    def __init__(self, path: str):
+        self.path = path
+
+    @property
+    def pitch(self) -> float:
+        return crescent_api_internal.audio_source_get_pitch(path=self.path)
+
+    @pitch.setter
+    def pitch(self, value: float) -> None:
+        crescent_api_internal.audio_source_set_pitch(path=self.path, pitch=value)
 
 
 class Texture:
@@ -1089,39 +1097,6 @@ class Node2D(Node):
 
 class Sprite(Node2D):
     @property
-    def flip_h(self) -> bool:
-        return crescent_api_internal.sprite_get_flip_h(entity_id=self.entity_id)
-
-    @flip_h.setter
-    def flip_h(self, value: bool) -> None:
-        crescent_api_internal.sprite_set_flip_h(entity_id=self.entity_id, flip_h=value)
-
-    @property
-    def flip_v(self) -> bool:
-        return crescent_api_internal.sprite_get_flip_v(entity_id=self.entity_id)
-
-    @flip_v.setter
-    def flip_v(self, value: bool) -> None:
-        crescent_api_internal.sprite_set_flip_v(entity_id=self.entity_id, flip_h=value)
-
-    @property
-    def modulate(self) -> Color:
-        red, green, blue, alpha = crescent_api_internal.sprite_get_modulate(
-            entity_id=self.entity_id
-        )
-        return Color(r=red, g=green, b=blue, a=alpha)
-
-    @modulate.setter
-    def modulate(self, color: Color) -> None:
-        crescent_api_internal.sprite_set_modulate(
-            entity_id=self.entity_id,
-            red=color.r,
-            green=color.g,
-            blue=color.b,
-            alpha=color.a,
-        )
-
-    @property
     def texture(self) -> Texture:
         (
             file_path,
@@ -1156,6 +1131,39 @@ class Sprite(Node2D):
     def draw_source(self, value: Rect2) -> None:
         crescent_api_internal.sprite_set_draw_source(
             entity_id=self.entity_id, x=value.x, y=value.y, w=value.w, h=value.h
+        )
+
+    @property
+    def flip_h(self) -> bool:
+        return crescent_api_internal.sprite_get_flip_h(entity_id=self.entity_id)
+
+    @flip_h.setter
+    def flip_h(self, value: bool) -> None:
+        crescent_api_internal.sprite_set_flip_h(entity_id=self.entity_id, flip_h=value)
+
+    @property
+    def flip_v(self) -> bool:
+        return crescent_api_internal.sprite_get_flip_v(entity_id=self.entity_id)
+
+    @flip_v.setter
+    def flip_v(self, value: bool) -> None:
+        crescent_api_internal.sprite_set_flip_v(entity_id=self.entity_id, flip_v=value)
+
+    @property
+    def modulate(self) -> Color:
+        red, green, blue, alpha = crescent_api_internal.sprite_get_modulate(
+            entity_id=self.entity_id
+        )
+        return Color(r=red, g=green, b=blue, a=alpha)
+
+    @modulate.setter
+    def modulate(self, color: Color) -> None:
+        crescent_api_internal.sprite_set_modulate(
+            entity_id=self.entity_id,
+            r=color.r,
+            g=color.g,
+            b=color.b,
+            a=color.a,
         )
 
     @property
@@ -1202,6 +1210,47 @@ class AnimatedSprite(Node2D):
             speed=animation.speed,
             loops=animation.loops,
             frames=anim_frames,
+        )
+
+    @property
+    def flip_h(self) -> bool:
+        return crescent_api_internal.animated_sprite_get_flip_h(
+            entity_id=self.entity_id
+        )
+
+    @flip_h.setter
+    def flip_h(self, value: bool) -> None:
+        crescent_api_internal.animated_sprite_set_flip_h(
+            entity_id=self.entity_id, flip_h=value
+        )
+
+    @property
+    def flip_v(self) -> bool:
+        return crescent_api_internal.animated_sprite_get_flip_v(
+            entity_id=self.entity_id
+        )
+
+    @flip_v.setter
+    def flip_v(self, value: bool) -> None:
+        crescent_api_internal.animated_sprite_set_flip_v(
+            entity_id=self.entity_id, flip_v=value
+        )
+
+    @property
+    def modulate(self) -> Color:
+        red, green, blue, alpha = crescent_api_internal.animated_sprite_get_modulate(
+            entity_id=self.entity_id
+        )
+        return Color(r=red, g=green, b=blue, a=alpha)
+
+    @modulate.setter
+    def modulate(self, color: Color) -> None:
+        crescent_api_internal.animated_sprite_set_modulate(
+            entity_id=self.entity_id,
+            r=color.r,
+            g=color.g,
+            b=color.b,
+            a=color.a,
         )
 
     @property
@@ -1398,12 +1447,20 @@ class World:
 # AUDIO MANAGER
 class AudioManager:
     @staticmethod
-    def play_sound(path: str, loops=False):
-        crescent_api_internal.audio_manager_play_sound(path=path, loops=loops)
+    def get_audio_source(path: str) -> AudioSource:
+        return AudioSource(path)
 
     @staticmethod
-    def stop_sound(path: str):
-        crescent_api_internal.audio_manager_stop_sound(path=path)
+    def play_sound(source: Union[AudioSource, str], loops=False):
+        if isinstance(source, AudioSource):
+            source = source.path
+        crescent_api_internal.audio_manager_play_sound(path=source, loops=loops)
+
+    @staticmethod
+    def stop_sound(source: Union[AudioSource, str]):
+        if isinstance(source, AudioSource):
+            source = source.path
+        crescent_api_internal.audio_manager_stop_sound(path=source)
 
 
 # PHYSICS

@@ -26,7 +26,7 @@ typedef struct TextureCoordinates {
     GLfloat tMax;
 } TextureCoordinates;
 
-TextureCoordinates renderer_get_texture_coordinates(const SETexture* texture, const SERect2* drawSource, bool flipX, bool flipY);
+TextureCoordinates renderer_get_texture_coordinates(const SETexture* texture, const SERect2* drawSource, bool flipH, bool flipV);
 void renderer_set_shader_instance_params(SEShaderInstance* shaderInstance);
 void renderer_print_opengl_errors();
 
@@ -60,8 +60,8 @@ typedef struct SpriteBatchItem {
     SERect2 sourceRect;
     SESize2D destSize;
     SEColor color;
-    bool flipX;
-    bool flipY;
+    bool flipH;
+    bool flipV;
     SETransformModel2D* globalTransform;
     SEShaderInstance* shaderInstance;
 } SpriteBatchItem;
@@ -149,12 +149,12 @@ void update_active_render_layer_index(int zIndex) {
     }
 }
 
-void se_renderer_queue_sprite_draw_call(SETexture* texture, SERect2 sourceRect, SESize2D destSize, SEColor color, bool flipX, bool flipY, SETransformModel2D* globalTransform, int zIndex, SEShaderInstance* shaderInstance) {
+void se_renderer_queue_sprite_draw_call(SETexture* texture, SERect2 sourceRect, SESize2D destSize, SEColor color, bool flipH, bool flipV, SETransformModel2D* globalTransform, int zIndex, SEShaderInstance* shaderInstance) {
     if (texture == NULL) {
         se_logger_error("NULL texture, not submitting draw call!");
         return;
     }
-    SpriteBatchItem item = { .texture = texture, .sourceRect = sourceRect, .destSize = destSize, .color = color, .flipX = flipX, .flipY = flipY, .globalTransform = globalTransform, .shaderInstance = shaderInstance };
+    SpriteBatchItem item = { .texture = texture, .sourceRect = sourceRect, .destSize = destSize, .color = color, .flipH = flipH, .flipV = flipV, .globalTransform = globalTransform, .shaderInstance = shaderInstance };
     const int arrayZIndex = se_math_clamp_int(zIndex + SE_RENDER_LAYER_BATCH_MAX / 2, 0, SE_RENDER_LAYER_BATCH_MAX - 1);
     // Get texture layer index for render texture
     size_t textureLayerIndex = render_layer_items[arrayZIndex].renderTextureLayerCount;
@@ -352,7 +352,7 @@ void renderer_batching_draw_sprites(SpriteBatchItem items[], size_t spriteCount)
         });
         const float spriteId = (float) i;
         const float determinate = glm_mat4_det(items[i].globalTransform->model);
-        const TextureCoordinates textureCoords = renderer_get_texture_coordinates(texture, &items[i].sourceRect, items[i].flipX, items[i].flipY);
+        const TextureCoordinates textureCoords = renderer_get_texture_coordinates(texture, &items[i].sourceRect, items[i].flipH, items[i].flipV);
         // concat CRE_MODELS[] string for uniform param
         char modelsBuffer[24];
         sprintf(modelsBuffer, "CRE_MODELS[%zu]", i);
@@ -468,10 +468,10 @@ void font_renderer_draw_text(const SEFont* font, const char* text, float x, floa
 }
 
 // --- Misc --- //
-TextureCoordinates renderer_get_texture_coordinates(const SETexture* texture, const SERect2* drawSource, bool flipX, bool flipY) {
+TextureCoordinates renderer_get_texture_coordinates(const SETexture* texture, const SERect2* drawSource, bool flipH, bool flipV) {
     // S
     GLfloat sMin, sMax;
-    if (flipX) {
+    if (flipH) {
         sMax = (drawSource->x + 0.5f) / (float) texture->width;
         sMin = (drawSource->x + drawSource->w - 0.5f) / (float) texture->width;
     } else {
@@ -480,7 +480,7 @@ TextureCoordinates renderer_get_texture_coordinates(const SETexture* texture, co
     }
     // T
     GLfloat tMin, tMax;
-    if (flipY) {
+    if (flipV) {
         tMax = (drawSource->y + 0.5f) / (float) texture->height;
         tMin = (drawSource->y + drawSource->h - 0.5f) / (float) texture->height;
     } else {
