@@ -482,8 +482,16 @@
 "\n"\
 "# ASSETS\n"\
 "class AudioSource:\n"\
-"    def __init__(self, file_path: str):\n"\
-"        self.file_path = file_path\n"\
+"    def __init__(self, path: str):\n"\
+"        self.path = path\n"\
+"\n"\
+"    @property\n"\
+"    def pitch(self) -> float:\n"\
+"        return crescent_api_internal.audio_source_get_pitch(path=self.path)\n"\
+"\n"\
+"    @pitch.setter\n"\
+"    def pitch(self, value: float) -> None:\n"\
+"        crescent_api_internal.audio_source_set_pitch(path=self.path, pitch=value)\n"\
 "\n"\
 "\n"\
 "class Texture:\n"\
@@ -1475,6 +1483,10 @@
 "\n"\
 "# AUDIO MANAGER\n"\
 "class AudioManager:\n"\
+"    @staticmethod\n"\
+"    def get_audio_source(path: str) -> AudioSource:\n"\
+"        return AudioSource(path)\n"\
+"\n"\
 "    @staticmethod\n"\
 "    def play_sound(path: str, loops=False):\n"\
 "        crescent_api_internal.audio_manager_play_sound(path=path, loops=loops)\n"\

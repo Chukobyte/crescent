@@ -85,6 +85,10 @@ PyObject* cre_py_api_world_get_time_dilation(PyObject* self, PyObject* args);
 PyObject* cre_py_api_audio_manager_play_sound(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_audio_manager_stop_sound(PyObject* self, PyObject* args, PyObject* kwargs);
 
+// Audio Source
+PyObject* cre_py_api_audio_source_set_pitch(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_audio_source_get_pitch(PyObject* self, PyObject* args, PyObject* kwargs);
+
 // Game Properties
 PyObject* cre_py_api_game_properties_get(PyObject* self, PyObject* args);
 
@@ -439,6 +443,15 @@ static struct PyMethodDef crePyApiMethods[] = {
     {
         "audio_manager_stop_sound", (PyCFunction) cre_py_api_audio_manager_stop_sound,
         METH_VARARGS | METH_KEYWORDS, "Stops a sound."
+    },
+    // AUDIO SOURCE
+    {
+        "audio_source_set_pitch", (PyCFunction) cre_py_api_audio_source_set_pitch,
+        METH_VARARGS | METH_KEYWORDS, "Sets the pitch for an audio source."
+    },
+    {
+        "audio_source_get_pitch", (PyCFunction) cre_py_api_audio_source_get_pitch,
+        METH_VARARGS | METH_KEYWORDS, "Gets the pitch for an audio source."
     },
     // GAME PROPERTIES
     {
@@ -816,6 +829,8 @@ static char* crePyApiInputAddActionKWList[] = {"name", "value", "device_id", NUL
 static char* crePyApiInputActionInputCheckKWList[] = {"name", NULL};
 
 static char* crePyApiAudioManagerPlaySoundKWList[] = {"path", "loops", NULL};
+
+static char* crePyApiAudioSourceSetPitchKWList[] = {"path", "pitch", NULL};
 
 static char* crePyApiNodeNewKWList[] = {"class_path", "class_name", "node_type", NULL};
 static char* crePyApiNodeAddChildKWList[] = {"parent_entity_id", "child_entity_id", NULL};

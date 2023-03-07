@@ -82,11 +82,11 @@ def curve_float_eval(curve_id: int, t: float) -> float:
     return 0.0
 
 
-def audio_source_set_pitch(file_path: str, pitch: float) -> None:
+def audio_source_set_pitch(path: str, pitch: float) -> None:
     pass
 
 
-def audio_source_get_pitch(file_path: str) -> float:
+def audio_source_get_pitch(path: str) -> float:
     return 1.0
 
 

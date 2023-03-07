@@ -5,6 +5,7 @@
 #include "../seika/src/asset/asset_manager.h"
 #include "../seika/src/input/input.h"
 #include "../seika/src/input/mouse.h"
+#include "../seika/src/audio/audio.h"
 #include "../seika/src/audio/audio_manager.h"
 #include "../seika/src/networking/se_network.h"
 #include "../seika/src/memory/se_mem.h"
@@ -743,6 +744,35 @@ PyObject* cre_py_api_audio_manager_stop_sound(PyObject* self, PyObject* args, Py
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "s", crePyApiGenericPathKWList, &audioPath)) {
         se_audio_manager_stop_sound(audioPath);
         Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+// Audio Source
+PyObject* cre_py_api_audio_source_set_pitch(PyObject* self, PyObject* args, PyObject* kwargs) {
+    char* audioPath;
+    float pitch;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "sf", crePyApiAudioSourceSetPitchKWList, &audioPath, &pitch)) {
+        if (se_asset_manager_has_audio_source(audioPath)) {
+            SEAudioSource* audioSource = se_asset_manager_get_audio_source(audioPath);
+            audioSource->pitch = (double)pitch;
+        } else {
+            se_logger_error("Tried to set non-existent audio source's pitch at '%s'", audioPath);
+        }
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_audio_source_get_pitch(PyObject* self, PyObject* args, PyObject* kwargs) {
+    char* audioPath;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "s", crePyApiGenericPathKWList, &audioPath)) {
+        if (se_asset_manager_has_audio_source(audioPath)) {
+            SEAudioSource* audioSource = se_asset_manager_get_audio_source(audioPath);
+            return Py_BuildValue("f", (float)audioSource->pitch);
+        }
+        se_logger_error("Tried to get non-existent audio source's pitch at '%s'", audioPath);
+        return Py_BuildValue("f", 1.0f);
     }
     return NULL;
 }

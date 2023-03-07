@@ -445,18 +445,16 @@ class CurveFloat:
 
 # ASSETS
 class AudioSource:
-    def __init__(self, file_path: str):
-        self.file_path = file_path
+    def __init__(self, path: str):
+        self.path = path
 
     @property
     def pitch(self) -> float:
-        return crescent_api_internal.audio_source_get_pitch(file_path=self.file_path)
+        return crescent_api_internal.audio_source_get_pitch(path=self.path)
 
     @pitch.setter
     def pitch(self, value: float) -> None:
-        crescent_api_internal.audio_source_set_pitch(
-            file_path=self.file_path, pitch=value
-        )
+        crescent_api_internal.audio_source_set_pitch(path=self.path, pitch=value)
 
 
 class Texture:
@@ -1449,8 +1447,8 @@ class World:
 # AUDIO MANAGER
 class AudioManager:
     @staticmethod
-    def get_audio_source(file_path: str) -> AudioSource:
-        return AudioSource(file_path)
+    def get_audio_source(path: str) -> AudioSource:
+        return AudioSource(path)
 
     @staticmethod
     def play_sound(path: str, loops=False):
