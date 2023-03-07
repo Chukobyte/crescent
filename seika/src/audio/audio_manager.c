@@ -46,7 +46,7 @@ bool se_audio_manager_init() {
     config.capture.pDeviceID = NULL;
     config.capture.format = ma_format_s16;
     config.capture.channels = 1;
-    config.sampleRate = 44100;
+    config.sampleRate = SE_AUDIO_SOURCE_EXPECTED_SAMPLE_RATE;
     config.dataCallback = audio_data_callback;
     config.pUserData = NULL;
     audio_device = SE_MEM_ALLOCATE(ma_device);
@@ -142,26 +142,16 @@ void audio_data_callback(ma_device* device, void* output, const void* input, ma_
                 targetSamplePosition -= (double) audioInst->source->sample_count;
             }
 
-            int16_t startLeftSample;
-            int16_t startRightSample;
-            {
-                uint64_t leftId = (uint64_t) startSamplePosition;
-                if (channels > 1) {
-                    leftId &= ~((uint64_t)(0x01));
-                }
-                uint64_t rightId = leftId + (uint64_t) (channels - 1);
-
-                int16_t firstLeftSample = samples[leftId];
-                int16_t firstRightSample = samples[rightId];
-                int16_t secondLeftSample = samples[leftId + channels];
-                int16_t secondRightSample = samples[rightId + channels];
-
-                startLeftSample = (int16_t) (firstLeftSample + secondLeftSample - firstLeftSample);
-                startRightSample = (int16_t) (firstRightSample + secondRightSample - firstRightSample);
+            uint64_t leftId = (uint64_t) startSamplePosition;
+            if (channels > 1) {
+                leftId &= ~((uint64_t)(0x01));
             }
+            const uint64_t rightId = leftId + (uint64_t) (channels - 1);
+            const int16_t startLeftSample = samples[leftId + channels];
+            const int16_t startRightSample = samples[rightId + channels];
 
-            int16_t leftSample = (int16_t) (startLeftSample / channels);
-            int16_t rightSample = (int16_t) (startRightSample / channels);
+            const int16_t leftSample = (int16_t) (startLeftSample / channels);
+            const int16_t rightSample = (int16_t) (startRightSample / channels);
 
             *sampleOut++ += leftSample;  // Left
             *sampleOut++ += rightSample; // Right
