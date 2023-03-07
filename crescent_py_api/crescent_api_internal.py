@@ -82,6 +82,14 @@ def curve_float_eval(curve_id: int, t: float) -> float:
     return 0.0
 
 
+def audio_source_set_pitch(file_path: str, pitch: float) -> None:
+    pass
+
+
+def audio_source_get_pitch(file_path: str) -> float:
+    return 1.0
+
+
 def shader_instance_delete(shader_id: int) -> bool:
     return True
 
