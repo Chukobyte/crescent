@@ -1,7 +1,7 @@
 import json
 from enum import Enum
 from json import JSONDecodeError
-from typing import Callable, Type, List, Optional
+from typing import Callable, List, Optional, Union
 
 import crescent_api_internal
 
@@ -1451,12 +1451,16 @@ class AudioManager:
         return AudioSource(path)
 
     @staticmethod
-    def play_sound(path: str, loops=False):
-        crescent_api_internal.audio_manager_play_sound(path=path, loops=loops)
+    def play_sound(source: Union[AudioSource, str], loops=False):
+        if isinstance(source, AudioSource):
+            source = source.path
+        crescent_api_internal.audio_manager_play_sound(path=source, loops=loops)
 
     @staticmethod
-    def stop_sound(path: str):
-        crescent_api_internal.audio_manager_stop_sound(path=path)
+    def stop_sound(source: Union[AudioSource, str]):
+        if isinstance(source, AudioSource):
+            source = source.path
+        crescent_api_internal.audio_manager_stop_sound(path=source)
 
 
 # PHYSICS

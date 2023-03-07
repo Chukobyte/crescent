@@ -38,7 +38,7 @@
 "import json\n"\
 "from enum import Enum\n"\
 "from json import JSONDecodeError\n"\
-"from typing import Callable, Type, List, Optional\n"\
+"from typing import Callable, List, Optional, Union\n"\
 "\n"\
 "import crescent_api_internal\n"\
 "\n"\
@@ -1488,12 +1488,16 @@
 "        return AudioSource(path)\n"\
 "\n"\
 "    @staticmethod\n"\
-"    def play_sound(path: str, loops=False):\n"\
-"        crescent_api_internal.audio_manager_play_sound(path=path, loops=loops)\n"\
+"    def play_sound(source: Union[AudioSource, str], loops=False):\n"\
+"        if isinstance(source, AudioSource):\n"\
+"            source = source.path\n"\
+"        crescent_api_internal.audio_manager_play_sound(path=source, loops=loops)\n"\
 "\n"\
 "    @staticmethod\n"\
-"    def stop_sound(path: str):\n"\
-"        crescent_api_internal.audio_manager_stop_sound(path=path)\n"\
+"    def stop_sound(source: Union[AudioSource, str]):\n"\
+"        if isinstance(source, AudioSource):\n"\
+"            source = source.path\n"\
+"        crescent_api_internal.audio_manager_stop_sound(path=source)\n"\
 "\n"\
 "\n"\
 "# PHYSICS\n"\
