@@ -83,6 +83,7 @@ void se_audio_manager_play_sound(const char* filePath, bool loops) {
         return;
     }
 
+    pthread_mutex_lock(&audio_mutex);
     // Create audio instance and add to instances array
     static unsigned int audioInstanceId = 0;  // TODO: temp id for now in case we need to grab a hold of an audio instance for roll back later...
     RBEAudioInstance* audioInstance = SE_MEM_ALLOCATE(RBEAudioInstance);
@@ -94,9 +95,11 @@ void se_audio_manager_play_sound(const char* filePath, bool loops) {
 
     audio_instances->instances[audio_instances->count++] = audioInstance;
     se_logger_debug("Added audio instance from file path '%s' to play!", filePath);
+    pthread_mutex_unlock(&audio_mutex);
 }
 
 void se_audio_manager_stop_sound(const char* filePath) {
+    pthread_mutex_lock(&audio_mutex);
     for (size_t i = 0; i < audio_instances->count; i++) {
         RBEAudioInstance* audioInst = audio_instances->instances[i];
         if (strcmp(audioInst->source->file_path, filePath) == 0) {
@@ -104,6 +107,7 @@ void se_audio_manager_stop_sound(const char* filePath) {
             break;
         }
     }
+    pthread_mutex_unlock(&audio_mutex);
 }
 
 // --- Mini Audio Callback --- //
@@ -124,6 +128,7 @@ void audio_data_callback(ma_device* device, void* output, const void* input, ma_
         }
 
         const int32_t channels = audioInst->source->channels;
+        const double pitch = audioInst->source->pitch;
         int16_t* sampleOut = (int16_t*) output;
         int16_t* samples = (int16_t*) audioInst->source->samples;
         uint64_t samplesToWrite = (uint64_t) frame_count;
@@ -132,7 +137,7 @@ void audio_data_callback(ma_device* device, void* output, const void* input, ma_
         for (uint64_t writeSample = 0; writeSample < samplesToWrite; writeSample++) {
             double startSamplePosition = audioInst->sample_position;
 
-            double targetSamplePosition = startSamplePosition + (double) channels * 1.1f; // TODO: Not sure why '1.1f'
+            double targetSamplePosition = startSamplePosition + (double) channels * pitch;
             if (targetSamplePosition >= audioInst->source->sample_count) {
                 targetSamplePosition -= (double) audioInst->source->sample_count;
             }

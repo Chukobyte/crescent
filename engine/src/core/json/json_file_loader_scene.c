@@ -204,14 +204,14 @@ void cre_json_sprite_create_or_set_default(JsonSceneNode* node, cJSON* component
         json_node_set_shader_instance_paths(node, componentJson, "shader_instance");
     }
     se_logger_debug(
-            "Sprite\ntexture_path: '%s'\ndraw_source = (%f, %f, %f, %f)\norigin: (%f, %f)\nflip_h: %s\nflip_v: %s\nmodulate: (%f, %f, %f, %f)",
-            node->spriteTexturePath,
-            spriteComponent->drawSource.x, spriteComponent->drawSource.y, spriteComponent->drawSource.w,
-            spriteComponent->drawSource.h,
-            spriteComponent->origin.x, spriteComponent->origin.y,
-            se_bool_to_string(spriteComponent->flipH), se_bool_to_string(spriteComponent->flipV),
-            spriteComponent->modulate.r, spriteComponent->modulate.g, spriteComponent->modulate.b,
-            spriteComponent->modulate.a);
+        "Sprite\ntexture_path: '%s'\ndraw_source = (%f, %f, %f, %f)\norigin: (%f, %f)\nflip_h: %s\nflip_v: %s\nmodulate: (%f, %f, %f, %f)",
+        node->spriteTexturePath,
+        spriteComponent->drawSource.x, spriteComponent->drawSource.y, spriteComponent->drawSource.w,
+        spriteComponent->drawSource.h,
+        spriteComponent->origin.x, spriteComponent->origin.y,
+        se_bool_to_string(spriteComponent->flipH), se_bool_to_string(spriteComponent->flipV),
+        spriteComponent->modulate.r, spriteComponent->modulate.g, spriteComponent->modulate.b,
+        spriteComponent->modulate.a);
 }
 
 void cre_json_animated_sprite_create_or_set_default(JsonSceneNode* node, cJSON* componentJson) {

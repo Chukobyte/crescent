@@ -5,6 +5,7 @@
 
 typedef struct SEAudioSource {
     const char* file_path;
+    double pitch;
     int32_t channels;
     int32_t sample_rate;
     void* samples;
