@@ -191,6 +191,9 @@ PyObject* cre_py_api_collision_handler_process_mouse_collisions(PyObject* self, 
 PyObject* cre_py_api_game_config_save(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_game_config_load(PyObject* self, PyObject* args, PyObject* kwargs);
 
+// Scene Utils
+PyObject* cre_py_api_scene_util_load_scene(PyObject* self, PyObject* args, PyObject* kwargs);
+
 
 // --- Module Methods Definitions --- //
 static struct PyMethodDef crePyApiMethods[] = {
@@ -778,7 +781,11 @@ static struct PyMethodDef crePyApiMethods[] = {
         "game_config_load", (PyCFunction) cre_py_api_game_config_load,
         METH_VARARGS | METH_KEYWORDS, "Loads a game config."
     },
-    // COLLISION HANDLER
+    // SCENE UTIL
+    {
+        "scene_util_load_scene", (PyCFunction) cre_py_api_scene_util_load_scene,
+        METH_VARARGS | METH_KEYWORDS, "Loads a packed scene by path."
+    },
     { NULL, NULL, 0,NULL },
 };
 

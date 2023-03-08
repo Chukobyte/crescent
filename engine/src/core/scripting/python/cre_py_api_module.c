@@ -1853,3 +1853,17 @@ PyObject* cre_py_api_game_config_load(PyObject* self, PyObject* args, PyObject* 
     }
     return Py_BuildValue("s", "{}");
 }
+
+// Scene Util
+PyObject* cre_py_api_scene_util_load_scene(PyObject* self, PyObject* args, PyObject* kwargs) {
+    char* scenePath;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "s", crePyApiGenericPathKWList, &scenePath)) {
+        int packedId = -1;
+        char* sceneText = sf_asset_file_loader_read_file_contents_as_string(scenePath, NULL);
+        if (sceneText) {
+            // TODO: Create or get packed scene id
+        }
+        return Py_BuildValue("i", packedId);
+    }
+    return NULL;
+}

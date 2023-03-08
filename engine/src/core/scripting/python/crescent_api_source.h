@@ -1661,4 +1661,19 @@
 "            print(f\"Game Config Load Json Decode Error: {e}\")\n"\
 "            return {}\n"\
 "        return json_dict\n"\
+"\n"\
+"\n"\
+"class PackedScene:\n"\
+"    def __init__(self, packed_id: int, path: str):\n"\
+"        self.packed_id = packed_id\n"\
+"        self.path = path\n"\
+"\n"\
+"\n"\
+"class SceneUtil:\n"\
+"    @staticmethod\n"\
+"    def load_scene(path: str) -> Optional[PackedScene]:\n"\
+"        packed_id = crescent_api_internal.scene_util_load_scene(path=path)\n"\
+"        if packed_id < 0:\n"\
+"            return None\n"\
+"        return PackedScene(packed_id=packed_id, path=path)\n"\
 "\n"
