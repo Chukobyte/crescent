@@ -63,12 +63,6 @@ CREScriptContext* cre_py_get_script_context() {
 
 void py_on_create_instance(Entity entity, const char* classPath, const char* className) {
     PyObject* pScriptInstance = cre_py_cache_create_instance(classPath, className, entity);
-    if (PyObject_HasAttrString(pScriptInstance, "_update")) {
-        python_script_context->updateEntities[python_script_context->updateEntityCount++] = entity;
-    }
-    if (PyObject_HasAttrString(pScriptInstance, "_physics_update")) {
-        python_script_context->physicsUpdateEntities[python_script_context->physicsUpdateEntityCount++] = entity;
-    }
     se_hash_map_add(pythonInstanceHashMap, &entity, &pScriptInstance);
 }
 
@@ -114,6 +108,12 @@ void py_on_start(Entity entity) {
     node_event_notify_observers(entity, "scene_entered", &(NodeEventNotifyPayload) {
         .data = pScriptInstance
     });
+    if (PyObject_HasAttrString(pScriptInstance, "_update")) {
+        python_script_context->updateEntities[python_script_context->updateEntityCount++] = entity;
+    }
+    if (PyObject_HasAttrString(pScriptInstance, "_physics_update")) {
+        python_script_context->physicsUpdateEntities[python_script_context->physicsUpdateEntityCount++] = entity;
+    }
 }
 
 void py_on_pre_update_all() {

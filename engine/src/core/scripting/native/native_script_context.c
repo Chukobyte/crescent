@@ -63,17 +63,10 @@ void native_on_create_instance(Entity entity, const char* classPath, const char*
     SE_ASSERT(scriptClassRef->create_new_instance_func != NULL);
     CRENativeScriptClass* newScriptClass = scriptClassRef->create_new_instance_func(entity);
     se_hash_map_add(entityToClassName, &entity, &newScriptClass);
-    if (newScriptClass->update_func != NULL) {
-        native_script_context->updateEntities[native_script_context->updateEntityCount++] = entity;
-    }
-    if (newScriptClass->physics_update_func != NULL) {
-        native_script_context->physicsUpdateEntities[native_script_context->physicsUpdateEntityCount++] = entity;
-    }
 }
 
 void native_on_delete_instance(Entity entity) {
-    CRENativeScriptClass* scriptClassRef = (CRENativeScriptClass*) *(CRENativeScriptClass**) se_hash_map_get(
-            entityToClassName, &entity);
+    CRENativeScriptClass* scriptClassRef = (CRENativeScriptClass*) *(CRENativeScriptClass**) se_hash_map_get(entityToClassName, &entity);
 
     if (scriptClassRef->update_func != NULL) {
         se_array_utils_remove_item_uint32(
@@ -98,9 +91,15 @@ void native_on_delete_instance(Entity entity) {
 
 void native_on_start(Entity entity) {
     SE_ASSERT(se_hash_map_has(entityToClassName, &entity));
-    CRENativeScriptClass* scriptClassRef = (CRENativeScriptClass*) *(CRENativeScriptClass**) se_hash_map_get(
-            entityToClassName, &entity);
+    CRENativeScriptClass* scriptClassRef = (CRENativeScriptClass*) *(CRENativeScriptClass**) se_hash_map_get(entityToClassName, &entity);
     scriptClassRef->on_start_func(scriptClassRef);
+    // Check if entity has update functions
+    if (scriptClassRef->update_func != NULL) {
+        native_script_context->updateEntities[native_script_context->updateEntityCount++] = entity;
+    }
+    if (scriptClassRef->physics_update_func != NULL) {
+        native_script_context->physicsUpdateEntities[native_script_context->physicsUpdateEntityCount++] = entity;
+    }
 }
 
 void native_on_update_instance(Entity entity, float deltaTime) {
