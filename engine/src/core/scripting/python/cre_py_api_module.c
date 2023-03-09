@@ -1856,7 +1856,9 @@ PyObject* cre_py_api_packed_scene_create_instance(PyObject* self, PyObject* args
         SceneTreeNode* rootNode = cre_scene_manager_stage_scene_nodes_from_json(sceneNode);
         ScriptComponent* scriptComponent = (ScriptComponent*) component_manager_get_component_unchecked(rootNode->entity, ComponentDataIndex_SCRIPT);
         if (!scriptComponent) {
-            // TODO: Create new script component if it doesn't exist
+            // Create new script component if it doesn't exist
+            scriptComponent = script_component_create("crescent_api", node_get_base_type_string(sceneNode->type));
+            component_manager_set_component(rootNode->entity, ComponentDataIndex_SCRIPT, scriptComponent);
         }
         PyObject* entityInstance = cre_py_create_script_instance(rootNode->entity, scriptComponent->classPath, scriptComponent->className);
 
