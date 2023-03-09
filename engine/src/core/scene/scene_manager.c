@@ -146,13 +146,13 @@ void cre_scene_manager_process_queued_deletion_entities() {
         // Remove entity from systems
         cre_ec_system_remove_entity_from_all_systems(entityToDelete);
         // Remove shader instance if applicable
-        SpriteComponent* spriteComponent = component_manager_get_component_unsafe(entityToDelete, ComponentDataIndex_SPRITE);
+        SpriteComponent* spriteComponent = component_manager_get_component_unchecked(entityToDelete, ComponentDataIndex_SPRITE);
         if (spriteComponent != NULL && spriteComponent->shaderInstanceId != SE_SHADER_INSTANCE_INVALID_ID) {
             SEShaderInstance* shaderInstance = se_shader_cache_get_instance(spriteComponent->shaderInstanceId);
             se_shader_cache_remove_instance(spriteComponent->shaderInstanceId);
             SE_MEM_FREE(shaderInstance);
         }
-        AnimatedSpriteComponent* animatedSpriteComponent = component_manager_get_component_unsafe(entityToDelete, ComponentDataIndex_ANIMATED_SPRITE);
+        AnimatedSpriteComponent* animatedSpriteComponent = component_manager_get_component_unchecked(entityToDelete, ComponentDataIndex_ANIMATED_SPRITE);
         if (animatedSpriteComponent != NULL && animatedSpriteComponent->shaderInstanceId != SE_SHADER_INSTANCE_INVALID_ID) {
             SEShaderInstance* shaderInstance = se_shader_cache_get_instance(animatedSpriteComponent->shaderInstanceId);
             se_shader_cache_remove_instance(animatedSpriteComponent->shaderInstanceId);
@@ -234,7 +234,7 @@ SETransformModel2D* cre_scene_manager_get_scene_node_global_transform(Entity ent
 }
 
 float cre_scene_manager_get_node_full_time_dilation(Entity entity) {
-    NodeComponent* nodeComp = component_manager_get_component_unsafe(entity, ComponentDataIndex_NODE);
+    NodeComponent* nodeComp = component_manager_get_component_unchecked(entity, ComponentDataIndex_NODE);
     // The only thing in the scene without nodes current are native script entities
     if (nodeComp == NULL) {
         return cre_world_get_time_dilation();
@@ -247,7 +247,7 @@ float cre_scene_manager_get_node_full_time_dilation(Entity entity) {
     nodeComp->timeDilation.cachedFullValue = cre_world_get_time_dilation();
     const EntityArray entityArray = cre_scene_manager_get_self_and_parent_nodes(entity);
     for (size_t i = 0; (int) i < entityArray.entityCount; i++) {
-        NodeComponent* entityNodeComp = component_manager_get_component_unsafe(entityArray.entities[i], ComponentDataIndex_NODE);
+        NodeComponent* entityNodeComp = component_manager_get_component_unchecked(entityArray.entities[i], ComponentDataIndex_NODE);
         SE_ASSERT_FMT(entityNodeComp != NULL, "node comp is NULL!");
         nodeComp->timeDilation.cachedFullValue *= entityNodeComp->timeDilation.value;
     }
@@ -335,7 +335,7 @@ void cre_scene_manager_notify_all_on_transform_events(Entity entity, Transform2D
         SceneTreeNode* sceneTreeNode = cre_scene_manager_get_entity_tree_node(entity);
         for (size_t i = 0; i < sceneTreeNode->childCount; i++) {
             const Entity childEntity = sceneTreeNode->children[i]->entity;
-            Transform2DComponent* childTransformComp = (Transform2DComponent*) component_manager_get_component_unsafe(childEntity, ComponentDataIndex_TRANSFORM_2D);
+            Transform2DComponent* childTransformComp = (Transform2DComponent*) component_manager_get_component_unchecked(childEntity, ComponentDataIndex_TRANSFORM_2D);
             if (childTransformComp != NULL) {
                 cre_scene_manager_notify_all_on_transform_events(childEntity, childTransformComp);
             }

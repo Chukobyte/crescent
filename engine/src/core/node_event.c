@@ -184,7 +184,7 @@ bool does_entity_have_observer_event_already(Entity observerEntity, NodeEvent* e
 
 void register_entity_to_on_scene_exit_callback(Entity entity) {
     NodeComponent* nodeComp = NULL;
-    if (!eventDatabase.hasEntityRegisteredOnSceneExitCallback[entity] && (nodeComp = component_manager_get_component_unsafe(entity, ComponentDataIndex_NODE))) {
+    if (!eventDatabase.hasEntityRegisteredOnSceneExitCallback[entity] && (nodeComp = component_manager_get_component_unchecked(entity, ComponentDataIndex_NODE))) {
         se_event_register_observer(&nodeComp->onSceneTreeExit, &nodeEntityOnExitSceneObserver);
         eventDatabase.hasEntityRegisteredOnSceneExitCallback[entity] = true;
     }
@@ -192,7 +192,7 @@ void register_entity_to_on_scene_exit_callback(Entity entity) {
 
 void unregister_entity_to_on_scene_exit_callback(Entity entity) {
     NodeComponent* nodeComp = NULL;
-    if (eventDatabase.hasEntityRegisteredOnSceneExitCallback[entity] && (nodeComp = component_manager_get_component_unsafe(entity, ComponentDataIndex_NODE))) {
+    if (eventDatabase.hasEntityRegisteredOnSceneExitCallback[entity] && (nodeComp = component_manager_get_component_unchecked(entity, ComponentDataIndex_NODE))) {
         se_event_unregister_observer(&nodeComp->onSceneTreeExit, &nodeEntityOnExitSceneObserver);
         eventDatabase.hasEntityRegisteredOnSceneExitCallback[entity] = false;
     }

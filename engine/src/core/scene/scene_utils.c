@@ -12,7 +12,7 @@ on_get_local_transform onGetLocalTransformFunc = &default_get_local_transform;
 
 // Default engine callbacks
 SETransform2D default_get_local_transform(Entity entity, int* zIndex, bool* success) {
-    Transform2DComponent* transform2DComponent = component_manager_get_component_unsafe(entity, ComponentDataIndex_TRANSFORM_2D);
+    Transform2DComponent* transform2DComponent = component_manager_get_component_unchecked(entity, ComponentDataIndex_TRANSFORM_2D);
     if (transform2DComponent == NULL) {
         *success = false;
         return (SETransform2D) {

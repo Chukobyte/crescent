@@ -111,8 +111,8 @@ void collision_system_render() {
 }
 
 void collision_system_on_node_entered_scene(Entity entity) {
-    Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component_unsafe(entity, ComponentDataIndex_TRANSFORM_2D);
-    Collider2DComponent* colliderComp = (Collider2DComponent*) component_manager_get_component_unsafe(entity, ComponentDataIndex_COLLIDER_2D);
+    Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component_unchecked(entity, ComponentDataIndex_TRANSFORM_2D);
+    Collider2DComponent* colliderComp = (Collider2DComponent*) component_manager_get_component_unchecked(entity, ComponentDataIndex_COLLIDER_2D);
     if (transformComp != NULL && colliderComp != NULL) {
         SERect2 collisionRect = cre_get_collision_rectangle(entity, transformComp, colliderComp);
         se_spatial_hash_map_insert_or_update(spatialHashMap, entity, &collisionRect);
@@ -126,7 +126,7 @@ void collision_system_on_transform_update(SESubjectNotifyPayload* payload) {
     Transform2DComponent* transformComp = (Transform2DComponent*) updatePayload->component;
     const Entity entity = updatePayload->entity;
 
-    Collider2DComponent* colliderComp = (Collider2DComponent*) component_manager_get_component_unsafe(entity, ComponentDataIndex_COLLIDER_2D);
+    Collider2DComponent* colliderComp = (Collider2DComponent*) component_manager_get_component_unchecked(entity, ComponentDataIndex_COLLIDER_2D);
     if (transformComp != NULL && colliderComp != NULL) {
         SERect2 collisionRect = cre_get_collision_rectangle(entity, transformComp, colliderComp);
         se_spatial_hash_map_insert_or_update(spatialHashMap, entity, &collisionRect);

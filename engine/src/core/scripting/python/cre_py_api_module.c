@@ -710,7 +710,7 @@ PyObject* cre_py_api_camera2D_unfollow_node(PyObject* self, PyObject* args, PyOb
 
 // World
 void py_mark_scene_nodes_time_dilation_flag_dirty(SceneTreeNode* node) {
-    NodeComponent* nodeComponent = (NodeComponent*) component_manager_get_component_unsafe(node->entity, ComponentDataIndex_NODE);
+    NodeComponent* nodeComponent = (NodeComponent*) component_manager_get_component_unchecked(node->entity, ComponentDataIndex_NODE);
     SE_ASSERT(nodeComponent != NULL);
     nodeComponent->timeDilation.cacheInvalid = true;
 }
@@ -1854,11 +1854,14 @@ PyObject* cre_py_api_packed_scene_create_instance(PyObject* self, PyObject* args
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiPackedSceneCreateInstanceKWList, &cacheId)) {
         JsonSceneNode* sceneNode = cre_scene_template_cache_get_scene(cacheId);
         SceneTreeNode* rootNode = cre_scene_manager_stage_scene_nodes_from_json(sceneNode);
-        // TODO: Finish by getting entity, classPath, and className
-//        PyObject* entityInstance = cre_py_create_script_instance();
-//
-//        Py_IncRef(entityInstance);
-//        return Py_BuildValue("O", entityInstance);
+        ScriptComponent* scriptComponent = (ScriptComponent*) component_manager_get_component_unchecked(rootNode->entity, ComponentDataIndex_SCRIPT);
+        if (!scriptComponent) {
+            // TODO: Create new script component if it doesn't exist
+        }
+        PyObject* entityInstance = cre_py_create_script_instance(rootNode->entity, scriptComponent->classPath, scriptComponent->className);
+
+        Py_IncRef(entityInstance);
+        return Py_BuildValue("O", entityInstance);
     }
     return NULL;
 }

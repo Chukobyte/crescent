@@ -33,8 +33,8 @@ struct EntitySystem* parallax_ec_system_create() {
 }
 
 void parallax_system_on_entity_entered_scene(Entity entity) {
-    Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component_unsafe(entity, ComponentDataIndex_TRANSFORM_2D);
-    ParallaxComponent* parallaxComp = (ParallaxComponent*) component_manager_get_component_unsafe(entity, ComponentDataIndex_PARALLAX);
+    Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component_unchecked(entity, ComponentDataIndex_TRANSFORM_2D);
+    ParallaxComponent* parallaxComp = (ParallaxComponent*) component_manager_get_component_unchecked(entity, ComponentDataIndex_PARALLAX);
     SE_ASSERT(transformComp != NULL);
     SE_ASSERT(parallaxComp != NULL);
     parallaxComp->cachedScrollSpeed = parallaxComp->scrollSpeed;
@@ -46,7 +46,7 @@ void parallax_system_on_entity_entered_scene(Entity entity) {
 
 void parallax_system_on_entity_unregistered(Entity entity) {
     // Remove observer
-    Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component_unsafe(entity, ComponentDataIndex_TRANSFORM_2D);
+    Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component_unchecked(entity, ComponentDataIndex_TRANSFORM_2D);
     SE_ASSERT(transformComp != NULL);
     se_event_unregister_observer(&transformComp->onTransformChanged, &parallaxOnEntityTransformChangeObserver);
 }
