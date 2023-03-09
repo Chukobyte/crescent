@@ -7,7 +7,6 @@
 #include "../seika/src/asset/asset_manager.h"
 #include "../seika/src/utils/logger.h"
 #include "../seika/src/utils/se_assert.h"
-#include "../seika/src/memory/se_mem.h"
 #include "../seika/src/data_structures/se_hash_map.h"
 #include "../seika/src/data_structures/se_static_array.h"
 
@@ -22,7 +21,6 @@
 #include "../ecs/component/collider2d_component.h"
 #include "../ecs/component/color_rect_component.h"
 #include "../camera/camera_manager.h"
-#include "../json/json_file_loader.h"
 #include "../ecs/component/parallax_component.h"
 #include "scene_template_cache.h"
 
@@ -76,6 +74,7 @@ static SEHashMap* entityToTreeNodeMap = NULL;
 static SEHashMap* entityToStagedTreeNodeMap = NULL;
 
 SceneTreeNode* cre_scene_manager_pop_staged_entity_tree_node(Entity entity);
+void cre_scene_manager_add_staged_node_children_to_scene(SceneTreeNode* treeNode);
 void cre_scene_manager_setup_scene_nodes_from_json(JsonSceneNode* jsonSceneNode);
 
 void cre_scene_manager_initialize() {
@@ -298,6 +297,19 @@ void cre_scene_manager_add_node_as_child(Entity childEntity, Entity parentEntity
     parentNode->children[parentNode->childCount++] = node;
     cre_ec_system_update_entity_signature_with_systems(childEntity);
     cre_scene_manager_queue_node_for_creation(node);
+    // If there are child nodes, they are already parented to the current child entity
+    for (size_t i = 0; i < node->childCount; i++) {
+        cre_scene_manager_add_staged_node_children_to_scene(node->children[i]);
+    }
+}
+
+// A recursive functions to add already setup child nodes to the scene
+void cre_scene_manager_add_staged_node_children_to_scene(SceneTreeNode* treeNode) {
+    cre_ec_system_update_entity_signature_with_systems(treeNode->entity);
+    cre_scene_manager_queue_node_for_creation(treeNode);
+    for (size_t i = 0; i < treeNode->childCount; i++) {
+        cre_scene_manager_add_staged_node_children_to_scene(treeNode->children[i]);
+    }
 }
 
 EntityArray cre_scene_manager_get_self_and_parent_nodes(Entity entity) {
@@ -339,20 +351,24 @@ void cre_scene_manager_execute_on_root_and_child_nodes(ExecuteOnAllTreeNodesFunc
 }
 
 // Scene node setup
-void cre_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneNode, SceneTreeNode* parent);
+void cre_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneNode, SceneTreeNode* parent, bool isStagedNodes);
 
 void cre_scene_manager_setup_scene_nodes_from_json(JsonSceneNode* jsonSceneNode) {
-    cre_scene_manager_setup_json_scene_node(jsonSceneNode, NULL);
+    cre_scene_manager_setup_json_scene_node(jsonSceneNode, NULL, false);
+}
+
+void cre_scene_manager_stage_scene_nodes_from_json(JsonSceneNode* jsonSceneNode) {
+    cre_scene_manager_setup_json_scene_node(jsonSceneNode, NULL, true);
 }
 
 // Recursive
-void cre_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneNode, SceneTreeNode* parent) {
+void cre_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneNode, SceneTreeNode* parent, bool isStagedNodes) {
     SceneTreeNode* node = cre_scene_tree_create_tree_node(cre_ec_system_create_entity_uid(), parent);
 
     const bool isRoot = parent == NULL;
-    if (isRoot) {
+    if (isRoot && !isStagedNodes) {
         cre_scene_manager_set_active_scene_root(node);
-    }  else {
+    }  else if (parent) {
         SE_ASSERT(parent->childCount + 1 < SCENE_TREE_NODE_MAX_CHILDREN);
         parent->children[parent->childCount++] = node;
     }
@@ -435,8 +451,13 @@ void cre_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneNode, Scene
 
     // Children
     for (size_t i = 0; i < jsonSceneNode->childrenCount; i++) {
-        cre_scene_manager_setup_json_scene_node(jsonSceneNode->children[i], node);
+        cre_scene_manager_setup_json_scene_node(jsonSceneNode->children[i], node, isStagedNodes);
     }
 
-    cre_scene_manager_queue_node_for_creation(node);
+    if (!isStagedNodes) {
+        cre_scene_manager_queue_node_for_creation(node);
+    } else if (isRoot) {
+        // Staged nodes only need to add root as the children are added within a recursive function
+        cre_scene_manager_add_staged_node_children_to_scene(node);
+    }
 }

@@ -799,10 +799,9 @@ PyObject* cre_py_api_node_new(PyObject* self, PyObject* args, PyObject* kwargs) 
         ScriptComponent* scriptComponent = script_component_create(classPath, className);
         scriptComponent->contextType = ScriptContextType_PYTHON;
         component_manager_set_component(newNode->entity, ComponentDataIndex_SCRIPT, scriptComponent);
-        // Call create instance on script context
-        // TODO: Not a big fan of updating the scripting system signature this way, but I guess it will suffice for now...
-        cre_ec_system_update_entity_signature_with_systems(newNode->entity);
-        PyObject* entityInstance = cre_py_get_script_instance(newNode->entity);
+        // Call create instance on script context.
+        // Note: python script context checks to make sure the instance for an entity is only created once
+        PyObject* entityInstance = cre_py_create_script_instance(newNode->entity, classPath, className);
         SE_ASSERT_FMT(entityInstance != NULL, "Entity instance '%d' is NULL!", newNode->entity);
 
         NodeComponent* nodeComponent = node_component_create();
@@ -1853,7 +1852,13 @@ PyObject* cre_py_api_game_config_load(PyObject* self, PyObject* args, PyObject* 
 PyObject* cre_py_api_packed_scene_create_instance(PyObject* self, PyObject* args, PyObject* kwargs) {
     CreSceneCacheId cacheId;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiPackedSceneCreateInstanceKWList, &cacheId)) {
-        struct JsonSceneNode* sceneNode = cre_scene_template_cache_get_scene(cacheId);
+        JsonSceneNode* sceneNode = cre_scene_template_cache_get_scene(cacheId);
+        cre_scene_manager_stage_scene_nodes_from_json(sceneNode);
+        // TODO: Finish by getting entity, classPath, and className
+//        PyObject* entityInstance = cre_py_create_script_instance();
+//
+//        Py_IncRef(entityInstance);
+//        return Py_BuildValue("O", entityInstance);
     }
     return NULL;
 }

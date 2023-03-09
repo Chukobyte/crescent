@@ -4,9 +4,11 @@
 extern "C" {
 #endif
 
+#include "../seika/src/math/se_math.h"
+
 #include "scene_tree.h"
 #include "../ecs/component/transform2d_component.h"
-#include "../seika/src/math/se_math.h"
+#include "../json/json_file_loader.h"
 
 // Scene Tree
 // Creates a new tree node.  If NULL is passed in for parent, it's expected that it's the root of a scene tree.
@@ -31,6 +33,7 @@ void cre_scene_manager_finalize();
 void cre_scene_manager_queue_node_for_creation(SceneTreeNode* treeNode);
 // Will stage a node to be added as a child at a later time (e.g. creating a new node instance)
 void cre_scene_manager_stage_child_node_to_be_added_later(SceneTreeNode* treeNode);
+void cre_scene_manager_stage_scene_nodes_from_json(JsonSceneNode* jsonSceneNode);
 void cre_scene_manager_process_queued_creation_entities();
 void cre_scene_manager_queue_entity_for_deletion(Entity entity);
 void cre_queue_destroy_tree_node_entity_all(SceneTreeNode* treeNode);

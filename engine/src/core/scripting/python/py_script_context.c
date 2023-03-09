@@ -62,6 +62,10 @@ CREScriptContext* cre_py_get_script_context() {
 }
 
 void py_on_create_instance(Entity entity, const char* classPath, const char* className) {
+    if (se_hash_map_has(pythonInstanceHashMap, &entity)) {
+        se_logger_warn("Won't create entity '%d' with class_path '%s' and class_name '%s' as they already exist!", entity, classPath, className);
+        return;
+    }
     PyObject* pScriptInstance = cre_py_cache_create_instance(classPath, className, entity);
     se_hash_map_add(pythonInstanceHashMap, &entity, &pScriptInstance);
 }
@@ -187,6 +191,13 @@ void cre_py_on_network_udp_server_client_connected() {
         PyGILState_Release(pyGilStateState);
     }
 }
+
+PyObject* cre_py_create_script_instance(Entity entity, const char* classPath, const char* className) {
+    SE_ASSERT(python_script_context != NULL);
+    python_script_context->on_create_instance(entity, classPath, className);
+    return cre_py_get_script_instance(entity);
+}
+
 
 PyObject* cre_py_get_script_instance(Entity entity) {
     if (se_hash_map_has(pythonInstanceHashMap, &entity)) {
