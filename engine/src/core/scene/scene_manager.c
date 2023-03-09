@@ -351,18 +351,19 @@ void cre_scene_manager_execute_on_root_and_child_nodes(ExecuteOnAllTreeNodesFunc
 }
 
 // Scene node setup
-void cre_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneNode, SceneTreeNode* parent, bool isStagedNodes);
+// Setup nodes and components from passed in json scene node.  Will return the root tree node
+SceneTreeNode* cre_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneNode, SceneTreeNode* parent, bool isStagedNodes);
 
 void cre_scene_manager_setup_scene_nodes_from_json(JsonSceneNode* jsonSceneNode) {
     cre_scene_manager_setup_json_scene_node(jsonSceneNode, NULL, false);
 }
 
-void cre_scene_manager_stage_scene_nodes_from_json(JsonSceneNode* jsonSceneNode) {
-    cre_scene_manager_setup_json_scene_node(jsonSceneNode, NULL, true);
+SceneTreeNode* cre_scene_manager_stage_scene_nodes_from_json(JsonSceneNode* jsonSceneNode) {
+    return cre_scene_manager_setup_json_scene_node(jsonSceneNode, NULL, true);
 }
 
 // Recursive
-void cre_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneNode, SceneTreeNode* parent, bool isStagedNodes) {
+SceneTreeNode* cre_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneNode, SceneTreeNode* parent, bool isStagedNodes) {
     SceneTreeNode* node = cre_scene_tree_create_tree_node(cre_ec_system_create_entity_uid(), parent);
 
     const bool isRoot = parent == NULL;
@@ -460,4 +461,6 @@ void cre_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneNode, Scene
         // Staged nodes only need to add root as the children are added within a recursive function
         cre_scene_manager_add_staged_node_children_to_scene(node);
     }
+
+    return node;
 }

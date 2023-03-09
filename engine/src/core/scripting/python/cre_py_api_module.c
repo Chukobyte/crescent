@@ -1853,7 +1853,7 @@ PyObject* cre_py_api_packed_scene_create_instance(PyObject* self, PyObject* args
     CreSceneCacheId cacheId;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiPackedSceneCreateInstanceKWList, &cacheId)) {
         JsonSceneNode* sceneNode = cre_scene_template_cache_get_scene(cacheId);
-        cre_scene_manager_stage_scene_nodes_from_json(sceneNode);
+        SceneTreeNode* rootNode = cre_scene_manager_stage_scene_nodes_from_json(sceneNode);
         // TODO: Finish by getting entity, classPath, and className
 //        PyObject* entityInstance = cre_py_create_script_instance();
 //
