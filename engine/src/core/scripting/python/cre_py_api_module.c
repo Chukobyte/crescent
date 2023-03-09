@@ -39,6 +39,7 @@
 #include "../../scene/scene_manager.h"
 #include "../../ecs/component/parallax_component.h"
 #include "../../math/curve_float_manager.h"
+#include "../../scene/scene_template_cache.h"
 
 #ifdef _MSC_VER
 #pragma warning(disable : 4996) // for strcpy
@@ -860,15 +861,7 @@ PyObject* cre_py_api_node_add_child(PyObject* self, PyObject* args, PyObject* kw
     Entity parentEntity;
     Entity entity;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "ii", crePyApiNodeAddChildKWList, &parentEntity, &entity)) {
-        SceneTreeNode* parentNode = cre_scene_manager_get_entity_tree_node(parentEntity);
-        SceneTreeNode* node = cre_scene_tree_create_tree_node(entity, parentNode);
-        if (parentNode != NULL) {
-            SE_ASSERT(parentNode->childCount + 1 < SCENE_TREE_NODE_MAX_CHILDREN);
-            parentNode->children[parentNode->childCount++] = node;
-        }
-
-        cre_ec_system_update_entity_signature_with_systems(entity);
-        cre_scene_manager_queue_entity_for_creation(node);
+        cre_scene_manager_add_node_as_child(entity, parentEntity);
         Py_RETURN_NONE;
     }
     return NULL;
@@ -1858,10 +1851,11 @@ PyObject* cre_py_api_game_config_load(PyObject* self, PyObject* args, PyObject* 
 PyObject* cre_py_api_scene_util_load_scene(PyObject* self, PyObject* args, PyObject* kwargs) {
     char* scenePath;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "s", crePyApiGenericPathKWList, &scenePath)) {
-        int packedId = -1;
+        CreSceneCacheId packedId = CRE_SCENE_CACHE_INVALID_ID;
         char* sceneText = sf_asset_file_loader_read_file_contents_as_string(scenePath, NULL);
         if (sceneText) {
             // TODO: Create or get packed scene id
+            packedId = cre_scene_template_cache_load_scene(scenePath);
         }
         return Py_BuildValue("i", packedId);
     }

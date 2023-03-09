@@ -24,6 +24,7 @@
 #include "../camera/camera_manager.h"
 #include "../json/json_file_loader.h"
 #include "../ecs/component/parallax_component.h"
+#include "scene_template_cache.h"
 
 // --- Scene Tree --- //
 // Executes function on passed in tree node and all child tree nodes
@@ -78,11 +79,13 @@ void cre_scene_manager_setup_scene_nodes_from_json(JsonSceneNode* jsonSceneNode)
 void cre_scene_manager_initialize() {
     SE_ASSERT(entityToTreeNodeMap == NULL);
     entityToTreeNodeMap = se_hash_map_create(sizeof(Entity), sizeof(SceneTreeNode**), 16); // TODO: Update capacity
+    cre_scene_template_cache_initialize();
 }
 
 void cre_scene_manager_finalize() {
     SE_ASSERT(entityToTreeNodeMap != NULL);
     se_hash_map_destroy(entityToTreeNodeMap);
+    cre_scene_template_cache_finalize();
 }
 
 void cre_scene_manager_queue_entity_for_creation(SceneTreeNode* treeNode) {
@@ -265,6 +268,18 @@ Entity cre_scene_manager_get_entity_child_by_name(Entity parent, const char* chi
 
 bool cre_scene_manager_has_entity_tree_node(Entity entity) {
     return se_hash_map_has(entityToTreeNodeMap, &entity);
+}
+
+void cre_scene_manager_add_node_as_child(Entity childEntity, Entity parentEntity) {
+    SceneTreeNode* parentNode = cre_scene_manager_get_entity_tree_node(parentEntity);
+    SceneTreeNode* node = cre_scene_tree_create_tree_node(childEntity, parentNode);
+    if (parentNode != NULL) {
+        SE_ASSERT(parentNode->childCount + 1 < SCENE_TREE_NODE_MAX_CHILDREN);
+        parentNode->children[parentNode->childCount++] = node;
+    }
+
+    cre_ec_system_update_entity_signature_with_systems(childEntity);
+    cre_scene_manager_queue_entity_for_creation(node);
 }
 
 EntityArray cre_scene_manager_get_self_and_parent_nodes(Entity entity) {

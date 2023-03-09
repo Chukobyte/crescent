@@ -19,6 +19,7 @@ void cre_scene_utils_override_on_get_self_and_parent_entities_func(on_get_self_a
 void cre_scene_utils_override_on_get_local_transform_func(on_get_local_transform func);
 EntityArray cre_scene_utils_get_self_and_parent_entities(Entity entity);
 void cre_scene_utils_reset_callback_func_overrides();
+void cre_scene_utils_load_scene_into_cache(const char* scenePath);
 
 #ifdef __cplusplus
 }
