@@ -659,5 +659,9 @@ def game_config_load(path: str, encryption_key="") -> str:
     return '{ "level": 0 }'
 
 
+def packed_scene_create_instance(scene_cache_id: int):
+    pass
+
+
 def scene_util_load_scene(path: str) -> int:
     return 0

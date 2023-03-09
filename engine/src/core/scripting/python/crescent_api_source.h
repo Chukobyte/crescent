@@ -1664,16 +1664,21 @@
 "\n"\
 "\n"\
 "class PackedScene:\n"\
-"    def __init__(self, packed_id: int, path: str):\n"\
-"        self.packed_id = packed_id\n"\
+"    def __init__(self, scene_cache_id: int, path: str):\n"\
+"        self.scene_cache_id = scene_cache_id\n"\
 "        self.path = path\n"\
+"\n"\
+"    def create_instance(self):\n"\
+"        return crescent_api_internal.packed_scene_create_instance(\n"\
+"            scene_cache_id=self.scene_cache_id\n"\
+"        )\n"\
 "\n"\
 "\n"\
 "class SceneUtil:\n"\
 "    @staticmethod\n"\
 "    def load_scene(path: str) -> Optional[PackedScene]:\n"\
-"        packed_id = crescent_api_internal.scene_util_load_scene(path=path)\n"\
-"        if packed_id < 0:\n"\
+"        scene_cache_id = crescent_api_internal.scene_util_load_scene(path=path)\n"\
+"        if scene_cache_id < 0:\n"\
 "            return None\n"\
-"        return PackedScene(packed_id=packed_id, path=path)\n"\
+"        return PackedScene(scene_cache_id=scene_cache_id, path=path)\n"\
 "\n"

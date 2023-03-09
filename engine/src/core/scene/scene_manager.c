@@ -73,25 +73,36 @@ Scene* activeScene = NULL;
 Scene* queuedSceneToChangeTo = NULL;
 
 static SEHashMap* entityToTreeNodeMap = NULL;
+static SEHashMap* entityToStagedTreeNodeMap = NULL;
 
+SceneTreeNode* cre_scene_manager_pop_staged_entity_tree_node(Entity entity);
 void cre_scene_manager_setup_scene_nodes_from_json(JsonSceneNode* jsonSceneNode);
 
 void cre_scene_manager_initialize() {
     SE_ASSERT(entityToTreeNodeMap == NULL);
-    entityToTreeNodeMap = se_hash_map_create(sizeof(Entity), sizeof(SceneTreeNode**), 16); // TODO: Update capacity
+    SE_ASSERT(entityToStagedTreeNodeMap == NULL);
+    entityToTreeNodeMap = se_hash_map_create(sizeof(Entity), sizeof(SceneTreeNode**), SE_HASH_MAP_MIN_CAPACITY);
+    entityToStagedTreeNodeMap = se_hash_map_create(sizeof(Entity), sizeof(SceneTreeNode**), SE_HASH_MAP_MIN_CAPACITY);
     cre_scene_template_cache_initialize();
 }
 
 void cre_scene_manager_finalize() {
     SE_ASSERT(entityToTreeNodeMap != NULL);
+    SE_ASSERT(entityToStagedTreeNodeMap != NULL);
     se_hash_map_destroy(entityToTreeNodeMap);
+    se_hash_map_destroy(entityToStagedTreeNodeMap);
     cre_scene_template_cache_finalize();
 }
 
-void cre_scene_manager_queue_entity_for_creation(SceneTreeNode* treeNode) {
+void cre_scene_manager_queue_node_for_creation(SceneTreeNode* treeNode) {
     entitiesQueuedForCreation[entitiesQueuedForCreationSize++] = treeNode->entity;
     SE_ASSERT_FMT(!se_hash_map_has(entityToTreeNodeMap, &treeNode->entity), "Entity '%d' already in entity to tree map!", treeNode->entity);
     se_hash_map_add(entityToTreeNodeMap, &treeNode->entity, &treeNode);
+}
+
+void cre_scene_manager_stage_child_node_to_be_added_later(SceneTreeNode* treeNode) {
+    SE_ASSERT_FMT(!se_hash_map_has(entityToTreeNodeMap, &treeNode->entity), "Entity '%d' already staged to be added!", treeNode->entity);
+    se_hash_map_add(entityToStagedTreeNodeMap, &treeNode->entity, &treeNode);
 }
 
 void cre_scene_manager_process_queued_creation_entities() {
@@ -252,6 +263,15 @@ SceneTreeNode* cre_scene_manager_get_entity_tree_node(Entity entity) {
     return treeNode;
 }
 
+SceneTreeNode* cre_scene_manager_pop_staged_entity_tree_node(Entity entity) {
+    SE_ASSERT_FMT(se_hash_map_has(entityToStagedTreeNodeMap, &entity), "Doesn't have entity '%d' in scene tree!", entity);
+    SceneTreeNode* treeNode = (SceneTreeNode*) *(SceneTreeNode**) se_hash_map_get(entityToStagedTreeNodeMap, &entity);
+    SE_ASSERT_FMT(treeNode != NULL, "Failed to get tree node for entity '%d'", entity);
+    // Now that we have the staged tree node, remove the reference from the staged hash map
+    se_hash_map_erase(entityToStagedTreeNodeMap, &entity);
+    return treeNode;
+}
+
 Entity cre_scene_manager_get_entity_child_by_name(Entity parent, const char* childName) {
     SceneTreeNode* parentNode = cre_scene_manager_get_entity_tree_node(parent);
     for (size_t childIndex = 0; childIndex < parentNode->childCount; childIndex++) {
@@ -272,14 +292,12 @@ bool cre_scene_manager_has_entity_tree_node(Entity entity) {
 
 void cre_scene_manager_add_node_as_child(Entity childEntity, Entity parentEntity) {
     SceneTreeNode* parentNode = cre_scene_manager_get_entity_tree_node(parentEntity);
-    SceneTreeNode* node = cre_scene_tree_create_tree_node(childEntity, parentNode);
-    if (parentNode != NULL) {
-        SE_ASSERT(parentNode->childCount + 1 < SCENE_TREE_NODE_MAX_CHILDREN);
-        parentNode->children[parentNode->childCount++] = node;
-    }
-
+    SceneTreeNode* node = cre_scene_manager_pop_staged_entity_tree_node(childEntity);
+    node->parent = parentNode;
+    SE_ASSERT(parentNode->childCount + 1 < SCENE_TREE_NODE_MAX_CHILDREN);
+    parentNode->children[parentNode->childCount++] = node;
     cre_ec_system_update_entity_signature_with_systems(childEntity);
-    cre_scene_manager_queue_entity_for_creation(node);
+    cre_scene_manager_queue_node_for_creation(node);
 }
 
 EntityArray cre_scene_manager_get_self_and_parent_nodes(Entity entity) {
@@ -420,5 +438,5 @@ void cre_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneNode, Scene
         cre_scene_manager_setup_json_scene_node(jsonSceneNode->children[i], node);
     }
 
-    cre_scene_manager_queue_entity_for_creation(node);
+    cre_scene_manager_queue_node_for_creation(node);
 }

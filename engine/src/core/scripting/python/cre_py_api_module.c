@@ -793,48 +793,50 @@ PyObject* cre_py_api_node_new(PyObject* self, PyObject* args, PyObject* kwargs) 
     char* className;
     char* nodeType;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "sss", crePyApiNodeNewKWList, &classPath, &className, &nodeType)) {
-        const Entity newEntity = cre_ec_system_create_entity_uid();
+        SceneTreeNode* newNode = cre_scene_tree_create_tree_node(cre_ec_system_create_entity_uid(), NULL);
 
         // Setup script component first
         ScriptComponent* scriptComponent = script_component_create(classPath, className);
         scriptComponent->contextType = ScriptContextType_PYTHON;
-        component_manager_set_component(newEntity, ComponentDataIndex_SCRIPT, scriptComponent);
+        component_manager_set_component(newNode->entity, ComponentDataIndex_SCRIPT, scriptComponent);
         // Call create instance on script context
         // TODO: Not a big fan of updating the scripting system signature this way, but I guess it will suffice for now...
-        cre_ec_system_update_entity_signature_with_systems(newEntity);
-        PyObject* entityInstance = cre_py_get_script_instance(newEntity);
-        SE_ASSERT_FMT(entityInstance != NULL, "Entity instance '%d' is NULL!", newEntity);
+        cre_ec_system_update_entity_signature_with_systems(newNode->entity);
+        PyObject* entityInstance = cre_py_get_script_instance(newNode->entity);
+        SE_ASSERT_FMT(entityInstance != NULL, "Entity instance '%d' is NULL!", newNode->entity);
 
         NodeComponent* nodeComponent = node_component_create();
         strcpy(nodeComponent->name, nodeType);
         nodeComponent->type = node_get_base_type(nodeType);
         SE_ASSERT_FMT(nodeComponent->type != NodeBaseType_INVALID, "Node '%s' has an invalid node type '%s'", nodeType, nodeType);
-        component_manager_set_component(newEntity, ComponentDataIndex_NODE, nodeComponent);
+        component_manager_set_component(newNode->entity, ComponentDataIndex_NODE, nodeComponent);
 
         const NodeBaseInheritanceType inheritanceType = node_get_type_inheritance(nodeComponent->type);
 
         if ((NodeBaseInheritanceType_NODE2D & inheritanceType) == NodeBaseInheritanceType_NODE2D) {
             Transform2DComponent* transform2DComponent = transform2d_component_create();
-            component_manager_set_component(newEntity, ComponentDataIndex_TRANSFORM_2D, transform2d_component_create());
+            component_manager_set_component(newNode->entity, ComponentDataIndex_TRANSFORM_2D, transform2d_component_create());
         }
         if ((NodeBaseInheritanceType_SPRITE & inheritanceType) == NodeBaseInheritanceType_SPRITE) {
-            component_manager_set_component(newEntity, ComponentDataIndex_SPRITE, sprite_component_create());
+            component_manager_set_component(newNode->entity, ComponentDataIndex_SPRITE, sprite_component_create());
         }
         if ((NodeBaseInheritanceType_ANIMATED_SPRITE & inheritanceType) == NodeBaseInheritanceType_ANIMATED_SPRITE) {
-            component_manager_set_component(newEntity, ComponentDataIndex_ANIMATED_SPRITE, animated_sprite_component_create());
+            component_manager_set_component(newNode->entity, ComponentDataIndex_ANIMATED_SPRITE, animated_sprite_component_create());
         }
         if ((NodeBaseInheritanceType_TEXT_LABEL & inheritanceType) == NodeBaseInheritanceType_TEXT_LABEL) {
-            component_manager_set_component(newEntity, ComponentDataIndex_TEXT_LABEL, text_label_component_create());
+            component_manager_set_component(newNode->entity, ComponentDataIndex_TEXT_LABEL, text_label_component_create());
         }
         if ((NodeBaseInheritanceType_COLLIDER2D & inheritanceType) == NodeBaseInheritanceType_COLLIDER2D) {
-            component_manager_set_component(newEntity, ComponentDataIndex_COLLIDER_2D, collider2d_component_create());
+            component_manager_set_component(newNode->entity, ComponentDataIndex_COLLIDER_2D, collider2d_component_create());
         }
         if ((NodeBaseInheritanceType_COLOR_RECT & inheritanceType) == NodeBaseInheritanceType_COLOR_RECT) {
-            component_manager_set_component(newEntity, ComponentDataIndex_COLOR_RECT, color_rect_component_create());
+            component_manager_set_component(newNode->entity, ComponentDataIndex_COLOR_RECT, color_rect_component_create());
         }
         if ((NodeBaseInheritanceType_PARALLAX & inheritanceType) == NodeBaseInheritanceType_PARALLAX) {
-            component_manager_set_component(newEntity, ComponentDataIndex_PARALLAX, parallax_component_create());
+            component_manager_set_component(newNode->entity, ComponentDataIndex_PARALLAX, parallax_component_create());
         }
+
+        cre_scene_manager_stage_child_node_to_be_added_later(newNode);
 
         Py_IncRef(entityInstance);
         return Py_BuildValue("O", entityInstance);
@@ -1847,17 +1849,26 @@ PyObject* cre_py_api_game_config_load(PyObject* self, PyObject* args, PyObject* 
     return Py_BuildValue("s", "{}");
 }
 
+// Packed Scene
+PyObject* cre_py_api_packed_scene_create_instance(PyObject* self, PyObject* args, PyObject* kwargs) {
+    CreSceneCacheId cacheId;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiPackedSceneCreateInstanceKWList, &cacheId)) {
+        struct JsonSceneNode* sceneNode = cre_scene_template_cache_get_scene(cacheId);
+    }
+    return NULL;
+}
+
 // Scene Util
 PyObject* cre_py_api_scene_util_load_scene(PyObject* self, PyObject* args, PyObject* kwargs) {
     char* scenePath;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "s", crePyApiGenericPathKWList, &scenePath)) {
-        CreSceneCacheId packedId = CRE_SCENE_CACHE_INVALID_ID;
+        CreSceneCacheId cacheId = CRE_SCENE_CACHE_INVALID_ID;
         char* sceneText = sf_asset_file_loader_read_file_contents_as_string(scenePath, NULL);
         if (sceneText) {
             // TODO: Create or get packed scene id
-            packedId = cre_scene_template_cache_load_scene(scenePath);
+            cacheId = cre_scene_template_cache_load_scene(scenePath);
         }
-        return Py_BuildValue("i", packedId);
+        return Py_BuildValue("i", cacheId);
     }
     return NULL;
 }
