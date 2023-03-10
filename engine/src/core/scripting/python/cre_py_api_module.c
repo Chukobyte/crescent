@@ -1858,6 +1858,7 @@ PyObject* cre_py_api_packed_scene_create_instance(PyObject* self, PyObject* args
         if (!scriptComponent) {
             // Create new script component if it doesn't exist
             scriptComponent = script_component_create("crescent_api", node_get_base_type_string(sceneNode->type));
+            scriptComponent->contextType = ScriptContextType_PYTHON;
             component_manager_set_component(rootNode->entity, ComponentDataIndex_SCRIPT, scriptComponent);
         }
         PyObject* entityInstance = cre_py_create_script_instance(rootNode->entity, scriptComponent->classPath, scriptComponent->className);

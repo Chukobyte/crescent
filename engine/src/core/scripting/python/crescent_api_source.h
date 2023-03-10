@@ -1668,7 +1668,7 @@
 "        self.scene_cache_id = scene_cache_id\n"\
 "        self.path = path\n"\
 "\n"\
-"    def create_instance(self):\n"\
+"    def create_instance(self) -> Node:\n"\
 "        return crescent_api_internal.packed_scene_create_instance(\n"\
 "            scene_cache_id=self.scene_cache_id\n"\
 "        )\n"\

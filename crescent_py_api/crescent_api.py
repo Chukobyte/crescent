@@ -1631,7 +1631,7 @@ class PackedScene:
         self.scene_cache_id = scene_cache_id
         self.path = path
 
-    def create_instance(self):
+    def create_instance(self) -> Node:
         return crescent_api_internal.packed_scene_create_instance(
             scene_cache_id=self.scene_cache_id
         )

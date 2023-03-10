@@ -448,18 +448,17 @@ SceneTreeNode* cre_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneN
         component_manager_set_component(node->entity, ComponentDataIndex_PARALLAX, parallaxComponent);
     }
 
-    cre_ec_system_update_entity_signature_with_systems(node->entity);
+    if (!isStagedNodes) {
+        cre_ec_system_update_entity_signature_with_systems(node->entity);
+        cre_scene_manager_queue_node_for_creation(node);
+    } else if (isRoot) {
+        // Staged nodes only need to add root as the children are added within a recursive function
+        cre_scene_manager_stage_child_node_to_be_added_later(node);
+    }
 
     // Children
     for (size_t i = 0; i < jsonSceneNode->childrenCount; i++) {
         cre_scene_manager_setup_json_scene_node(jsonSceneNode->children[i], node, isStagedNodes);
-    }
-
-    if (!isStagedNodes) {
-        cre_scene_manager_queue_node_for_creation(node);
-    } else if (isRoot) {
-        // Staged nodes only need to add root as the children are added within a recursive function
-        cre_scene_manager_add_staged_node_children_to_scene(node);
     }
 
     return node;
