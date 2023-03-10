@@ -12,22 +12,22 @@
 #include "../../scripting/native/native_script_context.h"
 #include "../../scripting/native/internal_classes/fps_display_class.h"
 
-void script_system_on_entity_registered(Entity entity);
-void script_system_on_entity_unregistered(Entity entity);
-void script_system_entity_start(Entity entity);
-void script_system_entity_end(Entity entity);
+void script_system_on_entity_registered(CreEntity entity);
+void script_system_on_entity_unregistered(CreEntity entity);
+void script_system_entity_start(CreEntity entity);
+void script_system_entity_end(CreEntity entity);
 void script_system_pre_update_all();
 void script_system_post_update_all();
 void script_system_instance_update(float deltaTime);
 void script_system_instance_physics_update(float deltaTime);
 void script_system_network_callback(const char* message);
 
-EntitySystem* scriptSystem = NULL;
+CreEntitySystem* scriptSystem = NULL;
 
 static CREScriptContext* scriptContexts[ScriptContextType_TOTAL_TYPES];
 static size_t scriptContextsCount = 0;
 
-EntitySystem* script_ec_system_create() {
+CreEntitySystem* cre_script_ec_system_create() {
     SE_ASSERT(scriptSystem == NULL);
     scriptSystem = cre_ec_system_create();
     scriptSystem->name = se_strdup("Script");
@@ -40,7 +40,7 @@ EntitySystem* script_ec_system_create() {
     scriptSystem->process_func = script_system_instance_update;
     scriptSystem->physics_process_func = script_system_instance_physics_update;
     scriptSystem->network_callback_func = script_system_network_callback;
-    scriptSystem->component_signature = ComponentType_SCRIPT;
+    scriptSystem->component_signature = CreComponentType_SCRIPT;
     // Python Context
     scriptContexts[ScriptContextType_PYTHON] = cre_py_create_script_context();
     scriptContextsCount++;
@@ -53,28 +53,32 @@ EntitySystem* script_ec_system_create() {
     return scriptSystem;
 }
 
-void script_system_on_entity_registered(Entity entity) {
-    const ScriptComponent* scriptComponent = (ScriptComponent*) component_manager_get_component(entity, ComponentDataIndex_SCRIPT);
+void script_system_on_entity_registered(CreEntity entity) {
+    const ScriptComponent* scriptComponent = (ScriptComponent*) cre_component_manager_get_component(entity,
+            CreComponentDataIndex_SCRIPT);
     SE_ASSERT(scriptContexts[scriptComponent->contextType] != NULL);
     SE_ASSERT(scriptContexts[scriptComponent->contextType]->on_create_instance != NULL);
     scriptContexts[scriptComponent->contextType]->on_create_instance(entity, scriptComponent->classPath, scriptComponent->className);
 }
 
-void script_system_on_entity_unregistered(Entity entity) {
-    const ScriptComponent* scriptComponent = (ScriptComponent*) component_manager_get_component(entity, ComponentDataIndex_SCRIPT);
+void script_system_on_entity_unregistered(CreEntity entity) {
+    const ScriptComponent* scriptComponent = (ScriptComponent*) cre_component_manager_get_component(entity,
+            CreComponentDataIndex_SCRIPT);
     scriptContexts[scriptComponent->contextType]->on_delete_instance(entity);
 }
 
-void script_system_entity_start(Entity entity) {
-    const ScriptComponent* scriptComponent = (ScriptComponent*) component_manager_get_component(entity, ComponentDataIndex_SCRIPT);
+void script_system_entity_start(CreEntity entity) {
+    const ScriptComponent* scriptComponent = (ScriptComponent*) cre_component_manager_get_component(entity,
+            CreComponentDataIndex_SCRIPT);
     SE_ASSERT(scriptComponent != NULL);
     SE_ASSERT_FMT(scriptComponent->contextType == ScriptContextType_PYTHON || scriptComponent->contextType == ScriptContextType_NATIVE,
                   "Invalid context type '%d' for entity '%d'", scriptComponent->contextType, entity);
     scriptContexts[scriptComponent->contextType]->on_start(entity);
 }
 
-void script_system_entity_end(Entity entity) {
-    const ScriptComponent* scriptComponent = (ScriptComponent*) component_manager_get_component(entity, ComponentDataIndex_SCRIPT);
+void script_system_entity_end(CreEntity entity) {
+    const ScriptComponent* scriptComponent = (ScriptComponent*) cre_component_manager_get_component(entity,
+            CreComponentDataIndex_SCRIPT);
     scriptContexts[scriptComponent->contextType]->on_end(entity);
 }
 
@@ -97,7 +101,7 @@ void script_system_post_update_all() {
 void script_system_instance_update(float deltaTime) {
     for (size_t i = 0; i < scriptContextsCount; i++) {
         for (size_t entityIndex = 0; entityIndex < scriptContexts[i]->updateEntityCount; entityIndex++) {
-            const Entity entity = scriptContexts[i]->updateEntities[entityIndex];
+            const CreEntity entity = scriptContexts[i]->updateEntities[entityIndex];
             const float entityTimeDilation = cre_scene_manager_get_node_full_time_dilation(entity);
             scriptContexts[i]->on_update_instance(entity, deltaTime * entityTimeDilation);
         }
@@ -107,7 +111,7 @@ void script_system_instance_update(float deltaTime) {
 void script_system_instance_physics_update(float deltaTime) {
     for (size_t i = 0; i < scriptContextsCount; i++) {
         for (size_t entityIndex = 0; entityIndex < scriptContexts[i]->physicsUpdateEntityCount; entityIndex++) {
-            const Entity entity = scriptContexts[i]->physicsUpdateEntities[entityIndex];
+            const CreEntity entity = scriptContexts[i]->physicsUpdateEntities[entityIndex];
             const float entityTimeDilation = cre_scene_manager_get_node_full_time_dilation(entity);
             scriptContexts[i]->on_physics_update_instance(entity, deltaTime * entityTimeDilation);
         }

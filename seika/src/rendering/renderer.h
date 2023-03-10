@@ -11,6 +11,8 @@ extern "C" {
 #include "shader/shader_instance.h"
 #include "../math/se_math.h"
 
+#define SE_RENDERER_MAX_Z_INDEX 200
+
 void se_renderer_initialize(int inWindowWidth, int inWindowHeight, int inResolutionWidth, int inResolutionHeight);
 void se_renderer_finalize();
 void se_renderer_update_window_size(float windowWidth, float windowHeight);

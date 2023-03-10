@@ -12,12 +12,12 @@
 #define MAX_NATIVE_CLASS_ENTITIES 8
 
 // --- Script Context Interface --- //
-void native_on_create_instance(Entity entity, const char* classPath, const char* className);
-void native_on_delete_instance(Entity entity);
-void native_on_start(Entity entity);
-void native_on_update_instance(Entity entity, float deltaTime);
-void native_on_physics_update_instance(Entity entity, float deltaTime);
-void native_on_end(Entity entity);
+void native_on_create_instance(CreEntity entity, const char* classPath, const char* className);
+void native_on_delete_instance(CreEntity entity);
+void native_on_start(CreEntity entity);
+void native_on_update_instance(CreEntity entity, float deltaTime);
+void native_on_physics_update_instance(CreEntity entity, float deltaTime);
+void native_on_end(CreEntity entity);
 
 // Script Cache
 SEStringHashMap* classCache = NULL;
@@ -38,7 +38,7 @@ CREScriptContext* cre_native_create_script_context() {
     classCache = se_string_hash_map_create(MAX_NATIVE_CLASSES);
 
     SE_ASSERT(entityToClassName == NULL);
-    entityToClassName = se_hash_map_create(sizeof(Entity), sizeof(CRENativeScriptClass **), MAX_NATIVE_CLASS_ENTITIES);
+    entityToClassName = se_hash_map_create(sizeof(CreEntity), sizeof(CRENativeScriptClass **), MAX_NATIVE_CLASS_ENTITIES);
 
     native_script_context = scriptContext;
 
@@ -55,7 +55,7 @@ void cre_native_class_register_new_class(CRENativeScriptClass* scriptClass) {
     se_string_hash_map_add(classCache, scriptClass->name, &scriptClass, scriptClass->class_instance_size);
 }
 
-void native_on_create_instance(Entity entity, const char* classPath, const char* className) {
+void native_on_create_instance(CreEntity entity, const char* classPath, const char* className) {
     SE_ASSERT_FMT(se_string_hash_map_has(classCache, className), "Class ref not cached!  entity: '%d', class_path: '%s', class_name: '%s'", entity, classPath, className);
     CRENativeScriptClass* scriptClassRef = (CRENativeScriptClass*) *(CRENativeScriptClass**) se_string_hash_map_get(
             classCache, className);
@@ -65,7 +65,7 @@ void native_on_create_instance(Entity entity, const char* classPath, const char*
     se_hash_map_add(entityToClassName, &entity, &newScriptClass);
 }
 
-void native_on_delete_instance(Entity entity) {
+void native_on_delete_instance(CreEntity entity) {
     CRENativeScriptClass* scriptClassRef = (CRENativeScriptClass*) *(CRENativeScriptClass**) se_hash_map_get(entityToClassName, &entity);
 
     if (scriptClassRef->update_func != NULL) {
@@ -73,7 +73,7 @@ void native_on_delete_instance(Entity entity) {
             native_script_context->updateEntities,
             &native_script_context->updateEntityCount,
             entity,
-            NULL_ENTITY
+            CRE_NULL_ENTITY
         );
     }
     if (scriptClassRef->physics_update_func != NULL) {
@@ -81,7 +81,7 @@ void native_on_delete_instance(Entity entity) {
             native_script_context->physicsUpdateEntities,
             &native_script_context->physicsUpdateEntityCount,
             entity,
-            NULL_ENTITY
+            CRE_NULL_ENTITY
         );
     }
 
@@ -89,7 +89,7 @@ void native_on_delete_instance(Entity entity) {
     se_hash_map_erase(entityToClassName, &entity);
 }
 
-void native_on_start(Entity entity) {
+void native_on_start(CreEntity entity) {
     SE_ASSERT(se_hash_map_has(entityToClassName, &entity));
     CRENativeScriptClass* scriptClassRef = (CRENativeScriptClass*) *(CRENativeScriptClass**) se_hash_map_get(entityToClassName, &entity);
     scriptClassRef->on_start_func(scriptClassRef);
@@ -102,17 +102,17 @@ void native_on_start(Entity entity) {
     }
 }
 
-void native_on_update_instance(Entity entity, float deltaTime) {
+void native_on_update_instance(CreEntity entity, float deltaTime) {
     CRENativeScriptClass* scriptClass = (CRENativeScriptClass*) *(CRENativeScriptClass**) se_hash_map_get(entityToClassName, &entity);
     scriptClass->update_func(scriptClass, deltaTime);
 }
 
-void native_on_physics_update_instance(Entity entity, float deltaTime) {
+void native_on_physics_update_instance(CreEntity entity, float deltaTime) {
     CRENativeScriptClass* scriptClass = (CRENativeScriptClass*) *(CRENativeScriptClass**) se_hash_map_get(entityToClassName, &entity);
     scriptClass->physics_update_func(scriptClass, deltaTime);
 }
 
-void native_on_end(Entity entity) {
+void native_on_end(CreEntity entity) {
     SE_ASSERT(se_hash_map_has(entityToClassName, &entity));
     CRENativeScriptClass* scriptClassRef = (CRENativeScriptClass*) *(CRENativeScriptClass**) se_hash_map_get(
             entityToClassName, &entity);

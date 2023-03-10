@@ -68,7 +68,7 @@ PyObject* cre_py_cache_get_class(const char* modulePath, const char* classPath) 
     return *pClass;
 }
 
-PyObject* cre_py_cache_create_instance(const char* modulePath, const char* classPath, Entity entity) {
+PyObject* cre_py_cache_create_instance(const char* modulePath, const char* classPath, CreEntity entity) {
     PyObject* argsList = Py_BuildValue("(i)", entity);
     SE_ASSERT(argsList != NULL);
     PyObject* classRef = cre_py_cache_get_class(modulePath, classPath);

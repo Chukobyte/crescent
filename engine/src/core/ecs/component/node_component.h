@@ -10,14 +10,14 @@ extern "C" {
 #include "../seika/src/data_structures/se_hash_map_string.h"
 #include "../entity/entity.h"
 
-#define RBE_NODE_NODE_STRING "Node"
-#define RBE_NODE_NODE2D_STRING "Node2D"
-#define RBE_NODE_SPRITE_STRING "Sprite"
-#define RBE_NODE_ANIMATED_SPRITE_STRING "AnimatedSprite"
-#define RBE_NODE_TEXT_LABEL_STRING "TextLabel"
-#define RBE_NODE_COLLIDER2D_STRING "Collider2D"
-#define RBE_NODE_COLOR_RECT_STRING "ColorRect"
-#define RBE_NODE_PARALLAX_STRING "Parallax"
+#define CRE_NODE_NODE_STRING "Node"
+#define CRE_NODE_NODE2D_STRING "Node2D"
+#define CRE_NODE_SPRITE_STRING "Sprite"
+#define CRE_NODE_ANIMATED_SPRITE_STRING "AnimatedSprite"
+#define CRE_NODE_TEXT_LABEL_STRING "TextLabel"
+#define CRE_NODE_COLLIDER2D_STRING "Collider2D"
+#define CRE_NODE_COLOR_RECT_STRING "ColorRect"
+#define CRE_NODE_PARALLAX_STRING "Parallax"
 
 typedef enum NodeBaseType {
     NodeBaseType_INVALID = -1,

@@ -12,7 +12,7 @@ extern "C" {
 
 typedef struct Collider2DComponent {
     SESize2D extents; // TODO: Default to a box, implement other colliders later.  Also should use extents instead of rect!
-    Entity collisionExceptions[4];
+    CreEntity collisionExceptions[4];
     size_t collisionExceptionCount;
     SEColor color; // For debug purposes
 } Collider2DComponent;

@@ -5,14 +5,15 @@
 #include "../camera/camera.h"
 #include "../camera/camera_manager.h"
 
-SETransform2D default_get_local_transform(Entity entity, int* zIndex, bool* success);
+SETransform2D default_get_local_transform(CreEntity entity, int* zIndex, bool* success);
 
 on_get_self_and_parent_entities onGetSelfAndParentEntitiesFunc = &cre_scene_manager_get_self_and_parent_nodes;
 on_get_local_transform onGetLocalTransformFunc = &default_get_local_transform;
 
 // Default engine callbacks
-SETransform2D default_get_local_transform(Entity entity, int* zIndex, bool* success) {
-    Transform2DComponent* transform2DComponent = component_manager_get_component_unchecked(entity, ComponentDataIndex_TRANSFORM_2D);
+SETransform2D default_get_local_transform(CreEntity entity, int* zIndex, bool* success) {
+    Transform2DComponent* transform2DComponent = cre_component_manager_get_component_unchecked(entity,
+            CreComponentDataIndex_TRANSFORM_2D);
     if (transform2DComponent == NULL) {
         *success = false;
         return (SETransform2D) {
@@ -24,13 +25,13 @@ SETransform2D default_get_local_transform(Entity entity, int* zIndex, bool* succ
     return transform2DComponent->localTransform;
 }
 
-void cre_scene_utils_update_global_transform_model(Entity entity, SETransformModel2D* globalTransform) {
+void cre_scene_utils_update_global_transform_model(CreEntity entity, SETransformModel2D* globalTransform) {
     glm_mat4_identity(globalTransform->model);
     EntityArray combineModelResult = onGetSelfAndParentEntitiesFunc(entity);
     SEVector2 scaleTotal = { 1.0f, 1.0f };
     globalTransform->zIndex = 0;
     for (int i = combineModelResult.entityCount - 1; i >= 0; i--) {
-        Entity currentEntity = combineModelResult.entities[i];
+        CreEntity currentEntity = combineModelResult.entities[i];
         bool hasLocalTransform = false;
         int localZIndex = 0;
         const SETransform2D localTransform = onGetLocalTransformFunc(currentEntity, &localZIndex, &hasLocalTransform);
@@ -76,7 +77,7 @@ void cre_scene_utils_override_on_get_local_transform_func(on_get_local_transform
     onGetLocalTransformFunc = func;
 }
 
-EntityArray cre_scene_utils_get_self_and_parent_entities(Entity entity) {
+EntityArray cre_scene_utils_get_self_and_parent_entities(CreEntity entity) {
     return onGetSelfAndParentEntitiesFunc(entity);
 }
 

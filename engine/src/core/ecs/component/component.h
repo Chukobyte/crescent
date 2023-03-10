@@ -8,54 +8,54 @@ extern "C" {
 
 #include "../entity/entity.h"
 
-#define MAX_COMPONENTS 9
+#define CRE_MAX_COMPONENTS 9
 
-typedef enum ComponentDataIndex {
-    ComponentDataIndex_NONE = -1,
-    ComponentDataIndex_NODE = 0,
-    ComponentDataIndex_TRANSFORM_2D = 1,
-    ComponentDataIndex_SPRITE = 2,
-    ComponentDataIndex_ANIMATED_SPRITE = 3,
-    ComponentDataIndex_TEXT_LABEL = 4,
-    ComponentDataIndex_SCRIPT = 5,
-    ComponentDataIndex_COLLIDER_2D = 6,
-    ComponentDataIndex_COLOR_RECT = 7,
-    ComponentDataIndex_PARALLAX = 8,
-} ComponentDataIndex;
+typedef enum CreComponentDataIndex {
+    CreComponentDataIndex_NONE = -1,
+    CreComponentDataIndex_NODE = 0,
+    CreComponentDataIndex_TRANSFORM_2D = 1,
+    CreComponentDataIndex_SPRITE = 2,
+    CreComponentDataIndex_ANIMATED_SPRITE = 3,
+    CreComponentDataIndex_TEXT_LABEL = 4,
+    CreComponentDataIndex_SCRIPT = 5,
+    CreComponentDataIndex_COLLIDER_2D = 6,
+    CreComponentDataIndex_COLOR_RECT = 7,
+    CreComponentDataIndex_PARALLAX = 8,
+} CreComponentDataIndex;
 
-typedef enum ComponentType {
-    ComponentType_NONE = 0,
-    ComponentType_NODE = 1 << 0,
-    ComponentType_TRANSFORM_2D = 1 << 1,
-    ComponentType_SPRITE = 1 << 2,
-    ComponentType_ANIMATED_SPRITE = 1 << 3,
-    ComponentType_TEXT_LABEL = 1 << 4,
-    ComponentType_SCRIPT = 1 << 5,
-    ComponentType_COLLIDER_2D = 1 << 6,
-    ComponentType_COLOR_RECT = 1 << 7,
-    ComponentType_PARALLAX = 1 << 8,
-} ComponentType;
+typedef enum CreComponentType {
+    CreComponentType_NONE = 0,
+    CreComponentType_NODE = 1 << 0,
+    CreComponentType_TRANSFORM_2D = 1 << 1,
+    CreComponentType_SPRITE = 1 << 2,
+    CreComponentType_ANIMATED_SPRITE = 1 << 3,
+    CreComponentType_TEXT_LABEL = 1 << 4,
+    CreComponentType_SCRIPT = 1 << 5,
+    CreComponentType_COLLIDER_2D = 1 << 6,
+    CreComponentType_COLOR_RECT = 1 << 7,
+    CreComponentType_PARALLAX = 1 << 8,
+} CreComponentType;
 
 // Struct that is used to pass information to observers from events
-typedef struct ComponentEntityUpdatePayload {
-    Entity entity;
+typedef struct CreComponentEntityUpdatePayload {
+    CreEntity entity;
     void* component;
-    ComponentType componentType;
-} ComponentEntityUpdatePayload;
+    CreComponentType componentType;
+} CreComponentEntityUpdatePayload;
 
 // --- Component Manager --- //
-void component_manager_initialize();
-void component_manager_finalize();
-void* component_manager_get_component(Entity entity, ComponentDataIndex index);
-void* component_manager_get_component_unchecked(Entity entity, ComponentDataIndex index); // No check, will probably consolidate later...
-void component_manager_set_component(Entity entity, ComponentDataIndex index, void* component);
-void component_manager_remove_component(Entity entity, ComponentDataIndex index);
-void component_manager_remove_all_components(Entity entity);
-bool component_manager_has_component(Entity entity, ComponentDataIndex index);
-void component_manager_set_component_signature(Entity entity, ComponentType componentTypeSignature);
-ComponentType component_manager_get_component_signature(Entity entity);
+void cre_component_manager_initialize();
+void cre_component_manager_finalize();
+void* cre_component_manager_get_component(CreEntity entity, CreComponentDataIndex index);
+void* cre_component_manager_get_component_unchecked(CreEntity entity, CreComponentDataIndex index); // No check, will probably consolidate later...
+void cre_component_manager_set_component(CreEntity entity, CreComponentDataIndex index, void* component);
+void cre_component_manager_remove_component(CreEntity entity, CreComponentDataIndex index);
+void cre_component_manager_remove_all_components(CreEntity entity);
+bool cre_component_manager_has_component(CreEntity entity, CreComponentDataIndex index);
+void cre_component_manager_set_component_signature(CreEntity entity, CreComponentType componentTypeSignature);
+CreComponentType cre_component_manager_get_component_signature(CreEntity entity);
 
-const char* component_get_component_data_index_string(ComponentDataIndex index);
+const char* cre_component_get_component_data_index_string(CreComponentDataIndex index);
 
 #ifdef __cplusplus
 }

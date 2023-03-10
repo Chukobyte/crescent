@@ -289,33 +289,33 @@ SceneNode* SceneManager::LoadSceneTreeJson(JsonSceneNode* node, SceneNode* paren
     const std::string shaderPath = node->shaderInstanceShaderPath != nullptr ? std::string(node->shaderInstanceShaderPath) : "";
 
     // Components
-    if (node->components[ComponentDataIndex_TRANSFORM_2D] != nullptr) {
-        sceneNode->AddComponent<Transform2DComp>((Transform2DComponent*) node->components[ComponentDataIndex_TRANSFORM_2D]);
+    if (node->components[CreComponentDataIndex_TRANSFORM_2D] != nullptr) {
+        sceneNode->AddComponent<Transform2DComp>((Transform2DComponent*) node->components[CreComponentDataIndex_TRANSFORM_2D]);
     }
-    if (node->components[ComponentDataIndex_SPRITE] != nullptr) {
-        sceneNode->AddComponent<SpriteComp>((SpriteComponent*) node->components[ComponentDataIndex_SPRITE], node->spriteTexturePath, shaderPath);
+    if (node->components[CreComponentDataIndex_SPRITE] != nullptr) {
+        sceneNode->AddComponent<SpriteComp>((SpriteComponent*) node->components[CreComponentDataIndex_SPRITE], node->spriteTexturePath, shaderPath);
     }
-    if (node->components[ComponentDataIndex_ANIMATED_SPRITE] != nullptr) {
-        sceneNode->AddComponent<AnimatedSpriteComp>((AnimatedSpriteComponentData*) node->components[ComponentDataIndex_ANIMATED_SPRITE], shaderPath);
+    if (node->components[CreComponentDataIndex_ANIMATED_SPRITE] != nullptr) {
+        sceneNode->AddComponent<AnimatedSpriteComp>((AnimatedSpriteComponentData*) node->components[CreComponentDataIndex_ANIMATED_SPRITE], shaderPath);
     }
-    if (node->components[ComponentDataIndex_TEXT_LABEL] != nullptr) {
+    if (node->components[CreComponentDataIndex_TEXT_LABEL] != nullptr) {
         std::string nodeFontUID = std::string(node->fontUID);
         if (nodeFontUID == CRE_DEFAULT_FONT_ASSET.uid) {
             nodeFontUID.clear();
         }
-        sceneNode->AddComponent<TextLabelComp>((TextLabelComponent*) node->components[ComponentDataIndex_TEXT_LABEL], nodeFontUID);
+        sceneNode->AddComponent<TextLabelComp>((TextLabelComponent*) node->components[CreComponentDataIndex_TEXT_LABEL], nodeFontUID);
     }
-    if (node->components[ComponentDataIndex_SCRIPT] != nullptr) {
-        sceneNode->AddComponent<ScriptComp>((ScriptComponent*) node->components[ComponentDataIndex_SCRIPT]);
+    if (node->components[CreComponentDataIndex_SCRIPT] != nullptr) {
+        sceneNode->AddComponent<ScriptComp>((ScriptComponent*) node->components[CreComponentDataIndex_SCRIPT]);
     }
-    if (node->components[ComponentDataIndex_COLLIDER_2D] != nullptr) {
-        sceneNode->AddComponent<Collider2DComp>((Collider2DComponent*) node->components[ComponentDataIndex_COLLIDER_2D]);
+    if (node->components[CreComponentDataIndex_COLLIDER_2D] != nullptr) {
+        sceneNode->AddComponent<Collider2DComp>((Collider2DComponent*) node->components[CreComponentDataIndex_COLLIDER_2D]);
     }
-    if (node->components[ComponentDataIndex_COLOR_RECT] != nullptr) {
-        sceneNode->AddComponent<ColorRectComp>((ColorRectComponent*) node->components[ComponentDataIndex_COLOR_RECT]);
+    if (node->components[CreComponentDataIndex_COLOR_RECT] != nullptr) {
+        sceneNode->AddComponent<ColorRectComp>((ColorRectComponent*) node->components[CreComponentDataIndex_COLOR_RECT]);
     }
-    if (node->components[ComponentDataIndex_PARALLAX] != nullptr) {
-        sceneNode->AddComponent<ParallaxComp>((ParallaxComponent*) node->components[ComponentDataIndex_PARALLAX]);
+    if (node->components[CreComponentDataIndex_PARALLAX] != nullptr) {
+        sceneNode->AddComponent<ParallaxComp>((ParallaxComponent*) node->components[CreComponentDataIndex_PARALLAX]);
     }
 
     // Load children
@@ -341,11 +341,11 @@ void SceneManager::IterateAllSceneNodes(SceneNode* node, std::function<void(Scen
     LoopNodes(node, func, index);
 }
 
-SceneNode* SceneManager::GetNode(SceneNodeFile* nodeFile, Entity entity) {
+SceneNode* SceneManager::GetNode(SceneNodeFile* nodeFile, CreEntity entity) {
     return GetNode(nodeFile->rootNode, entity);
 }
 
-SceneNode* SceneManager::GetNode(SceneNode* node, Entity entity) {
+SceneNode* SceneManager::GetNode(SceneNode* node, CreEntity entity) {
     if (node->GetUID() == entity) {
         return node;
     }

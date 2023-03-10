@@ -8,7 +8,7 @@
 #include "../../../../scene/scene_manager.h"
 
 namespace WindowRenderUtils {
-EntityArray OnGetSelfAndParentEntitiesFunc(Entity entity) {
+EntityArray OnGetSelfAndParentEntitiesFunc(CreEntity entity) {
     static auto* sceneManager = SceneManager::Get();
     EntityArray combineModelResult = { .entityCount = 0 };
     combineModelResult.entities[combineModelResult.entityCount++] = entity;
@@ -22,7 +22,7 @@ EntityArray OnGetSelfAndParentEntitiesFunc(Entity entity) {
     return combineModelResult;
 }
 
-SETransform2D OnGetLocalTransformFunc(Entity entity, int* zIndex, bool* success) {
+SETransform2D OnGetLocalTransformFunc(CreEntity entity, int* zIndex, bool* success) {
     static auto* sceneManager = SceneManager::Get();
     if (auto* node = sceneManager->GetNode(sceneManager->selectedSceneFile, entity)) {
         if (auto* transformComp = node->GetComponentSafe<Transform2DComp>()) {
@@ -44,7 +44,7 @@ ImGuiHelper::Window OpenedProjectUI::Windows::GetSceneViewWindow() {
         .callbackFunc = [] (ImGuiHelper::Context* context) {
             static auto GetNodeTextureRenderTarget = [](SceneNode* node, size_t index, Transform2DComp* transformComp, bool& hasTexture) {
                 static AssetManager* assetManager = AssetManager::Get();
-                static SETransformModel2D globalTransforms[MAX_ENTITIES];
+                static SETransformModel2D globalTransforms[CRE_MAX_ENTITIES];
                 static SETexture* whiteRectTexture = se_texture_create_solid_colored_texture(1, 1, 255);
                 SETexture* renderTargetTexture = nullptr;
                 cre_scene_utils_update_global_transform_model(node->GetUID(), &globalTransforms[index]);

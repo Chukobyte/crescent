@@ -73,7 +73,7 @@ JsonSceneNode* cre_json_create_new_node() {
     node->parent = NULL;
     node->childrenCount = 0;
     node->type = NodeBaseType_INVALID;
-    for (size_t i = 0; i < MAX_COMPONENTS; i++) {
+    for (size_t i = 0; i < CRE_MAX_COMPONENTS; i++) {
         node->components[i] = NULL;
     }
     return node;
@@ -102,29 +102,29 @@ void cre_json_delete_json_scene_node(JsonSceneNode* node) {
         cre_json_delete_json_scene_node(node->children[i]);
     }
     // Components
-    if (node->components[ComponentDataIndex_TRANSFORM_2D]) {
-        transform2d_component_delete(node->components[ComponentDataIndex_TRANSFORM_2D]);
+    if (node->components[CreComponentDataIndex_TRANSFORM_2D]) {
+        transform2d_component_delete(node->components[CreComponentDataIndex_TRANSFORM_2D]);
     }
-    if (node->components[ComponentDataIndex_SPRITE]) {
-        sprite_component_delete(node->components[ComponentDataIndex_SPRITE]);
+    if (node->components[CreComponentDataIndex_SPRITE]) {
+        sprite_component_delete(node->components[CreComponentDataIndex_SPRITE]);
     }
-    if (node->components[ComponentDataIndex_ANIMATED_SPRITE]) {
-        animated_sprite_component_data_delete(node->components[ComponentDataIndex_ANIMATED_SPRITE]);
+    if (node->components[CreComponentDataIndex_ANIMATED_SPRITE]) {
+        animated_sprite_component_data_delete(node->components[CreComponentDataIndex_ANIMATED_SPRITE]);
     }
-    if (node->components[ComponentDataIndex_TEXT_LABEL]) {
-        text_label_component_delete(node->components[ComponentDataIndex_TEXT_LABEL]);
+    if (node->components[CreComponentDataIndex_TEXT_LABEL]) {
+        text_label_component_delete(node->components[CreComponentDataIndex_TEXT_LABEL]);
     }
-    if (node->components[ComponentDataIndex_SCRIPT]) {
-        script_component_delete(node->components[ComponentDataIndex_SCRIPT]);
+    if (node->components[CreComponentDataIndex_SCRIPT]) {
+        script_component_delete(node->components[CreComponentDataIndex_SCRIPT]);
     }
-    if (node->components[ComponentDataIndex_COLLIDER_2D]) {
-        collider2d_component_delete(node->components[ComponentDataIndex_COLLIDER_2D]);
+    if (node->components[CreComponentDataIndex_COLLIDER_2D]) {
+        collider2d_component_delete(node->components[CreComponentDataIndex_COLLIDER_2D]);
     }
-    if (node->components[ComponentDataIndex_COLOR_RECT]) {
-        color_rect_component_delete(node->components[ComponentDataIndex_COLOR_RECT]);
+    if (node->components[CreComponentDataIndex_COLOR_RECT]) {
+        color_rect_component_delete(node->components[CreComponentDataIndex_COLOR_RECT]);
     }
-    if (node->components[ComponentDataIndex_PARALLAX]) {
-        parallax_component_delete(node->components[ComponentDataIndex_PARALLAX]);
+    if (node->components[CreComponentDataIndex_PARALLAX]) {
+        parallax_component_delete(node->components[CreComponentDataIndex_PARALLAX]);
     }
 
     if (node->shaderInstanceShaderPath) {
@@ -150,7 +150,7 @@ void cre_json_delete_json_scene_node(JsonSceneNode* node) {
 // Component functions
 void cre_json_transform2d_create_or_set_default(JsonSceneNode* node, cJSON* componentJson) {
     Transform2DComponent* transform2DComponent = NULL;
-    if (node->components[ComponentDataIndex_TRANSFORM_2D] == NULL) {
+    if (node->components[CreComponentDataIndex_TRANSFORM_2D] == NULL) {
         transform2DComponent = transform2d_component_create();
         transform2DComponent->localTransform.position = json_get_vec2_default(componentJson, "position", DEFAULT_COMPONENT_TRANSFORM2D_POSITION);
         transform2DComponent->localTransform.scale = json_get_vec2_default(componentJson, "scale", DEFAULT_COMPONENT_TRANSFORM2D_SCALE);
@@ -158,9 +158,9 @@ void cre_json_transform2d_create_or_set_default(JsonSceneNode* node, cJSON* comp
         transform2DComponent->zIndex = json_get_int_default(componentJson, "z_index", DEFAULT_COMPONENT_TRANSFORM2D_Z_INDEX);
         transform2DComponent->isZIndexRelativeToParent = json_get_bool_default(componentJson, "z_index_relative_to_parent", DEFAULT_COMPONENT_TRANSFORM2D_Z_INDEX_RELATIVE_TO_PARENT);
         transform2DComponent->ignoreCamera = json_get_bool_default(componentJson, "ignore_camera", DEFAULT_COMPONENT_TRANSFORM2D_IGNORE_CAMERA);
-        node->components[ComponentDataIndex_TRANSFORM_2D] = transform2DComponent;
+        node->components[CreComponentDataIndex_TRANSFORM_2D] = transform2DComponent;
     } else {
-        transform2DComponent = (Transform2DComponent*) node->components[ComponentDataIndex_TRANSFORM_2D];
+        transform2DComponent = (Transform2DComponent*) node->components[CreComponentDataIndex_TRANSFORM_2D];
         transform2DComponent->localTransform.position = json_get_vec2_default(componentJson, "position", transform2DComponent->localTransform.position);
         transform2DComponent->localTransform.scale = json_get_vec2_default(componentJson, "scale", transform2DComponent->localTransform.scale);
         transform2DComponent->localTransform.rotation = (float) json_get_double_default(componentJson, "rotation", transform2DComponent->localTransform.rotation);
@@ -179,7 +179,7 @@ void cre_json_transform2d_create_or_set_default(JsonSceneNode* node, cJSON* comp
 
 void cre_json_sprite_create_or_set_default(JsonSceneNode* node, cJSON* componentJson) {
     SpriteComponent* spriteComponent = NULL;
-    if (node->components[ComponentDataIndex_SPRITE] == NULL) {
+    if (node->components[CreComponentDataIndex_SPRITE] == NULL) {
         spriteComponent = sprite_component_create();
         node->spriteTexturePath = json_get_string_new(componentJson, "texture_path");
         spriteComponent->drawSource = json_get_rect2(componentJson, "draw_source");
@@ -188,9 +188,9 @@ void cre_json_sprite_create_or_set_default(JsonSceneNode* node, cJSON* component
         spriteComponent->flipV = json_get_bool_default(componentJson, "flip_v", DEFAULT_COMPONENT_SPRITE_FLIP_V);
         spriteComponent->modulate = json_get_linear_color_default(componentJson, "modulate", DEFAULT_COMPONENT_SPRITE_MODULATE);
         json_node_set_shader_instance_paths(node, componentJson, "shader_instance");
-        node->components[ComponentDataIndex_SPRITE] = spriteComponent;
+        node->components[CreComponentDataIndex_SPRITE] = spriteComponent;
     } else {
-        spriteComponent = node->components[ComponentDataIndex_SPRITE];
+        spriteComponent = node->components[CreComponentDataIndex_SPRITE];
         char* newTexturePath = json_get_string_new_unchecked(componentJson, "texture_path");
         if (newTexturePath != NULL) {
             SE_MEM_FREE(node->spriteTexturePath);
@@ -217,7 +217,7 @@ void cre_json_sprite_create_or_set_default(JsonSceneNode* node, cJSON* component
 void cre_json_animated_sprite_create_or_set_default(JsonSceneNode* node, cJSON* componentJson) {
     AnimatedSpriteComponentData* animatedSpriteComponent = NULL;
     char* currentAnimationName = NULL;
-    if (node->components[ComponentDataIndex_ANIMATED_SPRITE] == NULL) {
+    if (node->components[CreComponentDataIndex_ANIMATED_SPRITE] == NULL) {
         animatedSpriteComponent = animated_sprite_component_data_create();
         currentAnimationName = json_get_string_new(componentJson, "current_animation_name");
         animatedSpriteComponent->isPlaying = json_get_bool(componentJson, "is_playing");
@@ -257,9 +257,9 @@ void cre_json_animated_sprite_create_or_set_default(JsonSceneNode* node, cJSON* 
                 animatedSpriteComponent->currentAnimation = animation;
             }
         }
-        node->components[ComponentDataIndex_ANIMATED_SPRITE] = animatedSpriteComponent;
+        node->components[CreComponentDataIndex_ANIMATED_SPRITE] = animatedSpriteComponent;
     } else {
-        animatedSpriteComponent = (AnimatedSpriteComponentData*) node->components[ComponentDataIndex_ANIMATED_SPRITE];
+        animatedSpriteComponent = (AnimatedSpriteComponentData*) node->components[CreComponentDataIndex_ANIMATED_SPRITE];
         currentAnimationName = json_get_string_default_new(componentJson, "current_animation_name", animatedSpriteComponent->currentAnimation.name);
         animatedSpriteComponent->isPlaying = json_get_bool_default(componentJson, "is_playing", animatedSpriteComponent->isPlaying);
         animatedSpriteComponent->origin = json_get_vec2_default(componentJson, "origin", animatedSpriteComponent->origin);
@@ -283,14 +283,14 @@ void cre_json_animated_sprite_create_or_set_default(JsonSceneNode* node, cJSON* 
 
 void cre_json_text_label_create_or_set_default(JsonSceneNode* node, cJSON* componentJson) {
     TextLabelComponent* textLabelComponent = NULL;
-    if (node->components[ComponentDataIndex_TEXT_LABEL] == NULL) {
+    if (node->components[CreComponentDataIndex_TEXT_LABEL] == NULL) {
         textLabelComponent = text_label_component_create();
         node->fontUID = json_get_string_new_unchecked(componentJson, "uid");
         strcpy(textLabelComponent->text, json_get_string(componentJson, "text"));
         textLabelComponent->color = json_get_linear_color_default(componentJson, "color", DEFAULT_COMPONENT_TEXT_LABEL_COLOR);
-        node->components[ComponentDataIndex_TEXT_LABEL] = textLabelComponent;
+        node->components[CreComponentDataIndex_TEXT_LABEL] = textLabelComponent;
     } else {
-        textLabelComponent = (TextLabelComponent*) node->components[ComponentDataIndex_TEXT_LABEL];
+        textLabelComponent = (TextLabelComponent*) node->components[CreComponentDataIndex_TEXT_LABEL];
         char* newFontUID = json_get_string_new_unchecked(componentJson, "uid");
         if (newFontUID != NULL) {
             SE_MEM_FREE(node->fontUID);
@@ -308,13 +308,13 @@ void cre_json_text_label_create_or_set_default(JsonSceneNode* node, cJSON* compo
 
 void cre_json_collider2d_create_or_set_default(JsonSceneNode* node, cJSON* componentJson) {
     Collider2DComponent* collider2DComponent = NULL;
-    if (node->components[ComponentDataIndex_COLLIDER_2D] == NULL) {
+    if (node->components[CreComponentDataIndex_COLLIDER_2D] == NULL) {
         collider2DComponent = collider2d_component_create();
         collider2DComponent->extents = json_get_size2d(componentJson, "extents");
         collider2DComponent->color = json_get_linear_color_default(componentJson, "color", DEFAULT_COMPONENT_COLLIDER2D_COLOR);
-        node->components[ComponentDataIndex_COLLIDER_2D] = collider2DComponent;
+        node->components[CreComponentDataIndex_COLLIDER_2D] = collider2DComponent;
     } else {
-        collider2DComponent = (Collider2DComponent*) node->components[ComponentDataIndex_COLLIDER_2D];
+        collider2DComponent = (Collider2DComponent*) node->components[CreComponentDataIndex_COLLIDER_2D];
         collider2DComponent->extents = json_get_size2d_default(componentJson, "extents", collider2DComponent->extents);
         collider2DComponent->color = json_get_linear_color_default(componentJson, "color", collider2DComponent->color);
     }
@@ -326,13 +326,13 @@ void cre_json_collider2d_create_or_set_default(JsonSceneNode* node, cJSON* compo
 
 void cre_json_color_rect_create_or_set_default(JsonSceneNode* node, cJSON* componentJson) {
     ColorRectComponent* colorRectComponent = NULL;
-    if (node->components[ComponentDataIndex_COLOR_RECT] == NULL) {
+    if (node->components[CreComponentDataIndex_COLOR_RECT] == NULL) {
         colorRectComponent = color_rect_component_create();
         colorRectComponent->size = json_get_size2d(componentJson, "size");
         colorRectComponent->color = json_get_linear_color_default(componentJson, "color", DEFAULT_COMPONENT_COLOR_RECT_COLOR);
-        node->components[ComponentDataIndex_COLOR_RECT] = colorRectComponent;
+        node->components[CreComponentDataIndex_COLOR_RECT] = colorRectComponent;
     } else {
-        colorRectComponent = (ColorRectComponent*) node->components[ComponentDataIndex_COLOR_RECT];
+        colorRectComponent = (ColorRectComponent*) node->components[CreComponentDataIndex_COLOR_RECT];
         colorRectComponent->size = json_get_size2d_default(componentJson, "size", colorRectComponent->size);
         colorRectComponent->color = json_get_linear_color_default(componentJson, "color", colorRectComponent->color);
     }
@@ -344,16 +344,16 @@ void cre_json_color_rect_create_or_set_default(JsonSceneNode* node, cJSON* compo
 
 void cre_json_script_create_or_set_default(JsonSceneNode* node, cJSON* componentJson) {
     ScriptComponent* scriptComponent = NULL;
-    if (node->components[ComponentDataIndex_SCRIPT] == NULL) {
+    if (node->components[CreComponentDataIndex_SCRIPT] == NULL) {
         scriptComponent = script_component_create(
                               json_get_string(componentJson, "class_path"),
                               json_get_string(componentJson, "class_name")
                           );
         scriptComponent->contextType = ScriptContextType_PYTHON;
-        node->components[ComponentDataIndex_SCRIPT] = scriptComponent;
+        node->components[CreComponentDataIndex_SCRIPT] = scriptComponent;
     } else {
         // No override for scripts for now...
-        scriptComponent = (ScriptComponent*) node->components[ComponentDataIndex_SCRIPT];
+        scriptComponent = (ScriptComponent*) node->components[CreComponentDataIndex_SCRIPT];
     }
     se_logger_debug("Script\nclass path: '%s'\nclass name: '%s'",
                     scriptComponent->classPath, scriptComponent->className);
@@ -361,12 +361,12 @@ void cre_json_script_create_or_set_default(JsonSceneNode* node, cJSON* component
 
 void cre_json_parallax_create_or_set_default(JsonSceneNode* node, cJSON* componentJson) {
     ParallaxComponent* parallaxComponent = NULL;
-    if (node->components[ComponentDataIndex_PARALLAX] == NULL) {
+    if (node->components[CreComponentDataIndex_PARALLAX] == NULL) {
         parallaxComponent = parallax_component_create();
         parallaxComponent->scrollSpeed =  json_get_vec2_default(componentJson, "scroll_speed", DEFAULT_COMPONENT_PARALLAX_SCROLL_SPEED);
-        node->components[ComponentDataIndex_PARALLAX] = parallaxComponent;
+        node->components[CreComponentDataIndex_PARALLAX] = parallaxComponent;
     } else {
-        parallaxComponent = (ParallaxComponent*) node->components[ComponentDataIndex_PARALLAX];
+        parallaxComponent = (ParallaxComponent*) node->components[CreComponentDataIndex_PARALLAX];
         parallaxComponent->scrollSpeed = json_get_vec2_default(componentJson, "scroll_speed", parallaxComponent->scrollSpeed);
     }
     se_logger_debug("Parallax\nscroll_speed: (%f, %f)", parallaxComponent->scrollSpeed.x, parallaxComponent->scrollSpeed.y);

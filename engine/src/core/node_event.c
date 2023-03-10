@@ -15,7 +15,7 @@
 #define MAX_EVENT_OBSERVER_ENTRY_COUNT 100
 
 typedef struct NodeEventObserver {
-    Entity entity;
+    CreEntity entity;
     NodeEventObserverCallback callback;
     void* data; // Used to store misc data from the caller
     NodeEventObserverDataDeleteCallback dataDeleteCallback;
@@ -23,7 +23,7 @@ typedef struct NodeEventObserver {
 } NodeEventObserver;
 
 typedef struct NodeEvent {
-    Entity entity;
+    CreEntity entity;
     char* id;
     size_t observerCount;
     NodeEventObserver* observers[CRE_NODE_EVENT_MAX_OBSERVERS];
@@ -36,19 +36,19 @@ typedef struct NodeEventObserverEntry {
 
 typedef struct NodeEventDatabase {
     // Keeps tracks of an entity's events and observers
-    SEStringHashMap* entityEventMaps[MAX_ENTITIES];
+    SEStringHashMap* entityEventMaps[CRE_MAX_ENTITIES];
     // Keeps tracks of observers to events
-    NodeEventObserverEntry nodeEventObserverEntry[MAX_ENTITIES];
+    NodeEventObserverEntry nodeEventObserverEntry[CRE_MAX_ENTITIES];
     // Booleans for if entity has registered to the 'on scene exit' callback (TODO: Should be done better...)
-    bool hasEntityRegisteredOnSceneExitCallback[MAX_ENTITIES];
+    bool hasEntityRegisteredOnSceneExitCallback[CRE_MAX_ENTITIES];
 } NodeEventDatabase;
 
-NodeEvent* node_event_create_event_internal(Entity entity, const char* eventId);
-NodeEventObserver* node_create_observer_internal(Entity entity, NodeEvent* event, NodeEventObserverCallback observerCallback, void* observerData, NodeEventObserverDataDeleteCallback dataDeleteCallback);
+NodeEvent* node_event_create_event_internal(CreEntity entity, const char* eventId);
+NodeEventObserver* node_create_observer_internal(CreEntity entity, NodeEvent* event, NodeEventObserverCallback observerCallback, void* observerData, NodeEventObserverDataDeleteCallback dataDeleteCallback);
 void node_observer_free(NodeEventObserver* observer);
-bool does_entity_have_observer_event_already(Entity observerEntity, NodeEvent* event);
-void register_entity_to_on_scene_exit_callback(Entity entity);
-void unregister_entity_to_on_scene_exit_callback(Entity entity);
+bool does_entity_have_observer_event_already(CreEntity observerEntity, NodeEvent* event);
+void register_entity_to_on_scene_exit_callback(CreEntity entity);
+void unregister_entity_to_on_scene_exit_callback(CreEntity entity);
 
 void cre_node_event_on_entity_exit_scene(SESubjectNotifyPayload* payload);
 
@@ -59,25 +59,25 @@ static NodeEventDatabase eventDatabase = {
 };
 static SEObserver nodeEntityOnExitSceneObserver = { .on_notify = cre_node_event_on_entity_exit_scene };
 
-void node_event_create_event(Entity entity, const char* eventId) {
+void node_event_create_event(CreEntity entity, const char* eventId) {
     node_event_create_event_internal(entity, eventId);
 }
 
-void node_event_subscribe_to_event(Entity entity, const char* eventId, Entity observerEntity, NodeEventObserverCallback observerCallback, void* observerData, NodeEventObserverDataDeleteCallback dataDeleteCallback) {
+void node_event_subscribe_to_event(CreEntity entity, const char* eventId, CreEntity observerEntity, NodeEventObserverCallback observerCallback, void* observerData, NodeEventObserverDataDeleteCallback dataDeleteCallback) {
     NodeEvent* event = node_event_create_event_internal(entity, eventId);
     if (!does_entity_have_observer_event_already(observerEntity, event)) {
         event->observers[event->observerCount++] = node_create_observer_internal(observerEntity, event, observerCallback, observerData, dataDeleteCallback);
     }
 }
 
-void node_event_notify_observers(Entity entity, const char* eventId, NodeEventNotifyPayload* payload) {
+void node_event_notify_observers(CreEntity entity, const char* eventId, NodeEventNotifyPayload* payload) {
     NodeEvent* event = node_event_create_event_internal(entity, eventId);
     for (size_t i = 0; i < event->observerCount; i++) {
         event->observers[i]->callback(event->observers[i]->data, payload);
     }
 }
 
-void node_event_destroy_all_entity_events_and_observers(Entity entity) {
+void node_event_destroy_all_entity_events_and_observers(CreEntity entity) {
     // Remove all entity observers
     for (size_t i = 0; i < eventDatabase.nodeEventObserverEntry[entity].entryCount; i++) {
         NodeEventObserver* nodeEventObserver = eventDatabase.nodeEventObserverEntry[entity].observers[i];
@@ -117,11 +117,11 @@ void node_event_destroy_all_entity_events_and_observers(Entity entity) {
 }
 
 // Queries
-size_t node_event_get_event_count(Entity entity) {
+size_t node_event_get_event_count(CreEntity entity) {
     return eventDatabase.entityEventMaps[entity] != NULL ? eventDatabase.entityEventMaps[entity]->size : 0;
 }
 
-size_t node_event_get_event_observer_count(Entity entity, const char* eventId) {
+size_t node_event_get_event_observer_count(CreEntity entity, const char* eventId) {
     if (eventDatabase.entityEventMaps[entity] != NULL) {
         NodeEvent* event = node_event_create_event_internal(entity, eventId);
         return event->observerCount;
@@ -129,12 +129,12 @@ size_t node_event_get_event_observer_count(Entity entity, const char* eventId) {
     return 0;
 }
 
-size_t node_event_get_entity_observer_count(Entity entity) {
+size_t node_event_get_entity_observer_count(CreEntity entity) {
     return eventDatabase.nodeEventObserverEntry[entity].entryCount;
 }
 
 // Internal
-NodeEvent* node_event_create_event_internal(Entity entity, const char* eventId) {
+NodeEvent* node_event_create_event_internal(CreEntity entity, const char* eventId) {
     if (eventDatabase.entityEventMaps[entity] == NULL) {
         eventDatabase.entityEventMaps[entity] = se_string_hash_map_create_default_capacity();
         register_entity_to_on_scene_exit_callback(entity);
@@ -150,7 +150,7 @@ NodeEvent* node_event_create_event_internal(Entity entity, const char* eventId) 
     return event;
 }
 
-NodeEventObserver* node_create_observer_internal(Entity entity, NodeEvent* event, NodeEventObserverCallback observerCallback, void* observerData, NodeEventObserverDataDeleteCallback dataDeleteCallback) {
+NodeEventObserver* node_create_observer_internal(CreEntity entity, NodeEvent* event, NodeEventObserverCallback observerCallback, void* observerData, NodeEventObserverDataDeleteCallback dataDeleteCallback) {
     NodeEventObserver* eventObserver = SE_MEM_ALLOCATE(NodeEventObserver);
     eventObserver->entity = entity;
     eventObserver->callback = observerCallback;
@@ -172,7 +172,7 @@ void node_observer_free(NodeEventObserver* observer) {
     SE_MEM_FREE(observer);
 }
 
-bool does_entity_have_observer_event_already(Entity observerEntity, NodeEvent* event) {
+bool does_entity_have_observer_event_already(CreEntity observerEntity, NodeEvent* event) {
     for (size_t i = 0; i < eventDatabase.nodeEventObserverEntry[observerEntity].entryCount; i++) {
         const NodeEvent* observerEvent = eventDatabase.nodeEventObserverEntry[observerEntity].observers[i]->event;
         if (strcmp(observerEvent->id, event->id) == 0 && observerEvent->entity == event->entity) {
@@ -182,17 +182,19 @@ bool does_entity_have_observer_event_already(Entity observerEntity, NodeEvent* e
     return false;
 }
 
-void register_entity_to_on_scene_exit_callback(Entity entity) {
+void register_entity_to_on_scene_exit_callback(CreEntity entity) {
     NodeComponent* nodeComp = NULL;
-    if (!eventDatabase.hasEntityRegisteredOnSceneExitCallback[entity] && (nodeComp = component_manager_get_component_unchecked(entity, ComponentDataIndex_NODE))) {
+    if (!eventDatabase.hasEntityRegisteredOnSceneExitCallback[entity] && (nodeComp = cre_component_manager_get_component_unchecked(
+                entity, CreComponentDataIndex_NODE))) {
         se_event_register_observer(&nodeComp->onSceneTreeExit, &nodeEntityOnExitSceneObserver);
         eventDatabase.hasEntityRegisteredOnSceneExitCallback[entity] = true;
     }
 }
 
-void unregister_entity_to_on_scene_exit_callback(Entity entity) {
+void unregister_entity_to_on_scene_exit_callback(CreEntity entity) {
     NodeComponent* nodeComp = NULL;
-    if (eventDatabase.hasEntityRegisteredOnSceneExitCallback[entity] && (nodeComp = component_manager_get_component_unchecked(entity, ComponentDataIndex_NODE))) {
+    if (eventDatabase.hasEntityRegisteredOnSceneExitCallback[entity] && (nodeComp = cre_component_manager_get_component_unchecked(
+                entity, CreComponentDataIndex_NODE))) {
         se_event_unregister_observer(&nodeComp->onSceneTreeExit, &nodeEntityOnExitSceneObserver);
         eventDatabase.hasEntityRegisteredOnSceneExitCallback[entity] = false;
     }
@@ -200,6 +202,6 @@ void unregister_entity_to_on_scene_exit_callback(Entity entity) {
 
 // Callbacks
 void cre_node_event_on_entity_exit_scene(SESubjectNotifyPayload* payload) {
-    const Entity entity = *(Entity*) payload->data;
+    const CreEntity entity = *(CreEntity*) payload->data;
     node_event_destroy_all_entity_events_and_observers(entity);
 }

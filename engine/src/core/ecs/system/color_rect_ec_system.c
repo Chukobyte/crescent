@@ -14,18 +14,18 @@
 #include "../../camera/camera_manager.h"
 #include "../../scene/scene_utils.h"
 
-EntitySystem* colorRectSystem = NULL;
+CreEntitySystem* colorRectSystem = NULL;
 SETexture* colorRectTexture = NULL;
 SERect2 colorRectDrawSource = { 0.0f, 0.0f, 1.0f, 1.0f };
 
 void color_rect_system_render();
 
-EntitySystem* color_rect_ec_system_create() {
+CreEntitySystem* cre_color_rect_ec_system_create() {
     SE_ASSERT(colorRectSystem == NULL);
     colorRectSystem = cre_ec_system_create();
     colorRectSystem->name = se_strdup("Color Square");
     colorRectSystem->render_func = color_rect_system_render;
-    colorRectSystem->component_signature = ComponentType_TRANSFORM_2D | ComponentType_COLOR_RECT;
+    colorRectSystem->component_signature = CreComponentType_TRANSFORM_2D | CreComponentType_COLOR_RECT;
 
     SE_ASSERT_FMT(colorRectTexture == NULL, "Color Square Texture isn't NULL!");
     colorRectTexture = se_texture_create_solid_colored_texture(1, 1, 255);
@@ -37,9 +37,11 @@ void color_rect_system_render() {
     const CRECamera2D* defaultCamera = cre_camera_manager_get_default_camera();
 
     for (size_t i = 0; i < colorRectSystem->entity_count; i++) {
-        const Entity entity = colorRectSystem->entities[i];
-        Transform2DComponent* transformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
-        const ColorRectComponent* colorRectComponent = (ColorRectComponent *) component_manager_get_component(entity, ComponentDataIndex_COLOR_RECT);
+        const CreEntity entity = colorRectSystem->entities[i];
+        Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity,
+                                              CreComponentDataIndex_TRANSFORM_2D);
+        const ColorRectComponent* colorRectComponent = (ColorRectComponent *) cre_component_manager_get_component(
+                    entity, CreComponentDataIndex_COLOR_RECT);
         const CRECamera2D* renderCamera = transformComp->ignoreCamera ? defaultCamera : camera2D;
         SETransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity, transformComp);
         static SEVector2 origin = { 0.0f, 0.0f };

@@ -1,3 +1,3 @@
 #pragma once
 
-struct EntitySystem* color_rect_ec_system_create();
+struct CreEntitySystem* cre_color_rect_ec_system_create();

@@ -4,21 +4,21 @@
 
 #include "../ecs/entity/entity.h"
 
-typedef void (*OnCreateInstance) (Entity, const char*, const char*);
-typedef void (*OnDeleteInstance) (Entity);
-typedef void (*OnStart) (Entity);
-typedef void (*OnEnd) (Entity);
+typedef void (*OnCreateInstance) (CreEntity, const char*, const char*);
+typedef void (*OnDeleteInstance) (CreEntity);
+typedef void (*OnStart) (CreEntity);
+typedef void (*OnEnd) (CreEntity);
 
 typedef void (*OnPreUpdateAll) ();
 typedef void (*OnPostUpdateAll) ();
-typedef void (*OnUpdateInstance) (Entity, float);
-typedef void (*OnPhysicsUpdateInstance) (Entity, float);
+typedef void (*OnUpdateInstance) (CreEntity, float);
+typedef void (*OnPhysicsUpdateInstance) (CreEntity, float);
 
 typedef void (*OnNetworkCallback) (const char*);
 
 // TODO: Make network callbacks not specific to python
 struct _object; // PyObject
-typedef void (*OnEntitySubscribeToNetworkCallback) (Entity, struct _object*, const char*);
+typedef void (*OnEntitySubscribeToNetworkCallback) (CreEntity, struct _object*, const char*);
 
 // Generic script context to be used as an interface for game scripting
 // Note: Node event logics must be handled manually within the script context, refer to 'node_event.h' for the api.
@@ -44,8 +44,8 @@ typedef struct CREScriptContext {
     // even though it's not used in the script ec system
     size_t updateEntityCount;
     size_t physicsUpdateEntityCount;
-    Entity updateEntities[MAX_ENTITIES];
-    Entity physicsUpdateEntities[MAX_ENTITIES];
+    CreEntity updateEntities[CRE_MAX_ENTITIES];
+    CreEntity physicsUpdateEntities[CRE_MAX_ENTITIES];
 } CREScriptContext;
 
 CREScriptContext* cre_script_context_create();

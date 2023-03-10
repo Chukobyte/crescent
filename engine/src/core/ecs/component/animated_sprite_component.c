@@ -37,7 +37,7 @@ AnimatedSpriteComponent* animated_sprite_component_copy(const AnimatedSpriteComp
     return copiedNode;
 }
 
-void animated_sprite_component_add_animation(AnimatedSpriteComponent* animatedSpriteComponent, Animation animation) {
+void animated_sprite_component_add_animation(AnimatedSpriteComponent* animatedSpriteComponent, CreAnimation animation) {
     SE_ASSERT_FMT(animatedSpriteComponent->animationCount + 1 < RBE_MAX_ANIMATIONS,
                   "Adding animation '%s' exceeds the max limit of animations which is '%d'", animation.name, RBE_MAX_ANIMATIONS);
     animatedSpriteComponent->animations[animatedSpriteComponent->animationCount++] = animation;
@@ -101,7 +101,7 @@ AnimatedSpriteComponent* animated_sprite_component_data_copy_to_animated_sprite(
     strcpy(copiedNode->currentAnimation.name, animatedSpriteComponentData->currentAnimation.name);
     for (size_t animationIndex = 0; animationIndex < animatedSpriteComponentData->animationCount; animationIndex++) {
         const AnimationData* animationData = &animatedSpriteComponentData->animations[animationIndex];
-        Animation animation;
+        CreAnimation animation;
         strcpy(animation.name, animationData->name);
         animation.doesLoop = animationData->doesLoop;
         animation.speed = animationData->speed;
@@ -110,7 +110,7 @@ AnimatedSpriteComponent* animated_sprite_component_data_copy_to_animated_sprite(
         animation.frameCount = animationData->frameCount;
         for (size_t frameIndex = 0; (int) frameIndex < animationData->frameCount; frameIndex++) {
             const AnimationFrameData* animationFrameData = &animationData->animationFrames[frameIndex];
-            AnimationFrame animationFrame;
+            CreAnimationFrame animationFrame;
             animationFrame.texture = se_asset_manager_get_texture(animationFrameData->texturePath);
             animationFrame.drawSource = animationFrameData->drawSource;
             animationFrame.frame = animationFrameData->frame;
