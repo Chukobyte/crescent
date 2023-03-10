@@ -795,15 +795,6 @@ PyObject* cre_py_api_node_new(PyObject* self, PyObject* args, PyObject* kwargs) 
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "sss", crePyApiNodeNewKWList, &classPath, &className, &nodeType)) {
         SceneTreeNode* newNode = cre_scene_tree_create_tree_node(cre_ec_system_create_entity_uid(), NULL);
 
-        // Setup script component first
-        ScriptComponent* scriptComponent = script_component_create(classPath, className);
-        scriptComponent->contextType = ScriptContextType_PYTHON;
-        component_manager_set_component(newNode->entity, ComponentDataIndex_SCRIPT, scriptComponent);
-        // Call create instance on script context.
-        // Note: python script context checks to make sure the instance for an entity is only created once
-        PyObject* entityInstance = cre_py_create_script_instance(newNode->entity, classPath, className);
-        SE_ASSERT_FMT(entityInstance != NULL, "Entity instance '%d' is NULL!", newNode->entity);
-
         NodeComponent* nodeComponent = node_component_create();
         strcpy(nodeComponent->name, nodeType);
         nodeComponent->type = node_get_base_type(nodeType);
@@ -836,6 +827,15 @@ PyObject* cre_py_api_node_new(PyObject* self, PyObject* args, PyObject* kwargs) 
         }
 
         cre_scene_manager_stage_child_node_to_be_added_later(newNode);
+
+        // Setup script component
+        ScriptComponent* scriptComponent = script_component_create(classPath, className);
+        scriptComponent->contextType = ScriptContextType_PYTHON;
+        component_manager_set_component(newNode->entity, ComponentDataIndex_SCRIPT, scriptComponent);
+        // Call create instance on script context.
+        // Note: python script context checks to make sure the instance for an entity is only created once
+        PyObject* entityInstance = cre_py_create_script_instance(newNode->entity, classPath, className);
+        SE_ASSERT_FMT(entityInstance != NULL, "Entity instance '%d' is NULL!", newNode->entity);
 
         Py_IncRef(entityInstance);
         return Py_BuildValue("O", entityInstance);
