@@ -108,7 +108,7 @@ void collision_system_render() {
             false,
             false,
             globalTransform,
-            globalTransform->zIndex, // Do we just want to make this the max z index?
+            SE_RENDERER_MAX_Z_INDEX, // Use the max possible z index value to draw colliders on top of other things...
             NULL
         );
     }

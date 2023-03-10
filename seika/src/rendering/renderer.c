@@ -11,8 +11,7 @@
 #include "../utils/se_assert.h"
 
 #define SE_RENDER_TO_FRAMEBUFFER
-#define SE_RENDER_LAYER_BATCH_MAX 200
-#define SE_RENDER_LAYER_BATCH_ITEM_MAX (SE_RENDER_LAYER_BATCH_MAX / 2)
+#define SE_RENDER_LAYER_BATCH_ITEM_MAX (SE_RENDERER_MAX_Z_INDEX / 2)
 #define SE_RENDER_TEXTURE_LAYER_TEXTURE_MAX 64
 
 #ifdef SE_RENDER_TO_FRAMEBUFFER
@@ -90,8 +89,8 @@ typedef struct RenderLayer {
     size_t fontBatchItemCount;
 } RenderLayer;
 
-SE_STATIC_ARRAY_CREATE(RenderLayer, SE_RENDER_LAYER_BATCH_MAX, render_layer_items);
-SE_STATIC_ARRAY_CREATE(int, SE_RENDER_LAYER_BATCH_MAX, active_render_layer_items_indices);
+SE_STATIC_ARRAY_CREATE(RenderLayer, SE_RENDERER_MAX_Z_INDEX, render_layer_items);
+SE_STATIC_ARRAY_CREATE(int, SE_RENDERER_MAX_Z_INDEX, active_render_layer_items_indices);
 
 // Renderer
 void se_renderer_initialize(int inWindowWidth, int inWindowHeight, int inResolutionWidth, int inResolutionHeight) {
@@ -110,7 +109,7 @@ void se_renderer_initialize(int inWindowWidth, int inWindowHeight, int inResolut
     SE_ASSERT_FMT(se_frame_buffer_initialize(inWindowWidth, inWindowHeight), "Framebuffer didn't initialize!");
 #endif
     // Set initial data for render layer
-    for (size_t i = 0; i < SE_RENDER_LAYER_BATCH_MAX; i++) {
+    for (size_t i = 0; i < SE_RENDERER_MAX_Z_INDEX; i++) {
         render_layer_items[i].renderTextureLayerCount = 0;
         render_layer_items[i].fontBatchItemCount = 0;
         for (size_t j = 0; j < SE_RENDER_TEXTURE_LAYER_TEXTURE_MAX; j++) {
@@ -155,7 +154,7 @@ void se_renderer_queue_sprite_draw_call(SETexture* texture, SERect2 sourceRect, 
         return;
     }
     SpriteBatchItem item = { .texture = texture, .sourceRect = sourceRect, .destSize = destSize, .color = color, .flipH = flipH, .flipV = flipV, .globalTransform = globalTransform, .shaderInstance = shaderInstance };
-    const int arrayZIndex = se_math_clamp_int(zIndex + SE_RENDER_LAYER_BATCH_MAX / 2, 0, SE_RENDER_LAYER_BATCH_MAX - 1);
+    const int arrayZIndex = se_math_clamp_int(zIndex + SE_RENDERER_MAX_Z_INDEX / 2, 0, SE_RENDERER_MAX_Z_INDEX - 1);
     // Get texture layer index for render texture
     size_t textureLayerIndex = render_layer_items[arrayZIndex].renderTextureLayerCount;
     for (size_t i = 0; i < render_layer_items[arrayZIndex].renderTextureLayerCount; i++) {
@@ -181,7 +180,7 @@ void se_renderer_queue_font_draw_call(SEFont* font, const char* text, float x, f
     }
 
     FontBatchItem item = { .font = font, .text = text, .x = x, .y = y, .scale = scale, .color = color };
-    const int arrayZIndex = se_math_clamp_int(zIndex + SE_RENDER_LAYER_BATCH_MAX / 2, 0, SE_RENDER_LAYER_BATCH_MAX - 1);
+    const int arrayZIndex = se_math_clamp_int(zIndex + SE_RENDERER_MAX_Z_INDEX / 2, 0, SE_RENDERER_MAX_Z_INDEX - 1);
     // Update font batch item on render layer
     render_layer_items[arrayZIndex].fontBatchItems[render_layer_items[arrayZIndex].fontBatchItemCount++] = item;
     // Update active render layer indices
