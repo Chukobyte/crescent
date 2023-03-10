@@ -62,13 +62,11 @@ CREScriptContext* cre_py_get_script_context() {
 }
 
 void py_on_create_instance(Entity entity, const char* classPath, const char* className) {
+    if (se_hash_map_has(pythonInstanceHashMap, &entity)) {
+        se_logger_warn("Won't create entity '%d' with class_path '%s' and class_name '%s' as they already exist!", entity, classPath, className);
+        return;
+    }
     PyObject* pScriptInstance = cre_py_cache_create_instance(classPath, className, entity);
-    if (PyObject_HasAttrString(pScriptInstance, "_update")) {
-        python_script_context->updateEntities[python_script_context->updateEntityCount++] = entity;
-    }
-    if (PyObject_HasAttrString(pScriptInstance, "_physics_update")) {
-        python_script_context->physicsUpdateEntities[python_script_context->physicsUpdateEntityCount++] = entity;
-    }
     se_hash_map_add(pythonInstanceHashMap, &entity, &pScriptInstance);
 }
 
@@ -114,6 +112,12 @@ void py_on_start(Entity entity) {
     node_event_notify_observers(entity, "scene_entered", &(NodeEventNotifyPayload) {
         .data = pScriptInstance
     });
+    if (PyObject_HasAttrString(pScriptInstance, "_update")) {
+        python_script_context->updateEntities[python_script_context->updateEntityCount++] = entity;
+    }
+    if (PyObject_HasAttrString(pScriptInstance, "_physics_update")) {
+        python_script_context->physicsUpdateEntities[python_script_context->physicsUpdateEntityCount++] = entity;
+    }
 }
 
 void py_on_pre_update_all() {
@@ -186,6 +190,12 @@ void cre_py_on_network_udp_server_client_connected() {
         PyObject_CallObject(current_network_server_client_connected_script_callback->callback_func, NULL);
         PyGILState_Release(pyGilStateState);
     }
+}
+
+PyObject* cre_py_create_script_instance(Entity entity, const char* classPath, const char* className) {
+    SE_ASSERT(python_script_context != NULL);
+    python_script_context->on_create_instance(entity, classPath, className);
+    return cre_py_get_script_instance(entity);
 }
 
 PyObject* cre_py_get_script_instance(Entity entity) {

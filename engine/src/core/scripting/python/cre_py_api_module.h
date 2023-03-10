@@ -191,6 +191,12 @@ PyObject* cre_py_api_collision_handler_process_mouse_collisions(PyObject* self, 
 PyObject* cre_py_api_game_config_save(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_game_config_load(PyObject* self, PyObject* args, PyObject* kwargs);
 
+// Packed Scene
+PyObject* cre_py_api_packed_scene_create_instance(PyObject* self, PyObject* args, PyObject* kwargs);
+
+// Scene Utils
+PyObject* cre_py_api_scene_util_load_scene(PyObject* self, PyObject* args, PyObject* kwargs);
+
 
 // --- Module Methods Definitions --- //
 static struct PyMethodDef crePyApiMethods[] = {
@@ -778,7 +784,16 @@ static struct PyMethodDef crePyApiMethods[] = {
         "game_config_load", (PyCFunction) cre_py_api_game_config_load,
         METH_VARARGS | METH_KEYWORDS, "Loads a game config."
     },
-    // COLLISION HANDLER
+    // PACKED SCENE
+    {
+        "packed_scene_create_instance", (PyCFunction) cre_py_api_packed_scene_create_instance,
+        METH_VARARGS | METH_KEYWORDS, "Creates a node instance from a packed scene."
+    },
+    // SCENE UTIL
+    {
+        "scene_util_load_scene", (PyCFunction) cre_py_api_scene_util_load_scene,
+        METH_VARARGS | METH_KEYWORDS, "Loads a packed scene by path."
+    },
     { NULL, NULL, 0,NULL },
 };
 
@@ -863,6 +878,8 @@ static char* crePyApiClientStartKWList[] = {"host", "port", NULL};
 static char* crePyApiWorldSetTimeDilationKWList[] = {"time_dilation", NULL};
 
 static char* crePyApiCollisionHandlerProcessMouseCollisionsKWList[] = {"pos_offset_x", "pos_offset_y", "collision_size_w", "collision_size_h", NULL};
+
+static char* crePyApiPackedSceneCreateInstanceKWList[] = {"scene_cache_id", NULL};
 
 static char* crePyApiGameConfigSaveKWList[] = {"path", "data_json", "encryption_key", NULL};
 static char* crePyApiGameConfigLoadKWList[] = {"path", "encryption_key", NULL};

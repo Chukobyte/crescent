@@ -61,7 +61,7 @@ void cre_ecs_manager_enable_fps_display_entity(bool enabled) {
         component_manager_set_component(currentFpsEntity, ComponentDataIndex_SCRIPT, scriptComponent);
         // Update systems
         cre_ec_system_update_entity_signature_with_systems(currentFpsEntity);
-        cre_scene_manager_queue_entity_for_creation(fpsDisplayNode);
+        cre_scene_manager_queue_node_for_creation(fpsDisplayNode);
     } else if (isEnabled && !enabled) {
         SE_ASSERT_FMT(currentFpsEntity != NULL_ENTITY, "Current fps entity is a null entity!?");
         SE_ASSERT_FMT(fpsDisplayNode != NULL, "FPS Display Node is NULL!?");

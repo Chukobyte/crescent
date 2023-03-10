@@ -34,6 +34,7 @@ add_library(${PROJECT_NAME} STATIC
         src/core/engine_context.c
         src/core/node_event.c
         src/core/world.c
+        src/core/scene/scene_template_cache.c
         src/core/scene/scene_manager.c
         src/core/scene/scene_utils.c
         src/core/scripting/script_context.c

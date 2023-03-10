@@ -39,6 +39,7 @@
 #include "../../scene/scene_manager.h"
 #include "../../ecs/component/parallax_component.h"
 #include "../../math/curve_float_manager.h"
+#include "../../scene/scene_template_cache.h"
 
 #ifdef _MSC_VER
 #pragma warning(disable : 4996) // for strcpy
@@ -709,7 +710,7 @@ PyObject* cre_py_api_camera2D_unfollow_node(PyObject* self, PyObject* args, PyOb
 
 // World
 void py_mark_scene_nodes_time_dilation_flag_dirty(SceneTreeNode* node) {
-    NodeComponent* nodeComponent = (NodeComponent*) component_manager_get_component_unsafe(node->entity, ComponentDataIndex_NODE);
+    NodeComponent* nodeComponent = (NodeComponent*) component_manager_get_component_unchecked(node->entity, ComponentDataIndex_NODE);
     SE_ASSERT(nodeComponent != NULL);
     nodeComponent->timeDilation.cacheInvalid = true;
 }
@@ -792,48 +793,49 @@ PyObject* cre_py_api_node_new(PyObject* self, PyObject* args, PyObject* kwargs) 
     char* className;
     char* nodeType;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "sss", crePyApiNodeNewKWList, &classPath, &className, &nodeType)) {
-        const Entity newEntity = cre_ec_system_create_entity_uid();
+        SceneTreeNode* newNode = cre_scene_tree_create_tree_node(cre_ec_system_create_entity_uid(), NULL);
 
         // Setup script component first
         ScriptComponent* scriptComponent = script_component_create(classPath, className);
         scriptComponent->contextType = ScriptContextType_PYTHON;
-        component_manager_set_component(newEntity, ComponentDataIndex_SCRIPT, scriptComponent);
-        // Call create instance on script context
-        // TODO: Not a big fan of updating the scripting system signature this way, but I guess it will suffice for now...
-        cre_ec_system_update_entity_signature_with_systems(newEntity);
-        PyObject* entityInstance = cre_py_get_script_instance(newEntity);
-        SE_ASSERT_FMT(entityInstance != NULL, "Entity instance '%d' is NULL!", newEntity);
+        component_manager_set_component(newNode->entity, ComponentDataIndex_SCRIPT, scriptComponent);
+        // Call create instance on script context.
+        // Note: python script context checks to make sure the instance for an entity is only created once
+        PyObject* entityInstance = cre_py_create_script_instance(newNode->entity, classPath, className);
+        SE_ASSERT_FMT(entityInstance != NULL, "Entity instance '%d' is NULL!", newNode->entity);
 
         NodeComponent* nodeComponent = node_component_create();
         strcpy(nodeComponent->name, nodeType);
         nodeComponent->type = node_get_base_type(nodeType);
         SE_ASSERT_FMT(nodeComponent->type != NodeBaseType_INVALID, "Node '%s' has an invalid node type '%s'", nodeType, nodeType);
-        component_manager_set_component(newEntity, ComponentDataIndex_NODE, nodeComponent);
+        component_manager_set_component(newNode->entity, ComponentDataIndex_NODE, nodeComponent);
 
         const NodeBaseInheritanceType inheritanceType = node_get_type_inheritance(nodeComponent->type);
 
         if ((NodeBaseInheritanceType_NODE2D & inheritanceType) == NodeBaseInheritanceType_NODE2D) {
             Transform2DComponent* transform2DComponent = transform2d_component_create();
-            component_manager_set_component(newEntity, ComponentDataIndex_TRANSFORM_2D, transform2d_component_create());
+            component_manager_set_component(newNode->entity, ComponentDataIndex_TRANSFORM_2D, transform2d_component_create());
         }
         if ((NodeBaseInheritanceType_SPRITE & inheritanceType) == NodeBaseInheritanceType_SPRITE) {
-            component_manager_set_component(newEntity, ComponentDataIndex_SPRITE, sprite_component_create());
+            component_manager_set_component(newNode->entity, ComponentDataIndex_SPRITE, sprite_component_create());
         }
         if ((NodeBaseInheritanceType_ANIMATED_SPRITE & inheritanceType) == NodeBaseInheritanceType_ANIMATED_SPRITE) {
-            component_manager_set_component(newEntity, ComponentDataIndex_ANIMATED_SPRITE, animated_sprite_component_create());
+            component_manager_set_component(newNode->entity, ComponentDataIndex_ANIMATED_SPRITE, animated_sprite_component_create());
         }
         if ((NodeBaseInheritanceType_TEXT_LABEL & inheritanceType) == NodeBaseInheritanceType_TEXT_LABEL) {
-            component_manager_set_component(newEntity, ComponentDataIndex_TEXT_LABEL, text_label_component_create());
+            component_manager_set_component(newNode->entity, ComponentDataIndex_TEXT_LABEL, text_label_component_create());
         }
         if ((NodeBaseInheritanceType_COLLIDER2D & inheritanceType) == NodeBaseInheritanceType_COLLIDER2D) {
-            component_manager_set_component(newEntity, ComponentDataIndex_COLLIDER_2D, collider2d_component_create());
+            component_manager_set_component(newNode->entity, ComponentDataIndex_COLLIDER_2D, collider2d_component_create());
         }
         if ((NodeBaseInheritanceType_COLOR_RECT & inheritanceType) == NodeBaseInheritanceType_COLOR_RECT) {
-            component_manager_set_component(newEntity, ComponentDataIndex_COLOR_RECT, color_rect_component_create());
+            component_manager_set_component(newNode->entity, ComponentDataIndex_COLOR_RECT, color_rect_component_create());
         }
         if ((NodeBaseInheritanceType_PARALLAX & inheritanceType) == NodeBaseInheritanceType_PARALLAX) {
-            component_manager_set_component(newEntity, ComponentDataIndex_PARALLAX, parallax_component_create());
+            component_manager_set_component(newNode->entity, ComponentDataIndex_PARALLAX, parallax_component_create());
         }
+
+        cre_scene_manager_stage_child_node_to_be_added_later(newNode);
 
         Py_IncRef(entityInstance);
         return Py_BuildValue("O", entityInstance);
@@ -860,15 +862,7 @@ PyObject* cre_py_api_node_add_child(PyObject* self, PyObject* args, PyObject* kw
     Entity parentEntity;
     Entity entity;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "ii", crePyApiNodeAddChildKWList, &parentEntity, &entity)) {
-        SceneTreeNode* parentNode = cre_scene_manager_get_entity_tree_node(parentEntity);
-        SceneTreeNode* node = cre_scene_tree_create_tree_node(entity, parentNode);
-        if (parentNode != NULL) {
-            SE_ASSERT(parentNode->childCount + 1 < SCENE_TREE_NODE_MAX_CHILDREN);
-            parentNode->children[parentNode->childCount++] = node;
-        }
-
-        cre_ec_system_update_entity_signature_with_systems(entity);
-        cre_scene_manager_queue_entity_for_creation(node);
+        cre_scene_manager_add_node_as_child(entity, parentEntity);
         Py_RETURN_NONE;
     }
     return NULL;
@@ -1852,4 +1846,39 @@ PyObject* cre_py_api_game_config_load(PyObject* self, PyObject* args, PyObject* 
         return returnValue;
     }
     return Py_BuildValue("s", "{}");
+}
+
+// Packed Scene
+PyObject* cre_py_api_packed_scene_create_instance(PyObject* self, PyObject* args, PyObject* kwargs) {
+    CreSceneCacheId cacheId;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiPackedSceneCreateInstanceKWList, &cacheId)) {
+        JsonSceneNode* sceneNode = cre_scene_template_cache_get_scene(cacheId);
+        SceneTreeNode* rootNode = cre_scene_manager_stage_scene_nodes_from_json(sceneNode);
+        ScriptComponent* scriptComponent = (ScriptComponent*) component_manager_get_component_unchecked(rootNode->entity, ComponentDataIndex_SCRIPT);
+        if (!scriptComponent) {
+            // Create new script component if it doesn't exist
+            scriptComponent = script_component_create("crescent_api", node_get_base_type_string(sceneNode->type));
+            scriptComponent->contextType = ScriptContextType_PYTHON;
+            component_manager_set_component(rootNode->entity, ComponentDataIndex_SCRIPT, scriptComponent);
+        }
+        PyObject* entityInstance = cre_py_create_script_instance(rootNode->entity, scriptComponent->classPath, scriptComponent->className);
+
+        Py_IncRef(entityInstance);
+        return Py_BuildValue("O", entityInstance);
+    }
+    return NULL;
+}
+
+// Scene Util
+PyObject* cre_py_api_scene_util_load_scene(PyObject* self, PyObject* args, PyObject* kwargs) {
+    char* scenePath;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "s", crePyApiGenericPathKWList, &scenePath)) {
+        CreSceneCacheId cacheId = CRE_SCENE_CACHE_INVALID_ID;
+        char* sceneText = sf_asset_file_loader_read_file_contents_as_string(scenePath, NULL);
+        if (sceneText) {
+            cacheId = cre_scene_template_cache_load_scene(scenePath);
+        }
+        return Py_BuildValue("i", cacheId);
+    }
+    return NULL;
 }

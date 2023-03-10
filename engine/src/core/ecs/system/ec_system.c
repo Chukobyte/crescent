@@ -164,7 +164,7 @@ void cre_ec_system_entity_end(Entity entity) {
             entitySystemData.on_entity_end_systems[i]->on_entity_end_func(entity);
         }
     }
-    NodeComponent* nodeComponent = (NodeComponent*) component_manager_get_component_unsafe(entity, ComponentDataIndex_NODE);
+    NodeComponent* nodeComponent = (NodeComponent*) component_manager_get_component_unchecked(entity, ComponentDataIndex_NODE);
     if (nodeComponent != NULL) {
         // Note: Node events should not be created during this time
         se_event_notify_observers(&nodeComponent->onSceneTreeExit, &(SESubjectNotifyPayload) {
@@ -175,7 +175,7 @@ void cre_ec_system_entity_end(Entity entity) {
 
 void cre_ec_system_entity_entered_scene(Entity entity) {
     // Notify scene enter observers before calling it on systems
-    NodeComponent* nodeComponent = (NodeComponent*) component_manager_get_component_unsafe(entity, ComponentDataIndex_NODE);
+    NodeComponent* nodeComponent = (NodeComponent*) component_manager_get_component_unchecked(entity, ComponentDataIndex_NODE);
     if (nodeComponent != NULL) {
         se_event_notify_observers(&nodeComponent->onSceneTreeEnter, &(SESubjectNotifyPayload) {
             .data = &entity, .type = 0
