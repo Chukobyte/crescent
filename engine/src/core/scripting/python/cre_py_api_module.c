@@ -1876,7 +1876,6 @@ PyObject* cre_py_api_scene_util_load_scene(PyObject* self, PyObject* args, PyObj
         CreSceneCacheId cacheId = CRE_SCENE_CACHE_INVALID_ID;
         char* sceneText = sf_asset_file_loader_read_file_contents_as_string(scenePath, NULL);
         if (sceneText) {
-            // TODO: Create or get packed scene id
             cacheId = cre_scene_template_cache_load_scene(scenePath);
         }
         return Py_BuildValue("i", cacheId);

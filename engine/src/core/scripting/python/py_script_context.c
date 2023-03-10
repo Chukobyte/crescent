@@ -198,7 +198,6 @@ PyObject* cre_py_create_script_instance(Entity entity, const char* classPath, co
     return cre_py_get_script_instance(entity);
 }
 
-
 PyObject* cre_py_get_script_instance(Entity entity) {
     if (se_hash_map_has(pythonInstanceHashMap, &entity)) {
         return (PyObject*) *(PyObject**) se_hash_map_get(pythonInstanceHashMap, &entity);
