@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 
-#define MAX_ENTITIES 100
-#define NULL_ENTITY 4294967295
+#define CRE_MAX_ENTITIES 100
+#define CRE_NULL_ENTITY 4294967295
 
-typedef uint32_t Entity;
+typedef uint32_t CreEntity;

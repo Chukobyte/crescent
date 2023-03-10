@@ -7,8 +7,8 @@
 typedef struct CRENativeScriptClass {
     const char* path;
     const char* name;
-    Entity entity;
-    struct CRENativeScriptClass* (*create_new_instance_func)(Entity);
+    CreEntity entity;
+    struct CRENativeScriptClass* (*create_new_instance_func)(CreEntity);
     void (*on_start_func)(struct CRENativeScriptClass* nativeScriptClass);
     void (*on_end_func)(struct CRENativeScriptClass* nativeScriptClass);
     void (*update_func)(struct CRENativeScriptClass* nativeScriptClass, float deltaTime);
@@ -17,4 +17,4 @@ typedef struct CRENativeScriptClass {
     size_t class_instance_size;
 } CRENativeScriptClass;
 
-CRENativeScriptClass* cre_native_class_create_new(Entity entity, const char* path, const char* name);
+CRENativeScriptClass* cre_native_class_create_new(CreEntity entity, const char* path, const char* name);

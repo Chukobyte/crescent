@@ -37,7 +37,7 @@ typedef struct SceneTree {
     SceneTreeNode* root;
 } SceneTree;
 
-SceneTreeNode* cre_scene_tree_create_tree_node(Entity entity, SceneTreeNode* parent) {
+SceneTreeNode* cre_scene_tree_create_tree_node(CreEntity entity, SceneTreeNode* parent) {
     SceneTreeNode* treeNode = SE_MEM_ALLOCATE(SceneTreeNode);
     treeNode->entity = entity;
     treeNode->parent = parent;
@@ -60,12 +60,12 @@ Scene* cre_scene_create_scene(const char* scenePath) {
 }
 
 // --- Scene Manager --- //
-Entity entitiesQueuedForCreation[MAX_ENTITIES];
+CreEntity entitiesQueuedForCreation[CRE_MAX_ENTITIES];
 size_t entitiesQueuedForCreationSize = 0;
-Entity entitiesQueuedForDeletion[MAX_ENTITIES];
+CreEntity entitiesQueuedForDeletion[CRE_MAX_ENTITIES];
 size_t entitiesQueuedForDeletionSize = 0;
 
-SE_STATIC_ARRAY_CREATE(Entity, MAX_ENTITIES, entitiesToUnlinkParent);
+SE_STATIC_ARRAY_CREATE(CreEntity, CRE_MAX_ENTITIES, entitiesToUnlinkParent);
 
 Scene* activeScene = NULL;
 Scene* queuedSceneToChangeTo = NULL;
@@ -73,15 +73,15 @@ Scene* queuedSceneToChangeTo = NULL;
 static SEHashMap* entityToTreeNodeMap = NULL;
 static SEHashMap* entityToStagedTreeNodeMap = NULL;
 
-SceneTreeNode* cre_scene_manager_pop_staged_entity_tree_node(Entity entity);
+SceneTreeNode* cre_scene_manager_pop_staged_entity_tree_node(CreEntity entity);
 void cre_scene_manager_add_staged_node_children_to_scene(SceneTreeNode* treeNode);
 void cre_scene_manager_setup_scene_nodes_from_json(JsonSceneNode* jsonSceneNode);
 
 void cre_scene_manager_initialize() {
     SE_ASSERT(entityToTreeNodeMap == NULL);
     SE_ASSERT(entityToStagedTreeNodeMap == NULL);
-    entityToTreeNodeMap = se_hash_map_create(sizeof(Entity), sizeof(SceneTreeNode**), SE_HASH_MAP_MIN_CAPACITY);
-    entityToStagedTreeNodeMap = se_hash_map_create(sizeof(Entity), sizeof(SceneTreeNode**), SE_HASH_MAP_MIN_CAPACITY);
+    entityToTreeNodeMap = se_hash_map_create(sizeof(CreEntity), sizeof(SceneTreeNode**), SE_HASH_MAP_MIN_CAPACITY);
+    entityToStagedTreeNodeMap = se_hash_map_create(sizeof(CreEntity), sizeof(SceneTreeNode**), SE_HASH_MAP_MIN_CAPACITY);
     cre_scene_template_cache_initialize();
 }
 
@@ -112,7 +112,7 @@ void cre_scene_manager_process_queued_creation_entities() {
     entitiesQueuedForCreationSize = 0;
 }
 
-void cre_scene_manager_queue_entity_for_deletion(Entity entity) {
+void cre_scene_manager_queue_entity_for_deletion(CreEntity entity) {
     // Check if entity is already queued exit out early if so
     for (size_t i = 0; i < entitiesQueuedForDeletionSize; i++) {
         if (entitiesQueuedForDeletion[i] == entity) {
@@ -137,7 +137,7 @@ void cre_scene_manager_process_queued_deletion_entities() {
 
     for (size_t i = 0; i < entitiesQueuedForDeletionSize; i++) {
         // Remove entity from entity to tree node map
-        Entity entityToDelete = entitiesQueuedForDeletion[i];
+        CreEntity entityToDelete = entitiesQueuedForDeletion[i];
         SE_ASSERT_FMT(se_hash_map_has(entityToTreeNodeMap, &entityToDelete), "Entity '%d' not in tree node map!?", entityToDelete);
         SceneTreeNode* treeNode = (SceneTreeNode*) *(SceneTreeNode**) se_hash_map_get(entityToTreeNodeMap,
                                   &entityToDelete);
@@ -146,20 +146,22 @@ void cre_scene_manager_process_queued_deletion_entities() {
         // Remove entity from systems
         cre_ec_system_remove_entity_from_all_systems(entityToDelete);
         // Remove shader instance if applicable
-        SpriteComponent* spriteComponent = component_manager_get_component_unchecked(entityToDelete, ComponentDataIndex_SPRITE);
+        SpriteComponent* spriteComponent = cre_component_manager_get_component_unchecked(entityToDelete,
+                                           CreComponentDataIndex_SPRITE);
         if (spriteComponent != NULL && spriteComponent->shaderInstanceId != SE_SHADER_INSTANCE_INVALID_ID) {
             SEShaderInstance* shaderInstance = se_shader_cache_get_instance(spriteComponent->shaderInstanceId);
             se_shader_cache_remove_instance(spriteComponent->shaderInstanceId);
             SE_MEM_FREE(shaderInstance);
         }
-        AnimatedSpriteComponent* animatedSpriteComponent = component_manager_get_component_unchecked(entityToDelete, ComponentDataIndex_ANIMATED_SPRITE);
+        AnimatedSpriteComponent* animatedSpriteComponent = cre_component_manager_get_component_unchecked(entityToDelete,
+                CreComponentDataIndex_ANIMATED_SPRITE);
         if (animatedSpriteComponent != NULL && animatedSpriteComponent->shaderInstanceId != SE_SHADER_INSTANCE_INVALID_ID) {
             SEShaderInstance* shaderInstance = se_shader_cache_get_instance(animatedSpriteComponent->shaderInstanceId);
             se_shader_cache_remove_instance(animatedSpriteComponent->shaderInstanceId);
             SE_MEM_FREE(shaderInstance);
         }
         // Remove all components
-        component_manager_remove_all_components(entityToDelete);
+        cre_component_manager_remove_all_components(entityToDelete);
         // Return entity id to pool
         cre_ec_system_return_entity_uid(entityToDelete);
     }
@@ -222,7 +224,7 @@ SceneTreeNode* cre_scene_manager_get_active_scene_root() {
 }
 
 // TODO: Make function to update flags for all children
-SETransformModel2D* cre_scene_manager_get_scene_node_global_transform(Entity entity, Transform2DComponent* transform2DComponent) {
+SETransformModel2D* cre_scene_manager_get_scene_node_global_transform(CreEntity entity, Transform2DComponent* transform2DComponent) {
     SE_ASSERT_FMT(transform2DComponent != NULL, "Transform Model is NULL for entity '%d'", entity);
     if (transform2DComponent->isGlobalTransformDirty) {
         // Walk up scene to root node and calculate global transform
@@ -233,8 +235,8 @@ SETransformModel2D* cre_scene_manager_get_scene_node_global_transform(Entity ent
     return &transform2DComponent->globalTransform;
 }
 
-float cre_scene_manager_get_node_full_time_dilation(Entity entity) {
-    NodeComponent* nodeComp = component_manager_get_component_unchecked(entity, ComponentDataIndex_NODE);
+float cre_scene_manager_get_node_full_time_dilation(CreEntity entity) {
+    NodeComponent* nodeComp = cre_component_manager_get_component_unchecked(entity, CreComponentDataIndex_NODE);
     // The only thing in the scene without nodes current are native script entities
     if (nodeComp == NULL) {
         return cre_world_get_time_dilation();
@@ -247,7 +249,8 @@ float cre_scene_manager_get_node_full_time_dilation(Entity entity) {
     nodeComp->timeDilation.cachedFullValue = cre_world_get_time_dilation();
     const EntityArray entityArray = cre_scene_manager_get_self_and_parent_nodes(entity);
     for (size_t i = 0; (int) i < entityArray.entityCount; i++) {
-        NodeComponent* entityNodeComp = component_manager_get_component_unchecked(entityArray.entities[i], ComponentDataIndex_NODE);
+        NodeComponent* entityNodeComp = cre_component_manager_get_component_unchecked(entityArray.entities[i],
+                                        CreComponentDataIndex_NODE);
         SE_ASSERT_FMT(entityNodeComp != NULL, "node comp is NULL!");
         nodeComp->timeDilation.cachedFullValue *= entityNodeComp->timeDilation.value;
     }
@@ -255,14 +258,14 @@ float cre_scene_manager_get_node_full_time_dilation(Entity entity) {
     return nodeComp->timeDilation.cachedFullValue;
 }
 
-SceneTreeNode* cre_scene_manager_get_entity_tree_node(Entity entity) {
+SceneTreeNode* cre_scene_manager_get_entity_tree_node(CreEntity entity) {
     SE_ASSERT_FMT(se_hash_map_has(entityToTreeNodeMap, &entity), "Doesn't have entity '%d' in scene tree!", entity);
     SceneTreeNode* treeNode = (SceneTreeNode*) *(SceneTreeNode**) se_hash_map_get(entityToTreeNodeMap, &entity);
     SE_ASSERT_FMT(treeNode != NULL, "Failed to get tree node for entity '%d'", entity);
     return treeNode;
 }
 
-SceneTreeNode* cre_scene_manager_pop_staged_entity_tree_node(Entity entity) {
+SceneTreeNode* cre_scene_manager_pop_staged_entity_tree_node(CreEntity entity) {
     SE_ASSERT_FMT(se_hash_map_has(entityToStagedTreeNodeMap, &entity), "Doesn't have entity '%d' in scene tree!", entity);
     SceneTreeNode* treeNode = (SceneTreeNode*) *(SceneTreeNode**) se_hash_map_get(entityToStagedTreeNodeMap, &entity);
     SE_ASSERT_FMT(treeNode != NULL, "Failed to get tree node for entity '%d'", entity);
@@ -271,25 +274,26 @@ SceneTreeNode* cre_scene_manager_pop_staged_entity_tree_node(Entity entity) {
     return treeNode;
 }
 
-Entity cre_scene_manager_get_entity_child_by_name(Entity parent, const char* childName) {
+CreEntity cre_scene_manager_get_entity_child_by_name(CreEntity parent, const char* childName) {
     SceneTreeNode* parentNode = cre_scene_manager_get_entity_tree_node(parent);
     for (size_t childIndex = 0; childIndex < parentNode->childCount; childIndex++) {
-        const Entity childEntity = parentNode->children[childIndex]->entity;
-        if (component_manager_has_component(childEntity, ComponentDataIndex_NODE)) {
-            NodeComponent* childNodeComponent = component_manager_get_component(childEntity, ComponentDataIndex_NODE);
+        const CreEntity childEntity = parentNode->children[childIndex]->entity;
+        if (cre_component_manager_has_component(childEntity, CreComponentDataIndex_NODE)) {
+            NodeComponent* childNodeComponent = cre_component_manager_get_component(childEntity,
+                                                CreComponentDataIndex_NODE);
             if (strcmp(childNodeComponent->name, childName) == 0) {
                 return childEntity;
             }
         }
     }
-    return NULL_ENTITY;
+    return CRE_NULL_ENTITY;
 }
 
-bool cre_scene_manager_has_entity_tree_node(Entity entity) {
+bool cre_scene_manager_has_entity_tree_node(CreEntity entity) {
     return se_hash_map_has(entityToTreeNodeMap, &entity);
 }
 
-void cre_scene_manager_add_node_as_child(Entity childEntity, Entity parentEntity) {
+void cre_scene_manager_add_node_as_child(CreEntity childEntity, CreEntity parentEntity) {
     SceneTreeNode* parentNode = cre_scene_manager_get_entity_tree_node(parentEntity);
     SceneTreeNode* node = cre_scene_manager_pop_staged_entity_tree_node(childEntity);
     node->parent = parentNode;
@@ -312,7 +316,7 @@ void cre_scene_manager_add_staged_node_children_to_scene(SceneTreeNode* treeNode
     }
 }
 
-EntityArray cre_scene_manager_get_self_and_parent_nodes(Entity entity) {
+EntityArray cre_scene_manager_get_self_and_parent_nodes(CreEntity entity) {
     EntityArray combineModelResult = { .entityCount = 0 };
     combineModelResult.entities[combineModelResult.entityCount++] = entity;
 
@@ -325,17 +329,18 @@ EntityArray cre_scene_manager_get_self_and_parent_nodes(Entity entity) {
     return combineModelResult;
 }
 
-void cre_scene_manager_notify_all_on_transform_events(Entity entity, Transform2DComponent* transformComp) {
+void cre_scene_manager_notify_all_on_transform_events(CreEntity entity, Transform2DComponent* transformComp) {
     se_event_notify_observers(&transformComp->onTransformChanged, &(SESubjectNotifyPayload) {
-        .data = &(ComponentEntityUpdatePayload) {.entity = entity, .component = transformComp, .componentType = ComponentType_TRANSFORM_2D},
+        .data = &(CreComponentEntityUpdatePayload) {.entity = entity, .component = transformComp, .componentType = CreComponentType_TRANSFORM_2D},
         .type = 0
     });
     // Notify children by recursion
     if (cre_scene_manager_has_entity_tree_node(entity)) {
         SceneTreeNode* sceneTreeNode = cre_scene_manager_get_entity_tree_node(entity);
         for (size_t i = 0; i < sceneTreeNode->childCount; i++) {
-            const Entity childEntity = sceneTreeNode->children[i]->entity;
-            Transform2DComponent* childTransformComp = (Transform2DComponent*) component_manager_get_component_unchecked(childEntity, ComponentDataIndex_TRANSFORM_2D);
+            const CreEntity childEntity = sceneTreeNode->children[i]->entity;
+            Transform2DComponent* childTransformComp = (Transform2DComponent*) cre_component_manager_get_component_unchecked(
+                        childEntity, CreComponentDataIndex_TRANSFORM_2D);
             if (childTransformComp != NULL) {
                 cre_scene_manager_notify_all_on_transform_events(childEntity, childTransformComp);
             }
@@ -379,16 +384,16 @@ SceneTreeNode* cre_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneN
     strcpy(nodeComponent->name, jsonSceneNode->name);
     nodeComponent->type = jsonSceneNode->type;
     SE_ASSERT_FMT(nodeComponent->type != NodeBaseType_INVALID, "Node '%s' has an invalid node type '%d'", nodeComponent->name, nodeComponent->type);
-    component_manager_set_component(node->entity, ComponentDataIndex_NODE, nodeComponent);
+    cre_component_manager_set_component(node->entity, CreComponentDataIndex_NODE, nodeComponent);
     se_logger_info("Creating entity - name: '%s', entity_id = '%d', type: '%s'", nodeComponent->name, node->entity,
                    node_get_base_type_string(nodeComponent->type));
 
-    if (jsonSceneNode->components[ComponentDataIndex_TRANSFORM_2D] != NULL) {
-        Transform2DComponent* transform2DComponent = transform2d_component_copy((Transform2DComponent*) jsonSceneNode->components[ComponentDataIndex_TRANSFORM_2D]);
-        component_manager_set_component(node->entity, ComponentDataIndex_TRANSFORM_2D, transform2DComponent);
+    if (jsonSceneNode->components[CreComponentDataIndex_TRANSFORM_2D] != NULL) {
+        Transform2DComponent* transform2DComponent = transform2d_component_copy((Transform2DComponent*) jsonSceneNode->components[CreComponentDataIndex_TRANSFORM_2D]);
+        cre_component_manager_set_component(node->entity, CreComponentDataIndex_TRANSFORM_2D, transform2DComponent);
     }
-    if (jsonSceneNode->components[ComponentDataIndex_SPRITE] != NULL) {
-        SpriteComponent* spriteComponent = sprite_component_copy((SpriteComponent*) jsonSceneNode->components[ComponentDataIndex_SPRITE]);
+    if (jsonSceneNode->components[CreComponentDataIndex_SPRITE] != NULL) {
+        SpriteComponent* spriteComponent = sprite_component_copy((SpriteComponent*) jsonSceneNode->components[CreComponentDataIndex_SPRITE]);
         spriteComponent->texture = se_asset_manager_get_texture(jsonSceneNode->spriteTexturePath);
         if (jsonSceneNode->shaderInstanceShaderPath) {
             spriteComponent->shaderInstanceId = se_shader_cache_create_instance_and_add(jsonSceneNode->shaderInstanceShaderPath);
@@ -402,10 +407,10 @@ SceneTreeNode* cre_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneN
         } else {
             spriteComponent->shaderInstanceId = SE_SHADER_INSTANCE_INVALID_ID;
         }
-        component_manager_set_component(node->entity, ComponentDataIndex_SPRITE, spriteComponent);
+        cre_component_manager_set_component(node->entity, CreComponentDataIndex_SPRITE, spriteComponent);
     }
-    if (jsonSceneNode->components[ComponentDataIndex_ANIMATED_SPRITE] != NULL) {
-        AnimatedSpriteComponent* animatedSpriteComponent = animated_sprite_component_data_copy_to_animated_sprite((AnimatedSpriteComponentData*) jsonSceneNode->components[ComponentDataIndex_ANIMATED_SPRITE]);
+    if (jsonSceneNode->components[CreComponentDataIndex_ANIMATED_SPRITE] != NULL) {
+        AnimatedSpriteComponent* animatedSpriteComponent = animated_sprite_component_data_copy_to_animated_sprite((AnimatedSpriteComponentData*) jsonSceneNode->components[CreComponentDataIndex_ANIMATED_SPRITE]);
         if (jsonSceneNode->shaderInstanceShaderPath) {
             animatedSpriteComponent->shaderInstanceId = se_shader_cache_create_instance_and_add_from_raw(
                         jsonSceneNode->shaderInstanceVertexPath, jsonSceneNode->shaderInstanceFragmentPath);
@@ -419,33 +424,33 @@ SceneTreeNode* cre_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneN
         } else {
             animatedSpriteComponent->shaderInstanceId = SE_SHADER_INSTANCE_INVALID_ID;
         }
-        component_manager_set_component(node->entity, ComponentDataIndex_ANIMATED_SPRITE, animatedSpriteComponent);
+        cre_component_manager_set_component(node->entity, CreComponentDataIndex_ANIMATED_SPRITE, animatedSpriteComponent);
     }
-    if (jsonSceneNode->components[ComponentDataIndex_TEXT_LABEL] != NULL) {
-        TextLabelComponent* textLabelComponent = text_label_component_copy((TextLabelComponent*) jsonSceneNode->components[ComponentDataIndex_TEXT_LABEL]);
+    if (jsonSceneNode->components[CreComponentDataIndex_TEXT_LABEL] != NULL) {
+        TextLabelComponent* textLabelComponent = text_label_component_copy((TextLabelComponent*) jsonSceneNode->components[CreComponentDataIndex_TEXT_LABEL]);
         if (jsonSceneNode->fontUID != NULL) {
             textLabelComponent->font = se_asset_manager_get_font(jsonSceneNode->fontUID);
         } else {
             textLabelComponent->font = se_asset_manager_get_font(CRE_DEFAULT_FONT_ASSET.uid);
         }
-        component_manager_set_component(node->entity, ComponentDataIndex_TEXT_LABEL, textLabelComponent);
+        cre_component_manager_set_component(node->entity, CreComponentDataIndex_TEXT_LABEL, textLabelComponent);
     }
-    if (jsonSceneNode->components[ComponentDataIndex_SCRIPT] != NULL) {
-        ScriptComponent* scriptComponent = script_component_copy((ScriptComponent*) jsonSceneNode->components[ComponentDataIndex_SCRIPT]);
-        component_manager_set_component(node->entity, ComponentDataIndex_SCRIPT, scriptComponent);
+    if (jsonSceneNode->components[CreComponentDataIndex_SCRIPT] != NULL) {
+        ScriptComponent* scriptComponent = script_component_copy((ScriptComponent*) jsonSceneNode->components[CreComponentDataIndex_SCRIPT]);
+        cre_component_manager_set_component(node->entity, CreComponentDataIndex_SCRIPT, scriptComponent);
     }
-    if (jsonSceneNode->components[ComponentDataIndex_COLLIDER_2D] != NULL) {
-        Collider2DComponent* collider2DComponent = collider2d_component_copy((Collider2DComponent*) jsonSceneNode->components[ComponentDataIndex_COLLIDER_2D]);
-        component_manager_set_component(node->entity, ComponentDataIndex_COLLIDER_2D, collider2DComponent);
+    if (jsonSceneNode->components[CreComponentDataIndex_COLLIDER_2D] != NULL) {
+        Collider2DComponent* collider2DComponent = collider2d_component_copy((Collider2DComponent*) jsonSceneNode->components[CreComponentDataIndex_COLLIDER_2D]);
+        cre_component_manager_set_component(node->entity, CreComponentDataIndex_COLLIDER_2D, collider2DComponent);
     }
-    if (jsonSceneNode->components[ComponentDataIndex_COLOR_RECT] != NULL) {
+    if (jsonSceneNode->components[CreComponentDataIndex_COLOR_RECT] != NULL) {
         ColorRectComponent* colorSquareComponent = color_rect_component_copy(
-                    (ColorRectComponent*) jsonSceneNode->components[ComponentDataIndex_COLOR_RECT]);
-        component_manager_set_component(node->entity, ComponentDataIndex_COLOR_RECT, colorSquareComponent);
+                    (ColorRectComponent*) jsonSceneNode->components[CreComponentDataIndex_COLOR_RECT]);
+        cre_component_manager_set_component(node->entity, CreComponentDataIndex_COLOR_RECT, colorSquareComponent);
     }
-    if (jsonSceneNode->components[ComponentDataIndex_PARALLAX] != NULL) {
-        ParallaxComponent* parallaxComponent = parallax_component_copy((ParallaxComponent *) jsonSceneNode->components[ComponentDataIndex_PARALLAX]);
-        component_manager_set_component(node->entity, ComponentDataIndex_PARALLAX, parallaxComponent);
+    if (jsonSceneNode->components[CreComponentDataIndex_PARALLAX] != NULL) {
+        ParallaxComponent* parallaxComponent = parallax_component_copy((ParallaxComponent *) jsonSceneNode->components[CreComponentDataIndex_PARALLAX]);
+        cre_component_manager_set_component(node->entity, CreComponentDataIndex_PARALLAX, parallaxComponent);
     }
 
     if (!isStagedNodes) {

@@ -1,3 +1,3 @@
 #pragma once
 
-struct EntitySystem* font_rendering_ec_system_create();
+struct CreEntitySystem* cre_font_rendering_ec_system_create();

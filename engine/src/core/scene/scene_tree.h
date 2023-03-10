@@ -8,11 +8,11 @@ extern "C" {
 
 #include "../ecs/entity/entity.h"
 
-#define SCENE_TREE_NODE_MAX_CHILDREN (MAX_ENTITIES - 1)
+#define SCENE_TREE_NODE_MAX_CHILDREN (CRE_MAX_ENTITIES - 1)
 
 // Maintains parent child relationship between nodes
 typedef struct SceneTreeNode {
-    Entity entity;
+    CreEntity entity;
     struct SceneTreeNode* parent;
     struct SceneTreeNode* children[SCENE_TREE_NODE_MAX_CHILDREN];
     size_t childCount;

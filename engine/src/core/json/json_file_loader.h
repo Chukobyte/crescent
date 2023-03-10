@@ -20,9 +20,9 @@ typedef struct JsonSceneNode {
     char* externalNodeSource;
     bool fromExternalNodeSource;
     SEArrayList* tags;
-    void* components[MAX_COMPONENTS];
+    void* components[CRE_MAX_COMPONENTS];
     struct JsonSceneNode* parent;
-    struct JsonSceneNode* children[MAX_ENTITIES / 4]; // TODO: Change to an array list
+    struct JsonSceneNode* children[CRE_MAX_ENTITIES / 4]; // TODO: Change to an array list
     size_t childrenCount;
     char* spriteTexturePath;
     char* fontUID;

@@ -40,14 +40,15 @@ void se_socket_system_finalize() {
 }
 
 bool se_socket_send_message(SESocket* sock, const char* message) {
-#define RBE_SOCKET_SEND_BUFFER_SIZE 512
-    static char socket_output_buffer[RBE_SOCKET_SEND_BUFFER_SIZE];
+#define CRE_SOCKET_SEND_BUFFER_SIZE 512
+    static char socket_output_buffer[CRE_SOCKET_SEND_BUFFER_SIZE];
     strcpy(socket_output_buffer, message);
     if (sendto(sock->sock, socket_output_buffer, (int) strlen(socket_output_buffer), 0, (struct sockaddr*) &sock->si_other, sock->size) == SOCKET_ERROR) {
         se_logger_error("sendto() failed with error code : %d", se_socket_get_last_error());
         return false;
     }
     return true;
+#undef CRE_SOCKET_SEND_BUFFER_SIZE
 }
 
 bool se_socket_receive_data(SESocket* sock, char* buffer, int buffer_size) {

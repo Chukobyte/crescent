@@ -14,24 +14,24 @@
 
 //--- RBE Script Callback ---//
 typedef struct RBEScriptCallback {
-    Entity entity;
+    CreEntity entity;
     PyObject* callback_func;
 } RBEScriptCallback;
 
-void py_on_entity_subscribe_to_network_callback(Entity entity, PyObject* callback_func, const char* id);
+void py_on_entity_subscribe_to_network_callback(CreEntity entity, PyObject* callback_func, const char* id);
 
 static RBEScriptCallback* current_network_script_callback = NULL;
 static RBEScriptCallback* current_network_server_client_connected_script_callback = NULL;
 
 //--- Script Context Interface ---//
-void py_on_create_instance(Entity entity, const char* classPath, const char* className);
-void py_on_delete_instance(Entity entity);
-void py_on_start(Entity entity);
+void py_on_create_instance(CreEntity entity, const char* classPath, const char* className);
+void py_on_delete_instance(CreEntity entity);
+void py_on_start(CreEntity entity);
 void py_on_pre_update_all();
 void py_on_post_update_all();
-void py_on_update_instance(Entity entity, float deltaTime);
-void py_on_physics_update_instance(Entity entity, float deltaTime);
-void py_on_end(Entity entity);
+void py_on_update_instance(CreEntity entity, float deltaTime);
+void py_on_physics_update_instance(CreEntity entity, float deltaTime);
+void py_on_end(CreEntity entity);
 void py_on_network_callback(const char* message);
 
 SEHashMap* pythonInstanceHashMap = NULL;
@@ -52,7 +52,7 @@ CREScriptContext* cre_py_create_script_context() {
     scriptContext->on_network_callback = py_on_network_callback;
     scriptContext->on_entity_subscribe_to_network_callback = py_on_entity_subscribe_to_network_callback;
 
-    pythonInstanceHashMap = se_hash_map_create(sizeof(Entity), sizeof(PyObject **), 16);
+    pythonInstanceHashMap = se_hash_map_create(sizeof(CreEntity), sizeof(PyObject **), 16);
     python_script_context = scriptContext;
     return scriptContext;
 }
@@ -61,7 +61,7 @@ CREScriptContext* cre_py_get_script_context() {
     return python_script_context;
 }
 
-void py_on_create_instance(Entity entity, const char* classPath, const char* className) {
+void py_on_create_instance(CreEntity entity, const char* classPath, const char* className) {
     if (se_hash_map_has(pythonInstanceHashMap, &entity)) {
         se_logger_warn("Won't create entity '%d' with class_path '%s' and class_name '%s' as they already exist!", entity, classPath, className);
         return;
@@ -70,7 +70,7 @@ void py_on_create_instance(Entity entity, const char* classPath, const char* cla
     se_hash_map_add(pythonInstanceHashMap, &entity, &pScriptInstance);
 }
 
-void py_on_delete_instance(Entity entity) {
+void py_on_delete_instance(CreEntity entity) {
     SE_ASSERT_FMT(se_hash_map_has(pythonInstanceHashMap, &entity), "Doesn't have entity '%d'", entity);
     PyObject* pScriptInstance = (PyObject*) *(PyObject**) se_hash_map_get(pythonInstanceHashMap, &entity);
     // Remove from update arrays
@@ -79,7 +79,7 @@ void py_on_delete_instance(Entity entity) {
             python_script_context->updateEntities,
             &python_script_context->updateEntityCount,
             entity,
-            NULL_ENTITY
+            CRE_NULL_ENTITY
         );
     }
     if (PyObject_HasAttrString(pScriptInstance, "_physics_update")) {
@@ -87,7 +87,7 @@ void py_on_delete_instance(Entity entity) {
             python_script_context->physicsUpdateEntities,
             &python_script_context->physicsUpdateEntityCount,
             entity,
-            NULL_ENTITY
+            CRE_NULL_ENTITY
         );
     }
 
@@ -101,7 +101,7 @@ void py_on_delete_instance(Entity entity) {
     }
 }
 
-void py_on_start(Entity entity) {
+void py_on_start(CreEntity entity) {
     SE_ASSERT_FMT(se_hash_map_has(pythonInstanceHashMap, &entity), "Tried to call py on_start to non existent python instance entity '%d'", entity);
     PyObject* pScriptInstance = (PyObject*) *(PyObject**) se_hash_map_get(pythonInstanceHashMap, &entity);
     SE_ASSERT(pScriptInstance != NULL);
@@ -130,17 +130,17 @@ void py_on_post_update_all() {
 }
 
 // TODO: Can get from an array instead of getting from a hashmap if performance becomes a problem.
-void py_on_update_instance(Entity entity, float deltaTime) {
+void py_on_update_instance(CreEntity entity, float deltaTime) {
     PyObject* pScriptInstance = (PyObject*) *(PyObject**) se_hash_map_get(pythonInstanceHashMap, &entity);
     PyObject_CallMethod(pScriptInstance, "_update", "(f)", deltaTime);
 }
 
-void py_on_physics_update_instance(Entity entity, float deltaTime) {
+void py_on_physics_update_instance(CreEntity entity, float deltaTime) {
     PyObject* pScriptInstance = (PyObject*) *(PyObject**) se_hash_map_get(pythonInstanceHashMap, &entity);
     PyObject_CallMethod(pScriptInstance, "_physics_update", "(f)", deltaTime);
 }
 
-void py_on_end(Entity entity) {
+void py_on_end(CreEntity entity) {
     SE_ASSERT(se_hash_map_has(pythonInstanceHashMap, &entity));
     PyObject* pScriptInstance = (PyObject*) *(PyObject**) se_hash_map_get(pythonInstanceHashMap, &entity);
     SE_ASSERT(pScriptInstance != NULL);
@@ -163,7 +163,7 @@ void py_on_network_callback(const char* message) {
 }
 
 // Entity Network Callback
-void py_on_entity_subscribe_to_network_callback(Entity entity, PyObject* callback_func, const char* id) {
+void py_on_entity_subscribe_to_network_callback(CreEntity entity, PyObject* callback_func, const char* id) {
     if (strcmp(id, "poll") == 0) {
         if (current_network_script_callback == NULL) {
             current_network_script_callback = SE_MEM_ALLOCATE(RBEScriptCallback);
@@ -192,13 +192,13 @@ void cre_py_on_network_udp_server_client_connected() {
     }
 }
 
-PyObject* cre_py_create_script_instance(Entity entity, const char* classPath, const char* className) {
+PyObject* cre_py_create_script_instance(CreEntity entity, const char* classPath, const char* className) {
     SE_ASSERT(python_script_context != NULL);
     python_script_context->on_create_instance(entity, classPath, className);
     return cre_py_get_script_instance(entity);
 }
 
-PyObject* cre_py_get_script_instance(Entity entity) {
+PyObject* cre_py_get_script_instance(CreEntity entity) {
     if (se_hash_map_has(pythonInstanceHashMap, &entity)) {
         return (PyObject*) *(PyObject**) se_hash_map_get(pythonInstanceHashMap, &entity);
     }

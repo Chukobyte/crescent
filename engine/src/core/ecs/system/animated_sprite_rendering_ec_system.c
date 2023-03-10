@@ -16,15 +16,15 @@
 #include "../../camera/camera_manager.h"
 #include "../../scene/scene_utils.h"
 
-EntitySystem* animatedSpriteRenderingSystem = NULL;
+CreEntitySystem* animatedSpriteRenderingSystem = NULL;
 
 void animated_sprite_rendering_system_render();
 
-EntitySystem* animated_sprite_rendering_ec_system_create() {
+CreEntitySystem* cre_animated_sprite_rendering_ec_system_create() {
     animatedSpriteRenderingSystem = cre_ec_system_create();
     animatedSpriteRenderingSystem->name = se_strdup("Animated Sprite Rendering");
     animatedSpriteRenderingSystem->render_func = animated_sprite_rendering_system_render;
-    animatedSpriteRenderingSystem->component_signature = ComponentType_TRANSFORM_2D | ComponentType_ANIMATED_SPRITE;
+    animatedSpriteRenderingSystem->component_signature = CreComponentType_TRANSFORM_2D | CreComponentType_ANIMATED_SPRITE;
     return animatedSpriteRenderingSystem;
 }
 
@@ -33,10 +33,12 @@ void animated_sprite_rendering_system_render() {
     const CRECamera2D* defaultCamera = cre_camera_manager_get_default_camera();
     const int currentTickTime = (int) SDL_GetTicks();
     for (size_t i = 0; i < animatedSpriteRenderingSystem->entity_count; i++) {
-        const Entity entity = animatedSpriteRenderingSystem->entities[i];
-        Transform2DComponent* spriteTransformComp = (Transform2DComponent*) component_manager_get_component(entity, ComponentDataIndex_TRANSFORM_2D);
-        AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) component_manager_get_component(entity, ComponentDataIndex_ANIMATED_SPRITE);
-        AnimationFrame currentFrame = animatedSpriteComponent->currentAnimation.animationFrames[animatedSpriteComponent->currentAnimation.currentFrame];
+        const CreEntity entity = animatedSpriteRenderingSystem->entities[i];
+        Transform2DComponent* spriteTransformComp = (Transform2DComponent*) cre_component_manager_get_component(entity,
+                CreComponentDataIndex_TRANSFORM_2D);
+        AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) cre_component_manager_get_component(
+                    entity, CreComponentDataIndex_ANIMATED_SPRITE);
+        CreAnimationFrame currentFrame = animatedSpriteComponent->currentAnimation.animationFrames[animatedSpriteComponent->currentAnimation.currentFrame];
         if (animatedSpriteComponent->isPlaying) {
             const float entityTimeDilation = cre_scene_manager_get_node_full_time_dilation(entity);
             const int tickRate = (int) ((((float) currentTickTime - (float) animatedSpriteComponent->startAnimationTickTime) / (float) animatedSpriteComponent->currentAnimation.speed) * entityTimeDilation);
