@@ -99,7 +99,8 @@ ImGuiHelper::Window OpenedProjectUI::Windows::GetSceneViewWindow() {
                     .color = color,
                     .flipH = flipH,
                     .flipV = flipV,
-                    .globalTransform = &globalTransforms[index]
+                    .globalTransform = &globalTransforms[index],
+                    .zIndex = globalTransforms[index].zIndex
                 };
             };
             static SceneManager* sceneManager = SceneManager::Get();
@@ -127,7 +128,8 @@ ImGuiHelper::Window OpenedProjectUI::Windows::GetSceneViewWindow() {
                                 .text = textLabelComp->text,
                                 .position = globalTransform.position,
                                 .scale = globalTransform.scale.x,
-                                .color = textLabelComp->color
+                                .color = textLabelComp->color,
+                                .zIndex = globalTransform.zIndex
                             };
                             fontRenderTargets.emplace_back(renderTarget);
                         } else {
