@@ -18,6 +18,8 @@ static GLuint screenVBO = -1;
 
 static int screenTextureWidth = 800;
 static int screenTextureHeight = 600;
+static int resolutionWidth = 800;
+static int resolutionHeight = 600;
 
 bool recreate_frame_buffer_object() {
     // Create Framebuffer
@@ -44,9 +46,11 @@ bool recreate_frame_buffer_object() {
     return success;
 }
 
-bool se_frame_buffer_initialize(int inWindowWidth, int inWindowHeight) {
+bool se_frame_buffer_initialize(int inWindowWidth, int inWindowHeight, int inResolutionWidth, int inResolutionHeight) {
     screenTextureWidth = inWindowWidth;
     screenTextureHeight = inWindowHeight;
+    resolutionWidth = inResolutionWidth;
+    resolutionHeight = inResolutionHeight;
     // VAO & VBO
     GLfloat vertices[] = {
         // pos      // tex coords

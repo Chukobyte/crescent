@@ -6,7 +6,7 @@ extern "C" {
 
 #include <stdbool.h>
 
-bool se_frame_buffer_initialize();
+bool se_frame_buffer_initialize(int inWindowWidth, int inWindowHeight, int inResolutionWidth, int inResolutionHeight);
 void se_frame_buffer_finalize();
 void se_frame_buffer_bind();
 void se_frame_buffer_unbind();

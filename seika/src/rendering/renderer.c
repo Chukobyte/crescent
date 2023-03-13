@@ -106,7 +106,7 @@ void se_renderer_initialize(int inWindowWidth, int inWindowHeight, int inResolut
     se_shader_cache_initialize();
 #ifdef SE_RENDER_TO_FRAMEBUFFER
     // Initialize framebuffer
-    SE_ASSERT_FMT(se_frame_buffer_initialize(inWindowWidth, inWindowHeight), "Framebuffer didn't initialize!");
+    SE_ASSERT_FMT(se_frame_buffer_initialize(inWindowWidth, inWindowHeight, inResolutionWidth, inResolutionHeight), "Framebuffer didn't initialize!");
 #endif
     // Set initial data for render layer
     for (size_t i = 0; i < SE_RENDERER_MAX_Z_INDEX; i++) {
