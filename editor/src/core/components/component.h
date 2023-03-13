@@ -216,7 +216,7 @@ struct Collider2DComp : public EditorComponent {
           color(collider2DComponent->color) {}
 
     SESize2D extents = { .w = 0.0f, .h = 0.0f };
-    SEColor color = { .r = 0.0f, .g = 0.0f, .b = 0.8f, .a = 1.0f };
+    SEColor color = { .r = 0.0f, .g = 0.0f, .b = 0.8f, .a = 0.8f };
 };
 
 struct ColorRectComp : public EditorComponent {
