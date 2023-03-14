@@ -28,6 +28,12 @@ typedef struct SESize2D {
     float h;
 } SESize2D;
 
+// --- SESize2Di --- //
+typedef struct SESize2Di {
+    int w;
+    int h;
+} SESize2Di;
+
 // --- SERect2 --- //
 typedef struct SERect2 {
     float x;
