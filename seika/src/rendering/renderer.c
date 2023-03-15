@@ -224,6 +224,9 @@ void se_renderer_process_and_flush_batches(const SEColor* backgroundColor) {
     glClearColor(backgroundColor->r, backgroundColor->g, backgroundColor->b, backgroundColor->a);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
+    FrameBufferViewportData* viewportData = se_frame_buffer_get_cached_viewport_data();
+    glViewport(0, 0, viewportData->size.w, viewportData->size.h);
+
     se_renderer_flush_batches();
 
 #ifdef SE_RENDER_TO_FRAMEBUFFER
@@ -232,7 +235,7 @@ void se_renderer_process_and_flush_batches(const SEColor* backgroundColor) {
     // Clear screen texture background
     static const SEColor screenBackgroundColor = { 0.0f, 0.0f, 0.0f, 1.0f };
     glClearColor(screenBackgroundColor.r, screenBackgroundColor.g, screenBackgroundColor.b, screenBackgroundColor.a);
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     // Draw screen texture from framebuffer
     SEShaderInstance* screenShaderInstance = se_frame_buffer_get_screen_shader();
     se_shader_use(screenShaderInstance->shader);
@@ -241,8 +244,8 @@ void se_renderer_process_and_flush_batches(const SEColor* backgroundColor) {
     renderer_set_shader_instance_params(screenShaderInstance);
 
     glBindVertexArray(se_frame_buffer_get_quad_vao());
-    // Update vertices
-    se_frame_buffer_update_vertices_buffer_data(true);
+    glViewport(viewportData->position.x, viewportData->position.y, viewportData->size.w, viewportData->size.h);
+
     glBindTexture(GL_TEXTURE_2D, se_frame_buffer_get_color_buffer_texture());	// use the color attachment texture as the texture of the quad plane
     glDrawArrays(GL_TRIANGLES, 0, 6);
 #endif
