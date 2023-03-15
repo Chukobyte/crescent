@@ -143,10 +143,10 @@ void sf_process_inputs() {
             case SDL_WINDOWEVENT_SIZE_CHANGED: {
                 const Sint32 windowWidth = event.window.data1;
                 const Sint32 windowHeight = event.window.data2;
-                se_renderer_update_window_size((float) windowWidth, (float) windowHeight);
-                const FrameBufferViewportData data = se_frame_buffer_get_viewport_data();
+//                se_renderer_update_window_size((float) windowWidth, (float) windowHeight);
+                const FrameBufferViewportData data = se_frame_buffer_generate_viewport_data(windowWidth, windowHeight);
                 glViewport(data.position.x, data.position.y, data.size.w, data.size.h);
-                se_renderer_update_window_size((float) data.size.w, (float) data.size.h);
+                se_renderer_update_window_size((float)data.size.w, (float)data.size.h);
 //                glViewport(0, 0, windowWidth, windowHeight);
                 break;
             }

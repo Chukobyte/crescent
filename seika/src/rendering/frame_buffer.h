@@ -25,14 +25,7 @@ typedef struct FrameBufferViewportData {
     SESize2Di size;
 } FrameBufferViewportData;
 
-FrameBufferViewportData se_frame_buffer_get_viewport_data();
-
-typedef struct FrameBufferCreationData {
-    SESize2Di size;
-    SEVector2 offset;
-} FrameBufferCreationData;
-
-FrameBufferCreationData get_frame_buffer_size_data();
+FrameBufferViewportData se_frame_buffer_generate_viewport_data(int windowWidth, int windowHeight);
 
 #ifdef __cplusplus
 }
