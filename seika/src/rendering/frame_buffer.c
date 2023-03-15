@@ -133,7 +133,6 @@ bool se_frame_buffer_initialize(int inWindowWidth, int inWindowHeight, int inRes
         .shader = screenShader, .paramMap = se_string_hash_map_create_default_capacity()
     };
     se_frame_buffer_set_screen_shader(&defaultScreenShader);
-    verticesDataDirty = true;
     se_frame_buffer_generate_viewport_data(inWindowWidth, inWindowHeight);
 
     hasBeenInitialized = true;
@@ -167,7 +166,6 @@ void se_frame_buffer_resize_texture(int newWidth, int newHeight) {
     screenTextureWidth = newWidth;
     screenTextureHeight = newHeight;
     recreate_frame_buffer_object();
-    verticesDataDirty = true;
 }
 
 SEShaderInstance* se_frame_buffer_get_screen_shader() {
