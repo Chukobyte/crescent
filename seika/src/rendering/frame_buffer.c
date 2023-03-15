@@ -25,11 +25,11 @@ static bool verticesDataDirty = false;
 static bool maintainAspectRatio = true;
 
 FrameBufferViewportData se_frame_buffer_generate_viewport_data(int windowWidth, int windowHeight) {
-    int framebufferWidth = resolutionWidth; // Original framebuffer width
-    int framebufferHeight = resolutionHeight; // Original framebuffer height
+    int framebufferWidth = windowWidth; // Original framebuffer width
+    int framebufferHeight = windowHeight; // Original framebuffer height
 
     // Calculate the aspect ratio of the game's resolution
-    const float game_aspect_ratio = (float)framebufferWidth / (float)framebufferHeight;
+    const float game_aspect_ratio = (float)resolutionWidth / (float)resolutionHeight;
 
     // Calculate the aspect ratio of the window
     const float window_aspect_ratio = (float)windowWidth / (float)windowHeight;
@@ -42,9 +42,6 @@ FrameBufferViewportData se_frame_buffer_generate_viewport_data(int windowWidth, 
             framebufferHeight = windowHeight;
             framebufferWidth = (int)(windowHeight * game_aspect_ratio);
         }
-    } else {
-        framebufferWidth = windowWidth;
-        framebufferHeight = windowHeight;
     }
 
 
@@ -91,14 +88,15 @@ void se_frame_buffer_update_vertices_buffer_data(bool bindBuffer) {
     if (!verticesDataDirty) {
         return;
     }
+    const SEVector2 viewport = { .x = (float)cachedViewportData.position.x, .y = (float)cachedViewportData.position.y };
+    const SESize2D size = { .w = (float)cachedViewportData.size.w, .h = (float)cachedViewportData.size.h };
     // Calculate texture coords
-    // S
-    const GLfloat sMin = ((float)cachedViewportData.position.x + 0.5f) / (float)cachedViewportData.size.w;
-    const GLfloat sMax = ((float)cachedViewportData.position.x + (float)cachedViewportData.size.w - 0.5f) / (float)cachedViewportData.size.w;
-    // T
-    const GLfloat tMin = ((float)cachedViewportData.position.y + 0.5f) / (float)cachedViewportData.size.h;
-    const GLfloat tMax = ((float)cachedViewportData.position.y + (float)cachedViewportData.size.h - 0.5f) / (float)cachedViewportData.size.h;
+    const GLfloat sMin = (viewport.x) / size.w;
+    const GLfloat sMax = (viewport.x + size.w) / size.w;
+    const GLfloat tMin = (viewport.y) / size.h;
+    const GLfloat tMax = (viewport.y + size.h) / size.h;
 
+    // Fills in the viewport but doesn't show entire screen texture
     GLfloat vertices[] = {
         // pos      // tex coords
         -1.0f, 1.0f, sMin, tMax,
