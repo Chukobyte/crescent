@@ -20,7 +20,7 @@ static int screenTextureWidth = 800;
 static int screenTextureHeight = 600;
 static int resolutionWidth = 800;
 static int resolutionHeight = 600;
-static FrameBufferViewportData cachedViewportData = { .position = { .x = 0, .y = 0 }, .size = { .w = 800, .h = 600 } };
+static FrameBufferViewportData cachedViewportData = { .position = { .x = 0, .y = 0 }, .size = { .w = 800, .h = 600 }, .window = { .w = 800, .h = 600 } };
 static bool verticesDataDirty = false;
 static bool maintainAspectRatio = true;
 
@@ -52,8 +52,11 @@ FrameBufferViewportData se_frame_buffer_generate_viewport_data(int windowWidth, 
     const int viewportHeight = framebufferHeight;
 
     const FrameBufferViewportData data = {
-        .position = { .x = viewportX, .y = viewportY },
-        .size = { .w = viewportWidth, .h = viewportHeight }
+        // TODO: Setting viewport position to something other than (0, 0) is not working for the renderer screen texture...
+//        .position = { .x = viewportX, .y = viewportY },
+        .position = { .x = 0, .y = 0 },
+        .size = { .w = viewportWidth, .h = viewportHeight },
+        .window = { .w = windowWidth, .h = windowHeight }
     };
     cachedViewportData = data;
     return data;
@@ -91,10 +94,15 @@ void se_frame_buffer_update_vertices_buffer_data(bool bindBuffer) {
     const SEVector2 viewport = { .x = (float)cachedViewportData.position.x, .y = (float)cachedViewportData.position.y };
     const SESize2D size = { .w = (float)cachedViewportData.size.w, .h = (float)cachedViewportData.size.h };
     // Calculate texture coords
-    const GLfloat sMin = (viewport.x) / size.w;
-    const GLfloat sMax = (viewport.x + size.w) / size.w;
-    const GLfloat tMin = (viewport.y) / size.h;
-    const GLfloat tMax = (viewport.y + size.h) / size.h;
+//    const GLfloat sMin = (viewport.x) / size.w;
+//    const GLfloat sMax = (viewport.x + size.w) / size.w;
+//    const GLfloat tMin = (viewport.y) / size.h;
+//    const GLfloat tMax = (viewport.y + size.h) / size.h;
+
+    const GLfloat sMin = 0.0f;
+    const GLfloat sMax = 1.0f;
+    const GLfloat tMin = 0.0f;
+    const GLfloat tMax = 1.0f;
 
     // Fills in the viewport but doesn't show entire screen texture
     GLfloat vertices[] = {
@@ -149,6 +157,7 @@ bool se_frame_buffer_initialize(int inWindowWidth, int inWindowHeight, int inRes
     };
     se_frame_buffer_set_screen_shader(&defaultScreenShader);
     verticesDataDirty = true;
+    se_frame_buffer_generate_viewport_data(inWindowWidth, inWindowHeight);
 
     hasBeenInitialized = true;
     return success;

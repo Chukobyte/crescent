@@ -23,6 +23,7 @@ void se_frame_buffer_reset_to_default_screen_shader();
 typedef struct FrameBufferViewportData {
     SEVector2i position;
     SESize2Di size;
+    SESize2Di window;
 } FrameBufferViewportData;
 
 FrameBufferViewportData se_frame_buffer_generate_viewport_data(int windowWidth, int windowHeight);
