@@ -27,6 +27,8 @@ typedef struct FrameBufferViewportData {
 
 FrameBufferViewportData se_frame_buffer_generate_viewport_data(int windowWidth, int windowHeight);
 
+void se_frame_buffer_update_vertices_buffer_data(bool bindBuffer);
+
 #ifdef __cplusplus
 }
 #endif

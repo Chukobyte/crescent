@@ -241,6 +241,8 @@ void se_renderer_process_and_flush_batches(const SEColor* backgroundColor) {
     renderer_set_shader_instance_params(screenShaderInstance);
 
     glBindVertexArray(se_frame_buffer_get_quad_vao());
+    // Update vertices
+    se_frame_buffer_update_vertices_buffer_data(true);
     glBindTexture(GL_TEXTURE_2D, se_frame_buffer_get_color_buffer_texture());	// use the color attachment texture as the texture of the quad plane
     glDrawArrays(GL_TRIANGLES, 0, 6);
 #endif

@@ -21,7 +21,8 @@ static int screenTextureHeight = 600;
 static int resolutionWidth = 800;
 static int resolutionHeight = 600;
 static FrameBufferViewportData cachedViewportData = { .position = { .x = 0, .y = 0 }, .size = { .w = 800, .h = 600 } };
-static bool maintainAspectRatio = false;
+static bool verticesDataDirty = false;
+static bool maintainAspectRatio = true;
 
 FrameBufferViewportData se_frame_buffer_generate_viewport_data(int windowWidth, int windowHeight) {
     int framebufferWidth = resolutionWidth; // Original framebuffer width
@@ -86,29 +87,50 @@ bool recreate_frame_buffer_object() {
     return success;
 }
 
+void se_frame_buffer_update_vertices_buffer_data(bool bindBuffer) {
+    if (!verticesDataDirty) {
+        return;
+    }
+    // Calculate texture coords
+    // S
+    const GLfloat sMin = ((float)cachedViewportData.position.x + 0.5f) / (float)cachedViewportData.size.w;
+    const GLfloat sMax = ((float)cachedViewportData.position.x + (float)cachedViewportData.size.w - 0.5f) / (float)cachedViewportData.size.w;
+    // T
+    const GLfloat tMin = ((float)cachedViewportData.position.y + 0.5f) / (float)cachedViewportData.size.h;
+    const GLfloat tMax = ((float)cachedViewportData.position.y + (float)cachedViewportData.size.h - 0.5f) / (float)cachedViewportData.size.h;
+
+    GLfloat vertices[] = {
+        // pos      // tex coords
+        -1.0f, 1.0f, sMin, tMax,
+            -1.0f, -1.0f, sMin, tMin,
+            1.0f, -1.0f, sMax, tMin,
+
+            -1.0f, 1.0f, sMin, tMax,
+            1.0f, -1.0f, sMax, tMin,
+            1.0f, 1.0f, sMax, tMax
+        };
+    if (bindBuffer) {
+        glBindBuffer(GL_ARRAY_BUFFER, screenVBO);
+    }
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    if (bindBuffer) {
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+    }
+    verticesDataDirty = false;
+}
+
 bool se_frame_buffer_initialize(int inWindowWidth, int inWindowHeight, int inResolutionWidth, int inResolutionHeight) {
     screenTextureWidth = inWindowWidth;
     screenTextureHeight = inWindowHeight;
     resolutionWidth = inResolutionWidth;
     resolutionHeight = inResolutionHeight;
     // VAO & VBO
-    GLfloat vertices[] = {
-        // pos      // tex coords
-        -1.0f, 1.0f, 0.0f, 1.0f,
-            -1.0f, -1.0f, 0.0f, 0.0f,
-            1.0f, -1.0f, 1.0f, 0.0f,
-
-            -1.0f, 1.0f, 0.0f, 1.0f,
-            1.0f, -1.0f, 1.0f, 0.0f,
-            1.0f, 1.0f, 1.0f, 1.0f
-        };
-
     // Initialize render data
     glGenVertexArrays(1, &screenVAO);
     glGenBuffers(1, &screenVBO);
     glBindVertexArray(screenVAO);
     glBindBuffer(GL_ARRAY_BUFFER, screenVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    se_frame_buffer_update_vertices_buffer_data(false);
     // position attribute
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*) NULL);
@@ -128,6 +150,7 @@ bool se_frame_buffer_initialize(int inWindowWidth, int inWindowHeight, int inRes
         .shader = screenShader, .paramMap = se_string_hash_map_create_default_capacity()
     };
     se_frame_buffer_set_screen_shader(&defaultScreenShader);
+    verticesDataDirty = true;
 
     hasBeenInitialized = true;
     return success;
@@ -160,6 +183,7 @@ void se_frame_buffer_resize_texture(int newWidth, int newHeight) {
     screenTextureWidth = newWidth;
     screenTextureHeight = newHeight;
     recreate_frame_buffer_object();
+    verticesDataDirty = true;
 }
 
 SEShaderInstance* se_frame_buffer_get_screen_shader() {
