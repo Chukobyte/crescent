@@ -6,6 +6,8 @@ extern "C" {
 
 #include <stdbool.h>
 
+#include "../math/se_math.h"
+
 bool se_frame_buffer_initialize(int inWindowWidth, int inWindowHeight, int inResolutionWidth, int inResolutionHeight);
 void se_frame_buffer_finalize();
 void se_frame_buffer_bind();
@@ -17,6 +19,20 @@ void se_frame_buffer_resize_texture(int newWidth, int newHeight);
 struct SEShaderInstance* se_frame_buffer_get_screen_shader();
 void se_frame_buffer_set_screen_shader(struct SEShaderInstance* shaderInstance);
 void se_frame_buffer_reset_to_default_screen_shader();
+
+typedef struct FrameBufferViewportData {
+    SEVector2i position;
+    SESize2Di size;
+} FrameBufferViewportData;
+
+FrameBufferViewportData se_frame_buffer_get_viewport_data();
+
+typedef struct FrameBufferCreationData {
+    SESize2Di size;
+    SEVector2 offset;
+} FrameBufferCreationData;
+
+FrameBufferCreationData get_frame_buffer_size_data();
 
 #ifdef __cplusplus
 }

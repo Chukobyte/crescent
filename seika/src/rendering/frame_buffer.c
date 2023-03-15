@@ -20,41 +20,53 @@ static int screenTextureWidth = 800;
 static int screenTextureHeight = 600;
 static int resolutionWidth = 800;
 static int resolutionHeight = 600;
-static bool maintainAspectRatio = false;
-
-typedef struct FrameBufferCreationData {
-    SESize2Di size;
-    SEVector2 offset;
-} FrameBufferCreationData;
+static bool maintainAspectRatio = true;
 
 FrameBufferCreationData get_frame_buffer_size_data() {
     FrameBufferCreationData creationData = {
         .size = { .w = screenTextureWidth, .h = screenTextureHeight },
         .offset = { .x = 0.0f, .y = 0.0f }
     };
-    // TODO: Create enum for aspect ratio type and actually implement something that works...
-    if (maintainAspectRatio) {
-        const float windowAspectRatio = (float)screenTextureWidth / (float)screenTextureHeight;
-        const float resolutionAspectRatio = (float)resolutionWidth / (float)resolutionHeight;
-        if (windowAspectRatio != resolutionAspectRatio) {
-            float scaleFactor = 1.0f;
-            float offsetX = 0.0f;
-            float offsetY = 0.0f;
-            if (windowAspectRatio > resolutionAspectRatio) {
-                // If screen is wider than game resolution's width
-                scaleFactor = (float)screenTextureHeight / (float) resolutionHeight;
-                offsetX = ((float)screenTextureWidth - (float)resolutionWidth * scaleFactor) / 2.0f;
-            } else {
-                // If screen is taller than game resolution's height
-                scaleFactor = (float)screenTextureWidth / (float)resolutionWidth;
-                offsetY = ((float)screenTextureHeight - (float)resolutionHeight * scaleFactor) / 2.0f;
-            }
-            // Now update screen texture dimensions
-            creationData.size.w *= scaleFactor;
-            creationData.size.h *= scaleFactor;
-        }
-    }
     return creationData;
+}
+
+FrameBufferViewportData se_frame_buffer_get_viewport_data() {
+    int window_width = screenTextureWidth; // Example window width
+    int window_height = screenTextureHeight; // Example window height
+    int framebuffer_width = resolutionWidth; // Original framebuffer width
+    int framebuffer_height = resolutionHeight; // Original framebuffer height
+
+    // Calculate the aspect ratio of the game's resolution
+    const float game_aspect_ratio = (float)framebuffer_width / (float)framebuffer_height;
+
+    // Calculate the aspect ratio of the window
+    const float window_aspect_ratio = (float)window_width / (float)window_height;
+
+    // Adjust the framebuffer width or height to match the window aspect ratio
+    if (maintainAspectRatio && game_aspect_ratio != window_aspect_ratio) {
+        framebuffer_height = (int)(window_width / game_aspect_ratio);
+        framebuffer_width = window_width;
+        if (framebuffer_height > window_height) {
+            framebuffer_height = window_height;
+            framebuffer_width = (int)(window_height * game_aspect_ratio);
+        }
+    } else {
+        framebuffer_width = window_width;
+        framebuffer_height = window_height;
+    }
+
+
+    // Calculate the viewport dimensions
+    const int viewport_x = (window_width - framebuffer_width) / 2;
+    const int viewport_y = (window_height - framebuffer_height) / 2;
+    const int viewport_width = framebuffer_width;
+    const int viewport_height = framebuffer_height;
+
+    const FrameBufferViewportData data = {
+        .position = { .x = viewport_x, .y = viewport_y },
+        .size = { .w = viewport_width, .h = viewport_height }
+    };
+    return data;
 }
 
 bool recreate_frame_buffer_object() {

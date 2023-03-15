@@ -12,6 +12,7 @@
 #include "audio/audio_manager.h"
 #include "asset/asset_file_loader.h"
 #include "asset/asset_manager.h"
+#include "rendering/frame_buffer.h"
 
 bool initialize_sdl();
 bool initialize_rendering(const char* title, int windowWidth, int windowHeight, int resolutionWidth, int resolutionHeight);
@@ -143,7 +144,10 @@ void sf_process_inputs() {
                 const Sint32 windowWidth = event.window.data1;
                 const Sint32 windowHeight = event.window.data2;
                 se_renderer_update_window_size((float) windowWidth, (float) windowHeight);
-                glViewport(0, 0, windowWidth, windowHeight);
+                const FrameBufferViewportData data = se_frame_buffer_get_viewport_data();
+                glViewport(data.position.x, data.position.y, data.size.w, data.size.h);
+                se_renderer_update_window_size((float) data.size.w, (float) data.size.h);
+//                glViewport(0, 0, windowWidth, windowHeight);
                 break;
             }
             }
