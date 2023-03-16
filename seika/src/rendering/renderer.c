@@ -93,7 +93,7 @@ SE_STATIC_ARRAY_CREATE(RenderLayer, SE_RENDERER_MAX_Z_INDEX, render_layer_items)
 SE_STATIC_ARRAY_CREATE(int, SE_RENDERER_MAX_Z_INDEX, active_render_layer_items_indices);
 
 // Renderer
-void se_renderer_initialize(int inWindowWidth, int inWindowHeight, int inResolutionWidth, int inResolutionHeight) {
+void se_renderer_initialize(int inWindowWidth, int inWindowHeight, int inResolutionWidth, int inResolutionHeight, bool maintainAspectRatio) {
     resolutionWidth = (float) inResolutionWidth;
     resolutionHeight = (float) inResolutionHeight;
     glEnable(GL_CULL_FACE);
@@ -107,6 +107,7 @@ void se_renderer_initialize(int inWindowWidth, int inWindowHeight, int inResolut
 #ifdef SE_RENDER_TO_FRAMEBUFFER
     // Initialize framebuffer
     SE_ASSERT_FMT(se_frame_buffer_initialize(inWindowWidth, inWindowHeight, inResolutionWidth, inResolutionHeight), "Framebuffer didn't initialize!");
+    se_frame_buffer_set_maintain_aspect_ratio(maintainAspectRatio);
 #endif
     // Set initial data for render layer
     for (size_t i = 0; i < SE_RENDERER_MAX_Z_INDEX; i++) {

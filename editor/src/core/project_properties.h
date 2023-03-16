@@ -84,6 +84,7 @@ class ProjectProperties : public Singleton<ProjectProperties> {
     int windowHeight;
     int resolutionWidth;
     int resolutionHeight;
+    bool maintainAspectRatio = false;
     int targetFPS;
     bool areCollidersVisible = false;
     std::string version;

@@ -8,6 +8,7 @@ bool sf_initialize(const char* title,
                    int windowHeight,
                    int resolutionWidth,
                    int resolutionHeight,
+                   bool maintainAspectRatio,
                    const char* controllerDBFilePath);
 void sf_process_inputs();
 void sf_update();

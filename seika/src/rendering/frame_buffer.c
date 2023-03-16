@@ -21,7 +21,7 @@ static int screenTextureHeight = 600;
 static int resolutionWidth = 800;
 static int resolutionHeight = 600;
 static FrameBufferViewportData cachedViewportData = { .position = { .x = 0, .y = 0 }, .size = { .w = 800, .h = 600 } };
-static bool maintainAspectRatio = true;
+static bool maintainAspectRatio = false;
 
 FrameBufferViewportData se_frame_buffer_generate_viewport_data(int windowWidth, int windowHeight) {
     int framebufferWidth = windowWidth;
@@ -161,6 +161,10 @@ void se_frame_buffer_resize_texture(int newWidth, int newHeight) {
     screenTextureWidth = newWidth;
     screenTextureHeight = newHeight;
     recreate_frame_buffer_object();
+}
+
+void se_frame_buffer_set_maintain_aspect_ratio(bool shouldMaintainAspectRatio) {
+    maintainAspectRatio = shouldMaintainAspectRatio;
 }
 
 SEShaderInstance* se_frame_buffer_get_screen_shader() {

@@ -104,6 +104,9 @@ CREGameProperties* cre_json_load_config_file(const char* filePath) {
         // Resolution Height
         properties->resolutionHeight = json_get_int(configJson, "resolution_height");
         se_logger_debug("Resolution Height: '%d'", properties->resolutionHeight);
+        // Maintain Aspect Ratio
+        properties->maintainAspectRatio = json_get_bool_default(configJson, "maintain_aspect_ratio", false);
+        se_logger_debug("Maintain Aspect Ratio '%s'", properties->maintainAspectRatio == true ? "true" : "false");
         // Target FPS
         properties->targetFPS = json_get_int(configJson, "target_fps");
         se_logger_debug("Target FPS '%d'", properties->targetFPS);

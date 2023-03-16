@@ -13,7 +13,7 @@ extern "C" {
 
 #define SE_RENDERER_MAX_Z_INDEX 200
 
-void se_renderer_initialize(int inWindowWidth, int inWindowHeight, int inResolutionWidth, int inResolutionHeight);
+void se_renderer_initialize(int inWindowWidth, int inWindowHeight, int inResolutionWidth, int inResolutionHeight, bool maintainAspectRatio);
 void se_renderer_finalize();
 void se_renderer_update_window_size(int windowWidth, int windowHeight);
 void se_renderer_set_sprite_shader_default_params(SEShader* shader);
