@@ -53,6 +53,7 @@ typedef struct CREGameProperties {
     int resolutionHeight;
     int windowWidth;
     int windowHeight;
+    bool maintainAspectRatio;
     int targetFPS;
     char* initialScenePath;
     bool areCollidersVisible;

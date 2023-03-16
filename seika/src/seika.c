@@ -14,7 +14,7 @@
 #include "asset/asset_manager.h"
 
 bool initialize_sdl();
-bool initialize_rendering(const char* title, int windowWidth, int windowHeight, int resolutionWidth, int resolutionHeight);
+bool initialize_rendering(const char* title, int windowWidth, int windowHeight, int resolutionWidth, int resolutionHeight, bool maintainAspectRatio);
 bool initialize_audio();
 bool initialize_input(const char* controllerDBFilePath);
 
@@ -23,7 +23,7 @@ static SDL_GLContext openGlContext;
 static bool isRunning = false;
 
 bool sf_initialize_simple(const char* title, int windowWidth, int windowHeight) {
-    return sf_initialize(title, windowWidth, windowHeight, windowWidth, windowHeight, NULL);
+    return sf_initialize(title, windowWidth, windowHeight, windowWidth, windowHeight, false, NULL);
 }
 
 bool sf_initialize(const char* title,
@@ -31,6 +31,7 @@ bool sf_initialize(const char* title,
                    int windowHeight,
                    int resolutionWidth,
                    int resolutionHeight,
+                   bool maintainAspectRatio,
                    const char* controllerDBFilePath) {
     if (isRunning) {
         return false;
@@ -46,7 +47,7 @@ bool sf_initialize(const char* title,
         se_logger_error("Failed to initialize sdl!");
         return false;
     }
-    if (!initialize_rendering(title, windowWidth, windowHeight, resolutionWidth, resolutionHeight)) {
+    if (!initialize_rendering(title, windowWidth, windowHeight, resolutionWidth, resolutionHeight, maintainAspectRatio)) {
         se_logger_error("Failed to initialize rendering!");
         return false;
     }
@@ -74,7 +75,7 @@ bool initialize_sdl() {
     return true;
 }
 
-bool initialize_rendering(const char* title, int windowWidth, int windowHeight, int resolutionWidth, int resolutionHeight) {
+bool initialize_rendering(const char* title, int windowWidth, int windowHeight, int resolutionWidth, int resolutionHeight, bool maintainAspectRatio) {
     // OpenGL attributes
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
@@ -112,7 +113,7 @@ bool initialize_rendering(const char* title, int windowWidth, int windowHeight, 
         return false;
     }
 
-    se_renderer_initialize(windowWidth, windowHeight, resolutionWidth, resolutionHeight);
+    se_renderer_initialize(windowWidth, windowHeight, resolutionWidth, resolutionHeight, maintainAspectRatio);
     return true;
 }
 
@@ -142,8 +143,7 @@ void sf_process_inputs() {
             case SDL_WINDOWEVENT_SIZE_CHANGED: {
                 const Sint32 windowWidth = event.window.data1;
                 const Sint32 windowHeight = event.window.data2;
-                se_renderer_update_window_size((float) windowWidth, (float) windowHeight);
-                glViewport(0, 0, windowWidth, windowHeight);
+                se_renderer_update_window_size(windowWidth, windowHeight);
                 break;
             }
             }

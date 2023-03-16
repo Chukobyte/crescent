@@ -93,20 +93,21 @@ SE_STATIC_ARRAY_CREATE(RenderLayer, SE_RENDERER_MAX_Z_INDEX, render_layer_items)
 SE_STATIC_ARRAY_CREATE(int, SE_RENDERER_MAX_Z_INDEX, active_render_layer_items_indices);
 
 // Renderer
-void se_renderer_initialize(int inWindowWidth, int inWindowHeight, int inResolutionWidth, int inResolutionHeight) {
+void se_renderer_initialize(int inWindowWidth, int inWindowHeight, int inResolutionWidth, int inResolutionHeight, bool maintainAspectRatio) {
     resolutionWidth = (float) inResolutionWidth;
     resolutionHeight = (float) inResolutionHeight;
     glEnable(GL_CULL_FACE);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     se_render_context_initialize();
-    se_renderer_update_window_size((float) inWindowWidth, (float) inWindowHeight);
+    se_renderer_update_window_size(inWindowWidth, inWindowHeight);
     sprite_renderer_initialize();
     font_renderer_initialize();
     se_shader_cache_initialize();
 #ifdef SE_RENDER_TO_FRAMEBUFFER
     // Initialize framebuffer
-    SE_ASSERT_FMT(se_frame_buffer_initialize(inWindowWidth, inWindowHeight), "Framebuffer didn't initialize!");
+    SE_ASSERT_FMT(se_frame_buffer_initialize(inWindowWidth, inWindowHeight, inResolutionWidth, inResolutionHeight), "Framebuffer didn't initialize!");
+    se_frame_buffer_set_maintain_aspect_ratio(maintainAspectRatio);
 #endif
     // Set initial data for render layer
     for (size_t i = 0; i < SE_RENDERER_MAX_Z_INDEX; i++) {
@@ -128,14 +129,14 @@ void se_renderer_finalize() {
 #endif
 }
 
-void se_renderer_update_window_size(float windowWidth, float windowHeight) {
-    const int width = (int) windowWidth;
-    const int height = (int) windowHeight;
+void se_renderer_update_window_size(int windowWidth, int windowHeight) {
+    const FrameBufferViewportData data = se_frame_buffer_generate_viewport_data(windowWidth, windowHeight);
+    glViewport(data.position.x, data.position.y, data.size.w, data.size.h);
     SERenderContext* renderContext = se_render_context_get();
-    renderContext->windowWidth = width;
-    renderContext->windowHeight = height;
+    renderContext->windowWidth = data.size.w;
+    renderContext->windowHeight = data.size.h;
 #ifdef SE_RENDER_TO_FRAMEBUFFER
-    se_frame_buffer_resize_texture(width, height);
+    se_frame_buffer_resize_texture(data.size.w, data.size.h);
 #endif
 }
 
@@ -224,15 +225,18 @@ void se_renderer_process_and_flush_batches(const SEColor* backgroundColor) {
     glClearColor(backgroundColor->r, backgroundColor->g, backgroundColor->b, backgroundColor->a);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
+    FrameBufferViewportData* viewportData = se_frame_buffer_get_cached_viewport_data();
+    glViewport(0, 0, viewportData->size.w, viewportData->size.h);
+
     se_renderer_flush_batches();
 
 #ifdef SE_RENDER_TO_FRAMEBUFFER
     se_frame_buffer_unbind();
 
     // Clear screen texture background
-    static const SEColor screenBackgroundColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+    static const SEColor screenBackgroundColor = { 0.0f, 0.0f, 0.0f, 1.0f };
     glClearColor(screenBackgroundColor.r, screenBackgroundColor.g, screenBackgroundColor.b, screenBackgroundColor.a);
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     // Draw screen texture from framebuffer
     SEShaderInstance* screenShaderInstance = se_frame_buffer_get_screen_shader();
     se_shader_use(screenShaderInstance->shader);
@@ -241,6 +245,8 @@ void se_renderer_process_and_flush_batches(const SEColor* backgroundColor) {
     renderer_set_shader_instance_params(screenShaderInstance);
 
     glBindVertexArray(se_frame_buffer_get_quad_vao());
+    glViewport(viewportData->position.x, viewportData->position.y, viewportData->size.w, viewportData->size.h);
+
     glBindTexture(GL_TEXTURE_2D, se_frame_buffer_get_color_buffer_texture());	// use the color attachment texture as the texture of the quad plane
     glDrawArrays(GL_TRIANGLES, 0, 6);
 #endif

@@ -22,11 +22,23 @@ typedef struct SEVector2 {
 bool se_math_vec2_equals(const SEVector2* v1, const SEVector2* v2);
 SEVector2 se_math_vec2_lerp(const SEVector2* v1, const SEVector2* v2, float t);
 
+// --- SEVector2i --- //
+typedef struct SEVector2i {
+    int x;
+    int y;
+} SEVector2i;
+
 // --- SESize2D --- //
 typedef struct SESize2D {
     float w;
     float h;
 } SESize2D;
+
+// --- SESize2Di --- //
+typedef struct SESize2Di {
+    int w;
+    int h;
+} SESize2Di;
 
 // --- SERect2 --- //
 typedef struct SERect2 {

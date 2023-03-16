@@ -41,7 +41,7 @@ bool Editor::Initialize() {
     cre_py_initialize(editorContext->GetEngineBinPath().c_str());
 
     // TODO: Figure out window stuff dimensions...
-    se_renderer_initialize(800, 600, 800, 600);
+    se_renderer_initialize(800, 600, 800, 600, false);
 
     // Initialize Asset Manager
     AssetManager::Get()->Initialize();

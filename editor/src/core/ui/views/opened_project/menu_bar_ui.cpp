@@ -175,6 +175,9 @@ ImGuiHelper::MenuBar OpenedProjectUI::MenuBar::GetMenuBar() {
                                     static ImGuiHelper::DragInt resolutionHeightInt("Resolution Height", projectProperties->resolutionHeight);
                                     ImGuiHelper::BeginDragInt(resolutionHeightInt);
 
+                                    static ImGuiHelper::CheckBox maintainAspectRatioCheckBox("Maintain Aspect Ratio", projectProperties->maintainAspectRatio);
+                                    ImGuiHelper::BeginCheckBox(maintainAspectRatioCheckBox);
+
                                     static ImGuiHelper::DragInt targetFPSInt("Target FPS", projectProperties->targetFPS);
                                     ImGuiHelper::BeginDragInt(targetFPSInt);
 

@@ -15,6 +15,7 @@ CREGameProperties* cre_game_props_create() {
     props->windowHeight = 600;
     props->resolutionWidth = props->windowWidth;
     props->resolutionHeight = props->windowHeight;
+    props->maintainAspectRatio = false;
     props->targetFPS = 66;
     props->initialScenePath = NULL;
     props->areCollidersVisible = false;

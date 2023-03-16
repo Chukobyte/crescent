@@ -88,6 +88,7 @@ void ProjectProperties::LoadPropertiesFromConfig(const char* filePath) {
     windowHeight = JsonHelper::Get<int>(propertyJson, "window_height");
     resolutionWidth = JsonHelper::Get<int>(propertyJson, "resolution_width");
     resolutionHeight = JsonHelper::Get<int>(propertyJson, "resolution_height");
+    maintainAspectRatio = JsonHelper::GetDefault<bool>(propertyJson, "maintain_aspect_ratio", false);
     targetFPS = JsonHelper::Get<int>(propertyJson, "target_fps");
     areCollidersVisible = JsonHelper::Get<bool>(propertyJson, "colliders_visible");
     version = JsonHelper::GetDefault<std::string>(propertyJson, "version", "0.0.1");
@@ -155,6 +156,7 @@ nlohmann::ordered_json ProjectProperties::ToJson() const {
     configJson["window_height"] = windowHeight;
     configJson["resolution_width"] = resolutionWidth;
     configJson["resolution_height"] = resolutionHeight;
+    configJson["maintain_aspect_ratio"] = maintainAspectRatio;
     configJson["target_fps"] = targetFPS;
     configJson["initial_node_path"] = initialNodePath;
     configJson["colliders_visible"] = areCollidersVisible;
