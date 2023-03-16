@@ -20,7 +20,7 @@ static int screenTextureWidth = 800;
 static int screenTextureHeight = 600;
 static int resolutionWidth = 800;
 static int resolutionHeight = 600;
-static FrameBufferViewportData cachedViewportData = { .position = { .x = 0, .y = 0 }, .size = { .w = 800, .h = 600 }, .window = { .w = 800, .h = 600 } };
+static FrameBufferViewportData cachedViewportData = { .position = { .x = 0, .y = 0 }, .size = { .w = 800, .h = 600 } };
 static bool maintainAspectRatio = true;
 
 FrameBufferViewportData se_frame_buffer_generate_viewport_data(int windowWidth, int windowHeight) {
@@ -51,10 +51,8 @@ FrameBufferViewportData se_frame_buffer_generate_viewport_data(int windowWidth, 
     const int viewportHeight = framebufferHeight;
 
     const FrameBufferViewportData data = {
-        // TODO: Setting viewport position to something other than (0, 0) is not working for the renderer screen texture...
         .position = { .x = viewportX, .y = viewportY },
-        .size = { .w = viewportWidth, .h = viewportHeight },
-        .window = { .w = windowWidth, .h = windowHeight }
+        .size = { .w = viewportWidth, .h = viewportHeight }
     };
     cachedViewportData = data;
     return data;
@@ -104,15 +102,15 @@ bool se_frame_buffer_initialize(int inWindowWidth, int inWindowHeight, int inRes
     glBindBuffer(GL_ARRAY_BUFFER, screenVBO);
     // Set buffer data
     GLfloat vertices[] = {
-            // pos      // tex coords
-            -1.0f, 1.0f, 0.0f, 1.0f,
+        // pos      // tex coords
+        -1.0f, 1.0f, 0.0f, 1.0f,
             -1.0f, -1.0f, 0.0f, 0.0f,
             1.0f, -1.0f, 1.0f, 0.0f,
 
             -1.0f, 1.0f, 0.0f, 1.0f,
             1.0f, -1.0f, 1.0f, 0.0f,
             1.0f, 1.0f, 1.0f, 1.0f
-    };
+        };
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
     // position attribute
     glEnableVertexAttribArray(0);
