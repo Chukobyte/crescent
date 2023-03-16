@@ -130,7 +130,7 @@ void se_renderer_finalize() {
 }
 
 void se_renderer_update_window_size(int windowWidth, int windowHeight) {
-    const FrameBufferViewportData data = se_frame_buffer_generate_viewport_data((int)windowWidth, (int)windowHeight);
+    const FrameBufferViewportData data = se_frame_buffer_generate_viewport_data(windowWidth, windowHeight);
     glViewport(data.position.x, data.position.y, data.size.w, data.size.h);
     SERenderContext* renderContext = se_render_context_get();
     renderContext->windowWidth = data.size.w;
