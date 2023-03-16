@@ -24,13 +24,10 @@ static FrameBufferViewportData cachedViewportData = { .position = { .x = 0, .y =
 static bool maintainAspectRatio = true;
 
 FrameBufferViewportData se_frame_buffer_generate_viewport_data(int windowWidth, int windowHeight) {
-    int framebufferWidth = windowWidth; // Original framebuffer width
-    int framebufferHeight = windowHeight; // Original framebuffer height
+    int framebufferWidth = windowWidth;
+    int framebufferHeight = windowHeight;
 
-    // Calculate the aspect ratio of the game's resolution
     const float game_aspect_ratio = (float)resolutionWidth / (float)resolutionHeight;
-
-    // Calculate the aspect ratio of the window
     const float window_aspect_ratio = (float)windowWidth / (float)windowHeight;
 
     // Adjust the framebuffer width or height to match the window aspect ratio
