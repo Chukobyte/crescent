@@ -33,13 +33,11 @@ FrameBufferViewportData se_frame_buffer_generate_viewport_data(int windowWidth, 
     // Adjust the framebuffer width or height to match the window aspect ratio
     if (maintainAspectRatio && game_aspect_ratio != window_aspect_ratio) {
         framebufferHeight = (int)(windowWidth / game_aspect_ratio);
-        framebufferWidth = windowWidth;
         if (framebufferHeight > windowHeight) {
             framebufferHeight = windowHeight;
             framebufferWidth = (int)(windowHeight * game_aspect_ratio);
         }
     }
-
 
     // Calculate the viewport dimensions
     const int viewportX = (windowWidth - framebufferWidth) / 2;
