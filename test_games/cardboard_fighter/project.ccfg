@@ -4,9 +4,11 @@
     "window_height": 600,
     "resolution_width": 800,
     "resolution_height": 600,
+    "maintain_aspect_ratio": true,
     "target_fps": 66,
     "initial_node_path": "nodes/title_screen.cscn",
     "colliders_visible": false,
+    "version": "0.0.1",
     "assets": {
         "audio_sources": [
             {
