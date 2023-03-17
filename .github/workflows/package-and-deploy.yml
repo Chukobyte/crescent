@@ -164,6 +164,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v1
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '11.0'
 
       - name: install vcpkg
         run: |
