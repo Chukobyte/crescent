@@ -7,8 +7,6 @@
 #include "ui/imgui/imgui_helper.h"
 #include "utils/file_system_helper.h"
 
-using namespace Squid;
-
 // TODO: Fix issue with not registering 'Right Click' logic because tree node is closed...
 void FileNodeUtils::DisplayFileNodeTree(FileNode &fileNode, const bool isRoot) {
     static AssetBrowser* assetBrowser = AssetBrowser::Get();
@@ -120,26 +118,11 @@ void FileNodeUtils::DisplayFileNodeTree(FileNode &fileNode, const bool isRoot) {
 }
 
 //--- AssetBrowser ---//
-Task<> AssetBrowser::UpdateFileSystemCache() {
-    RefreshCache();
-    while (true) {
-        // TODO: Figure out what the refresh rate should be...
-//        co_await WaitSeconds(10.0f, EditorContext::Time);
-        co_await WaitUntil([this] { return refreshCacheQueued; });
-        RefreshCache();
-        refreshCacheQueued = false;
-    }
-}
-
 void AssetBrowser::RefreshCache() {
     fileCache.LoadRootNodeDir(FileSystemHelper::GetCurrentDir());
     for (auto& sub : refreshSubscribers) {
         sub.func(fileCache.rootNode);
     }
-}
-
-void AssetBrowser::QueueRefreshCache() {
-    refreshCacheQueued = true;
 }
 
 void AssetBrowser::RenameFile(const std::filesystem::path& oldPath, const std::string& newName) {
@@ -151,7 +134,7 @@ void AssetBrowser::RenameFile(const std::filesystem::path& oldPath, const std::s
     if (ec.value() != 0) {
         se_logger_error("ec value = %d, message = %s", ec.value(), ec.message().c_str());
     } else {
-        QueueRefreshCache();
+        RefreshCache();
     }
 }
 
@@ -168,7 +151,7 @@ void AssetBrowser::DeleteFile(const std::filesystem::path& path) {
         se_logger_error("Error deleting from path '%s'!\nec value = %d, message = %s",
                         path.string().c_str(), ec.value(), ec.message().c_str());
     } else {
-        QueueRefreshCache();
+        RefreshCache();
     }
 }
 
@@ -184,7 +167,7 @@ void AssetBrowser::CreateDirectory(const std::filesystem::path& path, const std:
         se_logger_error("Create directory failed for asset path '%s'!\nec value = %d, message = %s",
                         fullDirPath.string().c_str(), ec.value(), ec.message().c_str());
     } else {
-        QueueRefreshCache();
+        RefreshCache();
     }
 }
 

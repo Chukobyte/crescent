@@ -30,11 +30,10 @@ A work in progress fighting game engine for windows, linux, and macos with the c
     * [ImPlot](https://github.com/epezent/implot) - Plotting Library (Used with ImGui)
     * [MiniAudio](https://github.com/mackron/miniaudio) - Audio
     * [Catch2](https://github.com/catchorg/Catch2) - Testing
-    * [SquidTasks](https://github.com/westquote/SquidTasks) - Coroutine library
 
 ## Building
 
-Supports windows, linux, and macos builds at the moment.  The editor currently doesn't work on macos.  Crescent engine can be either built with cmake or make.  All build commands should be executed from the project's root directory.
+Supports windows, linux, and macos builds at the moment.  Crescent engine can be either built with cmake or make.  All build commands should be executed from the project's root directory.
 
 ### CMake
 

@@ -12,7 +12,6 @@
 
 #include "../engine/src/core/scripting/python/cre_py.h"
 #include "editor_context.h"
-#include "editor_background_tasks.h"
 #include "scene/scene_manager.h"
 #include "color.h"
 #include "asset_manager.h"
@@ -23,6 +22,8 @@
 static EditorContext* editorContext = EditorContext::Get();
 
 bool Editor::Initialize() {
+    editorContext->initialDir = FileSystemHelper::GetCurrentDir();
+
     // Load editor setting or create a new file if it doesn't exist
     if (!editorContext->settings.Load()) {
         editorContext->settings.Save();
@@ -35,8 +36,6 @@ bool Editor::Initialize() {
         return false;
     }
 
-    editorContext->initialDir = FileSystemHelper::GetCurrentDir();
-
     // Initialize Python Instance
     cre_py_initialize(editorContext->GetEngineBinPath().c_str());
 
@@ -48,16 +47,12 @@ bool Editor::Initialize() {
 
     editorContext->isRunning = true;
     se_logger_info("Crescent Engine Editor has started!");
-
-    // Start editor background tasks
-    mainTasks.RunManaged(EditorBackgroundTasks::Main(&mainTasks));
     return true;
 }
 
 void Editor::Update() {
     ProcessInput();
     Render();
-    mainTasks.Update();
     Flush();
 }
 
@@ -115,7 +110,8 @@ bool Editor::InitializeImGui() {
     (void)io;
     io.IniFilename = nullptr;
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-    io.Fonts->AddFontFromFileTTF("assets/fonts/verdana.ttf", 16.0f, nullptr, nullptr);
+    const std::string engineDefaultFontPath = editorContext->GetEngineDefaultFontPath();
+    io.Fonts->AddFontFromFileTTF(editorContext->GetEngineDefaultFontPath().c_str(), 16.0f, nullptr, nullptr);
 
     // Merge in icons from Font Awesome
     static const ImWchar icons_ranges[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };
@@ -125,7 +121,7 @@ bool Editor::InitializeImGui() {
     io.Fonts->AddFontFromFileTTF(FONT_ICON_FILE_NAME_FAS, 12.0f, &icons_config, icons_ranges);
 
     ImGui_ImplSDL2_InitForOpenGL(editorContext->window, editorContext->openGLContext);
-    ImGui_ImplOpenGL3_Init("#version 130");
+    ImGui_ImplOpenGL3_Init("#version 330");
 
     ImGuiStyler::ApplyStyle(ImGuiStyler::Style::Crescent);
 
@@ -179,7 +175,6 @@ bool Editor::IsRunning() const {
 }
 
 void Editor::Shutdown() {
-    mainTasks.KillAllTasks();
     // IMGUI
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplSDL2_Shutdown();

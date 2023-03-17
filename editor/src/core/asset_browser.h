@@ -5,8 +5,8 @@
 #include <vector>
 #include <unordered_map>
 #include <filesystem>
-
-#include "SquidTasks/Task.h"
+#include <optional>
+#include <functional>
 
 #include "file_node.h"
 
@@ -27,11 +27,9 @@ struct AssetBrowserRefreshSubscriber {
 class AssetBrowser : public Singleton<AssetBrowser> {
   public:
     AssetBrowser(singleton) {}
-    Task<> UpdateFileSystemCache();
     AssetBrowserRefreshSubscriberHandle RegisterRefreshCallback(const AssetBrowserRefreshFunc& func);
     void UnregisterRefreshCallback(AssetBrowserRefreshSubscriberHandle handle);
     void RefreshCache();
-    void QueueRefreshCache();
     // TODO: Consider moving these into a utility, interface, etc...
     void RenameFile(const std::filesystem::path& oldPath, const std::string& newName);
     void DeleteFile(const std::filesystem::path& path);
@@ -42,6 +40,5 @@ class AssetBrowser : public Singleton<AssetBrowser> {
 
   private:
     std::vector<AssetBrowserRefreshSubscriber> refreshSubscribers;
-    bool refreshCacheQueued = false;
     AssetBrowserRefreshSubscriberHandle handleIndex = 1;
 };

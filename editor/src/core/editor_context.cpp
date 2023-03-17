@@ -1,4 +1,7 @@
 #include "editor_context.h"
+
+#include "../engine/src/core/game_properties.h"
+
 #include "utils/file_system_helper.h"
 
 #ifdef _WINDOWS
@@ -37,4 +40,8 @@ std::string EditorContext::GetProjectTempPath() const {
 
 float EditorContext::Time() {
     return (float) SDL_GetTicks() / 1000.0f;
+}
+
+std::string EditorContext::GetEngineDefaultFontPath() const {
+    return GetEngineBinPath() + "/" + CRE_DEFAULT_FONT_ASSET.file_path;
 }

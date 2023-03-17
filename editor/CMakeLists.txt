@@ -7,7 +7,7 @@ project(crescent_editor)
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     list(APPEND flags "/std:c++20" "/W3" "/Zc:preprocessor")
 elseif (APPLE)
-    list(APPEND flags "-w" "-std=c++2a" "-stdlib=libc++" "-fcoroutines-ts" "-Wfatal-errors" "-Wall" "-Wextra" "-Wno-write-strings"
+    list(APPEND flags "-w" "-std=c++2a" "-stdlib=libc++" "-Wfatal-errors" "-Wall" "-Wextra" "-Wno-write-strings"
             "-Wno-deprecated-declarations" "-Wno-unused-variable" "-Wno-bad-function-cast" "-Wno-unused-parameter"
             "-Wno-missing-field-initializers")
 else ()
@@ -42,7 +42,6 @@ add_library(${PROJECT_NAME} STATIC
         src/core/asset_manager.cpp
         src/core/file_node.cpp
         src/core/editor.cpp
-        src/core/editor_background_tasks.cpp
         src/core/editor_callbacks.cpp
         src/core/editor_context.cpp
         src/core/editor_settings.cpp
@@ -51,7 +50,6 @@ add_library(${PROJECT_NAME} STATIC
         src/core/game_exporter.cpp
         src/core/file_creation/config_file_creator.cpp
         src/core/file_creation/scene_file_creator.cpp
-        src/core/math/curve_float.cpp
         src/core/scene/scene_manager.cpp
         src/core/ui/opened_project_ui.cpp
         src/core/ui/project_manager_ui.cpp
@@ -82,7 +80,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image SDL2::SDL2main SDL2::SDL2 imgui implot)
 elseif (WIN32)
-    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image -lmingw32 -static-libgcc -fcoroutines SDL2::SDL2main SDL2::SDL2 imgui implot)
+    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image -lmingw32 -static-libgcc SDL2::SDL2main SDL2::SDL2 imgui implot)
 elseif (APPLE)
     target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image -Xlinker SDL2::SDL2main SDL2::SDL2 imgui implot)
 else ()
