@@ -7,7 +7,7 @@ project(crescent_editor)
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     list(APPEND flags "/std:c++20" "/W3" "/Zc:preprocessor")
 elseif (APPLE)
-    list(APPEND flags "-w" "-std=c++2a" "-stdlib=libc++" "-fcoroutines-ts" "-Wfatal-errors" "-Wall" "-Wextra" "-Wno-write-strings"
+    list(APPEND flags "-w" "-std=c++2a" "-stdlib=libc++" "-Wfatal-errors" "-Wall" "-Wextra" "-Wno-write-strings"
             "-Wno-deprecated-declarations" "-Wno-unused-variable" "-Wno-bad-function-cast" "-Wno-unused-parameter"
             "-Wno-missing-field-initializers")
 else ()
@@ -82,7 +82,7 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 elseif (WIN32)
     target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image -lmingw32 -static-libgcc -fcoroutines SDL2::SDL2main SDL2::SDL2 imgui implot)
 elseif (APPLE)
-    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image -Xlinker SDL2::SDL2main SDL2::SDL2 imgui implot)
+    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image -static-libstdc++ -Xlinker SDL2::SDL2main SDL2::SDL2 imgui implot)
 else ()
     target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image -static-libgcc -Xlinker -export-dynamic SDL2::SDL2main SDL2::SDL2 imgui implot)
 endif ()
