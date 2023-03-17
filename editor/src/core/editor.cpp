@@ -12,7 +12,6 @@
 
 #include "../engine/src/core/scripting/python/cre_py.h"
 #include "editor_context.h"
-#include "editor_background_tasks.h"
 #include "scene/scene_manager.h"
 #include "color.h"
 #include "asset_manager.h"
@@ -48,16 +47,12 @@ bool Editor::Initialize() {
 
     editorContext->isRunning = true;
     se_logger_info("Crescent Engine Editor has started!");
-
-    // Start editor background tasks
-    mainTasks.RunManaged(EditorBackgroundTasks::Main(&mainTasks));
     return true;
 }
 
 void Editor::Update() {
     ProcessInput();
     Render();
-    mainTasks.Update();
     Flush();
 }
 

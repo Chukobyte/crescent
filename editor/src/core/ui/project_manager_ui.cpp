@@ -17,6 +17,7 @@
 #include "../file_creation/config_file_creator.h"
 #include "../utils/file_system_helper.h"
 #include "../utils/console_logger.h"
+#include "../asset_browser.h"
 
 static EditorContext* editorContext = EditorContext::Get();
 
@@ -89,6 +90,8 @@ void ProjectManagerUI::ProcessWindows() {
                                         gameProperties->initialNodePath.c_str());
                     }
                 }
+                AssetBrowser* assetBrowser = AssetBrowser::Get();
+                assetBrowser->RefreshCache();
             };
 
             // Test Fighter Section
