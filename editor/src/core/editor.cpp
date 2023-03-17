@@ -110,7 +110,8 @@ bool Editor::InitializeImGui() {
     (void)io;
     io.IniFilename = nullptr;
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-    io.Fonts->AddFontFromFileTTF("assets/fonts/verdana.ttf", 16.0f, nullptr, nullptr);
+    const std::string defaultFontPath = editorContext->GetEngineBinPath() + "/assets/fonts/verdana.ttf";
+    io.Fonts->AddFontFromFileTTF(defaultFontPath.c_str(), 16.0f, nullptr, nullptr);
 
     // Merge in icons from Font Awesome
     static const ImWchar icons_ranges[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };
