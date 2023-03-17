@@ -3,8 +3,6 @@
 #include <SDL2/SDL.h>
 #include <glad/glad.h>
 
-#include "SquidTasks/TaskManager.h"
-
 class Editor {
   public:
     bool Initialize();
@@ -15,8 +13,6 @@ class Editor {
   private:
     int windowWidth = 800;
     int windowHeight = 600;
-
-    TaskManager mainTasks;
 
     bool InitializeSDL();
     bool InitializeImGui();

@@ -175,7 +175,6 @@ bool Editor::IsRunning() const {
 }
 
 void Editor::Shutdown() {
-    mainTasks.KillAllTasks();
     // IMGUI
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplSDL2_Shutdown();
