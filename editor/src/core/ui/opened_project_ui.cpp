@@ -109,16 +109,3 @@ void OpenedProjectUI::ProcessWindows() {
         curveEditor->Begin();
     }
 }
-
-Task<> OpenedProjectUI::ManageOpenedProject() {
-    static EditorContext* editorContext = EditorContext::Get();
-    while (true) {
-        co_await WaitUntil([] { return editorContext->projectState == EditorProjectState::OpenedProject; });
-
-        while (editorContext->projectState == EditorProjectState::OpenedProject) {
-            co_await Suspend();
-        }
-
-        co_await Suspend();
-    }
-}

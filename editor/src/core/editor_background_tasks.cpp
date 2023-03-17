@@ -5,20 +5,6 @@
 
 using namespace Squid;
 
-namespace {
-Task<> ProjectManagerTasks() {
-    while (true) {
-        co_await Suspend();
-    }
-}
-
-Task<> OpenedProjectTasks() {
-    while (true) {
-        co_await Suspend();
-    }
-}
-} // namespace
-
 Task<> EditorBackgroundTasks::Main(TaskManager* taskManager) {
     TASK_NAME("EditorBackgroundTasks::Main");
 
