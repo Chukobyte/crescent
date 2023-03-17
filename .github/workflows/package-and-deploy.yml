@@ -202,6 +202,9 @@ jobs:
           echo ""
           echo "Running crescent engine tests!"
           ./crescent_engine_test
+          echo ""
+          echo "Running crescent engine editor tests!"
+          ./crescent_engine_editor_test
 
       - name: download macosx python embed
         uses: dawidd6/action-download-artifact@v2
