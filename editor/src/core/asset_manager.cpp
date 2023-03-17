@@ -3,6 +3,7 @@
 #include "../engine/src/core/game_properties.h"
 
 #include "asset_browser.h"
+#include "editor_context.h"
 #include "project_properties.h"
 
 static AssetBrowserRefreshSubscriberHandle subscriberHandle = 0;
@@ -34,7 +35,8 @@ void AssetManager::Initialize() {
         se_asset_manager_initialize();
         AssetBrowser* assetBrowser = AssetBrowser::Get();
         // Load default font
-        LoadFont(CRE_DEFAULT_FONT_ASSET.file_path, CRE_DEFAULT_FONT_ASSET.uid, CRE_DEFAULT_FONT_ASSET.size);
+        EditorContext* editorContext = EditorContext::Get();
+        LoadFont(editorContext->GetEngineDefaultFontPath().c_str(), CRE_DEFAULT_FONT_ASSET.uid, CRE_DEFAULT_FONT_ASSET.size);
 
         subscriberHandle = assetBrowser->RegisterRefreshCallback([this, assetBrowser](const FileNode& rootNode) {
             // Textures

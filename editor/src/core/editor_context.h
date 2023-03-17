@@ -28,12 +28,14 @@ class EditorContext : public Singleton<EditorContext> {
   public:
     EditorContext(singleton);
 
-    std::string GetEngineBinPath() const;
-    std::string GetEngineBinPathByOS(const std::string& osType) const;
-    std::string GetEngineBinaryPath() const;
-    std::string GetEngineBinaryProgramArgs() const;
-    std::string GetProjectExportPath() const;
-    std::string GetProjectTempPath() const;
+    [[nodiscard]] std::string GetEngineBinPath() const;
+    [[nodiscard]] std::string GetEngineBinPathByOS(const std::string& osType) const;
+    [[nodiscard]] std::string GetEngineBinaryPath() const;
+    [[nodiscard]] std::string GetEngineBinaryProgramArgs() const;
+    [[nodiscard]] std::string GetProjectExportPath() const;
+    [[nodiscard]] std::string GetProjectTempPath() const;
+    [[nodiscard]] std::string GetEngineDefaultFontPath() const;
+
 
     // Returns a time used for ticking of seconds
     static float Time();

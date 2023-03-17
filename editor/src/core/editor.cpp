@@ -22,6 +22,8 @@
 static EditorContext* editorContext = EditorContext::Get();
 
 bool Editor::Initialize() {
+    editorContext->initialDir = FileSystemHelper::GetCurrentDir();
+
     // Load editor setting or create a new file if it doesn't exist
     if (!editorContext->settings.Load()) {
         editorContext->settings.Save();
@@ -33,8 +35,6 @@ bool Editor::Initialize() {
     if (!InitializeImGui()) {
         return false;
     }
-
-    editorContext->initialDir = FileSystemHelper::GetCurrentDir();
 
     // Initialize Python Instance
     cre_py_initialize(editorContext->GetEngineBinPath().c_str());
@@ -110,8 +110,8 @@ bool Editor::InitializeImGui() {
     (void)io;
     io.IniFilename = nullptr;
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-    const std::string defaultFontPath = editorContext->GetEngineBinPath() + "/assets/fonts/verdana.ttf";
-    io.Fonts->AddFontFromFileTTF(defaultFontPath.c_str(), 16.0f, nullptr, nullptr);
+    const std::string engineDefaultFontPath = editorContext->GetEngineDefaultFontPath();
+    io.Fonts->AddFontFromFileTTF(editorContext->GetEngineDefaultFontPath().c_str(), 16.0f, nullptr, nullptr);
 
     // Merge in icons from Font Awesome
     static const ImWchar icons_ranges[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };
