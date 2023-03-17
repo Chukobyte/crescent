@@ -5,6 +5,7 @@
 #include <vector>
 #include <unordered_map>
 #include <filesystem>
+#include <optional>
 #include <functional>
 
 #include "file_node.h"
