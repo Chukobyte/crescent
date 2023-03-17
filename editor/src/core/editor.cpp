@@ -120,7 +120,7 @@ bool Editor::InitializeImGui() {
     io.Fonts->AddFontFromFileTTF(FONT_ICON_FILE_NAME_FAS, 12.0f, &icons_config, icons_ranges);
 
     ImGui_ImplSDL2_InitForOpenGL(editorContext->window, editorContext->openGLContext);
-    ImGui_ImplOpenGL3_Init("#version 130");
+    ImGui_ImplOpenGL3_Init("#version 330");
 
     ImGuiStyler::ApplyStyle(ImGuiStyler::Style::Crescent);
 

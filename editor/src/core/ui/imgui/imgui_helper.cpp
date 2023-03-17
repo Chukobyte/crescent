@@ -56,7 +56,9 @@ void ImGuiHelper::InputText::SetValue(std::string value) {
     if (value.size() > bufferSize) {
         value = value.substr(bufferSize);
     }
-    std::ranges::copy(value, buffer.get());
+    for (size_t i = 0; i < value.size(); i++) {
+        buffer[i] = value[i];
+    }
     buffer[value.size()] = '\0';
 }
 
