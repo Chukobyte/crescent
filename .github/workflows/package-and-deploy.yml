@@ -262,11 +262,11 @@ jobs:
           if-no-files-found: error
 
       - name: store engine binary
-          uses: actions/upload-artifact@v3
-          with:
-            name: crescent_engine_editor_macosx
-            path: crescent_engine_editor_macosx
-            if-no-files-found: error
+        uses: actions/upload-artifact@v3
+        with:
+          name: crescent_engine_editor_macosx
+          path: crescent_engine_editor_macosx
+          if-no-files-found: error
 
       - name: store signed embedded python package
         uses: actions/upload-artifact@v3
