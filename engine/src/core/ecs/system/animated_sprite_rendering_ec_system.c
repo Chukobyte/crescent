@@ -34,10 +34,8 @@ void animated_sprite_rendering_system_render() {
     const int currentTickTime = (int) SDL_GetTicks();
     for (size_t i = 0; i < animatedSpriteRenderingSystem->entity_count; i++) {
         const CreEntity entity = animatedSpriteRenderingSystem->entities[i];
-        Transform2DComponent* spriteTransformComp = (Transform2DComponent*) cre_component_manager_get_component(entity,
-                CreComponentDataIndex_TRANSFORM_2D);
-        AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) cre_component_manager_get_component(
-                    entity, CreComponentDataIndex_ANIMATED_SPRITE);
+        Transform2DComponent* spriteTransformComp = (Transform2DComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_TRANSFORM_2D);
+        AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_ANIMATED_SPRITE);
         CreAnimationFrame currentFrame = animatedSpriteComponent->currentAnimation.animationFrames[animatedSpriteComponent->currentAnimation.currentFrame];
         if (animatedSpriteComponent->isPlaying) {
             const float entityTimeDilation = cre_scene_manager_get_node_full_time_dilation(entity);
@@ -56,8 +54,7 @@ void animated_sprite_rendering_system_render() {
             }
         }
         const CRECamera2D* renderCamera = spriteTransformComp->ignoreCamera ? defaultCamera : camera2D;
-        SETransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity,
-                                              spriteTransformComp);
+        SETransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity, spriteTransformComp);
         cre_scene_utils_apply_camera_and_origin_translation(globalTransform, &animatedSpriteComponent->origin, spriteTransformComp->ignoreCamera);
         spriteTransformComp->isGlobalTransformDirty = true; // TODO: Make global transform const
         const SESize2D destinationSize = {
