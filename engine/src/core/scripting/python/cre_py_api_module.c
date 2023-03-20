@@ -1325,7 +1325,7 @@ PyObject* cre_py_api_sprite_set_modulate(PyObject* self, PyObject* args, PyObjec
     int g;
     int b;
     int a;
-    if (PyArg_ParseTupleAndKeywords(args, kwargs, "iiiii", crePyApiGenericSetEntityRectKWList, &entity, &r, &g, &b, &a)) {
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "iiiii", crePyApiGenericSetEntityColorKWList, &entity, &r, &g, &b, &a)) {
         SpriteComponent* spriteComponent = (SpriteComponent*) cre_component_manager_get_component(entity,
                                            CreComponentDataIndex_SPRITE);
         spriteComponent->modulate = se_color_get_normalized_color(r, g, b, a);
@@ -1503,7 +1503,7 @@ PyObject* cre_py_api_animated_sprite_set_modulate(PyObject* self, PyObject* args
     int g;
     int b;
     int a;
-    if (PyArg_ParseTupleAndKeywords(args, kwargs, "iiiii", crePyApiGenericSetEntityRectKWList, &entity, &r, &g, &b, &a)) {
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "iiiii", crePyApiGenericSetEntityColorKWList, &entity, &r, &g, &b, &a)) {
         AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) cre_component_manager_get_component(
                     entity, CreComponentDataIndex_ANIMATED_SPRITE);
         animatedSpriteComponent->modulate = se_color_get_normalized_color(r, g, b, a);
