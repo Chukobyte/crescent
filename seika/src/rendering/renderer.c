@@ -130,7 +130,15 @@ void se_renderer_finalize() {
 }
 
 void se_renderer_update_window_size(int windowWidth, int windowHeight) {
+#ifdef SE_RENDER_TO_FRAMEBUFFER
     const FrameBufferViewportData data = se_frame_buffer_generate_viewport_data(windowWidth, windowHeight);
+#else
+    struct ViewportData {
+        SEVector2i position;
+        SESize2Di size;
+    };
+    const struct ViewportData data = { .position = { .x = 0, .y = 0 }, .size = { .w = windowWidth, .h = windowHeight } };
+#endif
     glViewport(data.position.x, data.position.y, data.size.w, data.size.h);
     SERenderContext* renderContext = se_render_context_get();
     renderContext->windowWidth = data.size.w;
@@ -225,8 +233,10 @@ void se_renderer_process_and_flush_batches(const SEColor* backgroundColor) {
     glClearColor(backgroundColor->r, backgroundColor->g, backgroundColor->b, backgroundColor->a);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
+#ifdef SE_RENDER_TO_FRAMEBUFFER
     FrameBufferViewportData* viewportData = se_frame_buffer_get_cached_viewport_data();
     glViewport(0, 0, viewportData->size.w, viewportData->size.h);
+#endif
 
     se_renderer_flush_batches();
 
