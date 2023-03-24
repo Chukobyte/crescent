@@ -72,3 +72,19 @@ void cre_camera2d_update_entity_follow(CRECamera2D* camera2D, Transform2DCompone
     camera2D->viewport = newCameraPos;
     cre_camera2d_clamp_viewport_to_boundary(camera2D);
 }
+
+void cre_camera2d_update_model_if_dirty(CRECamera2D* camera2D) {
+    if (camera2D->modelIsDirty) {
+        glm_mat4_identity(camera2D->model);
+        // 1. Translation
+        glm_translate(camera2D->model, (vec3) {
+            camera2D->viewport.x + camera2D->offset.x, camera2D->viewport.y + camera2D->offset.y, 0.0f
+        });
+        // 2. No camera rotation for now...
+        // 3. Scaling
+        glm_scale(camera2D->model, (vec3) {
+            camera2D->zoom.x, camera2D->zoom.y, 1.0f
+        });
+        camera2D->modelIsDirty = false;
+    }
+}

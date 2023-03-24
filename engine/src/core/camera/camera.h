@@ -30,12 +30,15 @@ typedef struct CRECamera2D {
     CreEntity entityFollowing;
     SEObserver onEntityTransformChangeObserver;
     SEObserver onEntityExitSceneObserver;
+    bool modelIsDirty;
+    mat4 model;
 } CRECamera2D;
 
 void cre_camera2d_clamp_viewport_to_boundary(CRECamera2D* camera2D);
 void cre_camera2d_follow_entity(CRECamera2D* camera2D, CreEntity entity);
 void cre_camera2d_unfollow_entity(CRECamera2D* camera2D, CreEntity entity);
 void cre_camera2d_update_entity_follow(CRECamera2D* camera2D, Transform2DComponent* transform2DComponent);
+void cre_camera2d_update_model_if_dirty(CRECamera2D* camera2D);
 
 #ifdef __cplusplus
 }

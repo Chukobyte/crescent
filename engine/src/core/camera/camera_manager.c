@@ -23,7 +23,8 @@ static CRECamera2D DEFAULT_CAMERA =   {
     .archorMode = CreCameraArchorMode_FIXED_TOP_LEFT,
     .entityFollowing = CRE_NULL_ENTITY,
     .onEntityTransformChangeObserver = { .on_notify = camera2d_on_entity_transform_change },
-    .onEntityExitSceneObserver = { .on_notify = camera2d_on_entity_exit_scene }
+    .onEntityExitSceneObserver = { .on_notify = camera2d_on_entity_exit_scene },
+    .modelIsDirty = true
 };
 
 static CRECamera2D currentCamera = {
@@ -40,7 +41,8 @@ static CRECamera2D currentCamera = {
     .archorMode = CreCameraArchorMode_FIXED_TOP_LEFT,
     .entityFollowing = CRE_NULL_ENTITY,
     .onEntityTransformChangeObserver = { .on_notify = camera2d_on_entity_transform_change },
-    .onEntityExitSceneObserver = { .on_notify = camera2d_on_entity_exit_scene }
+    .onEntityExitSceneObserver = { .on_notify = camera2d_on_entity_exit_scene },
+    .modelIsDirty = true
 };
 
 CRECamera2D* cre_camera_manager_get_current_camera() {

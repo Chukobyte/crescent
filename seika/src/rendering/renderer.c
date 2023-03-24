@@ -98,6 +98,7 @@ void se_renderer_initialize(int inWindowWidth, int inWindowHeight, int inResolut
     resolutionHeight = (float) inResolutionHeight;
     glEnable(GL_CULL_FACE);
     glEnable(GL_BLEND);
+    glDisable(GL_MULTISAMPLE);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     se_render_context_initialize();
     se_renderer_update_window_size(inWindowWidth, inWindowHeight);
