@@ -28,14 +28,6 @@ static const char* SE_OPENGL_SHADER_SOURCE_VERTEX_SPRITE =
     "    USING_NEAREST_NEIGHBOR = CRE_APPLY_NEAREST_NEIGHBOR;\n"
     "    //@@vertex()\n"
     "    gl_Position = CRE_PROJECTION * CRE_MODELS[CRE_SPRITE_INT_ID] * vec4(VERTEX, 0.0f, 1.0f);\n"
-//    "    vec2 screenSize = vec2(640.0f, 576.0f);\n"
-//    "    vec4 worldPos = CRE_MODELS[CRE_SPRITE_INT_ID] * vec4(VERTEX, 0.0f, 1.0f);\n"
-//    "    vec4 clipPos = CRE_PROJECTION * worldPos;\n"
-//    "    vec2 pixelPos = clipPos.xy / clipPos.w * 0.5f + 0.5f;\n"
-//    "    pixelPos *= screenSize;\n"
-//    "    pixelPos = floor(pixelPos) + 0.5f;\n"
-//    "    pixelPos = pixelPos / screenSize * 2.0f - 1.0f;\n"
-//    "    gl_Position = vec4(pixelPos, clipPos.z, clipPos.w);\n"
     "}\n";
 
 static const char* SE_OPENGL_SHADER_SOURCE_FRAGMENT_SPRITE =
