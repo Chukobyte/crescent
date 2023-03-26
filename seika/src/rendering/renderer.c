@@ -98,6 +98,7 @@ void se_renderer_initialize(int inWindowWidth, int inWindowHeight, int inResolut
     resolutionHeight = (float) inResolutionHeight;
     glEnable(GL_CULL_FACE);
     glEnable(GL_BLEND);
+    glDisable(GL_MULTISAMPLE);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     se_render_context_initialize();
     se_renderer_update_window_size(inWindowWidth, inWindowHeight);
@@ -130,7 +131,15 @@ void se_renderer_finalize() {
 }
 
 void se_renderer_update_window_size(int windowWidth, int windowHeight) {
+#ifdef SE_RENDER_TO_FRAMEBUFFER
     const FrameBufferViewportData data = se_frame_buffer_generate_viewport_data(windowWidth, windowHeight);
+#else
+    struct ViewportData {
+        SEVector2i position;
+        SESize2Di size;
+    };
+    const struct ViewportData data = { .position = { .x = 0, .y = 0 }, .size = { .w = windowWidth, .h = windowHeight } };
+#endif
     glViewport(data.position.x, data.position.y, data.size.w, data.size.h);
     SERenderContext* renderContext = se_render_context_get();
     renderContext->windowWidth = data.size.w;
@@ -225,8 +234,10 @@ void se_renderer_process_and_flush_batches(const SEColor* backgroundColor) {
     glClearColor(backgroundColor->r, backgroundColor->g, backgroundColor->b, backgroundColor->a);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
+#ifdef SE_RENDER_TO_FRAMEBUFFER
     FrameBufferViewportData* viewportData = se_frame_buffer_get_cached_viewport_data();
     glViewport(0, 0, viewportData->size.w, viewportData->size.h);
+#endif
 
     se_renderer_flush_batches();
 
@@ -368,11 +379,11 @@ void renderer_batching_draw_sprites(SpriteBatchItem items[], size_t spriteCount)
             bool isSMin;
             bool isTMin;
             if (determinate >= 0.0f) {
-                isSMin = j == 0 || j == 2 || j == 3 ? true : false;
-                isTMin = j == 1 || j == 2 || j == 5 ? true : false;
+                isSMin = j == 0 || j == 2 || j == 3;
+                isTMin = j == 1 || j == 2 || j == 5;
             } else {
-                isSMin = j == 1 || j == 2 || j == 5 ? true : false;
-                isTMin = j == 0 || j == 2 || j == 3 ? true : false;
+                isSMin = j == 1 || j == 2 || j == 5;
+                isTMin = j == 0 || j == 2 || j == 3;
             }
             const int row = (j * VERTS_STRIDE) + ((int) i * (VERTS_STRIDE * NUMBER_OF_VERTICES));
             verts[row + 0] = spriteId;
@@ -474,26 +485,28 @@ void font_renderer_draw_text(const SEFont* font, const char* text, float x, floa
 
 // --- Misc --- //
 TextureCoordinates renderer_get_texture_coordinates(const SETexture* texture, const SERect2* drawSource, bool flipH, bool flipV) {
+    GLfloat sMin = 0.0f;
+    GLfloat sMax = 1.0f;
+    GLfloat tMin = 0.0f;
+    GLfloat tMax = 1.0f;
     // S
-    GLfloat sMin, sMax;
-    if (flipH) {
-        sMax = (drawSource->x + 0.5f) / (float) texture->width;
-        sMin = (drawSource->x + drawSource->w - 0.5f) / (float) texture->width;
-    } else {
+    if (texture->width != (GLsizei)drawSource->w || texture->height != (GLsizei)drawSource->h) {
         sMin = (drawSource->x + 0.5f) / (float) texture->width;
         sMax = (drawSource->x + drawSource->w - 0.5f) / (float) texture->width;
-    }
-    // T
-    GLfloat tMin, tMax;
-    if (flipV) {
-        tMax = (drawSource->y + 0.5f) / (float) texture->height;
-        tMin = (drawSource->y + drawSource->h - 0.5f) / (float) texture->height;
-    } else {
         tMin = (drawSource->y + 0.5f) / (float) texture->height;
         tMax = (drawSource->y + drawSource->h - 0.5f) / (float) texture->height;
     }
-    TextureCoordinates textureCoords = { sMin, sMax, tMin, tMax };
-    return textureCoords;
+    if (flipH) {
+        const GLfloat tempSMin = sMin;
+        sMin = sMax;
+        sMax = tempSMin;
+    }
+    if (flipV) {
+        const GLfloat tempTMin = tMin;
+        tMin = tMax;
+        tMax = tempTMin;
+    }
+    return (TextureCoordinates){ sMin, sMax, tMin, tMax };
 }
 
 void renderer_set_shader_instance_params(SEShaderInstance* shaderInstance) {

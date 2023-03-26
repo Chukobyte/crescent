@@ -13,6 +13,7 @@ static const char* SE_OPENGL_SHADER_SOURCE_VERTEX_SPRITE =
     "out vec4 TEXTURE_MODULATE;\n"
     "out float USING_NEAREST_NEIGHBOR;\n"
     "\n"
+    "uniform sampler2D TEXTURE;\n"
     "uniform mat4 CRE_MODELS[100];\n"
     "uniform mat4 CRE_PROJECTION;\n"
     "\n"

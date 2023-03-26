@@ -32,10 +32,8 @@ void sprite_rendering_system_render() {
 
     for (size_t i = 0; i < spriteRenderingSystem->entity_count; i++) {
         const CreEntity entity = spriteRenderingSystem->entities[i];
-        Transform2DComponent* spriteTransformComp = (Transform2DComponent*) cre_component_manager_get_component(entity,
-                CreComponentDataIndex_TRANSFORM_2D);
-        SpriteComponent* spriteComponent = (SpriteComponent*) cre_component_manager_get_component(entity,
-                                           CreComponentDataIndex_SPRITE);
+        Transform2DComponent* spriteTransformComp = (Transform2DComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_TRANSFORM_2D);
+        SpriteComponent* spriteComponent = (SpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_SPRITE);
         const CRECamera2D* renderCamera = spriteTransformComp->ignoreCamera ? defaultCamera : camera2D;
         SETransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity,
                                               spriteTransformComp);
