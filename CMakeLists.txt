@@ -32,4 +32,4 @@ target_link_libraries(${PROJECT_NAME}_editor_test crescent_editor crescent_core 
 
 # Create test renderer exe
 add_executable(test_renderer tr/src/main.c)
-target_link_libraries(test_renderer tr)
+target_link_libraries(test_renderer tr seika)
