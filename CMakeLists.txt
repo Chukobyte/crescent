@@ -7,6 +7,8 @@ add_subdirectory(engine)
 
 add_subdirectory(editor)
 
+add_subdirectory(tr)
+
 # Create seika test exe
 add_executable(seika_test seika/test/main.c)
 target_link_libraries(seika_test seika unity)
@@ -27,3 +29,7 @@ target_link_libraries(${PROJECT_NAME}_editor crescent_editor crescent_core seika
 find_package(SDL2 CONFIG REQUIRED)
 add_executable(${PROJECT_NAME}_editor_test editor/test/main.cpp editor/test/unit/curve_float_test.cpp)
 target_link_libraries(${PROJECT_NAME}_editor_test crescent_editor crescent_core seika SDL2::SDL2main SDL2::SDL2)
+
+# Create test renderer exe
+add_executable(test_renderer tr/src/main.c)
+target_link_libraries(test_renderer tr)
