@@ -37,7 +37,6 @@ static const char* TR_OPENGL_SHADER_SOURCE_FRAGMENT_SPRITE =
         "    COLOR = texture(TEXTURE, UV);\n"
         "}\n";
 
-
 static mat4 spriteProjection = {
         {1.0f, 0.0f, 0.0f, 0.0f},
         {0.0f, 1.0f, 0.0f, 0.0f},
@@ -48,11 +47,12 @@ static GLuint spriteQuadVAO;
 static GLuint spriteQuadVBO;
 static SEShader* spriteShader = NULL;
 
-void tr_renderer_init(int resolutionWidth, int resolutionHeight) {
+void tr_renderer_init(int windowWidth, int windowHeight, int resolutionWidth, int resolutionHeight) {
     glEnable(GL_CULL_FACE);
     glEnable(GL_BLEND);
     glDisable(GL_MULTISAMPLE);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glDepthMask(false);
 
     GLfloat vertices[] = {
             // positions (2) texture coordinates (2)
@@ -74,23 +74,28 @@ void tr_renderer_init(int resolutionWidth, int resolutionHeight) {
 
     glBindVertexArray(spriteQuadVAO);
     // position attribute
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, TR_VERTS_STRIDE * sizeof(GLfloat), (GLvoid*) NULL);
-    glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, TR_VERTS_STRIDE * sizeof(GLfloat), (void*) NULL);
     // texture coords attribute
+    glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, TR_VERTS_STRIDE * sizeof(GLfloat), (GLvoid*)(2 * sizeof(GLfloat)));
-    glEnableVertexAttribArray(2);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
+    tr_renderer_resize(windowWidth, windowHeight);
+
     // compile shaders
-    spriteShader = se_shader_compile_new_shader(TR_OPENGL_SHADER_SOURCE_VERTEX_SPRITE,
-                                                TR_OPENGL_SHADER_SOURCE_FRAGMENT_SPRITE);
-    SE_ASSERT(spriteShader);
+    spriteShader = se_shader_compile_new_shader(TR_OPENGL_SHADER_SOURCE_VERTEX_SPRITE, TR_OPENGL_SHADER_SOURCE_FRAGMENT_SPRITE);
+    SE_ASSERT(spriteShader != NULL);
     se_shader_use(spriteShader);
     se_shader_set_int(spriteShader, "TEXTURE", 0);
     glm_ortho(0.0f, (float)resolutionWidth, (float)resolutionHeight, 0.0f, -1.0f, 1.0f, spriteProjection);
     se_shader_set_mat4_float(spriteShader, "PROJECTION", &spriteProjection);
+}
+
+void tr_renderer_resize(int windowWidth, int windowHeight) {
+    glViewport(0, 0, windowWidth, windowHeight);
 }
 
 void tr_renderer_draw_sprite(TRTexture* texture, SEVector2* position, SESize2Di* drawSize) {
@@ -106,6 +111,7 @@ void tr_renderer_draw_sprite(TRTexture* texture, SEVector2* position, SESize2Di*
             (float)drawSize->w, (float)drawSize->h, 1.0f
     });
 
+    tr_renderer_print_opengl_errors();
     glBindVertexArray(spriteQuadVAO);
     glBindBuffer(GL_ARRAY_BUFFER, spriteQuadVBO);
 
@@ -116,4 +122,32 @@ void tr_renderer_draw_sprite(TRTexture* texture, SEVector2* position, SESize2Di*
     glBindTexture(GL_TEXTURE_2D, texture->id);
 
     glDrawArrays(GL_TRIANGLES, 0, 6);
+    glBindVertexArray(0);
+}
+
+void tr_renderer_print_opengl_errors() {
+    GLenum err;
+    while ((err = glGetError()) != GL_NO_ERROR) {
+        printf("err = %d\n", err);
+        switch (err) {
+            case GL_NO_ERROR:
+                printf("GL_NO_ERROR\n");
+                break;
+            case GL_INVALID_ENUM:
+                printf("GL_INVALID_ENUM\n");
+                break;
+            case GL_INVALID_VALUE:
+                printf("GL_INVALID_VALUE\n");
+                break;
+            case GL_INVALID_OPERATION:
+                printf("GL_INVALID_OPERATION\n");
+                break;
+            case GL_INVALID_FRAMEBUFFER_OPERATION:
+                printf("GL_INVALID_FRAMEBUFFER_OPERATION\n");
+                break;
+            default:
+                printf("default\n");
+                break;
+        }
+    }
 }

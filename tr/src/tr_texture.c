@@ -28,6 +28,7 @@ void tr_texture_generate(TRTexture* texture);
 TRTexture* tr_texture_create_texture(const char* filePath) {
     TRTexture* texture = TR_MEM_ALLOCATE(TRTexture);
     texture->fileName = strdup(filePath);
+    texture->internalFormat = DEFAULT_TEXTURE_REF.internalFormat;
     texture->wrapS = DEFAULT_TEXTURE_REF.wrapS;
     texture->wrapT = DEFAULT_TEXTURE_REF.wrapT;
     // Load image data
@@ -56,8 +57,8 @@ void tr_texture_generate(TRTexture* texture) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, texture->wrapS);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, texture->wrapT);
     // Defaults to bilinear interpolation
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     // Unbind texture
     glBindTexture(GL_TEXTURE_2D, 0);
 

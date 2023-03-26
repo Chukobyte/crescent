@@ -20,7 +20,9 @@ SDL_Window* window = NULL;
 SDL_GLContext openGlContext;
 bool isRunning = false;
 
-TRTexture* bgImage = NULL;
+TRTexture* baseUITexture = NULL;
+TRTexture* healthBarTexture = NULL;
+TRTexture* magicBarTexture = NULL;
 
 int main(int argv, char** args) {
     // Init SDL
@@ -29,10 +31,16 @@ int main(int argv, char** args) {
     }
 
     // Init Renderer
-    tr_renderer_init(TR_GAME_RESOLUTION_WIDTH, TR_GAME_RESOLUTION_HEIGHT);
+    tr_renderer_init(TR_WINDOW_WIDTH, TR_WINDOW_HEIGHT, TR_GAME_RESOLUTION_WIDTH, TR_GAME_RESOLUTION_HEIGHT);
+    tr_renderer_print_opengl_errors();
 
     // Main
-    bgImage = tr_texture_create_texture("tr/assets/bottom_ui.png");
+    baseUITexture = tr_texture_create_texture("tr/assets/bottom_ui.png");
+    tr_renderer_print_opengl_errors();
+    healthBarTexture = tr_texture_create_texture("tr/assets/health_bar_ui.png");
+    tr_renderer_print_opengl_errors();
+    magicBarTexture = tr_texture_create_texture("tr/assets/magic_bar_ui.png");
+    tr_renderer_print_opengl_errors();
 
     isRunning = true;
 
@@ -49,6 +57,7 @@ int main(int argv, char** args) {
                         case SDL_WINDOWEVENT_SIZE_CHANGED: {
                             const Sint32 windowWidth = event.window.data1;
                             const Sint32 windowHeight = event.window.data2;
+                            tr_renderer_resize(windowWidth, windowHeight);
                             break;
                         }
                     }
@@ -60,7 +69,9 @@ int main(int argv, char** args) {
         tr_render();
     }
 
-    tr_texture_delete(bgImage);
+    tr_texture_delete(baseUITexture);
+    tr_texture_delete(healthBarTexture);
+    tr_texture_delete(magicBarTexture);
 
     SDL_DestroyWindow(window);
     SDL_GL_DeleteContext(openGlContext);
@@ -120,7 +131,9 @@ void tr_render() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
     // Render stuff
-    tr_renderer_draw_sprite(bgImage, &(SEVector2){ .x = 0.0f, .y = 112.0f }, &(SESize2Di){ .w = 160, .h = 32 });
+    tr_renderer_draw_sprite(baseUITexture, &(SEVector2){ .x = 0.0f, .y = 112.0f }, &(SESize2Di){ .w = 160, .h = 32 });
+    tr_renderer_draw_sprite(healthBarTexture, &(SEVector2){ .x = 34.0f, .y = 123.0f }, &(SESize2Di){ .w = 52, .h = 9 });
+    tr_renderer_draw_sprite(magicBarTexture, &(SEVector2){ .x = 98.0f, .y = 123.0f }, &(SESize2Di){ .w = 52, .h = 9 });
 
     SDL_GL_SwapWindow(window);
 }
