@@ -485,26 +485,28 @@ void font_renderer_draw_text(const SEFont* font, const char* text, float x, floa
 
 // --- Misc --- //
 TextureCoordinates renderer_get_texture_coordinates(const SETexture* texture, const SERect2* drawSource, bool flipH, bool flipV) {
+    GLfloat sMin = 0.0f;
+    GLfloat sMax = 1.0f;
+    GLfloat tMin = 0.0f;
+    GLfloat tMax = 1.0f;
     // S
-    GLfloat sMin, sMax;
-    if (flipH) {
-        sMax = (drawSource->x + 0.5f) / (float) texture->width;
-        sMin = (drawSource->x + drawSource->w - 0.5f) / (float) texture->width;
-    } else {
+    if (texture->width != (GLsizei)drawSource->w || texture->height != (GLsizei)drawSource->h) {
         sMin = (drawSource->x + 0.5f) / (float) texture->width;
         sMax = (drawSource->x + drawSource->w - 0.5f) / (float) texture->width;
-    }
-    // T
-    GLfloat tMin, tMax;
-    if (flipV) {
-        tMax = (drawSource->y + 0.5f) / (float) texture->height;
-        tMin = (drawSource->y + drawSource->h - 0.5f) / (float) texture->height;
-    } else {
         tMin = (drawSource->y + 0.5f) / (float) texture->height;
         tMax = (drawSource->y + drawSource->h - 0.5f) / (float) texture->height;
     }
-    TextureCoordinates textureCoords = { sMin, sMax, tMin, tMax };
-    return textureCoords;
+    if (flipH) {
+        const GLfloat tempSMin = sMin;
+        sMin = sMax;
+        sMax = tempSMin;
+    }
+    if (flipV) {
+        const GLfloat tempTMin = tMin;
+        tMin = tMax;
+        tMax = tempTMin;
+    }
+    return (TextureCoordinates){ sMin, sMax, tMin, tMax };
 }
 
 void renderer_set_shader_instance_params(SEShaderInstance* shaderInstance) {
