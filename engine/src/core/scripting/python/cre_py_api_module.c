@@ -564,7 +564,6 @@ PyObject* cre_py_api_mouse_get_world_position(PyObject* self, PyObject* args) {
 }
 
 // Camera
-// TODO: Set is dirty flags
 PyObject* cre_py_api_camera2D_set_position(PyObject* self, PyObject* args, PyObject* kwargs) {
     float x;
     float y;
