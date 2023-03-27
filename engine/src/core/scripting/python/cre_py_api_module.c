@@ -867,6 +867,18 @@ PyObject* cre_py_api_node_queue_deletion(PyObject* self, PyObject* args, PyObjec
     return NULL;
 }
 
+PyObject* cre_py_api_node_is_queued_for_deletion(PyObject* self, PyObject* args, PyObject* kwargs) {
+    CreEntity entity;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
+        NodeComponent* nodeComponent = (NodeComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_NODE);
+        if (nodeComponent->queuedForDeletion) {
+            Py_RETURN_TRUE;
+        }
+        Py_RETURN_FALSE;
+    }
+    return NULL;
+}
+
 PyObject* cre_py_api_node_add_child(PyObject* self, PyObject* args, PyObject* kwargs) {
     CreEntity parentEntity;
     CreEntity entity;

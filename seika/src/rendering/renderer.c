@@ -506,7 +506,9 @@ TextureCoordinates renderer_get_texture_coordinates(const SETexture* texture, co
         tMin = tMax;
         tMax = tempTMin;
     }
-    return (TextureCoordinates){ sMin, sMax, tMin, tMax };
+    return (TextureCoordinates) {
+        sMin, sMax, tMin, tMax
+    };
 }
 
 void renderer_set_shader_instance_params(SEShaderInstance* shaderInstance) {

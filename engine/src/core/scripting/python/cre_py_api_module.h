@@ -95,6 +95,7 @@ PyObject* cre_py_api_game_properties_get(PyObject* self, PyObject* args);
 // Node
 PyObject* cre_py_api_node_new(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_node_queue_deletion(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_node_is_queued_for_deletion(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_node_add_child(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_node_get_child(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_node_get_children(PyObject* self, PyObject* args, PyObject* kwargs);
@@ -472,6 +473,10 @@ static struct PyMethodDef crePyApiMethods[] = {
     {
         "node_queue_deletion", (PyCFunction) cre_py_api_node_queue_deletion,
         METH_VARARGS | METH_KEYWORDS, "Queues a node for deletion."
+    },
+    {
+        "node_is_queued_for_deletion", (PyCFunction) cre_py_api_node_is_queued_for_deletion,
+        METH_VARARGS | METH_KEYWORDS, "Returns whether a node is queued for deletion."
     },
     {
         "node_add_child", (PyCFunction) cre_py_api_node_add_child,

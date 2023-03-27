@@ -181,7 +181,7 @@ void cre_queue_destroy_tree_node_entity(SceneTreeNode* treeNode) {
 }
 
 void cre_queue_destroy_tree_node_entity_all(SceneTreeNode* treeNode) {
-    NodeComponent* nodeComp = cre_component_manager_get_component_unchecked(entity, CreComponentDataIndex_NODE);
+    NodeComponent* nodeComp = cre_component_manager_get_component_unchecked(treeNode->entity, CreComponentDataIndex_NODE);
     if (nodeComp) {
         if (nodeComp->queuedForDeletion) {
             se_logger_warn("Entity '%s' already queued for deletion, skipping queue deletion!", nodeComp->name);

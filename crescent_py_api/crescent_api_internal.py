@@ -331,6 +331,10 @@ def node_queue_deletion(entity_id: int) -> None:
     pass
 
 
+def node_is_queued_for_deletion(entity_id: int) -> bool:
+    return False
+
+
 def node_add_child(parent_entity_id: int, child_entity_id: int) -> None:
     pass
 
