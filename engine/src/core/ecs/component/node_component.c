@@ -8,6 +8,7 @@ NodeComponent* node_component_create() {
     NodeComponent* nodeComponent = SE_MEM_ALLOCATE(NodeComponent);
     nodeComponent->name[0] = '\0';
     nodeComponent->type = NodeBaseType_INVALID;
+    nodeComponent->queuedForDeletion = false;
     nodeComponent->timeDilation = (NodeTimeDilation) {
         .value = 1.0f, .cachedFullValue = 1.0f, .cacheInvalid = true
     };

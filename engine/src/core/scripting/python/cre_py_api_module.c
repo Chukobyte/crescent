@@ -713,8 +713,7 @@ PyObject* cre_py_api_camera2D_unfollow_node(PyObject* self, PyObject* args, PyOb
 
 // World
 void py_mark_scene_nodes_time_dilation_flag_dirty(SceneTreeNode* node) {
-    NodeComponent* nodeComponent = (NodeComponent*) cre_component_manager_get_component_unchecked(node->entity,
-                                   CreComponentDataIndex_NODE);
+    NodeComponent* nodeComponent = (NodeComponent*) cre_component_manager_get_component_unchecked(node->entity, CreComponentDataIndex_NODE);
     SE_ASSERT(nodeComponent != NULL);
     nodeComponent->timeDilation.cacheInvalid = true;
 }

@@ -53,6 +53,7 @@ typedef struct NodeTimeDilation {
 typedef struct NodeComponent {
     char name[32];
     NodeBaseType type;
+    bool queuedForDeletion;
     NodeTimeDilation timeDilation;
     // Called after '_start' is called on an entity
     SEEvent onSceneTreeEnter; // { data = entity (unsigned int), type = 0 (not used) }
