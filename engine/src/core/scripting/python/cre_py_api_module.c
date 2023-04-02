@@ -1001,6 +1001,14 @@ PyObject* cre_py_api_node_get_full_time_dilation(PyObject* self, PyObject* args,
     return NULL;
 }
 
+PyObject* cre_py_api_node_get_full_time_dilation_with_physics_delta(PyObject* self, PyObject* args, PyObject* kwargs) {
+    CreEntity entity;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
+        return Py_BuildValue("f", cre_scene_manager_get_node_full_time_dilation(entity) * CRE_GLOBAL_PHYSICS_DELTA_TIME);
+    }
+    return NULL;
+}
+
 // Event related stuff
 void py_api_node_event_callback(void* observerData, NodeEventNotifyPayload* notifyPayload) {
     PyObject* pyCallbackFunc = (PyObject*) observerData;

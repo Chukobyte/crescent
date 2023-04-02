@@ -1028,6 +1028,11 @@
 "            entity_id=self.entity_id\n"\
 "        )\n"\
 "\n"\
+"    def get_full_time_dilation_with_physics_delta(self) -> float:\n"\
+"        return crescent_api_internal.node_get_full_time_dilation_with_physics_delta(\n"\
+"            entity_id=self.entity_id\n"\
+"        )\n"\
+"\n"\
 "\n"\
 "# 2D\n"\
 "class Node2D(Node):\n"\

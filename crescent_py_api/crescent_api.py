@@ -991,6 +991,11 @@ class Node:
             entity_id=self.entity_id
         )
 
+    def get_full_time_dilation_with_physics_delta(self) -> float:
+        return crescent_api_internal.node_get_full_time_dilation_with_physics_delta(
+            entity_id=self.entity_id
+        )
+
 
 # 2D
 class Node2D(Node):

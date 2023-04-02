@@ -381,6 +381,10 @@ def node_get_full_time_dilation(entity_id: int) -> float:
     return 1.0
 
 
+def node_get_full_time_dilation_with_physics_delta(entity_id: int) -> float:
+    return 1.0
+
+
 def node2D_set_position(entity_id: int, x: float, y: float) -> None:
     pass
 
