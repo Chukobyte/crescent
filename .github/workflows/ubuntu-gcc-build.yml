@@ -2,7 +2,7 @@ name: ubuntu-gcc-build
 
 on:
   push:
-    branches: [ vcpkg_cache2 ]
+    branches: [ vcpkg_cache ]
   pull_request:
     branches: [ main ]
 
@@ -44,19 +44,13 @@ jobs:
           buildPreset: 'ninja-multi-vcpkg'
           buildPresetAdditionalArgs: "['-DIS_CI_BUILD=true']"
 
-#      - name: run build
-#        run: |
-#          cd ${{ github.workspace }}
-#          cmake . -DCMAKE_C_COMPILER=gcc-11 -DCMAKE_CXX_COMPILER=g++-11 -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/../vcpkg/scripts/buildsystems/vcpkg.cmake -DIS_CI_BUILD="true"
-#          cmake --build .
-
       - name: run unit tests
         run: |
           echo "Running seika tests!"
-          Debug/seika_test
+          ${{ github.workspace }}/buildsDebug/seika_test
           echo ""
           echo "Running crescent engine tests!"
-          Debug/crescent_engine_test
+          ${{ github.workspace }}/builds/Debug/crescent_engine_test
           echo ""
           echo "Running crescent engine editor tests!"
-          Debug/crescent_engine_editor_test
+          ${{ github.workspace }}/builds/Debug/crescent_engine_editor_test
