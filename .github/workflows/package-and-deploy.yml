@@ -43,9 +43,9 @@ jobs:
         with:
           cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
           configurePreset: 'ninja-multi-vcpkg'
-          configurePresetAdditionalArgs: "['--config', 'Release', '-DIS_CI_BUILD=true']"
+          configurePresetAdditionalArgs: "['--config Release', '-DIS_CI_BUILD=true']"
           buildPreset: 'ninja-multi-vcpkg'
-          buildPresetAdditionalArgs: "['--config', 'Release', '-DIS_CI_BUILD=true']"
+          buildPresetAdditionalArgs: "['--config Release', '-DIS_CI_BUILD=true']"
 
       - name: rename binaries
         run: |
@@ -146,9 +146,9 @@ jobs:
         with:
           cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
           configurePreset: 'ninja-multi-vcpkg'
-          configurePresetAdditionalArgs: "['--config', 'Release', '-DIS_CI_BUILD=true']"
+          configurePresetAdditionalArgs: "['--config Release', '-DIS_CI_BUILD=true']"
           buildPreset: 'ninja-multi-vcpkg'
-          buildPresetAdditionalArgs: "['--config', 'Release', '-DIS_CI_BUILD=true']"
+          buildPresetAdditionalArgs: "['--config Release', '-DIS_CI_BUILD=true']"
 
       - name: rename binaries
         run: |
@@ -221,9 +221,9 @@ jobs:
         with:
           cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
           configurePreset: 'ninja-multi-vcpkg'
-          configurePresetAdditionalArgs: "['--config', 'Release', '-DIS_CI_BUILD=true']"
+          configurePresetAdditionalArgs: "['--config Release', '-DIS_CI_BUILD=true']"
           buildPreset: 'ninja-multi-vcpkg'
-          buildPresetAdditionalArgs: "['--config', 'Release', '-DIS_CI_BUILD=true']"
+          buildPresetAdditionalArgs: "['--config Release', '-DIS_CI_BUILD=true']"
 
       - name: rename binaries
         run: |
