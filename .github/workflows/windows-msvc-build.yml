@@ -1,7 +1,7 @@
 name: windows-msvc-build
 
 on:
-  pull_request:
+  push:
     branches: [ vcpkg_cache ]
 
 jobs:
