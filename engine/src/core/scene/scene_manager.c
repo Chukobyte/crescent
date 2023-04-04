@@ -181,6 +181,14 @@ void cre_queue_destroy_tree_node_entity(SceneTreeNode* treeNode) {
 }
 
 void cre_queue_destroy_tree_node_entity_all(SceneTreeNode* treeNode) {
+    NodeComponent* nodeComp = cre_component_manager_get_component_unchecked(treeNode->entity, CreComponentDataIndex_NODE);
+    if (nodeComp) {
+        if (nodeComp->queuedForDeletion) {
+            se_logger_warn("Entity '%s' already queued for deletion, skipping queue deletion!", nodeComp->name);
+            return;
+        }
+        nodeComp->queuedForDeletion = true;
+    }
     cre_scene_execute_on_all_tree_nodes(treeNode, cre_queue_destroy_tree_node_entity);
     if (treeNode->parent != NULL) {
         SE_STATIC_ARRAY_ADD(entitiesToUnlinkParent, treeNode->entity);

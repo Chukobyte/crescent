@@ -95,6 +95,7 @@ PyObject* cre_py_api_game_properties_get(PyObject* self, PyObject* args);
 // Node
 PyObject* cre_py_api_node_new(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_node_queue_deletion(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_node_is_queued_for_deletion(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_node_add_child(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_node_get_child(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_node_get_children(PyObject* self, PyObject* args, PyObject* kwargs);
@@ -103,6 +104,7 @@ PyObject* cre_py_api_node_get_name(PyObject* self, PyObject* args, PyObject* kwa
 PyObject* cre_py_api_node_set_time_dilation(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_node_get_time_dilation(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_node_get_full_time_dilation(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_node_get_full_time_dilation_with_physics_delta(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_node_create_event(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_node_subscribe_to_event(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_node_broadcast_event(PyObject* self, PyObject* args, PyObject* kwargs);
@@ -474,6 +476,10 @@ static struct PyMethodDef crePyApiMethods[] = {
         METH_VARARGS | METH_KEYWORDS, "Queues a node for deletion."
     },
     {
+        "node_is_queued_for_deletion", (PyCFunction) cre_py_api_node_is_queued_for_deletion,
+        METH_VARARGS | METH_KEYWORDS, "Returns whether a node is queued for deletion."
+    },
+    {
         "node_add_child", (PyCFunction) cre_py_api_node_add_child,
         METH_VARARGS | METH_KEYWORDS, "Adds a node to the scene."
     },
@@ -504,6 +510,10 @@ static struct PyMethodDef crePyApiMethods[] = {
     {
         "node_get_full_time_dilation", (PyCFunction) cre_py_api_node_get_full_time_dilation,
         METH_VARARGS | METH_KEYWORDS, "Returns a node's total time dilation, including global world and parents."
+    },
+    {
+        "node_get_full_time_dilation_with_physics_delta", (PyCFunction) cre_py_api_node_get_full_time_dilation_with_physics_delta,
+        METH_VARARGS | METH_KEYWORDS, "Returns a node's total time dilation, including global world, parents, and physics delta time."
     },
     {
         "node_create_event", (PyCFunction) cre_py_api_node_create_event,

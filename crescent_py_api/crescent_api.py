@@ -946,6 +946,12 @@ class Node:
     def queue_deletion(self) -> None:
         crescent_api_internal.node_queue_deletion(entity_id=self.entity_id)
 
+    @property
+    def is_queued_for_deletion(self) -> bool:
+        return crescent_api_internal.node_is_queued_for_deletion(
+            entity_id=self.entity_id
+        )
+
     def create_event(self, event_id: str) -> None:
         crescent_api_internal.node_create_event(
             entity_id=self.entity_id, event_id=event_id
@@ -982,6 +988,11 @@ class Node:
 
     def get_full_time_dilation(self) -> float:
         return crescent_api_internal.node_get_full_time_dilation(
+            entity_id=self.entity_id
+        )
+
+    def get_full_time_dilation_with_physics_delta(self) -> float:
+        return crescent_api_internal.node_get_full_time_dilation_with_physics_delta(
             entity_id=self.entity_id
         )
 

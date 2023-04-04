@@ -331,6 +331,10 @@ def node_queue_deletion(entity_id: int) -> None:
     pass
 
 
+def node_is_queued_for_deletion(entity_id: int) -> bool:
+    return False
+
+
 def node_add_child(parent_entity_id: int, child_entity_id: int) -> None:
     pass
 
@@ -374,6 +378,10 @@ def node_get_time_dilation(entity_id: int) -> float:
 
 
 def node_get_full_time_dilation(entity_id: int) -> float:
+    return 1.0
+
+
+def node_get_full_time_dilation_with_physics_delta(entity_id: int) -> float:
     return 1.0
 
 

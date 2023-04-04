@@ -983,6 +983,12 @@
 "    def queue_deletion(self) -> None:\n"\
 "        crescent_api_internal.node_queue_deletion(entity_id=self.entity_id)\n"\
 "\n"\
+"    @property\n"\
+"    def is_queued_for_deletion(self) -> bool:\n"\
+"        return crescent_api_internal.node_is_queued_for_deletion(\n"\
+"            entity_id=self.entity_id\n"\
+"        )\n"\
+"\n"\
 "    def create_event(self, event_id: str) -> None:\n"\
 "        crescent_api_internal.node_create_event(\n"\
 "            entity_id=self.entity_id, event_id=event_id\n"\
@@ -1019,6 +1025,11 @@
 "\n"\
 "    def get_full_time_dilation(self) -> float:\n"\
 "        return crescent_api_internal.node_get_full_time_dilation(\n"\
+"            entity_id=self.entity_id\n"\
+"        )\n"\
+"\n"\
+"    def get_full_time_dilation_with_physics_delta(self) -> float:\n"\
+"        return crescent_api_internal.node_get_full_time_dilation_with_physics_delta(\n"\
 "            entity_id=self.entity_id\n"\
 "        )\n"\
 "\n"\

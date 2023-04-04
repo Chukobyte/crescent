@@ -713,8 +713,7 @@ PyObject* cre_py_api_camera2D_unfollow_node(PyObject* self, PyObject* args, PyOb
 
 // World
 void py_mark_scene_nodes_time_dilation_flag_dirty(SceneTreeNode* node) {
-    NodeComponent* nodeComponent = (NodeComponent*) cre_component_manager_get_component_unchecked(node->entity,
-                                   CreComponentDataIndex_NODE);
+    NodeComponent* nodeComponent = (NodeComponent*) cre_component_manager_get_component_unchecked(node->entity, CreComponentDataIndex_NODE);
     SE_ASSERT(nodeComponent != NULL);
     nodeComponent->timeDilation.cacheInvalid = true;
 }
@@ -868,6 +867,18 @@ PyObject* cre_py_api_node_queue_deletion(PyObject* self, PyObject* args, PyObjec
     return NULL;
 }
 
+PyObject* cre_py_api_node_is_queued_for_deletion(PyObject* self, PyObject* args, PyObject* kwargs) {
+    CreEntity entity;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
+        NodeComponent* nodeComponent = (NodeComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_NODE);
+        if (nodeComponent->queuedForDeletion) {
+            Py_RETURN_TRUE;
+        }
+        Py_RETURN_FALSE;
+    }
+    return NULL;
+}
+
 PyObject* cre_py_api_node_add_child(PyObject* self, PyObject* args, PyObject* kwargs) {
     CreEntity parentEntity;
     CreEntity entity;
@@ -986,6 +997,14 @@ PyObject* cre_py_api_node_get_full_time_dilation(PyObject* self, PyObject* args,
     CreEntity entity;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
         return Py_BuildValue("f", cre_scene_manager_get_node_full_time_dilation(entity));
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_node_get_full_time_dilation_with_physics_delta(PyObject* self, PyObject* args, PyObject* kwargs) {
+    CreEntity entity;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
+        return Py_BuildValue("f", cre_scene_manager_get_node_full_time_dilation(entity) * CRE_GLOBAL_PHYSICS_DELTA_TIME);
     }
     return NULL;
 }
