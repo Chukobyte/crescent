@@ -47,7 +47,7 @@ jobs:
       - name: run unit tests
         run: |
           echo "Running seika tests!"
-          ${{ github.workspace }}/buildsDebug/seika_test
+          ${{ github.workspace }}/builds/Debug/seika_test
           echo ""
           echo "Running crescent engine tests!"
           ${{ github.workspace }}/builds/Debug/crescent_engine_test
