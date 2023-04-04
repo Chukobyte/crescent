@@ -34,7 +34,7 @@ jobs:
       - name: run build
         run: |
           cd ${{ github.workspace }}
-          cmake . -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/../vcpkg/scripts/buildsystems/vcpkg.cmake -DIS_CI_BUILD="true"
+          cmake --preset ninja-multiconfiguration-vcpkg . -DIS_CI_BUILD="true"
           cmake --build .
 
       - name: run unit tests
