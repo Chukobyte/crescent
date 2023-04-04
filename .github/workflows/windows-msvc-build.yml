@@ -24,18 +24,13 @@ jobs:
           vcpkgDirectory: '${{ github.workspace }}/vcpkg'
           vcpkgGitCommitId: 'b619a233fbf7b2c9765fb4458f3ecb05bd3166e3'
 
-#      - name: installing vcpkg
-#        run: |
-#          cd ..
-#          git clone https://github.com/Microsoft/vcpkg.git
-#          cd vcpkg
-#          .\bootstrap-vcpkg.bat
-
       - name: run build
-        run: |
-          cd ${{ github.workspace }}
-          cmake --preset ninja-multiconfiguration-vcpkg . -DIS_CI_BUILD="true"
-          cmake --build .
+        uses: lukka/run-cmake@v10.3
+        with:
+          cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
+          configurePreset: 'ninja-multi-vcpkg'
+          configurePresetAdditionalArgs: "['-DIS_CI_BUILD=true']"
+          buildPreset: 'ninja-multi-vcpkg'
 
       - name: run unit tests
         run: |
