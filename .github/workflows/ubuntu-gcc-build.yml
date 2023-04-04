@@ -1,8 +1,6 @@
 name: ubuntu-gcc-build
 
 on:
-  push:
-    branches: [ vcpkg_cache ]
   pull_request:
     branches: [ main ]
 

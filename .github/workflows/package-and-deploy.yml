@@ -2,7 +2,7 @@ name: package-and-deploy
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, vcpkg_cache ]
 
 jobs:
   # WINDOWS BUILD
@@ -25,32 +25,45 @@ jobs:
           $python_version = jq -r '.dependencies[] | select(.name == \"python3\") | .\"version>=\"' vcpkg.json
           "PYTHON_VERSION=$python_version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
-      - name: installing vcpkg
-        run: |
-          cd ..
-          git clone https://github.com/Microsoft/vcpkg.git
-          cd vcpkg
-          .\bootstrap-vcpkg.bat
+      - name: get cmake
+        uses: lukka/get-cmake@latest
+        with:
+          useLocalCache: true
+          useCloudCache: false
+          cmakeVersion: "3.25.0"
+
+      - name: run-vcpkg
+        uses: lukka/run-vcpkg@v11.0
+        with:
+          vcpkgDirectory: '${{ github.workspace }}/vcpkg'
+          vcpkgGitCommitId: 'b619a233fbf7b2c9765fb4458f3ecb05bd3166e3'
 
       - name: run build
+        uses: lukka/run-cmake@v10.3
+        with:
+          cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
+          configurePreset: 'ninja-multi-vcpkg'
+          configurePresetAdditionalArgs: "['--config', 'Release', '-DIS_CI_BUILD=true']"
+          buildPreset: 'ninja-multi-vcpkg'
+          buildPresetAdditionalArgs: "['--config', 'Release', '-DIS_CI_BUILD=true']"
+
+      - name: rename binaries
         run: |
           cd ${{ github.workspace }}
-          cmake . -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/../vcpkg/scripts/buildsystems/vcpkg.cmake -DIS_CI_BUILD="true"
-          cmake --build . --config Release
-          ren Release\crescent_engine.exe crescent_engine_windows.exe
-          ren Release\crescent_engine_editor.exe crescent_engine_editor_windows.exe
+          ren builds\Release\crescent_engine.exe crescent_engine_windows.exe
+          ren builds\Release\crescent_engine_editor.exe crescent_engine_editor_windows.exe
 
       - name: run unit tests
         run: |
           echo "Running seika tests!"
           cd ${{ github.workspace }}
-          ${{ github.workspace }}\Release\seika_test.exe
+          ${{ github.workspace }}\builds\Release\seika_test.exe
           echo ""
           echo "Running crescent engine tests!"
-          ${{ github.workspace }}\Release\crescent_engine_test.exe
+          ${{ github.workspace }}\builds\Release\crescent_engine_test.exe
           echo ""
           echo "Running crescent engine editor tests!"
-          ${{ github.workspace }}\Release\crescent_engine_editor_test.exe
+          ${{ github.workspace }}\builds\Release\crescent_engine_editor_test.exe
 
       - name: package dlls (and python zip)
         run: |
@@ -73,14 +86,14 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: crescent_engine_windows.exe
-          path: Release\crescent_engine_windows.exe
+          path: crescent_engine_windows.exe
           if-no-files-found: error
 
       - name: store editor binary
         uses: actions/upload-artifact@v3
         with:
           name: crescent_engine_editor_windows.exe
-          path: Release\crescent_engine_editor_windows.exe
+          path: crescent_engine_editor_windows.exe
           if-no-files-found: error
 
       - name: store windows deps
@@ -115,20 +128,33 @@ jobs:
           python_major_minor=$(echo $python_version | grep -Po "\d+.\d+")
           echo "PYTHON_MAJOR_MINOR_VERSION=$python_major_minor" >> $GITHUB_ENV
 
-      - name: install vcpkg
-        run: |
-          cd ..
-          git clone https://github.com/Microsoft/vcpkg.git
-          cd vcpkg
-          ./bootstrap-vcpkg.sh
+      - name: get cmake
+        uses: lukka/get-cmake@latest
+        with:
+          useLocalCache: true
+          useCloudCache: false
+          cmakeVersion: "3.25.0"
+
+      - name: run-vcpkg
+        uses: lukka/run-vcpkg@v11.0
+        with:
+          vcpkgDirectory: '${{ github.workspace }}/vcpkg'
+          vcpkgGitCommitId: 'b619a233fbf7b2c9765fb4458f3ecb05bd3166e3'
 
       - name: run build
+        uses: lukka/run-cmake@v10.3
+        with:
+          cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
+          configurePreset: 'ninja-multi-vcpkg'
+          configurePresetAdditionalArgs: "['--config', 'Release', '-DIS_CI_BUILD=true']"
+          buildPreset: 'ninja-multi-vcpkg'
+          buildPresetAdditionalArgs: "['--config', 'Release', '-DIS_CI_BUILD=true']"
+
+      - name: rename binaries
         run: |
           cd ${{ github.workspace }}
-          cmake . -DCMAKE_BUILD_TYPE=Release -DVIDEO_OPENGL=ON -DVIDEO_X11=ON -DCMAKE_C_COMPILER=gcc-11 -DCMAKE_CXX_COMPILER=g++-11 -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/../vcpkg/scripts/buildsystems/vcpkg.cmake -DIS_CI_BUILD="true"
-          cmake --build . --config Release
-          mv crescent_engine crescent_engine_linux
-          mv crescent_engine_editor crescent_engine_editor_linux
+          mv builds/Release/crescent_engine crescent_engine_linux
+          mv builds/Release/crescent_engine_editor crescent_engine_editor_linux
           chmod +x crescent_engine_linux
           chmod +x crescent_engine_editor_linux
 
@@ -136,13 +162,13 @@ jobs:
         run: |
           cd ${{ github.workspace }}
           echo "Running seika tests!"
-          ./seika_test
+          ${{ github.workspace }}/builds/Release/seika_test
           echo ""
           echo "Running crescent engine tests!"
-          ./crescent_engine_test
+          ${{ github.workspace }}/builds/Release/crescent_engine_test
           echo ""
           echo "Running crescent engine editor tests!"
-          ./crescent_engine_editor_test
+          ${{ github.workspace }}/builds/Release/crescent_engine_editor_test
 
       - name: store engine binary
         uses: actions/upload-artifact@v3
@@ -165,13 +191,6 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
-      - name: install vcpkg
-        run: |
-          cd ..
-          git clone https://github.com/Microsoft/vcpkg.git
-          cd vcpkg
-          ./bootstrap-vcpkg.sh
-
       - name: install dependencies
         run: |
           brew install pkg-config jq
@@ -184,13 +203,33 @@ jobs:
           python_major_minor=$(echo $python_version | grep -Eo "\d+.\d+")
           echo "PYTHON_MAJOR_MINOR_VERSION=$python_major_minor" >> $GITHUB_ENV
 
+      - name: get cmake
+        uses: lukka/get-cmake@latest
+        with:
+          useLocalCache: true
+          useCloudCache: false
+          cmakeVersion: "3.25.0"
+
+      - name: run-vcpkg
+        uses: lukka/run-vcpkg@v11.0
+        with:
+          vcpkgDirectory: '${{ github.workspace }}/vcpkg'
+          vcpkgGitCommitId: 'b619a233fbf7b2c9765fb4458f3ecb05bd3166e3'
+
       - name: run build
+        uses: lukka/run-cmake@v10.3
+        with:
+          cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
+          configurePreset: 'ninja-multi-vcpkg'
+          configurePresetAdditionalArgs: "['--config', 'Release', '-DIS_CI_BUILD=true']"
+          buildPreset: 'ninja-multi-vcpkg'
+          buildPresetAdditionalArgs: "['--config', 'Release', '-DIS_CI_BUILD=true']"
+
+      - name: rename binaries
         run: |
           cd ${{ github.workspace }}
-          cmake . -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/../vcpkg/scripts/buildsystems/vcpkg.cmake -DIS_CI_BUILD="true"
-          cmake --build . --config Release
-          mv crescent_engine crescent_engine_macosx
-          mv crescent_engine_editor crescent_engine_editor_macosx
+          mv builds/Release/crescent_engine crescent_engine_macosx
+          mv builds/Release/crescent_engine_editor crescent_engine_editor_macosx
           chmod +x crescent_engine_macosx
           chmod +x crescent_engine_editor_macosx
 
@@ -198,13 +237,13 @@ jobs:
         run: |
           cd ${{ github.workspace }}
           echo "Running seika tests!"
-          ./seika_test
+          builds/Release/seika_test
           echo ""
           echo "Running crescent engine tests!"
-          ./crescent_engine_test
+          builds/Release/crescent_engine_test
           echo ""
           echo "Running crescent engine editor tests!"
-          ./crescent_engine_editor_test
+          builds/Release/crescent_engine_editor_test
 
       - name: download macosx python embed
         uses: dawidd6/action-download-artifact@v2
