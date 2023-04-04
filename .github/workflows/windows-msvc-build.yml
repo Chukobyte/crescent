@@ -2,7 +2,7 @@ name: windows-msvc-build
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [ vcpkg_cache ]
 
 jobs:
   build:
@@ -11,12 +11,25 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
-      - name: installing vcpkg
-        run: |
-          cd ..
-          git clone https://github.com/Microsoft/vcpkg.git
-          cd vcpkg
-          .\bootstrap-vcpkg.bat
+      - name: get cmake
+        uses: lukka/get-cmake@latest
+        with:
+          useLocalCache: true
+          useCloudCache: false
+          cmakeVersion: "3.25.0"
+
+      - name: run-vcpkg
+        uses: lukka/run-vcpkg@v11.0
+        with:
+          vcpkgDirectory: '${{ github.workspace }}/vcpkg'
+          vcpkgGitCommitId: 'b619a233fbf7b2c9765fb4458f3ecb05bd3166e3'
+
+#      - name: installing vcpkg
+#        run: |
+#          cd ..
+#          git clone https://github.com/Microsoft/vcpkg.git
+#          cd vcpkg
+#          .\bootstrap-vcpkg.bat
 
       - name: run build
         run: |
