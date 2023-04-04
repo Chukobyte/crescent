@@ -33,14 +33,15 @@ jobs:
           configurePreset: 'ninja-multi-vcpkg'
           configurePresetAdditionalArgs: "['-DIS_CI_BUILD=true']"
           buildPreset: 'ninja-multi-vcpkg'
+          buildPresetAdditionalArgs: "['-DIS_CI_BUILD=true']"
 
       - name: run unit tests
         run: |
           echo "Running seika tests!"
-          Debug\seika_test.exe
+          ${{ github.workspace }}\builds\Debug\seika_test.exe
           echo ""
           echo "Running crescent engine tests!"
-          Debug\crescent_engine_test.exe
+          ${{ github.workspace }}\builds\Debug\crescent_engine_test.exe
           echo ""
           echo "Running crescent engine editor tests!"
-          Debug\crescent_engine_editor_test.exe
+          ${{ github.workspace }}\builds\Debug\crescent_engine_editor_test.exe
