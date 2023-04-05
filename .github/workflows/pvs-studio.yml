@@ -54,8 +54,7 @@ jobs:
 
       - name: run pvs studio
         run: |
-          find . -name "*.json"
-          pvs-studio-analyzer analyze -f compile_commands.json -j -e include -e docs -e assets -e test_games
+          pvs-studio-analyzer analyze -f builds/compile_commands.json -j -e include -e docs -e assets -e test_games
 
       - name: convert pvs studio report
         run: |
