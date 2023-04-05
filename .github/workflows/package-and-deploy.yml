@@ -65,10 +65,15 @@ jobs:
           echo "Running crescent engine editor tests!"
           ${{ github.workspace }}\builds\Release\crescent_engine_editor_test.exe
 
-      - name: print vcpkg dlls
+      - name: print dlls
         run: |
-          cd ${{ github.workspace }}\vcpkg\buildtrees
-          Get-ChildItem -Path . -Recurse
+          cd ${{ github.workspace }}
+          Get-ChildItem -Path . -Recurse -Filter "*.dll"
+
+      - name: print outer dlls
+        run: |
+          cd ..
+          Get-ChildItem -Path . -Recurse -Filter "*.dll"
 
       - name: package dlls (and python zip)
         run: |
