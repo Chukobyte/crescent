@@ -69,14 +69,14 @@ jobs:
         run: |
           cd ${{ github.workspace }}
           mkdir -p windows_run_dependencies
-          copy Release\brotlicommon.dll windows_run_dependencies\
-          copy Release\brotlidec.dll windows_run_dependencies\
-          copy Release\bz2.dll windows_run_dependencies\
-          copy Release\freetype.dll windows_run_dependencies\
-          copy Release\libpng16.dll windows_run_dependencies\
-          copy Release\python310.dll windows_run_dependencies\
-          copy Release\SDL2.dll windows_run_dependencies\
-          copy Release\zlib1.dll windows_run_dependencies\
+          copy builds\Release\brotlicommon.dll windows_run_dependencies\
+          copy builds\Release\brotlidec.dll windows_run_dependencies\
+          copy builds\Release\bz2.dll windows_run_dependencies\
+          copy builds\Release\freetype.dll windows_run_dependencies\
+          copy builds\Release\libpng16.dll windows_run_dependencies\
+          copy builds\Release\python310.dll windows_run_dependencies\
+          copy builds\Release\SDL2.dll windows_run_dependencies\
+          copy builds\Release\zlib1.dll windows_run_dependencies\
           Invoke-WebRequest -URI "https://www.python.org/ftp/python/${{ env.PYTHON_VERSION }}/python-${{ env.PYTHON_VERSION }}-embed-win32.zip" -OutFile python-${{ env.PYTHON_VERSION }}-embed-win32.zip
           Expand-Archive -Path python-${{ env.PYTHON_VERSION }}-embed-win32.zip -DestinationPath python-310_5_embed
           copy python-310_5_embed\python310.zip windows_run_dependencies\
