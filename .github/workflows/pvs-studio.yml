@@ -47,7 +47,7 @@ jobs:
         with:
           cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
           configurePreset: 'ninja-multi-vcpkg'
-          configurePresetAdditionalArgs: "['-DIS_CI_BUILD=true']"
+          configurePresetAdditionalArgs: "['-DIS_CI_BUILD=true', '-DCMAKE_EXPORT_COMPILE_COMMANDS=On']"
           buildPreset: 'ninja-multi-vcpkg'
           buildPresetAdditionalArgs: "['-DCMAKE_EXPORT_COMPILE_COMMANDS=On']"
 
