@@ -65,28 +65,18 @@ jobs:
           echo "Running crescent engine editor tests!"
           ${{ github.workspace }}\builds\Release\crescent_engine_editor_test.exe
 
-      - name: print dlls
-        run: |
-          cd ${{ github.workspace }}
-          Get-ChildItem -Path . -Recurse -Filter "*.dll"
-
-      - name: print outer dlls
-        run: |
-          cd ..
-          Get-ChildItem -Path . -Recurse -Filter "*.dll"
-
       - name: package dlls (and python zip)
         run: |
           cd ${{ github.workspace }}
           mkdir -p windows_run_dependencies
-          copy vcpkg\buildtrees\brotli\x64-windows-rel\brotlicommon.dll windows_run_dependencies\
-          copy vcpkg\buildtrees\brotli\x64-windows-rel\brotlidec.dll windows_run_dependencies\
-          copy vcpkg\buildtrees\bzip2\x64-windows-rel\bz2.dll windows_run_dependencies\
-          copy vcpkg\buildtrees\freetype\x64-windows-rel\freetype.dll windows_run_dependencies\
-          copy vcpkg\buildtrees\libpng\x64-windows-rel\libpng16.dll windows_run_dependencies\
-          copy vcpkg\packages\python3_x64-windows\bin\python310.dll windows_run_dependencies\
-          copy vcpkg\buildtrees\sdl2\x64-windows-rel\SDL2.dll windows_run_dependencies\
-          copy vcpkg\buildtrees\zlib\x64-windows-rel\zlib1.dll windows_run_dependencies\
+          copy Release\brotlicommon.dll windows_run_dependencies\
+          copy Release\brotlidec.dll windows_run_dependencies\
+          copy Release\bz2.dll windows_run_dependencies\
+          copy Release\freetype.dll windows_run_dependencies\
+          copy Release\libpng16.dll windows_run_dependencies\
+          copy Release\python310.dll windows_run_dependencies\
+          copy Release\SDL2.dll windows_run_dependencies\
+          copy Release\zlib1.dll windows_run_dependencies\
           Invoke-WebRequest -URI "https://www.python.org/ftp/python/${{ env.PYTHON_VERSION }}/python-${{ env.PYTHON_VERSION }}-embed-win32.zip" -OutFile python-${{ env.PYTHON_VERSION }}-embed-win32.zip
           Expand-Archive -Path python-${{ env.PYTHON_VERSION }}-embed-win32.zip -DestinationPath python-310_5_embed
           copy python-310_5_embed\python310.zip windows_run_dependencies\
