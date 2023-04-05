@@ -2,7 +2,7 @@ name: package-and-deploy
 
 on:
   push:
-    branches: [ main, vcpkg_cache ]
+    branches: [ main ]
 
 jobs:
   # WINDOWS BUILD
