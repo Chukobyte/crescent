@@ -68,6 +68,7 @@ jobs:
       - name: package dlls (and python zip)
         run: |
           cd ${{ github.workspace }}
+          Get-ChildItem -Path "vcpkg\buildtrees" -Recurse -Filter "*.dll"
           mkdir -p windows_run_dependencies
           copy vcpkg\buildtrees\brotli\x64-windows-rel\brotlicommon.dll windows_run_dependencies\
           copy vcpkg\buildtrees\brotli\x64-windows-rel\brotlidec.dll windows_run_dependencies\
