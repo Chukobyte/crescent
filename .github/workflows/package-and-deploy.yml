@@ -50,6 +50,7 @@ jobs:
       - name: rename binaries
         run: |
           cd ${{ github.workspace }}
+          Get-ChildItem -Path . -Recurse -Filter "*.exe"
           ren builds\Release\crescent_engine.exe crescent_engine_windows.exe
           ren builds\Release\crescent_engine_editor.exe crescent_engine_editor_windows.exe
 
