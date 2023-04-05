@@ -49,10 +49,10 @@ jobs:
           configurePreset: 'ninja-multi-vcpkg'
           configurePresetAdditionalArgs: "['-DIS_CI_BUILD=true', '-DCMAKE_EXPORT_COMPILE_COMMANDS=On']"
           buildPreset: 'ninja-multi-vcpkg'
-          buildPresetAdditionalArgs: "['-DCMAKE_EXPORT_COMPILE_COMMANDS=On']"
 
       - name: run pvs studio
         run: |
+          Get-ChildItem -Path . -Recurse -Filter "*.json"
           pvs-studio-analyzer analyze -f compile_commands.json -j -e include -e docs -e assets -e test_games
 
       - name: convert pvs studio report
