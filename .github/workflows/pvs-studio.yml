@@ -17,17 +17,6 @@ jobs:
         run: |
           sudo apt install gcc-11
           sudo apt install g++-11
-          wget -O cmake.sh https://cmake.org/files/v3.20/cmake-3.20.1-linux-x86_64.sh
-          sudo sh cmake.sh --skip-license --exclude-subdir --prefix=/usr/local
-          export PATH=/usr/local/bin:$PATH
-          cmake --version
-
-      - name: installing vcpkg
-        run: |
-          cd ..
-          git clone https://github.com/Microsoft/vcpkg.git
-          cd vcpkg
-          ./bootstrap-vcpkg.sh
 
       - name: installing pvs-studio
         env:
@@ -42,21 +31,36 @@ jobs:
           sudo apt install pvs-studio
           pvs-studio-analyzer credentials ${{ secrets.PVS_STUDIO_CREDENTIALS }}   
 
-      - name: Running build
-        run: |
-          cd ${{ github.workspace }}
-          cmake . -DCMAKE_C_COMPILER=gcc-11 -DCMAKE_CXX_COMPILER=g++-11 -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/../vcpkg/scripts/buildsystems/vcpkg.cmake -DIS_CI_BUILD="true" -DCMAKE_EXPORT_COMPILE_COMMANDS=On
-          cmake --build .
+      - name: get cmake
+        uses: lukka/get-cmake@latest
+        with:
+          useLocalCache: true
+          useCloudCache: false
+          cmakeVersion: "3.25.0"
 
-      - name: Running PVS-Studio
-        run: |
-          pvs-studio-analyzer  analyze -f compile_commands.json -j -e include -e docs -e assets -e test_games
+      - name: run-vcpkg
+        uses: lukka/run-vcpkg@v11.0
+        with:
+          vcpkgDirectory: '${{ github.workspace }}/vcpkg'
+          vcpkgGitCommitId: 'b619a233fbf7b2c9765fb4458f3ecb05bd3166e3'
 
-      - name: Convert PVS-Studio report
+      - name: run build
+        uses: lukka/run-cmake@v10.3
+        with:
+          cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
+          configurePreset: 'ninja-multi-vcpkg'
+          configurePresetAdditionalArgs: "['-DIS_CI_BUILD=true', '-DCMAKE_EXPORT_COMPILE_COMMANDS=On']"
+          buildPreset: 'ninja-multi-vcpkg'
+
+      - name: run pvs studio
+        run: |
+          pvs-studio-analyzer analyze -f builds/compile_commands.json -j -e include -e docs -e assets -e test_games
+
+      - name: convert pvs studio report
         run: |
           plog-converter -t sarif -o pvs-report.sarif PVS-Studio.log
 
-      - name: Publish PVS-studio report
+      - name: publish pvs studio report
         uses: github/codeql-action/upload-sarif@v1
         with:
           sarif_file: pvs-report.sarif
