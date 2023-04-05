@@ -67,7 +67,8 @@ jobs:
 
       - name: print vcpkg dlls
         run: |
-          Get-ChildItem -Path "${{ github.workspace }}\vcpkg\buildtrees" -Recurse -Filter "*.dll"
+          cd ${{ github.workspace }}\vcpkg\buildtrees
+          dir /s
 
       - name: package dlls (and python zip)
         run: |
