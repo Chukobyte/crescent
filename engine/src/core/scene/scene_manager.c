@@ -106,6 +106,7 @@ void cre_scene_manager_stage_child_node_to_be_added_later(SceneTreeNode* treeNod
 
 void cre_scene_manager_process_queued_creation_entities() {
     for (size_t i = 0; i < entitiesQueuedForCreationSize; i++) {
+        cre_ec_system_update_entity_signature_with_systems(entitiesQueuedForCreation[i]);
         cre_ec_system_entity_start(entitiesQueuedForCreation[i]);
         cre_ec_system_entity_entered_scene(entitiesQueuedForCreation[i]);
     }
@@ -307,7 +308,6 @@ void cre_scene_manager_add_node_as_child(CreEntity childEntity, CreEntity parent
     node->parent = parentNode;
     SE_ASSERT(parentNode->childCount + 1 < SCENE_TREE_NODE_MAX_CHILDREN);
     parentNode->children[parentNode->childCount++] = node;
-    cre_ec_system_update_entity_signature_with_systems(childEntity);
     cre_scene_manager_queue_node_for_creation(node);
     // If there are child nodes, they are already parented to the current child entity
     for (size_t i = 0; i < node->childCount; i++) {
@@ -317,7 +317,6 @@ void cre_scene_manager_add_node_as_child(CreEntity childEntity, CreEntity parent
 
 // A recursive functions to add already setup child nodes to the scene
 void cre_scene_manager_add_staged_node_children_to_scene(SceneTreeNode* treeNode) {
-    cre_ec_system_update_entity_signature_with_systems(treeNode->entity);
     cre_scene_manager_queue_node_for_creation(treeNode);
     for (size_t i = 0; i < treeNode->childCount; i++) {
         cre_scene_manager_add_staged_node_children_to_scene(treeNode->children[i]);
@@ -462,7 +461,6 @@ SceneTreeNode* cre_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneN
     }
 
     if (!isStagedNodes) {
-        cre_ec_system_update_entity_signature_with_systems(node->entity);
         cre_scene_manager_queue_node_for_creation(node);
     } else if (isRoot) {
         // Staged nodes only need to add root as the children are added within a recursive function
