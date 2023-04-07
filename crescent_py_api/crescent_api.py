@@ -391,6 +391,12 @@ class MinMax:
     def is_above(self, value: float) -> bool:
         return value > self.max
 
+    def __str__(self):
+        return f"({self.min}, {self.max})"
+
+    def __repr__(self):
+        return f"({self.min}, {self.max})"
+
 
 class CurveFloatPoint:
     def __init__(self, x: float, y: float, tangent_in: float, tangent_out: float):
