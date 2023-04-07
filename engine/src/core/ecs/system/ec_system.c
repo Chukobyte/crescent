@@ -136,7 +136,7 @@ void cre_ec_system_register(CreEntitySystem* system) {
 }
 
 void cre_ec_system_update_entity_signature_with_systems(CreEntity entity) {
-    CreComponentType entityComponentSignature = cre_component_manager_get_component_signature(entity);
+    const CreComponentType entityComponentSignature = cre_component_manager_get_component_signature(entity);
     for (size_t i = 0; i < entitySystemData.entity_systems_count; i++) {
         if ((entityComponentSignature & entitySystemData.entity_systems[i]->component_signature) == entitySystemData.entity_systems[i]->component_signature) {
             cre_ec_system_insert_entity_into_system(entity, entitySystemData.entity_systems[i]);
@@ -147,7 +147,7 @@ void cre_ec_system_update_entity_signature_with_systems(CreEntity entity) {
 }
 
 void cre_ec_system_entity_start(CreEntity entity) {
-    CreComponentType entityComponentSignature = cre_component_manager_get_component_signature(entity);
+    const CreComponentType entityComponentSignature = cre_component_manager_get_component_signature(entity);
     for (size_t i = 0; i < entitySystemData.on_entity_start_systems_count; i++) {
         if ((entityComponentSignature & entitySystemData.on_entity_start_systems[i]->component_signature) == entitySystemData.on_entity_start_systems[i]->component_signature) {
             entitySystemData.on_entity_start_systems[i]->on_entity_start_func(entity);
@@ -158,14 +158,13 @@ void cre_ec_system_entity_start(CreEntity entity) {
 void cre_ec_system_entity_end(CreEntity entity) {
     // Notify scene exit observers before calling it on systems
     // TODO: Consider hooks for components instead of direct node component references
-    CreComponentType entityComponentSignature = cre_component_manager_get_component_signature(entity);
+    const CreComponentType entityComponentSignature = cre_component_manager_get_component_signature(entity);
     for (size_t i = 0; i < entitySystemData.on_entity_end_systems_count; i++) {
         if ((entityComponentSignature & entitySystemData.on_entity_end_systems[i]->component_signature) == entitySystemData.on_entity_end_systems[i]->component_signature) {
             entitySystemData.on_entity_end_systems[i]->on_entity_end_func(entity);
         }
     }
-    NodeComponent* nodeComponent = (NodeComponent*) cre_component_manager_get_component_unchecked(entity,
-                                   CreComponentDataIndex_NODE);
+    NodeComponent* nodeComponent = (NodeComponent*) cre_component_manager_get_component_unchecked(entity, CreComponentDataIndex_NODE);
     if (nodeComponent != NULL) {
         // Note: Node events should not be created during this time
         se_event_notify_observers(&nodeComponent->onSceneTreeExit, &(SESubjectNotifyPayload) {
@@ -183,7 +182,7 @@ void cre_ec_system_entity_entered_scene(CreEntity entity) {
             .data = &entity, .type = 0
         });
     }
-    CreComponentType entityComponentSignature = cre_component_manager_get_component_signature(entity);
+    const CreComponentType entityComponentSignature = cre_component_manager_get_component_signature(entity);
     for (size_t i = 0; i < entitySystemData.on_entity_entered_scene_systems_count; i++) {
         if ((entityComponentSignature & entitySystemData.on_entity_entered_scene_systems[i]->component_signature) == entitySystemData.on_entity_entered_scene_systems[i]->component_signature) {
             entitySystemData.on_entity_entered_scene_systems[i]->on_entity_entered_scene_func(entity);
