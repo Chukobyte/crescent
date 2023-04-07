@@ -12,7 +12,7 @@ static SEQueue* idQueue = NULL;
 void cre_curve_float_manager_init() {
     if (idQueue == NULL) {
         idQueue = se_queue_create(CRE_MAX_CURVE_FLOATS, CRE_CURVE_FLOAT_INVALID_ID);
-        for (size_t i = 0; i < CRE_MAX_CURVE_FLOATS; i++) {
+        for (uint32_t i = 0; i < CRE_MAX_CURVE_FLOATS; i++) {
             se_queue_enqueue(idQueue, i);
         }
     }

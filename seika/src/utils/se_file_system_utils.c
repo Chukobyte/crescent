@@ -133,7 +133,8 @@ char* se_fs_read_file_contents_without_raw(const char* filePath, size_t* sz) {
         if (buffer != NULL) {
             size_t bytesRead = 0;
             while (bytesRead < readSize) {
-                if (fgets(buffer + bytesRead, readSize - bytesRead + 1, fp) == NULL) {
+                const int maxCount = (int)(readSize - bytesRead + 1);
+                if (fgets(buffer + bytesRead, maxCount, fp) == NULL) {
                     break;
                 }
                 bytesRead += strlen(buffer + bytesRead);
