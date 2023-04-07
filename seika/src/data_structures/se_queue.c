@@ -8,7 +8,7 @@ SEQueue* se_queue_create(size_t capacity, uint32_t invalidValue) {
     queue->invalidValue = invalidValue;
     queue->size = 0;
     queue->front = 0;
-    queue->rear = capacity - 1;
+    queue->rear = (uint32_t)capacity - 1;
     queue->array = (uint32_t*) SE_MEM_ALLOCATE_SIZE(queue->capacity * sizeof(uint32_t));
     return queue;
 }

@@ -14,7 +14,7 @@ static SEQueue* shaderInstanceIdQueue = NULL;
 void se_shader_cache_initialize() {
     SE_ASSERT(shaderInstanceIdQueue == NULL);
     shaderInstanceIdQueue = se_queue_create(SE_SHADER_INSTANCE_MAX_INSTANCES, SE_SHADER_INSTANCE_INVALID_ID);
-    for (size_t i = 0; i < SE_SHADER_INSTANCE_MAX_INSTANCES; i++) {
+    for (uint32_t i = 0; i < SE_SHADER_INSTANCE_MAX_INSTANCES; i++) {
         se_queue_enqueue(shaderInstanceIdQueue, i);
         instanceCache[i] = NULL;
     }

@@ -148,7 +148,7 @@ SEShaderFileParserFunction shader_file_find_next_function(char** shaderSource, c
     char shaderFunctionBuffer[1024];
     strcpy(shaderFunctionBuffer, functionReturnType);
     strcat(shaderFunctionBuffer, " ");
-    unsigned int bufferIndex = strlen(shaderFunctionBuffer);
+    size_t bufferIndex = strlen(shaderFunctionBuffer);
 
     // Get name first
     char shaderFunctionName[64];
@@ -471,10 +471,10 @@ SEShaderFileParseResult se_shader_file_parser_parse_shader(const char* shaderSou
     const char* SHADER_FUNCTIONS_REPLACE_TOKEN = "//@@FUNCTIONS\n";
     const char* SHADER_VERTEX_BODY_REPLACE_TOKEN = "//@@vertex()\n";
     const char* SHADER_FRAGMENT_BODY_REPLACE_TOKEN = "//@@fragment()\n";
-    const unsigned int SHADER_UNIFORMS_REPLACE_TOKEN_LENGTH = strlen(SHADER_UNIFORMS_REPLACE_TOKEN);
-    const unsigned int SHADER_FUNCTIONS_REPLACE_TOKEN_LENGTH = strlen(SHADER_FUNCTIONS_REPLACE_TOKEN);
-    const unsigned int SHADER_VERTEX_BODY_REPLACE_TOKEN_LENGTH = strlen(SHADER_VERTEX_BODY_REPLACE_TOKEN);
-    const unsigned int SHADER_FRAGMENT_BODY_REPLACE_TOKEN_LENGTH = strlen(SHADER_FRAGMENT_BODY_REPLACE_TOKEN);
+    const size_t SHADER_UNIFORMS_REPLACE_TOKEN_LENGTH = strlen(SHADER_UNIFORMS_REPLACE_TOKEN);
+    const size_t SHADER_FUNCTIONS_REPLACE_TOKEN_LENGTH = strlen(SHADER_FUNCTIONS_REPLACE_TOKEN);
+    const size_t SHADER_VERTEX_BODY_REPLACE_TOKEN_LENGTH = strlen(SHADER_VERTEX_BODY_REPLACE_TOKEN);
+    const size_t SHADER_FRAGMENT_BODY_REPLACE_TOKEN_LENGTH = strlen(SHADER_FRAGMENT_BODY_REPLACE_TOKEN);
 
     const SEShaderFileParseBaseText shaderBaseText = shader_file_get_base_shader_text(result.parseData.shaderType);
     char fullShaderBuffer[4096];
@@ -488,7 +488,7 @@ SEShaderFileParseResult se_shader_file_parser_parse_shader(const char* shaderSou
         }
         char* uniformsSource = shader_file_parse_data_get_full_uniforms_source(&result.parseData);
         if (uniformsSource) {
-            const unsigned int uniformsReplaceLength = strlen(uniformsSource);
+            const size_t uniformsReplaceLength = strlen(uniformsSource);
             memmove(foundUniformsToken + uniformsReplaceLength,
                     foundUniformsToken + SHADER_UNIFORMS_REPLACE_TOKEN_LENGTH,
                     strlen(foundUniformsToken + SHADER_UNIFORMS_REPLACE_TOKEN_LENGTH) + 1);
@@ -502,7 +502,7 @@ SEShaderFileParseResult se_shader_file_parser_parse_shader(const char* shaderSou
         }
         char* functionsSource = shader_file_parse_data_get_full_functions_source(&result.parseData);
         if (functionsSource) {
-            const unsigned int functionsReplaceLength = strlen(functionsSource);
+            const size_t functionsReplaceLength = strlen(functionsSource);
             memmove(foundFunctionsToken + functionsReplaceLength,
                     foundFunctionsToken + SHADER_FUNCTIONS_REPLACE_TOKEN_LENGTH,
                     strlen(foundFunctionsToken + SHADER_FUNCTIONS_REPLACE_TOKEN_LENGTH) + 1);
@@ -514,7 +514,7 @@ SEShaderFileParseResult se_shader_file_parser_parse_shader(const char* shaderSou
         if (!foundVertexToken) {
             SHADER_FILE_PARSER_ERROR_RETURN(result, originalSource, "Unable to find vertex() token in vertex shader!")
         }
-        const unsigned int vertexBodyReplaceLength = strlen(result.parseData.vertexFunctionSource);
+        const size_t vertexBodyReplaceLength = strlen(result.parseData.vertexFunctionSource);
         memmove(foundVertexToken + vertexBodyReplaceLength,
                 foundVertexToken + SHADER_VERTEX_BODY_REPLACE_TOKEN_LENGTH,
                 strlen(foundVertexToken + SHADER_VERTEX_BODY_REPLACE_TOKEN_LENGTH) + 1);
@@ -533,7 +533,7 @@ SEShaderFileParseResult se_shader_file_parser_parse_shader(const char* shaderSou
         }
         char* uniformsSource = shader_file_parse_data_get_full_uniforms_source(&result.parseData);
         if (uniformsSource) {
-            const unsigned int uniformsReplaceLength = strlen(uniformsSource);
+            const size_t uniformsReplaceLength = strlen(uniformsSource);
             memmove(foundUniformsToken + uniformsReplaceLength,
                     foundUniformsToken + SHADER_UNIFORMS_REPLACE_TOKEN_LENGTH,
                     strlen(foundUniformsToken + SHADER_UNIFORMS_REPLACE_TOKEN_LENGTH) + 1);
@@ -547,7 +547,7 @@ SEShaderFileParseResult se_shader_file_parser_parse_shader(const char* shaderSou
         }
         char* functionsSource = shader_file_parse_data_get_full_functions_source(&result.parseData);
         if (functionsSource) {
-            const unsigned int functionsReplaceLength = strlen(functionsSource);
+            const size_t functionsReplaceLength = strlen(functionsSource);
             memmove(foundFunctionsToken + functionsReplaceLength,
                     foundFunctionsToken + SHADER_FUNCTIONS_REPLACE_TOKEN_LENGTH,
                     strlen(foundFunctionsToken + SHADER_FUNCTIONS_REPLACE_TOKEN_LENGTH) + 1);
@@ -559,7 +559,7 @@ SEShaderFileParseResult se_shader_file_parser_parse_shader(const char* shaderSou
         if (!foundFragmentToken) {
             SHADER_FILE_PARSER_ERROR_RETURN(result, originalSource, "Unable to find fragment() token in fragment shader!")
         }
-        const unsigned int fragmentBodyReplaceLength = strlen(result.parseData.fragmentFunctionSource);
+        const size_t fragmentBodyReplaceLength = strlen(result.parseData.fragmentFunctionSource);
         memmove(foundFragmentToken + fragmentBodyReplaceLength,
                 foundFragmentToken + SHADER_FRAGMENT_BODY_REPLACE_TOKEN_LENGTH,
                 strlen(foundFragmentToken + SHADER_FRAGMENT_BODY_REPLACE_TOKEN_LENGTH) + 1);
