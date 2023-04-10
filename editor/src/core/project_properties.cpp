@@ -1,5 +1,7 @@
 #include "project_properties.h"
 
+#include "../engine/src/core/core_info.h"
+
 #include "asset_browser.h"
 
 //--- Project Assets ---//
@@ -212,6 +214,9 @@ nlohmann::ordered_json ProjectProperties::ToJson() const {
         inputsJsonArray.emplace_back(inputActionJson);
     }
     configJson["inputs"] = inputsJsonArray;
+
+    // Adding in crescent core version to easily see crescent version without running executable
+    configJson["crescent_core_version"] = CRE_CORE_VERSION;
 
     return configJson;
 }
