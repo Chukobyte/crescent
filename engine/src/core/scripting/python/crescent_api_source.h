@@ -399,13 +399,13 @@
 "        self.y = value.y\n"\
 "\n"\
 "    @property\n"\
-"    def size(self) -> Vector2:\n"\
-"        return Vector2(self.w, self.h)\n"\
+"    def size(self) -> Size2D:\n"\
+"        return Size2D(self.w, self.h)\n"\
 "\n"\
 "    @size.setter\n"\
-"    def size(self, value: Vector2) -> None:\n"\
-"        self.w = value.x\n"\
-"        self.h = value.y\n"\
+"    def size(self, value: Size2D) -> None:\n"\
+"        self.w = value.w\n"\
+"        self.h = value.h\n"\
 "\n"\
 "    def total_length(self) -> float:\n"\
 "        return self.x + self.y + self.w + self.h\n"\

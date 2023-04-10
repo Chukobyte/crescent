@@ -362,13 +362,13 @@ class Rect2:
         self.y = value.y
 
     @property
-    def size(self) -> Vector2:
-        return Vector2(self.w, self.h)
+    def size(self) -> Size2D:
+        return Size2D(self.w, self.h)
 
     @size.setter
-    def size(self, value: Vector2) -> None:
-        self.w = value.x
-        self.h = value.y
+    def size(self, value: Size2D) -> None:
+        self.w = value.w
+        self.h = value.h
 
     def total_length(self) -> float:
         return self.x + self.y + self.w + self.h
