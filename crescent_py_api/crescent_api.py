@@ -1521,6 +1521,7 @@ class Camera2D:
     @staticmethod
     def get_position() -> Vector2:
         x, y = crescent_api_internal.camera2D_get_position()
+        return Vector2(x, y)
 
     @staticmethod
     def set_offset(offset: Vector2) -> None:

@@ -1558,6 +1558,7 @@
 "    @staticmethod\n"\
 "    def get_position() -> Vector2:\n"\
 "        x, y = crescent_api_internal.camera2D_get_position()\n"\
+"        return Vector2(x, y)\n"\
 "\n"\
 "    @staticmethod\n"\
 "    def set_offset(offset: Vector2) -> None:\n"\
