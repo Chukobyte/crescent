@@ -2,6 +2,7 @@
 
 #include <string.h>
 
+#include "../seika/src/rendering/renderer.h"
 #include "../seika/src/utils/se_assert.h"
 #include "../seika/src/asset/asset_manager.h"
 
@@ -50,6 +51,7 @@ void cre_ecs_manager_enable_fps_display_entity(bool enabled) {
         transform2DComponent->localTransform.position.x = 20.0f;
         transform2DComponent->localTransform.position.y = 30.0f;
         transform2DComponent->ignoreCamera = true;
+        transform2DComponent->zIndex = SE_RENDERER_MAX_Z_INDEX;
         cre_component_manager_set_component(currentFpsEntity, CreComponentDataIndex_TRANSFORM_2D, transform2DComponent);
         // Text Label Component
         TextLabelComponent* textLabelComponent = text_label_component_create();
