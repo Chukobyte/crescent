@@ -39,7 +39,7 @@ void cre_ecs_manager_initialize() {
     cre_ec_system_register(cre_parallax_ec_system_create());
 }
 
-void cre_ecs_manager_enable_fps_display_entity(bool enabled) {
+void cre_ecs_manager_enable_fps_display_entity(bool enabled, const char* fontUID, float positionX, float positionY) {
     static bool isEnabled = false;
     static CreEntity currentFpsEntity = CRE_NULL_ENTITY;
     // Create temp entity
@@ -48,14 +48,14 @@ void cre_ecs_manager_enable_fps_display_entity(bool enabled) {
         currentFpsEntity = fpsDisplayNode->entity;
         // Transform 2D
         Transform2DComponent* transform2DComponent = transform2d_component_create();
-        transform2DComponent->localTransform.position.x = 20.0f;
-        transform2DComponent->localTransform.position.y = 30.0f;
+        transform2DComponent->localTransform.position.x = positionX;
+        transform2DComponent->localTransform.position.y = positionY;
         transform2DComponent->ignoreCamera = true;
         transform2DComponent->zIndex = SE_RENDERER_MAX_Z_INDEX;
         cre_component_manager_set_component(currentFpsEntity, CreComponentDataIndex_TRANSFORM_2D, transform2DComponent);
         // Text Label Component
         TextLabelComponent* textLabelComponent = text_label_component_create();
-        textLabelComponent->font = se_asset_manager_get_font(CRE_DEFAULT_FONT_ASSET.uid);
+        textLabelComponent->font = se_asset_manager_get_font(fontUID != NULL ? fontUID : CRE_DEFAULT_FONT_ASSET.uid);
         strcpy(textLabelComponent->text, "FPS: ");
         cre_component_manager_set_component(currentFpsEntity, CreComponentDataIndex_TEXT_LABEL, textLabelComponent);
         // Script Component

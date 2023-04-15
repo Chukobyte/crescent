@@ -726,8 +726,15 @@
 "        return crescent_api_internal.engine_get_average_fps()\n"\
 "\n"\
 "    @staticmethod\n"\
-"    def set_fps_display_enabled(enabled: bool) -> None:\n"\
-"        crescent_api_internal.engine_set_fps_display_enabled(enabled=enabled)\n"\
+"    def set_fps_display_enabled(\n"\
+"        enabled: bool, font_uid=\"\", position=Vector2(20, 30)\n"\
+"    ) -> None:\n"\
+"        crescent_api_internal.engine_set_fps_display_enabled(\n"\
+"            enabled=enabled,\n"\
+"            font_uid=font_uid,\n"\
+"            position_x=position.x,\n"\
+"            position_y=position.y,\n"\
+"        )\n"\
 "\n"\
 "    @staticmethod\n"\
 "    def get_global_physics_delta_time() -> float:\n"\

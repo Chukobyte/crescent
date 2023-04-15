@@ -816,7 +816,7 @@ static struct PyModuleDef crePyAPIModDef = {
 // --- Argument Lists --- //
 static char* crePyApiGenericGetEntityKWList[] = {"entity_id", NULL};
 static char* crePyApiGenericPathKWList[] = {"path", NULL};
-static char* crePyApiGenericEnabledKWList[] = {"enabled", NULL};
+static char* crePyApiGenericEnabledKWList[] = {"enabled", "font_uid", "position_x", "position_y", NULL};
 static char* crePyApiGenericXYKWList[] = {"x", "y", NULL};
 static char* crePyApiGenericXYWHKWList[] = {"x", "y", "w", "h", NULL};
 static char* crePyApiGenericSetEntitySize2DKWList[] = {"entity_id", "w", "h", NULL};

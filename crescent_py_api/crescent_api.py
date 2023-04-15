@@ -689,8 +689,15 @@ class Engine:
         return crescent_api_internal.engine_get_average_fps()
 
     @staticmethod
-    def set_fps_display_enabled(enabled: bool) -> None:
-        crescent_api_internal.engine_set_fps_display_enabled(enabled=enabled)
+    def set_fps_display_enabled(
+        enabled: bool, font_uid="", position=Vector2(20, 30)
+    ) -> None:
+        crescent_api_internal.engine_set_fps_display_enabled(
+            enabled=enabled,
+            font_uid=font_uid,
+            position_x=position.x,
+            position_y=position.y,
+        )
 
     @staticmethod
     def get_global_physics_delta_time() -> float:

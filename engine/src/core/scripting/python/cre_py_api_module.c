@@ -137,8 +137,11 @@ PyObject* cre_py_api_engine_get_average_fps(PyObject* self, PyObject* args) {
 
 PyObject* cre_py_api_engine_set_fps_display_enabled(PyObject* self, PyObject* args, PyObject* kwargs) {
     bool isEnabled;
-    if (PyArg_ParseTupleAndKeywords(args, kwargs, "b", crePyApiGenericEnabledKWList, &isEnabled)) {
-        cre_ecs_manager_enable_fps_display_entity(isEnabled);
+    char* fontUID;
+    float positionX;
+    float positionY;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "bsff", crePyApiGenericEnabledKWList, &isEnabled, &fontUID, &positionX, &positionY)) {
+        cre_ecs_manager_enable_fps_display_entity(isEnabled, strlen(fontUID) < 0 ? fontUID : NULL, positionX, positionY);
         Py_RETURN_NONE;
     }
     return NULL;
