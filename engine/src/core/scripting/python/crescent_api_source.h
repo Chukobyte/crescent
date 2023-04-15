@@ -399,13 +399,13 @@
 "        self.y = value.y\n"\
 "\n"\
 "    @property\n"\
-"    def size(self) -> Vector2:\n"\
-"        return Vector2(self.w, self.h)\n"\
+"    def size(self) -> Size2D:\n"\
+"        return Size2D(self.w, self.h)\n"\
 "\n"\
 "    @size.setter\n"\
-"    def size(self, value: Vector2) -> None:\n"\
-"        self.w = value.x\n"\
-"        self.h = value.y\n"\
+"    def size(self, value: Size2D) -> None:\n"\
+"        self.w = value.w\n"\
+"        self.h = value.h\n"\
 "\n"\
 "    def total_length(self) -> float:\n"\
 "        return self.x + self.y + self.w + self.h\n"\
@@ -427,6 +427,12 @@
 "\n"\
 "    def is_above(self, value: float) -> bool:\n"\
 "        return value > self.max\n"\
+"\n"\
+"    def __str__(self):\n"\
+"        return f\"({self.min}, {self.max})\"\n"\
+"\n"\
+"    def __repr__(self):\n"\
+"        return f\"({self.min}, {self.max})\"\n"\
 "\n"\
 "\n"\
 "class CurveFloatPoint:\n"\
@@ -720,8 +726,15 @@
 "        return crescent_api_internal.engine_get_average_fps()\n"\
 "\n"\
 "    @staticmethod\n"\
-"    def set_fps_display_enabled(enabled: bool) -> None:\n"\
-"        crescent_api_internal.engine_set_fps_display_enabled(enabled=enabled)\n"\
+"    def set_fps_display_enabled(\n"\
+"        enabled: bool, font_uid=\"\", position=Vector2(20, 30)\n"\
+"    ) -> None:\n"\
+"        crescent_api_internal.engine_set_fps_display_enabled(\n"\
+"            enabled=enabled,\n"\
+"            font_uid=font_uid,\n"\
+"            position_x=position.x,\n"\
+"            position_y=position.y,\n"\
+"        )\n"\
 "\n"\
 "    @staticmethod\n"\
 "    def get_global_physics_delta_time() -> float:\n"\
@@ -1552,6 +1565,7 @@
 "    @staticmethod\n"\
 "    def get_position() -> Vector2:\n"\
 "        x, y = crescent_api_internal.camera2D_get_position()\n"\
+"        return Vector2(x, y)\n"\
 "\n"\
 "    @staticmethod\n"\
 "    def set_offset(offset: Vector2) -> None:\n"\

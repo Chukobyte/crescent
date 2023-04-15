@@ -17,7 +17,9 @@ def engine_get_average_fps() -> float:
     return 66.0
 
 
-def engine_set_fps_display_enabled(enabled: bool) -> None:
+def engine_set_fps_display_enabled(
+    enabled: bool, font_uid: str, position_x: float, position_y: float
+) -> None:
     pass
 
 

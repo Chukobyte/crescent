@@ -45,7 +45,7 @@ CRENativeScriptClass* fps_display_create_new_instance(CreEntity entity) {
 
 void fps_display_on_start(CRENativeScriptClass* nativeScriptClass) {
     FpsDisplayClassData* data = (FpsDisplayClassData*) nativeScriptClass->instance_data;
-    printf("[C SCRIPT] - entity '%u' on start value = %d\n", nativeScriptClass->entity, data->value);
+//    printf("[C SCRIPT] - entity '%u' on start value = %d\n", nativeScriptClass->entity, data->value);
 }
 
 void fps_display_on_end(CRENativeScriptClass* nativeScriptClass) {}
@@ -55,8 +55,7 @@ void fps_display_update(CRENativeScriptClass* nativeScriptClass, float deltaTime
     static char fpsAmountBuffer[6];
     // FIXME: This is windows specific, needs to be replaced for other OS
     gcvt(cre_engine_context_get()->stats.averageFPS, 4, fpsAmountBuffer);
-    TextLabelComponent* textLabelComponent = (TextLabelComponent*) cre_component_manager_get_component(
-                nativeScriptClass->entity, CreComponentDataIndex_TEXT_LABEL);
+    TextLabelComponent* textLabelComponent = (TextLabelComponent*) cre_component_manager_get_component(nativeScriptClass->entity, CreComponentDataIndex_TEXT_LABEL);
     strcpy(textLabelComponent->text, "FPS: ");
     strcat(textLabelComponent->text, fpsAmountBuffer);
 }

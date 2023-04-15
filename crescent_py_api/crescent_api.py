@@ -362,13 +362,13 @@ class Rect2:
         self.y = value.y
 
     @property
-    def size(self) -> Vector2:
-        return Vector2(self.w, self.h)
+    def size(self) -> Size2D:
+        return Size2D(self.w, self.h)
 
     @size.setter
-    def size(self, value: Vector2) -> None:
-        self.w = value.x
-        self.h = value.y
+    def size(self, value: Size2D) -> None:
+        self.w = value.w
+        self.h = value.h
 
     def total_length(self) -> float:
         return self.x + self.y + self.w + self.h
@@ -390,6 +390,12 @@ class MinMax:
 
     def is_above(self, value: float) -> bool:
         return value > self.max
+
+    def __str__(self):
+        return f"({self.min}, {self.max})"
+
+    def __repr__(self):
+        return f"({self.min}, {self.max})"
 
 
 class CurveFloatPoint:
@@ -683,8 +689,15 @@ class Engine:
         return crescent_api_internal.engine_get_average_fps()
 
     @staticmethod
-    def set_fps_display_enabled(enabled: bool) -> None:
-        crescent_api_internal.engine_set_fps_display_enabled(enabled=enabled)
+    def set_fps_display_enabled(
+        enabled: bool, font_uid="", position=Vector2(20, 30)
+    ) -> None:
+        crescent_api_internal.engine_set_fps_display_enabled(
+            enabled=enabled,
+            font_uid=font_uid,
+            position_x=position.x,
+            position_y=position.y,
+        )
 
     @staticmethod
     def get_global_physics_delta_time() -> float:
@@ -1515,6 +1528,7 @@ class Camera2D:
     @staticmethod
     def get_position() -> Vector2:
         x, y = crescent_api_internal.camera2D_get_position()
+        return Vector2(x, y)
 
     @staticmethod
     def set_offset(offset: Vector2) -> None:
