@@ -761,6 +761,21 @@
 "    def is_action_just_released(name: str) -> bool:\n"\
 "        return crescent_api_internal.input_is_action_just_released(name=name)\n"\
 "\n"\
+"    @staticmethod\n"\
+"    def start_gamepad_vibration(\n"\
+"        device_id: int, weak_magnitude: float, strong_magnitude: float, duration: float\n"\
+"    ) -> None:\n"\
+"        crescent_api_internal.input_start_gamepad_vibration(\n"\
+"            device_id=device_id,\n"\
+"            weak_magnitude=weak_magnitude,\n"\
+"            strong_magnitude=strong_magnitude,\n"\
+"            duration=duration,\n"\
+"        )\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def stop_gamepad_vibration(device_id: int) -> None:\n"\
+"        crescent_api_internal.input_stop_gamepad_vibration(device_id=device_id)\n"\
+"\n"\
 "    class Mouse:\n"\
 "        LEFT_BUTTON = \"mb_left\"\n"\
 "        RIGHT_BUTTON = \"mb_right\"\n"\

@@ -53,6 +53,8 @@ PyObject* cre_py_api_input_add_action(PyObject* self, PyObject* args, PyObject* 
 PyObject* cre_py_api_input_is_action_pressed(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_input_is_action_just_pressed(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_input_is_action_just_released(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_input_start_gamepad_vibration(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_input_stop_gamepad_vibration(PyObject* self, PyObject* args, PyObject* kwargs);
 
 // Mouse
 PyObject* cre_py_api_mouse_get_position(PyObject* self, PyObject* args);
@@ -362,6 +364,14 @@ static struct PyMethodDef crePyApiMethods[] = {
     {
         "input_is_action_just_released", (PyCFunction) cre_py_api_input_is_action_just_released,
         METH_VARARGS | METH_KEYWORDS, "Checks if an input actions was just released."
+    },
+    {
+        "input_start_gamepad_vibration", (PyCFunction) cre_py_api_input_start_gamepad_vibration,
+        METH_VARARGS | METH_KEYWORDS, "Starts gamepad vibration."
+    },
+    {
+        "input_stop_gamepad_vibration", (PyCFunction) cre_py_api_input_stop_gamepad_vibration,
+        METH_VARARGS | METH_KEYWORDS, "Stops gamepad vibration."
     },
     // MOUSE
     {
@@ -852,6 +862,8 @@ static char* crePyApiShaderUtilCompileShaderRawKWList[] = {"vertex_path", "fragm
 
 static char* crePyApiInputAddActionKWList[] = {"name", "value", "device_id", NULL};
 static char* crePyApiInputActionInputCheckKWList[] = {"name", NULL};
+static char* crePyApiInputStartGamepadVibrationKWList[] = {"device_id", "weak_magnitude", "strong_magnitude", "duration", NULL};
+static char* crePyApiInputStopGamepadVibrationKWList[] = {"device_id", NULL};
 
 static char* crePyApiAudioManagerPlaySoundKWList[] = {"path", "loops", NULL};
 

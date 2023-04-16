@@ -15,3 +15,6 @@ void se_input_clean_up_flags();
 bool se_input_is_action_pressed(const char* actionName);
 bool se_input_is_action_just_pressed(const char* actionName);
 bool se_input_is_action_just_released(const char* actionName);
+// Gamepad
+void se_input_gamepad_start_vibration(int device, float weakMagnitude, float strongMagnitude, float durationSeconds);
+void se_input_gamepad_stop_vibration(int device);
