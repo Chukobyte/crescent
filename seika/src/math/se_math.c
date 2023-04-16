@@ -98,6 +98,10 @@ int se_math_clamp_int(int value, int min, int max) {
     return value < min ? min : (value > max ? max : value);
 }
 
+float se_math_clamp_float(float value, float min, float max) {
+    return value < min ? min : (value > max ? max : value);
+}
+
 bool se_math_is_almost_equal_float(float v1, float v2, float epsilon) {
     return fabsf(v1 - v2) <= epsilon;
 }
