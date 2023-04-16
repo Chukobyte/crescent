@@ -236,6 +236,16 @@ def input_is_action_just_released(name: str) -> bool:
     return False
 
 
+def input_start_gamepad_vibration(
+    device_id: int, weak_magnitude: float, strong_magnitude: float, duration: float
+) -> None:
+    pass
+
+
+def input_stop_gamepad_vibration(device_id: int) -> None:
+    pass
+
+
 def mouse_get_position() -> Tuple[float, float]:
     return 0.0, 0.0
 

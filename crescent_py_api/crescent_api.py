@@ -724,6 +724,21 @@ class Input:
     def is_action_just_released(name: str) -> bool:
         return crescent_api_internal.input_is_action_just_released(name=name)
 
+    @staticmethod
+    def start_gamepad_vibration(
+        device_id: int, weak_magnitude: float, strong_magnitude: float, duration: float
+    ) -> None:
+        crescent_api_internal.input_start_gamepad_vibration(
+            device_id=device_id,
+            weak_magnitude=weak_magnitude,
+            strong_magnitude=strong_magnitude,
+            duration=duration,
+        )
+
+    @staticmethod
+    def stop_gamepad_vibration(device_id: int) -> None:
+        crescent_api_internal.input_stop_gamepad_vibration(device_id=device_id)
+
     class Mouse:
         LEFT_BUTTON = "mb_left"
         RIGHT_BUTTON = "mb_right"

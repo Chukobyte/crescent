@@ -552,6 +552,27 @@ PyObject* cre_py_api_input_is_action_just_released(PyObject* self, PyObject* arg
     return NULL;
 }
 
+PyObject* cre_py_api_input_start_gamepad_vibration(PyObject* self, PyObject* args, PyObject* kwargs) {
+    int deviceId;
+    float weakMagnitude;
+    float strongMagnitude;
+    float durationSeconds;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "ifff", crePyApiInputStartGamepadVibrationKWList, &deviceId, &weakMagnitude, &strongMagnitude, &durationSeconds)) {
+        se_input_gamepad_start_vibration(deviceId, weakMagnitude, strongMagnitude, durationSeconds);
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_input_stop_gamepad_vibration(PyObject* self, PyObject* args, PyObject* kwargs) {
+    int deviceId;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiInputStopGamepadVibrationKWList, &deviceId)) {
+        se_input_gamepad_stop_vibration(deviceId);
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
 // Mouse
 PyObject* cre_py_api_mouse_get_position(PyObject* self, PyObject* args) {
     const CREEngineContext* engineContext = cre_engine_context_get();

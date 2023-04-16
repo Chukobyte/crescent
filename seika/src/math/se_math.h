@@ -103,6 +103,7 @@ double se_math_map_to_unit_double(double input, double inputMin, double inputMax
 float se_math_signf(float value);
 SEVector2 se_math_signvec2(SEVector2* value);
 int se_math_clamp_int(int value, int min, int max);
+float se_math_clamp_float(float value, float min, float max);
 bool se_math_is_almost_equal_float(float v1, float v2, float epsilon);
 bool se_math_is_almost_equal_float_default(float v1, float v2);
 bool se_math_is_almost_equal_double(double v1, double v2, double epsilon);

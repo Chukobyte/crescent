@@ -698,3 +698,28 @@ void input_gamepad_cleanup_flags() {
         }
     }
 }
+
+void se_input_gamepad_start_vibration(int device, float weakMagnitude, float strongMagnitude, float durationSeconds) {
+    for (int i = 0; i < activeGamepadCount; i++) {
+        if (i == device) {
+            weakMagnitude = se_math_clamp_float(weakMagnitude, 0.0f, 1.0f);
+            strongMagnitude = se_math_clamp_float(strongMagnitude, 0.0f, 1.0f);
+            const Uint16 weakMag = (Uint16)(weakMagnitude * 65535.0f + 0.5f);
+            const Uint16 strongMag = (Uint16)(strongMagnitude * 65535.0f + 0.5f);
+            const Uint32 durationMilliseconds = (Uint32)(durationSeconds * 1000.0f);
+            const int deviceId = activeGamepadIds[i];
+            SDL_JoystickRumble(activeGamePads[deviceId].joystickController, weakMag, strongMag, durationMilliseconds);
+            break;
+        }
+    }
+}
+
+void se_input_gamepad_stop_vibration(int device) {
+    for (int i = 0; i < activeGamepadCount; i++) {
+        if (i == device) {
+            const int deviceId = activeGamepadIds[i];
+            SDL_JoystickRumble(activeGamePads[deviceId].joystickController, 0, 0, 0);
+            break;
+        }
+    }
+}
