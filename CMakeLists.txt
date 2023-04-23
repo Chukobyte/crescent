@@ -21,6 +21,7 @@ target_link_libraries(${PROJECT_NAME}_test crescent_core seika unity)
 
 # Create editor exe
 add_executable(${PROJECT_NAME}_editor editor/src/main.cpp)
+add_dependencies(${PROJECT_NAME}_editor ${PROJECT_NAME})
 target_link_libraries(${PROJECT_NAME}_editor crescent_editor crescent_core seika)
 
 # Create test editor exe
