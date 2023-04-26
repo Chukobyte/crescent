@@ -61,7 +61,7 @@ SEShaderInstanceId se_shader_cache_create_instance_and_add(const char* shaderPat
             SEShaderInstance* shaderInstance = se_shader_cache_get_instance(newId);
             if (shaderInstance) {
                 for (size_t i = 0; i < result.parseData.uniformCount; i++) {
-                    se_shader_instance_param_create(shaderInstance, result.parseData.uniforms[i]);
+                    se_shader_instance_param_create_from_copy(shaderInstance, &result.parseData.uniforms[i]);
                 }
             }
             se_shader_file_parse_clear_parse_result(&result);
