@@ -128,7 +128,11 @@ bool initialize_input(const char* controllerDBFilePath) {
     return true;
 }
 
-void sf_update() {}
+void sf_fixed_update(float deltaTime) {
+    static float globalTime = 0.0f;
+    globalTime += deltaTime;
+    se_renderer_set_global_shader_param_time(globalTime);
+}
 
 void sf_process_inputs() {
     SDL_Event event;

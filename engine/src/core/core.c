@@ -245,6 +245,7 @@ void cre_process_game_update() {
 
     while (accumulator >= CRE_GLOBAL_PHYSICS_DELTA_TIME) {
         accumulator -= CRE_GLOBAL_PHYSICS_DELTA_TIME;
+        sf_fixed_update(CRE_GLOBAL_PHYSICS_DELTA_TIME);
         cre_ec_system_physics_process_systems(CRE_GLOBAL_PHYSICS_DELTA_TIME);
         se_input_clean_up_flags();
     }
