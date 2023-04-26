@@ -1442,6 +1442,18 @@ PyObject* cre_py_api_animated_sprite_stop(PyObject* self, PyObject* args, PyObje
         AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent *) cre_component_manager_get_component(
                     entity, CreComponentDataIndex_ANIMATED_SPRITE);
         animatedSpriteComponent->isPlaying = false;
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_animated_sprite_set_current_animation_frame(PyObject* self, PyObject* args, PyObject* kwargs) {
+    CreEntity entity;
+    int frame;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "ii", crePyApiAnimatedSpriteSetCurrentAnimationFrameKWList, &entity, &frame)) {
+        AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent *) cre_component_manager_get_component(entity, CreComponentDataIndex_ANIMATED_SPRITE);
+        animatedSpriteComponent->currentAnimation.currentFrame = se_math_clamp_int(frame, 0, animatedSpriteComponent->currentAnimation.frameCount - 1);
+        Py_RETURN_NONE;
     }
     return NULL;
 }

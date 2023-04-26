@@ -1230,6 +1230,11 @@ class AnimatedSprite(Node2D):
     def stop(self) -> None:
         crescent_api_internal.animated_sprite_stop(entity_id=self.entity_id)
 
+    def set_current_animation_frame(self, frame: int) -> None:
+        crescent_api_internal.animated_sprite_set_current_animation_frame(
+            entity_id=self.entity_id, frame=frame
+        )
+
     def add_animation(self, animation: Animation) -> None:
         anim_frames = []
         for frame in animation.frames:
