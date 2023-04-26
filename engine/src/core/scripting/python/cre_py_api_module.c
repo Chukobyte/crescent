@@ -1431,6 +1431,7 @@ PyObject* cre_py_api_animated_sprite_play(PyObject* self, PyObject* args, PyObje
                 Py_RETURN_TRUE;
             }
         }
+        animatedSpriteComponent->isPlaying = true;
         Py_RETURN_FALSE;
     }
     return NULL;
@@ -1438,9 +1439,8 @@ PyObject* cre_py_api_animated_sprite_play(PyObject* self, PyObject* args, PyObje
 
 PyObject* cre_py_api_animated_sprite_stop(PyObject* self, PyObject* args, PyObject* kwargs) {
     CreEntity entity;
-    if (PyArg_ParseTupleAndKeywords(args, kwargs, "is", crePyApiGenericGetEntityKWList, &entity)) {
-        AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent *) cre_component_manager_get_component(
-                    entity, CreComponentDataIndex_ANIMATED_SPRITE);
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
+        AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent *) cre_component_manager_get_component(entity, CreComponentDataIndex_ANIMATED_SPRITE);
         animatedSpriteComponent->isPlaying = false;
         Py_RETURN_NONE;
     }
