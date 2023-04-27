@@ -16,7 +16,7 @@ void native_on_create_instance(CreEntity entity, const char* classPath, const ch
 void native_on_delete_instance(CreEntity entity);
 void native_on_start(CreEntity entity);
 void native_on_update_instance(CreEntity entity, float deltaTime);
-void native_on_physics_update_instance(CreEntity entity, float deltaTime);
+void native_on_fixed_update_instance(CreEntity entity, float deltaTime);
 void native_on_end(CreEntity entity);
 
 // Script Cache
@@ -31,7 +31,7 @@ CREScriptContext* cre_native_create_script_context() {
     scriptContext->on_delete_instance = native_on_delete_instance;
     scriptContext->on_start = native_on_start;
     scriptContext->on_update_instance = native_on_update_instance;
-    scriptContext->on_physics_update_instance = native_on_physics_update_instance;
+    scriptContext->on_fixed_update_instance = native_on_fixed_update_instance;
     scriptContext->on_end = native_on_end;
 
     SE_ASSERT(classCache == NULL);
@@ -76,10 +76,10 @@ void native_on_delete_instance(CreEntity entity) {
             CRE_NULL_ENTITY
         );
     }
-    if (scriptClassRef->physics_update_func != NULL) {
+    if (scriptClassRef->fixed_update_func != NULL) {
         se_array_utils_remove_item_uint32(
-            native_script_context->physicsUpdateEntities,
-            &native_script_context->physicsUpdateEntityCount,
+            native_script_context->fixedUpdateEntities,
+            &native_script_context->fixedUpdateEntityCount,
             entity,
             CRE_NULL_ENTITY
         );
@@ -97,8 +97,8 @@ void native_on_start(CreEntity entity) {
     if (scriptClassRef->update_func != NULL) {
         native_script_context->updateEntities[native_script_context->updateEntityCount++] = entity;
     }
-    if (scriptClassRef->physics_update_func != NULL) {
-        native_script_context->physicsUpdateEntities[native_script_context->physicsUpdateEntityCount++] = entity;
+    if (scriptClassRef->fixed_update_func != NULL) {
+        native_script_context->fixedUpdateEntities[native_script_context->fixedUpdateEntityCount++] = entity;
     }
 }
 
@@ -107,9 +107,9 @@ void native_on_update_instance(CreEntity entity, float deltaTime) {
     scriptClass->update_func(scriptClass, deltaTime);
 }
 
-void native_on_physics_update_instance(CreEntity entity, float deltaTime) {
+void native_on_fixed_update_instance(CreEntity entity, float deltaTime) {
     CRENativeScriptClass* scriptClass = (CRENativeScriptClass*) *(CRENativeScriptClass**) se_hash_map_get(entityToClassName, &entity);
-    scriptClass->physics_update_func(scriptClass, deltaTime);
+    scriptClass->fixed_update_func(scriptClass, deltaTime);
 }
 
 void native_on_end(CreEntity entity) {

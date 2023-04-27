@@ -102,7 +102,7 @@ class Main(Node2D):
                 total_collisions.append(collision)
             print(f"mouse_pos = {mouse_pos} collisions = {total_collisions}")
 
-    def _physics_update(self, delta_time: float) -> None:
+    def _fixed_update(self, delta_time: float) -> None:
         # Temp camera test
         camera_speed = Vector2(5.0, 5.0)
         if Input.is_action_pressed("camera_left"):

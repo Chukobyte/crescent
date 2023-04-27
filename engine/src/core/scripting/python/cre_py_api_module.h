@@ -144,6 +144,7 @@ PyObject* cre_py_api_sprite_get_shader_instance(PyObject* self, PyObject* args, 
 // Animated Sprite
 PyObject* cre_py_api_animated_sprite_play(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_animated_sprite_stop(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_animated_sprite_set_current_animation_frame(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_animated_sprite_add_animation(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_animated_sprite_set_flip_h(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_animated_sprite_get_flip_h(PyObject* self, PyObject* args, PyObject* kwargs);
@@ -653,6 +654,10 @@ static struct PyMethodDef crePyApiMethods[] = {
         METH_VARARGS | METH_KEYWORDS, "Will stop the currently playing animation."
     },
     {
+        "animated_sprite_set_current_animation_frame", (PyCFunction) cre_py_api_animated_sprite_set_current_animation_frame,
+        METH_VARARGS | METH_KEYWORDS, "Sets the current animation's frame."
+    },
+    {
         "animated_sprite_add_animation", (PyCFunction) cre_py_api_animated_sprite_add_animation,
         METH_VARARGS | METH_KEYWORDS, "Adds a new animation."
     },
@@ -885,6 +890,7 @@ static char* crePyApiNode2DSetIgnoreCameraKWList[] = {"entity_id", "ignore_camer
 static char* crePyApiSpriteSetTextureKWList[] = {"entity_id", "file_path", NULL};
 
 static char* crePyApiAnimatedSpriteSetAnimationKWList[] = {"entity_id", "name", NULL};
+static char* crePyApiAnimatedSpriteSetCurrentAnimationFrameKWList[] = {"entity_id", "frame", NULL};
 static char* crePyApiAnimatedSpriteAddAnimationKWList[] = {"entity_id", "name", "speed", "loops", "frames", NULL};
 
 static char* crePyApiTextLabelSetTextKWList[] = {"entity_id", "text", NULL};

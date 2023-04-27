@@ -1422,14 +1422,16 @@ PyObject* cre_py_api_animated_sprite_play(PyObject* self, PyObject* args, PyObje
     CreEntity entity;
     char* animationName;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "is", crePyApiAnimatedSpriteSetAnimationKWList, &entity, &animationName)) {
-        AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent *) cre_component_manager_get_component(
-                    entity, CreComponentDataIndex_ANIMATED_SPRITE);
-        const bool success = animated_sprite_component_set_animation(animatedSpriteComponent, animationName);
-        animatedSpriteComponent->isPlaying = true;
-        if (success) {
-            animatedSpriteComponent->startAnimationTickTime = SDL_GetTicks();
-            Py_RETURN_TRUE;
+        AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent *) cre_component_manager_get_component(entity, CreComponentDataIndex_ANIMATED_SPRITE);
+        if (strcmp(animatedSpriteComponent->currentAnimation.name, animationName) != 0) {
+            const bool success = animated_sprite_component_set_animation(animatedSpriteComponent, animationName);
+            animatedSpriteComponent->isPlaying = true;
+            if (success) {
+                animatedSpriteComponent->startAnimationTickTime = SDL_GetTicks();
+                Py_RETURN_TRUE;
+            }
         }
+        animatedSpriteComponent->isPlaying = true;
         Py_RETURN_FALSE;
     }
     return NULL;
@@ -1437,10 +1439,21 @@ PyObject* cre_py_api_animated_sprite_play(PyObject* self, PyObject* args, PyObje
 
 PyObject* cre_py_api_animated_sprite_stop(PyObject* self, PyObject* args, PyObject* kwargs) {
     CreEntity entity;
-    if (PyArg_ParseTupleAndKeywords(args, kwargs, "is", crePyApiGenericGetEntityKWList, &entity)) {
-        AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent *) cre_component_manager_get_component(
-                    entity, CreComponentDataIndex_ANIMATED_SPRITE);
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
+        AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent *) cre_component_manager_get_component(entity, CreComponentDataIndex_ANIMATED_SPRITE);
         animatedSpriteComponent->isPlaying = false;
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_animated_sprite_set_current_animation_frame(PyObject* self, PyObject* args, PyObject* kwargs) {
+    CreEntity entity;
+    int frame;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "ii", crePyApiAnimatedSpriteSetCurrentAnimationFrameKWList, &entity, &frame)) {
+        AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent *) cre_component_manager_get_component(entity, CreComponentDataIndex_ANIMATED_SPRITE);
+        animatedSpriteComponent->currentAnimation.currentFrame = se_math_clamp_int(frame, 0, animatedSpriteComponent->currentAnimation.frameCount - 1);
+        Py_RETURN_NONE;
     }
     return NULL;
 }

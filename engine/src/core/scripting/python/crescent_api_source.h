@@ -1267,6 +1267,11 @@
 "    def stop(self) -> None:\n"\
 "        crescent_api_internal.animated_sprite_stop(entity_id=self.entity_id)\n"\
 "\n"\
+"    def set_current_animation_frame(self, frame: int) -> None:\n"\
+"        crescent_api_internal.animated_sprite_set_current_animation_frame(\n"\
+"            entity_id=self.entity_id, frame=frame\n"\
+"        )\n"\
+"\n"\
 "    def add_animation(self, animation: Animation) -> None:\n"\
 "        anim_frames = []\n"\
 "        for frame in animation.frames:\n"\

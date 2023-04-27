@@ -11,7 +11,7 @@ bool sf_initialize(const char* title,
                    bool maintainAspectRatio,
                    const char* controllerDBFilePath);
 void sf_process_inputs();
-void sf_update();
+void sf_fixed_update(float deltaTime);
 void sf_render();
 bool sf_is_running();
 void sf_shutdown();

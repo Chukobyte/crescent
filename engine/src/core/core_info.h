@@ -1,3 +1,3 @@
 #pragma once
 
-#define CRE_CORE_VERSION "0.11.0"
+#define CRE_CORE_VERSION "0.12.0"

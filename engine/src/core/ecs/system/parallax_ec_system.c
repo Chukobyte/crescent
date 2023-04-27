@@ -81,8 +81,7 @@ void parallax_on_entity_transform_change(SESubjectNotifyPayload* payload) {
     Transform2DComponent* transform2DComponent = (Transform2DComponent*) updatePayload->component;
     CreEntity entity = updatePayload->entity;
 
-    ParallaxComponent* parallaxComp = (ParallaxComponent*) cre_component_manager_get_component(entity,
-                                      CreComponentDataIndex_PARALLAX);
+    ParallaxComponent* parallaxComp = (ParallaxComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_PARALLAX);
     SE_ASSERT(parallaxComp != NULL);
 
     parallaxComp->cachedLocalPosition = transform2DComponent->localTransform.position;

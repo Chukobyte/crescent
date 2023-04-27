@@ -19,7 +19,7 @@ void script_system_entity_end(CreEntity entity);
 void script_system_pre_update_all();
 void script_system_post_update_all();
 void script_system_instance_update(float deltaTime);
-void script_system_instance_physics_update(float deltaTime);
+void script_system_instance_fixed_update(float deltaTime);
 void script_system_network_callback(const char* message);
 
 CreEntitySystem* scriptSystem = NULL;
@@ -38,7 +38,7 @@ CreEntitySystem* cre_script_ec_system_create() {
     scriptSystem->pre_process_all_func = script_system_pre_update_all;
     scriptSystem->post_process_all_func = script_system_post_update_all;
     scriptSystem->process_func = script_system_instance_update;
-    scriptSystem->physics_process_func = script_system_instance_physics_update;
+    scriptSystem->physics_process_func = script_system_instance_fixed_update;
     scriptSystem->network_callback_func = script_system_network_callback;
     scriptSystem->component_signature = CreComponentType_SCRIPT;
     // Python Context
@@ -108,12 +108,12 @@ void script_system_instance_update(float deltaTime) {
     }
 }
 
-void script_system_instance_physics_update(float deltaTime) {
+void script_system_instance_fixed_update(float deltaTime) {
     for (size_t i = 0; i < scriptContextsCount; i++) {
-        for (size_t entityIndex = 0; entityIndex < scriptContexts[i]->physicsUpdateEntityCount; entityIndex++) {
-            const CreEntity entity = scriptContexts[i]->physicsUpdateEntities[entityIndex];
+        for (size_t entityIndex = 0; entityIndex < scriptContexts[i]->fixedUpdateEntityCount; entityIndex++) {
+            const CreEntity entity = scriptContexts[i]->fixedUpdateEntities[entityIndex];
             const float entityTimeDilation = cre_scene_manager_get_node_full_time_dilation(entity);
-            scriptContexts[i]->on_physics_update_instance(entity, deltaTime * entityTimeDilation);
+            scriptContexts[i]->on_fixed_update_instance(entity, deltaTime * entityTimeDilation);
         }
     }
 }

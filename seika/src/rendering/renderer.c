@@ -44,6 +44,9 @@ static GLuint spriteQuadVBO;
 static SEShader* spriteShader = NULL;
 static SEShader* fontShader = NULL;
 
+// Global Shader Params
+float globalShaderParamTime = 0.0f;
+
 static float resolutionWidth = 800.0f;
 static float resolutionHeight = 600.0f;
 static mat4 spriteProjection = {
@@ -512,6 +515,10 @@ TextureCoordinates renderer_get_texture_coordinates(const SETexture* texture, co
 }
 
 void renderer_set_shader_instance_params(SEShaderInstance* shaderInstance) {
+    // Set global shader params first
+    se_shader_set_float(shaderInstance->shader, "TIME", globalShaderParamTime);
+
+    // Now set shader params specific to the shader instance
     if (shaderInstance->paramMap->size > 0) {
         SE_STRING_HASH_MAP_FOR_EACH(shaderInstance->paramMap, iter) {
             StringHashMapNode* node = iter.pair;
@@ -575,4 +582,9 @@ void renderer_print_opengl_errors() {
             break;
         }
     }
+}
+
+// Shader param stuff
+void se_renderer_set_global_shader_param_time(float timeValue) {
+    globalShaderParamTime = timeValue;
 }

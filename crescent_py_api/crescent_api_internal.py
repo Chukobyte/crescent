@@ -516,6 +516,10 @@ def animated_sprite_stop(entity_id: int) -> None:
     pass
 
 
+def animated_sprite_set_current_animation_frame(entity_id: int, frame: int) -> None:
+    pass
+
+
 def animated_sprite_add_animation(
     entity_id: int,
     name: str,

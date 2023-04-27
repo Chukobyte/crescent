@@ -22,6 +22,9 @@ void se_renderer_queue_font_draw_call(SEFont* font, const char* text, float x, f
 void se_renderer_process_and_flush_batches(const SEColor* backgroundColor);
 void se_renderer_process_and_flush_batches_just_framebuffer(const SEColor* backgroundColor);
 
+// Shader params
+void se_renderer_set_global_shader_param_time(float timeValue);
+
 #ifdef __cplusplus
 }
 #endif
