@@ -19,7 +19,7 @@ SETexture* collisionOutlineTexture = NULL;
 SERect2 colliderDrawSource = { .x=0.0f, .y=0.0f, .w=1.0f, .h=1.0f };
 
 void collision_system_entity_unregistered(CreEntity entity);
-void collision_system_physics_update(float deltaTime);
+void collision_system_fixed_update(float deltaTime);
 void collision_system_render();
 
 void collision_system_on_node_entered_scene(CreEntity entity);
@@ -37,7 +37,7 @@ CreEntitySystem* cre_collision_ec_system_create() {
 
     collisionSystem->on_entity_entered_scene_func = collision_system_on_node_entered_scene;
     collisionSystem->on_entity_unregistered_func = collision_system_entity_unregistered;
-    collisionSystem->physics_process_func = collision_system_physics_update;
+    collisionSystem->physics_process_func = collision_system_fixed_update;
 
     CREGameProperties* gameProps = cre_game_props_get();
     SE_ASSERT(cre_game_props_get() != NULL);
@@ -73,7 +73,7 @@ void collision_system_entity_unregistered(CreEntity entity) {
 }
 
 // TODO: Temp, figure out how we want to handle caching the global transform
-void collision_system_physics_update(float deltaTime) {
+void collision_system_fixed_update(float deltaTime) {
     for (size_t i = 0; i < collisionSystem->entity_count; i++) {
         const CreEntity entity = collisionSystem->entities[i];
         Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity,

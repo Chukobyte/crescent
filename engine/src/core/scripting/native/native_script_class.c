@@ -13,7 +13,7 @@ CRENativeScriptClass* cre_native_class_create_new(CreEntity entity, const char* 
     scriptClass->on_start_func = NULL;
     scriptClass->on_end_func = NULL;
     scriptClass->update_func = NULL;
-    scriptClass->physics_update_func = NULL;
+    scriptClass->fixed_update_func = NULL;
     scriptClass->instance_data = NULL;
     return scriptClass;
 }

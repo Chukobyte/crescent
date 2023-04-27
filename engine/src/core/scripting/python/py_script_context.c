@@ -30,7 +30,7 @@ void py_on_start(CreEntity entity);
 void py_on_pre_update_all();
 void py_on_post_update_all();
 void py_on_update_instance(CreEntity entity, float deltaTime);
-void py_on_physics_update_instance(CreEntity entity, float deltaTime);
+void py_on_fixed_update_instance(CreEntity entity, float deltaTime);
 void py_on_end(CreEntity entity);
 void py_on_network_callback(const char* message);
 
@@ -47,7 +47,7 @@ CREScriptContext* cre_py_create_script_context() {
     scriptContext->on_pre_update_all = py_on_pre_update_all;
     scriptContext->on_post_update_all = py_on_post_update_all;
     scriptContext->on_update_instance = py_on_update_instance;
-    scriptContext->on_physics_update_instance = py_on_physics_update_instance;
+    scriptContext->on_fixed_update_instance = py_on_fixed_update_instance;
     scriptContext->on_end = py_on_end;
     scriptContext->on_network_callback = py_on_network_callback;
     scriptContext->on_entity_subscribe_to_network_callback = py_on_entity_subscribe_to_network_callback;
@@ -82,10 +82,10 @@ void py_on_delete_instance(CreEntity entity) {
             CRE_NULL_ENTITY
         );
     }
-    if (PyObject_HasAttrString(pScriptInstance, "_physics_update")) {
+    if (PyObject_HasAttrString(pScriptInstance, "_fixed_update")) {
         se_array_utils_remove_item_uint32(
-            python_script_context->physicsUpdateEntities,
-            &python_script_context->physicsUpdateEntityCount,
+            python_script_context->fixedUpdateEntities,
+            &python_script_context->fixedUpdateEntityCount,
             entity,
             CRE_NULL_ENTITY
         );
@@ -115,8 +115,8 @@ void py_on_start(CreEntity entity) {
     if (PyObject_HasAttrString(pScriptInstance, "_update")) {
         python_script_context->updateEntities[python_script_context->updateEntityCount++] = entity;
     }
-    if (PyObject_HasAttrString(pScriptInstance, "_physics_update")) {
-        python_script_context->physicsUpdateEntities[python_script_context->physicsUpdateEntityCount++] = entity;
+    if (PyObject_HasAttrString(pScriptInstance, "_fixed_update")) {
+        python_script_context->fixedUpdateEntities[python_script_context->fixedUpdateEntityCount++] = entity;
     }
 }
 
@@ -135,9 +135,9 @@ void py_on_update_instance(CreEntity entity, float deltaTime) {
     PyObject_CallMethod(pScriptInstance, "_update", "(f)", deltaTime);
 }
 
-void py_on_physics_update_instance(CreEntity entity, float deltaTime) {
+void py_on_fixed_update_instance(CreEntity entity, float deltaTime) {
     PyObject* pScriptInstance = (PyObject*) *(PyObject**) se_hash_map_get(pythonInstanceHashMap, &entity);
-    PyObject_CallMethod(pScriptInstance, "_physics_update", "(f)", deltaTime);
+    PyObject_CallMethod(pScriptInstance, "_fixed_update", "(f)", deltaTime);
 }
 
 void py_on_end(CreEntity entity) {

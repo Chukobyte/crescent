@@ -12,7 +12,7 @@ typedef void (*OnEnd) (CreEntity);
 typedef void (*OnPreUpdateAll) ();
 typedef void (*OnPostUpdateAll) ();
 typedef void (*OnUpdateInstance) (CreEntity, float);
-typedef void (*OnPhysicsUpdateInstance) (CreEntity, float);
+typedef void (*OnFixedUpdateInstance) (CreEntity, float);
 
 typedef void (*OnNetworkCallback) (const char*);
 
@@ -33,19 +33,19 @@ typedef struct CREScriptContext {
     // Called after all script update callbacks
     OnPostUpdateAll on_post_update_all;
     OnUpdateInstance on_update_instance;
-    OnPhysicsUpdateInstance on_physics_update_instance;
+    OnFixedUpdateInstance on_fixed_update_instance;
     // Called before an entity exits a scene
     OnEnd on_end;
     // The main network callback for forwarding network data to the script context
     OnNetworkCallback on_network_callback;
     OnEntitySubscribeToNetworkCallback on_entity_subscribe_to_network_callback;
-    // We could have a validation step on the script contexts to check if the update, physics_update, etc... funcs exists
+    // We could have a validation step on the script contexts to check if the update, fixed_update, etc... funcs exists
     // in the class within the scripting language.  For now, the script context is responsible for entity and entity count
     // even though it's not used in the script ec system
     size_t updateEntityCount;
-    size_t physicsUpdateEntityCount;
+    size_t fixedUpdateEntityCount;
     CreEntity updateEntities[CRE_MAX_ENTITIES];
-    CreEntity physicsUpdateEntities[CRE_MAX_ENTITIES];
+    CreEntity fixedUpdateEntities[CRE_MAX_ENTITIES];
 } CREScriptContext;
 
 CREScriptContext* cre_script_context_create();
