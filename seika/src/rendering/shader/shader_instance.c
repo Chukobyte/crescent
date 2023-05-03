@@ -20,6 +20,14 @@ SEShaderInstance* se_shader_instance_create(const char* vertexSource, const char
     return instance;
 }
 
+SEShaderInstance* se_shader_instance_create_from_shader(SEShader* shader) {
+    SE_ASSERT(shader != NULL);
+    SEShaderInstance* instance = SE_MEM_ALLOCATE(SEShaderInstance);
+    instance->shader = shader;
+    instance->paramMap = se_string_hash_map_create_default_capacity();
+    return instance;
+}
+
 void se_shader_instance_destroy(SEShaderInstance* shaderInstance) {
     SE_STRING_HASH_MAP_FOR_EACH(shaderInstance->paramMap, iter) {
         StringHashMapNode* node = iter.pair;
