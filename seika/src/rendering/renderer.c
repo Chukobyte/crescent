@@ -521,7 +521,7 @@ void renderer_set_shader_instance_params(SEShaderInstance* shaderInstance) {
     se_shader_set_float(shaderInstance->shader, "TIME", globalShaderParamTime);
 
     // Now set shader params specific to the shader instance
-    if (shaderInstance->paramMap->size > 0) {
+    if (shaderInstance->paramsDirty && shaderInstance->paramMap->size > 0) {
         SE_STRING_HASH_MAP_FOR_EACH(shaderInstance->paramMap, iter) {
             StringHashMapNode* node = iter.pair;
             SEShaderParam* param = (SEShaderParam*) node->value;
@@ -556,6 +556,7 @@ void renderer_set_shader_instance_params(SEShaderInstance* shaderInstance) {
             }
             }
         }
+        shaderInstance->paramsDirty = false;
     }
 }
 

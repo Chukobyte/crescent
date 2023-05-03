@@ -43,6 +43,7 @@ typedef enum SEShaderInstanceType {
 typedef struct SEShaderInstance {
     SEShader* shader;
     SEStringHashMap* paramMap;
+    bool paramsDirty;
 } SEShaderInstance;
 
 SEShaderInstance* se_shader_instance_create(const char* vertexSource, const char* fragmentSource);
