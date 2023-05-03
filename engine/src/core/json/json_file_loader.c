@@ -31,7 +31,7 @@ void cre_json_configure_assets(cJSON* configJson, CREGameProperties* properties)
     cJSON* texturesJsonArray = cJSON_GetObjectItemCaseSensitive(assetsJson, "textures");
     cJSON* textureJson = NULL;
     cJSON_ArrayForEach(textureJson, texturesJsonArray) {
-        SE_ASSERT_FMT(properties->textureCount < CRE_PROPERTIES_ASSET_LIMIT, "Audio source count is over the max limit of %d, increase the limit of CRE_PROPERTIES_ASSET_LIMIT", CRE_INPUT_VALUES_LIMIT);
+        SE_ASSERT_FMT(properties->textureCount < CRE_PROPERTIES_ASSET_LIMIT, "Texture count is over the max limit of %d, increase the limit of CRE_PROPERTIES_ASSET_LIMIT", CRE_INPUT_VALUES_LIMIT);
         properties->textures[properties->textureCount].file_path = json_get_string_new(textureJson, "file_path");
         se_logger_debug("Texture File Path: '%s'", properties->textures[properties->textureCount].file_path);
         properties->textures[properties->textureCount].wrap_s = json_get_string_default_new(textureJson, "wrap_s", "clamp_to_border");

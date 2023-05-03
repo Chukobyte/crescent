@@ -1409,8 +1409,7 @@ PyObject* cre_py_api_sprite_set_shader_instance(PyObject* self, PyObject* args, 
 PyObject* cre_py_api_sprite_get_shader_instance(PyObject* self, PyObject* args, PyObject* kwargs) {
     CreEntity entity;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
-        const SpriteComponent* spriteComponent = (SpriteComponent*) cre_component_manager_get_component(entity,
-                CreComponentDataIndex_SPRITE);
+        const SpriteComponent* spriteComponent = (SpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_SPRITE);
         const int spriteShaderInstanceId = spriteComponent->shaderInstanceId != SE_SHADER_INSTANCE_INVALID_ID ? (int)spriteComponent->shaderInstanceId : -1;
         return Py_BuildValue("i", spriteShaderInstanceId);
     }

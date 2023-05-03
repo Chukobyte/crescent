@@ -419,8 +419,7 @@ SceneTreeNode* cre_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneN
     if (jsonSceneNode->components[CreComponentDataIndex_ANIMATED_SPRITE] != NULL) {
         AnimatedSpriteComponent* animatedSpriteComponent = animated_sprite_component_data_copy_to_animated_sprite((AnimatedSpriteComponentData*) jsonSceneNode->components[CreComponentDataIndex_ANIMATED_SPRITE]);
         if (jsonSceneNode->shaderInstanceShaderPath) {
-            animatedSpriteComponent->shaderInstanceId = se_shader_cache_create_instance_and_add_from_raw(
-                        jsonSceneNode->shaderInstanceVertexPath, jsonSceneNode->shaderInstanceFragmentPath);
+            animatedSpriteComponent->shaderInstanceId = se_shader_cache_create_instance_and_add(jsonSceneNode->shaderInstanceShaderPath);
             SEShaderInstance* shaderInstance = se_shader_cache_get_instance(animatedSpriteComponent->shaderInstanceId);
             se_renderer_set_sprite_shader_default_params(shaderInstance->shader);
         } else if (jsonSceneNode->shaderInstanceVertexPath && jsonSceneNode->shaderInstanceFragmentPath) {

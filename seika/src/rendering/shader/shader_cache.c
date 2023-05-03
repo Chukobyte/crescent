@@ -48,6 +48,7 @@ SEShaderInstance* se_shader_cache_get_instance_checked(SEShaderInstanceId instan
     return NULL;
 }
 
+// TODO: Cache shaders in hashmap so we don't need to parse and recompile each time
 SEShaderInstanceId se_shader_cache_create_instance_and_add(const char* shaderPath) {
     SEShaderInstanceId newId = SE_SHADER_INSTANCE_INVALID_ID;
     char* shaderSource = sf_asset_file_loader_read_file_contents_as_string_without_raw(shaderPath, NULL);
