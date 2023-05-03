@@ -35,30 +35,30 @@ void se_shader_instance_destroy(SEShaderInstance* shaderInstance) {
 void se_shader_instance_param_create_from_copy(SEShaderInstance* shaderInstance, SEShaderParam* param) {
     param->name = se_strdup(param->name);
     switch (param->type) {
-        case SEShaderParamType_BOOL: {
-            se_shader_instance_param_create_bool(shaderInstance, param->name, param->value.boolValue);
-            return;
-        }
-        case SEShaderParamType_INT: {
-            se_shader_instance_param_create_int(shaderInstance, param->name, param->value.intValue);
-            return;
-        }
-        case SEShaderParamType_FLOAT: {
-            se_shader_instance_param_create_float(shaderInstance, param->name, param->value.floatValue);
-            return;
-        }
-        case SEShaderParamType_FLOAT2: {
-            se_shader_instance_param_create_float2(shaderInstance, param->name, param->value.float2Value);
-            return;
-        }
-        case SEShaderParamType_FLOAT3: {
-            se_shader_instance_param_create_float3(shaderInstance, param->name, param->value.float3Value);
-            return;
-        }
-        case SEShaderParamType_FLOAT4: {
-            se_shader_instance_param_create_float4(shaderInstance, param->name, param->value.float4Value);
-            return;
-        }
+    case SEShaderParamType_BOOL: {
+        se_shader_instance_param_create_bool(shaderInstance, param->name, param->value.boolValue);
+        return;
+    }
+    case SEShaderParamType_INT: {
+        se_shader_instance_param_create_int(shaderInstance, param->name, param->value.intValue);
+        return;
+    }
+    case SEShaderParamType_FLOAT: {
+        se_shader_instance_param_create_float(shaderInstance, param->name, param->value.floatValue);
+        return;
+    }
+    case SEShaderParamType_FLOAT2: {
+        se_shader_instance_param_create_float2(shaderInstance, param->name, param->value.float2Value);
+        return;
+    }
+    case SEShaderParamType_FLOAT3: {
+        se_shader_instance_param_create_float3(shaderInstance, param->name, param->value.float3Value);
+        return;
+    }
+    case SEShaderParamType_FLOAT4: {
+        se_shader_instance_param_create_float4(shaderInstance, param->name, param->value.float4Value);
+        return;
+    }
     }
     SE_ASSERT_FMT(false, "Failed to copy shader param with name '%s'", param->name);
 }
