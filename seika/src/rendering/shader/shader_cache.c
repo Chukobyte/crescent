@@ -11,7 +11,6 @@
 // --- Parsed Shader Cache --- //
 typedef struct SEParsedShaderCacheItem {
     SEShaderFileParseResult parseResult;
-    SEShader* shader;
 } SEParsedShaderCacheItem;
 
 SEStringHashMap* parsedShaderCacheMap = NULL;
