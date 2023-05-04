@@ -171,7 +171,7 @@ void se_renderer_queue_sprite_draw_call(SETexture* texture, SERect2 sourceRect, 
     // Get texture layer index for render texture
     size_t textureLayerIndex = render_layer_items[arrayZIndex].renderTextureLayerCount;
     for (size_t i = 0; i < render_layer_items[arrayZIndex].renderTextureLayerCount; i++) {
-        if (texture == render_layer_items[arrayZIndex].renderTextureLayers[i].spriteBatchItems[0].texture) {
+        if (texture == render_layer_items[arrayZIndex].renderTextureLayers[i].spriteBatchItems[0].texture && shaderInstance == render_layer_items[arrayZIndex].renderTextureLayers[i].spriteBatchItems[0].shaderInstance) {
             textureLayerIndex = i;
             break;
         }
@@ -519,7 +519,7 @@ void renderer_set_shader_instance_params(SEShaderInstance* shaderInstance) {
     se_shader_set_float(shaderInstance->shader, "TIME", globalShaderParamTime);
 
     // Now set shader params specific to the shader instance
-    if (shaderInstance->paramMap->size > 0) {
+    if (shaderInstance->paramsDirty && shaderInstance->paramMap->size > 0) {
         SE_STRING_HASH_MAP_FOR_EACH(shaderInstance->paramMap, iter) {
             StringHashMapNode* node = iter.pair;
             SEShaderParam* param = (SEShaderParam*) node->value;
@@ -554,6 +554,7 @@ void renderer_set_shader_instance_params(SEShaderInstance* shaderInstance) {
             }
             }
         }
+        shaderInstance->paramsDirty = false;
     }
 }
 

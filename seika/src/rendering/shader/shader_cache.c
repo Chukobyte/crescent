@@ -8,22 +8,40 @@
 #include "../../utils/se_assert.h"
 #include "../../memory/se_mem.h"
 
+// --- Parsed Shader Cache --- //
+typedef struct SEParsedShaderCacheItem {
+    SEShaderFileParseResult parseResult;
+} SEParsedShaderCacheItem;
+
+SEStringHashMap* parsedShaderCacheMap = NULL;
+
+// --- Shader Cache --- //
 static SEShaderInstance* instanceCache[SE_SHADER_INSTANCE_MAX_INSTANCES];
 static SEQueue* shaderInstanceIdQueue = NULL;
 
 void se_shader_cache_initialize() {
     SE_ASSERT(shaderInstanceIdQueue == NULL);
+    SE_ASSERT(parsedShaderCacheMap == NULL);
     shaderInstanceIdQueue = se_queue_create(SE_SHADER_INSTANCE_MAX_INSTANCES, SE_SHADER_INSTANCE_INVALID_ID);
     for (uint32_t i = 0; i < SE_SHADER_INSTANCE_MAX_INSTANCES; i++) {
         se_queue_enqueue(shaderInstanceIdQueue, i);
         instanceCache[i] = NULL;
     }
+    parsedShaderCacheMap = se_string_hash_map_create_default_capacity();
 }
 
 void se_shader_cache_finalize() {
     SE_ASSERT(shaderInstanceIdQueue != NULL);
+    SE_ASSERT(parsedShaderCacheMap != NULL);
     se_queue_destroy(shaderInstanceIdQueue);
     shaderInstanceIdQueue = NULL;
+    SE_STRING_HASH_MAP_FOR_EACH(parsedShaderCacheMap, iter) {
+        StringHashMapNode *node = iter.pair;
+        SEParsedShaderCacheItem* cacheItem = (SEParsedShaderCacheItem*) node->value;
+        se_shader_file_parse_clear_parse_result(&cacheItem->parseResult);
+    }
+    se_string_hash_map_destroy(parsedShaderCacheMap);
+    parsedShaderCacheMap = NULL;
 }
 
 SEShaderInstanceId se_shader_cache_add_instance(SEShaderInstance* instance) {
@@ -49,26 +67,36 @@ SEShaderInstance* se_shader_cache_get_instance_checked(SEShaderInstanceId instan
 }
 
 SEShaderInstanceId se_shader_cache_create_instance_and_add(const char* shaderPath) {
-    SEShaderInstanceId newId = SE_SHADER_INSTANCE_INVALID_ID;
-    char* shaderSource = sf_asset_file_loader_read_file_contents_as_string_without_raw(shaderPath, NULL);
-    // Uncomment when needing to debug shaders
+    if (!se_string_hash_map_has(parsedShaderCacheMap, shaderPath)) {
+        char* shaderSource = sf_asset_file_loader_read_file_contents_as_string_without_raw(shaderPath, NULL);
+        // Uncomment when needing to debug shaders
 //    se_logger_debug("shader source = \n%s", shaderSource);
-    if (shaderSource) {
-        SEShaderFileParseResult result = se_shader_file_parser_parse_shader(shaderSource);
-        const bool hasErrorMessage = strlen(result.errorMessage) > 0;
-        if (!hasErrorMessage) {
-            newId = se_shader_cache_create_instance_and_add_from_source(result.parseData.fullVertexSource, result.parseData.fullFragmentSource);
-            SEShaderInstance* shaderInstance = se_shader_cache_get_instance(newId);
-            if (shaderInstance) {
-                for (size_t i = 0; i < result.parseData.uniformCount; i++) {
-                    se_shader_instance_param_create_from_copy(shaderInstance, &result.parseData.uniforms[i]);
-                }
+        if (shaderSource) {
+            SEParsedShaderCacheItem newCacheItem;
+            newCacheItem.parseResult = se_shader_file_parser_parse_shader(shaderSource);
+            const bool hasErrorMessage = strlen(newCacheItem.parseResult.errorMessage) > 0;
+            if (hasErrorMessage) {
+                se_logger_error("Shader parse error = '%s'\n", newCacheItem.parseResult.errorMessage);
+                return SE_SHADER_INSTANCE_INVALID_ID;
             }
-            se_shader_file_parse_clear_parse_result(&result);
+            se_string_hash_map_add(parsedShaderCacheMap, shaderPath, &newCacheItem, sizeof(SEParsedShaderCacheItem));
         } else {
-            se_logger_error("Shader parse error = '%s'\n", result.errorMessage);
+            se_logger_error("Failed to read shader source from '%s'", shaderPath);
+            return SE_SHADER_INSTANCE_INVALID_ID;
         }
     }
+
+    SEParsedShaderCacheItem* cacheItem = (SEParsedShaderCacheItem*) se_string_hash_map_get(parsedShaderCacheMap, shaderPath);
+    SEShader* newShader = se_shader_compile_new_shader(cacheItem->parseResult.parseData.fullVertexSource, cacheItem->parseResult.parseData.fullFragmentSource);
+    if (newShader == NULL) {
+        se_logger_error("Error compiling shader from path = '%s'\n", shaderPath);
+        return SE_SHADER_INSTANCE_INVALID_ID;
+    }
+    SEShaderInstance* shaderInstance = se_shader_instance_create_from_shader(newShader);
+    for (size_t i = 0; i < cacheItem->parseResult.parseData.uniformCount; i++) {
+        se_shader_instance_param_create_from_copy(shaderInstance, &cacheItem->parseResult.parseData.uniforms[i]);
+    }
+    SEShaderInstanceId newId = se_shader_cache_add_instance(shaderInstance);
     return newId;
 }
 
