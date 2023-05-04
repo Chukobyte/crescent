@@ -222,7 +222,7 @@ PyObject* cre_py_api_shader_instance_delete(PyObject* self, PyObject* args, PyOb
         SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
         if (shaderInstance != NULL) {
             se_shader_cache_remove_instance(shaderId);
-            SE_MEM_FREE(shaderInstance);
+            se_shader_instance_destroy(shaderInstance);
             Py_RETURN_TRUE;
         }
         Py_RETURN_FALSE;

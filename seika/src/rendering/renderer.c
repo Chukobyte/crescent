@@ -170,10 +170,8 @@ void se_renderer_queue_sprite_draw_call(SETexture* texture, SERect2 sourceRect, 
     const int arrayZIndex = se_math_clamp_int(zIndex + SE_RENDERER_MAX_Z_INDEX / 2, 0, SE_RENDERER_MAX_Z_INDEX - 1);
     // Get texture layer index for render texture
     size_t textureLayerIndex = render_layer_items[arrayZIndex].renderTextureLayerCount;
-    const SEShader* queuedShader = shaderInstance != NULL ? shaderInstance->shader : NULL;
     for (size_t i = 0; i < render_layer_items[arrayZIndex].renderTextureLayerCount; i++) {
-        const SEShader* renderLayerTextureShader = render_layer_items[arrayZIndex].renderTextureLayers[i].spriteBatchItems[0].shaderInstance != NULL ? render_layer_items[arrayZIndex].renderTextureLayers[i].spriteBatchItems[0].shaderInstance->shader : NULL;
-        if (texture == render_layer_items[arrayZIndex].renderTextureLayers[i].spriteBatchItems[0].texture && queuedShader == renderLayerTextureShader) {
+        if (texture == render_layer_items[arrayZIndex].renderTextureLayers[i].spriteBatchItems[0].texture && shaderInstance == render_layer_items[arrayZIndex].renderTextureLayers[i].spriteBatchItems[0].shaderInstance) {
             textureLayerIndex = i;
             break;
         }
