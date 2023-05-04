@@ -165,14 +165,20 @@ SEShaderFileParserFunction shader_file_find_next_function(char** shaderSource, c
         }
     }
     // Now just loop through until we encounter a '}'
+    size_t openBracketsCount = 0;
     while (*(*shaderSource) != '\0') {
         shaderFunctionBuffer[bufferIndex++] = *(*shaderSource);
         (*shaderSource)++;
-        if (*(*shaderSource) == '}') {
+        if (*(*shaderSource) == '{') {
+            openBracketsCount++;
+        } else if (*(*shaderSource) == '}') {
             shaderFunctionBuffer[bufferIndex++] = *(*shaderSource);
             (*shaderSource)++;
-            shaderFunctionBuffer[bufferIndex] = '\0';
-            break;
+            openBracketsCount--;
+            if (openBracketsCount == 0) {
+                shaderFunctionBuffer[bufferIndex] = '\0';
+                break;
+            }
         }
     }
 
@@ -199,9 +205,15 @@ char* shader_file_parse_function_body(const char* functionSource) {
     if (currentToken == '}') {
         return NULL;
     }
-    while (currentToken != '}') {
+    size_t openBracketsCount = 1;
+    while (openBracketsCount > 0) {
         currentToken = shaderFunctionBuffer[functionBufferIndex++];
         functionBodyBuffer[functionBodyIndex++] = currentToken;
+        if (currentToken == '{') {
+            openBracketsCount++;
+        } else if (currentToken == '}') {
+            openBracketsCount--;
+        }
     }
     functionBodyBuffer[functionBodyIndex - 1] = '\n';
     functionBodyBuffer[functionBodyIndex] = '\0';
