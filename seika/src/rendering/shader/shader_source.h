@@ -4,7 +4,7 @@ static const char* SE_OPENGL_SHADER_SOURCE_VERTEX_SPRITE =
     "#version 330 core\n"
     "\n"
     "layout (location = 0) in float ID;\n"
-    "layout (location = 1) in vec2 VERTEX;\n"
+    "layout (location = 1) in vec2 CRE_VERTEX;\n"
     "layout (location = 2) in vec2 CRE_TEXTURE_COORDS;\n"
     "layout (location = 3) in vec4 CRE_TEXTURE_MODULATE;\n"
     "layout (location = 4) in float CRE_APPLY_NEAREST_NEIGHBOR;\n"
@@ -27,6 +27,7 @@ static const char* SE_OPENGL_SHADER_SOURCE_VERTEX_SPRITE =
     "    UV = CRE_TEXTURE_COORDS;\n"
     "    TEXTURE_MODULATE = CRE_TEXTURE_MODULATE;\n"
     "    USING_NEAREST_NEIGHBOR = CRE_APPLY_NEAREST_NEIGHBOR;\n"
+    "    vec2 VERTEX = CRE_VERTEX;\n"
     "    //@@vertex()\n"
     "    gl_Position = CRE_PROJECTION * CRE_MODELS[CRE_SPRITE_INT_ID] * vec4(VERTEX, 0.0f, 1.0f);\n"
     "}\n";
@@ -90,7 +91,7 @@ static const char* SE_OPENGL_SHADER_SOURCE_FRAGMENT_FONT =
 
 static const char* SE_OPENGL_SHADER_SOURCE_VERTEX_SCREEN =
     "#version 330 core\n"
-    "layout (location = 0) in vec2 VERTEX;\n"
+    "layout (location = 0) in vec2 CRE_VERTEX;\n"
     "layout (location = 1) in vec2 CRE_TEXTURE_COORDS;\n"
     "\n"
     "out vec2 UV;\n"
@@ -104,6 +105,7 @@ static const char* SE_OPENGL_SHADER_SOURCE_VERTEX_SCREEN =
     "\n"
     "void main() {\n"
     "    UV = CRE_TEXTURE_COORDS;\n"
+    "    vec2 VERTEX = CRE_VERTEX;\n"
     "    //@@vertex()\n"
     "    gl_Position = vec4(VERTEX, 0.0f, 1.0f);\n"
     "}\n";
