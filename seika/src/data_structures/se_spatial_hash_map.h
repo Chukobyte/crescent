@@ -4,7 +4,7 @@
 #include "se_hash_map.h"
 
 #define SE_SPATIAL_HASH_GRID_SPACE_ENTITY_LIMIT 32
-#define SE_SPATIAL_HASH_GRID_MAX_COLLISIONS 8
+#define SE_SPATIAL_HASH_GRID_MAX_COLLISIONS 16
 
 // Note: Spatial hash expects rectangles that have 0 rotation
 
