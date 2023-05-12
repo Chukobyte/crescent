@@ -1392,6 +1392,28 @@ PyObject* cre_py_api_sprite_get_modulate(PyObject* self, PyObject* args, PyObjec
     return NULL;
 }
 
+PyObject* cre_py_api_sprite_set_origin(PyObject* self, PyObject* args, PyObject* kwargs) {
+    CreEntity entity;
+    float x;
+    float y;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "iff", crePyApiNode2DSetXYKWList, &entity, &x, &y)) {
+        SpriteComponent* spriteComponent = (SpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_SPRITE);
+        spriteComponent->origin.x = x;
+        spriteComponent->origin.y = y;
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_sprite_get_origin(PyObject* self, PyObject* args, PyObject* kwargs) {
+    CreEntity entity;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
+        const SpriteComponent* spriteComponent = (SpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_SPRITE);
+        return Py_BuildValue("(ff)", spriteComponent->origin.x, spriteComponent->origin.y);
+    }
+    return NULL;
+}
+
 PyObject* cre_py_api_sprite_set_shader_instance(PyObject* self, PyObject* args, PyObject* kwargs) {
     CreEntity entity;
     SEShaderInstanceId shaderInstanceId;
@@ -1582,12 +1604,33 @@ PyObject* cre_py_api_animated_sprite_get_modulate(PyObject* self, PyObject* args
     return NULL;
 }
 
+PyObject* cre_py_api_animated_sprite_set_origin(PyObject* self, PyObject* args, PyObject* kwargs) {
+    CreEntity entity;
+    float x;
+    float y;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "iff", crePyApiNode2DSetXYKWList, &entity, &x, &y)) {
+        AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent *) cre_component_manager_get_component(entity, CreComponentDataIndex_ANIMATED_SPRITE);
+        animatedSpriteComponent->origin.x = x;
+        animatedSpriteComponent->origin.y = y;
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_animated_sprite_get_origin(PyObject* self, PyObject* args, PyObject* kwargs) {
+    CreEntity entity;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
+        const AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent *) cre_component_manager_get_component(entity, CreComponentDataIndex_ANIMATED_SPRITE);
+        return Py_BuildValue("(ff)", animatedSpriteComponent->origin.x, animatedSpriteComponent->origin.y);
+    }
+    return NULL;
+}
+
 PyObject* cre_py_api_animated_sprite_set_shader_instance(PyObject* self, PyObject* args, PyObject* kwargs) {
     CreEntity entity;
     SEShaderInstanceId shaderInstanceId;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "ii", crePyApiGenericSetShaderInstanceKWList, &entity, &shaderInstanceId)) {
-        AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent *) cre_component_manager_get_component(
-                    entity, CreComponentDataIndex_ANIMATED_SPRITE);
+        AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent *) cre_component_manager_get_component(entity, CreComponentDataIndex_ANIMATED_SPRITE);
         animatedSpriteComponent->shaderInstanceId = shaderInstanceId;
         SEShaderInstance* shaderInstance = se_shader_cache_get_instance(animatedSpriteComponent->shaderInstanceId);
         se_renderer_set_sprite_shader_default_params(shaderInstance->shader);

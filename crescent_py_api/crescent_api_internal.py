@@ -500,6 +500,14 @@ def sprite_get_flip_v(entity_id: int) -> bool:
     return False
 
 
+def sprite_set_origin(entity_id: int, x: float, y: float) -> None:
+    pass
+
+
+def sprite_get_origin(entity_id: int) -> Tuple[float, float]:
+    pass
+
+
 def sprite_get_shader_instance(entity_id: int) -> int:
     return 0
 
@@ -554,6 +562,14 @@ def animated_sprite_set_flip_v(entity_id: int, flip_v: bool) -> None:
 
 def animated_sprite_get_flip_v(entity_id: int) -> bool:
     return False
+
+
+def animated_sprite_set_origin(entity_id: int, x: float, y: float) -> None:
+    pass
+
+
+def animated_sprite_get_origin(entity_id: int) -> Tuple[float, float]:
+    pass
 
 
 def animated_sprite_get_shader_instance(entity_id: int) -> int:
