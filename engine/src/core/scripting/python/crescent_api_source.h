@@ -1243,6 +1243,17 @@
 "        )\n"\
 "\n"\
 "    @property\n"\
+"    def origin(self) -> Vector2:\n"\
+"        x, y = crescent_api_internal.sprite_get_origin(entity_id=self.entity_id)\n"\
+"        return Vector2(x, y)\n"\
+"\n"\
+"    @origin.setter\n"\
+"    def origin(self, value: Vector2) -> None:\n"\
+"        crescent_api_internal.sprite_set_origin(\n"\
+"            entity_id=self.entity_id, x=value.x, y=value.y\n"\
+"        )\n"\
+"\n"\
+"    @property\n"\
 "    def shader_instance(self) -> Optional[ShaderInstance]:\n"\
 "        shader_instance_id = crescent_api_internal.sprite_get_shader_instance(\n"\
 "            entity_id=self.entity_id\n"\
@@ -1332,6 +1343,19 @@
 "            g=color.g,\n"\
 "            b=color.b,\n"\
 "            a=color.a,\n"\
+"        )\n"\
+"\n"\
+"    @property\n"\
+"    def origin(self) -> Vector2:\n"\
+"        x, y = crescent_api_internal.animated_sprite_get_origin(\n"\
+"            entity_id=self.entity_id\n"\
+"        )\n"\
+"        return Vector2(x, y)\n"\
+"\n"\
+"    @origin.setter\n"\
+"    def origin(self, value: Vector2) -> None:\n"\
+"        crescent_api_internal.animated_sprite_set_origin(\n"\
+"            entity_id=self.entity_id, x=value.x, y=value.y\n"\
 "        )\n"\
 "\n"\
 "    @property\n"\

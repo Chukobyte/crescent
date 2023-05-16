@@ -138,6 +138,8 @@ PyObject* cre_py_api_sprite_set_flip_v(PyObject* self, PyObject* args, PyObject*
 PyObject* cre_py_api_sprite_get_flip_v(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_sprite_set_modulate(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_sprite_get_modulate(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_sprite_set_origin(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_sprite_get_origin(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_sprite_set_shader_instance(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_sprite_get_shader_instance(PyObject* self, PyObject* args, PyObject* kwargs);
 
@@ -152,6 +154,8 @@ PyObject* cre_py_api_animated_sprite_set_flip_v(PyObject* self, PyObject* args, 
 PyObject* cre_py_api_animated_sprite_get_flip_v(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_animated_sprite_set_modulate(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_animated_sprite_get_modulate(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_animated_sprite_set_origin(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_animated_sprite_get_origin(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_animated_sprite_set_shader_instance(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_animated_sprite_get_shader_instance(PyObject* self, PyObject* args, PyObject* kwargs);
 
@@ -637,6 +641,14 @@ static struct PyMethodDef crePyApiMethods[] = {
         METH_VARARGS | METH_KEYWORDS, "Gets the sprite's modulate."
     },
     {
+        "sprite_set_origin", (PyCFunction) cre_py_api_sprite_set_origin,
+        METH_VARARGS | METH_KEYWORDS, "Sets the sprite's origin."
+    },
+    {
+        "sprite_get_origin", (PyCFunction) cre_py_api_sprite_get_origin,
+        METH_VARARGS | METH_KEYWORDS, "Gets the sprite's origin."
+    },
+    {
         "sprite_set_shader_instance", (PyCFunction) cre_py_api_sprite_set_shader_instance,
         METH_VARARGS | METH_KEYWORDS, "Sets the shader instance for the sprite."
     },
@@ -684,6 +696,14 @@ static struct PyMethodDef crePyApiMethods[] = {
     {
         "animated_sprite_get_modulate", (PyCFunction) cre_py_api_animated_sprite_get_modulate,
         METH_VARARGS | METH_KEYWORDS, "Gets the animated sprite's modulate."
+    },
+    {
+        "animated_sprite_set_origin", (PyCFunction) cre_py_api_animated_sprite_set_origin,
+        METH_VARARGS | METH_KEYWORDS, "Sets the animated sprite's origin."
+    },
+    {
+        "animated_sprite_get_origin", (PyCFunction) cre_py_api_animated_sprite_get_origin,
+        METH_VARARGS | METH_KEYWORDS, "Gets the animated sprite's origin."
     },
     {
         "animated_sprite_set_shader_instance", (PyCFunction) cre_py_api_animated_sprite_set_shader_instance,

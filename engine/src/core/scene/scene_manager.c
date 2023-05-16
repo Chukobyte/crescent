@@ -147,19 +147,21 @@ void cre_scene_manager_process_queued_deletion_entities() {
         // Remove entity from systems
         cre_ec_system_remove_entity_from_all_systems(entityToDelete);
         // Remove shader instance if applicable
-        SpriteComponent* spriteComponent = cre_component_manager_get_component_unchecked(entityToDelete,
-                                           CreComponentDataIndex_SPRITE);
+        SpriteComponent* spriteComponent = cre_component_manager_get_component_unchecked(entityToDelete, CreComponentDataIndex_SPRITE);
         if (spriteComponent != NULL && spriteComponent->shaderInstanceId != SE_SHADER_INSTANCE_INVALID_ID) {
             SEShaderInstance* shaderInstance = se_shader_cache_get_instance(spriteComponent->shaderInstanceId);
-            se_shader_cache_remove_instance(spriteComponent->shaderInstanceId);
-            SE_MEM_FREE(shaderInstance);
+            if (shaderInstance) {
+                se_shader_cache_remove_instance(spriteComponent->shaderInstanceId);
+                se_shader_instance_destroy(shaderInstance);
+            }
         }
-        AnimatedSpriteComponent* animatedSpriteComponent = cre_component_manager_get_component_unchecked(entityToDelete,
-                CreComponentDataIndex_ANIMATED_SPRITE);
+        AnimatedSpriteComponent* animatedSpriteComponent = cre_component_manager_get_component_unchecked(entityToDelete, CreComponentDataIndex_ANIMATED_SPRITE);
         if (animatedSpriteComponent != NULL && animatedSpriteComponent->shaderInstanceId != SE_SHADER_INSTANCE_INVALID_ID) {
             SEShaderInstance* shaderInstance = se_shader_cache_get_instance(animatedSpriteComponent->shaderInstanceId);
-            se_shader_cache_remove_instance(animatedSpriteComponent->shaderInstanceId);
-            SE_MEM_FREE(shaderInstance);
+            if (shaderInstance) {
+                se_shader_cache_remove_instance(animatedSpriteComponent->shaderInstanceId);
+                se_shader_instance_destroy(shaderInstance);
+            }
         }
         // Remove all components
         cre_component_manager_remove_all_components(entityToDelete);
