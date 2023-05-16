@@ -29,13 +29,16 @@ Technically any game type will be able to be made with the engine.  But these ar
   * [MiniAudio](https://github.com/mackron/miniaudio) - Audio
   * [Python](https://en.wikipedia.org/wiki/Python_(programming_language)) (3.10) - Scripting
   * [Unity](https://github.com/ThrowTheSwitch/Unity) - Testing
+  * [PVS-Studio](https://pvs-studio.com/pvs-studio/?utm_source=website&utm_medium=github&utm_campaign=open_source) - static analyzer for C code.
 * Editor
-    * [C++](https://en.wikipedia.org/wiki/C%2B%2B) (c++20) - Editor Core
-    * [SDL2](https://github.com/libsdl-org/SDL) - Windowing, inputs
-    * [ImGui](https://github.com/ocornut/imgui) - GUI Library
-    * [ImPlot](https://github.com/epezent/implot) - Plotting Library (Used with ImGui)
-    * [MiniAudio](https://github.com/mackron/miniaudio) - Audio
-    * [Catch2](https://github.com/catchorg/Catch2) - Testing
+  * [C++](https://en.wikipedia.org/wiki/C%2B%2B) (c++20) - Editor Core
+  * [SDL2](https://github.com/libsdl-org/SDL) - Windowing, inputs
+  * [ImGui](https://github.com/ocornut/imgui) - GUI Library
+  * [ImPlot](https://github.com/epezent/implot) - Plotting Library (Used with ImGui)
+  * [MiniAudio](https://github.com/mackron/miniaudio) - Audio
+  * [Catch2](https://github.com/catchorg/Catch2) - Testing
+  * [PVS-Studio](https://pvs-studio.com/pvs-studio/?utm_source=website&utm_medium=github&utm_campaign=open_source) - static analyzer for C++ code.
+* All
 
 ## Building
 
