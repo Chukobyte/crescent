@@ -1548,6 +1548,10 @@
 "    def get_time_dilation() -> float:\n"\
 "        return crescent_api_internal.world_get_time_dilation()\n"\
 "\n"\
+"    @staticmethod\n"\
+"    def get_delta_time() -> float:\n"\
+"        return World.get_time_dilation() * Engine.get_global_physics_delta_time()\n"\
+"\n"\
 "\n"\
 "# AUDIO MANAGER\n"\
 "class AudioManager:\n"\
