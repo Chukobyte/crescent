@@ -18,6 +18,7 @@
 #include "../seika/src/utils/se_file_system_utils.h"
 #include "../seika/src/utils/se_string_util.h"
 
+#include "cre_py.h"
 #include "py_cache.h"
 #include "py_script_context.h"
 #include "../../engine_context.h"
@@ -1043,6 +1044,7 @@ void py_api_node_event_callback(void* observerData, NodeEventNotifyPayload* noti
 
     PyObject* listenerFuncArg = Py_BuildValue("(O)", pyEventArgs);
     PyObject_CallObject(pyCallbackFunc, listenerFuncArg);
+    cre_py_handle_if_errors("py_api_node_event_callback", CrePythonHandleErrorType_FATAL);
 }
 
 void py_api_node_event_data_delete_callback(void* data) {
