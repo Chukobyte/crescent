@@ -4,6 +4,7 @@
 #include <windows.h>
 #elif defined(__APPLE__)
 #include <unistd.h>
+#include <sys/ptrace.h>
 #elif defined(__linux__)
 #include <sys/ptrace.h>
 #endif
