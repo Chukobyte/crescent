@@ -1,3 +1,7 @@
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <assert.h>
 #include <stdlib.h>
 
@@ -25,3 +29,7 @@ if (se_platform_is_debugger_attached()) { SE_TRIGGER_BREAKPOINT; }              
 exit(SE_ASSERT_FAIL_EXIT_CODE);                                                       \
 }                                                                                     \
 )
+
+#ifdef __cplusplus
+}
+#endif

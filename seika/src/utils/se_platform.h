@@ -1,5 +1,9 @@
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "stdbool.h"
 
 #if defined(_WIN32) || defined(_WIN64) // Windows
@@ -15,3 +19,7 @@
 #endif
 
 bool se_platform_is_debugger_attached();
+
+#ifdef __cplusplus
+}
+#endif
