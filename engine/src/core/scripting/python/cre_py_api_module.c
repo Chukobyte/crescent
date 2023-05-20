@@ -758,6 +758,10 @@ PyObject* cre_py_api_world_get_time_dilation(PyObject* self, PyObject* args) {
     return Py_BuildValue("f", cre_world_get_time_dilation());
 }
 
+PyObject* cre_py_api_world_get_delta_time(PyObject* self, PyObject* args) {
+    return Py_BuildValue("f", cre_world_get_time_dilation() * CRE_GLOBAL_PHYSICS_DELTA_TIME);
+}
+
 // Audio Manager
 PyObject* cre_py_api_audio_manager_play_sound(PyObject* self, PyObject* args, PyObject* kwargs) {
     char* audioPath;

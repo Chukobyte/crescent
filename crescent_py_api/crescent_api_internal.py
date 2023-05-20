@@ -270,6 +270,10 @@ def world_get_time_dilation() -> float:
     return 1.0
 
 
+def world_get_delta_time() -> float:
+    return 1.0
+
+
 def audio_manager_play_sound(path: str, loops: bool) -> None:
     pass
 

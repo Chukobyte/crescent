@@ -82,6 +82,7 @@ PyObject* cre_py_api_scene_tree_get_root(PyObject* self, PyObject* args);
 // World
 PyObject* cre_py_api_world_set_time_dilation(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_world_get_time_dilation(PyObject* self, PyObject* args);
+PyObject* cre_py_api_world_get_delta_time(PyObject* self, PyObject* args);
 
 // Audio Manager
 PyObject* cre_py_api_audio_manager_play_sound(PyObject* self, PyObject* args, PyObject* kwargs);
@@ -457,6 +458,10 @@ static struct PyMethodDef crePyApiMethods[] = {
     {
         "world_get_time_dilation", cre_py_api_world_get_time_dilation,
         METH_VARARGS, "Returns the global time dilation for world."
+    },
+    {
+        "world_get_delta_time", cre_py_api_world_get_delta_time,
+        METH_VARARGS, "Returns the delta time (global time dilation * physics delta time) for world."
     },
     // AUDIO MANAGER
     {

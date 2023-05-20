@@ -1513,7 +1513,7 @@ class World:
 
     @staticmethod
     def get_delta_time() -> float:
-        return World.get_time_dilation() * Engine.get_global_physics_delta_time()
+        return crescent_api_internal.world_get_delta_time()
 
 
 # AUDIO MANAGER
