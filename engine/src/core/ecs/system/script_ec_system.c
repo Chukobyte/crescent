@@ -35,10 +35,10 @@ CreEntitySystem* cre_script_ec_system_create() {
     scriptSystem->on_entity_unregistered_func = script_system_on_entity_unregistered;
     scriptSystem->on_entity_start_func = script_system_entity_start;
     scriptSystem->on_entity_end_func = script_system_entity_end;
-    scriptSystem->pre_process_all_func = script_system_pre_update_all;
-    scriptSystem->post_process_all_func = script_system_post_update_all;
-    scriptSystem->process_func = script_system_instance_update;
-    scriptSystem->physics_process_func = script_system_instance_fixed_update;
+    scriptSystem->pre_update_all_func = script_system_pre_update_all;
+    scriptSystem->post_update_all_func = script_system_post_update_all;
+    scriptSystem->update_func = script_system_instance_update;
+    scriptSystem->fixed_update_func = script_system_instance_fixed_update;
     scriptSystem->network_callback_func = script_system_network_callback;
     scriptSystem->component_signature = CreComponentType_SCRIPT;
     // Python Context

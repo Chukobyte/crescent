@@ -27,7 +27,7 @@ struct CreEntitySystem* cre_parallax_ec_system_create() {
     parallaxSystem->name = se_strdup("Parallax");
     parallaxSystem->on_entity_entered_scene_func = parallax_system_on_entity_entered_scene;
     parallaxSystem->on_entity_unregistered_func = parallax_system_on_entity_unregistered;
-    parallaxSystem->physics_process_func = parallax_system_physics_process;
+    parallaxSystem->fixed_update_func = parallax_system_physics_process;
     parallaxSystem->component_signature = CreComponentType_TRANSFORM_2D | CreComponentType_PARALLAX;
     return parallaxSystem;
 }

@@ -17,20 +17,20 @@ typedef struct EntitySystemData {
     size_t on_entity_end_systems_count;
     size_t on_entity_entered_scene_systems_count;
     size_t render_systems_count;
-    size_t pre_process_all_systems_count;
-    size_t post_process_all_systems_count;
-    size_t process_systems_count;
-    size_t physics_process_systems_count;
+    size_t pre_update_all_systems_count;
+    size_t post_update_all_systems_count;
+    size_t update_systems_count;
+    size_t fixed_update_systems_count;
     size_t network_callback_systems_count;
     CreEntitySystem* entity_systems[CRE_MAX_COMPONENTS];
     CreEntitySystem* on_entity_start_systems[MAX_ENTITY_SYSTEMS_PER_HOOK];
     CreEntitySystem* on_entity_end_systems[MAX_ENTITY_SYSTEMS_PER_HOOK];
     CreEntitySystem* on_entity_entered_scene_systems[MAX_ENTITY_SYSTEMS_PER_HOOK];
     CreEntitySystem* render_systems[MAX_ENTITY_SYSTEMS_PER_HOOK];
-    CreEntitySystem* process_systems[MAX_ENTITY_SYSTEMS_PER_HOOK];
-    CreEntitySystem* pre_process_all_systems[MAX_ENTITY_SYSTEMS_PER_HOOK];
-    CreEntitySystem* post_process_all_systems[MAX_ENTITY_SYSTEMS_PER_HOOK];
-    CreEntitySystem* physics_process_systems[MAX_ENTITY_SYSTEMS_PER_HOOK];
+    CreEntitySystem* update_systems[MAX_ENTITY_SYSTEMS_PER_HOOK];
+    CreEntitySystem* pre_update_all_systems[MAX_ENTITY_SYSTEMS_PER_HOOK];
+    CreEntitySystem* post_update_all_systems[MAX_ENTITY_SYSTEMS_PER_HOOK];
+    CreEntitySystem* fixed_update_systems[MAX_ENTITY_SYSTEMS_PER_HOOK];
     CreEntitySystem* network_callback_systems[MAX_ENTITY_SYSTEMS_PER_HOOK];
 } EntitySystemData;
 
@@ -49,10 +49,10 @@ void cre_ec_system_initialize() {
         entitySystemData.on_entity_end_systems[i] = NULL;
         entitySystemData.on_entity_entered_scene_systems[i] = NULL;
         entitySystemData.render_systems[i] = NULL;
-        entitySystemData.pre_process_all_systems[i] = NULL;
-        entitySystemData.post_process_all_systems[i] = NULL;
-        entitySystemData.process_systems[i] = NULL;
-        entitySystemData.physics_process_systems[i] = NULL;
+        entitySystemData.pre_update_all_systems[i] = NULL;
+        entitySystemData.post_update_all_systems[i] = NULL;
+        entitySystemData.update_systems[i] = NULL;
+        entitySystemData.fixed_update_systems[i] = NULL;
         entitySystemData.network_callback_systems[i] = NULL;
     }
     // Fill up entity id queue
@@ -66,10 +66,10 @@ void cre_ec_system_initialize() {
     entitySystemData.on_entity_end_systems_count = 0;
     entitySystemData.on_entity_entered_scene_systems_count = 0;
     entitySystemData.render_systems_count = 0;
-    entitySystemData.pre_process_all_systems_count = 0;
-    entitySystemData.post_process_all_systems_count = 0;
-    entitySystemData.process_systems_count = 0;
-    entitySystemData.physics_process_systems_count = 0;
+    entitySystemData.pre_update_all_systems_count = 0;
+    entitySystemData.post_update_all_systems_count = 0;
+    entitySystemData.update_systems_count = 0;
+    entitySystemData.fixed_update_systems_count = 0;
     entitySystemData.network_callback_systems_count = 0;
 }
 
@@ -90,10 +90,10 @@ CreEntitySystem* cre_ec_system_create() {
     newSystem->on_entity_end_func = NULL;
     newSystem->on_entity_unregistered_func = NULL;
     newSystem->render_func = NULL;
-    newSystem->pre_process_all_func = NULL;
-    newSystem->post_process_all_func = NULL;
-    newSystem->process_func = NULL;
-    newSystem->physics_process_func = NULL;
+    newSystem->pre_update_all_func = NULL;
+    newSystem->post_update_all_func = NULL;
+    newSystem->update_func = NULL;
+    newSystem->fixed_update_func = NULL;
     newSystem->network_callback_func = NULL;
     newSystem->component_signature = CreComponentType_NONE;
     return newSystem;
@@ -118,17 +118,17 @@ void cre_ec_system_register(CreEntitySystem* system) {
     if (system->render_func != NULL) {
         entitySystemData.render_systems[entitySystemData.render_systems_count++] = system;
     }
-    if (system->pre_process_all_func != NULL) {
-        entitySystemData.pre_process_all_systems[entitySystemData.pre_process_all_systems_count++] = system;
+    if (system->pre_update_all_func != NULL) {
+        entitySystemData.pre_update_all_systems[entitySystemData.pre_update_all_systems_count++] = system;
     }
-    if (system->post_process_all_func != NULL) {
-        entitySystemData.post_process_all_systems[entitySystemData.post_process_all_systems_count++] = system;
+    if (system->post_update_all_func != NULL) {
+        entitySystemData.post_update_all_systems[entitySystemData.post_update_all_systems_count++] = system;
     }
-    if (system->process_func != NULL) {
-        entitySystemData.process_systems[entitySystemData.process_systems_count++] = system;
+    if (system->update_func != NULL) {
+        entitySystemData.update_systems[entitySystemData.update_systems_count++] = system;
     }
-    if (system->physics_process_func != NULL) {
-        entitySystemData.physics_process_systems[entitySystemData.physics_process_systems_count++] = system;
+    if (system->fixed_update_func != NULL) {
+        entitySystemData.fixed_update_systems[entitySystemData.fixed_update_systems_count++] = system;
     }
     if (system->network_callback_func != NULL) {
         entitySystemData.network_callback_systems[entitySystemData.network_callback_systems_count++] = system;
@@ -196,27 +196,27 @@ void cre_ec_system_render_systems() {
     }
 }
 
-void cre_ec_system_pre_process_all_systems() {
-    for (size_t i = 0; i < entitySystemData.pre_process_all_systems_count; i++) {
-        entitySystemData.pre_process_all_systems[i]->pre_process_all_func();
+void cre_ec_system_pre_update_all_systems() {
+    for (size_t i = 0; i < entitySystemData.pre_update_all_systems_count; i++) {
+        entitySystemData.pre_update_all_systems[i]->pre_update_all_func();
     }
 }
 
-void cre_ec_system_post_process_all_systems() {
-    for (size_t i = 0; i < entitySystemData.post_process_all_systems_count; i++) {
-        entitySystemData.post_process_all_systems[i]->post_process_all_func();
+void cre_ec_system_post_update_all_systems() {
+    for (size_t i = 0; i < entitySystemData.post_update_all_systems_count; i++) {
+        entitySystemData.post_update_all_systems[i]->post_update_all_func();
     }
 }
 
-void cre_ec_system_process_systems(float deltaTime) {
-    for (size_t i = 0; i < entitySystemData.process_systems_count; i++) {
-        entitySystemData.process_systems[i]->process_func(deltaTime);
+void cre_ec_system_update_systems(float deltaTime) {
+    for (size_t i = 0; i < entitySystemData.update_systems_count; i++) {
+        entitySystemData.update_systems[i]->update_func(deltaTime);
     }
 }
 
-void cre_ec_system_physics_process_systems(float deltaTime) {
-    for (size_t i = 0; i < entitySystemData.physics_process_systems_count; i++) {
-        entitySystemData.physics_process_systems[i]->physics_process_func(deltaTime);
+void cre_ec_system_fixed_update_systems(float deltaTime) {
+    for (size_t i = 0; i < entitySystemData.fixed_update_systems_count; i++) {
+        entitySystemData.fixed_update_systems[i]->fixed_update_func(deltaTime);
     }
 }
 

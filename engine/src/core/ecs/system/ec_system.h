@@ -12,8 +12,8 @@ typedef void (*OnEntityEnteredSceneFunc) (CreEntity); // When entity enters a sc
 typedef void (*RenderFunc) ();
 typedef void (*PreProcessAllFunc) ();
 typedef void (*PostProcessAllFunc) ();
-typedef void (*ProcessFunc) (float);
-typedef void (*PhysicsProcessFunc) (float);
+typedef void (*UpdateFunc) (float);
+typedef void (*FixedUpdateFunc) (float);
 typedef void (*NetworkCallbackFunc) (const char*);
 
 typedef struct CreEntitySystem {
@@ -24,10 +24,10 @@ typedef struct CreEntitySystem {
     OnEntityUnRegisteredFunc on_entity_unregistered_func;
     OnEntityEnteredSceneFunc on_entity_entered_scene_func;
     RenderFunc render_func;
-    PreProcessAllFunc pre_process_all_func;
-    PostProcessAllFunc post_process_all_func;
-    ProcessFunc process_func;
-    PhysicsProcessFunc physics_process_func;
+    PreProcessAllFunc pre_update_all_func;
+    PostProcessAllFunc post_update_all_func;
+    UpdateFunc update_func;
+    FixedUpdateFunc fixed_update_func;
     NetworkCallbackFunc network_callback_func;
     CreComponentType component_signature;
     size_t entity_count;
@@ -47,10 +47,10 @@ void cre_ec_system_entity_start(CreEntity entity);
 void cre_ec_system_entity_end(CreEntity entity);
 void cre_ec_system_entity_entered_scene(CreEntity entity);
 void cre_ec_system_render_systems();
-void cre_ec_system_pre_process_all_systems();
-void cre_ec_system_post_process_all_systems();
-void cre_ec_system_process_systems(float deltaTime);
-void cre_ec_system_physics_process_systems(float deltaTime);
+void cre_ec_system_pre_update_all_systems();
+void cre_ec_system_post_update_all_systems();
+void cre_ec_system_update_systems(float deltaTime);
+void cre_ec_system_fixed_update_systems(float deltaTime);
 
 void cre_ec_system_network_callback(const char* message);
 
