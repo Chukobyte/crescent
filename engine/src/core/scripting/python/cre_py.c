@@ -52,6 +52,36 @@ void cre_py_finalize() {
     Py_Finalize();
 }
 
+bool cre_py_handle_if_errors(const char* context, CrePythonHandleErrorType errorType) {
+    if (PyErr_Occurred()) {
+        // Get the exception type, value, and traceback objects
+        PyObject* excType = NULL;
+        PyObject* excValue = NULL;
+        PyObject* excTraceback = NULL;
+        PyErr_Fetch(&excType, &excValue, &excTraceback);
+
+        // Convert the exception objects to strings
+        const char *typeStr = PyUnicode_AsUTF8(PyObject_Str(excType));
+        const char *valueStr = PyUnicode_AsUTF8(PyObject_Str(excValue));
+
+        // Format the error message
+        char errorMessage[256];
+        snprintf(errorMessage, sizeof(errorMessage), "Python error: %s: %s", typeStr, valueStr);
+
+        // Print or log the error message
+        se_logger_error(errorMessage);
+
+        PyErr_Clear();
+
+        if (errorType == CrePythonHandleErrorType_FATAL) {
+            SE_ASSERT_FMT(false, "Fatal python error, context: '%s'", context);
+        }
+
+        return true;
+    }
+    return false;
+}
+
 void cre_py_import_module_source(const char* moduleName, const char* moduleText) {
 #define IMPORT_COMMAND_BUFFER_SIZE 65536
     char importCommandBuffer[IMPORT_COMMAND_BUFFER_SIZE];

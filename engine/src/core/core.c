@@ -216,7 +216,7 @@ void cre_update() {
 }
 
 void cre_process_game_update() {
-    cre_ec_system_pre_process_all_systems();
+    cre_ec_system_pre_update_all_systems();
 
     static const uint32_t MILLISECONDS_PER_TICK = 1000; // TODO: Put in another place
     static uint32_t lastFrameTime = 0;
@@ -229,7 +229,7 @@ void cre_process_game_update() {
 
     // Variable Time Step
     const float variableDeltaTime = (float) (SDL_GetTicks() - lastFrameTime) / (float) MILLISECONDS_PER_TICK;
-    cre_ec_system_process_systems(variableDeltaTime);
+    cre_ec_system_update_systems(variableDeltaTime);
 
     // Fixed Time Step
     static uint32_t fixedCurrentTime = 0;
@@ -246,14 +246,14 @@ void cre_process_game_update() {
     while (accumulator >= CRE_GLOBAL_PHYSICS_DELTA_TIME) {
         accumulator -= CRE_GLOBAL_PHYSICS_DELTA_TIME;
         sf_fixed_update(CRE_GLOBAL_PHYSICS_DELTA_TIME);
-        cre_ec_system_physics_process_systems(CRE_GLOBAL_PHYSICS_DELTA_TIME);
+        cre_ec_system_fixed_update_systems(CRE_GLOBAL_PHYSICS_DELTA_TIME);
         se_input_clean_up_flags();
     }
 
     se_input_clean_up_flags();
     lastFrameTime = SDL_GetTicks();
 
-    cre_ec_system_post_process_all_systems();
+    cre_ec_system_post_update_all_systems();
 }
 
 void cre_render() {

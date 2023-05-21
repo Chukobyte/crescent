@@ -37,7 +37,7 @@ CreEntitySystem* cre_collision_ec_system_create() {
 
     collisionSystem->on_entity_entered_scene_func = collision_system_on_node_entered_scene;
     collisionSystem->on_entity_unregistered_func = collision_system_entity_unregistered;
-    collisionSystem->physics_process_func = collision_system_fixed_update;
+    collisionSystem->fixed_update_func = collision_system_fixed_update;
 
     CREGameProperties* gameProps = cre_game_props_get();
     SE_ASSERT(cre_game_props_get() != NULL);

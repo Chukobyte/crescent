@@ -9,6 +9,7 @@
 #include "../seika/src/networking/se_network.h"
 
 #include "py_cache.h"
+#include "cre_py.h"
 #include "../script_context.h"
 #include "../../node_event.h"
 
@@ -107,7 +108,7 @@ void py_on_start(CreEntity entity) {
     SE_ASSERT(pScriptInstance != NULL);
     if (PyObject_HasAttrString(pScriptInstance, "_start")) {
         PyObject_CallMethod(pScriptInstance, "_start", NULL);
-        PyErr_Print();
+        cre_py_handle_if_errors("py_on_start", CrePythonHandleErrorType_FATAL);
     }
     node_event_notify_observers(entity, "scene_entered", &(NodeEventNotifyPayload) {
         .data = pScriptInstance
@@ -133,11 +134,14 @@ void py_on_post_update_all() {
 void py_on_update_instance(CreEntity entity, float deltaTime) {
     PyObject* pScriptInstance = (PyObject*) *(PyObject**) se_hash_map_get(pythonInstanceHashMap, &entity);
     PyObject_CallMethod(pScriptInstance, "_update", "(f)", deltaTime);
+    cre_py_handle_if_errors("py_on_update_instance", CrePythonHandleErrorType_FATAL);
+
 }
 
 void py_on_fixed_update_instance(CreEntity entity, float deltaTime) {
     PyObject* pScriptInstance = (PyObject*) *(PyObject**) se_hash_map_get(pythonInstanceHashMap, &entity);
     PyObject_CallMethod(pScriptInstance, "_fixed_update", "(f)", deltaTime);
+    cre_py_handle_if_errors("py_on_fixed_update_instance", CrePythonHandleErrorType_FATAL);
 }
 
 void py_on_end(CreEntity entity) {
@@ -149,6 +153,7 @@ void py_on_end(CreEntity entity) {
     });
     if (PyObject_HasAttrString(pScriptInstance, "_end")) {
         PyObject_CallMethod(pScriptInstance, "_end", NULL);
+        cre_py_handle_if_errors("py_on_end", CrePythonHandleErrorType_FATAL);
     }
 }
 
@@ -158,6 +163,7 @@ void py_on_network_callback(const char* message) {
         PyGILState_STATE pyGilStateState = PyGILState_Ensure();
         PyObject* listenerFuncArg = Py_BuildValue("(s)", message);
         PyObject_CallObject(current_network_script_callback->callback_func, listenerFuncArg);
+        cre_py_handle_if_errors("py_on_network_callback", CrePythonHandleErrorType_FATAL);
         PyGILState_Release(pyGilStateState);
     }
 }
