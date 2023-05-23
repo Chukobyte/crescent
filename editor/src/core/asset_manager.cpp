@@ -36,7 +36,7 @@ void AssetManager::Initialize() {
         AssetBrowser* assetBrowser = AssetBrowser::Get();
         // Load default font
         EditorContext* editorContext = EditorContext::Get();
-        LoadFont(editorContext->GetEngineDefaultFontPath().c_str(), CRE_DEFAULT_FONT_ASSET.uid, CRE_DEFAULT_FONT_ASSET.size);
+        LoadFont(editorContext->GetEngineDefaultFontPath().c_str(), CRE_DEFAULT_FONT_ASSET.uid, CRE_DEFAULT_FONT_ASSET.size, CRE_DEFAULT_FONT_ASSET.applyNearestNeighbor);
 
         subscriberHandle = assetBrowser->RegisterRefreshCallback([this, assetBrowser](const FileNode& rootNode) {
             // Textures
@@ -68,7 +68,7 @@ void AssetManager::RefreshFromProperties(ProjectProperties* projectProperties) {
     // TODO: Remove ones that don't exist anymore...
     for (const FontAsset& fontAsset : projectProperties->assets.fonts) {
         if (!HasFont(fontAsset.uid.c_str())) {
-            LoadFont(fontAsset.file_path.c_str(), fontAsset.uid.c_str(), fontAsset.size);
+            LoadFont(fontAsset.file_path.c_str(), fontAsset.uid.c_str(), fontAsset.size, fontAsset.applyNearestNeighbor);
         }
     }
 }
@@ -91,8 +91,8 @@ bool AssetManager::HasTexture(const char* key) const {
 }
 
 // Font
-SEFont* AssetManager::LoadFont(const char* fileName, const char* key, int size) {
-    return se_asset_manager_load_font(fileName, key, size);
+SEFont* AssetManager::LoadFont(const char* fileName, const char* key, int size, bool applyNearestNeighbor) {
+    return se_asset_manager_load_font(fileName, key, size, applyNearestNeighbor);
 }
 
 SEFont* AssetManager::GetFont(const char* key) {

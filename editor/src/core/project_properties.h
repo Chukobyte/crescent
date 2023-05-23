@@ -49,11 +49,13 @@ struct FontAsset {
     explicit FontAsset(const nlohmann::json& font) :
         file_path(JsonHelper::Get<std::string>(font, "file_path")),
         uid(JsonHelper::Get<std::string>(font, "uid")),
-        size(JsonHelper::Get<int>(font, "size")) {}
+        size(JsonHelper::Get<int>(font, "size")),
+        applyNearestNeighbor(JsonHelper::GetDefault<bool>(font, "nearest_neighbor", true)) {}
 
     std::string file_path;
     std::string uid;
     int size = -1;
+    bool applyNearestNeighbor = true;
 };
 
 struct ProjectAssets {

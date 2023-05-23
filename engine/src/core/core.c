@@ -156,9 +156,9 @@ bool cre_load_built_in_assets() {
         strcpy(defaultFontFilePath, engineContext->internalAssetsDir);
         strcat(defaultFontFilePath, "/");
         strcat(defaultFontFilePath, CRE_DEFAULT_FONT_ASSET.file_path);
-        se_asset_manager_load_font(defaultFontFilePath, CRE_DEFAULT_FONT_ASSET.uid, CRE_DEFAULT_FONT_ASSET.size);
+        se_asset_manager_load_font(defaultFontFilePath, CRE_DEFAULT_FONT_ASSET.uid, CRE_DEFAULT_FONT_ASSET.size, CRE_DEFAULT_FONT_ASSET.applyNearestNeighbor);
     } else {
-        se_asset_manager_load_font(CRE_DEFAULT_FONT_ASSET.file_path, CRE_DEFAULT_FONT_ASSET.uid, CRE_DEFAULT_FONT_ASSET.size);
+        se_asset_manager_load_font(CRE_DEFAULT_FONT_ASSET.file_path, CRE_DEFAULT_FONT_ASSET.uid, CRE_DEFAULT_FONT_ASSET.size, CRE_DEFAULT_FONT_ASSET.applyNearestNeighbor);
     }
 
     return true;
@@ -180,7 +180,7 @@ bool cre_load_assets_from_configuration() {
     // Fonts
     for (size_t i = 0; i < gameProperties->fontCount; i++) {
         const CREAssetFont assetFont = gameProperties->fonts[i];
-        se_asset_manager_load_font(assetFont.file_path, assetFont.uid, assetFont.size);
+        se_asset_manager_load_font(assetFont.file_path, assetFont.uid, assetFont.size, assetFont.applyNearestNeighbor);
     }
 
     // Inputs

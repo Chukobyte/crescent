@@ -313,6 +313,9 @@ ImGuiHelper::MenuBar OpenedProjectUI::MenuBar::GetMenuBar() {
                                         ImGuiHelper::DragInt size("Size", fontAsset.size, i);
                                         ImGuiHelper::BeginDragInt(size);
 
+                                        ImGuiHelper::CheckBox nearestNeighbor("Nearest Neighbor", fontAsset.applyNearestNeighbor);
+                                        ImGuiHelper::BeginCheckBox(nearestNeighbor);
+
                                         const std::string deleteText = "Delete##" + std::to_string(i);
                                         if (ImGui::Button(deleteText.c_str())) {
                                             fontIndexToDelete = (int) i;
