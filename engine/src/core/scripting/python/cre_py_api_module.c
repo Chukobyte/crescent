@@ -1685,9 +1685,8 @@ PyObject* cre_py_api_text_label_set_color(PyObject* self, PyObject* args, PyObje
     int green;
     int blue;
     int alpha;
-    if (PyArg_ParseTupleAndKeywords(args, kwargs, "iffff", crePyApiGenericSetEntityColorKWList, &entity, &red, &green, &blue, &alpha)) {
-        TextLabelComponent* textLabelComponent = (TextLabelComponent*) cre_component_manager_get_component(entity,
-                CreComponentDataIndex_TEXT_LABEL);
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "iiiii", crePyApiGenericSetEntityColorKWList, &entity, &red, &green, &blue, &alpha)) {
+        TextLabelComponent* textLabelComponent = (TextLabelComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_TEXT_LABEL);
         textLabelComponent->color = se_color_get_normalized_color(red, green, blue, alpha);
         Py_RETURN_NONE;
     }
