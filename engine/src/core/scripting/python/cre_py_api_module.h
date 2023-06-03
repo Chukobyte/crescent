@@ -46,6 +46,7 @@ PyObject* cre_py_api_shader_instance_get_float4_param(PyObject* self, PyObject* 
 PyObject* cre_py_api_shader_util_compile_shader(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_shader_util_compile_shader_raw(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_shader_util_set_screen_shader(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_shader_util_get_current_screen_shader(PyObject* self, PyObject* args);
 PyObject* cre_py_api_shader_util_reset_screen_shader_to_default(PyObject* self, PyObject* args);
 
 // Input
@@ -349,6 +350,10 @@ static struct PyMethodDef crePyApiMethods[] = {
     {
         "shader_util_set_screen_shader", (PyCFunction) cre_py_api_shader_util_set_screen_shader,
         METH_VARARGS | METH_KEYWORDS, "Sets a screen shader from an instance in the shader instance cache."
+    },
+    {
+        "shader_util_get_current_screen_shader", cre_py_api_shader_util_get_current_screen_shader,
+        METH_VARARGS, "Returns current screen shader instance id."
     },
     {
         "shader_util_reset_screen_shader_to_default", cre_py_api_shader_util_reset_screen_shader_to_default,

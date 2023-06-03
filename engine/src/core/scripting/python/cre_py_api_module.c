@@ -490,12 +490,18 @@ PyObject* cre_py_api_shader_util_compile_shader_raw(PyObject* self, PyObject* ar
     return NULL;
 }
 
+// If we need this api exposed for other script implementations, we'll need to do this at the framework or engine level
+// Will also need to update this if screen shaders are set at the config level
+#define CRE_INVALID_SHADER_INSTANCE_ID (-1)
+static SEShaderInstanceId currentScreenShaderInstanceId = CRE_INVALID_SHADER_INSTANCE_ID;
+
 PyObject* cre_py_api_shader_util_set_screen_shader(PyObject* self, PyObject* args, PyObject* kwargs) {
     SEShaderInstanceId shaderId;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericShaderIdKWList, &shaderId)) {
         SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
         if (shaderInstance != NULL) {
             se_frame_buffer_set_screen_shader(shaderInstance);
+            currentScreenShaderInstanceId = shaderId;
             Py_RETURN_TRUE;
         }
         Py_RETURN_FALSE;
@@ -503,8 +509,13 @@ PyObject* cre_py_api_shader_util_set_screen_shader(PyObject* self, PyObject* arg
     return NULL;
 }
 
+PyObject* cre_py_api_shader_util_get_current_screen_shader(PyObject* self, PyObject* args) {
+    return Py_BuildValue("i", currentScreenShaderInstanceId != CRE_INVALID_SHADER_INSTANCE_ID ? currentScreenShaderInstanceId : -1);
+}
+
 PyObject* cre_py_api_shader_util_reset_screen_shader_to_default(PyObject* self, PyObject* args) {
     se_frame_buffer_reset_to_default_screen_shader();
+    currentScreenShaderInstanceId = CRE_INVALID_SHADER_INSTANCE_ID;
     Py_RETURN_NONE;
 }
 
