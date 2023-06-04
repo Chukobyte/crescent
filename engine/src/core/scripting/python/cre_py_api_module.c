@@ -510,7 +510,7 @@ PyObject* cre_py_api_shader_util_set_screen_shader(PyObject* self, PyObject* arg
 }
 
 PyObject* cre_py_api_shader_util_get_current_screen_shader(PyObject* self, PyObject* args) {
-    return Py_BuildValue("i", currentScreenShaderInstanceId != CRE_INVALID_SHADER_INSTANCE_ID ? currentScreenShaderInstanceId : -1);
+    return Py_BuildValue("i", currentScreenShaderInstanceId != CRE_INVALID_SHADER_INSTANCE_ID ? (int) currentScreenShaderInstanceId : -1);
 }
 
 PyObject* cre_py_api_shader_util_reset_screen_shader_to_default(PyObject* self, PyObject* args) {
