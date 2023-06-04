@@ -703,6 +703,15 @@
 "        )\n"\
 "\n"\
 "    @staticmethod\n"\
+"    def get_current_screen_shader() -> Optional[ShaderInstance]:\n"\
+"        shader_instance_id = (\n"\
+"            crescent_api_internal.shader_util_get_current_screen_shader()\n"\
+"        )\n"\
+"        if shader_instance_id >= 0:\n"\
+"            return ShaderInstance(shader_instance_id)\n"\
+"        return None\n"\
+"\n"\
+"    @staticmethod\n"\
 "    def reset_screen_shader_to_default() -> None:\n"\
 "        crescent_api_internal.shader_util_reset_screen_shader_to_default()\n"\
 "\n"\

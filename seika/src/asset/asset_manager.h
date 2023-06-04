@@ -14,7 +14,7 @@ struct SETexture* se_asset_manager_load_texture_ex(const char* fileName, const c
 struct SETexture* se_asset_manager_get_texture(const char* key);
 bool se_asset_manager_has_texture(const char* key);
 // --- Font --- //
-struct SEFont* se_asset_manager_load_font(const char* fileName, const char* key, int size);
+struct SEFont* se_asset_manager_load_font(const char* fileName, const char* key, int size, bool applyNearestNeighbor);
 struct SEFont* se_asset_manager_get_font(const char* key);
 bool se_asset_manager_has_font(const char* key);
 // -- Audio Source --- //

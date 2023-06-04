@@ -53,7 +53,9 @@ void cre_json_configure_assets(cJSON* configJson, CREGameProperties* properties)
         properties->fonts[properties->fontCount].uid = json_get_string_new(fontJson, "uid");
         se_logger_debug("Font UID: '%s'", properties->fonts[properties->fontCount].uid);
         properties->fonts[properties->fontCount].size = json_get_int(fontJson, "size");
-        se_logger_debug("Font UID: '%d'", properties->fonts[properties->fontCount].size);
+        se_logger_debug("Font Size: '%d'", properties->fonts[properties->fontCount].size);
+        properties->fonts[properties->fontCount].applyNearestNeighbor = json_get_bool_default(fontJson, "nearest_neighbor", true);
+        se_logger_debug("Font Nearest Neighbor: '%s'", se_bool_to_string(properties->fonts[properties->fontCount].applyNearestNeighbor));
         properties->fontCount++;
     }
 }

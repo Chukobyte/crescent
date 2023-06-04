@@ -21,4 +21,4 @@ typedef struct SEFont {
     SECharacter characters[128]; // First 128 of ASCII set
 } SEFont;
 
-SEFont* se_font_create_font(const char* fileName, int size);
+SEFont* se_font_create_font(const char* fileName, int size, bool applyNearestNeighbor);

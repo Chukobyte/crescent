@@ -666,6 +666,15 @@ class ShaderUtil:
         )
 
     @staticmethod
+    def get_current_screen_shader() -> Optional[ShaderInstance]:
+        shader_instance_id = (
+            crescent_api_internal.shader_util_get_current_screen_shader()
+        )
+        if shader_instance_id >= 0:
+            return ShaderInstance(shader_instance_id)
+        return None
+
+    @staticmethod
     def reset_screen_shader_to_default() -> None:
         crescent_api_internal.shader_util_reset_screen_shader_to_default()
 

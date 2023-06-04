@@ -22,6 +22,7 @@ typedef struct CREAssetFont {
     char* file_path;
     char* uid;
     int size;
+    bool applyNearestNeighbor;
 } CREAssetFont;
 
 // Only used for having a default font struct
@@ -29,11 +30,13 @@ struct CreAssetFontDefault {
     const char* file_path;
     const char* uid;
     int size;
+    bool applyNearestNeighbor;
 };
 static struct CreAssetFontDefault CRE_DEFAULT_FONT_ASSET = {
     .file_path = "assets/fonts/verdana.ttf",
     .uid = "_cre_default",
-    .size = 16
+    .size = 16,
+    .applyNearestNeighbor = true
 };
 
 #define CRE_INPUT_VALUES_LIMIT 4

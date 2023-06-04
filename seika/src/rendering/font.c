@@ -10,7 +10,8 @@
 
 bool generate_new_font_face(const char* fileName, FT_Face* face);
 
-SEFont* se_font_create_font(const char* fileName, int size) {
+SEFont* se_font_create_font(const char* fileName, int size, bool applyNearestNeighbor) {
+    const GLint filterType = applyNearestNeighbor ? GL_NEAREST : GL_LINEAR;
     FT_Face face;
     SEFont* font = SE_MEM_ALLOCATE(SEFont);
     font->size = size;
@@ -52,8 +53,8 @@ SEFont* se_font_create_font(const char* fileName, int size) {
         // Texture wrap and filter options
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filterType);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filterType);
         // Create character struct
         SECharacter character = {
             .textureId = textTexture,

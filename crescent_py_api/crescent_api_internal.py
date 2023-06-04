@@ -216,6 +216,10 @@ def shader_util_set_screen_shader(shader_id: int) -> bool:
     return True
 
 
+def shader_util_get_current_screen_shader() -> int:
+    return 0
+
+
 def shader_util_reset_screen_shader_to_default() -> None:
     pass
 

@@ -21,7 +21,7 @@ class AssetManager : public Singleton<AssetManager> {
     SETexture* GetTextureSafe(const char* key);
     bool HasTexture(const char* key) const;
     // Font
-    SEFont* LoadFont(const char* fileName, const char* key, int size);
+    SEFont* LoadFont(const char* fileName, const char* key, int size, bool applyNearestNeighbor);
     SEFont* GetFont(const char* key);
     bool HasFont(const char* key) const;
     // Audio Source

@@ -192,6 +192,7 @@ nlohmann::ordered_json ProjectProperties::ToJson() const {
         fontJson["file_path"] = font.file_path;
         fontJson["uid"] = font.uid;
         fontJson["size"] = font.size;
+        fontJson["nearest_neighbor"] = font.applyNearestNeighbor;
         fontJsonArray.emplace_back(fontJson);
     }
     assetJson["fonts"] = fontJsonArray;
