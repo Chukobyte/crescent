@@ -492,7 +492,7 @@ PyObject* cre_py_api_shader_util_compile_shader_raw(PyObject* self, PyObject* ar
 
 // If we need this api exposed for other script implementations, we'll need to do this at the framework or engine level
 // Will also need to update this if screen shaders are set at the config level
-#define CRE_INVALID_SHADER_INSTANCE_ID (-1)
+#define CRE_INVALID_SHADER_INSTANCE_ID (SEShaderInstanceId)(-1)
 static SEShaderInstanceId currentScreenShaderInstanceId = CRE_INVALID_SHADER_INSTANCE_ID;
 
 PyObject* cre_py_api_shader_util_set_screen_shader(PyObject* self, PyObject* args, PyObject* kwargs) {
