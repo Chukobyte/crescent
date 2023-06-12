@@ -175,22 +175,22 @@ ImGuiHelper::MenuBar OpenedProjectUI::MenuBar::GetMenuBar() {
                                     static ImGuiHelper::DragInt resolutionHeightInt("Resolution Height", projectProperties->resolutionHeight);
                                     ImGuiHelper::BeginDragInt(resolutionHeightInt);
 
-                                    static std::string selectedAudioWaveSampleRate = "";
-                                    static ImGuiHelper::ComboBox audioWaveSampleRateComboBox(
-                                        "Audio Wave Sample Rate",
+                                    static std::string selectedAudioWavSampleRate = "";
+                                    static ImGuiHelper::ComboBox audioWavSampleRateComboBox(
+                                        "Audio Wav Sample Rate",
                                     { "44100", "48000" },
                                     [](const char* newItem) {
-                                        selectedAudioWaveSampleRate = newItem;
-                                        if (selectedAudioWaveSampleRate == "44100") {
-                                            projectProperties->audioWaveSampleRate = 44100;
-                                        } else if (selectedAudioWaveSampleRate == "48000") {
-                                            projectProperties->audioWaveSampleRate = 48000;
+                                        selectedAudioWavSampleRate = newItem;
+                                        if (selectedAudioWavSampleRate == "44100") {
+                                            projectProperties->audioWavSampleRate = 44100;
+                                        } else if (selectedAudioWavSampleRate == "48000") {
+                                            projectProperties->audioWavSampleRate = 48000;
                                         } else {
-                                            se_logger_error("Unsupported audio wave sample rate '%s'", selectedAudioWaveSampleRate.c_str());
+                                            se_logger_error("Unsupported audio wav sample rate '%s'", selectedAudioWavSampleRate.c_str());
                                         }
                                     }
                                     );
-                                    ImGuiHelper::BeginComboBox(audioWaveSampleRateComboBox);
+                                    ImGuiHelper::BeginComboBox(audioWavSampleRateComboBox);
 
                                     static ImGuiHelper::CheckBox maintainAspectRatioCheckBox("Maintain Aspect Ratio", projectProperties->maintainAspectRatio);
                                     ImGuiHelper::BeginCheckBox(maintainAspectRatioCheckBox);

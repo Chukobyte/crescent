@@ -8,7 +8,7 @@ extern "C" {
 #include <stdint.h>
 
 // --- Audio Manager --- //
-bool se_audio_manager_init(uint32_t waveSampleRate);
+bool se_audio_manager_init(uint32_t wavSampleRate);
 void se_audio_manager_finalize();
 // Process current jobs for resource manager
 void se_audio_manager_play_sound(const char* filePath, bool loops);

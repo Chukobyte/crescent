@@ -7,11 +7,21 @@
 #include "../asset/asset_file_loader.h"
 #include "../utils/logger.h"
 
+static uint32_t audioWavSampleRate = SE_AUDIO_SOURCE_DEFAULT_WAV_SAMPLE_RATE;
+
 bool load_wav_data_from_file(const char* file_path, int32_t* sample_count, int32_t* channels, int32_t* sample_rate, void** samples);
 
 void se_audio_print_audio_source(SEAudioSource* audioSource) {
     se_logger_debug("audio source | channels = %d, sample rate = %d, sample count = %d, samples = %x",
                     audioSource->channels, audioSource->sample_rate, audioSource->sample_count, audioSource->samples);
+}
+
+void se_audio_set_wav_sample_rate(uint32_t wavSampleRate) {
+    audioWavSampleRate = wavSampleRate;
+}
+
+uint32_t se_audio_get_wav_sample_rate() {
+    return audioWavSampleRate;
 }
 
 SEAudioSource* se_audio_load_audio_source_wav(const char* fileName) {
@@ -31,9 +41,9 @@ SEAudioSource* se_audio_load_audio_source_wav(const char* fileName) {
     newAudioSource->sample_rate = sampleRate;
     newAudioSource->samples = samples;
 
-    if (newAudioSource->sample_rate != SE_AUDIO_SOURCE_DEFAULT_WAVE_SAMPLE_RATE) {
-        se_logger_error("Sample rate for '%s' is %d instead of the expected sample rate of %d!  Audio won't play as expected!",
-                        fileName, sampleRate, SE_AUDIO_SOURCE_DEFAULT_WAVE_SAMPLE_RATE);
+    if (newAudioSource->sample_rate != audioWavSampleRate) {
+        se_logger_error("Sample rate for wav file '%s' is %d instead of the expected sample rate of %d!  Audio won't play as expected!",
+                        fileName, sampleRate, audioWavSampleRate);
     }
 
     return newAudioSource;

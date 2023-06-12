@@ -9,7 +9,7 @@ bool sf_initialize(const char* title,
                    int windowHeight,
                    int resolutionWidth,
                    int resolutionHeight,
-                   uint32_t audioWaveSampleRate,
+                   uint32_t audioWavSampleRate,
                    bool maintainAspectRatio,
                    const char* controllerDBFilePath);
 void sf_process_inputs();

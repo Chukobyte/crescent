@@ -86,7 +86,7 @@ class ProjectProperties : public Singleton<ProjectProperties> {
     int windowHeight;
     int resolutionWidth;
     int resolutionHeight;
-    uint32_t audioWaveSampleRate;
+    uint32_t audioWavSampleRate;
     bool maintainAspectRatio = false;
     int targetFPS;
     bool areCollidersVisible = false;
