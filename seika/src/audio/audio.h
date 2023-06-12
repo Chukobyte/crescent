@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#define SE_AUDIO_SOURCE_EXPECTED_SAMPLE_RATE 44100
+#define SE_AUDIO_SOURCE_DEFAULT_WAVE_SAMPLE_RATE 44100
 
 typedef struct SEAudioSource {
     const char* file_path;

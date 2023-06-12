@@ -1,5 +1,7 @@
 #include "project_properties.h"
 
+#include "../seika/src/audio/audio.h"
+
 #include "../engine/src/core/core_info.h"
 
 #include "asset_browser.h"
@@ -90,6 +92,7 @@ void ProjectProperties::LoadPropertiesFromConfig(const char* filePath) {
     windowHeight = JsonHelper::Get<int>(propertyJson, "window_height");
     resolutionWidth = JsonHelper::Get<int>(propertyJson, "resolution_width");
     resolutionHeight = JsonHelper::Get<int>(propertyJson, "resolution_height");
+    audioWaveSampleRate = JsonHelper::GetDefault<uint32_t>(propertyJson, "audio_wave_sample_rate", SE_AUDIO_SOURCE_DEFAULT_WAVE_SAMPLE_RATE);
     maintainAspectRatio = JsonHelper::GetDefault<bool>(propertyJson, "maintain_aspect_ratio", false);
     targetFPS = JsonHelper::Get<int>(propertyJson, "target_fps");
     areCollidersVisible = JsonHelper::Get<bool>(propertyJson, "colliders_visible");
@@ -159,6 +162,7 @@ nlohmann::ordered_json ProjectProperties::ToJson() const {
     configJson["resolution_width"] = resolutionWidth;
     configJson["resolution_height"] = resolutionHeight;
     configJson["maintain_aspect_ratio"] = maintainAspectRatio;
+    configJson["audio_wave_sample_rate"] = audioWaveSampleRate;
     configJson["target_fps"] = targetFPS;
     configJson["initial_node_path"] = initialNodePath;
     configJson["colliders_visible"] = areCollidersVisible;

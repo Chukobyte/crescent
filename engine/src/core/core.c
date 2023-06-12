@@ -115,6 +115,7 @@ bool cre_initialize(int argv, char** args) {
                                          gameProperties->windowHeight,
                                          gameProperties->resolutionWidth,
                                          gameProperties->resolutionHeight,
+                                         gameProperties->audioWaveSampleRate,
                                          gameProperties->maintainAspectRatio,
                                          controllerMappingFilePath
                                      );

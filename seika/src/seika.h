@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdbool.h>
+#include <stdint.h>
 
 bool sf_initialize_simple(const char* title, int windowWidth, int windowHeight);
 bool sf_initialize(const char* title,
@@ -8,6 +9,7 @@ bool sf_initialize(const char* title,
                    int windowHeight,
                    int resolutionWidth,
                    int resolutionHeight,
+                   uint32_t audioWaveSampleRate,
                    bool maintainAspectRatio,
                    const char* controllerDBFilePath);
 void sf_process_inputs();
