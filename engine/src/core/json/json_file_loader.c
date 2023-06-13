@@ -2,7 +2,7 @@
 
 #include "../seika/src/asset/asset_file_loader.h"
 #include "../seika/src/utils/se_string_util.h"
-#include "../seika/src/utils/se_file_system_utils.h"
+#include "../seika/src/audio/audio.h"
 
 #include "json_helper.h"
 #include "../game_properties.h"
@@ -109,6 +109,9 @@ CREGameProperties* cre_json_load_config_file(const char* filePath) {
         // Maintain Aspect Ratio
         properties->maintainAspectRatio = json_get_bool_default(configJson, "maintain_aspect_ratio", false);
         se_logger_debug("Maintain Aspect Ratio '%s'", properties->maintainAspectRatio == true ? "true" : "false");
+        // Wav Sample Rate
+        properties->audioWavSampleRate = json_get_int_default(configJson, "audio_wav_sample_rate", SE_AUDIO_SOURCE_DEFAULT_WAV_SAMPLE_RATE);
+        se_logger_debug("Wav Sample Rate '%u'", properties->audioWavSampleRate);
         // Target FPS
         properties->targetFPS = json_get_int(configJson, "target_fps");
         se_logger_debug("Target FPS '%d'", properties->targetFPS);

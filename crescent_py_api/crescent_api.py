@@ -10,6 +10,12 @@ import math
 
 # COLOR
 class Color:
+    BLACK: "Color" = None
+    WHITE: "Color" = None
+    RED: "Color" = None
+    GREEN: "Color" = None
+    BLUE: "Color" = None
+
     # 255 is the limit...
     def __init__(self, r=0, g=0, b=0, a=255):
         self.r = r
@@ -27,25 +33,12 @@ class Color:
     def linear_color(r: float, g: float, b: float, a=1.0) -> "Color":
         return Color(int(r * 255), int(g * 255), int(b * 255), int(a * 255))
 
-    @staticmethod
-    def BLACK() -> "Color":
-        return Color(0, 0, 0)
 
-    @staticmethod
-    def WHITE() -> "Color":
-        return Color(255, 255, 255)
-
-    @staticmethod
-    def RED() -> "Color":
-        return Color(255, 0, 0)
-
-    @staticmethod
-    def GREEN() -> "Color":
-        return Color(0, 255, 0)
-
-    @staticmethod
-    def BLUE() -> "Color":
-        return Color(0, 0, 255)
+Color.BLACK = Color(0, 0, 0)
+Color.WHITE = Color(255, 255, 255)
+Color.RED = Color(255, 0, 0)
+Color.GREEN = Color(0, 255, 0)
+Color.BLUE = Color(0, 0, 255)
 
 
 # MATH
@@ -58,6 +51,12 @@ class Math:
 
 
 class Vector2:
+    ZERO: "Vector2" = None
+    RIGHT: "Vector2" = None
+    LEFT: "Vector2" = None
+    UP: "Vector2" = None
+    DOWN: "Vector2" = None
+
     def __init__(self, x=0.0, y=0.0):
         self.x = x
         self.y = y
@@ -127,25 +126,12 @@ class Vector2:
     def lerp(source, destination, amount: float) -> float:
         return source + (destination - source) * Vector2(amount, amount)
 
-    @staticmethod
-    def ZERO() -> "Vector2":
-        return Vector2(0.0, 0.0)
 
-    @staticmethod
-    def LEFT() -> "Vector2":
-        return Vector2(-1.0, 0.0)
-
-    @staticmethod
-    def RIGHT() -> "Vector2":
-        return Vector2(1.0, 0.0)
-
-    @staticmethod
-    def UP() -> "Vector2":
-        return Vector2(0.0, -1.0)
-
-    @staticmethod
-    def DOWN() -> "Vector2":
-        return Vector2(0.0, 1.0)
+Vector2.ZERO = Vector2(0.0, 0.0)
+Vector2.LEFT = Vector2(-1.0, 0.0)
+Vector2.RIGHT = Vector2(1.0, 0.0)
+Vector2.UP = Vector2(0.0, -1.0)
+Vector2.DOWN = Vector2(0.0, 1.0)
 
 
 class Vector3:

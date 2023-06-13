@@ -9,13 +9,14 @@
 #include "utils/logger.h"
 #include "utils/se_assert.h"
 #include "rendering/renderer.h"
+#include "audio/audio.h"
 #include "audio/audio_manager.h"
 #include "asset/asset_file_loader.h"
 #include "asset/asset_manager.h"
 
 bool initialize_sdl();
 bool initialize_rendering(const char* title, int windowWidth, int windowHeight, int resolutionWidth, int resolutionHeight, bool maintainAspectRatio);
-bool initialize_audio();
+bool initialize_audio(uint32_t wavSampleRate);
 bool initialize_input(const char* controllerDBFilePath);
 
 static SDL_Window* window = NULL;
@@ -23,7 +24,7 @@ static SDL_GLContext openGlContext;
 static bool isRunning = false;
 
 bool sf_initialize_simple(const char* title, int windowWidth, int windowHeight) {
-    return sf_initialize(title, windowWidth, windowHeight, windowWidth, windowHeight, false, NULL);
+    return sf_initialize(title, windowWidth, windowHeight, windowWidth, windowHeight, SE_AUDIO_SOURCE_DEFAULT_WAV_SAMPLE_RATE, false, NULL);
 }
 
 bool sf_initialize(const char* title,
@@ -31,6 +32,7 @@ bool sf_initialize(const char* title,
                    int windowHeight,
                    int resolutionWidth,
                    int resolutionHeight,
+                   uint32_t audioWavSampleRate,
                    bool maintainAspectRatio,
                    const char* controllerDBFilePath) {
     if (isRunning) {
@@ -51,7 +53,7 @@ bool sf_initialize(const char* title,
         se_logger_error("Failed to initialize rendering!");
         return false;
     }
-    if (!initialize_audio()) {
+    if (!initialize_audio(audioWavSampleRate)) {
         se_logger_error("Failed to initialize audio!");
         return false;
     }
@@ -117,8 +119,8 @@ bool initialize_rendering(const char* title, int windowWidth, int windowHeight, 
     return true;
 }
 
-bool initialize_audio() {
-    return se_audio_manager_init();
+bool initialize_audio(uint32_t wavSampleRate) {
+    return se_audio_manager_init(wavSampleRate);
 }
 
 bool initialize_input(const char* controllerDBFilePath) {

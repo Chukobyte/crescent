@@ -6,6 +6,7 @@ extern "C" {
 
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdint.h>
 
 typedef struct CREAssetAudioSource {
     char* file_path;
@@ -57,6 +58,7 @@ typedef struct CREGameProperties {
     int windowWidth;
     int windowHeight;
     bool maintainAspectRatio;
+    uint32_t audioWavSampleRate;
     int targetFPS;
     char* initialScenePath;
     bool areCollidersVisible;

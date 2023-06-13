@@ -35,9 +35,10 @@ struct AudioInstances {
 static struct AudioInstances* audio_instances = NULL;
 
 // --- Audio Manager --- //
-bool se_audio_manager_init() {
+bool se_audio_manager_init(uint32_t wavSampleRate) {
     audio_instances = SE_MEM_ALLOCATE(struct AudioInstances);
     pthread_mutex_init(&audio_mutex, NULL);
+    se_audio_set_wav_sample_rate(wavSampleRate);
     // Device
     ma_device_config config = ma_device_config_init(ma_device_type_playback);
     config.playback.pDeviceID = NULL;
@@ -46,7 +47,7 @@ bool se_audio_manager_init() {
     config.capture.pDeviceID = NULL;
     config.capture.format = ma_format_s16;
     config.capture.channels = 1;
-    config.sampleRate = SE_AUDIO_SOURCE_EXPECTED_SAMPLE_RATE;
+    config.sampleRate = wavSampleRate;
     config.dataCallback = audio_data_callback;
     config.pUserData = NULL;
     audio_device = SE_MEM_ALLOCATE(ma_device);

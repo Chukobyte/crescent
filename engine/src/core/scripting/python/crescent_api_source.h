@@ -47,6 +47,12 @@
 "\n"\
 "# COLOR\n"\
 "class Color:\n"\
+"    BLACK: \"Color\" = None\n"\
+"    WHITE: \"Color\" = None\n"\
+"    RED: \"Color\" = None\n"\
+"    GREEN: \"Color\" = None\n"\
+"    BLUE: \"Color\" = None\n"\
+"\n"\
 "    # 255 is the limit...\n"\
 "    def __init__(self, r=0, g=0, b=0, a=255):\n"\
 "        self.r = r\n"\
@@ -64,25 +70,12 @@
 "    def linear_color(r: float, g: float, b: float, a=1.0) -> \"Color\":\n"\
 "        return Color(int(r * 255), int(g * 255), int(b * 255), int(a * 255))\n"\
 "\n"\
-"    @staticmethod\n"\
-"    def BLACK() -> \"Color\":\n"\
-"        return Color(0, 0, 0)\n"\
 "\n"\
-"    @staticmethod\n"\
-"    def WHITE() -> \"Color\":\n"\
-"        return Color(255, 255, 255)\n"\
-"\n"\
-"    @staticmethod\n"\
-"    def RED() -> \"Color\":\n"\
-"        return Color(255, 0, 0)\n"\
-"\n"\
-"    @staticmethod\n"\
-"    def GREEN() -> \"Color\":\n"\
-"        return Color(0, 255, 0)\n"\
-"\n"\
-"    @staticmethod\n"\
-"    def BLUE() -> \"Color\":\n"\
-"        return Color(0, 0, 255)\n"\
+"Color.BLACK = Color(0, 0, 0)\n"\
+"Color.WHITE = Color(255, 255, 255)\n"\
+"Color.RED = Color(255, 0, 0)\n"\
+"Color.GREEN = Color(0, 255, 0)\n"\
+"Color.BLUE = Color(0, 0, 255)\n"\
 "\n"\
 "\n"\
 "# MATH\n"\
@@ -95,6 +88,12 @@
 "\n"\
 "\n"\
 "class Vector2:\n"\
+"    ZERO: \"Vector2\" = None\n"\
+"    RIGHT: \"Vector2\" = None\n"\
+"    LEFT: \"Vector2\" = None\n"\
+"    UP: \"Vector2\" = None\n"\
+"    DOWN: \"Vector2\" = None\n"\
+"\n"\
 "    def __init__(self, x=0.0, y=0.0):\n"\
 "        self.x = x\n"\
 "        self.y = y\n"\
@@ -164,25 +163,12 @@
 "    def lerp(source, destination, amount: float) -> float:\n"\
 "        return source + (destination - source) * Vector2(amount, amount)\n"\
 "\n"\
-"    @staticmethod\n"\
-"    def ZERO() -> \"Vector2\":\n"\
-"        return Vector2(0.0, 0.0)\n"\
 "\n"\
-"    @staticmethod\n"\
-"    def LEFT() -> \"Vector2\":\n"\
-"        return Vector2(-1.0, 0.0)\n"\
-"\n"\
-"    @staticmethod\n"\
-"    def RIGHT() -> \"Vector2\":\n"\
-"        return Vector2(1.0, 0.0)\n"\
-"\n"\
-"    @staticmethod\n"\
-"    def UP() -> \"Vector2\":\n"\
-"        return Vector2(0.0, -1.0)\n"\
-"\n"\
-"    @staticmethod\n"\
-"    def DOWN() -> \"Vector2\":\n"\
-"        return Vector2(0.0, 1.0)\n"\
+"Vector2.ZERO = Vector2(0.0, 0.0)\n"\
+"Vector2.LEFT = Vector2(-1.0, 0.0)\n"\
+"Vector2.RIGHT = Vector2(1.0, 0.0)\n"\
+"Vector2.UP = Vector2(0.0, -1.0)\n"\
+"Vector2.DOWN = Vector2(0.0, 1.0)\n"\
 "\n"\
 "\n"\
 "class Vector3:\n"\
