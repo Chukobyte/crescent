@@ -41,7 +41,7 @@ SEAudioSource* se_audio_load_audio_source_wav(const char* fileName) {
     newAudioSource->sample_rate = sampleRate;
     newAudioSource->samples = samples;
 
-    if (newAudioSource->sample_rate != audioWavSampleRate) {
+    if ((uint32_t)newAudioSource->sample_rate != audioWavSampleRate) {
         se_logger_error("Sample rate for wav file '%s' is %d instead of the expected sample rate of %d!  Audio won't play as expected!",
                         fileName, sampleRate, audioWavSampleRate);
     }
