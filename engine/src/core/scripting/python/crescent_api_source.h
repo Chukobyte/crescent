@@ -66,6 +66,9 @@
 "    def __repr__(self):\n"\
 "        return f\"({self.r}, {self.g}, {self.b}, {self.a})\"\n"\
 "\n"\
+"    def copy(self) -> \"Color\":\n"\
+"        return Color(self.r, self.g, self.b, self.a)\n"\
+"\n"\
 "    @staticmethod\n"\
 "    def linear_color(r: float, g: float, b: float, a=1.0) -> \"Color\":\n"\
 "        return Color(int(r * 255), int(g * 255), int(b * 255), int(a * 255))\n"\
@@ -158,6 +161,9 @@
 "            (self.x - target.x) * (self.x - target.x)\n"\
 "            + (self.y - target.y) * (self.y - target.y)\n"\
 "        )\n"\
+"\n"\
+"    def copy(self) -> \"Vector2\":\n"\
+"        return Vector2(self.x, self.y)\n"\
 "\n"\
 "    @staticmethod\n"\
 "    def lerp(source, destination, amount: float) -> float:\n"\
