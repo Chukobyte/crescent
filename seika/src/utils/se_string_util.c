@@ -11,19 +11,21 @@
 #endif
 
 char* se_strdup(const char* string) {
-    size_t string_length = strlen(string) + 1;
-    void* new_string = SE_MEM_ALLOCATE_SIZE(string_length);
+    const size_t string_length = strlen(string) + 1;
+    char* new_string = (char*) SE_MEM_ALLOCATE_SIZE(string_length);
 
     if (new_string == NULL) {
         return NULL;
     }
 
-    return (char*) memcpy(new_string, string, string_length);
+    return strcpy(new_string, string);
 }
 
 char* se_strdup_from_memory(void* data, size_t size) {
-    void* newData = SE_MEM_ALLOCATE_SIZE(size);
-    return (char*) memcpy(newData, data, size);
+    char* newString = (char*) SE_MEM_ALLOCATE_SIZE(size + 1);
+    memcpy(newString, data, size);
+    newString[size] = '\0';
+    return newString;
 }
 
 const char* se_bool_to_string(bool value) {
@@ -77,6 +79,20 @@ char* se_str_trim_and_replace(const char* value, char delimiter, const char* rep
     newValue = se_strdup(pathBuffer);
     return newValue;
 #undef SE_TRIM_PATH_BUFFER
+}
+
+void se_str_remove_carriage_return(char* string) {
+    char* dest = string;  // Destination pointer to track the modified string
+
+    while (*string) {
+        if (*string != '\r') {
+            *dest = *string;  // Copy non-carriage return characters
+            dest++;
+        }
+        string++;
+    }
+
+    *dest = '\0';  // Add null terminator to the modified string
 }
 
 char* get_project_archive_name(const char* startingPath) {
