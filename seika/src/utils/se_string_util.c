@@ -21,6 +21,11 @@ char* se_strdup(const char* string) {
     return (char*) memcpy(new_string, string, string_length);
 }
 
+char* se_strdup_from_memory(void* data, size_t size) {
+    void* newData = SE_MEM_ALLOCATE_SIZE(size);
+    return (char*) memcpy(newData, data, size);
+}
+
 const char* se_bool_to_string(bool value) {
     return value == true ? "true" : "false";
 }

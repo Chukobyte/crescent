@@ -1,8 +1,10 @@
 #pragma once
 
+#include <stddef.h>
 #include <stdbool.h>
 
 char* se_strdup(const char* string);
+char* se_strdup_from_memory(void* data, size_t size);
 const char* se_bool_to_string(bool value);
 char* se_str_to_lower();
 char* se_str_to_lower_and_underscore_whitespace(char* str);
