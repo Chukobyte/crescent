@@ -4,7 +4,6 @@ import json
 import shutil
 import zipfile
 import tarfile
-import plistlib
 from pathlib import Path, PurePath
 from typing import Optional, Callable
 
@@ -74,8 +73,26 @@ class FileUtils:
 
     @staticmethod
     def write_info_plist_file(path: str, info: dict) -> None:
-        with open(path, "wb") as file:
-            plistlib.dump(info, file)
+        xml_string = '<?xml version="1.0" encoding="UTF-8"?>'
+        xml_string += os.linesep.strip("\r")
+        xml_string += '<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">'
+        xml_string += os.linesep.strip("\r")
+        xml_string += '<plist version="1.0">'
+        xml_string += os.linesep.strip("\r")
+        xml_string += "<dict>"
+        xml_string += os.linesep.strip("\r")
+        for key, value in info.items():
+            xml_string += f"    <key>{key}</key>"
+            xml_string += os.linesep.strip("\r")
+            xml_string += f"    <string>{value}</string>"
+            xml_string += os.linesep.strip("\r")
+        xml_string += "</dict>"
+        xml_string += os.linesep.strip("\r")
+        xml_string += "</plist>"
+        xml_string += os.linesep.strip("\r")
+
+        with open(path, "w", encoding="utf-8") as file:
+            file.write(xml_string)
 
 
 class PythonCompiler:

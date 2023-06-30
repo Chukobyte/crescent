@@ -9,7 +9,6 @@
 "import shutil\n"\
 "import zipfile\n"\
 "import tarfile\n"\
-"import plistlib\n"\
 "from pathlib import Path, PurePath\n"\
 "from typing import Optional, Callable\n"\
 "\n"\
@@ -79,8 +78,26 @@
 "\n"\
 "    @staticmethod\n"\
 "    def write_info_plist_file(path: str, info: dict) -> None:\n"\
-"        with open(path, \"wb\") as file:\n"\
-"            plistlib.dump(info, file)\n"\
+"        xml_string = '<?xml version=\"1.0\" encoding=\"UTF-8\"?>'\n"\
+"        xml_string += os.linesep.strip(\"\\\r\")\n"\
+"        xml_string += '<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">'\n"\
+"        xml_string += os.linesep.strip(\"\\\r\")\n"\
+"        xml_string += '<plist version=\"1.0\">'\n"\
+"        xml_string += os.linesep.strip(\"\\\r\")\n"\
+"        xml_string += \"<dict>\"\n"\
+"        xml_string += os.linesep.strip(\"\\\r\")\n"\
+"        for key, value in info.items():\n"\
+"            xml_string += f\"    <key>{key}</key>\"\n"\
+"            xml_string += os.linesep.strip(\"\\\r\")\n"\
+"            xml_string += f\"    <string>{value}</string>\"\n"\
+"            xml_string += os.linesep.strip(\"\\\r\")\n"\
+"        xml_string += \"</dict>\"\n"\
+"        xml_string += os.linesep.strip(\"\\\r\")\n"\
+"        xml_string += \"</plist>\"\n"\
+"        xml_string += os.linesep.strip(\"\\\r\")\n"\
+"\n"\
+"        with open(path, \"w\", encoding=\"utf-8\") as file:\n"\
+"            file.write(xml_string)\n"\
 "\n"\
 "\n"\
 "class PythonCompiler:\n"\

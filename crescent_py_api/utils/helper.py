@@ -5,7 +5,7 @@ class Helper:
         with open(file_path) as file:
             lines = file.readlines()
         for line in lines:
-            formatted_line = line.rstrip().replace('"', '\\"')
+            formatted_line = line.rstrip().replace('"', '\\"').replace("\\r", "\\\\\\r")
             py_source_text += f'"{formatted_line}\\n"\\\n'
         if end_of_string:
             py_source_text += '"\\n"'
