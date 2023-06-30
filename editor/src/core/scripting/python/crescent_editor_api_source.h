@@ -29,8 +29,8 @@
 "                for file in files:\n"\
 "                    file_path = os.path.join(root, file)\n"\
 "                    FileUtils.delete_file(file_path)\n"\
-"                for dir in dirs:\n"\
-"                    dir_path = os.path.join(root, dir)\n"\
+"                for child_dir in dirs:\n"\
+"                    dir_path = os.path.join(root, child_dir)\n"\
 "                    FileUtils.remove_dir(dir_path)\n"\
 "\n"\
 "            shutil.rmtree(directory, onerror=handle_remove_error)\n"\
@@ -44,6 +44,19 @@
 "    @staticmethod\n"\
 "    def copy_dir(source: str, destination: str, dirs_exist_ok=True) -> None:\n"\
 "        shutil.copytree(source, destination, dirs_exist_ok=dirs_exist_ok)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def copy_dir_exclude_dot(source: str, destination: str, dirs_exist_ok=True) -> None:\n"\
+"        for item in os.listdir(source):\n"\
+"            if not item.startswith(\".\"):\n"\
+"                source_path = os.path.join(source, item)\n"\
+"                destination_path = os.path.join(destination, item)\n"\
+"                if os.path.isdir(source_path):\n"\
+"                    shutil.copytree(\n"\
+"                        source_path, destination_path, dirs_exist_ok=dirs_exist_ok\n"\
+"                    )\n"\
+"                else:\n"\
+"                    shutil.copy2(source_path, destination_path)\n"\
 "\n"\
 "    @staticmethod\n"\
 "    def move_dir(source: str, destination: str):\n"\
@@ -192,7 +205,7 @@
 "        FileUtils.remove_dir(temp_file_path.as_posix())\n"\
 "        FileUtils.create_dir(temp_file_path.as_posix())\n"\
 "        # Copy Project Files\n"\
-"        FileUtils.copy_dir(project_dir, temp_file_path.as_posix())\n"\
+"        FileUtils.copy_dir_exclude_dot(project_dir, temp_file_path.as_posix())\n"\
 "        # Copy Engine Bin Files\n"\
 "        engine_bin_dir_path = PurePath(engine_bin_dir)\n"\
 "        engine_assets_fonts_path = engine_bin_dir_path / \"assets\" / \"fonts\"\n"\

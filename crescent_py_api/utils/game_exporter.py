@@ -24,8 +24,8 @@ class FileUtils:
                 for file in files:
                     file_path = os.path.join(root, file)
                     FileUtils.delete_file(file_path)
-                for dir in dirs:
-                    dir_path = os.path.join(root, dir)
+                for child_dir in dirs:
+                    dir_path = os.path.join(root, child_dir)
                     FileUtils.remove_dir(dir_path)
 
             shutil.rmtree(directory, onerror=handle_remove_error)
@@ -39,6 +39,19 @@ class FileUtils:
     @staticmethod
     def copy_dir(source: str, destination: str, dirs_exist_ok=True) -> None:
         shutil.copytree(source, destination, dirs_exist_ok=dirs_exist_ok)
+
+    @staticmethod
+    def copy_dir_exclude_dot(source: str, destination: str, dirs_exist_ok=True) -> None:
+        for item in os.listdir(source):
+            if not item.startswith("."):
+                source_path = os.path.join(source, item)
+                destination_path = os.path.join(destination, item)
+                if os.path.isdir(source_path):
+                    shutil.copytree(
+                        source_path, destination_path, dirs_exist_ok=dirs_exist_ok
+                    )
+                else:
+                    shutil.copy2(source_path, destination_path)
 
     @staticmethod
     def move_dir(source: str, destination: str):
@@ -187,7 +200,7 @@ class GameExporter:
         FileUtils.remove_dir(temp_file_path.as_posix())
         FileUtils.create_dir(temp_file_path.as_posix())
         # Copy Project Files
-        FileUtils.copy_dir(project_dir, temp_file_path.as_posix())
+        FileUtils.copy_dir_exclude_dot(project_dir, temp_file_path.as_posix())
         # Copy Engine Bin Files
         engine_bin_dir_path = PurePath(engine_bin_dir)
         engine_assets_fonts_path = engine_bin_dir_path / "assets" / "fonts"
