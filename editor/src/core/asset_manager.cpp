@@ -71,6 +71,8 @@ void AssetManager::RefreshFromProperties(ProjectProperties* projectProperties) {
             LoadFont(fontAsset.file_path.c_str(), fontAsset.uid.c_str(), fontAsset.size, fontAsset.applyNearestNeighbor);
         }
     }
+    // Set wav sample rate for audio system
+    se_audio_set_wav_sample_rate(projectProperties->audioWavSampleRate);
 }
 
 // Texture

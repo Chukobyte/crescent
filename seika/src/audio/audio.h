@@ -1,5 +1,9 @@
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -18,3 +22,7 @@ void se_audio_print_audio_source(SEAudioSource* audioSource);
 void se_audio_set_wav_sample_rate(uint32_t wavSampleRate);
 uint32_t se_audio_get_wav_sample_rate();
 SEAudioSource* se_audio_load_audio_source_wav(const char* fileName);
+
+#ifdef __cplusplus
+}
+#endif
