@@ -11,8 +11,24 @@ from typing import Optional, Callable
 class FileUtils:
     @staticmethod
     def remove_dir(directory: str) -> None:
+        def handle_remove_error(func, path, exc_info):
+            # Handle specific error types
+            if isinstance(exc_info[1], PermissionError):
+                return
+
+            # Reraise the exception for other errors
+            raise exc_info[0](exc_info[1]).with_traceback(exc_info[2])
+
         try:
-            shutil.rmtree(directory)
+            for root, dirs, files in os.walk(directory, topdown=False):
+                for file in files:
+                    file_path = os.path.join(root, file)
+                    FileUtils.delete_file(file_path)
+                for dir in dirs:
+                    dir_path = os.path.join(root, dir)
+                    FileUtils.remove_dir(dir_path)
+
+            shutil.rmtree(directory, onerror=handle_remove_error)
         except Exception as e:
             pass
 

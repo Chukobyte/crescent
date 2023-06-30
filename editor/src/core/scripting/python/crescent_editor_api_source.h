@@ -16,8 +16,24 @@
 "class FileUtils:\n"\
 "    @staticmethod\n"\
 "    def remove_dir(directory: str) -> None:\n"\
+"        def handle_remove_error(func, path, exc_info):\n"\
+"            # Handle specific error types\n"\
+"            if isinstance(exc_info[1], PermissionError):\n"\
+"                return\n"\
+"\n"\
+"            # Reraise the exception for other errors\n"\
+"            raise exc_info[0](exc_info[1]).with_traceback(exc_info[2])\n"\
+"\n"\
 "        try:\n"\
-"            shutil.rmtree(directory)\n"\
+"            for root, dirs, files in os.walk(directory, topdown=False):\n"\
+"                for file in files:\n"\
+"                    file_path = os.path.join(root, file)\n"\
+"                    FileUtils.delete_file(file_path)\n"\
+"                for dir in dirs:\n"\
+"                    dir_path = os.path.join(root, dir)\n"\
+"                    FileUtils.remove_dir(dir_path)\n"\
+"\n"\
+"            shutil.rmtree(directory, onerror=handle_remove_error)\n"\
 "        except Exception as e:\n"\
 "            pass\n"\
 "\n"\
