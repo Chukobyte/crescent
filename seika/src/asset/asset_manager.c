@@ -83,6 +83,7 @@ SEAudioSource* se_asset_manager_load_audio_source_wav(const char* fileName, cons
     SE_ASSERT(audioSourceMap != NULL);
     SE_ASSERT_FMT(!se_string_hash_map_has(audioSourceMap, fileName), "Already loaded audio source at file path '%'s!  Has key '%s'.", fileName, key);
     SEAudioSource* newAudioSource = se_audio_load_audio_source_wav(fileName);
+    SE_ASSERT_FMT(newAudioSource != NULL, "Audio source is null!  file_name = '%s', key = '%s'", fileName, key);
     se_string_hash_map_add(audioSourceMap, key, newAudioSource, sizeof(SEAudioSource));
     SE_MEM_FREE(newAudioSource);
     return newAudioSource;

@@ -9,7 +9,6 @@
 "import shutil\n"\
 "import zipfile\n"\
 "import tarfile\n"\
-"import plistlib\n"\
 "from pathlib import Path, PurePath\n"\
 "from typing import Optional, Callable\n"\
 "\n"\
@@ -17,8 +16,24 @@
 "class FileUtils:\n"\
 "    @staticmethod\n"\
 "    def remove_dir(directory: str) -> None:\n"\
+"        def handle_remove_error(func, path, exc_info):\n"\
+"            # Handle specific error types\n"\
+"            if isinstance(exc_info[1], PermissionError):\n"\
+"                return\n"\
+"\n"\
+"            # Reraise the exception for other errors\n"\
+"            raise exc_info[0](exc_info[1]).with_traceback(exc_info[2])\n"\
+"\n"\
 "        try:\n"\
-"            shutil.rmtree(directory)\n"\
+"            for root, dirs, files in os.walk(directory, topdown=False):\n"\
+"                for file in files:\n"\
+"                    file_path = os.path.join(root, file)\n"\
+"                    FileUtils.delete_file(file_path)\n"\
+"                for child_dir in dirs:\n"\
+"                    dir_path = os.path.join(root, child_dir)\n"\
+"                    FileUtils.remove_dir(dir_path)\n"\
+"\n"\
+"            shutil.rmtree(directory, onerror=handle_remove_error)\n"\
 "        except Exception as e:\n"\
 "            pass\n"\
 "\n"\
@@ -29,6 +44,19 @@
 "    @staticmethod\n"\
 "    def copy_dir(source: str, destination: str, dirs_exist_ok=True) -> None:\n"\
 "        shutil.copytree(source, destination, dirs_exist_ok=dirs_exist_ok)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def copy_dir_exclude_dot(source: str, destination: str, dirs_exist_ok=True) -> None:\n"\
+"        for item in os.listdir(source):\n"\
+"            if not item.startswith(\".\"):\n"\
+"                source_path = os.path.join(source, item)\n"\
+"                destination_path = os.path.join(destination, item)\n"\
+"                if os.path.isdir(source_path):\n"\
+"                    shutil.copytree(\n"\
+"                        source_path, destination_path, dirs_exist_ok=dirs_exist_ok\n"\
+"                    )\n"\
+"                else:\n"\
+"                    shutil.copy2(source_path, destination_path)\n"\
 "\n"\
 "    @staticmethod\n"\
 "    def move_dir(source: str, destination: str):\n"\
@@ -79,8 +107,18 @@
 "\n"\
 "    @staticmethod\n"\
 "    def write_info_plist_file(path: str, info: dict) -> None:\n"\
-"        with open(path, \"wb\") as file:\n"\
-"            plistlib.dump(info, file)\n"\
+"        xml_string = '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\\\n'\n"\
+"        xml_string += '<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\\\n'\n"\
+"        xml_string += '<plist version=\"1.0\">\\\n'\n"\
+"        xml_string += \"<dict>\\\n\"\n"\
+"        for key, value in info.items():\n"\
+"            xml_string += f\"    <key>{key}</key>\\\n\"\n"\
+"            xml_string += f\"    <string>{value}</string>\\\n\"\n"\
+"        xml_string += \"</dict>\\\n\"\n"\
+"        xml_string += \"</plist>\\\n\"\n"\
+"\n"\
+"        with open(path, \"w\", encoding=\"utf-8\") as file:\n"\
+"            file.write(xml_string)\n"\
 "\n"\
 "\n"\
 "class PythonCompiler:\n"\
@@ -167,7 +205,7 @@
 "        FileUtils.remove_dir(temp_file_path.as_posix())\n"\
 "        FileUtils.create_dir(temp_file_path.as_posix())\n"\
 "        # Copy Project Files\n"\
-"        FileUtils.copy_dir(project_dir, temp_file_path.as_posix())\n"\
+"        FileUtils.copy_dir_exclude_dot(project_dir, temp_file_path.as_posix())\n"\
 "        # Copy Engine Bin Files\n"\
 "        engine_bin_dir_path = PurePath(engine_bin_dir)\n"\
 "        engine_assets_fonts_path = engine_bin_dir_path / \"assets\" / \"fonts\"\n"\

@@ -42,7 +42,7 @@ bool cre_initialize(int argv, char** args) {
     // Set random seed
     srand((int)time(NULL));
 
-    se_logger_set_level(SELogLevel_DEBUG);
+    se_logger_set_level(SELogLevel_ERROR);
 
     engineContext = cre_engine_context_initialize();
     engineContext->engineRootDir = se_fs_get_cwd();

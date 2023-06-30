@@ -10,6 +10,7 @@
 #include "../memory/se_mem.h"
 #include "../thread/se_pthread.h"
 #include "../utils/logger.h"
+#include "../utils/se_assert.h"
 
 #define MAX_AUDIO_INSTANCES 32
 
@@ -122,7 +123,9 @@ void audio_data_callback(ma_device* device, void* output, const void* input, ma_
     size_t removedInstances = 0;
     for (size_t i = 0; i < audio_instances->count; i++) {
         RBEAudioInstance* audioInst = audio_instances->instances[i];
+        SE_ASSERT_FMT(audioInst != NULL, "audio instance with index %zu is null!", i);
         if (!audioInst->is_playing) {
+            SE_MEM_FREE(audioInst);
             audio_instances->instances[i] = NULL;
             removedInstances++;
             continue;
@@ -165,7 +168,6 @@ void audio_data_callback(ma_device* device, void* output, const void* input, ma_
                 audioInst->sample_position = 0;
                 if (!audioInst->does_loop) {
                     se_logger_debug("Audio instance with id '%u' is queued for deletion!", audioInst->id);
-                    audioInst->is_playing = false;
                     audio_instances->instances[i] = NULL;
                     removedInstances++;
                     SE_MEM_FREE(audioInst);
@@ -177,13 +179,19 @@ void audio_data_callback(ma_device* device, void* output, const void* input, ma_
 
     // Reshuffle array and update count if data sources have been removed
     if (removedInstances > 0) {
+        static RBEAudioInstance* tempAudioInstances[MAX_AUDIO_INSTANCES];
+        size_t newCount = 0;
+        // Place non-null instances in temp array
         for (size_t i = 0; i < audio_instances->count; i++) {
-            if (audio_instances->instances[i] == NULL && i + 1 < audio_instances->count) {
-                audio_instances->instances[i] = audio_instances->instances[i + 1];
-                audio_instances->instances[i + 1] = NULL;
+            if (audio_instances->instances[i] != NULL) {
+                tempAudioInstances[newCount++] = audio_instances->instances[i];
             }
         }
-        audio_instances->count -= removedInstances;
+        // Now fill up regular array
+        for (size_t i = 0; i < newCount; i++) {
+            audio_instances->instances[i] = tempAudioInstances[i];
+        }
+        audio_instances->count = newCount;
     }
     pthread_mutex_unlock(&audio_mutex);
 }
