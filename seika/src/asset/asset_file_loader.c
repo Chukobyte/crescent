@@ -110,7 +110,7 @@ char* sf_asset_file_loader_read_file_contents_as_string_without_raw(const char* 
         SEArchiveFileAsset fileAsset = sf_asset_file_loader_get_asset(filePath);
         if (sf_asset_file_loader_is_asset_valid(&fileAsset)) {
             fileString = se_strdup_from_memory(fileAsset.buffer, fileAsset.bufferSize);
-            se_str_remove_carriage_return(fileString);
+            se_str_remove_char(fileString, '\r');
             len = fileAsset.bufferSize;
         }
     }

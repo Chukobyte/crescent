@@ -81,18 +81,18 @@ char* se_str_trim_and_replace(const char* value, char delimiter, const char* rep
 #undef SE_TRIM_PATH_BUFFER
 }
 
-void se_str_remove_carriage_return(char* string) {
-    char* dest = string;  // Destination pointer to track the modified string
+void se_str_remove_char(char* string, char charToRemove) {
+    char* dest = string;
 
     while (*string) {
-        if (*string != '\r') {
-            *dest = *string;  // Copy non-carriage return characters
+        if (*string != charToRemove) {
+            *dest = *string;
             dest++;
         }
         string++;
     }
 
-    *dest = '\0';  // Add null terminator to the modified string
+    *dest = '\0';
 }
 
 char* get_project_archive_name(const char* startingPath) {
