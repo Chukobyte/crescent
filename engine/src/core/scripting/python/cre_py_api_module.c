@@ -1461,15 +1461,9 @@ PyObject* cre_py_api_animated_sprite_play(PyObject* self, PyObject* args, PyObje
     char* animationName;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "is", crePyApiAnimatedSpriteSetAnimationKWList, &entity, &animationName)) {
         AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent *) cre_component_manager_get_component(entity, CreComponentDataIndex_ANIMATED_SPRITE);
-        if (strcmp(animatedSpriteComponent->currentAnimation.name, animationName) != 0) {
-            const bool success = animated_sprite_component_set_animation(animatedSpriteComponent, animationName);
-            animatedSpriteComponent->isPlaying = true;
-            if (success) {
-                animatedSpriteComponent->startAnimationTickTime = SDL_GetTicks();
-                Py_RETURN_TRUE;
-            }
+        if (animated_sprite_component_play_animation(animatedSpriteComponent, animationName)) {
+            Py_RETURN_TRUE;
         }
-        animatedSpriteComponent->isPlaying = true;
         Py_RETURN_FALSE;
     }
     return NULL;

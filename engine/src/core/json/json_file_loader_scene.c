@@ -225,6 +225,7 @@ void cre_json_animated_sprite_create_or_set_default(JsonSceneNode* node, cJSON* 
         animatedSpriteComponent->modulate = json_get_linear_color_default(componentJson, "modulate", DEFAULT_COMPONENT_ANIMATED_SPRITE_MODULATE);
         animatedSpriteComponent->flipH = json_get_bool_default(componentJson, "flip_h", DEFAULT_COMPONENT_ANIMATED_SPRITE_FLIP_H);
         animatedSpriteComponent->flipV = json_get_bool_default(componentJson, "flip_v", DEFAULT_COMPONENT_ANIMATED_SPRITE_FLIP_V);
+        animatedSpriteComponent->staggerStartAnimationTimes = json_get_bool_default(componentJson, "stagger_start_animation_time", DEFAULT_COMPONENT_ANIMATED_SPRITE_SHOULD_RANDOMLY_STAGGER_START_ANIMATION_TIMES);
         json_node_set_shader_instance_paths(node, componentJson, "shader_instance");
         // Animation (Won't look at local anims for now)
         cJSON* animationsJsonArray = cJSON_GetObjectItemCaseSensitive(componentJson, "animations");
@@ -266,16 +267,18 @@ void cre_json_animated_sprite_create_or_set_default(JsonSceneNode* node, cJSON* 
         animatedSpriteComponent->modulate = json_get_linear_color_default(componentJson, "modulate", animatedSpriteComponent->modulate);
         animatedSpriteComponent->flipH = json_get_bool_default(componentJson, "flip_h", animatedSpriteComponent->flipH);
         animatedSpriteComponent->flipV = json_get_bool_default(componentJson, "flip_v", animatedSpriteComponent->flipV);
+        animatedSpriteComponent->staggerStartAnimationTimes = json_get_bool_default(componentJson, "stagger_start_animation_times", animatedSpriteComponent->staggerStartAnimationTimes);
         json_node_set_shader_instance_paths(node, componentJson, "shader_instance");
     }
     se_logger_debug(
-        "Animated Sprite\ncurrent animation name: '%s'\nis playing: %s\norigin: (%f, %f)\nmodulate: (%f, %f, %f, %f)\nflip x: %s\nflip y: %s",
+        "Animated Sprite\ncurrent animation name: '%s'\nis playing: %s\norigin: (%f, %f)\nmodulate: (%f, %f, %f, %f)\nflip x: %s\nflip y: %s\nstagger start animation times: %s",
         currentAnimationName, se_bool_to_string(animatedSpriteComponent->isPlaying),
         animatedSpriteComponent->origin.x, animatedSpriteComponent->origin.y,
         animatedSpriteComponent->modulate.r, animatedSpriteComponent->modulate.g,
         animatedSpriteComponent->modulate.b, animatedSpriteComponent->modulate.a,
         se_bool_to_string(animatedSpriteComponent->flipH),
-        se_bool_to_string(animatedSpriteComponent->flipV));
+        se_bool_to_string(animatedSpriteComponent->flipV),
+        se_bool_to_string(animatedSpriteComponent->staggerStartAnimationTimes));
     if (currentAnimationName != NULL) {
         SE_MEM_FREE(currentAnimationName);
     }

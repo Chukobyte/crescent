@@ -125,6 +125,7 @@ struct AnimatedSpriteComp : public EditorComponent {
           origin(animatedSpriteComponentData->origin),
           flipH(animatedSpriteComponentData->flipH),
           flipV(animatedSpriteComponentData->flipV),
+          staggerStartAnimationTimes(animatedSpriteComponentData->staggerStartAnimationTimes),
           shaderPath(std::move(shaderPath)) {
         for (size_t animationIndex = 0; animationIndex < animatedSpriteComponentData->animationCount; animationIndex++) {
             const AnimationData& animData = animatedSpriteComponentData->animations[animationIndex];
@@ -181,6 +182,7 @@ struct AnimatedSpriteComp : public EditorComponent {
     SEVector2 origin = { .x = 0.0f, .y = 0.0f };
     bool flipH = false;
     bool flipV = false;
+    bool staggerStartAnimationTimes = false;
     std::string shaderPath;
 };
 

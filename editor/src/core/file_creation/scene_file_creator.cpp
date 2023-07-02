@@ -102,6 +102,10 @@ nlohmann::ordered_json GetComponentsJsonArray(SceneNode* sceneNode) {
         if (animatedSpriteComp->flipV != DEFAULT_COMPONENT_ANIMATED_SPRITE_FLIP_V) {
             animSpriteJson["flip_v"] = animatedSpriteComp->flipV;
         }
+        if (animatedSpriteComp->staggerStartAnimationTimes != DEFAULT_COMPONENT_ANIMATED_SPRITE_SHOULD_RANDOMLY_STAGGER_START_ANIMATION_TIMES) {
+            animSpriteJson["stagger_start_animation_times"] = animatedSpriteComp->staggerStartAnimationTimes;
+        }
+
         if (!animatedSpriteComp->shaderPath.empty()) {
             animSpriteJson["shader_instance"]["shader_path"] = animatedSpriteComp->shaderPath;
         }
