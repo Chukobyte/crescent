@@ -126,14 +126,11 @@ AnimatedSpriteComponent* animated_sprite_component_data_copy_to_animated_sprite(
     copiedNode->animationCount = animatedSpriteComponentData->animationCount;
     copiedNode->modulate = animatedSpriteComponentData->modulate;
     copiedNode->origin = animatedSpriteComponentData->origin;
-//    copiedNode->isPlaying = animatedSpriteComponentData->isPlaying;
+    copiedNode->isPlaying = animatedSpriteComponentData->isPlaying;
     copiedNode->flipH = animatedSpriteComponentData->flipH;
     copiedNode->flipV = animatedSpriteComponentData->flipV;
     copiedNode->staggerStartAnimationTimes = animatedSpriteComponentData->staggerStartAnimationTimes;
     strcpy(copiedNode->currentAnimation.name, animatedSpriteComponentData->currentAnimation.name);
-    if (animatedSpriteComponentData->isPlaying) {
-        animated_sprite_component_play_animation(copiedNode, copiedNode->currentAnimation.name);
-    }
     for (size_t animationIndex = 0; animationIndex < animatedSpriteComponentData->animationCount; animationIndex++) {
         const AnimationData* animationData = &animatedSpriteComponentData->animations[animationIndex];
         CreAnimation animation;

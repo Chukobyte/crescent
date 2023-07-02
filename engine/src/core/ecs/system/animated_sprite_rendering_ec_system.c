@@ -18,14 +18,26 @@
 
 CreEntitySystem* animatedSpriteRenderingSystem = NULL;
 
+void animated_sprite_rendering_system_on_entity_registered(CreEntity entity);
 void animated_sprite_rendering_system_render();
 
 CreEntitySystem* cre_animated_sprite_rendering_ec_system_create() {
     animatedSpriteRenderingSystem = cre_ec_system_create();
     animatedSpriteRenderingSystem->name = se_strdup("Animated Sprite Rendering");
+    animatedSpriteRenderingSystem->on_entity_registered_func = animated_sprite_rendering_system_on_entity_registered;
     animatedSpriteRenderingSystem->render_func = animated_sprite_rendering_system_render;
     animatedSpriteRenderingSystem->component_signature = CreComponentType_TRANSFORM_2D | CreComponentType_ANIMATED_SPRITE;
     return animatedSpriteRenderingSystem;
+}
+
+void animated_sprite_rendering_system_on_entity_registered(CreEntity entity) {
+    AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent *) cre_component_manager_get_component(entity, CreComponentDataIndex_ANIMATED_SPRITE);
+    SE_ASSERT(animatedSpriteComponent != NULL);
+    // Play initial animation if 'is playing' is true (May want a component initialize step for this and other components?)
+    if (animatedSpriteComponent->isPlaying) {
+        animatedSpriteComponent->isPlaying = false;
+        animated_sprite_component_play_animation(animatedSpriteComponent, animatedSpriteComponent->currentAnimation.name);
+    }
 }
 
 void animated_sprite_rendering_system_render() {
