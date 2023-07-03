@@ -33,10 +33,9 @@ CreEntitySystem* cre_animated_sprite_rendering_ec_system_create() {
 void animated_sprite_rendering_system_on_entity_registered(CreEntity entity) {
     AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent *) cre_component_manager_get_component(entity, CreComponentDataIndex_ANIMATED_SPRITE);
     SE_ASSERT(animatedSpriteComponent != NULL);
-    // Play initial animation if 'is playing' is true (May want a component initialize step for this and other components?)
+    animated_sprite_component_refresh_random_stagger_animation_time(animatedSpriteComponent);
     if (animatedSpriteComponent->isPlaying) {
-        animatedSpriteComponent->isPlaying = false;
-        animated_sprite_component_play_animation(animatedSpriteComponent, animatedSpriteComponent->currentAnimation.name);
+        animatedSpriteComponent->startAnimationTickTime = SDL_GetTicks() + animatedSpriteComponent->randomStaggerTime;
     }
 }
 

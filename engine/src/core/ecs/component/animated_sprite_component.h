@@ -72,6 +72,7 @@ AnimationQueryResult animated_sprite_component_get_animation(AnimatedSpriteCompo
 bool animated_sprite_component_set_animation(AnimatedSpriteComponent* animatedSpriteComponent, const char* name);
 // Plays animation and returns true if a new one is played
 bool animated_sprite_component_play_animation(AnimatedSpriteComponent* animatedSpriteComponent, const char* name);
+void animated_sprite_component_refresh_random_stagger_animation_time(AnimatedSpriteComponent* animatedSpriteComponent);
 
 AnimatedSpriteComponentData* animated_sprite_component_data_create();
 void animated_sprite_component_data_delete(AnimatedSpriteComponentData* animatedSpriteComponent);

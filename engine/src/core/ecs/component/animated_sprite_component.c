@@ -87,15 +87,19 @@ bool animated_sprite_component_play_animation(AnimatedSpriteComponent *animatedS
     }
     if (playAnimationSuccess) {
         animatedSpriteComponent->isPlaying = true;
-        // Only set once for now
-        if (animatedSpriteComponent->staggerStartAnimationTimes && animatedSpriteComponent->randomStaggerTime == 0) {
-            uint32_t random_value = (rand() & 0xFFFF) << 16; // Generate random upper 16 bits
-            random_value |= (rand() & 0xFFFF);
-            animatedSpriteComponent->randomStaggerTime = random_value;
-        }
         animatedSpriteComponent->startAnimationTickTime = SDL_GetTicks() + animatedSpriteComponent->randomStaggerTime;
     }
     return isPlayingNewAnimation;
+}
+
+void animated_sprite_component_refresh_random_stagger_animation_time(AnimatedSpriteComponent* animatedSpriteComponent) {
+    if (animatedSpriteComponent->staggerStartAnimationTimes) {
+        uint32_t random_value = (rand() & 0xFFFF) << 16; // Generate random upper 16 bits
+        random_value |= (rand() & 0xFFFF);
+        animatedSpriteComponent->randomStaggerTime = random_value;
+    } else {
+        animatedSpriteComponent->randomStaggerTime = 0;
+    }
 }
 
 //--- Animated Sprite Component Data ---//
