@@ -1323,6 +1323,18 @@ class AnimatedSprite(Node2D):
         )
 
     @property
+    def stagger_animation_start_times(self) -> bool:
+        return crescent_api_internal.animated_sprite_get_stagger_animation_start_times(
+            entity_id=self.entity_id
+        )
+
+    @stagger_animation_start_times.setter
+    def stagger_animation_start_times(self, value: bool) -> None:
+        crescent_api_internal.animated_sprite_set_stagger_animation_start_times(
+            entity_id=self.entity_id, stagger=value
+        )
+
+    @property
     def shader_instance(self) -> Optional[ShaderInstance]:
         shader_instance_id = crescent_api_internal.animated_sprite_get_shader_instance(
             entity_id=self.entity_id

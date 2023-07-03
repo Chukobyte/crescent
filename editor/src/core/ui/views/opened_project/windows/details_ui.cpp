@@ -163,6 +163,9 @@ void DrawAnimatedSprite(SceneNode* node) {
         ImGuiHelper::CheckBox flipVCheckBox("Flip V", animatedSpriteComp->flipV);
         ImGuiHelper::BeginCheckBox(flipVCheckBox);
 
+        ImGuiHelper::CheckBox staggerAnimationStartTimesCheckBox("Stagger Animation Start Times", animatedSpriteComp->staggerStartAnimationTimes);
+        ImGuiHelper::BeginCheckBox(staggerAnimationStartTimesCheckBox);
+
         static ImGuiHelper::AssetBrowserComboBox shaderPathComboBox("Shader Path", ".shader");
         shaderPathComboBox.onSelectionChangeCallback = [animatedSpriteComp](const char* newItem) {
             animatedSpriteComp->shaderPath = newItem;

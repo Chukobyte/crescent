@@ -158,6 +158,8 @@ PyObject* cre_py_api_animated_sprite_set_modulate(PyObject* self, PyObject* args
 PyObject* cre_py_api_animated_sprite_get_modulate(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_animated_sprite_set_origin(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_animated_sprite_get_origin(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_animated_sprite_set_stagger_animation_start_times(PyObject* self, PyObject* args, PyObject* kwargs);
+PyObject* cre_py_api_animated_sprite_get_stagger_animation_start_times(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_animated_sprite_set_shader_instance(PyObject* self, PyObject* args, PyObject* kwargs);
 PyObject* cre_py_api_animated_sprite_get_shader_instance(PyObject* self, PyObject* args, PyObject* kwargs);
 
@@ -716,6 +718,14 @@ static struct PyMethodDef crePyApiMethods[] = {
         METH_VARARGS | METH_KEYWORDS, "Gets the animated sprite's origin."
     },
     {
+        "animated_sprite_set_stagger_animation_start_times", (PyCFunction) cre_py_api_animated_sprite_set_stagger_animation_start_times,
+        METH_VARARGS | METH_KEYWORDS, "Sets the animated sprite's stagger animation start times value."
+    },
+    {
+        "animated_sprite_get_stagger_animation_start_times", (PyCFunction) cre_py_api_animated_sprite_get_stagger_animation_start_times,
+        METH_VARARGS | METH_KEYWORDS, "Gets the animated sprite's stagger animation start times value."
+    },
+    {
         "animated_sprite_set_shader_instance", (PyCFunction) cre_py_api_animated_sprite_set_shader_instance,
         METH_VARARGS | METH_KEYWORDS, "Sets the shader instance for the animated sprite."
     },
@@ -922,6 +932,7 @@ static char* crePyApiSpriteSetTextureKWList[] = {"entity_id", "file_path", NULL}
 static char* crePyApiAnimatedSpriteSetAnimationKWList[] = {"entity_id", "name", NULL};
 static char* crePyApiAnimatedSpriteSetCurrentAnimationFrameKWList[] = {"entity_id", "frame", NULL};
 static char* crePyApiAnimatedSpriteAddAnimationKWList[] = {"entity_id", "name", "speed", "loops", "frames", NULL};
+static char* crePyApiAnimatedSpriteSetStaggerAnimationStartTimesKWList[] = {"entity_id", "stagger", NULL};
 
 static char* crePyApiTextLabelSetTextKWList[] = {"entity_id", "text", NULL};
 static char* crePyApiTextLabelSetFontUIDKWList[] = {"entity_id", "uid", NULL};

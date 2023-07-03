@@ -25,6 +25,8 @@ typedef struct AnimatedSpriteComponent {
     bool flipH;
     bool flipV;
     uint32_t startAnimationTickTime;
+    bool staggerStartAnimationTimes; // If true, will apply a random start time modifier when being played
+    uint32_t randomStaggerTime; // Used to stagger animations
     SEShaderInstanceId shaderInstanceId;
 } AnimatedSpriteComponent;
 
@@ -58,7 +60,7 @@ typedef struct AnimatedSpriteComponentData {
     SEVector2 origin;
     bool flipH;
     bool flipV;
-    uint32_t startAnimationTickTime;
+    bool staggerStartAnimationTimes;
 } AnimatedSpriteComponentData;
 
 AnimatedSpriteComponent* animated_sprite_component_create();
@@ -68,6 +70,9 @@ AnimatedSpriteComponent* animated_sprite_component_copy(const AnimatedSpriteComp
 void animated_sprite_component_add_animation(AnimatedSpriteComponent* animatedSpriteComponent, CreAnimation animation);
 AnimationQueryResult animated_sprite_component_get_animation(AnimatedSpriteComponent* animatedSpriteComponent, const char* name);
 bool animated_sprite_component_set_animation(AnimatedSpriteComponent* animatedSpriteComponent, const char* name);
+// Plays animation and returns true if a new one is played
+bool animated_sprite_component_play_animation(AnimatedSpriteComponent* animatedSpriteComponent, const char* name);
+void animated_sprite_component_refresh_random_stagger_animation_time(AnimatedSpriteComponent* animatedSpriteComponent);
 
 AnimatedSpriteComponentData* animated_sprite_component_data_create();
 void animated_sprite_component_data_delete(AnimatedSpriteComponentData* animatedSpriteComponent);

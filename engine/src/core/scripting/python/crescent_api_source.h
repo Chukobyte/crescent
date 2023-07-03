@@ -1360,6 +1360,18 @@
 "        )\n"\
 "\n"\
 "    @property\n"\
+"    def stagger_animation_start_times(self) -> bool:\n"\
+"        return crescent_api_internal.animated_sprite_get_stagger_animation_start_times(\n"\
+"            entity_id=self.entity_id\n"\
+"        )\n"\
+"\n"\
+"    @stagger_animation_start_times.setter\n"\
+"    def stagger_animation_start_times(self, value: bool) -> None:\n"\
+"        crescent_api_internal.animated_sprite_set_stagger_animation_start_times(\n"\
+"            entity_id=self.entity_id, stagger=value\n"\
+"        )\n"\
+"\n"\
+"    @property\n"\
 "    def shader_instance(self) -> Optional[ShaderInstance]:\n"\
 "        shader_instance_id = crescent_api_internal.animated_sprite_get_shader_instance(\n"\
 "            entity_id=self.entity_id\n"\

@@ -18,14 +18,25 @@
 
 CreEntitySystem* animatedSpriteRenderingSystem = NULL;
 
+void animated_sprite_rendering_system_on_entity_registered(CreEntity entity);
 void animated_sprite_rendering_system_render();
 
 CreEntitySystem* cre_animated_sprite_rendering_ec_system_create() {
     animatedSpriteRenderingSystem = cre_ec_system_create();
     animatedSpriteRenderingSystem->name = se_strdup("Animated Sprite Rendering");
+    animatedSpriteRenderingSystem->on_entity_registered_func = animated_sprite_rendering_system_on_entity_registered;
     animatedSpriteRenderingSystem->render_func = animated_sprite_rendering_system_render;
     animatedSpriteRenderingSystem->component_signature = CreComponentType_TRANSFORM_2D | CreComponentType_ANIMATED_SPRITE;
     return animatedSpriteRenderingSystem;
+}
+
+void animated_sprite_rendering_system_on_entity_registered(CreEntity entity) {
+    AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent *) cre_component_manager_get_component(entity, CreComponentDataIndex_ANIMATED_SPRITE);
+    SE_ASSERT(animatedSpriteComponent != NULL);
+    animated_sprite_component_refresh_random_stagger_animation_time(animatedSpriteComponent);
+    if (animatedSpriteComponent->isPlaying) {
+        animatedSpriteComponent->startAnimationTickTime = SDL_GetTicks() + animatedSpriteComponent->randomStaggerTime;
+    }
 }
 
 void animated_sprite_rendering_system_render() {
@@ -39,7 +50,8 @@ void animated_sprite_rendering_system_render() {
         CreAnimationFrame currentFrame = animatedSpriteComponent->currentAnimation.animationFrames[animatedSpriteComponent->currentAnimation.currentFrame];
         if (animatedSpriteComponent->isPlaying) {
             const float entityTimeDilation = cre_scene_manager_get_node_full_time_dilation(entity);
-            const int tickRate = (int) ((((float) currentTickTime - (float) animatedSpriteComponent->startAnimationTickTime) / (float) animatedSpriteComponent->currentAnimation.speed) * entityTimeDilation);
+            const float spriteCurrentTickTime = (float) currentTickTime + (float) animatedSpriteComponent->randomStaggerTime;
+            const int tickRate = (int) (((spriteCurrentTickTime - (float) animatedSpriteComponent->startAnimationTickTime) / (float) animatedSpriteComponent->currentAnimation.speed) * entityTimeDilation);
             const int newIndex = tickRate % animatedSpriteComponent->currentAnimation.frameCount;
             if (newIndex != animatedSpriteComponent->currentAnimation.currentFrame) {
                 // Index changed

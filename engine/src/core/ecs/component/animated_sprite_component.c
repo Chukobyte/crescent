@@ -2,6 +2,8 @@
 
 #include <string.h>
 
+#include <SDL2/SDL.h>
+
 #include "../seika/src/asset/asset_manager.h"
 #include "../seika/src/memory/se_mem.h"
 #include "../seika/src/utils/se_assert.h"
@@ -22,6 +24,8 @@ AnimatedSpriteComponent* animated_sprite_component_create() {
     animatedSpriteComponent->flipH = false;
     animatedSpriteComponent->flipV = false;
     animatedSpriteComponent->startAnimationTickTime = 0;
+    animatedSpriteComponent->staggerStartAnimationTimes = false;
+    animatedSpriteComponent->randomStaggerTime = 0;
     animatedSpriteComponent->shaderInstanceId = SE_SHADER_INSTANCE_INVALID_ID;
 
     return animatedSpriteComponent;
@@ -66,6 +70,38 @@ AnimationQueryResult animated_sprite_component_get_animation(AnimatedSpriteCompo
     return animationQueryResult;
 }
 
+bool animated_sprite_component_play_animation(AnimatedSpriteComponent *animatedSpriteComponent, const char* name) {
+    // First checks if new animation, if not just play the currently set animation (if not playing)
+    bool isPlayingNewAnimation = false;
+    bool playAnimationSuccess = false;
+    if (strcmp(animatedSpriteComponent->currentAnimation.name, name) != 0) {
+        playAnimationSuccess = animated_sprite_component_set_animation(animatedSpriteComponent, name);
+        if (playAnimationSuccess) {
+            isPlayingNewAnimation = true;
+        }
+    } else if (!animatedSpriteComponent->isPlaying) {
+        const AnimationQueryResult queryResult = animated_sprite_component_get_animation(animatedSpriteComponent, name);
+        if (queryResult.success) {
+            playAnimationSuccess = true;
+        }
+    }
+    if (playAnimationSuccess) {
+        animatedSpriteComponent->isPlaying = true;
+        animatedSpriteComponent->startAnimationTickTime = SDL_GetTicks() + animatedSpriteComponent->randomStaggerTime;
+    }
+    return isPlayingNewAnimation;
+}
+
+void animated_sprite_component_refresh_random_stagger_animation_time(AnimatedSpriteComponent* animatedSpriteComponent) {
+    if (animatedSpriteComponent->staggerStartAnimationTimes) {
+        uint32_t random_value = (rand() & 0xFFFF) << 16; // Generate random upper 16 bits
+        random_value |= (rand() & 0xFFFF);
+        animatedSpriteComponent->randomStaggerTime = random_value;
+    } else {
+        animatedSpriteComponent->randomStaggerTime = 0;
+    }
+}
+
 //--- Animated Sprite Component Data ---//
 AnimatedSpriteComponentData* animated_sprite_component_data_create() {
     AnimatedSpriteComponentData* animatedSpriteComponent = SE_MEM_ALLOCATE(AnimatedSpriteComponentData);
@@ -80,7 +116,7 @@ AnimatedSpriteComponentData* animated_sprite_component_data_create() {
     animatedSpriteComponent->isPlaying = false;
     animatedSpriteComponent->flipH = false;
     animatedSpriteComponent->flipV = false;
-    animatedSpriteComponent->startAnimationTickTime = 0;
+    animatedSpriteComponent->staggerStartAnimationTimes = false;
 
     return animatedSpriteComponent;
 }
@@ -97,7 +133,7 @@ AnimatedSpriteComponent* animated_sprite_component_data_copy_to_animated_sprite(
     copiedNode->isPlaying = animatedSpriteComponentData->isPlaying;
     copiedNode->flipH = animatedSpriteComponentData->flipH;
     copiedNode->flipV = animatedSpriteComponentData->flipV;
-    copiedNode->startAnimationTickTime = 0;
+    copiedNode->staggerStartAnimationTimes = animatedSpriteComponentData->staggerStartAnimationTimes;
     strcpy(copiedNode->currentAnimation.name, animatedSpriteComponentData->currentAnimation.name);
     for (size_t animationIndex = 0; animationIndex < animatedSpriteComponentData->animationCount; animationIndex++) {
         const AnimationData* animationData = &animatedSpriteComponentData->animations[animationIndex];
