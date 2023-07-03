@@ -1460,7 +1460,7 @@ PyObject* cre_py_api_animated_sprite_play(PyObject* self, PyObject* args, PyObje
     CreEntity entity;
     char* animationName;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "is", crePyApiAnimatedSpriteSetAnimationKWList, &entity, &animationName)) {
-        AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent *) cre_component_manager_get_component(entity, CreComponentDataIndex_ANIMATED_SPRITE);
+        AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_ANIMATED_SPRITE);
         if (animated_sprite_component_play_animation(animatedSpriteComponent, animationName)) {
             Py_RETURN_TRUE;
         }
@@ -1472,7 +1472,7 @@ PyObject* cre_py_api_animated_sprite_play(PyObject* self, PyObject* args, PyObje
 PyObject* cre_py_api_animated_sprite_stop(PyObject* self, PyObject* args, PyObject* kwargs) {
     CreEntity entity;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
-        AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent *) cre_component_manager_get_component(entity, CreComponentDataIndex_ANIMATED_SPRITE);
+        AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_ANIMATED_SPRITE);
         animatedSpriteComponent->isPlaying = false;
         Py_RETURN_NONE;
     }
@@ -1521,8 +1521,7 @@ PyObject* cre_py_api_animated_sprite_add_animation(PyObject* self, PyObject* arg
     bool loops;
     PyObject* framesList;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "isibO", crePyApiAnimatedSpriteAddAnimationKWList, &entity, &name, &speed, &loops, &framesList)) {
-        AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) cre_component_manager_get_component(
-                    entity, CreComponentDataIndex_ANIMATED_SPRITE);
+        AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_ANIMATED_SPRITE);
         CreAnimation newAnim = { .frameCount = 0, .currentFrame = 0, .speed = speed, .name = {'\0'}, .doesLoop = loops, .isValid = true };
         strcpy(newAnim.name, name);
         py_load_animated_sprite_anim_frames(&newAnim, framesList);
@@ -1540,8 +1539,7 @@ PyObject* cre_py_api_animated_sprite_set_flip_h(PyObject* self, PyObject* args, 
     CreEntity entity;
     bool flipH;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "ib", crePyApiGenericSetEntityFlipHKWList, &entity, &flipH)) {
-        AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) cre_component_manager_get_component(
-                    entity, CreComponentDataIndex_ANIMATED_SPRITE);
+        AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_ANIMATED_SPRITE);
         animatedSpriteComponent->flipH = flipH;
         Py_RETURN_NONE;
     }
@@ -1551,8 +1549,7 @@ PyObject* cre_py_api_animated_sprite_set_flip_h(PyObject* self, PyObject* args, 
 PyObject* cre_py_api_animated_sprite_get_flip_h(PyObject* self, PyObject* args, PyObject* kwargs) {
     CreEntity entity;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
-        const AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) cre_component_manager_get_component(
-                    entity, CreComponentDataIndex_ANIMATED_SPRITE);
+        const AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_ANIMATED_SPRITE);
         if (animatedSpriteComponent->flipH) {
             Py_RETURN_TRUE;
         }
@@ -1565,8 +1562,7 @@ PyObject* cre_py_api_animated_sprite_set_flip_v(PyObject* self, PyObject* args, 
     CreEntity entity;
     bool flipV;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "ib", crePyApiGenericSetEntityFlipVKWList, &entity, &flipV)) {
-        AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) cre_component_manager_get_component(
-                    entity, CreComponentDataIndex_ANIMATED_SPRITE);
+        AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_ANIMATED_SPRITE);
         animatedSpriteComponent->flipV = flipV;
         Py_RETURN_NONE;
     }
@@ -1593,8 +1589,7 @@ PyObject* cre_py_api_animated_sprite_set_modulate(PyObject* self, PyObject* args
     int b;
     int a;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "iiiii", crePyApiGenericSetEntityColorKWList, &entity, &r, &g, &b, &a)) {
-        AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) cre_component_manager_get_component(
-                    entity, CreComponentDataIndex_ANIMATED_SPRITE);
+        AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_ANIMATED_SPRITE);
         animatedSpriteComponent->modulate = se_color_get_normalized_color(r, g, b, a);
         Py_RETURN_NONE;
     }
@@ -1604,8 +1599,7 @@ PyObject* cre_py_api_animated_sprite_set_modulate(PyObject* self, PyObject* args
 PyObject* cre_py_api_animated_sprite_get_modulate(PyObject* self, PyObject* args, PyObject* kwargs) {
     CreEntity entity;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
-        const AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) cre_component_manager_get_component(
-                    entity, CreComponentDataIndex_ANIMATED_SPRITE);
+        const AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_ANIMATED_SPRITE);
         const int red = (int) (animatedSpriteComponent->modulate.r * 255.0f);
         const int green = (int) (animatedSpriteComponent->modulate.g * 255.0f);
         const int blue = (int) (animatedSpriteComponent->modulate.b * 255.0f);
@@ -1633,6 +1627,33 @@ PyObject* cre_py_api_animated_sprite_get_origin(PyObject* self, PyObject* args, 
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
         const AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent *) cre_component_manager_get_component(entity, CreComponentDataIndex_ANIMATED_SPRITE);
         return Py_BuildValue("(ff)", animatedSpriteComponent->origin.x, animatedSpriteComponent->origin.y);
+    }
+    return NULL;
+}
+
+
+PyObject* cre_py_api_animated_sprite_set_stagger_animation_start_times(PyObject* self, PyObject* args, PyObject* kwargs) {
+    CreEntity entity;
+    bool staggerAnimationStartTimes;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "ib", crePyApiAnimatedSpriteSetStaggerAnimationStartTimesKWList, &entity, &staggerAnimationStartTimes)) {
+        AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent *) cre_component_manager_get_component(entity, CreComponentDataIndex_ANIMATED_SPRITE);
+        if (animatedSpriteComponent->staggerStartAnimationTimes != staggerAnimationStartTimes) {
+            animatedSpriteComponent->staggerStartAnimationTimes = staggerAnimationStartTimes;
+            animated_sprite_component_refresh_random_stagger_animation_time(animatedSpriteComponent);
+        }
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_animated_sprite_get_stagger_animation_start_times(PyObject* self, PyObject* args, PyObject* kwargs) {
+    CreEntity entity;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
+        const AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_ANIMATED_SPRITE);
+        if (animatedSpriteComponent->staggerStartAnimationTimes) {
+            Py_RETURN_TRUE;
+        }
+        Py_RETURN_FALSE;
     }
     return NULL;
 }

@@ -580,6 +580,16 @@ def animated_sprite_get_origin(entity_id: int) -> Tuple[float, float]:
     pass
 
 
+def animated_sprite_set_stagger_animation_start_times(
+    entity_id: int, stagger: bool
+) -> None:
+    pass
+
+
+def animated_sprite_get_stagger_animation_start_times(entity_id: int) -> bool:
+    pass
+
+
 def animated_sprite_get_shader_instance(entity_id: int) -> int:
     return 0
 
