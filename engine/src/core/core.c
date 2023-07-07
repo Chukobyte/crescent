@@ -2,9 +2,6 @@
 
 #include <time.h>
 
-#include <SDL2/SDL.h>
-#include <glad/glad.h>
-
 #include "../seika/src/seika.h"
 #include "../seika/src/asset/asset_file_loader.h"
 #include "../seika/src/asset/asset_manager.h"
@@ -223,19 +220,19 @@ void cre_process_game_update() {
     static uint32_t lastFrameTime = 0;
     const uint32_t targetFps = engineContext->targetFPS;
     const uint32_t FRAME_TARGET_TIME = MILLISECONDS_PER_TICK / targetFps;
-    const uint32_t timeToWait = FRAME_TARGET_TIME - (SDL_GetTicks() - lastFrameTime);
+    const uint32_t timeToWait = FRAME_TARGET_TIME - (sf_get_ticks() - lastFrameTime);
     if (timeToWait > 0 && timeToWait <= FRAME_TARGET_TIME) {
-        SDL_Delay(timeToWait);
+        sf_delay(timeToWait);
     }
 
     // Variable Time Step
-    const float variableDeltaTime = (float) (SDL_GetTicks() - lastFrameTime) / (float) MILLISECONDS_PER_TICK;
+    const float variableDeltaTime = (float) (sf_get_ticks() - lastFrameTime) / (float) MILLISECONDS_PER_TICK;
     cre_ec_system_update_systems(variableDeltaTime);
 
     // Fixed Time Step
     static uint32_t fixedCurrentTime = 0;
     static float accumulator = 0.0f;
-    uint32_t newTime = SDL_GetTicks();
+    uint32_t newTime = sf_get_ticks();
     uint32_t frameTime = newTime - fixedCurrentTime;
     static const uint32_t MAX_FRAME_TIME = 250;
     if (frameTime > MAX_FRAME_TIME) {
@@ -252,7 +249,7 @@ void cre_process_game_update() {
     }
 
     se_input_clean_up_flags();
-    lastFrameTime = SDL_GetTicks();
+    lastFrameTime = sf_get_ticks();
 
     cre_ec_system_post_update_all_systems();
 }
@@ -275,6 +272,5 @@ void cre_shutdown() {
     cre_ecs_manager_finalize();
     cre_py_finalize();
     cre_curve_float_manager_finalize();
-    SDL_Quit();
     se_logger_info("Crescent Engine shutdown!");
 }

@@ -1187,8 +1187,7 @@ PyObject* cre_py_api_node2D_add_to_scale(PyObject* self, PyObject* args, PyObjec
 PyObject* cre_py_api_node2D_get_scale(PyObject* self, PyObject* args, PyObject* kwargs) {
     CreEntity entity;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
-        const Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity,
-                CreComponentDataIndex_TRANSFORM_2D);
+        const Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_TRANSFORM_2D);
         return Py_BuildValue("(ff)", transformComp->localTransform.scale.x, transformComp->localTransform.scale.y);
     }
     return NULL;

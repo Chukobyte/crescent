@@ -2,8 +2,7 @@
 
 #include <stddef.h>
 
-#include <SDL2/SDL.h>
-
+#include "../seika/src/seika.h"
 #include "../seika/src/memory/se_mem.h"
 #include "../seika/src/utils/se_assert.h"
 
@@ -45,6 +44,6 @@ void cre_engine_context_update_stats() {
     } else {
         countedFrames++;
     }
-    float averageFPS = (float) countedFrames / ((float) SDL_GetTicks() / 1000.f);
+    float averageFPS = (float) countedFrames / ((float) sf_get_ticks() / 1000.f);
     creEngineContext->stats.averageFPS = averageFPS;
 }

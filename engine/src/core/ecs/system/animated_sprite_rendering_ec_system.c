@@ -1,7 +1,6 @@
 #include "animated_sprite_rendering_ec_system.h"
 
-#include <SDL2/SDL.h>
-
+#include "../seika/src/seika.h"
 #include "../seika/src/rendering/renderer.h"
 #include "../seika/src/rendering/shader/shader_cache.h"
 #include "../seika/src/utils/se_string_util.h"
@@ -35,14 +34,14 @@ void animated_sprite_rendering_system_on_entity_registered(CreEntity entity) {
     SE_ASSERT(animatedSpriteComponent != NULL);
     animated_sprite_component_refresh_random_stagger_animation_time(animatedSpriteComponent);
     if (animatedSpriteComponent->isPlaying) {
-        animatedSpriteComponent->startAnimationTickTime = SDL_GetTicks() + animatedSpriteComponent->randomStaggerTime;
+        animatedSpriteComponent->startAnimationTickTime = sf_get_ticks() + animatedSpriteComponent->randomStaggerTime;
     }
 }
 
 void animated_sprite_rendering_system_render() {
     const CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
     const CRECamera2D* defaultCamera = cre_camera_manager_get_default_camera();
-    const int currentTickTime = (int) SDL_GetTicks();
+    const int currentTickTime = (int) sf_get_ticks();
     for (size_t i = 0; i < animatedSpriteRenderingSystem->entity_count; i++) {
         const CreEntity entity = animatedSpriteRenderingSystem->entities[i];
         Transform2DComponent* spriteTransformComp = (Transform2DComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_TRANSFORM_2D);

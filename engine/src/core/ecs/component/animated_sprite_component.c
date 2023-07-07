@@ -2,8 +2,7 @@
 
 #include <string.h>
 
-#include <SDL2/SDL.h>
-
+#include "../seika/src/seika.h"
 #include "../seika/src/asset/asset_manager.h"
 #include "../seika/src/memory/se_mem.h"
 #include "../seika/src/utils/se_assert.h"
@@ -87,7 +86,7 @@ bool animated_sprite_component_play_animation(AnimatedSpriteComponent *animatedS
     }
     if (playAnimationSuccess) {
         animatedSpriteComponent->isPlaying = true;
-        animatedSpriteComponent->startAnimationTickTime = SDL_GetTicks() + animatedSpriteComponent->randomStaggerTime;
+        animatedSpriteComponent->startAnimationTickTime = sf_get_ticks() + animatedSpriteComponent->randomStaggerTime;
     }
     return isPlayingNewAnimation;
 }
