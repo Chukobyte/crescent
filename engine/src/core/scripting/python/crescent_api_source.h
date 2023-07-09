@@ -1162,6 +1162,18 @@
 "        )\n"\
 "\n"\
 "    @property\n"\
+"    def z_index_relative_to_parent(self) -> bool:\n"\
+"        return crescent_api_internal.node2D_get_z_index_relative_to_parent(\n"\
+"            entity_id=self.entity_id\n"\
+"        )\n"\
+"\n"\
+"    @z_index_relative_to_parent.setter\n"\
+"    def z_index_relative_to_parent(self, value: bool) -> None:\n"\
+"        crescent_api_internal.node2D_set_z_index_relative_to_parent(\n"\
+"            entity_id=self.entity_id, is_relative=value\n"\
+"        )\n"\
+"\n"\
+"    @property\n"\
 "    def ignore_camera(self) -> bool:\n"\
 "        return crescent_api_internal.node2D_get_ignore_camera(entity_id=self.entity_id)\n"\
 "\n"\

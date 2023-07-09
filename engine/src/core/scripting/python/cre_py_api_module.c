@@ -1247,6 +1247,29 @@ PyObject* cre_py_api_node2D_get_z_index(PyObject* self, PyObject* args, PyObject
     return NULL;
 }
 
+PyObject* cre_py_api_node2D_set_z_index_relative_to_parent(PyObject* self, PyObject* args, PyObject* kwargs) {
+    CreEntity entity;
+    bool isRelative;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "ib", crePyApiNode2DSetZIndexRelativeToParentKWList, &entity, &isRelative)) {
+        Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_TRANSFORM_2D);
+        transformComp->isZIndexRelativeToParent = isRelative;
+        Py_RETURN_NONE;
+    }
+    return NULL;
+}
+
+PyObject* cre_py_api_node2D_get_z_index_relative_to_parent(PyObject* self, PyObject* args, PyObject* kwargs) {
+    CreEntity entity;
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
+        const Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_TRANSFORM_2D);
+        if (transformComp->isZIndexRelativeToParent) {
+            Py_RETURN_TRUE;
+        }
+        Py_RETURN_FALSE;
+    }
+    return NULL;
+}
+
 PyObject* cre_py_api_node2D_set_ignore_camera(PyObject* self, PyObject* args, PyObject* kwargs) {
     CreEntity entity;
     bool ignoreCamera;

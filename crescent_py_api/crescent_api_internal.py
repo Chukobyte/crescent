@@ -453,6 +453,14 @@ def node2D_set_z_index(entity_id: int, z_index: int) -> None:
     pass
 
 
+def node2D_get_z_index_relative_to_parent(entity_id: int) -> bool:
+    return True
+
+
+def node2D_set_z_index_relative_to_parent(entity_id: int, is_relative: bool) -> bool:
+    pass
+
+
 def node2D_get_ignore_camera(entity_id: int) -> bool:
     return False
 
