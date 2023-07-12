@@ -46,7 +46,7 @@ inline bool IsJsonValid(const std::string& jsonText) {
 template<typename JsonType = nlohmann::json>
 inline JsonType LoadFile(const std::string& filePath) {
     std::ifstream i(filePath);
-    nlohmann::json json;
+    JsonType json;
     i >> json;
     return json;
 }
