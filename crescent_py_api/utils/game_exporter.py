@@ -238,10 +238,10 @@ class GameExporter:
         export_os_type = engine_bin_dir_path.as_posix().split("/")[-1]
         engine_binary_extension = ""
         if export_os_type == "windows":
-            # Copy dlls
+            # Copy dlls and embedded python zip
             for file in FileUtils.get_dir_file_paths(
                 engine_bin_dir_path.as_posix(),
-                filter_func=lambda file: file.endswith(".dll"),
+                filter_func=lambda file: file.endswith(".dll") or file.endswith(".zip"),
             ):
                 file_path = Path(file)
                 dest_path = temp_file_path / file_path.name

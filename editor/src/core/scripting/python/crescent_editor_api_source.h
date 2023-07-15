@@ -243,10 +243,10 @@
 "        export_os_type = engine_bin_dir_path.as_posix().split(\"/\")[-1]\n"\
 "        engine_binary_extension = \"\"\n"\
 "        if export_os_type == \"windows\":\n"\
-"            # Copy dlls\n"\
+"            # Copy dlls and embedded python zip\n"\
 "            for file in FileUtils.get_dir_file_paths(\n"\
 "                engine_bin_dir_path.as_posix(),\n"\
-"                filter_func=lambda file: file.endswith(\".dll\"),\n"\
+"                filter_func=lambda file: file.endswith(\".dll\") or file.endswith(\".zip\"),\n"\
 "            ):\n"\
 "                file_path = Path(file)\n"\
 "                dest_path = temp_file_path / file_path.name\n"\
