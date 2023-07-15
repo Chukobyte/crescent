@@ -173,6 +173,14 @@ bool sf_is_running() {
     return isRunning;
 }
 
+uint32_t sf_get_ticks() {
+    return SDL_GetTicks();
+}
+
+void sf_delay(uint32_t timeToWait) {
+    SDL_Delay(timeToWait);
+}
+
 void sf_shutdown() {
     if (isRunning) {
         SDL_DestroyWindow(window);

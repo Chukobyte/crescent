@@ -1125,6 +1125,18 @@ class Node2D(Node):
         )
 
     @property
+    def z_index_relative_to_parent(self) -> bool:
+        return crescent_api_internal.node2D_get_z_index_relative_to_parent(
+            entity_id=self.entity_id
+        )
+
+    @z_index_relative_to_parent.setter
+    def z_index_relative_to_parent(self, value: bool) -> None:
+        crescent_api_internal.node2D_set_z_index_relative_to_parent(
+            entity_id=self.entity_id, is_relative=value
+        )
+
+    @property
     def ignore_camera(self) -> bool:
         return crescent_api_internal.node2D_get_ignore_camera(entity_id=self.entity_id)
 
