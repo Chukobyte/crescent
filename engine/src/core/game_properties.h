@@ -40,7 +40,7 @@ static struct CreAssetFontDefault CRE_DEFAULT_FONT_ASSET = {
     .applyNearestNeighbor = true
 };
 
-#define CRE_INPUT_VALUES_LIMIT 4
+#define CRE_INPUT_VALUES_LIMIT 8
 
 typedef struct CREInputAction {
     char* name;
