@@ -16,7 +16,7 @@
 #pragma warning(disable : 4996) // for strcpy
 #endif
 
-void input_process_keyboard();
+void input_process_keyboard(SDL_Event event);
 void input_process_mouse(SDL_Event event);
 void input_load_gamepads();
 void input_process_gamepad(SDL_Event event);
@@ -207,7 +207,7 @@ void se_input_remove_action(const char* actionName) {}
 
 void se_input_process(SDL_Event event) {
     input_frame_event_data_clear();
-    input_process_keyboard();
+    input_process_keyboard(event);
     input_process_mouse(event);
     input_process_gamepad(event);
 }
@@ -253,28 +253,43 @@ bool se_input_is_action_just_released(const char* actionName) {
     return false;
 }
 
-// TODO: Centralize looping through input actions names to prevent multiple loops
 //--- Keyboard ---//
-void input_process_keyboard() {
-    const Uint8* keyboardState = SDL_GetKeyboardState(NULL);
-    for (size_t i = 0; i < inputActionNamesCount; i++) {
-        SEInputAction* inputAction = (SEInputAction*) se_string_hash_map_get(inputActionMap, inputActionNames[i]);
-        for (size_t j = 0; j < inputAction->keyboardValueCount; j++) {
-            SDL_Scancode scancode = (SDL_Scancode) inputAction->keyboardValues[j];
-            bool isKeyboardValuePressed = keyboardState[scancode];
-            if (isKeyboardValuePressed && !inputAction->isActionPressed) {
-                inputAction->isActionPressed = true;
-                inputAction->isActionJustPressed = true;
-                inputAction->lastScancodePressed = scancode;
-                actionJustPressedClean.inputActions[actionJustPressedClean.count++] = inputAction;
-                input_frame_event_data_add_keyboard_data(scancode, InputFrameEventDataType_PRESSED);
-                break;
-            } else if (!isKeyboardValuePressed && !inputAction->isActionJustReleased && inputAction->isActionPressed && (int) scancode == inputAction->lastScancodePressed) {
-                inputAction->isActionPressed = false;
-                inputAction->isActionJustPressed = false;
-                inputAction->isActionJustReleased = true;
-                input_frame_event_data_add_keyboard_data(scancode, InputFrameEventDataType_RELEASED);
-                actionJustReleasedClean.inputActions[actionJustReleasedClean.count++] = inputAction;
+void input_process_keyboard(SDL_Event event) {
+    switch (event.type) {
+    case SDL_KEYDOWN: {
+        const SDL_Scancode scancode = event.key.keysym.scancode;
+        input_frame_event_data_add_keyboard_data(scancode, InputFrameEventDataType_PRESSED);
+        break;
+    }
+    case SDL_KEYUP: {
+        const SDL_Scancode scancode = event.key.keysym.scancode;
+        input_frame_event_data_add_keyboard_data(scancode, InputFrameEventDataType_RELEASED);
+        break;
+    }
+    default:
+        break;
+    }
+
+    if (frameEventData.keyboardDataCount >= 1) {
+        const KeyboardFrameEventData* eventData = &frameEventData.keyboardData[0];
+        for (size_t i = 0; i < inputActionNamesCount; i++) {
+            SEInputAction* inputAction = (SEInputAction*) se_string_hash_map_get(inputActionMap, inputActionNames[i]);
+            for (size_t j = 0; j < inputAction->keyboardValueCount; j++) {
+                SDL_Scancode scancode = (SDL_Scancode) inputAction->keyboardValues[j];
+                if (eventData->scancode == scancode) {
+                    if (eventData->type == InputFrameEventDataType_PRESSED && inputAction->lastScancodePressed != scancode) {
+                        inputAction->isActionPressed = true;
+                        inputAction->isActionJustPressed = true;
+                        inputAction->lastScancodePressed = scancode;
+                        actionJustPressedClean.inputActions[actionJustPressedClean.count++] = inputAction;
+                    } else if (eventData->type == InputFrameEventDataType_RELEASED) {
+                        inputAction->isActionPressed = false;
+                        inputAction->isActionJustPressed = false;
+                        inputAction->isActionJustReleased = true;
+                        inputAction->lastScancodePressed = SDL_SCANCODE_UNKNOWN;
+                        actionJustReleasedClean.inputActions[actionJustReleasedClean.count++] = inputAction;
+                    }
+                }
             }
         }
     }
