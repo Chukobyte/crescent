@@ -282,9 +282,6 @@ void input_process_keyboard() {
 
 //--- Mouse ---//
 void input_process_mouse(SDL_Event event) {
-    bool isMouseEvent = false;
-    bool mousePressed = false;
-    Uint8 mouseButton = 0;
     switch (event.type) {
     case SDL_MOUSEMOTION: {
         SEMouse* globalMouse = se_mouse_get();
@@ -293,22 +290,20 @@ void input_process_mouse(SDL_Event event) {
         break;
     }
     case SDL_MOUSEWHEEL:
-//            inputEvent.type = InputEventType::MOUSE;
         break;
     case SDL_MOUSEBUTTONDOWN:
-        isMouseEvent = true;
-        mousePressed = true;
-        mouseButton = event.button.button;
+        input_frame_event_data_add_mouse_data(event.button.button, InputFrameEventDataType_PRESSED);
         break;
     case SDL_MOUSEBUTTONUP:
-        isMouseEvent = true;
-        mousePressed = false;
-        mouseButton = event.button.button;
+        input_frame_event_data_add_mouse_data(event.button.button, InputFrameEventDataType_RELEASED);
         break;
     default:
         break;
     }
-    if (isMouseEvent) {
+    if (frameEventData.mouseDataCount >= 1) {
+        const MouseFrameEventData* eventData = &frameEventData.mouseData[0];
+        const Uint8 mouseButton = eventData->mouseButton;
+        const bool mousePressed = eventData->type == InputFrameEventDataType_PRESSED;
         for (size_t i = 0; i < inputActionNamesCount; i++) {
             SEInputAction* inputAction = (SEInputAction*) se_string_hash_map_get(inputActionMap, inputActionNames[i]);
             for (size_t j = 0; j < inputAction->mouseValueCount; j++) {
@@ -319,13 +314,11 @@ void input_process_mouse(SDL_Event event) {
                     if (mousePressed) {
                         inputAction->isActionPressed = true;
                         inputAction->isActionJustPressed = true;
-                        input_frame_event_data_add_mouse_data(mouseButton, InputFrameEventDataType_PRESSED);
                         actionJustPressedClean.inputActions[actionJustPressedClean.count++] = inputAction;
                     } else {
                         inputAction->isActionPressed = false;
                         inputAction->isActionJustPressed = false;
                         inputAction->isActionJustReleased = true;
-                        input_frame_event_data_add_mouse_data(mouseButton, InputFrameEventDataType_RELEASED);
                         actionJustReleasedClean.inputActions[actionJustReleasedClean.count++] = inputAction;
                     }
                     break;
