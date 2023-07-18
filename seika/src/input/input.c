@@ -277,7 +277,7 @@ void input_process_keyboard(SDL_Event event) {
             for (size_t j = 0; j < inputAction->keyboardValueCount; j++) {
                 SDL_Scancode scancode = (SDL_Scancode) inputAction->keyboardValues[j];
                 if (eventData->scancode == scancode) {
-                    if (eventData->type == InputFrameEventDataType_PRESSED && inputAction->lastScancodePressed != scancode) {
+                    if (eventData->type == InputFrameEventDataType_PRESSED && (SDL_Scancode)inputAction->lastScancodePressed != scancode) {
                         inputAction->isActionPressed = true;
                         inputAction->isActionJustPressed = true;
                         inputAction->lastScancodePressed = scancode;
