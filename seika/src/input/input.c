@@ -427,21 +427,14 @@ void input_initialize_gamepad_system(const char* controllerDBFilePath) {
     // Non Game Controller Button Action
     se_string_hash_map_add_int(gamepadStringValuesMap, "joystick_left_trigger", GamepadInputButtonType_LEFT_TRIGGER);
     se_string_hash_map_add_int(gamepadStringValuesMap, "joystick_right_trigger", GamepadInputButtonType_RIGHT_TRIGGER);
-    se_string_hash_map_add_int(gamepadStringValuesMap, "joystick_left_analog_left",
-                               GamepadInputButtonType_LEFT_ANALOG_LEFT);
-    se_string_hash_map_add_int(gamepadStringValuesMap, "joystick_left_analog_right",
-                               GamepadInputButtonType_LEFT_ANALOG_RIGHT);
+    se_string_hash_map_add_int(gamepadStringValuesMap, "joystick_left_analog_left", GamepadInputButtonType_LEFT_ANALOG_LEFT);
+    se_string_hash_map_add_int(gamepadStringValuesMap, "joystick_left_analog_right", GamepadInputButtonType_LEFT_ANALOG_RIGHT);
     se_string_hash_map_add_int(gamepadStringValuesMap, "joystick_left_analog_up", GamepadInputButtonType_LEFT_ANALOG_UP);
-    se_string_hash_map_add_int(gamepadStringValuesMap, "joystick_left_analog_down",
-                               GamepadInputButtonType_LEFT_ANALOG_DOWN);
-    se_string_hash_map_add_int(gamepadStringValuesMap, "joystick_right_analog_left",
-                               GamepadInputButtonType_RIGHT_ANALOG_LEFT);
-    se_string_hash_map_add_int(gamepadStringValuesMap, "joystick_right_analog_right",
-                               GamepadInputButtonType_RIGHT_ANALOG_RIGHT);
-    se_string_hash_map_add_int(gamepadStringValuesMap, "joystick_right_analog_up",
-                               GamepadInputButtonType_RIGHT_ANALOG_UP);
-    se_string_hash_map_add_int(gamepadStringValuesMap, "joystick_right_analog_down",
-                               GamepadInputButtonType_RIGHT_ANALOG_DOWN);
+    se_string_hash_map_add_int(gamepadStringValuesMap, "joystick_left_analog_down", GamepadInputButtonType_LEFT_ANALOG_DOWN);
+    se_string_hash_map_add_int(gamepadStringValuesMap, "joystick_right_analog_left", GamepadInputButtonType_RIGHT_ANALOG_LEFT);
+    se_string_hash_map_add_int(gamepadStringValuesMap, "joystick_right_analog_right", GamepadInputButtonType_RIGHT_ANALOG_RIGHT);
+    se_string_hash_map_add_int(gamepadStringValuesMap, "joystick_right_analog_up", GamepadInputButtonType_RIGHT_ANALOG_UP);
+    se_string_hash_map_add_int(gamepadStringValuesMap, "joystick_right_analog_down", GamepadInputButtonType_RIGHT_ANALOG_DOWN);
 
     // Initialize game pads
     input_load_gamepads(controllerDBFilePath);
