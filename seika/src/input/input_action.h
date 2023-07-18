@@ -6,12 +6,6 @@
 #define SE_MAX_INPUT_ACTIONS 32
 #define SE_MAX_INPUT_VALUES 4
 
-typedef enum SEInputActionType {
-    SEInputActionType_KEYBOARD,
-    SEInputActionType_MOUSE,
-    SEInputActionType_GAMEPAD
-} SEInputActionType;
-
 typedef struct SEInputAction {
     size_t keyboardValueCount;
     size_t mouseValueCount;
