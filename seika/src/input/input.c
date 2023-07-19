@@ -385,10 +385,10 @@ typedef enum GamepadInputButtonType {
 typedef enum GamepadInputAxisMotionType {
     GamepadInputAxisMotionType_LEFT_HORIZONTAL_AXIS = 0,
     GamepadInputAxisMotionType_LEFT_VERTICAL_AXIS = 1,
-    GamepadInputAxisMotionType_RIGHT_HORIZONTAL_AXIS = 3,
-    GamepadInputAxisMotionType_RIGHT_VERTICAL_AXIS = 4,
+    GamepadInputAxisMotionType_RIGHT_HORIZONTAL_AXIS = 2,
+    GamepadInputAxisMotionType_RIGHT_VERTICAL_AXIS = 3,
 
-    GamepadInputAxisMotionType_LEFT_TRIGGER = 2,
+    GamepadInputAxisMotionType_LEFT_TRIGGER = 4,
     GamepadInputAxisMotionType_RIGHT_TRIGGER = 5,
 } GamepadInputAxisMotionType;
 
