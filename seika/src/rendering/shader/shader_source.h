@@ -57,8 +57,8 @@ static const char* SE_OPENGL_SHADER_SOURCE_FRAGMENT_SPRITE =
     "//@@FUNCTIONS\n"
     "\n"
     "void main() {\n"
-    "    vec2 CRE_SPRITE_TEXTURE_SIZE = textureSize(TEXTURE, 0);\n"
-    "    vec2 CRE_SPRITE_UV = mix(UV, CRE_APPLY_NEAREST_NEIGHBOR(UV, CRE_SPRITE_TEXTURE_SIZE), USING_NEAREST_NEIGHBOR);\n"
+    "    vec2 TEXTURE_SIZE = textureSize(TEXTURE, 0);\n"
+    "    vec2 CRE_SPRITE_UV = mix(UV, CRE_APPLY_NEAREST_NEIGHBOR(UV, TEXTURE_SIZE), USING_NEAREST_NEIGHBOR);\n"
     "    COLOR = TEXTURE_MODULATE * texture(TEXTURE, CRE_SPRITE_UV);\n"
     "    //@@fragment()\n"
     "}\n";
