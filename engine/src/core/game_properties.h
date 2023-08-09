@@ -49,7 +49,7 @@ typedef struct CREInputAction {
     char* values[CRE_INPUT_VALUES_LIMIT];
 } CREInputAction;
 
-#define CRE_PROPERTIES_ASSET_LIMIT 64
+#define CRE_PROPERTIES_ASSET_LIMIT 128
 
 typedef struct CREGameProperties {
     char* gameTitle;
