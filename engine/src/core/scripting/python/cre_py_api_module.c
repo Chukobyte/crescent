@@ -1005,9 +1005,11 @@ PyObject* cre_py_api_node_get_name(PyObject* self, PyObject* args, PyObject* kwa
 void cre_invalidate_time_dilation_nodes_with_children(CreEntity entity) {
     NodeComponent* nodeComponent = cre_component_manager_get_component(entity, CreComponentDataIndex_NODE);
     nodeComponent->timeDilation.cacheInvalid = true;
-    SceneTreeNode* sceneTreeNode = cre_scene_manager_get_entity_tree_node(entity);
-    for (size_t i = 0; i < sceneTreeNode->childCount; i++) {
-        cre_invalidate_time_dilation_nodes_with_children(sceneTreeNode->children[i]->entity);
+    if (cre_scene_manager_has_entity_tree_node(entity)) {
+        SceneTreeNode* sceneTreeNode = cre_scene_manager_get_entity_tree_node(entity);
+        for (size_t i = 0; i < sceneTreeNode->childCount; i++) {
+            cre_invalidate_time_dilation_nodes_with_children(sceneTreeNode->children[i]->entity);
+        }
     }
 }
 
@@ -1015,8 +1017,7 @@ PyObject* cre_py_api_node_set_time_dilation(PyObject* self, PyObject* args, PyOb
     CreEntity entity;
     float timeDilation;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "if", crePyApiNodeSetTimeDilationKWList, &entity, &timeDilation)) {
-        NodeComponent* nodeComponent = (NodeComponent*) cre_component_manager_get_component(entity,
-                                       CreComponentDataIndex_NODE);
+        NodeComponent* nodeComponent = (NodeComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_NODE);
         nodeComponent->timeDilation.value = timeDilation;
         cre_invalidate_time_dilation_nodes_with_children(entity);
         Py_RETURN_NONE;
@@ -1027,8 +1028,7 @@ PyObject* cre_py_api_node_set_time_dilation(PyObject* self, PyObject* args, PyOb
 PyObject* cre_py_api_node_get_time_dilation(PyObject* self, PyObject* args, PyObject* kwargs) {
     CreEntity entity;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
-        NodeComponent* nodeComponent = (NodeComponent*) cre_component_manager_get_component(entity,
-                                       CreComponentDataIndex_NODE);
+        NodeComponent* nodeComponent = (NodeComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_NODE);
         return Py_BuildValue("f", nodeComponent->timeDilation.value);
     }
     return NULL;
@@ -1125,8 +1125,7 @@ PyObject* cre_py_api_node2D_add_to_position(PyObject* self, PyObject* args, PyOb
     float x;
     float y;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "iff", crePyApiNode2DSetXYKWList, &entity, &x, &y)) {
-        Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity,
-                                              CreComponentDataIndex_TRANSFORM_2D);
+        Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_TRANSFORM_2D);
         py_api_update_entity_local_position(entity, &(SEVector2) {
             x + transformComp->localTransform.position.x, y + transformComp->localTransform.position.y
         });
@@ -1138,8 +1137,7 @@ PyObject* cre_py_api_node2D_add_to_position(PyObject* self, PyObject* args, PyOb
 PyObject* cre_py_api_node2D_get_position(PyObject* self, PyObject* args, PyObject* kwargs) {
     CreEntity entity;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
-        const Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity,
-                CreComponentDataIndex_TRANSFORM_2D);
+        const Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_TRANSFORM_2D);
         return Py_BuildValue("(ff)", transformComp->localTransform.position.x, transformComp->localTransform.position.y);
     }
     return NULL;
@@ -1148,8 +1146,7 @@ PyObject* cre_py_api_node2D_get_position(PyObject* self, PyObject* args, PyObjec
 PyObject* cre_py_api_node2D_get_global_position(PyObject* self, PyObject* args, PyObject* kwargs) {
     CreEntity entity;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
-        Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity,
-                                              CreComponentDataIndex_TRANSFORM_2D);
+        Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_TRANSFORM_2D);
         SETransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity, transformComp);
         return Py_BuildValue("(ff)", globalTransform->position.x, globalTransform->position.y);
     }
@@ -1174,8 +1171,7 @@ PyObject* cre_py_api_node2D_add_to_scale(PyObject* self, PyObject* args, PyObjec
     float x;
     float y;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "iff", crePyApiNode2DSetXYKWList, &entity, &x, &y)) {
-        Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity,
-                                              CreComponentDataIndex_TRANSFORM_2D);
+        Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_TRANSFORM_2D);
         py_api_update_entity_local_scale(entity, &(SEVector2) {
             x + transformComp->localTransform.scale.x, y + transformComp->localTransform.scale.y
         });
@@ -1207,8 +1203,7 @@ PyObject* cre_py_api_node2D_add_to_rotation(PyObject* self, PyObject* args, PyOb
     CreEntity entity;
     float rotation;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "if", crePyApiNode2DSetRotationKWList, &entity, &rotation)) {
-        Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity,
-                                              CreComponentDataIndex_TRANSFORM_2D);
+        Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_TRANSFORM_2D);
         py_api_update_entity_local_rotation(entity, rotation + transformComp->localTransform.rotation);
         Py_RETURN_NONE;
     }
@@ -1218,8 +1213,7 @@ PyObject* cre_py_api_node2D_add_to_rotation(PyObject* self, PyObject* args, PyOb
 PyObject* cre_py_api_node2D_get_rotation(PyObject* self, PyObject* args, PyObject* kwargs) {
     CreEntity entity;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
-        const Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity,
-                CreComponentDataIndex_TRANSFORM_2D);
+        const Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_TRANSFORM_2D);
         return Py_BuildValue("f", transformComp->localTransform.rotation);
     }
     return NULL;
@@ -1229,8 +1223,7 @@ PyObject* cre_py_api_node2D_set_z_index(PyObject* self, PyObject* args, PyObject
     CreEntity entity;
     int zIndex;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "ii", crePyApiNode2DSetZIndexKWList, &entity, &zIndex)) {
-        Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity,
-                                              CreComponentDataIndex_TRANSFORM_2D);
+        Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_TRANSFORM_2D);
         transformComp->zIndex = zIndex;
         Py_RETURN_NONE;
     }
@@ -1240,8 +1233,7 @@ PyObject* cre_py_api_node2D_set_z_index(PyObject* self, PyObject* args, PyObject
 PyObject* cre_py_api_node2D_get_z_index(PyObject* self, PyObject* args, PyObject* kwargs) {
     CreEntity entity;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
-        const Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity,
-                CreComponentDataIndex_TRANSFORM_2D);
+        const Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_TRANSFORM_2D);
         return Py_BuildValue("i", transformComp->zIndex);
     }
     return NULL;
@@ -1274,8 +1266,7 @@ PyObject* cre_py_api_node2D_set_ignore_camera(PyObject* self, PyObject* args, Py
     CreEntity entity;
     bool ignoreCamera;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "ib", crePyApiNode2DSetIgnoreCameraKWList, &entity, &ignoreCamera)) {
-        Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity,
-                                              CreComponentDataIndex_TRANSFORM_2D);
+        Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_TRANSFORM_2D);
         transformComp->ignoreCamera = ignoreCamera;
         Py_RETURN_NONE;
     }
@@ -1285,8 +1276,7 @@ PyObject* cre_py_api_node2D_set_ignore_camera(PyObject* self, PyObject* args, Py
 PyObject* cre_py_api_node2D_get_ignore_camera(PyObject* self, PyObject* args, PyObject* kwargs) {
     CreEntity entity;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
-        const Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity,
-                CreComponentDataIndex_TRANSFORM_2D);
+        const Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_TRANSFORM_2D);
         if (transformComp->ignoreCamera) {
             Py_RETURN_TRUE;
         }
@@ -1300,8 +1290,7 @@ PyObject* cre_py_api_sprite_set_texture(PyObject* self, PyObject* args, PyObject
     CreEntity entity;
     char* filePath;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "is", crePyApiSpriteSetTextureKWList, &entity, &filePath)) {
-        SpriteComponent* spriteComponent = (SpriteComponent*) cre_component_manager_get_component(entity,
-                                           CreComponentDataIndex_SPRITE);
+        SpriteComponent* spriteComponent = (SpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_SPRITE);
         SE_ASSERT_FMT(se_asset_manager_has_texture(filePath), "Doesn't have texture with file path '%s'", filePath);
         spriteComponent->texture = se_asset_manager_get_texture(filePath);
         Py_RETURN_NONE;
@@ -1312,8 +1301,7 @@ PyObject* cre_py_api_sprite_set_texture(PyObject* self, PyObject* args, PyObject
 PyObject* cre_py_api_sprite_get_texture(PyObject* self, PyObject* args, PyObject* kwargs) {
     CreEntity entity;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
-        const SpriteComponent* spriteComponent = (SpriteComponent*) cre_component_manager_get_component(entity,
-                CreComponentDataIndex_SPRITE);
+        const SpriteComponent* spriteComponent = (SpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_SPRITE);
         SETexture* texture = spriteComponent->texture;
         return Py_BuildValue("(sssb)",
                              texture->fileName,
@@ -1331,8 +1319,7 @@ PyObject* cre_py_api_sprite_set_draw_source(PyObject* self, PyObject* args, PyOb
     float w;
     float h;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "iffff", crePyApiGenericSetEntityRectKWList, &entity, &x, &y, &w, &h)) {
-        SpriteComponent* spriteComponent = (SpriteComponent*) cre_component_manager_get_component(entity,
-                                           CreComponentDataIndex_SPRITE);
+        SpriteComponent* spriteComponent = (SpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_SPRITE);
         spriteComponent->drawSource.x = x;
         spriteComponent->drawSource.y = y;
         spriteComponent->drawSource.w = w;
@@ -1345,8 +1332,7 @@ PyObject* cre_py_api_sprite_set_draw_source(PyObject* self, PyObject* args, PyOb
 PyObject* cre_py_api_sprite_get_draw_source(PyObject* self, PyObject* args, PyObject* kwargs) {
     CreEntity entity;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
-        const SpriteComponent* spriteComponent = (SpriteComponent*) cre_component_manager_get_component(entity,
-                CreComponentDataIndex_SPRITE);
+        const SpriteComponent* spriteComponent = (SpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_SPRITE);
         return Py_BuildValue("(ffff)", spriteComponent->drawSource.x, spriteComponent->drawSource.y, spriteComponent->drawSource.w, spriteComponent->drawSource.h);
     }
     return NULL;
@@ -1356,8 +1342,7 @@ PyObject* cre_py_api_sprite_set_flip_h(PyObject* self, PyObject* args, PyObject*
     CreEntity entity;
     bool flipH;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "ib", crePyApiGenericSetEntityFlipHKWList, &entity, &flipH)) {
-        SpriteComponent* spriteComponent = (SpriteComponent*) cre_component_manager_get_component(entity,
-                                           CreComponentDataIndex_SPRITE);
+        SpriteComponent* spriteComponent = (SpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_SPRITE);
         spriteComponent->flipH = flipH;
         Py_RETURN_NONE;
     }
@@ -1367,8 +1352,7 @@ PyObject* cre_py_api_sprite_set_flip_h(PyObject* self, PyObject* args, PyObject*
 PyObject* cre_py_api_sprite_get_flip_h(PyObject* self, PyObject* args, PyObject* kwargs) {
     CreEntity entity;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
-        const SpriteComponent* spriteComponent = (SpriteComponent*) cre_component_manager_get_component(entity,
-                CreComponentDataIndex_SPRITE);
+        const SpriteComponent* spriteComponent = (SpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_SPRITE);
         if (spriteComponent->flipH) {
             Py_RETURN_TRUE;
         }
@@ -1381,8 +1365,7 @@ PyObject* cre_py_api_sprite_set_flip_v(PyObject* self, PyObject* args, PyObject*
     CreEntity entity;
     bool flipV;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "ib", crePyApiGenericSetEntityFlipVKWList, &entity, &flipV)) {
-        SpriteComponent* spriteComponent = (SpriteComponent*) cre_component_manager_get_component(entity,
-                                           CreComponentDataIndex_SPRITE);
+        SpriteComponent* spriteComponent = (SpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_SPRITE);
         spriteComponent->flipV = flipV;
         Py_RETURN_NONE;
     }
@@ -1392,8 +1375,7 @@ PyObject* cre_py_api_sprite_set_flip_v(PyObject* self, PyObject* args, PyObject*
 PyObject* cre_py_api_sprite_get_flip_v(PyObject* self, PyObject* args, PyObject* kwargs) {
     CreEntity entity;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
-        const SpriteComponent* spriteComponent = (SpriteComponent*) cre_component_manager_get_component(entity,
-                CreComponentDataIndex_SPRITE);
+        const SpriteComponent* spriteComponent = (SpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_SPRITE);
         if (spriteComponent->flipV) {
             Py_RETURN_TRUE;
         }
@@ -1409,8 +1391,7 @@ PyObject* cre_py_api_sprite_set_modulate(PyObject* self, PyObject* args, PyObjec
     int b;
     int a;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "iiiii", crePyApiGenericSetEntityColorKWList, &entity, &r, &g, &b, &a)) {
-        SpriteComponent* spriteComponent = (SpriteComponent*) cre_component_manager_get_component(entity,
-                                           CreComponentDataIndex_SPRITE);
+        SpriteComponent* spriteComponent = (SpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_SPRITE);
         spriteComponent->modulate = se_color_get_normalized_color(r, g, b, a);
         Py_RETURN_NONE;
     }
@@ -1420,8 +1401,7 @@ PyObject* cre_py_api_sprite_set_modulate(PyObject* self, PyObject* args, PyObjec
 PyObject* cre_py_api_sprite_get_modulate(PyObject* self, PyObject* args, PyObject* kwargs) {
     CreEntity entity;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "i", crePyApiGenericGetEntityKWList, &entity)) {
-        const SpriteComponent* spriteComponent = (SpriteComponent*) cre_component_manager_get_component(entity,
-                CreComponentDataIndex_SPRITE);
+        const SpriteComponent* spriteComponent = (SpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_SPRITE);
         const int red = (int) (spriteComponent->modulate.r * 255.0f);
         const int green = (int) (spriteComponent->modulate.g * 255.0f);
         const int blue = (int) (spriteComponent->modulate.b * 255.0f);
@@ -1457,8 +1437,7 @@ PyObject* cre_py_api_sprite_set_shader_instance(PyObject* self, PyObject* args, 
     CreEntity entity;
     SEShaderInstanceId shaderInstanceId;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "ii", crePyApiGenericSetShaderInstanceKWList, &entity, &shaderInstanceId)) {
-        SpriteComponent* spriteComponent = (SpriteComponent*) cre_component_manager_get_component(entity,
-                                           CreComponentDataIndex_SPRITE);
+        SpriteComponent* spriteComponent = (SpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_SPRITE);
         spriteComponent->shaderInstanceId = shaderInstanceId;
         SEShaderInstance* shaderInstance = se_shader_cache_get_instance(spriteComponent->shaderInstanceId);
         se_renderer_set_sprite_shader_default_params(shaderInstance->shader);
