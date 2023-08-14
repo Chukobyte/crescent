@@ -72,24 +72,32 @@ void node_event_subscribe_to_event(CreEntity entity, const char* eventId, CreEnt
 
 void node_event_notify_observers(CreEntity entity, const char* eventId, NodeEventNotifyPayload* payload) {
     NodeEvent* event = node_event_create_event_internal(entity, eventId);
-    for (size_t i = 0; i < event->observerCount; i++) {
-        event->observers[i]->callback(event->observers[i]->data, payload);
+    // Copy observers in case they're deleted in a callback
+    static NodeEventObserver* observersToNotify[CRE_NODE_EVENT_MAX_OBSERVERS];
+    const size_t observerCount = event->observerCount;
+    for (size_t i = 0; i < observerCount; i++) {
+        observersToNotify[i] = event->observers[i];
+    }
+    // Invoke observer callbacks
+    for (size_t i = 0; i < observerCount; i++) {
+        observersToNotify[i]->callback(observersToNotify[i]->data, payload);
     }
 }
 
 void node_event_destroy_all_entity_events_and_observers(CreEntity entity) {
     // Remove all entity observers
-    for (size_t i = 0; i < eventDatabase.nodeEventObserverEntry[entity].entryCount; i++) {
-        NodeEventObserver* nodeEventObserver = eventDatabase.nodeEventObserverEntry[entity].observers[i];
+    NodeEventObserverEntry* observerEntry = &eventDatabase.nodeEventObserverEntry[entity];
+    for (size_t i = 0; i < observerEntry->entryCount; i++) {
+        NodeEventObserver* nodeEventObserver = observerEntry->observers[i];
         if (nodeEventObserver == NULL || nodeEventObserver->event == NULL) {
             continue;
         }
         NodeEvent* nodeEvent = nodeEventObserver->event;
         SE_ARRAY_UTILS_REMOVE_ARRAY_ITEM(nodeEvent->observers, nodeEvent->observerCount, nodeEventObserver, NULL);
         node_observer_free(nodeEventObserver);
-        eventDatabase.nodeEventObserverEntry[entity].observers[i] = NULL;
+        observerEntry->observers[i] = NULL;
     }
-    eventDatabase.nodeEventObserverEntry[entity].entryCount = 0;
+    observerEntry->entryCount = 0;
     // Remove all entity events
     if (eventDatabase.entityEventMaps[entity] != NULL) {
         SE_STRING_HASH_MAP_FOR_EACH(eventDatabase.entityEventMaps[entity], iter) {
@@ -184,8 +192,7 @@ bool does_entity_have_observer_event_already(CreEntity observerEntity, NodeEvent
 
 void register_entity_to_on_scene_exit_callback(CreEntity entity) {
     NodeComponent* nodeComp = NULL;
-    if (!eventDatabase.hasEntityRegisteredOnSceneExitCallback[entity] && (nodeComp = cre_component_manager_get_component_unchecked(
-                entity, CreComponentDataIndex_NODE))) {
+    if (!eventDatabase.hasEntityRegisteredOnSceneExitCallback[entity] && (nodeComp = cre_component_manager_get_component_unchecked(entity, CreComponentDataIndex_NODE))) {
         se_event_register_observer(&nodeComp->onSceneTreeExit, &nodeEntityOnExitSceneObserver);
         eventDatabase.hasEntityRegisteredOnSceneExitCallback[entity] = true;
     }
@@ -193,8 +200,7 @@ void register_entity_to_on_scene_exit_callback(CreEntity entity) {
 
 void unregister_entity_to_on_scene_exit_callback(CreEntity entity) {
     NodeComponent* nodeComp = NULL;
-    if (eventDatabase.hasEntityRegisteredOnSceneExitCallback[entity] && (nodeComp = cre_component_manager_get_component_unchecked(
-                entity, CreComponentDataIndex_NODE))) {
+    if (eventDatabase.hasEntityRegisteredOnSceneExitCallback[entity] && (nodeComp = cre_component_manager_get_component_unchecked(entity, CreComponentDataIndex_NODE))) {
         se_event_unregister_observer(&nodeComp->onSceneTreeExit, &nodeEntityOnExitSceneObserver);
         eventDatabase.hasEntityRegisteredOnSceneExitCallback[entity] = false;
     }
