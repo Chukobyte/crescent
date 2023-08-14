@@ -72,13 +72,13 @@ void node_event_subscribe_to_event(CreEntity entity, const char* eventId, CreEnt
 
 void node_event_notify_observers(CreEntity entity, const char* eventId, NodeEventNotifyPayload* payload) {
     NodeEvent* event = node_event_create_event_internal(entity, eventId);
-    // Copy observers in case their deleted in a callback
+    // Copy observers in case they're deleted in a callback
     static NodeEventObserver* observersToNotify[CRE_NODE_EVENT_MAX_OBSERVERS];
     const size_t observerCount = event->observerCount;
     for (size_t i = 0; i < observerCount; i++) {
         observersToNotify[i] = event->observers[i];
     }
-    // Now notify
+    // Invoke observer callbacks
     for (size_t i = 0; i < observerCount; i++) {
         observersToNotify[i]->callback(observersToNotify[i]->data, payload);
     }
