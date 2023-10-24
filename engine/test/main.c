@@ -4,6 +4,10 @@
 
 #include <SDL2/SDL_main.h>
 
+#include <pocketpy_c.h>
+
+#include "../seika/src/utils/se_file_system_utils.h"
+
 #include "../src/core/node_event.h"
 #include "../src/core/ecs/component/component.h"
 #include "../src/core/ecs/component/transform2d_component.h"
@@ -20,15 +24,17 @@ void tearDown() {
 
 void cre_node_event_test(void);
 void cre_json_file_loader_scene_test(void);
+void cre_pocketpy_test(void);
 
 int main(int argv, char** args) {
     UNITY_BEGIN();
     RUN_TEST(cre_node_event_test);
     RUN_TEST(cre_json_file_loader_scene_test);
+    RUN_TEST(cre_pocketpy_test);
     return UNITY_END();
 }
 
-// Node event test
+//--- Node event test ---//
 static bool hasBeenNotified = false;
 static int NODE_EVENT_TEST_NUMBER = 345;
 
@@ -91,7 +97,7 @@ void cre_node_event_test(void) {
     TEST_ASSERT_EQUAL_UINT(0, node_event_get_entity_observer_count(anotherObserverEntity));
 }
 
-// Json File Loader Tests
+//--- Json File Loader Tests ---//
 // Note: If making changes to scene file make sure cmake runs steps to copy test dependency resources
 
 #define TEST_SCENE_1_PATH "engine/test/resources/test_scene1.cscn"
@@ -174,4 +180,117 @@ void cre_json_file_loader_scene_test(void) {
 
 
     cre_json_delete_json_scene_node(rootNode);
+}
+
+//--- Pocketpy Test ---//
+#define POCKET_PY_TEST_SOURCE_PY "" \
+"class Test:"\
+"    def __init__(self) -> None:"\
+"        self.value = 10"\
+""
+
+bool print_py_error_message(pkpy_vm* vm) {
+    static char* errorMessage = NULL;
+    if (pkpy_clear_error(vm, &errorMessage)) {
+        printf("[PY ERROR]:\n'%s'", errorMessage);
+        return true;
+    }
+    return false;
+}
+
+//    char* errorMessage = NULL;
+//    pkpy_clear_error(vm, &errorMessage);
+//    printf("error message = '%s'", errorMessage);
+
+void cre_pocketpy_test(void) {
+    pkpy_vm* vm = pkpy_new_vm(true);
+
+    // Test hard coded source
+    pkpy_exec(vm, POCKET_PY_TEST_SOURCE_PY);
+    TEST_ASSERT_FALSE(pkpy_check_error(vm));
+    pkpy_exec(vm, "print(f\"{Test().value}\")");
+    TEST_ASSERT_FALSE(pkpy_check_error(vm));
+    pkpy_exec(vm, "print('Hello!')");
+    TEST_ASSERT_FALSE(pkpy_check_error(vm));
+    TEST_ASSERT_EQUAL_INT(0, pkpy_stack_size(vm));
+
+    // Test source from file
+    pkpy_push_module(vm, "pocketpy_test");
+    char* pythonSourceFromFile = se_fs_read_file_contents("engine/test/resources/pocketpy_test.py", NULL);
+    TEST_ASSERT_NOT_NULL(pythonSourceFromFile);
+//    TEST_ASSERT_TRUE(pkpy_exec(vm, pythonSourceFromFile));
+    pkpy_exec_2(vm, pythonSourceFromFile, "engine/test/resources/pocketpy_test.py", 0, "pocketpy_test");
+    TEST_ASSERT_FALSE(print_py_error_message(vm));
+    SE_MEM_FREE(pythonSourceFromFile);
+    pkpy_exec(vm, "from pocketpy_test import Node, NodeManager");
+    TEST_ASSERT_FALSE(print_py_error_message(vm));
+    pkpy_exec(vm, "print(f\"{Node(0)}\")");
+    TEST_ASSERT_FALSE(print_py_error_message(vm));
+    pkpy_exec(vm, "print(f\"{NodeManager().test_node}\")");
+    TEST_ASSERT_FALSE(print_py_error_message(vm));
+    pkpy_exec(vm, "print(f\"{NodeManager().test_add(1, 2, 3)}\")");
+    TEST_ASSERT_FALSE(print_py_error_message(vm));
+    pkpy_pop_top(vm);
+
+    TEST_ASSERT_EQUAL_INT(0, pkpy_stack_size(vm));
+    pkpy_getglobal(vm, pkpy_name("Node"));
+    TEST_ASSERT_FALSE(print_py_error_message(vm));
+    pkpy_push_null(vm);
+    TEST_ASSERT_FALSE(print_py_error_message(vm));
+    pkpy_push_int(vm, 1);
+    TEST_ASSERT_FALSE(print_py_error_message(vm));
+    pkpy_vectorcall(vm, 1);
+    TEST_ASSERT_FALSE(print_py_error_message(vm));
+    int nodeEntity = 0;
+    pkpy_getattr(vm, pkpy_name("entity_id"));
+    pkpy_to_int(vm, 0, &nodeEntity);
+    printf("node entity = '%d'", nodeEntity);
+
+    // Test creating instance and getting attr
+//    pkpy_getglobal(vm, pkpy_name("Test"));
+//    pkpy_push_null(vm);
+//    pkpy_vectorcall(vm, 0);
+//    TEST_ASSERT_FALSE(pkpy_check_error(vm));
+//    pkpy_getattr(vm, pkpy_name("value"));
+//    TEST_ASSERT_FALSE(pkpy_check_error(vm));
+//    int valueRet0 = 0;
+//    pkpy_to_int(vm, -1, &valueRet0);
+//    TEST_ASSERT_FALSE(pkpy_check_error(vm));
+//    TEST_ASSERT_EQUAL_INT(10, valueRet0);
+//    TEST_ASSERT_EQUAL_INT(1, pkpy_stack_size(vm));
+//    pkpy_pop_top(vm);
+//    // Test setting attr on instance
+//    TEST_ASSERT_EQUAL_INT(0, pkpy_stack_size(vm));
+//    pkpy_getglobal(vm, pkpy_name("Test"));
+//    pkpy_push_null(vm);
+//    pkpy_vectorcall(vm, 0);
+//    TEST_ASSERT_FALSE(pkpy_check_error(vm));
+//
+//    TEST_ASSERT_EQUAL_INT(1, pkpy_stack_size(vm));
+//    pkpy_push_int(vm, 50);
+//    TEST_ASSERT_FALSE(pkpy_check_error(vm));
+//    pkpy_rot_two(vm);
+//    TEST_ASSERT_FALSE(pkpy_check_error(vm));
+//    pkpy_setattr(vm, pkpy_name("value"));
+//    TEST_ASSERT_FALSE(pkpy_check_error(vm));
+//    TEST_ASSERT_EQUAL_INT(0, pkpy_stack_size(vm));
+//
+//    pkpy_push_int(vm, 50);
+//    pkpy_exec(vm, "test_inst = Test()");
+//    TEST_ASSERT_FALSE(pkpy_check_error(vm));
+//    pkpy_getglobal(vm, pkpy_name("test_inst"));
+//    TEST_ASSERT_FALSE(pkpy_check_error(vm));
+//    pkpy_setattr(vm, pkpy_name("value"));
+//    TEST_ASSERT_FALSE(pkpy_check_error(vm));
+//    TEST_ASSERT_EQUAL_INT(0, pkpy_stack_size(vm));
+//    pkpy_getglobal(vm, pkpy_name("test_inst"));
+//    TEST_ASSERT_FALSE(pkpy_check_error(vm));
+//    pkpy_getattr(vm, pkpy_name("value"));
+//    TEST_ASSERT_FALSE(pkpy_check_error(vm));
+//    int valueRet1 = 0;
+//    pkpy_to_int(vm, -1, &valueRet1);
+//    TEST_ASSERT_FALSE(pkpy_check_error(vm));
+//    TEST_ASSERT_EQUAL_INT(50, valueRet1);
+
+    pkpy_delete_vm(vm);
 }

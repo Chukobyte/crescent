@@ -28,6 +28,19 @@ endif()
 
 find_package (Python3 COMPONENTS Interpreter Development REQUIRED)
 
+# Include pocketpy as a dependency
+include(FetchContent)
+
+option(PK_BUILD_STATIC_LIB "Build static library" ON)
+
+FetchContent_Declare(
+        pocketpy_content
+        GIT_REPOSITORY https://github.com/blueloveTH/pocketpy.git
+        GIT_TAG v1.2.7
+)
+
+FetchContent_MakeAvailable(pocketpy_content)
+
 add_library(${PROJECT_NAME} STATIC
         src/core/core.c
         src/core/game_properties.c
@@ -94,6 +107,7 @@ add_library(cJSON ../include/cjson/cJSON.c)
 target_include_directories(${PROJECT_NAME} PUBLIC
         "${PROJECT_BINARY_DIR}"
         "../include"
+        "${pocketpy_content_SOURCE_DIR}/include"
         )
 target_include_directories(glad PUBLIC
         "${PROJECT_BINARY_DIR}"
@@ -114,13 +128,13 @@ if (NOT freetype_from_find_package)
 endif()
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image cJSON SDL2::SDL2main SDL2::SDL2 freetype Python3::Python Ws2_32)
+    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image cJSON SDL2::SDL2main SDL2::SDL2 freetype Python3::Python pocketpy Ws2_32)
 elseif (WIN32)
-    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image cJSON -lmingw32 -static-libgcc SDL2::SDL2main SDL2::SDL2 freetype Python3::Python -lws2_32)
+    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image cJSON -lmingw32 -static-libgcc SDL2::SDL2main SDL2::SDL2 freetype Python3::Python pocketpy -lws2_32)
 elseif (APPLE)
-    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image cJSON -Xlinker SDL2::SDL2main SDL2::SDL2 freetype Python3::Python m)
+    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image cJSON -Xlinker SDL2::SDL2main SDL2::SDL2 freetype Python3::Python pocketpy m)
 else ()
-    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image cJSON -static-libgcc -Xlinker -export-dynamic SDL2::SDL2main SDL2::SDL2 freetype Python3::Python m)
+    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image cJSON -static-libgcc -Xlinker -export-dynamic SDL2::SDL2main SDL2::SDL2 freetype Python3::Python pocketpy m)
 endif ()
 
 target_compile_options(${PROJECT_NAME} PUBLIC ${flags})
