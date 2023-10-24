@@ -4,6 +4,7 @@
 
 #include "input_action.h"
 #include "input_value_constants.h"
+#include "gamepad_db.h"
 #include "../data_structures/se_hash_map_string.h"
 #include "../data_structures/se_static_array.h"
 #include "../utils/logger.h"
@@ -21,7 +22,7 @@ void input_process_mouse(SDL_Event event);
 void input_load_gamepads();
 void input_process_gamepad(SDL_Event event);
 
-void input_initialize_gamepad_system(const char* controllerDBFilePath);
+void input_initialize_gamepad_system();
 void input_gamepad_cleanup_flags();
 
 //--- Input ---//
@@ -101,7 +102,7 @@ void input_frame_event_data_add_gamepad_data(SDL_JoystickID deviceId, uint8_t bu
     };
 }
 
-bool se_input_initialize(const char* controllerDBFilePath) {
+bool se_input_initialize() {
     inputActionMap = se_string_hash_map_create(32);
     // SETUP INPUT STRING VALUES
     // Keyboard
@@ -167,7 +168,7 @@ bool se_input_initialize(const char* controllerDBFilePath) {
     se_string_hash_map_add_int(keyboardStringValuesMap, SE_INPUT_VALUE_F12, SDL_SCANCODE_F12);
 
     // Gamepad
-    input_initialize_gamepad_system(controllerDBFilePath);
+    input_initialize_gamepad_system();
 
     return true;
 }
@@ -404,10 +405,10 @@ CreGamepad activeGamePads[CRE_MAX_GAMEPAD_DEVICES];
 static int activeGamepadCount = 0;
 SE_STATIC_ARRAY_CREATE(int, CRE_MAX_GAMEPAD_DEVICES, activeGamepadIds);
 
-void input_load_controller_mappings(const char* controllerDBFilePath);
+void input_load_controller_mappings();
 void input_process_axis_motions();
 
-void input_initialize_gamepad_system(const char* controllerDBFilePath) {
+void input_initialize_gamepad_system() {
     gamepadStringValuesMap = se_string_hash_map_create(30);
     se_string_hash_map_add_int(gamepadStringValuesMap, "joystick_button_a", SDL_CONTROLLER_BUTTON_A);
     se_string_hash_map_add_int(gamepadStringValuesMap, "joystick_button_b", SDL_CONTROLLER_BUTTON_B);
@@ -437,10 +438,10 @@ void input_initialize_gamepad_system(const char* controllerDBFilePath) {
     se_string_hash_map_add_int(gamepadStringValuesMap, "joystick_right_analog_down", GamepadInputButtonType_RIGHT_ANALOG_DOWN);
 
     // Initialize game pads
-    input_load_gamepads(controllerDBFilePath);
+    input_load_gamepads();
 }
 
-void input_load_gamepads(const char* controllerDBFilePath) {
+void input_load_gamepads() {
     for (size_t i = 0; i < CRE_MAX_GAMEPAD_DEVICES; i++) {
         activeGamePads[i].gameController = NULL;
         activeGamePads[i].joystickController = NULL;
@@ -453,19 +454,12 @@ void input_load_gamepads(const char* controllerDBFilePath) {
         activeGamepadIds[i] = INVALID_GAMEPAD_ID;
     }
 
-    input_load_controller_mappings(controllerDBFilePath);
+    input_load_controller_mappings();
 }
 
-void input_load_controller_mappings(const char* controllerDBFilePath) {
-    int result = -1;
-    if (sf_asset_file_loader_get_read_mode() == SEAssetFileLoaderReadMode_ARCHIVE) {
-        SEArchiveFileAsset fileAsset = sf_asset_file_loader_get_asset(controllerDBFilePath);
-        SE_ASSERT_FMT(sf_asset_file_loader_is_asset_valid(&fileAsset), "Failed to load game controller db file asset from memory!  Path: '%s'", controllerDBFilePath);
-        result = SDL_GameControllerAddMappingsFromRW(SDL_RWFromMem(fileAsset.buffer, (int) fileAsset.bufferSize), 1);
-    } else if (sf_asset_file_loader_get_read_mode() == SEAssetFileLoaderReadMode_DISK) {
-        result = SDL_GameControllerAddMappingsFromFile(controllerDBFilePath);
-    }
-    SE_ASSERT_FMT(result >= 0, "Couldn't load sdl controller mapping file at path '%s'!", controllerDBFilePath);
+void input_load_controller_mappings() {
+    const int result = SDL_GameControllerAddMapping(SK_GAMEPAD_DB_STR);
+    SE_ASSERT_FMT(result >= 0, "Couldn't load sdl controller mapping!");
 }
 
 CreGamepad* input_find_gamepad(SDL_JoystickID id) {

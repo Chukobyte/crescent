@@ -94,17 +94,6 @@ bool cre_initialize(int argv, char** args) {
     cre_game_props_initialize(gameProperties);
     cre_game_props_print();
 
-    // Setup Game Controller DB Path
-    static const char* gameControllerDBFilePath = "assets/resources/game_controller_db.txt";
-    char controllerMappingFilePath[256];
-    if (sf_asset_file_loader_get_read_mode() == SEAssetFileLoaderReadMode_ARCHIVE) {
-        strcpy(controllerMappingFilePath, gameControllerDBFilePath);
-    } else { // Can only be disk
-        strcpy(controllerMappingFilePath, engineContext->internalAssetsDir);
-        strcat(controllerMappingFilePath, "/");
-        strcat(controllerMappingFilePath, gameControllerDBFilePath);
-    }
-
     // Initialize seika framework
     const bool hasSeikaInitialized = sf_initialize(
                                          gameProperties->gameTitle,
@@ -113,9 +102,7 @@ bool cre_initialize(int argv, char** args) {
                                          gameProperties->resolutionWidth,
                                          gameProperties->resolutionHeight,
                                          gameProperties->audioWavSampleRate,
-                                         gameProperties->maintainAspectRatio,
-                                         controllerMappingFilePath
-                                     );
+                                         gameProperties->maintainAspectRatio);
     if (!hasSeikaInitialized) {
         se_logger_error("Failed to initialize seika framework!");
         return false;

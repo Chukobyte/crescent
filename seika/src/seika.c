@@ -17,14 +17,14 @@
 bool initialize_sdl();
 bool initialize_rendering(const char* title, int windowWidth, int windowHeight, int resolutionWidth, int resolutionHeight, bool maintainAspectRatio);
 bool initialize_audio(uint32_t wavSampleRate);
-bool initialize_input(const char* controllerDBFilePath);
+bool initialize_input();
 
 static SDL_Window* window = NULL;
 static SDL_GLContext openGlContext;
 static bool isRunning = false;
 
 bool sf_initialize_simple(const char* title, int windowWidth, int windowHeight) {
-    return sf_initialize(title, windowWidth, windowHeight, windowWidth, windowHeight, SE_AUDIO_SOURCE_DEFAULT_WAV_SAMPLE_RATE, false, NULL);
+    return sf_initialize(title, windowWidth, windowHeight, windowWidth, windowHeight, SE_AUDIO_SOURCE_DEFAULT_WAV_SAMPLE_RATE, false);
 }
 
 bool sf_initialize(const char* title,
@@ -33,8 +33,7 @@ bool sf_initialize(const char* title,
                    int resolutionWidth,
                    int resolutionHeight,
                    uint32_t audioWavSampleRate,
-                   bool maintainAspectRatio,
-                   const char* controllerDBFilePath) {
+                   bool maintainAspectRatio) {
     if (isRunning) {
         return false;
     }
@@ -57,7 +56,7 @@ bool sf_initialize(const char* title,
         se_logger_error("Failed to initialize audio!");
         return false;
     }
-    if (!initialize_input(controllerDBFilePath)) {
+    if (!initialize_input()) {
         se_logger_error("Failed to initialize input!");
         return false;
     }
@@ -123,8 +122,8 @@ bool initialize_audio(uint32_t wavSampleRate) {
     return se_audio_manager_init(wavSampleRate);
 }
 
-bool initialize_input(const char* controllerDBFilePath) {
-    if (!se_input_initialize(controllerDBFilePath)) {
+bool initialize_input() {
+    if (!se_input_initialize()) {
         return false;
     }
     return true;
