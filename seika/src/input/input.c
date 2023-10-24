@@ -458,7 +458,7 @@ void input_load_gamepads() {
 }
 
 void input_load_controller_mappings() {
-    const int result = SDL_GameControllerAddMapping((const char*)SK_GAMEPAD_DB_HEX);
+    const int result = SDL_GameControllerAddMapping(SK_GAMEPAD_DB_STR);
     SE_ASSERT_FMT(result >= 0, "Couldn't load sdl controller mapping!");
 }
 
