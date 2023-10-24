@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../seika/src/math/se_math.h"
+#include "../math/se_math.h"
 
 typedef struct SEMouse {
     SEVector2 position;

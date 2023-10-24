@@ -10,8 +10,7 @@ bool sf_initialize(const char* title,
                    int resolutionWidth,
                    int resolutionHeight,
                    uint32_t audioWavSampleRate,
-                   bool maintainAspectRatio,
-                   const char* controllerDBFilePath);
+                   bool maintainAspectRatio);
 void sf_process_inputs();
 void sf_fixed_update(float deltaTime);
 void sf_render();
