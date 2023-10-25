@@ -190,17 +190,14 @@ void cre_json_file_loader_scene_test(void) {
 ""
 
 bool print_py_error_message(pkpy_vm* vm) {
-    static char* errorMessage = NULL;
+    char* errorMessage = NULL;
     if (pkpy_clear_error(vm, &errorMessage)) {
         printf("[PY ERROR]:\n'%s'", errorMessage);
+        pkpy_free(errorMessage);
         return true;
     }
     return false;
 }
-
-//    char* errorMessage = NULL;
-//    pkpy_clear_error(vm, &errorMessage);
-//    printf("error message = '%s'", errorMessage);
 
 int pocketpy_test_node_get_name(pkpy_vm* vm) {
     int entityId;
@@ -222,14 +219,12 @@ void cre_pocketpy_test(void) {
     TEST_ASSERT_EQUAL_INT(0, pkpy_stack_size(vm));
 
     // Testing adding a module
-    pkpy_push_module(vm, "crescent_api_internal");
-    TEST_ASSERT_FALSE(print_py_error_message(vm));
     pkpy_push_function(vm, "node_get_name(entity_id: int) -> str", pocketpy_test_node_get_name);
     TEST_ASSERT_FALSE(print_py_error_message(vm));
-//    pkpy_setglobal(vm, pkpy_name("node_get_name"));
+    pkpy_push_module(vm, "crescent_api_internal");
     TEST_ASSERT_FALSE(print_py_error_message(vm));
-    pkpy_pop_top(vm);
-    pkpy_pop_top(vm);
+    pkpy_setattr(vm, pkpy_name("node_get_name"));
+    TEST_ASSERT_FALSE(print_py_error_message(vm));
     TEST_ASSERT_EQUAL_INT(0, pkpy_stack_size(vm));
 
     // Test source from file
@@ -237,14 +232,15 @@ void cre_pocketpy_test(void) {
     pkpy_push_module(vm, "pocketpy_test");
     char* pythonSourceFromFile = se_fs_read_file_contents(PYTHON_SOURCE_FILE_PATH, NULL);
     TEST_ASSERT_NOT_NULL(pythonSourceFromFile);
-//    TEST_ASSERT_TRUE(pkpy_exec(vm, pythonSourceFromFile));
     pkpy_exec_2(vm, pythonSourceFromFile, PYTHON_SOURCE_FILE_PATH, 0, "pocketpy_test");
     TEST_ASSERT_FALSE(print_py_error_message(vm));
     SE_MEM_FREE(pythonSourceFromFile);
     pkpy_exec(vm, "from pocketpy_test import Node, NodeManager");
     TEST_ASSERT_FALSE(print_py_error_message(vm));
-//    pkpy_exec(vm, "print(f\"{Node(0).name}\")");
-//    TEST_ASSERT_FALSE(print_py_error_message(vm));
+//    pkpy_exec(vm, "print(f\"{Node(0).get_name()}\")");
+    pkpy_exec(vm, "print(f\"{Node(0).name}\")");
+    TEST_ASSERT_FALSE(print_py_error_message(vm));
+
     pkpy_exec(vm, "print(f\"{NodeManager().test_node}\")");
     TEST_ASSERT_FALSE(print_py_error_message(vm));
     pkpy_exec(vm, "print(f\"{NodeManager().test_add(1, 2, 3)}\")");
