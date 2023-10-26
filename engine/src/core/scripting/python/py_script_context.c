@@ -34,6 +34,7 @@ void py_on_update_instance(CreEntity entity, float deltaTime);
 void py_on_fixed_update_instance(CreEntity entity, float deltaTime);
 void py_on_end(CreEntity entity);
 void py_on_network_callback(const char* message);
+void py_on_network_udp_server_client_connected();
 
 SEHashMap* pythonInstanceHashMap = NULL;
 CREScriptContext* python_script_context = NULL;
@@ -180,7 +181,7 @@ void py_on_entity_subscribe_to_network_callback(CreEntity entity, PyObject* call
         }
     } else if (strcmp(id, "client_connected") == 0) {
         if (current_network_server_client_connected_script_callback == NULL) {
-            se_udp_server_register_client_connected_callback(cre_py_on_network_udp_server_client_connected);
+            se_udp_server_register_client_connected_callback(py_on_network_udp_server_client_connected);
             current_network_server_client_connected_script_callback = SE_MEM_ALLOCATE(RBEScriptCallback);
             current_network_server_client_connected_script_callback->entity = entity;
             current_network_server_client_connected_script_callback->callback_func = callback_func;
@@ -190,7 +191,7 @@ void py_on_entity_subscribe_to_network_callback(CreEntity entity, PyObject* call
     }
 }
 
-void cre_py_on_network_udp_server_client_connected() {
+void py_on_network_udp_server_client_connected() {
     if (current_network_server_client_connected_script_callback != NULL) {
         PyGILState_STATE pyGilStateState = PyGILState_Ensure();
         PyObject_CallObject(current_network_server_client_connected_script_callback->callback_func, NULL);

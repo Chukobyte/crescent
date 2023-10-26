@@ -2,11 +2,11 @@
 
 #include "../seika/src/utils/se_assert.h"
 
-#include "../../ecs/entity/entity.h"
-#include "../../ecs/component/node_component.h"
-#include "../../ecs/component/component.h"
+#include "../../../ecs/entity/entity.h"
+#include "../../../ecs/component/node_component.h"
+#include "../../../ecs/component/component.h"
 
-int cre_py_api_node_get_name(pkpy_vm* vm) {
+int cre_py_pp_api_node_get_name(pkpy_vm* vm) {
     int entityId;
     pkpy_to_int(vm, 0, &entityId);
     const CreEntity entity = (CreEntity)entityId;
