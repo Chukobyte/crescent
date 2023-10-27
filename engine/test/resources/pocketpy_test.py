@@ -17,9 +17,10 @@ class Node:
     def get_children(self) -> List["Node"]:
         children_ids = crescent_api_internal.node_get_children(self.entity_id)
         # TODO: Get nodes from internal global dict
+        children = []
         for child_id in children_ids:
-            pass
-        return []
+            children.append(Node(child_id))
+        return children
 
     def __eq__(self, other) -> bool:
         return self.entity_id == other.entity_id

@@ -206,6 +206,16 @@ int pocketpy_test_node_get_name(pkpy_vm* vm) {
     return 1;
 }
 
+int pocketpy_test_node_get_children(pkpy_vm* vm) {
+    int entityId;
+    pkpy_to_int(vm, 0, &entityId);
+    const int idsToReturn = 5;
+    for (int i = 0; i < idsToReturn; i++) {
+        pkpy_push_int(vm, i + 1);
+    }
+    return idsToReturn;
+}
+
 void cre_pocketpy_test(void) {
     pkpy_vm* vm = pkpy_new_vm(true);
 
@@ -225,6 +235,17 @@ void cre_pocketpy_test(void) {
     TEST_ASSERT_FALSE(print_py_error_message(vm));
     pkpy_setattr(vm, pkpy_name("node_get_name"));
     TEST_ASSERT_FALSE(print_py_error_message(vm));
+
+    pkpy_push_function(vm, "node_get_children(entity_id: int) -> Tuple[int, ...]", pocketpy_test_node_get_children);
+    TEST_ASSERT_FALSE(print_py_error_message(vm));
+    pkpy_exec(vm, "import crescent_api_internal");
+    TEST_ASSERT_FALSE(print_py_error_message(vm));
+    pkpy_eval(vm, "crescent_api_internal");
+    TEST_ASSERT_FALSE(print_py_error_message(vm));
+    TEST_ASSERT_EQUAL_INT(2, pkpy_stack_size(vm));
+    pkpy_setattr(vm, pkpy_name("node_get_children"));
+    TEST_ASSERT_FALSE(print_py_error_message(vm));
+
     TEST_ASSERT_EQUAL_INT(0, pkpy_stack_size(vm));
 
     // Test source from file
@@ -239,6 +260,8 @@ void cre_pocketpy_test(void) {
     TEST_ASSERT_FALSE(print_py_error_message(vm));
 //    pkpy_exec(vm, "print(f\"{Node(0).get_name()}\")");
     pkpy_exec(vm, "print(f\"{Node(0).name}\")");
+    TEST_ASSERT_FALSE(print_py_error_message(vm));
+    pkpy_exec(vm, "print(f\"children = {Node(24).get_children()}\")");
     TEST_ASSERT_FALSE(print_py_error_message(vm));
 
     pkpy_exec(vm, "print(f\"{NodeManager().test_node}\")");
