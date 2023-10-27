@@ -119,6 +119,6 @@ void script_system_instance_fixed_update(float deltaTime) {
 }
 
 void script_system_network_callback(const char* message) {
-    // Hard coding python for now
+    // Hard coding python for now  TODO: Keep an array of script contexts that contain this callback
     scriptContexts[ScriptContextType_PYTHON]->on_network_callback(message);
 }

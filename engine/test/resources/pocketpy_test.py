@@ -1,3 +1,5 @@
+from typing import List
+
 import crescent_api_internal
 
 
@@ -11,6 +13,13 @@ class Node:
     @property
     def name(self) -> str:
         return crescent_api_internal.node_get_name(self.entity_id)
+
+    def get_children(self) -> List["Node"]:
+        children_ids = crescent_api_internal.node_get_children(self.entity_id)
+        # TODO: Get nodes from internal global dict
+        for child_id in children_ids:
+            pass
+        return []
 
     def __eq__(self, other) -> bool:
         return self.entity_id == other.entity_id
