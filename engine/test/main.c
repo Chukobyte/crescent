@@ -4,8 +4,6 @@
 
 #include <SDL2/SDL_main.h>
 
-#include <pocketpy_c.h>
-
 #include "../seika/src/utils/se_file_system_utils.h"
 
 #include "../src/core/node_event.h"
@@ -14,6 +12,7 @@
 #include "../src/core/ecs/component/collider2d_component.h"
 #include "../src/core/ecs/component/text_label_component.h"
 #include "../src/core/json/json_file_loader.h"
+#include "../src/core/scripting/python/pocketpy/cre_py_pp_util.h"
 
 void setUp() {
     cre_component_manager_initialize();
@@ -229,23 +228,14 @@ void cre_pocketpy_test(void) {
     TEST_ASSERT_EQUAL_INT(0, pkpy_stack_size(vm));
 
     // Testing adding a module
-    pkpy_push_function(vm, "node_get_name(entity_id: int) -> str", pocketpy_test_node_get_name);
-    TEST_ASSERT_FALSE(print_py_error_message(vm));
-    pkpy_push_module(vm, "crescent_api_internal");
-    TEST_ASSERT_FALSE(print_py_error_message(vm));
-    pkpy_setattr(vm, pkpy_name("node_get_name"));
-    TEST_ASSERT_FALSE(print_py_error_message(vm));
-
-    pkpy_push_function(vm, "node_get_children(entity_id: int) -> Tuple[int, ...]", pocketpy_test_node_get_children);
-    TEST_ASSERT_FALSE(print_py_error_message(vm));
-    pkpy_exec(vm, "import crescent_api_internal");
-    TEST_ASSERT_FALSE(print_py_error_message(vm));
-    pkpy_eval(vm, "crescent_api_internal");
-    TEST_ASSERT_FALSE(print_py_error_message(vm));
-    TEST_ASSERT_EQUAL_INT(2, pkpy_stack_size(vm));
-    pkpy_setattr(vm, pkpy_name("node_get_children"));
-    TEST_ASSERT_FALSE(print_py_error_message(vm));
-
+    cre_py_pp_util_create_module(vm, &(CrePPModule){
+        .name = "crescent_api_internal",
+        .functionCount = 2,
+        .functions = {
+                { .name = "node_get_name", .signature = "node_get_name(entity_id: int) -> str", .function = pocketpy_test_node_get_name },
+                { .name = "node_get_children", .signature = "node_get_children(entity_id: int) -> Tuple[int, ...]", .function = pocketpy_test_node_get_children },
+        }
+    });
     TEST_ASSERT_EQUAL_INT(0, pkpy_stack_size(vm));
 
     // Test source from file

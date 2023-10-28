@@ -29,7 +29,7 @@ class Node:
         return f"Node(entity_id: {self.entity_id})"
 
     def __repr__(self):
-        return f"Node(entity_id: {self.entity_id}"
+        return f"Node(entity_id: {self.entity_id})"
 
 
 class NodeManager:
