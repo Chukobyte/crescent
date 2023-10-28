@@ -3,7 +3,6 @@
 #include <pocketpy/pocketpy_c.h>
 
 typedef struct CrePPFunction {
-    const char* name;
     const char* signature;
     pkpy_CFunction function;
 } CrePPFunction;

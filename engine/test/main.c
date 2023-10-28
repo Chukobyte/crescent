@@ -232,8 +232,8 @@ void cre_pocketpy_test(void) {
         .name = "crescent_api_internal",
         .functionCount = 2,
         .functions = {
-                { .name = "node_get_name", .signature = "node_get_name(entity_id: int) -> str", .function = pocketpy_test_node_get_name },
-                { .name = "node_get_children", .signature = "node_get_children(entity_id: int) -> Tuple[int, ...]", .function = pocketpy_test_node_get_children },
+                { .signature = "node_get_name(entity_id: int) -> str", .function = pocketpy_test_node_get_name },
+                { .signature = "node_get_children(entity_id: int) -> Tuple[int, ...]", .function = pocketpy_test_node_get_children },
         }
     });
     TEST_ASSERT_EQUAL_INT(0, pkpy_stack_size(vm));
