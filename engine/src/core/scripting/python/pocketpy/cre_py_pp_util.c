@@ -34,7 +34,8 @@ void cre_py_pp_util_create_module(pkpy_vm* vm, CrePPModule* module) {
     pkpy_pop_top(vm);
     char nameBuffer[48];
     strncpy_s(nameBuffer, sizeof(char) * 8, "import ", 8);
-    pkpy_exec(vm, "import crescent_api_internal");
+    strcat_s(nameBuffer, sizeof(nameBuffer), module->name);
+    pkpy_exec(vm, nameBuffer); // import { module->name }
     SE_ASSERT(!cre_py_pp_util_print_error_message(vm));
     for (size_t i = 0; i < module->functionCount; i++) {
         const CrePPFunction* func = &module->functions[i];
