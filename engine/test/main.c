@@ -229,7 +229,7 @@ void cre_pocketpy_test(void) {
 
     // Testing adding a module
     cre_py_pp_util_create_module(vm, &(CrePPModule){
-        .name = "crescent_api_internal",
+        .name = "crescent_internal",
         .functionCount = 2,
         .functions = {
                 { .signature = "node_get_name(entity_id: int) -> str", .function = pocketpy_test_node_get_name },

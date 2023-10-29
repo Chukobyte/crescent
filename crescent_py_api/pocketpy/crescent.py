@@ -30,11 +30,3 @@ class Node:
 
     def __repr__(self):
         return f"Node(entity_id: {self.entity_id})"
-
-
-class NodeManager:
-    def __init__(self):
-        self.test_node = Node(45)
-
-    def test_add(self, x: int, y: int, z: int) -> int:
-        return x + y + z

@@ -2,10 +2,29 @@
 
 #include "../seika/src/utils/se_assert.h"
 
+#include "cre_py_pp_util.h"
 #include "../../../ecs/entity/entity.h"
 #include "../../../ecs/component/node_component.h"
 #include "../../../ecs/component/component.h"
 #include "../../../scene/scene_utils.h"
+
+int cre_py_pp_api_node_get_name(pkpy_vm* vm);
+int cre_py_pp_api_node_get_children(pkpy_vm* vm);
+
+void cre_pypp_api_load_internal_modules(pkpy_vm* vm) {
+    // Load internal first
+    cre_py_pp_util_create_module(vm, &(CrePPModule){
+            .name = "crescent_internal",
+            .functionCount = 2,
+            .functions = {
+                    { .signature = "node_get_name(entity_id: int) -> str", .function = cre_py_pp_api_node_get_name },
+                    { .signature = "node_get_children(entity_id: int) -> Tuple[int, ...]", .function = cre_py_pp_api_node_get_children },
+            }
+    });
+
+    // Now load front facing api
+
+}
 
 int cre_py_pp_api_node_get_name(pkpy_vm* vm) {
     int entityId;
