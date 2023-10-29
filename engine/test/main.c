@@ -13,6 +13,7 @@
 #include "../src/core/ecs/component/text_label_component.h"
 #include "../src/core/json/json_file_loader.h"
 #include "../src/core/scripting/python/pocketpy/cre_py_pp_util.h"
+#include "../src/core/scripting/python/pocketpy/cre_py_api.h"
 
 void setUp() {
     cre_component_manager_initialize();
@@ -216,6 +217,19 @@ int pocketpy_test_node_get_children(pkpy_vm* vm) {
 }
 
 void cre_pocketpy_test(void) {
+    pkpy_vm* vm = pkpy_new_vm(true);
+
+    // Test loading internal modules
+    cre_pypp_api_load_internal_modules(vm);
+    pkpy_exec(vm, "from crescent import Node");
+    TEST_ASSERT_FALSE(print_py_error_message(vm));
+    pkpy_exec(vm, "print(f\"Node(0).entity_id = {Node(0).entity_id}\")");
+    TEST_ASSERT_FALSE(print_py_error_message(vm));
+
+    pkpy_delete_vm(vm);
+}
+
+void cre_pocketpy_test_old(void) {
     pkpy_vm* vm = pkpy_new_vm(true);
 
     // Test hard coded source

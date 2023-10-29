@@ -3,6 +3,7 @@
 #include "../seika/src/utils/se_assert.h"
 
 #include "cre_py_pp_util.h"
+#include "crescent_api_source.h"
 #include "../../../ecs/entity/entity.h"
 #include "../../../ecs/component/node_component.h"
 #include "../../../ecs/component/component.h"
@@ -23,7 +24,9 @@ void cre_pypp_api_load_internal_modules(pkpy_vm* vm) {
     });
 
     // Now load front facing api
-
+    pkpy_push_module(vm, "crescent");
+    pkpy_exec_2(vm, CRE_PYPP_CRESCENT_SOURCE, "crescent.py", 0, "crescent");
+    SE_ASSERT(!cre_py_pp_util_print_error_message(vm));
 }
 
 int cre_py_pp_api_node_get_name(pkpy_vm* vm) {
