@@ -19,12 +19,12 @@ void cre_pypp_entity_instance_cache_initialize(pkpy_vm* vm) {
         SE_ASSERT(!cre_py_pp_util_print_error_message(vm));
 
 #define CRE_PY_PP_GLOBAL_FUNCS "" \
-"def cre_global_get_entity(entity_id: int) -> Node:"\
-    "return CRE_ENTITY_TO_NODE_MAP[entity_id]" \
-""\
-  "def cre_global_set_entity(node: Node) -> None:"\
-    "CRE_ENTITY_TO_NODE_MAP[node.entity_id] = node" \
-""
+"def cre_global_get_entity(entity_id: int) -> Node:\n"\
+"    return CRE_ENTITY_TO_NODE_MAP[entity_id]\n" \
+"\n"\
+"def cre_global_set_entity(node: Node) -> None:\n"\
+"    CRE_ENTITY_TO_NODE_MAP[node.entity_id] = node\n" \
+"\n"
         pkpy_exec(vm, CRE_PY_PP_GLOBAL_FUNCS);
         SE_ASSERT(!cre_py_pp_util_print_error_message(vm));
 #undef CRE_PY_PP_GLOBAL_FUNCS

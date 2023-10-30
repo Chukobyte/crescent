@@ -228,6 +228,7 @@ void cre_ec_system_network_callback(const char* message) {
 
 // --- Entity Management --- //
 CreEntity cre_ec_system_create_entity_uid() {
+    SE_ASSERT(entityIdQueue != NULL);
     SE_ASSERT_FMT(!se_queue_is_empty(entityIdQueue), "Entity pool is empty.  Entity limit reached, considering increasing MAX_ENTITIES!");
     return se_queue_dequeue(entityIdQueue);
 }

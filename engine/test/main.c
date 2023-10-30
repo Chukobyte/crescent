@@ -11,9 +11,11 @@
 #include "../src/core/ecs/component/transform2d_component.h"
 #include "../src/core/ecs/component/collider2d_component.h"
 #include "../src/core/ecs/component/text_label_component.h"
+#include "../src/core/ecs/system/ec_system.h"
 #include "../src/core/json/json_file_loader.h"
 #include "../src/core/scripting/python/pocketpy/cre_py_pp_util.h"
 #include "../src/core/scripting/python/pocketpy/cre_py_api.h"
+#include "../src/core/scripting/python/pocketpy/entity_instance_cache.h"
 
 void setUp() {
     cre_component_manager_initialize();
@@ -219,12 +221,22 @@ int pocketpy_test_node_get_children(pkpy_vm* vm) {
 void cre_pocketpy_test(void) {
     pkpy_vm* vm = pkpy_new_vm(true);
 
-    // Test loading internal modules
+    TEST_MESSAGE("Testing loading internal modules");
     cre_pypp_api_load_internal_modules(vm);
     pkpy_exec(vm, "from crescent import Node");
     TEST_ASSERT_FALSE(print_py_error_message(vm));
     pkpy_exec(vm, "print(f\"Node(0).entity_id = {Node(0).entity_id}\")");
     TEST_ASSERT_FALSE(print_py_error_message(vm));
+
+    TEST_MESSAGE("Testing entity instance cache");
+    cre_ec_system_initialize();  // Is needed for entity id generation
+    cre_pypp_entity_instance_cache_initialize(vm);
+    const CreEntity entity = cre_pypp_entity_instance_cache_create_new_entity(vm, "Node");
+    cre_pypp_entity_instance_cache_push_entity_instance(vm, entity);
+    TEST_ASSERT_EQUAL_INT(1, pkpy_stack_size(vm));
+
+    cre_ec_system_finalize();
+    cre_pypp_entity_instance_cache_finalize(vm);
 
     pkpy_delete_vm(vm);
 }
