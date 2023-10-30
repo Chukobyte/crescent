@@ -6,29 +6,20 @@
 
 #include "cre_py_pp_util.h"
 #include "../../../ecs/system/ec_system.h"
+#include "crescent_api_source.h"
 
 static bool entity_instance_cache_is_initialized = false;
 
 void cre_pypp_entity_instance_cache_initialize(pkpy_vm* vm) {
     if (!entity_instance_cache_is_initialized) {
-        pkpy_exec(vm, "from typing import Dict");
+        SE_ASSERT(pkpy_stack_size(vm) == 0);
+        pkpy_push_module(vm, "crescent_internal_py");
+        pkpy_exec_2(vm, CRE_PYPP_CRESCENT_INTERNAL_PY_SOURCE, "crescent_internal_py.py", 0, "crescent_internal_py");
         SE_ASSERT(!cre_py_pp_util_print_error_message(vm));
-        pkpy_exec(vm, "from crescent import Node");
+        pkpy_exec(vm, "import crescent_internal_py");
         SE_ASSERT(!cre_py_pp_util_print_error_message(vm));
-        pkpy_exec(vm, "CRE_ENTITY_TO_NODE_MAP: Dict[int, Node]");
-        SE_ASSERT(!cre_py_pp_util_print_error_message(vm));
-
-#define CRE_PY_PP_GLOBAL_FUNCS "" \
-"def cre_global_get_entity(entity_id: int) -> Node:\n"\
-"    return CRE_ENTITY_TO_NODE_MAP[entity_id]\n" \
-"\n"\
-"def cre_global_set_entity(node: Node) -> None:\n"\
-"    CRE_ENTITY_TO_NODE_MAP[node.entity_id] = node\n" \
-"\n"
-        pkpy_exec(vm, CRE_PY_PP_GLOBAL_FUNCS);
-        SE_ASSERT(!cre_py_pp_util_print_error_message(vm));
-#undef CRE_PY_PP_GLOBAL_FUNCS
-
+        pkpy_pop_top(vm);
+        SE_ASSERT(pkpy_stack_size(vm) == 0);
         entity_instance_cache_is_initialized = true;
     }
 }
@@ -48,8 +39,12 @@ CreEntity cre_pypp_entity_instance_cache_create_new_entity(pkpy_vm* vm, const ch
     pkpy_push_int(vm, (int)newEntity);
     pkpy_vectorcall(vm, 1);
     SE_ASSERT(!cre_py_pp_util_print_error_message(vm));
+    SE_ASSERT(pkpy_stack_size(vm) == 1);
 
-    pkpy_getglobal(vm, pkpy_name("cre_global_set_entity"));
+    pkpy_eval(vm, "crescent_internal_py");
+    SE_ASSERT(!cre_py_pp_util_print_error_message(vm));
+    pkpy_getattr(vm, pkpy_name("set_entity"));
+//    pkpy_get_unbound_method(vm, pkpy_name("set_entity"));
     pkpy_rot_two(vm);
     pkpy_vectorcall(vm, 1);
     SE_ASSERT(!cre_py_pp_util_print_error_message(vm));

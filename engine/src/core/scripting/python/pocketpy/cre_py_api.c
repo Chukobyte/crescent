@@ -27,6 +27,8 @@ void cre_pypp_api_load_internal_modules(pkpy_vm* vm) {
     pkpy_push_module(vm, "crescent");
     pkpy_exec_2(vm, CRE_PYPP_CRESCENT_SOURCE, "crescent.py", 0, "crescent");
     SE_ASSERT(!cre_py_pp_util_print_error_message(vm));
+    pkpy_pop_top(vm);
+    SE_ASSERT(pkpy_stack_size(vm) == 0);
 }
 
 int cre_py_pp_api_node_get_name(pkpy_vm* vm) {
