@@ -12,14 +12,12 @@ static bool entity_instance_cache_is_initialized = false;
 
 void cre_pypp_entity_instance_cache_initialize(pkpy_vm* vm) {
     if (!entity_instance_cache_is_initialized) {
-        SE_ASSERT(pkpy_stack_size(vm) == 0);
         pkpy_push_module(vm, "crescent_internal_py");
         pkpy_exec_2(vm, CRE_PYPP_CRESCENT_INTERNAL_PY_SOURCE, "crescent_internal_py.py", 0, "crescent_internal_py");
         SE_ASSERT(!cre_py_pp_util_print_error_message(vm));
         pkpy_exec(vm, "import crescent_internal_py");
         SE_ASSERT(!cre_py_pp_util_print_error_message(vm));
         pkpy_pop_top(vm);
-        SE_ASSERT(pkpy_stack_size(vm) == 0);
         entity_instance_cache_is_initialized = true;
     }
 }
@@ -55,7 +53,6 @@ CreEntity cre_pypp_entity_instance_cache_create_new_entity(pkpy_vm* vm, const ch
     pkpy_vectorcall(vm, 1);
     SE_ASSERT(!cre_py_pp_util_print_error_message(vm));
     pkpy_pop_top(vm);
-    SE_ASSERT(pkpy_stack_size(vm) == 0);
     return newEntity;
 }
 

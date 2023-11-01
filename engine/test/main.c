@@ -221,21 +221,26 @@ int pocketpy_test_node_get_children(pkpy_vm* vm) {
 void cre_pocketpy_test(void) {
     pkpy_vm* vm = pkpy_new_vm(true);
 
-    TEST_MESSAGE("Testing loading internal modules");
+    TEST_MESSAGE("Testing creating internal modules");
+
+    TEST_MESSAGE("Testing loading included internal modules");
     cre_pypp_api_load_internal_modules(vm);
     pkpy_exec(vm, "from crescent import Node");
     TEST_ASSERT_FALSE(print_py_error_message(vm));
-    pkpy_exec(vm, "print(f\"Node(0).entity_id = {Node(0).entity_id}\")");
+    pkpy_eval(vm, "Node(10).entity_id");
+    int nodeEntity = 0;
+    pkpy_to_int(vm, 0, &nodeEntity);
+    pkpy_exec(vm, "print(f\"Node(10).entity_id = {Node(0).entity_id}\")");
     TEST_ASSERT_FALSE(print_py_error_message(vm));
+    TEST_ASSERT_EQUAL_INT(10, nodeEntity);
+    pkpy_pop_top(vm);
 
     TEST_MESSAGE("Testing entity instance cache");
     cre_ec_system_initialize();  // Is needed for entity id generation
     cre_pypp_entity_instance_cache_initialize(vm);
-    const CreEntity firstEntity = cre_pypp_entity_instance_cache_create_new_entity(vm, "Node");
     const CreEntity entity = cre_pypp_entity_instance_cache_create_new_entity(vm, "Node");
     cre_pypp_entity_instance_cache_push_entity_instance(vm, entity);
     TEST_ASSERT_EQUAL_INT(1, pkpy_stack_size(vm));
-    int nodeEntity = 0;
     pkpy_getattr(vm, pkpy_name("entity_id"));
     TEST_ASSERT_FALSE(print_py_error_message(vm));
     pkpy_to_int(vm, 0, &nodeEntity);
@@ -245,6 +250,8 @@ void cre_pocketpy_test(void) {
     TEST_ASSERT_TRUE(cre_pypp_entity_instance_cache_has_entity(vm, nodeEntity));
     cre_pypp_entity_instance_cache_remove_entity(vm, entity);
     TEST_ASSERT_FALSE(cre_pypp_entity_instance_cache_has_entity(vm, nodeEntity));
+    pkpy_pop_top(vm);
+    TEST_ASSERT_EQUAL_INT(0, pkpy_stack_size(vm));
 
     cre_ec_system_finalize();
     cre_pypp_entity_instance_cache_finalize(vm);
