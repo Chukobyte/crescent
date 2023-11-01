@@ -66,6 +66,18 @@ void cre_pypp_entity_instance_cache_remove_entity(pkpy_vm* vm, CreEntity entity)
     SE_ASSERT(!cre_py_pp_util_print_error_message(vm));
 }
 
+bool cre_pypp_entity_instance_cache_has_entity(pkpy_vm *vm, CreEntity entity) {
+    char entityStringBuffer[56];
+    sprintf(entityStringBuffer, "%d in crescent_internal_py.CRE_ENTITY_TO_NODE_MAP", entity);
+    pkpy_eval(vm, entityStringBuffer);
+    SE_ASSERT(!cre_py_pp_util_print_error_message(vm));
+    bool doesKeyExist = false;
+    pkpy_to_bool(vm, 1, &doesKeyExist);
+    SE_ASSERT(!cre_py_pp_util_print_error_message(vm));
+    pkpy_pop_top(vm);
+    return doesKeyExist;
+}
+
 void cre_pypp_entity_instance_cache_push_entity_instance(pkpy_vm* vm, CreEntity entity) {
     char entityStringBuffer[56];
     sprintf(entityStringBuffer, "crescent_internal_py.CRE_ENTITY_TO_NODE_MAP[%d]", entity);

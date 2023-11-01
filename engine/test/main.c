@@ -231,6 +231,7 @@ void cre_pocketpy_test(void) {
     TEST_MESSAGE("Testing entity instance cache");
     cre_ec_system_initialize();  // Is needed for entity id generation
     cre_pypp_entity_instance_cache_initialize(vm);
+    const CreEntity firstEntity = cre_pypp_entity_instance_cache_create_new_entity(vm, "Node");
     const CreEntity entity = cre_pypp_entity_instance_cache_create_new_entity(vm, "Node");
     cre_pypp_entity_instance_cache_push_entity_instance(vm, entity);
     TEST_ASSERT_EQUAL_INT(1, pkpy_stack_size(vm));
@@ -240,6 +241,10 @@ void cre_pocketpy_test(void) {
     pkpy_to_int(vm, 0, &nodeEntity);
     TEST_ASSERT_FALSE(print_py_error_message(vm));
     TEST_ASSERT_EQUAL_INT((int)entity, nodeEntity);
+    // Test removing entity
+    TEST_ASSERT_TRUE(cre_pypp_entity_instance_cache_has_entity(vm, nodeEntity));
+    cre_pypp_entity_instance_cache_remove_entity(vm, entity);
+    TEST_ASSERT_FALSE(cre_pypp_entity_instance_cache_has_entity(vm, nodeEntity));
 
     cre_ec_system_finalize();
     cre_pypp_entity_instance_cache_finalize(vm);
