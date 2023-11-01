@@ -221,7 +221,20 @@ int pocketpy_test_node_get_children(pkpy_vm* vm) {
 void cre_pocketpy_test(void) {
     pkpy_vm* vm = pkpy_new_vm(true);
 
-    TEST_MESSAGE("Testing creating internal modules");
+    TEST_MESSAGE("Misc pocketpy tests");
+#define CRE_TEST_POCKETPY_SOURCE ""\
+"class Test:\n"\
+"    @staticmethod\n"\
+"    def test_static(value: int) -> None:\n" \
+"        pass\n"\
+"\n"
+
+    pkpy_exec(vm, CRE_TEST_POCKETPY_SOURCE);
+    TEST_ASSERT_FALSE(print_py_error_message(vm));
+    pkpy_exec(vm, "Test.test_static(12)");
+    TEST_ASSERT_FALSE(print_py_error_message(vm));
+
+#undef CRE_TEST_POCKETPY_SOURCE
 
     TEST_MESSAGE("Testing loading included internal modules");
     cre_pypp_api_load_internal_modules(vm);
@@ -230,7 +243,6 @@ void cre_pocketpy_test(void) {
     pkpy_eval(vm, "Node(10).entity_id");
     int nodeEntity = 0;
     pkpy_to_int(vm, 0, &nodeEntity);
-    pkpy_exec(vm, "print(f\"Node(10).entity_id = {Node(0).entity_id}\")");
     TEST_ASSERT_FALSE(print_py_error_message(vm));
     TEST_ASSERT_EQUAL_INT(10, nodeEntity);
     pkpy_pop_top(vm);
