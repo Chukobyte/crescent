@@ -232,8 +232,8 @@ void cre_pocketpy_test(void) {
     cre_ec_system_initialize();  // Is needed for entity id generation
     cre_pypp_entity_instance_cache_initialize(vm);
     const CreEntity entity = cre_pypp_entity_instance_cache_create_new_entity(vm, "Node");
-//    cre_pypp_entity_instance_cache_push_entity_instance(vm, entity);
-//    TEST_ASSERT_EQUAL_INT(1, pkpy_stack_size(vm));
+    cre_pypp_entity_instance_cache_push_entity_instance(vm, entity);
+    TEST_ASSERT_EQUAL_INT(1, pkpy_stack_size(vm));
 
     cre_ec_system_finalize();
     cre_pypp_entity_instance_cache_finalize(vm);

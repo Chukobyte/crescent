@@ -26,7 +26,7 @@ void cre_pypp_entity_instance_cache_initialize(pkpy_vm* vm) {
 
 void cre_pypp_entity_instance_cache_finalize(pkpy_vm* vm) {
     if (entity_instance_cache_is_initialized) {
-        pkpy_exec(vm, "CRE_ENTITY_TO_NODE_MAP.clear()");
+        pkpy_exec(vm, "crescent_internal_py.CRE_ENTITY_TO_NODE_MAP.clear()");
         SE_ASSERT(!cre_py_pp_util_print_error_message(vm));
         entity_instance_cache_is_initialized = false;
     }
@@ -60,15 +60,15 @@ CreEntity cre_pypp_entity_instance_cache_create_new_entity(pkpy_vm* vm, const ch
 }
 
 void cre_pypp_entity_instance_cache_remove_entity(pkpy_vm* vm, CreEntity entity) {
-    char entityStringBuffer[32];
-    sprintf(entityStringBuffer, "del CRE_ENTITY_TO_NODE_MAP[%d]", entity);
+    char entityStringBuffer[56];
+    sprintf(entityStringBuffer, "del crescent_internal_py.CRE_ENTITY_TO_NODE_MAP[%d]", entity);
     pkpy_exec(vm, entityStringBuffer);
     SE_ASSERT(!cre_py_pp_util_print_error_message(vm));
 }
 
 void cre_pypp_entity_instance_cache_push_entity_instance(pkpy_vm* vm, CreEntity entity) {
-    char entityStringBuffer[32];
-    sprintf(entityStringBuffer, "CRE_ENTITY_TO_NODE_MAP[%d]", entity);
+    char entityStringBuffer[56];
+    sprintf(entityStringBuffer, "crescent_internal_py.CRE_ENTITY_TO_NODE_MAP[%d]", entity);
     pkpy_eval(vm, entityStringBuffer);
     SE_ASSERT(!cre_py_pp_util_print_error_message(vm));
 }
