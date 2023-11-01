@@ -234,6 +234,12 @@ void cre_pocketpy_test(void) {
     const CreEntity entity = cre_pypp_entity_instance_cache_create_new_entity(vm, "Node");
     cre_pypp_entity_instance_cache_push_entity_instance(vm, entity);
     TEST_ASSERT_EQUAL_INT(1, pkpy_stack_size(vm));
+    int nodeEntity = 0;
+    pkpy_getattr(vm, pkpy_name("entity_id"));
+    TEST_ASSERT_FALSE(print_py_error_message(vm));
+    pkpy_to_int(vm, 0, &nodeEntity);
+    TEST_ASSERT_FALSE(print_py_error_message(vm));
+    TEST_ASSERT_EQUAL_INT((int)entity, nodeEntity);
 
     cre_ec_system_finalize();
     cre_pypp_entity_instance_cache_finalize(vm);

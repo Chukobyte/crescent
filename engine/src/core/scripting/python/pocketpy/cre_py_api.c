@@ -14,13 +14,13 @@ int cre_py_pp_api_node_get_children(pkpy_vm* vm);
 
 void cre_pypp_api_load_internal_modules(pkpy_vm* vm) {
     // Load internal first
-    cre_py_pp_util_create_module(vm, &(CrePPModule){
-            .name = "crescent_internal",
-            .functionCount = 2,
-            .functions = {
-                    { .signature = "node_get_name(entity_id: int) -> str", .function = cre_py_pp_api_node_get_name },
-                    { .signature = "node_get_children(entity_id: int) -> Tuple[int, ...]", .function = cre_py_pp_api_node_get_children },
-            }
+    cre_py_pp_util_create_module(vm, &(CrePPModule) {
+        .name = "crescent_internal",
+        .functionCount = 2,
+        .functions = {
+            { .signature = "node_get_name(entity_id: int) -> str", .function = cre_py_pp_api_node_get_name },
+            { .signature = "node_get_children(entity_id: int) -> Tuple[int, ...]", .function = cre_py_pp_api_node_get_children },
+        }
     });
 
     // Now load front facing api
