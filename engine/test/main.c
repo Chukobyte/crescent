@@ -237,7 +237,7 @@ void cre_pocketpy_test(void) {
 #undef CRE_TEST_POCKETPY_SOURCE
 
     TEST_MESSAGE("Testing loading included internal modules");
-    cre_pypp_api_load_internal_modules(vm);
+    cre_pkpy_api_load_internal_modules(vm);
     pkpy_exec(vm, "from crescent import Node");
     TEST_ASSERT_FALSE(print_py_error_message(vm));
     pkpy_eval(vm, "Node(10).entity_id");
@@ -249,9 +249,9 @@ void cre_pocketpy_test(void) {
 
     TEST_MESSAGE("Testing entity instance cache");
     cre_ec_system_initialize();  // Is needed for entity id generation
-    cre_pypp_entity_instance_cache_initialize(vm);
-    const CreEntity entity = cre_pypp_entity_instance_cache_create_new_entity(vm, "Node");
-    cre_pypp_entity_instance_cache_push_entity_instance(vm, entity);
+    cre_pkpy_entity_instance_cache_initialize(vm);
+    const CreEntity entity = cre_pkpy_entity_instance_cache_create_new_entity(vm, "Node");
+    cre_pkpy_entity_instance_cache_push_entity_instance(vm, entity);
     TEST_ASSERT_EQUAL_INT(1, pkpy_stack_size(vm));
     pkpy_getattr(vm, pkpy_name("entity_id"));
     TEST_ASSERT_FALSE(print_py_error_message(vm));
@@ -259,14 +259,14 @@ void cre_pocketpy_test(void) {
     TEST_ASSERT_FALSE(print_py_error_message(vm));
     TEST_ASSERT_EQUAL_INT((int)entity, nodeEntity);
     // Test removing entity
-    TEST_ASSERT_TRUE(cre_pypp_entity_instance_cache_has_entity(vm, nodeEntity));
-    cre_pypp_entity_instance_cache_remove_entity(vm, entity);
-    TEST_ASSERT_FALSE(cre_pypp_entity_instance_cache_has_entity(vm, nodeEntity));
+    TEST_ASSERT_TRUE(cre_pkpy_entity_instance_cache_has_entity(vm, nodeEntity));
+    cre_pkpy_entity_instance_cache_remove_entity(vm, entity);
+    TEST_ASSERT_FALSE(cre_pkpy_entity_instance_cache_has_entity(vm, nodeEntity));
     pkpy_pop_top(vm);
     TEST_ASSERT_EQUAL_INT(0, pkpy_stack_size(vm));
 
     cre_ec_system_finalize();
-    cre_pypp_entity_instance_cache_finalize(vm);
+    cre_pkpy_entity_instance_cache_finalize(vm);
 
     pkpy_delete_vm(vm);
 }
@@ -284,13 +284,13 @@ void cre_pocketpy_test_old(void) {
     TEST_ASSERT_EQUAL_INT(0, pkpy_stack_size(vm));
 
     // Testing adding a module
-    cre_py_pp_util_create_module(vm, &(CrePPModule){
-        .name = "crescent_internal",
-        .functionCount = 2,
-        .functions = {
-                { .signature = "node_get_name(entity_id: int) -> str", .function = pocketpy_test_node_get_name },
-                { .signature = "node_get_children(entity_id: int) -> Tuple[int, ...]", .function = pocketpy_test_node_get_children },
-        }
+    cre_pkpy_util_create_module(vm, &(CrePPModule) {
+            .name = "crescent_internal",
+            .functionCount = 2,
+            .functions = {
+                    {.signature = "node_get_name(entity_id: int) -> str", .function = pocketpy_test_node_get_name},
+                    {.signature = "node_get_children(entity_id: int) -> Tuple[int, ...]", .function = pocketpy_test_node_get_children},
+            }
     });
     TEST_ASSERT_EQUAL_INT(0, pkpy_stack_size(vm));
 

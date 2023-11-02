@@ -13,6 +13,6 @@ typedef struct CrePPModule {
     CrePPFunction functions[8];
 } CrePPModule;
 
-char* cre_py_pp_util_get_error_message(pkpy_vm* vm);
-bool cre_py_pp_util_print_error_message(pkpy_vm* vm);
-void cre_py_pp_util_create_module(pkpy_vm* vm, CrePPModule* module);
+char* cre_pkpy_util_get_error_message(pkpy_vm* vm);
+bool cre_pkpy_util_print_error_message(pkpy_vm* vm);
+void cre_pkpy_util_create_module(pkpy_vm* vm, CrePPModule* module);

@@ -20,7 +20,7 @@ void py_pp_on_entity_subscribe_to_network_callback(CreEntity entity, PyObject* c
 
 CREScriptContext* pp_script_context = NULL;
 
-CREScriptContext* cre_py_pp_create_script_context() {
+CREScriptContext* cre_pkpy_script_context_create() {
     SE_ASSERT_FMT(pp_script_context == NULL, "Script context already created!");
     CREScriptContext* scriptContext = cre_script_context_create();
     scriptContext->on_create_instance = py_pp_on_create_instance;
@@ -36,7 +36,7 @@ CREScriptContext* cre_py_pp_create_script_context() {
     return scriptContext;
 }
 
-CREScriptContext* cre_py_pp_get_script_context() {
+CREScriptContext* cre_pkpy_script_context_get() {
     return pp_script_context;
 }
 
@@ -50,6 +50,6 @@ void py_pp_on_network_callback(const char* message) {}
 
 // Entity Network Callback
 void py_pp_on_entity_subscribe_to_network_callback(CreEntity entity, PyObject* callback_func, const char* id) {}
-void cre_py_pp_on_network_udp_server_client_connected() {}
-void cre_py_pp_create_script_instance(CreEntity entity, const char* classPath, const char* className) {}
-void cre_py_pp_get_script_instance(CreEntity entity) {}
+void cre_pkpy_script_context_on_network_udp_server_client_connected() {}
+void cre_pkpy_script_context_create_script_instance(CreEntity entity, const char* classPath, const char* className) {}
+void cre_pkpy_script_context_get_script_instance(CreEntity entity) {}

@@ -9,29 +9,29 @@
 #include "../../../ecs/component/component.h"
 #include "../../../scene/scene_utils.h"
 
-int cre_py_pp_api_node_get_name(pkpy_vm* vm);
-int cre_py_pp_api_node_get_children(pkpy_vm* vm);
+int cre_pkpy_api_node_get_name(pkpy_vm* vm);
+int cre_pkpy_api_node_get_children(pkpy_vm* vm);
 
-void cre_pypp_api_load_internal_modules(pkpy_vm* vm) {
+void cre_pkpy_api_load_internal_modules(pkpy_vm* vm) {
     // Load internal first
-    cre_py_pp_util_create_module(vm, &(CrePPModule) {
-        .name = "crescent_internal",
-        .functionCount = 2,
-        .functions = {
-            { .signature = "node_get_name(entity_id: int) -> str", .function = cre_py_pp_api_node_get_name },
-            { .signature = "node_get_children(entity_id: int) -> Tuple[int, ...]", .function = cre_py_pp_api_node_get_children },
-        }
+    cre_pkpy_util_create_module(vm, &(CrePPModule) {
+            .name = "crescent_internal",
+            .functionCount = 2,
+            .functions = {
+                    {.signature = "node_get_name(entity_id: int) -> str", .function = cre_pkpy_api_node_get_name},
+                    {.signature = "node_get_children(entity_id: int) -> Tuple[int, ...]", .function = cre_pkpy_api_node_get_children},
+            }
     });
 
     // Now load front facing api
     pkpy_push_module(vm, "crescent");
-    pkpy_exec_2(vm, CRE_PYPP_CRESCENT_SOURCE, "crescent.py", 0, "crescent");
-    SE_ASSERT(!cre_py_pp_util_print_error_message(vm));
+    pkpy_exec_2(vm, CRE_PKPY_CRESCENT_SOURCE, "crescent.py", 0, "crescent");
+    SE_ASSERT(!cre_pkpy_util_print_error_message(vm));
     pkpy_pop_top(vm);
     SE_ASSERT(pkpy_stack_size(vm) == 0);
 }
 
-int cre_py_pp_api_node_get_name(pkpy_vm* vm) {
+int cre_pkpy_api_node_get_name(pkpy_vm* vm) {
     int entityId;
     pkpy_to_int(vm, 0, &entityId);
 
@@ -41,7 +41,7 @@ int cre_py_pp_api_node_get_name(pkpy_vm* vm) {
     return 1;
 }
 
-int cre_py_pp_api_node_get_children(pkpy_vm* vm) {
+int cre_pkpy_api_node_get_children(pkpy_vm* vm) {
     int entityId;
     pkpy_to_int(vm, 0, &entityId);
 

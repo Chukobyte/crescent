@@ -1,6 +1,6 @@
 #pragma once
 
-#define CRE_PYPP_CRESCENT_SOURCE ""\
+#define CRE_PKPY_CRESCENT_SOURCE ""\
 "from typing import List\n"\
 "\n"\
 "import crescent_internal\n"\
@@ -35,7 +35,7 @@
 "        return f\"Node(entity_id: {self.entity_id})\"\n"\
 "\n"
 
-#define CRE_PYPP_CRESCENT_INTERNAL_PY_SOURCE ""\
+#define CRE_PKPY_CRESCENT_INTERNAL_PY_SOURCE ""\
 "from typing import Dict\n"\
 "\n"\
 "from crescent import Node\n"\
