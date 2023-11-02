@@ -25,7 +25,7 @@ def generate_source_header_file(
 
 
 generate_source_header_file(
-    output_path="../../../engine/src/core/scripting/python/pocketpy/crescent_api_source.h",
+    output_path="../../../engine/src/core/scripting/python/pocketpy/cre_pkpy_api_source.h",
     source_inputs=[
         SourceInput(file_path="../crescent.py", macro_name="CRE_PKPY_CRESCENT_SOURCE"),
         SourceInput(

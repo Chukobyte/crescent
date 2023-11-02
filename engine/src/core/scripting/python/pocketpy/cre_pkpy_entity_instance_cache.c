@@ -1,12 +1,12 @@
-#include "entity_instance_cache.h"
+#include "cre_pkpy_entity_instance_cache.h"
 
 #include <stdio.h>
 
 #include "../seika/src/utils/se_assert.h"
 
-#include "cre_py_pp_util.h"
+#include "cre_pkpy_util.h"
 #include "../../../ecs/system/ec_system.h"
-#include "crescent_api_source.h"
+#include "cre_pkpy_api_source.h"
 
 static bool entity_instance_cache_is_initialized = false;
 

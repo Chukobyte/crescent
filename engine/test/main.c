@@ -13,9 +13,9 @@
 #include "../src/core/ecs/component/text_label_component.h"
 #include "../src/core/ecs/system/ec_system.h"
 #include "../src/core/json/json_file_loader.h"
-#include "../src/core/scripting/python/pocketpy/cre_py_pp_util.h"
-#include "../src/core/scripting/python/pocketpy/cre_py_api.h"
-#include "../src/core/scripting/python/pocketpy/entity_instance_cache.h"
+#include "../src/core/scripting/python/pocketpy/cre_pkpy_util.h"
+#include "../src/core/scripting/python/pocketpy/cre_pkpy_api.h"
+#include "../src/core/scripting/python/pocketpy/cre_pkpy_entity_instance_cache.h"
 
 void setUp() {
     cre_component_manager_initialize();

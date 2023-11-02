@@ -56,10 +56,10 @@ add_library(${PROJECT_NAME} STATIC
         src/core/scripting/python/cre_py_api_module.c
         src/core/scripting/python/py_cache.c
         src/core/scripting/python/py_script_context.c
-        src/core/scripting/python/pocketpy/cre_py_api.c
-        src/core/scripting/python/pocketpy/cre_py_pp_util.c
-        src/core/scripting/python/pocketpy/cre_py_script_context.c
-        src/core/scripting/python/pocketpy/entity_instance_cache.c
+        src/core/scripting/python/pocketpy/cre_pkpy_api.c
+        src/core/scripting/python/pocketpy/cre_pkpy_util.c
+        src/core/scripting/python/pocketpy/cre_pkpy_script_context.c
+        src/core/scripting/python/pocketpy/cre_pkpy_entity_instance_cache.c
         src/core/scripting/native/native_script_context.c
         src/core/scripting/native/native_script_class.c
         src/core/scripting/native/internal_classes/fps_display_class.c
