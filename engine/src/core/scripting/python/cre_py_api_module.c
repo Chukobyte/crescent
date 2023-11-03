@@ -848,32 +848,25 @@ PyObject* cre_py_api_node_new(PyObject* self, PyObject* args, PyObject* kwargs) 
         const NodeBaseInheritanceType inheritanceType = node_get_type_inheritance(nodeComponent->type);
 
         if ((NodeBaseInheritanceType_NODE2D & inheritanceType) == NodeBaseInheritanceType_NODE2D) {
-            Transform2DComponent* transform2DComponent = transform2d_component_create();
-            cre_component_manager_set_component(newNode->entity, CreComponentDataIndex_TRANSFORM_2D,
-                                                transform2d_component_create());
+            cre_component_manager_set_component(newNode->entity, CreComponentDataIndex_TRANSFORM_2D, transform2d_component_create());
         }
         if ((NodeBaseInheritanceType_SPRITE & inheritanceType) == NodeBaseInheritanceType_SPRITE) {
             cre_component_manager_set_component(newNode->entity, CreComponentDataIndex_SPRITE, sprite_component_create());
         }
         if ((NodeBaseInheritanceType_ANIMATED_SPRITE & inheritanceType) == NodeBaseInheritanceType_ANIMATED_SPRITE) {
-            cre_component_manager_set_component(newNode->entity, CreComponentDataIndex_ANIMATED_SPRITE,
-                                                animated_sprite_component_create());
+            cre_component_manager_set_component(newNode->entity, CreComponentDataIndex_ANIMATED_SPRITE, animated_sprite_component_create());
         }
         if ((NodeBaseInheritanceType_TEXT_LABEL & inheritanceType) == NodeBaseInheritanceType_TEXT_LABEL) {
-            cre_component_manager_set_component(newNode->entity, CreComponentDataIndex_TEXT_LABEL,
-                                                text_label_component_create());
+            cre_component_manager_set_component(newNode->entity, CreComponentDataIndex_TEXT_LABEL, text_label_component_create());
         }
         if ((NodeBaseInheritanceType_COLLIDER2D & inheritanceType) == NodeBaseInheritanceType_COLLIDER2D) {
-            cre_component_manager_set_component(newNode->entity, CreComponentDataIndex_COLLIDER_2D,
-                                                collider2d_component_create());
+            cre_component_manager_set_component(newNode->entity, CreComponentDataIndex_COLLIDER_2D, collider2d_component_create());
         }
         if ((NodeBaseInheritanceType_COLOR_RECT & inheritanceType) == NodeBaseInheritanceType_COLOR_RECT) {
-            cre_component_manager_set_component(newNode->entity, CreComponentDataIndex_COLOR_RECT,
-                                                color_rect_component_create());
+            cre_component_manager_set_component(newNode->entity, CreComponentDataIndex_COLOR_RECT, color_rect_component_create());
         }
         if ((NodeBaseInheritanceType_PARALLAX & inheritanceType) == NodeBaseInheritanceType_PARALLAX) {
-            cre_component_manager_set_component(newNode->entity, CreComponentDataIndex_PARALLAX,
-                                                parallax_component_create());
+            cre_component_manager_set_component(newNode->entity, CreComponentDataIndex_PARALLAX, parallax_component_create());
         }
 
         cre_scene_manager_stage_child_node_to_be_added_later(newNode);

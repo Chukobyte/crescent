@@ -1,5 +1,7 @@
 #include "cre_pkpy_api.h"
 
+#include <string.h>
+
 #include "../seika/src/utils/se_assert.h"
 
 #include "cre_pkpy_util.h"
@@ -8,19 +10,23 @@
 #include "../../../ecs/component/node_component.h"
 #include "../../../ecs/component/component.h"
 #include "../../../scene/scene_utils.h"
+#include "../../../ecs/system/ec_system.h"
+#include "../../../ecs/component/script_component.h"
 
+int cre_pkpy_api_node_new(pkpy_vm* vm);
 int cre_pkpy_api_node_get_name(pkpy_vm* vm);
 int cre_pkpy_api_node_get_children(pkpy_vm* vm);
 
 void cre_pkpy_api_load_internal_modules(pkpy_vm* vm) {
     // Load internal first
     cre_pkpy_util_create_module(vm, &(CrePPModule) {
-            .name = "crescent_internal",
-            .functionCount = 2,
-            .functions = {
-                    {.signature = "node_get_name(entity_id: int) -> str", .function = cre_pkpy_api_node_get_name},
-                    {.signature = "node_get_children(entity_id: int) -> Tuple[int, ...]", .function = cre_pkpy_api_node_get_children},
-            }
+        .name = "crescent_internal",
+        .functionCount = 3,
+        .functions = {
+            {.signature = "node_new(class_path: str, class_name: str, node_type_flag: int) -> int", .function = cre_pkpy_api_node_new},
+            {.signature = "node_get_name(entity_id: int) -> str", .function = cre_pkpy_api_node_get_name},
+            {.signature = "node_get_children(entity_id: int) -> Tuple[int, ...]", .function = cre_pkpy_api_node_get_children},
+        }
     });
 
     // Now load front facing api
@@ -29,6 +35,28 @@ void cre_pkpy_api_load_internal_modules(pkpy_vm* vm) {
     SE_ASSERT(!cre_pkpy_util_print_error_message(vm));
     pkpy_pop_top(vm);
     SE_ASSERT(pkpy_stack_size(vm) == 0);
+}
+
+int cre_pkpy_api_node_new(pkpy_vm* vm) {
+    pkpy_CString pyClassPath;
+    pkpy_CString pyClassName;
+    int pyNodeTypeFlag;
+    pkpy_to_string(vm, 0, &pyClassPath);
+    pkpy_to_string(vm, 1, &pyClassName);
+    pkpy_to_int(vm, 2, &pyNodeTypeFlag);
+
+    SceneTreeNode* newNode = cre_scene_tree_create_tree_node(cre_ec_system_create_entity_uid(), NULL);
+    cre_scene_manager_stage_child_node_to_be_added_later(newNode);
+
+    NodeComponent* nodeComponent = node_component_create();
+    strcpy(nodeComponent->name, pyClassName.data);
+    nodeComponent->type = (NodeBaseType)pyNodeTypeFlag;
+    cre_component_manager_set_component(newNode->entity, CreComponentDataIndex_NODE, nodeComponent);
+
+    cre_component_manager_set_component(newNode->entity, CreComponentDataIndex_SCRIPT, script_component_create(pyClassPath.data, pyClassName.data));
+
+    pkpy_push_int(vm, (int)newNode->entity);
+    return 1;
 }
 
 int cre_pkpy_api_node_get_name(pkpy_vm* vm) {
