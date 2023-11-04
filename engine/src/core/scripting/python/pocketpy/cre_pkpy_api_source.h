@@ -10,6 +10,11 @@
 "    def __init__(self, entity_id: int):\n"\
 "        self.entity_id = entity_id\n"\
 "\n"\
+"    # TODO: Replace with proper method once class method is added\n"\
+"    # @staticmethod\n"\
+"    # def new() -> \"Node\":\n"\
+"    #     return Node(0)\n"\
+"\n"\
 "    def get_name(self) -> str:\n"\
 "        return crescent_internal.node_get_name(self.entity_id)\n"\
 "\n"\
@@ -24,6 +29,12 @@
 "        for child_id in children_ids:\n"\
 "            children.append(Node(child_id))\n"\
 "        return children\n"\
+"\n"\
+"    def queue_deletion(self) -> None:\n"\
+"        crescent_api_internal.node_queue_deletion(self.entity_id)\n"\
+"\n"\
+"    def is_queued_for_deletion(self) -> bool:\n"\
+"        return crescent_api_internal.node_is_queued_for_deletion(self.entity_id)\n"\
 "\n"\
 "    def __eq__(self, other) -> bool:\n"\
 "        return self.entity_id == other.entity_id\n"\

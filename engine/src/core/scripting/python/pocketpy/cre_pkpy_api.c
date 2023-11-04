@@ -14,16 +14,30 @@
 #include "../../../ecs/component/script_component.h"
 
 int cre_pkpy_api_node_new(pkpy_vm* vm);
-int cre_pkpy_api_node_get_name(pkpy_vm* vm);
+int cre_pkpy_api_node_queue_deletion(pkpy_vm* vm);
+int cre_pkpy_api_node_is_queued_for_deletion(pkpy_vm* vm);
+int cre_pkpy_api_node_add_child(pkpy_vm* vm);
+int cre_pkpy_api_node_get_child(pkpy_vm* vm);
 int cre_pkpy_api_node_get_children(pkpy_vm* vm);
+int cre_pkpy_api_node_get_parent(pkpy_vm* vm);
+int cre_pkpy_api_node_get_name(pkpy_vm* vm);
+int cre_pkpy_api_node_set_time_dilation(pkpy_vm* vm);
+int cre_pkpy_api_node_get_time_dilation(pkpy_vm* vm);
+int cre_pkpy_api_node_set_full_time_dilation(pkpy_vm* vm);
+int cre_pkpy_api_node_get_full_time_dilation(pkpy_vm* vm);
+int cre_pkpy_api_node_create_event(pkpy_vm* vm);
+int cre_pkpy_api_node_subscribe_to_event(pkpy_vm* vm);
+int cre_pkpy_api_node_broadcast_event(pkpy_vm* vm);
 
 void cre_pkpy_api_load_internal_modules(pkpy_vm* vm) {
     // Load internal first
     cre_pkpy_util_create_module(vm, &(CrePPModule) {
         .name = "crescent_internal",
-        .functionCount = 3,
+        .functionCount = 5,
         .functions = {
             {.signature = "node_new(class_path: str, class_name: str, node_type_flag: int) -> int", .function = cre_pkpy_api_node_new},
+            {.signature = "node_queue_deletion(entity_id: int) -> None", .function = cre_pkpy_api_node_queue_deletion},
+            {.signature = "node_is_queued_for_deletion(entity_id: int) -> bool", .function = cre_pkpy_api_node_is_queued_for_deletion},
             {.signature = "node_get_name(entity_id: int) -> str", .function = cre_pkpy_api_node_get_name},
             {.signature = "node_get_children(entity_id: int) -> Tuple[int, ...]", .function = cre_pkpy_api_node_get_children},
         }
@@ -56,6 +70,35 @@ int cre_pkpy_api_node_new(pkpy_vm* vm) {
     cre_component_manager_set_component(newNode->entity, CreComponentDataIndex_SCRIPT, script_component_create(pyClassPath.data, pyClassName.data));
 
     pkpy_push_int(vm, (int)newNode->entity);
+    return 1;
+}
+
+int cre_pkpy_api_node_queue_deletion(pkpy_vm* vm) {
+    int entityId;
+    pkpy_to_int(vm, 0, &entityId);
+
+    const CreEntity entity = (CreEntity)entityId;
+    NodeComponent* nodeComponent = (NodeComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_NODE);
+    if (!nodeComponent->queuedForDeletion) {
+        if (cre_scene_manager_has_entity_tree_node(entity)) {
+            SceneTreeNode* node = cre_scene_manager_get_entity_tree_node(entity);
+            cre_queue_destroy_tree_node_entity_all(node);
+        } else {
+            se_logger_warn("Entity not found in tree, skipping queue deletion.");
+        }
+    } else {
+        se_logger_warn("Node '%s' already queued for deletion!", nodeComponent->name);
+    }
+    return 0;
+}
+
+int cre_pkpy_api_node_is_queued_for_deletion(pkpy_vm* vm) {
+    int entityId;
+    pkpy_to_int(vm, 0, &entityId);
+
+    const CreEntity entity = (CreEntity)entityId;
+    NodeComponent* nodeComponent = (NodeComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_NODE);
+    pkpy_push_bool(vm, nodeComponent->queuedForDeletion);
     return 1;
 }
 
