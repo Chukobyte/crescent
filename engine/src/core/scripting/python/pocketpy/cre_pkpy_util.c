@@ -29,6 +29,7 @@ bool cre_pkpy_util_print_error_message(pkpy_vm* vm) {
 }
 
 void cre_pkpy_util_create_module(pkpy_vm* vm, CrePPModule* module) {
+    SE_ASSERT(module->functionCount <= CRE_PKPY_MODULE_FUNCTION_LIMIT);
     pkpy_push_module(vm, module->name);
     SE_ASSERT(!cre_pkpy_util_print_error_message(vm));
     pkpy_pop_top(vm);

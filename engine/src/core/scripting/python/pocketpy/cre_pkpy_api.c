@@ -33,13 +33,15 @@ void cre_pkpy_api_load_internal_modules(pkpy_vm* vm) {
     // Load internal first
     cre_pkpy_util_create_module(vm, &(CrePPModule) {
         .name = "crescent_internal",
-        .functionCount = 5,
+        .functionCount = 7,
         .functions = {
             {.signature = "node_new(class_path: str, class_name: str, node_type_flag: int) -> int", .function = cre_pkpy_api_node_new},
+            {.signature = "node_add_child(parent_entity_id: int, child_entity_id: int) -> None", .function = cre_pkpy_api_node_add_child},
+            {.signature = "node_get_child(parent_entity_id: int, child_entity_name: str) -> int", .function = cre_pkpy_api_node_get_child},
+            {.signature = "node_get_children(entity_id: int) -> Tuple[int, ...]", .function = cre_pkpy_api_node_get_children},
             {.signature = "node_queue_deletion(entity_id: int) -> None", .function = cre_pkpy_api_node_queue_deletion},
             {.signature = "node_is_queued_for_deletion(entity_id: int) -> bool", .function = cre_pkpy_api_node_is_queued_for_deletion},
             {.signature = "node_get_name(entity_id: int) -> str", .function = cre_pkpy_api_node_get_name},
-            {.signature = "node_get_children(entity_id: int) -> Tuple[int, ...]", .function = cre_pkpy_api_node_get_children},
         }
     });
 
@@ -73,6 +75,53 @@ int cre_pkpy_api_node_new(pkpy_vm* vm) {
     return 1;
 }
 
+int cre_pkpy_api_node_get_name(pkpy_vm* vm) {
+    int entityId;
+    pkpy_to_int(vm, 0, &entityId);
+
+    const CreEntity entity = (CreEntity)entityId;
+    NodeComponent* nodeComponent = (NodeComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_NODE);
+    pkpy_push_string(vm, pkpy_string(nodeComponent->name));
+    return 1;
+}
+
+int cre_pkpy_api_node_add_child(pkpy_vm* vm) {
+    int childEntityId;
+    int parentEntityId;
+    pkpy_to_int(vm, 0, &parentEntityId);
+    pkpy_to_int(vm, 1, &childEntityId);
+
+    CreEntity childEntity = (CreEntity)childEntityId;
+    CreEntity parentEntity = (CreEntity)parentEntityId;
+    cre_scene_manager_add_node_as_child(childEntity, parentEntity);
+    return 0;
+}
+
+int cre_pkpy_api_node_get_child(pkpy_vm* vm) {
+    int parentEntityId;
+    pkpy_CString childEntityName;
+    pkpy_to_int(vm, 0, &parentEntityId);
+    pkpy_to_string(vm, 1, &childEntityName);
+
+    int childEntityId = (int)cre_scene_manager_get_entity_child_by_name((CreEntity)parentEntityId, childEntityName.data);
+    pkpy_to_int(vm, 0, &childEntityId);
+    return 1;
+}
+
+int cre_pkpy_api_node_get_children(pkpy_vm* vm) {
+    int entityId;
+    pkpy_to_int(vm, 0, &entityId);
+
+    const CreEntity entity = (CreEntity)entityId;
+    const SceneTreeNode* parentTreeNode = cre_scene_manager_get_entity_tree_node(entity);
+    for (size_t i = 0; i < parentTreeNode->childCount; i++) {
+        const SceneTreeNode* childTreeNode = parentTreeNode->children[i];
+        pkpy_push_int(vm, (int)childTreeNode->entity);
+    }
+
+    return (int)parentTreeNode->childCount;
+}
+
 int cre_pkpy_api_node_queue_deletion(pkpy_vm* vm) {
     int entityId;
     pkpy_to_int(vm, 0, &entityId);
@@ -100,28 +149,4 @@ int cre_pkpy_api_node_is_queued_for_deletion(pkpy_vm* vm) {
     NodeComponent* nodeComponent = (NodeComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_NODE);
     pkpy_push_bool(vm, nodeComponent->queuedForDeletion);
     return 1;
-}
-
-int cre_pkpy_api_node_get_name(pkpy_vm* vm) {
-    int entityId;
-    pkpy_to_int(vm, 0, &entityId);
-
-    const CreEntity entity = (CreEntity)entityId;
-    NodeComponent* nodeComponent = (NodeComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_NODE);
-    pkpy_push_string(vm, pkpy_string(nodeComponent->name));
-    return 1;
-}
-
-int cre_pkpy_api_node_get_children(pkpy_vm* vm) {
-    int entityId;
-    pkpy_to_int(vm, 0, &entityId);
-
-    const CreEntity entity = (CreEntity)entityId;
-    const SceneTreeNode* parentTreeNode = cre_scene_manager_get_entity_tree_node(entity);
-    for (size_t i = 0; i < parentTreeNode->childCount; i++) {
-        const SceneTreeNode* childTreeNode = parentTreeNode->children[i];
-        pkpy_push_int(vm, (int)childTreeNode->entity);
-    }
-
-    return (int)parentTreeNode->childCount;
 }

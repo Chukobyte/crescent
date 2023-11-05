@@ -4,7 +4,7 @@ import crescent_internal
 
 
 class Node:
-    def __init__(self, entity_id: int):
+    def __init__(self, entity_id: int) -> None:
         self.entity_id = entity_id
 
     # TODO: Replace with proper method once class method is added
@@ -19,6 +19,13 @@ class Node:
     def name(self) -> str:
         return crescent_internal.node_get_name(self.entity_id)
 
+    def add_child(self, child_node: "Node") -> None:
+        crescent_internal.node_add_child(self.entity_id, child_node.entity_id)
+
+    def get_child(self, child_name: str) -> "Node":
+        child_entity_id = crescent_internal.node_get_child(self.entity_id, child_name)
+        return Node(child_entity_id)
+
     def get_children(self) -> List["Node"]:
         children_ids = crescent_internal.node_get_children(self.entity_id)
         # TODO: Get nodes from internal global dict
@@ -28,16 +35,16 @@ class Node:
         return children
 
     def queue_deletion(self) -> None:
-        crescent_api_internal.node_queue_deletion(self.entity_id)
+        crescent_internal.node_queue_deletion(self.entity_id)
 
     def is_queued_for_deletion(self) -> bool:
-        return crescent_api_internal.node_is_queued_for_deletion(self.entity_id)
+        return crescent_internal.node_is_queued_for_deletion(self.entity_id)
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: "Node") -> bool:
         return self.entity_id == other.entity_id
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"Node(entity_id: {self.entity_id})"
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"Node(entity_id: {self.entity_id})"
