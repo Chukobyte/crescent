@@ -1075,7 +1075,7 @@ PyObject* cre_py_api_node_create_event(PyObject* self, PyObject* args, PyObject*
 PyObject* cre_py_api_node_subscribe_to_event(PyObject* self, PyObject* args, PyObject* kwargs) {
     CreEntity entity;
     char* eventId;
-    CreEntity scopedEntity;
+    CreEntity scopedEntity; // Entity that 'owns' the subscription
     PyObject* pCallbackFunc;
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "isiO", crePyApiNodeSubscribeToEventKWList, &entity, &eventId, &scopedEntity, &pCallbackFunc)) {
         // Decreases ref in event data delete callback
