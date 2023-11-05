@@ -104,7 +104,7 @@ int cre_pkpy_api_node_get_child(pkpy_vm* vm) {
     pkpy_to_string(vm, 1, &childEntityName);
 
     int childEntityId = (int)cre_scene_manager_get_entity_child_by_name((CreEntity)parentEntityId, childEntityName.data);
-    pkpy_to_int(vm, 0, &childEntityId);
+    pkpy_push_int(vm, childEntityId);
     return 1;
 }
 
@@ -120,6 +120,20 @@ int cre_pkpy_api_node_get_children(pkpy_vm* vm) {
     }
 
     return (int)parentTreeNode->childCount;
+}
+
+int cre_pkpy_api_node_get_parent(pkpy_vm* vm) {
+    int childEntityId;
+    pkpy_to_int(vm, 0, &childEntityId);
+
+    CreEntity childEntity = (CreEntity)childEntityId;
+    CreEntity parentEntity = CRE_NULL_ENTITY;
+    if (cre_scene_manager_has_entity_tree_node(childEntity)) {
+        const SceneTreeNode* treeNode = cre_scene_manager_get_entity_tree_node(childEntity);
+        parentEntity = treeNode->parent->entity;
+    }
+    pkpy_push_int(vm, (int)parentEntity);
+    return 1;
 }
 
 int cre_pkpy_api_node_queue_deletion(pkpy_vm* vm) {
