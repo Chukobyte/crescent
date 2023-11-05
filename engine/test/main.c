@@ -286,10 +286,10 @@ void cre_pocketpy_test_old(void) {
     // Testing adding a module
     cre_pkpy_util_create_module(vm, &(CrePPModule) {
             .name = "crescent_internal",
-            .functionCount = 2,
             .functions = {
                     {.signature = "node_get_name(entity_id: int) -> str", .function = pocketpy_test_node_get_name},
                     {.signature = "node_get_children(entity_id: int) -> Tuple[int, ...]", .function = pocketpy_test_node_get_children},
+                    { NULL, NULL },
             }
     });
     TEST_ASSERT_EQUAL_INT(0, pkpy_stack_size(vm));

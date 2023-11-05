@@ -29,7 +29,6 @@ bool cre_pkpy_util_print_error_message(pkpy_vm* vm) {
 }
 
 void cre_pkpy_util_create_module(pkpy_vm* vm, CrePPModule* module) {
-    SE_ASSERT(module->functionCount <= CRE_PKPY_MODULE_FUNCTION_LIMIT);
     pkpy_push_module(vm, module->name);
     SE_ASSERT(!cre_pkpy_util_print_error_message(vm));
     pkpy_pop_top(vm);
@@ -38,8 +37,11 @@ void cre_pkpy_util_create_module(pkpy_vm* vm, CrePPModule* module) {
     strcat_s(nameBuffer, sizeof(nameBuffer), module->name);
     pkpy_exec(vm, nameBuffer); // import { module->name }
     SE_ASSERT(!cre_pkpy_util_print_error_message(vm));
-    for (size_t i = 0; i < module->functionCount; i++) {
+    for (size_t i = 0; i < CRE_PKPY_MODULE_FUNCTION_LIMIT; i++) {
         const CrePPFunction* func = &module->functions[i];
+        if (!func->signature || !func->function) {
+            break;
+        }
         pkpy_push_function(vm, func->signature, func->function);
         SE_ASSERT(!cre_pkpy_util_print_error_message(vm));
         pkpy_eval(vm, module->name);
