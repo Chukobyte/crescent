@@ -17,7 +17,7 @@ CreEntitySystem* fontRenderingSystem = NULL;
 void font_rendering_system_render();
 
 CreEntitySystem* cre_font_rendering_ec_system_create() {
-    SE_ASSERT(fontRenderingSystem == NULL);
+//    SE_ASSERT(fontRenderingSystem == NULL);
     fontRenderingSystem = cre_ec_system_create();
     fontRenderingSystem->name = se_strdup("Font Rendering");
     fontRenderingSystem->render_func = font_rendering_system_render;

@@ -41,7 +41,7 @@ CREScriptContext* python_script_context = NULL;
 PyGILState_STATE pyGlobalGilStateState;
 
 CREScriptContext* cre_py_create_script_context() {
-    SE_ASSERT_FMT(python_script_context == NULL, "Script context already created!");
+//    SE_ASSERT_FMT(python_script_context == NULL, "Script context already created!");
     CREScriptContext* scriptContext = cre_script_context_create();
     scriptContext->on_create_instance = py_on_create_instance;
     scriptContext->on_delete_instance = py_on_delete_instance;

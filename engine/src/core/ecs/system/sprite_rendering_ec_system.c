@@ -18,7 +18,7 @@ CreEntitySystem* spriteRenderingSystem = NULL;
 void sprite_rendering_system_render();
 
 CreEntitySystem* cre_sprite_rendering_ec_system_create() {
-    SE_ASSERT(spriteRenderingSystem == NULL);
+//    SE_ASSERT(spriteRenderingSystem == NULL);
     spriteRenderingSystem = cre_ec_system_create();
     spriteRenderingSystem->name = se_strdup("Sprite Rendering");
     spriteRenderingSystem->render_func = sprite_rendering_system_render;

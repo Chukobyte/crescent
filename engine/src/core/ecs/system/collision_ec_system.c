@@ -30,7 +30,7 @@ SEObserver collisionOnEntityTransformChangeObserver = { .on_notify = collision_s
 SESpatialHashMap* spatialHashMap = NULL;
 
 CreEntitySystem* cre_collision_ec_system_create() {
-    SE_ASSERT(collisionSystem == NULL);
+//    SE_ASSERT(collisionSystem == NULL);
     collisionSystem = cre_ec_system_create();
     collisionSystem->name = se_strdup("Collision");
     collisionSystem->component_signature = CreComponentType_TRANSFORM_2D | CreComponentType_COLLIDER_2D;

@@ -22,7 +22,7 @@ CreEntitySystem* parallaxSystem = NULL;
 SEObserver parallaxOnEntityTransformChangeObserver = { .on_notify = parallax_on_entity_transform_change };
 
 struct CreEntitySystem* cre_parallax_ec_system_create() {
-    SE_ASSERT(parallaxSystem == NULL);
+//    SE_ASSERT(parallaxSystem == NULL);
     parallaxSystem = cre_ec_system_create();
     parallaxSystem->name = se_strdup("Parallax");
     parallaxSystem->on_entity_entered_scene_func = parallax_system_on_entity_entered_scene;

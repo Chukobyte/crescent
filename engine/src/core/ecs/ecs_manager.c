@@ -39,6 +39,19 @@ void cre_ecs_manager_initialize() {
     cre_ec_system_register(cre_parallax_ec_system_create());
 }
 
+void cre_ecs_manager_initialize_ex(struct SETexture* colorRectTexture) {
+    cre_component_manager_initialize();
+    cre_ec_system_initialize();
+    // Initialize and register ec systems
+    cre_ec_system_register(cre_sprite_rendering_ec_system_create());
+    cre_ec_system_register(cre_animated_sprite_rendering_ec_system_create());
+    cre_ec_system_register(cre_font_rendering_ec_system_create());
+    cre_ec_system_register(cre_script_ec_system_create());
+    cre_ec_system_register(cre_collision_ec_system_create());
+    cre_ec_system_register(cre_color_rect_ec_system_create_ex(colorRectTexture));
+    cre_ec_system_register(cre_parallax_ec_system_create());
+}
+
 void cre_ecs_manager_enable_fps_display_entity(bool enabled, const char* fontUID, float positionX, float positionY) {
     static bool isEnabled = false;
     static CreEntity currentFpsEntity = CRE_NULL_ENTITY;

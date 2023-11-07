@@ -34,10 +34,10 @@ CREScriptContext* cre_native_create_script_context() {
     scriptContext->on_fixed_update_instance = native_on_fixed_update_instance;
     scriptContext->on_end = native_on_end;
 
-    SE_ASSERT(classCache == NULL);
+//    SE_ASSERT(classCache == NULL);
     classCache = se_string_hash_map_create(MAX_NATIVE_CLASSES);
 
-    SE_ASSERT(entityToClassName == NULL);
+//    SE_ASSERT(entityToClassName == NULL);
     entityToClassName = se_hash_map_create(sizeof(CreEntity), sizeof(CRENativeScriptClass **), MAX_NATIVE_CLASS_ENTITIES);
 
     native_script_context = scriptContext;

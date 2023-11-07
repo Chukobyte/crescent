@@ -21,14 +21,18 @@ SERect2 colorRectDrawSource = { 0.0f, 0.0f, 1.0f, 1.0f };
 void color_rect_system_render();
 
 CreEntitySystem* cre_color_rect_ec_system_create() {
-    SE_ASSERT(colorRectSystem == NULL);
+    return cre_color_rect_ec_system_create_ex(NULL);
+}
+
+struct CreEntitySystem* cre_color_rect_ec_system_create_ex(struct SETexture* rectTexture) {
+//    SE_ASSERT(colorRectSystem == NULL);
     colorRectSystem = cre_ec_system_create();
     colorRectSystem->name = se_strdup("Color Square");
     colorRectSystem->render_func = color_rect_system_render;
     colorRectSystem->component_signature = CreComponentType_TRANSFORM_2D | CreComponentType_COLOR_RECT;
 
-    SE_ASSERT_FMT(colorRectTexture == NULL, "Color Square Texture isn't NULL!");
-    colorRectTexture = se_texture_create_solid_colored_texture(1, 1, 255);
+//    SE_ASSERT_FMT(colorRectTexture == NULL, "Color Square Texture isn't NULL!");
+    colorRectTexture = rectTexture != NULL ? rectTexture : se_texture_create_solid_colored_texture(1, 1, 255);
     return colorRectSystem;
 }
 

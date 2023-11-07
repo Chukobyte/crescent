@@ -5,6 +5,7 @@
 #include <SDL2/SDL_main.h>
 
 #include "../seika/src/utils/se_file_system_utils.h"
+#include "../seika/src/rendering/texture.h"
 
 #include "../src/core/node_event.h"
 #include "../src/core/ecs/component/component.h"
@@ -12,16 +13,22 @@
 #include "../src/core/ecs/component/collider2d_component.h"
 #include "../src/core/ecs/component/text_label_component.h"
 #include "../src/core/ecs/system/ec_system.h"
+#include "../src/core/ecs/ecs_manager.h"
 #include "../src/core/json/json_file_loader.h"
 #include "../src/core/scripting/python/pocketpy/cre_pkpy_util.h"
 #include "../src/core/scripting/python/pocketpy/cre_pkpy_api.h"
 #include "../src/core/scripting/python/pocketpy/cre_pkpy_entity_instance_cache.h"
+#include "../src/core/game_properties.h"
+
+SETexture fakeColorRectTexture = {0};
 
 void setUp() {
-    cre_component_manager_initialize();
+    cre_game_props_initialize(cre_game_props_create());
+    cre_ecs_manager_initialize_ex(&fakeColorRectTexture);
 }
 void tearDown() {
-    cre_component_manager_finalize(); // TODO: Need to implement
+    cre_ecs_manager_finalize();
+    cre_game_props_finalize();
 }
 
 void cre_node_event_test(void);
@@ -248,7 +255,6 @@ void cre_pocketpy_test(void) {
     pkpy_pop_top(vm);
 
     TEST_MESSAGE("Testing entity instance cache");
-    cre_ec_system_initialize();  // Is needed for entity id generation
     cre_pkpy_entity_instance_cache_initialize(vm);
     const CreEntity entity = cre_pkpy_entity_instance_cache_create_new_entity(vm, "Node");
     cre_pkpy_entity_instance_cache_push_entity_instance(vm, entity);
@@ -265,7 +271,6 @@ void cre_pocketpy_test(void) {
     pkpy_pop_top(vm);
     TEST_ASSERT_EQUAL_INT(0, pkpy_stack_size(vm));
 
-    cre_ec_system_finalize();
     cre_pkpy_entity_instance_cache_finalize(vm);
 
     pkpy_delete_vm(vm);

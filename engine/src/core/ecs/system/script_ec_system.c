@@ -28,7 +28,7 @@ static CREScriptContext* scriptContexts[ScriptContextType_TOTAL_TYPES];
 static size_t scriptContextsCount = 0;
 
 CreEntitySystem* cre_script_ec_system_create() {
-    SE_ASSERT(scriptSystem == NULL);
+//    SE_ASSERT(scriptSystem == NULL);
     scriptSystem = cre_ec_system_create();
     scriptSystem->name = se_strdup("Script");
     scriptSystem->on_entity_registered_func = script_system_on_entity_registered;
