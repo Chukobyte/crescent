@@ -80,11 +80,12 @@
 "\n"\
 "\n"\
 "class _NodeEvent:\n"\
-"    def __init__(self, entity_id: int, name: str) -> None:\n"\
+"    def __init__(self, entity_id: int, name: str, subscribers: List[_NodeEventSubscriber] = None) -> None:\n"\
 "        self.entity_id = entity_id\n"\
 "        self.name = name\n"\
-"        # self.subscribers: List[_NodeEventSubscriber] = []\n"\
-"        self.subscribers = []\n"\
+"        if not subscribers:\n"\
+"            subscribers = []\n"\
+"        self.subscribers = subscribers\n"\
 "\n"\
 "    def add_or_update_subscriber(self, entity_id: int, call_back: Callable[[Tuple], None]) -> _NodeEventSubscriber:\n"\
 "        for sub in self.subscribers:\n"\
@@ -105,11 +106,13 @@
 "\n"\
 "\n"\
 "class _NodeEventManager:\n"\
-"    def __init__(self) -> None:\n"\
-"        # self.events: Dict[int, Dict[str, _NodeEvent]] = {}\n"\
-"        # self.entity_subscribers: Dict[int, List[_NodeEventSubscriber]] = {}\n"\
-"        self.events = {}\n"\
-"        self.entity_subscribers = {}\n"\
+"    def __init__(self, events: Dict[int, Dict[str, _NodeEvent]] = None, entity_subscribers: Dict[int, List[_NodeEventSubscriber]] = None) -> None:\n"\
+"        if not events:\n"\
+"            events = {}\n"\
+"        if not entity_subscribers:\n"\
+"            entity_subscribers = {}\n"\
+"        self.events = events\n"\
+"        self.entity_subscribers = entity_subscribers\n"\
 "\n"\
 "    def _get_entity_events(self, entity_id: int) -> Dict[str, _NodeEvent]:\n"\
 "        entity_events = self.events.get(entity_id, {})\n"\

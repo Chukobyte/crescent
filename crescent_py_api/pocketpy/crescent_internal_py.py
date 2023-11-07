@@ -24,11 +24,12 @@ class _NodeEventSubscriber:
 
 
 class _NodeEvent:
-    def __init__(self, entity_id: int, name: str) -> None:
+    def __init__(self, entity_id: int, name: str, subscribers: List[_NodeEventSubscriber] = None) -> None:
         self.entity_id = entity_id
         self.name = name
-        # self.subscribers: List[_NodeEventSubscriber] = []
-        self.subscribers = []
+        if not subscribers:
+            subscribers = []
+        self.subscribers = subscribers
 
     def add_or_update_subscriber(self, entity_id: int, call_back: Callable[[Tuple], None]) -> _NodeEventSubscriber:
         for sub in self.subscribers:
@@ -49,11 +50,13 @@ class _NodeEvent:
 
 
 class _NodeEventManager:
-    def __init__(self) -> None:
-        # self.events: Dict[int, Dict[str, _NodeEvent]] = {}
-        # self.entity_subscribers: Dict[int, List[_NodeEventSubscriber]] = {}
-        self.events = {}
-        self.entity_subscribers = {}
+    def __init__(self, events: Dict[int, Dict[str, _NodeEvent]] = None, entity_subscribers: Dict[int, List[_NodeEventSubscriber]] = None) -> None:
+        if not events:
+            events = {}
+        if not entity_subscribers:
+            entity_subscribers = {}
+        self.events = events
+        self.entity_subscribers = entity_subscribers
 
     def _get_entity_events(self, entity_id: int) -> Dict[str, _NodeEvent]:
         entity_events = self.events.get(entity_id, {})
