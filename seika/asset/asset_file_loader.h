@@ -3,7 +3,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 
-#include <glad/glad.h>
+#include "glad/glad.h"
 
 typedef enum SEAssetFileLoaderReadMode {
     SEAssetFileLoaderReadMode_DISK,

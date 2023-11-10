@@ -1,7 +1,7 @@
 #include "se_file_system_utils.h"
 
 #ifdef _WIN32
-#include <windows.h>
+#include <Windows.h>
 #include <corecrt.h>
 #else
 #include <sys/stat.h>

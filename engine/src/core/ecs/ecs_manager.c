@@ -2,9 +2,9 @@
 
 #include <string.h>
 
-#include "../seika/src/rendering/renderer.h"
-#include "../seika/src/utils/se_assert.h"
-#include "../seika/src/asset/asset_manager.h"
+#include "../seika/rendering/renderer.h"
+#include "../seika/utils/se_assert.h"
+#include "../seika/asset/asset_manager.h"
 
 #include "component/component.h"
 #include "component/transform2d_component.h"

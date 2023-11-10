@@ -4,8 +4,8 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "../seika/src/rendering/renderer.h"
-#include "../seika/src/memory/se_mem.h"
+#include "../seika/rendering/renderer.h"
+#include "../seika/memory/se_mem.h"
 
 #include "../native_script_class.h"
 #include "../../../engine_context.h"

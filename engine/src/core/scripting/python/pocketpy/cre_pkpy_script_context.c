@@ -2,9 +2,9 @@
 
 #include <Python.h>
 
-#include "../seika/src/utils/se_assert.h"
-#include "../seika/src/memory/se_mem.h"
-#include "../seika/src/networking/se_network.h"
+#include "../seika/utils/se_assert.h"
+#include "../seika/memory/se_mem.h"
+#include "../seika/networking/se_network.h"
 
 #include "../../script_context.h"
 

@@ -2,15 +2,15 @@
 
 #include <time.h>
 
-#include "../seika/src/seika.h"
-#include "../seika/src/asset/asset_file_loader.h"
-#include "../seika/src/asset/asset_manager.h"
-#include "../seika/src/input/input.h"
-#include "../seika/src/memory/se_mem.h"
-#include "../seika/src/utils/logger.h"
-#include "../seika/src/utils/se_file_system_utils.h"
-#include "../seika/src/utils/se_string_util.h"
-#include "../seika/src/utils/se_assert.h"
+#include "../seika/seika.h"
+#include "../seika/asset/asset_file_loader.h"
+#include "../seika/asset/asset_manager.h"
+#include "../seika/input/input.h"
+#include "../seika/memory/se_mem.h"
+#include "../seika/utils/logger.h"
+#include "../seika/utils/se_file_system_utils.h"
+#include "../seika/utils/se_string_util.h"
+#include "../seika/utils/se_assert.h"
 
 #include "core_info.h"
 #include "game_properties.h"

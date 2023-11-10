@@ -1,7 +1,7 @@
 #pragma once
 
-#include <ft2build.h>
-#include FT_FREETYPE_H
+#include "ft2build.h"
+#include FT_FREETYPE_H"freetype/freetype.h"
 
 typedef struct SERenderContext {
     FT_Library freeTypeLibrary;

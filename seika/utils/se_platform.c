@@ -1,7 +1,7 @@
 #include "se_platform.h"
 
 #if defined(_WIN32) || defined(_WIN64)
-#include <windows.h>
+#include <Windows.h>
 #elif defined(__APPLE__)
 #include <unistd.h>
 #include <sys/ptrace.h>

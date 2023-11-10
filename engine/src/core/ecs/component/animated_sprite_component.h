@@ -7,9 +7,9 @@ extern "C" {
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "../seika/src/rendering/shader/shader_instance_minimal.h"
-#include "../seika/src/math/se_math.h"
-#include "../seika/src/data_structures/se_hash_map_string.h"
+#include "../seika/rendering/shader/shader_instance_minimal.h"
+#include "../seika/math/se_math.h"
+#include "../seika/data_structures/se_hash_map_string.h"
 
 #include "../../animation/animation.h"
 

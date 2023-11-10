@@ -1,6 +1,6 @@
 #include "menu_bar_ui.h"
 
-#include "../seika/src/utils/se_file_system_utils.h"
+#include "../seika/utils/se_file_system_utils.h"
 
 #include "../../imgui/imgui_file_browser.h"
 #include "../../../scene/scene_manager.h"

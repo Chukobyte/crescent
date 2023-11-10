@@ -6,9 +6,9 @@
 #include <implot.h>
 #include <IconsFontAwesome6.h>
 
-#include "../seika/src/rendering/renderer.h"
+#include "../seika/rendering/renderer.h"
 
-#include "../seika/src/utils/logger.h"
+#include "../seika/utils/logger.h"
 
 #include "../engine/src/core/scripting/python/cre_py.h"
 #include "editor_context.h"

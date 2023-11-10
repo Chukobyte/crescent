@@ -1,7 +1,7 @@
 #include "font.h"
 
-#include <ft2build.h>
-#include FT_FREETYPE_H
+#include "ft2build.h"
+#include FT_FREETYPE_H"freetype/freetype.h"
 
 #include "render_context.h"
 #include "../asset/asset_file_loader.h"

@@ -3,7 +3,7 @@
 #include <string.h>
 #include <memory.h>
 
-#include <stb_image/stb_image.h>
+#include "stb_image/stb_image.h"
 
 #include "../asset/asset_file_loader.h"
 #include "../memory/se_mem.h"

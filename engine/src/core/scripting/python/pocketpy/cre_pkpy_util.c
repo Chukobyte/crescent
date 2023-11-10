@@ -2,7 +2,7 @@
 
 #include <string.h>
 
-#include "../seika/src/utils/se_assert.h"
+#include "../seika/utils/se_assert.h"
 
 void cre_copy_name_from_signature(char* target, const char* signature) {
     const char* open_parenthesis = strchr(signature, '(');

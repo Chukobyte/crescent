@@ -2,17 +2,17 @@
 
 #include <SDL2/SDL_main.h>
 
-#include "../src/data_structures/se_array_utils.h"
-#include "../src/data_structures/se_array_list.h"
-#include "../src/data_structures/se_spatial_hash_map.h"
-#include "../src/asset/asset_file_loader.h"
-#include "../src/utils/se_string_util.h"
-#include "../src/utils/se_file_system_utils.h"
-#include "../src/utils/observer.h"
-#include "../src/utils/se_profile_code.h"
-#include "../src/math/se_curve_float.h"
-#include "../src/rendering/shader/shader_instance.h"
-#include "../src/rendering/shader/shader_file_parser.h"
+#include "../data_structures/se_array_utils.h"
+#include "../data_structures/se_array_list.h"
+#include "../data_structures/se_spatial_hash_map.h"
+#include "../asset/asset_file_loader.h"
+#include "../utils/se_string_util.h"
+#include "../utils/se_file_system_utils.h"
+#include "../utils/observer.h"
+#include "../utils/se_profile_code.h"
+#include "../math/se_curve_float.h"
+#include "../rendering/shader/shader_instance.h"
+#include "../rendering/shader/shader_file_parser.h"
 
 #define RESOURCES_PATH "seika/test/resources"
 #define RESOURCES_PACK_PATH "seika/test/resources/test.pck"

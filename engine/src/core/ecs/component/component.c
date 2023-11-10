@@ -2,8 +2,8 @@
 
 #include <stddef.h>
 
-#include "../seika/src/memory/se_mem.h"
-#include "../seika/src/utils/se_assert.h"
+#include "../seika/memory/se_mem.h"
+#include "../seika/utils/se_assert.h"
 
 //--- Component Array ---//
 typedef struct ComponentArray {

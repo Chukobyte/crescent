@@ -1,7 +1,7 @@
 #include "audio.h"
 
 #define MINIAUDIO_IMPLEMENTATION
-#include <miniaudio/miniaudio.h>
+#include "miniaudio/miniaudio.h"
 
 #include "../memory/se_mem.h"
 #include "../asset/asset_file_loader.h"

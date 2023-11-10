@@ -2,8 +2,8 @@
 
 #include <stdbool.h>
 
-#include "../seika/src/rendering/texture.h"
-#include "../seika/src/math/se_math.h"
+#include "../seika/rendering/texture.h"
+#include "../seika/math/se_math.h"
 
 #define CRE_MAX_ANIMATION_FRAMES 16
 

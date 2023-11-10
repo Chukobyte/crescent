@@ -2,7 +2,7 @@
 
 #include <IconsFontAwesome6.h>
 
-#include "../seika/src/utils/logger.h"
+#include "../seika/utils/logger.h"
 
 #include "ui/imgui/imgui_helper.h"
 #include "utils/file_system_helper.h"

@@ -2,7 +2,7 @@
 
 #include <stddef.h>
 
-#include "../seika/src/memory/se_mem.h"
+#include "../seika/memory/se_mem.h"
 
 CRENativeScriptClass* cre_native_class_create_new(CreEntity entity, const char* path, const char* name) {
     CRENativeScriptClass* scriptClass = SE_MEM_ALLOCATE(CRENativeScriptClass);

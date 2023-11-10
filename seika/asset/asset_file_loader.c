@@ -1,7 +1,7 @@
 #include "asset_file_loader.h"
 
-#include <stb_image/stb_image.h>
-#include <kuba_zip/zip.h>
+#include "stb_image/stb_image.h"
+#include "kuba_zip/zip.h"
 
 #include "../data_structures/se_hash_map_string.h"
 #include "../memory/se_mem.h"

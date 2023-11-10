@@ -1,7 +1,7 @@
 #include "collision.h"
 
-#include "../seika/src/utils/logger.h"
-#include "../seika/src/utils/se_assert.h"
+#include "../seika/utils/logger.h"
+#include "../seika/utils/se_assert.h"
 
 #include "../../ecs/system/ec_system.h"
 #include "../../ecs/system/collision_ec_system.h"

@@ -2,13 +2,13 @@
 
 #include <string.h>
 
-#include "../seika/src/rendering/shader/shader_cache.h"
-#include "../seika/src/rendering/renderer.h"
-#include "../seika/src/asset/asset_manager.h"
-#include "../seika/src/utils/logger.h"
-#include "../seika/src/utils/se_assert.h"
-#include "../seika/src/data_structures/se_hash_map.h"
-#include "../seika/src/data_structures/se_static_array.h"
+#include "../seika/rendering/shader/shader_cache.h"
+#include "../seika/rendering/renderer.h"
+#include "../seika/asset/asset_manager.h"
+#include "../seika/utils/logger.h"
+#include "../seika/utils/se_assert.h"
+#include "../seika/data_structures/se_hash_map.h"
+#include "../seika/data_structures/se_static_array.h"
 
 #include "scene_utils.h"
 #include "../world.h"

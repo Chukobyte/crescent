@@ -4,7 +4,7 @@
 extern "C" {
 #endif
 
-#include "../seika/src/math/se_math.h"
+#include "../seika/math/se_math.h"
 
 typedef struct ColorRectComponent {
     SESize2D size;

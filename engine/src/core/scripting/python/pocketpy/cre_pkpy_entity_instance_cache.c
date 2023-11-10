@@ -2,7 +2,7 @@
 
 #include <stdio.h>
 
-#include "../seika/src/utils/se_assert.h"
+#include "../seika/utils/se_assert.h"
 
 #include "cre_pkpy_util.h"
 #include "../../../ecs/system/ec_system.h"
