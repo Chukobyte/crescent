@@ -1,7 +1,7 @@
 #pragma once
 
 #define CRE_PKPY_CRESCENT_SOURCE ""\
-"from typing import List\n"\
+"from typing import List, Callable, Tuple\n"\
 "\n"\
 "import crescent_internal\n"\
 "\n"\
@@ -42,6 +42,32 @@
 "\n"\
 "    def is_queued_for_deletion(self) -> bool:\n"\
 "        return crescent_internal.node_is_queued_for_deletion(self.entity_id)\n"\
+"\n"\
+"    def get_time_dilation(self) -> float:\n"\
+"        return crescent_internal.node_get_time_dilation(self.entity_id)\n"\
+"\n"\
+"    def set_time_dilation(self, dilation: float) -> None:\n"\
+"        crescent_internal.node_set_time_dilation(self.entity_id, dilation)\n"\
+"\n"\
+"    @property\n"\
+"    def time_dilation(self) -> float:\n"\
+"        return crescent_internal.node_get_time_dilation(self.entity_id)\n"\
+"\n"\
+"    @time_dilation.setter\n"\
+"    def time_dilation(self, value: float) -> None:\n"\
+"        crescent_internal.node_set_time_dilation(self.entity_id, value)\n"\
+"\n"\
+"    def get_total_time_dilation(self) -> float:\n"\
+"        return crescent_internal.node_get_total_time_dilation(self.entity_id)\n"\
+"\n"\
+"    def create_event(self, event_name: str) -> None:\n"\
+"        pass\n"\
+"\n"\
+"    def subscribe_to_event(self, event_name: str, subscriber: \"Node\", callback_func: Callable[[Tuple], None]) -> None:\n"\
+"        pass\n"\
+"\n"\
+"    def broadcast_event(self, event_name: str, *args) -> None:\n"\
+"        pass\n"\
 "\n"\
 "    def __eq__(self, other: \"Node\") -> bool:\n"\
 "        return self.entity_id == other.entity_id\n"\

@@ -25,8 +25,7 @@ int cre_pkpy_api_node_queue_deletion(pkpy_vm* vm);
 int cre_pkpy_api_node_is_queued_for_deletion(pkpy_vm* vm);
 int cre_pkpy_api_node_set_time_dilation(pkpy_vm* vm);
 int cre_pkpy_api_node_get_time_dilation(pkpy_vm* vm);
-int cre_pkpy_api_node_set_full_time_dilation(pkpy_vm* vm);
-int cre_pkpy_api_node_get_full_time_dilation(pkpy_vm* vm);
+int cre_pkpy_api_node_get_total_time_dilation(pkpy_vm* vm);
 int cre_pkpy_api_node_create_event(pkpy_vm* vm);
 int cre_pkpy_api_node_subscribe_to_event(pkpy_vm* vm);
 int cre_pkpy_api_node_broadcast_event(pkpy_vm* vm);
@@ -37,13 +36,16 @@ void cre_pkpy_api_load_internal_modules(pkpy_vm* vm) {
         .name = "crescent_internal",
         .functions = {
             {.signature = "node_new(class_path: str, class_name: str, node_type_flag: int) -> int", .function = cre_pkpy_api_node_new},
+            {.signature = "node_get_name(entity_id: int) -> str", .function = cre_pkpy_api_node_get_name},
             {.signature = "node_add_child(parent_entity_id: int, child_entity_id: int) -> None", .function = cre_pkpy_api_node_add_child},
             {.signature = "node_get_child(parent_entity_id: int, child_entity_name: str) -> int", .function = cre_pkpy_api_node_get_child},
             {.signature = "node_get_children(entity_id: int) -> Tuple[int, ...]", .function = cre_pkpy_api_node_get_children},
             {.signature = "node_get_parent(child_entity_id: int) -> int", .function = cre_pkpy_api_node_get_parent},
             {.signature = "node_queue_deletion(entity_id: int) -> None", .function = cre_pkpy_api_node_queue_deletion},
             {.signature = "node_is_queued_for_deletion(entity_id: int) -> bool", .function = cre_pkpy_api_node_is_queued_for_deletion},
-            {.signature = "node_get_name(entity_id: int) -> str", .function = cre_pkpy_api_node_get_name},
+            {.signature = "node_set_time_dilation(entity_id: int, dilation: float) -> None", .function = cre_pkpy_api_node_set_time_dilation},
+            {.signature = "node_get_time_dilation(entity_id: int) -> float", .function = cre_pkpy_api_node_get_time_dilation},
+            {.signature = "node_get_total_time_dilation(entity_id: int) -> float", .function = cre_pkpy_api_node_get_total_time_dilation},
             { NULL, NULL },
         }
     });
@@ -169,5 +171,40 @@ int cre_pkpy_api_node_is_queued_for_deletion(pkpy_vm* vm) {
     const CreEntity entity = (CreEntity)entityId;
     NodeComponent* nodeComponent = (NodeComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_NODE);
     pkpy_push_bool(vm, nodeComponent->queuedForDeletion);
+    return 1;
+}
+
+int cre_pkpy_api_node_set_time_dilation(pkpy_vm* vm) {
+    int entityId;
+    double timeDilation;
+    pkpy_to_int(vm, 0, &entityId);
+    pkpy_to_float(vm, 1, &timeDilation);
+
+    const CreEntity entity = (CreEntity)entityId;
+    NodeComponent* nodeComponent = (NodeComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_NODE);
+    nodeComponent->timeDilation.value = (float)timeDilation;
+    cre_scene_manager_invalidate_time_dilation_nodes_with_children(entity);
+
+    return 0;
+}
+
+int cre_pkpy_api_node_get_time_dilation(pkpy_vm* vm) {
+    int entityId;
+    pkpy_to_int(vm, 0, &entityId);
+
+    const CreEntity entity = (CreEntity)entityId;
+    NodeComponent* nodeComponent = (NodeComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_NODE);
+    const double timeDilation = (double)nodeComponent->timeDilation.value;
+    pkpy_push_float(vm, timeDilation);
+    return 1;
+}
+
+int cre_pkpy_api_node_get_total_time_dilation(pkpy_vm* vm) {
+    int entityId;
+    pkpy_to_int(vm, 0, &entityId);
+
+    const CreEntity entity = (CreEntity)entityId;
+    const double totalTimeDilation = (double)cre_scene_manager_get_node_full_time_dilation(entity);
+    pkpy_push_float(vm, totalTimeDilation);
     return 1;
 }

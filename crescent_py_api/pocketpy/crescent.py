@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Callable, Tuple
 
 import crescent_internal
 
@@ -39,6 +39,32 @@ class Node:
 
     def is_queued_for_deletion(self) -> bool:
         return crescent_internal.node_is_queued_for_deletion(self.entity_id)
+
+    def get_time_dilation(self) -> float:
+        return crescent_internal.node_get_time_dilation(self.entity_id)
+
+    def set_time_dilation(self, dilation: float) -> None:
+        crescent_internal.node_set_time_dilation(self.entity_id, dilation)
+
+    @property
+    def time_dilation(self) -> float:
+        return crescent_internal.node_get_time_dilation(self.entity_id)
+
+    @time_dilation.setter
+    def time_dilation(self, value: float) -> None:
+        crescent_internal.node_set_time_dilation(self.entity_id, value)
+
+    def get_total_time_dilation(self) -> float:
+        return crescent_internal.node_get_total_time_dilation(self.entity_id)
+
+    def create_event(self, event_name: str) -> None:
+        pass
+
+    def subscribe_to_event(self, event_name: str, subscriber: "Node", callback_func: Callable[[Tuple], None]) -> None:
+        pass
+
+    def broadcast_event(self, event_name: str, *args) -> None:
+        pass
 
     def __eq__(self, other: "Node") -> bool:
         return self.entity_id == other.entity_id

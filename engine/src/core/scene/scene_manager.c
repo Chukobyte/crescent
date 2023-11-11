@@ -338,6 +338,17 @@ EntityArray cre_scene_manager_get_self_and_parent_nodes(CreEntity entity) {
     return combineModelResult;
 }
 
+void cre_scene_manager_invalidate_time_dilation_nodes_with_children(CreEntity entity) {
+    NodeComponent* nodeComponent = cre_component_manager_get_component(entity, CreComponentDataIndex_NODE);
+    nodeComponent->timeDilation.cacheInvalid = true;
+    if (cre_scene_manager_has_entity_tree_node(entity)) {
+        SceneTreeNode* sceneTreeNode = cre_scene_manager_get_entity_tree_node(entity);
+        for (size_t i = 0; i < sceneTreeNode->childCount; i++) {
+            cre_scene_manager_invalidate_time_dilation_nodes_with_children(sceneTreeNode->children[i]->entity);
+        }
+    }
+}
+
 void cre_scene_manager_notify_all_on_transform_events(CreEntity entity, Transform2DComponent* transformComp) {
     se_event_notify_observers(&transformComp->onTransformChanged, &(SESubjectNotifyPayload) {
         .data = &(CreComponentEntityUpdatePayload) {.entity = entity, .component = transformComp, .componentType = CreComponentType_TRANSFORM_2D},
