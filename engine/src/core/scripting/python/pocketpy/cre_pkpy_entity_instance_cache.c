@@ -1,6 +1,7 @@
 #include "cre_pkpy_entity_instance_cache.h"
 
 #include <stdio.h>
+#include <string.h>
 
 #include "../seika/utils/se_assert.h"
 
@@ -30,7 +31,13 @@ void cre_pkpy_entity_instance_cache_finalize(pkpy_vm* vm) {
     }
 }
 
-CreEntity cre_pkpy_entity_instance_cache_create_new_entity(pkpy_vm* vm, const char* className) {
+CreEntity cre_pkpy_entity_instance_cache_create_new_entity(pkpy_vm* vm, const char* classPath, const char* className) {
+    // import module first
+    char importCmdBuffer[96];
+    sprintf(importCmdBuffer, "from %s import %s", classPath, className);
+    pkpy_exec(vm, importCmdBuffer);
+    SE_ASSERT(!cre_pkpy_util_print_error_message(vm));
+
     const CreEntity newEntity = cre_ec_system_create_entity_uid();
     pkpy_getglobal(vm, pkpy_name(className));
     pkpy_push_null(vm);

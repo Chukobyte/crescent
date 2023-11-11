@@ -7,7 +7,7 @@
 // Assumes new vm instance
 void cre_pkpy_entity_instance_cache_initialize(pkpy_vm* vm);
 void cre_pkpy_entity_instance_cache_finalize(pkpy_vm* vm);
-CreEntity cre_pkpy_entity_instance_cache_create_new_entity(pkpy_vm* vm, const char* className);
+CreEntity cre_pkpy_entity_instance_cache_create_new_entity(pkpy_vm* vm, const char* classPath, const char* className);
 void cre_pkpy_entity_instance_cache_remove_entity(pkpy_vm* vm, CreEntity entity);
 bool cre_pkpy_entity_instance_cache_has_entity(pkpy_vm* vm, CreEntity entity);
 void cre_pkpy_entity_instance_cache_push_entity_instance(pkpy_vm* vm, CreEntity entity);
