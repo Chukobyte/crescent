@@ -12,6 +12,10 @@ class Node:
     # def new() -> "Node":
     #     return Node(0)
 
+    @staticmethod
+    def new(class_path: str, class_name: str) -> "Node":
+        return Node(0)
+
     def get_name(self) -> str:
         return crescent_internal.node_get_name(self.entity_id)
 
