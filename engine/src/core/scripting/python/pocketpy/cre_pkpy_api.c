@@ -2,6 +2,7 @@
 
 #include <string.h>
 
+#include "../seika/utils/se_string_util.h"
 #include "../seika/utils/se_assert.h"
 
 #include "cre_pkpy_util.h"
@@ -67,21 +68,21 @@ int cre_pkpy_api_node_new(pkpy_vm* vm) {
     pkpy_to_string(vm, 1, &pyClassName);
     pkpy_to_int(vm, 2, &pyNodeTypeFlag);
 
-    const char* classPath = pyClassPath.data;
-    const char* className = pyClassName.data;
-    se_logger_error("Not error, classPath = '%s', className = '%s'", classPath, className);
-    const CreEntity entity = cre_pkpy_entity_instance_cache_create_new_entity(vm, pyClassPath.data, pyClassName.data);
+    char classPath[64];
+    char className[32];
+    se_str_trim_by_size(pyClassPath.data, classPath, pyClassPath.size);
+    se_str_trim_by_size(pyClassName.data, className, pyClassName.size);
+    const CreEntity entity = cre_pkpy_entity_instance_cache_create_new_entity(vm, classPath, className);
     SceneTreeNode* newNode = cre_scene_tree_create_tree_node(entity, NULL);
     cre_scene_manager_stage_child_node_to_be_added_later(newNode);
 
     NodeComponent* nodeComponent = node_component_create();
-    strcpy(nodeComponent->name, pyClassName.data);
+    strcpy(nodeComponent->name, className);
     nodeComponent->type = (NodeBaseType)pyNodeTypeFlag;
     cre_component_manager_set_component(entity, CreComponentDataIndex_NODE, nodeComponent);
 
-    cre_component_manager_set_component(entity, CreComponentDataIndex_SCRIPT, script_component_create(pyClassPath.data, pyClassName.data));
+    cre_component_manager_set_component(entity, CreComponentDataIndex_SCRIPT, script_component_create(classPath, className));
 
-//    pkpy_push_int(vm, (int)entity);
     cre_pkpy_entity_instance_cache_push_entity_instance(vm, entity);
     return 1;
 }

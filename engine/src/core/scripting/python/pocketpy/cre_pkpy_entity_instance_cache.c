@@ -44,13 +44,11 @@ CreEntity cre_pkpy_entity_instance_cache_create_new_entity(pkpy_vm* vm, const ch
     pkpy_push_int(vm, (int)newEntity);
     pkpy_vectorcall(vm, 1);
     SE_ASSERT(!cre_pkpy_util_print_error_message(vm));
-    SE_ASSERT(pkpy_stack_size(vm) == 1);
 
     pkpy_eval(vm, "crescent_internal_py");
     SE_ASSERT(!cre_pkpy_util_print_error_message(vm));
     pkpy_getattr(vm, pkpy_name("set_entity"));
     SE_ASSERT(!cre_pkpy_util_print_error_message(vm));
-    SE_ASSERT(pkpy_stack_size(vm) == 2);
     pkpy_rot_two(vm);
     SE_ASSERT(!cre_pkpy_util_print_error_message(vm));
     pkpy_push_null(vm);

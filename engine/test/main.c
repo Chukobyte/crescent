@@ -19,6 +19,7 @@
 #include "../src/core/scripting/python/pocketpy/cre_pkpy_api.h"
 #include "../src/core/scripting/python/pocketpy/cre_pkpy_entity_instance_cache.h"
 #include "../src/core/game_properties.h"
+#include "../src/core/scene/scene_manager.h"
 
 SETexture fakeColorRectTexture = {0};
 
@@ -272,120 +273,14 @@ void cre_pocketpy_test(void) {
     pkpy_pop_top(vm);
     TEST_ASSERT_EQUAL_INT(0, pkpy_stack_size(vm));
 
+    cre_scene_manager_initialize();
     TEST_MESSAGE("Testing returning entity");
     pkpy_exec(vm, "new_node = Node.new(\"crescent\", \"Node\")\nprint(f\"new_node = {new_node}\")");
     TEST_ASSERT_FALSE(print_py_error_message(vm));
     TEST_ASSERT_EQUAL_INT(0, pkpy_stack_size(vm));
+    cre_scene_manager_finalize();
 
     cre_pkpy_entity_instance_cache_finalize(vm);
-
-    pkpy_delete_vm(vm);
-}
-
-void cre_pocketpy_test_old(void) {
-    pkpy_vm* vm = pkpy_new_vm(true);
-
-    // Test hard coded source
-    pkpy_exec(vm, POCKET_PY_TEST_SOURCE_PY);
-    TEST_ASSERT_FALSE(pkpy_check_error(vm));
-    pkpy_exec(vm, "print(f\"{Test().value}\")");
-    TEST_ASSERT_FALSE(pkpy_check_error(vm));
-    pkpy_exec(vm, "print('Hello!')");
-    TEST_ASSERT_FALSE(pkpy_check_error(vm));
-    TEST_ASSERT_EQUAL_INT(0, pkpy_stack_size(vm));
-
-    // Testing adding a module
-    cre_pkpy_util_create_module(vm, &(CrePPModule) {
-            .name = "crescent_internal",
-            .functions = {
-                    {.signature = "node_get_name(entity_id: int) -> str", .function = pocketpy_test_node_get_name},
-                    {.signature = "node_get_children(entity_id: int) -> Tuple[int, ...]", .function = pocketpy_test_node_get_children},
-                    { NULL, NULL },
-            }
-    });
-    TEST_ASSERT_EQUAL_INT(0, pkpy_stack_size(vm));
-
-    // Test source from file
-    const char* PYTHON_SOURCE_FILE_PATH = "engine/test/resources/pocketpy_test.py";
-    pkpy_push_module(vm, "pocketpy_test");
-    char* pythonSourceFromFile = se_fs_read_file_contents(PYTHON_SOURCE_FILE_PATH, NULL);
-    TEST_ASSERT_NOT_NULL(pythonSourceFromFile);
-    pkpy_exec_2(vm, pythonSourceFromFile, PYTHON_SOURCE_FILE_PATH, 0, "pocketpy_test");
-    TEST_ASSERT_FALSE(print_py_error_message(vm));
-    SE_MEM_FREE(pythonSourceFromFile);
-    pkpy_exec(vm, "from pocketpy_test import Node, NodeManager");
-    TEST_ASSERT_FALSE(print_py_error_message(vm));
-//    pkpy_exec(vm, "print(f\"{Node(0).get_name()}\")");
-    pkpy_exec(vm, "print(f\"{Node(0).name}\")");
-    TEST_ASSERT_FALSE(print_py_error_message(vm));
-    pkpy_exec(vm, "print(f\"children = {Node(24).get_children()}\")");
-    TEST_ASSERT_FALSE(print_py_error_message(vm));
-
-    pkpy_exec(vm, "print(f\"{NodeManager().test_node}\")");
-    TEST_ASSERT_FALSE(print_py_error_message(vm));
-    pkpy_exec(vm, "print(f\"{NodeManager().test_add(1, 2, 3)}\")");
-    TEST_ASSERT_FALSE(print_py_error_message(vm));
-    pkpy_pop_top(vm);
-
-    TEST_ASSERT_EQUAL_INT(0, pkpy_stack_size(vm));
-    pkpy_getglobal(vm, pkpy_name("Node"));
-    TEST_ASSERT_FALSE(print_py_error_message(vm));
-    pkpy_push_null(vm);
-    TEST_ASSERT_FALSE(print_py_error_message(vm));
-    pkpy_push_int(vm, 1);
-    TEST_ASSERT_FALSE(print_py_error_message(vm));
-    pkpy_vectorcall(vm, 1);
-    TEST_ASSERT_FALSE(print_py_error_message(vm));
-    int nodeEntity = 0;
-    pkpy_getattr(vm, pkpy_name("entity_id"));
-    pkpy_to_int(vm, 0, &nodeEntity);
-    printf("node entity = '%d'", nodeEntity);
-
-    // Test creating instance and getting attr
-//    pkpy_getglobal(vm, pkpy_name("Test"));
-//    pkpy_push_null(vm);
-//    pkpy_vectorcall(vm, 0);
-//    TEST_ASSERT_FALSE(pkpy_check_error(vm));
-//    pkpy_getattr(vm, pkpy_name("value"));
-//    TEST_ASSERT_FALSE(pkpy_check_error(vm));
-//    int valueRet0 = 0;
-//    pkpy_to_int(vm, -1, &valueRet0);
-//    TEST_ASSERT_FALSE(pkpy_check_error(vm));
-//    TEST_ASSERT_EQUAL_INT(10, valueRet0);
-//    TEST_ASSERT_EQUAL_INT(1, pkpy_stack_size(vm));
-//    pkpy_pop_top(vm);
-//    // Test setting attr on instance
-//    TEST_ASSERT_EQUAL_INT(0, pkpy_stack_size(vm));
-//    pkpy_getglobal(vm, pkpy_name("Test"));
-//    pkpy_push_null(vm);
-//    pkpy_vectorcall(vm, 0);
-//    TEST_ASSERT_FALSE(pkpy_check_error(vm));
-//
-//    TEST_ASSERT_EQUAL_INT(1, pkpy_stack_size(vm));
-//    pkpy_push_int(vm, 50);
-//    TEST_ASSERT_FALSE(pkpy_check_error(vm));
-//    pkpy_rot_two(vm);
-//    TEST_ASSERT_FALSE(pkpy_check_error(vm));
-//    pkpy_setattr(vm, pkpy_name("value"));
-//    TEST_ASSERT_FALSE(pkpy_check_error(vm));
-//    TEST_ASSERT_EQUAL_INT(0, pkpy_stack_size(vm));
-//
-//    pkpy_push_int(vm, 50);
-//    pkpy_exec(vm, "test_inst = Test()");
-//    TEST_ASSERT_FALSE(pkpy_check_error(vm));
-//    pkpy_getglobal(vm, pkpy_name("test_inst"));
-//    TEST_ASSERT_FALSE(pkpy_check_error(vm));
-//    pkpy_setattr(vm, pkpy_name("value"));
-//    TEST_ASSERT_FALSE(pkpy_check_error(vm));
-//    TEST_ASSERT_EQUAL_INT(0, pkpy_stack_size(vm));
-//    pkpy_getglobal(vm, pkpy_name("test_inst"));
-//    TEST_ASSERT_FALSE(pkpy_check_error(vm));
-//    pkpy_getattr(vm, pkpy_name("value"));
-//    TEST_ASSERT_FALSE(pkpy_check_error(vm));
-//    int valueRet1 = 0;
-//    pkpy_to_int(vm, -1, &valueRet1);
-//    TEST_ASSERT_FALSE(pkpy_check_error(vm));
-//    TEST_ASSERT_EQUAL_INT(50, valueRet1);
 
     pkpy_delete_vm(vm);
 }

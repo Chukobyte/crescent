@@ -50,7 +50,6 @@ char* se_str_to_lower_and_underscore_whitespace(char* str) {
     return str;
 }
 
-// Naive function to remove file extension assuming the first '.' occurrence is for the extension.
 char* se_str_trim(const char* value, char delimiter) {
     char* newStr;
     char* lastExt;
@@ -67,6 +66,13 @@ char* se_str_trim(const char* value, char delimiter) {
         *lastExt = '\0';
     }
     return newStr;
+}
+
+void se_str_trim_by_size(const char* value, char* output, size_t size) {
+    for (size_t i = 0; i < size; i++) {
+        output[i] = value[i];
+    }
+    output[size] = '\0';
 }
 
 char* se_str_trim_and_replace(const char* value, char delimiter, const char* replacementValue) {
