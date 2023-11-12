@@ -3,8 +3,8 @@ from typing import Tuple
 # Mock class for engine's internal c python module
 
 
-def node_new(class_path: str, class_name: str, node_type_flag: int) -> int:
-    return 0
+def node_new(class_path: str, class_name: str, node_type_flag: int) -> "Node":
+    return None
 
 
 def node_get_name(entity_id: int) -> str:

@@ -15,6 +15,10 @@
 "    # def new() -> \"Node\":\n"\
 "    #     return Node(0)\n"\
 "\n"\
+"    @staticmethod\n"\
+"    def new(class_path: str, class_name: str) -> \"Node\":\n"\
+"        return crescent_internal.node_new(class_path, class_name, 1)\n"\
+"\n"\
 "    def get_name(self) -> str:\n"\
 "        return crescent_internal.node_get_name(self.entity_id)\n"\
 "\n"\

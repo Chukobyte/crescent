@@ -272,6 +272,11 @@ void cre_pocketpy_test(void) {
     pkpy_pop_top(vm);
     TEST_ASSERT_EQUAL_INT(0, pkpy_stack_size(vm));
 
+    TEST_MESSAGE("Testing returning entity");
+    pkpy_exec(vm, "new_node = Node.new(\"crescent\", \"Node\")\nprint(f\"new_node = {new_node}\")");
+    TEST_ASSERT_FALSE(print_py_error_message(vm));
+    TEST_ASSERT_EQUAL_INT(0, pkpy_stack_size(vm));
+
     cre_pkpy_entity_instance_cache_finalize(vm);
 
     pkpy_delete_vm(vm);

@@ -36,7 +36,7 @@ void cre_pkpy_api_load_internal_modules(pkpy_vm* vm) {
     cre_pkpy_util_create_module(vm, &(CrePPModule) {
         .name = "crescent_internal",
         .functions = {
-            {.signature = "node_new(class_path: str, class_name: str, node_type_flag: int) -> int", .function = cre_pkpy_api_node_new},
+            {.signature = "node_new(class_path: str, class_name: str, node_type_flag: int) -> \"Node\"", .function = cre_pkpy_api_node_new},
             {.signature = "node_get_name(entity_id: int) -> str", .function = cre_pkpy_api_node_get_name},
             {.signature = "node_add_child(parent_entity_id: int, child_entity_id: int) -> None", .function = cre_pkpy_api_node_add_child},
             {.signature = "node_get_child(parent_entity_id: int, child_entity_name: str) -> int", .function = cre_pkpy_api_node_get_child},
@@ -67,6 +67,9 @@ int cre_pkpy_api_node_new(pkpy_vm* vm) {
     pkpy_to_string(vm, 1, &pyClassName);
     pkpy_to_int(vm, 2, &pyNodeTypeFlag);
 
+    const char* classPath = pyClassPath.data;
+    const char* className = pyClassName.data;
+    se_logger_error("Not error, classPath = '%s', className = '%s'", classPath, className);
     const CreEntity entity = cre_pkpy_entity_instance_cache_create_new_entity(vm, pyClassPath.data, pyClassName.data);
     SceneTreeNode* newNode = cre_scene_tree_create_tree_node(entity, NULL);
     cre_scene_manager_stage_child_node_to_be_added_later(newNode);
@@ -78,7 +81,8 @@ int cre_pkpy_api_node_new(pkpy_vm* vm) {
 
     cre_component_manager_set_component(entity, CreComponentDataIndex_SCRIPT, script_component_create(pyClassPath.data, pyClassName.data));
 
-    pkpy_push_int(vm, (int)entity);
+//    pkpy_push_int(vm, (int)entity);
+    cre_pkpy_entity_instance_cache_push_entity_instance(vm, entity);
     return 1;
 }
 
