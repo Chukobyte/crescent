@@ -12,6 +12,7 @@
 #include "../../../scene/scene_utils.h"
 #include "../../../ecs/system/ec_system.h"
 #include "../../../ecs/component/script_component.h"
+#include "cre_pkpy_entity_instance_cache.h"
 
 #define CRE_PKPY_NULL_ENTITY (-1)
 
@@ -66,17 +67,18 @@ int cre_pkpy_api_node_new(pkpy_vm* vm) {
     pkpy_to_string(vm, 1, &pyClassName);
     pkpy_to_int(vm, 2, &pyNodeTypeFlag);
 
-    SceneTreeNode* newNode = cre_scene_tree_create_tree_node(cre_ec_system_create_entity_uid(), NULL);
+    const CreEntity entity = cre_pkpy_entity_instance_cache_create_new_entity(vm, pyClassPath.data, pyClassName.data);
+    SceneTreeNode* newNode = cre_scene_tree_create_tree_node(entity, NULL);
     cre_scene_manager_stage_child_node_to_be_added_later(newNode);
 
     NodeComponent* nodeComponent = node_component_create();
     strcpy(nodeComponent->name, pyClassName.data);
     nodeComponent->type = (NodeBaseType)pyNodeTypeFlag;
-    cre_component_manager_set_component(newNode->entity, CreComponentDataIndex_NODE, nodeComponent);
+    cre_component_manager_set_component(entity, CreComponentDataIndex_NODE, nodeComponent);
 
-    cre_component_manager_set_component(newNode->entity, CreComponentDataIndex_SCRIPT, script_component_create(pyClassPath.data, pyClassName.data));
+    cre_component_manager_set_component(entity, CreComponentDataIndex_SCRIPT, script_component_create(pyClassPath.data, pyClassName.data));
 
-    pkpy_push_int(vm, (int)newNode->entity);
+    pkpy_push_int(vm, (int)entity);
     return 1;
 }
 
