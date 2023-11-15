@@ -3,7 +3,7 @@
 
 #include <utility>
 
-#include "../seika/utils/logger.h"
+#include "seika/utils/logger.h"
 
 #include "../../asset_browser.h"
 

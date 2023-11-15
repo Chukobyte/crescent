@@ -2,8 +2,8 @@
 
 #include <Python.h>
 
-#include "../seika/utils/se_assert.h"
-#include "../seika/data_structures/se_hash_map_string.h"
+#include "seika/utils/se_assert.h"
+#include "seika/data_structures/se_hash_map_string.h"
 
 // Helper functions
 const char* pyh_get_string_from_obj(PyObject* obj) {

@@ -6,8 +6,8 @@ extern "C" {
 
 #include <stdbool.h>
 
-#include "../seika/utils/observer.h"
-#include "../seika/data_structures/se_hash_map_string.h"
+#include "seika/utils/observer.h"
+#include "seika/data_structures/se_hash_map_string.h"
 #include "../entity/entity.h"
 
 #define CRE_NODE_NODE_STRING "Node"

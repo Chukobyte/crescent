@@ -4,8 +4,7 @@
 
 #include <SDL2/SDL_main.h>
 
-#include "../seika/utils/se_file_system_utils.h"
-#include "../seika/rendering/texture.h"
+#include "seika/rendering/texture.h"
 
 #include "../src/core/node_event.h"
 #include "../src/core/ecs/component/component.h"
@@ -16,7 +15,6 @@
 #include "../src/core/ecs/ecs_manager.h"
 #include "../src/core/json/json_file_loader.h"
 #include "../src/core/game_properties.h"
-#include "../src/core/scene/scene_manager.h"
 
 SETexture fakeColorRectTexture = {0};
 

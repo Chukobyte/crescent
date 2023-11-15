@@ -2,9 +2,9 @@
 
 #include <Python.h>
 
-#include "../seika/data_structures/se_hash_map.h"
-#include "../seika/utils/se_string_util.h"
-#include "../seika/utils/se_assert.h"
+#include "seika/data_structures/se_hash_map.h"
+#include "seika/utils/se_string_util.h"
+#include "seika/utils/se_assert.h"
 
 #include "ec_system.h"
 #include "../../scene/scene_manager.h"

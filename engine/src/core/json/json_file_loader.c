@@ -1,8 +1,8 @@
 #include "json_file_loader.h"
 
-#include "../seika/asset/asset_file_loader.h"
-#include "../seika/utils/se_string_util.h"
-#include "../seika/audio/audio.h"
+#include "seika/asset/asset_file_loader.h"
+#include "seika/utils/se_string_util.h"
+#include "seika/audio/audio.h"
 
 #include "json_helper.h"
 #include "../game_properties.h"

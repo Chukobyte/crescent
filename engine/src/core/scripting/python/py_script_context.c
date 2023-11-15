@@ -2,11 +2,11 @@
 
 #include <Python.h>
 
-#include "../seika/data_structures/se_hash_map.h"
-#include "../seika/data_structures/se_static_array.h"
-#include "../seika/utils/se_assert.h"
-#include "../seika/memory/se_mem.h"
-#include "../seika/networking/se_network.h"
+#include "seika/data_structures/se_hash_map.h"
+#include "seika/data_structures/se_static_array.h"
+#include "seika/utils/se_assert.h"
+#include "seika/memory/se_mem.h"
+#include "seika/networking/se_network.h"
 
 #include "py_cache.h"
 #include "cre_py.h"

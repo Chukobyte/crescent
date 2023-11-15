@@ -4,8 +4,8 @@
 #include <algorithm>
 #include <utility>
 
-#include "../seika/utils/logger.h"
-#include "../seika/utils/se_assert.h"
+#include "seika/utils/logger.h"
+#include "seika/utils/se_assert.h"
 
 #include "../engine/src/core/ecs/component/animated_sprite_component.h"
 #include "../engine/src/core/ecs/component/collider2d_component.h"

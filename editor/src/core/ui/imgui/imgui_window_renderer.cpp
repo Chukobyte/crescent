@@ -4,8 +4,8 @@
 #include "imgui_impl_opengl3.h"
 #include "imgui_impl_sdl.h"
 
-#include "../seika/rendering/renderer.h"
-#include "../seika/rendering/frame_buffer.h"
+#include "seika/rendering/renderer.h"
+#include "seika/rendering/frame_buffer.h"
 
 #include "../../editor_context.h"
 

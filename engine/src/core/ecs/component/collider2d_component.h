@@ -6,7 +6,7 @@ extern "C" {
 
 #include <stddef.h>
 
-#include "../seika/math/se_math.h"
+#include "seika/math/se_math.h"
 
 #include "../entity/entity.h"
 

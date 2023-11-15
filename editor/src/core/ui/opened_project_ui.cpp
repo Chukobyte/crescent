@@ -1,6 +1,6 @@
 #include "opened_project_ui.h"
 
-#include "../seika/utils/logger.h"
+#include "seika/utils/logger.h"
 
 #include "views/opened_project/menu_bar_ui.h"
 #include "views/opened_project/windows/asset_browser_ui.h"

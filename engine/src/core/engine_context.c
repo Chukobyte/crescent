@@ -2,9 +2,9 @@
 
 #include <stddef.h>
 
-#include "../seika/seika.h"
-#include "../seika/memory/se_mem.h"
-#include "../seika/utils/se_assert.h"
+#include "seika/seika.h"
+#include "seika/memory/se_mem.h"
+#include "seika/utils/se_assert.h"
 
 CREEngineContext* creEngineContext = NULL;
 

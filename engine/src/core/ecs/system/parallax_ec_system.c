@@ -1,7 +1,7 @@
 #include "parallax_ec_system.h"
 
-#include "../seika/utils/se_assert.h"
-#include "../seika/utils/se_string_util.h"
+#include "seika/utils/se_assert.h"
+#include "seika/utils/se_string_util.h"
 
 #include "ec_system.h"
 #include "../component/transform2d_component.h"

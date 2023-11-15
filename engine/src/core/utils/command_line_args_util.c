@@ -2,8 +2,8 @@
 
 #include <string.h>
 
-#include "../seika/utils/logger.h"
-#include "../seika/utils/se_assert.h"
+#include "seika/utils/logger.h"
+#include "seika/utils/se_assert.h"
 
 #ifdef _MSC_VER
 #pragma warning(disable : 4996) // for strcpy

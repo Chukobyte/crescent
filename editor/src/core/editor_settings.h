@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-#include "../seika/utils/logger.h"
+#include "seika/utils/logger.h"
 
 #define EDITOR_SETTINGS_FILE_NAME "editor_settings.json"
 

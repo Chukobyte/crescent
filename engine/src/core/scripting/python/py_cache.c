@@ -2,9 +2,9 @@
 
 #include <Python.h>
 
-#include "../seika/data_structures/se_hash_map_string.h"
-#include "../seika/memory/se_mem.h"
-#include "../seika/utils/se_assert.h"
+#include "seika/data_structures/se_hash_map_string.h"
+#include "seika/memory/se_mem.h"
+#include "seika/utils/se_assert.h"
 
 typedef struct PyModuleCacheItem {
     PyObject* module;
