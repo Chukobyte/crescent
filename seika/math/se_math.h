@@ -8,7 +8,7 @@ extern "C" {
 #define CGLM_ALL_UNALIGNED
 #endif
 
-#include "cglm/cglm.h"
+#include <cglm/cglm.h>
 
 #define SE_PI 3.14159265358979323846f
 #define SE_RAD_2_DEG (180.0f / SE_PI)

@@ -2,8 +2,8 @@
 
 #include <time.h>
 
-#include "SDL2/SDL.h"
-#include "glad/glad.h"
+#include <SDL2/SDL.h>
+#include <glad/glad.h>
 
 #include "input/input.h"
 #include "utils/logger.h"

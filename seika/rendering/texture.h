@@ -6,7 +6,7 @@ extern "C" {
 
 #include <stdbool.h>
 
-#include "glad/glad.h"
+#include <glad/glad.h>
 
 typedef struct SETexture {
     GLuint id;

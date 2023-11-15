@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "miniaudio/miniaudio.h"
+#include <miniaudio/miniaudio.h>
 
 #include "audio.h"
 #include "../asset/asset_manager.h"

@@ -2,7 +2,7 @@
 
 #include <stdbool.h>
 
-#include "SDL2/SDL.h"
+#include <SDL2/SDL.h>
 
 bool se_input_initialize();
 void se_input_finalize();

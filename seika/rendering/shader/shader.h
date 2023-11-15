@@ -2,7 +2,7 @@
 
 #include <stdbool.h>
 
-#include "glad/glad.h"
+#include <glad/glad.h>
 
 #include "../../math/se_math.h"
 
