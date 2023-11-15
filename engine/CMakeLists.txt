@@ -5,7 +5,7 @@ set(CMAKE_C_STANDARD 11)
 project(crescent_core C)
 
 if (CMAKE_C_COMPILER_ID STREQUAL "MSVC")
-#    list(APPEND flags "/std:c11" "/W3" "/Zc:preprocessor") # TODO: Adding "/std:c11" breaks editor, fix later...
+    #    list(APPEND flags "/std:c11" "/W3" "/Zc:preprocessor") # TODO: Adding "/std:c11" breaks editor, fix later...
     list(APPEND flags "/W3" "/Zc:preprocessor")
 elseif (APPLE)
     list(APPEND flags "-Wfatal-errors" "-Wall" "-Wextra" "-Wno-write-strings" "-Wno-deprecated-declarations"
@@ -28,19 +28,6 @@ endif()
 
 find_package (Python3 COMPONENTS Interpreter Development REQUIRED)
 
-# Include pocketpy as a dependency
-include(FetchContent)
-
-option(PK_BUILD_STATIC_LIB "Build static library" ON)
-
-FetchContent_Declare(
-        pocketpy_content
-        GIT_REPOSITORY https://github.com/blueloveTH/pocketpy.git
-        GIT_TAG v1.3.0
-)
-
-FetchContent_MakeAvailable(pocketpy_content)
-
 add_library(${PROJECT_NAME} STATIC
         src/core/core.c
         src/core/game_properties.c
@@ -56,10 +43,6 @@ add_library(${PROJECT_NAME} STATIC
         src/core/scripting/python/cre_py_api_module.c
         src/core/scripting/python/py_cache.c
         src/core/scripting/python/py_script_context.c
-        src/core/scripting/python/pocketpy/cre_pkpy_api.c
-        src/core/scripting/python/pocketpy/cre_pkpy_util.c
-        src/core/scripting/python/pocketpy/cre_pkpy_script_context.c
-        src/core/scripting/python/pocketpy/cre_pkpy_entity_instance_cache.c
         src/core/scripting/native/native_script_context.c
         src/core/scripting/native/native_script_class.c
         src/core/scripting/native/internal_classes/fps_display_class.c
@@ -90,7 +73,7 @@ add_library(${PROJECT_NAME} STATIC
         src/core/json/json_file_loader_scene.c
         src/core/json/json_helper.c
         src/core/math/curve_float_manager.c
-        )
+)
 
 if (NOT DEFINED IS_CI_BUILD)
     set(IS_CI_BUILD "false")
@@ -111,34 +94,33 @@ add_library(cJSON ../include/cjson/cJSON.c)
 target_include_directories(${PROJECT_NAME} PUBLIC
         "${PROJECT_BINARY_DIR}"
         "../include"
-        "${pocketpy_content_SOURCE_DIR}/include"
-        )
+)
 target_include_directories(glad PUBLIC
         "${PROJECT_BINARY_DIR}"
         "../include"
-        )
+)
 target_include_directories(stb_image PUBLIC
         "${PROJECT_BINARY_DIR}"
         "../include"
-        )
+)
 
 target_include_directories(unity PUBLIC
         "${PROJECT_BINARY_DIR}"
         "../include"
-        )
+)
 
 if (NOT freetype_from_find_package)
     target_include_directories(${PROJECT_NAME} PUBLIC ${freetype_INCLUDE_DIRS})
 endif()
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image cJSON SDL2::SDL2main SDL2::SDL2 freetype Python3::Python pocketpy Ws2_32)
+    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image cJSON SDL2::SDL2main SDL2::SDL2 freetype Python3::Python Ws2_32)
 elseif (WIN32)
-    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image cJSON -lmingw32 -static-libgcc SDL2::SDL2main SDL2::SDL2 freetype Python3::Python pocketpy -lws2_32)
+    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image cJSON -lmingw32 -static-libgcc SDL2::SDL2main SDL2::SDL2 freetype Python3::Python -lws2_32)
 elseif (APPLE)
-    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image cJSON -Xlinker SDL2::SDL2main SDL2::SDL2 freetype Python3::Python pocketpy m)
+    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image cJSON -Xlinker SDL2::SDL2main SDL2::SDL2 freetype Python3::Python m)
 else ()
-    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image cJSON -static-libgcc -Xlinker -export-dynamic SDL2::SDL2main SDL2::SDL2 freetype Python3::Python pocketpy m)
+    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image cJSON -static-libgcc -Xlinker -export-dynamic SDL2::SDL2main SDL2::SDL2 freetype Python3::Python m)
 endif ()
 
 target_compile_options(${PROJECT_NAME} PUBLIC ${flags})
@@ -149,24 +131,24 @@ if (IS_CI_BUILD STREQUAL "false")
             COMMAND ${CMAKE_COMMAND} -E copy_directory
             ${PROJECT_SOURCE_DIR}/../assets
             $<TARGET_FILE_DIR:${PROJECT_NAME}>/../assets
-            )
+    )
 
     add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_directory
             ${PROJECT_SOURCE_DIR}/../test_games
             $<TARGET_FILE_DIR:${PROJECT_NAME}>/../test_games
-            )
+    )
 
     add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_directory
             ${PROJECT_SOURCE_DIR}/../crescent_py_api
             $<TARGET_FILE_DIR:${PROJECT_NAME}>/../crescent_py_api
-            )
+    )
 
     # Copy directories over that are needed to test
     add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_directory
             ${PROJECT_SOURCE_DIR}/../engine/test
             $<TARGET_FILE_DIR:${PROJECT_NAME}>/../engine/test
-            )
+    )
 endif()
