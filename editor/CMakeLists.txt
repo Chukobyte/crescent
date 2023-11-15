@@ -4,6 +4,8 @@ set(CMAKE_CXX_STANDARD 20)
 
 project(crescent_editor)
 
+include(../Functions.cmake)
+
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     list(APPEND flags "/std:c++20" "/W3" "/Zc:preprocessor")
 elseif (APPLE)
@@ -73,15 +75,7 @@ add_library(implot STATIC
         ../include/implot_items.cpp
 )
 
-if (NOT TARGET seika)
-    include(FetchContent)
-    FetchContent_Declare(
-            seika
-            GIT_REPOSITORY https://github.com/Chukobyte/seika.git
-            GIT_TAG dev
-    )
-    FetchContent_MakeAvailable(seika)
-endif ()
+install_seika()
 
 target_include_directories(${PROJECT_NAME} PUBLIC
         "${PROJECT_BINARY_DIR}"

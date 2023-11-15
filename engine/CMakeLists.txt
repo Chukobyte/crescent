@@ -4,6 +4,8 @@ set(CMAKE_C_STANDARD 11)
 
 project(crescent_core C)
 
+include(../Functions.cmake)
+
 if (CMAKE_C_COMPILER_ID STREQUAL "MSVC")
     #    list(APPEND flags "/std:c11" "/W3" "/Zc:preprocessor") # TODO: Adding "/std:c11" breaks editor, fix later...
     list(APPEND flags "/W3" "/Zc:preprocessor")
@@ -26,7 +28,7 @@ if (NOT freetype_FOUND)
 endif()
 
 
-find_package (Python3 COMPONENTS Interpreter Development REQUIRED)
+find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
 
 add_library(${PROJECT_NAME} STATIC
         src/core/core.c
@@ -88,15 +90,8 @@ endif()
 if (NOT TARGET unity)
     add_library(unity ../include/unity.c)
 endif()
-if (NOT TARGET seika)
-    include(FetchContent)
-    FetchContent_Declare(
-            seika
-            GIT_REPOSITORY https://github.com/Chukobyte/seika.git
-            GIT_TAG dev
-    )
-    FetchContent_MakeAvailable(seika)
-endif ()
+
+install_seika()
 
 add_library(cJSON ../include/cjson/cJSON.c)
 
