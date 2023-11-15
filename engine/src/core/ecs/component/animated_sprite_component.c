@@ -2,7 +2,7 @@
 
 #include <string.h>
 
-#include "../../../../../seika/seika.h"
+#include "../seika/seika.h"
 #include "../seika/asset/asset_manager.h"
 #include "../seika/memory/se_mem.h"
 #include "../seika/utils/se_assert.h"

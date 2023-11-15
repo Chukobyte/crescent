@@ -2,14 +2,14 @@
 
 #include <string.h>
 
+#include "../seika/memory/se_mem.h"
 #include "../seika/data_structures/se_hash_map_string.h"
 #include "../seika/data_structures/se_array_utils.h"
 #include "../seika/utils/se_string_util.h"
-#include "../seika/memory/se_mem.h"
+#include "../seika/utils/se_assert.h"
 
 #include "ecs/component/node_component.h"
 #include "ecs/component/component.h"
-#include "../../../seika/utils/se_assert.h"
 
 #define CRE_NODE_EVENT_MAX_OBSERVERS 8
 #define MAX_EVENT_OBSERVER_ENTRY_COUNT 100
