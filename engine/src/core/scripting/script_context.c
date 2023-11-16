@@ -1,7 +1,6 @@
 #include "script_context.h"
 
-#include "seika/memory/se_mem.h"
-#include "seika/utils/se_assert.h"
+#include <seika/memory/se_mem.h>
 
 CREScriptContext* cre_script_context_create() {
     CREScriptContext* newScriptContext = SE_MEM_ALLOCATE(CREScriptContext);

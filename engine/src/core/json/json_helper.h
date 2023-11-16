@@ -4,8 +4,8 @@
 
 #include <cjson/cJSON.h>
 
-#include "seika/math/se_math.h"
-#include "seika/utils/se_assert.h"
+#include <seika/math/se_math.h>
+#include <seika/utils/se_assert.h>
 
 // Utility Functions
 const char* json_get_string(cJSON* json, const char* key);

@@ -1,7 +1,7 @@
 #include "json_file_loader.h"
 
-#include "seika/asset/asset_file_loader.h"
-#include "seika/utils/se_string_util.h"
+#include <seika/asset/asset_file_loader.h>
+#include <seika/utils/se_string_util.h>
 
 #include "json_helper.h"
 #include "../ecs/component/component_defaults.h"
