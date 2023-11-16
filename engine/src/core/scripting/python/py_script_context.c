@@ -35,13 +35,15 @@ void py_on_fixed_update_instance(CreEntity entity, float deltaTime);
 void py_on_end(CreEntity entity);
 void py_on_network_callback(const char* message);
 void py_on_network_udp_server_client_connected();
+void py_on_script_context_destroy();
 
 SEHashMap* pythonInstanceHashMap = NULL;
 CREScriptContext* python_script_context = NULL;
 PyGILState_STATE pyGlobalGilStateState;
 
 CREScriptContext* cre_py_create_script_context() {
-//    SE_ASSERT_FMT(python_script_context == NULL, "Script context already created!");
+    // TODO: Initialize CPython VM here
+    SE_ASSERT_FMT(python_script_context == NULL, "Script context already created!");
     CREScriptContext* scriptContext = cre_script_context_create();
     scriptContext->on_create_instance = py_on_create_instance;
     scriptContext->on_delete_instance = py_on_delete_instance;
@@ -53,6 +55,7 @@ CREScriptContext* cre_py_create_script_context() {
     scriptContext->on_end = py_on_end;
     scriptContext->on_network_callback = py_on_network_callback;
     scriptContext->on_entity_subscribe_to_network_callback = py_on_entity_subscribe_to_network_callback;
+    scriptContext->on_script_context_destroy = py_on_script_context_destroy;
 
     pythonInstanceHashMap = se_hash_map_create(sizeof(CreEntity), sizeof(PyObject **), 16);
     python_script_context = scriptContext;
@@ -210,4 +213,11 @@ PyObject* cre_py_get_script_instance(CreEntity entity) {
         return (PyObject*) *(PyObject**) se_hash_map_get(pythonInstanceHashMap, &entity);
     }
     return NULL;
+}
+
+void py_on_script_context_destroy() {
+    // TODO: Shutdown CPython VM here
+    se_hash_map_destroy(pythonInstanceHashMap);
+    pythonInstanceHashMap = NULL;
+    python_script_context = NULL;
 }

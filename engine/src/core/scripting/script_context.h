@@ -16,6 +16,8 @@ typedef void (*OnFixedUpdateInstance) (CreEntity, float);
 
 typedef void (*OnNetworkCallback) (const char*);
 
+typedef void (*OnScriptContextDestroy) ();
+
 // TODO: Make network callbacks not specific to python
 struct _object; // PyObject
 typedef void (*OnEntitySubscribeToNetworkCallback) (CreEntity, struct _object*, const char*);
@@ -39,6 +41,8 @@ typedef struct CREScriptContext {
     // The main network callback for forwarding network data to the script context
     OnNetworkCallback on_network_callback;
     OnEntitySubscribeToNetworkCallback on_entity_subscribe_to_network_callback;
+    // Called when the script context is destroyed
+    OnScriptContextDestroy on_script_context_destroy;
     // We could have a validation step on the script contexts to check if the update, fixed_update, etc... funcs exists
     // in the class within the scripting language.  For now, the script context is responsible for entity and entity count
     // even though it's not used in the script ec system

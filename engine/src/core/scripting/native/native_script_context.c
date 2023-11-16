@@ -20,6 +20,7 @@ void native_on_start(CreEntity entity);
 void native_on_update_instance(CreEntity entity, float deltaTime);
 void native_on_fixed_update_instance(CreEntity entity, float deltaTime);
 void native_on_end(CreEntity entity);
+void native_on_script_context_destroy();
 
 // Script Cache
 SEStringHashMap* classCache = NULL;
@@ -28,6 +29,7 @@ SEHashMap* entityToClassName = NULL;
 CREScriptContext* native_script_context = NULL;
 
 CREScriptContext* cre_native_create_script_context() {
+    SE_ASSERT(native_script_context == NULL);
     CREScriptContext* scriptContext = cre_script_context_create();
     scriptContext->on_create_instance = native_on_create_instance;
     scriptContext->on_delete_instance = native_on_delete_instance;
@@ -35,11 +37,12 @@ CREScriptContext* cre_native_create_script_context() {
     scriptContext->on_update_instance = native_on_update_instance;
     scriptContext->on_fixed_update_instance = native_on_fixed_update_instance;
     scriptContext->on_end = native_on_end;
+    scriptContext->on_script_context_destroy = native_on_script_context_destroy;
 
-//    SE_ASSERT(classCache == NULL);
+    SE_ASSERT(classCache == NULL);
     classCache = se_string_hash_map_create(MAX_NATIVE_CLASSES);
 
-//    SE_ASSERT(entityToClassName == NULL);
+    SE_ASSERT(entityToClassName == NULL);
     entityToClassName = se_hash_map_create(sizeof(CreEntity), sizeof(CRENativeScriptClass **), MAX_NATIVE_CLASS_ENTITIES);
 
     native_script_context = scriptContext;
@@ -119,4 +122,13 @@ void native_on_end(CreEntity entity) {
     CRENativeScriptClass* scriptClassRef = (CRENativeScriptClass*) *(CRENativeScriptClass**) se_hash_map_get(
             entityToClassName, &entity);
     scriptClassRef->on_end_func(scriptClassRef);
+}
+
+void native_on_script_context_destroy() {
+    native_script_context = NULL;
+
+    se_string_hash_map_destroy(classCache);
+    se_hash_map_destroy(entityToClassName);
+    classCache = NULL;
+    entityToClassName = NULL;
 }

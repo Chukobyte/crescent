@@ -95,6 +95,7 @@ CreEntitySystem* cre_ec_system_create() {
     newSystem->update_func = NULL;
     newSystem->fixed_update_func = NULL;
     newSystem->network_callback_func = NULL;
+    newSystem->on_ec_system_destroy = NULL;
     newSystem->component_signature = CreComponentType_NONE;
     return newSystem;
 }

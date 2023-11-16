@@ -56,16 +56,14 @@ CreEntitySystem* cre_script_ec_system_create() {
 }
 
 void script_system_on_entity_registered(CreEntity entity) {
-    const ScriptComponent* scriptComponent = (ScriptComponent*) cre_component_manager_get_component(entity,
-            CreComponentDataIndex_SCRIPT);
+    const ScriptComponent* scriptComponent = (ScriptComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_SCRIPT);
     SE_ASSERT(scriptContexts[scriptComponent->contextType] != NULL);
     SE_ASSERT(scriptContexts[scriptComponent->contextType]->on_create_instance != NULL);
     scriptContexts[scriptComponent->contextType]->on_create_instance(entity, scriptComponent->classPath, scriptComponent->className);
 }
 
 void script_system_on_entity_unregistered(CreEntity entity) {
-    const ScriptComponent* scriptComponent = (ScriptComponent*) cre_component_manager_get_component(entity,
-            CreComponentDataIndex_SCRIPT);
+    const ScriptComponent* scriptComponent = (ScriptComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_SCRIPT);
     scriptContexts[scriptComponent->contextType]->on_delete_instance(entity);
 }
 
@@ -79,8 +77,7 @@ void script_system_entity_start(CreEntity entity) {
 }
 
 void script_system_entity_end(CreEntity entity) {
-    const ScriptComponent* scriptComponent = (ScriptComponent*) cre_component_manager_get_component(entity,
-            CreComponentDataIndex_SCRIPT);
+    const ScriptComponent* scriptComponent = (ScriptComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_SCRIPT);
     scriptContexts[scriptComponent->contextType]->on_end(entity);
 }
 
@@ -128,4 +125,11 @@ void script_system_network_callback(const char* message) {
 void script_system_on_ec_system_destroy() {
     SE_ASSERT(scriptSystem != NULL);
     scriptSystem = NULL;
+
+    for (size_t i = 0; i < scriptContextsCount; i++) {
+        if (scriptContexts[i]->on_script_context_destroy != NULL) {
+            scriptContexts[i]->on_script_context_destroy();
+        }
+    }
+    scriptContextsCount = 0;
 }
