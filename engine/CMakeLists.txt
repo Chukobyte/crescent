@@ -17,19 +17,6 @@ else ()
             "-Wno-unused-variable" "-Wno-cast-function-type" "-Wno-unused-parameter" "-Wno-missing-field-initializers")
 endif ()
 
-find_package(SDL2 CONFIG REQUIRED)
-
-find_package(freetype CONFIG)
-set(freetype_from_find_package TRUE)
-if (NOT freetype_FOUND)
-    find_package(PkgConfig REQUIRED)
-    pkg_check_modules(freetype REQUIRED freetype2)
-    set(freetype_from_find_package FALSE)
-endif()
-
-
-find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
-
 add_library(${PROJECT_NAME} STATIC
         src/core/core.c
         src/core/game_properties.c
@@ -45,6 +32,10 @@ add_library(${PROJECT_NAME} STATIC
         src/core/scripting/python/cre_py_api_module.c
         src/core/scripting/python/py_cache.c
         src/core/scripting/python/py_script_context.c
+        src/core/scripting/python/pocketpy/cre_pkpy_api.c
+        src/core/scripting/python/pocketpy/cre_pkpy_util.c
+        src/core/scripting/python/pocketpy/cre_pkpy_script_context.c
+        src/core/scripting/python/pocketpy/cre_pkpy_entity_instance_cache.c
         src/core/scripting/native/native_script_context.c
         src/core/scripting/native/native_script_class.c
         src/core/scripting/native/internal_classes/fps_display_class.c
@@ -81,6 +72,31 @@ if (NOT DEFINED IS_CI_BUILD)
     set(IS_CI_BUILD "false")
 endif()
 
+#--- Dependencies ---#
+
+find_package(SDL2 CONFIG REQUIRED)
+
+find_package(freetype CONFIG)
+set(freetype_from_find_package TRUE)
+if (NOT freetype_FOUND)
+    find_package(PkgConfig REQUIRED)
+    pkg_check_modules(freetype REQUIRED freetype2)
+    set(freetype_from_find_package FALSE)
+endif()
+
+
+find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
+
+# Include pocketpy as a dependency
+include(FetchContent)
+option(PK_BUILD_STATIC_LIB "Build static library" ON)
+FetchContent_Declare(
+        pocketpy_content
+        GIT_REPOSITORY https://github.com/blueloveTH/pocketpy.git
+        GIT_TAG v1.3.0
+)
+FetchContent_MakeAvailable(pocketpy_content)
+
 if (NOT TARGET glad)
     add_library(glad ../include/glad/glad.c)
 endif()
@@ -98,6 +114,7 @@ add_library(cJSON ../include/cjson/cJSON.c)
 target_include_directories(${PROJECT_NAME} PUBLIC
         "${PROJECT_BINARY_DIR}"
         "../include"
+        "${pocketpy_content_SOURCE_DIR}/include"
 )
 target_include_directories(glad PUBLIC
         "${PROJECT_BINARY_DIR}"
@@ -118,13 +135,13 @@ if (NOT freetype_from_find_package)
 endif()
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image cJSON SDL2::SDL2main SDL2::SDL2 freetype Python3::Python Ws2_32 seika)
+    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image cJSON SDL2::SDL2main SDL2::SDL2 freetype Python3::Python Ws2_32 seika pocketpy)
 elseif (WIN32)
-    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image cJSON -lmingw32 -static-libgcc SDL2::SDL2main SDL2::SDL2 freetype Python3::Python -lws2_32 seika)
+    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image cJSON -lmingw32 -static-libgcc SDL2::SDL2main SDL2::SDL2 freetype Python3::Python -lws2_32 seika pocketpy)
 elseif (APPLE)
-    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image cJSON -Xlinker SDL2::SDL2main SDL2::SDL2 freetype Python3::Python m seika)
+    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image cJSON -Xlinker SDL2::SDL2main SDL2::SDL2 freetype Python3::Python m seika pocketpy)
 else ()
-    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image cJSON -static-libgcc -Xlinker -export-dynamic SDL2::SDL2main SDL2::SDL2 freetype Python3::Python m seika)
+    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image cJSON -static-libgcc -Xlinker -export-dynamic SDL2::SDL2main SDL2::SDL2 freetype Python3::Python m seika pocketpy)
 endif ()
 
 target_compile_options(${PROJECT_NAME} PUBLIC ${flags})
