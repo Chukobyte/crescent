@@ -1,10 +1,10 @@
 #include "ec_system.h"
 
-#include "seika/data_structures/se_queue.h"
-#include "seika/memory/se_mem.h"
-#include "seika/utils/logger.h"
-#include "seika/utils/observer.h"
-#include "seika/utils/se_assert.h"
+#include <seika/data_structures/se_queue.h>
+#include <seika/memory/se_mem.h>
+#include <seika/utils/logger.h>
+#include <seika/utils/observer.h>
+#include <seika/utils/se_assert.h>
 
 #include "../component/node_component.h"
 

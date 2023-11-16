@@ -1,9 +1,9 @@
 #include "sprite_rendering_ec_system.h"
 
-#include "seika/rendering/renderer.h"
-#include "seika/rendering/shader/shader_cache.h"
-#include "seika/utils/se_string_util.h"
-#include "seika/utils/se_assert.h"
+#include <seika/rendering/renderer.h>
+#include <seika/rendering/shader/shader_cache.h>
+#include <seika/utils/se_string_util.h>
+#include <seika/utils/se_assert.h>
 
 #include "ec_system.h"
 #include "../component/transform2d_component.h"

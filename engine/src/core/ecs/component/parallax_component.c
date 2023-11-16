@@ -2,7 +2,7 @@
 
 #include <string.h>
 
-#include "seika/memory/se_mem.h"
+#include <seika/memory/se_mem.h>
 
 ParallaxComponent* parallax_component_create() {
     ParallaxComponent* parallaxComponent = SE_MEM_ALLOCATE(ParallaxComponent);

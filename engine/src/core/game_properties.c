@@ -1,8 +1,7 @@
 #include "game_properties.h"
 
-#include "seika/utils/logger.h"
-#include "seika/memory/se_mem.h"
-#include "seika/utils/se_assert.h"
+#include <seika/utils/logger.h>
+#include <seika/memory/se_mem.h>
 
 #include "scripting/python/cre_py.h"
 

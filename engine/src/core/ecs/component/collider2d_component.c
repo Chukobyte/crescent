@@ -2,7 +2,7 @@
 
 #include <string.h>
 
-#include "seika/memory/se_mem.h"
+#include <seika/memory/se_mem.h>
 
 Collider2DComponent* collider2d_component_create() {
     Collider2DComponent* collider2DComponent = SE_MEM_ALLOCATE(Collider2DComponent);

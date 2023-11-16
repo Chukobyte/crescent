@@ -2,8 +2,8 @@
 
 #include <string.h>
 
-#include "seika/utils/logger.h"
-#include "seika/memory/se_mem.h"
+#include <seika/utils/logger.h>
+#include <seika/memory/se_mem.h>
 
 SETransform2D transform2d_component_create_blank_transform2d() {
     SETransform2D transform2D = {

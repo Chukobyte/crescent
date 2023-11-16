@@ -6,8 +6,8 @@ extern "C" {
 
 #include <stdbool.h>
 
-#include "seika/utils/observer.h"
-#include "seika/math/se_math.h"
+#include <seika/utils/observer.h>
+#include <seika/math/se_math.h>
 
 typedef struct Transform2DComponent {
     SETransform2D localTransform;

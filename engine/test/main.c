@@ -4,7 +4,7 @@
 
 #include <SDL2/SDL_main.h>
 
-#include "seika/rendering/texture.h"
+#include <seika/rendering/texture.h>
 
 #include "../src/core/node_event.h"
 #include "../src/core/ecs/component/component.h"
