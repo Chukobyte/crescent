@@ -21,6 +21,7 @@ SERect2 colliderDrawSource = { .x=0.0f, .y=0.0f, .w=1.0f, .h=1.0f };
 void collision_system_entity_unregistered(CreEntity entity);
 void collision_system_fixed_update(float deltaTime);
 void collision_system_render();
+void collision_system_on_ec_system_destroy();
 
 void collision_system_on_node_entered_scene(CreEntity entity);
 
@@ -30,7 +31,7 @@ SEObserver collisionOnEntityTransformChangeObserver = { .on_notify = collision_s
 SESpatialHashMap* spatialHashMap = NULL;
 
 CreEntitySystem* cre_collision_ec_system_create() {
-//    SE_ASSERT(collisionSystem == NULL);
+    SE_ASSERT(collisionSystem == NULL);
     collisionSystem = cre_ec_system_create();
     collisionSystem->name = se_strdup("Collision");
     collisionSystem->component_signature = CreComponentType_TRANSFORM_2D | CreComponentType_COLLIDER_2D;
@@ -38,6 +39,7 @@ CreEntitySystem* cre_collision_ec_system_create() {
     collisionSystem->on_entity_entered_scene_func = collision_system_on_node_entered_scene;
     collisionSystem->on_entity_unregistered_func = collision_system_entity_unregistered;
     collisionSystem->fixed_update_func = collision_system_fixed_update;
+    collisionSystem->on_ec_system_destroy = collision_system_on_ec_system_destroy;
 
     CREGameProperties* gameProps = cre_game_props_get();
     SE_ASSERT(cre_game_props_get() != NULL);
@@ -138,4 +140,9 @@ void collision_system_on_transform_update(SESubjectNotifyPayload* payload) {
         SERect2 collisionRect = cre_get_collision_rectangle(entity, transformComp, colliderComp);
         se_spatial_hash_map_insert_or_update(spatialHashMap, entity, &collisionRect);
     }
+}
+
+void collision_system_on_ec_system_destroy() {
+    SE_ASSERT(collisionSystem != NULL);
+    collisionSystem = NULL;
 }

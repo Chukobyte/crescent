@@ -21,6 +21,7 @@ void script_system_post_update_all();
 void script_system_instance_update(float deltaTime);
 void script_system_instance_fixed_update(float deltaTime);
 void script_system_network_callback(const char* message);
+void script_system_on_ec_system_destroy();
 
 CreEntitySystem* scriptSystem = NULL;
 
@@ -28,7 +29,7 @@ static CREScriptContext* scriptContexts[ScriptContextType_TOTAL_TYPES];
 static size_t scriptContextsCount = 0;
 
 CreEntitySystem* cre_script_ec_system_create() {
-//    SE_ASSERT(scriptSystem == NULL);
+    SE_ASSERT(scriptSystem == NULL);
     scriptSystem = cre_ec_system_create();
     scriptSystem->name = se_strdup("Script");
     scriptSystem->on_entity_registered_func = script_system_on_entity_registered;
@@ -40,6 +41,7 @@ CreEntitySystem* cre_script_ec_system_create() {
     scriptSystem->update_func = script_system_instance_update;
     scriptSystem->fixed_update_func = script_system_instance_fixed_update;
     scriptSystem->network_callback_func = script_system_network_callback;
+    scriptSystem->on_ec_system_destroy = script_system_on_ec_system_destroy;
     scriptSystem->component_signature = CreComponentType_SCRIPT;
     // Python Context
     scriptContexts[ScriptContextType_PYTHON] = cre_py_create_script_context();
@@ -121,4 +123,9 @@ void script_system_instance_fixed_update(float deltaTime) {
 void script_system_network_callback(const char* message) {
     // Hard coding python for now  TODO: Keep an array of script contexts that contain this callback
     scriptContexts[ScriptContextType_PYTHON]->on_network_callback(message);
+}
+
+void script_system_on_ec_system_destroy() {
+    SE_ASSERT(scriptSystem != NULL);
+    scriptSystem = NULL;
 }

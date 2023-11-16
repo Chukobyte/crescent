@@ -16,12 +16,14 @@
 CreEntitySystem* spriteRenderingSystem = NULL;
 
 void sprite_rendering_system_render();
+void sprite_rendering_on_ec_system_destroy();
 
 CreEntitySystem* cre_sprite_rendering_ec_system_create() {
-//    SE_ASSERT(spriteRenderingSystem == NULL);
+    SE_ASSERT(spriteRenderingSystem == NULL);
     spriteRenderingSystem = cre_ec_system_create();
     spriteRenderingSystem->name = se_strdup("Sprite Rendering");
     spriteRenderingSystem->render_func = sprite_rendering_system_render;
+    spriteRenderingSystem->on_ec_system_destroy = sprite_rendering_on_ec_system_destroy;
     spriteRenderingSystem->component_signature = CreComponentType_TRANSFORM_2D | CreComponentType_SPRITE;
     return spriteRenderingSystem;
 }
@@ -55,4 +57,9 @@ void sprite_rendering_system_render() {
             se_shader_cache_get_instance_checked(spriteComponent->shaderInstanceId)
         );
     }
+}
+
+void sprite_rendering_on_ec_system_destroy() {
+    SE_ASSERT(spriteRenderingSystem != NULL);
+    spriteRenderingSystem = NULL;
 }

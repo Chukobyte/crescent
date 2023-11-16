@@ -15,12 +15,14 @@
 CreEntitySystem* fontRenderingSystem = NULL;
 
 void font_rendering_system_render();
+void font_rendering_system_on_ec_system_destroy();
 
 CreEntitySystem* cre_font_rendering_ec_system_create() {
-//    SE_ASSERT(fontRenderingSystem == NULL);
+    SE_ASSERT(fontRenderingSystem == NULL);
     fontRenderingSystem = cre_ec_system_create();
     fontRenderingSystem->name = se_strdup("Font Rendering");
     fontRenderingSystem->render_func = font_rendering_system_render;
+    fontRenderingSystem->on_ec_system_destroy = font_rendering_system_on_ec_system_destroy;
     fontRenderingSystem->component_signature = CreComponentType_TRANSFORM_2D | CreComponentType_TEXT_LABEL;
     return fontRenderingSystem;
 }
@@ -46,4 +48,9 @@ void font_rendering_system_render() {
             globalTransform->zIndex
         );
     }
+}
+
+void font_rendering_system_on_ec_system_destroy() {
+    SE_ASSERT(fontRenderingSystem != NULL);
+    fontRenderingSystem = NULL;
 }

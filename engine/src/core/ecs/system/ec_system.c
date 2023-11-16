@@ -100,6 +100,9 @@ CreEntitySystem* cre_ec_system_create() {
 }
 
 void cre_ec_system_destroy(CreEntitySystem* entitySystem) {
+    if (entitySystem->on_ec_system_destroy) {
+        entitySystem->on_ec_system_destroy();
+    }
     SE_MEM_FREE(entitySystem);
 }
 
