@@ -4,7 +4,7 @@
 extern "C" {
 #endif
 
-#include "../seika/src/math/se_math.h"
+#include <seika/math/se_math.h>
 
 #include "scene_tree.h"
 #include "../ecs/component/transform2d_component.h"
@@ -51,6 +51,8 @@ SceneTreeNode* cre_scene_manager_get_entity_tree_node(CreEntity entity);
 bool cre_scene_manager_has_entity_tree_node(CreEntity entity);
 void cre_scene_manager_add_node_as_child(CreEntity childEntity, CreEntity parentEntity);
 EntityArray cre_scene_manager_get_self_and_parent_nodes(CreEntity entity);
+void cre_scene_manager_invalidate_time_dilation_nodes_with_children(CreEntity entity);
+
 // Helper function to call notify on entity and children node 'on transform changed' events.  Uses recursion.
 void cre_scene_manager_notify_all_on_transform_events(CreEntity entity, Transform2DComponent* transformComp);
 

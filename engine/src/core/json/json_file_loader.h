@@ -6,9 +6,9 @@ extern "C" {
 
 #include <stddef.h>
 
-#include "../seika/src/rendering/shader/shader_instance_minimal.h"
-#include "../seika/src/math/se_curve_float.h"
-#include "../seika/src/data_structures/se_array_list.h"
+#include <seika/rendering/shader/shader_instance_minimal.h>
+#include <seika/math/se_curve_float.h>
+#include <seika/data_structures/se_array_list.h>
 
 #include "../ecs/entity/entity.h"
 #include "../ecs/component/component.h"

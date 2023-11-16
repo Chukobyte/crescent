@@ -2,10 +2,10 @@
 
 #include <string.h>
 
-#include "../seika/src/seika.h"
-#include "../seika/src/asset/asset_manager.h"
-#include "../seika/src/memory/se_mem.h"
-#include "../seika/src/utils/se_assert.h"
+#include <seika/seika.h>
+#include <seika/asset/asset_manager.h>
+#include <seika/memory/se_mem.h>
+#include <seika/utils/se_assert.h>
 
 #define RBE_MAX_ANIMATIONS 16
 

@@ -1,8 +1,8 @@
 #include "curve_float_manager.h"
 
-#include "../seika/src/math/se_curve_float.h"
-#include "../seika/src/data_structures/se_queue.h"
-#include "../seika/src/utils/se_assert.h"
+#include <seika/math/se_curve_float.h>
+#include <seika/data_structures/se_queue.h>
+#include <seika/utils/se_assert.h>
 
 #include "../json/json_file_loader.h"
 

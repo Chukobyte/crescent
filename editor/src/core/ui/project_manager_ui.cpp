@@ -2,8 +2,8 @@
 
 #include <implot.h>
 
-#include "../seika/src/utils/se_file_system_utils.h"
-#include "../seika/src/utils/logger.h"
+#include <seika/utils/se_file_system_utils.h>
+#include <seika/utils/logger.h>
 
 #include "../engine/src/core/engine_context.h"
 #include "../engine/src/core/core_info.h"

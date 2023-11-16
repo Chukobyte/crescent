@@ -2,7 +2,7 @@
 
 #include <string.h>
 
-#include "../seika/src/memory/se_mem.h"
+#include <seika/memory/se_mem.h>
 
 NodeComponent* node_component_create() {
     NodeComponent* nodeComponent = SE_MEM_ALLOCATE(NodeComponent);

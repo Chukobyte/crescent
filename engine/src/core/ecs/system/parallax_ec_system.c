@@ -1,7 +1,7 @@
 #include "parallax_ec_system.h"
 
-#include "../seika/src/utils/se_assert.h"
-#include "../seika/src/utils/se_string_util.h"
+#include <seika/utils/se_assert.h>
+#include <seika/utils/se_string_util.h>
 
 #include "ec_system.h"
 #include "../component/transform2d_component.h"
@@ -12,6 +12,7 @@
 void parallax_system_on_entity_entered_scene(CreEntity entity);
 void parallax_system_on_entity_unregistered(CreEntity entity);
 void parallax_system_physics_process(float deltaTime);
+void parallax_system_on_ec_system_destroy();
 
 void parallax_on_entity_transform_change(SESubjectNotifyPayload* payload);
 
@@ -28,6 +29,7 @@ struct CreEntitySystem* cre_parallax_ec_system_create() {
     parallaxSystem->on_entity_entered_scene_func = parallax_system_on_entity_entered_scene;
     parallaxSystem->on_entity_unregistered_func = parallax_system_on_entity_unregistered;
     parallaxSystem->fixed_update_func = parallax_system_physics_process;
+    parallaxSystem->on_ec_system_destroy = parallax_system_on_ec_system_destroy;
     parallaxSystem->component_signature = CreComponentType_TRANSFORM_2D | CreComponentType_PARALLAX;
     return parallaxSystem;
 }
@@ -73,6 +75,11 @@ void parallax_system_update_entity(CreEntity entity, Transform2DComponent* trans
     };
     transformComp->localTransform.position.x = parallaxComp->cachedLocalPosition.x + offset.x;
     transformComp->localTransform.position.y = parallaxComp->cachedLocalPosition.y + offset.y;
+}
+
+void parallax_system_on_ec_system_destroy() {
+    SE_ASSERT(parallaxSystem != NULL);
+    parallaxSystem = NULL;
 }
 
 // Observer callbacks

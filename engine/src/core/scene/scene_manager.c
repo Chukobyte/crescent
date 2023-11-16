@@ -2,13 +2,13 @@
 
 #include <string.h>
 
-#include "../seika/src/rendering/shader/shader_cache.h"
-#include "../seika/src/rendering/renderer.h"
-#include "../seika/src/asset/asset_manager.h"
-#include "../seika/src/utils/logger.h"
-#include "../seika/src/utils/se_assert.h"
-#include "../seika/src/data_structures/se_hash_map.h"
-#include "../seika/src/data_structures/se_static_array.h"
+#include <seika/rendering/shader/shader_cache.h>
+#include <seika/rendering/renderer.h>
+#include <seika/asset/asset_manager.h>
+#include <seika/utils/logger.h>
+#include <seika/utils/se_assert.h>
+#include <seika/data_structures/se_hash_map.h>
+#include <seika/data_structures/se_static_array.h>
 
 #include "scene_utils.h"
 #include "../world.h"
@@ -336,6 +336,17 @@ EntityArray cre_scene_manager_get_self_and_parent_nodes(CreEntity entity) {
         parentTreeNode = parentTreeNode->parent;
     }
     return combineModelResult;
+}
+
+void cre_scene_manager_invalidate_time_dilation_nodes_with_children(CreEntity entity) {
+    NodeComponent* nodeComponent = cre_component_manager_get_component(entity, CreComponentDataIndex_NODE);
+    nodeComponent->timeDilation.cacheInvalid = true;
+    if (cre_scene_manager_has_entity_tree_node(entity)) {
+        SceneTreeNode* sceneTreeNode = cre_scene_manager_get_entity_tree_node(entity);
+        for (size_t i = 0; i < sceneTreeNode->childCount; i++) {
+            cre_scene_manager_invalidate_time_dilation_nodes_with_children(sceneTreeNode->children[i]->entity);
+        }
+    }
 }
 
 void cre_scene_manager_notify_all_on_transform_events(CreEntity entity, Transform2DComponent* transformComp) {

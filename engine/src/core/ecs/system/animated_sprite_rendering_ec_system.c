@@ -1,14 +1,13 @@
 #include "animated_sprite_rendering_ec_system.h"
 
-#include "../seika/src/seika.h"
-#include "../seika/src/rendering/renderer.h"
-#include "../seika/src/rendering/shader/shader_cache.h"
-#include "../seika/src/utils/se_string_util.h"
-#include "../seika/src/utils/se_assert.h"
+#include <seika/seika.h>
+#include <seika/rendering/renderer.h>
+#include <seika/rendering/shader/shader_cache.h>
+#include <seika/utils/se_string_util.h>
+#include <seika/utils/se_assert.h>
 
 #include "ec_system.h"
 #include "../component/animated_sprite_component.h"
-#include "../component/node_component.h"
 #include "../component/transform2d_component.h"
 #include "../../scene/scene_manager.h"
 #include "../../camera/camera.h"
@@ -19,12 +18,15 @@ CreEntitySystem* animatedSpriteRenderingSystem = NULL;
 
 void animated_sprite_rendering_system_on_entity_registered(CreEntity entity);
 void animated_sprite_rendering_system_render();
+void animated_sprite_rendering_system_on_ec_system_destroy();
 
 CreEntitySystem* cre_animated_sprite_rendering_ec_system_create() {
+    SE_ASSERT(animatedSpriteRenderingSystem == NULL);
     animatedSpriteRenderingSystem = cre_ec_system_create();
     animatedSpriteRenderingSystem->name = se_strdup("Animated Sprite Rendering");
     animatedSpriteRenderingSystem->on_entity_registered_func = animated_sprite_rendering_system_on_entity_registered;
     animatedSpriteRenderingSystem->render_func = animated_sprite_rendering_system_render;
+    animatedSpriteRenderingSystem->on_ec_system_destroy = animated_sprite_rendering_system_on_ec_system_destroy;
     animatedSpriteRenderingSystem->component_signature = CreComponentType_TRANSFORM_2D | CreComponentType_ANIMATED_SPRITE;
     return animatedSpriteRenderingSystem;
 }
@@ -84,4 +86,9 @@ void animated_sprite_rendering_system_render() {
             se_shader_cache_get_instance_checked(animatedSpriteComponent->shaderInstanceId)
         );
     }
+}
+
+void animated_sprite_rendering_system_on_ec_system_destroy() {
+    SE_ASSERT(animatedSpriteRenderingSystem != NULL);
+    animatedSpriteRenderingSystem = NULL;
 }

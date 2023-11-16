@@ -1,7 +1,6 @@
 #include "script_context.h"
 
-#include "../seika/src/memory/se_mem.h"
-#include "../seika/src/utils/se_assert.h"
+#include <seika/memory/se_mem.h>
 
 CREScriptContext* cre_script_context_create() {
     CREScriptContext* newScriptContext = SE_MEM_ALLOCATE(CREScriptContext);
@@ -15,6 +14,7 @@ CREScriptContext* cre_script_context_create() {
     newScriptContext->on_end = NULL;
     newScriptContext->on_network_callback = NULL;
     newScriptContext->on_entity_subscribe_to_network_callback = NULL;
+    newScriptContext->on_script_context_destroy = NULL;
     newScriptContext->updateEntityCount = 0;
     newScriptContext->fixedUpdateEntityCount = 0;
     return newScriptContext;

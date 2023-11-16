@@ -2,7 +2,7 @@
 
 #include <IconsFontAwesome6.h>
 
-#include "../seika/src/utils/se_assert.h"
+#include <seika/utils/se_assert.h>
 
 #include "../engine/src/core/json/json_file_loader.h"
 #include "../engine/src/core/game_properties.h"

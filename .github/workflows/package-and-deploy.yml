@@ -54,10 +54,6 @@ jobs:
 
       - name: run unit tests
         run: |
-          echo "Running seika tests!"
-          cd ${{ github.workspace }}
-          ${{ github.workspace }}\builds\Release\seika_test.exe
-          echo ""
           echo "Running crescent engine tests!"
           ${{ github.workspace }}\builds\Release\crescent_engine_test.exe
           echo ""
@@ -155,10 +151,6 @@ jobs:
 
       - name: run unit tests
         run: |
-          cd ${{ github.workspace }}
-          echo "Running seika tests!"
-          ${{ github.workspace }}/builds/Release/seika_test
-          echo ""
           echo "Running crescent engine tests!"
           ${{ github.workspace }}/builds/Release/crescent_engine_test
           echo ""
@@ -231,9 +223,6 @@ jobs:
       - name: run unit tests
         run: |
           cd ${{ github.workspace }}
-          echo "Running seika tests!"
-          builds/Release/seika_test
-          echo ""
           echo "Running crescent engine tests!"
           builds/Release/crescent_engine_test
           echo ""

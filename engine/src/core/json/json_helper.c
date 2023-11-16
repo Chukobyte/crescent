@@ -1,9 +1,7 @@
 #include "json_helper.h"
 
-#include <string.h>
-
-#include "../seika/src/utils/se_string_util.h"
-#include "../seika/src/utils/se_assert.h"
+#include <seika/utils/se_string_util.h>
+#include <seika/utils/se_assert.h>
 
 const char* json_get_string(cJSON* json, const char* key) {
     cJSON* stringJson = cJSON_GetObjectItemCaseSensitive(json, key);

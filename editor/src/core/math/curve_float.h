@@ -2,8 +2,8 @@
 
 #include <vector>
 
-#include "../seika/src/math/se_curve_float.h"
-#include "../seika/src/utils/se_assert.h"
+#include <seika/math/se_curve_float.h>
+#include <seika/utils/se_assert.h>
 
 #include "../utils/json_helper.h"
 

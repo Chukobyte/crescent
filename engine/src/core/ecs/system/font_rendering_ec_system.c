@@ -1,8 +1,8 @@
 #include "font_rendering_ec_system.h"
 
-#include "../seika/src/rendering/renderer.h"
-#include "../seika/src/utils/se_string_util.h"
-#include "../seika/src/utils/se_assert.h"
+#include <seika/rendering/renderer.h>
+#include <seika/utils/se_string_util.h>
+#include <seika/utils/se_assert.h>
 
 #include "ec_system.h"
 #include "../component/transform2d_component.h"
@@ -15,12 +15,14 @@
 CreEntitySystem* fontRenderingSystem = NULL;
 
 void font_rendering_system_render();
+void font_rendering_system_on_ec_system_destroy();
 
 CreEntitySystem* cre_font_rendering_ec_system_create() {
     SE_ASSERT(fontRenderingSystem == NULL);
     fontRenderingSystem = cre_ec_system_create();
     fontRenderingSystem->name = se_strdup("Font Rendering");
     fontRenderingSystem->render_func = font_rendering_system_render;
+    fontRenderingSystem->on_ec_system_destroy = font_rendering_system_on_ec_system_destroy;
     fontRenderingSystem->component_signature = CreComponentType_TRANSFORM_2D | CreComponentType_TEXT_LABEL;
     return fontRenderingSystem;
 }
@@ -46,4 +48,9 @@ void font_rendering_system_render() {
             globalTransform->zIndex
         );
     }
+}
+
+void font_rendering_system_on_ec_system_destroy() {
+    SE_ASSERT(fontRenderingSystem != NULL);
+    fontRenderingSystem = NULL;
 }

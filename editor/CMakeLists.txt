@@ -4,6 +4,8 @@ set(CMAKE_CXX_STANDARD 20)
 
 project(crescent_editor)
 
+include(../Functions.cmake)
+
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     list(APPEND flags "/std:c++20" "/W3" "/Zc:preprocessor")
 elseif (APPLE)
@@ -17,26 +19,6 @@ else ()
 endif ()
 
 find_package(SDL2 CONFIG REQUIRED)
-
-add_library(imgui STATIC
-        ../include/imgui.cpp
-        ../include/imgui_demo.cpp
-        ../include/imgui_draw.cpp
-        ../include/imgui_tables.cpp
-        ../include/imgui_widgets.cpp
-        ../include/imgui_impl_opengl3.cpp
-        ../include/imgui_impl_sdl.cpp
-        )
-
-target_include_directories(imgui PRIVATE
-        ${SDL2_INCLUDE_DIRS}
-        )
-
-add_library(implot STATIC
-        ../include/implot.cpp
-        ../include/implot_demo.cpp
-        ../include/implot_items.cpp
-        )
 
 add_library(${PROJECT_NAME} STATIC
         src/core/asset_manager.cpp
@@ -72,19 +54,42 @@ add_library(${PROJECT_NAME} STATIC
         src/core/utils/process_runner/process_context.cpp
         )
 
+#--- Dependencies ---#
+add_library(imgui STATIC
+        ../include/imgui.cpp
+        ../include/imgui_demo.cpp
+        ../include/imgui_draw.cpp
+        ../include/imgui_tables.cpp
+        ../include/imgui_widgets.cpp
+        ../include/imgui_impl_opengl3.cpp
+        ../include/imgui_impl_sdl.cpp
+)
+
+target_include_directories(imgui PRIVATE
+        ${SDL2_INCLUDE_DIRS}
+)
+
+add_library(implot STATIC
+        ../include/implot.cpp
+        ../include/implot_demo.cpp
+        ../include/implot_items.cpp
+)
+
+install_seika()
+
 target_include_directories(${PROJECT_NAME} PUBLIC
         "${PROJECT_BINARY_DIR}"
         "../include"
         )
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image SDL2::SDL2main SDL2::SDL2 imgui implot)
+    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image SDL2::SDL2main SDL2::SDL2 imgui implot seika)
 elseif (WIN32)
-    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image -lmingw32 -static-libgcc SDL2::SDL2main SDL2::SDL2 imgui implot)
+    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image -lmingw32 -static-libgcc SDL2::SDL2main SDL2::SDL2 imgui implot seika)
 elseif (APPLE)
-    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image -Xlinker SDL2::SDL2main SDL2::SDL2 imgui implot)
+    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image -Xlinker SDL2::SDL2main SDL2::SDL2 imgui implot seika)
 else ()
-    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image -static-libgcc -Xlinker -export-dynamic SDL2::SDL2main SDL2::SDL2 imgui implot)
+    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image -static-libgcc -Xlinker -export-dynamic SDL2::SDL2main SDL2::SDL2 imgui implot seika)
 endif ()
 
 target_compile_options(${PROJECT_NAME} PUBLIC ${flags})

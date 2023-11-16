@@ -15,6 +15,7 @@ typedef void (*PostProcessAllFunc) ();
 typedef void (*UpdateFunc) (float);
 typedef void (*FixedUpdateFunc) (float);
 typedef void (*NetworkCallbackFunc) (const char*);
+typedef void (*OnECSystemDestroy) ();
 
 typedef struct CreEntitySystem {
     char* name;
@@ -29,6 +30,7 @@ typedef struct CreEntitySystem {
     UpdateFunc update_func;
     FixedUpdateFunc fixed_update_func;
     NetworkCallbackFunc network_callback_func;
+    OnECSystemDestroy on_ec_system_destroy;
     CreComponentType component_signature;
     size_t entity_count;
     CreEntity entities[CRE_MAX_ENTITIES];

@@ -2,9 +2,9 @@
 
 #include <string.h>
 
-#include "../seika/src/rendering/renderer.h"
-#include "../seika/src/utils/se_assert.h"
-#include "../seika/src/asset/asset_manager.h"
+#include <seika/rendering/renderer.h>
+#include <seika/utils/se_assert.h>
+#include <seika/asset/asset_manager.h>
 
 #include "component/component.h"
 #include "component/transform2d_component.h"
@@ -36,6 +36,19 @@ void cre_ecs_manager_initialize() {
     cre_ec_system_register(cre_script_ec_system_create());
     cre_ec_system_register(cre_collision_ec_system_create());
     cre_ec_system_register(cre_color_rect_ec_system_create());
+    cre_ec_system_register(cre_parallax_ec_system_create());
+}
+
+void cre_ecs_manager_initialize_ex(struct SETexture* colorRectTexture) {
+    cre_component_manager_initialize();
+    cre_ec_system_initialize();
+    // Initialize and register ec systems
+    cre_ec_system_register(cre_sprite_rendering_ec_system_create());
+    cre_ec_system_register(cre_animated_sprite_rendering_ec_system_create());
+    cre_ec_system_register(cre_font_rendering_ec_system_create());
+    cre_ec_system_register(cre_script_ec_system_create());
+    cre_ec_system_register(cre_collision_ec_system_create());
+    cre_ec_system_register(cre_color_rect_ec_system_create_ex(colorRectTexture));
     cre_ec_system_register(cre_parallax_ec_system_create());
 }
 

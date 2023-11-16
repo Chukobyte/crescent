@@ -1,6 +1,6 @@
 #include "project_properties.h"
 
-#include "../seika/src/audio/audio.h"
+#include <seika/audio/audio.h>
 
 #include "../engine/src/core/core_info.h"
 

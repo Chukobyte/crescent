@@ -2,10 +2,10 @@
 
 #include <Python.h>
 
-#include "../seika/src/asset/asset_file_loader.h"
-#include "../seika/src/memory/se_mem.h"
-#include "../seika/src/utils/se_file_system_utils.h"
-#include "../seika/src/utils/se_assert.h"
+#include <seika/asset/asset_file_loader.h>
+#include <seika/memory/se_mem.h>
+#include <seika/utils/se_file_system_utils.h>
+#include <seika/utils/se_assert.h>
 
 #include "py_cache.h"
 #include "cre_py_api_module.h"

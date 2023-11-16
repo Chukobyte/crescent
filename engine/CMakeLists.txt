@@ -4,8 +4,10 @@ set(CMAKE_C_STANDARD 11)
 
 project(crescent_core C)
 
+include(../Functions.cmake)
+
 if (CMAKE_C_COMPILER_ID STREQUAL "MSVC")
-#    list(APPEND flags "/std:c11" "/W3" "/Zc:preprocessor") # TODO: Adding "/std:c11" breaks editor, fix later...
+    #    list(APPEND flags "/std:c11" "/W3" "/Zc:preprocessor") # TODO: Adding "/std:c11" breaks editor, fix later...
     list(APPEND flags "/W3" "/Zc:preprocessor")
 elseif (APPLE)
     list(APPEND flags "-Wfatal-errors" "-Wall" "-Wextra" "-Wno-write-strings" "-Wno-deprecated-declarations"
@@ -26,7 +28,7 @@ if (NOT freetype_FOUND)
 endif()
 
 
-find_package (Python3 COMPONENTS Interpreter Development REQUIRED)
+find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
 
 add_library(${PROJECT_NAME} STATIC
         src/core/core.c
@@ -73,7 +75,7 @@ add_library(${PROJECT_NAME} STATIC
         src/core/json/json_file_loader_scene.c
         src/core/json/json_helper.c
         src/core/math/curve_float_manager.c
-        )
+)
 
 if (NOT DEFINED IS_CI_BUILD)
     set(IS_CI_BUILD "false")
@@ -89,38 +91,40 @@ if (NOT TARGET unity)
     add_library(unity ../include/unity.c)
 endif()
 
+install_seika()
+
 add_library(cJSON ../include/cjson/cJSON.c)
 
 target_include_directories(${PROJECT_NAME} PUBLIC
         "${PROJECT_BINARY_DIR}"
         "../include"
-        )
+)
 target_include_directories(glad PUBLIC
         "${PROJECT_BINARY_DIR}"
         "../include"
-        )
+)
 target_include_directories(stb_image PUBLIC
         "${PROJECT_BINARY_DIR}"
         "../include"
-        )
+)
 
 target_include_directories(unity PUBLIC
         "${PROJECT_BINARY_DIR}"
         "../include"
-        )
+)
 
 if (NOT freetype_from_find_package)
     target_include_directories(${PROJECT_NAME} PUBLIC ${freetype_INCLUDE_DIRS})
 endif()
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image cJSON SDL2::SDL2main SDL2::SDL2 freetype Python3::Python Ws2_32)
+    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image cJSON SDL2::SDL2main SDL2::SDL2 freetype Python3::Python Ws2_32 seika)
 elseif (WIN32)
-    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image cJSON -lmingw32 -static-libgcc SDL2::SDL2main SDL2::SDL2 freetype Python3::Python -lws2_32)
+    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image cJSON -lmingw32 -static-libgcc SDL2::SDL2main SDL2::SDL2 freetype Python3::Python -lws2_32 seika)
 elseif (APPLE)
-    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image cJSON -Xlinker SDL2::SDL2main SDL2::SDL2 freetype Python3::Python m)
+    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image cJSON -Xlinker SDL2::SDL2main SDL2::SDL2 freetype Python3::Python m seika)
 else ()
-    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image cJSON -static-libgcc -Xlinker -export-dynamic SDL2::SDL2main SDL2::SDL2 freetype Python3::Python m)
+    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image cJSON -static-libgcc -Xlinker -export-dynamic SDL2::SDL2main SDL2::SDL2 freetype Python3::Python m seika)
 endif ()
 
 target_compile_options(${PROJECT_NAME} PUBLIC ${flags})
@@ -131,24 +135,24 @@ if (IS_CI_BUILD STREQUAL "false")
             COMMAND ${CMAKE_COMMAND} -E copy_directory
             ${PROJECT_SOURCE_DIR}/../assets
             $<TARGET_FILE_DIR:${PROJECT_NAME}>/../assets
-            )
+    )
 
     add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_directory
             ${PROJECT_SOURCE_DIR}/../test_games
             $<TARGET_FILE_DIR:${PROJECT_NAME}>/../test_games
-            )
+    )
 
     add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_directory
             ${PROJECT_SOURCE_DIR}/../crescent_py_api
             $<TARGET_FILE_DIR:${PROJECT_NAME}>/../crescent_py_api
-            )
+    )
 
     # Copy directories over that are needed to test
     add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_directory
             ${PROJECT_SOURCE_DIR}/../engine/test
             $<TARGET_FILE_DIR:${PROJECT_NAME}>/../engine/test
-            )
+    )
 endif()

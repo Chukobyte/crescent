@@ -2,10 +2,9 @@
 
 #include <string.h>
 
-#include "../seika/src/asset/asset_file_loader.h"
-#include "../seika/src/data_structures/se_hash_map_string.h"
-#include "../seika/src/utils/se_assert.h"
-#include "../seika/src/utils/se_string_util.h"
+#include <seika/asset/asset_file_loader.h>
+#include <seika/data_structures/se_hash_map_string.h>
+#include <seika/utils/se_string_util.h>
 
 #include "../json/json_file_loader.h"
 

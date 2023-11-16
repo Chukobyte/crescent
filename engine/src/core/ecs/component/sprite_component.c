@@ -2,7 +2,7 @@
 
 #include <string.h>
 
-#include "../seika/src/memory/se_mem.h"
+#include <seika/memory/se_mem.h>
 
 SpriteComponent* sprite_component_create() {
     SpriteComponent* spriteComponent = SE_MEM_ALLOCATE(SpriteComponent);

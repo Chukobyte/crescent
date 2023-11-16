@@ -2,11 +2,11 @@
 
 #include <Python.h>
 
-#include "../seika/src/data_structures/se_hash_map.h"
-#include "../seika/src/data_structures/se_static_array.h"
-#include "../seika/src/utils/se_assert.h"
-#include "../seika/src/memory/se_mem.h"
-#include "../seika/src/networking/se_network.h"
+#include <seika/data_structures/se_hash_map.h>
+#include <seika/data_structures/se_static_array.h>
+#include <seika/utils/se_assert.h>
+#include <seika/memory/se_mem.h>
+#include <seika/networking/se_network.h>
 
 #include "py_cache.h"
 #include "cre_py.h"
@@ -34,12 +34,15 @@ void py_on_update_instance(CreEntity entity, float deltaTime);
 void py_on_fixed_update_instance(CreEntity entity, float deltaTime);
 void py_on_end(CreEntity entity);
 void py_on_network_callback(const char* message);
+void py_on_network_udp_server_client_connected();
+void py_on_script_context_destroy();
 
 SEHashMap* pythonInstanceHashMap = NULL;
 CREScriptContext* python_script_context = NULL;
 PyGILState_STATE pyGlobalGilStateState;
 
 CREScriptContext* cre_py_create_script_context() {
+    // TODO: Initialize CPython VM here
     SE_ASSERT_FMT(python_script_context == NULL, "Script context already created!");
     CREScriptContext* scriptContext = cre_script_context_create();
     scriptContext->on_create_instance = py_on_create_instance;
@@ -52,6 +55,7 @@ CREScriptContext* cre_py_create_script_context() {
     scriptContext->on_end = py_on_end;
     scriptContext->on_network_callback = py_on_network_callback;
     scriptContext->on_entity_subscribe_to_network_callback = py_on_entity_subscribe_to_network_callback;
+    scriptContext->on_script_context_destroy = py_on_script_context_destroy;
 
     pythonInstanceHashMap = se_hash_map_create(sizeof(CreEntity), sizeof(PyObject **), 16);
     python_script_context = scriptContext;
@@ -180,7 +184,7 @@ void py_on_entity_subscribe_to_network_callback(CreEntity entity, PyObject* call
         }
     } else if (strcmp(id, "client_connected") == 0) {
         if (current_network_server_client_connected_script_callback == NULL) {
-            se_udp_server_register_client_connected_callback(cre_py_on_network_udp_server_client_connected);
+            se_udp_server_register_client_connected_callback(py_on_network_udp_server_client_connected);
             current_network_server_client_connected_script_callback = SE_MEM_ALLOCATE(RBEScriptCallback);
             current_network_server_client_connected_script_callback->entity = entity;
             current_network_server_client_connected_script_callback->callback_func = callback_func;
@@ -190,7 +194,7 @@ void py_on_entity_subscribe_to_network_callback(CreEntity entity, PyObject* call
     }
 }
 
-void cre_py_on_network_udp_server_client_connected() {
+void py_on_network_udp_server_client_connected() {
     if (current_network_server_client_connected_script_callback != NULL) {
         PyGILState_STATE pyGilStateState = PyGILState_Ensure();
         PyObject_CallObject(current_network_server_client_connected_script_callback->callback_func, NULL);
@@ -209,4 +213,11 @@ PyObject* cre_py_get_script_instance(CreEntity entity) {
         return (PyObject*) *(PyObject**) se_hash_map_get(pythonInstanceHashMap, &entity);
     }
     return NULL;
+}
+
+void py_on_script_context_destroy() {
+    // TODO: Shutdown CPython VM here
+    se_hash_map_destroy(pythonInstanceHashMap);
+    pythonInstanceHashMap = NULL;
+    python_script_context = NULL;
 }

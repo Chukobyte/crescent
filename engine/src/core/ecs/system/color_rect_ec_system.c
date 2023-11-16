@@ -2,9 +2,9 @@
 
 #include <string.h>
 
-#include "../seika/src/rendering/renderer.h"
-#include "../seika/src/utils/se_string_util.h"
-#include "../seika/src/utils/se_assert.h"
+#include <seika/rendering/renderer.h>
+#include <seika/utils/se_string_util.h>
+#include <seika/utils/se_assert.h>
 
 #include "ec_system.h"
 #include "../component/transform2d_component.h"
@@ -19,16 +19,21 @@ SETexture* colorRectTexture = NULL;
 SERect2 colorRectDrawSource = { 0.0f, 0.0f, 1.0f, 1.0f };
 
 void color_rect_system_render();
+void color_rect_system_on_ec_system_destroy();
 
 CreEntitySystem* cre_color_rect_ec_system_create() {
+    return cre_color_rect_ec_system_create_ex(NULL);
+}
+
+struct CreEntitySystem* cre_color_rect_ec_system_create_ex(struct SETexture* rectTexture) {
     SE_ASSERT(colorRectSystem == NULL);
     colorRectSystem = cre_ec_system_create();
     colorRectSystem->name = se_strdup("Color Square");
     colorRectSystem->render_func = color_rect_system_render;
+    colorRectSystem->on_ec_system_destroy = color_rect_system_on_ec_system_destroy;
     colorRectSystem->component_signature = CreComponentType_TRANSFORM_2D | CreComponentType_COLOR_RECT;
 
-    SE_ASSERT_FMT(colorRectTexture == NULL, "Color Square Texture isn't NULL!");
-    colorRectTexture = se_texture_create_solid_colored_texture(1, 1, 255);
+    colorRectTexture = rectTexture != NULL ? rectTexture : se_texture_create_solid_colored_texture(1, 1, 255);
     return colorRectSystem;
 }
 
@@ -63,4 +68,9 @@ void color_rect_system_render() {
             NULL
         );
     }
+}
+
+void color_rect_system_on_ec_system_destroy() {
+    SE_ASSERT(colorRectSystem != NULL);
+    colorRectSystem = NULL;
 }

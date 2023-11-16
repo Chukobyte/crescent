@@ -4,18 +4,27 @@
 
 #include <SDL2/SDL_main.h>
 
+#include <seika/rendering/texture.h>
+
 #include "../src/core/node_event.h"
 #include "../src/core/ecs/component/component.h"
 #include "../src/core/ecs/component/transform2d_component.h"
 #include "../src/core/ecs/component/collider2d_component.h"
 #include "../src/core/ecs/component/text_label_component.h"
+#include "../src/core/ecs/system/ec_system.h"
+#include "../src/core/ecs/ecs_manager.h"
 #include "../src/core/json/json_file_loader.h"
+#include "../src/core/game_properties.h"
+
+SETexture fakeColorRectTexture = {0};
 
 void setUp() {
-    cre_component_manager_initialize();
+    cre_game_props_initialize(cre_game_props_create());
+    cre_ecs_manager_initialize_ex(&fakeColorRectTexture);
 }
 void tearDown() {
-    cre_component_manager_finalize(); // TODO: Need to implement
+    cre_ecs_manager_finalize();
+    cre_game_props_finalize();
 }
 
 void cre_node_event_test(void);
@@ -28,7 +37,7 @@ int main(int argv, char** args) {
     return UNITY_END();
 }
 
-// Node event test
+//--- Node event test ---//
 static bool hasBeenNotified = false;
 static int NODE_EVENT_TEST_NUMBER = 345;
 
@@ -91,7 +100,7 @@ void cre_node_event_test(void) {
     TEST_ASSERT_EQUAL_UINT(0, node_event_get_entity_observer_count(anotherObserverEntity));
 }
 
-// Json File Loader Tests
+//--- Json File Loader Tests ---//
 // Note: If making changes to scene file make sure cmake runs steps to copy test dependency resources
 
 #define TEST_SCENE_1_PATH "engine/test/resources/test_scene1.cscn"

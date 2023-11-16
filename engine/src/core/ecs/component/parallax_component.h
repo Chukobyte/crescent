@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../seika/src/math/se_math.h"
+#include <seika/math/se_math.h>
 
 typedef struct ParallaxComponent {
     SEVector2 scrollSpeed;

@@ -2,7 +2,7 @@
 
 #include <string.h>
 
-#include "../seika/src/memory/se_mem.h"
+#include <seika/memory/se_mem.h>
 
 ScriptComponent* script_component_create(const char* path, const char* name) {
     ScriptComponent* scriptComponent = SE_MEM_ALLOCATE(ScriptComponent);

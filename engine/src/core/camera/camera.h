@@ -4,8 +4,8 @@
 extern "C" {
 #endif
 
-#include "../seika/src/utils/observer.h"
-#include "../seika/src/math/se_math.h"
+#include <seika/utils/observer.h>
+#include <seika/math/se_math.h>
 
 #include "../ecs/entity/entity.h"
 #include "../ecs/component/transform2d_component.h"

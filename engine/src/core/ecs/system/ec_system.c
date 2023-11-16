@@ -1,10 +1,10 @@
 #include "ec_system.h"
 
-#include "../seika/src/data_structures/se_queue.h"
-#include "../seika/src/memory/se_mem.h"
-#include "../seika/src/utils/logger.h"
-#include "../seika/src/utils/observer.h"
-#include "../seika/src/utils/se_assert.h"
+#include <seika/data_structures/se_queue.h>
+#include <seika/memory/se_mem.h>
+#include <seika/utils/logger.h>
+#include <seika/utils/observer.h>
+#include <seika/utils/se_assert.h>
 
 #include "../component/node_component.h"
 
@@ -95,11 +95,15 @@ CreEntitySystem* cre_ec_system_create() {
     newSystem->update_func = NULL;
     newSystem->fixed_update_func = NULL;
     newSystem->network_callback_func = NULL;
+    newSystem->on_ec_system_destroy = NULL;
     newSystem->component_signature = CreComponentType_NONE;
     return newSystem;
 }
 
 void cre_ec_system_destroy(CreEntitySystem* entitySystem) {
+    if (entitySystem->on_ec_system_destroy) {
+        entitySystem->on_ec_system_destroy();
+    }
     SE_MEM_FREE(entitySystem);
 }
 
@@ -228,6 +232,7 @@ void cre_ec_system_network_callback(const char* message) {
 
 // --- Entity Management --- //
 CreEntity cre_ec_system_create_entity_uid() {
+    SE_ASSERT(entityIdQueue != NULL);
     SE_ASSERT_FMT(!se_queue_is_empty(entityIdQueue), "Entity pool is empty.  Entity limit reached, considering increasing MAX_ENTITIES!");
     return se_queue_dequeue(entityIdQueue);
 }
