@@ -2,7 +2,7 @@
 
 #include <stddef.h>
 
-#include "seika/data_structures/se_spatial_hash_map.h"
+#include <seika/data_structures/se_spatial_hash_map.h>
 
 #include "../../ecs/entity/entity.h"
 #include "../../ecs/component/transform2d_component.h"

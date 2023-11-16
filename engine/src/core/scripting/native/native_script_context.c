@@ -1,10 +1,12 @@
 #include "native_script_context.h"
 
-#include "seika/data_structures/se_hash_map.h"
-#include "seika/data_structures/se_hash_map_string.h"
-#include "seika/data_structures/se_static_array.h"
-#include "seika/utils/se_assert.h"
-#include "seika/memory/se_mem.h"
+#include <seika/data_structures/se_hash_map.h>
+#include <seika/data_structures/se_hash_map_string.h>
+#include <seika/data_structures/se_static_array.h>
+#include <seika/utils/se_assert.h>
+#include <seika/memory/se_mem.h>
+
+#include "native_script_class.h"
 
 #include "../script_context.h"
 

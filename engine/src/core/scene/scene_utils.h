@@ -4,8 +4,9 @@
 extern "C" {
 #endif
 
+#include <seika/math/se_math.h>
+
 #include "../ecs/entity/entity.h"
-#include "seika/math/se_math.h"
 #include "scene_manager.h"
 
 struct SETransformModel2D;
