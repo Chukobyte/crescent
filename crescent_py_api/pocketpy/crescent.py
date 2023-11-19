@@ -1,4 +1,4 @@
-from typing import List, Callable, Tuple
+from typing import List, Callable, Tuple, Optional
 
 import crescent_internal
 
@@ -79,3 +79,13 @@ class Node:
 
     def __repr__(self) -> str:
         return f"Node(entity_id: {self.entity_id})"
+
+
+class SceneTree:
+    @staticmethod
+    def change_scene(path: str) -> None:
+        crescent_internal.scene_tree_change_scene(path)
+
+    @staticmethod
+    def get_root() -> Optional[Node]:
+        return crescent_internal.scene_tree_get_root()

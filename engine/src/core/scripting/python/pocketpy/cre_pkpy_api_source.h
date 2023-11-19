@@ -1,7 +1,7 @@
 #pragma once
 
 #define CRE_PKPY_CRESCENT_SOURCE ""\
-"from typing import List, Callable, Tuple\n"\
+"from typing import List, Callable, Tuple, Optional\n"\
 "\n"\
 "import crescent_internal\n"\
 "\n"\
@@ -82,6 +82,16 @@
 "\n"\
 "    def __repr__(self) -> str:\n"\
 "        return f\"Node(entity_id: {self.entity_id})\"\n"\
+"\n"\
+"\n"\
+"class SceneTree:\n"\
+"    @staticmethod\n"\
+"    def change_scene(path: str) -> None:\n"\
+"        crescent_internal.scene_tree_change_scene(path)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def get_root() -> Optional[Node]:\n"\
+"        return crescent_internal.scene_tree_get_root()\n"\
 "\n"
 
 #define CRE_PKPY_CRESCENT_INTERNAL_PY_SOURCE ""\

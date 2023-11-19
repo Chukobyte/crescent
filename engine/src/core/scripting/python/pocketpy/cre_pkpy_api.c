@@ -17,6 +17,7 @@
 
 #define CRE_PKPY_NULL_ENTITY (-1)
 
+// Node
 int cre_pkpy_api_node_new(pkpy_vm* vm);
 int cre_pkpy_api_node_get_name(pkpy_vm* vm);
 int cre_pkpy_api_node_add_child(pkpy_vm* vm);
@@ -32,11 +33,16 @@ int cre_pkpy_api_node_create_event(pkpy_vm* vm);
 int cre_pkpy_api_node_subscribe_to_event(pkpy_vm* vm);
 int cre_pkpy_api_node_broadcast_event(pkpy_vm* vm);
 
+// Scene Tree
+int cre_pkpy_api_scene_tree_change_scene(pkpy_vm* vm);
+int cre_pkpy_api_scene_tree_get_root(pkpy_vm* vm);
+
 void cre_pkpy_api_load_internal_modules(pkpy_vm* vm) {
     // Load internal first
     cre_pkpy_util_create_module(vm, &(CrePPModule) {
         .name = "crescent_internal",
         .functions = {
+                // Node
             {.signature = "node_new(class_path: str, class_name: str, node_type_flag: int) -> \"Node\"", .function = cre_pkpy_api_node_new},
             {.signature = "node_get_name(entity_id: int) -> str", .function = cre_pkpy_api_node_get_name},
             {.signature = "node_add_child(parent_entity_id: int, child_entity_id: int) -> None", .function = cre_pkpy_api_node_add_child},
@@ -48,6 +54,10 @@ void cre_pkpy_api_load_internal_modules(pkpy_vm* vm) {
             {.signature = "node_set_time_dilation(entity_id: int, dilation: float) -> None", .function = cre_pkpy_api_node_set_time_dilation},
             {.signature = "node_get_time_dilation(entity_id: int) -> float", .function = cre_pkpy_api_node_get_time_dilation},
             {.signature = "node_get_total_time_dilation(entity_id: int) -> float", .function = cre_pkpy_api_node_get_total_time_dilation},
+            // Scene Tree
+            {.signature = "scene_tree_change_scene(path: str) -> None", .function = cre_pkpy_api_scene_tree_change_scene},
+            {.signature = "scene_tree_get_root()", .function = cre_pkpy_api_scene_tree_get_root},
+
             { NULL, NULL },
         }
     });
@@ -59,6 +69,8 @@ void cre_pkpy_api_load_internal_modules(pkpy_vm* vm) {
     pkpy_pop_top(vm);
     SE_ASSERT(pkpy_stack_size(vm) == 0);
 }
+
+//--- NODE ---//
 
 int cre_pkpy_api_node_new(pkpy_vm* vm) {
     pkpy_CString pyClassPath;
@@ -218,4 +230,21 @@ int cre_pkpy_api_node_get_total_time_dilation(pkpy_vm* vm) {
     const double totalTimeDilation = (double)cre_scene_manager_get_node_full_time_dilation(entity);
     pkpy_push_float(vm, totalTimeDilation);
     return 1;
+}
+
+//--- SCENE TREE ---//
+
+int cre_pkpy_api_scene_tree_change_scene(pkpy_vm* vm) {
+    pkpy_CString scenePath;
+    pkpy_to_string(vm, 0, &scenePath);
+
+    cre_scene_manager_queue_scene_change(scenePath.data);
+    return 0;
+}
+
+int cre_pkpy_api_scene_tree_get_root(pkpy_vm* vm) {
+    SceneTreeNode* rootNode = cre_scene_manager_get_active_scene_root();
+    SE_ASSERT(rootNode != NULL);
+    cre_pkpy_entity_instance_cache_push_entity_instance(vm, rootNode->entity);
+    return 0;
 }

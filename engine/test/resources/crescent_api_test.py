@@ -1,4 +1,7 @@
-from crescent import Node
+from typing import Optional
+
+from crescent import Node, SceneTree
+
 
 class TestCase:
     def __init__(self, name: str) -> None:
@@ -21,6 +24,7 @@ class TestCase:
 def are_floats_equal(a: float, b: float, rel_tol=0.00000001, abs_tol=0.0) -> bool:
     return abs(a-b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
 
+
 # Tests
 with TestCase("Node Tests") as test_case:
     # Create node
@@ -39,5 +43,10 @@ with TestCase("Node Tests") as test_case:
     new_node.time_dilation = 1.0
     assert are_floats_equal(new_node.time_dilation, 1.0)
     # TODO: Queue delete once scene manager updates properly in tests
-    # new_node.queue_deletion()
+    new_node.queue_deletion()
     # assert new_node.is_queued_for_deletion()
+
+with TestCase("Scene Tree Tests") as test_case:
+    SceneTree.change_scene("test_scene1.cscn")
+    # TODO: Fix once scene manager updates are in
+    # assert SceneTree.get_root()

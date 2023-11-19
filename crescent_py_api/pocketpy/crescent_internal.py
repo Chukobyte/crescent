@@ -1,4 +1,5 @@
-from typing import Tuple
+from typing import Tuple, Optional
+
 
 # Mock class for engine's internal c python module
 
@@ -41,3 +42,12 @@ def node_get_time_dilation(entity_id: int) -> float:
 
 def node_get_total_time_dilation(entity_id: int) -> float:
     return 1.0
+
+
+# --- SCENE TREE --- #
+def scene_tree_change_scene(path: str) -> None:
+    pass
+
+
+def scene_tree_get_root() -> Optional["Node"]:
+    return None
