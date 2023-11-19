@@ -5,6 +5,7 @@
 #include <SDL2/SDL_main.h>
 
 #include <seika/rendering/texture.h>
+#include "seika/utils/se_file_system_utils.h"
 
 #include "../src/core/node_event.h"
 #include "../src/core/ecs/component/component.h"
@@ -277,6 +278,14 @@ void cre_pocketpy_test(void) {
     pkpy_exec(vm, "new_node = Node.new(\"crescent\", \"Node\")\nprint(f\"new_node = {new_node}\")");
     TEST_ASSERT_FALSE(print_py_error_message(vm));
     TEST_ASSERT_EQUAL_INT(0, pkpy_stack_size(vm));
+
+    TEST_MESSAGE("Testing python api");
+    char* pythonText = se_fs_read_file_contents("engine/test/resources/crescent_api_test.py", NULL);
+    TEST_ASSERT_NOT_NULL(pythonText);
+    pkpy_exec_2(vm, pythonText, "crescent_api_test.py", 0, NULL);
+    SE_MEM_FREE(pythonText);
+    TEST_ASSERT_FALSE(print_py_error_message(vm));
+
     cre_scene_manager_finalize();
 
     cre_pkpy_entity_instance_cache_finalize(vm);

@@ -129,6 +129,10 @@ int cre_pkpy_api_node_get_children(pkpy_vm* vm) {
     pkpy_to_int(vm, 0, &entityId);
 
     const CreEntity entity = (CreEntity)entityId;
+    if (!cre_scene_manager_has_entity_tree_node(entity)) {
+        return 0;
+    }
+
     const SceneTreeNode* parentTreeNode = cre_scene_manager_get_entity_tree_node(entity);
     for (size_t i = 0; i < parentTreeNode->childCount; i++) {
         const SceneTreeNode* childTreeNode = parentTreeNode->children[i];

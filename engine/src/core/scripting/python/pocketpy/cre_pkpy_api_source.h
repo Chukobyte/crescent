@@ -37,8 +37,9 @@
 "        children_ids = crescent_internal.node_get_children(self.entity_id)\n"\
 "        # TODO: Get nodes from internal global dict\n"\
 "        children = []\n"\
-"        for child_id in children_ids:\n"\
-"            children.append(Node(child_id))\n"\
+"        if children_ids:\n"\
+"            for child_id in children_ids:\n"\
+"                children.append(Node(child_id))\n"\
 "        return children\n"\
 "\n"\
 "    def queue_deletion(self) -> None:\n"\
