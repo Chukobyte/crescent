@@ -16,12 +16,16 @@ def node_add_child(parent_entity_id: int, child_entity_id: int) -> None:
     pass
 
 
-def node_get_child(parent_entity_id: int, child_entity_name: str) -> int:
-    return 0
+def node_get_child(parent_entity_id: int, child_entity_name: str) -> Optional["Node"]:
+    return None
 
 
-def node_get_children(entity_id: int) -> Tuple[int, ...]:
+def node_get_children(entity_id: int) -> Tuple["Node", ...]:
     return ()
+
+
+def node_get_parent(entity_id: int) -> Optional["Node"]:
+    return None
 
 
 def node_queue_deletion(entity_id: int) -> None:

@@ -29,18 +29,17 @@
 "    def add_child(self, child_node: \"Node\") -> None:\n"\
 "        crescent_internal.node_add_child(self.entity_id, child_node.entity_id)\n"\
 "\n"\
-"    def get_child(self, child_name: str) -> \"Node\":\n"\
-"        child_entity_id = crescent_internal.node_get_child(self.entity_id, child_name)\n"\
-"        return Node(child_entity_id)\n"\
+"    def get_child(self, child_name: str) -> Optional[\"Node\"]:\n"\
+"        return crescent_internal.node_get_child(self.entity_id, child_name)\n"\
 "\n"\
 "    def get_children(self) -> List[\"Node\"]:\n"\
-"        children_ids = crescent_internal.node_get_children(self.entity_id)\n"\
-"        # TODO: Get nodes from internal global dict\n"\
-"        children = []\n"\
-"        if children_ids:\n"\
-"            for child_id in children_ids:\n"\
-"                children.append(Node(child_id))\n"\
-"        return children\n"\
+"        children = crescent_internal.node_get_children(self.entity_id)\n"\
+"        if children:\n"\
+"            return list(children)\n"\
+"        return []\n"\
+"\n"\
+"    def get_parent(self) -> Optional[\"Node\"]:\n"\
+"        return crescent_internal.node_get_parent(self.entity_id)\n"\
 "\n"\
 "    def queue_deletion(self) -> None:\n"\
 "        crescent_internal.node_queue_deletion(self.entity_id)\n"\

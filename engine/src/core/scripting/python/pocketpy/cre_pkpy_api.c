@@ -46,9 +46,9 @@ void cre_pkpy_api_load_internal_modules(pkpy_vm* vm) {
             {.signature = "node_new(class_path: str, class_name: str, node_type_flag: int) -> \"Node\"", .function = cre_pkpy_api_node_new},
             {.signature = "node_get_name(entity_id: int) -> str", .function = cre_pkpy_api_node_get_name},
             {.signature = "node_add_child(parent_entity_id: int, child_entity_id: int) -> None", .function = cre_pkpy_api_node_add_child},
-            {.signature = "node_get_child(parent_entity_id: int, child_entity_name: str) -> int", .function = cre_pkpy_api_node_get_child},
-            {.signature = "node_get_children(entity_id: int) -> Tuple[int, ...]", .function = cre_pkpy_api_node_get_children},
-            {.signature = "node_get_parent(child_entity_id: int) -> int", .function = cre_pkpy_api_node_get_parent},
+            {.signature = "node_get_child(parent_entity_id: int, child_entity_name: str) -> Optional[\"Node\"]", .function = cre_pkpy_api_node_get_child},
+            {.signature = "node_get_children(entity_id: int) -> Tuple[\"Node\", ...]", .function = cre_pkpy_api_node_get_children},
+            {.signature = "node_get_parent(child_entity_id: int) -> Optional[\"Node\"]", .function = cre_pkpy_api_node_get_parent},
             {.signature = "node_queue_deletion(entity_id: int) -> None", .function = cre_pkpy_api_node_queue_deletion},
             {.signature = "node_is_queued_for_deletion(entity_id: int) -> bool", .function = cre_pkpy_api_node_is_queued_for_deletion},
             {.signature = "node_set_time_dilation(entity_id: int, dilation: float) -> None", .function = cre_pkpy_api_node_set_time_dilation},
@@ -127,13 +127,12 @@ int cre_pkpy_api_node_get_child(pkpy_vm* vm) {
     pkpy_to_int(vm, 0, &parentEntityId);
     pkpy_to_string(vm, 1, &childEntityName);
 
-    int childEntityId = CRE_PKPY_NULL_ENTITY;
     const CreEntity childEntity = cre_scene_manager_get_entity_child_by_name((CreEntity)parentEntityId, childEntityName.data);
-    if (childEntity != CRE_NULL_ENTITY) {
-        childEntityId = (int)childEntity;
+    if (cre_pkpy_entity_instance_cache_has_entity(vm, childEntity)) {
+        cre_pkpy_entity_instance_cache_push_entity_instance(vm, childEntity);
+        return 1;
     }
-    pkpy_push_int(vm, childEntityId);
-    return 1;
+    return 0;
 }
 
 int cre_pkpy_api_node_get_children(pkpy_vm* vm) {
@@ -148,7 +147,7 @@ int cre_pkpy_api_node_get_children(pkpy_vm* vm) {
     const SceneTreeNode* parentTreeNode = cre_scene_manager_get_entity_tree_node(entity);
     for (size_t i = 0; i < parentTreeNode->childCount; i++) {
         const SceneTreeNode* childTreeNode = parentTreeNode->children[i];
-        pkpy_push_int(vm, (int)childTreeNode->entity);
+        cre_pkpy_entity_instance_cache_push_entity_instance(vm, childTreeNode->entity);
     }
 
     return (int)parentTreeNode->childCount;
@@ -159,13 +158,12 @@ int cre_pkpy_api_node_get_parent(pkpy_vm* vm) {
     pkpy_to_int(vm, 0, &childEntityId);
 
     const CreEntity childEntity = (CreEntity)childEntityId;
-    int parentEntityId = CRE_PKPY_NULL_ENTITY;
     if (cre_scene_manager_has_entity_tree_node(childEntity)) {
         const SceneTreeNode* treeNode = cre_scene_manager_get_entity_tree_node(childEntity);
-        parentEntityId = (int)treeNode->parent->entity;
+        cre_pkpy_entity_instance_cache_push_entity_instance(vm, treeNode->entity);
+        return 1;
     }
-    pkpy_push_int(vm, parentEntityId);
-    return 1;
+    return 0;
 }
 
 int cre_pkpy_api_node_queue_deletion(pkpy_vm* vm) {

@@ -26,18 +26,17 @@ class Node:
     def add_child(self, child_node: "Node") -> None:
         crescent_internal.node_add_child(self.entity_id, child_node.entity_id)
 
-    def get_child(self, child_name: str) -> "Node":
-        child_entity_id = crescent_internal.node_get_child(self.entity_id, child_name)
-        return Node(child_entity_id)
+    def get_child(self, child_name: str) -> Optional["Node"]:
+        return crescent_internal.node_get_child(self.entity_id, child_name)
 
     def get_children(self) -> List["Node"]:
-        children_ids = crescent_internal.node_get_children(self.entity_id)
-        # TODO: Get nodes from internal global dict
-        children = []
-        if children_ids:
-            for child_id in children_ids:
-                children.append(Node(child_id))
-        return children
+        children = crescent_internal.node_get_children(self.entity_id)
+        if children:
+            return list(children)
+        return []
+
+    def get_parent(self) -> Optional["Node"]:
+        return crescent_internal.node_get_parent(self.entity_id)
 
     def queue_deletion(self) -> None:
         crescent_internal.node_queue_deletion(self.entity_id)
