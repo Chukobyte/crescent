@@ -37,6 +37,10 @@ int cre_pkpy_api_node_broadcast_event(pkpy_vm* vm);
 int cre_pkpy_api_scene_tree_change_scene(pkpy_vm* vm);
 int cre_pkpy_api_scene_tree_get_root(pkpy_vm* vm);
 
+// Scene Manager
+int cre_pkpy_api_scene_manager_process_queued_creation_entities(pkpy_vm* vm);
+int cre_pkpy_api_scene_manager_process_queued_scene_change(pkpy_vm* vm);
+
 void cre_pkpy_api_load_internal_modules(pkpy_vm* vm) {
     // Load internal first
     cre_pkpy_util_create_module(vm, &(CrePPModule) {
@@ -57,6 +61,9 @@ void cre_pkpy_api_load_internal_modules(pkpy_vm* vm) {
             // Scene Tree
             {.signature = "scene_tree_change_scene(path: str) -> None", .function = cre_pkpy_api_scene_tree_change_scene},
             {.signature = "scene_tree_get_root()", .function = cre_pkpy_api_scene_tree_get_root},
+            // Scene Manager
+            {.signature = "_scene_manager_process_queued_creation_entities() -> None", .function = cre_pkpy_api_scene_manager_process_queued_creation_entities},
+            {.signature = "_scene_manager_process_queued_scene_change() -> None", .function = cre_pkpy_api_scene_manager_process_queued_scene_change},
 
             { NULL, NULL },
         }
@@ -244,5 +251,14 @@ int cre_pkpy_api_scene_tree_get_root(pkpy_vm* vm) {
     SceneTreeNode* rootNode = cre_scene_manager_get_active_scene_root();
     SE_ASSERT(rootNode != NULL);
     cre_pkpy_entity_instance_cache_push_entity_instance(vm, rootNode->entity);
+    return 0;
+}
+
+//--- SCENE MANAGER ---//
+int cre_pkpy_api_scene_manager_process_queued_creation_entities(pkpy_vm* vm) {
+    return 0;
+}
+
+int cre_pkpy_api_scene_manager_process_queued_scene_change(pkpy_vm* vm) {
     return 0;
 }

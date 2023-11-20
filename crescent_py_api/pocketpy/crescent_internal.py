@@ -55,3 +55,15 @@ def scene_tree_change_scene(path: str) -> None:
 
 def scene_tree_get_root() -> Optional["Node"]:
     return None
+
+# Exposed internal functions that should only be used for testing
+
+
+# --- SCENE MANAGER --- #
+
+def _scene_manager_process_queued_creation_entities() -> None:
+    pass
+
+
+def _scene_manager_process_queued_scene_change() -> None:
+    pass
