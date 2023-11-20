@@ -11,3 +11,4 @@ CreEntity cre_pkpy_entity_instance_cache_create_new_entity(pkpy_vm* vm, const ch
 void cre_pkpy_entity_instance_cache_remove_entity(pkpy_vm* vm, CreEntity entity);
 bool cre_pkpy_entity_instance_cache_has_entity(pkpy_vm* vm, CreEntity entity);
 void cre_pkpy_entity_instance_cache_push_entity_instance(pkpy_vm* vm, CreEntity entity);
+void cre_pkpy_entity_instance_cache_push_or_add_default_entity_instance(pkpy_vm* vm, CreEntity entity);
