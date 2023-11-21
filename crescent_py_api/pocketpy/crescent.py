@@ -32,7 +32,10 @@ class Node:
     def get_children(self) -> List["Node"]:
         children = crescent_internal.node_get_children(self.entity_id)
         if children:
-            return list(children)
+            if isinstance(children, tuple):
+                return list(children)
+            elif isinstance(children, Node):
+                return [children]
         return []
 
     def get_parent(self) -> Optional["Node"]:

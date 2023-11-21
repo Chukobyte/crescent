@@ -91,7 +91,7 @@ int cre_pkpy_api_node_new(pkpy_vm* vm) {
     char className[32];
     se_str_trim_by_size(pyClassPath.data, classPath, pyClassPath.size);
     se_str_trim_by_size(pyClassName.data, className, pyClassName.size);
-    const CreEntity entity = cre_pkpy_entity_instance_cache_create_new_entity(vm, classPath, className);
+    const CreEntity entity = cre_pkpy_entity_instance_cache_create_new_entity(vm, classPath, className, CRE_NULL_ENTITY);
     SceneTreeNode* newNode = cre_scene_tree_create_tree_node(entity, NULL);
     cre_scene_manager_stage_child_node_to_be_added_later(newNode);
 
@@ -251,7 +251,7 @@ int cre_pkpy_api_scene_tree_get_root(pkpy_vm* vm) {
     SceneTreeNode* rootNode = cre_scene_manager_get_active_scene_root();
     SE_ASSERT(rootNode != NULL);
     cre_pkpy_entity_instance_cache_push_or_add_default_entity_instance(vm, rootNode->entity);
-    return 0;
+    return 1;
 }
 
 //--- SCENE MANAGER ---//

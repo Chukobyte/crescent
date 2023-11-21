@@ -33,14 +33,14 @@ void cre_pkpy_entity_instance_cache_finalize(pkpy_vm* vm) {
     }
 }
 
-CreEntity cre_pkpy_entity_instance_cache_create_new_entity(pkpy_vm* vm, const char* classPath, const char* className) {
+CreEntity cre_pkpy_entity_instance_cache_create_new_entity(pkpy_vm* vm, const char* classPath, const char* className, CreEntity entity) {
     // import module first
     char importCmdBuffer[96];
     sprintf(importCmdBuffer, "from %s import %s", classPath, className);
     pkpy_exec(vm, importCmdBuffer);
     SE_ASSERT(!cre_pkpy_util_print_error_message(vm));
 
-    const CreEntity newEntity = cre_ec_system_create_entity_uid();
+    const CreEntity newEntity = entity != CRE_NULL_ENTITY ? entity : cre_ec_system_create_entity_uid();
     pkpy_getglobal(vm, pkpy_name(className));
     pkpy_push_null(vm);
     pkpy_push_int(vm, (int)newEntity);
@@ -91,14 +91,13 @@ void cre_pkpy_entity_instance_cache_push_entity_instance(pkpy_vm* vm, CreEntity 
 }
 
 void cre_pkpy_entity_instance_cache_push_or_add_default_entity_instance(pkpy_vm* vm, CreEntity entity) {
-    const int stackSize = pkpy_stack_size(vm);
     if (!cre_pkpy_entity_instance_cache_has_entity(vm, entity)) {
         const NodeComponent* nodeComponent = cre_component_manager_get_component_unchecked(entity, CreComponentDataIndex_NODE);
         SE_ASSERT(nodeComponent);
         const char* nodeClassPath = CRE_PKPY_MODULE_NAME_CRESCENT;
         const char* nodeBaseType = node_get_base_type_string(nodeComponent->type);
         cre_component_manager_set_component(entity, CreComponentDataIndex_SCRIPT, script_component_create(nodeClassPath, nodeBaseType));
-        cre_pkpy_entity_instance_cache_create_new_entity(vm, nodeClassPath, nodeBaseType);
+        cre_pkpy_entity_instance_cache_create_new_entity(vm, nodeClassPath, nodeBaseType, entity);
     }
     cre_pkpy_entity_instance_cache_push_entity_instance(vm, entity);
 }

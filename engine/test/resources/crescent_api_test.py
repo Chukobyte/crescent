@@ -42,14 +42,14 @@ with TestCase("Node Tests") as test_case:
     new_node_child1 = Node.new("crescent", "Node")
     new_node.add_child(new_node_child1)
     # Get Child
-    assert not new_node.get_children()
+    assert len(new_node.get_children()) == 1
     # Time Dilation
     new_node.set_time_dilation(2.0)
     assert are_floats_equal(new_node.get_time_dilation(), 2.0)
     new_node.time_dilation = 1.0
     assert are_floats_equal(new_node.time_dilation, 1.0)
-    # TODO: Queue delete once scene manager updates properly in tests
-    new_node.queue_deletion()
+    # TODO: Queue delete once pkpy script context replaces cpython
+    # new_node.queue_deletion()
     # assert new_node.is_queued_for_deletion()
 
 with TestCase("Scene Tree Tests") as test_case:
