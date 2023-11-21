@@ -6,18 +6,19 @@
 "import crescent_internal\n"\
 "\n"\
 "\n"\
+"class NodeType:\n"\
+"    Node = 1\n"\
+"    Node2D = 3\n"\
+"\n"\
+"\n"\
 "class Node:\n"\
 "    def __init__(self, entity_id: int) -> None:\n"\
 "        self.entity_id = entity_id\n"\
 "\n"\
 "    # TODO: Replace with proper method once class method is added\n"\
-"    # @staticmethod\n"\
-"    # def new() -> \"Node\":\n"\
-"    #     return Node(0)\n"\
-"\n"\
 "    @staticmethod\n"\
-"    def new(class_path: str, class_name: str) -> \"Node\":\n"\
-"        return crescent_internal.node_new(class_path, class_name, 1)\n"\
+"    def new() -> \"Node\":\n"\
+"        return crescent_internal.node_new(\"crescent\", \"Node\", NodeType.Node)\n"\
 "\n"\
 "    def get_name(self) -> str:\n"\
 "        return crescent_internal.node_get_name(self.entity_id)\n"\
@@ -87,7 +88,9 @@
 "\n"\
 "\n"\
 "class Node2D(Node):\n"\
-"    pass\n"\
+"    @staticmethod\n"\
+"    def new() -> \"Node2D\":\n"\
+"        return crescent_internal.node_new(\"crescent\", \"Node2D\", NodeType.Node2D)\n"\
 "\n"\
 "\n"\
 "class SceneTree:\n"\

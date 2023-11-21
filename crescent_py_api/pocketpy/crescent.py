@@ -3,18 +3,19 @@ from typing import List, Callable, Tuple, Optional
 import crescent_internal
 
 
+class NodeType:
+    Node = 1
+    Node2D = 3
+
+
 class Node:
     def __init__(self, entity_id: int) -> None:
         self.entity_id = entity_id
 
     # TODO: Replace with proper method once class method is added
-    # @staticmethod
-    # def new() -> "Node":
-    #     return Node(0)
-
     @staticmethod
-    def new(class_path: str, class_name: str) -> "Node":
-        return crescent_internal.node_new(class_path, class_name, 1)
+    def new() -> "Node":
+        return crescent_internal.node_new("crescent", "Node", NodeType.Node)
 
     def get_name(self) -> str:
         return crescent_internal.node_get_name(self.entity_id)
@@ -84,7 +85,9 @@ class Node:
 
 
 class Node2D(Node):
-    pass
+    @staticmethod
+    def new() -> "Node2D":
+        return crescent_internal.node_new("crescent", "Node2D", NodeType.Node2D)
 
 
 class SceneTree:

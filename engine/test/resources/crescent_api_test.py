@@ -29,7 +29,7 @@ def are_floats_equal(a: float, b: float, rel_tol=0.00000001, abs_tol=0.0) -> boo
 # Tests
 with TestCase("Node Tests") as test_case:
     # Create node
-    new_node = Node.new("crescent", "Node")
+    new_node = Node.new()
     assert new_node
     scene_root = SceneTree.get_root()
     assert scene_root
@@ -40,7 +40,7 @@ with TestCase("Node Tests") as test_case:
     print(f"node_name = {node_name}")
     # Add Child
     assert len(new_node.get_children()) == 0
-    new_node_child1 = Node.new("crescent", "Node")
+    new_node_child1 = Node.new()
     new_node.add_child(new_node_child1)
     # Get Child
     assert len(new_node.get_children()) == 1
