@@ -39,6 +39,7 @@ with TestCase("Node Tests") as test_case:
     assert node_name
     print(f"node_name = {node_name}")
     # Add Child
+    assert len(new_node.get_children()) == 0
     new_node_child1 = Node.new("crescent", "Node")
     new_node.add_child(new_node_child1)
     # Get Child
