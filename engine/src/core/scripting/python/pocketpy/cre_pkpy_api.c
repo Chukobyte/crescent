@@ -15,8 +15,6 @@
 #include "../../../ecs/component/script_component.h"
 #include "cre_pkpy_entity_instance_cache.h"
 
-#define CRE_PKPY_NULL_ENTITY (-1)
-
 // Node
 int cre_pkpy_api_node_new(pkpy_vm* vm);
 int cre_pkpy_api_node_get_name(pkpy_vm* vm);
