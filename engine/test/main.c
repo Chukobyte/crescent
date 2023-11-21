@@ -22,6 +22,7 @@
 #include "../src/core/scripting/python/pocketpy/cre_pkpy_entity_instance_cache.h"
 #include "../src/core/game_properties.h"
 #include "../src/core/scene/scene_manager.h"
+#include "../src/core/scripting/python/pocketpy/cre_pkpy_script_context.h"
 
 SETexture fakeColorRectTexture = {0};
 
@@ -229,7 +230,7 @@ int pocketpy_test_node_get_children(pkpy_vm* vm) {
 }
 
 void cre_pocketpy_test(void) {
-    pkpy_vm* vm = pkpy_new_vm(true);
+    pkpy_vm* vm = cre_pkpy_script_context_get_active_pkpy_vm();
 
     TEST_MESSAGE("Misc pocketpy tests");
 #define CRE_TEST_POCKETPY_SOURCE ""\
@@ -295,6 +296,4 @@ void cre_pocketpy_test(void) {
     se_asset_manager_finalize();
 
     cre_pkpy_entity_instance_cache_finalize(vm);
-
-    pkpy_delete_vm(vm);
 }

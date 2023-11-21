@@ -8,7 +8,8 @@
 
 #include "ec_system.h"
 #include "../../scene/scene_manager.h"
-#include "../../scripting/python/py_script_context.h"
+//#include "../../scripting/python/py_script_context.h"
+#include "../../scripting/python/pocketpy/cre_pkpy_script_context.h"
 #include "../../scripting/native/native_script_context.h"
 #include "../../scripting/native/internal_classes/fps_display_class.h"
 
@@ -44,7 +45,8 @@ CreEntitySystem* cre_script_ec_system_create() {
     scriptSystem->on_ec_system_destroy = script_system_on_ec_system_destroy;
     scriptSystem->component_signature = CreComponentType_SCRIPT;
     // Python Context
-    scriptContexts[ScriptContextType_PYTHON] = cre_py_create_script_context();
+//    scriptContexts[ScriptContextType_PYTHON] = cre_py_create_script_context();
+    scriptContexts[ScriptContextType_PYTHON] = cre_pkpy_script_context_create();
     scriptContextsCount++;
     SE_ASSERT(scriptContexts[ScriptContextType_PYTHON] != NULL);
     // Native Context
