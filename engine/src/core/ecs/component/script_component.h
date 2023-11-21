@@ -19,6 +19,7 @@ typedef struct ScriptComponent {
 } ScriptComponent;
 
 ScriptComponent* script_component_create(const char* path, const char* name);
+ScriptComponent* script_component_create_ex(const char* path, const char* name, ScriptContextType contextType);
 void script_component_delete(ScriptComponent* scriptComponent);
 ScriptComponent* script_component_copy(const ScriptComponent* scriptComponent);
 

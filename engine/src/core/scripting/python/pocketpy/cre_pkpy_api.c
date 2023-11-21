@@ -9,8 +9,14 @@
 #include "cre_pkpy_util.h"
 #include "cre_pkpy_api_source.h"
 #include "../../../ecs/entity/entity.h"
-#include "../../../ecs/component/node_component.h"
 #include "../../../ecs/component/component.h"
+#include "../../../ecs/component/node_component.h"
+#include "../../../ecs/component/sprite_component.h"
+#include "../../../ecs/component/animated_sprite_component.h"
+#include "../../../ecs/component/text_label_component.h"
+#include "../../../ecs/component/collider2d_component.h"
+#include "../../../ecs/component/color_rect_component.h"
+#include "../../../ecs/component/parallax_component.h"
 #include "../../../scene/scene_utils.h"
 #include "../../../ecs/component/script_component.h"
 #include "cre_pkpy_entity_instance_cache.h"
@@ -77,6 +83,37 @@ void cre_pkpy_api_load_internal_modules(pkpy_vm* vm) {
 
 //--- NODE ---//
 
+void set_node_component_from_type(CreEntity entity, const char* classPath, const char* className, NodeBaseType baseType) {
+
+    // Set components that should be set for a base node (that has invoked .new() from scripting)
+    cre_component_manager_set_component(entity, CreComponentDataIndex_NODE, node_component_create_ex(className, baseType));
+    cre_component_manager_set_component(entity, CreComponentDataIndex_SCRIPT, script_component_create_ex(classPath, className, ScriptContextType_PYTHON));
+
+    const NodeBaseInheritanceType inheritanceType = node_get_type_inheritance(baseType);
+
+    if ((NodeBaseInheritanceType_NODE2D & inheritanceType) == NodeBaseInheritanceType_NODE2D) {
+        cre_component_manager_set_component(entity, CreComponentDataIndex_TRANSFORM_2D, transform2d_component_create());
+    }
+    if ((NodeBaseInheritanceType_SPRITE & inheritanceType) == NodeBaseInheritanceType_SPRITE) {
+        cre_component_manager_set_component(entity, CreComponentDataIndex_SPRITE, sprite_component_create());
+    }
+    if ((NodeBaseInheritanceType_ANIMATED_SPRITE & inheritanceType) == NodeBaseInheritanceType_ANIMATED_SPRITE) {
+        cre_component_manager_set_component(entity, CreComponentDataIndex_ANIMATED_SPRITE, animated_sprite_component_create());
+    }
+    if ((NodeBaseInheritanceType_TEXT_LABEL & inheritanceType) == NodeBaseInheritanceType_TEXT_LABEL) {
+        cre_component_manager_set_component(entity, CreComponentDataIndex_TEXT_LABEL, text_label_component_create());
+    }
+    if ((NodeBaseInheritanceType_COLLIDER2D & inheritanceType) == NodeBaseInheritanceType_COLLIDER2D) {
+        cre_component_manager_set_component(entity, CreComponentDataIndex_COLLIDER_2D, collider2d_component_create());
+    }
+    if ((NodeBaseInheritanceType_COLOR_RECT & inheritanceType) == NodeBaseInheritanceType_COLOR_RECT) {
+        cre_component_manager_set_component(entity, CreComponentDataIndex_COLOR_RECT, color_rect_component_create());
+    }
+    if ((NodeBaseInheritanceType_PARALLAX & inheritanceType) == NodeBaseInheritanceType_PARALLAX) {
+        cre_component_manager_set_component(entity, CreComponentDataIndex_PARALLAX, parallax_component_create());
+    }
+}
+
 int cre_pkpy_api_node_new(pkpy_vm* vm) {
     pkpy_CString pyClassPath;
     pkpy_CString pyClassName;
@@ -93,12 +130,7 @@ int cre_pkpy_api_node_new(pkpy_vm* vm) {
     SceneTreeNode* newNode = cre_scene_tree_create_tree_node(entity, NULL);
     cre_scene_manager_stage_child_node_to_be_added_later(newNode);
 
-    NodeComponent* nodeComponent = node_component_create();
-    strcpy(nodeComponent->name, className);
-    nodeComponent->type = (NodeBaseType)pyNodeTypeFlag;
-    cre_component_manager_set_component(entity, CreComponentDataIndex_NODE, nodeComponent);
-
-    cre_component_manager_set_component(entity, CreComponentDataIndex_SCRIPT, script_component_create(classPath, className));
+    set_node_component_from_type(entity, classPath, className, (NodeBaseType)pyNodeTypeFlag);
 
     cre_pkpy_entity_instance_cache_push_entity_instance(vm, entity);
     return 1;

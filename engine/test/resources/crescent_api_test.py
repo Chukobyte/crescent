@@ -1,7 +1,7 @@
 from typing import Optional
 
 import crescent_internal
-from crescent import Node, SceneTree
+from crescent import Node, SceneTree, Node2D
 
 
 class TestCase:
@@ -37,7 +37,6 @@ with TestCase("Node Tests") as test_case:
     # Node name
     node_name = new_node.name
     assert node_name
-    print(f"node_name = {node_name}")
     # Add Child
     assert len(new_node.get_children()) == 0
     new_node_child1 = Node.new()
@@ -52,6 +51,10 @@ with TestCase("Node Tests") as test_case:
     # TODO: Queue delete once pkpy script context replaces cpython
     # new_node.queue_deletion()
     # assert new_node.is_queued_for_deletion()
+
+with TestCase("Node2D Tests") as test_case:
+    node2d = Node2D.new()
+    print(f"node2d = {node2d}")
 
 with TestCase("Scene Tree Tests") as test_case:
     SceneTree.change_scene("test_scene1.cscn")

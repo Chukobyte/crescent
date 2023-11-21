@@ -17,6 +17,13 @@ NodeComponent* node_component_create() {
     return nodeComponent;
 }
 
+NodeComponent* node_component_create_ex(const char* name, NodeBaseType baseType) {
+    NodeComponent* nodeComponent = node_component_create();
+    strcpy(nodeComponent->name, name);
+    nodeComponent->type = baseType;
+    return nodeComponent;
+}
+
 void node_component_delete(NodeComponent* nodeComponent) {
     SE_MEM_FREE(nodeComponent);
 }

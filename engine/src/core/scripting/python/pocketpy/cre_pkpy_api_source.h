@@ -81,10 +81,10 @@
 "        return self.entity_id == other.entity_id\n"\
 "\n"\
 "    def __str__(self) -> str:\n"\
-"        return f\"Node(entity_id: {self.entity_id})\"\n"\
+"        return f\"{self.__class__.__name__}(entity_id: {self.entity_id})\"\n"\
 "\n"\
 "    def __repr__(self) -> str:\n"\
-"        return f\"Node(entity_id: {self.entity_id})\"\n"\
+"        return f\"{self.__class__.__name__}(entity_id: {self.entity_id})\"\n"\
 "\n"\
 "\n"\
 "class Node2D(Node):\n"\

@@ -78,10 +78,10 @@ class Node:
         return self.entity_id == other.entity_id
 
     def __str__(self) -> str:
-        return f"Node(entity_id: {self.entity_id})"
+        return f"{self.__class__.__name__}(entity_id: {self.entity_id})"
 
     def __repr__(self) -> str:
-        return f"Node(entity_id: {self.entity_id})"
+        return f"{self.__class__.__name__}(entity_id: {self.entity_id})"
 
 
 class Node2D(Node):
