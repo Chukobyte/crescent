@@ -83,6 +83,10 @@
 "        return f\"Node(entity_id: {self.entity_id})\"\n"\
 "\n"\
 "\n"\
+"class Node2D(Node):\n"\
+"    pass\n"\
+"\n"\
+"\n"\
 "class SceneTree:\n"\
 "    @staticmethod\n"\
 "    def change_scene(path: str) -> None:\n"\

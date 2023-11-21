@@ -5,13 +5,13 @@
 #include "../seika/utils/se_string_util.h"
 #include "../seika/utils/se_assert.h"
 
+#include "cre_pkpy.h"
 #include "cre_pkpy_util.h"
 #include "cre_pkpy_api_source.h"
 #include "../../../ecs/entity/entity.h"
 #include "../../../ecs/component/node_component.h"
 #include "../../../ecs/component/component.h"
 #include "../../../scene/scene_utils.h"
-#include "../../../ecs/system/ec_system.h"
 #include "../../../ecs/component/script_component.h"
 #include "cre_pkpy_entity_instance_cache.h"
 
@@ -70,8 +70,8 @@ void cre_pkpy_api_load_internal_modules(pkpy_vm* vm) {
     });
 
     // Now load front facing api
-    pkpy_push_module(vm, "crescent");
-    pkpy_exec_2(vm, CRE_PKPY_CRESCENT_SOURCE, "crescent.py", 0, "crescent");
+    pkpy_push_module(vm, CRE_PKPY_MODULE_NAME_CRESCENT);
+    pkpy_exec_2(vm, CRE_PKPY_CRESCENT_SOURCE, "crescent.py", 0, CRE_PKPY_MODULE_NAME_CRESCENT);
     SE_ASSERT(!cre_pkpy_util_print_error_message(vm));
     pkpy_pop_top(vm);
     SE_ASSERT(pkpy_stack_size(vm) == 0);
@@ -136,7 +136,7 @@ int cre_pkpy_api_node_get_child(pkpy_vm* vm) {
 
     const CreEntity childEntity = cre_scene_manager_get_entity_child_by_name((CreEntity)parentEntityId, childEntityName.data);
     if (cre_pkpy_entity_instance_cache_has_entity(vm, childEntity)) {
-        cre_pkpy_entity_instance_cache_push_entity_instance(vm, childEntity);
+        cre_pkpy_entity_instance_cache_push_or_add_default_entity_instance(vm, childEntity);
         return 1;
     }
     return 0;
@@ -154,7 +154,7 @@ int cre_pkpy_api_node_get_children(pkpy_vm* vm) {
     const SceneTreeNode* parentTreeNode = cre_scene_manager_get_entity_tree_node(entity);
     for (size_t i = 0; i < parentTreeNode->childCount; i++) {
         const SceneTreeNode* childTreeNode = parentTreeNode->children[i];
-        cre_pkpy_entity_instance_cache_push_entity_instance(vm, childTreeNode->entity);
+        cre_pkpy_entity_instance_cache_push_or_add_default_entity_instance(vm, childTreeNode->entity);
     }
 
     return (int)parentTreeNode->childCount;
@@ -167,7 +167,7 @@ int cre_pkpy_api_node_get_parent(pkpy_vm* vm) {
     const CreEntity childEntity = (CreEntity)childEntityId;
     if (cre_scene_manager_has_entity_tree_node(childEntity)) {
         const SceneTreeNode* treeNode = cre_scene_manager_get_entity_tree_node(childEntity);
-        cre_pkpy_entity_instance_cache_push_entity_instance(vm, treeNode->entity);
+        cre_pkpy_entity_instance_cache_push_or_add_default_entity_instance(vm, treeNode->entity);
         return 1;
     }
     return 0;
@@ -250,15 +250,17 @@ int cre_pkpy_api_scene_tree_change_scene(pkpy_vm* vm) {
 int cre_pkpy_api_scene_tree_get_root(pkpy_vm* vm) {
     SceneTreeNode* rootNode = cre_scene_manager_get_active_scene_root();
     SE_ASSERT(rootNode != NULL);
-    cre_pkpy_entity_instance_cache_push_entity_instance(vm, rootNode->entity);
+    cre_pkpy_entity_instance_cache_push_or_add_default_entity_instance(vm, rootNode->entity);
     return 0;
 }
 
 //--- SCENE MANAGER ---//
 int cre_pkpy_api_scene_manager_process_queued_creation_entities(pkpy_vm* vm) {
+    cre_scene_manager_process_queued_creation_entities();
     return 0;
 }
 
 int cre_pkpy_api_scene_manager_process_queued_scene_change(pkpy_vm* vm) {
+    cre_scene_manager_process_queued_scene_change();
     return 0;
 }

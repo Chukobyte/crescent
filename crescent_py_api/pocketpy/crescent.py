@@ -80,6 +80,10 @@ class Node:
         return f"Node(entity_id: {self.entity_id})"
 
 
+class Node2D(Node):
+    pass
+
+
 class SceneTree:
     @staticmethod
     def change_scene(path: str) -> None:

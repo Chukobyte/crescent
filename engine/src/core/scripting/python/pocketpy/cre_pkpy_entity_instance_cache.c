@@ -4,10 +4,12 @@
 
 #include "../seika/utils/se_assert.h"
 
+#include "cre_pkpy.h"
 #include "cre_pkpy_util.h"
 #include "cre_pkpy_api_source.h"
 #include "../../../ecs/system/ec_system.h"
 #include "../../../ecs/component/node_component.h"
+#include "../../../ecs/component/script_component.h"
 
 static bool entity_instance_cache_is_initialized = false;
 
@@ -69,12 +71,13 @@ void cre_pkpy_entity_instance_cache_remove_entity(pkpy_vm* vm, CreEntity entity)
 }
 
 bool cre_pkpy_entity_instance_cache_has_entity(pkpy_vm *vm, CreEntity entity) {
+    const int stackSizeBeforeEval = pkpy_stack_size(vm);
     char entityStringBuffer[56];
     sprintf(entityStringBuffer, "%d in crescent_internal_py.CRE_ENTITY_TO_NODE_MAP", entity);
     pkpy_eval(vm, entityStringBuffer);
     SE_ASSERT(!cre_pkpy_util_print_error_message(vm));
     bool doesKeyExist = false;
-    pkpy_to_bool(vm, 1, &doesKeyExist);
+    pkpy_to_bool(vm, stackSizeBeforeEval, &doesKeyExist);
     SE_ASSERT(!cre_pkpy_util_print_error_message(vm));
     pkpy_pop_top(vm);
     return doesKeyExist;
@@ -88,11 +91,14 @@ void cre_pkpy_entity_instance_cache_push_entity_instance(pkpy_vm* vm, CreEntity 
 }
 
 void cre_pkpy_entity_instance_cache_push_or_add_default_entity_instance(pkpy_vm* vm, CreEntity entity) {
-    if (cre_pkpy_entity_instance_cache_has_entity(vm, entity)) {
+    const int stackSize = pkpy_stack_size(vm);
+    if (!cre_pkpy_entity_instance_cache_has_entity(vm, entity)) {
         const NodeComponent* nodeComponent = cre_component_manager_get_component_unchecked(entity, CreComponentDataIndex_NODE);
         SE_ASSERT(nodeComponent);
+        const char* nodeClassPath = CRE_PKPY_MODULE_NAME_CRESCENT;
         const char* nodeBaseType = node_get_base_type_string(nodeComponent->type);
-        cre_pkpy_entity_instance_cache_create_new_entity(vm, "crescent", nodeBaseType);
+        cre_component_manager_set_component(entity, CreComponentDataIndex_SCRIPT, script_component_create(nodeClassPath, nodeBaseType));
+        cre_pkpy_entity_instance_cache_create_new_entity(vm, nodeClassPath, nodeBaseType);
     }
     cre_pkpy_entity_instance_cache_push_entity_instance(vm, entity);
 }

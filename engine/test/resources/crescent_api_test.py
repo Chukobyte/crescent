@@ -1,5 +1,6 @@
 from typing import Optional
 
+import crescent_internal
 from crescent import Node, SceneTree
 
 
@@ -30,11 +31,16 @@ with TestCase("Node Tests") as test_case:
     # Create node
     new_node = Node.new("crescent", "Node")
     assert new_node
+    scene_root = SceneTree.get_root()
+    assert scene_root
+    scene_root.add_child(new_node)
     # Node name
     node_name = new_node.name
     assert node_name
     print(f"node_name = {node_name}")
     # Add Child
+    new_node_child1 = Node.new("crescent", "Node")
+    new_node.add_child(new_node_child1)
     # Get Child
     assert not new_node.get_children()
     # Time Dilation
