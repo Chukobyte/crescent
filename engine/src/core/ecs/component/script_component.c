@@ -6,8 +6,8 @@
 
 ScriptComponent* script_component_create(const char* path, const char* name) {
     ScriptComponent* scriptComponent = SE_MEM_ALLOCATE(ScriptComponent);
-    scriptComponent->classPath = path;
-    scriptComponent->className = name;
+    strcpy(scriptComponent->classPath, path);
+    strcpy(scriptComponent->className, name);
     scriptComponent->contextType = ScriptContextType_NONE;
     return scriptComponent;
 }
