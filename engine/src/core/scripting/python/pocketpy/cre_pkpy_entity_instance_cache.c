@@ -96,7 +96,7 @@ void cre_pkpy_entity_instance_cache_push_or_add_default_entity_instance(pkpy_vm*
         SE_ASSERT(nodeComponent);
         const char* nodeClassPath = CRE_PKPY_MODULE_NAME_CRESCENT;
         const char* nodeBaseType = node_get_base_type_string(nodeComponent->type);
-        cre_component_manager_set_component(entity, CreComponentDataIndex_SCRIPT, script_component_create(nodeClassPath, nodeBaseType));
+        cre_component_manager_set_component(entity, CreComponentDataIndex_SCRIPT, script_component_create_ex(nodeClassPath, nodeBaseType, ScriptContextType_PYTHON));
         cre_pkpy_entity_instance_cache_create_new_entity(vm, nodeClassPath, nodeBaseType, entity);
     }
     cre_pkpy_entity_instance_cache_push_entity_instance(vm, entity);

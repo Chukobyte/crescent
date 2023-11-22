@@ -23,6 +23,11 @@ void pkpy_sc_on_script_context_destroy();
 CREScriptContext* pkpy_script_context = NULL;
 pkpy_vm* vm = NULL;
 
+pkpy_CName pyStartFunctionName;
+pkpy_CName pyUpdateFunctionName;
+pkpy_CName pyFixedUpdateFunctionName;
+pkpy_CName pyEndFunctionName;
+
 CREScriptContext* cre_pkpy_script_context_create() {
     SE_ASSERT_FMT(pkpy_script_context == NULL, "Script context already created!");
     CREScriptContext* scriptContext = cre_script_context_create();
@@ -40,6 +45,10 @@ CREScriptContext* cre_pkpy_script_context_create() {
 
     if (!vm) {
         vm = pkpy_new_vm(false);
+        pyStartFunctionName = pkpy_name("_start");
+        pyUpdateFunctionName = pkpy_name("_process");
+        pyFixedUpdateFunctionName = pkpy_name("_fixed_process");
+        pyEndFunctionName = pkpy_name("_end");
     }
 
     return scriptContext;
@@ -50,23 +59,61 @@ CREScriptContext* cre_pkpy_script_context_get() {
 }
 
 void pkpy_sc_on_create_instance(CreEntity entity, const char* classPath, const char* className) {
+    SE_ASSERT(vm);
     cre_pkpy_entity_instance_cache_create_new_entity(vm, classPath, className, entity);
 }
 
-void pkpy_sc_on_delete_instance(CreEntity entity) {}
+void pkpy_sc_on_delete_instance(CreEntity entity) {
+    SE_ASSERT(vm);
+    cre_pkpy_entity_instance_cache_remove_entity(vm, entity);
+}
 
-void pkpy_sc_on_start(CreEntity entity) {}
+void pkpy_sc_on_start(CreEntity entity) {
+    SE_ASSERT(vm);
+    cre_pkpy_entity_instance_cache_push_entity_instance(vm, entity);
+    if (pkpy_getattr(vm, pyStartFunctionName)) {
+        pkpy_push_null(vm);
+        pkpy_vectorcall(vm, 0);
+    }
+    pkpy_pop_top(vm);
+}
 
-void pkpy_sc_on_update_instance(CreEntity entity, float deltaTime) {}
+void pkpy_sc_on_update_instance(CreEntity entity, float deltaTime) {
+    SE_ASSERT(vm);
+    cre_pkpy_entity_instance_cache_push_entity_instance(vm, entity);
+    if (pkpy_getattr(vm, pyUpdateFunctionName)) {
+        pkpy_push_null(vm);
+        pkpy_vectorcall(vm, 0);
+    }
+    pkpy_pop_top(vm);
+}
 
-void pkpy_sc_on_fixed_update_instance(CreEntity entity, float deltaTime) {}
+void pkpy_sc_on_fixed_update_instance(CreEntity entity, float deltaTime) {
+    SE_ASSERT(vm);
+    cre_pkpy_entity_instance_cache_push_entity_instance(vm, entity);
+    if (pkpy_getattr(vm, pyFixedUpdateFunctionName)) {
+        pkpy_push_null(vm);
+        pkpy_vectorcall(vm, 0);
+    }
+    pkpy_pop_top(vm);
+}
 
-void pkpy_sc_on_end(CreEntity entity) {}
+void pkpy_sc_on_end(CreEntity entity) {
+    SE_ASSERT(vm);
+    cre_pkpy_entity_instance_cache_push_entity_instance(vm, entity);
+    if (pkpy_getattr(vm, pyEndFunctionName)) {
+        pkpy_push_null(vm);
+        pkpy_vectorcall(vm, 0);
+    }
+    pkpy_pop_top(vm);
+}
 
-void pkpy_sc_on_network_callback(const char* message) {}
+void pkpy_sc_on_network_callback(const char* message) {
+    SE_ASSERT(vm);
+}
 
 void pkpy_sc_on_script_context_destroy() {
-    SE_ASSERT(vm != NULL);
+    SE_ASSERT(vm);
     pkpy_delete_vm(vm);
     vm = NULL;
 

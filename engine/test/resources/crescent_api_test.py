@@ -48,9 +48,11 @@ with TestCase("Node Tests") as test_case:
     assert are_floats_equal(new_node.get_time_dilation(), 2.0)
     new_node.time_dilation = 1.0
     assert are_floats_equal(new_node.time_dilation, 1.0)
-    # TODO: Queue delete once pkpy script context replaces cpython
-    # new_node.queue_deletion()
-    # assert new_node.is_queued_for_deletion()
+
+    crescent_internal._scene_manager_process_queued_creation_entities()
+
+    new_node.queue_deletion()
+    assert new_node.is_queued_for_deletion()
 
 with TestCase("Node2D Tests") as test_case:
     node2d = Node2D.new()

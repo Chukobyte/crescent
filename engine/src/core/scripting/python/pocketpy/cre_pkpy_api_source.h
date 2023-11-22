@@ -92,6 +92,9 @@
 "    def new() -> \"Node2D\":\n"\
 "        return crescent_internal.node_new(\"crescent\", \"Node2D\", NodeType.Node2D)\n"\
 "\n"\
+"    def _start(self) -> None:\n"\
+"        print(f\"Called start on {self}\")\n"\
+"\n"\
 "\n"\
 "class SceneTree:\n"\
 "    @staticmethod\n"\
