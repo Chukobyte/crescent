@@ -3,7 +3,7 @@ from typing import Optional
 import crescent_internal
 from crescent import Node, SceneTree, Node2D, NodeType
 
-from test_custom_nodes import TestNode
+import test_custom_nodes
 
 
 class TestCase:
@@ -51,7 +51,7 @@ with TestCase("Node Tests") as test_case:
     new_node.time_dilation = 1.0
     assert are_floats_equal(new_node.time_dilation, 1.0)
     # Test Custom Node
-    test_node = TestNode.new()
+    test_node = test_custom_nodes.TestNode.new()
     new_node.add_child(test_node)
 
     crescent_internal._scene_manager_process_queued_creation_entities()
@@ -59,9 +59,19 @@ with TestCase("Node Tests") as test_case:
     new_node.queue_deletion()
     assert new_node.is_queued_for_deletion()
 
+    assert test_custom_nodes.run_end_of_test_asserts()
+
 with TestCase("Node2D Tests") as test_case:
     node2d = Node2D.new()
-    print(f"node2d = {node2d}")
+    assert node2d
+    scene_root = SceneTree.get_root()
+    assert scene_root
+    scene_root.add_child(node2d)
+
+    crescent_internal._scene_manager_process_queued_creation_entities()
+
+    node2d.queue_deletion()
+
 
 with TestCase("Scene Tree Tests") as test_case:
     SceneTree.change_scene("test_scene1.cscn")
