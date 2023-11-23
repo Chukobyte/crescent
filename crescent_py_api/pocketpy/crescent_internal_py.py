@@ -102,3 +102,7 @@ class _NodeEventManager:
         sub_list = self.entity_subscribers.get(subscriber_entity, [])
         if subscriber not in sub_list:
             sub_list.append(subscriber)
+
+    def clear_all_data(self) -> None:
+        self.events.clear()
+        self.entity_subscribers.clear()

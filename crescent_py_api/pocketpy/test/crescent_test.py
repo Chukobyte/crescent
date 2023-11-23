@@ -15,6 +15,12 @@ def set_was_callback_called(value: bool) -> None:
     was_callback_called = value
 
 
+def test_callback_with_args(*args) -> None:
+    x, y = args[0]
+    assert x == 2
+    assert y == 4
+
+
 def test_node_event_manager() -> None:
     event_manager = _NodeEventManager()
 
@@ -39,6 +45,16 @@ def test_node_event_manager() -> None:
     was_callback_called = False
     event_manager.broadcast_event(node_event.entity_id, "moved")
     assert not was_callback_called
+    # Testing broadcasting with params
+    event_manager.subscribe_to_event(node.entity_id, "shake", sub_node.entity_id, test_callback_with_args)
+    assert event_manager.has_event(node.entity_id, "shake")
+    event_manager.broadcast_event(node.entity_id, "shake", 2, 4)
+    # Test clear
+    event_manager.clear_all_data()
+    assert not event_manager.has_event(node.entity_id, "moved")
+    assert not event_manager.has_event(node.entity_id, "shake")
+    assert not event_manager.events
+    assert not event_manager.entity_subscribers
 
 
 test_node_event_manager()
