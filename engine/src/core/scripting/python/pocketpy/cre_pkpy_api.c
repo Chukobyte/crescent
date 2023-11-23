@@ -33,9 +33,10 @@ int cre_pkpy_api_node_is_queued_for_deletion(pkpy_vm* vm);
 int cre_pkpy_api_node_set_time_dilation(pkpy_vm* vm);
 int cre_pkpy_api_node_get_time_dilation(pkpy_vm* vm);
 int cre_pkpy_api_node_get_total_time_dilation(pkpy_vm* vm);
-int cre_pkpy_api_node_create_event(pkpy_vm* vm);
-int cre_pkpy_api_node_subscribe_to_event(pkpy_vm* vm);
-int cre_pkpy_api_node_broadcast_event(pkpy_vm* vm);
+// TODO: These are implemented in python, may want to move later..
+//int cre_pkpy_api_node_create_event(pkpy_vm* vm);
+//int cre_pkpy_api_node_subscribe_to_event(pkpy_vm* vm);
+//int cre_pkpy_api_node_broadcast_event(pkpy_vm* vm);
 
 // Scene Tree
 int cre_pkpy_api_scene_tree_change_scene(pkpy_vm* vm);

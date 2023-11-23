@@ -1,9 +1,108 @@
 #pragma once
 
 #define CRE_PKPY_CRESCENT_SOURCE ""\
-"from typing import List, Callable, Tuple, Optional\n"\
+"from typing import List, Callable, Tuple, Optional, Dict\n"\
 "\n"\
 "import crescent_internal\n"\
+"\n"\
+"\n"\
+"class _NodeEventSubscriber:\n"\
+"    def __init__(self, entity_id: int, call_back: Callable[[Tuple], None], event_owner_entity_id: int, event_name: str) -> None:\n"\
+"        self.entity_id = entity_id\n"\
+"        self.call_back = call_back\n"\
+"        self.event_owner_entity_id = event_owner_entity_id\n"\
+"        self.event_name = event_name\n"\
+"\n"\
+"\n"\
+"class _NodeEvent:\n"\
+"    def __init__(self, entity_id: int, name: str, subscribers: List[_NodeEventSubscriber] = None) -> None:\n"\
+"        self.entity_id = entity_id\n"\
+"        self.name = name\n"\
+"        if not subscribers:\n"\
+"            subscribers = []\n"\
+"        self.subscribers = subscribers\n"\
+"\n"\
+"    def add_or_update_subscriber(self, entity_id: int, call_back: Callable[[Tuple], None]) -> _NodeEventSubscriber:\n"\
+"        for sub in self.subscribers:\n"\
+"            if entity_id == sub.entity_id:\n"\
+"                sub.call_back = call_back\n"\
+"                return sub\n"\
+"        subscriber = _NodeEventSubscriber(\n"\
+"            entity_id, call_back, self.entity_id, self.name\n"\
+"        )\n"\
+"        self.subscribers.append(subscriber)\n"\
+"        return subscriber\n"\
+"\n"\
+"    def remove_subscriber(self, subscribe_entity_id: int) -> None:\n"\
+"        for sub in self.subscribers:\n"\
+"            if subscribe_entity_id == sub.entity_id:\n"\
+"                self.subscribers.remove(sub)\n"\
+"                break\n"\
+"\n"\
+"\n"\
+"class _NodeEventManager:\n"\
+"    \"\"\"\n"\
+"    Used to manage events between nodes\n"\
+"    \"\"\"\n"\
+"    def __init__(self, events: Dict[int, Dict[str, _NodeEvent]] = None, entity_subscribers: Dict[int, List[_NodeEventSubscriber]] = None) -> None:\n"\
+"        if not events:\n"\
+"            events = {}\n"\
+"        if not entity_subscribers:\n"\
+"            entity_subscribers = {}\n"\
+"        self.events = events\n"\
+"        self.entity_subscribers = entity_subscribers\n"\
+"\n"\
+"    def create_event(self, entity_id: int, event_name: str) -> _NodeEvent:\n"\
+"        if entity_id not in self.events:\n"\
+"            self.events[entity_id] = {}\n"\
+"        if event_name not in self.events[entity_id]:\n"\
+"            self.events[entity_id][event_name] = _NodeEvent(entity_id, event_name)\n"\
+"        return self.events[entity_id][event_name]\n"\
+"\n"\
+"    def remove_event(self, entity_id: int, event_name: str) -> None:\n"\
+"        if self.has_event(entity_id, event_name):\n"\
+"            del self.events[entity_id][event_name]\n"\
+"\n"\
+"    def remove_entity_and_connections(self, entity_id: int) -> None:\n"\
+"        if entity_id in self.events:\n"\
+"            del self.events[entity_id]\n"\
+"        if entity_id in self.entity_subscribers:\n"\
+"            for sub in self.entity_subscribers[entity_id]:\n"\
+"                event = self.get_event(sub.event_owner_entity_id, sub.event_name)\n"\
+"                if event:\n"\
+"                    event.remove_subscriber(entity_id)\n"\
+"            del self.entity_subscribers[entity_id]\n"\
+"\n"\
+"    def get_event(self, entity_id: int, event_name: str) -> Optional[_NodeEvent]:\n"\
+"        if self.has_event(entity_id, event_name):\n"\
+"            return self.events[entity_id][event_name]\n"\
+"        return None\n"\
+"\n"\
+"    def has_event(self, entity_id: int, event_name: str) -> bool:\n"\
+"        return entity_id in self.events and event_name in self.events[entity_id]\n"\
+"\n"\
+"    def broadcast_event(self, entity_id: int, event_name: str, *args) -> None:\n"\
+"        event = self.create_event(entity_id, event_name)\n"\
+"        for sub in event.subscribers:\n"\
+"            sub.call_back(args)\n"\
+"\n"\
+"    def subscribe_to_event(self, owner_entity: int, event_name: str, subscriber_entity: int, subscriber_call_back: Callable[[Tuple], None]) -> None:\n"\
+"        event = self.create_event(owner_entity, event_name)\n"\
+"        subscriber = event.add_or_update_subscriber(\n"\
+"            subscriber_entity, subscriber_call_back\n"\
+"        )\n"\
+"        if subscriber_entity not in self.entity_subscribers:\n"\
+"            self.entity_subscribers[subscriber_entity] = []\n"\
+"        sub_list = self.entity_subscribers.get(subscriber_entity, [])\n"\
+"        if subscriber not in sub_list:\n"\
+"            sub_list.append(subscriber)\n"\
+"\n"\
+"    def clear_all_data(self) -> None:\n"\
+"        self.events.clear()\n"\
+"        self.entity_subscribers.clear()\n"\
+"\n"\
+"\n"\
+"_node_event_manager = _NodeEventManager()\n"\
 "\n"\
 "\n"\
 "class NodeType:\n"\
@@ -69,13 +168,13 @@
 "        return crescent_internal.node_get_total_time_dilation(self.entity_id)\n"\
 "\n"\
 "    def create_event(self, event_name: str) -> None:\n"\
-"        pass\n"\
+"        _node_event_manager.create_event(self.entity_id, event_name)\n"\
 "\n"\
 "    def subscribe_to_event(self, event_name: str, subscriber: \"Node\", callback_func: Callable[[Tuple], None]) -> None:\n"\
-"        pass\n"\
+"        _node_event_manager.subscribe_to_event(self.entity_id, event_name, subscriber.entity_id, callback_func)\n"\
 "\n"\
 "    def broadcast_event(self, event_name: str, *args) -> None:\n"\
-"        pass\n"\
+"        _node_event_manager.broadcast_event(self.entity_id, event_name)\n"\
 "\n"\
 "    def __eq__(self, other: \"Node\") -> bool:\n"\
 "        return self.entity_id == other.entity_id\n"\
@@ -119,97 +218,5 @@
 "\n"\
 "def set_entity(node: Node) -> None:\n"\
 "    CRE_ENTITY_TO_NODE_MAP[node.entity_id] = node\n"\
-"\n"\
-"\n"\
-"class _NodeEventSubscriber:\n"\
-"    def __init__(self, entity_id: int, call_back: Callable[[Tuple], None], event_owner_entity_id: int, event_name: str) -> None:\n"\
-"        self.entity_id = entity_id\n"\
-"        self.call_back = call_back\n"\
-"        self.event_owner_entity_id = event_owner_entity_id\n"\
-"        self.event_name = event_name\n"\
-"\n"\
-"\n"\
-"class _NodeEvent:\n"\
-"    def __init__(self, entity_id: int, name: str, subscribers: List[_NodeEventSubscriber] = None) -> None:\n"\
-"        self.entity_id = entity_id\n"\
-"        self.name = name\n"\
-"        if not subscribers:\n"\
-"            subscribers = []\n"\
-"        self.subscribers = subscribers\n"\
-"\n"\
-"    def add_or_update_subscriber(self, entity_id: int, call_back: Callable[[Tuple], None]) -> _NodeEventSubscriber:\n"\
-"        for sub in self.subscribers:\n"\
-"            if entity_id == sub.entity_id:\n"\
-"                sub.call_back = call_back\n"\
-"                return sub\n"\
-"        subscriber = _NodeEventSubscriber(\n"\
-"            entity_id, call_back, self.entity_id, self.name\n"\
-"        )\n"\
-"        self.subscribers.append(subscriber)\n"\
-"        return subscriber\n"\
-"\n"\
-"    def remove_subscriber(self, subscribe_entity_id: int) -> None:\n"\
-"        for sub in self.subscribers:\n"\
-"            if subscribe_entity_id == sub.entity_id:\n"\
-"                self.subscribers.remove(sub)\n"\
-"                break\n"\
-"\n"\
-"\n"\
-"class _NodeEventManager:\n"\
-"    def __init__(self, events: Dict[int, Dict[str, _NodeEvent]] = None, entity_subscribers: Dict[int, List[_NodeEventSubscriber]] = None) -> None:\n"\
-"        if not events:\n"\
-"            events = {}\n"\
-"        if not entity_subscribers:\n"\
-"            entity_subscribers = {}\n"\
-"        self.events = events\n"\
-"        self.entity_subscribers = entity_subscribers\n"\
-"\n"\
-"    def _get_entity_events(self, entity_id: int) -> Dict[str, _NodeEvent]:\n"\
-"        entity_events = self.events.get(entity_id, {})\n"\
-"        return entity_events\n"\
-"\n"\
-"    def create_event(self, entity_id: int, event_name: str) -> _NodeEvent:\n"\
-"        if not self.has_event(entity_id, event_name):\n"\
-"            entity_events = self._get_entity_events(entity_id)\n"\
-"            entity_events[event_name] = _NodeEvent(entity_id, event_name)\n"\
-"            return entity_events[event_name]\n"\
-"        return self.events[entity_id][event_name]\n"\
-"\n"\
-"    def remove_event(self, entity_id: int, event_name: str) -> None:\n"\
-"        if self.has_event(entity_id, event_name):\n"\
-"            entity_events = self._get_entity_events(entity_id)\n"\
-"            del entity_events[event_name]\n"\
-"\n"\
-"    def remove_entity_and_connections(self, entity_id: int) -> None:\n"\
-"        if entity_id in self.events:\n"\
-"            del self.events[entity_id]\n"\
-"        if entity_id in self.entity_subscribers:\n"\
-"            for sub in self.entity_subscribers[entity_id]:\n"\
-"                event = self.get_event(sub.event_owner_entity_id, sub.event_name)\n"\
-"                if event:\n"\
-"                    event.remove_subscriber(entity_id)\n"\
-"            del self.entity_subscribers[entity_id]\n"\
-"\n"\
-"    def get_event(self, entity_id: int, event_name: str) -> Optional[_NodeEvent]:\n"\
-"        if self.has_event(entity_id, event_name):\n"\
-"            return self.events[entity_id][event_name]\n"\
-"        return None\n"\
-"\n"\
-"    def has_event(self, entity_id: int, event_name: str) -> bool:\n"\
-"        return entity_id in self.events and event_name in self.events[entity_id]\n"\
-"\n"\
-"    def broadcast_event(self, entity_id: int, event_name: str, *args) -> None:\n"\
-"        event = self.create_event(entity_id, event_name)\n"\
-"        for sub in event.subscribers:\n"\
-"            sub.call_back(args)\n"\
-"\n"\
-"    def subscribe_to_event(self, owner_entity: int, event_name: str, subscriber_entity: int, subscriber_call_back: Callable[[Tuple], None]) -> None:\n"\
-"        event = self.create_event(owner_entity, event_name)\n"\
-"        subscriber = event.add_or_update_subscriber(\n"\
-"            subscriber_entity, subscriber_call_back\n"\
-"        )\n"\
-"        sub_list = self.entity_subscribers.get(subscriber_entity, [])\n"\
-"        if subscriber not in sub_list:\n"\
-"            sub_list.append(subscriber)\n"\
 "\n"
 

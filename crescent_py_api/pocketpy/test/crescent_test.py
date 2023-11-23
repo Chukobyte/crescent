@@ -3,8 +3,7 @@ Sanity check tests meant to be run by normal python.  These tests shouldn't requ
 For tests that do need the engine and embedded pocketpy, those should be added within the unit tests.
 """
 
-from crescent import Node
-from crescent_internal_py import _NodeEventManager
+from crescent import _NodeEventManager, Node, _node_event_manager
 
 
 was_callback_called = False
@@ -21,7 +20,7 @@ def test_callback_with_args(*args) -> None:
     assert y == 4
 
 
-def test_node_event_manager() -> None:
+def test_node_event_manager_events() -> None:
     event_manager = _NodeEventManager()
 
     node = Node(0)
@@ -57,4 +56,27 @@ def test_node_event_manager() -> None:
     assert not event_manager.entity_subscribers
 
 
-test_node_event_manager()
+def test_node_events() -> None:
+    """
+    Same as 'test_node_event_manager_events' but calling through wrapping node functions
+    """
+    node = Node(0)
+
+    # Test create event
+    node.create_event("moved")
+    assert _node_event_manager.has_event(node.entity_id, "moved")
+    # Test subscribe to event
+    sub_node = Node(1)
+    node.subscribe_to_event("moved", sub_node, lambda *args: set_was_callback_called(True))
+    # Test broadcast event
+    node.broadcast_event("moved")
+    global was_callback_called
+    assert was_callback_called
+    was_callback_called = False
+    # Testing broadcasting with params
+    node.subscribe_to_event("shake", sub_node, test_callback_with_args)
+    # TODO: Test clear
+
+
+test_node_event_manager_events()
+test_node_events()
