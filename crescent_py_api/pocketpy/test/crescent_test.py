@@ -1,5 +1,6 @@
 """
-Sanity check tests meant to be run by normal python.
+Sanity check tests meant to be run by normal python.  These tests shouldn't require the engine.
+For tests that do need the engine and embedded pocketpy, those should be added within the unit tests.
 """
 
 from crescent import Node
@@ -22,6 +23,7 @@ def test_node_event_manager() -> None:
     # Test create event
     node_event = event_manager.create_event(node.entity_id, "moved")
     assert node_event
+    assert event_manager.has_event(node_event.entity_id, "moved")
     # Test get event
     node_event = event_manager.get_event(node.entity_id, "moved")
     assert node_event
