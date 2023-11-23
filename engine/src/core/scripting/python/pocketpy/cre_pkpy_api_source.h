@@ -84,9 +84,9 @@
 "    def broadcast_event(self, entity_id: int, event_name: str, *args) -> None:\n"\
 "        event = self.create_event(entity_id, event_name)\n"\
 "        for sub in event.subscribers:\n"\
-"            sub.call_back(args)\n"\
+"            sub.call_back(*args)\n"\
 "\n"\
-"    def subscribe_to_event(self, owner_entity: int, event_name: str, subscriber_entity: int, subscriber_call_back: Callable[[Tuple], None]) -> None:\n"\
+"    def subscribe_to_event(self, owner_entity: int, event_name: str, subscriber_entity: int, subscriber_call_back: Callable[[...], None]) -> None:\n"\
 "        event = self.create_event(owner_entity, event_name)\n"\
 "        subscriber = event.add_or_update_subscriber(\n"\
 "            subscriber_entity, subscriber_call_back\n"\
@@ -170,11 +170,11 @@
 "    def create_event(self, event_name: str) -> None:\n"\
 "        _node_event_manager.create_event(self.entity_id, event_name)\n"\
 "\n"\
-"    def subscribe_to_event(self, event_name: str, subscriber: \"Node\", callback_func: Callable[[Tuple], None]) -> None:\n"\
+"    def subscribe_to_event(self, event_name: str, subscriber: \"Node\", callback_func: Callable[[...], None]) -> None:\n"\
 "        _node_event_manager.subscribe_to_event(self.entity_id, event_name, subscriber.entity_id, callback_func)\n"\
 "\n"\
 "    def broadcast_event(self, event_name: str, *args) -> None:\n"\
-"        _node_event_manager.broadcast_event(self.entity_id, event_name)\n"\
+"        _node_event_manager.broadcast_event(self.entity_id, event_name, *args)\n"\
 "\n"\
 "    def __eq__(self, other: \"Node\") -> bool:\n"\
 "        return self.entity_id == other.entity_id\n"\

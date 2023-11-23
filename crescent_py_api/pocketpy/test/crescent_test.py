@@ -14,8 +14,7 @@ def set_was_callback_called(value: bool) -> None:
     was_callback_called = value
 
 
-def test_callback_with_args(*args) -> None:
-    x, y = args[0]
+def test_callback_with_args(x: float, y: float) -> None:
     assert x == 2
     assert y == 4
 
@@ -75,6 +74,7 @@ def test_node_events() -> None:
     was_callback_called = False
     # Testing broadcasting with params
     node.subscribe_to_event("shake", sub_node, test_callback_with_args)
+    node.broadcast_event("shake", 2, 4)
     # TODO: Test clear
 
 
