@@ -3,6 +3,8 @@ from typing import Optional
 import crescent_internal
 from crescent import Node, SceneTree, Node2D, NodeType
 
+from test_custom_nodes import TestNode
+
 
 class TestCase:
     def __init__(self, name: str) -> None:
@@ -24,15 +26,6 @@ class TestCase:
 
 def are_floats_equal(a: float, b: float, rel_tol=0.00000001, abs_tol=0.0) -> bool:
     return abs(a-b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
-
-
-class TestNode(Node):
-    def _start(self) -> None:
-        print(f"Called start on {self}")
-
-    @staticmethod
-    def new() -> "TestNode":
-        return crescent_internal.node_new("crescent_api_test", "TestNode", NodeType.Node)
 
 
 # Tests

@@ -255,9 +255,9 @@ void cre_pocketpy_test(void) {
     TEST_MESSAGE("Testing python api");
 
     // Load test node
-    char* testCustomNodesSource = se_fs_read_file_contents("engine/test/resources/crescent_api_test.py", NULL);
-
-
+    char* testCustomNodesSource = se_fs_read_file_contents("engine/test/resources/test_custom_nodes.py", NULL);
+    cre_pkpy_util_create_from_string(vm, "test_custom_nodes", testCustomNodesSource);
+    // Load test file
     char* pythonText = se_fs_read_file_contents("engine/test/resources/crescent_api_test.py", NULL);
     TEST_ASSERT_NOT_NULL(pythonText);
     pkpy_exec_2(vm, pythonText, "crescent_api_test.py", 0, NULL);

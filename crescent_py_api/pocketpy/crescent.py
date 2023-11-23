@@ -89,9 +89,6 @@ class Node2D(Node):
     def new() -> "Node2D":
         return crescent_internal.node_new("crescent", "Node2D", NodeType.Node2D)
 
-    def _start(self) -> None:
-        print(f"Called start on {self}")
-
 
 class SceneTree:
     @staticmethod

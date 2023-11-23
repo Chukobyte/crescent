@@ -8,4 +8,4 @@ class TestNode(Node):
 
     @staticmethod
     def new() -> "TestNode":
-        return crescent_internal.node_new("crescent_api_test", "TestNode", NodeType.Node)
+        return crescent_internal.node_new("test_custom_nodes", "TestNode", NodeType.Node)
