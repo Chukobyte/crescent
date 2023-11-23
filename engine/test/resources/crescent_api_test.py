@@ -1,7 +1,7 @@
 from typing import Optional
 
 import crescent_internal
-from crescent import Node, SceneTree, Node2D
+from crescent import Node, SceneTree, Node2D, NodeType
 
 
 class TestCase:
@@ -26,6 +26,15 @@ def are_floats_equal(a: float, b: float, rel_tol=0.00000001, abs_tol=0.0) -> boo
     return abs(a-b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
 
 
+class TestNode(Node):
+    def _start(self) -> None:
+        print(f"Called start on {self}")
+
+    @staticmethod
+    def new() -> "TestNode":
+        return crescent_internal.node_new("crescent_api_test", "TestNode", NodeType.Node)
+
+
 # Tests
 with TestCase("Node Tests") as test_case:
     # Create node
@@ -48,6 +57,9 @@ with TestCase("Node Tests") as test_case:
     assert are_floats_equal(new_node.get_time_dilation(), 2.0)
     new_node.time_dilation = 1.0
     assert are_floats_equal(new_node.time_dilation, 1.0)
+    # Test Custom Node
+    test_node = TestNode.new()
+    new_node.add_child(test_node)
 
     crescent_internal._scene_manager_process_queued_creation_entities()
 

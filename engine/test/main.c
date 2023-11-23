@@ -196,39 +196,6 @@ void cre_json_file_loader_scene_test(void) {
 }
 
 //--- Pocketpy Test ---//
-#define POCKET_PY_TEST_SOURCE_PY "" \
-"class Test:"\
-"    def __init__(self) -> None:"\
-"        self.value = 10"\
-""
-
-bool print_py_error_message(pkpy_vm* vm) {
-    char* errorMessage = NULL;
-    if (pkpy_clear_error(vm, &errorMessage)) {
-        printf("[PY ERROR]:\n'%s'", errorMessage);
-        pkpy_free(errorMessage);
-        return true;
-    }
-    return false;
-}
-
-int pocketpy_test_node_get_name(pkpy_vm* vm) {
-    int entityId;
-    pkpy_to_int(vm, 0, &entityId);
-    pkpy_push_string(vm, pkpy_string("Chuko"));
-    return 1;
-}
-
-int pocketpy_test_node_get_children(pkpy_vm* vm) {
-    int entityId;
-    pkpy_to_int(vm, 0, &entityId);
-    const int idsToReturn = 5;
-    for (int i = 0; i < idsToReturn; i++) {
-        pkpy_push_int(vm, i + 1);
-    }
-    return idsToReturn;
-}
-
 void cre_pocketpy_test(void) {
     pkpy_vm* vm = cre_pkpy_script_context_get_active_pkpy_vm();
 
@@ -241,20 +208,20 @@ void cre_pocketpy_test(void) {
 "\n"
 
     pkpy_exec(vm, CRE_TEST_POCKETPY_SOURCE);
-    TEST_ASSERT_FALSE(print_py_error_message(vm));
+    TEST_ASSERT_FALSE(cre_pkpy_util_print_error_message(vm));
     pkpy_exec(vm, "Test.test_static(12)");
-    TEST_ASSERT_FALSE(print_py_error_message(vm));
+    TEST_ASSERT_FALSE(cre_pkpy_util_print_error_message(vm));
 
 #undef CRE_TEST_POCKETPY_SOURCE
 
     TEST_MESSAGE("Testing loading included internal modules");
     cre_pkpy_api_load_internal_modules(vm);
     pkpy_exec(vm, "from crescent import Node");
-    TEST_ASSERT_FALSE(print_py_error_message(vm));
+    TEST_ASSERT_FALSE(cre_pkpy_util_print_error_message(vm));
     pkpy_eval(vm, "Node(10).entity_id");
     int nodeEntity = 0;
     pkpy_to_int(vm, 0, &nodeEntity);
-    TEST_ASSERT_FALSE(print_py_error_message(vm));
+    TEST_ASSERT_FALSE(cre_pkpy_util_print_error_message(vm));
     TEST_ASSERT_EQUAL_INT(10, nodeEntity);
     pkpy_pop_top(vm);
     TEST_ASSERT_EQUAL_INT(0, pkpy_stack_size(vm));
@@ -265,9 +232,9 @@ void cre_pocketpy_test(void) {
     cre_pkpy_entity_instance_cache_push_entity_instance(vm, entity);
     TEST_ASSERT_EQUAL_INT(1, pkpy_stack_size(vm));
     pkpy_getattr(vm, pkpy_name("entity_id"));
-    TEST_ASSERT_FALSE(print_py_error_message(vm));
+    TEST_ASSERT_FALSE(cre_pkpy_util_print_error_message(vm));
     pkpy_to_int(vm, 0, &nodeEntity);
-    TEST_ASSERT_FALSE(print_py_error_message(vm));
+    TEST_ASSERT_FALSE(cre_pkpy_util_print_error_message(vm));
     TEST_ASSERT_EQUAL_INT((int)entity, nodeEntity);
     // Test removing entity
     TEST_ASSERT_TRUE(cre_pkpy_entity_instance_cache_has_entity(vm, nodeEntity));
@@ -286,11 +253,17 @@ void cre_pocketpy_test(void) {
 //    TEST_ASSERT_EQUAL_INT(0, pkpy_stack_size(vm));
 
     TEST_MESSAGE("Testing python api");
+
+    // Load test node
+    char* testCustomNodesSource = se_fs_read_file_contents("engine/test/resources/crescent_api_test.py", NULL);
+
+
     char* pythonText = se_fs_read_file_contents("engine/test/resources/crescent_api_test.py", NULL);
     TEST_ASSERT_NOT_NULL(pythonText);
     pkpy_exec_2(vm, pythonText, "crescent_api_test.py", 0, NULL);
+    SE_MEM_FREE(testCustomNodesSource);
     SE_MEM_FREE(pythonText);
-    TEST_ASSERT_FALSE(print_py_error_message(vm));
+    TEST_ASSERT_FALSE(cre_pkpy_util_print_error_message(vm));
 
     cre_scene_manager_finalize();
     se_asset_manager_finalize();

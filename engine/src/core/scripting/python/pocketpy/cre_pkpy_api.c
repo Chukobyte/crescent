@@ -74,11 +74,7 @@ void cre_pkpy_api_load_internal_modules(pkpy_vm* vm) {
     });
 
     // Now load front facing api
-    pkpy_push_module(vm, CRE_PKPY_MODULE_NAME_CRESCENT);
-    pkpy_exec_2(vm, CRE_PKPY_CRESCENT_SOURCE, "crescent.py", 0, CRE_PKPY_MODULE_NAME_CRESCENT);
-    SE_ASSERT(!cre_pkpy_util_print_error_message(vm));
-    pkpy_pop_top(vm);
-    SE_ASSERT(pkpy_stack_size(vm) == 0);
+    cre_pkpy_util_create_from_string(vm, CRE_PKPY_MODULE_NAME_CRESCENT, CRE_PKPY_CRESCENT_SOURCE);
 }
 
 //--- NODE ---//

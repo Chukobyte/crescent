@@ -17,3 +17,4 @@ typedef struct CrePPModule {
 char* cre_pkpy_util_get_error_message(pkpy_vm* vm);
 bool cre_pkpy_util_print_error_message(pkpy_vm* vm);
 void cre_pkpy_util_create_module(pkpy_vm* vm, CrePPModule* module);
+void cre_pkpy_util_create_from_string(pkpy_vm* vm, const char* moduleName, const char* moduleSource);

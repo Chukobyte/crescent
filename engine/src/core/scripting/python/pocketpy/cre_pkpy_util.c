@@ -53,3 +53,16 @@ void cre_pkpy_util_create_module(pkpy_vm* vm, CrePPModule* module) {
         SE_ASSERT(!cre_pkpy_util_print_error_message(vm));
     }
 }
+
+void cre_pkpy_util_create_from_string(pkpy_vm* vm, const char* moduleName, const char* moduleSource) {
+    const int stackBeforePush = pkpy_stack_size(vm);
+    char moduleFileName[64];
+    strcpy(moduleFileName, moduleName);
+    strcat(moduleFileName, ".py");
+
+    pkpy_push_module(vm, moduleName);
+    pkpy_exec_2(vm, moduleSource, moduleFileName, 0, moduleName);
+    SE_ASSERT(!cre_pkpy_util_print_error_message(vm));
+    pkpy_pop_top(vm);
+    SE_ASSERT(stackBeforePush == pkpy_stack_size(vm));
+}
