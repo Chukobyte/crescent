@@ -58,21 +58,16 @@ class _NodeEventManager:
         self.events = events
         self.entity_subscribers = entity_subscribers
 
-    def _get_entity_events(self, entity_id: int) -> Dict[str, _NodeEvent]:
-        entity_events = self.events.get(entity_id, {})
-        return entity_events
-
     def create_event(self, entity_id: int, event_name: str) -> _NodeEvent:
-        if not self.has_event(entity_id, event_name):
-            entity_events = self._get_entity_events(entity_id)
-            entity_events[event_name] = _NodeEvent(entity_id, event_name)
-            return entity_events[event_name]
+        if entity_id not in self.events:
+            self.events[entity_id] = {}
+        if event_name not in self.events[entity_id]:
+            self.events[entity_id][event_name] = _NodeEvent(entity_id, event_name)
         return self.events[entity_id][event_name]
 
     def remove_event(self, entity_id: int, event_name: str) -> None:
         if self.has_event(entity_id, event_name):
-            entity_events = self._get_entity_events(entity_id)
-            del entity_events[event_name]
+            del self.events[entity_id][event_name]
 
     def remove_entity_and_connections(self, entity_id: int) -> None:
         if entity_id in self.events:
