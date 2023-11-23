@@ -97,6 +97,8 @@ class _NodeEventManager:
         subscriber = event.add_or_update_subscriber(
             subscriber_entity, subscriber_call_back
         )
+        if subscriber_entity not in self.entity_subscribers:
+            self.entity_subscribers[subscriber_entity] = []
         sub_list = self.entity_subscribers.get(subscriber_entity, [])
         if subscriber not in sub_list:
             sub_list.append(subscriber)
