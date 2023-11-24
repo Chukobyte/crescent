@@ -1,9 +1,394 @@
 #pragma once
 
 #define CRE_PKPY_CRESCENT_SOURCE ""\
+"import math\n"\
 "from typing import List, Callable, Tuple, Optional, Dict\n"\
 "\n"\
 "import crescent_internal\n"\
+"\n"\
+"\n"\
+"# COLOR\n"\
+"class Color:\n"\
+"    def __init__(self, r=0, g=0, b=0, a=255):\n"\
+"        self.r = r\n"\
+"        self.g = g\n"\
+"        self.b = b\n"\
+"        self.a = a\n"\
+"\n"\
+"    def __str__(self):\n"\
+"        return f\"({self.r}, {self.g}, {self.b}, {self.a})\"\n"\
+"\n"\
+"    def __repr__(self):\n"\
+"        return f\"({self.r}, {self.g}, {self.b}, {self.a})\"\n"\
+"\n"\
+"    def copy(self) -> \"Color\":\n"\
+"        return Color(self.r, self.g, self.b, self.a)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def linear_color(r: float, g: float, b: float, a=1.0) -> \"Color\":\n"\
+"        return Color(int(r * 255), int(g * 255), int(b * 255), int(a * 255))\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def BLACK() -> \"Color\":\n"\
+"        return Color(0, 0, 0)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def WHITE() -> \"Color\":\n"\
+"        return Color(255, 255, 255)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def RED() -> \"Color\":\n"\
+"        return Color(255, 0, 0)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def GREEN() -> \"Color\":\n"\
+"        return Color(0, 255, 0)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def BLUE() -> \"Color\":\n"\
+"        return Color(0, 0, 255)\n"\
+"\n"\
+"\n"\
+"# MATH\n"\
+"class Math:\n"\
+"    PI = 3.14159\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def lerp(source: float, destination: float, amount: float) -> float:\n"\
+"        return source + (destination - source) * amount\n"\
+"\n"\
+"\n"\
+"class Vector2:\n"\
+"    def __init__(self, x=0.0, y=0.0):\n"\
+"        self.x = x\n"\
+"        self.y = y\n"\
+"\n"\
+"    def dot_product(self, other) -> float:\n"\
+"        return (self.x * other.x) + (self.y * other.y)\n"\
+"\n"\
+"    def __eq__(self, other) -> bool:\n"\
+"        if self.x == other.x and self.y == other.y:\n"\
+"            return True\n"\
+"        else:\n"\
+"            return False\n"\
+"\n"\
+"    # TODO: Make a not terrible hash function...\n"\
+"    def __hash__(self):\n"\
+"        return hash(self.x + (self.y * 0.2))\n"\
+"\n"\
+"    def __gt__(self, other) -> bool:\n"\
+"        if self.x + self.y > other.x + other.y:\n"\
+"            return True\n"\
+"        else:\n"\
+"            return False\n"\
+"\n"\
+"    def __lt__(self, other) -> bool:\n"\
+"        if self.x + self.y < other.x + other.y:\n"\
+"            return True\n"\
+"        else:\n"\
+"            return False\n"\
+"\n"\
+"    def __sub__(self, other):\n"\
+"        return Vector2(self.x - other.x, self.y - other.y)\n"\
+"\n"\
+"    def __add__(self, other):\n"\
+"        return Vector2(self.x + other.x, self.y + other.y)\n"\
+"\n"\
+"    def __mul__(self, other):\n"\
+"        return Vector2(self.x * other.x, self.y * other.y)\n"\
+"\n"\
+"    def __truediv__(self, other):\n"\
+"        return Vector2(self.x / other.x, self.y / other.y)\n"\
+"\n"\
+"    def __str__(self):\n"\
+"        return f\"({self.x}, {self.y})\"\n"\
+"\n"\
+"    def __repr__(self):\n"\
+"        return f\"({self.x}, {self.y})\"\n"\
+"\n"\
+"    def magnitude(self) -> float:\n"\
+"        return math.sqrt(self.x * self.x + self.y * self.y)\n"\
+"\n"\
+"    def normalized(self) -> \"Vector2\":\n"\
+"        mag = self.magnitude()\n"\
+"        self.x = self.x / mag\n"\
+"        self.y = self.y / mag\n"\
+"        return self\n"\
+"\n"\
+"    def direction_to(self, target: \"Vector2\") -> \"Vector2\":\n"\
+"        return (target - self).normalized()\n"\
+"\n"\
+"    def distance_to(self, target: \"Vector2\") -> float:\n"\
+"        return math.sqrt(\n"\
+"            (self.x - target.x) * (self.x - target.x) + (self.y - target.y) * (self.y - target.y)\n"\
+"        )\n"\
+"\n"\
+"    def copy(self) -> \"Vector2\":\n"\
+"        return Vector2(self.x, self.y)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def lerp(source, destination, amount: float) -> float:\n"\
+"        return source + (destination - source) * Vector2(amount, amount)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def ZERO() -> \"Vector2\":\n"\
+"        return Vector2(0.0, 0.0)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def LEFT() -> \"Vector2\":\n"\
+"        return Vector2(-1.0, 0.0)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def RIGHT() -> \"Vector2\":\n"\
+"        return Vector2(1.0, 0.0)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def UP() -> \"Vector2\":\n"\
+"        return Vector2(0.0, -1.0)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def DOWN() -> \"Vector2\":\n"\
+"        return Vector2(0.0, 1.0)\n"\
+"\n"\
+"\n"\
+"class Vector3:\n"\
+"    def __init__(self, x=0.0, y=0.0, z=0.0):\n"\
+"        self.x = x\n"\
+"        self.y = y\n"\
+"        self.z = z\n"\
+"\n"\
+"    def __eq__(self, other) -> bool:\n"\
+"        if self.x == other.x and self.y == other.y and self.z == other.z:\n"\
+"            return True\n"\
+"        else:\n"\
+"            return False\n"\
+"\n"\
+"    def __gt__(self, other) -> bool:\n"\
+"        if self.x + self.y + self.z > other.x + other.y + other.z:\n"\
+"            return True\n"\
+"        else:\n"\
+"            return False\n"\
+"\n"\
+"    def __lt__(self, other) -> bool:\n"\
+"        if self.x + self.y + self.z < other.x + other.y + other.z:\n"\
+"            return True\n"\
+"        else:\n"\
+"            return False\n"\
+"\n"\
+"    def __sub__(self, other):\n"\
+"        return Vector3(self.x - other.x, self.y - other.y, self.z - other.z)\n"\
+"\n"\
+"    def __add__(self, other):\n"\
+"        return Vector3(self.x + other.x, self.y + other.y, self.z + other.z)\n"\
+"\n"\
+"    def __mul__(self, other):\n"\
+"        return Vector3(self.x * other.x, self.y * other.y, self.z * other.z)\n"\
+"\n"\
+"    def __truediv__(self, other):\n"\
+"        return Vector3(self.x / other.x, self.y / other.y, self.z / other.z)\n"\
+"\n"\
+"    def __str__(self):\n"\
+"        return f\"({self.x}, {self.y}, {self.z})\"\n"\
+"\n"\
+"    def __repr__(self):\n"\
+"        return f\"({self.x}, {self.y}, {self.z})\"\n"\
+"\n"\
+"\n"\
+"class Vector4:\n"\
+"    def __init__(self, x=0.0, y=0.0, z=0.0, w=0.0):\n"\
+"        self.x = x\n"\
+"        self.y = y\n"\
+"        self.z = z\n"\
+"        self.w = w\n"\
+"\n"\
+"    def __eq__(self, other) -> bool:\n"\
+"        if self.x == other.x and self.y == other.y and self.z == other.z and self.w == other.w:\n"\
+"            return True\n"\
+"        else:\n"\
+"            return False\n"\
+"\n"\
+"    def __gt__(self, other) -> bool:\n"\
+"        if self.x + self.y + self.z + self.w > other.x + other.y + other.z + other.w:\n"\
+"            return True\n"\
+"        else:\n"\
+"            return False\n"\
+"\n"\
+"    def __lt__(self, other) -> bool:\n"\
+"        if self.x + self.y + self.z + self.w < other.x + other.y + other.z + other.w:\n"\
+"            return True\n"\
+"        else:\n"\
+"            return False\n"\
+"\n"\
+"    def __sub__(self, other):\n"\
+"        return Vector4(\n"\
+"            self.x - other.x, self.y - other.y, self.z - other.z, self.w - other.w\n"\
+"        )\n"\
+"\n"\
+"    def __add__(self, other):\n"\
+"        return Vector4(\n"\
+"            self.x + other.x, self.y + other.y, self.z + other.z, self.w + other.w\n"\
+"        )\n"\
+"\n"\
+"    def __mul__(self, other):\n"\
+"        return Vector4(\n"\
+"            self.x * other.x, self.y * other.y, self.z * other.z, self.w * other.w\n"\
+"        )\n"\
+"\n"\
+"    def __truediv__(self, other):\n"\
+"        return Vector4(\n"\
+"            self.x / other.x, self.y / other.y, self.z / other.z, self.w / other.w\n"\
+"        )\n"\
+"\n"\
+"    def __str__(self):\n"\
+"        return f\"({self.x}, {self.y}, {self.z}, {self.w})\"\n"\
+"\n"\
+"    def __repr__(self):\n"\
+"        return f\"({self.x}, {self.y}, {self.z}, {self.w})\"\n"\
+"\n"\
+"\n"\
+"class Size2D:\n"\
+"    def __init__(self, w=0.0, h=0.0):\n"\
+"        self.w = w\n"\
+"        self.h = h\n"\
+"\n"\
+"    def __eq__(self, other) -> bool:\n"\
+"        if self.w == other.w and self.h == other.h:\n"\
+"            return True\n"\
+"        else:\n"\
+"            return False\n"\
+"\n"\
+"    def __gt__(self, other) -> bool:\n"\
+"        if self.total_length() > other.total_length():\n"\
+"            return True\n"\
+"        else:\n"\
+"            return False\n"\
+"\n"\
+"    def __lt__(self, other) -> bool:\n"\
+"        if self.total_length() < other.total_length():\n"\
+"            return True\n"\
+"        else:\n"\
+"            return False\n"\
+"\n"\
+"    def __sub__(self, other):\n"\
+"        return Size2D(self.w - other.w, self.h - other.h)\n"\
+"\n"\
+"    def __add__(self, other):\n"\
+"        return Size2D(self.w + other.w, self.h + other.h)\n"\
+"\n"\
+"    def __mul__(self, other):\n"\
+"        return Size2D(self.w * other.w, self.h * other.h)\n"\
+"\n"\
+"    def __truediv__(self, other):\n"\
+"        return Size2D(self.w / other.w, self.h / other.h)\n"\
+"\n"\
+"    def __str__(self):\n"\
+"        return f\"({self.w}, {self.h})\"\n"\
+"\n"\
+"    def __repr__(self):\n"\
+"        return f\"({self.w}, {self.h})\"\n"\
+"\n"\
+"    def total_length(self) -> float:\n"\
+"        return self.w + self.h\n"\
+"\n"\
+"    def to_vec2(self) -> Vector2:\n"\
+"        return Vector2(self.w, self.h)\n"\
+"\n"\
+"\n"\
+"class Rect2:\n"\
+"    def __init__(self, x=0.0, y=0.0, w=0.0, h=0.0):\n"\
+"        self.x = x\n"\
+"        self.y = y\n"\
+"        self.w = w\n"\
+"        self.h = h\n"\
+"\n"\
+"    def __eq__(self, other) -> bool:\n"\
+"        if self.x == other.x and self.y == other.y and self.w == other.w and self.h == other.h:\n"\
+"            return True\n"\
+"        else:\n"\
+"            return False\n"\
+"\n"\
+"    def __gt__(self, other) -> bool:\n"\
+"        if self.total_length() > other.total_length():\n"\
+"            return True\n"\
+"        else:\n"\
+"            return False\n"\
+"\n"\
+"    def __lt__(self, other) -> bool:\n"\
+"        if self.total_length() < other.total_length():\n"\
+"            return True\n"\
+"        else:\n"\
+"            return False\n"\
+"\n"\
+"    def __sub__(self, other):\n"\
+"        return Rect2(\n"\
+"            self.x - other.x, self.y - other.y, self.w - other.w, self.h - other.h\n"\
+"        )\n"\
+"\n"\
+"    def __add__(self, other):\n"\
+"        return Rect2(\n"\
+"            self.x + other.x, self.y + other.y, self.w + other.w, self.h + other.h\n"\
+"        )\n"\
+"\n"\
+"    def __mul__(self, other):\n"\
+"        return Rect2(\n"\
+"            self.x * other.x, self.y * other.y, self.w * other.w, self.h * other.h\n"\
+"        )\n"\
+"\n"\
+"    def __truediv__(self, other):\n"\
+"        return Rect2(\n"\
+"            self.x / other.x, self.y / other.y, self.w / other.w, self.h / other.h\n"\
+"        )\n"\
+"\n"\
+"    def __str__(self):\n"\
+"        return f\"({self.x}, {self.y}, {self.w}, {self.h})\"\n"\
+"\n"\
+"    def __repr__(self):\n"\
+"        return f\"({self.x}, {self.y}, {self.w}, {self.h})\"\n"\
+"\n"\
+"    @property\n"\
+"    def position(self) -> Vector2:\n"\
+"        return Vector2(self.x, self.y)\n"\
+"\n"\
+"    @position.setter\n"\
+"    def position(self, value: Vector2) -> None:\n"\
+"        self.x = value.x\n"\
+"        self.y = value.y\n"\
+"\n"\
+"    @property\n"\
+"    def size(self) -> Size2D:\n"\
+"        return Size2D(self.w, self.h)\n"\
+"\n"\
+"    @size.setter\n"\
+"    def size(self, value: Size2D) -> None:\n"\
+"        self.w = value.w\n"\
+"        self.h = value.h\n"\
+"\n"\
+"    def total_length(self) -> float:\n"\
+"        return self.x + self.y + self.w + self.h\n"\
+"\n"\
+"    def contains_point(self, point: Vector2) -> bool:\n"\
+"        return self.x <= point.x <= self.w and self.y <= point.y <= self.h\n"\
+"\n"\
+"\n"\
+"class MinMax:\n"\
+"    def __init__(self, value_min: float, value_max: float):\n"\
+"        self.min = value_min\n"\
+"        self.max = value_max\n"\
+"\n"\
+"    def contain(self, value: float) -> bool:\n"\
+"        return self.min <= value <= self.max\n"\
+"\n"\
+"    def is_below(self, value: float) -> bool:\n"\
+"        return value < self.min\n"\
+"\n"\
+"    def is_above(self, value: float) -> bool:\n"\
+"        return value > self.max\n"\
+"\n"\
+"    def __str__(self):\n"\
+"        return f\"({self.min}, {self.max})\"\n"\
+"\n"\
+"    def __repr__(self):\n"\
+"        return f\"({self.min}, {self.max})\"\n"\
 "\n"\
 "\n"\
 "class _NodeEventSubscriber:\n"\
