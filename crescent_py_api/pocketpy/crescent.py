@@ -573,6 +573,96 @@ class Node2D(Node):
     def new() -> "Node2D":
         return crescent_internal.node_new("crescent", "Node2D", NodeType.Node2D)
 
+    def set_position(self, value: Vector2) -> None:
+        crescent_internal.node2d_set_position(self.entity_id, value.x, value.y
+        )
+
+    def add_to_position(self, value: Vector2) -> None:
+        crescent_internal.node2d_add_to_position(self.entity_id, value.x, value.y
+        )
+
+    def get_position(self) -> Vector2:
+        px, py = crescent_internal.node2d_get_position(self.entity_id)
+        return Vector2(px, py)
+
+    @property
+    def position(self) -> Vector2:
+        px, py = crescent_internal.node2d_get_position(self.entity_id)
+        return Vector2(px, py)
+
+    @position.setter
+    def position(self, value: Vector2) -> None:
+        crescent_internal.node2d_set_position(self.entity_id, value.x, value.y)
+
+    def get_global_position(self) -> Vector2:
+        px, py = crescent_internal.node2d_get_global_position(self.entity_id)
+        return Vector2(px, py)
+
+    @property
+    def global_position(self) -> Vector2:
+        px, py = crescent_internal.node2d_get_global_position(self.entity_id)
+        return Vector2(px, py)
+
+    def set_scale(self, value: Vector2) -> None:
+        crescent_internal.node2d_set_scale(self.entity_id, value.x, value.y)
+
+    def add_to_scale(self, value: Vector2) -> None:
+        crescent_internal.node2d_add_to_scale(self.entity_id, value.x, value.y)
+
+    def get_scale(self) -> Vector2:
+        sx, sy = crescent_internal.node2d_get_scale(self.entity_id)
+        return Vector2(sx, sy)
+
+    @property
+    def scale(self) -> Vector2:
+        sx, sy = crescent_internal.node2d_get_scale(self.entity_id)
+        return Vector2(sx, sy)
+
+    @scale.setter
+    def scale(self, value: Vector2) -> None:
+        crescent_internal.node2d_set_scale(self.entity_id, value.x, value.y)
+
+    def set_rotation(self, value: float) -> None:
+        crescent_internal.node2d_set_rotation(self.entity_id, value)
+
+    def add_to_rotation(self, value: float) -> None:
+        crescent_internal.node2d_add_to_rotation(self.entity_id, value)
+
+    def get_rotation(self) -> float:
+        return crescent_internal.node2d_get_rotation(self.entity_id)
+
+    @property
+    def rotation(self) -> float:
+        return crescent_internal.node2d_get_rotation(self.entity_id)
+
+    @rotation.setter
+    def rotation(self, value: float) -> None:
+        crescent_internal.node2d_set_rotation(self.entity_id, value)
+
+    @property
+    def z_index(self) -> int:
+        return crescent_internal.node2d_get_z_index(self.entity_id)
+
+    @z_index.setter
+    def z_index(self, value: int) -> None:
+        crescent_internal.node2d_set_z_index(self.entity_id, value)
+
+    @property
+    def z_index_relative_to_parent(self) -> bool:
+        return crescent_internal.node2d_get_z_index_relative_to_parent(self.entity_id)
+
+    @z_index_relative_to_parent.setter
+    def z_index_relative_to_parent(self, value: bool) -> None:
+        crescent_internal.node2d_set_z_index_relative_to_parent(self.entity_id, value)
+
+    @property
+    def ignore_camera(self) -> bool:
+        return crescent_internal.node2d_get_ignore_camera(self.entity_id)
+
+    @ignore_camera.setter
+    def ignore_camera(self, value: bool) -> None:
+        crescent_internal.node2d_set_ignore_camera(self.entity_id, value)
+
 
 class SceneTree:
     @staticmethod

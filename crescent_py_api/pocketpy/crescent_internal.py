@@ -3,7 +3,7 @@ from typing import Tuple, Optional
 
 # Mock class for engine's internal c python module
 
-
+# --- NODE --- #
 def node_new(class_path: str, class_name: str, node_type_flag: int) -> "Node":
     return None
 
@@ -46,6 +46,72 @@ def node_get_time_dilation(entity_id: int) -> float:
 
 def node_get_total_time_dilation(entity_id: int) -> float:
     return 1.0
+
+
+# --- NODE2D --- #
+
+def node2d_set_position(entity_id: int, x: float, y: float) -> None:
+    pass
+
+
+def node2d_add_to_position(entity_id: int, x: float, y: float) -> None:
+    pass
+
+
+def node2d_get_position(entity_id: int) -> Tuple[float, float]:
+    return 0.0, 0.0
+
+
+def node2d_get_global_position(entity_id: int) -> Tuple[float, float]:
+    return 0.0, 0.0
+
+
+def node2d_set_scale(entity_id: int, x: float, y: float) -> None:
+    pass
+
+
+def node2d_add_to_scale(entity_id: int, x: float, y: float) -> None:
+    pass
+
+
+def node2d_get_scale(entity_id: int) -> Tuple[float, float]:
+    return 1.0, 1.0
+
+
+def node2d_set_rotation(entity_id: int, rotation: float) -> None:
+    pass
+
+
+def node2d_add_to_rotation(entity_id: int, rotation: float) -> None:
+    pass
+
+
+def node2d_get_rotation(entity_id: int) -> float:
+    return 0.0
+
+
+def node2d_set_z_index(entity_id: int, z_index: int) -> None:
+    pass
+
+
+def node2d_get_z_index(entity_id: int) -> int:
+    return 0
+
+
+def node2d_set_z_index_relative_to_parent(entity_id: int, is_relative: bool) -> None:
+    pass
+
+
+def node2d_get_z_index_relative_to_parent(entity_id: int) -> bool:
+    return True
+
+
+def node2d_set_ignore_camera(entity_id: int, ignore_camera: bool) -> None:
+    pass
+
+
+def node2d_get_ignore_camera(entity_id: int) -> bool:
+    return False
 
 
 # --- SCENE TREE --- #
