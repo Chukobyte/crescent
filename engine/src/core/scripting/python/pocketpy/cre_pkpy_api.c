@@ -282,6 +282,72 @@ int cre_pkpy_api_node_get_total_time_dilation(pkpy_vm* vm) {
     return 1;
 }
 
+//--- NODE2D ---//
+
+void cre_pkpy_update_entity_local_position(CreEntity entity, SEVector2* position) {
+    Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity,CreComponentDataIndex_TRANSFORM_2D);
+    const SEVector2 prevPosition = transformComp->localTransform.position;
+    transformComp->localTransform.position.x = position->x;
+    transformComp->localTransform.position.y = position->y;
+    transformComp->isGlobalTransformDirty = true;
+    if (transformComp->localTransform.position.x != prevPosition.x || transformComp->localTransform.position.y != prevPosition.y) {
+        cre_scene_manager_notify_all_on_transform_events(entity, transformComp);
+    }
+}
+
+void cre_pkpy_update_entity_local_scale(CreEntity entity, SEVector2 * scale) {
+    Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity,CreComponentDataIndex_TRANSFORM_2D);
+    const SEVector2 prevScale = transformComp->localTransform.scale;
+    transformComp->localTransform.scale.x = scale->x;
+    transformComp->localTransform.scale.y = scale->y;
+    transformComp->isGlobalTransformDirty = true;
+    if (transformComp->localTransform.scale.x != prevScale.x || transformComp->localTransform.scale.y != prevScale.y) {
+        cre_scene_manager_notify_all_on_transform_events(entity, transformComp);
+    }
+}
+
+void cre_pkpy_update_entity_local_rotation(CreEntity entity, float rotation) {
+    Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_TRANSFORM_2D);
+    const float prevRotation = transformComp->localTransform.rotation;
+    transformComp->localTransform.rotation = rotation;
+    transformComp->isGlobalTransformDirty = true;
+    if (transformComp->localTransform.rotation != prevRotation) {
+        cre_scene_manager_notify_all_on_transform_events(entity, transformComp);
+    }
+}
+
+int cre_pkpy_api_node2d_set_position(pkpy_vm* vm) { return 0; }
+
+int cre_pkpy_api_node2d_add_to_position(pkpy_vm* vm) { return 0; }
+
+int cre_pkpy_api_node2d_get_position(pkpy_vm* vm) { return 0; }
+
+int cre_pkpy_api_node2d_get_global_position(pkpy_vm* vm) { return 0; }
+
+int cre_pkpy_api_node2d_set_scale(pkpy_vm* vm) { return 0; }
+
+int cre_pkpy_api_node2d_add_to_scale(pkpy_vm* vm) { return 0; }
+
+int cre_pkpy_api_node2d_get_scale(pkpy_vm* vm) { return 0; }
+
+int cre_pkpy_api_node2d_set_rotation(pkpy_vm* vm) { return 0; }
+
+int cre_pkpy_api_node2d_add_to_rotation(pkpy_vm* vm) { return 0; }
+
+int cre_pkpy_api_node2d_get_rotation(pkpy_vm* vm) { return 0; }
+
+int cre_pkpy_api_node2d_set_z_index(pkpy_vm* vm) { return 0; }
+
+int cre_pkpy_api_node2d_get_z_index(pkpy_vm* vm) { return 0; }
+
+int cre_pkpy_api_node2d_set_z_index_relative_to_parent(pkpy_vm* vm) { return 0; }
+
+int cre_pkpy_api_node2d_get_z_index_relative_to_parent(pkpy_vm* vm) { return 0; }
+
+int cre_pkpy_api_node2d_set_ignore_camera(pkpy_vm* vm) { return 0; }
+
+int cre_pkpy_api_node2d_get_ignore_camera(pkpy_vm* vm) { return 0; }
+
 //--- SCENE TREE ---//
 
 int cre_pkpy_api_scene_tree_change_scene(pkpy_vm* vm) {
