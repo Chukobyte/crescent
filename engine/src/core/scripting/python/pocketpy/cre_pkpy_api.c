@@ -38,6 +38,24 @@ int cre_pkpy_api_node_get_total_time_dilation(pkpy_vm* vm);
 //int cre_pkpy_api_node_subscribe_to_event(pkpy_vm* vm);
 //int cre_pkpy_api_node_broadcast_event(pkpy_vm* vm);
 
+// Node2D
+int cre_pkpy_api_node2d_set_position(pkpy_vm* vm);
+int cre_pkpy_api_node2d_add_to_position(pkpy_vm* vm);
+int cre_pkpy_api_node2d_get_position(pkpy_vm* vm);
+int cre_pkpy_api_node2d_get_global_position(pkpy_vm* vm);
+int cre_pkpy_api_node2d_set_scale(pkpy_vm* vm);
+int cre_pkpy_api_node2d_add_to_scale(pkpy_vm* vm);
+int cre_pkpy_api_node2d_get_scale(pkpy_vm* vm);
+int cre_pkpy_api_node2d_set_rotation(pkpy_vm* vm);
+int cre_pkpy_api_node2d_add_to_rotation(pkpy_vm* vm);
+int cre_pkpy_api_node2d_get_rotation(pkpy_vm* vm);
+int cre_pkpy_api_node2d_set_z_index(pkpy_vm* vm);
+int cre_pkpy_api_node2d_get_z_index(pkpy_vm* vm);
+int cre_pkpy_api_node2d_set_z_index_relative_to_parent(pkpy_vm* vm);
+int cre_pkpy_api_node2d_get_z_index_relative_to_parent(pkpy_vm* vm);
+int cre_pkpy_api_node2d_set_ignore_camera(pkpy_vm* vm);
+int cre_pkpy_api_node2d_get_ignore_camera(pkpy_vm* vm);
+
 // Scene Tree
 int cre_pkpy_api_scene_tree_change_scene(pkpy_vm* vm);
 int cre_pkpy_api_scene_tree_get_root(pkpy_vm* vm);
