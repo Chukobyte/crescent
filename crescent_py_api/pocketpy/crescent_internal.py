@@ -114,6 +114,15 @@ def node2d_get_ignore_camera(entity_id: int) -> bool:
     return False
 
 
+# --- SPRITE --- #
+def sprite_get_texture(entity_id: int) -> Tuple[str, str, str, bool]:
+    return "assets/image.png", "linear", "linear", True
+
+
+def sprite_set_texture(entity_id: int, file_path: str) -> None:
+    pass
+
+
 # --- SCENE TREE --- #
 def scene_tree_change_scene(path: str) -> None:
     pass
