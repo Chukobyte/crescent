@@ -1,9 +1,7 @@
 #include "cre_pkpy_api.h"
 
-#include <string.h>
-
-#include "../seika/utils/se_string_util.h"
-#include "../seika/utils/se_assert.h"
+#include <seika/utils/se_string_util.h>
+#include <seika/utils/se_assert.h>
 
 #include "cre_pkpy.h"
 #include "cre_pkpy_util.h"
@@ -316,37 +314,198 @@ void cre_pkpy_update_entity_local_rotation(CreEntity entity, float rotation) {
     }
 }
 
-int cre_pkpy_api_node2d_set_position(pkpy_vm* vm) { return 0; }
+int cre_pkpy_api_node2d_set_position(pkpy_vm* vm) {
+    int entityId;
+    double positionX;
+    double positionY;
+    pkpy_to_int(vm, 0, &entityId);
+    pkpy_to_float(vm, 1, &positionX);
+    pkpy_to_float(vm, 2, &positionY);
 
-int cre_pkpy_api_node2d_add_to_position(pkpy_vm* vm) { return 0; }
+    const CreEntity entity = (CreEntity)entityId;
+    cre_pkpy_update_entity_local_position(entity, &(SEVector2){ (float)positionX, (float)positionY });
+    return 0;
+}
 
-int cre_pkpy_api_node2d_get_position(pkpy_vm* vm) { return 0; }
+int cre_pkpy_api_node2d_add_to_position(pkpy_vm* vm) {
+    int entityId;
+    double positionX;
+    double positionY;
+    pkpy_to_int(vm, 0, &entityId);
+    pkpy_to_float(vm, 1, &positionX);
+    pkpy_to_float(vm, 2, &positionY);
 
-int cre_pkpy_api_node2d_get_global_position(pkpy_vm* vm) { return 0; }
+    const CreEntity entity = (CreEntity)entityId;
+    Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_TRANSFORM_2D);
+    cre_pkpy_update_entity_local_position(entity, &(SEVector2){
+            transformComp->localTransform.position.x + (float)positionX,
+            transformComp->localTransform.position.y + (float)positionY
+    });
+    return 0;
+}
 
-int cre_pkpy_api_node2d_set_scale(pkpy_vm* vm) { return 0; }
+int cre_pkpy_api_node2d_get_position(pkpy_vm* vm) {
+    int entityId;
+    pkpy_to_int(vm, 0, &entityId);
 
-int cre_pkpy_api_node2d_add_to_scale(pkpy_vm* vm) { return 0; }
+    const CreEntity entity = (CreEntity)entityId;
+    Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_TRANSFORM_2D);
+    pkpy_push_float(vm, (double)transformComp->localTransform.position.x);
+    pkpy_push_float(vm, (double)transformComp->localTransform.position.y);
+    return 2;
+}
 
-int cre_pkpy_api_node2d_get_scale(pkpy_vm* vm) { return 0; }
+int cre_pkpy_api_node2d_get_global_position(pkpy_vm* vm) {
+    int entityId;
+    pkpy_to_int(vm, 0, &entityId);
 
-int cre_pkpy_api_node2d_set_rotation(pkpy_vm* vm) { return 0; }
+    const CreEntity entity = (CreEntity)entityId;
+    Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_TRANSFORM_2D);
+    SETransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity, transformComp);
+    pkpy_push_float(vm, (double)globalTransform->position.x);
+    pkpy_push_float(vm, (double)globalTransform->position.y);
+    return 2;
+}
 
-int cre_pkpy_api_node2d_add_to_rotation(pkpy_vm* vm) { return 0; }
+int cre_pkpy_api_node2d_set_scale(pkpy_vm* vm) {
+    int entityId;
+    double scaleX;
+    double scaleY;
+    pkpy_to_int(vm, 0, &entityId);
+    pkpy_to_float(vm, 1, &scaleX);
+    pkpy_to_float(vm, 2, &scaleY);
 
-int cre_pkpy_api_node2d_get_rotation(pkpy_vm* vm) { return 0; }
+    const CreEntity entity = (CreEntity)entityId;
+    cre_pkpy_update_entity_local_scale(entity, &(SEVector2){(float)scaleX, (float)scaleY });
+    return 0;
+}
 
-int cre_pkpy_api_node2d_set_z_index(pkpy_vm* vm) { return 0; }
+int cre_pkpy_api_node2d_add_to_scale(pkpy_vm* vm) {
+    int entityId;
+    double scaleX;
+    double scaleY;
+    pkpy_to_int(vm, 0, &entityId);
+    pkpy_to_float(vm, 1, &scaleX);
+    pkpy_to_float(vm, 2, &scaleY);
 
-int cre_pkpy_api_node2d_get_z_index(pkpy_vm* vm) { return 0; }
+    const CreEntity entity = (CreEntity)entityId;
+    Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_TRANSFORM_2D);
+    cre_pkpy_update_entity_local_scale(entity, &(SEVector2){
+        transformComp->localTransform.scale.x + (float)scaleX,
+        transformComp->localTransform.scale.y + (float)scaleY
+    });
+    return 0;
+}
 
-int cre_pkpy_api_node2d_set_z_index_relative_to_parent(pkpy_vm* vm) { return 0; }
+int cre_pkpy_api_node2d_get_scale(pkpy_vm* vm) {
+    int entityId;
+    pkpy_to_int(vm, 0, &entityId);
 
-int cre_pkpy_api_node2d_get_z_index_relative_to_parent(pkpy_vm* vm) { return 0; }
+    const CreEntity entity = (CreEntity)entityId;
+    Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_TRANSFORM_2D);
+    pkpy_push_float(vm, (double)transformComp->localTransform.scale.x);
+    pkpy_push_float(vm, (double)transformComp->localTransform.scale.y);
+    return 2;
+}
 
-int cre_pkpy_api_node2d_set_ignore_camera(pkpy_vm* vm) { return 0; }
+int cre_pkpy_api_node2d_set_rotation(pkpy_vm* vm) {
+    int entityId;
+    double rotation;
+    pkpy_to_int(vm, 0, &entityId);
+    pkpy_to_float(vm, 1, &rotation);
 
-int cre_pkpy_api_node2d_get_ignore_camera(pkpy_vm* vm) { return 0; }
+    const CreEntity entity = (CreEntity)entityId;
+    cre_pkpy_update_entity_local_rotation(entity, (float)rotation);
+    return 0;
+}
+
+int cre_pkpy_api_node2d_add_to_rotation(pkpy_vm* vm) {
+    int entityId;
+    double rotation;
+    pkpy_to_int(vm, 0, &entityId);
+    pkpy_to_float(vm, 1, &rotation);
+
+    const CreEntity entity = (CreEntity)entityId;
+    Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_TRANSFORM_2D);
+    cre_pkpy_update_entity_local_rotation(entity, transformComp->localTransform.rotation + (float)rotation);
+    return 0;
+}
+
+int cre_pkpy_api_node2d_get_rotation(pkpy_vm* vm) {
+    int entityId;
+    pkpy_to_int(vm, 0, &entityId);
+
+    const CreEntity entity = (CreEntity)entityId;
+    Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_TRANSFORM_2D);
+    pkpy_push_float(vm, (double)transformComp->localTransform.rotation);
+    return 1;
+}
+
+int cre_pkpy_api_node2d_set_z_index(pkpy_vm* vm) {
+    int entityId;
+    int zIndex;
+    pkpy_to_int(vm, 0, &entityId);
+    pkpy_to_int(vm, 1, &zIndex);
+
+    const CreEntity entity = (CreEntity)entityId;
+    Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_TRANSFORM_2D);
+    transformComp->zIndex = zIndex;
+    return 0;
+}
+
+int cre_pkpy_api_node2d_get_z_index(pkpy_vm* vm) {
+    int entityId;
+    pkpy_to_int(vm, 0, &entityId);
+
+    const CreEntity entity = (CreEntity)entityId;
+    Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_TRANSFORM_2D);
+    pkpy_push_int(vm, transformComp->zIndex);
+    return 1;
+}
+
+int cre_pkpy_api_node2d_set_z_index_relative_to_parent(pkpy_vm* vm) {
+    int entityId;
+    bool zIndexRelativeToParent;
+    pkpy_to_int(vm, 0, &entityId);
+    pkpy_to_bool(vm, 1, &zIndexRelativeToParent);
+
+    const CreEntity entity = (CreEntity)entityId;
+    Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_TRANSFORM_2D);
+    transformComp->isZIndexRelativeToParent = zIndexRelativeToParent;
+    return 0;
+}
+
+int cre_pkpy_api_node2d_get_z_index_relative_to_parent(pkpy_vm* vm) {
+    int entityId;
+    pkpy_to_int(vm, 0, &entityId);
+
+    const CreEntity entity = (CreEntity)entityId;
+    Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_TRANSFORM_2D);
+    pkpy_push_bool(vm, transformComp->isZIndexRelativeToParent);
+    return 1;
+}
+
+int cre_pkpy_api_node2d_set_ignore_camera(pkpy_vm* vm) {
+    int entityId;
+    bool ignoreCamera;
+    pkpy_to_int(vm, 0, &entityId);
+    pkpy_to_bool(vm, 1, &ignoreCamera);
+
+    const CreEntity entity = (CreEntity)entityId;
+    Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_TRANSFORM_2D);
+    transformComp->ignoreCamera = ignoreCamera;
+    return 0;
+}
+
+int cre_pkpy_api_node2d_get_ignore_camera(pkpy_vm* vm) {
+    int entityId;
+    pkpy_to_int(vm, 0, &entityId);
+
+    const CreEntity entity = (CreEntity)entityId;
+    Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_TRANSFORM_2D);
+    pkpy_push_bool(vm, transformComp->ignoreCamera);
+    return 1;
+}
 
 //--- SCENE TREE ---//
 
