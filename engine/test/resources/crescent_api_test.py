@@ -1,7 +1,7 @@
 from typing import Optional
 
 import crescent_internal
-from crescent import Node, SceneTree, Node2D, NodeType
+from crescent import Node, SceneTree, Node2D, Vector2
 
 import test_custom_nodes
 
@@ -67,6 +67,42 @@ with TestCase("Node2D Tests") as test_case:
     scene_root = SceneTree.get_root()
     assert scene_root
     scene_root.add_child(node2d)
+    # Test position functions
+    node2d.set_position(Vector2(10, 15))
+    assert node2d.get_position() == Vector2(10, 15)
+    node2d.add_to_position(Vector2(3, 10))
+    assert node2d.get_position() == Vector2(13, 25)
+    assert node2d.position == Vector2(13, 25)
+    node2d.position = Vector2(1, 3)
+    assert node2d.position == Vector2(1, 3)
+    # Test scale functions
+    node2d.set_scale(Vector2(3, 5))
+    assert node2d.get_scale() == Vector2(3, 5)
+    node2d.add_to_scale(Vector2(2, 30))
+    assert node2d.get_scale() == Vector2(5, 35)
+    node2d.scale = Vector2(2, 3)
+    assert node2d.scale == Vector2(2, 3)
+    # Test rotation functions
+    node2d.set_rotation(20.0)
+    assert node2d.get_rotation() == 20.0
+    node2d.add_to_rotation(5.0)
+    assert node2d.get_rotation() == 25.0
+    node2d.rotation = 180.0
+    assert node2d.rotation == 180.0
+    # Test z index functions
+    node2d.z_index = 10
+    assert node2d.z_index == 10
+    node2d.z_index = 0
+    assert node2d.z_index == 0
+    node2d.z_index_relative_to_parent = False
+    assert not node2d.z_index_relative_to_parent
+    node2d.z_index_relative_to_parent = True
+    assert node2d.z_index_relative_to_parent
+    # Test ignore camera functions
+    node2d.ignore_camera = False
+    assert not node2d.ignore_camera
+    node2d.ignore_camera = True
+    assert node2d.ignore_camera
 
     crescent_internal._scene_manager_process_queued_creation_entities()
 
