@@ -402,6 +402,104 @@ class Texture:
         return f"Texture(file_path: {self.file_path}, wrap_s: {self.wrap_s}, wrap_s: {self.wrap_t}, nearest_neighbor: {self.nearest_neighbor})"
 
 
+class ShaderInstance:
+    def __init__(self, shader_id: int):
+        self.shader_id = shader_id
+        self._is_active = True
+
+    def delete(self) -> bool:
+        if self._is_active:
+            has_deleted = crescent_internal.shader_instance_delete(self.shader_id)
+            if has_deleted:
+                self._is_active = False
+            return has_deleted
+        return False
+
+    def create_bool_param(self, name: str, initial_value: bool) -> None:
+        crescent_internal.shader_instance_create_bool_param(self.shader_id, name, initial_value)
+
+    def set_bool_param(self, name: str, value: bool) -> None:
+        crescent_internal.shader_instance_set_bool_param(self.shader_id, name, value)
+
+    def get_bool_param(self, name: str) -> bool:
+        return crescent_internal.shader_instance_get_bool_param(self.shader_id, name)
+
+    def create_int_param(self, name: str, initial_value: int) -> None:
+        crescent_internal.shader_instance_create_int_param(self.shader_id, name, initial_value)
+
+    def set_int_param(self, name: str, value: int) -> None:
+        crescent_internal.shader_instance_set_int_param(self.shader_id, name, value)
+
+    def get_int_param(self, name: str) -> int:
+        return crescent_internal.shader_instance_get_int_param(self.shader_id, name)
+
+    def create_float_param(self, name: str, initial_value: float) -> None:
+        crescent_internal.shader_instance_create_float_param(self.shader_id, name, initial_value)
+
+    def set_float_param(self, name: str, value: float) -> None:
+        crescent_internal.shader_instance_set_float_param(self.shader_id, name, value)
+
+    def get_float_param(self, name: str) -> float:
+        return crescent_internal.shader_instance_get_float_param(self.shader_id, name)
+
+    def create_float2_param(self, name: str, initial_value: Vector2) -> None:
+        crescent_internal.shader_instance_create_float2_param(self.shader_id, name, initial_value.x, initial_value.y)
+
+    def set_float2_param(self, name: str, value: Vector2) -> None:
+        crescent_internal.shader_instance_set_float2_param(self.shader_id, name, value.x, value.y)
+
+    def get_float2_param(self, name: str) -> Vector2:
+        x, y = crescent_internal.shader_instance_get_float2_param(self.shader_id, name)
+        return Vector2(x, y)
+
+    def create_float3_param(self, name: str, initial_value: Vector3) -> None:
+        crescent_internal.shader_instance_create_float3_param(self.shader_id, name, initial_value.x, initial_value.y, initial_value.z)
+
+    def set_float3_param(self, name: str, value: Vector3) -> None:
+        crescent_internal.shader_instance_set_float3_param(self.shader_id, name, value.x, value.y, value.z)
+
+    def get_float3_param(self, name: str) -> Vector3:
+        x, y, z = crescent_internal.shader_instance_get_float3_param(self.shader_id, name)
+        return Vector3(x, y, z)
+
+    def create_float4_param(self, name: str, initial_value: Vector4) -> None:
+        crescent_internal.shader_instance_create_float4_param(self.shader_id, name, initial_value.x, initial_value.y, initial_value.z, initial_value.w)
+
+    def set_float4_param(self, name: str, value: Vector4) -> None:
+        crescent_internal.shader_instance_set_float4_param(self.shader_id, name, value.x, value.y, value.z, value.w)
+
+    def get_float4_param(self, name: str) -> Vector4:
+        x, y, z, w = crescent_internal.shader_instance_get_float4_param(self.shader_id, name)
+        return Vector4(x, y, z, w)
+
+
+class ShaderUtil:
+    @staticmethod
+    def compile_shader(shader_path: str) -> ShaderInstance:
+        shader_id = crescent_internal.shader_util_compile_shader(shader_path)
+        return ShaderInstance(shader_id)
+
+    @staticmethod
+    def compile_shader_raw(vertex_path: str, fragment_path: str) -> ShaderInstance:
+        shader_id = crescent_internal.shader_util_compile_shader_raw(vertex_path, fragment_path)
+        return ShaderInstance(shader_id)
+
+    @staticmethod
+    def set_screen_shader(shader_instance: ShaderInstance) -> bool:
+        return crescent_internal.shader_util_set_screen_shader(shader_instance.shader_id)
+
+    @staticmethod
+    def get_current_screen_shader() -> Optional[ShaderInstance]:
+        shader_instance_id = (crescent_internal.shader_util_get_current_screen_shader())
+        if shader_instance_id >= 0:
+            return ShaderInstance(shader_instance_id)
+        return None
+
+    @staticmethod
+    def reset_screen_shader_to_default() -> None:
+        crescent_internal.shader_util_reset_screen_shader_to_default()
+
+
 class _NodeEventSubscriber:
     def __init__(self, entity_id: int, call_back: Callable[[Tuple], None], event_owner_entity_id: int, event_name: str) -> None:
         self.entity_id = entity_id
@@ -423,9 +521,7 @@ class _NodeEvent:
             if entity_id == sub.entity_id:
                 sub.call_back = call_back
                 return sub
-        subscriber = _NodeEventSubscriber(
-            entity_id, call_back, self.entity_id, self.name
-        )
+        subscriber = _NodeEventSubscriber(entity_id, call_back, self.entity_id, self.name)
         self.subscribers.append(subscriber)
         return subscriber
 
@@ -681,93 +777,72 @@ class Node2D(Node):
 class Sprite(Node2D):
     @property
     def texture(self) -> Texture:
-        file_path, wrap_s, wrap_t, nearest_neighbor = crescent_internal.sprite_get_texture(entity_id=self.entity_id)
+        file_path, wrap_s, wrap_t, nearest_neighbor = crescent_internal.sprite_get_texture(self.entity_id)
         return Texture(file_path, wrap_s, wrap_t, nearest_neighbor)
 
     @texture.setter
     def texture(self, value: Texture) -> None:
         crescent_internal.sprite_set_texture(self.entity_id, value.file_path)
 
-    # @property
-    # def draw_source(self) -> Rect2:
-    #     (
-    #         x,
-    #         y,
-    #         w,
-    #         h,
-    #     ) = crescent_internal.sprite_get_draw_source(entity_id=self.entity_id)
-    #     return Rect2(x=x, y=y, w=w, h=h)
-    #
-    # @draw_source.setter
-    # def draw_source(self, value: Rect2) -> None:
-    #     crescent_internal.sprite_set_draw_source(
-    #         entity_id=self.entity_id, x=value.x, y=value.y, w=value.w, h=value.h
-    #     )
-    #
-    # @property
-    # def flip_h(self) -> bool:
-    #     return crescent_internal.sprite_get_flip_h(entity_id=self.entity_id)
-    #
-    # @flip_h.setter
-    # def flip_h(self, value: bool) -> None:
-    #     crescent_internal.sprite_set_flip_h(entity_id=self.entity_id, flip_h=value)
-    #
-    # @property
-    # def flip_v(self) -> bool:
-    #     return crescent_internal.sprite_get_flip_v(entity_id=self.entity_id)
-    #
-    # @flip_v.setter
-    # def flip_v(self, value: bool) -> None:
-    #     crescent_internal.sprite_set_flip_v(entity_id=self.entity_id, flip_v=value)
-    #
-    # @property
-    # def modulate(self) -> Color:
-    #     red, green, blue, alpha = crescent_internal.sprite_get_modulate(
-    #         entity_id=self.entity_id
-    #     )
-    #     return Color(r=red, g=green, b=blue, a=alpha)
-    #
-    # @modulate.setter
-    # def modulate(self, color: Color) -> None:
-    #     crescent_internal.sprite_set_modulate(
-    #         entity_id=self.entity_id,
-    #         r=color.r,
-    #         g=color.g,
-    #         b=color.b,
-    #         a=color.a,
-    #     )
-    #
-    # @property
-    # def origin(self) -> Vector2:
-    #     x, y = crescent_internal.sprite_get_origin(entity_id=self.entity_id)
-    #     return Vector2(x, y)
-    #
-    # @origin.setter
-    # def origin(self, value: Vector2) -> None:
-    #     crescent_internal.sprite_set_origin(
-    #         entity_id=self.entity_id, x=value.x, y=value.y
-    #     )
-    #
-    # @property
-    # def shader_instance(self) -> Optional[ShaderInstance]:
-    #     shader_instance_id = crescent_internal.sprite_get_shader_instance(
-    #         entity_id=self.entity_id
-    #     )
-    #     if shader_instance_id >= 0:
-    #         return ShaderInstance(shader_id=shader_instance_id)
-    #     return None
-    #
-    # @shader_instance.setter
-    # def shader_instance(self, value: ShaderInstance) -> None:
-    #     crescent_internal.sprite_set_shader_instance(
-    #         entity_id=self.entity_id, shader_instance_id=value.shader_id
-    #     )
+    @property
+    def draw_source(self) -> Rect2:
+        x, y, w, h = crescent_internal.sprite_get_draw_source(self.entity_id)
+        return Rect2(x=x, y=y, w=w, h=h)
+
+    @draw_source.setter
+    def draw_source(self, value: Rect2) -> None:
+        crescent_internal.sprite_set_draw_source(self.entity_id, value.x, value.y, value.w, value.h)
+
+    @property
+    def flip_h(self) -> bool:
+        return crescent_internal.sprite_get_flip_h(self.entity_id)
+
+    @flip_h.setter
+    def flip_h(self, value: bool) -> None:
+        crescent_internal.sprite_set_flip_h(self.entity_id, value)
+
+    @property
+    def flip_v(self) -> bool:
+        return crescent_internal.sprite_get_flip_v(self.entity_id)
+
+    @flip_v.setter
+    def flip_v(self, value: bool) -> None:
+        crescent_internal.sprite_set_flip_v(self.entity_id, value)
+
+    @property
+    def modulate(self) -> Color:
+        red, green, blue, alpha = crescent_internal.sprite_get_modulate(self.entity_id)
+        return Color(red, green, blue, alpha)
+
+    @modulate.setter
+    def modulate(self, color: Color) -> None:
+        crescent_internal.sprite_set_modulate(self.entity_id, color.r, color.g, color.b, color.a)
+
+    @property
+    def origin(self) -> Vector2:
+        x, y = crescent_internal.sprite_get_origin(self.entity_id)
+        return Vector2(x, y)
+
+    @origin.setter
+    def origin(self, value: Vector2) -> None:
+        crescent_internal.sprite_set_origin(self.entity_id, value.x, value.y)
+
+    @property
+    def shader_instance(self) -> Optional[ShaderInstance]:
+        shader_instance_id = crescent_internal.sprite_get_shader_instance(self.entity_id)
+        if shader_instance_id >= 0:
+            return ShaderInstance(shader_instance_id)
+        return None
+
+    @shader_instance.setter
+    def shader_instance(self, value: ShaderInstance) -> None:
+        crescent_internal.sprite_set_shader_instance(self.entity_id, value.shader_id)
 
 
 # class AnimatedSprite(Node2D):
 #     def play(self, name: str) -> bool:
 #         return crescent_internal.animated_sprite_play(
-#             entity_id=self.entity_id, name=name
+#             entity_id=self.entity_id, name
 #         )
 #
 #     def stop(self) -> None:
@@ -793,7 +868,7 @@ class Sprite(Node2D):
 #             )
 #         crescent_internal.animated_sprite_add_animation(
 #             entity_id=self.entity_id,
-#             name=animation.name,
+#             animation.name,
 #             speed=animation.speed,
 #             loops=animation.loops,
 #             frames=anim_frames,
@@ -871,7 +946,7 @@ class Sprite(Node2D):
 #             entity_id=self.entity_id
 #         )
 #         if shader_instance_id >= 0:
-#             return ShaderInstance(shader_id=shader_instance_id)
+#             return ShaderInstance(shader_instance_id)
 #         return None
 #
 #     @shader_instance.setter
