@@ -1,5 +1,6 @@
 #include "cre_pkpy_api.h"
 
+#include <seika/rendering/frame_buffer.h>
 #include <seika/rendering/shader/shader_cache.h>
 #include <seika/utils/se_string_util.h>
 #include <seika/utils/se_assert.h>
@@ -440,7 +441,25 @@ int cre_pkpy_api_shader_instance_create_float4_param(pkpy_vm* vm) {
     return 0;
 }
 
-int cre_pkpy_api_shader_instance_set_float4_param(pkpy_vm* vm) { return 0; }
+int cre_pkpy_api_shader_instance_set_float4_param(pkpy_vm* vm) {
+    int pyShaderId;
+    pkpy_CString pyParamName;
+    double valueX;
+    double valueY;
+    double valueZ;
+    double valueW;
+    pkpy_to_int(vm, 0, &pyShaderId);
+    pkpy_to_string(vm, 1, &pyParamName);
+    pkpy_to_float(vm, 2, &valueX);
+    pkpy_to_float(vm, 3, &valueY);
+    pkpy_to_float(vm, 4, &valueZ);
+    pkpy_to_float(vm, 5, &valueW);
+
+    const SEShaderInstanceId shaderId = (SEShaderInstanceId)pyShaderId;
+    SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
+    se_shader_instance_param_update_float4(shaderInstance, pyParamName.data, (SEVector4){ (float)valueX, (float)valueY, (float)valueZ, (float)valueW });
+    return 0;
+}
 
 int cre_pkpy_api_shader_instance_get_float4_param(pkpy_vm* vm) {
     int pyShaderId;
@@ -459,15 +478,56 @@ int cre_pkpy_api_shader_instance_get_float4_param(pkpy_vm* vm) {
 }
 
 //--- SHADER UTIL ---//
-int cre_pkpy_api_shader_util_compile_shader(pkpy_vm* vm) { return 0; }
+int cre_pkpy_api_shader_util_compile_shader(pkpy_vm* vm) {
+    pkpy_CString pyShaderPath;
+    pkpy_to_string(vm, 0, &pyShaderPath);
 
-int cre_pkpy_api_shader_util_compile_shader_raw(pkpy_vm* vm) { return 0; }
+    const char* shaderPath = pyShaderPath.data;
+    const SEShaderInstanceId newId = se_shader_cache_create_instance_and_add(shaderPath);
+    SE_ASSERT_FMT(newId != SE_SHADER_INSTANCE_INVALID_ID, "Invalid shader id reading from path '%s'", shaderPath);
+    pkpy_push_int(vm, (int)newId);
+    return 1;
+}
 
-int cre_pkpy_api_shader_util_set_screen_shader(pkpy_vm* vm) { return 0; }
+int cre_pkpy_api_shader_util_compile_shader_raw(pkpy_vm* vm) {
+    pkpy_CString pyVertexPath;
+    pkpy_CString pyFragmentPath;
+    pkpy_to_string(vm, 0, &pyVertexPath);
+    pkpy_to_string(vm, 1, &pyFragmentPath);
 
-int cre_pkpy_api_shader_util_get_current_screen_shader(pkpy_vm* vm) { return 0; }
+    const char* vertexPath = pyVertexPath.data;
+    const char* fragmentPath = pyFragmentPath.data;
+    const SEShaderInstanceId newId = se_shader_cache_create_instance_and_add_from_raw(vertexPath, fragmentPath);
+    SE_ASSERT_FMT(newId != SE_SHADER_INSTANCE_INVALID_ID, "Invalid shader id reading from paths: vertex = '%s', fragment = '%s'", vertexPath, fragmentPath);
+    pkpy_push_int(vm, (int)newId);
+    return 1;
+}
 
-int cre_pkpy_api_shader_util_reset_screen_shader_to_default(pkpy_vm* vm) { return 0; }
+int cre_pkpy_api_shader_util_set_screen_shader(pkpy_vm* vm) {
+    int pyShaderId;
+    pkpy_to_int(vm, 0, &pyShaderId);
+
+    const SEShaderInstanceId shaderId = (SEShaderInstanceId)pyShaderId;
+    SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
+    bool hasSetShaderInstance = false;
+    if (shaderInstance) {
+        se_frame_buffer_set_screen_shader(shaderInstance);
+        hasSetShaderInstance = true;
+    }
+    pkpy_push_bool(vm, hasSetShaderInstance);
+    return 1;
+}
+
+int cre_pkpy_api_shader_util_get_current_screen_shader(pkpy_vm* vm) {
+    const SEShaderInstanceId currentScreenShaderId = 0; // TODO: Keep track of current screen shader somewhere
+    pkpy_push_int(vm, (int)currentScreenShaderId);
+    return 1;
+}
+
+int cre_pkpy_api_shader_util_reset_screen_shader_to_default(pkpy_vm* vm) {
+    se_frame_buffer_reset_to_default_screen_shader();
+    return 0;
+}
 
 //--- NODE ---//
 
