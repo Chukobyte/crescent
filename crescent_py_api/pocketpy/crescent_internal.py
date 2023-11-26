@@ -171,6 +171,71 @@ def sprite_set_shader_instance(entity_id: int, shader_instance_id: int) -> None:
     pass
 
 
+# --- ANIMATED SPRITE --- #
+
+def animated_sprite_play(entity_id: int, animation_name: str) -> bool:
+    return True
+
+
+def animated_sprite_stop(entity_id: int) -> None:
+    pass
+
+
+def animated_sprite_set_current_animation_frame(entity_id: int, frame: int) -> None:
+    pass
+
+
+def animated_sprite_add_animation(entity_id: int, name: str, speed: float, does_loop: bool, frame_count: int, *args) -> None:
+    pass
+
+
+def animated_sprite_get_stagger_animation_start_times(entity_id: int) -> bool:
+    return False
+
+
+def animated_sprite_set_stagger_animation_start_times(entity_id: int, stagger: bool) -> None:
+    pass
+
+
+def animated_sprite_get_flip_h(entity_id: int) -> bool:
+    return False
+
+
+def animated_sprite_set_flip_h(entity_id: int, flip_h: bool) -> None:
+    pass
+
+
+def animated_sprite_get_flip_v(entity_id: int) -> bool:
+    return False
+
+
+def animated_sprite_set_flip_v(entity_id: int, flip_v: bool) -> None:
+    pass
+
+
+def animated_sprite_get_modulate(entity_id: int) -> Tuple[int, int, int, int]:
+    return 255, 255, 255, 255
+
+
+def animated_sprite_set_modulate(entity_id: int, r: int, g: int, b: int, a: int) -> None:
+    pass
+
+
+def animated_sprite_get_origin(entity_id: int) -> Tuple[float, float]:
+    return 0.0, 0.0
+
+
+def animated_sprite_set_origin(entity_id: int, x: float, y: float) -> None:
+    pass
+
+
+def animated_sprite_get_shader_instance(entity_id: int) -> int:
+    return 0
+
+
+def animated_sprite_set_shader_instance(entity_id: int, shader_instance_id: int) -> None:
+    pass
+
 # --- SHADER INSTANCE --- #
 
 def shader_instance_delete(shader_id: int) -> bool:

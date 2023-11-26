@@ -402,6 +402,35 @@ class Texture:
         return f"Texture(file_path: {self.file_path}, wrap_s: {self.wrap_s}, wrap_s: {self.wrap_t}, nearest_neighbor: {self.nearest_neighbor})"
 
 
+class Font:
+    def __init__(self, file_path: str, uid: str, size: int):
+        self.file_path = file_path
+        self.uid = uid
+        self.size = size
+
+
+class InputAction:
+    def __init__(self, name: str, values: list, device_id=0):
+        self.name = name
+        self.values = values
+        self.device_id = device_id
+
+
+class AnimationFrame:
+    def __init__(self, frame: int, texture_path: str, draw_source: Rect2):
+        self.frame = frame
+        self.texture_path = texture_path
+        self.draw_source = draw_source
+
+
+class Animation:
+    def __init__(self, name: str, speed: int, loops: bool, frames: List[AnimationFrame]):
+        self.name = name
+        self.speed = speed
+        self.loops = loops
+        self.frames = frames
+
+
 class ShaderInstance:
     def __init__(self, shader_id: int):
         self.shader_id = shader_id
@@ -839,123 +868,73 @@ class Sprite(Node2D):
         crescent_internal.sprite_set_shader_instance(self.entity_id, value.shader_id)
 
 
-# class AnimatedSprite(Node2D):
-#     def play(self, name: str) -> bool:
-#         return crescent_internal.animated_sprite_play(
-#             entity_id=self.entity_id, name
-#         )
-#
-#     def stop(self) -> None:
-#         crescent_internal.animated_sprite_stop(entity_id=self.entity_id)
-#
-#     def set_current_animation_frame(self, frame: int) -> None:
-#         crescent_internal.animated_sprite_set_current_animation_frame(
-#             entity_id=self.entity_id, frame=frame
-#         )
-#
-#     def add_animation(self, animation: Animation) -> None:
-#         anim_frames = []
-#         for frame in animation.frames:
-#             anim_frames.append(
-#                 (
-#                     frame.frame,
-#                     frame.texture_path,
-#                     frame.draw_source.x,
-#                     frame.draw_source.y,
-#                     frame.draw_source.w,
-#                     frame.draw_source.h,
-#                 )
-#             )
-#         crescent_internal.animated_sprite_add_animation(
-#             entity_id=self.entity_id,
-#             animation.name,
-#             speed=animation.speed,
-#             loops=animation.loops,
-#             frames=anim_frames,
-#         )
-#
-#     @property
-#     def flip_h(self) -> bool:
-#         return crescent_internal.animated_sprite_get_flip_h(
-#             entity_id=self.entity_id
-#         )
-#
-#     @flip_h.setter
-#     def flip_h(self, value: bool) -> None:
-#         crescent_internal.animated_sprite_set_flip_h(
-#             entity_id=self.entity_id, flip_h=value
-#         )
-#
-#     @property
-#     def flip_v(self) -> bool:
-#         return crescent_internal.animated_sprite_get_flip_v(
-#             entity_id=self.entity_id
-#         )
-#
-#     @flip_v.setter
-#     def flip_v(self, value: bool) -> None:
-#         crescent_internal.animated_sprite_set_flip_v(
-#             entity_id=self.entity_id, flip_v=value
-#         )
-#
-#     @property
-#     def modulate(self) -> Color:
-#         red, green, blue, alpha = crescent_internal.animated_sprite_get_modulate(
-#             entity_id=self.entity_id
-#         )
-#         return Color(r=red, g=green, b=blue, a=alpha)
-#
-#     @modulate.setter
-#     def modulate(self, color: Color) -> None:
-#         crescent_internal.animated_sprite_set_modulate(
-#             entity_id=self.entity_id,
-#             r=color.r,
-#             g=color.g,
-#             b=color.b,
-#             a=color.a,
-#         )
-#
-#     @property
-#     def origin(self) -> Vector2:
-#         x, y = crescent_internal.animated_sprite_get_origin(
-#             entity_id=self.entity_id
-#         )
-#         return Vector2(x, y)
-#
-#     @origin.setter
-#     def origin(self, value: Vector2) -> None:
-#         crescent_internal.animated_sprite_set_origin(
-#             entity_id=self.entity_id, x=value.x, y=value.y
-#         )
-#
-#     @property
-#     def stagger_animation_start_times(self) -> bool:
-#         return crescent_internal.animated_sprite_get_stagger_animation_start_times(
-#             entity_id=self.entity_id
-#         )
-#
-#     @stagger_animation_start_times.setter
-#     def stagger_animation_start_times(self, value: bool) -> None:
-#         crescent_internal.animated_sprite_set_stagger_animation_start_times(
-#             entity_id=self.entity_id, stagger=value
-#         )
-#
-#     @property
-#     def shader_instance(self) -> Optional[ShaderInstance]:
-#         shader_instance_id = crescent_internal.animated_sprite_get_shader_instance(
-#             entity_id=self.entity_id
-#         )
-#         if shader_instance_id >= 0:
-#             return ShaderInstance(shader_instance_id)
-#         return None
-#
-#     @shader_instance.setter
-#     def shader_instance(self, value: ShaderInstance) -> None:
-#         crescent_internal.animated_sprite_set_shader_instance(
-#             entity_id=self.entity_id, shader_instance_id=value.shader_id
-#         )
-#
-#
+class AnimatedSprite(Node2D):
+    def play(self, name: str) -> bool:
+        return crescent_internal.animated_sprite_play(self.entity_id, name)
+
+    def stop(self) -> None:
+        crescent_internal.animated_sprite_stop(self.entity_id)
+
+    def set_current_animation_frame(self, frame: int) -> None:
+        crescent_internal.animated_sprite_set_current_animation_frame(self.entity_id, frame)
+
+    def add_animation(self, animation: Animation) -> None:
+        crescent_internal.animated_sprite_add_animation(self.entity_id, animation.name, animation.speed, animation.loops, len(animation.frames), *animation.frames)
+
+    @property
+    def flip_h(self) -> bool:
+        return crescent_internal.animated_sprite_get_flip_h(self.entity_id)
+
+    @flip_h.setter
+    def flip_h(self, value: bool) -> None:
+        crescent_internal.animated_sprite_set_flip_h(self.entity_id, value)
+
+    @property
+    def flip_v(self) -> bool:
+        return crescent_internal.animated_sprite_get_flip_v(self.entity_id)
+
+    @flip_v.setter
+    def flip_v(self, value: bool) -> None:
+        crescent_internal.animated_sprite_set_flip_v(self.entity_id, value)
+
+    @property
+    def modulate(self) -> Color:
+        red, green, blue, alpha = crescent_internal.animated_sprite_get_modulate(self.entity_id)
+        return Color(r=red, g=green, b=blue, a=alpha)
+
+    @modulate.setter
+    def modulate(self, color: Color) -> None:
+        crescent_internal.animated_sprite_set_modulate(self.entity_id, color.r, color.g, color.b, color.a)
+
+    @property
+    def origin(self) -> Vector2:
+        x, y = crescent_internal.animated_sprite_get_origin(self.entity_id)
+        return Vector2(x, y)
+
+    @origin.setter
+    def origin(self, value: Vector2) -> None:
+        crescent_internal.animated_sprite_set_origin(self.entity_id, value.x, value.y)
+
+    @property
+    def stagger_animation_start_times(self) -> bool:
+        return crescent_internal.animated_sprite_get_stagger_animation_start_times(self.entity_id)
+
+    @stagger_animation_start_times.setter
+    def stagger_animation_start_times(self, value: bool) -> None:
+        crescent_internal.animated_sprite_set_stagger_animation_start_times(self.entity_id, value)
+
+    @property
+    def shader_instance(self) -> Optional[ShaderInstance]:
+        shader_instance_id = crescent_internal.animated_sprite_get_shader_instance(self.entity_id)
+        if shader_instance_id >= 0:
+            return ShaderInstance(shader_instance_id)
+        return None
+
+    @shader_instance.setter
+    def shader_instance(self, value: ShaderInstance) -> None:
+        crescent_internal.animated_sprite_set_shader_instance(self.entity_id, value.shader_id)
+
+
 # class TextLabel(Node2D):
 #     @property
 #     def text(self) -> str:
