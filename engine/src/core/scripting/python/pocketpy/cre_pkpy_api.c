@@ -1,5 +1,6 @@
 #include "cre_pkpy_api.h"
 
+#include <seika/rendering/shader/shader_cache.h>
 #include <seika/utils/se_string_util.h>
 #include <seika/utils/se_assert.h>
 
@@ -183,31 +184,289 @@ void cre_pkpy_api_load_internal_modules(pkpy_vm* vm) {
 }
 
 //--- SHADER INSTANCE ---//
-int cre_pkpy_api_shader_instance_delete(pkpy_vm* vm) { return 0; }
-int cre_pkpy_api_shader_instance_create_bool_param(pkpy_vm* vm) { return 0; }
-int cre_pkpy_api_shader_instance_set_bool_param(pkpy_vm* vm) { return 0; }
-int cre_pkpy_api_shader_instance_get_bool_param(pkpy_vm* vm) { return 0; }
-int cre_pkpy_api_shader_instance_create_int_param(pkpy_vm* vm) { return 0; }
-int cre_pkpy_api_shader_instance_set_int_param(pkpy_vm* vm) { return 0; }
-int cre_pkpy_api_shader_instance_get_int_param(pkpy_vm* vm) { return 0; }
-int cre_pkpy_api_shader_instance_create_float_param(pkpy_vm* vm) { return 0; }
-int cre_pkpy_api_shader_instance_set_float_param(pkpy_vm* vm) { return 0; }
-int cre_pkpy_api_shader_instance_get_float_param(pkpy_vm* vm) { return 0; }
-int cre_pkpy_api_shader_instance_create_float2_param(pkpy_vm* vm) { return 0; }
-int cre_pkpy_api_shader_instance_set_float2_param(pkpy_vm* vm) { return 0; }
-int cre_pkpy_api_shader_instance_get_float2_param(pkpy_vm* vm) { return 0; }
-int cre_pkpy_api_shader_instance_create_float3_param(pkpy_vm* vm) { return 0; }
-int cre_pkpy_api_shader_instance_set_float3_param(pkpy_vm* vm) { return 0; }
-int cre_pkpy_api_shader_instance_get_float3_param(pkpy_vm* vm) { return 0; }
-int cre_pkpy_api_shader_instance_create_float4_param(pkpy_vm* vm) { return 0; }
+int cre_pkpy_api_shader_instance_delete(pkpy_vm* vm) {
+    int pyShaderId;
+    pkpy_to_int(vm, 0, &pyShaderId);
+
+    const SEShaderInstanceId shaderId = (SEShaderInstanceId)pyShaderId;
+    SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
+    bool hasDeletedInstance = false;
+    if (shaderInstance != NULL) {
+        se_shader_cache_remove_instance(shaderId);
+        se_shader_instance_destroy(shaderInstance);
+        hasDeletedInstance = true;
+    }
+    pkpy_push_bool(vm, hasDeletedInstance);
+    return 1;
+}
+
+int cre_pkpy_api_shader_instance_create_bool_param(pkpy_vm* vm) {
+    int pyShaderId;
+    pkpy_CString pyParamName;
+    bool value;
+    pkpy_to_int(vm, 0, &pyShaderId);
+    pkpy_to_string(vm, 1, &pyParamName);
+    pkpy_to_bool(vm, 2, &value);
+
+    const SEShaderInstanceId shaderId = (SEShaderInstanceId)pyShaderId;
+    SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
+    se_shader_instance_param_create_bool(shaderInstance, pyParamName.data, value);
+    return 0;
+}
+
+int cre_pkpy_api_shader_instance_set_bool_param(pkpy_vm* vm) {
+    int pyShaderId;
+    pkpy_CString pyParamName;
+    bool value;
+    pkpy_to_int(vm, 0, &pyShaderId);
+    pkpy_to_string(vm, 1, &pyParamName);
+    pkpy_to_bool(vm, 2, &value);
+
+    const SEShaderInstanceId shaderId = (SEShaderInstanceId)pyShaderId;
+    SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
+    se_shader_instance_param_update_bool(shaderInstance, pyParamName.data, value);
+    return 0;
+}
+
+int cre_pkpy_api_shader_instance_get_bool_param(pkpy_vm* vm) {
+    int pyShaderId;
+    pkpy_CString pyParamName;
+    pkpy_to_int(vm, 0, &pyShaderId);
+    pkpy_to_string(vm, 1, &pyParamName);
+
+    const SEShaderInstanceId shaderId = (SEShaderInstanceId)pyShaderId;
+    SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
+    const bool paramValue = se_shader_instance_param_get_bool(shaderInstance, pyParamName.data);
+    pkpy_push_bool(vm, paramValue);
+    return 1;
+}
+
+int cre_pkpy_api_shader_instance_create_int_param(pkpy_vm* vm) {
+    int pyShaderId;
+    pkpy_CString pyParamName;
+    int value;
+    pkpy_to_int(vm, 0, &pyShaderId);
+    pkpy_to_string(vm, 1, &pyParamName);
+    pkpy_to_int(vm, 2, &value);
+
+    const SEShaderInstanceId shaderId = (SEShaderInstanceId)pyShaderId;
+    SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
+    se_shader_instance_param_create_int(shaderInstance, pyParamName.data, value);
+    return 0;
+}
+
+int cre_pkpy_api_shader_instance_set_int_param(pkpy_vm* vm) {
+    int pyShaderId;
+    pkpy_CString pyParamName;
+    int value;
+    pkpy_to_int(vm, 0, &pyShaderId);
+    pkpy_to_string(vm, 1, &pyParamName);
+    pkpy_to_int(vm, 2, &value);
+
+    const SEShaderInstanceId shaderId = (SEShaderInstanceId)pyShaderId;
+    SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
+    se_shader_instance_param_update_int(shaderInstance, pyParamName.data, value);
+    return 0;
+}
+
+int cre_pkpy_api_shader_instance_get_int_param(pkpy_vm* vm) {
+    int pyShaderId;
+    pkpy_CString pyParamName;
+    pkpy_to_int(vm, 0, &pyShaderId);
+    pkpy_to_string(vm, 1, &pyParamName);
+
+    const SEShaderInstanceId shaderId = (SEShaderInstanceId)pyShaderId;
+    SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
+    const int paramValue = se_shader_instance_param_get_int(shaderInstance, pyParamName.data);
+    pkpy_push_int(vm, paramValue);
+    return 1;
+}
+
+int cre_pkpy_api_shader_instance_create_float_param(pkpy_vm* vm) {
+    int pyShaderId;
+    pkpy_CString pyParamName;
+    double value;
+    pkpy_to_int(vm, 0, &pyShaderId);
+    pkpy_to_string(vm, 1, &pyParamName);
+    pkpy_to_float(vm, 2, &value);
+
+    const SEShaderInstanceId shaderId = (SEShaderInstanceId)pyShaderId;
+    SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
+    se_shader_instance_param_create_float(shaderInstance, pyParamName.data, (float)value);
+    return 0;
+}
+
+int cre_pkpy_api_shader_instance_set_float_param(pkpy_vm* vm) {
+    int pyShaderId;
+    pkpy_CString pyParamName;
+    double value;
+    pkpy_to_int(vm, 0, &pyShaderId);
+    pkpy_to_string(vm, 1, &pyParamName);
+    pkpy_to_float(vm, 2, &value);
+
+    const SEShaderInstanceId shaderId = (SEShaderInstanceId)pyShaderId;
+    SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
+    se_shader_instance_param_update_float(shaderInstance, pyParamName.data, (float)value);
+    return 0;
+}
+
+int cre_pkpy_api_shader_instance_get_float_param(pkpy_vm* vm) {
+    int pyShaderId;
+    pkpy_CString pyParamName;
+    pkpy_to_int(vm, 0, &pyShaderId);
+    pkpy_to_string(vm, 1, &pyParamName);
+
+    const SEShaderInstanceId shaderId = (SEShaderInstanceId)pyShaderId;
+    SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
+    const float paramValue = se_shader_instance_param_get_float(shaderInstance, pyParamName.data);
+    pkpy_push_float(vm, paramValue);
+    return 1;
+}
+
+int cre_pkpy_api_shader_instance_create_float2_param(pkpy_vm* vm) {
+    int pyShaderId;
+    pkpy_CString pyParamName;
+    double valueX;
+    double valueY;
+    pkpy_to_int(vm, 0, &pyShaderId);
+    pkpy_to_string(vm, 1, &pyParamName);
+    pkpy_to_float(vm, 2, &valueX);
+    pkpy_to_float(vm, 3, &valueY);
+
+    const SEShaderInstanceId shaderId = (SEShaderInstanceId)pyShaderId;
+    SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
+    se_shader_instance_param_create_float2(shaderInstance, pyParamName.data, (SEVector2){ (float)valueX, (float)valueY });
+    return 0;
+}
+
+int cre_pkpy_api_shader_instance_set_float2_param(pkpy_vm* vm) {
+    int pyShaderId;
+    pkpy_CString pyParamName;
+    double valueX;
+    double valueY;
+    pkpy_to_int(vm, 0, &pyShaderId);
+    pkpy_to_string(vm, 1, &pyParamName);
+    pkpy_to_float(vm, 2, &valueX);
+    pkpy_to_float(vm, 3, &valueY);
+
+    const SEShaderInstanceId shaderId = (SEShaderInstanceId)pyShaderId;
+    SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
+    se_shader_instance_param_update_float2(shaderInstance, pyParamName.data, (SEVector2){ (float)valueX, (float)valueY });
+    return 0;
+}
+
+int cre_pkpy_api_shader_instance_get_float2_param(pkpy_vm* vm) {
+    int pyShaderId;
+    pkpy_CString pyParamName;
+    pkpy_to_int(vm, 0, &pyShaderId);
+    pkpy_to_string(vm, 1, &pyParamName);
+
+    const SEShaderInstanceId shaderId = (SEShaderInstanceId)pyShaderId;
+    SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
+    const SEVector2 paramValue = se_shader_instance_param_get_float2(shaderInstance, pyParamName.data);
+    pkpy_push_float(vm, paramValue.x);
+    pkpy_push_float(vm, paramValue.y);
+    return 2;
+}
+
+int cre_pkpy_api_shader_instance_create_float3_param(pkpy_vm* vm) {
+    int pyShaderId;
+    pkpy_CString pyParamName;
+    double valueX;
+    double valueY;
+    double valueZ;
+    pkpy_to_int(vm, 0, &pyShaderId);
+    pkpy_to_string(vm, 1, &pyParamName);
+    pkpy_to_float(vm, 2, &valueX);
+    pkpy_to_float(vm, 3, &valueY);
+    pkpy_to_float(vm, 4, &valueZ);
+
+    const SEShaderInstanceId shaderId = (SEShaderInstanceId)pyShaderId;
+    SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
+    se_shader_instance_param_create_float3(shaderInstance, pyParamName.data, (SEVector3){ (float)valueX, (float)valueY, (float)valueZ });
+    return 0;
+}
+
+int cre_pkpy_api_shader_instance_set_float3_param(pkpy_vm* vm) {
+    int pyShaderId;
+    pkpy_CString pyParamName;
+    double valueX;
+    double valueY;
+    double valueZ;
+    pkpy_to_int(vm, 0, &pyShaderId);
+    pkpy_to_string(vm, 1, &pyParamName);
+    pkpy_to_float(vm, 2, &valueX);
+    pkpy_to_float(vm, 3, &valueY);
+    pkpy_to_float(vm, 4, &valueZ);
+
+    const SEShaderInstanceId shaderId = (SEShaderInstanceId)pyShaderId;
+    SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
+    se_shader_instance_param_update_float3(shaderInstance, pyParamName.data, (SEVector3){ (float)valueX, (float)valueY, (float)valueZ });
+    return 0;
+}
+
+int cre_pkpy_api_shader_instance_get_float3_param(pkpy_vm* vm) {
+    int pyShaderId;
+    pkpy_CString pyParamName;
+    pkpy_to_int(vm, 0, &pyShaderId);
+    pkpy_to_string(vm, 1, &pyParamName);
+
+    const SEShaderInstanceId shaderId = (SEShaderInstanceId)pyShaderId;
+    SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
+    const SEVector3 paramValue = se_shader_instance_param_get_float3(shaderInstance, pyParamName.data);
+    pkpy_push_float(vm, paramValue.x);
+    pkpy_push_float(vm, paramValue.y);
+    pkpy_push_float(vm, paramValue.z);
+    return 3;
+}
+
+int cre_pkpy_api_shader_instance_create_float4_param(pkpy_vm* vm) {
+    int pyShaderId;
+    pkpy_CString pyParamName;
+    double valueX;
+    double valueY;
+    double valueZ;
+    double valueW;
+    pkpy_to_int(vm, 0, &pyShaderId);
+    pkpy_to_string(vm, 1, &pyParamName);
+    pkpy_to_float(vm, 2, &valueX);
+    pkpy_to_float(vm, 3, &valueY);
+    pkpy_to_float(vm, 4, &valueZ);
+    pkpy_to_float(vm, 5, &valueW);
+
+    const SEShaderInstanceId shaderId = (SEShaderInstanceId)pyShaderId;
+    SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
+    se_shader_instance_param_create_float4(shaderInstance, pyParamName.data, (SEVector4){ (float)valueX, (float)valueY, (float)valueZ, (float)valueW });
+    return 0;
+}
+
 int cre_pkpy_api_shader_instance_set_float4_param(pkpy_vm* vm) { return 0; }
-int cre_pkpy_api_shader_instance_get_float4_param(pkpy_vm* vm) { return 0; }
+
+int cre_pkpy_api_shader_instance_get_float4_param(pkpy_vm* vm) {
+    int pyShaderId;
+    pkpy_CString pyParamName;
+    pkpy_to_int(vm, 0, &pyShaderId);
+    pkpy_to_string(vm, 1, &pyParamName);
+
+    const SEShaderInstanceId shaderId = (SEShaderInstanceId)pyShaderId;
+    SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
+    const SEVector4 paramValue = se_shader_instance_param_get_float4(shaderInstance, pyParamName.data);
+    pkpy_push_float(vm, paramValue.x);
+    pkpy_push_float(vm, paramValue.y);
+    pkpy_push_float(vm, paramValue.z);
+    pkpy_push_float(vm, paramValue.w);
+    return 4;
+}
 
 //--- SHADER UTIL ---//
 int cre_pkpy_api_shader_util_compile_shader(pkpy_vm* vm) { return 0; }
+
 int cre_pkpy_api_shader_util_compile_shader_raw(pkpy_vm* vm) { return 0; }
+
 int cre_pkpy_api_shader_util_set_screen_shader(pkpy_vm* vm) { return 0; }
+
 int cre_pkpy_api_shader_util_get_current_screen_shader(pkpy_vm* vm) { return 0; }
+
 int cre_pkpy_api_shader_util_reset_screen_shader_to_default(pkpy_vm* vm) { return 0; }
 
 //--- NODE ---//

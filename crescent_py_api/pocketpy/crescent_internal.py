@@ -177,7 +177,7 @@ def shader_instance_delete(shader_id: int) -> bool:
     return True
 
 
-def shader_instance_create_bool_param(shader_id: int, name, initial_value: bool) -> None:
+def shader_instance_create_bool_param(shader_id: int, name: str, initial_value: bool) -> None:
     pass
 
 
