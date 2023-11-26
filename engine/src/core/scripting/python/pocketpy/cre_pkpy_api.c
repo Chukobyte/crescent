@@ -171,6 +171,21 @@ void cre_pkpy_api_load_internal_modules(pkpy_vm* vm) {
             {.signature = "node2d_set_ignore_camera(entity_id: int, ignore_camera: bool) -> None", .function = cre_pkpy_api_node2d_set_ignore_camera},
             {.signature = "node2d_get_ignore_camera(entity_id: int) -> bool", .function = cre_pkpy_api_node2d_get_ignore_camera},
             // Sprite
+            {.signature = "sprite_get_texture(entity_id: int) -> Tuple[str, str, str, bool]", .function = cre_pkpy_api_sprite_get_texture},
+            {.signature = "sprite_set_texture(entity_id: int, file_path: str) -> None", .function = cre_pkpy_api_sprite_set_texture},
+            {.signature = "sprite_get_draw_source(entity_id: int) -> Tuple[float, float, float, float]", .function = cre_pkpy_api_sprite_get_draw_source},
+            {.signature = "sprite_set_draw_source(entity_id: int, x: float, y: float, w: float, h: float) -> None", .function = cre_pkpy_api_sprite_set_draw_source},
+            {.signature = "sprite_get_flip_h(entity_id: int) -> bool", .function = cre_pkpy_api_sprite_get_flip_h},
+            {.signature = "sprite_set_flip_h(entity_id: int, flip_h: bool) -> None", .function = cre_pkpy_api_sprite_set_flip_h},
+            {.signature = "sprite_get_flip_v(entity_id: int) -> bool", .function = cre_pkpy_api_sprite_get_flip_v},
+            {.signature = "sprite_set_flip_v(entity_id: int, flip_v: bool) -> None", .function = cre_pkpy_api_sprite_set_flip_v},
+            {.signature = "sprite_get_modulate(entity_id: int) -> Tuple[int, int, int, int]", .function = cre_pkpy_api_sprite_get_modulate},
+            {.signature = "sprite_set_modulate(entity_id: int, r: int, g: int, b: int, a: int) -> None", .function = cre_pkpy_api_sprite_set_modulate},
+            {.signature = "sprite_get_origin(entity_id: int) -> Tuple[float, float]", .function = cre_pkpy_api_sprite_get_origin},
+            {.signature = "sprite_set_origin(entity_id: int, x: float, y: float) -> None", .function = cre_pkpy_api_sprite_set_origin},
+            {.signature = "sprite_get_shader_instance(entity_id: int) -> int", .function = cre_pkpy_api_sprite_get_shader_instance},
+            {.signature = "sprite_set_shader_instance(entity_id: int, shader_instance_id: int) -> None", .function = cre_pkpy_api_sprite_set_shader_instance},
+
             // Scene Tree
             {.signature = "scene_tree_change_scene(path: str) -> None", .function = cre_pkpy_api_scene_tree_change_scene},
             {.signature = "scene_tree_get_root()", .function = cre_pkpy_api_scene_tree_get_root},
