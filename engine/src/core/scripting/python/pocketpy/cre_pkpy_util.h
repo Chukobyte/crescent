@@ -2,7 +2,7 @@
 
 #include <pocketpy/pocketpy_c.h>
 
-#define CRE_PKPY_MODULE_FUNCTION_LIMIT 32
+#define CRE_PKPY_MODULE_FUNCTION_LIMIT 128
 
 typedef struct CrePPFunction {
     const char* signature;
