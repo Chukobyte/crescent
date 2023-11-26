@@ -202,6 +202,7 @@ void cre_pkpy_api_load_internal_modules(pkpy_vm* vm) {
 }
 
 //--- SHADER INSTANCE ---//
+
 int cre_pkpy_api_shader_instance_delete(pkpy_vm* vm) {
     int pyShaderId;
     pkpy_to_int(vm, 0, &pyShaderId);
@@ -495,6 +496,7 @@ int cre_pkpy_api_shader_instance_get_float4_param(pkpy_vm* vm) {
 }
 
 //--- SHADER UTIL ---//
+
 int cre_pkpy_api_shader_util_compile_shader(pkpy_vm* vm) {
     pkpy_CString pyShaderPath;
     pkpy_to_string(vm, 0, &pyShaderPath);

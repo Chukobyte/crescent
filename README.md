@@ -27,7 +27,7 @@ Technically any game type will be able to be made with the engine.  But these ar
   * [C](https://en.wikipedia.org/wiki/C_(programming_language)) (c11) - Engine Core
   * [SDL2](https://github.com/libsdl-org/SDL) - Windowing, inputs
   * [MiniAudio](https://github.com/mackron/miniaudio) - Audio
-  * [Python](https://en.wikipedia.org/wiki/Python_(programming_language)) (3.10) - Scripting
+  * [pocketpy](https://github.com/blueloveth/pocketpy) - Python Scripting
   * [Unity](https://github.com/ThrowTheSwitch/Unity) - Testing
   * [PVS-Studio](https://pvs-studio.com/pvs-studio/?utm_source=website&utm_medium=github&utm_campaign=open_source) - static analyzer for C code.
 * Editor
