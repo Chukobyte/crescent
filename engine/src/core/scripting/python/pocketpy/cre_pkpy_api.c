@@ -1,5 +1,7 @@
 #include "cre_pkpy_api.h"
 
+#include <string.h>
+
 #include <seika/rendering/frame_buffer.h>
 #include <seika/rendering/renderer.h>
 #include <seika/rendering/shader/shader_cache.h>
@@ -101,6 +103,22 @@ int cre_pkpy_api_sprite_get_origin(pkpy_vm* vm);
 int cre_pkpy_api_sprite_set_origin(pkpy_vm* vm);
 int cre_pkpy_api_sprite_get_shader_instance(pkpy_vm* vm);
 int cre_pkpy_api_sprite_set_shader_instance(pkpy_vm* vm);
+
+// Animated Sprite
+int cre_pkpy_api_animated_sprite_play(pkpy_vm* vm);
+int cre_pkpy_api_animated_sprite_stop(pkpy_vm* vm);
+int cre_pkpy_api_animated_sprite_set_current_animation_frame(pkpy_vm* vm);
+int cre_pkpy_api_animated_sprite_add_animation(pkpy_vm* vm);
+int cre_pkpy_api_animated_sprite_get_flip_h(pkpy_vm* vm);
+int cre_pkpy_api_animated_sprite_set_flip_h(pkpy_vm* vm);
+int cre_pkpy_api_animated_sprite_get_flip_v(pkpy_vm* vm);
+int cre_pkpy_api_animated_sprite_set_flip_v(pkpy_vm* vm);
+int cre_pkpy_api_animated_sprite_get_modulate(pkpy_vm* vm);
+int cre_pkpy_api_animated_sprite_set_modulate(pkpy_vm* vm);
+int cre_pkpy_api_animated_sprite_get_origin(pkpy_vm* vm);
+int cre_pkpy_api_animated_sprite_set_origin(pkpy_vm* vm);
+int cre_pkpy_api_animated_sprite_get_shader_instance(pkpy_vm* vm);
+int cre_pkpy_api_animated_sprite_set_shader_instance(pkpy_vm* vm);
 
 // Scene Tree
 int cre_pkpy_api_scene_tree_change_scene(pkpy_vm* vm);
@@ -1143,6 +1161,222 @@ int cre_pkpy_api_sprite_set_shader_instance(pkpy_vm* vm) {
     SpriteComponent* spriteComponent = (SpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_SPRITE);
     spriteComponent->shaderInstanceId = (SEShaderInstanceId)pyShaderInstanceId;
     SEShaderInstance* shaderInstance = se_shader_cache_get_instance(spriteComponent->shaderInstanceId);
+    se_renderer_set_sprite_shader_default_params(shaderInstance->shader);
+    return 0;
+}
+
+//--- ANIMATED SPRITE ---//
+
+int cre_pkpy_api_animated_sprite_play(pkpy_vm* vm) {
+    int pyEntityId;
+    pkpy_CString pyAnimationName;
+    pkpy_to_int(vm, 0, &pyEntityId);
+    pkpy_to_string(vm, 1, &pyAnimationName);
+
+    const CreEntity entity = (CreEntity)pyEntityId;
+    const char* animationName = pyAnimationName.data;
+    AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_ANIMATED_SPRITE);
+    const bool hasSuccessfullyPlayedAnimation = animated_sprite_component_play_animation(animatedSpriteComponent, animationName);
+    pkpy_push_bool(vm, hasSuccessfullyPlayedAnimation);
+    return 1;
+}
+
+int cre_pkpy_api_animated_sprite_stop(pkpy_vm* vm) {
+    int pyEntityId;
+    pkpy_to_int(vm, 0, &pyEntityId);
+
+    const CreEntity entity = (CreEntity)pyEntityId;
+    AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_ANIMATED_SPRITE);
+    animatedSpriteComponent->isPlaying = false;
+    return 0;
+}
+
+int cre_pkpy_api_animated_sprite_set_current_animation_frame(pkpy_vm* vm) {
+    int pyEntityId;
+    int pyFrame;
+    pkpy_to_int(vm, 0, &pyEntityId);
+    pkpy_to_int(vm, 1, &pyFrame);
+
+    const CreEntity entity = (CreEntity)pyEntityId;
+    AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_ANIMATED_SPRITE);
+    animatedSpriteComponent->currentAnimation.currentFrame = se_math_clamp_int(pyFrame, 0, animatedSpriteComponent->currentAnimation.frameCount - 1);
+    return 0;
+}
+
+int cre_pkpy_api_animated_sprite_add_animation(pkpy_vm* vm) {
+#define CRE_PKPY_API_ANIM_FRAME_STRIDE 6
+    int pyEntityId;
+    pkpy_CString pyAnimationName;
+    int pyAnimationSpeed;
+    bool pyAnimationDoesLoop;
+    int pyFrameCount;
+    pkpy_to_int(vm, 0, &pyEntityId);
+    pkpy_to_string(vm, 1, &pyAnimationName);
+    pkpy_to_int(vm, 2, &pyAnimationSpeed);
+    pkpy_to_bool(vm, 3, &pyAnimationDoesLoop);
+    pkpy_to_int(vm, 4, &pyFrameCount);
+
+    const CreEntity entity = (CreEntity)pyEntityId;
+    const char* animationName = pyAnimationName.data;
+    AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_ANIMATED_SPRITE);
+    CreAnimation newAnim = { .frameCount = 0, .currentFrame = 0, .speed = pyAnimationSpeed, .name = {'\0'}, .doesLoop = pyAnimationDoesLoop, .isValid = true };
+    strcpy(newAnim.name, animationName);
+    // Unpack *args filled with frame data
+    pkpy_unpack_sequence(vm, pyFrameCount * CRE_PKPY_API_ANIM_FRAME_STRIDE);
+    for (int i = 0; i < pyFrameCount; i++) {
+        int pyFrame;
+        pkpy_CString pyTexturePath;
+        double pyDrawSourceX;
+        double pyDrawSourceY;
+        double pyDrawSourceW;
+        double pyDrawSourceH;
+        const int dataIndex = i * CRE_PKPY_API_ANIM_FRAME_STRIDE;
+        pkpy_to_int(vm, dataIndex, &pyFrame);
+        pkpy_to_string(vm, dataIndex + 1, &pyTexturePath);
+        pkpy_to_float(vm, dataIndex + 2, &pyDrawSourceX);
+        pkpy_to_float(vm, dataIndex + 3, &pyDrawSourceY);
+        pkpy_to_float(vm, dataIndex + 4, &pyDrawSourceW);
+        pkpy_to_float(vm, dataIndex + 5, &pyDrawSourceH);
+
+        const char* texturePath = pyTexturePath.data;
+        CreAnimationFrame animationFrame = {
+                .frame = pyFrame,
+                .texture = se_asset_manager_get_texture(texturePath),
+                .drawSource = { (float)pyDrawSourceX, (float)pyDrawSourceY, (float)pyDrawSourceW, (float)pyDrawSourceH }
+        };
+        newAnim.animationFrames[newAnim.frameCount++] = animationFrame;
+    }
+    // Finally add the animation
+    animated_sprite_component_add_animation(animatedSpriteComponent, newAnim);\
+    // If the only animation then set the current to that
+    if (animatedSpriteComponent->animationCount == 1) {
+        animated_sprite_component_set_animation(animatedSpriteComponent, newAnim.name);
+    }
+    return 0;
+#undef CRE_PKPY_API_ANIM_FRAME_STRIDE
+}
+
+int cre_pkpy_api_animated_sprite_get_flip_h(pkpy_vm* vm) {
+    int pyEntityId;
+    pkpy_to_int(vm, 0, &pyEntityId);
+
+    const CreEntity entity = (CreEntity)pyEntityId;
+    const AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_ANIMATED_SPRITE);
+    pkpy_push_bool(vm, animatedSpriteComponent->flipH);
+    return 1;
+}
+
+int cre_pkpy_api_animated_sprite_set_flip_h(pkpy_vm* vm) {
+    int pyEntityId;
+    bool pySetFlipH;
+    pkpy_to_int(vm, 0, &pyEntityId);
+    pkpy_to_bool(vm, 1, &pySetFlipH);
+
+    const CreEntity entity = (CreEntity)pyEntityId;
+    AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_ANIMATED_SPRITE);
+    animatedSpriteComponent->flipH = pySetFlipH;
+    return 0;
+}
+
+int cre_pkpy_api_animated_sprite_get_flip_v(pkpy_vm* vm) {
+    int pyEntityId;
+    pkpy_to_int(vm, 0, &pyEntityId);
+
+    const CreEntity entity = (CreEntity)pyEntityId;
+    const AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_ANIMATED_SPRITE);
+    pkpy_push_bool(vm, animatedSpriteComponent->flipV);
+    return 1;
+}
+
+int cre_pkpy_api_animated_sprite_set_flip_v(pkpy_vm* vm) {
+    int pyEntityId;
+    bool pySetFlipV;
+    pkpy_to_int(vm, 0, &pyEntityId);
+    pkpy_to_bool(vm, 1, &pySetFlipV);
+
+    const CreEntity entity = (CreEntity)pyEntityId;
+    AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_ANIMATED_SPRITE);
+    animatedSpriteComponent->flipV = pySetFlipV;
+    return 0;
+}
+
+int cre_pkpy_api_animated_sprite_get_modulate(pkpy_vm* vm) {
+    int pyEntityId;
+    pkpy_to_int(vm, 0, &pyEntityId);
+
+    const CreEntity entity = (CreEntity)pyEntityId;
+    const AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_ANIMATED_SPRITE);
+    pkpy_push_float(vm, (double)animatedSpriteComponent->modulate.r);
+    pkpy_push_float(vm, (double)animatedSpriteComponent->modulate.g);
+    pkpy_push_float(vm, (double)animatedSpriteComponent->modulate.b);
+    pkpy_push_float(vm, (double)animatedSpriteComponent->modulate.a);
+    return 4;
+}
+
+int cre_pkpy_api_animated_sprite_set_modulate(pkpy_vm* vm) {
+    int pyEntityId;
+    double pyModulateR;
+    double pyModulateG;
+    double pyModulateB;
+    double pyModulateA;
+    pkpy_to_int(vm, 0, &pyEntityId);
+    pkpy_to_float(vm, 1, &pyModulateR);
+    pkpy_to_float(vm, 2, &pyModulateG);
+    pkpy_to_float(vm, 3, &pyModulateB);
+    pkpy_to_float(vm, 4, &pyModulateA);
+
+    const CreEntity entity = (CreEntity)pyEntityId;
+    AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_ANIMATED_SPRITE);
+    animatedSpriteComponent->modulate = (SEColor){(float)pyModulateR, (float)pyModulateG, (float)pyModulateB, (float)pyModulateA };
+    return 0;
+}
+
+int cre_pkpy_api_animated_sprite_get_origin(pkpy_vm* vm) {
+    int pyEntityId;
+    pkpy_to_int(vm, 0, &pyEntityId);
+
+    const CreEntity entity = (CreEntity)pyEntityId;
+    const AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_ANIMATED_SPRITE);
+    pkpy_push_float(vm, (double)animatedSpriteComponent->origin.x);
+    pkpy_push_float(vm, (double)animatedSpriteComponent->origin.y);
+    return 2;
+}
+
+int cre_pkpy_api_animated_sprite_set_origin(pkpy_vm* vm) {
+    int pyEntityId;
+    double pyOriginX;
+    double pyOriginY;
+    pkpy_to_int(vm, 0, &pyEntityId);
+    pkpy_to_float(vm, 1, &pyOriginX);
+    pkpy_to_float(vm, 2, &pyOriginY);
+
+    const CreEntity entity = (CreEntity)pyEntityId;
+    AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_ANIMATED_SPRITE);
+    animatedSpriteComponent->origin = (SEVector2){ (float)pyOriginX, (float)pyOriginY };
+    return 0;
+}
+
+int cre_pkpy_api_animated_sprite_get_shader_instance(pkpy_vm* vm) {
+    int pyEntityId;
+    pkpy_to_int(vm, 0, &pyEntityId);
+
+    const CreEntity entity = (CreEntity)pyEntityId;
+    const AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_ANIMATED_SPRITE);
+    const int pyShaderInstanceId = animatedSpriteComponent->shaderInstanceId != SE_SHADER_INSTANCE_INVALID_ID ? (int)animatedSpriteComponent->shaderInstanceId : -1;
+    pkpy_push_int(vm, pyShaderInstanceId);
+    return 1;
+}
+
+int cre_pkpy_api_animated_sprite_set_shader_instance(pkpy_vm* vm) {
+    int pyEntityId;
+    int pyShaderInstanceId;
+    pkpy_to_int(vm, 0, &pyEntityId);
+    pkpy_to_int(vm, 1, &pyShaderInstanceId);
+
+    const CreEntity entity = (CreEntity)pyEntityId;
+    AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_ANIMATED_SPRITE);
+    animatedSpriteComponent->shaderInstanceId = (SEShaderInstanceId)pyShaderInstanceId;
+    SEShaderInstance* shaderInstance = se_shader_cache_get_instance(animatedSpriteComponent->shaderInstanceId);
     se_renderer_set_sprite_shader_default_params(shaderInstance->shader);
     return 0;
 }
