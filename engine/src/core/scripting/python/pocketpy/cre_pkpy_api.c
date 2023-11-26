@@ -111,6 +111,32 @@ void cre_pkpy_api_load_internal_modules(pkpy_vm* vm) {
     cre_pkpy_util_create_module(vm, &(CrePPModule) {
         .name = "crescent_internal",
         .functions = {
+            // Shader Instance
+            {.signature = "shader_instance_delete(shader_id: int) -> bool", .function = cre_pkpy_api_shader_instance_delete},
+            {.signature = "shader_instance_create_bool_param(shader_id: int, initial_value: bool) -> None", .function = cre_pkpy_api_shader_instance_create_bool_param},
+            {.signature = "shader_instance_set_bool_param(shader_id: int, name: str, value: bool) -> None", .function = cre_pkpy_api_shader_instance_set_bool_param},
+            {.signature = "shader_instance_get_bool_param(shader_id: int, name: str) -> bool", .function = cre_pkpy_api_shader_instance_get_bool_param},
+            {.signature = "shader_instance_create_int_param(shader_id: int, initial_value: int) -> None", .function = cre_pkpy_api_shader_instance_create_int_param},
+            {.signature = "shader_instance_set_int_param(shader_id: int, name: str, value: int) -> None", .function = cre_pkpy_api_shader_instance_set_int_param},
+            {.signature = "shader_instance_get_int_param(shader_id: int, name: str) -> int", .function = cre_pkpy_api_shader_instance_get_int_param},
+            {.signature = "shader_instance_create_float_param(shader_id: int, initial_value: float) -> None", .function = cre_pkpy_api_shader_instance_create_float_param},
+            {.signature = "shader_instance_set_float_param(shader_id: int, name: str, value: float) -> None", .function = cre_pkpy_api_shader_instance_set_float_param},
+            {.signature = "shader_instance_get_float_param(shader_id: int, name: str) -> float", .function = cre_pkpy_api_shader_instance_get_float_param},
+            {.signature = "shader_instance_create_float2_param(shader_id: int, initial_value_x: float, initial_value_y: float) -> None", .function = cre_pkpy_api_shader_instance_create_float2_param},
+            {.signature = "shader_instance_set_float2_param(shader_id: int, name: str, value_x: float, value_y: float) -> None", .function = cre_pkpy_api_shader_instance_set_float2_param},
+            {.signature = "shader_instance_get_float2_param(shader_id: int, name: str) -> Tuple[float, float]", .function = cre_pkpy_api_shader_instance_get_float2_param},
+            {.signature = "shader_instance_create_float3_param(shader_id: int, initial_value_x: float, initial_value_y: float, initial_value_z: float) -> None", .function = cre_pkpy_api_shader_instance_create_float3_param},
+            {.signature = "shader_instance_set_float3_param(shader_id: int, name: str, value_x: float, value_y: float, value_z: float) -> None", .function = cre_pkpy_api_shader_instance_set_float3_param},
+            {.signature = "shader_instance_get_float3_param(shader_id: int, name: str) -> Tuple[float, float, float]", .function = cre_pkpy_api_shader_instance_get_float3_param},
+            {.signature = "shader_instance_create_float4_param(shader_id: int, initial_value_x: float, initial_value_y: float, initial_value_z: float, initial_value_w: float) -> None", .function = cre_pkpy_api_shader_instance_create_float4_param},
+            {.signature = "shader_instance_set_float4_param(shader_id: int, name: str, value_x: float, value_y: float, value_z: float, value_w: float) -> None", .function = cre_pkpy_api_shader_instance_set_float4_param},
+            {.signature = "shader_instance_get_float4_param(shader_id: int, name: str) -> Tuple[float, float, float, float]", .function = cre_pkpy_api_shader_instance_get_float4_param},
+            // Shader Util
+            {.signature = "shader_util_compile_shader(shader_path: str) -> int", .function = cre_pkpy_api_shader_util_compile_shader},
+            {.signature = "shader_util_compile_shader_raw(vertex_path, fragment_path) -> int", .function = cre_pkpy_api_shader_util_compile_shader_raw},
+            {.signature = "shader_util_set_screen_shader(shader_path: str) -> bool", .function = cre_pkpy_api_shader_util_set_screen_shader},
+            {.signature = "shader_util_get_current_screen_shader() -> int", .function = cre_pkpy_api_shader_util_get_current_screen_shader},
+            {.signature = "shader_util_reset_screen_shader_to_default() -> None", .function = cre_pkpy_api_shader_util_reset_screen_shader_to_default},
             // Node
             {.signature = "node_new(class_path: str, class_name: str, node_type_flag: int) -> \"Node\"", .function = cre_pkpy_api_node_new},
             {.signature = "node_get_name(entity_id: int) -> str", .function = cre_pkpy_api_node_get_name},
@@ -140,6 +166,7 @@ void cre_pkpy_api_load_internal_modules(pkpy_vm* vm) {
             {.signature = "node2d_get_z_index_relative_to_parent(entity_id: int) -> bool", .function = cre_pkpy_api_node2d_get_z_index_relative_to_parent},
             {.signature = "node2d_set_ignore_camera(entity_id: int, ignore_camera: bool) -> None", .function = cre_pkpy_api_node2d_set_ignore_camera},
             {.signature = "node2d_get_ignore_camera(entity_id: int) -> bool", .function = cre_pkpy_api_node2d_get_ignore_camera},
+            // Sprite
             // Scene Tree
             {.signature = "scene_tree_change_scene(path: str) -> None", .function = cre_pkpy_api_scene_tree_change_scene},
             {.signature = "scene_tree_get_root()", .function = cre_pkpy_api_scene_tree_get_root},
@@ -154,6 +181,34 @@ void cre_pkpy_api_load_internal_modules(pkpy_vm* vm) {
     // Now load front facing api
     cre_pkpy_util_create_from_string(vm, CRE_PKPY_MODULE_NAME_CRESCENT, CRE_PKPY_CRESCENT_SOURCE);
 }
+
+//--- SHADER INSTANCE ---//
+int cre_pkpy_api_shader_instance_delete(pkpy_vm* vm) { return 0; }
+int cre_pkpy_api_shader_instance_create_bool_param(pkpy_vm* vm) { return 0; }
+int cre_pkpy_api_shader_instance_set_bool_param(pkpy_vm* vm) { return 0; }
+int cre_pkpy_api_shader_instance_get_bool_param(pkpy_vm* vm) { return 0; }
+int cre_pkpy_api_shader_instance_create_int_param(pkpy_vm* vm) { return 0; }
+int cre_pkpy_api_shader_instance_set_int_param(pkpy_vm* vm) { return 0; }
+int cre_pkpy_api_shader_instance_get_int_param(pkpy_vm* vm) { return 0; }
+int cre_pkpy_api_shader_instance_create_float_param(pkpy_vm* vm) { return 0; }
+int cre_pkpy_api_shader_instance_set_float_param(pkpy_vm* vm) { return 0; }
+int cre_pkpy_api_shader_instance_get_float_param(pkpy_vm* vm) { return 0; }
+int cre_pkpy_api_shader_instance_create_float2_param(pkpy_vm* vm) { return 0; }
+int cre_pkpy_api_shader_instance_set_float2_param(pkpy_vm* vm) { return 0; }
+int cre_pkpy_api_shader_instance_get_float2_param(pkpy_vm* vm) { return 0; }
+int cre_pkpy_api_shader_instance_create_float3_param(pkpy_vm* vm) { return 0; }
+int cre_pkpy_api_shader_instance_set_float3_param(pkpy_vm* vm) { return 0; }
+int cre_pkpy_api_shader_instance_get_float3_param(pkpy_vm* vm) { return 0; }
+int cre_pkpy_api_shader_instance_create_float4_param(pkpy_vm* vm) { return 0; }
+int cre_pkpy_api_shader_instance_set_float4_param(pkpy_vm* vm) { return 0; }
+int cre_pkpy_api_shader_instance_get_float4_param(pkpy_vm* vm) { return 0; }
+
+//--- SHADER UTIL ---//
+int cre_pkpy_api_shader_util_compile_shader(pkpy_vm* vm) { return 0; }
+int cre_pkpy_api_shader_util_compile_shader_raw(pkpy_vm* vm) { return 0; }
+int cre_pkpy_api_shader_util_set_screen_shader(pkpy_vm* vm) { return 0; }
+int cre_pkpy_api_shader_util_get_current_screen_shader(pkpy_vm* vm) { return 0; }
+int cre_pkpy_api_shader_util_reset_screen_shader_to_default(pkpy_vm* vm) { return 0; }
 
 //--- NODE ---//
 
