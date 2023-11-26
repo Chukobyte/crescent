@@ -19,6 +19,34 @@
 #include "../../../ecs/component/script_component.h"
 #include "cre_pkpy_entity_instance_cache.h"
 
+// Shader Instance
+int cre_pkpy_api_shader_instance_delete(pkpy_vm* vm);
+int cre_pkpy_api_shader_instance_create_bool_param(pkpy_vm* vm);
+int cre_pkpy_api_shader_instance_set_bool_param(pkpy_vm* vm);
+int cre_pkpy_api_shader_instance_get_bool_param(pkpy_vm* vm);
+int cre_pkpy_api_shader_instance_create_int_param(pkpy_vm* vm);
+int cre_pkpy_api_shader_instance_set_int_param(pkpy_vm* vm);
+int cre_pkpy_api_shader_instance_get_int_param(pkpy_vm* vm);
+int cre_pkpy_api_shader_instance_create_float_param(pkpy_vm* vm);
+int cre_pkpy_api_shader_instance_set_float_param(pkpy_vm* vm);
+int cre_pkpy_api_shader_instance_get_float_param(pkpy_vm* vm);
+int cre_pkpy_api_shader_instance_create_float2_param(pkpy_vm* vm);
+int cre_pkpy_api_shader_instance_set_float2_param(pkpy_vm* vm);
+int cre_pkpy_api_shader_instance_get_float2_param(pkpy_vm* vm);
+int cre_pkpy_api_shader_instance_create_float3_param(pkpy_vm* vm);
+int cre_pkpy_api_shader_instance_set_float3_param(pkpy_vm* vm);
+int cre_pkpy_api_shader_instance_get_float3_param(pkpy_vm* vm);
+int cre_pkpy_api_shader_instance_create_float4_param(pkpy_vm* vm);
+int cre_pkpy_api_shader_instance_set_float4_param(pkpy_vm* vm);
+int cre_pkpy_api_shader_instance_get_float4_param(pkpy_vm* vm);
+
+// Shader Util
+int cre_pkpy_api_shader_util_compile_shader(pkpy_vm* vm);
+int cre_pkpy_api_shader_util_compile_shader_raw(pkpy_vm* vm);
+int cre_pkpy_api_shader_util_set_screen_shader(pkpy_vm* vm);
+int cre_pkpy_api_shader_util_get_current_screen_shader(pkpy_vm* vm);
+int cre_pkpy_api_shader_util_reset_screen_shader_to_default(pkpy_vm* vm);
+
 // Node
 int cre_pkpy_api_node_new(pkpy_vm* vm);
 int cre_pkpy_api_node_get_name(pkpy_vm* vm);
@@ -53,6 +81,22 @@ int cre_pkpy_api_node2d_set_z_index_relative_to_parent(pkpy_vm* vm);
 int cre_pkpy_api_node2d_get_z_index_relative_to_parent(pkpy_vm* vm);
 int cre_pkpy_api_node2d_set_ignore_camera(pkpy_vm* vm);
 int cre_pkpy_api_node2d_get_ignore_camera(pkpy_vm* vm);
+
+// Sprite
+int cre_pkpy_api_sprite_get_texture(pkpy_vm* vm);
+int cre_pkpy_api_sprite_set_texture(pkpy_vm* vm);
+int cre_pkpy_api_sprite_get_draw_source(pkpy_vm* vm);
+int cre_pkpy_api_sprite_set_draw_source(pkpy_vm* vm);
+int cre_pkpy_api_sprite_get_flip_h(pkpy_vm* vm);
+int cre_pkpy_api_sprite_set_flip_h(pkpy_vm* vm);
+int cre_pkpy_api_sprite_get_flip_v(pkpy_vm* vm);
+int cre_pkpy_api_sprite_set_flip_v(pkpy_vm* vm);
+int cre_pkpy_api_sprite_get_modulate(pkpy_vm* vm);
+int cre_pkpy_api_sprite_set_modulate(pkpy_vm* vm);
+int cre_pkpy_api_sprite_get_origin(pkpy_vm* vm);
+int cre_pkpy_api_sprite_set_origin(pkpy_vm* vm);
+int cre_pkpy_api_sprite_get_shader_instance(pkpy_vm* vm);
+int cre_pkpy_api_sprite_set_shader_instance(pkpy_vm* vm);
 
 // Scene Tree
 int cre_pkpy_api_scene_tree_change_scene(pkpy_vm* vm);
