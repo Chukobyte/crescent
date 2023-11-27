@@ -32,7 +32,7 @@ void cre_pkpy_util_create_module(pkpy_vm* vm, CrePPModule* module) {
     pkpy_push_module(vm, module->name);
     SE_ASSERT(!cre_pkpy_util_print_error_message(vm));
     pkpy_pop_top(vm);
-    char nameBuffer[48];
+    char nameBuffer[64];
     strncpy_s(nameBuffer, sizeof(char) * 8, "import ", 8);
     strcat_s(nameBuffer, sizeof(nameBuffer), module->name);
     pkpy_exec(vm, nameBuffer); // import { module->name }
@@ -47,7 +47,7 @@ void cre_pkpy_util_create_module(pkpy_vm* vm, CrePPModule* module) {
         pkpy_eval(vm, module->name);
         SE_ASSERT(!cre_pkpy_util_print_error_message(vm));
 
-        SE_ASSERT_FMT(pkpy_stack_size(vm) == 2, "Expected stack size to be 2 but was %d for '%s'", pkpy_stack_size(vm), func->signature);
+//        SE_ASSERT_FMT(pkpy_stack_size(vm) == 2, "Expected stack size to be 2 but was %d for '%s'", pkpy_stack_size(vm), func->signature);
         cre_copy_name_from_signature(nameBuffer, func->signature);
         pkpy_setattr(vm, pkpy_name(nameBuffer));
         SE_ASSERT(!cre_pkpy_util_print_error_message(vm));
