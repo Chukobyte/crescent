@@ -109,6 +109,8 @@ int cre_pkpy_api_animated_sprite_play(pkpy_vm* vm);
 int cre_pkpy_api_animated_sprite_stop(pkpy_vm* vm);
 int cre_pkpy_api_animated_sprite_set_current_animation_frame(pkpy_vm* vm);
 int cre_pkpy_api_animated_sprite_add_animation(pkpy_vm* vm);
+int cre_pkpy_api_animated_sprite_get_stagger_animation_start_times(pkpy_vm* vm);
+int cre_pkpy_api_animated_sprite_set_stagger_animation_start_times(pkpy_vm* vm);
 int cre_pkpy_api_animated_sprite_get_flip_h(pkpy_vm* vm);
 int cre_pkpy_api_animated_sprite_set_flip_h(pkpy_vm* vm);
 int cre_pkpy_api_animated_sprite_get_flip_v(pkpy_vm* vm);
@@ -203,7 +205,23 @@ void cre_pkpy_api_load_internal_modules(pkpy_vm* vm) {
             {.signature = "sprite_set_origin(entity_id: int, x: float, y: float) -> None", .function = cre_pkpy_api_sprite_set_origin},
             {.signature = "sprite_get_shader_instance(entity_id: int) -> int", .function = cre_pkpy_api_sprite_get_shader_instance},
             {.signature = "sprite_set_shader_instance(entity_id: int, shader_instance_id: int) -> None", .function = cre_pkpy_api_sprite_set_shader_instance},
-
+            // Animated Sprite
+            {.signature = "animated_sprite_play(entity_id: int, animation_name: str) -> bool", .function = cre_pkpy_api_animated_sprite_play},
+            {.signature = "animated_sprite_stop(entity_id: int) -> None", .function = cre_pkpy_api_animated_sprite_stop},
+            {.signature = "animated_sprite_set_current_animation_frame(entity_id: int, frame: int) -> None", .function = cre_pkpy_api_animated_sprite_set_current_animation_frame},
+            {.signature = "animated_sprite_add_animation(entity_id: int, name: str, speed: float, does_loop: bool, frame_count: int, *args) -> None", .function = cre_pkpy_api_animated_sprite_add_animation},
+//            {.signature = "animated_sprite_get_stagger_animation_start_times(entity_id: int) -> bool", .function = cre_pkpy_api_animated_sprite_get_stagger_animation_start_times},
+//            {.signature = "animated_sprite_set_stagger_animation_start_times(entity_id: int, stagger: bool) -> None", .function = cre_pkpy_api_animated_sprite_set_stagger_animation_start_times},
+            {.signature = "animated_sprite_get_flip_h(entity_id: int) -> bool", .function = cre_pkpy_api_animated_sprite_get_flip_h},
+            {.signature = "animated_sprite_set_flip_h(entity_id: int, flip_h: bool) -> None", .function = cre_pkpy_api_animated_sprite_set_flip_h},
+            {.signature = "animated_sprite_get_flip_v(entity_id: int) -> bool", .function = cre_pkpy_api_animated_sprite_get_flip_v},
+            {.signature = "animated_sprite_set_flip_v(entity_id: int, flip_v: bool) -> None", .function = cre_pkpy_api_animated_sprite_set_flip_v},
+            {.signature = "animated_sprite_get_modulate(entity_id: int) -> Tuple[int, int, int, int]", .function = cre_pkpy_api_animated_sprite_get_modulate},
+            {.signature = "animated_sprite_set_modulate(entity_id: int, r: int, g: int, b: int, a: int) -> None", .function = cre_pkpy_api_animated_sprite_set_modulate},
+            {.signature = "animated_sprite_get_origin(entity_id: int) -> Tuple[float, float]", .function = cre_pkpy_api_animated_sprite_get_origin},
+            {.signature = "animated_sprite_set_origin(entity_id: int, x: float, y: float) -> None", .function = cre_pkpy_api_animated_sprite_set_origin},
+            {.signature = "animated_sprite_get_shader_instance(entity_id: int) -> int", .function = cre_pkpy_api_animated_sprite_get_shader_instance},
+            {.signature = "animated_sprite_set_shader_instance(entity_id: int, shader_instance_id: int) -> None", .function = cre_pkpy_api_animated_sprite_set_shader_instance},
             // Scene Tree
             {.signature = "scene_tree_change_scene(path: str) -> None", .function = cre_pkpy_api_scene_tree_change_scene},
             {.signature = "scene_tree_get_root()", .function = cre_pkpy_api_scene_tree_get_root},
@@ -1254,6 +1272,28 @@ int cre_pkpy_api_animated_sprite_add_animation(pkpy_vm* vm) {
     }
     return 0;
 #undef CRE_PKPY_API_ANIM_FRAME_STRIDE
+}
+
+int cre_pkpy_api_animated_sprite_get_stagger_animation_start_times(pkpy_vm* vm) {
+    int pyEntityId;
+    pkpy_to_int(vm, 0, &pyEntityId);
+
+    const CreEntity entity = (CreEntity)pyEntityId;
+    const AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_ANIMATED_SPRITE);
+    pkpy_push_bool(vm, animatedSpriteComponent->staggerStartAnimationTimes);
+    return 1;
+}
+
+int cre_pkpy_api_animated_sprite_set_stagger_animation_start_times(pkpy_vm* vm) {
+    int pyEntityId;
+    bool pyStaggerStartAnimationTimes;
+    pkpy_to_int(vm, 0, &pyEntityId);
+    pkpy_to_bool(vm, 1, &pyStaggerStartAnimationTimes);
+
+    const CreEntity entity = (CreEntity)pyEntityId;
+    AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_ANIMATED_SPRITE);
+    animatedSpriteComponent->staggerStartAnimationTimes = pyStaggerStartAnimationTimes;
+    return 0;
 }
 
 int cre_pkpy_api_animated_sprite_get_flip_h(pkpy_vm* vm) {
