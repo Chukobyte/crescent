@@ -3,6 +3,7 @@ from typing import Optional
 import crescent_internal
 from crescent import Node, SceneTree, Node2D, Vector2
 
+# import nonexistant  # TODO: uncomment and test custom import handler
 import test_custom_nodes
 
 

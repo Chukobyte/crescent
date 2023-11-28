@@ -236,6 +236,73 @@ def animated_sprite_get_shader_instance(entity_id: int) -> int:
 def animated_sprite_set_shader_instance(entity_id: int, shader_instance_id: int) -> None:
     pass
 
+
+# --- TEXT LABEL --- #
+def text_label_get_text(entity_id: int) -> str:
+    return ""
+
+
+def text_label_set_text(entity_id: int, text: str) -> None:
+    pass
+
+
+def text_label_get_color(entity_id: int) -> Tuple[int, int, int, int]:
+    return 255, 255, 255, 255
+
+
+def text_label_set_color(entity_id: int, r: int, g: int, b: int, a: int) -> None:
+    pass
+
+
+def text_label_set_font_uid(entity_id: int, uid: str) -> None:
+    pass
+
+
+# --- COLLIDER2D --- #
+def collider2d_get_extents(entity_id: int) -> Tuple[float, float]:
+    return 8.0, 8.0
+
+
+def collider2d_set_extents(entity_id: int, w: float, h: float):
+    pass
+
+
+def collider2d_get_color(entity_id: int) -> Tuple[int, int, int, int]:
+    return 255, 255, 255, 255
+
+
+def collider2d_set_color(entity_id: int, r: int, g: int, b: int, a: int) -> None:
+    pass
+
+
+# --- COLOR RECT --- #
+
+def color_rect_get_size(entity_id: int) -> Tuple[float, float]:
+    return 8.0, 8.0
+
+
+def color_rect_set_size(entity_id: int, w: float, h: float) -> None:
+    pass
+
+
+def color_rect_get_color(entity_id: int) -> Tuple[int, int, int, int]:
+    return 255, 255, 255, 255
+
+
+def color_rect_set_color(entity_id: int, r: int, g: int, b: int, a: int) -> None:
+    pass
+
+
+# --- PARALLAX --- #
+
+def parallax_get_scroll_speed(entity_id: int) -> Tuple[float, float]:
+    return 1.0, 1.0
+
+
+def parallax_set_scroll_speed(entity_id: int, x: float, y: float) -> None:
+    pass
+
+
 # --- SHADER INSTANCE --- #
 
 def shader_instance_delete(shader_id: int) -> bool:

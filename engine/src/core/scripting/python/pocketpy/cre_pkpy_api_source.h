@@ -938,156 +938,118 @@
 "        crescent_internal.animated_sprite_set_shader_instance(self.entity_id, value.shader_id)\n"\
 "\n"\
 "\n"\
-"# class TextLabel(Node2D):\n"\
-"#     @property\n"\
-"#     def text(self) -> str:\n"\
-"#         return crescent_internal.text_label_get_text(entity_id=self.entity_id)\n"\
-"#\n"\
-"#     @text.setter\n"\
-"#     def text(self, value: str) -> None:\n"\
-"#         crescent_internal.text_label_set_text(entity_id=self.entity_id, text=value)\n"\
-"#\n"\
-"#     def get_text(self) -> str:\n"\
-"#         return crescent_internal.text_label_get_text(entity_id=self.entity_id)\n"\
-"#\n"\
-"#     def set_text(self, text: str) -> None:\n"\
-"#         crescent_internal.text_label_set_text(entity_id=self.entity_id, text=text)\n"\
-"#\n"\
-"#     @property\n"\
-"#     def color(self) -> Color:\n"\
-"#         r, g, b, a = crescent_internal.text_label_get_color(\n"\
-"#             entity_id=self.entity_id\n"\
-"#         )\n"\
-"#         return Color(r, g, b, a)\n"\
-"#\n"\
-"#     @color.setter\n"\
-"#     def color(self, value: Color) -> None:\n"\
-"#         crescent_internal.text_label_set_color(\n"\
-"#             entity_id=self.entity_id, r=value.r, g=value.g, b=value.b, a=value.a\n"\
-"#         )\n"\
-"#\n"\
-"#     def get_color(self) -> Color:\n"\
-"#         r, g, b, a = crescent_internal.text_label_get_color(\n"\
-"#             entity_id=self.entity_id\n"\
-"#         )\n"\
-"#         return Color(r, g, b, a)\n"\
-"#\n"\
-"#     def set_color(self, color: Color) -> None:\n"\
-"#         crescent_internal.text_label_set_color(\n"\
-"#             entity_id=self.entity_id, r=color.r, g=color.g, b=color.b, a=color.a\n"\
-"#         )\n"\
-"#\n"\
-"#     @property\n"\
-"#     def font_uid(self) -> str:\n"\
-"#         return crescent_internal.text_label_get_font_uid(entity_id=self.entity_id)\n"\
-"#\n"\
-"#     @font_uid.setter\n"\
-"#     def font_uid(self, value: str) -> None:\n"\
-"#         crescent_internal.text_label_set_font_uid(\n"\
-"#             entity_id=self.entity_id, uid=value\n"\
-"#         )\n"\
-"#\n"\
-"#\n"\
-"# class Collider2D(Node2D):\n"\
-"#     def get_extents(self) -> Size2D:\n"\
-"#         w, h = crescent_internal.collider2D_get_extents(entity_id=self.entity_id)\n"\
-"#         return Size2D(w=w, h=h)\n"\
-"#\n"\
-"#     def set_extents(self, extents: Size2D) -> None:\n"\
-"#         crescent_internal.collider2D_set_extents(\n"\
-"#             entity_id=self.entity_id, w=extents.w, h=extents.h\n"\
-"#         )\n"\
-"#\n"\
-"#     @property\n"\
-"#     def extents(self) -> Size2D:\n"\
-"#         w, h = crescent_internal.collider2D_get_extents(entity_id=self.entity_id)\n"\
-"#         return Size2D(w=w, h=h)\n"\
-"#\n"\
-"#     @extents.setter\n"\
-"#     def extents(self, value: Size2D) -> None:\n"\
-"#         crescent_internal.collider2D_set_extents(\n"\
-"#             entity_id=self.entity_id, w=value.w, h=value.h\n"\
-"#         )\n"\
-"#\n"\
-"#     def get_color(self) -> Color:\n"\
-"#         r, g, b, a = crescent_internal.collider2D_get_color(\n"\
-"#             entity_id=self.entity_id\n"\
-"#         )\n"\
-"#         return Color(r=r, g=g, b=b, a=a)\n"\
-"#\n"\
-"#     def set_color(self, color: Color) -> None:\n"\
-"#         crescent_internal.collider2D_set_color(\n"\
-"#             entity_id=self.entity_id, r=color.r, g=color.g, b=color.b, a=color.a\n"\
-"#         )\n"\
-"#\n"\
-"#     @property\n"\
-"#     def color(self) -> Color:\n"\
-"#         r, g, b, a = crescent_internal.collider2D_get_color(\n"\
-"#             entity_id=self.entity_id\n"\
-"#         )\n"\
-"#         return Color(r=r, g=g, b=b, a=a)\n"\
-"#\n"\
-"#     @color.setter\n"\
-"#     def color(self, value: Color) -> None:\n"\
-"#         crescent_internal.collider2D_set_color(\n"\
-"#             entity_id=self.entity_id, r=value.r, g=value.g, b=value.b, a=value.a\n"\
-"#         )\n"\
-"#\n"\
-"#\n"\
-"# class ColorRect(Node2D):\n"\
-"#     def get_size(self) -> Size2D:\n"\
-"#         w, h = crescent_internal.color_rect_get_size(entity_id=self.entity_id)\n"\
-"#         return Size2D(w=w, h=h)\n"\
-"#\n"\
-"#     def set_size(self, extents: Size2D) -> None:\n"\
-"#         crescent_internal.color_rect_set_size(\n"\
-"#             entity_id=self.entity_id, w=extents.w, h=extents.h\n"\
-"#         )\n"\
-"#\n"\
-"#     @property\n"\
-"#     def size(self) -> Size2D:\n"\
-"#         w, h = crescent_internal.color_rect_get_size(entity_id=self.entity_id)\n"\
-"#         return Size2D(w=w, h=h)\n"\
-"#\n"\
-"#     @size.setter\n"\
-"#     def size(self, value: Size2D) -> None:\n"\
-"#         crescent_internal.color_rect_set_size(\n"\
-"#             entity_id=self.entity_id, w=value.w, h=value.h\n"\
-"#         )\n"\
-"#\n"\
-"#     def get_color(self) -> Color:\n"\
-"#         r, g, b, a = crescent_internal.color_rect_get_color(\n"\
-"#             entity_id=self.entity_id\n"\
-"#         )\n"\
-"#         return Color(r=r, g=g, b=b, a=a)\n"\
-"#\n"\
-"#     def set_color(self, color: Color) -> None:\n"\
-"#         crescent_internal.color_rect_set_color(\n"\
-"#             entity_id=self.entity_id, r=color.r, g=color.g, b=color.b, a=color.a\n"\
-"#         )\n"\
-"#\n"\
-"#     @property\n"\
-"#     def color(self) -> Color:\n"\
-"#         r, g, b, a = crescent_internal.color_rect_get_color(\n"\
-"#             entity_id=self.entity_id\n"\
-"#         )\n"\
-"#         return Color(r=r, g=g, b=b, a=a)\n"\
-"#\n"\
-"#     @color.setter\n"\
-"#     def color(self, value: Color) -> None:\n"\
-"#         crescent_internal.color_rect_set_color(\n"\
-"#             entity_id=self.entity_id, r=value.r, g=value.g, b=value.b, a=value.a\n"\
-"#         )\n"\
-"#\n"\
-"#\n"\
-"# class Parallax(Node2D):\n"\
-"#     @property\n"\
-"#     def scroll_speed(self) -> Vector2:\n"\
-"#         return Vector2.ZERO()\n"\
-"#\n"\
-"#     @scroll_speed.setter\n"\
-"#     def scroll_speed(self, value: Vector2) -> None:\n"\
-"#         pass\n"\
+"class TextLabel(Node2D):\n"\
+"    @property\n"\
+"    def text(self) -> str:\n"\
+"        return crescent_internal.text_label_get_text(self.entity_id)\n"\
+"\n"\
+"    @text.setter\n"\
+"    def text(self, value: str) -> None:\n"\
+"        crescent_internal.text_label_set_text(self.entity_id, value)\n"\
+"\n"\
+"    def get_text(self) -> str:\n"\
+"        return crescent_internal.text_label_get_text(self.entity_id)\n"\
+"\n"\
+"    def set_text(self, text: str) -> None:\n"\
+"        crescent_internal.text_label_set_text(self.entity_id, text)\n"\
+"\n"\
+"    @property\n"\
+"    def color(self) -> Color:\n"\
+"        r, g, b, a = crescent_internal.text_label_get_color(self.entity_id)\n"\
+"        return Color(r, g, b, a)\n"\
+"\n"\
+"    @color.setter\n"\
+"    def color(self, value: Color) -> None:\n"\
+"        crescent_internal.text_label_set_color(self.entity_id, value.r, value.g, value.b, value.a)\n"\
+"\n"\
+"    def get_color(self) -> Color:\n"\
+"        r, g, b, a = crescent_internal.text_label_get_color(self.entity_id)\n"\
+"        return Color(r, g, b, a)\n"\
+"\n"\
+"    def set_color(self, color: Color) -> None:\n"\
+"        crescent_internal.text_label_set_color(self.entity_id, color.r, color.g, color.b, color.a)\n"\
+"\n"\
+"    def set_font(self, uid: str) -> None:\n"\
+"        crescent_internal.text_label_set_font_uid(self.entity_id, uid)\n"\
+"\n"\
+"\n"\
+"class Collider2D(Node2D):\n"\
+"    def get_extents(self) -> Size2D:\n"\
+"        w, h = crescent_internal.collider2d_get_extents(self.entity_id)\n"\
+"        return Size2D(w, h)\n"\
+"\n"\
+"    def set_extents(self, extents: Size2D) -> None:\n"\
+"        crescent_internal.collider2d_set_extents(self.entity_id, extents.w, extents.h)\n"\
+"\n"\
+"    @property\n"\
+"    def extents(self) -> Size2D:\n"\
+"        w, h = crescent_internal.collider2d_get_extents(self.entity_id)\n"\
+"        return Size2D(w, h)\n"\
+"\n"\
+"    @extents.setter\n"\
+"    def extents(self, value: Size2D) -> None:\n"\
+"        crescent_internal.collider2d_set_extents(self.entity_id, value.w, value.h)\n"\
+"\n"\
+"    def get_color(self) -> Color:\n"\
+"        r, g, b, a = crescent_internal.collider2d_get_color(self.entity_id)\n"\
+"        return Color(r, g, b, a)\n"\
+"\n"\
+"    def set_color(self, color: Color) -> None:\n"\
+"        crescent_internal.collider2d_set_color(self.entity_id, color.r, color.g, color.b, color.a)\n"\
+"\n"\
+"    @property\n"\
+"    def color(self) -> Color:\n"\
+"        r, g, b, a = crescent_internal.collider2d_get_color(self.entity_id)\n"\
+"        return Color(r, g, b, a)\n"\
+"\n"\
+"    @color.setter\n"\
+"    def color(self, value: Color) -> None:\n"\
+"        crescent_internal.collider2d_set_color(self.entity_id, value.r, value.g, value.b, value.a)\n"\
+"\n"\
+"\n"\
+"class ColorRect(Node2D):\n"\
+"    def get_size(self) -> Size2D:\n"\
+"        w, h = crescent_internal.color_rect_get_size(self.entity_id)\n"\
+"        return Size2D(w, h)\n"\
+"\n"\
+"    def set_size(self, extents: Size2D) -> None:\n"\
+"        crescent_internal.color_rect_set_size(self.entity_id, extents.w, extents.h)\n"\
+"\n"\
+"    @property\n"\
+"    def size(self) -> Size2D:\n"\
+"        w, h = crescent_internal.color_rect_get_size(self.entity_id)\n"\
+"        return Size2D(w, h)\n"\
+"\n"\
+"    @size.setter\n"\
+"    def size(self, value: Size2D) -> None:\n"\
+"        crescent_internal.color_rect_set_size(self.entity_id, value.w, value.h)\n"\
+"\n"\
+"    def get_color(self) -> Color:\n"\
+"        r, g, b, a = crescent_internal.color_rect_get_color(self.entity_id)\n"\
+"        return Color(r, g, b, a)\n"\
+"\n"\
+"    def set_color(self, color: Color) -> None:\n"\
+"        crescent_internal.color_rect_set_color(self.entity_id, color.r, color.g, color.b, color.a)\n"\
+"\n"\
+"    @property\n"\
+"    def color(self) -> Color:\n"\
+"        r, g, b, a = crescent_internal.color_rect_get_color(self.entity_id)\n"\
+"        return Color(r, g, b, a)\n"\
+"\n"\
+"    @color.setter\n"\
+"    def color(self, value: Color) -> None:\n"\
+"        crescent_internal.color_rect_set_color(self.entity_id, value.r, value.g, value.b, value.a)\n"\
+"\n"\
+"\n"\
+"class Parallax(Node2D):\n"\
+"    @property\n"\
+"    def scroll_speed(self) -> Vector2:\n"\
+"        x, y = crescent_internal.parallax_get_scroll_speed(self.entity_id)\n"\
+"        return Vector2(x, y)\n"\
+"\n"\
+"    @scroll_speed.setter\n"\
+"    def scroll_speed(self, value: Vector2) -> None:\n"\
+"        crescent_internal.parallax_set_scroll_speed(self.entity_id, value.x, value.y)\n"\
 "\n"\
 "\n"\
 "class SceneTree:\n"\
