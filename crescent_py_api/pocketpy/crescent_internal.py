@@ -403,6 +403,66 @@ def shader_util_reset_screen_shader_to_default() -> None:
     pass
 
 
+# --- ENGINE --- #
+
+def engine_exit(code: int) -> None:
+    pass
+
+
+def engine_set_target_fps(fps: int) -> None:
+    pass
+
+
+def engine_get_target_fps() -> int:
+    return 66
+
+
+def engine_get_average_fps() -> int:
+    return 66
+
+
+def engine_set_fps_display_enabled(enabled: bool, font_uid: str, position_x: float, position_y: float) -> None:
+    pass
+
+
+def engine_get_global_physics_delta_time() -> float:
+    return 0.1
+
+
+# --- INPUT --- #
+
+def input_add_action(name: str, value: str, device_id: int) -> None:
+    pass
+
+
+def input_is_action_pressed(name: str) -> bool:
+    return False
+
+
+def input_is_action_just_pressed(name: str) -> bool:
+    return False
+
+
+def input_is_action_just_released(name: str) -> bool:
+    return False
+
+
+def input_start_gamepad_vibration(device_id: int, weak_magnitude: float, strong_magnitude: float, duration: float) -> None:
+    pass
+
+
+def input_stop_gamepad_vibration(device_id: int) -> None:
+    pass
+
+
+def input_mouse_get_position() -> Tuple[float, float]:
+    return 0.0, 0.0
+
+
+def input_mouse_get_world_position() -> Tuple[float, float]:
+    return 0.0, 0.0
+
+
 # --- SCENE TREE --- #
 def scene_tree_change_scene(path: str) -> None:
     pass

@@ -892,7 +892,7 @@ int cre_pkpy_api_node2d_get_global_position(pkpy_vm* vm) {
     pkpy_to_int(vm, 0, &pyEntityId);
 
     const CreEntity entity = (CreEntity)pyEntityId;
-    const Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_TRANSFORM_2D);
+    Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_TRANSFORM_2D);
     SETransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity, transformComp);
     pkpy_push_float(vm, (double)globalTransform->position.x);
     pkpy_push_float(vm, (double)globalTransform->position.y);

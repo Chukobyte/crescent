@@ -529,6 +529,164 @@ class ShaderUtil:
         crescent_internal.shader_util_reset_screen_shader_to_default()
 
 
+class Engine:
+    @staticmethod
+    def exit(code=0) -> None:
+        crescent_internal.engine_exit(code=code)
+
+    @staticmethod
+    def set_target_fps(fps: int) -> None:
+        crescent_internal.engine_set_target_fps(fps=fps)
+
+    @staticmethod
+    def get_target_fps() -> int:
+        return crescent_internal.engine_get_target_fps()
+
+    @staticmethod
+    def get_average_fps() -> float:
+        return crescent_internal.engine_get_average_fps()
+
+    @staticmethod
+    def set_fps_display_enabled(enabled: bool, font_uid="", position: Optional[Vector2] = None) -> None:
+        if not position:
+            position = Vector2(20, 30)
+        crescent_internal.engine_set_fps_display_enabled(enabled, font_uid, position.x, position.y)
+
+    @staticmethod
+    def get_global_physics_delta_time() -> float:
+        return crescent_internal.engine_get_global_physics_delta_time()
+
+
+class Input:
+    @staticmethod
+    def add_action(name: str, value: str, device_id=0) -> None:
+        crescent_internal.input_add_action(name, value, device_id)
+
+    @staticmethod
+    def is_action_pressed(name: str) -> bool:
+        return crescent_internal.input_is_action_pressed(name)
+
+    @staticmethod
+    def is_action_just_pressed(name: str) -> bool:
+        return crescent_internal.input_is_action_just_pressed(name)
+
+    @staticmethod
+    def is_action_just_released(name: str) -> bool:
+        return crescent_internal.input_is_action_just_released(name)
+
+    @staticmethod
+    def start_gamepad_vibration(device_id: int, weak_magnitude: float, strong_magnitude: float, duration: float) -> None:
+        crescent_internal.input_start_gamepad_vibration(device_id, weak_magnitude, strong_magnitude, duration)
+
+    @staticmethod
+    def stop_gamepad_vibration(device_id: int) -> None:
+        crescent_internal.input_stop_gamepad_vibration(device_id)
+
+
+class Mouse:
+    LEFT_BUTTON = "mb_left"
+    RIGHT_BUTTON = "mb_right"
+
+    @staticmethod
+    def get_position() -> Vector2:
+        mouse_x, mouse_y = crescent_internal.input_mouse_get_position()
+        return Vector2(mouse_x, mouse_y)
+
+    @staticmethod
+    def get_world_position() -> Vector2:
+        mouse_x, mouse_y = crescent_internal.input_mouse_get_world_position()
+        return Vector2(mouse_x, mouse_y)
+
+
+class Keyboard:
+    NUM_0 = "0"
+    NUM_1 = "1"
+    NUM_2 = "2"
+    NUM_3 = "3"
+    NUM_4 = "4"
+    NUM_5 = "5"
+    NUM_6 = "6"
+    NUM_7 = "7"
+    NUM_8 = "8"
+    NUM_9 = "9"
+
+    A = "a"
+    B = "b"
+    C = "c"
+    D = "d"
+    E = "e"
+    F = "f"
+    G = "g"
+    H = "h"
+    I = "i"
+    J = "j"
+    K = "k"
+    L = "l"
+    M = "m"
+    N = "n"
+    O = "o"
+    P = "p"
+    Q = "q"
+    R = "r"
+    S = "s"
+    T = "t"
+    U = "u"
+    V = "v"
+    W = "w"
+    X = "x"
+    Y = "y"
+    Z = "z"
+
+    UP = "up"
+    DOWN = "down"
+    LEFT = "left"
+    RIGHT = "right"
+    SPACE = "space"
+    ESC = "esc"
+    RETURN = "return"
+
+    F1 = "f1"
+    F2 = "f2"
+    F3 = "f3"
+    F4 = "f4"
+    F5 = "f5"
+    F6 = "f6"
+    F7 = "f7"
+    F8 = "f8"
+    F9 = "f9"
+    F10 = "f10"
+    F11 = "f11"
+    F12 = "f12"
+
+
+class Gamepad:
+    BUTTON_A = "joystick_button_a"
+    BUTTON_B = "joystick_button_b"
+    BUTTON_X = "joystick_button_x"
+    BUTTON_Y = "joystick_button_y"
+    BUTTON_START = "joystick_start"
+    BUTTON_BACK = "joystick_back"
+    BUTTON_DPAD_LEFT = "joystick_dpad_left"
+    BUTTON_DPAD_RIGHT = "joystick_dpad_right"
+    BUTTON_DPAD_UP = "joystick_dpad_up"
+    BUTTON_DPAD_DOWN = "joystick_dpad_down"
+    BUTTON_LEFT_SHOULDER = "joystick_left_shoulder"
+    BUTTON_RIGHT_SHOULDER = "joystick_right_shoulder"
+    BUTTON_LEFT_ANALOG = "joystick_left_analog"
+    BUTTON_RIGHT_ANALOG = "joystick_right_analog"
+
+    AXIS_LEFT_TRIGGER = "joystick_left_trigger"
+    AXIS_RIGHT_TRIGGER = "joystick_right_trigger"
+    AXIS_LEFT_ANALOG_LEFT = "joystick_left_analog_left"
+    AXIS_LEFT_ANALOG_RIGHT = "joystick_left_analog_right"
+    AXIS_LEFT_ANALOG_UP = "joystick_left_analog_up"
+    AXIS_LEFT_ANALOG_DOWN = "joystick_left_analog_down"
+    AXIS_RIGHT_ANALOG_LEFT = "joystick_right_analog_left"
+    AXIS_RIGHT_ANALOG_RIGHT = "joystick_right_analog_right"
+    AXIS_RIGHT_ANALOG_UP = "joystick_right_analog_up"
+    AXIS_RIGHT_ANALOG_DOWN = "joystick_right_analog_down"
+
+
 class _NodeEventSubscriber:
     def __init__(self, entity_id: int, call_back: Callable[[Tuple], None], event_owner_entity_id: int, event_name: str) -> None:
         self.entity_id = entity_id

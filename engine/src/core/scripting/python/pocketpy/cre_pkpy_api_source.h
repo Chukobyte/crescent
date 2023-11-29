@@ -532,6 +532,164 @@
 "        crescent_internal.shader_util_reset_screen_shader_to_default()\n"\
 "\n"\
 "\n"\
+"class Engine:\n"\
+"    @staticmethod\n"\
+"    def exit(code=0) -> None:\n"\
+"        crescent_internal.engine_exit(code=code)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def set_target_fps(fps: int) -> None:\n"\
+"        crescent_internal.engine_set_target_fps(fps=fps)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def get_target_fps() -> int:\n"\
+"        return crescent_internal.engine_get_target_fps()\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def get_average_fps() -> float:\n"\
+"        return crescent_internal.engine_get_average_fps()\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def set_fps_display_enabled(enabled: bool, font_uid=\"\", position: Optional[Vector2] = None) -> None:\n"\
+"        if not position:\n"\
+"            position = Vector2(20, 30)\n"\
+"        crescent_internal.engine_set_fps_display_enabled(enabled, font_uid, position.x, position.y)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def get_global_physics_delta_time() -> float:\n"\
+"        return crescent_internal.engine_get_global_physics_delta_time()\n"\
+"\n"\
+"\n"\
+"class Input:\n"\
+"    @staticmethod\n"\
+"    def add_action(name: str, value: str, device_id=0) -> None:\n"\
+"        crescent_internal.input_add_action(name, value, device_id)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def is_action_pressed(name: str) -> bool:\n"\
+"        return crescent_internal.input_is_action_pressed(name)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def is_action_just_pressed(name: str) -> bool:\n"\
+"        return crescent_internal.input_is_action_just_pressed(name)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def is_action_just_released(name: str) -> bool:\n"\
+"        return crescent_internal.input_is_action_just_released(name)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def start_gamepad_vibration(device_id: int, weak_magnitude: float, strong_magnitude: float, duration: float) -> None:\n"\
+"        crescent_internal.input_start_gamepad_vibration(device_id, weak_magnitude, strong_magnitude, duration)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def stop_gamepad_vibration(device_id: int) -> None:\n"\
+"        crescent_internal.input_stop_gamepad_vibration(device_id)\n"\
+"\n"\
+"\n"\
+"class Mouse:\n"\
+"    LEFT_BUTTON = \"mb_left\"\n"\
+"    RIGHT_BUTTON = \"mb_right\"\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def get_position() -> Vector2:\n"\
+"        mouse_x, mouse_y = crescent_internal.input_mouse_get_position()\n"\
+"        return Vector2(mouse_x, mouse_y)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def get_world_position() -> Vector2:\n"\
+"        mouse_x, mouse_y = crescent_internal.input_mouse_get_world_position()\n"\
+"        return Vector2(mouse_x, mouse_y)\n"\
+"\n"\
+"\n"\
+"class Keyboard:\n"\
+"    NUM_0 = \"0\"\n"\
+"    NUM_1 = \"1\"\n"\
+"    NUM_2 = \"2\"\n"\
+"    NUM_3 = \"3\"\n"\
+"    NUM_4 = \"4\"\n"\
+"    NUM_5 = \"5\"\n"\
+"    NUM_6 = \"6\"\n"\
+"    NUM_7 = \"7\"\n"\
+"    NUM_8 = \"8\"\n"\
+"    NUM_9 = \"9\"\n"\
+"\n"\
+"    A = \"a\"\n"\
+"    B = \"b\"\n"\
+"    C = \"c\"\n"\
+"    D = \"d\"\n"\
+"    E = \"e\"\n"\
+"    F = \"f\"\n"\
+"    G = \"g\"\n"\
+"    H = \"h\"\n"\
+"    I = \"i\"\n"\
+"    J = \"j\"\n"\
+"    K = \"k\"\n"\
+"    L = \"l\"\n"\
+"    M = \"m\"\n"\
+"    N = \"n\"\n"\
+"    O = \"o\"\n"\
+"    P = \"p\"\n"\
+"    Q = \"q\"\n"\
+"    R = \"r\"\n"\
+"    S = \"s\"\n"\
+"    T = \"t\"\n"\
+"    U = \"u\"\n"\
+"    V = \"v\"\n"\
+"    W = \"w\"\n"\
+"    X = \"x\"\n"\
+"    Y = \"y\"\n"\
+"    Z = \"z\"\n"\
+"\n"\
+"    UP = \"up\"\n"\
+"    DOWN = \"down\"\n"\
+"    LEFT = \"left\"\n"\
+"    RIGHT = \"right\"\n"\
+"    SPACE = \"space\"\n"\
+"    ESC = \"esc\"\n"\
+"    RETURN = \"return\"\n"\
+"\n"\
+"    F1 = \"f1\"\n"\
+"    F2 = \"f2\"\n"\
+"    F3 = \"f3\"\n"\
+"    F4 = \"f4\"\n"\
+"    F5 = \"f5\"\n"\
+"    F6 = \"f6\"\n"\
+"    F7 = \"f7\"\n"\
+"    F8 = \"f8\"\n"\
+"    F9 = \"f9\"\n"\
+"    F10 = \"f10\"\n"\
+"    F11 = \"f11\"\n"\
+"    F12 = \"f12\"\n"\
+"\n"\
+"\n"\
+"class Gamepad:\n"\
+"    BUTTON_A = \"joystick_button_a\"\n"\
+"    BUTTON_B = \"joystick_button_b\"\n"\
+"    BUTTON_X = \"joystick_button_x\"\n"\
+"    BUTTON_Y = \"joystick_button_y\"\n"\
+"    BUTTON_START = \"joystick_start\"\n"\
+"    BUTTON_BACK = \"joystick_back\"\n"\
+"    BUTTON_DPAD_LEFT = \"joystick_dpad_left\"\n"\
+"    BUTTON_DPAD_RIGHT = \"joystick_dpad_right\"\n"\
+"    BUTTON_DPAD_UP = \"joystick_dpad_up\"\n"\
+"    BUTTON_DPAD_DOWN = \"joystick_dpad_down\"\n"\
+"    BUTTON_LEFT_SHOULDER = \"joystick_left_shoulder\"\n"\
+"    BUTTON_RIGHT_SHOULDER = \"joystick_right_shoulder\"\n"\
+"    BUTTON_LEFT_ANALOG = \"joystick_left_analog\"\n"\
+"    BUTTON_RIGHT_ANALOG = \"joystick_right_analog\"\n"\
+"\n"\
+"    AXIS_LEFT_TRIGGER = \"joystick_left_trigger\"\n"\
+"    AXIS_RIGHT_TRIGGER = \"joystick_right_trigger\"\n"\
+"    AXIS_LEFT_ANALOG_LEFT = \"joystick_left_analog_left\"\n"\
+"    AXIS_LEFT_ANALOG_RIGHT = \"joystick_left_analog_right\"\n"\
+"    AXIS_LEFT_ANALOG_UP = \"joystick_left_analog_up\"\n"\
+"    AXIS_LEFT_ANALOG_DOWN = \"joystick_left_analog_down\"\n"\
+"    AXIS_RIGHT_ANALOG_LEFT = \"joystick_right_analog_left\"\n"\
+"    AXIS_RIGHT_ANALOG_RIGHT = \"joystick_right_analog_right\"\n"\
+"    AXIS_RIGHT_ANALOG_UP = \"joystick_right_analog_up\"\n"\
+"    AXIS_RIGHT_ANALOG_DOWN = \"joystick_right_analog_down\"\n"\
+"\n"\
+"\n"\
 "class _NodeEventSubscriber:\n"\
 "    def __init__(self, entity_id: int, call_back: Callable[[Tuple], None], event_owner_entity_id: int, event_name: str) -> None:\n"\
 "        self.entity_id = entity_id\n"\
