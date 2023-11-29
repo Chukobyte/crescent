@@ -1215,3 +1215,115 @@ class SceneTree:
     @staticmethod
     def get_root() -> Optional[Node]:
         return crescent_internal.scene_tree_get_root()
+
+
+# Work around for singleton until class methods are in
+class _InternalGameProperties:
+    def __init__(self, game_title: str, game_resolution: Size2D, default_window_size: Size2D, target_fps: int, initial_scene_path: str, are_colliders_visible: bool):
+        self.game_title = game_title
+        self.game_resolution = game_resolution
+        self.default_window_size = default_window_size
+        self.target_fps = target_fps
+        self.initial_scene_path = initial_scene_path
+        self.are_colliders_visible = are_colliders_visible
+
+
+_game_properties_instance = None
+
+
+class GameProperties:
+    def __init__(self) -> None:
+        global _game_properties_instance
+        if not _game_properties_instance:
+            game_title, res_w, res_h, window_w, window_h, target_fps, initial_scene_path, are_colliders_visible = crescent_internal.game_properties_get()
+            _game_properties_instance = _InternalGameProperties(game_title, Size2D(res_w, res_h), Size2D(window_w, window_h), target_fps, initial_scene_path, are_colliders_visible)
+
+    def __str__(self):
+        return f"GameProperties(game_title: {self.game_title}, game_resolution: {self.game_resolution}), default_window_size: {self.default_window_size}, target_fps: {self.target_fps}, initial_scene_path: {self.initial_scene_path}, are_colliders_visible: {self.are_colliders_visible})"
+
+    def __repr__(self):
+        return f"GameProperties(game_title: {self.game_title}, game_resolution: {self.game_resolution}), default_window_size: {self.default_window_size}, target_fps: {self.target_fps}, initial_scene_path: {self.initial_scene_path}, are_colliders_visible: {self.are_colliders_visible})"
+
+    @property
+    def game_title(self) -> str:
+        return _game_properties_instance.game_title
+
+    @property
+    def game_resolution(self) -> Size2D:
+        return _game_properties_instance.game_resolution
+
+    @property
+    def default_window_size(self) -> Size2D:
+        return _game_properties_instance.default_window_size
+
+    @property
+    def target_fps(self) -> int:
+        return _game_properties_instance.target_fps
+
+    @property
+    def initial_scene_path(self) -> str:
+        return _game_properties_instance.initial_scene_path
+
+    @property
+    def are_colliders_visible(self) -> bool:
+        return _game_properties_instance.are_colliders_visible
+
+
+class Camera2D:
+    @staticmethod
+    def set_position(position: Vector2) -> None:
+        crescent_internal.camera2d_set_position(position.x, position.y)
+
+    @staticmethod
+    def add_to_position(position: Vector2) -> None:
+        crescent_internal.camera2d_add_to_position(position.x, position.y)
+
+    @staticmethod
+    def get_position() -> Vector2:
+        x, y = crescent_internal.camera2d_get_position()
+        return Vector2(x, y)
+
+    @staticmethod
+    def set_offset(offset: Vector2) -> None:
+        crescent_internal.camera2d_set_offset(offset.x, offset.y)
+
+    @staticmethod
+    def add_to_offset(offset: Vector2) -> None:
+        crescent_internal.camera2d_add_to_offset(offset.x, offset.y)
+
+    @staticmethod
+    def get_offset() -> Vector2:
+        x, y = crescent_internal.camera2d_get_offset()
+        return Vector2(x, y)
+
+    @staticmethod
+    def set_zoom(zoom: Vector2) -> None:
+        crescent_internal.camera2d_set_zoom(zoom.x, zoom.y)
+
+    @staticmethod
+    def add_to_zoom(zoom: Vector2) -> None:
+        crescent_internal.camera2d_add_to_zoom(zoom.x, zoom.y)
+
+    @staticmethod
+    def get_zoom() -> Vector2:
+        x, y = crescent_internal.camera2d_get_zoom()
+        return Vector2(x, y)
+
+    @staticmethod
+    def set_boundary(boundary: Rect2) -> None:
+        crescent_internal.camera2d_set_boundary(
+            boundary.x, boundary.y, boundary.w, boundary.h
+        )
+
+    @staticmethod
+    def get_boundary() -> Rect2:
+        x, y, w, h = crescent_internal.camera2d_get_boundary()
+        return Rect2(x, y, w, h)
+
+    @staticmethod
+    def follow_node(node: Node2D) -> None:
+        crescent_internal.camera2d_follow_node(node.entity_id)
+
+    @staticmethod
+    def unfollow_node(node: Node2D) -> None:
+        crescent_internal.camera2d_unfollow_node(node.entity_id)

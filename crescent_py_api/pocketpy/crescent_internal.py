@@ -481,3 +481,63 @@ def _scene_manager_process_queued_creation_entities() -> None:
 
 def _scene_manager_process_queued_scene_change() -> None:
     pass
+
+
+# --- GAME PROPERTIES ---#
+
+def game_properties_get() -> Tuple[str, int, int, int, int, int, str, bool]:
+    return "Game", 640, 480, 640, 480, 66, "scene.cscn", False
+
+
+# --- CAMERA2D ---#
+
+def camera2d_set_position(x: float, y: float) -> None:
+    pass
+
+
+def camera2d_add_to_position(x: float, y: float) -> None:
+    pass
+
+
+def camera2d_get_position() -> Tuple[float, float]:
+    return 0.0, 0.0
+
+
+def camera2d_set_offset(x: float, y: float) -> None:
+    pass
+
+
+def camera2d_add_to_offset(x: float, y: float) -> None:
+    pass
+
+
+def camera2d_get_offset() -> Tuple[float, float]:
+    return 0.0, 0.0
+
+
+def camera2d_set_zoom(x: float, y: float) -> None:
+    pass
+
+
+def camera2d_add_to_zoom(x: float, y: float) -> None:
+    pass
+
+
+def camera2d_get_zoom() -> Tuple[float, float]:
+    return 1.0, 1.0
+
+
+def camera2d_set_boundary(x: float, y: float, w: float, h: float) -> None:
+    pass
+
+
+def camera2d_get_boundary() -> Tuple[float, float, float, float]:
+    return 0.0, 0.0, 0.0, 0.0
+
+
+def camera2d_follow_node(entity_id: int) -> None:
+    pass
+
+
+def camera2d_unfollow_node(entity_id: int) -> None:
+    pass

@@ -1,20 +1,28 @@
 #include "cre_pkpy_api.h"
 
-#include <pocketpy_c.h>
+#include <string.h>
 
 #include <seika/rendering/frame_buffer.h>
+#include <seika/rendering/render_context.h>
 #include <seika/rendering/renderer.h>
 #include <seika/rendering/shader/shader_cache.h>
-#include <seika/asset/asset_manager.h>
+#include <seika/input/input.h>
+#include <seika/input/mouse.h>
 #include <seika/utils/se_string_util.h>
 #include <seika/utils/se_assert.h>
+
 
 #include "cre_pkpy_api_node.h"
 #include "../cre_pkpy.h"
 #include "../cre_pkpy_util.h"
 #include "../cre_pkpy_entity_instance_cache.h"
 #include "../cre_pkpy_api_source.h"
+#include "../../../../engine_context.h"
 #include "../../../../scene/scene_utils.h"
+#include "../../../../ecs/ecs_manager.h"
+#include "../../../../camera/camera.h"
+#include "../../../../camera/camera_manager.h"
+#include "../../../../game_properties.h"
 
 // Shader Instance
 int cre_pkpy_api_shader_instance_delete(pkpy_vm* vm);
@@ -69,6 +77,24 @@ int cre_pkpy_api_scene_tree_get_root(pkpy_vm* vm);
 // Scene Manager
 int cre_pkpy_api_scene_manager_process_queued_creation_entities(pkpy_vm* vm);
 int cre_pkpy_api_scene_manager_process_queued_scene_change(pkpy_vm* vm);
+
+// Game Properties
+int cre_pkpy_api_game_properties_get(pkpy_vm* vm);
+
+// Camera2D
+int cre_pkpy_api_camera2d_set_position(pkpy_vm* vm);
+int cre_pkpy_api_camera2d_add_to_position(pkpy_vm* vm);
+int cre_pkpy_api_camera2d_get_position(pkpy_vm* vm);
+int cre_pkpy_api_camera2d_set_offset(pkpy_vm* vm);
+int cre_pkpy_api_camera2d_add_to_offset(pkpy_vm* vm);
+int cre_pkpy_api_camera2d_get_offset(pkpy_vm* vm);
+int cre_pkpy_api_camera2d_set_zoom(pkpy_vm* vm);
+int cre_pkpy_api_camera2d_add_to_zoom(pkpy_vm* vm);
+int cre_pkpy_api_camera2d_get_zoom(pkpy_vm* vm);
+int cre_pkpy_api_camera2d_set_boundary(pkpy_vm* vm);
+int cre_pkpy_api_camera2d_get_boundary(pkpy_vm* vm);
+int cre_pkpy_api_camera2d_follow_node(pkpy_vm* vm);
+int cre_pkpy_api_camera2d_unfollow_node(pkpy_vm* vm);
 
 void cre_pkpy_api_load_internal_modules(pkpy_vm* vm) {
     // Load internal first
@@ -203,6 +229,22 @@ void cre_pkpy_api_load_internal_modules(pkpy_vm* vm) {
             // Scene Manager
             {.signature = "_scene_manager_process_queued_creation_entities() -> None", .function = cre_pkpy_api_scene_manager_process_queued_creation_entities},
             {.signature = "_scene_manager_process_queued_scene_change() -> None", .function = cre_pkpy_api_scene_manager_process_queued_scene_change},
+            // Game Properties
+            {.signature = "game_properties_get() -> Tuple[str, int, int, int, int, int, str, bool]", .function = cre_pkpy_api_game_properties_get},
+            // Camera2D
+            {.signature = "camera2d_set_position(x: float, y: float) -> None", .function = cre_pkpy_api_camera2d_set_position},
+            {.signature = "camera2d_add_to_position(x: float, y: float) -> None", .function = cre_pkpy_api_camera2d_add_to_position},
+            {.signature = "camera2d_get_position() -> Tuple[float, float]", .function = cre_pkpy_api_camera2d_get_position},
+            {.signature = "camera2d_set_offset(x: float, y: float) -> None", .function = cre_pkpy_api_camera2d_set_offset},
+            {.signature = "camera2d_add_to_offset(x: float, y: float) -> None", .function = cre_pkpy_api_camera2d_add_to_offset},
+            {.signature = "camera2d_get_offset() -> Tuple[float, float]", .function = cre_pkpy_api_camera2d_get_offset},
+            {.signature = "camera2d_set_zoom(x: float, y: float) -> None", .function = cre_pkpy_api_camera2d_set_zoom},
+            {.signature = "camera2d_add_to_zoom(x: float, y: float) -> None", .function = cre_pkpy_api_camera2d_add_to_zoom},
+            {.signature = "camera2d_get_zoom() -> Tuple[float, float]", .function = cre_pkpy_api_camera2d_get_zoom},
+            {.signature = "camera2d_set_boundary(x: float, y: float, w: float, h: float) -> None", .function = cre_pkpy_api_camera2d_set_boundary},
+            {.signature = "camera2d_get_boundary() -> Tuple[float, float, float, float]", .function = cre_pkpy_api_camera2d_get_boundary},
+            {.signature = "camera2d_follow_node(entity_id: int) -> None", .function = cre_pkpy_api_camera2d_follow_node},
+            {.signature = "camera2d_unfollow_node(entity_id: int) -> None", .function = cre_pkpy_api_camera2d_unfollow_node},
 
             { NULL, NULL },
         }
@@ -210,6 +252,23 @@ void cre_pkpy_api_load_internal_modules(pkpy_vm* vm) {
 
     // Now load front facing api
     cre_pkpy_util_create_from_string(vm, CRE_PKPY_MODULE_NAME_CRESCENT, CRE_PKPY_CRESCENT_SOURCE);
+}
+
+// Helper functions
+SEVector2 cre_pkpy_api_helper_mouse_get_global_position(SEMouse* mouse, SEVector2* offset) {
+    const CRECamera2D* camera = cre_camera_manager_get_current_camera();
+    SEMouse* globalMouse = se_mouse_get();
+    CREGameProperties* gameProps = cre_game_props_get();
+    SERenderContext* renderContext = se_render_context_get();
+    const SEVector2 mouse_pixel_coord = {
+            se_math_map_to_range(globalMouse->position.x, 0.0f, (float) renderContext->windowWidth, 0.0f, (float) gameProps->resolutionWidth),
+            se_math_map_to_range(globalMouse->position.y, 0.0f, (float) renderContext->windowHeight, 0.0f, (float) gameProps->resolutionHeight)
+    };
+    const SEVector2 mouseWorldPos = {
+            (camera->viewport.x + camera->offset.x + mouse_pixel_coord.x + offset->x) * camera->zoom.x,
+            (camera->viewport.y + camera->offset.y + mouse_pixel_coord.y + offset->y) * camera->zoom.y
+    };
+    return mouseWorldPos;
 }
 
 //--- SHADER INSTANCE ---//
@@ -562,60 +621,133 @@ int cre_pkpy_api_shader_util_reset_screen_shader_to_default(pkpy_vm* vm) {
 //--- ENGINE ---//
 
 int cre_pkpy_api_engine_exit(pkpy_vm* vm) {
+    CREEngineContext* engineContext = cre_engine_context_get();
+    engineContext->isRunning = false;
     return 0;
 }
 
 int cre_pkpy_api_engine_set_target_fps(pkpy_vm* vm) {
+    int pyTargetFPS;
+    pkpy_to_int(vm, 0, &pyTargetFPS);
+
+    CREEngineContext* engineContext = cre_engine_context_get();
+    engineContext->targetFPS = pyTargetFPS;
     return 0;
 }
 
 int cre_pkpy_api_engine_get_target_fps(pkpy_vm* vm) {
+    const CREEngineContext* engineContext = cre_engine_context_get();
+    pkpy_push_int(vm, engineContext->targetFPS);
     return 1;
 }
 
 int cre_pkpy_api_engine_get_average_fps(pkpy_vm* vm) {
+    const CREEngineContext* engineContext = cre_engine_context_get();
+    pkpy_push_int(vm, (int)engineContext->stats.averageFPS);
     return 1;
 }
 
 int cre_pkpy_api_engine_set_fps_display_enabled(pkpy_vm* vm) {
+    bool pyIsEnabled;
+    pkpy_CString pyFontUID;
+    double pyPositionX, pyPositionY;
+    pkpy_to_bool(vm, 0, &pyIsEnabled);
+    pkpy_to_string(vm, 1, &pyFontUID);
+    pkpy_to_float(vm, 2, &pyPositionX);
+    pkpy_to_float(vm, 3, &pyPositionY);
+
+    const char* potentialFontUID = pyFontUID.data;
+    cre_ecs_manager_enable_fps_display_entity(
+            pyIsEnabled,
+            strcmp(potentialFontUID, "") != 0 ? potentialFontUID : NULL,
+            (float)pyPositionX,
+            (float)pyPositionY
+    );
     return 0;
 }
 
 int cre_pkpy_api_engine_get_global_physics_delta_time(pkpy_vm* vm) {
+    pkpy_push_float(vm, (double)CRE_GLOBAL_PHYSICS_DELTA_TIME);
     return 1;
 }
 
 //--- INPUT ---//
 
 int cre_pkpy_api_input_add_action(pkpy_vm* vm) {
+    pkpy_CString pyActionName;
+    pkpy_CString pyActionValue;
+    int pyDeviceId;
+    pkpy_to_string(vm, 0, &pyActionName);
+    pkpy_to_string(vm, 1, &pyActionValue);
+    pkpy_to_int(vm, 2, &pyDeviceId);
+
+    const char* actionName = pyActionName.data;
+    const char* actionValue = pyActionValue.data;
+    se_input_add_action_value(actionName, actionValue, pyDeviceId);
     return 0;
 }
 
 int cre_pkpy_api_input_is_action_pressed(pkpy_vm* vm) {
+    pkpy_CString pyActionName;
+    pkpy_to_string(vm, 0, &pyActionName);
+
+    const char* actionName = pyActionName.data;
+    pkpy_push_bool(vm, se_input_is_action_pressed(actionName));
     return 1;
 }
 
 int cre_pkpy_api_input_is_action_just_pressed(pkpy_vm* vm) {
+    pkpy_CString pyActionName;
+    pkpy_to_string(vm, 0, &pyActionName);
+
+    const char* actionName = pyActionName.data;
+    pkpy_push_bool(vm, se_input_is_action_just_pressed(actionName));
     return 1;
 }
 
 int cre_pkpy_api_input_is_action_just_released(pkpy_vm* vm) {
+    pkpy_CString pyActionName;
+    pkpy_to_string(vm, 0, &pyActionName);
+
+    const char* actionName = pyActionName.data;
+    pkpy_push_bool(vm, se_input_is_action_just_released(actionName));
     return 1;
 }
 
 int cre_pkpy_api_input_start_gamepad_vibration(pkpy_vm* vm) {
+    int pyDeviceId;
+    double pyWeakMagnitude;
+    double pyStrongMagnitude;
+    double pyDurationSeconds;
+    pkpy_to_int(vm, 0, &pyDeviceId);
+    pkpy_to_float(vm, 1, &pyWeakMagnitude);
+    pkpy_to_float(vm, 2, &pyStrongMagnitude);
+    pkpy_to_float(vm, 3, &pyDurationSeconds);
+
+    se_input_gamepad_start_vibration(pyDeviceId, (float)pyWeakMagnitude, (float)pyStrongMagnitude, (float)pyDurationSeconds);
     return 0;
 }
 
 int cre_pkpy_api_input_stop_gamepad_vibration(pkpy_vm* vm) {
+    int pyDeviceId;
+    pkpy_to_int(vm, 0, &pyDeviceId);
+
+    se_input_gamepad_stop_vibration(pyDeviceId);
     return 0;
 }
 
 int cre_pkpy_api_input_mouse_get_position(pkpy_vm* vm) {
+    const SEMouse* globalMouse = se_mouse_get();
+    pkpy_push_float(vm, (double)globalMouse->position.x);
+    pkpy_push_float(vm, (double)globalMouse->position.y);
     return 2;
 }
 
 int cre_pkpy_api_input_mouse_get_world_position(pkpy_vm* vm) {
+    SEMouse* globalMouse = se_mouse_get();
+    const SEVector2 worldPosition = cre_pkpy_api_helper_mouse_get_global_position(globalMouse, &(SEVector2){ 0.0f, 0.0f });
+    pkpy_push_float(vm, (double)worldPosition.x);
+    pkpy_push_float(vm, (double)worldPosition.y);
     return 2;
 }
 
@@ -637,6 +769,7 @@ int cre_pkpy_api_scene_tree_get_root(pkpy_vm* vm) {
 }
 
 //--- SCENE MANAGER ---//
+
 int cre_pkpy_api_scene_manager_process_queued_creation_entities(pkpy_vm* vm) {
     cre_scene_manager_process_queued_creation_entities();
     return 0;
@@ -644,5 +777,76 @@ int cre_pkpy_api_scene_manager_process_queued_creation_entities(pkpy_vm* vm) {
 
 int cre_pkpy_api_scene_manager_process_queued_scene_change(pkpy_vm* vm) {
     cre_scene_manager_process_queued_scene_change();
+    return 0;
+}
+
+//--- GAME PROPERTIES ---//
+
+int cre_pkpy_api_game_properties_get(pkpy_vm* vm) {
+    const CREGameProperties* gameProps = cre_game_props_get();
+    SE_ASSERT(gameProps->gameTitle);
+    SE_ASSERT(gameProps->initialScenePath);
+    pkpy_push_string(vm, pkpy_string(gameProps->gameTitle));
+    pkpy_push_int(vm, gameProps->resolutionWidth);
+    pkpy_push_int(vm, gameProps->resolutionHeight);
+    pkpy_push_int(vm, gameProps->windowWidth);
+    pkpy_push_int(vm, gameProps->windowHeight);
+    pkpy_push_int(vm, gameProps->targetFPS);
+    pkpy_push_string(vm, pkpy_string(gameProps->initialScenePath));
+    pkpy_push_bool(vm, gameProps->areCollidersVisible);
+    return 8;
+}
+
+//--- CAMERA2D ---//
+
+int cre_pkpy_api_camera2d_set_position(pkpy_vm* vm) {
+    return 0;
+}
+
+int cre_pkpy_api_camera2d_add_to_position(pkpy_vm* vm) {
+    return 0;
+}
+
+int cre_pkpy_api_camera2d_get_position(pkpy_vm* vm) {
+    return 2;
+}
+
+int cre_pkpy_api_camera2d_set_offset(pkpy_vm* vm) {
+    return 0;
+}
+
+int cre_pkpy_api_camera2d_add_to_offset(pkpy_vm* vm) {
+    return 0;
+}
+
+int cre_pkpy_api_camera2d_get_offset(pkpy_vm* vm) {
+    return 2;
+}
+
+int cre_pkpy_api_camera2d_set_zoom(pkpy_vm* vm) {
+    return 0;
+}
+
+int cre_pkpy_api_camera2d_add_to_zoom(pkpy_vm* vm) {
+    return 0;
+}
+
+int cre_pkpy_api_camera2d_get_zoom(pkpy_vm* vm) {
+    return 2;
+}
+
+int cre_pkpy_api_camera2d_set_boundary(pkpy_vm* vm) {
+    return 0;
+}
+
+int cre_pkpy_api_camera2d_get_boundary(pkpy_vm* vm) {
+    return 4;
+}
+
+int cre_pkpy_api_camera2d_follow_node(pkpy_vm* vm) {
+    return 0;
+}
+
+int cre_pkpy_api_camera2d_unfollow_node(pkpy_vm* vm) {
     return 0;
 }

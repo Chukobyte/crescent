@@ -1218,6 +1218,118 @@
 "    @staticmethod\n"\
 "    def get_root() -> Optional[Node]:\n"\
 "        return crescent_internal.scene_tree_get_root()\n"\
+"\n"\
+"\n"\
+"# Work around for singleton until class methods are in\n"\
+"class _InternalGameProperties:\n"\
+"    def __init__(self, game_title: str, game_resolution: Size2D, default_window_size: Size2D, target_fps: int, initial_scene_path: str, are_colliders_visible: bool):\n"\
+"        self.game_title = game_title\n"\
+"        self.game_resolution = game_resolution\n"\
+"        self.default_window_size = default_window_size\n"\
+"        self.target_fps = target_fps\n"\
+"        self.initial_scene_path = initial_scene_path\n"\
+"        self.are_colliders_visible = are_colliders_visible\n"\
+"\n"\
+"\n"\
+"_game_properties_instance = None\n"\
+"\n"\
+"\n"\
+"class GameProperties:\n"\
+"    def __init__(self) -> None:\n"\
+"        global _game_properties_instance\n"\
+"        if not _game_properties_instance:\n"\
+"            game_title, res_w, res_h, window_w, window_h, target_fps, initial_scene_path, are_colliders_visible = crescent_internal.game_properties_get()\n"\
+"            _game_properties_instance = _InternalGameProperties(game_title, Size2D(res_w, res_h), Size2D(window_w, window_h), target_fps, initial_scene_path, are_colliders_visible)\n"\
+"\n"\
+"    def __str__(self):\n"\
+"        return f\"GameProperties(game_title: {self.game_title}, game_resolution: {self.game_resolution}), default_window_size: {self.default_window_size}, target_fps: {self.target_fps}, initial_scene_path: {self.initial_scene_path}, are_colliders_visible: {self.are_colliders_visible})\"\n"\
+"\n"\
+"    def __repr__(self):\n"\
+"        return f\"GameProperties(game_title: {self.game_title}, game_resolution: {self.game_resolution}), default_window_size: {self.default_window_size}, target_fps: {self.target_fps}, initial_scene_path: {self.initial_scene_path}, are_colliders_visible: {self.are_colliders_visible})\"\n"\
+"\n"\
+"    @property\n"\
+"    def game_title(self) -> str:\n"\
+"        return _game_properties_instance.game_title\n"\
+"\n"\
+"    @property\n"\
+"    def game_resolution(self) -> Size2D:\n"\
+"        return _game_properties_instance.game_resolution\n"\
+"\n"\
+"    @property\n"\
+"    def default_window_size(self) -> Size2D:\n"\
+"        return _game_properties_instance.default_window_size\n"\
+"\n"\
+"    @property\n"\
+"    def target_fps(self) -> int:\n"\
+"        return _game_properties_instance.target_fps\n"\
+"\n"\
+"    @property\n"\
+"    def initial_scene_path(self) -> str:\n"\
+"        return _game_properties_instance.initial_scene_path\n"\
+"\n"\
+"    @property\n"\
+"    def are_colliders_visible(self) -> bool:\n"\
+"        return _game_properties_instance.are_colliders_visible\n"\
+"\n"\
+"\n"\
+"class Camera2D:\n"\
+"    @staticmethod\n"\
+"    def set_position(position: Vector2) -> None:\n"\
+"        crescent_internal.camera2d_set_position(position.x, position.y)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def add_to_position(position: Vector2) -> None:\n"\
+"        crescent_internal.camera2d_add_to_position(position.x, position.y)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def get_position() -> Vector2:\n"\
+"        x, y = crescent_internal.camera2d_get_position()\n"\
+"        return Vector2(x, y)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def set_offset(offset: Vector2) -> None:\n"\
+"        crescent_internal.camera2d_set_offset(offset.x, offset.y)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def add_to_offset(offset: Vector2) -> None:\n"\
+"        crescent_internal.camera2d_add_to_offset(offset.x, offset.y)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def get_offset() -> Vector2:\n"\
+"        x, y = crescent_internal.camera2d_get_offset()\n"\
+"        return Vector2(x, y)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def set_zoom(zoom: Vector2) -> None:\n"\
+"        crescent_internal.camera2d_set_zoom(zoom.x, zoom.y)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def add_to_zoom(zoom: Vector2) -> None:\n"\
+"        crescent_internal.camera2d_add_to_zoom(zoom.x, zoom.y)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def get_zoom() -> Vector2:\n"\
+"        x, y = crescent_internal.camera2d_get_zoom()\n"\
+"        return Vector2(x, y)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def set_boundary(boundary: Rect2) -> None:\n"\
+"        crescent_internal.camera2d_set_boundary(\n"\
+"            boundary.x, boundary.y, boundary.w, boundary.h\n"\
+"        )\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def get_boundary() -> Rect2:\n"\
+"        x, y, w, h = crescent_internal.camera2d_get_boundary()\n"\
+"        return Rect2(x, y, w, h)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def follow_node(node: Node2D) -> None:\n"\
+"        crescent_internal.camera2d_follow_node(node.entity_id)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def unfollow_node(node: Node2D) -> None:\n"\
+"        crescent_internal.camera2d_unfollow_node(node.entity_id)\n"\
 "\n"
 
 #define CRE_PKPY_CRESCENT_INTERNAL_PY_SOURCE ""\

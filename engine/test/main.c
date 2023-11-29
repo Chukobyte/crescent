@@ -259,10 +259,13 @@ void cre_pocketpy_test(void) {
     cre_scene_manager_initialize();
     cre_scene_manager_queue_scene_change("engine/test/resources/test_scene1.cscn");
     cre_scene_manager_process_queued_scene_change();
-//    TEST_MESSAGE("Testing returning entity");
-//    pkpy_exec(vm, "new_node = Node.new(\"crescent\", \"Node\")\nprint(f\"new_node = {new_node}\")");
-//    TEST_ASSERT_FALSE(print_py_error_message(vm));
-//    TEST_ASSERT_EQUAL_INT(0, pkpy_stack_size(vm));
+
+    CREGameProperties* testGameProps = cre_game_props_create();
+    testGameProps->gameTitle = strdup("Test Game");
+    testGameProps->resolutionWidth = 400;
+    testGameProps->resolutionHeight = 300;
+    testGameProps->initialScenePath = strdup("main.cscn");
+    cre_game_props_initialize(testGameProps);
 
     TEST_MESSAGE("Testing python api");
 
@@ -279,6 +282,7 @@ void cre_pocketpy_test(void) {
 
     cre_scene_manager_finalize();
     se_asset_manager_finalize();
+    cre_game_props_finalize();
 
     cre_pkpy_entity_instance_cache_finalize(vm);
 }

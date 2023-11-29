@@ -1,7 +1,7 @@
 from typing import Optional
 
 import crescent_internal
-from crescent import Node, SceneTree, Node2D, Vector2
+from crescent import Node, SceneTree, Node2D, Vector2, GameProperties, Size2D
 
 # import nonexistant  # TODO: uncomment and test custom import handler
 import test_custom_nodes
@@ -114,3 +114,12 @@ with TestCase("Scene Tree Tests") as test_case:
     SceneTree.change_scene("test_scene1.cscn")
     # TODO: Fix once scene manager updates are in
     # assert SceneTree.get_root()
+
+with TestCase("Game Properties Tests") as test_case:
+    game_props = GameProperties()
+    assert game_props.game_title == "Test Game"
+    assert game_props.game_resolution == Size2D(400, 300)
+    assert game_props.default_window_size == Size2D(800, 600)
+    assert game_props.target_fps == 66
+    assert game_props.initial_scene_path == "main.cscn"
+    assert not game_props.are_colliders_visible
