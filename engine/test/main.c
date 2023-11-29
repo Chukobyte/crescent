@@ -18,7 +18,7 @@
 #include "../src/core/json/json_file_loader.h"
 #include "../src/core/scripting/python/pocketpy/cre_pkpy.h"
 #include "../src/core/scripting/python/pocketpy/cre_pkpy_util.h"
-#include "../src/core/scripting/python/pocketpy/cre_pkpy_api.h"
+#include "../src/core/scripting/python/pocketpy/api/cre_pkpy_api.h"
 #include "../src/core/scripting/python/pocketpy/cre_pkpy_entity_instance_cache.h"
 #include "../src/core/game_properties.h"
 #include "../src/core/scene/scene_manager.h"
