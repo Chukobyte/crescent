@@ -44,6 +44,24 @@ int cre_pkpy_api_shader_util_set_screen_shader(pkpy_vm* vm);
 int cre_pkpy_api_shader_util_get_current_screen_shader(pkpy_vm* vm);
 int cre_pkpy_api_shader_util_reset_screen_shader_to_default(pkpy_vm* vm);
 
+// Engine
+int cre_pkpy_api_engine_exit(pkpy_vm* vm);
+int cre_pkpy_api_engine_set_target_fps(pkpy_vm* vm);
+int cre_pkpy_api_engine_get_target_fps(pkpy_vm* vm);
+int cre_pkpy_api_engine_get_average_fps(pkpy_vm* vm);
+int cre_pkpy_api_engine_set_fps_display_enabled(pkpy_vm* vm);
+int cre_pkpy_api_engine_get_global_physics_delta_time(pkpy_vm* vm);
+
+// Input
+int cre_pkpy_api_input_add_action(pkpy_vm* vm);
+int cre_pkpy_api_input_is_action_pressed(pkpy_vm* vm);
+int cre_pkpy_api_input_is_action_just_pressed(pkpy_vm* vm);
+int cre_pkpy_api_input_is_action_just_released(pkpy_vm* vm);
+int cre_pkpy_api_input_start_gamepad_vibration(pkpy_vm* vm);
+int cre_pkpy_api_input_stop_gamepad_vibration(pkpy_vm* vm);
+int cre_pkpy_api_input_mouse_get_position(pkpy_vm* vm);
+int cre_pkpy_api_input_mouse_get_world_position(pkpy_vm* vm);
+
 // Scene Tree
 int cre_pkpy_api_scene_tree_change_scene(pkpy_vm* vm);
 int cre_pkpy_api_scene_tree_get_root(pkpy_vm* vm);
@@ -83,6 +101,22 @@ void cre_pkpy_api_load_internal_modules(pkpy_vm* vm) {
             {.signature = "shader_util_set_screen_shader(shader_path: str) -> bool", .function = cre_pkpy_api_shader_util_set_screen_shader},
             {.signature = "shader_util_get_current_screen_shader() -> int", .function = cre_pkpy_api_shader_util_get_current_screen_shader},
             {.signature = "shader_util_reset_screen_shader_to_default() -> None", .function = cre_pkpy_api_shader_util_reset_screen_shader_to_default},
+            // Engine
+            {.signature = "engine_exit(code: int) -> None", .function = cre_pkpy_api_engine_exit},
+            {.signature = "engine_set_target_fps(fps: int) -> None", .function = cre_pkpy_api_engine_set_target_fps},
+            {.signature = "engine_get_target_fps() -> int", .function = cre_pkpy_api_engine_get_target_fps},
+            {.signature = "engine_get_average_fps() -> int", .function = cre_pkpy_api_engine_get_average_fps},
+            {.signature = "engine_set_fps_display_enabled(enabled: bool, font_uid: str, position_x: float, position_y: float) -> None", .function = cre_pkpy_api_engine_set_fps_display_enabled},
+            {.signature = "engine_get_global_physics_delta_time() -> float", .function = cre_pkpy_api_engine_get_global_physics_delta_time},
+            // Input
+            {.signature = "input_add_action(name: str, value: str, device_id: int) -> None", .function = cre_pkpy_api_input_add_action},
+            {.signature = "input_is_action_pressed(name: str) -> bool", .function = cre_pkpy_api_input_is_action_pressed},
+            {.signature = "input_is_action_just_pressed(name: str) -> bool", .function = cre_pkpy_api_input_is_action_just_pressed},
+            {.signature = "input_is_action_just_released(name: str) -> bool", .function = cre_pkpy_api_input_is_action_just_released},
+            {.signature = "input_start_gamepad_vibration(device_id: int, weak_magnitude: float, strong_magnitude: float, duration: float) -> None", .function = cre_pkpy_api_input_start_gamepad_vibration},
+            {.signature = "input_stop_gamepad_vibration(device_id: int) -> None", .function = cre_pkpy_api_input_stop_gamepad_vibration},
+            {.signature = "input_mouse_get_position() -> Tuple[float, float]", .function = cre_pkpy_api_input_mouse_get_position},
+            {.signature = "input_mouse_get_world_position() -> Tuple[float, float]", .function = cre_pkpy_api_input_mouse_get_world_position},
             // Node
             {.signature = "node_new(class_path: str, class_name: str, node_type_flag: int) -> \"Node\"", .function = cre_pkpy_api_node_new},
             {.signature = "node_get_name(entity_id: int) -> str", .function = cre_pkpy_api_node_get_name},
@@ -523,6 +557,66 @@ int cre_pkpy_api_shader_util_get_current_screen_shader(pkpy_vm* vm) {
 int cre_pkpy_api_shader_util_reset_screen_shader_to_default(pkpy_vm* vm) {
     se_frame_buffer_reset_to_default_screen_shader();
     return 0;
+}
+
+//--- ENGINE ---//
+
+int cre_pkpy_api_engine_exit(pkpy_vm* vm) {
+    return 0;
+}
+
+int cre_pkpy_api_engine_set_target_fps(pkpy_vm* vm) {
+    return 0;
+}
+
+int cre_pkpy_api_engine_get_target_fps(pkpy_vm* vm) {
+    return 1;
+}
+
+int cre_pkpy_api_engine_get_average_fps(pkpy_vm* vm) {
+    return 1;
+}
+
+int cre_pkpy_api_engine_set_fps_display_enabled(pkpy_vm* vm) {
+    return 0;
+}
+
+int cre_pkpy_api_engine_get_global_physics_delta_time(pkpy_vm* vm) {
+    return 1;
+}
+
+//--- INPUT ---//
+
+int cre_pkpy_api_input_add_action(pkpy_vm* vm) {
+    return 0;
+}
+
+int cre_pkpy_api_input_is_action_pressed(pkpy_vm* vm) {
+    return 1;
+}
+
+int cre_pkpy_api_input_is_action_just_pressed(pkpy_vm* vm) {
+    return 1;
+}
+
+int cre_pkpy_api_input_is_action_just_released(pkpy_vm* vm) {
+    return 1;
+}
+
+int cre_pkpy_api_input_start_gamepad_vibration(pkpy_vm* vm) {
+    return 0;
+}
+
+int cre_pkpy_api_input_stop_gamepad_vibration(pkpy_vm* vm) {
+    return 0;
+}
+
+int cre_pkpy_api_input_mouse_get_position(pkpy_vm* vm) {
+    return 2;
+}
+
+int cre_pkpy_api_input_mouse_get_world_position(pkpy_vm* vm) {
+    return 2;
 }
 
 //--- SCENE TREE ---//

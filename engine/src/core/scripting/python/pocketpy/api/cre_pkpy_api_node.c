@@ -21,7 +21,6 @@
 #include "../../../../ecs/component/parallax_component.h"
 #include "../../../../ecs/component/script_component.h"
 
-
 void set_node_component_from_type(CreEntity entity, const char* classPath, const char* className, NodeBaseType baseType) {
 
     // Set components that should be set for a base node (that has invoked .new() from scripting)
