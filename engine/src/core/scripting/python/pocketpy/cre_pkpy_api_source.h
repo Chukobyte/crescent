@@ -1,8 +1,9 @@
 #pragma once
 
 #define CRE_PKPY_CRESCENT_SOURCE ""\
+"import json\n"\
 "import math\n"\
-"from typing import List, Callable, Tuple, Optional, Dict\n"\
+"from typing import List, Callable, Tuple, Optional, Dict, Union\n"\
 "\n"\
 "import crescent_internal\n"\
 "\n"\
@@ -389,6 +390,37 @@
 "\n"\
 "    def __repr__(self):\n"\
 "        return f\"({self.min}, {self.max})\"\n"\
+"\n"\
+"\n"\
+"class AudioSource:\n"\
+"    def __init__(self, path: str):\n"\
+"        self.path = path\n"\
+"\n"\
+"    @property\n"\
+"    def pitch(self) -> float:\n"\
+"        return crescent_internal.audio_source_get_pitch(self.path)\n"\
+"\n"\
+"    @pitch.setter\n"\
+"    def pitch(self, value: float) -> None:\n"\
+"        crescent_internal.audio_source_set_pitch(self.path, value)\n"\
+"\n"\
+"\n"\
+"class AudioManager:\n"\
+"    @staticmethod\n"\
+"    def get_audio_source(path: str) -> AudioSource:\n"\
+"        return AudioSource(path)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def play_sound(source: Union[AudioSource, str], loops=False):\n"\
+"        if isinstance(source, AudioSource):\n"\
+"            source = source.path\n"\
+"        crescent_internal.audio_manager_play_sound(source, loops)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def stop_sound(source: Union[AudioSource, str]):\n"\
+"        if isinstance(source, AudioSource):\n"\
+"            source = source.path\n"\
+"        crescent_internal.audio_manager_stop_sound(source)\n"\
 "\n"\
 "\n"\
 "class Texture:\n"\
@@ -1220,6 +1252,20 @@
 "        return crescent_internal.scene_tree_get_root()\n"\
 "\n"\
 "\n"\
+"class World:\n"\
+"    @staticmethod\n"\
+"    def set_time_dilation(time_dilation: float) -> None:\n"\
+"        crescent_internal.world_set_time_dilation(time_dilation)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def get_time_dilation() -> float:\n"\
+"        return crescent_internal.world_get_time_dilation()\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def get_delta_time() -> float:\n"\
+"        return crescent_internal.world_get_delta_time()\n"\
+"\n"\
+"\n"\
 "# Work around for singleton until class methods are in\n"\
 "class _InternalGameProperties:\n"\
 "    def __init__(self, game_title: str, game_resolution: Size2D, default_window_size: Size2D, target_fps: int, initial_scene_path: str, are_colliders_visible: bool):\n"\
@@ -1330,6 +1376,44 @@
 "    @staticmethod\n"\
 "    def unfollow_node(node: Node2D) -> None:\n"\
 "        crescent_internal.camera2d_unfollow_node(node.entity_id)\n"\
+"\n"\
+"\n"\
+"class GameConfig:\n"\
+"    @staticmethod\n"\
+"    def save(path: str, data: dict, encryption_key=\"\") -> bool:\n"\
+"        try:\n"\
+"            json_text = json.dumps(data, indent=4)\n"\
+"        except Exception:\n"\
+"            print(f\"Game Config Save Json Decode Error\")\n"\
+"            return False\n"\
+"        return crescent_internal.game_config_save(path, json_text, encryption_key)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def load(path: str, encryption_key=\"\") -> dict:\n"\
+"        try:\n"\
+"            json_dict = json.loads(\n"\
+"                crescent_internal.game_config_load(path, encryption_key)\n"\
+"            )\n"\
+"        except Exception:\n"\
+"            print(f\"Game Config Load Json Decode Error\")\n"\
+"            return {}\n"\
+"        return json_dict\n"\
+"\n"\
+"\n"\
+"class PackedScene:\n"\
+"    def __init__(self, scene_cache_id: int, path: str):\n"\
+"        self.scene_cache_id = scene_cache_id\n"\
+"        self.path = path\n"\
+"\n"\
+"    def create_instance(self) -> Node:\n"\
+"        return crescent_internal.packed_scene_create_instance(self.scene_cache_id)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def load(path: str) -> Optional[\"PackedScene\"]:\n"\
+"        scene_cache_id = crescent_internal.packed_scene_load(path)\n"\
+"        if scene_cache_id < 0:\n"\
+"            return None\n"\
+"        return PackedScene(scene_cache_id, path)\n"\
 "\n"
 
 #define CRE_PKPY_CRESCENT_INTERNAL_PY_SOURCE ""\

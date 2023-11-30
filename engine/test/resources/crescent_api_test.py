@@ -1,7 +1,7 @@
 from typing import Optional
 
 import crescent_internal
-from crescent import Node, SceneTree, Node2D, Vector2, GameProperties, Size2D
+from crescent import Node, SceneTree, Node2D, Vector2, GameProperties, Size2D, Camera2D, Rect2, World
 
 # import nonexistant  # TODO: uncomment and test custom import handler
 import test_custom_nodes
@@ -123,3 +123,27 @@ with TestCase("Game Properties Tests") as test_case:
     assert game_props.target_fps == 66
     assert game_props.initial_scene_path == "main.cscn"
     assert not game_props.are_colliders_visible
+
+with TestCase("Camera2D Tests") as test_case:
+    Camera2D.set_position(Vector2(10, 20))
+    assert Camera2D.get_position() == Vector2(10, 20)
+    Camera2D.set_offset(Vector2(-5, -2))
+    assert Camera2D.get_offset() == Vector2(-5, -2)
+    Camera2D.set_zoom(Vector2(300, 400))
+    assert Camera2D.get_zoom() == Vector2(300, 400)
+    Camera2D.set_boundary(Rect2(10, 20, 300, 400))
+    assert Camera2D.get_boundary() == Rect2(10, 20, 300, 400)
+    # Test boundary
+    Camera2D.set_position(Vector2(0, 0))
+    assert Camera2D.get_position() == Vector2(10, 20)
+    Camera2D.set_position(Vector2(2000, 2000))
+    # Instead of testing for specific boundary position (that factors in screen resolution) we are just going to check to make sure it's not the value
+    assert Camera2D.get_position().x < 2000
+    assert Camera2D.get_position().y < 2000
+
+with TestCase("World Tests") as test_case:
+    World.set_time_dilation(2.0)
+    assert World.get_time_dilation() == 2.0
+    World.set_time_dilation(1.0)
+    assert World.get_time_dilation() == 1.0
+    assert World.get_delta_time() > 0.0

@@ -1,5 +1,6 @@
+import json
 import math
-from typing import List, Callable, Tuple, Optional, Dict
+from typing import List, Callable, Tuple, Optional, Dict, Union
 
 import crescent_internal
 
@@ -386,6 +387,37 @@ class MinMax:
 
     def __repr__(self):
         return f"({self.min}, {self.max})"
+
+
+class AudioSource:
+    def __init__(self, path: str):
+        self.path = path
+
+    @property
+    def pitch(self) -> float:
+        return crescent_internal.audio_source_get_pitch(self.path)
+
+    @pitch.setter
+    def pitch(self, value: float) -> None:
+        crescent_internal.audio_source_set_pitch(self.path, value)
+
+
+class AudioManager:
+    @staticmethod
+    def get_audio_source(path: str) -> AudioSource:
+        return AudioSource(path)
+
+    @staticmethod
+    def play_sound(source: Union[AudioSource, str], loops=False):
+        if isinstance(source, AudioSource):
+            source = source.path
+        crescent_internal.audio_manager_play_sound(source, loops)
+
+    @staticmethod
+    def stop_sound(source: Union[AudioSource, str]):
+        if isinstance(source, AudioSource):
+            source = source.path
+        crescent_internal.audio_manager_stop_sound(source)
 
 
 class Texture:
@@ -1217,6 +1249,20 @@ class SceneTree:
         return crescent_internal.scene_tree_get_root()
 
 
+class World:
+    @staticmethod
+    def set_time_dilation(time_dilation: float) -> None:
+        crescent_internal.world_set_time_dilation(time_dilation)
+
+    @staticmethod
+    def get_time_dilation() -> float:
+        return crescent_internal.world_get_time_dilation()
+
+    @staticmethod
+    def get_delta_time() -> float:
+        return crescent_internal.world_get_delta_time()
+
+
 # Work around for singleton until class methods are in
 class _InternalGameProperties:
     def __init__(self, game_title: str, game_resolution: Size2D, default_window_size: Size2D, target_fps: int, initial_scene_path: str, are_colliders_visible: bool):
@@ -1327,3 +1373,41 @@ class Camera2D:
     @staticmethod
     def unfollow_node(node: Node2D) -> None:
         crescent_internal.camera2d_unfollow_node(node.entity_id)
+
+
+class GameConfig:
+    @staticmethod
+    def save(path: str, data: dict, encryption_key="") -> bool:
+        try:
+            json_text = json.dumps(data, indent=4)
+        except Exception:
+            print(f"Game Config Save Json Decode Error")
+            return False
+        return crescent_internal.game_config_save(path, json_text, encryption_key)
+
+    @staticmethod
+    def load(path: str, encryption_key="") -> dict:
+        try:
+            json_dict = json.loads(
+                crescent_internal.game_config_load(path, encryption_key)
+            )
+        except Exception:
+            print(f"Game Config Load Json Decode Error")
+            return {}
+        return json_dict
+
+
+class PackedScene:
+    def __init__(self, scene_cache_id: int, path: str):
+        self.scene_cache_id = scene_cache_id
+        self.path = path
+
+    def create_instance(self) -> Node:
+        return crescent_internal.packed_scene_create_instance(self.scene_cache_id)
+
+    @staticmethod
+    def load(path: str) -> Optional["PackedScene"]:
+        scene_cache_id = crescent_internal.packed_scene_load(path)
+        if scene_cache_id < 0:
+            return None
+        return PackedScene(scene_cache_id, path)

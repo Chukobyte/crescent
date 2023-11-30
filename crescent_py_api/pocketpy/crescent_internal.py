@@ -541,3 +541,57 @@ def camera2d_follow_node(entity_id: int) -> None:
 
 def camera2d_unfollow_node(entity_id: int) -> None:
     pass
+
+
+# --- World ---#
+
+def world_set_time_dilation(time_dilation: float) -> None:
+    pass
+
+
+def world_get_time_dilation() -> float:
+    return 1.0
+
+
+def world_get_delta_time() -> float:
+    return 0.1
+
+
+# --- Audio Source ---#
+
+def audio_source_get_pitch(path: str) -> float:
+    return 1.0
+
+
+def audio_source_set_pitch(path: str, pitch: float) -> None:
+    pass
+
+
+# --- Audio Manager ---#
+
+def audio_manager_play_sound(path: str, loops: bool) -> None:
+    pass
+
+
+def audio_manager_stop_sound(path: str) -> None:
+    pass
+
+
+# --- Game Config ---#
+
+def game_config_save(path: str, json_text: str, encryption_key: str) -> bool:
+    return True
+
+
+def game_config_load(path, encryption_key) -> str:
+    return "{}"
+
+
+# --- Packed Scene ---#
+
+def packed_scene_create_instance(scene_cache_id: int) -> "Node":
+    return None
+
+
+def packed_scene_load(path: str) -> int:
+    return 0

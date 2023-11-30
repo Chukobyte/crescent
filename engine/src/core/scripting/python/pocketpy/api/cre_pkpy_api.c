@@ -8,7 +8,8 @@
 #include <seika/rendering/shader/shader_cache.h>
 #include <seika/input/input.h>
 #include <seika/input/mouse.h>
-#include <seika/utils/se_string_util.h>
+#include <seika/audio/audio.h>
+#include <seika/asset/asset_manager.h>
 #include <seika/utils/se_assert.h>
 
 
@@ -23,6 +24,13 @@
 #include "../../../../camera/camera.h"
 #include "../../../../camera/camera_manager.h"
 #include "../../../../game_properties.h"
+#include "../../../../world.h"
+#include "seika/audio/audio_manager.h"
+#include "seika/utils/se_string_util.h"
+#include "seika/utils/se_file_system_utils.h"
+#include "seika/asset/asset_file_loader.h"
+#include "../../../../scene/scene_template_cache.h"
+#include "../../../../ecs/component/script_component.h"
 
 // Shader Instance
 int cre_pkpy_api_shader_instance_delete(pkpy_vm* vm);
@@ -95,6 +103,27 @@ int cre_pkpy_api_camera2d_set_boundary(pkpy_vm* vm);
 int cre_pkpy_api_camera2d_get_boundary(pkpy_vm* vm);
 int cre_pkpy_api_camera2d_follow_node(pkpy_vm* vm);
 int cre_pkpy_api_camera2d_unfollow_node(pkpy_vm* vm);
+
+// World
+int cre_pkpy_api_world_set_time_dilation(pkpy_vm* vm);
+int cre_pkpy_api_world_get_time_dilation(pkpy_vm* vm);
+int cre_pkpy_api_world_get_delta_time(pkpy_vm* vm);
+
+// Audio Source
+int cre_pkpy_api_audio_source_set_pitch(pkpy_vm* vm);
+int cre_pkpy_api_audio_source_get_pitch(pkpy_vm* vm);
+
+// Audio Manager
+int cre_pkpy_api_audio_manager_play_sound(pkpy_vm* vm);
+int cre_pkpy_api_audio_manager_stop_sound(pkpy_vm* vm);
+
+// Game Config
+int cre_pkpy_api_game_config_save(pkpy_vm* vm);
+int cre_pkpy_api_game_config_load(pkpy_vm* vm);
+
+// Packed Scene
+int cre_pkpy_api_packed_scene_create_instance(pkpy_vm* vm);
+int cre_pkpy_api_packed_scene_load(pkpy_vm* vm);
 
 void cre_pkpy_api_load_internal_modules(pkpy_vm* vm) {
     // Load internal first
@@ -245,6 +274,22 @@ void cre_pkpy_api_load_internal_modules(pkpy_vm* vm) {
             {.signature = "camera2d_get_boundary() -> Tuple[float, float, float, float]", .function = cre_pkpy_api_camera2d_get_boundary},
             {.signature = "camera2d_follow_node(entity_id: int) -> None", .function = cre_pkpy_api_camera2d_follow_node},
             {.signature = "camera2d_unfollow_node(entity_id: int) -> None", .function = cre_pkpy_api_camera2d_unfollow_node},
+            // World
+            {.signature = "world_set_time_dilation(time_dilation: float) -> None", .function = cre_pkpy_api_world_set_time_dilation},
+            {.signature = "world_get_time_dilation() -> float", .function = cre_pkpy_api_world_get_time_dilation},
+            {.signature = "world_get_delta_time() -> float", .function = cre_pkpy_api_world_get_delta_time},
+            // Audio Source
+            {.signature = "audio_source_set_pitch(path: str, pitch: float) -> None", .function = cre_pkpy_api_audio_source_set_pitch},
+            {.signature = "audio_source_get_pitch(path: str) -> float", .function = cre_pkpy_api_audio_source_get_pitch},
+            // Audio Manager
+            {.signature = "audio_manager_play_sound(path: str, loops: bool) -> None", .function = cre_pkpy_api_audio_manager_play_sound},
+            {.signature = "audio_manager_stop_sound(path: str) -> None", .function = cre_pkpy_api_audio_manager_stop_sound},
+            // Game Config
+            {.signature = "game_config_save(path: str, json_text: str, encryption_key: str) -> bool", .function = cre_pkpy_api_game_config_save},
+            {.signature = "game_config_load(path, encryption_key) -> str", .function = cre_pkpy_api_game_config_load},
+            // Packed Scene
+            {.signature = "packed_scene_create_instance(scene_cache_id: int) -> \"Node\"", .function = cre_pkpy_api_packed_scene_create_instance},
+            {.signature = "packed_scene_load(path: str) -> int", .function = cre_pkpy_api_packed_scene_load},
 
             { NULL, NULL },
         }
@@ -806,6 +851,7 @@ int cre_pkpy_api_camera2d_set_position(pkpy_vm* vm) {
 
     CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
     camera2D->viewport = (SEVector2){ (float)pyPositionX, (float)pyPositionY };
+    cre_camera2d_clamp_viewport_to_boundary(camera2D);
     return 0;
 }
 
@@ -816,6 +862,7 @@ int cre_pkpy_api_camera2d_add_to_position(pkpy_vm* vm) {
 
     CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
     camera2D->viewport = (SEVector2){  camera2D->viewport.x + (float)pyPositionX, camera2D->viewport.y + (float)pyPositionY };
+    cre_camera2d_clamp_viewport_to_boundary(camera2D);
     return 0;
 }
 
@@ -888,7 +935,7 @@ int cre_pkpy_api_camera2d_set_boundary(pkpy_vm* vm) {
     pkpy_to_float(vm, 3, &pyBoundaryH);
 
     CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
-    camera2D->boundary = (SERect2){ (float)pyBoundaryX, (float)pyBoundaryH, (float)pyBoundaryW, (float)pyBoundaryH };
+    camera2D->boundary = (SERect2){ (float)pyBoundaryX, (float)pyBoundaryY, (float)pyBoundaryW, (float)pyBoundaryH };
     cre_camera2d_clamp_viewport_to_boundary(camera2D);
     return 0;
 }
@@ -920,4 +967,152 @@ int cre_pkpy_api_camera2d_unfollow_node(pkpy_vm* vm) {
     CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
     cre_camera2d_unfollow_entity(camera2D, entity);
     return 0;
+}
+
+//--- WORLD ---//
+void cre_pkpy_mark_scene_nodes_time_dilation_flag_dirty(SceneTreeNode* node) {
+    NodeComponent* nodeComponent = (NodeComponent*) cre_component_manager_get_component_unchecked(node->entity, CreComponentDataIndex_NODE);
+    SE_ASSERT(nodeComponent != NULL);
+    nodeComponent->timeDilation.cacheInvalid = true;
+}
+
+int cre_pkpy_api_world_set_time_dilation(pkpy_vm* vm) {
+    double pyTimeDilation;
+    pkpy_to_float(vm, 0, &pyTimeDilation);
+
+    cre_world_set_time_dilation((float)pyTimeDilation);
+    cre_scene_manager_execute_on_root_and_child_nodes(cre_pkpy_mark_scene_nodes_time_dilation_flag_dirty);
+    return 0;
+}
+
+int cre_pkpy_api_world_get_time_dilation(pkpy_vm* vm) {
+    pkpy_push_float(vm, (double)cre_world_get_time_dilation());
+    return 1;
+}
+
+int cre_pkpy_api_world_get_delta_time(pkpy_vm* vm) {
+    pkpy_push_float(vm, (double)(cre_world_get_time_dilation() * CRE_GLOBAL_PHYSICS_DELTA_TIME));
+    return 1;
+}
+
+//--- AUDIO SOURCE ---//
+
+int cre_pkpy_api_audio_source_set_pitch(pkpy_vm* vm) {
+    pkpy_CString pyPath;
+    double pyPitch;
+    pkpy_to_string(vm, 0, &pyPath);
+    pkpy_to_float(vm, 1, &pyPitch);
+
+    const char* path = pyPath.data;
+    if (se_asset_manager_has_audio_source(path)) {
+        SEAudioSource* audioSource = se_asset_manager_get_audio_source(path);
+        audioSource->pitch = pyPitch;
+    } else {
+        se_logger_warn("Tried to set non-existent audio source's pitch at '%s'", path);
+    }
+    return 0;
+}
+int cre_pkpy_api_audio_source_get_pitch(pkpy_vm* vm) {
+    pkpy_CString pyPath;
+    pkpy_to_string(vm, 0, &pyPath);
+
+    const char* path = pyPath.data;
+    if (se_asset_manager_has_audio_source(path)) {
+        SEAudioSource* audioSource = se_asset_manager_get_audio_source(path);
+        pkpy_push_float(vm, audioSource->pitch);
+    } else {
+        se_logger_warn("Tried to get non-existent audio source's pitch at '%s'", path);
+        pkpy_push_float(vm, 1.0);
+    }
+    return 1;
+}
+
+//--- AUDIO MANAGER ---//
+
+int cre_pkpy_api_audio_manager_play_sound(pkpy_vm* vm) {
+    pkpy_CString pyPath;
+    bool pyLoops;
+    pkpy_to_string(vm, 0, &pyPath);
+    pkpy_to_bool(vm, 1, &pyLoops);
+
+    const char* path = pyPath.data;
+    se_audio_manager_play_sound(path, pyLoops);
+    return 0;
+}
+
+int cre_pkpy_api_audio_manager_stop_sound(pkpy_vm* vm) {
+    pkpy_CString pyPath;
+    pkpy_to_string(vm, 0, &pyPath);
+
+    const char* path = pyPath.data;
+    se_audio_manager_stop_sound(path);
+    return 0;
+}
+
+//--- GAME CONFIG ---//
+
+int cre_pkpy_api_game_config_save(pkpy_vm* vm) {
+    pkpy_CString pyPath;
+    pkpy_CString pyDataJson;
+    pkpy_CString pyEncryptionKey;
+
+    const char* path = pyPath.data;
+    const char* dataJson = pyDataJson.data;
+    const char* encryptionKey = pyEncryptionKey.data; // TODO: Use
+    const CREGameProperties* gameProps = cre_game_props_get();
+    char* validGameTitle = se_strdup(gameProps->gameTitle);
+    se_str_to_lower_and_underscore_whitespace(validGameTitle);
+    char* fullSavePath = se_fs_get_user_save_path("crescent", validGameTitle, path);
+    const bool success = se_fs_write_to_file(fullSavePath, dataJson);
+    SE_MEM_FREE(fullSavePath);
+    SE_MEM_FREE(validGameTitle);
+    pkpy_push_bool(vm, success);
+    return 1;
+}
+
+int cre_pkpy_api_game_config_load(pkpy_vm* vm) {
+    pkpy_CString pyPath;
+    pkpy_CString pyEncryptionKey;
+
+    const char* path = pyPath.data;
+    const char* encryptionKey = pyEncryptionKey.data; // TODO: Use
+    const CREGameProperties* gameProps = cre_game_props_get();
+    char* validGameTitle = se_strdup(gameProps->gameTitle);
+    se_str_to_lower_and_underscore_whitespace(validGameTitle);
+    char* fullSavePath = se_fs_get_user_save_path("crescent", validGameTitle, path);
+    char* fileContents = sf_asset_file_loader_read_file_contents_as_string(fullSavePath, NULL);
+    pkpy_push_string(vm, pkpy_string(fileContents));
+    SE_MEM_FREE(validGameTitle);
+    SE_MEM_FREE(fullSavePath);
+    SE_MEM_FREE(fileContents);
+    return 1;
+}
+
+//--- Packed Scene ---//
+
+int cre_pkpy_api_packed_scene_create_instance(pkpy_vm* vm) {
+    int pyCacheId;
+    pkpy_to_int(vm, 0, &pyCacheId);
+
+    const CreSceneCacheId cacheId = (CreSceneCacheId)pyCacheId;
+    JsonSceneNode* sceneNode = cre_scene_template_cache_get_scene(cacheId);
+    SceneTreeNode* rootNode = cre_scene_manager_stage_scene_nodes_from_json(sceneNode);
+    ScriptComponent* scriptComponent = (ScriptComponent*) cre_component_manager_get_component_unchecked(rootNode->entity, CreComponentDataIndex_SCRIPT);
+    // Create script component if it doesn't exist
+    if (!scriptComponent) {
+        scriptComponent = script_component_create("crescent", node_get_base_type_string(sceneNode->type));
+        scriptComponent->contextType = ScriptContextType_PYTHON;
+        cre_component_manager_set_component(rootNode->entity, CreComponentDataIndex_SCRIPT, scriptComponent);
+    }
+    cre_pkpy_entity_instance_cache_push_or_add_default_entity_instance(vm, rootNode->entity);
+    return 1;
+}
+int cre_pkpy_api_packed_scene_load(pkpy_vm* vm) {
+    pkpy_CString pyScenePath;
+    pkpy_to_string(vm, 0, &pyScenePath);
+
+    const char* scenePath = pyScenePath.data;
+    const CreSceneCacheId cacheId = cre_scene_template_cache_load_scene(scenePath);
+    pkpy_push_int(vm, (int)cacheId);
+    return 1;
 }
