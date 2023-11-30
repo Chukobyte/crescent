@@ -800,53 +800,124 @@ int cre_pkpy_api_game_properties_get(pkpy_vm* vm) {
 //--- CAMERA2D ---//
 
 int cre_pkpy_api_camera2d_set_position(pkpy_vm* vm) {
+    double pyPositionX, pyPositionY;
+    pkpy_to_float(vm, 0, &pyPositionX);
+    pkpy_to_float(vm, 1, &pyPositionY);
+
+    CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
+    camera2D->viewport = (SEVector2){ (float)pyPositionX, (float)pyPositionY };
     return 0;
 }
 
 int cre_pkpy_api_camera2d_add_to_position(pkpy_vm* vm) {
+    double pyPositionX, pyPositionY;
+    pkpy_to_float(vm, 0, &pyPositionX);
+    pkpy_to_float(vm, 1, &pyPositionY);
+
+    CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
+    camera2D->viewport = (SEVector2){  camera2D->viewport.x + (float)pyPositionX, camera2D->viewport.y + (float)pyPositionY };
     return 0;
 }
 
 int cre_pkpy_api_camera2d_get_position(pkpy_vm* vm) {
+    const CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
+    pkpy_push_float(vm, (double)camera2D->viewport.x);
+    pkpy_push_float(vm, (double)camera2D->viewport.y);
     return 2;
 }
 
 int cre_pkpy_api_camera2d_set_offset(pkpy_vm* vm) {
+    double pyOffsetX, pyOffsetY;
+    pkpy_to_float(vm, 0, &pyOffsetX);
+    pkpy_to_float(vm, 1, &pyOffsetY);
+
+    CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
+    camera2D->offset = (SEVector2){(float)pyOffsetX, (float)pyOffsetY };
     return 0;
 }
 
 int cre_pkpy_api_camera2d_add_to_offset(pkpy_vm* vm) {
+    double pyOffsetX, pyOffsetY;
+    pkpy_to_float(vm, 0, &pyOffsetX);
+    pkpy_to_float(vm, 1, &pyOffsetY);
+
+    CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
+    camera2D->offset = (SEVector2){camera2D->offset.x + (float)pyOffsetX, camera2D->offset.y + (float)pyOffsetY };
     return 0;
 }
 
 int cre_pkpy_api_camera2d_get_offset(pkpy_vm* vm) {
+    const CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
+    pkpy_push_float(vm, (double)camera2D->offset.x);
+    pkpy_push_float(vm, (double)camera2D->offset.y);
     return 2;
 }
 
 int cre_pkpy_api_camera2d_set_zoom(pkpy_vm* vm) {
+    double pyZoomX, pyZoomY;
+    pkpy_to_float(vm, 0, &pyZoomX);
+    pkpy_to_float(vm, 1, &pyZoomY);
+
+    CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
+    camera2D->zoom = (SEVector2){(float)pyZoomX, (float)pyZoomY };
     return 0;
 }
 
 int cre_pkpy_api_camera2d_add_to_zoom(pkpy_vm* vm) {
+    double pyZoomX, pyZoomY;
+    pkpy_to_float(vm, 0, &pyZoomX);
+    pkpy_to_float(vm, 1, &pyZoomY);
+
+    CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
+    camera2D->zoom = (SEVector2){camera2D->zoom.x + (float)pyZoomX, camera2D->zoom.y + (float)pyZoomY };
     return 0;
 }
 
 int cre_pkpy_api_camera2d_get_zoom(pkpy_vm* vm) {
+    const CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
+    pkpy_push_float(vm, (double)camera2D->zoom.x);
+    pkpy_push_float(vm, (double)camera2D->zoom.y);
     return 2;
 }
 
 int cre_pkpy_api_camera2d_set_boundary(pkpy_vm* vm) {
+    double pyBoundaryX, pyBoundaryY, pyBoundaryW, pyBoundaryH;
+    pkpy_to_float(vm, 0, &pyBoundaryX);
+    pkpy_to_float(vm, 1, &pyBoundaryY);
+    pkpy_to_float(vm, 2, &pyBoundaryW);
+    pkpy_to_float(vm, 3, &pyBoundaryH);
+
+    CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
+    camera2D->boundary = (SERect2){ (float)pyBoundaryX, (float)pyBoundaryH, (float)pyBoundaryW, (float)pyBoundaryH };
+    cre_camera2d_clamp_viewport_to_boundary(camera2D);
     return 0;
 }
 
 int cre_pkpy_api_camera2d_get_boundary(pkpy_vm* vm) {
+    const CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
+    pkpy_push_float(vm, (double)camera2D->boundary.x);
+    pkpy_push_float(vm, (double)camera2D->boundary.y);
+    pkpy_push_float(vm, (double)camera2D->boundary.w);
+    pkpy_push_float(vm, (double)camera2D->boundary.h);
     return 4;
 }
 
 int cre_pkpy_api_camera2d_follow_node(pkpy_vm* vm) {
+    int pyEntityId;
+    pkpy_to_int(vm, 0, &pyEntityId);
+
+    const CreEntity entity = (CreEntity)pyEntityId;
+    CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
+    cre_camera2d_follow_entity(camera2D, entity);
     return 0;
 }
 
 int cre_pkpy_api_camera2d_unfollow_node(pkpy_vm* vm) {
+    int pyEntityId;
+    pkpy_to_int(vm, 0, &pyEntityId);
+
+    const CreEntity entity = (CreEntity)pyEntityId;
+    CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
+    cre_camera2d_unfollow_entity(camera2D, entity);
     return 0;
 }
