@@ -1263,6 +1263,35 @@ class World:
         return crescent_internal.world_get_delta_time()
 
 
+class CollisionHandler:
+    """
+    Will most likely be replaced once a physics system is in place
+    """
+    @staticmethod
+    def process_collisions(collider: Collider2D) -> List[Node]:
+        collided_entities = crescent_internal.collision_handler_process_collisions(collider.entity_id)
+        if collided_entities:
+            if isinstance(collided_entities, tuple):
+                return list(collided_entities)
+            elif isinstance(collided_entities, Node):
+                return [collided_entities]
+        return []
+
+    @staticmethod
+    def process_mouse_collisions(pos_offset: Optional[Vector2] = None, collision_size: Optional[Size2D] = None) -> List[Node]:
+        if not pos_offset:
+            pos_offset = Vector2.ZERO()
+        if not collision_size:
+            collision_size = Size2D(1.0, 1.0)
+        collided_entities = crescent_internal.collision_handler_process_mouse_collisions(pos_offset.x, pos_offset.y, collision_size.w, collision_size.h)
+        if collided_entities:
+            if isinstance(collided_entities, tuple):
+                return list(collided_entities)
+            elif isinstance(collided_entities, Node):
+                return [collided_entities]
+        return []
+
+
 # Work around for singleton until class methods are in
 class _InternalGameProperties:
     def __init__(self, game_title: str, game_resolution: Size2D, default_window_size: Size2D, target_fps: int, initial_scene_path: str, are_colliders_visible: bool):

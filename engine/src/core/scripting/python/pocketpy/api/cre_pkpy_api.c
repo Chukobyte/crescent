@@ -9,8 +9,12 @@
 #include <seika/input/input.h>
 #include <seika/input/mouse.h>
 #include <seika/audio/audio.h>
+#include <seika/audio/audio_manager.h>
 #include <seika/asset/asset_manager.h>
+#include <seika/asset/asset_file_loader.h>
 #include <seika/utils/se_assert.h>
+#include <seika/utils/se_string_util.h>
+#include <seika/utils/se_file_system_utils.h>
 
 
 #include "cre_pkpy_api_node.h"
@@ -19,18 +23,15 @@
 #include "../cre_pkpy_entity_instance_cache.h"
 #include "../cre_pkpy_api_source.h"
 #include "../../../../engine_context.h"
+#include "../../../../world.h"
+#include "../../../../game_properties.h"
 #include "../../../../scene/scene_utils.h"
+#include "../../../../scene/scene_template_cache.h"
 #include "../../../../ecs/ecs_manager.h"
+#include "../../../../ecs/component/script_component.h"
 #include "../../../../camera/camera.h"
 #include "../../../../camera/camera_manager.h"
-#include "../../../../game_properties.h"
-#include "../../../../world.h"
-#include "seika/audio/audio_manager.h"
-#include "seika/utils/se_string_util.h"
-#include "seika/utils/se_file_system_utils.h"
-#include "seika/asset/asset_file_loader.h"
-#include "../../../../scene/scene_template_cache.h"
-#include "../../../../ecs/component/script_component.h"
+#include "../../../../physics/collision/collision.h"
 
 // Shader Instance
 int cre_pkpy_api_shader_instance_delete(pkpy_vm* vm);
@@ -124,6 +125,10 @@ int cre_pkpy_api_game_config_load(pkpy_vm* vm);
 // Packed Scene
 int cre_pkpy_api_packed_scene_create_instance(pkpy_vm* vm);
 int cre_pkpy_api_packed_scene_load(pkpy_vm* vm);
+
+// Collision Handler
+int cre_pkpy_api_collision_handler_process_collisions(pkpy_vm* vm);
+int cre_pkpy_api_collision_handler_process_mouse_collisions(pkpy_vm* vm);
 
 void cre_pkpy_api_load_internal_modules(pkpy_vm* vm) {
     // Load internal first
@@ -290,6 +295,9 @@ void cre_pkpy_api_load_internal_modules(pkpy_vm* vm) {
             // Packed Scene
             {.signature = "packed_scene_create_instance(scene_cache_id: int) -> \"Node\"", .function = cre_pkpy_api_packed_scene_create_instance},
             {.signature = "packed_scene_load(path: str) -> int", .function = cre_pkpy_api_packed_scene_load},
+            // Collision Handler
+            {.signature = "collision_handler_process_collisions(entity_id: float) -> Tuple[\"Node\", ...]", .function = cre_pkpy_api_collision_handler_process_collisions},
+            {.signature = "collision_handler_process_mouse_collisions(pos_offset_x: float, pos_offset_y: float, collision_size_w: float, collision_size_h: float) -> Tuple[\"Node\", ...]", .function = cre_pkpy_api_collision_handler_process_mouse_collisions},
 
             { NULL, NULL },
         }
@@ -300,9 +308,9 @@ void cre_pkpy_api_load_internal_modules(pkpy_vm* vm) {
 }
 
 // Helper functions
-SEVector2 cre_pkpy_api_helper_mouse_get_global_position(SEMouse* mouse, SEVector2* offset) {
-    const CRECamera2D* camera = cre_camera_manager_get_current_camera();
+SEVector2 cre_pkpy_api_helper_mouse_get_global_position(const SEVector2* offset) {
     SEMouse* globalMouse = se_mouse_get();
+    const CRECamera2D* camera = cre_camera_manager_get_current_camera();
     CREGameProperties* gameProps = cre_game_props_get();
     SERenderContext* renderContext = se_render_context_get();
     const SEVector2 mouse_pixel_coord = {
@@ -789,10 +797,9 @@ int cre_pkpy_api_input_mouse_get_position(pkpy_vm* vm) {
 }
 
 int cre_pkpy_api_input_mouse_get_world_position(pkpy_vm* vm) {
-    SEMouse* globalMouse = se_mouse_get();
-    const SEVector2 worldPosition = cre_pkpy_api_helper_mouse_get_global_position(globalMouse, &(SEVector2){ 0.0f, 0.0f });
-    pkpy_push_float(vm, (double)worldPosition.x);
-    pkpy_push_float(vm, (double)worldPosition.y);
+    const SEVector2 mouseWorldPosition = cre_pkpy_api_helper_mouse_get_global_position(&(SEVector2){0.0f, 0.0f });
+    pkpy_push_float(vm, (double)mouseWorldPosition.x);
+    pkpy_push_float(vm, (double)mouseWorldPosition.y);
     return 2;
 }
 
@@ -1055,6 +1062,9 @@ int cre_pkpy_api_game_config_save(pkpy_vm* vm) {
     pkpy_CString pyPath;
     pkpy_CString pyDataJson;
     pkpy_CString pyEncryptionKey;
+    pkpy_to_string(vm, 0, &pyPath);
+    pkpy_to_string(vm, 1, &pyDataJson);
+    pkpy_to_string(vm, 2, &pyEncryptionKey);
 
     const char* path = pyPath.data;
     const char* dataJson = pyDataJson.data;
@@ -1073,6 +1083,8 @@ int cre_pkpy_api_game_config_save(pkpy_vm* vm) {
 int cre_pkpy_api_game_config_load(pkpy_vm* vm) {
     pkpy_CString pyPath;
     pkpy_CString pyEncryptionKey;
+    pkpy_to_string(vm, 0, &pyPath);
+    pkpy_to_string(vm, 1, &pyEncryptionKey);
 
     const char* path = pyPath.data;
     const char* encryptionKey = pyEncryptionKey.data; // TODO: Use
@@ -1107,6 +1119,7 @@ int cre_pkpy_api_packed_scene_create_instance(pkpy_vm* vm) {
     cre_pkpy_entity_instance_cache_push_or_add_default_entity_instance(vm, rootNode->entity);
     return 1;
 }
+
 int cre_pkpy_api_packed_scene_load(pkpy_vm* vm) {
     pkpy_CString pyScenePath;
     pkpy_to_string(vm, 0, &pyScenePath);
@@ -1115,4 +1128,38 @@ int cre_pkpy_api_packed_scene_load(pkpy_vm* vm) {
     const CreSceneCacheId cacheId = cre_scene_template_cache_load_scene(scenePath);
     pkpy_push_int(vm, (int)cacheId);
     return 1;
+}
+
+//--- Collision Handler ---//
+
+int cre_pkpy_api_collision_handler_process_collisions(pkpy_vm* vm) {
+    int pyEntityId;
+    pkpy_to_int(vm, 0, &pyEntityId);
+
+    const CreEntity entity = (CreEntity)pyEntityId;
+    const CollisionResult collisionResult = cre_collision_process_entity_collisions(entity);
+    for (size_t i = 0; i < collisionResult.collidedEntityCount; i++) {
+        const CreEntity collidedEntity = collisionResult.collidedEntities[i];
+        cre_pkpy_entity_instance_cache_push_or_add_default_entity_instance(vm, collidedEntity);
+    }
+    return (int)collisionResult.collidedEntityCount;
+}
+
+int cre_pkpy_api_collision_handler_process_mouse_collisions(pkpy_vm* vm) {
+    double pyPosOffsetX, pyPosOffsetY;
+    double pyCollisionSizeW, pyCollisionSizeH;
+    pkpy_to_float(vm, 0, &pyPosOffsetX);
+    pkpy_to_float(vm, 1, &pyPosOffsetY);
+    pkpy_to_float(vm, 2, &pyCollisionSizeW);
+    pkpy_to_float(vm, 3, &pyCollisionSizeH);
+
+    const SEVector2 positionOffset = { (float)pyPosOffsetX, (float)pyPosOffsetY };
+    const SEVector2 mouseWorldPos = cre_pkpy_api_helper_mouse_get_global_position(&positionOffset);
+    const SERect2 collisionRect = { mouseWorldPos.x, mouseWorldPos.y, (float)pyCollisionSizeW, (float)pyCollisionSizeH };
+    const CollisionResult collisionResult = cre_collision_process_mouse_collisions(&collisionRect);
+    for (size_t i = 0; i < collisionResult.collidedEntityCount; i++) {
+        const CreEntity collidedEntity = collisionResult.collidedEntities[i];
+        cre_pkpy_entity_instance_cache_push_or_add_default_entity_instance(vm, collidedEntity);
+    }
+    return (int)collisionResult.collidedEntityCount;
 }

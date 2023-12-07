@@ -24,7 +24,7 @@ CollisionResult cre_collision_process_entity_collisions(CreEntity entity) {
     return collisionResult;
 }
 
-CollisionResult cre_collision_process_mouse_collisions(SERect2* collisionRect) {
+CollisionResult cre_collision_process_mouse_collisions(const SERect2* collisionRect) {
     CollisionResult collisionResult = { .sourceEntity = CRE_NULL_ENTITY, .collidedEntityCount = 0 };
     const CreEntitySystem* collisionSystem = cre_collision_ec_system_get();
     for (size_t i = 0; i < collisionSystem->entity_count; i++) {

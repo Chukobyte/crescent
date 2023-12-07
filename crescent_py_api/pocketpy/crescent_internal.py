@@ -483,13 +483,13 @@ def _scene_manager_process_queued_scene_change() -> None:
     pass
 
 
-# --- GAME PROPERTIES ---#
+# --- GAME PROPERTIES --- #
 
 def game_properties_get() -> Tuple[str, int, int, int, int, int, str, bool]:
     return "Game", 640, 480, 640, 480, 66, "scene.cscn", False
 
 
-# --- CAMERA2D ---#
+# --- CAMERA2D --- #
 
 def camera2d_set_position(x: float, y: float) -> None:
     pass
@@ -543,7 +543,7 @@ def camera2d_unfollow_node(entity_id: int) -> None:
     pass
 
 
-# --- World ---#
+# --- World --- #
 
 def world_set_time_dilation(time_dilation: float) -> None:
     pass
@@ -557,7 +557,7 @@ def world_get_delta_time() -> float:
     return 0.1
 
 
-# --- Audio Source ---#
+# --- Audio Source --- #
 
 def audio_source_get_pitch(path: str) -> float:
     return 1.0
@@ -567,7 +567,7 @@ def audio_source_set_pitch(path: str, pitch: float) -> None:
     pass
 
 
-# --- Audio Manager ---#
+# --- Audio Manager --- #
 
 def audio_manager_play_sound(path: str, loops: bool) -> None:
     pass
@@ -577,7 +577,7 @@ def audio_manager_stop_sound(path: str) -> None:
     pass
 
 
-# --- Game Config ---#
+# --- Game Config --- #
 
 def game_config_save(path: str, json_text: str, encryption_key: str) -> bool:
     return True
@@ -587,7 +587,7 @@ def game_config_load(path, encryption_key) -> str:
     return "{}"
 
 
-# --- Packed Scene ---#
+# --- Packed Scene --- #
 
 def packed_scene_create_instance(scene_cache_id: int) -> "Node":
     return None
@@ -595,3 +595,13 @@ def packed_scene_create_instance(scene_cache_id: int) -> "Node":
 
 def packed_scene_load(path: str) -> int:
     return 0
+
+
+# --- Collision Handler --- #
+
+def collision_handler_process_collisions(entity_id: float) -> Tuple["Node", ...]:
+    return ()
+
+
+def collision_handler_process_mouse_collisions(pos_offset_x: float, pos_offset_y: float, collision_size_w: float, collision_size_h: float) -> Tuple["Node", ...]:
+    return ()
