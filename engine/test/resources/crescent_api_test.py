@@ -110,11 +110,20 @@ with TestCase("Node2D Tests") as test_case:
     node2d.queue_deletion()
 
 
+def test_node_event_manager_callback(*args):
+    assert not args
+
+
+def test_node_event_manager_callback_one_param(*args):
+    assert len(args) == 1
+
+
 with TestCase("Node Event Manager Tests") as test_case:
     subscriber_node = Node2D.new()
     root_node = SceneTree.get_root()
     root_node.add_child(subscriber_node)
-    root_node.subscribe_to_event("talk", subscriber_node, lambda *args: print("talk event success!"))
+    root_node.subscribe_to_event("talk", subscriber_node, lambda *args: test_node_event_manager_callback(*args))
+    root_node.subscribe_to_event("talk1", subscriber_node, lambda *args: test_node_event_manager_callback_one_param(*args))
 
 
 with TestCase("Scene Tree Tests") as test_case:
