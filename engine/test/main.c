@@ -285,6 +285,9 @@ void cre_pocketpy_test(void) {
     cre_pkpy_node_event_manager_initialize(vm);
     cre_pkpy_node_event_manager_broadcast_event(vm, 1, "talk");
     cre_pkpy_node_event_manager_broadcast_event_string(vm, 1, "talk_string", "Testing");
+    cre_pkpy_node_event_manager_broadcast_event_int(vm, 1, "talk_int", 42);
+    cre_pkpy_node_event_manager_broadcast_event_float(vm, 1, "talk_float", 10.0f);
+    cre_pkpy_node_event_manager_broadcast_event_bool(vm, 1, "talk_bool", true);
     TEST_ASSERT_EQUAL_INT(0, pkpy_stack_size(vm));
     cre_pkpy_node_event_manager_finalize();
 

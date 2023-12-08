@@ -110,21 +110,39 @@ with TestCase("Node2D Tests") as test_case:
     node2d.queue_deletion()
 
 
-def test_node_event_manager_callback(*args):
+def test_node_event_manager_callback(*args) -> None:
     assert not args
 
 
-def test_node_event_manager_callback_one_param_string(*args):
+def test_node_event_manager_callback_one_param_string(*args) -> None:
     assert len(args) == 1
     assert args[0] == "Testing"
+
+
+def test_node_event_manager_callback_one_param_int(*args) -> None:
+    assert len(args) == 1
+    assert args[0] == 42
+
+
+def test_node_event_manager_callback_one_param_float(*args) -> None:
+    assert len(args) == 1
+    assert are_floats_equal(args[0], 10.0)
+
+
+def test_node_event_manager_callback_one_param_bool(*args) -> None:
+    assert len(args) == 1
+    assert args[0]
 
 
 with TestCase("Node Event Manager Tests") as test_case:
     subscriber_node = Node2D.new()
     root_node = SceneTree.get_root()
     root_node.add_child(subscriber_node)
-    root_node.subscribe_to_event("talk", subscriber_node, lambda *args: test_node_event_manager_callback(*args))
-    root_node.subscribe_to_event("talk_string", subscriber_node, lambda *args: test_node_event_manager_callback_one_param_string(*args))
+    root_node.subscribe_to_event("talk", subscriber_node, test_node_event_manager_callback)
+    root_node.subscribe_to_event("talk_string", subscriber_node, test_node_event_manager_callback_one_param_string)
+    root_node.subscribe_to_event("talk_int", subscriber_node, test_node_event_manager_callback_one_param_int)
+    root_node.subscribe_to_event("talk_float", subscriber_node, test_node_event_manager_callback_one_param_float)
+    root_node.subscribe_to_event("talk_bool", subscriber_node, test_node_event_manager_callback_one_param_bool)
 
 
 with TestCase("Scene Tree Tests") as test_case:
