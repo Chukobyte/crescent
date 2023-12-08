@@ -18,11 +18,12 @@
 #include "../src/core/json/json_file_loader.h"
 #include "../src/core/scripting/python/pocketpy/cre_pkpy.h"
 #include "../src/core/scripting/python/pocketpy/cre_pkpy_util.h"
-#include "../src/core/scripting/python/pocketpy/api/cre_pkpy_api.h"
 #include "../src/core/scripting/python/pocketpy/cre_pkpy_entity_instance_cache.h"
+#include "../src/core/scripting/python/pocketpy/cre_pkpy_script_context.h"
+#include "../src/core/scripting/python/pocketpy/cre_pkpy_node_event_manager.h"
+#include "../src/core/scripting/python/pocketpy/api/cre_pkpy_api.h"
 #include "../src/core/game_properties.h"
 #include "../src/core/scene/scene_manager.h"
-#include "../src/core/scripting/python/pocketpy/cre_pkpy_script_context.h"
 #include "seika/utils/se_string_util.h"
 
 SETexture fakeColorRectTexture = {0};
@@ -279,6 +280,21 @@ void cre_pocketpy_test(void) {
     SE_MEM_FREE(testCustomNodesSource);
     SE_MEM_FREE(pythonText);
     TEST_ASSERT_FALSE(cre_pkpy_util_print_error_message(vm));
+
+    // Testing pushing broadcast event func for node manager
+    cre_pkpy_node_event_manager_initialize(vm);
+    cre_pkpy_node_event_manager_push_node_event_manager_broadcast_event_func(vm);
+    TEST_ASSERT_FALSE(cre_pkpy_util_print_error_message(vm));
+    TEST_ASSERT_EQUAL_INT(1, pkpy_stack_size(vm));
+    // Now try to call the func
+    pkpy_push_null(vm);
+    pkpy_push_int(vm, 1); // Scene tree root
+    pkpy_push_string(vm, pkpy_string("talk"));
+    pkpy_vectorcall(vm, 2);
+    TEST_ASSERT_FALSE(cre_pkpy_util_print_error_message(vm));
+    pkpy_pop_top(vm);
+    TEST_ASSERT_EQUAL_INT(0, pkpy_stack_size(vm));
+    cre_pkpy_node_event_manager_finalize();
 
     cre_scene_manager_finalize();
     se_asset_manager_finalize();

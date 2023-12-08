@@ -110,6 +110,13 @@ with TestCase("Node2D Tests") as test_case:
     node2d.queue_deletion()
 
 
+with TestCase("Node Event Manager Tests") as test_case:
+    subscriber_node = Node2D.new()
+    root_node = SceneTree.get_root()
+    root_node.add_child(subscriber_node)
+    root_node.subscribe_to_event("talk", subscriber_node, lambda *args: print("talk event success!"))
+
+
 with TestCase("Scene Tree Tests") as test_case:
     SceneTree.change_scene("test_scene1.cscn")
     # TODO: Fix once scene manager updates are in
