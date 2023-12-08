@@ -114,8 +114,9 @@ def test_node_event_manager_callback(*args):
     assert not args
 
 
-def test_node_event_manager_callback_one_param(*args):
+def test_node_event_manager_callback_one_param_string(*args):
     assert len(args) == 1
+    assert args[0] == "Testing"
 
 
 with TestCase("Node Event Manager Tests") as test_case:
@@ -123,7 +124,7 @@ with TestCase("Node Event Manager Tests") as test_case:
     root_node = SceneTree.get_root()
     root_node.add_child(subscriber_node)
     root_node.subscribe_to_event("talk", subscriber_node, lambda *args: test_node_event_manager_callback(*args))
-    root_node.subscribe_to_event("talk1", subscriber_node, lambda *args: test_node_event_manager_callback_one_param(*args))
+    root_node.subscribe_to_event("talk_string", subscriber_node, lambda *args: test_node_event_manager_callback_one_param_string(*args))
 
 
 with TestCase("Scene Tree Tests") as test_case:

@@ -283,18 +283,8 @@ void cre_pocketpy_test(void) {
 
     // Testing pushing broadcast event func for node manager
     cre_pkpy_node_event_manager_initialize(vm);
-    CRE_PKPY_NODE_EVENT_MANAGER_BROADCAST(vm, 1, "talk");
-    CRE_PKPY_NODE_EVENT_MANAGER_BROADCAST_ONE_PARAM(vm, 1, "talk1", "Testing");
-//    cre_pkpy_node_event_manager_push_node_event_manager_broadcast_event_func(vm);
-//    TEST_ASSERT_FALSE(cre_pkpy_util_print_error_message(vm));
-//    TEST_ASSERT_EQUAL_INT(1, pkpy_stack_size(vm));
-//    // Now try to call the func
-//    pkpy_push_null(vm);
-//    pkpy_push_int(vm, 1); // Scene tree root
-//    pkpy_push_string(vm, pkpy_string("talk"));
-//    pkpy_vectorcall(vm, 2);
-//    TEST_ASSERT_FALSE(cre_pkpy_util_print_error_message(vm));
-//    pkpy_pop_top(vm);
+    cre_pkpy_node_event_manager_broadcast_event(vm, 1, "talk");
+    cre_pkpy_node_event_manager_broadcast_event_string(vm, 1, "talk_string", "Testing");
     TEST_ASSERT_EQUAL_INT(0, pkpy_stack_size(vm));
     cre_pkpy_node_event_manager_finalize();
 
