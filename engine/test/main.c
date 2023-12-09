@@ -240,6 +240,9 @@ void cre_pocketpy_test(void) {
     TEST_ASSERT_EQUAL_INT(0, pkpy_stack_size(vm));
 
     TEST_MESSAGE("Testing entity instance cache");
+    // TODO: Remove once called internally
+    cre_pkpy_node_event_manager_initialize(vm);
+
     cre_pkpy_entity_instance_cache_initialize(vm);
     const CreEntity entity = cre_pkpy_entity_instance_cache_create_new_entity(vm, CRE_PKPY_MODULE_NAME_CRESCENT, "Node", cre_ec_system_create_entity_uid());
     cre_pkpy_entity_instance_cache_push_entity_instance(vm, entity);
@@ -282,7 +285,6 @@ void cre_pocketpy_test(void) {
     TEST_ASSERT_FALSE(cre_pkpy_util_print_error_message(vm));
 
     // Testing pushing broadcast event func for node manager
-    cre_pkpy_node_event_manager_initialize(vm);
     cre_pkpy_node_event_manager_broadcast_event(vm, 1, "talk");
     cre_pkpy_node_event_manager_broadcast_event_string(vm, 1, "talk_string", "Testing");
     cre_pkpy_node_event_manager_broadcast_event_int(vm, 1, "talk_int", 42);
