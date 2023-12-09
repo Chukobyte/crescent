@@ -1,5 +1,7 @@
 #include "cre_pkpy_script_context.h"
 
+#include <string.h>
+
 #include <pocketpy/pocketpy_c.h>
 
 #include <seika/networking/se_network.h>
@@ -64,7 +66,12 @@ CREScriptContext* cre_pkpy_script_context_get() {
     return pkpy_script_context;
 }
 
-void cre_pkpy_script_context_setup_node_event(CreEntity entity) {}
+void cre_pkpy_script_context_setup_node_event(CreEntity entity) {
+    if (!entityInitializedList[entity]) {
+        entityInitializedList[entity] = true;
+        // TODO: Implement node event registrations (per component)
+    }
+}
 
 void cre_pkpy_script_context_create_instance(CreEntity entity, const char* classPath, const char* className) {
     SE_ASSERT(vm);
@@ -101,6 +108,8 @@ void cre_pkpy_script_context_create_instance_if_nonexistent_and_push_entity_inst
 void pkpy_sc_on_delete_instance(CreEntity entity) {
     SE_ASSERT(vm);
     cre_pkpy_entity_instance_cache_remove_entity(vm, entity);
+
+    entityInitializedList[entity] = false;
 }
 
 void pkpy_sc_on_start(CreEntity entity) {
@@ -154,6 +163,8 @@ void pkpy_sc_on_script_context_destroy() {
 
     SE_MEM_FREE(pkpy_script_context);
     pkpy_script_context = NULL;
+
+    memset(entityInitializedList, 0, sizeof(entityInitializedList));
 }
 
 // Entity Network Callback
