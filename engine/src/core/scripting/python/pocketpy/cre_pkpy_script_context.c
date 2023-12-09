@@ -15,6 +15,7 @@
 #include "../../../ecs/component/node_component.h"
 #include "../../../ecs/component/script_component.h"
 #include "../../../ecs/component/component.h"
+#include "cre_pkpy_node_event_manager.h"
 
 //--- Script Context Interface ---//
 void pkpy_sc_on_delete_instance(CreEntity entity);
@@ -25,6 +26,13 @@ void pkpy_sc_on_end(CreEntity entity);
 void pkpy_sc_on_network_callback(const char* message);
 void pkpy_sc_on_script_context_destroy();
 //void pkpy_sc_on_entity_subscribe_to_network_callback(CreEntity entity, PyObject* callback_func, const char* id);
+
+//--- Node Event Callbacks ---//
+void pkpy_node_event_node_scene_entered(SESubjectNotifyPayload* payload);
+void pkpy_node_event_node_scene_exited(SESubjectNotifyPayload* payload);
+// Observers
+SEObserver node_scene_entered_observer = { .on_notify = pkpy_node_event_node_scene_entered };
+SEObserver node_scene_exited_observer = { .on_notify = pkpy_node_event_node_scene_exited };
 
 CREScriptContext* pkpy_script_context = NULL;
 pkpy_vm* vm = NULL;
@@ -70,6 +78,10 @@ void cre_pkpy_script_context_setup_node_event(CreEntity entity) {
     if (!entityInitializedList[entity]) {
         entityInitializedList[entity] = true;
         // TODO: Implement node event registrations (per component)
+        NodeComponent* nodeComponent = cre_component_manager_get_component_unchecked(entity, CreComponentDataIndex_NODE);
+        SE_ASSERT(nodeComponent);
+        se_event_register_observer(&nodeComponent->onSceneTreeEnter, &node_scene_entered_observer);
+        se_event_register_observer(&nodeComponent->onSceneTreeExit, &node_scene_exited_observer);
     }
 }
 
@@ -175,3 +187,15 @@ pkpy_vm* cre_pkpy_script_context_get_active_pkpy_vm() {
 }
 
 void cre_pkpy_script_context_on_network_udp_server_client_connected() {}
+
+//--- Node event callbacks ---//
+
+void pkpy_node_event_node_scene_entered(SESubjectNotifyPayload* payload) {
+    const CreEntity entity = *(CreEntity*)payload->data;
+    cre_pkpy_node_event_manager_broadcast_event(vm, (int)entity, "scene_entered");
+}
+
+void pkpy_node_event_node_scene_exited(SESubjectNotifyPayload* payload) {
+    const CreEntity entity = *(CreEntity*)payload->data;
+    cre_pkpy_node_event_manager_broadcast_event(vm, (int)entity, "scene_exited");
+}
