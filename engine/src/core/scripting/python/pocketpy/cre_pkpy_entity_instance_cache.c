@@ -103,20 +103,3 @@ void cre_pkpy_entity_instance_cache_push_entity_instance(pkpy_vm* vm, CreEntity 
     pkpy_eval(vm, entityStringBuffer);
     SE_ASSERT(!cre_pkpy_util_print_error_message(vm));
 }
-
-void cre_pkpy_entity_instance_cache_add_if_nonexistent_and_push_entity_instance(pkpy_vm* vm, CreEntity entity) {
-    if (!cre_pkpy_entity_instance_cache_has_entity(vm, entity)) {
-        const NodeComponent* nodeComponent = (NodeComponent*) cre_component_manager_get_component_unchecked(entity, CreComponentDataIndex_NODE);
-        ScriptComponent* scriptComponent = (ScriptComponent*) cre_component_manager_get_component_unchecked(entity, CreComponentDataIndex_SCRIPT);
-        if (!scriptComponent) {
-            // If an entity doesn't have a script component at this point, it should just be a plain base class from the crescent module.
-            // Since that is the case, just create a script component so that we can clean up within the script context when the entity
-            // needs to leave the instance cache.
-            const char* baseClassName = node_get_base_type_string(nodeComponent->type);
-            scriptComponent = script_component_create_ex(CRE_PKPY_MODULE_NAME_CRESCENT, baseClassName, ScriptContextType_PYTHON);
-            cre_component_manager_set_component(entity, CreComponentDataIndex_SCRIPT, scriptComponent);
-        }
-        cre_pkpy_entity_instance_cache_create_new_entity(vm, scriptComponent->classPath, scriptComponent->className, entity);
-    }
-    cre_pkpy_entity_instance_cache_push_entity_instance(vm, entity);
-}

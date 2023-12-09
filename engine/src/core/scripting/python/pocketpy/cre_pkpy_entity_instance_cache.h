@@ -13,5 +13,3 @@ bool cre_pkpy_entity_instance_cache_create_new_entity_if_nonexistent(pkpy_vm* vm
 void cre_pkpy_entity_instance_cache_remove_entity(pkpy_vm* vm, CreEntity entity);
 bool cre_pkpy_entity_instance_cache_has_entity(pkpy_vm* vm, CreEntity entity);
 void cre_pkpy_entity_instance_cache_push_entity_instance(pkpy_vm* vm, CreEntity entity);
-// Will create entity instance.  If no script component is attached, it's assumed its a base class and will create one of those and attach a script component
-void cre_pkpy_entity_instance_cache_add_if_nonexistent_and_push_entity_instance(pkpy_vm* vm, CreEntity entity);

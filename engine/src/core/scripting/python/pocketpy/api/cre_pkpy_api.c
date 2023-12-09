@@ -817,7 +817,7 @@ int cre_pkpy_api_scene_tree_change_scene(pkpy_vm* vm) {
 int cre_pkpy_api_scene_tree_get_root(pkpy_vm* vm) {
     SceneTreeNode* rootNode = cre_scene_manager_get_active_scene_root();
     SE_ASSERT(rootNode != NULL);
-    cre_pkpy_entity_instance_cache_add_if_nonexistent_and_push_entity_instance(vm, rootNode->entity);
+    cre_pkpy_script_context_create_instance_if_nonexistent_and_push_entity_instance(rootNode->entity);
     return 1;
 }
 
@@ -1111,7 +1111,6 @@ int cre_pkpy_api_packed_scene_create_instance(pkpy_vm* vm) {
     JsonSceneNode* sceneNode = cre_scene_template_cache_get_scene(cacheId);
     SceneTreeNode* rootNode = cre_scene_manager_stage_scene_nodes_from_json(sceneNode);
 
-    const CREScriptContext* scriptContext = cre_pkpy_script_context_get();
     cre_pkpy_script_context_create_instance(rootNode->entity, CRE_PKPY_MODULE_NAME_CRESCENT, node_get_base_type_string(sceneNode->type));
     cre_pkpy_entity_instance_cache_push_entity_instance(vm, rootNode->entity);
     return 1;
@@ -1137,7 +1136,7 @@ int cre_pkpy_api_collision_handler_process_collisions(pkpy_vm* vm) {
     const CollisionResult collisionResult = cre_collision_process_entity_collisions(entity);
     for (size_t i = 0; i < collisionResult.collidedEntityCount; i++) {
         const CreEntity collidedEntity = collisionResult.collidedEntities[i];
-        cre_pkpy_entity_instance_cache_add_if_nonexistent_and_push_entity_instance(vm, collidedEntity);
+        cre_pkpy_script_context_create_instance_if_nonexistent_and_push_entity_instance(collidedEntity);
     }
     return (int)collisionResult.collidedEntityCount;
 }
@@ -1156,7 +1155,7 @@ int cre_pkpy_api_collision_handler_process_mouse_collisions(pkpy_vm* vm) {
     const CollisionResult collisionResult = cre_collision_process_mouse_collisions(&collisionRect);
     for (size_t i = 0; i < collisionResult.collidedEntityCount; i++) {
         const CreEntity collidedEntity = collisionResult.collidedEntities[i];
-        cre_pkpy_entity_instance_cache_add_if_nonexistent_and_push_entity_instance(vm, collidedEntity);
+        cre_pkpy_script_context_create_instance_if_nonexistent_and_push_entity_instance(collidedEntity);
     }
     return (int)collisionResult.collidedEntityCount;
 }

@@ -110,7 +110,7 @@ int cre_pkpy_api_node_get_child(pkpy_vm* vm) {
 
     const CreEntity childEntity = cre_scene_manager_get_entity_child_by_name((CreEntity)parentEntityId, childEntityName.data);
     if (childEntity != CRE_NULL_ENTITY) {
-        cre_pkpy_entity_instance_cache_add_if_nonexistent_and_push_entity_instance(vm, childEntity);
+        cre_pkpy_script_context_create_instance_if_nonexistent_and_push_entity_instance(childEntity);
         return 1;
     }
     return 0;
@@ -128,7 +128,7 @@ int cre_pkpy_api_node_get_children(pkpy_vm* vm) {
     const SceneTreeNode* parentTreeNode = cre_scene_manager_get_entity_tree_node(entity);
     for (size_t i = 0; i < parentTreeNode->childCount; i++) {
         const SceneTreeNode* childTreeNode = parentTreeNode->children[i];
-        cre_pkpy_entity_instance_cache_add_if_nonexistent_and_push_entity_instance(vm, childTreeNode->entity);
+        cre_pkpy_script_context_create_instance_if_nonexistent_and_push_entity_instance(childTreeNode->entity);
     }
 
     return (int)parentTreeNode->childCount;
@@ -141,7 +141,7 @@ int cre_pkpy_api_node_get_parent(pkpy_vm* vm) {
     const CreEntity childEntity = (CreEntity)childEntityId;
     if (cre_scene_manager_has_entity_tree_node(childEntity)) {
         const SceneTreeNode* treeNode = cre_scene_manager_get_entity_tree_node(childEntity);
-        cre_pkpy_entity_instance_cache_add_if_nonexistent_and_push_entity_instance(vm, treeNode->entity);
+        cre_pkpy_script_context_create_instance_if_nonexistent_and_push_entity_instance(treeNode->entity);
         return 1;
     }
     return 0;
