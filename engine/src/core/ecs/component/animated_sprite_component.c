@@ -26,6 +26,8 @@ AnimatedSpriteComponent* animated_sprite_component_create() {
     animatedSpriteComponent->staggerStartAnimationTimes = false;
     animatedSpriteComponent->randomStaggerTime = 0;
     animatedSpriteComponent->shaderInstanceId = SE_SHADER_INSTANCE_INVALID_ID;
+    animatedSpriteComponent->onFrameChanged.observerCount = 0;
+    animatedSpriteComponent->onAnimationFinished.observerCount = 0;
 
     return animatedSpriteComponent;
 }
