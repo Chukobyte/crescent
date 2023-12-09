@@ -10,7 +10,6 @@
 #include "cre_pkpy_entity_instance_cache.h"
 
 //--- Script Context Interface ---//
-void pkpy_sc_on_create_instance(CreEntity entity, const char* classPath, const char* className);
 void pkpy_sc_on_delete_instance(CreEntity entity);
 void pkpy_sc_on_start(CreEntity entity);
 void pkpy_sc_on_update_instance(CreEntity entity, float deltaTime);
@@ -31,7 +30,7 @@ pkpy_CName pyEndFunctionName;
 CREScriptContext* cre_pkpy_script_context_create() {
     SE_ASSERT_FMT(pkpy_script_context == NULL, "Script context already created!");
     CREScriptContext* scriptContext = cre_script_context_create();
-    scriptContext->on_create_instance = pkpy_sc_on_create_instance;
+    scriptContext->on_create_instance = cre_pkpy_script_context_create_instance_if_nonexistent; // Using nonexistent version in case added to entity cache from elsewhere
     scriptContext->on_delete_instance = pkpy_sc_on_delete_instance;
     scriptContext->on_start = pkpy_sc_on_start;
     scriptContext->on_update_instance = pkpy_sc_on_update_instance;
@@ -58,9 +57,16 @@ CREScriptContext* cre_pkpy_script_context_get() {
     return pkpy_script_context;
 }
 
-void pkpy_sc_on_create_instance(CreEntity entity, const char* classPath, const char* className) {
+void cre_pkpy_script_context_create_instance(CreEntity entity, const char* classPath, const char* className) {
     SE_ASSERT(vm);
-    cre_pkpy_entity_instance_cache_create_new_entity(vm, classPath, className, entity);
+    cre_pkpy_entity_instance_cache_create_new_entity_if_nonexistent(vm, classPath, className, entity);
+}
+
+void cre_pkpy_script_context_create_instance_if_nonexistent(CreEntity entity, const char* classPath, const char* className) {
+    SE_ASSERT(vm);
+    if (!cre_pkpy_entity_instance_cache_has_entity(vm, entity)) {
+        cre_pkpy_script_context_create_instance(entity, classPath, className);
+    }
 }
 
 void pkpy_sc_on_delete_instance(CreEntity entity) {
@@ -130,4 +136,3 @@ pkpy_vm* cre_pkpy_script_context_get_active_pkpy_vm() {
 
 void cre_pkpy_script_context_on_network_udp_server_client_connected() {}
 void cre_pkpy_script_context_create_script_instance(CreEntity entity, const char* classPath, const char* className) {}
-void cre_pkpy_script_context_get_script_instance(CreEntity entity) {}

@@ -34,16 +34,16 @@ void cre_pkpy_entity_instance_cache_finalize(pkpy_vm* vm) {
 }
 
 CreEntity cre_pkpy_entity_instance_cache_create_new_entity(pkpy_vm* vm, const char* classPath, const char* className, CreEntity entity) {
+    SE_ASSERT(entity != CRE_NULL_ENTITY);
     // import module first
     char importCmdBuffer[96];
     sprintf(importCmdBuffer, "from %s import %s", classPath, className);
     pkpy_exec(vm, importCmdBuffer);
     SE_ASSERT(!cre_pkpy_util_print_error_message(vm));
 
-    const CreEntity newEntity = entity != CRE_NULL_ENTITY ? entity : cre_ec_system_create_entity_uid();
     pkpy_getglobal(vm, pkpy_name(className));
     pkpy_push_null(vm);
-    pkpy_push_int(vm, (int)newEntity);
+    pkpy_push_int(vm, (int)entity);
     pkpy_vectorcall(vm, 1);
     SE_ASSERT(!cre_pkpy_util_print_error_message(vm));
 
@@ -60,7 +60,21 @@ CreEntity cre_pkpy_entity_instance_cache_create_new_entity(pkpy_vm* vm, const ch
     pkpy_vectorcall(vm, 1);
     SE_ASSERT(!cre_pkpy_util_print_error_message(vm));
     pkpy_pop_top(vm);
-    return newEntity;
+
+    // Add script component if missing
+    if (!cre_component_manager_has_component(entity, CreComponentDataIndex_SCRIPT)) {
+        cre_component_manager_set_component(entity, CreComponentDataIndex_SCRIPT, script_component_create_ex(classPath, className, ScriptContextType_PYTHON));
+    }
+
+    return entity;
+}
+
+bool cre_pkpy_entity_instance_cache_create_new_entity_if_nonexistent(pkpy_vm* vm, const char* classPath, const char* className, CreEntity entity) {
+    if (!cre_pkpy_entity_instance_cache_has_entity(vm, entity)) {
+        cre_pkpy_entity_instance_cache_create_new_entity(vm, classPath, className, entity);
+        return true;
+    }
+    return false;
 }
 
 void cre_pkpy_entity_instance_cache_remove_entity(pkpy_vm* vm, CreEntity entity) {
@@ -90,14 +104,19 @@ void cre_pkpy_entity_instance_cache_push_entity_instance(pkpy_vm* vm, CreEntity 
     SE_ASSERT(!cre_pkpy_util_print_error_message(vm));
 }
 
-void cre_pkpy_entity_instance_cache_push_or_add_default_entity_instance(pkpy_vm* vm, CreEntity entity) {
+void cre_pkpy_entity_instance_cache_add_if_nonexistent_and_push_entity_instance(pkpy_vm* vm, CreEntity entity) {
     if (!cre_pkpy_entity_instance_cache_has_entity(vm, entity)) {
-        const NodeComponent* nodeComponent = cre_component_manager_get_component_unchecked(entity, CreComponentDataIndex_NODE);
-        SE_ASSERT(nodeComponent);
-        const char* nodeClassPath = CRE_PKPY_MODULE_NAME_CRESCENT;
-        const char* nodeBaseType = node_get_base_type_string(nodeComponent->type);
-        cre_component_manager_set_component(entity, CreComponentDataIndex_SCRIPT, script_component_create_ex(nodeClassPath, nodeBaseType, ScriptContextType_PYTHON));
-        cre_pkpy_entity_instance_cache_create_new_entity(vm, nodeClassPath, nodeBaseType, entity);
+        const NodeComponent* nodeComponent = (NodeComponent*) cre_component_manager_get_component_unchecked(entity, CreComponentDataIndex_NODE);
+        ScriptComponent* scriptComponent = (ScriptComponent*) cre_component_manager_get_component_unchecked(entity, CreComponentDataIndex_SCRIPT);
+        if (!scriptComponent) {
+            // If an entity doesn't have a script component at this point, it should just be a plain base class from the crescent module.
+            // Since that is the case, just create a script component so that we can clean up within the script context when the entity
+            // needs to leave the instance cache.
+            const char* baseClassName = node_get_base_type_string(nodeComponent->type);
+            scriptComponent = script_component_create_ex(CRE_PKPY_MODULE_NAME_CRESCENT, baseClassName, ScriptContextType_PYTHON);
+            cre_component_manager_set_component(entity, CreComponentDataIndex_SCRIPT, scriptComponent);
+        }
+        cre_pkpy_entity_instance_cache_create_new_entity(vm, scriptComponent->classPath, scriptComponent->className, entity);
     }
     cre_pkpy_entity_instance_cache_push_entity_instance(vm, entity);
 }

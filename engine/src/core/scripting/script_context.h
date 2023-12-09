@@ -26,7 +26,11 @@ typedef void (*OnEntitySubscribeToNetworkCallback) (CreEntity, struct _object*, 
 // Note: Node event logics must be handled manually within the script context, refer to 'node_event.h' for the api.
 // Also check out other script contexts for examples.
 typedef struct CREScriptContext {
+    // Called when a new entity instance is requested to be created once a node has entered the scene.
+    // If using the same function to dynamically create instance from the script side, be sure to check if the instance
+    // Isn't already created
     OnCreateInstance on_create_instance;
+    // Called write before an entity is deleted from the scene
     OnDeleteInstance on_delete_instance;
     // Called when an entity enters a scene
     OnStart on_start;

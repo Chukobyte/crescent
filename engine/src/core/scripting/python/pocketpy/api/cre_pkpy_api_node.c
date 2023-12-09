@@ -12,6 +12,8 @@
 #include <seika/utils/se_assert.h>
 
 #include "../cre_pkpy_entity_instance_cache.h"
+#include "../cre_pkpy_script_context.h"
+#include "../../../script_context.h"
 #include "../../../../scene/scene_manager.h"
 #include "../../../../ecs/component/sprite_component.h"
 #include "../../../../ecs/component/animated_sprite_component.h"
@@ -20,6 +22,7 @@
 #include "../../../../ecs/component/color_rect_component.h"
 #include "../../../../ecs/component/parallax_component.h"
 #include "../../../../ecs/component/script_component.h"
+#include "../../../../ecs/system/ec_system.h"
 
 void set_node_component_from_type(CreEntity entity, const char* classPath, const char* className, NodeBaseType baseType) {
 
@@ -66,12 +69,13 @@ int cre_pkpy_api_node_new(pkpy_vm* vm) {
     char className[32];
     se_str_trim_by_size(pyClassPath.data, classPath, pyClassPath.size);
     se_str_trim_by_size(pyClassName.data, className, pyClassName.size);
-    const CreEntity entity = cre_pkpy_entity_instance_cache_create_new_entity(vm, classPath, className, CRE_NULL_ENTITY);
+    const CreEntity entity = cre_pkpy_entity_instance_cache_create_new_entity(vm, classPath, className, cre_ec_system_create_entity_uid());
     SceneTreeNode* newNode = cre_scene_tree_create_tree_node(entity, NULL);
     cre_scene_manager_stage_child_node_to_be_added_later(newNode);
 
     set_node_component_from_type(entity, classPath, className, (NodeBaseType)pyNodeTypeFlag);
 
+    cre_pkpy_script_context_create_instance(entity, classPath, className);
     cre_pkpy_entity_instance_cache_push_entity_instance(vm, entity);
     return 1;
 }
@@ -105,8 +109,8 @@ int cre_pkpy_api_node_get_child(pkpy_vm* vm) {
     pkpy_to_string(vm, 1, &childEntityName);
 
     const CreEntity childEntity = cre_scene_manager_get_entity_child_by_name((CreEntity)parentEntityId, childEntityName.data);
-    if (cre_pkpy_entity_instance_cache_has_entity(vm, childEntity)) {
-        cre_pkpy_entity_instance_cache_push_or_add_default_entity_instance(vm, childEntity);
+    if (childEntity != CRE_NULL_ENTITY) {
+        cre_pkpy_entity_instance_cache_add_if_nonexistent_and_push_entity_instance(vm, childEntity);
         return 1;
     }
     return 0;
@@ -124,7 +128,7 @@ int cre_pkpy_api_node_get_children(pkpy_vm* vm) {
     const SceneTreeNode* parentTreeNode = cre_scene_manager_get_entity_tree_node(entity);
     for (size_t i = 0; i < parentTreeNode->childCount; i++) {
         const SceneTreeNode* childTreeNode = parentTreeNode->children[i];
-        cre_pkpy_entity_instance_cache_push_or_add_default_entity_instance(vm, childTreeNode->entity);
+        cre_pkpy_entity_instance_cache_add_if_nonexistent_and_push_entity_instance(vm, childTreeNode->entity);
     }
 
     return (int)parentTreeNode->childCount;
@@ -137,7 +141,7 @@ int cre_pkpy_api_node_get_parent(pkpy_vm* vm) {
     const CreEntity childEntity = (CreEntity)childEntityId;
     if (cre_scene_manager_has_entity_tree_node(childEntity)) {
         const SceneTreeNode* treeNode = cre_scene_manager_get_entity_tree_node(childEntity);
-        cre_pkpy_entity_instance_cache_push_or_add_default_entity_instance(vm, treeNode->entity);
+        cre_pkpy_entity_instance_cache_add_if_nonexistent_and_push_entity_instance(vm, treeNode->entity);
         return 1;
     }
     return 0;

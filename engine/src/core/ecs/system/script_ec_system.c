@@ -59,10 +59,11 @@ CreEntitySystem* cre_script_ec_system_create() {
 
 void script_system_on_entity_registered(CreEntity entity) {
     const ScriptComponent* scriptComponent = (ScriptComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_SCRIPT);
-    SE_ASSERT(scriptContexts[scriptComponent->contextType] != NULL);
-    SE_ASSERT(scriptContexts[scriptComponent->contextType]->on_create_instance != NULL);
     SE_ASSERT(scriptComponent->contextType != ScriptContextType_NONE);
-    scriptContexts[scriptComponent->contextType]->on_create_instance(entity, scriptComponent->classPath, scriptComponent->className);
+    const CREScriptContext* scriptContext = scriptContexts[scriptComponent->contextType];
+    SE_ASSERT(scriptContext != NULL);
+    SE_ASSERT(scriptContext->on_create_instance != NULL);
+    scriptContext->on_create_instance(entity, scriptComponent->classPath, scriptComponent->className);
 }
 
 void script_system_on_entity_unregistered(CreEntity entity) {
@@ -74,8 +75,7 @@ void script_system_entity_start(CreEntity entity) {
     const ScriptComponent* scriptComponent = (ScriptComponent*) cre_component_manager_get_component(entity,
             CreComponentDataIndex_SCRIPT);
     SE_ASSERT(scriptComponent != NULL);
-    SE_ASSERT_FMT(scriptComponent->contextType == ScriptContextType_PYTHON || scriptComponent->contextType == ScriptContextType_NATIVE,
-                  "Invalid context type '%d' for entity '%d'", scriptComponent->contextType, entity);
+    SE_ASSERT_FMT(scriptComponent->contextType != ScriptContextType_NONE, "Invalid context type '%d' for entity '%d'", scriptComponent->contextType, entity);
     scriptContexts[scriptComponent->contextType]->on_start(entity);
 }
 
