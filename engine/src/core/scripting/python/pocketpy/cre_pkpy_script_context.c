@@ -11,11 +11,12 @@
 
 #include "cre_pkpy.h"
 #include "cre_pkpy_entity_instance_cache.h"
+#include "cre_pkpy_node_event_manager.h"
+#include "api/cre_pkpy_api.h"
 #include "../../script_context.h"
 #include "../../../ecs/component/node_component.h"
 #include "../../../ecs/component/script_component.h"
 #include "../../../ecs/component/component.h"
-#include "cre_pkpy_node_event_manager.h"
 
 //--- Script Context Interface ---//
 void pkpy_sc_on_delete_instance(CreEntity entity);
@@ -66,6 +67,10 @@ CREScriptContext* cre_pkpy_script_context_create() {
         pyFixedUpdateFunctionName = pkpy_name("_fixed_process");
         pyEndFunctionName = pkpy_name("_end");
     }
+
+    cre_pkpy_api_load_internal_modules(vm);
+    cre_pkpy_node_event_manager_initialize(vm);
+    cre_pkpy_entity_instance_cache_initialize(vm);
 
     return scriptContext;
 }
@@ -169,6 +174,9 @@ void pkpy_sc_on_network_callback(const char* message) {
 }
 
 void pkpy_sc_on_script_context_destroy() {
+    cre_pkpy_node_event_manager_finalize();
+    cre_pkpy_entity_instance_cache_finalize(vm);
+
     SE_ASSERT(vm);
     pkpy_delete_vm(vm);
     vm = NULL;

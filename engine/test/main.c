@@ -228,7 +228,6 @@ void cre_pocketpy_test(void) {
 #undef CRE_TEST_POCKETPY_SOURCE
 
     TEST_MESSAGE("Testing loading included internal modules");
-    cre_pkpy_api_load_internal_modules(vm);
     pkpy_exec(vm, "from crescent import Node");
     TEST_ASSERT_FALSE(cre_pkpy_util_print_error_message(vm));
     pkpy_eval(vm, "Node(10).entity_id");
@@ -240,10 +239,6 @@ void cre_pocketpy_test(void) {
     TEST_ASSERT_EQUAL_INT(0, pkpy_stack_size(vm));
 
     TEST_MESSAGE("Testing entity instance cache");
-    // TODO: Remove once called internally
-    cre_pkpy_node_event_manager_initialize(vm);
-
-    cre_pkpy_entity_instance_cache_initialize(vm);
     const CreEntity entity = cre_pkpy_entity_instance_cache_create_new_entity(vm, CRE_PKPY_MODULE_NAME_CRESCENT, "Node", cre_ec_system_create_entity_uid());
     cre_pkpy_entity_instance_cache_push_entity_instance(vm, entity);
     TEST_ASSERT_EQUAL_INT(1, pkpy_stack_size(vm));
@@ -291,11 +286,8 @@ void cre_pocketpy_test(void) {
     cre_pkpy_node_event_manager_broadcast_event_float(vm, 1, "talk_float", 10.0f);
     cre_pkpy_node_event_manager_broadcast_event_bool(vm, 1, "talk_bool", true);
     TEST_ASSERT_EQUAL_INT(0, pkpy_stack_size(vm));
-    cre_pkpy_node_event_manager_finalize();
 
     cre_scene_manager_finalize();
     se_asset_manager_finalize();
     cre_game_props_finalize();
-
-    cre_pkpy_entity_instance_cache_finalize(vm);
 }
