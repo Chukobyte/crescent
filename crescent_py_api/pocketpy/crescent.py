@@ -1442,51 +1442,43 @@ class PackedScene:
         return PackedScene(scene_cache_id, path)
 
 
-# class Network:
-#     @staticmethod
-#     def is_server() -> bool:
-#         return crescent_internal.network_is_server()
-#
-#
-# class Server:
-#     @staticmethod
-#     def start(port: int) -> None:
-#         crescent_internal.server_start(port=port)
-#
-#     @staticmethod
-#     def stop() -> None:
-#         crescent_internal.server_stop()
-#
-#     @staticmethod
-#     def send(message: str) -> None:
-#         crescent_internal.server_send(message=message)
-#
-#     @staticmethod
-#     def subscribe(signal_id: str, listener_node: Node, listener_func: Callable) -> None:
-#         crescent_internal.server_subscribe(
-#             signal_id=signal_id,
-#             listener_node=listener_node.entity_id,
-#             listener_func=listener_func,
-#         )
-#
-#
-# class Client:
-#     @staticmethod
-#     def start(host: str, port: int) -> None:
-#         crescent_internal.client_start(host=host, port=port)
-#
-#     @staticmethod
-#     def stop() -> None:
-#         crescent_internal.client_stop()
-#
-#     @staticmethod
-#     def send(message: str) -> None:
-#         crescent_internal.client_send(message=message)
-#
-#     @staticmethod
-#     def subscribe(signal_id: str, listener_node: Node, listener_func: Callable) -> None:
-#         crescent_internal.client_subscribe(
-#             signal_id=signal_id,
-#             listener_node=listener_node.entity_id,
-#             listener_func=listener_func,
-#         )
+class Network:
+    @staticmethod
+    def is_server() -> bool:
+        return crescent_internal.network_is_server()
+
+
+class Server:
+    @staticmethod
+    def start(port: int) -> None:
+        crescent_internal.server_start(port=port)
+
+    @staticmethod
+    def stop() -> None:
+        crescent_internal.server_stop()
+
+    @staticmethod
+    def send(message: str) -> None:
+        crescent_internal.server_send(message=message)
+
+    @staticmethod
+    def subscribe(event_name: str, listener_node: Node, listener_func: Callable) -> None:
+        _node_event_manager.subscribe_to_event(-100, event_name, listener_node.entity_id, listener_func)
+
+
+class Client:
+    @staticmethod
+    def start(host: str, port: int) -> None:
+        crescent_internal.client_start(host=host, port=port)
+
+    @staticmethod
+    def stop() -> None:
+        crescent_internal.client_stop()
+
+    @staticmethod
+    def send(message: str) -> None:
+        crescent_internal.client_send(message=message)
+
+    @staticmethod
+    def subscribe(event_name: str, listener_node: Node, listener_func: Callable) -> None:
+        _node_event_manager.subscribe_to_event(-100, event_name, listener_node.entity_id, listener_func)

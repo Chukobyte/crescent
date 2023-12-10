@@ -12,6 +12,7 @@
 #include <seika/audio/audio_manager.h>
 #include <seika/asset/asset_manager.h>
 #include <seika/asset/asset_file_loader.h>
+#include <seika/networking/se_network.h>
 #include <seika/utils/se_assert.h>
 #include <seika/utils/se_string_util.h>
 #include <seika/utils/se_file_system_utils.h>
@@ -130,6 +131,17 @@ int cre_pkpy_api_packed_scene_load(pkpy_vm* vm);
 // Collision Handler
 int cre_pkpy_api_collision_handler_process_collisions(pkpy_vm* vm);
 int cre_pkpy_api_collision_handler_process_mouse_collisions(pkpy_vm* vm);
+
+// Network
+int cre_pkpy_api_network_is_server(pkpy_vm* vm);
+// Server
+int cre_pkpy_api_server_start(pkpy_vm* vm);
+int cre_pkpy_api_server_stop(pkpy_vm* vm);
+int cre_pkpy_api_server_send(pkpy_vm* vm);
+// Client
+int cre_pkpy_api_client_start(pkpy_vm* vm);
+int cre_pkpy_api_client_stop(pkpy_vm* vm);
+int cre_pkpy_api_client_send(pkpy_vm* vm);
 
 void cre_pkpy_api_load_internal_modules(pkpy_vm* vm) {
     // Load internal first
@@ -299,6 +311,16 @@ void cre_pkpy_api_load_internal_modules(pkpy_vm* vm) {
             // Collision Handler
             {.signature = "collision_handler_process_collisions(entity_id: float) -> Tuple[\"Node\", ...]", .function = cre_pkpy_api_collision_handler_process_collisions},
             {.signature = "collision_handler_process_mouse_collisions(pos_offset_x: float, pos_offset_y: float, collision_size_w: float, collision_size_h: float) -> Tuple[\"Node\", ...]", .function = cre_pkpy_api_collision_handler_process_mouse_collisions},
+            // Network
+            {.signature = "network_is_server() -> bool", .function = cre_pkpy_api_network_is_server},
+            // Server
+            {.signature = "server_start(port: int) -> None", .function = cre_pkpy_api_server_start},
+            {.signature = "server_stop() -> None", .function = cre_pkpy_api_server_stop},
+            {.signature = "server_send(message: str) -> None", .function = cre_pkpy_api_server_send},
+            // Client
+            {.signature = "client_start(host: str, port: int) -> None", .function = cre_pkpy_api_client_start},
+            {.signature = "client_stop() -> None", .function = cre_pkpy_api_client_stop},
+            {.signature = "client_send(message: str) -> None", .function = cre_pkpy_api_client_send},
 
             { NULL, NULL },
         }
@@ -1158,4 +1180,57 @@ int cre_pkpy_api_collision_handler_process_mouse_collisions(pkpy_vm* vm) {
         cre_pkpy_script_context_create_instance_if_nonexistent_and_push_entity_instance(collidedEntity);
     }
     return (int)collisionResult.collidedEntityCount;
+}
+
+//--- Network ---//
+int cre_pkpy_api_network_is_server(pkpy_vm* vm) {
+    pkpy_push_bool(vm, se_network_is_server());
+    return 1;
+}
+
+//--- Server ---//
+int cre_pkpy_api_server_start(pkpy_vm* vm) {
+    int pyPort;
+    pkpy_to_int(vm, 0, &pyPort);
+
+    se_udp_server_initialize(pyPort, NULL);
+    return 0;
+}
+
+int cre_pkpy_api_server_stop(pkpy_vm* vm) {
+    se_udp_server_finalize();
+    return 0;
+}
+
+int cre_pkpy_api_server_send(pkpy_vm* vm) {
+    pkpy_CString pyMessage;
+    pkpy_to_string(vm, 0, &pyMessage);
+
+    const char* message = pyMessage.data;
+    se_udp_server_send_message(message);
+    return 0;
+}
+
+//--- Client ---//
+int cre_pkpy_api_client_start(pkpy_vm* vm) {
+    pkpy_CString pyHost;
+    int pyPort;
+    pkpy_to_string(vm, 0, &pyHost);
+    pkpy_to_int(vm, 1, &pyPort);
+
+    const char* host = pyHost.data;
+    se_udp_client_initialize(host, pyPort, NULL);
+    return 0;
+}
+int cre_pkpy_api_client_stop(pkpy_vm* vm) {
+    se_udp_client_finalize();
+    return 0;
+}
+int cre_pkpy_api_client_send(pkpy_vm* vm) {
+    pkpy_CString pyMessage;
+    pkpy_to_string(vm, 0, &pyMessage);
+
+    const char* message = pyMessage.data;
+    se_udp_client_send_message(message);
+    return 0;
 }

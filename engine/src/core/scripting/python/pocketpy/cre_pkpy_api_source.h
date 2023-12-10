@@ -1443,6 +1443,48 @@
 "        if scene_cache_id < 0:\n"\
 "            return None\n"\
 "        return PackedScene(scene_cache_id, path)\n"\
+"\n"\
+"\n"\
+"class Network:\n"\
+"    @staticmethod\n"\
+"    def is_server() -> bool:\n"\
+"        return crescent_internal.network_is_server()\n"\
+"\n"\
+"\n"\
+"class Server:\n"\
+"    @staticmethod\n"\
+"    def start(port: int) -> None:\n"\
+"        crescent_internal.server_start(port=port)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def stop() -> None:\n"\
+"        crescent_internal.server_stop()\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def send(message: str) -> None:\n"\
+"        crescent_internal.server_send(message=message)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def subscribe(event_name: str, listener_node: Node, listener_func: Callable) -> None:\n"\
+"        _node_event_manager.subscribe_to_event(-100, event_name, listener_node.entity_id, listener_func)\n"\
+"\n"\
+"\n"\
+"class Client:\n"\
+"    @staticmethod\n"\
+"    def start(host: str, port: int) -> None:\n"\
+"        crescent_internal.client_start(host=host, port=port)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def stop() -> None:\n"\
+"        crescent_internal.client_stop()\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def send(message: str) -> None:\n"\
+"        crescent_internal.client_send(message=message)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def subscribe(event_name: str, listener_node: Node, listener_func: Callable) -> None:\n"\
+"        _node_event_manager.subscribe_to_event(-100, event_name, listener_node.entity_id, listener_func)\n"\
 "\n"
 
 #define CRE_PKPY_CRESCENT_INTERNAL_PY_SOURCE ""\

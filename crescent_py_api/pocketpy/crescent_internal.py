@@ -605,3 +605,36 @@ def collision_handler_process_collisions(entity_id: float) -> Tuple["Node", ...]
 
 def collision_handler_process_mouse_collisions(pos_offset_x: float, pos_offset_y: float, collision_size_w: float, collision_size_h: float) -> Tuple["Node", ...]:
     return ()
+
+
+# --- Network --- #
+
+def network_is_server() -> bool:
+    return True
+
+
+# --- Server --- #
+
+def server_start(port: int) -> None:
+    pass
+
+
+def server_stop() -> None:
+    pass
+
+
+def server_send(message: str) -> None:
+    pass
+
+# --- Client --- #
+
+def client_start(host: str, port: int) -> None:
+    pass
+
+
+def client_stop() -> None:
+    pass
+
+
+def client_send(message: str) -> None:
+    pass
