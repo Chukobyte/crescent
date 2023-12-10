@@ -134,7 +134,8 @@ def test_node_event_manager_callback_one_param_bool(*args) -> None:
     assert args[0]
 
 
-with TestCase("Node Event Manager Tests") as test_case:
+with TestCase("Node Tests") as test_case:
+    # Testing subscriptions
     subscriber_node = Node2D.new()
     root_node = SceneTree.get_root()
     root_node.add_child(subscriber_node)
@@ -143,6 +144,10 @@ with TestCase("Node Event Manager Tests") as test_case:
     root_node.subscribe_to_event("talk_int", subscriber_node, test_node_event_manager_callback_one_param_int)
     root_node.subscribe_to_event("talk_float", subscriber_node, test_node_event_manager_callback_one_param_float)
     root_node.subscribe_to_event("talk_bool", subscriber_node, test_node_event_manager_callback_one_param_bool)
+
+    # Testing node events
+    test_node = Node2D.new()
+    test_node.subscribe_to_event("scene_entered", root_node, lambda *args: print("test_node entered scene!"))
 
 
 with TestCase("Scene Tree Tests") as test_case:
