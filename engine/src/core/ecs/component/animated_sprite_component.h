@@ -12,15 +12,18 @@ extern "C" {
 #include <seika/math/se_math.h>
 #include <seika/data_structures/se_hash_map_string.h>
 
+#include "../entity/entity.h"
 #include "../../animation/animation.h"
 
 #define ANIMATED_SPRITE_COMPONENT_MAX_ANIMATIONS 16
 
 typedef struct AnimatedSpriteFrameChangedPayload {
-    int newFrame;
+    const CreEntity entity;
+    const int newFrame;
 } AnimatedSpriteFrameChangedPayload;
 
 typedef struct AnimatedSpriteAnimationFinishedPayload {
+    const CreEntity entity;
     const CreAnimation* animation;
 } AnimatedSpriteAnimationFinishedPayload;
 

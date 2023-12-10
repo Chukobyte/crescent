@@ -57,14 +57,14 @@ void animated_sprite_rendering_system_render() {
             if (newIndex != animatedSpriteComponent->currentAnimation.currentFrame) {
                 // Notify observers that frame has changed
                 se_event_notify_observers(&animatedSpriteComponent->onFrameChanged, &(SESubjectNotifyPayload){
-                    .data = &(AnimatedSpriteFrameChangedPayload ){ .newFrame = newIndex }
+                    .data = &(AnimatedSpriteFrameChangedPayload){ .entity = entity, .newFrame = newIndex }
                 });
 
                 currentFrame = animatedSpriteComponent->currentAnimation.animationFrames[newIndex];
                 if (newIndex + 1 == animatedSpriteComponent->currentAnimation.frameCount) {
                     // Notify the observers that the animation has finished
                     se_event_notify_observers(&animatedSpriteComponent->onFrameChanged, &(SESubjectNotifyPayload){
-                        .data = &(AnimatedSpriteAnimationFinishedPayload ){ .animation = &animatedSpriteComponent->currentAnimation }
+                        .data = &(AnimatedSpriteAnimationFinishedPayload){ .entity = entity, .animation = &animatedSpriteComponent->currentAnimation }
                     });
                     if (!animatedSpriteComponent->currentAnimation.doesLoop) {
                         animatedSpriteComponent->isPlaying = false;

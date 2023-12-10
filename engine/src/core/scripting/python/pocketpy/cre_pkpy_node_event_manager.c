@@ -4,6 +4,23 @@
 
 #include "cre_pkpy_util.h"
 
+
+static inline void cre_pkpy_node_event_manager_push_broadcast_and_initial_args(pkpy_vm* vm, int ownerId, const char* eventName) {
+    cre_pkpy_node_event_manager_push_broadcast_event_func(vm);
+    SE_ASSERT(!cre_pkpy_util_print_error_message(vm));
+    pkpy_push_null(vm);
+    pkpy_push_int(vm, ownerId);
+    pkpy_push_string(vm, pkpy_string(eventName));
+}
+
+static inline bool cre_pkpy_node_event_manager_push_create_event_func(pkpy_vm* vm) {
+    return pkpy_eval(vm, "crescent._node_event_manager.create_event");
+}
+
+static inline bool cre_pkpy_node_event_manager_push_remove_entity_and_connections_func(pkpy_vm* vm) {
+    return pkpy_eval(vm, "crescent._node_event_manager.remove_entity_and_connections");
+}
+
 void cre_pkpy_node_event_manager_initialize(pkpy_vm* vm) {
     pkpy_exec(vm, "import crescent");
     SE_ASSERT(!cre_pkpy_util_print_error_message(vm));
@@ -11,15 +28,26 @@ void cre_pkpy_node_event_manager_initialize(pkpy_vm* vm) {
 
 void cre_pkpy_node_event_manager_finalize() {}
 
-static inline void cre_pkpy_node_event_manager_push_broadcast_and_initial_args(pkpy_vm* vm, int ownerId, const char* eventName) {
-    cre_pkpy_node_event_manager_push_node_event_manager_broadcast_event_func(vm);
+void cre_pkpy_node_event_manager_create_event(pkpy_vm* vm, int ownerId, const char* eventName) {
+    cre_pkpy_node_event_manager_push_create_event_func(vm);
     SE_ASSERT(!cre_pkpy_util_print_error_message(vm));
     pkpy_push_null(vm);
     pkpy_push_int(vm, ownerId);
     pkpy_push_string(vm, pkpy_string(eventName));
+    pkpy_vectorcall(vm, 2);
+    pkpy_pop_top(vm);
 }
 
-bool cre_pkpy_node_event_manager_push_node_event_manager_broadcast_event_func(pkpy_vm* vm) {
+void cre_pkpy_node_event_manager_remove_entity_and_connections(pkpy_vm* vm, int ownerId) {
+    cre_pkpy_node_event_manager_push_remove_entity_and_connections_func(vm);
+    SE_ASSERT(!cre_pkpy_util_print_error_message(vm));
+    pkpy_push_null(vm);
+    pkpy_push_int(vm, ownerId);
+    pkpy_vectorcall(vm, 1);
+    pkpy_pop_top(vm);
+}
+
+bool cre_pkpy_node_event_manager_push_broadcast_event_func(pkpy_vm* vm) {
     return pkpy_eval(vm, "crescent._node_event_manager.broadcast_event");
 }
 

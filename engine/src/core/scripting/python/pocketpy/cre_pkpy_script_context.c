@@ -14,9 +14,10 @@
 #include "cre_pkpy_node_event_manager.h"
 #include "api/cre_pkpy_api.h"
 #include "../../script_context.h"
+#include "../../../ecs/component/animated_sprite_component.h"
+#include "../../../ecs/component/component.h"
 #include "../../../ecs/component/node_component.h"
 #include "../../../ecs/component/script_component.h"
-#include "../../../ecs/component/component.h"
 
 //--- Script Context Interface ---//
 void pkpy_sc_on_delete_instance(CreEntity entity);
@@ -31,9 +32,15 @@ void pkpy_sc_on_script_context_destroy();
 //--- Node Event Callbacks ---//
 void pkpy_node_event_node_scene_entered(SESubjectNotifyPayload* payload);
 void pkpy_node_event_node_scene_exited(SESubjectNotifyPayload* payload);
+
+void pkpy_node_event_animated_sprite_frame_changed(SESubjectNotifyPayload* payload);
+void pkpy_node_event_animated_sprite_animation_finished(SESubjectNotifyPayload* payload);
 // Observers
 SEObserver node_scene_entered_observer = { .on_notify = pkpy_node_event_node_scene_entered };
 SEObserver node_scene_exited_observer = { .on_notify = pkpy_node_event_node_scene_exited };
+
+SEObserver animated_sprite_frame_changed_observer = { .on_notify = pkpy_node_event_animated_sprite_frame_changed };
+SEObserver animated_sprite_animation_finished_observer = { .on_notify = pkpy_node_event_animated_sprite_animation_finished };
 
 CREScriptContext* pkpy_script_context = NULL;
 pkpy_vm* vm = NULL;
@@ -82,11 +89,17 @@ CREScriptContext* cre_pkpy_script_context_get() {
 void cre_pkpy_script_context_setup_node_event(CreEntity entity) {
     if (!entityInitializedList[entity]) {
         entityInitializedList[entity] = true;
-        // TODO: Implement node event registrations (per component)
-        NodeComponent* nodeComponent = cre_component_manager_get_component_unchecked(entity, CreComponentDataIndex_NODE);
-        SE_ASSERT(nodeComponent);
+        // Node
+        NodeComponent* nodeComponent = (NodeComponent*) cre_component_manager_get_component_unchecked(entity, CreComponentDataIndex_NODE);
+        SE_ASSERT_FMT(nodeComponent, "Node component should never be null!  Node name: '%s', entity id: '%u'", nodeComponent->name, entity);
         se_event_register_observer(&nodeComponent->onSceneTreeEnter, &node_scene_entered_observer);
         se_event_register_observer(&nodeComponent->onSceneTreeExit, &node_scene_exited_observer);
+        // Animated Sprite
+        AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) cre_component_manager_get_component_unchecked(entity, CreComponentDataIndex_ANIMATED_SPRITE);
+        if (animatedSpriteComponent) {
+            se_event_register_observer(&animatedSpriteComponent->onFrameChanged, &animated_sprite_frame_changed_observer);
+            se_event_register_observer(&animatedSpriteComponent->onAnimationFinished, &animated_sprite_animation_finished_observer);
+        }
     }
 }
 
@@ -198,6 +211,7 @@ void cre_pkpy_script_context_on_network_udp_server_client_connected() {}
 
 //--- Node event callbacks ---//
 
+// NODE
 void pkpy_node_event_node_scene_entered(SESubjectNotifyPayload* payload) {
     const CreEntity entity = *(CreEntity*)payload->data;
     cre_pkpy_node_event_manager_broadcast_event(vm, (int)entity, "scene_entered");
@@ -206,4 +220,16 @@ void pkpy_node_event_node_scene_entered(SESubjectNotifyPayload* payload) {
 void pkpy_node_event_node_scene_exited(SESubjectNotifyPayload* payload) {
     const CreEntity entity = *(CreEntity*)payload->data;
     cre_pkpy_node_event_manager_broadcast_event(vm, (int)entity, "scene_exited");
+    cre_pkpy_node_event_manager_remove_entity_and_connections(vm, (int)entity);
+}
+
+// ANIMATED SPRITE
+void pkpy_node_event_animated_sprite_frame_changed(SESubjectNotifyPayload* payload) {
+    const AnimatedSpriteFrameChangedPayload* eventPayload = (AnimatedSpriteFrameChangedPayload*)payload->data;
+    cre_pkpy_node_event_manager_broadcast_event_int(vm, (int)eventPayload->entity, "frame_changed", eventPayload->newFrame);
+}
+
+void pkpy_node_event_animated_sprite_animation_finished(SESubjectNotifyPayload* payload) {
+    const AnimatedSpriteAnimationFinishedPayload* eventPayload = (AnimatedSpriteAnimationFinishedPayload*)payload->data;
+    cre_pkpy_node_event_manager_broadcast_event_string(vm, (int)eventPayload->entity, "animation_finished", eventPayload->animation->name);
 }
