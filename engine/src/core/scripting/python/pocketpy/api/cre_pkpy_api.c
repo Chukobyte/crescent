@@ -17,7 +17,6 @@
 #include <seika/utils/se_string_util.h>
 #include <seika/utils/se_file_system_utils.h>
 
-
 #include "cre_pkpy_api_node.h"
 #include "../cre_pkpy.h"
 #include "../cre_pkpy_util.h"
@@ -30,10 +29,10 @@
 #include "../../../../scene/scene_utils.h"
 #include "../../../../scene/scene_template_cache.h"
 #include "../../../../ecs/ecs_manager.h"
+#include "../../../../ecs/system/ec_system.h"
 #include "../../../../camera/camera.h"
 #include "../../../../camera/camera_manager.h"
 #include "../../../../physics/collision/collision.h"
-#include "../../../script_context.h"
 
 // Shader Instance
 int cre_pkpy_api_shader_instance_delete(pkpy_vm* vm);
@@ -1193,7 +1192,7 @@ int cre_pkpy_api_server_start(pkpy_vm* vm) {
     int pyPort;
     pkpy_to_int(vm, 0, &pyPort);
 
-    se_udp_server_initialize(pyPort, NULL);
+    se_udp_server_initialize(pyPort, cre_ec_system_network_callback);
     return 0;
 }
 
@@ -1219,7 +1218,7 @@ int cre_pkpy_api_client_start(pkpy_vm* vm) {
     pkpy_to_int(vm, 1, &pyPort);
 
     const char* host = pyHost.data;
-    se_udp_client_initialize(host, pyPort, NULL);
+    se_udp_client_initialize(host, pyPort, cre_ec_system_network_callback);
     return 0;
 }
 int cre_pkpy_api_client_stop(pkpy_vm* vm) {

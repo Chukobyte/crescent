@@ -1,0 +1,9 @@
+#pragma once
+
+#define CRE_PKPY_NODE_EVENT_NAME_SCENE_ENTERED "scene_entered"
+#define CRE_PKPY_NODE_EVENT_NAME_SCENE_EXITED "scene_exited"
+#define CRE_PKPY_NODE_EVENT_NAME_FRAME_CHANGED "frame_changed"
+#define CRE_PKPY_NODE_EVENT_NAME_ANIMATION_FINISHED "animation_finished"
+#define CRE_PKPY_NODE_EVENT_NAME_MESSAGE_RECEIVED "message_received"
+
+#define CRE_PKPY_NODE_EVENT_OWNER_ID_NETWORK (-100)
