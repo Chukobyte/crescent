@@ -19,7 +19,7 @@ typedef struct RBEScriptCallback {
     PyObject* callback_func;
 } RBEScriptCallback;
 
-void py_on_entity_subscribe_to_network_callback(CreEntity entity, PyObject* callback_func, const char* id);
+//void py_on_entity_subscribe_to_network_callback(CreEntity entity, PyObject* callback_func, const char* id);
 
 static RBEScriptCallback* current_network_script_callback = NULL;
 static RBEScriptCallback* current_network_server_client_connected_script_callback = NULL;
@@ -54,7 +54,7 @@ CREScriptContext* cre_py_create_script_context() {
     scriptContext->on_fixed_update_instance = py_on_fixed_update_instance;
     scriptContext->on_end = py_on_end;
     scriptContext->on_network_callback = py_on_network_callback;
-    scriptContext->on_entity_subscribe_to_network_callback = py_on_entity_subscribe_to_network_callback;
+//    scriptContext->on_entity_subscribe_to_network_callback = py_on_entity_subscribe_to_network_callback;
     scriptContext->on_script_context_destroy = py_on_script_context_destroy;
 
     pythonInstanceHashMap = se_hash_map_create(sizeof(CreEntity), sizeof(PyObject **), 16);
@@ -173,26 +173,26 @@ void py_on_network_callback(const char* message) {
 }
 
 // Entity Network Callback
-void py_on_entity_subscribe_to_network_callback(CreEntity entity, PyObject* callback_func, const char* id) {
-    if (strcmp(id, "poll") == 0) {
-        if (current_network_script_callback == NULL) {
-            current_network_script_callback = SE_MEM_ALLOCATE(RBEScriptCallback);
-            current_network_script_callback->entity = entity;
-            current_network_script_callback->callback_func = callback_func;
-            Py_IncRef(current_network_script_callback->callback_func); // Increase ref to hold on to function
-            Py_IncRef(current_network_script_callback->callback_func); // Why twice?
-        }
-    } else if (strcmp(id, "client_connected") == 0) {
-        if (current_network_server_client_connected_script_callback == NULL) {
-            se_udp_server_register_client_connected_callback(py_on_network_udp_server_client_connected);
-            current_network_server_client_connected_script_callback = SE_MEM_ALLOCATE(RBEScriptCallback);
-            current_network_server_client_connected_script_callback->entity = entity;
-            current_network_server_client_connected_script_callback->callback_func = callback_func;
-            Py_IncRef(current_network_server_client_connected_script_callback->callback_func); // Increase ref to hold on to function
-            Py_IncRef(current_network_server_client_connected_script_callback->callback_func); // Why twice?
-        }
-    }
-}
+//void py_on_entity_subscribe_to_network_callback(CreEntity entity, PyObject* callback_func, const char* id) {
+//    if (strcmp(id, "poll") == 0) {
+//        if (current_network_script_callback == NULL) {
+//            current_network_script_callback = SE_MEM_ALLOCATE(RBEScriptCallback);
+//            current_network_script_callback->entity = entity;
+//            current_network_script_callback->callback_func = callback_func;
+//            Py_IncRef(current_network_script_callback->callback_func); // Increase ref to hold on to function
+//            Py_IncRef(current_network_script_callback->callback_func); // Why twice?
+//        }
+//    } else if (strcmp(id, "client_connected") == 0) {
+//        if (current_network_server_client_connected_script_callback == NULL) {
+//            se_udp_server_register_client_connected_callback(py_on_network_udp_server_client_connected);
+//            current_network_server_client_connected_script_callback = SE_MEM_ALLOCATE(RBEScriptCallback);
+//            current_network_server_client_connected_script_callback->entity = entity;
+//            current_network_server_client_connected_script_callback->callback_func = callback_func;
+//            Py_IncRef(current_network_server_client_connected_script_callback->callback_func); // Increase ref to hold on to function
+//            Py_IncRef(current_network_server_client_connected_script_callback->callback_func); // Why twice?
+//        }
+//    }
+//}
 
 void py_on_network_udp_server_client_connected() {
     if (current_network_server_client_connected_script_callback != NULL) {

@@ -11,6 +11,7 @@
 
 #include "cre_pkpy.h"
 #include "cre_pkpy_entity_instance_cache.h"
+#include "cre_pkpy_node_event.h"
 #include "cre_pkpy_node_event_manager.h"
 #include "api/cre_pkpy_api.h"
 #include "../../script_context.h"
@@ -27,7 +28,6 @@ void pkpy_sc_on_fixed_update_instance(CreEntity entity, float deltaTime);
 void pkpy_sc_on_end(CreEntity entity);
 void pkpy_sc_on_network_callback(const char* message);
 void pkpy_sc_on_script_context_destroy();
-//void pkpy_sc_on_entity_subscribe_to_network_callback(CreEntity entity, PyObject* callback_func, const char* id);
 
 //--- Node Event Callbacks ---//
 void pkpy_node_event_node_scene_entered(SESubjectNotifyPayload* payload);
@@ -35,6 +35,7 @@ void pkpy_node_event_node_scene_exited(SESubjectNotifyPayload* payload);
 
 void pkpy_node_event_animated_sprite_frame_changed(SESubjectNotifyPayload* payload);
 void pkpy_node_event_animated_sprite_animation_finished(SESubjectNotifyPayload* payload);
+
 // Observers
 SEObserver node_scene_entered_observer = { .on_notify = pkpy_node_event_node_scene_entered };
 SEObserver node_scene_exited_observer = { .on_notify = pkpy_node_event_node_scene_exited };
@@ -63,7 +64,6 @@ CREScriptContext* cre_pkpy_script_context_create() {
     scriptContext->on_end = pkpy_sc_on_end;
     scriptContext->on_network_callback = pkpy_sc_on_network_callback;
     scriptContext->on_script_context_destroy = pkpy_sc_on_script_context_destroy;
-//    scriptContext->on_entity_subscribe_to_network_callback = pkpy_sc_on_entity_subscribe_to_network_callback;
 
     pkpy_script_context = scriptContext;
 
@@ -184,6 +184,7 @@ void pkpy_sc_on_end(CreEntity entity) {
 
 void pkpy_sc_on_network_callback(const char* message) {
     SE_ASSERT(vm);
+    cre_pkpy_node_event_manager_broadcast_event_string(vm, CRE_PKPY_NODE_EVENT_OWNER_ID_NETWORK, CRE_PKPY_NODE_EVENT_NAME_MESSAGE_RECEIVED, message);
 }
 
 void pkpy_sc_on_script_context_destroy() {
@@ -200,9 +201,6 @@ void pkpy_sc_on_script_context_destroy() {
     memset(entityInitializedList, 0, sizeof(entityInitializedList));
 }
 
-// Entity Network Callback
-//void pkpy_sc_on_entity_subscribe_to_network_callback(CreEntity entity, PyObject* callback_func, const char* id) {}
-
 pkpy_vm* cre_pkpy_script_context_get_active_pkpy_vm() {
     return vm;
 }
@@ -214,22 +212,22 @@ void cre_pkpy_script_context_on_network_udp_server_client_connected() {}
 // NODE
 void pkpy_node_event_node_scene_entered(SESubjectNotifyPayload* payload) {
     const CreEntity entity = *(CreEntity*)payload->data;
-    cre_pkpy_node_event_manager_broadcast_event(vm, (int)entity, "scene_entered");
+    cre_pkpy_node_event_manager_broadcast_event(vm, (int)entity, CRE_PKPY_NODE_EVENT_NAME_SCENE_ENTERED);
 }
 
 void pkpy_node_event_node_scene_exited(SESubjectNotifyPayload* payload) {
     const CreEntity entity = *(CreEntity*)payload->data;
-    cre_pkpy_node_event_manager_broadcast_event(vm, (int)entity, "scene_exited");
+    cre_pkpy_node_event_manager_broadcast_event(vm, (int)entity, CRE_PKPY_NODE_EVENT_NAME_SCENE_EXITED);
     cre_pkpy_node_event_manager_remove_entity_and_connections(vm, (int)entity);
 }
 
 // ANIMATED SPRITE
 void pkpy_node_event_animated_sprite_frame_changed(SESubjectNotifyPayload* payload) {
     const AnimatedSpriteFrameChangedPayload* eventPayload = (AnimatedSpriteFrameChangedPayload*)payload->data;
-    cre_pkpy_node_event_manager_broadcast_event_int(vm, (int)eventPayload->entity, "frame_changed", eventPayload->newFrame);
+    cre_pkpy_node_event_manager_broadcast_event_int(vm, (int)eventPayload->entity, CRE_PKPY_NODE_EVENT_NAME_FRAME_CHANGED, eventPayload->newFrame);
 }
 
 void pkpy_node_event_animated_sprite_animation_finished(SESubjectNotifyPayload* payload) {
     const AnimatedSpriteAnimationFinishedPayload* eventPayload = (AnimatedSpriteAnimationFinishedPayload*)payload->data;
-    cre_pkpy_node_event_manager_broadcast_event_string(vm, (int)eventPayload->entity, "animation_finished", eventPayload->animation->name);
+    cre_pkpy_node_event_manager_broadcast_event_string(vm, (int)eventPayload->entity, CRE_PKPY_NODE_EVENT_NAME_ANIMATION_FINISHED, eventPayload->animation->name);
 }

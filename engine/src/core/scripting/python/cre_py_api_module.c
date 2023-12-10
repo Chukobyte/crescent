@@ -1900,8 +1900,8 @@ PyObject* cre_py_api_server_subscribe(PyObject* self, PyObject* args, PyObject* 
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "siO", crePyApiNetworkSubscribeKWList, &signalId, &listenerNode, &listenerFunc)) {
         SE_ASSERT(PyObject_IsTrue(listenerFunc));
         const CREScriptContext* scriptContext = cre_py_get_script_context();
-        SE_ASSERT(scriptContext != NULL && scriptContext->on_entity_subscribe_to_network_callback != NULL);
-        scriptContext->on_entity_subscribe_to_network_callback(listenerNode, listenerFunc, signalId);
+//        SE_ASSERT(scriptContext != NULL && scriptContext->on_entity_subscribe_to_network_callback != NULL);
+//        scriptContext->on_entity_subscribe_to_network_callback(listenerNode, listenerFunc, signalId);
 
         Py_DECREF(listenerFunc);
         Py_RETURN_NONE;
@@ -1941,8 +1941,8 @@ PyObject* cre_py_api_client_subscribe(PyObject* self, PyObject* args, PyObject* 
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "siO", crePyApiNetworkSubscribeKWList, &signalId, &listenerNode, &listenerFunc)) {
         SE_ASSERT(PyObject_IsTrue(listenerFunc));
         const CREScriptContext* scriptContext = cre_py_get_script_context();
-        SE_ASSERT(scriptContext != NULL && scriptContext->on_entity_subscribe_to_network_callback != NULL);
-        scriptContext->on_entity_subscribe_to_network_callback(listenerNode, listenerFunc, signalId);
+//        SE_ASSERT(scriptContext != NULL && scriptContext->on_entity_subscribe_to_network_callback != NULL);
+//        scriptContext->on_entity_subscribe_to_network_callback(listenerNode, listenerFunc, signalId);
 
         Py_DECREF(listenerFunc);
         Py_RETURN_NONE;
