@@ -147,8 +147,27 @@ with TestCase("Node Tests") as test_case:
 
     # Testing node events
     test_node = Node2D.new()
-    test_node.subscribe_to_event("scene_entered", root_node, lambda *args: print("test_node entered scene!"))
+    has_entered_scene = False
+    has_exited_scene = False
 
+    def on_has_entered_scene(*args):
+        global has_entered_scene
+        has_entered_scene = True
+
+    def on_has_exited_scene(*args):
+        global has_exited_scene
+        has_exited_scene = True
+
+    test_node.subscribe_to_event("scene_entered", root_node, on_has_entered_scene)
+    test_node.subscribe_to_event("scene_exited", root_node, on_has_exited_scene)
+    root_node.add_child(test_node)
+
+    crescent_internal._scene_manager_process_queued_creation_entities()
+
+    test_node.queue_deletion()
+
+    assert has_entered_scene
+    assert has_exited_scene
 
 with TestCase("Scene Tree Tests") as test_case:
     SceneTree.change_scene("test_scene1.cscn")
