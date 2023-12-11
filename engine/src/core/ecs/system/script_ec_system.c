@@ -1,6 +1,6 @@
 #include "script_ec_system.h"
 
-#include <Python.h>
+//#include <Python.h>
 
 #include <seika/data_structures/se_hash_map.h>
 #include <seika/utils/se_string_util.h>

@@ -47,7 +47,6 @@ void cre_pkpy_util_create_module(pkpy_vm* vm, CrePPModule* module) {
         pkpy_eval(vm, module->name);
         SE_ASSERT(!cre_pkpy_util_print_error_message(vm));
 
-//        SE_ASSERT_FMT(pkpy_stack_size(vm) == 2, "Expected stack size to be 2 but was %d for '%s'", pkpy_stack_size(vm), func->signature);
         cre_copy_name_from_signature(nameBuffer, func->signature);
         pkpy_setattr(vm, pkpy_name(nameBuffer));
         SE_ASSERT(!cre_pkpy_util_print_error_message(vm));
