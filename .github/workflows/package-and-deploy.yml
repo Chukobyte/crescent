@@ -39,7 +39,7 @@ jobs:
           vcpkgGitCommitId: 'b619a233fbf7b2c9765fb4458f3ecb05bd3166e3'
 
       - name: run build
-        uses: lukka/run-cmake@v10.3
+        uses: lukka/run-cmake@v10.7
         with:
           cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
           configurePreset: 'ninja-multi-vcpkg'
@@ -133,7 +133,7 @@ jobs:
           vcpkgGitCommitId: 'b619a233fbf7b2c9765fb4458f3ecb05bd3166e3'
 
       - name: run build
-        uses: lukka/run-cmake@v10.3
+        uses: lukka/run-cmake@v10.7
         with:
           cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
           configurePreset: 'ninja-multi-vcpkg'
@@ -204,7 +204,7 @@ jobs:
           vcpkgGitCommitId: 'b619a233fbf7b2c9765fb4458f3ecb05bd3166e3'
 
       - name: run build
-        uses: lukka/run-cmake@v10.3
+        uses: lukka/run-cmake@v10.7
         with:
           cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
           configurePreset: 'ninja-multi-vcpkg'

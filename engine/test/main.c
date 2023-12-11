@@ -260,10 +260,10 @@ void cre_pocketpy_test(void) {
     cre_scene_manager_process_queued_scene_change();
 
     CREGameProperties* testGameProps = cre_game_props_create();
-    testGameProps->gameTitle = strdup("Test Game");
+    testGameProps->gameTitle = se_strdup("Test Game");
     testGameProps->resolutionWidth = 400;
     testGameProps->resolutionHeight = 300;
-    testGameProps->initialScenePath = strdup("main.cscn");
+    testGameProps->initialScenePath = se_strdup("main.cscn");
     cre_game_props_initialize(testGameProps);
 
     TEST_MESSAGE("Testing python api");
