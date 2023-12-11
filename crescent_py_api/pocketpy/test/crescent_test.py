@@ -1,6 +1,7 @@
 """
 Sanity check tests meant to be run by normal python.  These tests shouldn't require the engine.
-For tests that do need the engine and embedded pocketpy, those should be added within the unit tests.
+For tests that do need the engine and embedded pocketpy, those should be added within the unit tests
+(check 'engine/test/resources/crescent_api_test.py').
 """
 
 from crescent import _NodeEventManager, Node, _node_event_manager
