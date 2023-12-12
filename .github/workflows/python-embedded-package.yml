@@ -4,6 +4,8 @@ name: python-embedded-package
 on:
   schedule:
     - cron: '0 0 */60 * *'
+  push:
+    branches: [ pocketpy ]
 
 jobs:
   compile-linux-gcc-python:
