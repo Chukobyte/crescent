@@ -22,7 +22,7 @@ jobs:
         uses: lukka/run-vcpkg@v11
         with:
           vcpkgDirectory: '${{ github.workspace }}/vcpkg'
-          vcpkgGitCommitId: '45f6e57d3e10ad96b7db206cf7888f736ba5aa61'
+          vcpkgGitCommitId: '000d1bda1ffa95a73e0b40334fa4103d6f4d3d48'
 
       - name: run build
         uses: lukka/run-cmake@v10.7
