@@ -5,6 +5,7 @@
 #include <seika/seika.h>
 #include <seika/asset/asset_manager.h>
 #include <seika/memory/se_mem.h>
+#include <seika/utils/se_string_util.h>
 #include <seika/utils/se_assert.h>
 
 #define RBE_MAX_ANIMATIONS 16
@@ -135,11 +136,11 @@ AnimatedSpriteComponent* animated_sprite_component_data_copy_to_animated_sprite(
     copiedNode->flipH = animatedSpriteComponentData->flipH;
     copiedNode->flipV = animatedSpriteComponentData->flipV;
     copiedNode->staggerStartAnimationTimes = animatedSpriteComponentData->staggerStartAnimationTimes;
-    strcpy(copiedNode->currentAnimation.name, animatedSpriteComponentData->currentAnimation.name);
+    se_strcpy(copiedNode->currentAnimation.name, animatedSpriteComponentData->currentAnimation.name);
     for (size_t animationIndex = 0; animationIndex < animatedSpriteComponentData->animationCount; animationIndex++) {
         const AnimationData* animationData = &animatedSpriteComponentData->animations[animationIndex];
         CreAnimation animation;
-        strcpy(animation.name, animationData->name);
+        se_strcpy(animation.name, animationData->name);
         animation.doesLoop = animationData->doesLoop;
         animation.speed = animationData->speed;
         animation.isValid = true;

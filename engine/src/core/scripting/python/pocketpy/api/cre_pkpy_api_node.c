@@ -1,7 +1,5 @@
 #include "cre_pkpy_api_node.h"
 
-#include <string.h>
-
 #include <pocketpy_c.h>
 
 #include <seika/rendering/renderer.h>
@@ -13,7 +11,6 @@
 
 #include "../cre_pkpy_entity_instance_cache.h"
 #include "../cre_pkpy_script_context.h"
-#include "../../../script_context.h"
 #include "../../../../scene/scene_manager.h"
 #include "../../../../ecs/component/sprite_component.h"
 #include "../../../../ecs/component/animated_sprite_component.h"
@@ -679,7 +676,7 @@ int cre_pkpy_api_animated_sprite_add_animation(pkpy_vm* vm) {
     const char* animationName = pyAnimationName.data;
     AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_ANIMATED_SPRITE);
     CreAnimation newAnim = { .frameCount = 0, .currentFrame = 0, .speed = pyAnimationSpeed, .name = {'\0'}, .doesLoop = pyAnimationDoesLoop, .isValid = true };
-    strcpy(newAnim.name, animationName);
+    se_strcpy(newAnim.name, animationName);
     // Unpack *args filled with frame data
     pkpy_unpack_sequence(vm, pyFrameCount * CRE_PKPY_API_ANIM_FRAME_STRIDE);
     for (int i = 0; i < pyFrameCount; i++) {
@@ -883,7 +880,7 @@ int cre_pkpy_api_text_label_set_text(pkpy_vm* vm) {
     const CreEntity entity = (CreEntity)pyEntityId;
     const char* text = pyText.data;
     TextLabelComponent* textLabelComponent = (TextLabelComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_TEXT_LABEL);
-    strcpy(textLabelComponent->text, text);
+    se_strcpy(textLabelComponent->text, text);
     return 0;
 }
 

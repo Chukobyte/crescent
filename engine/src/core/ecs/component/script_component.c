@@ -3,11 +3,12 @@
 #include <string.h>
 
 #include <seika/memory/se_mem.h>
+#include <seika/utils/se_string_util.h>
 
 ScriptComponent* script_component_create(const char* path, const char* name) {
     ScriptComponent* scriptComponent = SE_MEM_ALLOCATE(ScriptComponent);
-    strcpy(scriptComponent->classPath, path);
-    strcpy(scriptComponent->className, name);
+    se_strcpy(scriptComponent->classPath, path);
+    se_strcpy(scriptComponent->className, name);
     scriptComponent->contextType = ScriptContextType_NONE;
     return scriptComponent;
 }

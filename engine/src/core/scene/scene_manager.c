@@ -6,6 +6,7 @@
 #include <seika/rendering/renderer.h>
 #include <seika/asset/asset_manager.h>
 #include <seika/utils/logger.h>
+#include <seika/utils/se_string_util.h>
 #include <seika/utils/se_assert.h>
 #include <seika/data_structures/se_hash_map.h>
 #include <seika/data_structures/se_static_array.h>
@@ -400,7 +401,7 @@ SceneTreeNode* cre_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneN
 
     // Components
     NodeComponent* nodeComponent = node_component_create();
-    strcpy(nodeComponent->name, jsonSceneNode->name);
+    se_strcpy(nodeComponent->name, jsonSceneNode->name);
     nodeComponent->type = jsonSceneNode->type;
     SE_ASSERT_FMT(nodeComponent->type != NodeBaseType_INVALID, "Node '%s' has an invalid node type '%d'", nodeComponent->name, nodeComponent->type);
     cre_component_manager_set_component(node->entity, CreComponentDataIndex_NODE, nodeComponent);

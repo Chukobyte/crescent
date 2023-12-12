@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include <seika/memory/se_mem.h>
+#include <seika/utils/se_string_util.h>
 
 NodeComponent* node_component_create() {
     NodeComponent* nodeComponent = SE_MEM_ALLOCATE(NodeComponent);
@@ -19,7 +20,7 @@ NodeComponent* node_component_create() {
 
 NodeComponent* node_component_create_ex(const char* name, NodeBaseType baseType) {
     NodeComponent* nodeComponent = node_component_create();
-    strcpy(nodeComponent->name, name);
+    se_strcpy(nodeComponent->name, name);
     nodeComponent->type = baseType;
     return nodeComponent;
 }

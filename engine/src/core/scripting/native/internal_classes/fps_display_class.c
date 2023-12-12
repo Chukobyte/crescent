@@ -5,15 +5,12 @@
 
 #include <seika/rendering/renderer.h>
 #include <seika/memory/se_mem.h>
+#include <seika/utils/se_string_util.h>
 
 #include "../native_script_class.h"
 #include "../../../engine_context.h"
 #include "../../../ecs/component/text_label_component.h"
 #include "../../../ecs/component/component.h"
-
-#ifdef _MSC_VER
-#pragma warning(disable : 4996) // for strcpy and strcat
-#endif
 
 typedef struct FpsDisplayClassData {
     int value;
@@ -55,6 +52,6 @@ void fps_display_update(CRENativeScriptClass* nativeScriptClass, float deltaTime
     // FIXME: This is windows specific, needs to be replaced for other OS
     gcvt(cre_engine_context_get()->stats.averageFPS, 4, fpsAmountBuffer);
     TextLabelComponent* textLabelComponent = (TextLabelComponent*) cre_component_manager_get_component(nativeScriptClass->entity, CreComponentDataIndex_TEXT_LABEL);
-    strcpy(textLabelComponent->text, "FPS: ");
-    strcat(textLabelComponent->text, fpsAmountBuffer);
+    se_strcpy(textLabelComponent->text, "FPS: ");
+    se_strcat(textLabelComponent->text, fpsAmountBuffer);
 }

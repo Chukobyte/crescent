@@ -10,7 +10,6 @@
 #include <seika/utils/logger.h>
 #include <seika/utils/se_file_system_utils.h>
 #include <seika/utils/se_string_util.h>
-#include <seika/utils/se_assert.h>
 
 #include "core_info.h"
 #include "game_properties.h"
@@ -138,9 +137,9 @@ bool cre_load_built_in_assets() {
     // Load default font
     if (sf_asset_file_loader_get_read_mode() == SEAssetFileLoaderReadMode_DISK) {
         char defaultFontFilePath[512];
-        strcpy(defaultFontFilePath, engineContext->internalAssetsDir);
-        strcat(defaultFontFilePath, "/");
-        strcat(defaultFontFilePath, CRE_DEFAULT_FONT_ASSET.file_path);
+        se_strcpy(defaultFontFilePath, engineContext->internalAssetsDir);
+        se_strcat(defaultFontFilePath, "/");
+        se_strcat(defaultFontFilePath, CRE_DEFAULT_FONT_ASSET.file_path);
         se_asset_manager_load_font(defaultFontFilePath, CRE_DEFAULT_FONT_ASSET.uid, CRE_DEFAULT_FONT_ASSET.size, CRE_DEFAULT_FONT_ASSET.applyNearestNeighbor);
     } else {
         se_asset_manager_load_font(CRE_DEFAULT_FONT_ASSET.file_path, CRE_DEFAULT_FONT_ASSET.uid, CRE_DEFAULT_FONT_ASSET.size, CRE_DEFAULT_FONT_ASSET.applyNearestNeighbor);
