@@ -18,6 +18,7 @@ jobs:
       - name: install dependencies
         run: |
           brew install pkg-config
+          brew install autoconf
 
       - name: get cmake
         uses: lukka/get-cmake@latest
