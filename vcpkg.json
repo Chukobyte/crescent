@@ -12,8 +12,8 @@
     },
     {
       "name": "python3",
-      "version>=": "3.11.5"
+      "version>=": "3.10.5"
     }
   ],
-  "builtin-baseline": "000d1bda1ffa95a73e0b40334fa4103d6f4d3d48"
+  "builtin-baseline": "b619a233fbf7b2c9765fb4458f3ecb05bd3166e3"
 }
