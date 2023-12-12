@@ -1,7 +1,5 @@
 #include "process_context.h"
 
-#include <seika/utils/se_string_util.h>
-
 #include "../helper.h"
 
 #if defined(WIN32) || defined(WIN64)
@@ -19,7 +17,7 @@ bool ProcessContext::Start(const std::string& processPath, const std::string& st
     const std::string fullStartProcessArgs = processPath + " " + startArgs;
 
     TCHAR startProcessArgs[MAX_START_PROCESS_ARGS_BUFFER_SIZE];
-    se_strcpy(startProcessArgs, fullStartProcessArgs.c_str());
+    strcpy(startProcessArgs, fullStartProcessArgs.c_str());
 
     CreateProcess(processPath.c_str(),
                   startArgs.empty() ? nullptr : startProcessArgs,
