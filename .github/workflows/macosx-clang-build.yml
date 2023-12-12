@@ -17,6 +17,7 @@ jobs:
 
       - name: install dependencies
         run: |
+          brew update
           brew install pkg-config
           brew install autoconf
 
