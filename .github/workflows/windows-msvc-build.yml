@@ -19,7 +19,7 @@ jobs:
           cmakeVersion: "3.25.0"
 
       - name: run-vcpkg
-        uses: lukka/run-vcpkg@v11.0
+        uses: lukka/run-vcpkg@v11
         with:
           vcpkgDirectory: '${{ github.workspace }}/vcpkg'
           vcpkgGitCommitId: 'b619a233fbf7b2c9765fb4458f3ecb05bd3166e3'
