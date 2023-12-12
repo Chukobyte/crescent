@@ -4,7 +4,7 @@
 
 #include "../helper.h"
 
-#ifdef _WIN32
+#if defined(WIN32) || defined(WIN64)
 
 #define MAX_START_PROCESS_ARGS_BUFFER_SIZE 256
 
