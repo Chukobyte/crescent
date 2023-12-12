@@ -13,10 +13,8 @@ jobs:
 
       - name: install dependencies
         run: |
-          sudo apt update
           sudo apt install gcc-11
           sudo apt install g++-11
-          sudo apt install autoconf
 
       - name: get cmake
         uses: lukka/get-cmake@latest
