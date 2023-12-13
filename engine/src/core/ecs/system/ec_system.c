@@ -172,7 +172,7 @@ void cre_ec_system_entity_end(CreEntity entity) {
     if (nodeComponent != NULL) {
         // Note: Node events should not be created during this time
         se_event_notify_observers(&nodeComponent->onSceneTreeExit, &(SESubjectNotifyPayload) {
-            .data = &entity, .type = 0
+            .data = &entity
         });
     }
 }
@@ -183,7 +183,7 @@ void cre_ec_system_entity_entered_scene(CreEntity entity) {
                                    CreComponentDataIndex_NODE);
     if (nodeComponent != NULL) {
         se_event_notify_observers(&nodeComponent->onSceneTreeEnter, &(SESubjectNotifyPayload) {
-            .data = &entity, .type = 0
+            .data = &entity
         });
     }
     const CreComponentType entityComponentSignature = cre_component_manager_get_component_signature(entity);

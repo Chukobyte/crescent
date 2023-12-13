@@ -7,10 +7,6 @@
 #include "json_helper.h"
 #include "../game_properties.h"
 
-#ifdef _MSC_VER
-#pragma warning(disable : 4996) // for strcpy
-#endif
-
 //--- Project Configuration Files ---//
 void cre_json_configure_assets(cJSON* configJson, CREGameProperties* properties) {
     cJSON* assetsJson = cJSON_GetObjectItemCaseSensitive(configJson, "assets");

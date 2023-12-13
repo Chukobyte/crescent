@@ -42,10 +42,6 @@
 #include "../../math/curve_float_manager.h"
 #include "../../scene/scene_template_cache.h"
 
-#ifdef _MSC_VER
-#pragma warning(disable : 4996) // for strcpy
-#endif
-
 //--- Helper Functions ---//
 // TODO: May want to move into another location...
 
@@ -840,7 +836,7 @@ PyObject* cre_py_api_node_new(PyObject* self, PyObject* args, PyObject* kwargs) 
         SceneTreeNode* newNode = cre_scene_tree_create_tree_node(cre_ec_system_create_entity_uid(), NULL);
 
         NodeComponent* nodeComponent = node_component_create();
-        strcpy(nodeComponent->name, nodeType);
+        se_strcpy(nodeComponent->name, nodeType);
         nodeComponent->type = node_get_base_type(nodeType);
         SE_ASSERT_FMT(nodeComponent->type != NodeBaseType_INVALID, "Node '%s' has an invalid node type '%s'", nodeType, nodeType);
         cre_component_manager_set_component(newNode->entity, CreComponentDataIndex_NODE, nodeComponent);
@@ -933,7 +929,7 @@ PyObject* cre_py_utils_get_entity_instance(CreEntity entity) {
     // If script instance doesn't exist, create a proxy to be used on the scripting side
     char typeBuffer[TYPE_BUFFER_SIZE];
     NodeComponent* nodeComponent = (NodeComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_NODE);
-    strcpy(typeBuffer, node_get_base_type_string(nodeComponent->type));
+    se_strcpy(typeBuffer, node_get_base_type_string(nodeComponent->type));
     return Py_BuildValue("(is)", entity, typeBuffer);
 #undef TYPE_BUFFER_SIZE
 }
@@ -1517,7 +1513,7 @@ PyObject* cre_py_api_animated_sprite_add_animation(PyObject* self, PyObject* arg
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "isibO", crePyApiAnimatedSpriteAddAnimationKWList, &entity, &name, &speed, &loops, &framesList)) {
         AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_ANIMATED_SPRITE);
         CreAnimation newAnim = { .frameCount = 0, .currentFrame = 0, .speed = speed, .name = {'\0'}, .doesLoop = loops, .isValid = true };
-        strcpy(newAnim.name, name);
+        se_strcpy(newAnim.name, name);
         py_load_animated_sprite_anim_frames(&newAnim, framesList);
         animated_sprite_component_add_animation(animatedSpriteComponent, newAnim);
         // If the only animation set it to the current
@@ -1683,7 +1679,7 @@ PyObject* cre_py_api_text_label_set_text(PyObject* self, PyObject* args, PyObjec
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "is", crePyApiTextLabelSetTextKWList, &entity, &text)) {
         TextLabelComponent* textLabelComponent = (TextLabelComponent*) cre_component_manager_get_component(entity,
                 CreComponentDataIndex_TEXT_LABEL);
-        strcpy(textLabelComponent->text, text);
+        se_strcpy(textLabelComponent->text, text);
         Py_RETURN_NONE;
     }
     return NULL;
@@ -1900,8 +1896,8 @@ PyObject* cre_py_api_server_subscribe(PyObject* self, PyObject* args, PyObject* 
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "siO", crePyApiNetworkSubscribeKWList, &signalId, &listenerNode, &listenerFunc)) {
         SE_ASSERT(PyObject_IsTrue(listenerFunc));
         const CREScriptContext* scriptContext = cre_py_get_script_context();
-        SE_ASSERT(scriptContext != NULL && scriptContext->on_entity_subscribe_to_network_callback != NULL);
-        scriptContext->on_entity_subscribe_to_network_callback(listenerNode, listenerFunc, signalId);
+//        SE_ASSERT(scriptContext != NULL && scriptContext->on_entity_subscribe_to_network_callback != NULL);
+//        scriptContext->on_entity_subscribe_to_network_callback(listenerNode, listenerFunc, signalId);
 
         Py_DECREF(listenerFunc);
         Py_RETURN_NONE;
@@ -1941,8 +1937,8 @@ PyObject* cre_py_api_client_subscribe(PyObject* self, PyObject* args, PyObject* 
     if (PyArg_ParseTupleAndKeywords(args, kwargs, "siO", crePyApiNetworkSubscribeKWList, &signalId, &listenerNode, &listenerFunc)) {
         SE_ASSERT(PyObject_IsTrue(listenerFunc));
         const CREScriptContext* scriptContext = cre_py_get_script_context();
-        SE_ASSERT(scriptContext != NULL && scriptContext->on_entity_subscribe_to_network_callback != NULL);
-        scriptContext->on_entity_subscribe_to_network_callback(listenerNode, listenerFunc, signalId);
+//        SE_ASSERT(scriptContext != NULL && scriptContext->on_entity_subscribe_to_network_callback != NULL);
+//        scriptContext->on_entity_subscribe_to_network_callback(listenerNode, listenerFunc, signalId);
 
         Py_DECREF(listenerFunc);
         Py_RETURN_NONE;

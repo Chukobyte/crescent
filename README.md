@@ -27,7 +27,7 @@ Technically any game type will be able to be made with the engine.  But these ar
   * [C](https://en.wikipedia.org/wiki/C_(programming_language)) (c11) - Engine Core
   * [SDL2](https://github.com/libsdl-org/SDL) - Windowing, inputs
   * [MiniAudio](https://github.com/mackron/miniaudio) - Audio
-  * [Python](https://en.wikipedia.org/wiki/Python_(programming_language)) (3.10) - Scripting
+  * [pocketpy](https://github.com/blueloveth/pocketpy) - Python Scripting
   * [Unity](https://github.com/ThrowTheSwitch/Unity) - Testing
   * [PVS-Studio](https://pvs-studio.com/pvs-studio/?utm_source=website&utm_medium=github&utm_campaign=open_source) - static analyzer for C code.
 * Editor
@@ -42,11 +42,25 @@ Technically any game type will be able to be made with the engine.  But these ar
 
 ## Building
 
-Supports windows, linux, and macos builds at the moment.  Crescent engine can be either built with cmake or make.  All build commands should be executed from the project's root directory.
+Supports windows, linux, and macos builds at the moment.  Crescent engine uses cmake to build.
 
 ### CMake
 
+Crescent officially supports and is actively tested with the following compilers.
+
+Windows:
+- msvc
+- mingw
+
+Linux (Ubuntu):
+- gcc
+
+MacOS:
+- clang
+
 **MinGW build**
+
+SDL2 needs to be installed manually for mingw builds.  Below are instructions on how to do so.
 1. Install MinGW through MSYS2
 2. Update pacman: `pacman -Syu`
 3. Install the following packages:
@@ -55,40 +69,4 @@ Supports windows, linux, and macos builds at the moment.  Crescent engine can be
     * `pacman -S mingw-w64-x86_64-python`
 4. Run cmake
 
-### Make
-
-*Note: Currently outdated*
-
-These environment variables are required to be set before building with make.
-
-| Environment Variable  |                      Description                   | Required | Default Value |
-|:---------------------:|:--------------------------------------------------:|:--------:|:-------------:|
-|   SDL2_INCLUDE_PATH   | The include directory of SDL2.                     |    YES   |      N/A      |
-|    SDL2_LIBS_PATH     | The libs directory of SDL2.                        |    YES   |      N/A      |
-|  PYTHON_INCLUDE_PATH  | The include directory of Python.                   |    YES   |      N/A      |
-|   PYTHON_LIBS_PATH    | The libs directory of Python.                      |    YES   |      N/A      |
-| FREETYPE_INCLUDE_PATH | The include directory of Freetype.                 |    YES   |      N/A      |
-|  FREETYPE_LIBS_PATH   | The libs directory of Freetype.                    |    YES   |      N/A      |
-
-
-Engine:
-
-```shell
-# Build
-make build-engine
-# Run
-make run-engine
-# Clean
-make clean-engine
-```
-
-Editor:
-
-```shell
-# Build
-make build-editor
-# Run
-make run-editor
-# Clean
-make clean-editor
-```
+*Note: There is an [example](.github/workflows/windows-mingw-build.yml) of building with mingw in the `.github/workflow` folder.*

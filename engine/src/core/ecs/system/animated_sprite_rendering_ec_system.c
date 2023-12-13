@@ -55,10 +55,17 @@ void animated_sprite_rendering_system_render() {
             const int tickRate = (int) (((spriteCurrentTickTime - (float) animatedSpriteComponent->startAnimationTickTime) / (float) animatedSpriteComponent->currentAnimation.speed) * entityTimeDilation);
             const int newIndex = tickRate % animatedSpriteComponent->currentAnimation.frameCount;
             if (newIndex != animatedSpriteComponent->currentAnimation.currentFrame) {
-                // Index changed
+                // Notify observers that frame has changed
+                se_event_notify_observers(&animatedSpriteComponent->onFrameChanged, &(SESubjectNotifyPayload){
+                    .data = &(AnimatedSpriteFrameChangedPayload){ .entity = entity, .newFrame = newIndex }
+                });
+
                 currentFrame = animatedSpriteComponent->currentAnimation.animationFrames[newIndex];
                 if (newIndex + 1 == animatedSpriteComponent->currentAnimation.frameCount) {
-                    // Animation Finished
+                    // Notify the observers that the animation has finished
+                    se_event_notify_observers(&animatedSpriteComponent->onFrameChanged, &(SESubjectNotifyPayload){
+                        .data = &(AnimatedSpriteAnimationFinishedPayload){ .entity = entity, .animation = &animatedSpriteComponent->currentAnimation }
+                    });
                     if (!animatedSpriteComponent->currentAnimation.doesLoop) {
                         animatedSpriteComponent->isPlaying = false;
                     }

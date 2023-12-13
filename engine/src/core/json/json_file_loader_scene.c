@@ -232,7 +232,7 @@ void cre_json_animated_sprite_create_or_set_default(JsonSceneNode* node, cJSON* 
         cJSON* animationJson = NULL;
         cJSON_ArrayForEach(animationJson, animationsJsonArray) {
             AnimationData animation;
-            strcpy(animation.name, json_get_string(animationJson, "name"));
+            se_strcpy(animation.name, json_get_string(animationJson, "name"));
             animation.speed = json_get_int(animationJson, "speed");
             animation.doesLoop = json_get_bool(animationJson, "loops");
             animation.frameCount = 0;
@@ -245,7 +245,7 @@ void cre_json_animated_sprite_create_or_set_default(JsonSceneNode* node, cJSON* 
             cJSON_ArrayForEach(frameJson, framesJsonArray) {
                 AnimationFrameData frameData;
                 frameData.frame = json_get_int(frameJson, "frame");
-                strcpy(frameData.texturePath, json_get_string(frameJson, "texture_path"));
+                se_strcpy(frameData.texturePath, json_get_string(frameJson, "texture_path"));
                 frameData.drawSource = json_get_rect2(frameJson, "draw_source");
                 se_logger_debug("Frame\nframe: %d\ntexture path: '%s'\ndraw source: (%f, %f, %f, %f)",
                                 frameData.frame, frameData.texturePath,
@@ -289,7 +289,7 @@ void cre_json_text_label_create_or_set_default(JsonSceneNode* node, cJSON* compo
     if (node->components[CreComponentDataIndex_TEXT_LABEL] == NULL) {
         textLabelComponent = text_label_component_create();
         node->fontUID = json_get_string_new_unchecked(componentJson, "uid");
-        strcpy(textLabelComponent->text, json_get_string(componentJson, "text"));
+        se_strcpy(textLabelComponent->text, json_get_string(componentJson, "text"));
         textLabelComponent->color = json_get_linear_color_default(componentJson, "color", DEFAULT_COMPONENT_TEXT_LABEL_COLOR);
         node->components[CreComponentDataIndex_TEXT_LABEL] = textLabelComponent;
     } else {
@@ -299,7 +299,7 @@ void cre_json_text_label_create_or_set_default(JsonSceneNode* node, cJSON* compo
             SE_MEM_FREE(node->fontUID);
             node->fontUID = newFontUID;
         }
-        strcpy(textLabelComponent->text, json_get_string_default(componentJson, "text", textLabelComponent->text));
+        se_strcpy(textLabelComponent->text, json_get_string_default(componentJson, "text", textLabelComponent->text));
         textLabelComponent->color = json_get_linear_color_default(componentJson, "color", textLabelComponent->color);
     }
     se_logger_debug("Text Label\nuid: '%s'\ntext: '%s'\ncolor: (%f, %f, %f, %f)",

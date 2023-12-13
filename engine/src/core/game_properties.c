@@ -31,6 +31,12 @@ void cre_game_props_initialize(CREGameProperties* initialProps) {
 
 void cre_game_props_finalize() {
     if (properties != NULL) {
+        if (properties->gameTitle != NULL) {
+            SE_MEM_FREE(properties->gameTitle);
+        }
+        if (properties->initialScenePath != NULL) {
+            SE_MEM_FREE(properties->initialScenePath);
+        }
         SE_MEM_FREE(properties);
         properties = NULL;
     }

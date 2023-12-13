@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include <seika/rendering/renderer.h>
+#include <seika/utils/se_string_util.h>
 #include <seika/utils/se_assert.h>
 #include <seika/asset/asset_manager.h>
 
@@ -19,10 +20,6 @@
 #include "system/sprite_rendering_ec_system.h"
 #include "../scene/scene_manager.h"
 #include "../game_properties.h"
-
-#ifdef _MSC_VER
-#pragma warning(disable : 4996) // for strcpy
-#endif
 
 static SceneTreeNode* fpsDisplayNode = NULL;
 
@@ -69,7 +66,7 @@ void cre_ecs_manager_enable_fps_display_entity(bool enabled, const char* fontUID
         // Text Label Component
         TextLabelComponent* textLabelComponent = text_label_component_create();
         textLabelComponent->font = se_asset_manager_get_font(fontUID != NULL ? fontUID : CRE_DEFAULT_FONT_ASSET.uid);
-        strcpy(textLabelComponent->text, "FPS: ");
+        se_strcpy(textLabelComponent->text, "FPS: ");
         cre_component_manager_set_component(currentFpsEntity, CreComponentDataIndex_TEXT_LABEL, textLabelComponent);
         // Script Component
         ScriptComponent* scriptComponent = script_component_create("main", "FpsDisplay");

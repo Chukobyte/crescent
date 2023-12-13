@@ -1,6 +1,6 @@
 #include "script_ec_system.h"
 
-#include <Python.h>
+//#include <Python.h>
 
 #include <seika/data_structures/se_hash_map.h>
 #include <seika/utils/se_string_util.h>
@@ -8,7 +8,8 @@
 
 #include "ec_system.h"
 #include "../../scene/scene_manager.h"
-#include "../../scripting/python/py_script_context.h"
+//#include "../../scripting/python/py_script_context.h"
+#include "../../scripting/python/pocketpy/cre_pkpy_script_context.h"
 #include "../../scripting/native/native_script_context.h"
 #include "../../scripting/native/internal_classes/fps_display_class.h"
 
@@ -44,7 +45,8 @@ CreEntitySystem* cre_script_ec_system_create() {
     scriptSystem->on_ec_system_destroy = script_system_on_ec_system_destroy;
     scriptSystem->component_signature = CreComponentType_SCRIPT;
     // Python Context
-    scriptContexts[ScriptContextType_PYTHON] = cre_py_create_script_context();
+//    scriptContexts[ScriptContextType_PYTHON] = cre_py_create_script_context();
+    scriptContexts[ScriptContextType_PYTHON] = cre_pkpy_script_context_create();
     scriptContextsCount++;
     SE_ASSERT(scriptContexts[ScriptContextType_PYTHON] != NULL);
     // Native Context
@@ -57,9 +59,11 @@ CreEntitySystem* cre_script_ec_system_create() {
 
 void script_system_on_entity_registered(CreEntity entity) {
     const ScriptComponent* scriptComponent = (ScriptComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_SCRIPT);
-    SE_ASSERT(scriptContexts[scriptComponent->contextType] != NULL);
-    SE_ASSERT(scriptContexts[scriptComponent->contextType]->on_create_instance != NULL);
-    scriptContexts[scriptComponent->contextType]->on_create_instance(entity, scriptComponent->classPath, scriptComponent->className);
+    SE_ASSERT(scriptComponent->contextType != ScriptContextType_NONE);
+    const CREScriptContext* scriptContext = scriptContexts[scriptComponent->contextType];
+    SE_ASSERT(scriptContext != NULL);
+    SE_ASSERT(scriptContext->on_create_instance != NULL);
+    scriptContext->on_create_instance(entity, scriptComponent->classPath, scriptComponent->className);
 }
 
 void script_system_on_entity_unregistered(CreEntity entity) {
@@ -71,8 +75,7 @@ void script_system_entity_start(CreEntity entity) {
     const ScriptComponent* scriptComponent = (ScriptComponent*) cre_component_manager_get_component(entity,
             CreComponentDataIndex_SCRIPT);
     SE_ASSERT(scriptComponent != NULL);
-    SE_ASSERT_FMT(scriptComponent->contextType == ScriptContextType_PYTHON || scriptComponent->contextType == ScriptContextType_NATIVE,
-                  "Invalid context type '%d' for entity '%d'", scriptComponent->contextType, entity);
+    SE_ASSERT_FMT(scriptComponent->contextType != ScriptContextType_NONE, "Invalid context type '%d' for entity '%d'", scriptComponent->contextType, entity);
     scriptContexts[scriptComponent->contextType]->on_start(entity);
 }
 

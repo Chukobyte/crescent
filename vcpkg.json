@@ -1,6 +1,6 @@
 {
   "name": "crescent-engine",
-  "version": "0.14.1",
+  "version": "0.15.0",
   "dependencies": [
     {
       "name": "sdl2",
@@ -15,5 +15,5 @@
       "version>=": "3.10.5"
     }
   ],
-  "builtin-baseline": "91393faf123c4f1d22ef3dbfb4ec03531bac907a"
+  "builtin-baseline": "efca044b75fbf481d6650ce4d3b223d8af94f7a7"
 }

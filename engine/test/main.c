@@ -4,7 +4,10 @@
 
 #include <SDL2/SDL_main.h>
 
+#include <seika/asset/asset_manager.h>
 #include <seika/rendering/texture.h>
+#include <seika/utils/se_file_system_utils.h>
+#include <seika/utils/se_string_util.h>
 
 #include "../src/core/node_event.h"
 #include "../src/core/ecs/component/component.h"
@@ -14,7 +17,13 @@
 #include "../src/core/ecs/system/ec_system.h"
 #include "../src/core/ecs/ecs_manager.h"
 #include "../src/core/json/json_file_loader.h"
+#include "../src/core/scripting/python/pocketpy/cre_pkpy.h"
+#include "../src/core/scripting/python/pocketpy/cre_pkpy_util.h"
+#include "../src/core/scripting/python/pocketpy/cre_pkpy_entity_instance_cache.h"
+#include "../src/core/scripting/python/pocketpy/cre_pkpy_script_context.h"
+#include "../src/core/scripting/python/pocketpy/cre_pkpy_node_event_manager.h"
 #include "../src/core/game_properties.h"
+#include "../src/core/scene/scene_manager.h"
 
 SETexture fakeColorRectTexture = {0};
 
@@ -29,11 +38,13 @@ void tearDown() {
 
 void cre_node_event_test(void);
 void cre_json_file_loader_scene_test(void);
+void cre_pocketpy_test(void);
 
 int main(int argv, char** args) {
     UNITY_BEGIN();
     RUN_TEST(cre_node_event_test);
     RUN_TEST(cre_json_file_loader_scene_test);
+    RUN_TEST(cre_pocketpy_test);
     return UNITY_END();
 }
 
@@ -183,4 +194,99 @@ void cre_json_file_loader_scene_test(void) {
 
 
     cre_json_delete_json_scene_node(rootNode);
+}
+
+//--- Pocketpy Test ---//
+unsigned char* cre_pocketpy_test_import_handler(const char* path, int pathSize, int* outSize) {
+    char pathBuffer[128];
+    se_str_trim_by_size(path, pathBuffer, pathSize);
+    printf("path: '%s', pathSize: '%d'", pathBuffer, pathSize);
+    *outSize = 1;
+    return NULL;
+}
+
+void cre_pocketpy_test(void) {
+    pkpy_vm* vm = cre_pkpy_script_context_get_active_pkpy_vm();
+
+    TEST_MESSAGE("Quick import handler test");
+    pkpy_set_import_handler(vm, cre_pocketpy_test_import_handler);
+
+    TEST_MESSAGE("Misc pocketpy tests");
+#define CRE_TEST_POCKETPY_SOURCE ""\
+"class Test:\n"\
+"    @staticmethod\n"\
+"    def test_static(value: int) -> None:\n" \
+"        pass\n"\
+"\n"
+
+    pkpy_exec(vm, CRE_TEST_POCKETPY_SOURCE);
+    TEST_ASSERT_FALSE(cre_pkpy_util_print_error_message(vm));
+    pkpy_exec(vm, "Test.test_static(12)");
+    TEST_ASSERT_FALSE(cre_pkpy_util_print_error_message(vm));
+
+#undef CRE_TEST_POCKETPY_SOURCE
+
+    TEST_MESSAGE("Testing loading included internal modules");
+    pkpy_exec(vm, "from crescent import Node");
+    TEST_ASSERT_FALSE(cre_pkpy_util_print_error_message(vm));
+    pkpy_eval(vm, "Node(10).entity_id");
+    int nodeEntity = 0;
+    pkpy_to_int(vm, 0, &nodeEntity);
+    TEST_ASSERT_FALSE(cre_pkpy_util_print_error_message(vm));
+    TEST_ASSERT_EQUAL_INT(10, nodeEntity);
+    pkpy_pop_top(vm);
+    TEST_ASSERT_EQUAL_INT(0, pkpy_stack_size(vm));
+
+    TEST_MESSAGE("Testing entity instance cache");
+    const CreEntity entity = cre_pkpy_entity_instance_cache_create_new_entity(vm, CRE_PKPY_MODULE_NAME_CRESCENT, "Node", cre_ec_system_create_entity_uid());
+    cre_pkpy_entity_instance_cache_push_entity_instance(vm, entity);
+    TEST_ASSERT_EQUAL_INT(1, pkpy_stack_size(vm));
+    pkpy_getattr(vm, pkpy_name("entity_id"));
+    TEST_ASSERT_FALSE(cre_pkpy_util_print_error_message(vm));
+    pkpy_to_int(vm, 0, &nodeEntity);
+    TEST_ASSERT_FALSE(cre_pkpy_util_print_error_message(vm));
+    TEST_ASSERT_EQUAL_INT((int)entity, nodeEntity);
+    // Test removing entity
+    TEST_ASSERT_TRUE(cre_pkpy_entity_instance_cache_has_entity(vm, nodeEntity));
+    cre_pkpy_entity_instance_cache_remove_entity(vm, entity);
+    TEST_ASSERT_FALSE(cre_pkpy_entity_instance_cache_has_entity(vm, nodeEntity));
+    pkpy_pop_top(vm);
+    TEST_ASSERT_EQUAL_INT(0, pkpy_stack_size(vm));
+
+    se_asset_manager_initialize();
+    cre_scene_manager_initialize();
+    cre_scene_manager_queue_scene_change("engine/test/resources/test_scene1.cscn");
+    cre_scene_manager_process_queued_scene_change();
+
+    CREGameProperties* testGameProps = cre_game_props_create();
+    testGameProps->gameTitle = se_strdup("Test Game");
+    testGameProps->resolutionWidth = 400;
+    testGameProps->resolutionHeight = 300;
+    testGameProps->initialScenePath = se_strdup("main.cscn");
+    cre_game_props_initialize(testGameProps);
+
+    TEST_MESSAGE("Testing python api");
+
+    // Load test node
+    char* testCustomNodesSource = se_fs_read_file_contents("engine/test/resources/test_custom_nodes.py", NULL);
+    cre_pkpy_util_create_from_string(vm, "test_custom_nodes", testCustomNodesSource);
+    // Load test file
+    char* pythonText = se_fs_read_file_contents("engine/test/resources/crescent_api_test.py", NULL);
+    TEST_ASSERT_NOT_NULL(pythonText);
+    pkpy_exec_2(vm, pythonText, "crescent_api_test.py", 0, NULL);
+    SE_MEM_FREE(testCustomNodesSource);
+    SE_MEM_FREE(pythonText);
+    TEST_ASSERT_FALSE(cre_pkpy_util_print_error_message(vm));
+
+    // Testing pushing broadcast event func for node manager
+    cre_pkpy_node_event_manager_broadcast_event(vm, 1, "talk");
+    cre_pkpy_node_event_manager_broadcast_event_string(vm, 1, "talk_string", "Testing");
+    cre_pkpy_node_event_manager_broadcast_event_int(vm, 1, "talk_int", 42);
+    cre_pkpy_node_event_manager_broadcast_event_float(vm, 1, "talk_float", 10.0f);
+    cre_pkpy_node_event_manager_broadcast_event_bool(vm, 1, "talk_bool", true);
+    TEST_ASSERT_EQUAL_INT(0, pkpy_stack_size(vm));
+
+    cre_scene_manager_finalize();
+    se_asset_manager_finalize();
+    cre_game_props_finalize();
 }

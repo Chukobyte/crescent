@@ -63,6 +63,7 @@ typedef struct NodeComponent {
 } NodeComponent;
 
 NodeComponent* node_component_create();
+NodeComponent* node_component_create_ex(const char* name, NodeBaseType baseType);
 void node_component_delete(NodeComponent* nodeComponent);
 NodeComponent* node_component_copy(const NodeComponent* nodeComponent);
 NodeBaseType node_get_base_type(const char* baseName);
