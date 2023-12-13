@@ -3,7 +3,6 @@ from typing import Optional
 import crescent_internal
 from crescent import Node, SceneTree, Node2D, Vector2, GameProperties, Size2D, Camera2D, Rect2, World
 
-import nonexistent_test  # Will get dynamically imported in test
 import test_custom_nodes
 
 
@@ -28,9 +27,6 @@ class TestCase:
 def are_floats_equal(a: float, b: float, rel_tol=0.00000001, abs_tol=0.0) -> bool:
     return abs(a-b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
 
-
-with TestCase("Import Test") as test_case:
-    assert nonexistent_test.ImportTest.test(24)
 
 # Tests
 with TestCase("Node Tests") as test_case:

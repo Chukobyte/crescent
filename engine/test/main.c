@@ -197,32 +197,8 @@ void cre_json_file_loader_scene_test(void) {
 }
 
 //--- Pocketpy Test ---//
-unsigned char* cre_pocketpy_test_import_handler(const char* path, int pathSize, int* outSize) {
-#define CRE_TEST_POCKETPY_IMPORT_SOURCE ""\
-"class ImportTest:\n"\
-"    @staticmethod\n"\
-"    def test(value: int) -> bool:\n" \
-"        return value == 24\n"\
-"\n"
-
-    char pathBuffer[128];
-    se_str_trim_by_size(path, pathBuffer, pathSize);
-    printf("path: '%s', pathSize: '%d'", pathBuffer, pathSize);
-
-    static unsigned char* cachedImportData = NULL;
-    if (cachedImportData) {
-        SE_MEM_FREE(cachedImportData);
-    }
-    cachedImportData = se_str_convert_string_to_unsigned_char(CRE_TEST_POCKETPY_IMPORT_SOURCE, (size_t*)outSize);
-    return cachedImportData;
-#undef CRE_TEST_POCKETPY_IMPORT_SOURCE
-}
-
 void cre_pocketpy_test(void) {
     pkpy_vm* vm = cre_pkpy_script_context_get_active_pkpy_vm();
-
-    TEST_MESSAGE("Quick import handler test");
-    pkpy_set_import_handler(vm, cre_pocketpy_test_import_handler);
 
     TEST_MESSAGE("Misc pocketpy tests");
 #define CRE_TEST_POCKETPY_SOURCE ""\

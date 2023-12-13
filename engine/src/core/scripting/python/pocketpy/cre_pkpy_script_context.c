@@ -6,8 +6,10 @@
 
 #include <seika/networking/se_network.h>
 #include <seika/data_structures/se_static_array.h>
-#include <seika/utils/se_assert.h>
+#include <seika/asset/asset_file_loader.h>
 #include <seika/memory/se_mem.h>
+#include <seika/utils/se_assert.h>
+#include <seika/utils/se_string_util.h>
 
 #include "cre_pkpy.h"
 #include "cre_pkpy_entity_instance_cache.h"
@@ -28,6 +30,9 @@ void pkpy_sc_on_fixed_update_instance(CreEntity entity, float deltaTime);
 void pkpy_sc_on_end(CreEntity entity);
 void pkpy_sc_on_network_callback(const char* message);
 void pkpy_sc_on_script_context_destroy();
+
+// Custom Import Handler
+unsigned char*  cre_pkpy_import_handler(const char* path, int pathSize, int* outSize);
 
 //--- Node Event Callbacks ---//
 void pkpy_node_event_node_scene_entered(SESubjectNotifyPayload* payload);
@@ -73,6 +78,9 @@ CREScriptContext* cre_pkpy_script_context_create() {
         pyUpdateFunctionName = pkpy_name("_process");
         pyFixedUpdateFunctionName = pkpy_name("_fixed_process");
         pyEndFunctionName = pkpy_name("_end");
+
+        pkpy_set_import_handler(cre_pkpy_vm, cre_pkpy_import_handler);
+        // TODO: create and set pkpy output handler
     }
 
     cre_pkpy_api_load_internal_modules(cre_pkpy_vm);
@@ -206,6 +214,35 @@ pkpy_vm* cre_pkpy_script_context_get_active_pkpy_vm() {
 }
 
 void cre_pkpy_script_context_on_network_udp_server_client_connected() {}
+
+//--- Custom Import Handler ---//
+unsigned char* cre_pkpy_import_handler(const char* path, int pathSize, int* outSize) {
+#define CRE_PKPY_IMPORT_HANDLER_PATH_BUFFER_SIZE 256
+    SE_ASSERT_FMT(
+            pathSize <= CRE_PKPY_IMPORT_HANDLER_PATH_BUFFER_SIZE,
+            "Passed in pkpy path size is '%d' while 'CRE_PKPY_IMPORT_HANDLER_PATH_BUFFER_SIZE' is '%d', consider increasing CRE_PKPY_IMPORT_HANDLER_PATH_BUFFER_SIZE!",
+            pathSize, CRE_PKPY_IMPORT_HANDLER_PATH_BUFFER_SIZE
+    );
+    // 1. Construct path
+    char pathBuffer[CRE_PKPY_IMPORT_HANDLER_PATH_BUFFER_SIZE];
+    se_str_trim_by_size(path, pathBuffer, pathSize);
+    se_logger_debug("Importing pkpy module from path '%s'", pathBuffer);
+    // 2. Clear out cachedImportData (if exists)
+    static unsigned char* cachedImportData = NULL;
+    if (cachedImportData) {
+        SE_MEM_FREE(cachedImportData);
+    }
+    // 3. Now attempt to load
+    char* moduleString = sf_asset_file_loader_read_file_contents_as_string(pathBuffer, (size_t*)outSize);
+    if (!moduleString) {
+        se_logger_error("Failed to load pkpy module at path'%s'", pathBuffer);
+        return NULL;
+    }
+    cachedImportData = se_str_convert_string_to_unsigned_char(moduleString, (size_t*)outSize);
+    SE_MEM_FREE(moduleString);
+    return cachedImportData;
+#undef CRE_PKPY_IMPORT_HANDLER_PATH_BUFFER_SIZE
+}
 
 //--- Node event callbacks ---//
 
