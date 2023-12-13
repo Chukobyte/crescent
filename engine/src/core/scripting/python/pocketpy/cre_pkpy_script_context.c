@@ -223,22 +223,18 @@ unsigned char* cre_pkpy_import_handler(const char* path, int pathSize, int* outS
             "Passed in pkpy path size is '%d' while 'CRE_PKPY_IMPORT_HANDLER_PATH_BUFFER_SIZE' is '%d', consider increasing CRE_PKPY_IMPORT_HANDLER_PATH_BUFFER_SIZE!",
             pathSize, CRE_PKPY_IMPORT_HANDLER_PATH_BUFFER_SIZE
     );
-    // 1. Construct path
+    // Construct path
+    // TODO: Add in full path from working dir (if not in memory)
     char pathBuffer[CRE_PKPY_IMPORT_HANDLER_PATH_BUFFER_SIZE];
     se_str_trim_by_size(path, pathBuffer, pathSize);
     se_logger_debug("Importing pkpy module from path '%s'", pathBuffer);
-    // 2. Clear out cachedImportData (if exists)
-    static unsigned char* cachedImportData = NULL;
-    if (cachedImportData) {
-        SE_MEM_FREE(cachedImportData);
-    }
-    // 3. Now attempt to load
+    // Now attempt to load
     char* moduleString = sf_asset_file_loader_read_file_contents_as_string(pathBuffer, (size_t*)outSize);
     if (!moduleString) {
         se_logger_error("Failed to load pkpy module at path'%s'", pathBuffer);
         return NULL;
     }
-    cachedImportData = se_str_convert_string_to_unsigned_char(moduleString, (size_t*)outSize);
+    unsigned char* cachedImportData = se_str_convert_string_to_unsigned_char(moduleString, (size_t*)outSize);
     SE_MEM_FREE(moduleString);
     return cachedImportData;
 #undef CRE_PKPY_IMPORT_HANDLER_PATH_BUFFER_SIZE
