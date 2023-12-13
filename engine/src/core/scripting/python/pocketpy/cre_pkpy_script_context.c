@@ -232,7 +232,7 @@ unsigned char* cre_pkpy_import_handler(const char* path, int pathSize, int* outS
         SE_ASSERT(engineContext);
         char diskPathBuffer[CRE_PKPY_IMPORT_HANDLER_PATH_BUFFER_SIZE];
         se_strcpy(diskPathBuffer, engineContext->internalAssetsDir);
-        se_strcat(diskPathBuffer, "\\");
+        se_strcat(diskPathBuffer, SE_PLATFORM_PATH_SEPARATOR_STRING);
         se_strcat(diskPathBuffer, pathBuffer);
         se_strcpy(pathBuffer, diskPathBuffer);
     }
