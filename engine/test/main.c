@@ -7,6 +7,7 @@
 #include <seika/asset/asset_manager.h>
 #include <seika/rendering/texture.h>
 #include <seika/utils/se_file_system_utils.h>
+#include <seika/utils/se_string_util.h>
 
 #include "../src/core/node_event.h"
 #include "../src/core/ecs/component/component.h"
@@ -21,10 +22,8 @@
 #include "../src/core/scripting/python/pocketpy/cre_pkpy_entity_instance_cache.h"
 #include "../src/core/scripting/python/pocketpy/cre_pkpy_script_context.h"
 #include "../src/core/scripting/python/pocketpy/cre_pkpy_node_event_manager.h"
-#include "../src/core/scripting/python/pocketpy/api/cre_pkpy_api.h"
 #include "../src/core/game_properties.h"
 #include "../src/core/scene/scene_manager.h"
-#include "seika/utils/se_string_util.h"
 
 SETexture fakeColorRectTexture = {0};
 
