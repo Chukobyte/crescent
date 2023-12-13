@@ -198,11 +198,24 @@ void cre_json_file_loader_scene_test(void) {
 
 //--- Pocketpy Test ---//
 unsigned char* cre_pocketpy_test_import_handler(const char* path, int pathSize, int* outSize) {
+#define CRE_TEST_POCKETPY_IMPORT_SOURCE ""\
+"class ImportTest:\n"\
+"    @staticmethod\n"\
+"    def test(value: int) -> bool:\n" \
+"        return value == 24\n"\
+"\n"
+
     char pathBuffer[128];
     se_str_trim_by_size(path, pathBuffer, pathSize);
     printf("path: '%s', pathSize: '%d'", pathBuffer, pathSize);
-    *outSize = 1;
-    return NULL;
+
+    static unsigned char* cachedImportData = NULL;
+    if (cachedImportData) {
+        SE_MEM_FREE(cachedImportData);
+    }
+    cachedImportData = se_str_convert_string_to_unsigned_char(CRE_TEST_POCKETPY_IMPORT_SOURCE, (size_t*)outSize);
+    return cachedImportData;
+#undef CRE_TEST_POCKETPY_IMPORT_SOURCE
 }
 
 void cre_pocketpy_test(void) {
