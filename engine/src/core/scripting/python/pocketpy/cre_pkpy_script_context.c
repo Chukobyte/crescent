@@ -21,6 +21,7 @@
 #include "../../../ecs/component/component.h"
 #include "../../../ecs/component/node_component.h"
 #include "../../../ecs/component/script_component.h"
+#include "../../../engine_context.h"
 
 //--- Script Context Interface ---//
 void pkpy_sc_on_delete_instance(CreEntity entity);
@@ -217,16 +218,24 @@ void cre_pkpy_script_context_on_network_udp_server_client_connected() {}
 
 //--- Custom Import Handler ---//
 unsigned char* cre_pkpy_import_handler(const char* path, int pathSize, int* outSize) {
-#define CRE_PKPY_IMPORT_HANDLER_PATH_BUFFER_SIZE 256
+#define CRE_PKPY_IMPORT_HANDLER_PATH_BUFFER_SIZE 512
     SE_ASSERT_FMT(
             pathSize <= CRE_PKPY_IMPORT_HANDLER_PATH_BUFFER_SIZE,
             "Passed in pkpy path size is '%d' while 'CRE_PKPY_IMPORT_HANDLER_PATH_BUFFER_SIZE' is '%d', consider increasing CRE_PKPY_IMPORT_HANDLER_PATH_BUFFER_SIZE!",
             pathSize, CRE_PKPY_IMPORT_HANDLER_PATH_BUFFER_SIZE
     );
-    // Construct path
-    // TODO: Add in full path from working dir (if not in memory)
+    // Construct path, adds full path if loading from disk
     char pathBuffer[CRE_PKPY_IMPORT_HANDLER_PATH_BUFFER_SIZE];
     se_str_trim_by_size(path, pathBuffer, pathSize);
+    if (sf_asset_file_loader_get_read_mode() == SEAssetFileLoaderReadMode_DISK) {
+        CREEngineContext* engineContext = cre_engine_context_get();
+        SE_ASSERT(engineContext);
+        char diskPathBuffer[CRE_PKPY_IMPORT_HANDLER_PATH_BUFFER_SIZE];
+        se_strcpy(diskPathBuffer, engineContext->internalAssetsDir);
+        se_strcat(diskPathBuffer, "\\");
+        se_strcat(diskPathBuffer, pathBuffer);
+        se_strcpy(pathBuffer, diskPathBuffer);
+    }
     se_logger_debug("Importing pkpy module from path '%s'", pathBuffer);
     // Now attempt to load
     char* moduleString = sf_asset_file_loader_read_file_contents_as_string(pathBuffer, (size_t*)outSize);

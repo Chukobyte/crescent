@@ -23,6 +23,7 @@
 #include "../src/core/scripting/python/pocketpy/cre_pkpy_script_context.h"
 #include "../src/core/scripting/python/pocketpy/cre_pkpy_node_event_manager.h"
 #include "../src/core/game_properties.h"
+#include "../src/core/engine_context.h"
 #include "../src/core/scene/scene_manager.h"
 
 SETexture fakeColorRectTexture = {0};
@@ -30,10 +31,15 @@ SETexture fakeColorRectTexture = {0};
 void setUp() {
     cre_game_props_initialize(cre_game_props_create());
     cre_ecs_manager_initialize_ex(&fakeColorRectTexture);
+
+    CREEngineContext* engineContext = cre_engine_context_initialize();
+    engineContext->engineRootDir = se_fs_get_cwd();
+    engineContext->internalAssetsDir = se_fs_get_cwd();
 }
 void tearDown() {
     cre_ecs_manager_finalize();
     cre_game_props_finalize();
+    cre_engine_context_finalize();
 }
 
 void cre_node_event_test(void);
