@@ -116,6 +116,15 @@ void cre_pkpy_script_context_create_instance(CreEntity entity, const char* class
     SE_ASSERT(cre_pkpy_vm);
     cre_pkpy_entity_instance_cache_create_new_entity(cre_pkpy_vm, classPath, className, entity);
     cre_pkpy_script_context_setup_node_event(entity);
+    // Check funcs
+    cre_pkpy_entity_instance_cache_push_entity_instance(cre_pkpy_vm, entity);
+    if (pkpy_getattr(cre_pkpy_vm, pyUpdateFunctionName)) {
+        pkpy_script_context->updateEntities[pkpy_script_context->updateEntityCount++] = entity;
+    }
+    if (pkpy_getattr(cre_pkpy_vm, pyFixedUpdateFunctionName)) {
+        pkpy_script_context->fixedUpdateEntities[pkpy_script_context->fixedUpdateEntityCount++] = entity;
+    }
+    pkpy_pop_top(cre_pkpy_vm);
 }
 
 void cre_pkpy_script_context_create_instance_if_nonexistent(CreEntity entity, const char* classPath, const char* className) {
@@ -148,6 +157,20 @@ void pkpy_sc_on_delete_instance(CreEntity entity) {
     SE_ASSERT(cre_pkpy_vm);
     cre_pkpy_entity_instance_cache_remove_entity(cre_pkpy_vm, entity);
 
+    se_array_utils_remove_item_uint32(
+            pkpy_script_context->updateEntities,
+            &pkpy_script_context->updateEntityCount,
+            entity,
+            CRE_NULL_ENTITY
+    );
+
+    se_array_utils_remove_item_uint32(
+            pkpy_script_context->fixedUpdateEntities,
+            &pkpy_script_context->fixedUpdateEntityCount,
+            entity,
+            CRE_NULL_ENTITY
+    );
+
     entityInitializedList[entity] = false;
 }
 
@@ -166,7 +189,8 @@ void pkpy_sc_on_update_instance(CreEntity entity, float deltaTime) {
     cre_pkpy_entity_instance_cache_push_entity_instance(cre_pkpy_vm, entity);
     if (pkpy_getattr(cre_pkpy_vm, pyUpdateFunctionName)) {
         pkpy_push_null(cre_pkpy_vm);
-        pkpy_vectorcall(cre_pkpy_vm, 0);
+        pkpy_push_float(cre_pkpy_vm, (double)deltaTime);
+        pkpy_vectorcall(cre_pkpy_vm, 1);
     }
     pkpy_pop_top(cre_pkpy_vm);
 }
@@ -176,7 +200,8 @@ void pkpy_sc_on_fixed_update_instance(CreEntity entity, float deltaTime) {
     cre_pkpy_entity_instance_cache_push_entity_instance(cre_pkpy_vm, entity);
     if (pkpy_getattr(cre_pkpy_vm, pyFixedUpdateFunctionName)) {
         pkpy_push_null(cre_pkpy_vm);
-        pkpy_vectorcall(cre_pkpy_vm, 0);
+        pkpy_push_float(cre_pkpy_vm, (double)deltaTime);
+        pkpy_vectorcall(cre_pkpy_vm, 1);
     }
     pkpy_pop_top(cre_pkpy_vm);
 }
@@ -227,15 +252,6 @@ unsigned char* cre_pkpy_import_handler(const char* path, int pathSize, int* outS
     // Construct path, adds full path if loading from disk
     char pathBuffer[CRE_PKPY_IMPORT_HANDLER_PATH_BUFFER_SIZE];
     se_str_trim_by_size(path, pathBuffer, pathSize);
-    if (sf_asset_file_loader_get_read_mode() == SEAssetFileLoaderReadMode_DISK) {
-        CREEngineContext* engineContext = cre_engine_context_get();
-        SE_ASSERT(engineContext);
-        char diskPathBuffer[CRE_PKPY_IMPORT_HANDLER_PATH_BUFFER_SIZE];
-        se_strcpy(diskPathBuffer, engineContext->internalAssetsDir);
-        se_strcat(diskPathBuffer, SE_PLATFORM_PATH_SEPARATOR_STRING);
-        se_strcat(diskPathBuffer, pathBuffer);
-        se_strcpy(pathBuffer, diskPathBuffer);
-    }
     se_logger_debug("Importing pkpy module from path '%s'", pathBuffer);
     // Now attempt to load
     char* moduleString = sf_asset_file_loader_read_file_contents_as_string(pathBuffer, (size_t*)outSize);
