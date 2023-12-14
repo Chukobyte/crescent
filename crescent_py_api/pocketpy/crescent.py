@@ -903,12 +903,10 @@ class Node2D(Node):
         return crescent_internal.node_new("crescent", "Node2D", NodeType.Node2D)
 
     def set_position(self, value: Vector2) -> None:
-        crescent_internal.node2d_set_position(self.entity_id, value.x, value.y
-        )
+        crescent_internal.node2d_set_position(self.entity_id, value.x, value.y)
 
     def add_to_position(self, value: Vector2) -> None:
-        crescent_internal.node2d_add_to_position(self.entity_id, value.x, value.y
-        )
+        crescent_internal.node2d_add_to_position(self.entity_id, value.x, value.y)
 
     def get_position(self) -> Vector2:
         px, py = crescent_internal.node2d_get_position(self.entity_id)
