@@ -254,13 +254,16 @@ unsigned char* cre_pkpy_import_handler(const char* path, int pathSize, int* outS
     se_str_trim_by_size(path, pathBuffer, pathSize);
     se_logger_debug("Importing pkpy module from path '%s'", pathBuffer);
     // Now attempt to load
-    char* moduleString = sf_asset_file_loader_read_file_contents_as_string(pathBuffer, (size_t*)outSize);
+    size_t moduleStringSize;
+    char* moduleString = sf_asset_file_loader_read_file_contents_as_string(pathBuffer, &moduleStringSize);
     if (!moduleString) {
         se_logger_error("Failed to load pkpy module at path'%s'", pathBuffer);
+        *outSize = 0;
         return NULL;
     }
-    unsigned char* cachedImportData = se_str_convert_string_to_unsigned_char(moduleString, (size_t*)outSize);
+    unsigned char* cachedImportData = se_str_convert_string_to_unsigned_char(moduleString, &moduleStringSize);
     SE_MEM_FREE(moduleString);
+    *outSize = (int)moduleStringSize;
     return cachedImportData;
 #undef CRE_PKPY_IMPORT_HANDLER_PATH_BUFFER_SIZE
 }

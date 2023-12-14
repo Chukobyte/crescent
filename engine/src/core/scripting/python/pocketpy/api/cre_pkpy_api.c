@@ -347,7 +347,7 @@ static inline SEVector2 cre_pkpy_api_helper_mouse_get_global_position(const SEVe
 }
 
 static inline const char* cre_pkpy_api_helper_convert_pkpy_CString(const pkpy_CString* pkpyString) {
-#define CONVERTED_STRING_BUFFER_SIZE 512
+#define CONVERTED_STRING_BUFFER_SIZE 2048
     SE_ASSERT_FMT(pkpyString->size <= CONVERTED_STRING_BUFFER_SIZE, "pkpy string is larger than converted string buffer size, consider raising 'CONVERTED_STRING_BUFFER_SIZE'!");
     static char convertedStringBuffer[CONVERTED_STRING_BUFFER_SIZE];
     se_str_trim_by_size(pkpyString->data, convertedStringBuffer, pkpyString->size);
