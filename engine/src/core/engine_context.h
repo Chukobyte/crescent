@@ -20,6 +20,7 @@ typedef struct CREEngineContext {
     // Where the project archive file is located (used when reading assets from memory in shipping builds)
     char* projectArchivePath;
     CreEngineStats stats;
+    int exitCode;
 } CREEngineContext;
 
 CREEngineContext* cre_engine_context_initialize();

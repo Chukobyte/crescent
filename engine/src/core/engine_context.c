@@ -17,6 +17,7 @@ CREEngineContext* cre_engine_context_initialize() {
     creEngineContext->engineRootDir = NULL;
     creEngineContext->internalAssetsDir = NULL;
     creEngineContext->projectArchivePath = NULL;
+    creEngineContext->exitCode = EXIT_SUCCESS;
     return creEngineContext;
 }
 

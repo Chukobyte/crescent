@@ -251,12 +251,16 @@ bool cre_is_running() {
     return engineContext->isRunning && sf_is_running();
 }
 
-void cre_shutdown() {
+int cre_shutdown() {
     sf_shutdown();
     cre_game_props_finalize();
     cre_scene_manager_finalize();
     cre_ecs_manager_finalize();
     cre_py_finalize();
     cre_curve_float_manager_finalize();
+    const int finalExitCode = engineContext->exitCode;
+    engineContext = NULL;
+    cre_engine_context_finalize();
     se_logger_info("Crescent Engine shutdown!");
+    return finalExitCode;
 }

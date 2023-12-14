@@ -567,11 +567,11 @@
 "class Engine:\n"\
 "    @staticmethod\n"\
 "    def exit(code=0) -> None:\n"\
-"        crescent_internal.engine_exit(code=code)\n"\
+"        crescent_internal.engine_exit(code)\n"\
 "\n"\
 "    @staticmethod\n"\
 "    def set_target_fps(fps: int) -> None:\n"\
-"        crescent_internal.engine_set_target_fps(fps=fps)\n"\
+"        crescent_internal.engine_set_target_fps(fps)\n"\
 "\n"\
 "    @staticmethod\n"\
 "    def get_target_fps() -> int:\n"\

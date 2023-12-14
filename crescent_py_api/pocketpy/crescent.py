@@ -564,11 +564,11 @@ class ShaderUtil:
 class Engine:
     @staticmethod
     def exit(code=0) -> None:
-        crescent_internal.engine_exit(code=code)
+        crescent_internal.engine_exit(code)
 
     @staticmethod
     def set_target_fps(fps: int) -> None:
-        crescent_internal.engine_set_target_fps(fps=fps)
+        crescent_internal.engine_set_target_fps(fps)
 
     @staticmethod
     def get_target_fps() -> int:

@@ -13,6 +13,5 @@ int main(int argv, char** args) {
         cre_update();
     }
 
-    cre_shutdown();
-    return EXIT_SUCCESS;
+    return cre_shutdown();
 }
