@@ -13,10 +13,14 @@ typedef struct CreEngineStats {
 typedef struct CREEngineContext {
     bool isRunning;
     int targetFPS;
+    // Root directory for engine, where the executable binary is
     char* engineRootDir;
+    // Where scripts, assets, in all other things are expected to be.  Also known as project directory.
     char* internalAssetsDir;
+    // Where the project archive file is located (used when reading assets from memory in shipping builds)
     char* projectArchivePath;
     CreEngineStats stats;
+    int exitCode;
 } CREEngineContext;
 
 CREEngineContext* cre_engine_context_initialize();

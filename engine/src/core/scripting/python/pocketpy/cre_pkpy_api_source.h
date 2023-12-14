@@ -567,11 +567,11 @@
 "class Engine:\n"\
 "    @staticmethod\n"\
 "    def exit(code=0) -> None:\n"\
-"        crescent_internal.engine_exit(code=code)\n"\
+"        crescent_internal.engine_exit(code)\n"\
 "\n"\
 "    @staticmethod\n"\
 "    def set_target_fps(fps: int) -> None:\n"\
-"        crescent_internal.engine_set_target_fps(fps=fps)\n"\
+"        crescent_internal.engine_set_target_fps(fps)\n"\
 "\n"\
 "    @staticmethod\n"\
 "    def get_target_fps() -> int:\n"\
@@ -906,12 +906,10 @@
 "        return crescent_internal.node_new(\"crescent\", \"Node2D\", NodeType.Node2D)\n"\
 "\n"\
 "    def set_position(self, value: Vector2) -> None:\n"\
-"        crescent_internal.node2d_set_position(self.entity_id, value.x, value.y\n"\
-"        )\n"\
+"        crescent_internal.node2d_set_position(self.entity_id, value.x, value.y)\n"\
 "\n"\
 "    def add_to_position(self, value: Vector2) -> None:\n"\
-"        crescent_internal.node2d_add_to_position(self.entity_id, value.x, value.y\n"\
-"        )\n"\
+"        crescent_internal.node2d_add_to_position(self.entity_id, value.x, value.y)\n"\
 "\n"\
 "    def get_position(self) -> Vector2:\n"\
 "        px, py = crescent_internal.node2d_get_position(self.entity_id)\n"\

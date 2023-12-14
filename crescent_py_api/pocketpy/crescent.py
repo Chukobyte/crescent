@@ -564,11 +564,11 @@ class ShaderUtil:
 class Engine:
     @staticmethod
     def exit(code=0) -> None:
-        crescent_internal.engine_exit(code=code)
+        crescent_internal.engine_exit(code)
 
     @staticmethod
     def set_target_fps(fps: int) -> None:
-        crescent_internal.engine_set_target_fps(fps=fps)
+        crescent_internal.engine_set_target_fps(fps)
 
     @staticmethod
     def get_target_fps() -> int:
@@ -903,12 +903,10 @@ class Node2D(Node):
         return crescent_internal.node_new("crescent", "Node2D", NodeType.Node2D)
 
     def set_position(self, value: Vector2) -> None:
-        crescent_internal.node2d_set_position(self.entity_id, value.x, value.y
-        )
+        crescent_internal.node2d_set_position(self.entity_id, value.x, value.y)
 
     def add_to_position(self, value: Vector2) -> None:
-        crescent_internal.node2d_add_to_position(self.entity_id, value.x, value.y
-        )
+        crescent_internal.node2d_add_to_position(self.entity_id, value.x, value.y)
 
     def get_position(self) -> Vector2:
         px, py = crescent_internal.node2d_get_position(self.entity_id)

@@ -6,8 +6,10 @@
 
 #include <seika/networking/se_network.h>
 #include <seika/data_structures/se_static_array.h>
-#include <seika/utils/se_assert.h>
+#include <seika/asset/asset_file_loader.h>
 #include <seika/memory/se_mem.h>
+#include <seika/utils/se_assert.h>
+#include <seika/utils/se_string_util.h>
 
 #include "cre_pkpy.h"
 #include "cre_pkpy_entity_instance_cache.h"
@@ -19,6 +21,7 @@
 #include "../../../ecs/component/component.h"
 #include "../../../ecs/component/node_component.h"
 #include "../../../ecs/component/script_component.h"
+#include "../../../engine_context.h"
 
 //--- Script Context Interface ---//
 void pkpy_sc_on_delete_instance(CreEntity entity);
@@ -28,6 +31,9 @@ void pkpy_sc_on_fixed_update_instance(CreEntity entity, float deltaTime);
 void pkpy_sc_on_end(CreEntity entity);
 void pkpy_sc_on_network_callback(const char* message);
 void pkpy_sc_on_script_context_destroy();
+
+// Custom Import Handler
+unsigned char*  cre_pkpy_import_handler(const char* path, int pathSize, int* outSize);
 
 //--- Node Event Callbacks ---//
 void pkpy_node_event_node_scene_entered(SESubjectNotifyPayload* payload);
@@ -47,8 +53,8 @@ CREScriptContext* pkpy_script_context = NULL;
 pkpy_vm* cre_pkpy_vm = NULL;
 
 pkpy_CName pyStartFunctionName;
-pkpy_CName pyUpdateFunctionName;
-pkpy_CName pyFixedUpdateFunctionName;
+pkpy_CName pyProcessFunctionName;
+pkpy_CName pyFixedProcessFunctionName;
 pkpy_CName pyEndFunctionName;
 
 SE_STATIC_ARRAY_CREATE(CreEntity, CRE_MAX_ENTITIES, entityInitializedList);
@@ -70,9 +76,12 @@ CREScriptContext* cre_pkpy_script_context_create() {
     if (!cre_pkpy_vm) {
         cre_pkpy_vm = pkpy_new_vm(false);
         pyStartFunctionName = pkpy_name("_start");
-        pyUpdateFunctionName = pkpy_name("_process");
-        pyFixedUpdateFunctionName = pkpy_name("_fixed_process");
+        pyProcessFunctionName = pkpy_name("_process");
+        pyFixedProcessFunctionName = pkpy_name("_fixed_process");
         pyEndFunctionName = pkpy_name("_end");
+
+        pkpy_set_import_handler(cre_pkpy_vm, cre_pkpy_import_handler);
+        // TODO: create and set pkpy output handler
     }
 
     cre_pkpy_api_load_internal_modules(cre_pkpy_vm);
@@ -107,6 +116,15 @@ void cre_pkpy_script_context_create_instance(CreEntity entity, const char* class
     SE_ASSERT(cre_pkpy_vm);
     cre_pkpy_entity_instance_cache_create_new_entity(cre_pkpy_vm, classPath, className, entity);
     cre_pkpy_script_context_setup_node_event(entity);
+    // Check for process funcs
+    cre_pkpy_entity_instance_cache_push_entity_instance(cre_pkpy_vm, entity);
+    if (pkpy_getattr(cre_pkpy_vm, pyProcessFunctionName)) {
+        pkpy_script_context->updateEntities[pkpy_script_context->updateEntityCount++] = entity;
+    }
+    if (pkpy_getattr(cre_pkpy_vm, pyFixedProcessFunctionName)) {
+        pkpy_script_context->fixedUpdateEntities[pkpy_script_context->fixedUpdateEntityCount++] = entity;
+    }
+    pkpy_pop_top(cre_pkpy_vm);
 }
 
 void cre_pkpy_script_context_create_instance_if_nonexistent(CreEntity entity, const char* classPath, const char* className) {
@@ -139,6 +157,20 @@ void pkpy_sc_on_delete_instance(CreEntity entity) {
     SE_ASSERT(cre_pkpy_vm);
     cre_pkpy_entity_instance_cache_remove_entity(cre_pkpy_vm, entity);
 
+    se_array_utils_remove_item_uint32(
+            pkpy_script_context->updateEntities,
+            &pkpy_script_context->updateEntityCount,
+            entity,
+            CRE_NULL_ENTITY
+    );
+
+    se_array_utils_remove_item_uint32(
+            pkpy_script_context->fixedUpdateEntities,
+            &pkpy_script_context->fixedUpdateEntityCount,
+            entity,
+            CRE_NULL_ENTITY
+    );
+
     entityInitializedList[entity] = false;
 }
 
@@ -155,20 +187,22 @@ void pkpy_sc_on_start(CreEntity entity) {
 void pkpy_sc_on_update_instance(CreEntity entity, float deltaTime) {
     SE_ASSERT(cre_pkpy_vm);
     cre_pkpy_entity_instance_cache_push_entity_instance(cre_pkpy_vm, entity);
-    if (pkpy_getattr(cre_pkpy_vm, pyUpdateFunctionName)) {
-        pkpy_push_null(cre_pkpy_vm);
-        pkpy_vectorcall(cre_pkpy_vm, 0);
-    }
+    const bool hasFunc = pkpy_getattr(cre_pkpy_vm, pyProcessFunctionName);
+    SE_ASSERT(hasFunc);
+    pkpy_push_null(cre_pkpy_vm);
+    pkpy_push_float(cre_pkpy_vm, (double)deltaTime);
+    pkpy_vectorcall(cre_pkpy_vm, 1);
     pkpy_pop_top(cre_pkpy_vm);
 }
 
 void pkpy_sc_on_fixed_update_instance(CreEntity entity, float deltaTime) {
     SE_ASSERT(cre_pkpy_vm);
     cre_pkpy_entity_instance_cache_push_entity_instance(cre_pkpy_vm, entity);
-    if (pkpy_getattr(cre_pkpy_vm, pyFixedUpdateFunctionName)) {
-        pkpy_push_null(cre_pkpy_vm);
-        pkpy_vectorcall(cre_pkpy_vm, 0);
-    }
+    const bool hasFunc = pkpy_getattr(cre_pkpy_vm, pyFixedProcessFunctionName);
+    SE_ASSERT(hasFunc);
+    pkpy_push_null(cre_pkpy_vm);
+    pkpy_push_float(cre_pkpy_vm, (double)deltaTime);
+    pkpy_vectorcall(cre_pkpy_vm, 1);
     pkpy_pop_top(cre_pkpy_vm);
 }
 
@@ -206,6 +240,33 @@ pkpy_vm* cre_pkpy_script_context_get_active_pkpy_vm() {
 }
 
 void cre_pkpy_script_context_on_network_udp_server_client_connected() {}
+
+//--- Custom Import Handler ---//
+unsigned char* cre_pkpy_import_handler(const char* path, int pathSize, int* outSize) {
+#define CRE_PKPY_IMPORT_HANDLER_PATH_BUFFER_SIZE 512
+    SE_ASSERT_FMT(
+            pathSize <= CRE_PKPY_IMPORT_HANDLER_PATH_BUFFER_SIZE,
+            "Passed in pkpy path size is '%d' while 'CRE_PKPY_IMPORT_HANDLER_PATH_BUFFER_SIZE' is '%d', consider increasing CRE_PKPY_IMPORT_HANDLER_PATH_BUFFER_SIZE!",
+            pathSize, CRE_PKPY_IMPORT_HANDLER_PATH_BUFFER_SIZE
+    );
+    // Construct path, adds full path if loading from disk
+    char pathBuffer[CRE_PKPY_IMPORT_HANDLER_PATH_BUFFER_SIZE];
+    se_str_trim_by_size(path, pathBuffer, pathSize);
+    se_logger_debug("Importing pkpy module from path '%s'", pathBuffer);
+    // Now attempt to load
+    char* moduleString = sf_asset_file_loader_read_file_contents_as_string(pathBuffer, NULL);
+    if (!moduleString) {
+        se_logger_error("Failed to load pkpy module at path'%s'", pathBuffer);
+        *outSize = 0;
+        return NULL;
+    }
+    size_t moduleDataSize;
+    unsigned char* cachedImportData = se_str_convert_string_to_unsigned_char(moduleString, &moduleDataSize);
+    SE_MEM_FREE(moduleString);
+    *outSize = (int)moduleDataSize;
+    return cachedImportData;
+#undef CRE_PKPY_IMPORT_HANDLER_PATH_BUFFER_SIZE
+}
 
 //--- Node event callbacks ---//
 

@@ -23,6 +23,7 @@
 #include "../src/core/scripting/python/pocketpy/cre_pkpy_script_context.h"
 #include "../src/core/scripting/python/pocketpy/cre_pkpy_node_event_manager.h"
 #include "../src/core/game_properties.h"
+#include "../src/core/engine_context.h"
 #include "../src/core/scene/scene_manager.h"
 
 SETexture fakeColorRectTexture = {0};
@@ -30,10 +31,15 @@ SETexture fakeColorRectTexture = {0};
 void setUp() {
     cre_game_props_initialize(cre_game_props_create());
     cre_ecs_manager_initialize_ex(&fakeColorRectTexture);
+
+    CREEngineContext* engineContext = cre_engine_context_initialize();
+    engineContext->engineRootDir = se_fs_get_cwd();
+    engineContext->internalAssetsDir = se_fs_get_cwd();
 }
 void tearDown() {
     cre_ecs_manager_finalize();
     cre_game_props_finalize();
+    cre_engine_context_finalize();
 }
 
 void cre_node_event_test(void);
@@ -197,19 +203,8 @@ void cre_json_file_loader_scene_test(void) {
 }
 
 //--- Pocketpy Test ---//
-unsigned char* cre_pocketpy_test_import_handler(const char* path, int pathSize, int* outSize) {
-    char pathBuffer[128];
-    se_str_trim_by_size(path, pathBuffer, pathSize);
-    printf("path: '%s', pathSize: '%d'", pathBuffer, pathSize);
-    *outSize = 1;
-    return NULL;
-}
-
 void cre_pocketpy_test(void) {
     pkpy_vm* vm = cre_pkpy_script_context_get_active_pkpy_vm();
-
-    TEST_MESSAGE("Quick import handler test");
-    pkpy_set_import_handler(vm, cre_pocketpy_test_import_handler);
 
     TEST_MESSAGE("Misc pocketpy tests");
 #define CRE_TEST_POCKETPY_SOURCE ""\
