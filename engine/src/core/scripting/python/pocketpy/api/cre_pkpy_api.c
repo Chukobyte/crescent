@@ -1064,7 +1064,7 @@ int cre_pkpy_api_audio_source_set_pitch(pkpy_vm* vm) {
     pkpy_to_string(vm, 0, &pyPath);
     pkpy_to_float(vm, 1, &pyPitch);
 
-    const char* path = pyPath.data;
+    const char* path = cre_pkpy_api_helper_convert_pkpy_CString(&pyPath);
     if (se_asset_manager_has_audio_source(path)) {
         SEAudioSource* audioSource = se_asset_manager_get_audio_source(path);
         audioSource->pitch = pyPitch;
@@ -1077,7 +1077,7 @@ int cre_pkpy_api_audio_source_get_pitch(pkpy_vm* vm) {
     pkpy_CString pyPath;
     pkpy_to_string(vm, 0, &pyPath);
 
-    const char* path = pyPath.data;
+    const char* path = cre_pkpy_api_helper_convert_pkpy_CString(&pyPath);
     if (se_asset_manager_has_audio_source(path)) {
         SEAudioSource* audioSource = se_asset_manager_get_audio_source(path);
         pkpy_push_float(vm, audioSource->pitch);
@@ -1096,7 +1096,7 @@ int cre_pkpy_api_audio_manager_play_sound(pkpy_vm* vm) {
     pkpy_to_string(vm, 0, &pyPath);
     pkpy_to_bool(vm, 1, &pyLoops);
 
-    const char* path = pyPath.data;
+    const char* path = cre_pkpy_api_helper_convert_pkpy_CString(&pyPath);
     se_audio_manager_play_sound(path, pyLoops);
     return 0;
 }
@@ -1105,7 +1105,7 @@ int cre_pkpy_api_audio_manager_stop_sound(pkpy_vm* vm) {
     pkpy_CString pyPath;
     pkpy_to_string(vm, 0, &pyPath);
 
-    const char* path = pyPath.data;
+    const char* path = cre_pkpy_api_helper_convert_pkpy_CString(&pyPath);
     se_audio_manager_stop_sound(path);
     return 0;
 }
@@ -1120,9 +1120,9 @@ int cre_pkpy_api_game_config_save(pkpy_vm* vm) {
     pkpy_to_string(vm, 1, &pyDataJson);
     pkpy_to_string(vm, 2, &pyEncryptionKey);
 
-    const char* path = pyPath.data;
-    const char* dataJson = pyDataJson.data;
-    const char* encryptionKey = pyEncryptionKey.data; // TODO: Use
+    const char* path = cre_pkpy_api_helper_convert_pkpy_CString(&pyPath);
+    const char* dataJson = cre_pkpy_api_helper_convert_pkpy_CString(&pyDataJson);
+    const char* encryptionKey = cre_pkpy_api_helper_convert_pkpy_CString(&pyEncryptionKey); // TODO: Use
     const CREGameProperties* gameProps = cre_game_props_get();
     char* validGameTitle = se_strdup(gameProps->gameTitle);
     se_str_to_lower_and_underscore_whitespace(validGameTitle);
@@ -1140,8 +1140,8 @@ int cre_pkpy_api_game_config_load(pkpy_vm* vm) {
     pkpy_to_string(vm, 0, &pyPath);
     pkpy_to_string(vm, 1, &pyEncryptionKey);
 
-    const char* path = pyPath.data;
-    const char* encryptionKey = pyEncryptionKey.data; // TODO: Use
+    const char* path = cre_pkpy_api_helper_convert_pkpy_CString(&pyPath);
+    const char* encryptionKey = cre_pkpy_api_helper_convert_pkpy_CString(&pyEncryptionKey); // TODO: Use
     const CREGameProperties* gameProps = cre_game_props_get();
     char* validGameTitle = se_strdup(gameProps->gameTitle);
     se_str_to_lower_and_underscore_whitespace(validGameTitle);
@@ -1173,7 +1173,7 @@ int cre_pkpy_api_packed_scene_load(pkpy_vm* vm) {
     pkpy_CString pyScenePath;
     pkpy_to_string(vm, 0, &pyScenePath);
 
-    const char* scenePath = pyScenePath.data;
+    const char* scenePath = cre_pkpy_api_helper_convert_pkpy_CString(&pyScenePath);
     const CreSceneCacheId cacheId = cre_scene_template_cache_load_scene(scenePath);
     pkpy_push_int(vm, (int)cacheId);
     return 1;
@@ -1237,7 +1237,7 @@ int cre_pkpy_api_server_send(pkpy_vm* vm) {
     pkpy_CString pyMessage;
     pkpy_to_string(vm, 0, &pyMessage);
 
-    const char* message = pyMessage.data;
+    const char* message = cre_pkpy_api_helper_convert_pkpy_CString(&pyMessage);
     se_udp_server_send_message(message);
     return 0;
 }
@@ -1249,7 +1249,7 @@ int cre_pkpy_api_client_start(pkpy_vm* vm) {
     pkpy_to_string(vm, 0, &pyHost);
     pkpy_to_int(vm, 1, &pyPort);
 
-    const char* host = pyHost.data;
+    const char* host = cre_pkpy_api_helper_convert_pkpy_CString(&pyHost);
     se_udp_client_initialize(host, pyPort, cre_ec_system_network_callback);
     return 0;
 }
@@ -1261,7 +1261,7 @@ int cre_pkpy_api_client_send(pkpy_vm* vm) {
     pkpy_CString pyMessage;
     pkpy_to_string(vm, 0, &pyMessage);
 
-    const char* message = pyMessage.data;
+    const char* message = cre_pkpy_api_helper_convert_pkpy_CString(&pyMessage);
     se_udp_client_send_message(message);
     return 0;
 }
