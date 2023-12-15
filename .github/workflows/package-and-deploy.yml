@@ -72,9 +72,6 @@ jobs:
           copy builds\Release\python310.dll windows_run_dependencies\
           copy builds\Release\SDL2.dll windows_run_dependencies\
           copy builds\Release\zlib1.dll windows_run_dependencies\
-          Invoke-WebRequest -URI "https://www.python.org/ftp/python/${{ env.PYTHON_VERSION }}/python-${{ env.PYTHON_VERSION }}-embed-win32.zip" -OutFile python-${{ env.PYTHON_VERSION }}-embed-win32.zip
-          Expand-Archive -Path python-${{ env.PYTHON_VERSION }}-embed-win32.zip -DestinationPath python-310_5_embed
-          copy python-310_5_embed\python310.zip windows_run_dependencies\
           Compress-Archive -Path windows_run_dependencies -DestinationPath ${{ github.workspace }}\windows_run_dependencies.zip
 
       - name: store engine binary
@@ -229,18 +226,6 @@ jobs:
           echo "Running crescent engine editor tests!"
           builds/Release/crescent_engine_editor_test
 
-      - name: download macosx python embed
-        uses: dawidd6/action-download-artifact@v2
-        with:
-          name: python-${{ env.PYTHON_VERSION }}-embed-macosx.zip
-          workflow: python-embedded-package.yml
-          search_artifacts: true
-          if_no_artifact_found: fail
-
-      - name: prepare macosx python package
-        run: |
-          unzip python-${{ env.PYTHON_VERSION }}-embed-macosx.zip -d embed_python_macosx
-
       - name: decode private key and cert
         run: |
           echo "${{ secrets.MAC_CERT_KEY }}" >> cert.txt
@@ -272,13 +257,6 @@ jobs:
         run: |
           codesign -s "${{ secrets.MAC_SIGNING_ID }}" -v crescent_engine_macosx
           codesign -s "${{ secrets.MAC_SIGNING_ID }}" -v crescent_engine_editor_macosx
-          # Will probably need to sign other embedded python files, but only doing these for now...
-          codesign -s "${{ secrets.MAC_SIGNING_ID }}" -v embed_python_macosx/lib/python3.10/lib-dynload/_struct.cpython-310-darwin.so
-          codesign -s "${{ secrets.MAC_SIGNING_ID }}" -v embed_python_macosx/lib/python3.10/lib-dynload/_json.cpython-310-darwin.so
-          codesign -s "${{ secrets.MAC_SIGNING_ID }}" -v embed_python_macosx/lib/python3.10/lib-dynload/_pickle.cpython-310-darwin.so
-          codesign -s "${{ secrets.MAC_SIGNING_ID }}" -v embed_python_macosx/lib/python3.10/lib-dynload/math.cpython-310-darwin.so
-          cd embed_python_macosx
-          zip -r ${{ github.workspace }}/embed_python_macosx.zip *
 
       - name: store engine binary
         uses: actions/upload-artifact@v3
@@ -292,13 +270,6 @@ jobs:
         with:
           name: crescent_engine_editor_macosx
           path: crescent_engine_editor_macosx
-          if-no-files-found: error
-
-      - name: store signed embedded python package
-        uses: actions/upload-artifact@v3
-        with:
-          name: embed_python_macosx.zip
-          path: embed_python_macosx.zip
           if-no-files-found: error
 
   package-all:
@@ -367,14 +338,6 @@ jobs:
         with:
           name: crescent_engine_editor_linux
 
-      - name: download linux python embed
-        uses: dawidd6/action-download-artifact@v2
-        with:
-          name: python-${{ env.PYTHON_VERSION }}-embed-linux.zip
-          workflow: python-embedded-package.yml
-          search_artifacts: true
-          if_no_artifact_found: fail
-
       - name: download macosx signed engine binary
         uses: actions/download-artifact@v3
         with:
@@ -384,18 +347,6 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: crescent_engine_editor_macosx
-
-      - name: download macosx signed python package
-        uses: actions/download-artifact@v3
-        with:
-          name: embed_python_macosx.zip
-
-      - name: setup python dependencies
-        run: |
-          # Linux
-          unzip python-${{ env.PYTHON_VERSION }}-embed-linux.zip -d embed_python_linux
-          # MacOSX
-          unzip embed_python_macosx.zip -d embed_python_macosx
 
       - name: build windows package
         run: |
@@ -415,8 +366,6 @@ jobs:
           unzip windows_run_dependencies.zip
           cp windows_run_dependencies/*  crescent_windows/
           cp windows_run_dependencies/*  crescent_windows/bin/windows/
-          cp -r embed_python_linux crescent_windows/bin/linux/embed_python
-          cp -r embed_python_macosx crescent_windows/bin/macosx/embed_python
           chmod -R 755 crescent_windows
           zip -r crescent_windows.zip crescent_windows/
 
@@ -436,8 +385,6 @@ jobs:
           mv crescent_engine_editor_linux crescent_linux/crescent
           # Copy runtime deps
           cp windows_run_dependencies/*  crescent_linux/bin/windows/
-          cp -r embed_python_linux crescent_linux/bin/linux/embed_python
-          cp -r embed_python_macosx crescent_linux/bin/macosx/embed_python
           chmod -R 755 crescent_linux
           zip -r crescent_linux.zip crescent_linux/
           tar -czvf crescent_linux.tar.gz crescent_linux/
@@ -466,8 +413,6 @@ jobs:
           mv crescent_engine_editor_macosx crescent.app/Contents/MacOS/crescent
           # Copy runtime deps
           cp windows_run_dependencies/*  crescent.app/Contents/MacOS/bin/windows/
-          cp -r embed_python_linux crescent.app/Contents/MacOS/bin/linux/embed_python
-          cp -r embed_python_macosx crescent.app/Contents/MacOS/bin/macosx/embed_python
           chmod -R 755 crescent.app
           zip -r crescent_macosx.zip crescent.app/
           tar -czvf crescent_macosx.tar.gz crescent.app/
