@@ -15,7 +15,6 @@
 #include "game_properties.h"
 #include "engine_context.h"
 #include "utils/command_line_args_util.h"
-#include "scripting/python/cre_py.h"
 #include "ecs/ecs_manager.h"
 #include "ecs/system/ec_system.h"
 #include "scene/scene_manager.h"
@@ -83,9 +82,6 @@ bool cre_initialize(int argv, char** args) {
     } else {
         engineContext->internalAssetsDir = se_strdup(engineContext->engineRootDir); // TODO: Clean up properly
     }
-
-    // TODO: Determine if python needs to be initialized programmatically
-    cre_py_initialize(engineContext->internalAssetsDir);
 
     cre_curve_float_manager_init();
 
@@ -256,7 +252,6 @@ int cre_shutdown() {
     cre_game_props_finalize();
     cre_scene_manager_finalize();
     cre_ecs_manager_finalize();
-    cre_py_finalize();
     cre_curve_float_manager_finalize();
     const int finalExitCode = engineContext->exitCode;
     engineContext = NULL;
