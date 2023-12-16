@@ -27,7 +27,7 @@ void GameExporter::Export(const GameExporter::ExportProperties& props) {
     FileSystemHelper::RecreateDirectory(tempBuildPath);
     // 3. Copy project files
     FileSystemHelper::CopyFilesRecursively(props.projectPath, tempBuildPath);
-    // 4. Copy engine 'bin' files
+    // 4. Copy engine 'bin' files (TODO: Remove this as we can skip this step, reorder once copying default font)
     // 5. Create .pck file
     // 6. Remove all files (except for .pck)
     // 7. OS specific files, Window need dlls and MaxOS needs to create the app bundle
