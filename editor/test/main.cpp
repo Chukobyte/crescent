@@ -4,7 +4,7 @@
 #include <SDL2/SDL_main.h>
 
 int main(int argc, char** argv) {
-    int result = Catch::Session().run( argc, argv );
+    int result = Catch::Session().run(argc, argv);
 
     return result;
 }

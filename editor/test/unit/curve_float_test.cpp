@@ -1,7 +1,5 @@
 #include <catch.hpp>
 
-#include <iostream>
-
 #include "../../src/core/math/curve_float.h"
 
 TEST_CASE("Curve Float", "[curve_float]") {
