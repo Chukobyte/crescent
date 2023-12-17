@@ -30,6 +30,6 @@ void GameExporter::Export(const GameExporter::ExportProperties& props) {
     // 4. Copy engine 'bin' files (TODO: Remove this as we can skip this step, reorder once copying default font)
     // 4. Create .pck file
     // 5. Remove all files (except for .pck)
-    // 6. OS specific files, Window need dlls and MaxOS needs to create the app bundle
+    // 6. OS specific files, Window need dlls and MacOS needs to create the app bundle
     // 7. Now that we have everything either create a zip or tar file.
 }
