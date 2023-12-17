@@ -1,5 +1,7 @@
 #include "game_exporter.h"
 
+#include <kuba_zip/zip.h>
+
 #include <seika/utils/se_platform.h>
 
 #include "utils/file_system_helper.h"

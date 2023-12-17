@@ -1,16 +1,16 @@
 #include "font_rendering_ec_system.h"
 
+#include <seika/asset/asset_manager.h>
 #include <seika/rendering/renderer.h>
 #include <seika/utils/se_string_util.h>
 #include <seika/utils/se_assert.h>
 
 #include "ec_system.h"
-#include "../component/transform2d_component.h"
-#include "../component/text_label_component.h"
+#include "../../engine_context.h"
 #include "../../scene/scene_manager.h"
 #include "../../camera/camera.h"
 #include "../../camera/camera_manager.h"
-#include "seika/asset/asset_manager.h"
+#include "../component/text_label_component.h"
 
 
 CreEntitySystem* fontRenderingSystem = NULL;
@@ -57,7 +57,7 @@ static void font_rendering_system_on_ec_system_entity_registered(CreEntity entit
     // Set default font if none is set already
     TextLabelComponent* textLabelComponent = (TextLabelComponent*)cre_component_manager_get_component_unchecked(entity, CreComponentDataIndex_TEXT_LABEL);
     if (!textLabelComponent->font) {
-        textLabelComponent->font = se_asset_manager_get_font("_default");
+        textLabelComponent->font = se_asset_manager_get_font(CRE_DEFAULT_FONT_KEY);
     }
 }
 

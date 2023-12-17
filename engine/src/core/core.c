@@ -132,7 +132,7 @@ bool cre_initialize_ecs() {
 
 bool cre_load_built_in_assets() {
     // Load default font
-    se_asset_manager_load_font_from_memory("_default", CRE_EMBEDDED_ASSET_FONT_VERDANA_TTF_HEX, CRE_EMBEDDED_ASSET_FONT_VERDANA_TTF_SIZE, CRE_DEFAULT_FONT_ASSET.size, CRE_DEFAULT_FONT_ASSET.applyNearestNeighbor);
+    se_asset_manager_load_font_from_memory(CRE_DEFAULT_FONT_KEY, CRE_EMBEDDED_ASSET_FONT_VERDANA_TTF_HEX, CRE_EMBEDDED_ASSET_FONT_VERDANA_TTF_SIZE, CRE_DEFAULT_FONT_ASSET.size, CRE_DEFAULT_FONT_ASSET.applyNearestNeighbor);
 
     return true;
 }
