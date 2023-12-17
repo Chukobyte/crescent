@@ -822,6 +822,12 @@
 "class NodeType:\n"\
 "    Node = 1\n"\
 "    Node2D = 3\n"\
+"    Sprite = 7\n"\
+"    AnimatedSprite = 11\n"\
+"    TextLabel = 19\n"\
+"    Collider2D = 67\n"\
+"    ColorRect = 131\n"\
+"    Parallax = 259\n"\
 "\n"\
 "\n"\
 "class Node:\n"\
@@ -995,6 +1001,10 @@
 "\n"\
 "\n"\
 "class Sprite(Node2D):\n"\
+"    @staticmethod\n"\
+"    def new() -> \"Sprite\":\n"\
+"        return crescent_internal.node_new(\"crescent\", \"Sprite\", NodeType.Sprite)\n"\
+"\n"\
 "    @property\n"\
 "    def texture(self) -> Texture:\n"\
 "        file_path, wrap_s, wrap_t, nearest_neighbor = crescent_internal.sprite_get_texture(self.entity_id)\n"\
@@ -1060,6 +1070,10 @@
 "\n"\
 "\n"\
 "class AnimatedSprite(Node2D):\n"\
+"    @staticmethod\n"\
+"    def new() -> \"AnimatedSprite\":\n"\
+"        return crescent_internal.node_new(\"crescent\", \"AnimatedSprite\", NodeType.AnimatedSprite)\n"\
+"\n"\
 "    def play(self, name: str) -> bool:\n"\
 "        return crescent_internal.animated_sprite_play(self.entity_id, name)\n"\
 "\n"\
@@ -1127,6 +1141,10 @@
 "\n"\
 "\n"\
 "class TextLabel(Node2D):\n"\
+"    @staticmethod\n"\
+"    def new() -> \"TextLabel\":\n"\
+"        return crescent_internal.node_new(\"crescent\", \"TextLabel\", NodeType.TextLabel)\n"\
+"\n"\
 "    @property\n"\
 "    def text(self) -> str:\n"\
 "        return crescent_internal.text_label_get_text(self.entity_id)\n"\
@@ -1162,6 +1180,10 @@
 "\n"\
 "\n"\
 "class Collider2D(Node2D):\n"\
+"    @staticmethod\n"\
+"    def new() -> \"Collider2D\":\n"\
+"        return crescent_internal.node_new(\"crescent\", \"Node2D\", NodeType.Collider2D)\n"\
+"\n"\
 "    def get_extents(self) -> Size2D:\n"\
 "        w, h = crescent_internal.collider2d_get_extents(self.entity_id)\n"\
 "        return Size2D(w, h)\n"\
@@ -1196,6 +1218,10 @@
 "\n"\
 "\n"\
 "class ColorRect(Node2D):\n"\
+"    @staticmethod\n"\
+"    def new() -> \"ColorRect\":\n"\
+"        return crescent_internal.node_new(\"crescent\", \"Node2D\", NodeType.ColorRect)\n"\
+"\n"\
 "    def get_size(self) -> Size2D:\n"\
 "        w, h = crescent_internal.color_rect_get_size(self.entity_id)\n"\
 "        return Size2D(w, h)\n"\
@@ -1230,6 +1256,10 @@
 "\n"\
 "\n"\
 "class Parallax(Node2D):\n"\
+"    @staticmethod\n"\
+"    def new() -> \"Parallax\":\n"\
+"        return crescent_internal.node_new(\"crescent\", \"Parallax\", NodeType.Parallax)\n"\
+"\n"\
 "    @property\n"\
 "    def scroll_speed(self) -> Vector2:\n"\
 "        x, y = crescent_internal.parallax_get_scroll_speed(self.entity_id)\n"\

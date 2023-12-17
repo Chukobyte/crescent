@@ -33,7 +33,7 @@ class EmbedAssetUtil:
     def _generate_file_hex_array(asset: EmbeddedAsset, hex_postfix="_HEX", str_postfix="_STR", size_postfix="_SIZE") -> str:
         with open(asset.file_path, 'rb') as file:
             file_content = file.read()
-            hex_array = f"const unsigned char {asset.name}{hex_postfix}[] = {{\n"
+            hex_array = f"unsigned char {asset.name}{hex_postfix}[] = {{\n"
             hex_array += ', '.join([f'0x{byte:02x}' for byte in file_content])
             hex_array += "\n"
             hex_array += "};\n"
