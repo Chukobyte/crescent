@@ -69,7 +69,6 @@ jobs:
           copy builds\Release\bz2.dll windows_run_dependencies\
           copy builds\Release\freetype.dll windows_run_dependencies\
           copy builds\Release\libpng16.dll windows_run_dependencies\
-          copy builds\Release\python310.dll windows_run_dependencies\
           copy builds\Release\SDL2.dll windows_run_dependencies\
           copy builds\Release\zlib1.dll windows_run_dependencies\
           Compress-Archive -Path windows_run_dependencies -DestinationPath ${{ github.workspace }}\windows_run_dependencies.zip
