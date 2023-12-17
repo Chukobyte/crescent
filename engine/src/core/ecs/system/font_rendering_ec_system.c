@@ -10,12 +10,14 @@
 #include "../../scene/scene_manager.h"
 #include "../../camera/camera.h"
 #include "../../camera/camera_manager.h"
+#include "seika/asset/asset_manager.h"
 
 
 CreEntitySystem* fontRenderingSystem = NULL;
 
-void font_rendering_system_render();
-void font_rendering_system_on_ec_system_destroy();
+static void font_rendering_system_render();
+static void font_rendering_system_on_ec_system_entity_registered(CreEntity entity);
+static void font_rendering_system_on_ec_system_destroy();
 
 CreEntitySystem* cre_font_rendering_ec_system_create() {
     SE_ASSERT(fontRenderingSystem == NULL);
@@ -23,11 +25,12 @@ CreEntitySystem* cre_font_rendering_ec_system_create() {
     fontRenderingSystem->name = se_strdup("Font Rendering");
     fontRenderingSystem->render_func = font_rendering_system_render;
     fontRenderingSystem->on_ec_system_destroy = font_rendering_system_on_ec_system_destroy;
+    fontRenderingSystem->on_entity_registered_func = font_rendering_system_on_ec_system_entity_registered;
     fontRenderingSystem->component_signature = CreComponentType_TRANSFORM_2D | CreComponentType_TEXT_LABEL;
     return fontRenderingSystem;
 }
 
-void font_rendering_system_render() {
+static void font_rendering_system_render() {
     const CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
     const CRECamera2D* defaultCamera = cre_camera_manager_get_default_camera();
     for (size_t i = 0; i < fontRenderingSystem->entity_count; i++) {
@@ -50,7 +53,15 @@ void font_rendering_system_render() {
     }
 }
 
-void font_rendering_system_on_ec_system_destroy() {
+static void font_rendering_system_on_ec_system_entity_registered(CreEntity entity) {
+    // Set default font if none is set already
+    TextLabelComponent* textLabelComponent = (TextLabelComponent*)cre_component_manager_get_component_unchecked(entity, CreComponentDataIndex_TEXT_LABEL);
+    if (!textLabelComponent->font) {
+        textLabelComponent->font = se_asset_manager_get_font("_default");
+    }
+}
+
+static void font_rendering_system_on_ec_system_destroy() {
     SE_ASSERT(fontRenderingSystem != NULL);
     fontRenderingSystem = NULL;
 }

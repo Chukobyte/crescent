@@ -818,13 +818,14 @@ _node_event_manager = _NodeEventManager()
 
 class NodeType:
     Node = 1
-    Node2D = 3
-    Sprite = 7
-    AnimatedSprite = 11
-    TextLabel = 19
-    Collider2D = 67
-    ColorRect = 131
-    Parallax = 259
+    Node2D = 2
+    Sprite = 4
+    AnimatedSprite = 8
+    TextLabel = 16
+    Script = 32
+    Collider2D = 64
+    ColorRect = 128
+    Parallax = 256
 
 
 class Node:

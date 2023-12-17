@@ -821,13 +821,14 @@
 "\n"\
 "class NodeType:\n"\
 "    Node = 1\n"\
-"    Node2D = 3\n"\
-"    Sprite = 7\n"\
-"    AnimatedSprite = 11\n"\
-"    TextLabel = 19\n"\
-"    Collider2D = 67\n"\
-"    ColorRect = 131\n"\
-"    Parallax = 259\n"\
+"    Node2D = 2\n"\
+"    Sprite = 4\n"\
+"    AnimatedSprite = 8\n"\
+"    TextLabel = 16\n"\
+"    Script = 32\n"\
+"    Collider2D = 64\n"\
+"    ColorRect = 128\n"\
+"    Parallax = 256\n"\
 "\n"\
 "\n"\
 "class Node:\n"\
