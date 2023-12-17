@@ -14,6 +14,7 @@
 #include "core_info.h"
 #include "game_properties.h"
 #include "engine_context.h"
+#include "embedded_assets.h"
 #include "utils/command_line_args_util.h"
 #include "ecs/ecs_manager.h"
 #include "ecs/system/ec_system.h"
@@ -131,15 +132,7 @@ bool cre_initialize_ecs() {
 
 bool cre_load_built_in_assets() {
     // Load default font
-    if (sf_asset_file_loader_get_read_mode() == SEAssetFileLoaderReadMode_DISK) {
-        char defaultFontFilePath[512];
-        se_strcpy(defaultFontFilePath, engineContext->internalAssetsDir);
-        se_strcat(defaultFontFilePath, "/");
-        se_strcat(defaultFontFilePath, CRE_DEFAULT_FONT_ASSET.file_path);
-        se_asset_manager_load_font(defaultFontFilePath, CRE_DEFAULT_FONT_ASSET.uid, CRE_DEFAULT_FONT_ASSET.size, CRE_DEFAULT_FONT_ASSET.applyNearestNeighbor);
-    } else {
-        se_asset_manager_load_font(CRE_DEFAULT_FONT_ASSET.file_path, CRE_DEFAULT_FONT_ASSET.uid, CRE_DEFAULT_FONT_ASSET.size, CRE_DEFAULT_FONT_ASSET.applyNearestNeighbor);
-    }
+    se_asset_manager_load_font_from_memory("_default", CRE_EMBEDDED_ASSET_FONT_VERDANA_TTF_HEX, CRE_EMBEDDED_ASSET_FONT_VERDANA_TTF_SIZE, CRE_DEFAULT_FONT_ASSET.size, CRE_DEFAULT_FONT_ASSET.applyNearestNeighbor);
 
     return true;
 }

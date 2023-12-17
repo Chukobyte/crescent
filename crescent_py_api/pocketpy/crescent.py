@@ -992,6 +992,10 @@ class Node2D(Node):
 
 
 class Sprite(Node2D):
+    @staticmethod
+    def new() -> "Node2D":
+        return crescent_internal.node_new("crescent", "Sprite", NodeType.Sprite)
+
     @property
     def texture(self) -> Texture:
         file_path, wrap_s, wrap_t, nearest_neighbor = crescent_internal.sprite_get_texture(self.entity_id)
