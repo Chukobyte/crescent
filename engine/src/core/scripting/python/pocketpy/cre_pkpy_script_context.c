@@ -116,15 +116,6 @@ void cre_pkpy_script_context_create_instance(CreEntity entity, const char* class
     SE_ASSERT(cre_pkpy_vm);
     cre_pkpy_entity_instance_cache_create_new_entity(cre_pkpy_vm, classPath, className, entity);
     cre_pkpy_script_context_setup_node_event(entity);
-    // Check for process funcs
-    cre_pkpy_entity_instance_cache_push_entity_instance(cre_pkpy_vm, entity);
-    if (pkpy_getattr(cre_pkpy_vm, pyProcessFunctionName)) {
-        pkpy_script_context->updateEntities[pkpy_script_context->updateEntityCount++] = entity;
-    }
-    if (pkpy_getattr(cre_pkpy_vm, pyFixedProcessFunctionName)) {
-        pkpy_script_context->fixedUpdateEntities[pkpy_script_context->fixedUpdateEntityCount++] = entity;
-    }
-    pkpy_pop_top(cre_pkpy_vm);
 }
 
 void cre_pkpy_script_context_create_instance_if_nonexistent(CreEntity entity, const char* classPath, const char* className) {
@@ -176,10 +167,21 @@ void pkpy_sc_on_delete_instance(CreEntity entity) {
 
 void pkpy_sc_on_start(CreEntity entity) {
     SE_ASSERT(cre_pkpy_vm);
+    // Check for process funcs
     cre_pkpy_entity_instance_cache_push_entity_instance(cre_pkpy_vm, entity);
     if (pkpy_getattr(cre_pkpy_vm, pyStartFunctionName)) {
         pkpy_push_null(cre_pkpy_vm);
         pkpy_vectorcall(cre_pkpy_vm, 0);
+    }
+    pkpy_pop_top(cre_pkpy_vm);
+    cre_pkpy_entity_instance_cache_push_entity_instance(cre_pkpy_vm, entity);
+    if (pkpy_getattr(cre_pkpy_vm, pyProcessFunctionName)) {
+        pkpy_script_context->updateEntities[pkpy_script_context->updateEntityCount++] = entity;
+    }
+    pkpy_pop_top(cre_pkpy_vm);
+    cre_pkpy_entity_instance_cache_push_entity_instance(cre_pkpy_vm, entity);
+    if (pkpy_getattr(cre_pkpy_vm, pyFixedProcessFunctionName)) {
+        pkpy_script_context->fixedUpdateEntities[pkpy_script_context->fixedUpdateEntityCount++] = entity;
     }
     pkpy_pop_top(cre_pkpy_vm);
 }
