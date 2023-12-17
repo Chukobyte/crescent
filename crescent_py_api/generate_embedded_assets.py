@@ -44,7 +44,7 @@ class EmbedAssetUtil:
             return hex_array
 
 
-EmbedAssetUtil.generate_asset_header("embedded_assets.h", [
+EmbedAssetUtil.generate_asset_header("../engine/src/core/embedded_assets.h", [
     EmbeddedAsset(
         name="CRE_EMBEDDED_ASSET_FONT_VERDANA_TTF",
         asset_type=AssetType.FONT,
