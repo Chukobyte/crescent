@@ -1,6 +1,7 @@
 #pragma once
 
 #include <filesystem>
+#include <optional>
 
 namespace FileSystemHelper {
     struct ReturnStatus{
