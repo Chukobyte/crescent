@@ -26,7 +26,7 @@ FileSystemHelper::ReturnStatus FileSystemHelper::RecreateDirectory(const std::st
 void FileSystemHelper::CopyFilesRecursively(const std::filesystem::path &source, const std::filesystem::path &dest, const std::vector<std::string>& exclusionPatterns) {
     static auto MatchesExclusionPattern = [](const std::vector<std::string>& exclusionPatterns, const std::filesystem::directory_entry& entry) {
         for (const auto& pattern : exclusionPatterns) {
-            if (entry.path().filename().string().find(pattern)) {
+            if (entry.path().filename().string().find(pattern) != std::string::npos) {
                 return true;
             }
         }
