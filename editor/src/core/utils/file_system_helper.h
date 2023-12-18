@@ -66,4 +66,5 @@ inline ReturnStatus CopyFile(const T& source,
 
 void CopyFilesRecursively(const std::filesystem::path& source, const std::filesystem::path& dest, const std::vector<std::string>& exclusionPatterns = {});
 
+void ZipDirectory(const std::string& zipName, const std::filesystem::path& sourceDirectory);
 } // namespace FileSystemHelper

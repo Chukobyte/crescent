@@ -3,8 +3,6 @@
 #include <algorithm>
 #include <cctype>
 
-#include <kuba_zip/zip.h>
-
 #include <seika/utils/se_platform.h>
 
 #include "utils/file_system_helper.h"
@@ -49,6 +47,8 @@ void GameExporter::Export(const GameExporter::ExportProperties& props) {
     }
     FileSystemHelper::CopyFilesRecursively(props.projectPath, tempBuildPath);
     // 4. Create .pck file
+    const std::string zipName = gameFileName + ".pck";
+    FileSystemHelper::ZipDirectory(zipName, tempBuildPath);
     // 5. Remove all files (except for .pck)
     // 6. OS specific files, Window need dlls and MacOS needs to create the app bundle
     // 7. Now that we have everything either create a zip or tar file.

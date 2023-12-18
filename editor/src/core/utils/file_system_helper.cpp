@@ -4,6 +4,10 @@
 #include <fstream>
 #include <sstream>
 
+#include <kuba_zip/zip.h>
+
+#include <seika/asset/asset_file_loader.h>
+
 void FileSystemHelper::WriteFile(const std::string &filePath, const std::string &fileText) {
     std::ofstream myFile(filePath);
     std::stringstream textStream;
@@ -54,4 +58,22 @@ void FileSystemHelper::CopyFilesRecursively(const std::filesystem::path &source,
     } catch (const std::filesystem::filesystem_error& ex) {
         // TODO: print error
     }
+}
+
+void FileSystemHelper::ZipDirectory(const std::string &zipName, const std::filesystem::path &sourceDirectory) {
+    std::error_code errorCode;
+    struct zip_t* zip = zip_open(zipName.c_str(), ZIP_DEFAULT_COMPRESSION_LEVEL, 'w');
+    for (const auto& entry : std::filesystem::recursive_directory_iterator(sourceDirectory, errorCode)) {
+        zip_entry_open(zip, entry.path().string().c_str());
+        {
+            const std::filesystem::path relativePath = entry.path().lexically_relative(sourceDirectory);
+            if (!std::filesystem::is_directory(entry.status())) {
+                // If it's not a directory, write the file content to the zip
+                const SEArchiveFileAsset asset = sf_asset_file_loader_get_asset(entry.path().string().c_str());
+                zip_entry_write(zip, asset.buffer, asset.bufferSize);
+            }
+        }
+        zip_entry_close(zip);
+    }
+    zip_close(zip);
 }
