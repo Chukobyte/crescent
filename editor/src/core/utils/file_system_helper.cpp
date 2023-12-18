@@ -1,4 +1,6 @@
 #include "file_system_helper.h"
+#include "seika/utils/logger.h"
+#include "seika/utils/se_assert.h"
 
 #include <iostream>
 #include <fstream>
@@ -62,18 +64,28 @@ void FileSystemHelper::CopyFilesRecursively(const std::filesystem::path &source,
 
 void FileSystemHelper::ZipDirectory(const std::string &zipName, const std::filesystem::path &sourceDirectory) {
     std::error_code errorCode;
-    struct zip_t* zip = zip_open(zipName.c_str(), ZIP_DEFAULT_COMPRESSION_LEVEL, 'w');
-    for (const auto& entry : std::filesystem::recursive_directory_iterator(sourceDirectory, errorCode)) {
-        zip_entry_open(zip, entry.path().string().c_str());
-        {
-            const std::filesystem::path relativePath = entry.path().lexically_relative(sourceDirectory);
-            if (!std::filesystem::is_directory(entry.status())) {
+
+    const std::filesystem::path originalPath = GetCurrentDir();
+    if (SetCurrentDir(sourceDirectory)) {
+        struct zip_t* zip = zip_open(zipName.c_str(), ZIP_DEFAULT_COMPRESSION_LEVEL, 'w');
+        for (const auto& entry : std::filesystem::recursive_directory_iterator(".", errorCode)) {
+            const std::string& entryPathString = entry.path().string().substr(2);
+            if (std::filesystem::is_directory(entry.status()) || entryPathString == zipName) {
+                continue;
+            }
+            zip_entry_open(zip, entryPathString.c_str());
+            {
                 // If it's not a directory, write the file content to the zip
                 const SEArchiveFileAsset asset = sf_asset_file_loader_get_asset(entry.path().string().c_str());
                 zip_entry_write(zip, asset.buffer, asset.bufferSize);
             }
+            zip_entry_close(zip);
         }
-        zip_entry_close(zip);
+        zip_close(zip);
+    } else {
+        se_logger_error("Failed to change to dir '%s' when creating zip archive '%s'", sourceDirectory.string().c_str(), zipName.c_str());
     }
-    zip_close(zip);
+
+    SetCurrentDir(originalPath);
+    SE_ASSERT(originalPath == GetCurrentDir());
 }

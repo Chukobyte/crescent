@@ -459,7 +459,7 @@ ImGuiHelper::MenuBar OpenedProjectUI::MenuBar::GetMenuBar() {
                                         const GameExporter::ExportProperties exportProps = {
                                             .gameTitle = projectProperties->gameTitle,
                                             .exportArchivePath = exportFileName,
-                                            .projectPath = FileSystemHelper::GetCurrentDir(),
+                                            .projectPath = FileSystemHelper::GetCurrentDirStr(),
                                             .binPath = editorContext->GetEngineBinPathByOS(osType),
                                             .tempPath = editorContext->GetProjectTempPath()
                                         };

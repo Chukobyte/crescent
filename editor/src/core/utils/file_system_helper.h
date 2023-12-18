@@ -18,8 +18,18 @@ namespace FileSystemHelper {
         }
     };
 
-inline std::string GetCurrentDir() {
+inline std::filesystem::path GetCurrentDir() {
+    return std::filesystem::current_path();
+}
+
+inline std::string GetCurrentDirStr() {
     return std::filesystem::current_path().string();
+}
+
+inline ReturnStatus SetCurrentDir(const std::filesystem::path& directory) {
+    ReturnStatus status;
+    std::filesystem::current_path(directory, status.errorCode);
+    return status;
 }
 
 void WriteFile(const std::string& filePath, const std::string& fileText);

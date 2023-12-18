@@ -20,7 +20,7 @@
 static EditorContext* editorContext = EditorContext::Get();
 
 bool Editor::Initialize() {
-    editorContext->initialDir = FileSystemHelper::GetCurrentDir();
+    editorContext->initialDir = FileSystemHelper::GetCurrentDirStr();
 
     // Load editor setting or create a new file if it doesn't exist
     if (!editorContext->settings.Load()) {

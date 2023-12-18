@@ -7,7 +7,7 @@
 
 //--- FileNode ---//
 std::string FileNode::GetRelativePath() const {
-    std::filesystem::path projectRootDir(FileSystemHelper::GetCurrentDir());
+    std::filesystem::path projectRootDir(FileSystemHelper::GetCurrentDirStr());
     std::filesystem::path relativePath = std::filesystem::relative(path, projectRootDir);
     return relativePath.generic_string();
 }
