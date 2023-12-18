@@ -1,10 +1,14 @@
 #include "game_exporter.h"
 
+#include <algorithm>
+#include <cctype>
+
 #include <kuba_zip/zip.h>
 
 #include <seika/utils/se_platform.h>
 
 #include "utils/file_system_helper.h"
+#include "utils/console_logger.h"
 
 #define GAME_EXPORTER_TMP_DIR_NAME "tmp_build"
 
@@ -12,6 +16,11 @@ namespace
 {
     std::string ConvertGameTitleToFileName(const std::string& gameTitle) {
         std::string fileName = gameTitle;
+        // Convert the string to lowercase
+        std::transform(fileName.begin(), fileName.end(), fileName.begin(),[](unsigned char c) {
+            return std::tolower(c);
+        });
+        // Convert white space and dashes to underscores
         for (char& c: fileName) {
             if (c == ' ' || c == '-') {
                 c = '_';
@@ -22,11 +31,16 @@ namespace
 } // namespace
 
 void GameExporter::Export(const GameExporter::ExportProperties& props) {
+    ConsoleLogger* consoleLogger = ConsoleLogger::Get();
     // 1. Fix up game title
     const std::string gameFileName = ConvertGameTitleToFileName(props.gameTitle);
     // 2. Remove old dir (if exists) and create new one
     const std::string tempBuildPath = props.tempPath + SE_PLATFORM_PATH_SEPARATOR_STRING + GAME_EXPORTER_TMP_DIR_NAME;
-    FileSystemHelper::RecreateDirectory(tempBuildPath);
+    auto returnStatus = FileSystemHelper::RecreateDirectory(tempBuildPath);
+    if (!returnStatus) {
+        printf("%s", returnStatus.errorCode.message().c_str());
+        consoleLogger->AddEntry(returnStatus.errorCode.message());
+    }
     // 3. Copy project files
     FileSystemHelper::CopyFilesRecursively(props.projectPath, tempBuildPath);
     // 4. Create .pck file
