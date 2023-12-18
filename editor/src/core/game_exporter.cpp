@@ -12,6 +12,12 @@
 
 namespace
 {
+    inline void StringToLower(std::string& string) {
+        std::transform(string.begin(), string.end(), string.begin(),[](unsigned char c) {
+            return std::tolower(c);
+        });
+    }
+
     std::string ConvertGameTitleToFileName(const std::string& gameTitle) {
         std::string fileName = gameTitle;
         // Convert the string to lowercase
@@ -54,4 +60,8 @@ void GameExporter::Export(const GameExporter::ExportProperties& props) {
     FileSystemHelper::DeleteAllInDirectory(tempBuildPath, { zipPath });
     // 6. OS specific files, Window need dlls and MacOS needs to create the app bundle
     // 7. Now that we have everything either create a zip or tar file.
+}
+
+GameExporter::Platform GameExporter::GetPlatformFromString(const std::string &platformString) {
+    return GameExporter::Platform::MacOS;
 }
