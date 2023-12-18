@@ -76,7 +76,7 @@ void FileSystemHelper::ZipDirectory(const std::string &zipName, const std::files
             zip_entry_open(zip, entryPathString.c_str());
             {
                 // If it's not a directory, write the file content to the zip
-                const SEArchiveFileAsset asset = sf_asset_file_loader_get_asset(entry.path().string().c_str());
+                const SEArchiveFileAsset asset = sf_asset_file_loader_load_asset_from_disk(entry.path().string().c_str());
                 zip_entry_write(zip, asset.buffer, asset.bufferSize);
             }
             zip_entry_close(zip);
