@@ -1,0 +1,15 @@
+{
+    "name": "Main",
+    "type": "Node2D",
+    "components": [
+        {
+            "type": "transform_2d"
+        },
+        {
+            "type": "script",
+            "class_path": "src.main",
+            "class_name": "Main"
+        }
+    ],
+    "children": []
+}

@@ -42,6 +42,11 @@ void GameExporter::Export(const GameExporter::ExportProperties& props) {
         consoleLogger->AddEntry(returnStatus.errorCode.message());
     }
     // 3. Copy project files
+    if (!FileSystemHelper::DoesDirectoryExist(props.projectPath)) {
+        const std::string errorMessage = props.projectPath + " doesn't exist!";
+        printf("%s", errorMessage.c_str());
+        consoleLogger->AddEntry(errorMessage);
+    }
     FileSystemHelper::CopyFilesRecursively(props.projectPath, tempBuildPath);
     // 4. Create .pck file
     // 5. Remove all files (except for .pck)

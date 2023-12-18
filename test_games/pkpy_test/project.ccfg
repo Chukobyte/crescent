@@ -1,0 +1,27 @@
+{
+    "name": "pkpy_test",
+    "window_width": 800,
+    "window_height": 600,
+    "resolution_width": 800,
+    "resolution_height": 600,
+    "maintain_aspect_ratio": false,
+    "audio_wav_sample_rate": 3452816845,
+    "target_fps": 66,
+    "initial_node_path": "scenes/main.cscn",
+    "colliders_visible": false,
+    "version": "",
+    "assets": {
+        "audio_sources": [],
+        "textures": [],
+        "fonts": []
+    },
+    "inputs": [
+        {
+            "name": "exit",
+            "values": [
+                "esc"
+            ]
+        }
+    ],
+    "crescent_core_version": "0.15.0"
+}
