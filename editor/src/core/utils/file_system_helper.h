@@ -74,6 +74,8 @@ inline ReturnStatus CopyFile(const T& source,
     return status;
 }
 
+ReturnStatus DeleteAllInDirectory(const std::filesystem::path& directory, const std::vector<std::filesystem::path>& exclusions = {});
+
 void CopyFilesRecursively(const std::filesystem::path& source, const std::filesystem::path& dest, const std::vector<std::string>& exclusionPatterns = {});
 
 void ZipDirectory(const std::string& zipName, const std::filesystem::path& sourceDirectory);

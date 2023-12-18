@@ -50,6 +50,8 @@ void GameExporter::Export(const GameExporter::ExportProperties& props) {
     const std::string zipName = gameFileName + ".pck";
     FileSystemHelper::ZipDirectory(zipName, tempBuildPath);
     // 5. Remove all files (except for .pck)
+    const std::filesystem::path zipPath = std::filesystem::path(tempBuildPath) / zipName;
+    FileSystemHelper::DeleteAllInDirectory(tempBuildPath, { zipPath });
     // 6. OS specific files, Window need dlls and MacOS needs to create the app bundle
     // 7. Now that we have everything either create a zip or tar file.
 }

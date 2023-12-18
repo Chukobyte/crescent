@@ -89,3 +89,31 @@ void FileSystemHelper::ZipDirectory(const std::string &zipName, const std::files
     SetCurrentDir(originalPath);
     SE_ASSERT(originalPath == GetCurrentDir());
 }
+
+FileSystemHelper::ReturnStatus FileSystemHelper::DeleteAllInDirectory(const std::filesystem::path& directory, const std::vector<std::filesystem::path>& exclusions) {
+    static auto MatchesExclusionPattern = [](const std::vector<std::filesystem::path>& exclusionPatterns, const std::filesystem::directory_entry& entry) {
+        for (const auto& pattern : exclusionPatterns) {
+            if (std::filesystem::canonical(entry.path()) == std::filesystem::canonical(pattern)) {
+                return true;
+            }
+        }
+        return false;
+    };
+
+    ReturnStatus status;
+    std::vector<std::filesystem::path> directoriesToDelete = {};
+    for (const auto& entry : std::filesystem::recursive_directory_iterator(directory, status.errorCode)) {
+        if (!MatchesExclusionPattern(exclusions, entry)) {
+            if (!std::filesystem::is_directory(entry)) {
+                std::filesystem::remove(entry.path(), status.errorCode);
+            } else {
+                directoriesToDelete.emplace_back(entry.path());
+            }
+        }
+    }
+    // Delete directories after files
+    for (const auto& dirPath : directoriesToDelete) {
+        std::filesystem::remove_all(dirPath, status.errorCode);
+    }
+    return status;
+}
