@@ -82,15 +82,16 @@ namespace
 
         return std::move(MacOSExportPaths{
             .appBundlePath = appBundlePath,
-            .contentsPath = appBundlePath,
-            .macOSPath = appBundlePath,
-            .resourcesPath = appBundlePath,
-            .plistInfoPath = appBundlePath,
+            .contentsPath = contentsPath,
+            .macOSPath = macOSPath,
+            .resourcesPath = resourcesPath,
+            .plistInfoPath = plistInfoPath,
         });
     }
 
     void GeneratePListInfoFile(const std::filesystem::path& filePath, const PListInfoData& data) {
-        se_fs_write_to_file(std::filesystem::canonical(filePath).string().c_str(), data.GetFileString().c_str());
+        const std::string infoFilePath = filePath.string().substr(2);
+        se_fs_write_to_file(infoFilePath.c_str(), data.GetFileString().c_str());
     }
 } // namespace
 
@@ -119,9 +120,10 @@ void GameExporter::Export(const GameExporter::ExportProperties& props) {
     const std::filesystem::path zipPath = std::filesystem::path(tempBuildPath) / zipName;
     FileSystemHelper::DeleteAllInDirectory(tempBuildPath, { zipPath });
     // 6. Create game binary (runtime) by copying the engine binary into the temp build folder
-    const std::string engineBinaryName = std::string("crescent_engine")  + std::string(EDITOR_ENGINE_EXTENSION);
+    const std::string runtimeBinaryExtension = props.platform == Platform::Windows ? ".exe" : "";
+    const std::string engineBinaryName = "crescent_engine" + runtimeBinaryExtension;
     const auto engineBinaryPath = std::filesystem::path(props.binPath) / engineBinaryName;
-    const auto gameBinaryDest = tempBuildPath / std::filesystem::path(gameFileName + EDITOR_ENGINE_EXTENSION);
+    const auto gameBinaryDest = tempBuildPath / std::filesystem::path(gameFileName + runtimeBinaryExtension);
     FileSystemHelper::CopyFile(engineBinaryPath, gameBinaryDest);
     // 7. OS specific stuff, Window need dlls and MacOS needs to create the app bundle
     switch (props.platform) {
