@@ -148,6 +148,10 @@ void GameExporter::Export(const GameExporter::ExportProperties& props) {
             // Create PS Info file
             GeneratePListInfoFile(exportData.plistInfoPath, { .cf_bundle_name = gameFileName, .cf_bundle_executable = gameBinaryDest.filename().string() });
             // Move all files to macos folder
+            FileSystemHelper::ForEachFile(tempBuildPath, [&exportData](const auto& entry) {
+
+               return true;
+            });
             break;
         }
     }

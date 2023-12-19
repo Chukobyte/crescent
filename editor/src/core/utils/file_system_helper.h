@@ -3,6 +3,7 @@
 #include <vector>
 #include <filesystem>
 #include <optional>
+#include <functional>
 
 namespace FileSystemHelper {
     struct ReturnStatus{
@@ -83,6 +84,8 @@ ReturnStatus DeleteAllInDirectory(const std::filesystem::path& directory, const 
 void CopyFilesRecursively(const std::filesystem::path& source, const std::filesystem::path& dest, const std::vector<std::string>& exclusionPatterns = {});
 
 void CopyFilesRecursivelyWithExtension(const std::filesystem::path& source, const std::filesystem::path& dest, const std::vector<std::string>& extensions);
+
+ReturnStatus ForEachFile(const std::filesystem::path& directory, std::function<bool(const std::filesystem::directory_entry&)> func);
 
 void ZipDirectory(const std::string& zipName, const std::filesystem::path& sourceDirectory);
 } // namespace FileSystemHelper
