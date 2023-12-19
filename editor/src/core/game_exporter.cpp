@@ -79,7 +79,13 @@ void GameExporter::Export(const GameExporter::ExportProperties& props) {
         case Platform::MacOS:
             break;
     }
-    // 8. Now that we have everything either create a zip or tar file.
+    // 8. Now that we have everything either create a zip or tar file and move it to specified archive path.
+    const std::filesystem::path exportArchivePath = props.exportArchivePath;
+    const std::filesystem::path exportArchiveName = exportArchivePath.filename();
+    const std::filesystem::path buildArchivePath = std::filesystem::path(tempBuildPath) / exportArchiveName;
+    FileSystemHelper::ZipDirectory(exportArchiveName.string(), tempBuildPath);
+    FileSystemHelper::MoveFile(buildArchivePath, exportArchivePath);
+    // 9. Finally delete our temp build directory
 }
 
 GameExporter::Platform GameExporter::GetPlatformFromString(const std::string &platformString) {

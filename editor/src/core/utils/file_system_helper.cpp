@@ -95,6 +95,12 @@ void FileSystemHelper::CopyFilesRecursivelyWithExtension(const std::filesystem::
     }
 }
 
+FileSystemHelper::ReturnStatus FileSystemHelper::MoveFile(const std::filesystem::path& source, const std::filesystem::path& dest) {
+    ReturnStatus status;
+    std::filesystem::rename(source, dest, status.errorCode);
+    return status;
+}
+
 void FileSystemHelper::ZipDirectory(const std::string &zipName, const std::filesystem::path &sourceDirectory) {
     std::error_code errorCode;
 

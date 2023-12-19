@@ -7,7 +7,7 @@ TEST_CASE("Game Exporter", "[game_exporter]") {
     SECTION("Test Export") {
         GameExporter::Export({
             .gameTitle = "Test Game",
-            .exportArchivePath = "/test",
+            .exportArchivePath = "test_game_windows.zip",
             .projectPath = "test_games/pkpy_test",
             .binPath = "bin/" + std::string(CRESCENT_OS_BIN_DIR),
             .tempPath = ".",
