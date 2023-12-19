@@ -4,6 +4,7 @@
 
 namespace GameExporter {
 enum class Platform {
+    Undefined,
     Windows,
     Linux,
     MacOS

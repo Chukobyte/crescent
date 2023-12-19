@@ -78,5 +78,7 @@ ReturnStatus DeleteAllInDirectory(const std::filesystem::path& directory, const 
 
 void CopyFilesRecursively(const std::filesystem::path& source, const std::filesystem::path& dest, const std::vector<std::string>& exclusionPatterns = {});
 
+void CopyFilesRecursivelyWithExtension(const std::filesystem::path& source, const std::filesystem::path& dest, const std::vector<std::string>& extensions);
+
 void ZipDirectory(const std::string& zipName, const std::filesystem::path& sourceDirectory);
 } // namespace FileSystemHelper

@@ -62,6 +62,39 @@ void FileSystemHelper::CopyFilesRecursively(const std::filesystem::path &source,
     }
 }
 
+void FileSystemHelper::CopyFilesRecursivelyWithExtension(const std::filesystem::path& source, const std::filesystem::path& dest, const std::vector<std::string>& extensions) {
+    static auto MatchesInclusionPattern = [](const std::vector<std::string>& inclusionPatterns, const std::filesystem::directory_entry& entry) {
+        for (const auto& pattern : inclusionPatterns) {
+            if (entry.path().filename().extension().string().find(pattern) != std::string::npos) {
+                return true;
+            }
+        }
+        return false;
+    };
+
+    try {
+        // Create dir if it doesn't exist
+        if (!std::filesystem::exists(dest)) {
+            std::filesystem::create_directory(dest);
+        }
+        // Iterate through each entry now
+        for (const auto& entry : std::filesystem::recursive_directory_iterator(source)) {
+            // Make sure it's a valid file that we should copy
+            if (std::filesystem::is_regular_file(entry.path()) && entry.path().filename().string()[0] != '.' && MatchesInclusionPattern(extensions, entry)) {
+                // Construct the corresponding path in the destination directory
+                std::filesystem::path relativePath = entry.path().lexically_relative(source);
+                std::filesystem::path destPath = dest / relativePath;
+                // Create necessary directories in the destination path
+                std::filesystem::create_directories(destPath.parent_path());
+                // Copy the file
+                std::filesystem::copy_file(entry.path(), destPath, std::filesystem::copy_options::overwrite_existing);
+            }
+        }
+    } catch (const std::filesystem::filesystem_error& ex) {
+        // TODO: print error
+    }
+}
+
 void FileSystemHelper::ZipDirectory(const std::string &zipName, const std::filesystem::path &sourceDirectory) {
     std::error_code errorCode;
 

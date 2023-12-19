@@ -16,6 +16,14 @@
 #define EDITOR_ENGINE_EXTENSION ""
 #endif
 
+#ifdef _WINDOWS
+#define CRESCENT_OS_BIN_DIR "windows"
+#elif __APPLE__
+#define CRESCENT_OS_BIN_DIR "macosx"
+#else
+#define CRESCENT_OS_BIN_DIR "linux"
+#endif
+
 #define EDITOR_ENGINE_BINARY_NAME EDITOR_ENGINE_NAME EDITOR_ENGINE_EXTENSION
 
 enum class EditorProjectState : int {

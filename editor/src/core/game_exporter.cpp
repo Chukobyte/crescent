@@ -59,9 +59,21 @@ void GameExporter::Export(const GameExporter::ExportProperties& props) {
     const std::filesystem::path zipPath = std::filesystem::path(tempBuildPath) / zipName;
     FileSystemHelper::DeleteAllInDirectory(tempBuildPath, { zipPath });
     // 6. OS specific files, Window need dlls and MacOS needs to create the app bundle
+    if (props.platform == Platform::Windows) {
+        FileSystemHelper::CopyFilesRecursivelyWithExtension(props.binPath, tempBuildPath, { ".dll" });
+    }
     // 7. Now that we have everything either create a zip or tar file.
 }
 
 GameExporter::Platform GameExporter::GetPlatformFromString(const std::string &platformString) {
-    return GameExporter::Platform::MacOS;
+    std::string platformStringLower = platformString;
+    StringToLower(platformStringLower);
+    if (platformStringLower == "windows") {
+        return GameExporter::Platform::Windows;
+    } else if (platformStringLower == "linux") {
+        return GameExporter::Platform::Linux;
+    } else if (platformStringLower == "macos") {
+        return GameExporter::Platform::MacOS;
+    }
+    return GameExporter::Platform::Undefined;
 }
