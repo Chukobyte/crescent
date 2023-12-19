@@ -11,7 +11,7 @@ TEST_CASE("Game Exporter", "[game_exporter]") {
             .projectPath = "test_games/pkpy_test",
             .binPath = "bin/" + std::string(CRESCENT_OS_BIN_DIR),
             .tempPath = ".",
-            .platform = GameExporter::Platform::Windows
+            .platform = GameExporter::GetPlatformFromString(CRESCENT_OS_BIN_DIR)
         });
         REQUIRE(true);
     }
