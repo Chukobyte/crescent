@@ -85,7 +85,8 @@ void GameExporter::Export(const GameExporter::ExportProperties& props) {
     const std::filesystem::path buildArchivePath = std::filesystem::path(tempBuildPath) / exportArchiveName;
     FileSystemHelper::ZipDirectory(exportArchiveName.string(), tempBuildPath);
     FileSystemHelper::MoveFile(buildArchivePath, exportArchivePath);
-    // 9. Finally delete our temp build directory
+    // 9. And finally we delete our temp build directory
+    FileSystemHelper::DeleteDirectory(tempBuildPath);
 }
 
 GameExporter::Platform GameExporter::GetPlatformFromString(const std::string &platformString) {

@@ -129,6 +129,13 @@ void FileSystemHelper::ZipDirectory(const std::string &zipName, const std::files
     SE_ASSERT(originalPath == GetCurrentDir());
 }
 
+FileSystemHelper::ReturnStatus FileSystemHelper::DeleteDirectory(const std::filesystem::path &directory) {
+    ReturnStatus status;
+    const auto removedCount = std::filesystem::remove_all(directory, status.errorCode);
+    status.returnValue = removedCount > 0;
+    return status;
+}
+
 FileSystemHelper::ReturnStatus FileSystemHelper::DeleteAllInDirectory(const std::filesystem::path& directory, const std::vector<std::filesystem::path>& exclusions) {
     static auto MatchesExclusionPattern = [](const std::vector<std::filesystem::path>& exclusionPatterns, const std::filesystem::directory_entry& entry) {
         for (const auto& pattern : exclusionPatterns) {
