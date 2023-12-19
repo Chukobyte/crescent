@@ -5,6 +5,7 @@
 
 #include <seika/utils/se_platform.h>
 
+#include "editor_context.h"
 #include "utils/file_system_helper.h"
 #include "utils/console_logger.h"
 
@@ -39,8 +40,8 @@ void GameExporter::Export(const GameExporter::ExportProperties& props) {
     // 1. Fix up game title
     const std::string gameFileName = ConvertGameTitleToFileName(props.gameTitle);
     // 2. Remove old dir (if exists) and create new one
-    const std::string tempBuildPath = props.tempPath + SE_PLATFORM_PATH_SEPARATOR_STRING + GAME_EXPORTER_TMP_DIR_NAME;
-    auto returnStatus = FileSystemHelper::RecreateDirectory(tempBuildPath);
+    const std::filesystem::path tempBuildPath = props.tempPath + SE_PLATFORM_PATH_SEPARATOR_STRING + GAME_EXPORTER_TMP_DIR_NAME;
+    auto returnStatus = FileSystemHelper::RecreateDirectory(tempBuildPath.string());
     if (!returnStatus) {
         printf("%s", returnStatus.errorCode.message().c_str());
         consoleLogger->AddEntry(returnStatus.errorCode.message());
@@ -52,17 +53,33 @@ void GameExporter::Export(const GameExporter::ExportProperties& props) {
         consoleLogger->AddEntry(errorMessage);
     }
     FileSystemHelper::CopyFilesRecursively(props.projectPath, tempBuildPath);
-    // 4. Create .pck file
+    // 4. Create .pck file from project files
     const std::string zipName = gameFileName + ".pck";
     FileSystemHelper::ZipDirectory(zipName, tempBuildPath);
-    // 5. Remove all files (except for .pck)
+    // 5. Remove all project files (everything except .pck)
     const std::filesystem::path zipPath = std::filesystem::path(tempBuildPath) / zipName;
     FileSystemHelper::DeleteAllInDirectory(tempBuildPath, { zipPath });
-    // 6. OS specific files, Window need dlls and MacOS needs to create the app bundle
-    if (props.platform == Platform::Windows) {
-        FileSystemHelper::CopyFilesRecursivelyWithExtension(props.binPath, tempBuildPath, { ".dll" });
+    // 6. Create game binary (runtime) by copying the engine binary into the temp build folder
+    const std::string engineBinaryName = std::string("crescent_engine")  + std::string(EDITOR_ENGINE_EXTENSION);
+    const auto engineBinaryPath = std::filesystem::path(props.binPath) / engineBinaryName;
+    const auto gameBinaryDest = tempBuildPath / std::filesystem::path(gameFileName + EDITOR_ENGINE_EXTENSION);
+    FileSystemHelper::CopyFile(engineBinaryPath, gameBinaryDest);
+    // 7. OS specific stuff, Window need dlls and MacOS needs to create the app bundle
+    switch (props.platform) {
+        case Platform::Undefined:
+            // TODO: Error
+            break;
+        case Platform::Windows: {
+            // Copy all necessary dlls
+            FileSystemHelper::CopyFilesRecursivelyWithExtension(props.binPath, tempBuildPath, { ".dll" });
+            break;
+        }
+        case Platform::Linux:
+            break;
+        case Platform::MacOS:
+            break;
     }
-    // 7. Now that we have everything either create a zip or tar file.
+    // 8. Now that we have everything either create a zip or tar file.
 }
 
 GameExporter::Platform GameExporter::GetPlatformFromString(const std::string &platformString) {
