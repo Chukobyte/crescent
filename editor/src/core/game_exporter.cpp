@@ -5,6 +5,8 @@
 
 #include <seika/utils/se_platform.h>
 
+#include "../../../engine/src/core/core_info.h"
+
 #include "editor_context.h"
 #include "utils/file_system_helper.h"
 #include "utils/console_logger.h"
@@ -33,6 +35,23 @@ namespace
         }
         return std::move(fileName);
     }
+
+    // MacOS stuff
+
+    struct PListInfoData {
+        std::string cf_bundle_name; // game title
+        std::string cf_bundle_executable; // executable name (e.g. game_title.exe)
+        std::string cf_bundle_version = CRE_CORE_VERSION; // crescent version
+        std::string ls_minimum_system_version = "10.15.0"; // minimum macOS version
+
+        std::string GetFileString() const {
+            return "";
+        }
+    };
+
+    void CreateMacOSBundleDirectories(const std::filesystem::path buildPath) {}
+
+    void GeneratePListInfoFile(const PListInfoData& data) {}
 } // namespace
 
 void GameExporter::Export(const GameExporter::ExportProperties& props) {
@@ -76,8 +95,14 @@ void GameExporter::Export(const GameExporter::ExportProperties& props) {
         }
         case Platform::Linux:
             break;
-        case Platform::MacOS:
+        case Platform::MacOS: {
+            // Create app bundle folders
+            CreateMacOSBundleDirectories(tempBuildPath);
+            // Create PS Info file
+            GeneratePListInfoFile({ .cf_bundle_name = gameFileName, .cf_bundle_executable = gameBinaryDest.filename().string() });
+            // Move all files to macos folder
             break;
+        }
     }
     // 8. Now that we have everything either create a zip or tar file and move it to specified archive path.
     const std::filesystem::path exportArchivePath = props.exportArchivePath;
