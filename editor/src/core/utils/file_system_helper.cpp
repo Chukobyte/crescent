@@ -164,11 +164,11 @@ FileSystemHelper::ReturnStatus FileSystemHelper::DeleteAllInDirectory(const std:
     return status;
 }
 
-FileSystemHelper::ReturnStatus FileSystemHelper::ForEachFile(const std::filesystem::path &directory, std::function<bool(const std::filesystem::directory_entry &)> func) {
+FileSystemHelper::ReturnStatus FileSystemHelper::ForEachFile(const std::filesystem::path &directory, std::function<void(const std::filesystem::directory_entry &)> func) {
     ReturnStatus status;
     for (const auto& entry : std::filesystem::recursive_directory_iterator(directory, status.errorCode)) {
-        if (!func(entry)) {
-            break;
+        if (!std::filesystem::is_directory(entry.path())) {
+            func(entry);
         }
     }
     return status;
