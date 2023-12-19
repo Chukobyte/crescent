@@ -10,6 +10,7 @@
 #include "editor_context.h"
 #include "utils/file_system_helper.h"
 #include "utils/console_logger.h"
+#include "seika/utils/se_file_system_utils.h"
 
 #define GAME_EXPORTER_TMP_DIR_NAME "tmp_build"
 
@@ -44,14 +45,53 @@ namespace
         std::string cf_bundle_version = CRE_CORE_VERSION; // crescent version
         std::string ls_minimum_system_version = "10.15.0"; // minimum macOS version
 
-        std::string GetFileString() const {
-            return "";
+        [[nodiscard]] std::string GetFileString() const {
+            std::string fileString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+            fileString += "<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n";
+            fileString += "<plist version=\"1.0\">\n";
+            fileString += "    <dict>\n";
+            fileString += "        <key>CFBundleName</key>\n";
+            fileString += "        <string>" + cf_bundle_name + "</string>\n";
+            fileString += "        <key>CFBundleVersion</key>\n";
+            fileString += "        <string>" + cf_bundle_version + "</string>\n";
+            fileString += "        <key>CFBundleExecutable</key>\n";
+            fileString += "        <string>" + cf_bundle_executable + "</string>\n";
+            fileString += "        <key>LSMinimumSystemVersion</key>\n";
+            fileString += "        <string>" + ls_minimum_system_version + "</string>\n";
+            fileString += "    </dict>\n";
+            fileString += "</plist>\n";
+
+            return fileString;
         }
     };
 
-    void CreateMacOSBundleDirectories(const std::filesystem::path buildPath) {}
+    struct MacOSExportPaths {
+        std::filesystem::path appBundlePath;
+        std::filesystem::path contentsPath;
+        std::filesystem::path macOSPath;
+        std::filesystem::path resourcesPath;
+        std::filesystem::path plistInfoPath;
+    };
 
-    void GeneratePListInfoFile(const PListInfoData& data) {}
+    MacOSExportPaths GenerateMacOSExportData(const std::filesystem::path& buildPath, const std::string& gameBinaryName) {
+        const std::filesystem::path appBundlePath = buildPath / std::string(gameBinaryName + ".app");
+        const std::filesystem::path contentsPath = appBundlePath / "Contents";
+        const std::filesystem::path macOSPath = contentsPath / "MacOS";
+        const std::filesystem::path resourcesPath = contentsPath / "Resources";
+        const std::filesystem::path plistInfoPath = contentsPath / "Info.plist";
+
+        return std::move(MacOSExportPaths{
+            .appBundlePath = appBundlePath,
+            .contentsPath = appBundlePath,
+            .macOSPath = appBundlePath,
+            .resourcesPath = appBundlePath,
+            .plistInfoPath = appBundlePath,
+        });
+    }
+
+    void GeneratePListInfoFile(const std::filesystem::path& filePath, const PListInfoData& data) {
+        se_fs_write_to_file(std::filesystem::canonical(filePath).string().c_str(), data.GetFileString().c_str());
+    }
 } // namespace
 
 void GameExporter::Export(const GameExporter::ExportProperties& props) {
@@ -96,10 +136,15 @@ void GameExporter::Export(const GameExporter::ExportProperties& props) {
         case Platform::Linux:
             break;
         case Platform::MacOS: {
-            // Create app bundle folders
-            CreateMacOSBundleDirectories(tempBuildPath);
+            // Generate data first
+            const auto exportData = GenerateMacOSExportData(tempBuildPath, gameBinaryDest.filename().string());
+            // Create dirs
+            FileSystemHelper::CreateDirectory(exportData.appBundlePath);
+            FileSystemHelper::CreateDirectory(exportData.contentsPath);
+            FileSystemHelper::CreateDirectory(exportData.macOSPath);
+            FileSystemHelper::CreateDirectory(exportData.resourcesPath);
             // Create PS Info file
-            GeneratePListInfoFile({ .cf_bundle_name = gameFileName, .cf_bundle_executable = gameBinaryDest.filename().string() });
+            GeneratePListInfoFile(exportData.plistInfoPath, { .cf_bundle_name = gameFileName, .cf_bundle_executable = gameBinaryDest.filename().string() });
             // Move all files to macos folder
             break;
         }

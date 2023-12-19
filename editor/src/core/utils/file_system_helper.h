@@ -57,7 +57,7 @@ inline bool DirectoryExistsAndIsEmpty(const std::string& filePath) {
     return DoesDirectoryExist(filePath) && IsDirectoryEmpty(filePath);
 }
 
-inline ReturnStatus CreateDirectory(const std::string& filePath) {
+inline ReturnStatus CreateDirectory(const std::filesystem::path& filePath) {
     ReturnStatus status;
     status.returnValue = std::filesystem::create_directory(filePath, status.errorCode);
     return status;
