@@ -50,6 +50,7 @@ add_library(${PROJECT_NAME} STATIC
         src/core/ui/views/opened_project/windows/scene_view_ui.cpp
         src/core/utils/console_logger.cpp
         src/core/utils/curve_editor.cpp
+        src/core/utils/file_system_helper.cpp
         src/core/utils/process_runner/process_runner.cpp
         src/core/utils/process_runner/process_context.cpp
         )
@@ -190,11 +191,6 @@ if (IS_CI_BUILD STREQUAL "false")
                     )
             add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
                     COMMAND ${CMAKE_COMMAND} -E copy
-                    $<TARGET_FILE_DIR:${PROJECT_NAME}>/../python310_d.dll
-                    $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/${OS_BIN_DIR}/python310_d.dll
-                    )
-            add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-                    COMMAND ${CMAKE_COMMAND} -E copy
                     $<TARGET_FILE_DIR:${PROJECT_NAME}>/../SDL2d.dll
                     $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/${OS_BIN_DIR}/SDL2d.dll
                     )
@@ -218,11 +214,6 @@ if (IS_CI_BUILD STREQUAL "false")
                     COMMAND ${CMAKE_COMMAND} -E copy
                     $<TARGET_FILE_DIR:${PROJECT_NAME}>/../libpng16.dll
                     $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/${OS_BIN_DIR}/libpng16.dll
-                    )
-            add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-                    COMMAND ${CMAKE_COMMAND} -E copy
-                    $<TARGET_FILE_DIR:${PROJECT_NAME}>/../python310.dll
-                    $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/${OS_BIN_DIR}/python310.dll
                     )
             add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
                     COMMAND ${CMAKE_COMMAND} -E copy

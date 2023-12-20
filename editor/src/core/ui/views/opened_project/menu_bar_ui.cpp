@@ -450,7 +450,8 @@ ImGuiHelper::MenuBar OpenedProjectUI::MenuBar::GetMenuBar() {
                                     ImGui::SameLine();
                                     if (ImGui::Button("Export") && exportPathInputText.HasValue()) {
                                         const std::string currentFileExtension = Helper::GetFileExtension(exportPathInputText.GetValue());
-                                        if (currentFileExtension != "zip" || currentFileExtension != "tar.gz") {
+//                                        if (currentFileExtension != "zip" || currentFileExtension != "tar.gz") { // TODO: Implement tar.gz compression
+                                        if (currentFileExtension != "zip") {
                                             exportFileName = Helper::ConvertFilePathToFilePathExtension(exportPathInputText.GetValue(), lastKnownFileExtension);
                                         } else {
                                             exportFileName = exportPathInputText.GetValue();
@@ -459,9 +460,9 @@ ImGuiHelper::MenuBar OpenedProjectUI::MenuBar::GetMenuBar() {
                                         const GameExporter::ExportProperties exportProps = {
                                             .gameTitle = projectProperties->gameTitle,
                                             .exportArchivePath = exportFileName,
-                                            .projectPath = FileSystemHelper::GetCurrentDir(),
-                                            .binPath = editorContext->GetEngineBinPathByOS(osType),
-                                            .tempPath = editorContext->GetProjectTempPath()
+                                            .projectPath = FileSystemHelper::GetCurrentDirStr(),
+                                            .tempPath = editorContext->GetProjectTempPath(),
+                                            .platform = osType
                                         };
                                         GameExporter::Export(exportProps);
                                         exportPathInputText.SetValue("");
@@ -482,7 +483,8 @@ ImGuiHelper::MenuBar OpenedProjectUI::MenuBar::GetMenuBar() {
                                         .size = ImVec2{ 600.0f, 320.0f },
                                         .rootPath = {},
                                         .mode = ImGuiHelper::FileBrowser::Mode::SaveFile,
-                                        .validExtensions = { ".zip", ".tar.gz" },
+//                                        .validExtensions = { ".zip", ".tar.gz" }, // TODO: Implement tar.gz compression
+                                        .validExtensions = { ".zip" },
                                         .onModeCompletedFunc = [](const std::filesystem::path& fullPath) {
                                             const std::string exportPath = fullPath.generic_string();
                                             se_logger_debug("Setting project export path to '%s'", exportPath.c_str());

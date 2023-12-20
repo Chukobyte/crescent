@@ -3,8 +3,6 @@
 #include <seika/utils/logger.h>
 #include <seika/memory/se_mem.h>
 
-#include "scripting/python/cre_py.h"
-
 static CREGameProperties* properties = NULL;
 
 CREGameProperties* cre_game_props_create() {

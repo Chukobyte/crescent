@@ -64,7 +64,7 @@ void ProjectManagerUI::ProcessWindows() {
             static auto* assetManager = AssetManager::Get();
             static auto* editorContext = EditorContext::Get();
             static auto LoadProject = [](const char* projectPath) {
-                if (FileSystemHelper::GetCurrentDir() != std::string(projectPath)) {
+                if (FileSystemHelper::GetCurrentDirStr() != std::string(projectPath)) {
                     se_fs_chdir(projectPath);
                 }
                 gameProperties->projectPath = projectPath;

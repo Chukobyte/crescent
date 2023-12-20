@@ -16,6 +16,14 @@
 #define EDITOR_ENGINE_EXTENSION ""
 #endif
 
+#ifdef _WINDOWS
+#define CRESCENT_OS_BIN_DIR "windows"
+#elif __APPLE__
+#define CRESCENT_OS_BIN_DIR "macosx"
+#else
+#define CRESCENT_OS_BIN_DIR "linux"
+#endif
+
 #define EDITOR_ENGINE_BINARY_NAME EDITOR_ENGINE_NAME EDITOR_ENGINE_EXTENSION
 
 enum class EditorProjectState : int {
@@ -28,11 +36,11 @@ class EditorContext : public Singleton<EditorContext> {
   public:
     EditorContext(singleton);
 
+    [[nodiscard]] std::string GetEngineBinRoot() const;
     [[nodiscard]] std::string GetEngineBinPath() const;
     [[nodiscard]] std::string GetEngineBinPathByOS(const std::string& osType) const;
     [[nodiscard]] std::string GetEngineBinaryPath() const;
     [[nodiscard]] std::string GetEngineBinaryProgramArgs() const;
-    [[nodiscard]] std::string GetProjectExportPath() const;
     [[nodiscard]] std::string GetProjectTempPath() const;
     [[nodiscard]] std::string GetEngineDefaultFontPath() const;
 

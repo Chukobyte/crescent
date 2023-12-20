@@ -9,7 +9,6 @@
 #include <seika/rendering/renderer.h>
 #include <seika/utils/logger.h>
 
-#include "../engine/src/core/scripting/python/cre_py.h"
 #include "editor_context.h"
 #include "scene/scene_manager.h"
 #include "color.h"
@@ -21,7 +20,7 @@
 static EditorContext* editorContext = EditorContext::Get();
 
 bool Editor::Initialize() {
-    editorContext->initialDir = FileSystemHelper::GetCurrentDir();
+    editorContext->initialDir = FileSystemHelper::GetCurrentDirStr();
 
     // Load editor setting or create a new file if it doesn't exist
     if (!editorContext->settings.Load()) {
@@ -34,9 +33,6 @@ bool Editor::Initialize() {
     if (!InitializeImGui()) {
         return false;
     }
-
-    // Initialize Python Instance
-    cre_py_initialize(editorContext->GetEngineBinPath().c_str());
 
     // TODO: Figure out window stuff dimensions...
     se_renderer_initialize(800, 600, 800, 600, false);
@@ -182,8 +178,6 @@ void Editor::Shutdown() {
     SDL_GL_DeleteContext(editorContext->openGLContext);
     SDL_DestroyWindow(editorContext->window);
     SDL_Quit();
-
-    cre_py_finalize();
 
     se_logger_info("Crescent Engine Editor has been shutdown!");
 }

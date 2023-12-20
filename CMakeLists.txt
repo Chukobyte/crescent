@@ -20,5 +20,5 @@ target_link_libraries(${PROJECT_NAME}_editor crescent_editor crescent_core)
 
 # Create test editor exe
 find_package(SDL2 CONFIG REQUIRED)
-add_executable(${PROJECT_NAME}_editor_test editor/test/main.cpp editor/test/unit/curve_float_test.cpp)
+add_executable(${PROJECT_NAME}_editor_test editor/test/main.cpp editor/test/unit/curve_float_test.cpp editor/test/unit/game_exporter_test.cpp)
 target_link_libraries(${PROJECT_NAME}_editor_test crescent_editor crescent_core SDL2::SDL2main SDL2::SDL2)

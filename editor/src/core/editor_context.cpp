@@ -4,26 +4,22 @@
 
 #include "utils/file_system_helper.h"
 
-#ifdef _WINDOWS
-#define CRESCENT_OS_BIN_DIR "windows"
-#elif __APPLE__
-#define CRESCENT_OS_BIN_DIR "macosx"
-#else
-#define CRESCENT_OS_BIN_DIR "linux"
-#endif
-
 EditorContext::EditorContext(singleton) {}
 
+std::string EditorContext::GetEngineBinRoot() const {
+    return initialDir.empty() ? "bin/" : initialDir + "/bin/";
+}
+
 std::string EditorContext::GetEngineBinPath() const {
-    return initialDir + "/bin/" + CRESCENT_OS_BIN_DIR;
+    return GetEngineBinRoot() + CRESCENT_OS_BIN_DIR;
 }
 
 std::string EditorContext::GetEngineBinPathByOS(const std::string &osType) const {
     if (osType == "windows" || osType == "macosx" || osType == "linux") {
-        return initialDir + "/bin/" + osType;
+        return GetEngineBinRoot() + osType;
     }
     se_logger_error("osType '%s' is invalid!", osType.c_str());
-    return std::string();
+    return {};
 }
 
 std::string EditorContext::GetEngineBinaryPath() const {

@@ -14,8 +14,8 @@
 #include "core_info.h"
 #include "game_properties.h"
 #include "engine_context.h"
+#include "embedded_assets.h"
 #include "utils/command_line_args_util.h"
-#include "scripting/python/cre_py.h"
 #include "ecs/ecs_manager.h"
 #include "ecs/system/ec_system.h"
 #include "scene/scene_manager.h"
@@ -84,9 +84,6 @@ bool cre_initialize(int argv, char** args) {
         engineContext->internalAssetsDir = se_strdup(engineContext->engineRootDir); // TODO: Clean up properly
     }
 
-    // TODO: Determine if python needs to be initialized programmatically
-    cre_py_initialize(engineContext->internalAssetsDir);
-
     cre_curve_float_manager_init();
 
     gameProperties = cre_json_load_config_file(CRE_PROJECT_CONFIG_FILE_NAME);
@@ -135,15 +132,7 @@ bool cre_initialize_ecs() {
 
 bool cre_load_built_in_assets() {
     // Load default font
-    if (sf_asset_file_loader_get_read_mode() == SEAssetFileLoaderReadMode_DISK) {
-        char defaultFontFilePath[512];
-        se_strcpy(defaultFontFilePath, engineContext->internalAssetsDir);
-        se_strcat(defaultFontFilePath, "/");
-        se_strcat(defaultFontFilePath, CRE_DEFAULT_FONT_ASSET.file_path);
-        se_asset_manager_load_font(defaultFontFilePath, CRE_DEFAULT_FONT_ASSET.uid, CRE_DEFAULT_FONT_ASSET.size, CRE_DEFAULT_FONT_ASSET.applyNearestNeighbor);
-    } else {
-        se_asset_manager_load_font(CRE_DEFAULT_FONT_ASSET.file_path, CRE_DEFAULT_FONT_ASSET.uid, CRE_DEFAULT_FONT_ASSET.size, CRE_DEFAULT_FONT_ASSET.applyNearestNeighbor);
-    }
+    se_asset_manager_load_font_from_memory(CRE_DEFAULT_FONT_KEY, CRE_EMBEDDED_ASSET_FONT_VERDANA_TTF_HEX, CRE_EMBEDDED_ASSET_FONT_VERDANA_TTF_SIZE, CRE_DEFAULT_FONT_ASSET.size, CRE_DEFAULT_FONT_ASSET.applyNearestNeighbor);
 
     return true;
 }
@@ -256,7 +245,6 @@ int cre_shutdown() {
     cre_game_props_finalize();
     cre_scene_manager_finalize();
     cre_ecs_manager_finalize();
-    cre_py_finalize();
     cre_curve_float_manager_finalize();
     const int finalExitCode = engineContext->exitCode;
     engineContext = NULL;

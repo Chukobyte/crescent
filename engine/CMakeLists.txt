@@ -27,11 +27,6 @@ add_library(${PROJECT_NAME} STATIC
         src/core/scene/scene_manager.c
         src/core/scene/scene_utils.c
         src/core/scripting/script_context.c
-        src/core/scripting/python/py_helper.c
-        src/core/scripting/python/cre_py.c
-        src/core/scripting/python/cre_py_api_module.c
-        src/core/scripting/python/py_cache.c
-        src/core/scripting/python/py_script_context.c
         src/core/scripting/python/pocketpy/cre_pkpy_util.c
         src/core/scripting/python/pocketpy/cre_pkpy_script_context.c
         src/core/scripting/python/pocketpy/cre_pkpy_entity_instance_cache.c
@@ -137,13 +132,13 @@ if (NOT freetype_from_find_package)
 endif()
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image cJSON SDL2::SDL2main SDL2::SDL2 freetype Python3::Python Ws2_32 seika pocketpy)
+    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image cJSON SDL2::SDL2main SDL2::SDL2 freetype Ws2_32 seika pocketpy)
 elseif (WIN32)
-    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image cJSON -lmingw32 -static-libgcc SDL2::SDL2main SDL2::SDL2 freetype Python3::Python -lws2_32 seika pocketpy)
+    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image cJSON -lmingw32 -static-libgcc SDL2::SDL2main SDL2::SDL2 freetype -lws2_32 seika pocketpy)
 elseif (APPLE)
-    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image cJSON -Xlinker SDL2::SDL2main SDL2::SDL2 freetype Python3::Python m seika pocketpy)
+    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image cJSON -Xlinker SDL2::SDL2main SDL2::SDL2 freetype m seika pocketpy)
 else ()
-    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image cJSON -static-libgcc -Xlinker -export-dynamic SDL2::SDL2main SDL2::SDL2 freetype Python3::Python m seika pocketpy)
+    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image cJSON -static-libgcc -Xlinker -export-dynamic SDL2::SDL2main SDL2::SDL2 freetype m seika pocketpy)
 endif ()
 
 target_compile_options(${PROJECT_NAME} PUBLIC ${flags})

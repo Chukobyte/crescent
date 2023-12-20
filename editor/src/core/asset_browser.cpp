@@ -119,7 +119,7 @@ void FileNodeUtils::DisplayFileNodeTree(FileNode &fileNode, const bool isRoot) {
 
 //--- AssetBrowser ---//
 void AssetBrowser::RefreshCache() {
-    fileCache.LoadRootNodeDir(FileSystemHelper::GetCurrentDir());
+    fileCache.LoadRootNodeDir(FileSystemHelper::GetCurrentDirStr());
     for (auto& sub : refreshSubscribers) {
         sub.func(fileCache.rootNode);
     }
