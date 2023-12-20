@@ -175,7 +175,7 @@ GameExporter::Platform GameExporter::GetPlatformFromString(const std::string &pl
         return GameExporter::Platform::Windows;
     } else if (platformStringLower == "linux") {
         return GameExporter::Platform::Linux;
-    } else if (platformStringLower == "macos") {
+    } else if (platformStringLower == "macosx") {
         return GameExporter::Platform::MacOS;
     }
     return GameExporter::Platform::Undefined;
