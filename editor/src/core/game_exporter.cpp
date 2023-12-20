@@ -107,13 +107,11 @@ void GameExporter::Export(const GameExporter::ExportProperties& props) {
     const std::filesystem::path tempBuildPath = props.tempPath / GAME_EXPORTER_TMP_DIR_NAME;
     auto returnStatus = FileSystemHelper::RecreateDirectory(tempBuildPath.string());
     if (!returnStatus) {
-        printf("%s", returnStatus.errorCode.message().c_str());
         consoleLogger->AddEntry(returnStatus.errorCode.message());
     }
     // 3. Copy project files
     if (!FileSystemHelper::DoesDirectoryExist(props.projectPath)) {
         const std::string errorMessage = props.projectPath.string() + " doesn't exist!";
-        printf("%s", errorMessage.c_str());
         consoleLogger->AddEntry(errorMessage);
     }
     FileSystemHelper::CopyFilesRecursively(props.projectPath, tempBuildPath);
