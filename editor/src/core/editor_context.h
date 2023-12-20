@@ -36,11 +36,11 @@ class EditorContext : public Singleton<EditorContext> {
   public:
     EditorContext(singleton);
 
+    [[nodiscard]] std::string GetEngineBinRoot() const;
     [[nodiscard]] std::string GetEngineBinPath() const;
     [[nodiscard]] std::string GetEngineBinPathByOS(const std::string& osType) const;
     [[nodiscard]] std::string GetEngineBinaryPath() const;
     [[nodiscard]] std::string GetEngineBinaryProgramArgs() const;
-    [[nodiscard]] std::string GetProjectExportPath() const;
     [[nodiscard]] std::string GetProjectTempPath() const;
     [[nodiscard]] std::string GetEngineDefaultFontPath() const;
 

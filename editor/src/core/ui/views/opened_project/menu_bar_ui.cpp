@@ -461,8 +461,8 @@ ImGuiHelper::MenuBar OpenedProjectUI::MenuBar::GetMenuBar() {
                                             .gameTitle = projectProperties->gameTitle,
                                             .exportArchivePath = exportFileName,
                                             .projectPath = FileSystemHelper::GetCurrentDirStr(),
-                                            .binPath = editorContext->GetEngineBinPathByOS(osType),
-                                            .tempPath = editorContext->GetProjectTempPath()
+                                            .tempPath = editorContext->GetProjectTempPath(),
+                                            .platform = osType
                                         };
                                         GameExporter::Export(exportProps);
                                         exportPathInputText.SetValue("");

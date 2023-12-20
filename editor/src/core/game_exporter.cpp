@@ -3,14 +3,15 @@
 #include <algorithm>
 #include <cctype>
 
+#include <seika/utils/se_file_system_utils.h>
 #include <seika/utils/se_platform.h>
+#include <seika/utils/se_assert.h>
 
 #include "../../../engine/src/core/core_info.h"
 
 #include "editor_context.h"
 #include "utils/file_system_helper.h"
 #include "utils/console_logger.h"
-#include "seika/utils/se_file_system_utils.h"
 
 #define GAME_EXPORTER_TMP_DIR_NAME "tmp_build"
 
@@ -96,11 +97,14 @@ namespace
 } // namespace
 
 void GameExporter::Export(const GameExporter::ExportProperties& props) {
+    const Platform platform = GetPlatformFromString(props.platform);
+    const std::filesystem::path binPath = EditorContext::Get()->GetEngineBinPathByOS(props.platform);
     ConsoleLogger* consoleLogger = ConsoleLogger::Get();
+    SE_ASSERT(platform != Platform::Undefined);
     // 1. Fix up game title
     const std::string gameFileName = ConvertGameTitleToFileName(props.gameTitle);
     // 2. Remove old dir (if exists) and create new one
-    const std::filesystem::path tempBuildPath = props.tempPath + SE_PLATFORM_PATH_SEPARATOR_STRING + GAME_EXPORTER_TMP_DIR_NAME;
+    const std::filesystem::path tempBuildPath = props.tempPath / GAME_EXPORTER_TMP_DIR_NAME;
     auto returnStatus = FileSystemHelper::RecreateDirectory(tempBuildPath.string());
     if (!returnStatus) {
         printf("%s", returnStatus.errorCode.message().c_str());
@@ -108,7 +112,7 @@ void GameExporter::Export(const GameExporter::ExportProperties& props) {
     }
     // 3. Copy project files
     if (!FileSystemHelper::DoesDirectoryExist(props.projectPath)) {
-        const std::string errorMessage = props.projectPath + " doesn't exist!";
+        const std::string errorMessage = props.projectPath.string() + " doesn't exist!";
         printf("%s", errorMessage.c_str());
         consoleLogger->AddEntry(errorMessage);
     }
@@ -120,19 +124,19 @@ void GameExporter::Export(const GameExporter::ExportProperties& props) {
     const std::filesystem::path zipPath = std::filesystem::path(tempBuildPath) / zipName;
     FileSystemHelper::DeleteAllInDirectory(tempBuildPath, { zipPath });
     // 6. Create game binary (runtime) by copying the engine binary into the temp build folder
-    const std::string runtimeBinaryExtension = props.platform == Platform::Windows ? ".exe" : "";
+    const std::string runtimeBinaryExtension = platform == Platform::Windows ? ".exe" : "";
     const std::string engineBinaryName = "crescent_engine" + runtimeBinaryExtension;
-    const auto engineBinaryPath = std::filesystem::path(props.binPath) / engineBinaryName;
+    const auto engineBinaryPath = binPath / engineBinaryName;
     const auto gameBinaryDest = tempBuildPath / std::filesystem::path(gameFileName + runtimeBinaryExtension);
     FileSystemHelper::CopyFile(engineBinaryPath, gameBinaryDest);
     // 7. OS specific stuff, Window need dlls and MacOS needs to create the app bundle
-    switch (props.platform) {
+    switch (platform) {
         case Platform::Undefined:
             // TODO: Error
             break;
         case Platform::Windows: {
             // Copy all necessary dlls
-            FileSystemHelper::CopyFilesRecursivelyWithExtension(props.binPath, tempBuildPath, { ".dll" });
+            FileSystemHelper::CopyFilesRecursivelyWithExtension(binPath, tempBuildPath, { ".dll" });
             break;
         }
         case Platform::Linux:
@@ -148,7 +152,7 @@ void GameExporter::Export(const GameExporter::ExportProperties& props) {
             // Create PS Info file
             GeneratePListInfoFile(exportData.plistInfoPath, { .cf_bundle_name = gameFileName, .cf_bundle_executable = gameBinaryDest.filename().string() });
             // Move all files to macos folder
-            FileSystemHelper::ForEachFile(tempBuildPath, [&tempBuildPath, &exportData](const std::filesystem::directory_entry& entry) {
+            FileSystemHelper::ForEachFile(tempBuildPath, [&exportData](const std::filesystem::directory_entry& entry) {
                 if (!std::filesystem::equivalent(entry.path(), exportData.appBundlePath)) {
                     FileSystemHelper::MoveFile(entry.path(), exportData.macOSPath / entry.path().filename());
                 }
