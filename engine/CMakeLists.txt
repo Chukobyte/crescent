@@ -58,6 +58,7 @@ add_library(${PROJECT_NAME} STATIC
         src/core/ecs/system/ec_system.c
         src/core/ecs/system/font_rendering_ec_system.c
         src/core/ecs/system/parallax_ec_system.c
+        src/core/ecs/system/particle_emitter_ec_system.c
         src/core/ecs/system/script_ec_system.c
         src/core/ecs/system/sprite_rendering_ec_system.c
         src/core/json/json_file_loader.c

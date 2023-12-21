@@ -16,9 +16,9 @@
 
 CreEntitySystem* animatedSpriteRenderingSystem = NULL;
 
-void animated_sprite_rendering_system_on_entity_registered(CreEntity entity);
-void animated_sprite_rendering_system_render();
-void animated_sprite_rendering_system_on_ec_system_destroy();
+static void animated_sprite_rendering_system_on_entity_registered(CreEntity entity);
+static void animated_sprite_rendering_system_render();
+static void animated_sprite_rendering_system_on_ec_system_destroy();
 
 CreEntitySystem* cre_animated_sprite_rendering_ec_system_create() {
     SE_ASSERT(animatedSpriteRenderingSystem == NULL);

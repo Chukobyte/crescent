@@ -1,7 +1,5 @@
 #include "ecs_manager.h"
 
-#include <string.h>
-
 #include <seika/rendering/renderer.h>
 #include <seika/utils/se_string_util.h>
 #include <seika/utils/se_assert.h>
@@ -16,6 +14,7 @@
 #include "system/ec_system.h"
 #include "system/font_rendering_ec_system.h"
 #include "system/parallax_ec_system.h"
+#include "system/particle_emitter_ec_system.h"
 #include "system/script_ec_system.h"
 #include "system/sprite_rendering_ec_system.h"
 #include "../scene/scene_manager.h"
@@ -34,6 +33,7 @@ void cre_ecs_manager_initialize() {
     cre_ec_system_register(cre_collision_ec_system_create());
     cre_ec_system_register(cre_color_rect_ec_system_create());
     cre_ec_system_register(cre_parallax_ec_system_create());
+    cre_ec_system_register(cre_particle_emitter_ec_system_create());
 }
 
 void cre_ecs_manager_initialize_ex(struct SETexture* colorRectTexture) {
@@ -47,6 +47,7 @@ void cre_ecs_manager_initialize_ex(struct SETexture* colorRectTexture) {
     cre_ec_system_register(cre_collision_ec_system_create());
     cre_ec_system_register(cre_color_rect_ec_system_create_ex(colorRectTexture));
     cre_ec_system_register(cre_parallax_ec_system_create());
+    cre_ec_system_register(cre_particle_emitter_ec_system_create());
 }
 
 void cre_ecs_manager_enable_fps_display_entity(bool enabled, const char* fontUID, float positionX, float positionY) {
