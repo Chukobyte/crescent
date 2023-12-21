@@ -2,6 +2,7 @@
 
 #include <string.h>
 
+#include <seika/rendering/texture.h>
 #include <seika/memory/se_mem.h>
 
 Particles2DComponent* particles2d_component_create() {
@@ -12,6 +13,7 @@ Particles2DComponent* particles2d_component_create() {
     particles2DComponent->color = (SEColor){ 1.0f, 1.0f, 1.0f, 1.0f };
     particles2DComponent->lifeTime = 0.0f;
     particles2DComponent->damping = 1.0f;
+    particles2DComponent->texture = NULL;
     return particles2DComponent;
 }
 

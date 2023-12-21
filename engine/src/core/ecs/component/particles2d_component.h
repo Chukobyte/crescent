@@ -7,12 +7,14 @@ extern "C" {
 #include <seika/math/se_math.h>
 
 typedef struct Particles2DComponent {
+    // Configuration
     SEVector2 position;
     SEVector2 linearVelocity;
     SEVector2 linearAcceleration;
     SEColor color;
     float lifeTime;
     float damping;
+    struct SETexture* texture;
 } Particles2DComponent;
 
 Particles2DComponent* particles2d_component_create();
