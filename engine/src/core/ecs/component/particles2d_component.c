@@ -7,7 +7,7 @@
 
 Particles2DComponent* particles2d_component_create() {
     Particles2DComponent* particles2DComponent = SE_MEM_ALLOCATE(Particles2DComponent);
-    particles2DComponent->position = (SEVector2){ 0.0f, 0.0f };
+    particles2DComponent->amount = 0;
     particles2DComponent->linearVelocity = (SEVector2){ 0.0f, 0.0f };
     particles2DComponent->linearAcceleration = (SEVector2){ 0.0f, 0.0f };
     particles2DComponent->color = (SEColor){ 1.0f, 1.0f, 1.0f, 1.0f };

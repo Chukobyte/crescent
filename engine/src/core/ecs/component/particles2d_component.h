@@ -18,6 +18,7 @@ typedef struct CreParticle2D {
 
 typedef struct Particles2DComponent {
     // Configuration
+    int amount;
     SEVector2 linearVelocity;
     SEVector2 linearAcceleration;
     SEColor color;
