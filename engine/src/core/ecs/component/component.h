@@ -21,6 +21,7 @@ typedef enum CreComponentDataIndex {
     CreComponentDataIndex_COLLIDER_2D = 6,
     CreComponentDataIndex_COLOR_RECT = 7,
     CreComponentDataIndex_PARALLAX = 8,
+    CreComponentDataIndex_PARTICLES_2D = 9,
 } CreComponentDataIndex;
 
 typedef enum CreComponentType {
@@ -34,6 +35,7 @@ typedef enum CreComponentType {
     CreComponentType_COLLIDER_2D = 1 << 6,
     CreComponentType_COLOR_RECT = 1 << 7,
     CreComponentType_PARALLAX = 1 << 8,
+    CreComponentType_PARTICLES_2D = 1 << 9,
 } CreComponentType;
 
 // Struct that is used to pass information to observers from events

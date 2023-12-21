@@ -826,6 +826,7 @@ class NodeType:
     Collider2D = 64
     ColorRect = 128
     Parallax = 256
+    Particles2D = 512
 
 
 class Node:
