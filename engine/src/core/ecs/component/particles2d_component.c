@@ -13,13 +13,15 @@ Particles2DComponent* particles2d_component_create() {
     particles2DComponent->color = (SEColor){ 1.0f, 1.0f, 1.0f, 1.0f };
     particles2DComponent->lifeTime = 0.0f;
     particles2DComponent->damping = 1.0f;
-    particles2DComponent->texture = NULL;
+    particles2DComponent->type = Particle2DComponentType_SQUARE;
+    particles2DComponent->squareSize = (SEVector2){ 1.0f, 1.0f };
+    memset(particles2DComponent->particles, 0, CRE_PARTICLES_2D_MAX * sizeof(CreParticle2D));
     return particles2DComponent;
 }
 
-void particles2d_component_delete(Particles2DComponent* collider2DComponent) {
-    if (collider2DComponent) {
-        SE_MEM_FREE(collider2DComponent);
+void particles2d_component_delete(Particles2DComponent* particles2DComponent) {
+    if (particles2DComponent) {
+        SE_MEM_FREE(particles2DComponent);
     }
 }
 
@@ -27,4 +29,20 @@ Particles2DComponent* particles2d_component_copy(const Particles2DComponent* par
     Particles2DComponent* copiedComponent = SE_MEM_ALLOCATE(Particles2DComponent);
     memcpy(copiedComponent, particles2DComponent, sizeof(Particles2DComponent));
     return copiedComponent;
+}
+
+void particles2d_component_set_default_particles(Particles2DComponent* particles2DComponent) {
+#define DEFAULT_PARTICLE2D (CreParticle2D){ \
+    .position = (SEVector2){ 0.0f, 0.0f }, \
+    .velocity = (SEVector2){ 0.0f, 0.0f }, \
+    .acceleration = (SEVector2){ 0.0f, 0.0f }, \
+    .color = (SEColor){ 1.0f, 1.0f, 1.0f, 1.0f }, \
+    .timeActive = 8.0f \
+}
+
+    for (size_t i = 0; i < particles2DComponent->amount; i++) {
+        particles2DComponent->particles[i] = DEFAULT_PARTICLE2D;
+    }
+
+#undef DEFAULT_PARTICLE2D
 }

@@ -4,17 +4,14 @@
 extern "C" {
 #endif
 
-#include <seika/math/se_math.h>
+#include "../../particles/particle.h"
 
 #define CRE_PARTICLES_2D_MAX 100
 
-typedef struct CreParticle2D {
-    SEVector2 position;
-    SEVector2 velocity;
-    SEVector2 acceleration;
-    SEColor color;
-    float timeActive;
-} CreParticle2D;
+typedef enum Particle2DComponentType {
+    Particle2DComponentType_TEXTURE = 0,
+    Particle2DComponentType_SQUARE = 1
+} Particle2DComponentType;
 
 typedef struct Particles2DComponent {
     // Configuration
@@ -22,15 +19,21 @@ typedef struct Particles2DComponent {
     SEVector2 linearVelocity;
     SEVector2 linearAcceleration;
     SEColor color;
+    // Sets initial 'timeActive' on CreParticle2D
     float lifeTime;
     float damping;
-    struct SETexture* texture;
+    Particle2DComponentType type;
+    union {
+        struct SETexture* texture;
+        SEVector2 squareSize;
+    };
     CreParticle2D particles[CRE_PARTICLES_2D_MAX];
 } Particles2DComponent;
 
 Particles2DComponent* particles2d_component_create();
-void particles2d_component_delete(Particles2DComponent* collider2DComponent);
-Particles2DComponent* particles2d_component_copy(const Particles2DComponent* collider2DComponent);
+void particles2d_component_delete(Particles2DComponent* particles2DComponent);
+Particles2DComponent* particles2d_component_copy(const Particles2DComponent* particles2DComponent);
+void particles2d_component_set_default_particles(Particles2DComponent* particles2DComponent);
 
 #ifdef __cplusplus
 }

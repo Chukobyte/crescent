@@ -73,4 +73,8 @@ void color_rect_system_render() {
 void color_rect_system_on_ec_system_destroy() {
     SE_ASSERT(colorRectSystem != NULL);
     colorRectSystem = NULL;
+    if (colorRectTexture) {
+        se_texture_delete(colorRectTexture);
+        colorRectTexture = NULL;
+    }
 }
