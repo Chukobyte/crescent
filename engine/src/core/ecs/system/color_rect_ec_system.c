@@ -1,7 +1,5 @@
 #include "color_rect_ec_system.h"
 
-#include <string.h>
-
 #include <seika/rendering/renderer.h>
 #include <seika/utils/se_string_util.h>
 #include <seika/utils/se_assert.h>
@@ -74,7 +72,7 @@ void color_rect_system_on_ec_system_destroy() {
     SE_ASSERT(colorRectSystem != NULL);
     colorRectSystem = NULL;
     if (colorRectTexture) {
-        se_texture_delete(colorRectTexture);
+        se_texture_delete(colorRectTexture); // TODO: Properly delete texture (te
         colorRectTexture = NULL;
     }
 }
