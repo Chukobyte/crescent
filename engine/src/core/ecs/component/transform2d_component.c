@@ -5,8 +5,8 @@
 #include <seika/utils/logger.h>
 #include <seika/memory/se_mem.h>
 
-SETransform2D transform2d_component_create_blank_transform2d() {
-    SETransform2D transform2D = {
+SKATransform2D transform2d_component_create_blank_transform2d() {
+    SKATransform2D transform2D = {
         .position = { .x = 0.0f, .y = 0.0f },
         .scale = { .x = 1.0f, .y = 1.0f },
         .rotation = 0.0f
@@ -14,8 +14,8 @@ SETransform2D transform2d_component_create_blank_transform2d() {
     return transform2D;
 }
 
-SETransformModel2D transform2d_component_create_blank_global_transform2d() {
-    SETransformModel2D transform2D = {
+SKATransformModel2D transform2d_component_create_blank_global_transform2d() {
+    SKATransformModel2D transform2D = {
         .position = { .x = 0.0f, .y = 0.0f },
         .scale = { .x = 1.0f, .y = 1.0f },
         .rotation = 0.0f,
@@ -47,7 +47,7 @@ Transform2DComponent* transform2d_component_copy(const Transform2DComponent* tra
     return copiedNode;
 }
 
-void transform2d_component_get_local_model_matrix(mat4 model, const SETransform2D* transform) {
+void transform2d_component_get_local_model_matrix(mat4 model, const SKATransform2D* transform) {
     glm_mat4_identity(model);
     // 1. Translation
     glm_translate(model, (vec3) {

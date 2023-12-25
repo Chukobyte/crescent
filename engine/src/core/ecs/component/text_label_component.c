@@ -8,7 +8,7 @@
 TextLabelComponent* text_label_component_create() {
     TextLabelComponent* textLabelComponent = SE_MEM_ALLOCATE(TextLabelComponent);
     textLabelComponent->font = NULL;
-    textLabelComponent->color = se_color_get_white();
+    textLabelComponent->color = SKA_COLOR_WHITE;
     textLabelComponent->text[0] = '\0';
     return textLabelComponent;
 }

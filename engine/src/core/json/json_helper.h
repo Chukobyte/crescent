@@ -23,14 +23,14 @@ double json_get_double_default(cJSON* json, const char* key, double defaultValue
 bool json_get_bool(cJSON* json, const char* key);
 bool json_get_bool_default(cJSON* json, const char* key, bool defaultValue);
 
-SEVector2 json_get_vec2(cJSON* json, const char* key);
-SEVector2 json_get_vec2_default(cJSON* json, const char* key, SEVector2 defaultValue);
+SKAVector2 json_get_vec2(cJSON* json, const char* key);
+SKAVector2 json_get_vec2_default(cJSON* json, const char* key, SKAVector2 defaultValue);
 
-SESize2D json_get_size2d(cJSON* json, const char* key);
-SESize2D json_get_size2d_default(cJSON* json, const char* key, SESize2D defaultValue);
+SKASize2D json_get_size2d(cJSON* json, const char* key);
+SKASize2D json_get_size2d_default(cJSON* json, const char* key, SKASize2D defaultValue);
 
-SERect2 json_get_rect2(cJSON* json, const char* key);
-SERect2 json_get_rect2_default(cJSON* json, const char* key, SERect2 defaultValue);
+SKARect2 json_get_rect2(cJSON* json, const char* key);
+SKARect2 json_get_rect2_default(cJSON* json, const char* key, SKARect2 defaultValue);
 
-SEColor json_get_linear_color(cJSON* json, const char* key);
-SEColor json_get_linear_color_default(cJSON* json, const char* key, SEColor defaultValue);
+SKAColor json_get_linear_color(cJSON* json, const char* key);
+SKAColor json_get_linear_color_default(cJSON* json, const char* key, SKAColor defaultValue);

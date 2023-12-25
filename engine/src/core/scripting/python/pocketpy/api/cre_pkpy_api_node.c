@@ -210,9 +210,9 @@ int cre_pkpy_api_node_get_total_time_dilation(pkpy_vm* vm) {
 
 //--- NODE2D ---//
 
-void cre_pkpy_update_entity_local_position(CreEntity entity, SEVector2* position) {
+void cre_pkpy_update_entity_local_position(CreEntity entity, SKAVector2* position) {
     Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity,CreComponentDataIndex_TRANSFORM_2D);
-    const SEVector2 prevPosition = transformComp->localTransform.position;
+    const SKAVector2 prevPosition = transformComp->localTransform.position;
     transformComp->localTransform.position.x = position->x;
     transformComp->localTransform.position.y = position->y;
     transformComp->isGlobalTransformDirty = true;
@@ -221,9 +221,9 @@ void cre_pkpy_update_entity_local_position(CreEntity entity, SEVector2* position
     }
 }
 
-void cre_pkpy_update_entity_local_scale(CreEntity entity, SEVector2 * scale) {
+void cre_pkpy_update_entity_local_scale(CreEntity entity, SKAVector2 * scale) {
     Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity,CreComponentDataIndex_TRANSFORM_2D);
-    const SEVector2 prevScale = transformComp->localTransform.scale;
+    const SKAVector2 prevScale = transformComp->localTransform.scale;
     transformComp->localTransform.scale.x = scale->x;
     transformComp->localTransform.scale.y = scale->y;
     transformComp->isGlobalTransformDirty = true;
@@ -251,7 +251,7 @@ int cre_pkpy_api_node2d_set_position(pkpy_vm* vm) {
     pkpy_to_float(vm, 2, &positionY);
 
     const CreEntity entity = (CreEntity)pyEntityId;
-    cre_pkpy_update_entity_local_position(entity, &(SEVector2){ (float)positionX, (float)positionY });
+    cre_pkpy_update_entity_local_position(entity, &(SKAVector2){ (float)positionX, (float)positionY });
     return 0;
 }
 
@@ -265,7 +265,7 @@ int cre_pkpy_api_node2d_add_to_position(pkpy_vm* vm) {
 
     const CreEntity entity = (CreEntity)pyEntityId;
     const Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_TRANSFORM_2D);
-    cre_pkpy_update_entity_local_position(entity, &(SEVector2){
+    cre_pkpy_update_entity_local_position(entity, &(SKAVector2){
             transformComp->localTransform.position.x + (float)positionX,
             transformComp->localTransform.position.y + (float)positionY
     });
@@ -289,7 +289,7 @@ int cre_pkpy_api_node2d_get_global_position(pkpy_vm* vm) {
 
     const CreEntity entity = (CreEntity)pyEntityId;
     Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_TRANSFORM_2D);
-    SETransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity, transformComp);
+    SKATransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity, transformComp);
     pkpy_push_float(vm, (double)globalTransform->position.x);
     pkpy_push_float(vm, (double)globalTransform->position.y);
     return 2;
@@ -304,7 +304,7 @@ int cre_pkpy_api_node2d_set_scale(pkpy_vm* vm) {
     pkpy_to_float(vm, 2, &scaleY);
 
     const CreEntity entity = (CreEntity)pyEntityId;
-    cre_pkpy_update_entity_local_scale(entity, &(SEVector2){(float)scaleX, (float)scaleY });
+    cre_pkpy_update_entity_local_scale(entity, &(SKAVector2){(float)scaleX, (float)scaleY });
     return 0;
 }
 
@@ -318,7 +318,7 @@ int cre_pkpy_api_node2d_add_to_scale(pkpy_vm* vm) {
 
     const CreEntity entity = (CreEntity)pyEntityId;
     const Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_TRANSFORM_2D);
-    cre_pkpy_update_entity_local_scale(entity, &(SEVector2){
+    cre_pkpy_update_entity_local_scale(entity, &(SKAVector2){
             transformComp->localTransform.scale.x + (float)scaleX,
             transformComp->localTransform.scale.y + (float)scaleY
     });
@@ -492,7 +492,7 @@ int cre_pkpy_api_sprite_set_draw_source(pkpy_vm* vm) {
 
     const CreEntity entity = (CreEntity)pyEntityId;
     SpriteComponent* spriteComponent = (SpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_SPRITE);
-    spriteComponent->drawSource = (SERect2){ (float)pyDrawSourceX, (float)pyDrawSourceY, (float)pyDrawSourceW, (float)pyDrawSourceH };
+    spriteComponent->drawSource = (SKARect2){ (float)pyDrawSourceX, (float)pyDrawSourceY, (float)pyDrawSourceW, (float)pyDrawSourceH };
     return 0;
 }
 
@@ -567,7 +567,7 @@ int cre_pkpy_api_sprite_set_modulate(pkpy_vm* vm) {
 
     const CreEntity entity = (CreEntity)pyEntityId;
     SpriteComponent* spriteComponent = (SpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_SPRITE);
-    spriteComponent->modulate = (SEColor){(float)pyModulateR, (float)pyModulateG, (float)pyModulateB, (float)pyModulateA };
+    spriteComponent->modulate = (SKAColor){(float)pyModulateR, (float)pyModulateG, (float)pyModulateB, (float)pyModulateA };
     return 0;
 }
 
@@ -592,7 +592,7 @@ int cre_pkpy_api_sprite_set_origin(pkpy_vm* vm) {
 
     const CreEntity entity = (CreEntity)pyEntityId;
     SpriteComponent* spriteComponent = (SpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_SPRITE);
-    spriteComponent->origin = (SEVector2){ (float)pyOriginX, (float)pyOriginY };
+    spriteComponent->origin = (SKAVector2){ (float)pyOriginX, (float)pyOriginY };
     return 0;
 }
 
@@ -655,7 +655,7 @@ int cre_pkpy_api_animated_sprite_set_current_animation_frame(pkpy_vm* vm) {
 
     const CreEntity entity = (CreEntity)pyEntityId;
     AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_ANIMATED_SPRITE);
-    animatedSpriteComponent->currentAnimation.currentFrame = se_math_clamp_int(pyFrame, 0, animatedSpriteComponent->currentAnimation.frameCount - 1);
+    animatedSpriteComponent->currentAnimation.currentFrame = ska_math_clamp_int(pyFrame, 0, animatedSpriteComponent->currentAnimation.frameCount - 1);
     return 0;
 }
 
@@ -805,7 +805,7 @@ int cre_pkpy_api_animated_sprite_set_modulate(pkpy_vm* vm) {
 
     const CreEntity entity = (CreEntity)pyEntityId;
     AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_ANIMATED_SPRITE);
-    animatedSpriteComponent->modulate = (SEColor){(float)pyModulateR, (float)pyModulateG, (float)pyModulateB, (float)pyModulateA };
+    animatedSpriteComponent->modulate = (SKAColor){(float)pyModulateR, (float)pyModulateG, (float)pyModulateB, (float)pyModulateA };
     return 0;
 }
 
@@ -830,7 +830,7 @@ int cre_pkpy_api_animated_sprite_set_origin(pkpy_vm* vm) {
 
     const CreEntity entity = (CreEntity)pyEntityId;
     AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_ANIMATED_SPRITE);
-    animatedSpriteComponent->origin = (SEVector2){ (float)pyOriginX, (float)pyOriginY };
+    animatedSpriteComponent->origin = (SKAVector2){ (float)pyOriginX, (float)pyOriginY };
     return 0;
 }
 
@@ -912,7 +912,7 @@ int cre_pkpy_api_text_label_set_color(pkpy_vm* vm) {
 
     const CreEntity entity = (CreEntity)pyEntityId;
     TextLabelComponent* textLabelComponent = (TextLabelComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_TEXT_LABEL);
-    textLabelComponent->color = se_color_get_normalized_color(pyRed, pyGreen, pyBlue, pyAlpha);
+    textLabelComponent->color = ska_color_get_normalized_color(pyRed, pyGreen, pyBlue, pyAlpha);
     return 0;
 }
 
@@ -955,7 +955,7 @@ int cre_pkpy_api_collider2d_set_extents(pkpy_vm* vm) {
 
     const CreEntity entity = (CreEntity)pyEntityId;
     Collider2DComponent* collider2DComponent = (Collider2DComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_COLLIDER_2D);
-    collider2DComponent->extents = (SESize2D){ (float)pyExtentsX, (float)pyExtentsY };
+    collider2DComponent->extents = (SKASize2D){ (float)pyExtentsX, (float)pyExtentsY };
     return 0;
 }
 
@@ -983,7 +983,7 @@ int cre_pkpy_api_collider2d_set_color(pkpy_vm* vm) {
 
     const CreEntity entity = (CreEntity)pyEntityId;
     Collider2DComponent* collider2DComponent = (Collider2DComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_COLLIDER_2D);
-    collider2DComponent->color = (SEColor){ (float)pyRed, (float)pyGreen, (float)pyBlue, (float)pyAlpha };
+    collider2DComponent->color = (SKAColor){ (float)pyRed, (float)pyGreen, (float)pyBlue, (float)pyAlpha };
     return 0;
 }
 
@@ -1009,7 +1009,7 @@ int cre_pkpy_api_color_rect_set_size(pkpy_vm* vm) {
 
     const CreEntity entity = (CreEntity)pyEntityId;
     ColorRectComponent* colorRectComponent = (ColorRectComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_COLOR_RECT);
-    colorRectComponent->size = (SESize2D){ (float)pySizeW, (float)pySizeH };
+    colorRectComponent->size = (SKASize2D){ (float)pySizeW, (float)pySizeH };
     return 0;
 }
 
@@ -1037,7 +1037,7 @@ int cre_pkpy_api_color_rect_set_color(pkpy_vm* vm) {
 
     const CreEntity entity = (CreEntity)pyEntityId;
     ColorRectComponent* colorRectComponent = (ColorRectComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_COLOR_RECT);
-    colorRectComponent->color = (SEColor){ (float)pyRed, (float)pyGreen, (float)pyBlue, (float)pyAlpha };
+    colorRectComponent->color = (SKAColor){ (float)pyRed, (float)pyGreen, (float)pyBlue, (float)pyAlpha };
     return 0;
 }
 
@@ -1063,6 +1063,6 @@ int cre_pkpy_api_parallax_set_scroll_speed(pkpy_vm* vm) {
 
     const CreEntity entity = (CreEntity)pyEntityId;
     ParallaxComponent* parallaxComponent = (ParallaxComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_PARALLAX);
-    parallaxComponent->scrollSpeed = (SEVector2){ (float)pySpeedX, (float)pySpeedY };
+    parallaxComponent->scrollSpeed = (SKAVector2){ (float)pySpeedX, (float)pySpeedY };
     return 0;
 }

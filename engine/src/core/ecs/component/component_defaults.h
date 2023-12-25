@@ -1,27 +1,27 @@
 #pragma once
 
-#define DEFAULT_COMPONENT_TRANSFORM2D_POSITION (SEVector2) { .x = 0.0f, .y = 0.0f }
-#define DEFAULT_COMPONENT_TRANSFORM2D_SCALE (SEVector2) { .x = 1.0f, .y = 1.0f }
+#define DEFAULT_COMPONENT_TRANSFORM2D_POSITION (SKAVector2) { .x = 0.0f, .y = 0.0f }
+#define DEFAULT_COMPONENT_TRANSFORM2D_SCALE (SKAVector2) { .x = 1.0f, .y = 1.0f }
 #define DEFAULT_COMPONENT_TRANSFORM2D_ROTATION 0.0f
 #define DEFAULT_COMPONENT_TRANSFORM2D_Z_INDEX 0
 #define DEFAULT_COMPONENT_TRANSFORM2D_Z_INDEX_RELATIVE_TO_PARENT true
 #define DEFAULT_COMPONENT_TRANSFORM2D_IGNORE_CAMERA false
 
-#define DEFAULT_COMPONENT_SPRITE_ORIGIN (SEVector2) { .x = 0.0f, .y = 0.0f }
+#define DEFAULT_COMPONENT_SPRITE_ORIGIN (SKAVector2) { .x = 0.0f, .y = 0.0f }
 #define DEFAULT_COMPONENT_SPRITE_FLIP_H false
 #define DEFAULT_COMPONENT_SPRITE_FLIP_V false
-#define DEFAULT_COMPONENT_SPRITE_MODULATE (SEColor) { .r = 1.0f, .g = 1.0f, .b = 1.0f, .a = 1.0f }
+#define DEFAULT_COMPONENT_SPRITE_MODULATE (SKAColor) { .r = 1.0f, .g = 1.0f, .b = 1.0f, .a = 1.0f }
 
-#define DEFAULT_COMPONENT_ANIMATED_SPRITE_ORIGIN (SEVector2) { .x = 0.0f, .y = 0.0f }
-#define DEFAULT_COMPONENT_ANIMATED_SPRITE_MODULATE (SEColor) { .r = 1.0f, .g = 1.0f, .b = 1.0f, .a = 1.0f }
+#define DEFAULT_COMPONENT_ANIMATED_SPRITE_ORIGIN (SKAVector2) { .x = 0.0f, .y = 0.0f }
+#define DEFAULT_COMPONENT_ANIMATED_SPRITE_MODULATE (SKAColor) { .r = 1.0f, .g = 1.0f, .b = 1.0f, .a = 1.0f }
 #define DEFAULT_COMPONENT_ANIMATED_SPRITE_FLIP_H false
 #define DEFAULT_COMPONENT_ANIMATED_SPRITE_FLIP_V false
 #define DEFAULT_COMPONENT_ANIMATED_SPRITE_SHOULD_RANDOMLY_STAGGER_START_ANIMATION_TIMES false
 
-#define DEFAULT_COMPONENT_TEXT_LABEL_COLOR (SEColor) { .r = 1.0f, .g = 1.0f, .b = 1.0f, .a = 1.0f }
+#define DEFAULT_COMPONENT_TEXT_LABEL_COLOR (SKAColor) { .r = 1.0f, .g = 1.0f, .b = 1.0f, .a = 1.0f }
 
-#define DEFAULT_COMPONENT_COLLIDER2D_COLOR (SEColor) { .r = 1.0f, .g = 1.0f, .b = 1.0f, .a = 1.0f }
+#define DEFAULT_COMPONENT_COLLIDER2D_COLOR (SKAColor) { .r = 1.0f, .g = 1.0f, .b = 1.0f, .a = 1.0f }
 
-#define DEFAULT_COMPONENT_COLOR_RECT_COLOR (SEColor) { .r = 1.0f, .g = 1.0f, .b = 1.0f, .a = 1.0f }
+#define DEFAULT_COMPONENT_COLOR_RECT_COLOR (SKAColor) { .r = 1.0f, .g = 1.0f, .b = 1.0f, .a = 1.0f }
 
-#define DEFAULT_COMPONENT_PARALLAX_SCROLL_SPEED (SEVector2) { .x = 0.0f, .y = 0.0f }
+#define DEFAULT_COMPONENT_PARALLAX_SCROLL_SPEED (SKAVector2) { .x = 0.0f, .y = 0.0f }

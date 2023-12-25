@@ -9,7 +9,7 @@
 
 typedef struct CreAnimationFrame {
     SETexture* texture;
-    SERect2 drawSource;
+    SKARect2 drawSource;
     int frame;
 } CreAnimationFrame;
 

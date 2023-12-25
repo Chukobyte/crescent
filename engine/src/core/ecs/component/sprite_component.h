@@ -12,11 +12,11 @@ extern "C" {
 
 typedef struct SpriteComponent {
     SETexture* texture;
-    SERect2 drawSource;
-    SEVector2 origin;
+    SKARect2 drawSource;
+    SKAVector2 origin;
     bool flipH;
     bool flipV;
-    SEColor modulate;
+    SKAColor modulate;
     SEShaderInstanceId shaderInstanceId;
 } SpriteComponent;
 

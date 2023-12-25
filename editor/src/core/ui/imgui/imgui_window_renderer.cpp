@@ -9,7 +9,7 @@
 
 #include "../../editor_context.h"
 
-const SEColor WINDOW_BACKGROUND_COLOR = { 0.1f, 0.1f, 0.1f, 1.0f };
+const SKAColor WINDOW_BACKGROUND_COLOR = { 0.1f, 0.1f, 0.1f, 1.0f };
 
 void ImGuiHelper::WindowRenderer::Render(const std::vector<TextureRenderTarget>& textureRenderTargets, const std::vector<FontRenderTarget>& fontRenderTargets) {
     // New frame

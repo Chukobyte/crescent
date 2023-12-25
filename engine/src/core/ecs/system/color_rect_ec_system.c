@@ -14,7 +14,7 @@
 
 CreEntitySystem* colorRectSystem = NULL;
 SETexture* colorRectTexture = NULL;
-SERect2 colorRectDrawSource = { 0.0f, 0.0f, 1.0f, 1.0f };
+SKARect2 colorRectDrawSource = { 0.0f, 0.0f, 1.0f, 1.0f };
 
 void color_rect_system_render();
 void color_rect_system_on_ec_system_destroy();
@@ -46,11 +46,11 @@ void color_rect_system_render() {
         const ColorRectComponent* colorRectComponent = (ColorRectComponent *) cre_component_manager_get_component(
                     entity, CreComponentDataIndex_COLOR_RECT);
         const CRECamera2D* renderCamera = transformComp->ignoreCamera ? defaultCamera : camera2D;
-        SETransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity, transformComp);
-        static SEVector2 origin = { 0.0f, 0.0f };
+        SKATransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity, transformComp);
+        static SKAVector2 origin = { 0.0f, 0.0f };
         cre_scene_utils_apply_camera_and_origin_translation(globalTransform, &origin, transformComp->ignoreCamera);
         transformComp->isGlobalTransformDirty = true; // TODO: Make global transform const
-        const SESize2D destinationSize = {
+        const SKASize2D destinationSize = {
             colorRectComponent->size.w * renderCamera->zoom.x,
             colorRectComponent->size.h * renderCamera->zoom.y
         };

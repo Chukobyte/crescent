@@ -39,7 +39,7 @@ static void font_rendering_system_render() {
         TextLabelComponent* textLabelComponent = (TextLabelComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_TEXT_LABEL);
         const CRECamera2D* renderCamera = fontTransformComp->ignoreCamera ? defaultCamera : camera2D;
         fontTransformComp->isGlobalTransformDirty = true;
-        const SETransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity, fontTransformComp);
+        const SKATransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity, fontTransformComp);
 
         se_renderer_queue_font_draw_call(
             textLabelComponent->font,

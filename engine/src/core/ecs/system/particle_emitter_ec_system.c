@@ -76,10 +76,10 @@ void particle_emitter_system_render() {
 
         // Particle types can only be Particle2DComponentType_SQUARE (default) and Particle2DComponentType_TEXTURE for now
         SETexture* texture = particles2DComponent->type == Particle2DComponentType_TEXTURE ? particles2DComponent->texture : particleSquareTexture;
-        const SERect2 particleDrawSource = (SERect2){ 0.0f, 0.0f, 0.0f, 0.0f };
-        const SESize2D particleSize = (SESize2D){ 0.0f * renderCamera->zoom.x, 0.0f * renderCamera->zoom.y };
+        const SKARect2 particleDrawSource = (SKARect2){ 0.0f, 0.0f, 0.0f, 0.0f };
+        const SKASize2D particleSize = (SKASize2D){ 0.0f * renderCamera->zoom.x, 0.0f * renderCamera->zoom.y };
         // TODO: Use real global transform
-        SETransformModel2D globalTransform = {0};
+        SKATransformModel2D globalTransform = {0};
         se_renderer_queue_sprite_draw_call(
                 texture,
                 particleDrawSource,

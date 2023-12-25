@@ -16,16 +16,16 @@ typedef enum Particle2DComponentType {
 typedef struct Particles2DComponent {
     // Configuration
     int amount;
-    SEVector2 linearVelocity;
-    SEVector2 linearAcceleration;
-    SEColor color;
+    SKAVector2 linearVelocity;
+    SKAVector2 linearAcceleration;
+    SKAColor color;
     // Sets initial 'timeActive' on CreParticle2D
     float lifeTime;
     float damping;
     Particle2DComponentType type;
     union {
         struct SETexture* texture;
-        SEVector2 squareSize;
+        SKAVector2 squareSize;
     };
     CreParticle2D particles[CRE_PARTICLES_2D_MAX];
 } Particles2DComponent;

@@ -37,10 +37,10 @@ void sprite_rendering_system_render() {
         Transform2DComponent* spriteTransformComp = (Transform2DComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_TRANSFORM_2D);
         SpriteComponent* spriteComponent = (SpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_SPRITE);
         const CRECamera2D* renderCamera = spriteTransformComp->ignoreCamera ? defaultCamera : camera2D;
-        SETransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity, spriteTransformComp);
+        SKATransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity, spriteTransformComp);
         cre_scene_utils_apply_camera_and_origin_translation(globalTransform, &spriteComponent->origin, spriteTransformComp->ignoreCamera);
         spriteTransformComp->isGlobalTransformDirty = true; // TODO: Make global transform const
-        const SESize2D destinationSize = {
+        const SKASize2D destinationSize = {
             spriteComponent->drawSource.w * renderCamera->zoom.x,
             spriteComponent->drawSource.h * renderCamera->zoom.y
         };
