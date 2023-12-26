@@ -48,12 +48,12 @@ ImGuiHelper::Window OpenedProjectUI::Windows::GetSceneViewWindow() {
                 static SETexture* whiteRectTexture = se_texture_create_solid_colored_texture(1, 1, 255);
                 SETexture* renderTargetTexture = nullptr;
                 cre_scene_utils_update_global_transform_model(node->GetUID(), &globalTransforms[index]);
-                SKARect2 sourceRect = { 0.0f, 0.0f, 0.0f, 0.0f };
-                SKASize2D destSize = { 0.0f, 0.0f };
-                SKAColor color = { 1.0f, 1.0f, 1.0f, 1.0f };
+                SKARect2 sourceRect = SKA_RECT2D_ZERO;
+                SKASize2D destSize = SKA_SIZE2D_ZERO;
+                SKAColor color = SKA_COLOR_WHITE;
                 bool flipH = false;
                 bool flipV = false;
-                SKAVector2 origin = { 0.0f, 0.0f };
+                SKAVector2 origin = SKA_VECTOR2_ZERO;
                 hasTexture = true;
                 if (auto* spriteComp = node->GetComponentSafe<SpriteComp>()) {
                     renderTargetTexture = assetManager->GetTexture(spriteComp->texturePath.c_str());
@@ -120,7 +120,7 @@ ImGuiHelper::Window OpenedProjectUI::Windows::GetSceneViewWindow() {
                         if (auto* textLabelComp = node->GetComponentSafe<TextLabelComp>()) {
                             SKATransformModel2D globalTransform = { transformComp->transform2D.position, transformComp->transform2D.scale, transformComp->transform2D.rotation };
                             cre_scene_utils_update_global_transform_model(node->GetUID(), &globalTransform);
-                            static SKAVector2 textLabelOrigin = { 0.0f, 0.0f };
+                            static SKAVector2 textLabelOrigin = SKA_VECTOR2_ZERO;
                             cre_scene_utils_apply_camera_and_origin_translation(&globalTransform, &textLabelOrigin, transformComp->ignoreCamera);
                             const char* renderFontUID = !textLabelComp->fontUID.empty() ? textLabelComp->fontUID.c_str() : CRE_DEFAULT_FONT_ASSET.uid;
                             const ImGuiHelper::FontRenderTarget renderTarget = {

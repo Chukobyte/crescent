@@ -10,6 +10,8 @@
 #include "../component/transform2d_component.h"
 #include "../../camera/camera.h"
 #include "../../camera/camera_manager.h"
+#include "../../scene/scene_manager.h"
+#include "../../scene/scene_utils.h"
 
 CreEntitySystem* particle_emitter_system = NULL;
 SETexture* particleSquareTexture = NULL;
@@ -76,10 +78,11 @@ void particle_emitter_system_render() {
 
         // Particle types can only be Particle2DComponentType_SQUARE (default) and Particle2DComponentType_TEXTURE for now
         SETexture* texture = particles2DComponent->type == Particle2DComponentType_TEXTURE ? particles2DComponent->texture : particleSquareTexture;
-        const SKARect2 particleDrawSource = (SKARect2){ 0.0f, 0.0f, 0.0f, 0.0f };
+        const SKARect2 particleDrawSource = SKA_RECT2D_ZERO;
         const SKASize2D particleSize = (SKASize2D){ 0.0f * renderCamera->zoom.x, 0.0f * renderCamera->zoom.y };
-        // TODO: Use real global transform
-        SKATransformModel2D globalTransform = {0};
+        SKATransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity, particleTransformComp);
+        cre_scene_utils_apply_camera_and_origin_translation(globalTransform, &SKA_VECTOR2_ZERO, particleTransformComp->ignoreCamera);
+
         se_renderer_queue_sprite_draw_call(
                 texture,
                 particleDrawSource,
@@ -87,7 +90,7 @@ void particle_emitter_system_render() {
                 particles2DComponent->color,
                 false,
                 false,
-                &globalTransform,
+                globalTransform,
                 particleTransformComp->zIndex,
                 NULL
         );
