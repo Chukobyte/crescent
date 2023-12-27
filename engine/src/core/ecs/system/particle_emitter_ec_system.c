@@ -65,8 +65,8 @@ void particle_emitter_system_on_entity_entered_scene(CreEntity entity) {
     Particles2DComponent* particles2DComponent = (Particles2DComponent*)cre_component_manager_get_component_unchecked(entity, CreComponentDataIndex_PARTICLES_2D);
     for (int pi = 0; pi < particles2DComponent->amount; pi++) {
         CreParticle2D* particle2D = &particles2DComponent->particles[pi];
-        particle2D->forceAccumulated.x += particles2DComponent->initialVelocity.x;
-        particle2D->forceAccumulated.y += particles2DComponent->initialVelocity.y;
+        particle2D->linearVelocity.x += particles2DComponent->initialVelocity.x;
+        particle2D->linearVelocity.y += particles2DComponent->initialVelocity.y;
     }
 }
 
