@@ -19,6 +19,7 @@ SETexture* particleSquareTexture = NULL;
 static void particle_emitter_system_on_ec_system_destroy();
 static void particle_emitter_system_on_entity_registered(CreEntity entity);
 static void particle_emitter_system_on_entity_unregistered(CreEntity entity);
+static void particle_emitter_system_on_entity_entered_scene(CreEntity entity);
 static void particle_emitter_system_fixed_update(float deltaTime);
 static void particle_emitter_system_render();
 
@@ -32,6 +33,7 @@ CreEntitySystem* cre_particle_emitter_ec_system_create_ex(SETexture* squareTextu
     particle_emitter_system->name = se_strdup("Particle Emitter");
     particle_emitter_system->on_entity_registered_func = particle_emitter_system_on_entity_registered;
     particle_emitter_system->on_entity_unregistered_func = particle_emitter_system_on_entity_unregistered;
+    particle_emitter_system->on_entity_entered_scene_func = particle_emitter_system_on_entity_entered_scene;
     particle_emitter_system->on_ec_system_destroy = particle_emitter_system_on_ec_system_destroy;
     particle_emitter_system->fixed_update_func = particle_emitter_system_fixed_update;
     particle_emitter_system->render_func = particle_emitter_system_render;
@@ -56,6 +58,16 @@ void particle_emitter_system_on_entity_registered(CreEntity entity) {
 
 void particle_emitter_system_on_entity_unregistered(CreEntity entity) {
 
+}
+
+void particle_emitter_system_on_entity_entered_scene(CreEntity entity) {
+    // Set initial velocity for particles
+    Particles2DComponent* particles2DComponent = (Particles2DComponent*)cre_component_manager_get_component_unchecked(entity, CreComponentDataIndex_PARTICLES_2D);
+    for (int pi = 0; pi < particles2DComponent->amount; pi++) {
+        CreParticle2D* particle2D = &particles2DComponent->particles[pi];
+        particle2D->forceAccumulated.x += particles2DComponent->initialVelocity.x;
+        particle2D->forceAccumulated.y += particles2DComponent->initialVelocity.y;
+    }
 }
 
 void particle_emitter_system_fixed_update(float deltaTime) {

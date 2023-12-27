@@ -16,7 +16,7 @@ typedef enum Particle2DComponentType {
 typedef struct Particles2DComponent {
     // Configuration
     int amount;
-    SKAVector2 linearVelocity;
+    SKAVector2 initialVelocity;
     SKAVector2 linearAcceleration;
     SKAColor color;
     // Sets initial 'timeActive' on CreParticle2D

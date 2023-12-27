@@ -8,7 +8,7 @@
 Particles2DComponent* particles2d_component_create() {
     Particles2DComponent* particles2DComponent = SE_MEM_ALLOCATE(Particles2DComponent);
     particles2DComponent->amount = 0;
-    particles2DComponent->linearVelocity = SKA_VECTOR2_ZERO;
+    particles2DComponent->initialVelocity = SKA_VECTOR2_ZERO;
     particles2DComponent->linearAcceleration = SKA_VECTOR2_ZERO;
     particles2DComponent->color = SKA_COLOR_WHITE;
     particles2DComponent->lifeTime = 0.0f;
@@ -36,8 +36,12 @@ void particles2d_component_set_default_particles(Particles2DComponent* particles
     .position = SKA_VECTOR2_ZERO, \
     .linearVelocity = SKA_VECTOR2_ZERO, \
     .acceleration = SKA_VECTOR2_ZERO, \
+    .forceAccumulated = SKA_VECTOR2_ZERO, \
+    .gravity = SKA_VECTOR2_ZERO, \
     .color = SKA_COLOR_WHITE, \
-    .timeActive = 8.0f \
+    .timeActive = 8.0f, \
+    .damping = CRE_PARTICLE2D_DEFAULT_DAMPING, \
+    .inverseMass = 1.0f \
 }
 
     for (int i = 0; i < particles2DComponent->amount; i++) {

@@ -4,12 +4,15 @@
 
 // Particle
 
+#define CRE_PARTICLE2D_DEFAULT_DAMPING 0.999f
+
 // CPU representation of a particle.
 typedef struct CreParticle2D {
     SKAVector2 position;
     SKAVector2 linearVelocity;
     SKAVector2 acceleration;
     SKAVector2 forceAccumulated;
+    SKAVector2 gravity;
     SKAColor color;
     float timeActive;
     float damping;

@@ -15,7 +15,7 @@ void cre_particle2d_set_mass(CreParticle2D* particle2D, float mass) {
 }
 
 float cre_particle2d_get_mass(CreParticle2D* particle2D) {
-    return particle2D->inverseMass > 0.0f ? 1.0f / particle2D->inverseMass : FLT_MAX;
+    return particle2D->inverseMass >= 0.0f ? 1.0f / particle2D->inverseMass : FLT_MAX;
 }
 
 //--- Particle System ---//
