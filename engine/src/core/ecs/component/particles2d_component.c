@@ -8,9 +8,9 @@
 Particles2DComponent* particles2d_component_create() {
     Particles2DComponent* particles2DComponent = SE_MEM_ALLOCATE(Particles2DComponent);
     particles2DComponent->amount = 0;
-    particles2DComponent->linearVelocity = (SKAVector2){ 0.0f, 0.0f };
-    particles2DComponent->linearAcceleration = (SKAVector2){ 0.0f, 0.0f };
-    particles2DComponent->color = (SKAColor){ 1.0f, 1.0f, 1.0f, 1.0f };
+    particles2DComponent->linearVelocity = SKA_VECTOR2_ZERO;
+    particles2DComponent->linearAcceleration = SKA_VECTOR2_ZERO;
+    particles2DComponent->color = SKA_COLOR_WHITE;
     particles2DComponent->lifeTime = 0.0f;
     particles2DComponent->damping = 1.0f;
     particles2DComponent->type = Particle2DComponentType_SQUARE;
@@ -33,10 +33,10 @@ Particles2DComponent* particles2d_component_copy(const Particles2DComponent* par
 
 void particles2d_component_set_default_particles(Particles2DComponent* particles2DComponent) {
 #define DEFAULT_PARTICLE2D (CreParticle2D){ \
-    .position = (SKAVector2){ 0.0f, 0.0f }, \
-    .linearVelocity = (SKAVector2){ 0.0f, 0.0f }, \
-    .acceleration = (SKAVector2){ 0.0f, 0.0f }, \
-    .color = (SKAColor){ 1.0f, 1.0f, 1.0f, 1.0f }, \
+    .position = SKA_VECTOR2_ZERO, \
+    .linearVelocity = SKA_VECTOR2_ZERO, \
+    .acceleration = SKA_VECTOR2_ZERO, \
+    .color = SKA_COLOR_WHITE, \
     .timeActive = 8.0f \
 }
 
