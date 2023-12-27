@@ -61,7 +61,10 @@ void particle_emitter_system_on_entity_unregistered(CreEntity entity) {
 void particle_emitter_system_fixed_update(float deltaTime) {
     for (size_t i = 0; i < particle_emitter_system->entity_count; i++) {
         const CreEntity entity = particle_emitter_system->entities[i];
-        const Particles2DComponent* particles2DComponent = (Particles2DComponent*)cre_component_manager_get_component_unchecked(entity, CreComponentDataIndex_PARTICLES_2D);
+        Particles2DComponent* particles2DComponent = (Particles2DComponent*)cre_component_manager_get_component_unchecked(entity, CreComponentDataIndex_PARTICLES_2D);
+        for (int pi = 0; pi < particles2DComponent->amount; pi++) {
+            cre_particle_system_integrate(&particles2DComponent->particles[pi], deltaTime);
+        }
     }
 }
 

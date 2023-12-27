@@ -38,6 +38,7 @@ add_library(${PROJECT_NAME} STATIC
         src/core/scripting/native/internal_classes/fps_display_class.c
         src/core/utils/command_line_args_util.c
         src/core/physics/collision/collision.c
+        src/core/physics/particle/particle.c
         src/core/camera/camera.c
         src/core/camera/camera_manager.c
         src/core/ecs/ecs_manager.c

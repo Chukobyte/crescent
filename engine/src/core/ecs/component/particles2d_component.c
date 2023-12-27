@@ -34,7 +34,7 @@ Particles2DComponent* particles2d_component_copy(const Particles2DComponent* par
 void particles2d_component_set_default_particles(Particles2DComponent* particles2DComponent) {
 #define DEFAULT_PARTICLE2D (CreParticle2D){ \
     .position = (SKAVector2){ 0.0f, 0.0f }, \
-    .velocity = (SKAVector2){ 0.0f, 0.0f }, \
+    .linearVelocity = (SKAVector2){ 0.0f, 0.0f }, \
     .acceleration = (SKAVector2){ 0.0f, 0.0f }, \
     .color = (SKAColor){ 1.0f, 1.0f, 1.0f, 1.0f }, \
     .timeActive = 8.0f \

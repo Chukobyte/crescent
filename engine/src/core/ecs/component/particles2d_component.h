@@ -4,7 +4,7 @@
 extern "C" {
 #endif
 
-#include "../../particles/particle.h"
+#include "../../physics/particle/particle.h"
 
 #define CRE_PARTICLES_2D_MAX 100
 
