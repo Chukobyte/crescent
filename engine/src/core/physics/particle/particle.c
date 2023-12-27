@@ -30,7 +30,17 @@ void cre_particle_system_integrate(CreParticle2D* particle2D, float duration) {
     // Update position
     add_scaled_vector2(&particle2D->position, &particle2D->linearVelocity, duration);
 
+    // Update acceleration
+    SKAVector2 acceleration = particle2D->acceleration;
+    add_scaled_vector2(&acceleration, &particle2D->forceAccumulated, particle2D->inverseMass);
+
+    // Update linear velocity
+    add_scaled_vector2(&particle2D->linearVelocity, &acceleration, duration);
+
     // Apply drag
     particle2D->linearVelocity.x *= powf(particle2D->damping, duration);
     particle2D->linearVelocity.y *= powf(particle2D->damping, duration);
+
+    // Clear out accumulated forces
+    particle2D->forceAccumulated = SKA_VECTOR2_ZERO;
 }
