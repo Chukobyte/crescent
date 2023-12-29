@@ -98,6 +98,7 @@ void particle_emitter_system_render() {
         const SKASize2D particleSize = (SKASize2D){ tempParticleSize.x * renderCamera->zoom.x, tempParticleSize.y * renderCamera->zoom.y };
         SKATransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity, particleTransformComp);
         cre_scene_utils_apply_camera_and_origin_translation(globalTransform, &SKA_VECTOR2_ZERO, particleTransformComp->ignoreCamera);
+        particleTransformComp->isGlobalTransformDirty = true;
 
         // TODO: Draw individual particles
 
