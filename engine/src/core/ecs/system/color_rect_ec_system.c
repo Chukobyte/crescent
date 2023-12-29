@@ -41,14 +41,11 @@ void color_rect_system_render() {
 
     for (size_t i = 0; i < colorRectSystem->entity_count; i++) {
         const CreEntity entity = colorRectSystem->entities[i];
-        Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity,
-                                              CreComponentDataIndex_TRANSFORM_2D);
-        const ColorRectComponent* colorRectComponent = (ColorRectComponent *) cre_component_manager_get_component(
-                    entity, CreComponentDataIndex_COLOR_RECT);
+        Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_TRANSFORM_2D);
+        const ColorRectComponent* colorRectComponent = (ColorRectComponent *) cre_component_manager_get_component(entity, CreComponentDataIndex_COLOR_RECT);
         const CRECamera2D* renderCamera = transformComp->ignoreCamera ? defaultCamera : camera2D;
         SKATransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity, transformComp);
-        static SKAVector2 origin = { 0.0f, 0.0f };
-        cre_scene_utils_apply_camera_and_origin_translation(globalTransform, &origin, transformComp->ignoreCamera);
+        cre_scene_utils_apply_camera_and_origin_translation(globalTransform, &SKA_VECTOR2_ZERO, transformComp->ignoreCamera);
         transformComp->isGlobalTransformDirty = true; // TODO: Make global transform const
         const SKASize2D destinationSize = {
             colorRectComponent->size.w * renderCamera->zoom.x,

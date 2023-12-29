@@ -40,7 +40,7 @@ CreEntitySystem* cre_particle_emitter_ec_system_create_ex(SETexture* squareTextu
     particle_emitter_system->component_signature = CreComponentType_TRANSFORM_2D | CreComponentType_PARTICLES_2D;
 
     SE_ASSERT(!particleSquareTexture);
-    particleSquareTexture = !squareTextureOverride ? se_texture_create_solid_colored_texture(1, 1, 255) : squareTextureOverride;
+    particleSquareTexture = squareTextureOverride != NULL ? squareTextureOverride : se_texture_create_solid_colored_texture(1, 1, 255);
     return particle_emitter_system;
 }
 

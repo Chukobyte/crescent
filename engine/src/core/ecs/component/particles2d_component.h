@@ -23,10 +23,13 @@ typedef struct Particles2DComponent {
     float lifeTime;
     float damping;
     Particle2DComponentType type;
-    union {
-        struct SETexture* texture;
-        SKAVector2 squareSize;
-    };
+//    union {
+//        struct SETexture* texture;
+//        SKAVector2 squareSize;
+//    };
+    struct SETexture* texture;
+    SKAVector2 squareSize;
+
     CreParticle2D particles[CRE_PARTICLES_2D_MAX];
 } Particles2DComponent;
 
