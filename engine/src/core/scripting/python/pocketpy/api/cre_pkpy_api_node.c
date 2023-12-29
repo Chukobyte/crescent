@@ -881,10 +881,11 @@ int cre_pkpy_api_text_label_set_text(pkpy_vm* vm) {
     pkpy_to_int(vm, 0, &pyEntityId);
     pkpy_to_string(vm, 1, &pyText);
 
+    static char textBuffer[2048];
+    se_str_trim_by_size(pyText.data, textBuffer, pyText.size);
     const CreEntity entity = (CreEntity)pyEntityId;
-    const char* text = pyText.data;
     TextLabelComponent* textLabelComponent = (TextLabelComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_TEXT_LABEL);
-    se_strcpy(textLabelComponent->text, text);
+    se_strcpy(textLabelComponent->text, textBuffer);
     return 0;
 }
 
