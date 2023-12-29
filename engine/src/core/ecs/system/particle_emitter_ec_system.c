@@ -93,8 +93,9 @@ void particle_emitter_system_render() {
 
         // Particle types can only be Particle2DComponentType_SQUARE (default) and Particle2DComponentType_TEXTURE for now
         SETexture* texture = particles2DComponent->type == Particle2DComponentType_TEXTURE ? particles2DComponent->texture : particleSquareTexture;
-        const SKARect2 particleDrawSource = SKA_RECT2D_ZERO;
-        const SKASize2D particleSize = (SKASize2D){ 0.0f * renderCamera->zoom.x, 0.0f * renderCamera->zoom.y };
+        const SKARect2 particleDrawSource = (SKARect2){ 0.0f, 0.0f, 1.0f, 1.0f };
+        static const SKAVector2 tempParticleSize = { 32.0f, 32.0f };
+        const SKASize2D particleSize = (SKASize2D){ tempParticleSize.x * renderCamera->zoom.x, tempParticleSize.y * renderCamera->zoom.y };
         SKATransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity, particleTransformComp);
         cre_scene_utils_apply_camera_and_origin_translation(globalTransform, &SKA_VECTOR2_ZERO, particleTransformComp->ignoreCamera);
 
