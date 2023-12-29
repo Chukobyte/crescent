@@ -74,6 +74,8 @@ NodeBaseInheritanceType node_get_type_inheritance(NodeBaseType type) {
         return NodeBaseInheritanceType_COLOR_RECT;
     case NodeBaseType_PARALLAX:
         return NodeBaseInheritanceType_PARALLAX;
+    case NodeBaseType_PARTICLES2D:
+        return NodeBaseInheritanceType_PARTICLES2D;
     default:
         break;
     }
@@ -98,6 +100,8 @@ const char* node_get_base_type_string(NodeBaseType type) {
         return CRE_NODE_COLOR_RECT_STRING;
     case NodeBaseType_PARALLAX:
         return CRE_NODE_PARALLAX_STRING;
+    case NodeBaseType_PARTICLES2D:
+        return CRE_NODE_PARTICLES2D_STRING;
     default:
         break;
     }

@@ -9,8 +9,8 @@ extern "C" {
 #define CRE_PARTICLES_2D_MAX 100
 
 typedef enum Particle2DComponentType {
-    Particle2DComponentType_TEXTURE = 0,
-    Particle2DComponentType_SQUARE = 1
+    Particle2DComponentType_SQUARE = 0,
+    Particle2DComponentType_TEXTURE = 1
 } Particle2DComponentType;
 
 typedef struct Particles2DComponent {

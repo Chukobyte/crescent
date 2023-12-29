@@ -37,7 +37,7 @@ void particles2d_component_set_default_particles(Particles2DComponent* particles
     .linearVelocity = SKA_VECTOR2_ZERO, \
     .acceleration = SKA_VECTOR2_ZERO, \
     .forceAccumulated = SKA_VECTOR2_ZERO, \
-    .gravity = SKA_VECTOR2_ZERO, \
+    .gravity = SKA_VECTOR2_DOWN, \
     .color = SKA_COLOR_WHITE, \
     .timeActive = 8.0f, \
     .damping = CRE_PARTICLE2D_DEFAULT_DAMPING, \

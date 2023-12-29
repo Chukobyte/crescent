@@ -825,10 +825,10 @@
 "    Sprite = 4\n"\
 "    AnimatedSprite = 8\n"\
 "    TextLabel = 16\n"\
-"    Script = 32\n"\
-"    Collider2D = 64\n"\
-"    ColorRect = 128\n"\
-"    Parallax = 256\n"\
+"    Collider2D = 32\n"\
+"    ColorRect = 64\n"\
+"    Parallax = 128\n"\
+"    Particles2D = 256\n"\
 "\n"\
 "\n"\
 "class Node:\n"\
@@ -1269,6 +1269,12 @@
 "    @scroll_speed.setter\n"\
 "    def scroll_speed(self, value: Vector2) -> None:\n"\
 "        crescent_internal.parallax_set_scroll_speed(self.entity_id, value.x, value.y)\n"\
+"\n"\
+"\n"\
+"class Particles2D(Node2D):\n"\
+"    @staticmethod\n"\
+"    def new() -> \"Particles2D\":\n"\
+"        return crescent_internal.node_new(\"crescent\", \"Particles2D\", NodeType.Particles2D)\n"\
 "\n"\
 "\n"\
 "class SceneTree:\n"\

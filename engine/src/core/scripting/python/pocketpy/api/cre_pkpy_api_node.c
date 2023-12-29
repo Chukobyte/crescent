@@ -20,6 +20,7 @@
 #include "../../../../ecs/component/parallax_component.h"
 #include "../../../../ecs/component/script_component.h"
 #include "../../../../ecs/system/ec_system.h"
+#include "../../../../ecs/component/particles2d_component.h"
 
 void set_node_component_from_type(CreEntity entity, const char* classPath, const char* className, NodeBaseType baseType) {
 
@@ -49,6 +50,9 @@ void set_node_component_from_type(CreEntity entity, const char* classPath, const
     }
     if ((NodeBaseInheritanceType_PARALLAX & inheritanceType) == NodeBaseInheritanceType_PARALLAX) {
         cre_component_manager_set_component(entity, CreComponentDataIndex_PARALLAX, parallax_component_create());
+    }
+    if ((NodeBaseInheritanceType_PARTICLES2D & inheritanceType) == NodeBaseInheritanceType_PARTICLES2D) {
+        cre_component_manager_set_component(entity, CreComponentDataIndex_PARTICLES_2D, particles2d_component_create());
     }
 }
 
