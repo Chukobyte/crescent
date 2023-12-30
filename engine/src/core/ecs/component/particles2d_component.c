@@ -33,6 +33,7 @@ Particles2DComponent* particles2d_component_copy(const Particles2DComponent* par
 
 void particles2d_component_set_default_particles(Particles2DComponent* particles2DComponent) {
 #define DEFAULT_PARTICLE2D (CreParticle2D){ \
+    .transform = SKA_TRANSFORM_MODEL_IDENTITY, \
     .position = SKA_VECTOR2_ZERO, \
     .linearVelocity = SKA_VECTOR2_ZERO, \
     .acceleration = SKA_VECTOR2_ZERO, \
