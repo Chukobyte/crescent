@@ -8,7 +8,6 @@
 
 // CPU representation of a particle.
 typedef struct CreParticle2D {
-    SKATransformModel2D transform;
     SKAVector2 position;
     SKAVector2 linearVelocity;
     SKAVector2 acceleration;

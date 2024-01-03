@@ -63,6 +63,7 @@ void particle_emitter_system_on_entity_unregistered(CreEntity entity) {
 void particle_emitter_system_on_entity_entered_scene(CreEntity entity) {
     // Set initial velocity for particles
     Particles2DComponent* particles2DComponent = (Particles2DComponent*)cre_component_manager_get_component_unchecked(entity, CreComponentDataIndex_PARTICLES_2D);
+    particles2d_component_set_default_particles(particles2DComponent);
     for (int pi = 0; pi < particles2DComponent->amount; pi++) {
         CreParticle2D* particle2D = &particles2DComponent->particles[pi];
         particle2D->linearVelocity.x += particles2DComponent->initialVelocity.x;
@@ -100,18 +101,28 @@ void particle_emitter_system_render() {
         cre_scene_utils_apply_camera_and_origin_translation(globalTransform, &SKA_VECTOR2_ZERO, particleTransformComp->ignoreCamera);
         particleTransformComp->isGlobalTransformDirty = true;
 
-        // TODO: Draw individual particles
+        // Draw individual particles
+        SKATransform2D baseParticleTransform;
+        ska_transform2d_mat4_to_transform(globalTransform->model, &baseParticleTransform);
 
-        ska_renderer_queue_sprite_draw2(
-                texture,
-                particleDrawSource,
-                particleSize,
-                particles2DComponent->color,
-                false,
-                false,
-                globalTransform->model,
-                particleTransformComp->zIndex,
-                NULL
-        );
+        for (int pi = 0; pi < particles2DComponent->amount; pi++) {
+            const CreParticle2D* particle2D = &particles2DComponent->particles[pi];
+            const SKATransform2D particle2DTransform = {
+                .position = { .x = baseParticleTransform.position.x + particle2D->position.x, .y = baseParticleTransform.position.y + particle2D->position.y },
+                .scale = baseParticleTransform.scale,
+                .rotation = baseParticleTransform.rotation
+            };
+            ska_renderer_queue_sprite_draw(
+                    texture,
+                    particleDrawSource,
+                    particleSize,
+                    particle2D->color,
+                    false,
+                    false,
+                    &particle2DTransform,
+                    particleTransformComp->zIndex,
+                    NULL
+            );
+        }
     }
 }
