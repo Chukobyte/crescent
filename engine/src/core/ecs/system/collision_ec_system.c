@@ -102,14 +102,14 @@ void collision_system_render() {
             colliderComp->extents.w * renderCamera->zoom.x,
             colliderComp->extents.h * renderCamera->zoom.y
         };
-        se_renderer_queue_sprite_draw_call(
+        ska_renderer_queue_sprite_draw2(
             collisionOutlineTexture,
             colliderDrawSource,
             colliderDrawSize,
             colliderComp->color,
             false,
             false,
-            globalTransform,
+            globalTransform->model,
             SE_RENDERER_MAX_Z_INDEX, // Use the max possible z index value to draw colliders on top of other things...
             NULL
         );

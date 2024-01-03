@@ -51,14 +51,14 @@ void color_rect_system_render() {
             colorRectComponent->size.w * renderCamera->zoom.x,
             colorRectComponent->size.h * renderCamera->zoom.y
         };
-        se_renderer_queue_sprite_draw_call(
+        ska_renderer_queue_sprite_draw2(
             colorRectTexture,
             colorRectDrawSource,
             destinationSize,
             colorRectComponent->color,
             false,
             false,
-            globalTransform,
+            globalTransform->model,
             globalTransform->zIndex,
             NULL
         );

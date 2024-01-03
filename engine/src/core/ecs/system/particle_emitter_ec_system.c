@@ -102,14 +102,14 @@ void particle_emitter_system_render() {
 
         // TODO: Draw individual particles
 
-        se_renderer_queue_sprite_draw_call(
+        ska_renderer_queue_sprite_draw2(
                 texture,
                 particleDrawSource,
                 particleSize,
                 particles2DComponent->color,
                 false,
                 false,
-                globalTransform,
+                globalTransform->model,
                 particleTransformComp->zIndex,
                 NULL
         );

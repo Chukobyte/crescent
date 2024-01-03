@@ -44,14 +44,14 @@ void sprite_rendering_system_render() {
             spriteComponent->drawSource.w * renderCamera->zoom.x,
             spriteComponent->drawSource.h * renderCamera->zoom.y
         };
-        se_renderer_queue_sprite_draw_call(
+        ska_renderer_queue_sprite_draw2(
             spriteComponent->texture,
             spriteComponent->drawSource,
             destinationSize,
             spriteComponent->modulate,
             spriteComponent->flipH,
             spriteComponent->flipV,
-            globalTransform,
+            globalTransform->model,
             globalTransform->zIndex,
             se_shader_cache_get_instance_checked(spriteComponent->shaderInstanceId)
         );
