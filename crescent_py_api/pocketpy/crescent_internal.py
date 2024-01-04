@@ -303,6 +303,40 @@ def parallax_set_scroll_speed(entity_id: int, x: float, y: float) -> None:
     pass
 
 
+# --- PARTICLES2D --- #
+
+def particles2d_get_amount(entity_id: int) -> int:
+    return 0
+
+
+def particles2d_set_amount(entity_id: int, amount: int) -> None:
+    pass
+
+
+def particles2d_get_life_time(entity_id: int) -> float:
+    return 0.0
+
+
+def particles2d_set_life_time(entity_id: int, life_time: float) -> None:
+    pass
+
+
+def particles2d_set_color(entity_id: int, r: int, g: int, b: int, a: int) -> None:
+    pass
+
+
+def particles2d_get_color(entity_id: int) -> Tuple[int, int, int, int]:
+    return 0, 0, 0, 0
+
+
+def particles2d_set_initial_velocity(entity_id: int, x: float, y: float) -> None:
+    pass
+
+
+def particles2d_get_initial_velocity(entity_id: int) -> Tuple[float, float]:
+    return 0.0, 0.0
+
+
 # --- SHADER INSTANCE --- #
 
 def shader_instance_delete(shader_id: int) -> bool:

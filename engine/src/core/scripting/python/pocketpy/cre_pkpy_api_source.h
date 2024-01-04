@@ -1276,6 +1276,40 @@
 "    def new() -> \"Particles2D\":\n"\
 "        return crescent_internal.node_new(\"crescent\", \"Particles2D\", NodeType.Particles2D)\n"\
 "\n"\
+"    @property\n"\
+"    def amount(self) -> int:\n"\
+"        return crescent_internal.particles2d_get_amount(self.entity_id)\n"\
+"\n"\
+"    @amount.setter\n"\
+"    def amount(self, value: int) -> None:\n"\
+"        crescent_internal.particles2d_set_amount(self.entity_id, value)\n"\
+"\n"\
+"    @property\n"\
+"    def life_time(self) -> float:\n"\
+"        return crescent_internal.particles2d_get_life_time(self.entity_id)\n"\
+"\n"\
+"    @life_time.setter\n"\
+"    def life_time(self, value: float) -> None:\n"\
+"        crescent_internal.particles2d_set_life_time(self.entity_id, value)\n"\
+"\n"\
+"    @property\n"\
+"    def color(self) -> Color:\n"\
+"        r, g, b, a = crescent_internal.particles2d_get_color(self.entity_id)\n"\
+"        return Color(r, g, b, a)\n"\
+"\n"\
+"    @color.setter\n"\
+"    def color(self, value: Color) -> None:\n"\
+"        crescent_internal.particles2d_set_color(self.entity_id, value.r, value.g, value.b, value.a)\n"\
+"\n"\
+"    @property\n"\
+"    def initial_velocity(self) -> Vector2:\n"\
+"        x, y = crescent_internal.particles2d_get_initial_velocity(self.entity_id)\n"\
+"        return Vector2(x, y)\n"\
+"\n"\
+"    @initial_velocity.setter\n"\
+"    def initial_velocity(self, value: Vector2) -> None:\n"\
+"        crescent_internal.particles2d_set_initial_velocity(self.entity_id, value.x, value.y)\n"\
+"\n"\
 "\n"\
 "class SceneTree:\n"\
 "    @staticmethod\n"\
