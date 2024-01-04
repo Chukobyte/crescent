@@ -37,15 +37,20 @@ void particles2d_component_set_default_particles(Particles2DComponent* particles
     .linearVelocity = SKA_VECTOR2_ZERO, \
     .acceleration = SKA_VECTOR2_ZERO, \
     .forceAccumulated = SKA_VECTOR2_ZERO, \
-    .gravity = SKA_VECTOR2_DOWN, \
+    .gravity = (SKAVector2){ 0.0f, 32.0f }, \
     .color = particles2DComponent->color, \
     .timeActive = 0.0f, \
     .damping = CRE_PARTICLE2D_DEFAULT_DAMPING, \
     .inverseMass = 1.0f \
 }
 
+    const bool hasInitialVelocity = particles2DComponent->initialVelocity.x != 0.0f || particles2DComponent->initialVelocity.y != 0.0f;
     for (int i = 0; i < particles2DComponent->amount; i++) {
         particles2DComponent->particles[i] = DEFAULT_PARTICLE2D;
+        if (hasInitialVelocity) {
+            particles2DComponent->particles[i].linearVelocity.x += particles2DComponent->initialVelocity.x;
+            particles2DComponent->particles[i].linearVelocity.y += particles2DComponent->initialVelocity.y;
+        }
     }
 
 #undef DEFAULT_PARTICLE2D
