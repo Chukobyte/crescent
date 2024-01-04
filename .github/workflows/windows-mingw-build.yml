@@ -14,13 +14,22 @@ jobs:
         with:
           install: gcc make
 
-      - name: run build
+      - name: install dependencies
         shell: msys2 {0}
         run: |
           (echo ""; echo "y") | pacman -S mingw-w64-x86_64-toolchain
           echo "y" | pacman -S mingw-w64-x86_64-cmake
           echo "y" | pacman -S mingw-w64-x86_64-SDL2
           echo "y" | pacman -S mingw-w64-x86_64-freetype
-          echo "y" | pacman -S mingw-w64-x86_64-python
+
+      - name: run build
+        shell: msys2 {0}
+        run: |
           cmake -G "MinGW Makefiles" . -DIS_CI_BUILD="true"
           cmake --build .
+
+      - name: run unit tests
+        shell: msys2 {0}
+        run: |
+          ./crescent_engine_test.exe
+          ./crescent_engine_editor_test.exe
