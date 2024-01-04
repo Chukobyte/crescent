@@ -269,6 +269,15 @@ void cre_pkpy_api_load_internal_modules(pkpy_vm* vm) {
             // Parallax
             {.signature = "parallax_get_scroll_speed(entity_id: int) -> Tuple[float, float]", .function = cre_pkpy_api_parallax_get_scroll_speed},
             {.signature = "parallax_set_scroll_speed(entity_id: int, x: float, y: float) -> None", .function = cre_pkpy_api_parallax_set_scroll_speed},
+            // Particles2D
+            {.signature = "particles2d_get_amount(entity_id: int) -> int", .function = cre_pkpy_api_particles2d_get_amount},
+            {.signature = "particles2d_set_amount(entity_id: int, amount: int) -> None", .function = cre_pkpy_api_particles2d_set_amount},
+            {.signature = "particles2d_get_life_time(entity_id: int) -> float", .function = cre_pkpy_api_particles2d_get_life_time},
+            {.signature = "particles2d_set_life_time(entity_id: int, life_time: float) -> None", .function = cre_pkpy_api_particles2d_set_life_time},
+            {.signature = "particles2d_get_color(entity_id: int) -> Tuple[int, int, int, int]", .function = cre_pkpy_api_particles2d_get_color},
+            {.signature = "particles2d_set_color(entity_id: int, r: int, g: int, b: int, a: int) -> None", .function = cre_pkpy_api_particles2d_set_color},
+            {.signature = "particles2d_get_initial_velocity(entity_id: int) -> Tuple[float, float]", .function = cre_pkpy_api_particles2d_get_initial_velocity},
+            {.signature = "particles2d_set_initial_velocity(entity_id: int, x: float, y: float) -> None", .function = cre_pkpy_api_particles2d_set_initial_velocity},
             // Scene Tree
             {.signature = "scene_tree_change_scene(path: str) -> None", .function = cre_pkpy_api_scene_tree_change_scene},
             {.signature = "scene_tree_get_root()", .function = cre_pkpy_api_scene_tree_get_root},

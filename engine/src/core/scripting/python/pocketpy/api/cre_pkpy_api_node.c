@@ -1071,3 +1071,106 @@ int cre_pkpy_api_parallax_set_scroll_speed(pkpy_vm* vm) {
     parallaxComponent->scrollSpeed = (SKAVector2){ (float)pySpeedX, (float)pySpeedY };
     return 0;
 }
+
+//--- PARTICLES2D ---//
+
+int cre_pkpy_api_particles2d_get_amount(pkpy_vm* vm) {
+    int pyEntityId;
+    pkpy_to_int(vm, 0, &pyEntityId);
+
+    const CreEntity entity = (CreEntity)pyEntityId;
+    const Particles2DComponent* particles2dComponent = (Particles2DComponent*)cre_component_manager_get_component(entity, CreComponentDataIndex_PARTICLES_2D);
+    pkpy_push_int(vm, particles2dComponent->amount);
+    return 1;
+}
+
+int cre_pkpy_api_particles2d_set_amount(pkpy_vm* vm) {
+    int pyEntityId;
+    int pyAmount;
+    pkpy_to_int(vm, 0, &pyEntityId);
+    pkpy_to_int(vm, 1, &pyAmount);
+
+    const CreEntity entity = (CreEntity)pyEntityId;
+    Particles2DComponent* particles2dComponent = (Particles2DComponent*)cre_component_manager_get_component(entity, CreComponentDataIndex_PARTICLES_2D);
+    particles2dComponent->amount = pyAmount;
+    // TODO: Update particle stuff...
+    return 0;
+}
+
+int cre_pkpy_api_particles2d_get_life_time(pkpy_vm* vm) {
+    int pyEntityId;
+    pkpy_to_int(vm, 0, &pyEntityId);
+
+    const CreEntity entity = (CreEntity)pyEntityId;
+    const Particles2DComponent* particles2dComponent = (Particles2DComponent*)cre_component_manager_get_component(entity, CreComponentDataIndex_PARTICLES_2D);
+    pkpy_push_float(vm, (double)particles2dComponent->lifeTime);
+    return 1;
+}
+
+int cre_pkpy_api_particles2d_set_life_time(pkpy_vm* vm) {
+    int pyEntityId;
+    double pyLifeTime;
+    pkpy_to_int(vm, 0, &pyEntityId);
+    pkpy_to_float(vm, 1, &pyLifeTime);
+
+    const CreEntity entity = (CreEntity)pyEntityId;
+    Particles2DComponent* particles2dComponent = (Particles2DComponent*)cre_component_manager_get_component(entity, CreComponentDataIndex_PARTICLES_2D);
+    particles2dComponent->lifeTime = (float)pyLifeTime;
+    return 0;
+}
+
+int cre_pkpy_api_particles2d_get_color(pkpy_vm* vm) {
+    int pyEntityId;
+    pkpy_to_int(vm, 0, &pyEntityId);
+
+    const CreEntity entity = (CreEntity)pyEntityId;
+    const Particles2DComponent* particles2dComponent = (Particles2DComponent*)cre_component_manager_get_component(entity, CreComponentDataIndex_PARTICLES_2D);
+    const int red = (int) (particles2dComponent->color.r * 255.0f);
+    const int green = (int) (particles2dComponent->color.g * 255.0f);
+    const int blue = (int) (particles2dComponent->color.b * 255.0f);
+    const int alpha = (int) (particles2dComponent->color.a * 255.0f);
+    pkpy_push_int(vm, red);
+    pkpy_push_int(vm, green);
+    pkpy_push_int(vm, blue);
+    pkpy_push_int(vm, alpha);
+    return 4;
+}
+
+int cre_pkpy_api_particles2d_set_color(pkpy_vm* vm) {
+    int pyEntityId;
+    int pyRed, pyGreen, pyBlue, pyAlpha;
+    pkpy_to_int(vm, 0, &pyEntityId);
+    pkpy_to_int(vm, 1, &pyRed);
+    pkpy_to_int(vm, 2, &pyGreen);
+    pkpy_to_int(vm, 3, &pyBlue);
+    pkpy_to_int(vm, 4, &pyAlpha);
+
+    const CreEntity entity = (CreEntity)pyEntityId;
+    Particles2DComponent* particles2dComponent = (Particles2DComponent*)cre_component_manager_get_component(entity, CreComponentDataIndex_PARTICLES_2D);
+    particles2dComponent->color = ska_color_get_normalized_color(pyRed, pyGreen, pyBlue, pyAlpha);
+    return 0;
+}
+
+int cre_pkpy_api_particles2d_get_initial_velocity(pkpy_vm* vm) {
+    int pyEntityId;
+    pkpy_to_int(vm, 0, &pyEntityId);
+
+    const CreEntity entity = (CreEntity)pyEntityId;
+    const Particles2DComponent* particles2dComponent = (Particles2DComponent*)cre_component_manager_get_component(entity, CreComponentDataIndex_PARTICLES_2D);
+    pkpy_push_float(vm, (double)particles2dComponent->initialVelocity.x);
+    pkpy_push_float(vm, (double)particles2dComponent->initialVelocity.y);
+    return 2;
+}
+
+int cre_pkpy_api_particles2d_set_initial_velocity(pkpy_vm* vm) {
+    int pyEntityId;
+    double pyX, pyY;
+    pkpy_to_int(vm, 0, &pyEntityId);
+    pkpy_to_float(vm, 1, &pyX);
+    pkpy_to_float(vm, 2, &pyY);
+
+    const CreEntity entity = (CreEntity)pyEntityId;
+    Particles2DComponent* particles2dComponent = (Particles2DComponent*)cre_component_manager_get_component(entity, CreComponentDataIndex_PARTICLES_2D);
+    particles2dComponent->initialVelocity = (SKAVector2){ (float)pyX, (float)pyY };
+    return 0;
+}
