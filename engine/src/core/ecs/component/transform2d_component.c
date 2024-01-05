@@ -5,30 +5,10 @@
 #include <seika/utils/logger.h>
 #include <seika/memory/se_mem.h>
 
-SKATransform2D transform2d_component_create_blank_transform2d() {
-    SKATransform2D transform2D = {
-        .position = { .x = 0.0f, .y = 0.0f },
-        .scale = { .x = 1.0f, .y = 1.0f },
-        .rotation = 0.0f
-    };
-    return transform2D;
-}
-
-SKATransformModel2D transform2d_component_create_blank_global_transform2d() {
-    SKATransformModel2D transform2D = {
-        .position = { .x = 0.0f, .y = 0.0f },
-        .scale = { .x = 1.0f, .y = 1.0f },
-        .rotation = 0.0f,
-        .zIndex = 0,
-        .scaleSign = { .x = 1.0f, .y = 1.0f }
-    };
-    return transform2D;
-}
-
 Transform2DComponent* transform2d_component_create() {
     Transform2DComponent* transform2DComponent = SE_MEM_ALLOCATE(Transform2DComponent);
-    transform2DComponent->localTransform = transform2d_component_create_blank_transform2d();
-    transform2DComponent->globalTransform = transform2d_component_create_blank_global_transform2d();
+    transform2DComponent->localTransform = SKA_TRANSFORM_IDENTITY;
+    transform2DComponent->globalTransform = SKA_TRANSFORM_MODEL_IDENTITY;
     transform2DComponent->zIndex = 0;
     transform2DComponent->isZIndexRelativeToParent = true;
     transform2DComponent->ignoreCamera = false;
