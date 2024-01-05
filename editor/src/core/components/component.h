@@ -27,11 +27,7 @@ struct Transform2DComp : public EditorComponent {
           isZIndexRelativeToParent(transform2DComponent->isZIndexRelativeToParent),
           ignoreCamera(transform2DComponent->ignoreCamera) {}
 
-    SKATransform2D transform2D = {
-        .position = SKA_VECTOR2_ZERO,
-        .scale = SKA_VECTOR2_ONE,
-        .rotation = 0.0f
-    };
+    SKATransform2D transform2D = SKA_TRANSFORM_IDENTITY;
     int zIndex = 0;
     bool isZIndexRelativeToParent = true;
     bool ignoreCamera = false;
