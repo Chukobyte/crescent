@@ -15,9 +15,7 @@ SKATransform2D default_get_local_transform(CreEntity entity, int* zIndex, bool* 
     Transform2DComponent* transform2DComponent = cre_component_manager_get_component_unchecked(entity, CreComponentDataIndex_TRANSFORM_2D);
     if (transform2DComponent == NULL) {
         *success = false;
-        return (SKATransform2D) {
-            .position = { 0.0f, 0.0f }, .scale = { 1.0f, 1.0f }, .rotation = 0.0f
-        };
+        return SKA_TRANSFORM_IDENTITY;
     }
     *zIndex = transform2DComponent->zIndex;
     *success = true;
@@ -27,7 +25,7 @@ SKATransform2D default_get_local_transform(CreEntity entity, int* zIndex, bool* 
 void cre_scene_utils_update_global_transform_model(CreEntity entity, SKATransformModel2D* globalTransform) {
     glm_mat4_identity(globalTransform->model);
     EntityArray combineModelResult = onGetSelfAndParentEntitiesFunc(entity);
-    SKAVector2 scaleTotal = { 1.0f, 1.0f };
+    SKAVector2 scaleTotal = SKA_VECTOR2_ONE;
     globalTransform->zIndex = 0;
     for (int i = combineModelResult.entityCount - 1; i >= 0; i--) {
         CreEntity currentEntity = combineModelResult.entities[i];

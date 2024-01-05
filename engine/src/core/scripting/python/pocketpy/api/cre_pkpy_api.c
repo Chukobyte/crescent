@@ -859,7 +859,7 @@ int cre_pkpy_api_input_mouse_get_position(pkpy_vm* vm) {
 }
 
 int cre_pkpy_api_input_mouse_get_world_position(pkpy_vm* vm) {
-    const SKAVector2 mouseWorldPosition = cre_pkpy_api_helper_mouse_get_global_position(&(SKAVector2){0.0f, 0.0f });
+    const SKAVector2 mouseWorldPosition = cre_pkpy_api_helper_mouse_get_global_position(&SKA_VECTOR2_ZERO);
     pkpy_push_float(vm, (double)mouseWorldPosition.x);
     pkpy_push_float(vm, (double)mouseWorldPosition.y);
     return 2;
