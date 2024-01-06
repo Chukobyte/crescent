@@ -5,18 +5,20 @@
 #include <seika/rendering/texture.h>
 #include <seika/memory/se_mem.h>
 
-static inline float vector2_to_angle_radians(const SKAVector2* vector) {
-    return atan2f(vector->y, vector->x);
-}
-
 static inline float get_random_spread_angle_in_radians(SKAVector2* direction, float spreadDegrees) {
-    const float dirAngle = vector2_to_angle_radians(direction);
+    const float dirAngle = ska_math_vec2_angle(direction);
+    const float dirAngleDegrees = SKA_RAD_2_DEGF(dirAngle);
     const float spreadRadians = SKA_DEG_2_RADF(spreadDegrees);
     // Generate a random angle based on direction and spread
     const float randomAngle = SKA_DEG_2_RADF((float)(rand() % 360)) - (spreadRadians / 2.0f);
-    const float dirAngleDegrees = SKA_RAD_2_DEGF(dirAngle);
-    const float randomAngleDegrees = SKA_RAD_2_DEGF(randomAngle);
-    return dirAngle + randomAngle;
+    const float finalAngle = dirAngle + randomAngle;
+    // Ensure the result is within [0, 2π)
+    if (finalAngle < 0.0f) {
+        return finalAngle + 2.0f * SKA_PI;
+    } else if (finalAngle >= 2.0f * SKA_PI) {
+        return finalAngle - 2.0f * SKA_PI;
+    }
+    return finalAngle;
 }
 
 Particles2DComponent* particles2d_component_create() {
@@ -25,7 +27,10 @@ Particles2DComponent* particles2d_component_create() {
     particles2DComponent->initialVelocity = SKA_VECTOR2_ZERO;
     particles2DComponent->linearAcceleration = SKA_VECTOR2_ZERO;
 //    particles2DComponent->direction = SKA_VECTOR2_ZERO;
-    particles2DComponent->direction = SKA_VECTOR2_RIGHT;
+//    particles2DComponent->direction = SKA_VECTOR2_RIGHT;
+//    particles2DComponent->direction = SKA_VECTOR2_UP;
+//    particles2DComponent->direction = SKA_VECTOR2_LEFT;
+    particles2DComponent->direction = SKA_VECTOR2_DOWN;
     particles2DComponent->spread = 45.0f;
     particles2DComponent->color = SKA_COLOR_WHITE;
     particles2DComponent->lifeTime = 0.0f;
