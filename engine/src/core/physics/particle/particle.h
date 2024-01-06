@@ -13,6 +13,7 @@ typedef struct CreParticle2D {
     SKAVector2 acceleration;
     SKAVector2 forceAccumulated;
     SKAVector2 gravity;
+    float angle; // Particle move direction in radians
     SKAColor color;
     float timeActive;
     float damping;

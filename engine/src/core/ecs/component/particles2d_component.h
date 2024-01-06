@@ -19,6 +19,8 @@ typedef struct Particles2DComponent {
     SKAVector2 initialVelocity;
     SKAVector2 linearAcceleration;
     SKAColor color;
+    SKAVector2 direction;
+    float spread; // angle in degrees in which the particles are spread
     // Sets initial 'timeActive' on CreParticle2D
     float lifeTime;
     float damping;

@@ -5,11 +5,28 @@
 #include <seika/rendering/texture.h>
 #include <seika/memory/se_mem.h>
 
+static inline float vector2_to_angle_radians(const SKAVector2* vector) {
+    return atan2f(vector->y, vector->x);
+}
+
+static inline float get_random_spread_angle_in_radians(SKAVector2* direction, float spreadDegrees) {
+    const float dirAngle = vector2_to_angle_radians(direction);
+    const float spreadRadians = SKA_DEG_2_RADF(spreadDegrees);
+    // Generate a random angle based on direction and spread
+    const float randomAngle = SKA_DEG_2_RADF((float)(rand() % 360)) - (spreadRadians / 2.0f);
+    const float dirAngleDegrees = SKA_RAD_2_DEGF(dirAngle);
+    const float randomAngleDegrees = SKA_RAD_2_DEGF(randomAngle);
+    return dirAngle + randomAngle;
+}
+
 Particles2DComponent* particles2d_component_create() {
     Particles2DComponent* particles2DComponent = SE_MEM_ALLOCATE(Particles2DComponent);
     particles2DComponent->amount = 8;
     particles2DComponent->initialVelocity = SKA_VECTOR2_ZERO;
     particles2DComponent->linearAcceleration = SKA_VECTOR2_ZERO;
+//    particles2DComponent->direction = SKA_VECTOR2_ZERO;
+    particles2DComponent->direction = SKA_VECTOR2_RIGHT;
+    particles2DComponent->spread = 45.0f;
     particles2DComponent->color = SKA_COLOR_WHITE;
     particles2DComponent->lifeTime = 0.0f;
     particles2DComponent->damping = 1.0f;
@@ -38,6 +55,7 @@ void particles2d_component_set_default_particles(Particles2DComponent* particles
     .acceleration = SKA_VECTOR2_ZERO, \
     .forceAccumulated = SKA_VECTOR2_ZERO, \
     .gravity = (SKAVector2){ 0.0f, 32.0f }, \
+    .angle = 0.0f, \
     .color = particles2DComponent->color, \
     .timeActive = 0.0f, \
     .damping = CRE_PARTICLE2D_DEFAULT_DAMPING, \
@@ -47,10 +65,14 @@ void particles2d_component_set_default_particles(Particles2DComponent* particles
     const bool hasInitialVelocity = particles2DComponent->initialVelocity.x != 0.0f || particles2DComponent->initialVelocity.y != 0.0f;
     for (int i = 0; i < particles2DComponent->amount; i++) {
         particles2DComponent->particles[i] = DEFAULT_PARTICLE2D;
+        CreParticle2D* currentParticle = &particles2DComponent->particles[i];
+        // Initial velocity
         if (hasInitialVelocity) {
-            particles2DComponent->particles[i].linearVelocity.x += particles2DComponent->initialVelocity.x;
-            particles2DComponent->particles[i].linearVelocity.y += particles2DComponent->initialVelocity.y;
+            currentParticle->linearVelocity.x += particles2DComponent->initialVelocity.x;
+            currentParticle->linearVelocity.y += particles2DComponent->initialVelocity.y;
         }
+        // Spread angle converting to radians
+        currentParticle->angle = get_random_spread_angle_in_radians(&particles2DComponent->direction, particles2DComponent->spread);
     }
 
 #undef DEFAULT_PARTICLE2D
