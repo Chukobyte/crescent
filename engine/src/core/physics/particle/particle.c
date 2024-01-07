@@ -48,8 +48,9 @@ void cre_particle_system_integrate(CreParticle2D* particle2D, float duration) {
     add_scaled_vector2(&particle2D->linearVelocity, &acceleration, duration);
 
     // Apply drag
-    particle2D->linearVelocity.x *= powf(particle2D->damping, duration);
-    particle2D->linearVelocity.y *= powf(particle2D->damping, duration);
+    const float dragAmount = powf(particle2D->damping, duration);
+    particle2D->linearVelocity.x *= dragAmount;
+    particle2D->linearVelocity.y *= dragAmount;
 
     // Clear out accumulated forces
     particle2D->forceAccumulated = SKA_VECTOR2_ZERO;
