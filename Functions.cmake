@@ -5,7 +5,7 @@ function(install_seika)
                 seika
                 GIT_REPOSITORY https://github.com/Chukobyte/seika.git
                 GIT_TAG v0.0.23
-gc        )
+        )
         FetchContent_MakeAvailable(seika)
     endif ()
 endfunction()
