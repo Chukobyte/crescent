@@ -5,11 +5,15 @@
 #include <seika/rendering/texture.h>
 #include <seika/memory/se_mem.h>
 
+static inline float get_random_sign() {
+    return ((rand() % 2) == 0) ? 1.0f : -1.0f;
+}
+
 static inline float get_random_spread_angle_in_radians(SKAVector2* direction, float spreadDegrees) {
     const float dirAngle = ska_math_vec2_angle(direction);
     const float spreadRadians = SKA_DEG_2_RADF(spreadDegrees);
     // Generate a random angle based on direction and spread
-    const float randomAngle = SKA_DEG_2_RADF(fmod(rand(), spreadDegrees));
+    const float randomAngle = SKA_DEG_2_RADF(fmod(rand(), spreadDegrees / 2.0f)) * get_random_sign();
     const float finalAngle = dirAngle + randomAngle;
     // Ensure the result is within [0, 2π]
     if (finalAngle < 0.0f) {
