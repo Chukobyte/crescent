@@ -25,7 +25,7 @@ static inline float get_random_spread_angle_in_radians(SKAVector2* direction, fl
     math_vec2_normalize(direction);
     const float dirAngle = ska_math_vec2_angle(direction);
     // Generate a random angle based on direction and spread
-    const float randomAngle = SKA_DEG_2_RADF(fmod(rand(), spreadDegrees / 2.0f)) * get_random_sign();
+    const float randomAngle = SKA_DEG_2_RADF(fmodf((float)rand(), spreadDegrees / 2.0f)) * get_random_sign();
     const float finalAngle = dirAngle + randomAngle;
     // Ensure the result is within [0, 2π]
     if (finalAngle < 0.0f) {
@@ -41,7 +41,6 @@ Particles2DComponent* particles2d_component_create() {
     particles2DComponent->amount = 8;
     particles2DComponent->initialVelocity = SKA_VECTOR2_ZERO;
     particles2DComponent->linearAcceleration = SKA_VECTOR2_ZERO;
-    particles2DComponent->direction = SKA_VECTOR2_RIGHT;
     particles2DComponent->spread = 45.0f;
     particles2DComponent->color = SKA_COLOR_WHITE;
     particles2DComponent->lifeTime = 0.0f;
