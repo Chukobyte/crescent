@@ -29,10 +29,7 @@ void cre_particle_system_integrate(CreParticle2D* particle2D, float duration) {
 
     // Update position
     SKAVector2 currentVel = SKA_VECTOR2_ZERO;
-//    add_scaled_vector2(&particle2D->position, &particle2D->linearVelocity, duration);
     add_scaled_vector2(&currentVel, &particle2D->linearVelocity, duration);
-    currentVel.x *= cosf(particle2D->angle);
-    currentVel.y *= sinf(particle2D->angle);
     particle2D->position.x += currentVel.x;
     particle2D->position.y += currentVel.y;
 
