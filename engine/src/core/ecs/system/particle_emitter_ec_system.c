@@ -71,7 +71,12 @@ void particle_emitter_system_fixed_update(float deltaTime) {
         const CreEntity entity = particle_emitter_system->entities[i];
         Particles2DComponent* particles2DComponent = (Particles2DComponent*)cre_component_manager_get_component_unchecked(entity, CreComponentDataIndex_PARTICLES_2D);
         for (int pi = 0; pi < particles2DComponent->amount; pi++) {
-            cre_particle_system_integrate(&particles2DComponent->particles[pi], deltaTime);
+            CreParticle2D* currentParticle = &particles2DComponent->particles[pi];
+            // Reset particle if time active is over lifetime
+            if (currentParticle->timeActive >= particles2DComponent->lifeTime) {
+                particles2d_component_reset_particle(particles2DComponent, currentParticle);
+            }
+            cre_particle_system_integrate(currentParticle, deltaTime);
         }
     }
 }

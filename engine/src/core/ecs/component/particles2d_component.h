@@ -37,6 +37,7 @@ Particles2DComponent* particles2d_component_create();
 void particles2d_component_delete(Particles2DComponent* particles2DComponent);
 Particles2DComponent* particles2d_component_copy(const Particles2DComponent* particles2DComponent);
 void particles2d_component_set_default_particles(Particles2DComponent* particles2DComponent);
+void particles2d_component_reset_particle(Particles2DComponent* particles2DComponent, CreParticle2D* particle2D);
 
 #ifdef __cplusplus
 }
