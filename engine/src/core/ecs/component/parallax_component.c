@@ -6,15 +6,9 @@
 
 ParallaxComponent* parallax_component_create() {
     ParallaxComponent* parallaxComponent = SE_MEM_ALLOCATE(ParallaxComponent);
-    parallaxComponent->scrollSpeed = (SKAVector2) {
-        0.0f, 0.0f
-    };
-    parallaxComponent->cachedScrollSpeed = (SKAVector2) {
-        0.0f, 0.0f
-    };
-    parallaxComponent->cachedLocalPosition = (SKAVector2) {
-        0.0f, 0.0f
-    };
+    parallaxComponent->scrollSpeed = SKA_VECTOR2_ZERO;
+    parallaxComponent->cachedScrollSpeed = SKA_VECTOR2_ZERO;
+    parallaxComponent->cachedLocalPosition = SKA_VECTOR2_ZERO;
     return parallaxComponent;
 }
 
