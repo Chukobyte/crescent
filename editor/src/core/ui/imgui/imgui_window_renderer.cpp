@@ -9,7 +9,7 @@
 
 #include "../../editor_context.h"
 
-const SEColor WINDOW_BACKGROUND_COLOR = { 0.1f, 0.1f, 0.1f, 1.0f };
+const SKAColor WINDOW_BACKGROUND_COLOR = { 0.1f, 0.1f, 0.1f, 1.0f };
 
 void ImGuiHelper::WindowRenderer::Render(const std::vector<TextureRenderTarget>& textureRenderTargets, const std::vector<FontRenderTarget>& fontRenderTargets) {
     // New frame
@@ -19,8 +19,8 @@ void ImGuiHelper::WindowRenderer::Render(const std::vector<TextureRenderTarget>&
     // Textures
     for (auto& target : textureRenderTargets) {
         if (target.texture) {
-            se_renderer_queue_sprite_draw_call(target.texture, target.sourceRect, target.destSize, target.color,
-                                               target.flipH, target.flipV, target.globalTransform, target.zIndex,
+            ska_renderer_queue_sprite_draw2(target.texture, target.sourceRect, target.destSize, target.color,
+                                               target.flipH, target.flipV, target.globalTransform->model, target.zIndex,
                                                nullptr);
         }
     }

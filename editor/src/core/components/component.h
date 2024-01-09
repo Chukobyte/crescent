@@ -27,11 +27,7 @@ struct Transform2DComp : public EditorComponent {
           isZIndexRelativeToParent(transform2DComponent->isZIndexRelativeToParent),
           ignoreCamera(transform2DComponent->ignoreCamera) {}
 
-    SETransform2D transform2D = {
-        .position = { 0.0f, 0.0f },
-        .scale = { 1.0f, 1.0f },
-        .rotation = 0.0f
-    };
+    SKATransform2D transform2D = SKA_TRANSFORM_IDENTITY;
     int zIndex = 0;
     bool isZIndexRelativeToParent = true;
     bool ignoreCamera = false;
@@ -50,18 +46,18 @@ struct SpriteComp : public EditorComponent {
           shaderPath(std::move(shaderPath)) {}
 
     std::string texturePath;
-    SERect2 drawSource = { .x = 0.0f, .y = 0.0f, .w = 0.0f, .h = 0.0f };
-    SEVector2 origin = { .x = 0.0f, .y = 0.0f };
+    SKARect2 drawSource = SKA_RECT2D_ZERO;
+    SKAVector2 origin = SKA_VECTOR2_ZERO;
     bool flipH = false;
     bool flipV = false;
-    SEColor modulate = { .r = 1.0f, .g = 1.0f, .b = 1.0f, .a = 1.0f };
+    SKAColor modulate = SKA_COLOR_WHITE;
     std::string shaderPath;
 };
 
 // TODO: Put editor animation stuff in another file...
 struct EditorAnimationFrame {
     std::string texturePath;
-    SERect2 drawSource = { 0.0f, 0.0f, 0.0f, 0.0f };
+    SKARect2 drawSource = SKA_RECT2D_ZERO;
     int frame = -1;
 };
 
@@ -177,9 +173,9 @@ struct AnimatedSpriteComp : public EditorComponent {
 
     std::string currentAnimationName;
     std::vector<EditorAnimation> animations;
-    SEColor modulate = { .r = 1.0f, .g = 1.0f, .b = 1.0f, .a = 1.0f };
+    SKAColor modulate = SKA_COLOR_WHITE;
     bool isPlaying = false;
-    SEVector2 origin = { .x = 0.0f, .y = 0.0f };
+    SKAVector2 origin = SKA_VECTOR2_ZERO;
     bool flipH = false;
     bool flipV = false;
     bool staggerStartAnimationTimes = false;
@@ -196,7 +192,7 @@ struct TextLabelComp : public EditorComponent {
 
     std::string text;
     std::string fontUID;
-    SEColor color = { .r = 1.0f, .g = 1.0f, .b = 1.0f, .a = 1.0f };
+    SKAColor color = SKA_COLOR_WHITE;
 };
 
 struct ScriptComp : public EditorComponent {
@@ -217,8 +213,8 @@ struct Collider2DComp : public EditorComponent {
         : extents(collider2DComponent->extents),
           color(collider2DComponent->color) {}
 
-    SESize2D extents = { .w = 0.0f, .h = 0.0f };
-    SEColor color = { .r = 0.0f, .g = 0.0f, .b = 0.8f, .a = 0.8f };
+    SKASize2D extents = SKA_SIZE2D_ZERO;
+    SKAColor color = { .r = 0.0f, .g = 0.0f, .b = 0.8f, .a = 0.8f };
 };
 
 struct ColorRectComp : public EditorComponent {
@@ -228,8 +224,8 @@ struct ColorRectComp : public EditorComponent {
         : size(colorSquareComp->size),
           color(colorSquareComp->color) {}
 
-    SESize2D size = { .w = 32.0f, .h = 32.0f };
-    SEColor color = { .r = 1.0f, .g = 1.0f, .b = 1.0f, .a = 1.0f };
+    SKASize2D size = { .w = 32.0f, .h = 32.0f };
+    SKAColor color = SKA_COLOR_WHITE;
 };
 
 struct ParallaxComp : public EditorComponent {
@@ -238,5 +234,5 @@ struct ParallaxComp : public EditorComponent {
     explicit ParallaxComp(const ParallaxComponent* parallaxComponent)
         : scrollSpeed(parallaxComponent->scrollSpeed) {}
 
-    SEVector2 scrollSpeed = { .x = 0.0f, .y = 0.0f };
+    SKAVector2 scrollSpeed = SKA_VECTOR2_ZERO;
 };

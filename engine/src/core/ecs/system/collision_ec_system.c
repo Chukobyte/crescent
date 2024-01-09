@@ -16,7 +16,7 @@
 
 CreEntitySystem* collisionSystem = NULL;
 SETexture* collisionOutlineTexture = NULL;
-SERect2 colliderDrawSource = { .x=0.0f, .y=0.0f, .w=1.0f, .h=1.0f };
+SKARect2 colliderDrawSource = { .x=0.0f, .y=0.0f, .w=1.0f, .h=1.0f };
 
 void collision_system_entity_unregistered(CreEntity entity);
 void collision_system_fixed_update(float deltaTime);
@@ -94,22 +94,22 @@ void collision_system_render() {
         const Collider2DComponent* colliderComp = (Collider2DComponent*) cre_component_manager_get_component(entity,
                 CreComponentDataIndex_COLLIDER_2D);
         const CRECamera2D* renderCamera = transformComp->ignoreCamera ? defaultCamera : camera2D;
-        SETransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity, transformComp);
-        static SEVector2 origin = { 0.0f, 0.0f };
+        SKATransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity, transformComp);
+        static SKAVector2 origin = { 0.0f, 0.0f };
         cre_scene_utils_apply_camera_and_origin_translation(globalTransform, &origin, transformComp->ignoreCamera);
         transformComp->isGlobalTransformDirty = true; // TODO: Make global transform const
-        const SESize2D colliderDrawSize = {
+        const SKASize2D colliderDrawSize = {
             colliderComp->extents.w * renderCamera->zoom.x,
             colliderComp->extents.h * renderCamera->zoom.y
         };
-        se_renderer_queue_sprite_draw_call(
+        ska_renderer_queue_sprite_draw2(
             collisionOutlineTexture,
             colliderDrawSource,
             colliderDrawSize,
             colliderComp->color,
             false,
             false,
-            globalTransform,
+            globalTransform->model,
             SE_RENDERER_MAX_Z_INDEX, // Use the max possible z index value to draw colliders on top of other things...
             NULL
         );
@@ -122,7 +122,7 @@ void collision_system_on_node_entered_scene(CreEntity entity) {
     Collider2DComponent* colliderComp = (Collider2DComponent*) cre_component_manager_get_component_unchecked(entity,
                                         CreComponentDataIndex_COLLIDER_2D);
     if (transformComp != NULL && colliderComp != NULL) {
-        SERect2 collisionRect = cre_get_collision_rectangle(entity, transformComp, colliderComp);
+        SKARect2 collisionRect = cre_get_collision_rectangle(entity, transformComp, colliderComp);
         se_spatial_hash_map_insert_or_update(spatialHashMap, entity, &collisionRect);
         // Register to entity's 'on transform changed' event
         se_event_register_observer(&transformComp->onTransformChanged, &collisionOnEntityTransformChangeObserver);
@@ -137,7 +137,7 @@ void collision_system_on_transform_update(SESubjectNotifyPayload* payload) {
     Collider2DComponent* colliderComp = (Collider2DComponent*) cre_component_manager_get_component_unchecked(entity,
                                         CreComponentDataIndex_COLLIDER_2D);
     if (transformComp != NULL && colliderComp != NULL) {
-        SERect2 collisionRect = cre_get_collision_rectangle(entity, transformComp, colliderComp);
+        SKARect2 collisionRect = cre_get_collision_rectangle(entity, transformComp, colliderComp);
         se_spatial_hash_map_insert_or_update(spatialHashMap, entity, &collisionRect);
     }
 }

@@ -1,7 +1,5 @@
 #include "color_rect_ec_system.h"
 
-#include <string.h>
-
 #include <seika/rendering/renderer.h>
 #include <seika/utils/se_string_util.h>
 #include <seika/utils/se_assert.h>
@@ -16,7 +14,7 @@
 
 CreEntitySystem* colorRectSystem = NULL;
 SETexture* colorRectTexture = NULL;
-SERect2 colorRectDrawSource = { 0.0f, 0.0f, 1.0f, 1.0f };
+SKARect2 colorRectDrawSource = { 0.0f, 0.0f, 1.0f, 1.0f };
 
 void color_rect_system_render();
 void color_rect_system_on_ec_system_destroy();
@@ -43,27 +41,24 @@ void color_rect_system_render() {
 
     for (size_t i = 0; i < colorRectSystem->entity_count; i++) {
         const CreEntity entity = colorRectSystem->entities[i];
-        Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity,
-                                              CreComponentDataIndex_TRANSFORM_2D);
-        const ColorRectComponent* colorRectComponent = (ColorRectComponent *) cre_component_manager_get_component(
-                    entity, CreComponentDataIndex_COLOR_RECT);
+        Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_TRANSFORM_2D);
+        const ColorRectComponent* colorRectComponent = (ColorRectComponent *) cre_component_manager_get_component(entity, CreComponentDataIndex_COLOR_RECT);
         const CRECamera2D* renderCamera = transformComp->ignoreCamera ? defaultCamera : camera2D;
-        SETransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity, transformComp);
-        static SEVector2 origin = { 0.0f, 0.0f };
-        cre_scene_utils_apply_camera_and_origin_translation(globalTransform, &origin, transformComp->ignoreCamera);
+        SKATransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity, transformComp);
+        cre_scene_utils_apply_camera_and_origin_translation(globalTransform, &SKA_VECTOR2_ZERO, transformComp->ignoreCamera);
         transformComp->isGlobalTransformDirty = true; // TODO: Make global transform const
-        const SESize2D destinationSize = {
+        const SKASize2D destinationSize = {
             colorRectComponent->size.w * renderCamera->zoom.x,
             colorRectComponent->size.h * renderCamera->zoom.y
         };
-        se_renderer_queue_sprite_draw_call(
+        ska_renderer_queue_sprite_draw2(
             colorRectTexture,
             colorRectDrawSource,
             destinationSize,
             colorRectComponent->color,
             false,
             false,
-            globalTransform,
+            globalTransform->model,
             globalTransform->zIndex,
             NULL
         );
@@ -73,4 +68,8 @@ void color_rect_system_render() {
 void color_rect_system_on_ec_system_destroy() {
     SE_ASSERT(colorRectSystem != NULL);
     colorRectSystem = NULL;
+    if (colorRectTexture) {
+        se_texture_delete(colorRectTexture); // TODO: Properly delete texture (te
+        colorRectTexture = NULL;
+    }
 }

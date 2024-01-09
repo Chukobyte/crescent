@@ -26,11 +26,16 @@
 #include "../src/core/engine_context.h"
 #include "../src/core/scene/scene_manager.h"
 
-SETexture fakeColorRectTexture = {0};
+inline static SETexture* create_mock_texture() {
+    SETexture* texture = SE_MEM_ALLOCATE(SETexture);
+    memset(texture, 0, sizeof(SETexture));
+    return texture;
+}
 
 void setUp() {
     cre_game_props_initialize(cre_game_props_create());
-    cre_ecs_manager_initialize_ex(&fakeColorRectTexture);
+
+    cre_ecs_manager_initialize_ex(create_mock_texture(), create_mock_texture());
 
     CREEngineContext* engineContext = cre_engine_context_initialize();
     engineContext->engineRootDir = se_fs_get_cwd();

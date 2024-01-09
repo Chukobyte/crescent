@@ -822,10 +822,10 @@ class NodeType:
     Sprite = 4
     AnimatedSprite = 8
     TextLabel = 16
-    Script = 32
-    Collider2D = 64
-    ColorRect = 128
-    Parallax = 256
+    Collider2D = 32
+    ColorRect = 64
+    Parallax = 128
+    Particles2D = 256
 
 
 class Node:
@@ -1266,6 +1266,62 @@ class Parallax(Node2D):
     @scroll_speed.setter
     def scroll_speed(self, value: Vector2) -> None:
         crescent_internal.parallax_set_scroll_speed(self.entity_id, value.x, value.y)
+
+
+class Particles2D(Node2D):
+    @staticmethod
+    def new() -> "Particles2D":
+        return crescent_internal.node_new("crescent", "Particles2D", NodeType.Particles2D)
+
+    @property
+    def amount(self) -> int:
+        return crescent_internal.particles2d_get_amount(self.entity_id)
+
+    @amount.setter
+    def amount(self, value: int) -> None:
+        crescent_internal.particles2d_set_amount(self.entity_id, value)
+
+    @property
+    def life_time(self) -> float:
+        return crescent_internal.particles2d_get_life_time(self.entity_id)
+
+    @life_time.setter
+    def life_time(self, value: float) -> None:
+        crescent_internal.particles2d_set_life_time(self.entity_id, value)
+
+    @property
+    def damping(self) -> float:
+        return crescent_internal.particles2d_get_damping(self.entity_id)
+
+    @damping.setter
+    def damping(self, value: float) -> None:
+        crescent_internal.particles2d_set_damping(self.entity_id, value)
+
+    @property
+    def color(self) -> Color:
+        r, g, b, a = crescent_internal.particles2d_get_color(self.entity_id)
+        return Color(r, g, b, a)
+
+    @color.setter
+    def color(self, value: Color) -> None:
+        crescent_internal.particles2d_set_color(self.entity_id, value.r, value.g, value.b, value.a)
+
+    @property
+    def initial_velocity(self) -> Vector2:
+        x, y = crescent_internal.particles2d_get_initial_velocity(self.entity_id)
+        return Vector2(x, y)
+
+    @initial_velocity.setter
+    def initial_velocity(self, value: Vector2) -> None:
+        crescent_internal.particles2d_set_initial_velocity(self.entity_id, value.x, value.y)
+
+    @property
+    def spread(self) -> float:
+        return crescent_internal.particles2d_get_spread(self.entity_id)
+
+    @spread.setter
+    def spread(self, value: float) -> None:
+        crescent_internal.particles2d_set_spread(self.entity_id, value)
 
 
 class SceneTree:

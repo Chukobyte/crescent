@@ -11,21 +11,21 @@ struct SEFont;
 namespace ImGuiHelper {
 struct TextureRenderTarget {
     SETexture *texture = nullptr;
-    SERect2 sourceRect = { 0.0f, 0.0f, 0.0f, 0.0f };
-    SESize2D destSize = { 0.0f, 0.0f };
-    SEColor color = { 1.0f, 1.0f, 1.0f, 1.0f };
+    SKARect2 sourceRect = SKA_RECT2D_ZERO;
+    SKASize2D destSize = SKA_SIZE2D_ZERO;
+    SKAColor color = SKA_COLOR_WHITE;
     bool flipH = false;
     bool flipV = false;
-    SETransformModel2D *globalTransform = nullptr;
+    SKATransformModel2D *globalTransform = nullptr;
     int zIndex = 0;
 };
 
 struct FontRenderTarget {
     SEFont* font = nullptr;
     std::string text;
-    SEVector2 position = { 0.0f, 0.0f };
+    SKAVector2 position = SKA_VECTOR2_ZERO;
     float scale = 1.0f;
-    SEColor color = { 1.0f, 1.0f, 1.0f, 1.0f };
+    SKAColor color = SKA_COLOR_WHITE;
     int zIndex = 0;
 };
 

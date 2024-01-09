@@ -7,8 +7,8 @@ extern "C" {
 #include <seika/math/se_math.h>
 
 typedef struct ColorRectComponent {
-    SESize2D size;
-    SEColor color;
+    SKASize2D size;
+    SKAColor color;
 } ColorRectComponent;
 
 ColorRectComponent* color_rect_component_create();

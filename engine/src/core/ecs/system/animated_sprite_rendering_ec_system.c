@@ -16,9 +16,9 @@
 
 CreEntitySystem* animatedSpriteRenderingSystem = NULL;
 
-void animated_sprite_rendering_system_on_entity_registered(CreEntity entity);
-void animated_sprite_rendering_system_render();
-void animated_sprite_rendering_system_on_ec_system_destroy();
+static void animated_sprite_rendering_system_on_entity_registered(CreEntity entity);
+static void animated_sprite_rendering_system_render();
+static void animated_sprite_rendering_system_on_ec_system_destroy();
 
 CreEntitySystem* cre_animated_sprite_rendering_ec_system_create() {
     SE_ASSERT(animatedSpriteRenderingSystem == NULL);
@@ -74,21 +74,21 @@ void animated_sprite_rendering_system_render() {
             }
         }
         const CRECamera2D* renderCamera = spriteTransformComp->ignoreCamera ? defaultCamera : camera2D;
-        SETransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity, spriteTransformComp);
+        SKATransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity, spriteTransformComp);
         cre_scene_utils_apply_camera_and_origin_translation(globalTransform, &animatedSpriteComponent->origin, spriteTransformComp->ignoreCamera);
         spriteTransformComp->isGlobalTransformDirty = true; // TODO: Make global transform const
-        const SESize2D destinationSize = {
+        const SKASize2D destinationSize = {
             currentFrame.drawSource.w * renderCamera->zoom.x,
             currentFrame.drawSource.h * renderCamera->zoom.y
         };
-        se_renderer_queue_sprite_draw_call(
+        ska_renderer_queue_sprite_draw2(
             currentFrame.texture,
             currentFrame.drawSource,
             destinationSize,
             animatedSpriteComponent->modulate,
             animatedSpriteComponent->flipH,
             animatedSpriteComponent->flipV,
-            globalTransform,
+            globalTransform->model,
             globalTransform->zIndex,
             se_shader_cache_get_instance_checked(animatedSpriteComponent->shaderInstanceId)
         );

@@ -269,6 +269,19 @@ void cre_pkpy_api_load_internal_modules(pkpy_vm* vm) {
             // Parallax
             {.signature = "parallax_get_scroll_speed(entity_id: int) -> Tuple[float, float]", .function = cre_pkpy_api_parallax_get_scroll_speed},
             {.signature = "parallax_set_scroll_speed(entity_id: int, x: float, y: float) -> None", .function = cre_pkpy_api_parallax_set_scroll_speed},
+            // Particles2D
+            {.signature = "particles2d_get_amount(entity_id: int) -> int", .function = cre_pkpy_api_particles2d_get_amount},
+            {.signature = "particles2d_set_amount(entity_id: int, amount: int) -> None", .function = cre_pkpy_api_particles2d_set_amount},
+            {.signature = "particles2d_get_life_time(entity_id: int) -> float", .function = cre_pkpy_api_particles2d_get_life_time},
+            {.signature = "particles2d_set_life_time(entity_id: int, life_time: float) -> None", .function = cre_pkpy_api_particles2d_set_life_time},
+            {.signature = "particles2d_get_damping(entity_id: int) -> float", .function = cre_pkpy_api_particles2d_get_damping},
+            {.signature = "particles2d_set_damping(entity_id: int, damping: float) -> None", .function = cre_pkpy_api_particles2d_set_damping},
+            {.signature = "particles2d_get_color(entity_id: int) -> Tuple[int, int, int, int]", .function = cre_pkpy_api_particles2d_get_color},
+            {.signature = "particles2d_set_color(entity_id: int, r: int, g: int, b: int, a: int) -> None", .function = cre_pkpy_api_particles2d_set_color},
+            {.signature = "particles2d_get_initial_velocity(entity_id: int) -> Tuple[float, float]", .function = cre_pkpy_api_particles2d_get_initial_velocity},
+            {.signature = "particles2d_set_initial_velocity(entity_id: int, x: float, y: float) -> None", .function = cre_pkpy_api_particles2d_set_initial_velocity},
+            {.signature = "particles2d_get_spread(entity_id: int) -> float", .function = cre_pkpy_api_particles2d_get_spread},
+            {.signature = "particles2d_set_spread(entity_id: int, spread: float) -> None", .function = cre_pkpy_api_particles2d_set_spread},
             // Scene Tree
             {.signature = "scene_tree_change_scene(path: str) -> None", .function = cre_pkpy_api_scene_tree_change_scene},
             {.signature = "scene_tree_get_root()", .function = cre_pkpy_api_scene_tree_get_root},
@@ -330,16 +343,16 @@ void cre_pkpy_api_load_internal_modules(pkpy_vm* vm) {
 }
 
 // Helper functions
-static inline SEVector2 cre_pkpy_api_helper_mouse_get_global_position(const SEVector2* offset) {
+static inline SKAVector2 cre_pkpy_api_helper_mouse_get_global_position(const SKAVector2* offset) {
     SEMouse* globalMouse = se_mouse_get();
     const CRECamera2D* camera = cre_camera_manager_get_current_camera();
     CREGameProperties* gameProps = cre_game_props_get();
     SERenderContext* renderContext = se_render_context_get();
-    const SEVector2 mouse_pixel_coord = {
-            se_math_map_to_range(globalMouse->position.x, 0.0f, (float) renderContext->windowWidth, 0.0f, (float) gameProps->resolutionWidth),
-            se_math_map_to_range(globalMouse->position.y, 0.0f, (float) renderContext->windowHeight, 0.0f, (float) gameProps->resolutionHeight)
+    const SKAVector2 mouse_pixel_coord = {
+            ska_math_map_to_range(globalMouse->position.x, 0.0f, (float) renderContext->windowWidth, 0.0f, (float) gameProps->resolutionWidth),
+            ska_math_map_to_range(globalMouse->position.y, 0.0f, (float) renderContext->windowHeight, 0.0f, (float) gameProps->resolutionHeight)
     };
-    const SEVector2 mouseWorldPos = {
+    const SKAVector2 mouseWorldPos = {
             (camera->viewport.x + camera->offset.x + mouse_pixel_coord.x + offset->x) * camera->zoom.x,
             (camera->viewport.y + camera->offset.y + mouse_pixel_coord.y + offset->y) * camera->zoom.y
     };
@@ -518,7 +531,7 @@ int cre_pkpy_api_shader_instance_create_float2_param(pkpy_vm* vm) {
     const SEShaderInstanceId shaderId = (SEShaderInstanceId)pyShaderId;
     const char* paramName = cre_pkpy_api_helper_convert_pkpy_CString(&pyParamName);
     SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
-    se_shader_instance_param_create_float2(shaderInstance, paramName, (SEVector2){ (float)valueX, (float)valueY });
+    se_shader_instance_param_create_float2(shaderInstance, paramName, (SKAVector2){ (float)valueX, (float)valueY });
     return 0;
 }
 
@@ -535,7 +548,7 @@ int cre_pkpy_api_shader_instance_set_float2_param(pkpy_vm* vm) {
     const SEShaderInstanceId shaderId = (SEShaderInstanceId)pyShaderId;
     const char* paramName = cre_pkpy_api_helper_convert_pkpy_CString(&pyParamName);
     SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
-    se_shader_instance_param_update_float2(shaderInstance, paramName, (SEVector2){ (float)valueX, (float)valueY });
+    se_shader_instance_param_update_float2(shaderInstance, paramName, (SKAVector2){ (float)valueX, (float)valueY });
     return 0;
 }
 
@@ -548,7 +561,7 @@ int cre_pkpy_api_shader_instance_get_float2_param(pkpy_vm* vm) {
     const SEShaderInstanceId shaderId = (SEShaderInstanceId)pyShaderId;
     const char* paramName = cre_pkpy_api_helper_convert_pkpy_CString(&pyParamName);
     SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
-    const SEVector2 paramValue = se_shader_instance_param_get_float2(shaderInstance, paramName);
+    const SKAVector2 paramValue = se_shader_instance_param_get_float2(shaderInstance, paramName);
     pkpy_push_float(vm, paramValue.x);
     pkpy_push_float(vm, paramValue.y);
     return 2;
@@ -569,7 +582,7 @@ int cre_pkpy_api_shader_instance_create_float3_param(pkpy_vm* vm) {
     const SEShaderInstanceId shaderId = (SEShaderInstanceId)pyShaderId;
     const char* paramName = cre_pkpy_api_helper_convert_pkpy_CString(&pyParamName);
     SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
-    se_shader_instance_param_create_float3(shaderInstance, paramName, (SEVector3){ (float)valueX, (float)valueY, (float)valueZ });
+    se_shader_instance_param_create_float3(shaderInstance, paramName, (SKAVector3){ (float)valueX, (float)valueY, (float)valueZ });
     return 0;
 }
 
@@ -588,7 +601,7 @@ int cre_pkpy_api_shader_instance_set_float3_param(pkpy_vm* vm) {
     const SEShaderInstanceId shaderId = (SEShaderInstanceId)pyShaderId;
     const char* paramName = cre_pkpy_api_helper_convert_pkpy_CString(&pyParamName);
     SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
-    se_shader_instance_param_update_float3(shaderInstance, paramName, (SEVector3){ (float)valueX, (float)valueY, (float)valueZ });
+    se_shader_instance_param_update_float3(shaderInstance, paramName, (SKAVector3){ (float)valueX, (float)valueY, (float)valueZ });
     return 0;
 }
 
@@ -601,7 +614,7 @@ int cre_pkpy_api_shader_instance_get_float3_param(pkpy_vm* vm) {
     const SEShaderInstanceId shaderId = (SEShaderInstanceId)pyShaderId;
     const char* paramName = cre_pkpy_api_helper_convert_pkpy_CString(&pyParamName);
     SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
-    const SEVector3 paramValue = se_shader_instance_param_get_float3(shaderInstance, paramName);
+    const SKAVector3 paramValue = se_shader_instance_param_get_float3(shaderInstance, paramName);
     pkpy_push_float(vm, paramValue.x);
     pkpy_push_float(vm, paramValue.y);
     pkpy_push_float(vm, paramValue.z);
@@ -625,7 +638,7 @@ int cre_pkpy_api_shader_instance_create_float4_param(pkpy_vm* vm) {
     const SEShaderInstanceId shaderId = (SEShaderInstanceId)pyShaderId;
     const char* paramName = cre_pkpy_api_helper_convert_pkpy_CString(&pyParamName);
     SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
-    se_shader_instance_param_create_float4(shaderInstance, paramName, (SEVector4){ (float)valueX, (float)valueY, (float)valueZ, (float)valueW });
+    se_shader_instance_param_create_float4(shaderInstance, paramName, (SKAVector4){ (float)valueX, (float)valueY, (float)valueZ, (float)valueW });
     return 0;
 }
 
@@ -646,7 +659,7 @@ int cre_pkpy_api_shader_instance_set_float4_param(pkpy_vm* vm) {
     const SEShaderInstanceId shaderId = (SEShaderInstanceId)pyShaderId;
     const char* paramName = cre_pkpy_api_helper_convert_pkpy_CString(&pyParamName);
     SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
-    se_shader_instance_param_update_float4(shaderInstance, paramName, (SEVector4){ (float)valueX, (float)valueY, (float)valueZ, (float)valueW });
+    se_shader_instance_param_update_float4(shaderInstance, paramName, (SKAVector4){ (float)valueX, (float)valueY, (float)valueZ, (float)valueW });
     return 0;
 }
 
@@ -659,7 +672,7 @@ int cre_pkpy_api_shader_instance_get_float4_param(pkpy_vm* vm) {
     const SEShaderInstanceId shaderId = (SEShaderInstanceId)pyShaderId;
     const char* paramName = cre_pkpy_api_helper_convert_pkpy_CString(&pyParamName);
     SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
-    const SEVector4 paramValue = se_shader_instance_param_get_float4(shaderInstance, paramName);
+    const SKAVector4 paramValue = se_shader_instance_param_get_float4(shaderInstance, paramName);
     pkpy_push_float(vm, paramValue.x);
     pkpy_push_float(vm, paramValue.y);
     pkpy_push_float(vm, paramValue.z);
@@ -850,7 +863,7 @@ int cre_pkpy_api_input_mouse_get_position(pkpy_vm* vm) {
 }
 
 int cre_pkpy_api_input_mouse_get_world_position(pkpy_vm* vm) {
-    const SEVector2 mouseWorldPosition = cre_pkpy_api_helper_mouse_get_global_position(&(SEVector2){0.0f, 0.0f });
+    const SKAVector2 mouseWorldPosition = cre_pkpy_api_helper_mouse_get_global_position(&SKA_VECTOR2_ZERO);
     pkpy_push_float(vm, (double)mouseWorldPosition.x);
     pkpy_push_float(vm, (double)mouseWorldPosition.y);
     return 2;
@@ -911,7 +924,7 @@ int cre_pkpy_api_camera2d_set_position(pkpy_vm* vm) {
     pkpy_to_float(vm, 1, &pyPositionY);
 
     CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
-    camera2D->viewport = (SEVector2){ (float)pyPositionX, (float)pyPositionY };
+    camera2D->viewport = (SKAVector2){ (float)pyPositionX, (float)pyPositionY };
     cre_camera2d_clamp_viewport_to_boundary(camera2D);
     return 0;
 }
@@ -922,7 +935,7 @@ int cre_pkpy_api_camera2d_add_to_position(pkpy_vm* vm) {
     pkpy_to_float(vm, 1, &pyPositionY);
 
     CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
-    camera2D->viewport = (SEVector2){  camera2D->viewport.x + (float)pyPositionX, camera2D->viewport.y + (float)pyPositionY };
+    camera2D->viewport = (SKAVector2){  camera2D->viewport.x + (float)pyPositionX, camera2D->viewport.y + (float)pyPositionY };
     cre_camera2d_clamp_viewport_to_boundary(camera2D);
     return 0;
 }
@@ -940,7 +953,7 @@ int cre_pkpy_api_camera2d_set_offset(pkpy_vm* vm) {
     pkpy_to_float(vm, 1, &pyOffsetY);
 
     CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
-    camera2D->offset = (SEVector2){(float)pyOffsetX, (float)pyOffsetY };
+    camera2D->offset = (SKAVector2){(float)pyOffsetX, (float)pyOffsetY };
     return 0;
 }
 
@@ -950,7 +963,7 @@ int cre_pkpy_api_camera2d_add_to_offset(pkpy_vm* vm) {
     pkpy_to_float(vm, 1, &pyOffsetY);
 
     CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
-    camera2D->offset = (SEVector2){camera2D->offset.x + (float)pyOffsetX, camera2D->offset.y + (float)pyOffsetY };
+    camera2D->offset = (SKAVector2){camera2D->offset.x + (float)pyOffsetX, camera2D->offset.y + (float)pyOffsetY };
     return 0;
 }
 
@@ -967,7 +980,7 @@ int cre_pkpy_api_camera2d_set_zoom(pkpy_vm* vm) {
     pkpy_to_float(vm, 1, &pyZoomY);
 
     CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
-    camera2D->zoom = (SEVector2){(float)pyZoomX, (float)pyZoomY };
+    camera2D->zoom = (SKAVector2){(float)pyZoomX, (float)pyZoomY };
     return 0;
 }
 
@@ -977,7 +990,7 @@ int cre_pkpy_api_camera2d_add_to_zoom(pkpy_vm* vm) {
     pkpy_to_float(vm, 1, &pyZoomY);
 
     CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
-    camera2D->zoom = (SEVector2){camera2D->zoom.x + (float)pyZoomX, camera2D->zoom.y + (float)pyZoomY };
+    camera2D->zoom = (SKAVector2){camera2D->zoom.x + (float)pyZoomX, camera2D->zoom.y + (float)pyZoomY };
     return 0;
 }
 
@@ -996,7 +1009,7 @@ int cre_pkpy_api_camera2d_set_boundary(pkpy_vm* vm) {
     pkpy_to_float(vm, 3, &pyBoundaryH);
 
     CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
-    camera2D->boundary = (SERect2){ (float)pyBoundaryX, (float)pyBoundaryY, (float)pyBoundaryW, (float)pyBoundaryH };
+    camera2D->boundary = (SKARect2){ (float)pyBoundaryX, (float)pyBoundaryY, (float)pyBoundaryW, (float)pyBoundaryH };
     cre_camera2d_clamp_viewport_to_boundary(camera2D);
     return 0;
 }
@@ -1202,9 +1215,9 @@ int cre_pkpy_api_collision_handler_process_mouse_collisions(pkpy_vm* vm) {
     pkpy_to_float(vm, 2, &pyCollisionSizeW);
     pkpy_to_float(vm, 3, &pyCollisionSizeH);
 
-    const SEVector2 positionOffset = { (float)pyPosOffsetX, (float)pyPosOffsetY };
-    const SEVector2 mouseWorldPos = cre_pkpy_api_helper_mouse_get_global_position(&positionOffset);
-    const SERect2 collisionRect = { mouseWorldPos.x, mouseWorldPos.y, (float)pyCollisionSizeW, (float)pyCollisionSizeH };
+    const SKAVector2 positionOffset = { (float)pyPosOffsetX, (float)pyPosOffsetY };
+    const SKAVector2 mouseWorldPos = cre_pkpy_api_helper_mouse_get_global_position(&positionOffset);
+    const SKARect2 collisionRect = { mouseWorldPos.x, mouseWorldPos.y, (float)pyCollisionSizeW, (float)pyCollisionSizeH };
     const CollisionResult collisionResult = cre_collision_process_mouse_collisions(&collisionRect);
     for (size_t i = 0; i < collisionResult.collidedEntityCount; i++) {
         const CreEntity collidedEntity = collisionResult.collidedEntities[i];

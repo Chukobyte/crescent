@@ -21,10 +21,10 @@ typedef enum CreCameraArchorMode {
 } CreCameraArchorMode;
 
 typedef struct CRECamera2D {
-    SERect2 boundary;
-    SEVector2 viewport;
-    SEVector2 offset;
-    SEVector2 zoom;
+    SKARect2 boundary;
+    SKAVector2 viewport;
+    SKAVector2 offset;
+    SKAVector2 zoom;
     CreCameraMode mode;
     CreCameraArchorMode archorMode;
     CreEntity entityFollowing;

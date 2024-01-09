@@ -89,3 +89,17 @@ int cre_pkpy_api_color_rect_set_color(struct pkpy_vm_handle* vm);
 // Parallax
 int cre_pkpy_api_parallax_get_scroll_speed(struct pkpy_vm_handle* vm);
 int cre_pkpy_api_parallax_set_scroll_speed(struct pkpy_vm_handle* vm);
+
+// Particles2D
+int cre_pkpy_api_particles2d_get_amount(struct pkpy_vm_handle* vm);
+int cre_pkpy_api_particles2d_set_amount(struct pkpy_vm_handle* vm);
+int cre_pkpy_api_particles2d_get_life_time(struct pkpy_vm_handle* vm);
+int cre_pkpy_api_particles2d_set_life_time(struct pkpy_vm_handle* vm);
+int cre_pkpy_api_particles2d_get_damping(struct pkpy_vm_handle* vm);
+int cre_pkpy_api_particles2d_set_damping(struct pkpy_vm_handle* vm);
+int cre_pkpy_api_particles2d_get_color(struct pkpy_vm_handle* vm);
+int cre_pkpy_api_particles2d_set_color(struct pkpy_vm_handle* vm);
+int cre_pkpy_api_particles2d_get_initial_velocity(struct pkpy_vm_handle* vm);
+int cre_pkpy_api_particles2d_set_initial_velocity(struct pkpy_vm_handle* vm);
+int cre_pkpy_api_particles2d_get_spread(struct pkpy_vm_handle* vm);
+int cre_pkpy_api_particles2d_set_spread(struct pkpy_vm_handle* vm);

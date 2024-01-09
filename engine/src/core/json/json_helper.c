@@ -84,18 +84,18 @@ bool json_get_bool_default(cJSON* json, const char* key, bool defaultValue) {
     return defaultValue;
 }
 
-SEVector2 json_get_vec2(cJSON* json, const char* key) {
+SKAVector2 json_get_vec2(cJSON* json, const char* key) {
     cJSON* vec2Json = cJSON_GetObjectItemCaseSensitive(json, key);
-    return (SEVector2) {
+    return (SKAVector2) {
         .x = (float) json_get_double(vec2Json, "x"),
         .y = (float) json_get_double(vec2Json, "y")
     };
 }
 
-SEVector2 json_get_vec2_default(cJSON* json, const char* key, SEVector2 defaultValue) {
+SKAVector2 json_get_vec2_default(cJSON* json, const char* key, SKAVector2 defaultValue) {
     cJSON* vec2Json = cJSON_GetObjectItemCaseSensitive(json, key);
     if (vec2Json != NULL) {
-        return (SEVector2) {
+        return (SKAVector2) {
             .x = (float) json_get_double_default(vec2Json, "x", defaultValue.x),
             .y = (float) json_get_double_default(vec2Json, "y", defaultValue.y)
         };
@@ -103,18 +103,18 @@ SEVector2 json_get_vec2_default(cJSON* json, const char* key, SEVector2 defaultV
     return defaultValue;
 }
 
-SESize2D json_get_size2d(cJSON* json, const char* key) {
+SKASize2D json_get_size2d(cJSON* json, const char* key) {
     cJSON* size2dJson = cJSON_GetObjectItemCaseSensitive(json, key);
-    return (SESize2D) {
+    return (SKASize2D) {
         .w = (float) json_get_double(size2dJson, "w"),
         .h = (float) json_get_double(size2dJson, "h")
     };
 }
 
-SESize2D json_get_size2d_default(cJSON* json, const char* key, SESize2D defaultValue) {
+SKASize2D json_get_size2d_default(cJSON* json, const char* key, SKASize2D defaultValue) {
     cJSON* size2dJson = cJSON_GetObjectItemCaseSensitive(json, key);
     if (size2dJson != NULL) {
-        return (SESize2D) {
+        return (SKASize2D) {
             .w = (float) json_get_double(size2dJson, "w"),
             .h = (float) json_get_double(size2dJson, "h")
         };
@@ -122,9 +122,9 @@ SESize2D json_get_size2d_default(cJSON* json, const char* key, SESize2D defaultV
     return defaultValue;
 }
 
-SERect2 json_get_rect2(cJSON* json, const char* key) {
+SKARect2 json_get_rect2(cJSON* json, const char* key) {
     cJSON* rect2Json = cJSON_GetObjectItemCaseSensitive(json, key);
-    return (SERect2) {
+    return (SKARect2) {
         .x = (float) json_get_double(rect2Json, "x"),
         .y = (float) json_get_double(rect2Json, "y"),
         .w = (float) json_get_double(rect2Json, "w"),
@@ -132,10 +132,10 @@ SERect2 json_get_rect2(cJSON* json, const char* key) {
     };
 }
 
-SERect2 json_get_rect2_default(cJSON* json, const char* key, SERect2 defaultValue) {
+SKARect2 json_get_rect2_default(cJSON* json, const char* key, SKARect2 defaultValue) {
     cJSON* rect2Json = cJSON_GetObjectItemCaseSensitive(json, key);
     if (rect2Json != NULL) {
-        return (SERect2) {
+        return (SKARect2) {
             .x = (float) json_get_double(rect2Json, "x"),
             .y = (float) json_get_double(rect2Json, "y"),
             .w = (float) json_get_double(rect2Json, "w"),
@@ -145,9 +145,9 @@ SERect2 json_get_rect2_default(cJSON* json, const char* key, SERect2 defaultValu
     return defaultValue;
 }
 
-SEColor json_get_linear_color(cJSON* json, const char* key) {
+SKAColor json_get_linear_color(cJSON* json, const char* key) {
     cJSON* colorJson = cJSON_GetObjectItemCaseSensitive(json, key);
-    return (SEColor) {
+    return (SKAColor) {
         .r = ((float) json_get_int(colorJson, "r") / 255.0f),
         .g = ((float) json_get_int(colorJson, "g") / 255.0f),
         .b = ((float) json_get_int(colorJson, "b") / 255.0f),
@@ -155,10 +155,10 @@ SEColor json_get_linear_color(cJSON* json, const char* key) {
     };
 }
 
-SEColor json_get_linear_color_default(cJSON* json, const char* key, SEColor defaultValue) {
+SKAColor json_get_linear_color_default(cJSON* json, const char* key, SKAColor defaultValue) {
     cJSON* colorJson = cJSON_GetObjectItemCaseSensitive(json, key);
     if (colorJson != NULL) {
-        return (SEColor) {
+        return (SKAColor) {
             .r = ((float) json_get_int_default(colorJson, "r", 255) / 255.0f),
             .g = ((float) json_get_int_default(colorJson, "g", 255) / 255.0f),
             .b = ((float) json_get_int_default(colorJson, "b", 255) / 255.0f),

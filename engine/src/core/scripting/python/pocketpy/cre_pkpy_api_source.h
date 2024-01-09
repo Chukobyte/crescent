@@ -825,10 +825,10 @@
 "    Sprite = 4\n"\
 "    AnimatedSprite = 8\n"\
 "    TextLabel = 16\n"\
-"    Script = 32\n"\
-"    Collider2D = 64\n"\
-"    ColorRect = 128\n"\
-"    Parallax = 256\n"\
+"    Collider2D = 32\n"\
+"    ColorRect = 64\n"\
+"    Parallax = 128\n"\
+"    Particles2D = 256\n"\
 "\n"\
 "\n"\
 "class Node:\n"\
@@ -1269,6 +1269,62 @@
 "    @scroll_speed.setter\n"\
 "    def scroll_speed(self, value: Vector2) -> None:\n"\
 "        crescent_internal.parallax_set_scroll_speed(self.entity_id, value.x, value.y)\n"\
+"\n"\
+"\n"\
+"class Particles2D(Node2D):\n"\
+"    @staticmethod\n"\
+"    def new() -> \"Particles2D\":\n"\
+"        return crescent_internal.node_new(\"crescent\", \"Particles2D\", NodeType.Particles2D)\n"\
+"\n"\
+"    @property\n"\
+"    def amount(self) -> int:\n"\
+"        return crescent_internal.particles2d_get_amount(self.entity_id)\n"\
+"\n"\
+"    @amount.setter\n"\
+"    def amount(self, value: int) -> None:\n"\
+"        crescent_internal.particles2d_set_amount(self.entity_id, value)\n"\
+"\n"\
+"    @property\n"\
+"    def life_time(self) -> float:\n"\
+"        return crescent_internal.particles2d_get_life_time(self.entity_id)\n"\
+"\n"\
+"    @life_time.setter\n"\
+"    def life_time(self, value: float) -> None:\n"\
+"        crescent_internal.particles2d_set_life_time(self.entity_id, value)\n"\
+"\n"\
+"    @property\n"\
+"    def damping(self) -> float:\n"\
+"        return crescent_internal.particles2d_get_damping(self.entity_id)\n"\
+"\n"\
+"    @damping.setter\n"\
+"    def damping(self, value: float) -> None:\n"\
+"        crescent_internal.particles2d_set_damping(self.entity_id, value)\n"\
+"\n"\
+"    @property\n"\
+"    def color(self) -> Color:\n"\
+"        r, g, b, a = crescent_internal.particles2d_get_color(self.entity_id)\n"\
+"        return Color(r, g, b, a)\n"\
+"\n"\
+"    @color.setter\n"\
+"    def color(self, value: Color) -> None:\n"\
+"        crescent_internal.particles2d_set_color(self.entity_id, value.r, value.g, value.b, value.a)\n"\
+"\n"\
+"    @property\n"\
+"    def initial_velocity(self) -> Vector2:\n"\
+"        x, y = crescent_internal.particles2d_get_initial_velocity(self.entity_id)\n"\
+"        return Vector2(x, y)\n"\
+"\n"\
+"    @initial_velocity.setter\n"\
+"    def initial_velocity(self, value: Vector2) -> None:\n"\
+"        crescent_internal.particles2d_set_initial_velocity(self.entity_id, value.x, value.y)\n"\
+"\n"\
+"    @property\n"\
+"    def spread(self) -> float:\n"\
+"        return crescent_internal.particles2d_get_spread(self.entity_id)\n"\
+"\n"\
+"    @spread.setter\n"\
+"    def spread(self, value: float) -> None:\n"\
+"        crescent_internal.particles2d_set_spread(self.entity_id, value)\n"\
 "\n"\
 "\n"\
 "class SceneTree:\n"\

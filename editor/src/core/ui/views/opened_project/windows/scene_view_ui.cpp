@@ -22,7 +22,7 @@ EntityArray OnGetSelfAndParentEntitiesFunc(CreEntity entity) {
     return combineModelResult;
 }
 
-SETransform2D OnGetLocalTransformFunc(CreEntity entity, int* zIndex, bool* success) {
+SKATransform2D OnGetLocalTransformFunc(CreEntity entity, int* zIndex, bool* success) {
     static auto* sceneManager = SceneManager::Get();
     if (auto* node = sceneManager->GetNode(sceneManager->selectedSceneFile, entity)) {
         if (auto* transformComp = node->GetComponentSafe<Transform2DComp>()) {
@@ -44,16 +44,16 @@ ImGuiHelper::Window OpenedProjectUI::Windows::GetSceneViewWindow() {
         .callbackFunc = [] (ImGuiHelper::Context* context) {
             static auto GetNodeTextureRenderTarget = [](SceneNode* node, size_t index, Transform2DComp* transformComp, bool& hasTexture) {
                 static AssetManager* assetManager = AssetManager::Get();
-                static SETransformModel2D globalTransforms[CRE_MAX_ENTITIES];
+                static SKATransformModel2D globalTransforms[CRE_MAX_ENTITIES];
                 static SETexture* whiteRectTexture = se_texture_create_solid_colored_texture(1, 1, 255);
                 SETexture* renderTargetTexture = nullptr;
                 cre_scene_utils_update_global_transform_model(node->GetUID(), &globalTransforms[index]);
-                SERect2 sourceRect = { 0.0f, 0.0f, 0.0f, 0.0f };
-                SESize2D destSize = { 0.0f, 0.0f };
-                SEColor color = { 1.0f, 1.0f, 1.0f, 1.0f };
+                SKARect2 sourceRect = SKA_RECT2D_ZERO;
+                SKASize2D destSize = SKA_SIZE2D_ZERO;
+                SKAColor color = SKA_COLOR_WHITE;
                 bool flipH = false;
                 bool flipV = false;
-                SEVector2 origin = { 0.0f, 0.0f };
+                SKAVector2 origin = SKA_VECTOR2_ZERO;
                 hasTexture = true;
                 if (auto* spriteComp = node->GetComponentSafe<SpriteComp>()) {
                     renderTargetTexture = assetManager->GetTexture(spriteComp->texturePath.c_str());
@@ -118,9 +118,9 @@ ImGuiHelper::Window OpenedProjectUI::Windows::GetSceneViewWindow() {
                 sceneManager->IterateAllSceneNodes(sceneManager->selectedSceneFile->rootNode, [&textureRenderTargets, &fontRenderTargets](SceneNode* node, size_t i) {
                     if (auto* transformComp = node->GetComponentSafe<Transform2DComp>()) {
                         if (auto* textLabelComp = node->GetComponentSafe<TextLabelComp>()) {
-                            SETransformModel2D globalTransform = { transformComp->transform2D.position, transformComp->transform2D.scale, transformComp->transform2D.rotation };
+                            SKATransformModel2D globalTransform = { transformComp->transform2D.position, transformComp->transform2D.scale, transformComp->transform2D.rotation };
                             cre_scene_utils_update_global_transform_model(node->GetUID(), &globalTransform);
-                            static SEVector2 textLabelOrigin = { 0.0f, 0.0f };
+                            static SKAVector2 textLabelOrigin = SKA_VECTOR2_ZERO;
                             cre_scene_utils_apply_camera_and_origin_translation(&globalTransform, &textLabelOrigin, transformComp->ignoreCamera);
                             const char* renderFontUID = !textLabelComp->fontUID.empty() ? textLabelComp->fontUID.c_str() : CRE_DEFAULT_FONT_ASSET.uid;
                             const ImGuiHelper::FontRenderTarget renderTarget = {

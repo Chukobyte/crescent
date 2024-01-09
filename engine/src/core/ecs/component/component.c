@@ -140,6 +140,8 @@ CreComponentType component_manager_translate_index_to_type(CreComponentDataIndex
         return CreComponentType_COLOR_RECT;
     case CreComponentDataIndex_PARALLAX:
         return CreComponentType_PARALLAX;
+    case CreComponentDataIndex_PARTICLES_2D:
+        return CreComponentType_PARTICLES_2D;
     case CreComponentDataIndex_NONE:
     default:
         se_logger_error("Not a valid component data index: '%d'", index);
@@ -167,6 +169,8 @@ const char* cre_component_get_component_data_index_string(CreComponentDataIndex 
         return "ColorRect";
     case CreComponentDataIndex_PARALLAX:
         return "Parallax";
+    case CreComponentDataIndex_PARTICLES_2D:
+        return "Particles2D";
     case CreComponentDataIndex_NONE:
     default:
         se_logger_error("Not a valid component data index: '%d'", index);

@@ -44,7 +44,7 @@ void cre_scene_manager_process_queued_scene_change();
 // Scene Tree related stuff, may separate into separate functionality later.
 void cre_scene_manager_set_active_scene_root(SceneTreeNode* root);
 SceneTreeNode* cre_scene_manager_get_active_scene_root();
-SETransformModel2D* cre_scene_manager_get_scene_node_global_transform(CreEntity entity, Transform2DComponent* transform2DComponent);
+SKATransformModel2D* cre_scene_manager_get_scene_node_global_transform(CreEntity entity, Transform2DComponent* transform2DComponent);
 float cre_scene_manager_get_node_full_time_dilation(CreEntity entity);
 CreEntity cre_scene_manager_get_entity_child_by_name(CreEntity parent, const char* childName);
 SceneTreeNode* cre_scene_manager_get_entity_tree_node(CreEntity entity);

@@ -236,7 +236,7 @@ SceneTreeNode* cre_scene_manager_get_active_scene_root() {
 }
 
 // TODO: Make function to update flags for all children
-SETransformModel2D* cre_scene_manager_get_scene_node_global_transform(CreEntity entity, Transform2DComponent* transform2DComponent) {
+SKATransformModel2D* cre_scene_manager_get_scene_node_global_transform(CreEntity entity, Transform2DComponent* transform2DComponent) {
     SE_ASSERT_FMT(transform2DComponent != NULL, "Transform Model is NULL for entity '%d'", entity);
     if (transform2DComponent->isGlobalTransformDirty) {
         // Walk up scene to root node and calculate global transform

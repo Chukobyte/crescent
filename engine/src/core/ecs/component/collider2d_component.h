@@ -11,10 +11,10 @@ extern "C" {
 #include "../entity/entity.h"
 
 typedef struct Collider2DComponent {
-    SESize2D extents; // TODO: Default to a box, implement other colliders later.  Also should use extents instead of rect!
+    SKASize2D extents; // TODO: Default to a box, implement other colliders later.  Also should use extents instead of rect!
     CreEntity collisionExceptions[4];
     size_t collisionExceptionCount;
-    SEColor color; // For debug purposes
+    SKAColor color; // For debug purposes
 } Collider2DComponent;
 
 Collider2DComponent* collider2d_component_create();

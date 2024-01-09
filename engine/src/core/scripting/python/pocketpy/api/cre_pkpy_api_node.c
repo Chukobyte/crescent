@@ -20,6 +20,7 @@
 #include "../../../../ecs/component/parallax_component.h"
 #include "../../../../ecs/component/script_component.h"
 #include "../../../../ecs/system/ec_system.h"
+#include "../../../../ecs/component/particles2d_component.h"
 
 void set_node_component_from_type(CreEntity entity, const char* classPath, const char* className, NodeBaseType baseType) {
 
@@ -49,6 +50,9 @@ void set_node_component_from_type(CreEntity entity, const char* classPath, const
     }
     if ((NodeBaseInheritanceType_PARALLAX & inheritanceType) == NodeBaseInheritanceType_PARALLAX) {
         cre_component_manager_set_component(entity, CreComponentDataIndex_PARALLAX, parallax_component_create());
+    }
+    if ((NodeBaseInheritanceType_PARTICLES2D & inheritanceType) == NodeBaseInheritanceType_PARTICLES2D) {
+        cre_component_manager_set_component(entity, CreComponentDataIndex_PARTICLES_2D, particles2d_component_create());
     }
 }
 
@@ -210,9 +214,9 @@ int cre_pkpy_api_node_get_total_time_dilation(pkpy_vm* vm) {
 
 //--- NODE2D ---//
 
-void cre_pkpy_update_entity_local_position(CreEntity entity, SEVector2* position) {
+void cre_pkpy_update_entity_local_position(CreEntity entity, SKAVector2* position) {
     Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity,CreComponentDataIndex_TRANSFORM_2D);
-    const SEVector2 prevPosition = transformComp->localTransform.position;
+    const SKAVector2 prevPosition = transformComp->localTransform.position;
     transformComp->localTransform.position.x = position->x;
     transformComp->localTransform.position.y = position->y;
     transformComp->isGlobalTransformDirty = true;
@@ -221,9 +225,9 @@ void cre_pkpy_update_entity_local_position(CreEntity entity, SEVector2* position
     }
 }
 
-void cre_pkpy_update_entity_local_scale(CreEntity entity, SEVector2 * scale) {
+void cre_pkpy_update_entity_local_scale(CreEntity entity, SKAVector2 * scale) {
     Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity,CreComponentDataIndex_TRANSFORM_2D);
-    const SEVector2 prevScale = transformComp->localTransform.scale;
+    const SKAVector2 prevScale = transformComp->localTransform.scale;
     transformComp->localTransform.scale.x = scale->x;
     transformComp->localTransform.scale.y = scale->y;
     transformComp->isGlobalTransformDirty = true;
@@ -251,7 +255,7 @@ int cre_pkpy_api_node2d_set_position(pkpy_vm* vm) {
     pkpy_to_float(vm, 2, &positionY);
 
     const CreEntity entity = (CreEntity)pyEntityId;
-    cre_pkpy_update_entity_local_position(entity, &(SEVector2){ (float)positionX, (float)positionY });
+    cre_pkpy_update_entity_local_position(entity, &(SKAVector2){ (float)positionX, (float)positionY });
     return 0;
 }
 
@@ -265,7 +269,7 @@ int cre_pkpy_api_node2d_add_to_position(pkpy_vm* vm) {
 
     const CreEntity entity = (CreEntity)pyEntityId;
     const Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_TRANSFORM_2D);
-    cre_pkpy_update_entity_local_position(entity, &(SEVector2){
+    cre_pkpy_update_entity_local_position(entity, &(SKAVector2){
             transformComp->localTransform.position.x + (float)positionX,
             transformComp->localTransform.position.y + (float)positionY
     });
@@ -289,7 +293,7 @@ int cre_pkpy_api_node2d_get_global_position(pkpy_vm* vm) {
 
     const CreEntity entity = (CreEntity)pyEntityId;
     Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_TRANSFORM_2D);
-    SETransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity, transformComp);
+    SKATransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity, transformComp);
     pkpy_push_float(vm, (double)globalTransform->position.x);
     pkpy_push_float(vm, (double)globalTransform->position.y);
     return 2;
@@ -304,7 +308,7 @@ int cre_pkpy_api_node2d_set_scale(pkpy_vm* vm) {
     pkpy_to_float(vm, 2, &scaleY);
 
     const CreEntity entity = (CreEntity)pyEntityId;
-    cre_pkpy_update_entity_local_scale(entity, &(SEVector2){(float)scaleX, (float)scaleY });
+    cre_pkpy_update_entity_local_scale(entity, &(SKAVector2){(float)scaleX, (float)scaleY });
     return 0;
 }
 
@@ -318,7 +322,7 @@ int cre_pkpy_api_node2d_add_to_scale(pkpy_vm* vm) {
 
     const CreEntity entity = (CreEntity)pyEntityId;
     const Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_TRANSFORM_2D);
-    cre_pkpy_update_entity_local_scale(entity, &(SEVector2){
+    cre_pkpy_update_entity_local_scale(entity, &(SKAVector2){
             transformComp->localTransform.scale.x + (float)scaleX,
             transformComp->localTransform.scale.y + (float)scaleY
     });
@@ -492,7 +496,7 @@ int cre_pkpy_api_sprite_set_draw_source(pkpy_vm* vm) {
 
     const CreEntity entity = (CreEntity)pyEntityId;
     SpriteComponent* spriteComponent = (SpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_SPRITE);
-    spriteComponent->drawSource = (SERect2){ (float)pyDrawSourceX, (float)pyDrawSourceY, (float)pyDrawSourceW, (float)pyDrawSourceH };
+    spriteComponent->drawSource = (SKARect2){ (float)pyDrawSourceX, (float)pyDrawSourceY, (float)pyDrawSourceW, (float)pyDrawSourceH };
     return 0;
 }
 
@@ -567,7 +571,7 @@ int cre_pkpy_api_sprite_set_modulate(pkpy_vm* vm) {
 
     const CreEntity entity = (CreEntity)pyEntityId;
     SpriteComponent* spriteComponent = (SpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_SPRITE);
-    spriteComponent->modulate = (SEColor){(float)pyModulateR, (float)pyModulateG, (float)pyModulateB, (float)pyModulateA };
+    spriteComponent->modulate = (SKAColor){(float)pyModulateR, (float)pyModulateG, (float)pyModulateB, (float)pyModulateA };
     return 0;
 }
 
@@ -592,7 +596,7 @@ int cre_pkpy_api_sprite_set_origin(pkpy_vm* vm) {
 
     const CreEntity entity = (CreEntity)pyEntityId;
     SpriteComponent* spriteComponent = (SpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_SPRITE);
-    spriteComponent->origin = (SEVector2){ (float)pyOriginX, (float)pyOriginY };
+    spriteComponent->origin = (SKAVector2){ (float)pyOriginX, (float)pyOriginY };
     return 0;
 }
 
@@ -655,7 +659,7 @@ int cre_pkpy_api_animated_sprite_set_current_animation_frame(pkpy_vm* vm) {
 
     const CreEntity entity = (CreEntity)pyEntityId;
     AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_ANIMATED_SPRITE);
-    animatedSpriteComponent->currentAnimation.currentFrame = se_math_clamp_int(pyFrame, 0, animatedSpriteComponent->currentAnimation.frameCount - 1);
+    animatedSpriteComponent->currentAnimation.currentFrame = ska_math_clamp_int(pyFrame, 0, animatedSpriteComponent->currentAnimation.frameCount - 1);
     return 0;
 }
 
@@ -805,7 +809,7 @@ int cre_pkpy_api_animated_sprite_set_modulate(pkpy_vm* vm) {
 
     const CreEntity entity = (CreEntity)pyEntityId;
     AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_ANIMATED_SPRITE);
-    animatedSpriteComponent->modulate = (SEColor){(float)pyModulateR, (float)pyModulateG, (float)pyModulateB, (float)pyModulateA };
+    animatedSpriteComponent->modulate = (SKAColor){(float)pyModulateR, (float)pyModulateG, (float)pyModulateB, (float)pyModulateA };
     return 0;
 }
 
@@ -830,7 +834,7 @@ int cre_pkpy_api_animated_sprite_set_origin(pkpy_vm* vm) {
 
     const CreEntity entity = (CreEntity)pyEntityId;
     AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_ANIMATED_SPRITE);
-    animatedSpriteComponent->origin = (SEVector2){ (float)pyOriginX, (float)pyOriginY };
+    animatedSpriteComponent->origin = (SKAVector2){ (float)pyOriginX, (float)pyOriginY };
     return 0;
 }
 
@@ -877,10 +881,11 @@ int cre_pkpy_api_text_label_set_text(pkpy_vm* vm) {
     pkpy_to_int(vm, 0, &pyEntityId);
     pkpy_to_string(vm, 1, &pyText);
 
+    static char textBuffer[2048];
+    se_str_trim_by_size(pyText.data, textBuffer, pyText.size);
     const CreEntity entity = (CreEntity)pyEntityId;
-    const char* text = pyText.data;
     TextLabelComponent* textLabelComponent = (TextLabelComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_TEXT_LABEL);
-    se_strcpy(textLabelComponent->text, text);
+    se_strcpy(textLabelComponent->text, textBuffer);
     return 0;
 }
 
@@ -912,7 +917,7 @@ int cre_pkpy_api_text_label_set_color(pkpy_vm* vm) {
 
     const CreEntity entity = (CreEntity)pyEntityId;
     TextLabelComponent* textLabelComponent = (TextLabelComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_TEXT_LABEL);
-    textLabelComponent->color = se_color_get_normalized_color(pyRed, pyGreen, pyBlue, pyAlpha);
+    textLabelComponent->color = ska_color_get_normalized_color(pyRed, pyGreen, pyBlue, pyAlpha);
     return 0;
 }
 
@@ -955,7 +960,7 @@ int cre_pkpy_api_collider2d_set_extents(pkpy_vm* vm) {
 
     const CreEntity entity = (CreEntity)pyEntityId;
     Collider2DComponent* collider2DComponent = (Collider2DComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_COLLIDER_2D);
-    collider2DComponent->extents = (SESize2D){ (float)pyExtentsX, (float)pyExtentsY };
+    collider2DComponent->extents = (SKASize2D){ (float)pyExtentsX, (float)pyExtentsY };
     return 0;
 }
 
@@ -983,7 +988,7 @@ int cre_pkpy_api_collider2d_set_color(pkpy_vm* vm) {
 
     const CreEntity entity = (CreEntity)pyEntityId;
     Collider2DComponent* collider2DComponent = (Collider2DComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_COLLIDER_2D);
-    collider2DComponent->color = (SEColor){ (float)pyRed, (float)pyGreen, (float)pyBlue, (float)pyAlpha };
+    collider2DComponent->color = (SKAColor){ (float)pyRed, (float)pyGreen, (float)pyBlue, (float)pyAlpha };
     return 0;
 }
 
@@ -1009,7 +1014,7 @@ int cre_pkpy_api_color_rect_set_size(pkpy_vm* vm) {
 
     const CreEntity entity = (CreEntity)pyEntityId;
     ColorRectComponent* colorRectComponent = (ColorRectComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_COLOR_RECT);
-    colorRectComponent->size = (SESize2D){ (float)pySizeW, (float)pySizeH };
+    colorRectComponent->size = (SKASize2D){ (float)pySizeW, (float)pySizeH };
     return 0;
 }
 
@@ -1037,7 +1042,7 @@ int cre_pkpy_api_color_rect_set_color(pkpy_vm* vm) {
 
     const CreEntity entity = (CreEntity)pyEntityId;
     ColorRectComponent* colorRectComponent = (ColorRectComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_COLOR_RECT);
-    colorRectComponent->color = (SEColor){ (float)pyRed, (float)pyGreen, (float)pyBlue, (float)pyAlpha };
+    colorRectComponent->color = (SKAColor){ (float)pyRed, (float)pyGreen, (float)pyBlue, (float)pyAlpha };
     return 0;
 }
 
@@ -1063,6 +1068,153 @@ int cre_pkpy_api_parallax_set_scroll_speed(pkpy_vm* vm) {
 
     const CreEntity entity = (CreEntity)pyEntityId;
     ParallaxComponent* parallaxComponent = (ParallaxComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_PARALLAX);
-    parallaxComponent->scrollSpeed = (SEVector2){ (float)pySpeedX, (float)pySpeedY };
+    parallaxComponent->scrollSpeed = (SKAVector2){ (float)pySpeedX, (float)pySpeedY };
+    return 0;
+}
+
+//--- PARTICLES2D ---//
+
+int cre_pkpy_api_particles2d_get_amount(pkpy_vm* vm) {
+    int pyEntityId;
+    pkpy_to_int(vm, 0, &pyEntityId);
+
+    const CreEntity entity = (CreEntity)pyEntityId;
+    const Particles2DComponent* particles2dComponent = (Particles2DComponent*)cre_component_manager_get_component(entity, CreComponentDataIndex_PARTICLES_2D);
+    pkpy_push_int(vm, particles2dComponent->amount);
+    return 1;
+}
+
+int cre_pkpy_api_particles2d_set_amount(pkpy_vm* vm) {
+    int pyEntityId;
+    int pyAmount;
+    pkpy_to_int(vm, 0, &pyEntityId);
+    pkpy_to_int(vm, 1, &pyAmount);
+
+    const CreEntity entity = (CreEntity)pyEntityId;
+    Particles2DComponent* particles2dComponent = (Particles2DComponent*)cre_component_manager_get_component(entity, CreComponentDataIndex_PARTICLES_2D);
+    particles2dComponent->amount = pyAmount;
+    // TODO: Update particle stuff...
+    return 0;
+}
+
+int cre_pkpy_api_particles2d_get_life_time(pkpy_vm* vm) {
+    int pyEntityId;
+    pkpy_to_int(vm, 0, &pyEntityId);
+
+    const CreEntity entity = (CreEntity)pyEntityId;
+    const Particles2DComponent* particles2dComponent = (Particles2DComponent*)cre_component_manager_get_component(entity, CreComponentDataIndex_PARTICLES_2D);
+    pkpy_push_float(vm, (double)particles2dComponent->lifeTime);
+    return 1;
+}
+
+int cre_pkpy_api_particles2d_set_life_time(pkpy_vm* vm) {
+    int pyEntityId;
+    double pyLifeTime;
+    pkpy_to_int(vm, 0, &pyEntityId);
+    pkpy_to_float(vm, 1, &pyLifeTime);
+
+    const CreEntity entity = (CreEntity)pyEntityId;
+    Particles2DComponent* particles2dComponent = (Particles2DComponent*)cre_component_manager_get_component(entity, CreComponentDataIndex_PARTICLES_2D);
+    particles2dComponent->lifeTime = (float)pyLifeTime;
+    return 0;
+}
+
+int cre_pkpy_api_particles2d_get_damping(pkpy_vm* vm) {
+    int pyEntityId;
+    pkpy_to_int(vm, 0, &pyEntityId);
+
+    const CreEntity entity = (CreEntity)pyEntityId;
+    const Particles2DComponent* particles2dComponent = (Particles2DComponent*)cre_component_manager_get_component(entity, CreComponentDataIndex_PARTICLES_2D);
+    pkpy_push_float(vm, (double)particles2dComponent->damping);
+    return 1;
+}
+
+int cre_pkpy_api_particles2d_set_damping(pkpy_vm* vm) {
+    int pyEntityId;
+    double pyDamping;
+    pkpy_to_int(vm, 0, &pyEntityId);
+    pkpy_to_float(vm, 1, &pyDamping);
+
+    const CreEntity entity = (CreEntity)pyEntityId;
+    Particles2DComponent* particles2dComponent = (Particles2DComponent*)cre_component_manager_get_component(entity, CreComponentDataIndex_PARTICLES_2D);
+    particles2dComponent->damping = (float)pyDamping;
+    return 0;
+}
+
+int cre_pkpy_api_particles2d_get_color(pkpy_vm* vm) {
+    int pyEntityId;
+    pkpy_to_int(vm, 0, &pyEntityId);
+
+    const CreEntity entity = (CreEntity)pyEntityId;
+    const Particles2DComponent* particles2dComponent = (Particles2DComponent*)cre_component_manager_get_component(entity, CreComponentDataIndex_PARTICLES_2D);
+    const int red = (int) (particles2dComponent->color.r * 255.0f);
+    const int green = (int) (particles2dComponent->color.g * 255.0f);
+    const int blue = (int) (particles2dComponent->color.b * 255.0f);
+    const int alpha = (int) (particles2dComponent->color.a * 255.0f);
+    pkpy_push_int(vm, red);
+    pkpy_push_int(vm, green);
+    pkpy_push_int(vm, blue);
+    pkpy_push_int(vm, alpha);
+    return 4;
+}
+
+int cre_pkpy_api_particles2d_set_color(pkpy_vm* vm) {
+    int pyEntityId;
+    int pyRed, pyGreen, pyBlue, pyAlpha;
+    pkpy_to_int(vm, 0, &pyEntityId);
+    pkpy_to_int(vm, 1, &pyRed);
+    pkpy_to_int(vm, 2, &pyGreen);
+    pkpy_to_int(vm, 3, &pyBlue);
+    pkpy_to_int(vm, 4, &pyAlpha);
+
+    const CreEntity entity = (CreEntity)pyEntityId;
+    Particles2DComponent* particles2dComponent = (Particles2DComponent*)cre_component_manager_get_component(entity, CreComponentDataIndex_PARTICLES_2D);
+    particles2dComponent->color = ska_color_get_normalized_color(pyRed, pyGreen, pyBlue, pyAlpha);
+    return 0;
+}
+
+int cre_pkpy_api_particles2d_get_initial_velocity(pkpy_vm* vm) {
+    int pyEntityId;
+    pkpy_to_int(vm, 0, &pyEntityId);
+
+    const CreEntity entity = (CreEntity)pyEntityId;
+    const Particles2DComponent* particles2dComponent = (Particles2DComponent*)cre_component_manager_get_component(entity, CreComponentDataIndex_PARTICLES_2D);
+    pkpy_push_float(vm, (double)particles2dComponent->initialVelocity.x);
+    pkpy_push_float(vm, (double)particles2dComponent->initialVelocity.y);
+    return 2;
+}
+
+int cre_pkpy_api_particles2d_set_initial_velocity(pkpy_vm* vm) {
+    int pyEntityId;
+    double pyX, pyY;
+    pkpy_to_int(vm, 0, &pyEntityId);
+    pkpy_to_float(vm, 1, &pyX);
+    pkpy_to_float(vm, 2, &pyY);
+
+    const CreEntity entity = (CreEntity)pyEntityId;
+    Particles2DComponent* particles2dComponent = (Particles2DComponent*)cre_component_manager_get_component(entity, CreComponentDataIndex_PARTICLES_2D);
+    particles2dComponent->initialVelocity = (SKAVector2){ (float)pyX, (float)pyY };
+    return 0;
+}
+
+int cre_pkpy_api_particles2d_get_spread(pkpy_vm* vm) {
+    int pyEntityId;
+    pkpy_to_int(vm, 0, &pyEntityId);
+
+    const CreEntity entity = (CreEntity)pyEntityId;
+    const Particles2DComponent* particles2dComponent = (Particles2DComponent*)cre_component_manager_get_component(entity, CreComponentDataIndex_PARTICLES_2D);
+    pkpy_push_float(vm, (double)particles2dComponent->spread);
+    return 1;
+}
+
+int cre_pkpy_api_particles2d_set_spread(pkpy_vm* vm) {
+    int pyEntityId;
+    double pySpread;
+    pkpy_to_int(vm, 0, &pyEntityId);
+    pkpy_to_float(vm, 1, &pySpread);
+
+    const CreEntity entity = (CreEntity)pyEntityId;
+    Particles2DComponent* particles2dComponent = (Particles2DComponent*)cre_component_manager_get_component(entity, CreComponentDataIndex_PARTICLES_2D);
+    particles2dComponent->spread = (float)pySpread;
     return 0;
 }

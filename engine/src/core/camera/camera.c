@@ -62,10 +62,10 @@ void cre_camera2d_unfollow_entity(CRECamera2D* camera2D, CreEntity entity) {
 }
 
 void cre_camera2d_update_entity_follow(CRECamera2D* camera2D, Transform2DComponent* transform2DComponent) {
-    SETransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(camera2D->entityFollowing, transform2DComponent);
+    SKATransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(camera2D->entityFollowing, transform2DComponent);
     CREGameProperties* gameProperties = cre_game_props_get();
     // TODO: Check for mode
-    SEVector2 newCameraPos = {
+    SKAVector2 newCameraPos = {
         globalTransform->position.x - ((float) gameProperties->resolutionWidth / 2.0f),
         globalTransform->position.y - ((float) gameProperties->resolutionHeight / 2.0f)
     };

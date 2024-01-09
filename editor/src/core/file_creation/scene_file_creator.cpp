@@ -6,21 +6,21 @@
 #include "../utils/json_helper.h"
 
 namespace {
-nlohmann::ordered_json Vector2ToJson(SEVector2 value) {
+nlohmann::ordered_json Vector2ToJson(SKAVector2 value) {
     nlohmann::ordered_json vec;
     vec["x"] = value.x;
     vec["y"] = value.y;
     return vec;
 }
 
-nlohmann::ordered_json Size2DToJson(SESize2D value) {
+nlohmann::ordered_json Size2DToJson(SKASize2D value) {
     nlohmann::ordered_json size;
     size["w"] = value.w;
     size["h"] = value.h;
     return size;
 }
 
-nlohmann::ordered_json Rect2ToJson(const SERect2& value) {
+nlohmann::ordered_json Rect2ToJson(const SKARect2& value) {
     nlohmann::ordered_json rect;
     rect["x"] = value.x;
     rect["y"] = value.y;
@@ -29,7 +29,7 @@ nlohmann::ordered_json Rect2ToJson(const SERect2& value) {
     return rect;
 }
 
-nlohmann::ordered_json ColorToJson(const SEColor& value) {
+nlohmann::ordered_json ColorToJson(const SKAColor& value) {
     nlohmann::ordered_json rect;
     rect["r"] = (int) (value.r * 255);
     rect["g"] = (int) (value.g * 255);

@@ -11,7 +11,7 @@ extern "C" {
 
 typedef struct TextLabelComponent {
     SEFont* font;
-    SEColor color;
+    SKAColor color;
     char text[TEXT_LABEL_BUFFER_SIZE];
 } TextLabelComponent;
 
