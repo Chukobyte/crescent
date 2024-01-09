@@ -10,8 +10,7 @@ class Main(Node2D):
 
         particles2d = Particles2D.new()
         particles2d.position = Vector2(300, 300)
-        # particles2d.initial_velocity = Vector2(30, 20)
-        particles2d.initial_velocity = Vector2(30, -20)
+        particles2d.initial_velocity = Vector2(90, -60)
         self.add_child(particles2d)
 
     def _process(self, delta_time: float) -> None:
