@@ -1293,6 +1293,14 @@
 "        crescent_internal.particles2d_set_life_time(self.entity_id, value)\n"\
 "\n"\
 "    @property\n"\
+"    def damping(self) -> float:\n"\
+"        return crescent_internal.particles2d_get_damping(self.entity_id)\n"\
+"\n"\
+"    @damping.setter\n"\
+"    def damping(self, value: float) -> None:\n"\
+"        crescent_internal.particles2d_set_damping(self.entity_id, value)\n"\
+"\n"\
+"    @property\n"\
 "    def color(self) -> Color:\n"\
 "        r, g, b, a = crescent_internal.particles2d_get_color(self.entity_id)\n"\
 "        return Color(r, g, b, a)\n"\
@@ -1309,6 +1317,14 @@
 "    @initial_velocity.setter\n"\
 "    def initial_velocity(self, value: Vector2) -> None:\n"\
 "        crescent_internal.particles2d_set_initial_velocity(self.entity_id, value.x, value.y)\n"\
+"\n"\
+"    @property\n"\
+"    def spread(self) -> float:\n"\
+"        return crescent_internal.particles2d_get_spread(self.entity_id)\n"\
+"\n"\
+"    @spread.setter\n"\
+"    def spread(self, value: float) -> None:\n"\
+"        crescent_internal.particles2d_set_spread(self.entity_id, value)\n"\
 "\n"\
 "\n"\
 "class SceneTree:\n"\
