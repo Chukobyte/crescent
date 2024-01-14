@@ -65,6 +65,6 @@ void cre_engine_context_update_stats() {
     fpsCounter.tickList[fpsCounter.tickIndex] = newTick;
     fpsCounter.tickIndex = (fpsCounter.tickIndex +1) % MAX_FPS_SAMPLES;
 
-    const float averageFrameTime = (float)fpsCounter.tickSum / (float)`MAX_FPS_SAMPLES`;
+    const float averageFrameTime = (float)fpsCounter.tickSum / (float)MAX_FPS_SAMPLES;
     creEngineContext->stats.averageFPS = 1000.0f / averageFrameTime;
 }

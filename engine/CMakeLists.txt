@@ -93,7 +93,7 @@ option(PK_BUILD_STATIC_LIB "Build static library" ON)
 FetchContent_Declare(
         pocketpy_content
         GIT_REPOSITORY https://github.com/blueloveTH/pocketpy.git
-        GIT_TAG v1.3.7
+        GIT_TAG v1.3.8
 )
 FetchContent_MakeAvailable(pocketpy_content)
 
