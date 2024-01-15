@@ -104,6 +104,8 @@ bool cre_initialize(int argv, char** args) {
         return false;
     }
 
+    sf_set_vsync_enabled(gameProperties->vsyncEnabled);
+
     // Initialize sub systems
     if (!cre_initialize_ecs()) {
         se_logger_error("Failed to initialize ecs!");
@@ -199,10 +201,10 @@ void cre_process_game_update() {
     static uint32_t lastFrameTime = 0;
     const uint32_t targetFps = engineContext->targetFPS;
     const uint32_t FRAME_TARGET_TIME = MILLISECONDS_PER_TICK / targetFps;
-//    const uint32_t timeToWait = FRAME_TARGET_TIME - (sf_get_ticks() - lastFrameTime);
-//    if (timeToWait > 0 && timeToWait <= FRAME_TARGET_TIME) {
-//        sf_delay(timeToWait);
-//    }
+    const uint32_t timeToWait = FRAME_TARGET_TIME - (sf_get_ticks() - lastFrameTime);
+    if (timeToWait > 0 && timeToWait <= FRAME_TARGET_TIME) {
+        sf_delay(timeToWait);
+    }
 
     // Variable Time Step
     const float variableDeltaTime = (float) (sf_get_ticks() - lastFrameTime) / (float) MILLISECONDS_PER_TICK;
