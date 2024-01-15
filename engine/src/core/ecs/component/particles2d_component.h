@@ -10,7 +10,8 @@ extern "C" {
 
 typedef enum Particle2DComponentState {
     Particle2DComponentState_INACTIVE = 0,
-    Particle2DComponentState_EMITTING = 1
+    Particle2DComponentState_WAITING_TO_INITIALIZE = 1,
+    Particle2DComponentState_EMITTING = 2
 } Particle2DComponentState;
 
 typedef enum Particle2DComponentType {

@@ -67,8 +67,8 @@ void particle_emitter_system_on_entity_entered_scene(CreEntity entity) {
 }
 
 static void particle_emitter_emit_particle(Particles2DComponent* particles2DComponent, float deltaTime) {
-    for (int pi = 0; pi < particles2DComponent->amount; pi++) {
-        CreParticle2D* currentParticle = &particles2DComponent->particles[pi];
+    for (int i = 0; i < particles2DComponent->amount; i++) {
+        CreParticle2D* currentParticle = &particles2DComponent->particles[i];
         switch (currentParticle->state) {
             case Particle2DState_INACTIVE: {
                 currentParticle->state = Particle2DState_ACTIVE;
@@ -88,15 +88,14 @@ static void particle_emitter_emit_particle(Particles2DComponent* particles2DComp
                     // The particle becomes active again which based on explosiveness
                     const float explosivenessAdjustedTimeInactive = -ska_math_map_to_range(particles2DComponent->explosiveness, 0.0f, 1.0f, 0.0f, particles2DComponent->lifeTime);
                     currentParticle->timeActive = explosivenessAdjustedTimeInactive;
+                }
+                // Uses negative time of 'currentParticle->timeActive' as time inactive
+                const float timeInactive = -currentParticle->timeActive + deltaTime;
+                if (timeInactive >= particles2DComponent->lifeTime) {
+                    currentParticle->timeActive = 0.0f;
+                    currentParticle->state = Particle2DState_ACTIVE;
                 } else {
-                    // Uses negative time of 'currentParticle->timeActive' as time inactive
-                    const float timeInactive = -currentParticle->timeActive + deltaTime;
-                    if (timeInactive >= particles2DComponent->lifeTime) {
-                        currentParticle->timeActive = 0.0f;
-                        currentParticle->state = Particle2DState_ACTIVE;
-                    } else {
-                        currentParticle->timeActive -= deltaTime;
-                    }
+                    currentParticle->timeActive -= deltaTime;
                 }
             }
                 break;
@@ -110,6 +109,17 @@ void particle_emitter_system_update(float deltaTime) {
         Particles2DComponent* particles2DComponent = (Particles2DComponent*)cre_component_manager_get_component_unchecked(entity, CreComponentDataIndex_PARTICLES_2D);
 
         switch (particles2DComponent->state) {
+            case Particle2DComponentState_WAITING_TO_INITIALIZE: {
+                // Spread out time active of particles on initialize so that they correspond to explosiveness
+                const float explosivenessAdjustedTimeInactive = -ska_math_map_to_range(particles2DComponent->explosiveness, 0.0f, 1.0f, 0.0f, particles2DComponent->lifeTime);
+                for (int pi = 0; pi < particles2DComponent->amount; pi++) {
+                    CreParticle2D* currentParticle = &particles2DComponent->particles[pi];
+                    currentParticle->state = Particle2DState_TIMED_WAITING_TO_BE_ACTIVE;
+                    const float currentParticleLerpAlpha = ska_math_map_to_unit((float)pi, 0.0f, (float)particles2DComponent->amount);
+                    currentParticle->timeActive = explosivenessAdjustedTimeInactive * currentParticleLerpAlpha;
+                }
+                particles2DComponent->state = Particle2DComponentState_EMITTING;
+            }
             case Particle2DComponentState_EMITTING: {
                 particle_emitter_emit_particle(particles2DComponent, deltaTime);
                 break;
@@ -127,11 +137,7 @@ void particle_emitter_system_render() {
 
     for (size_t i = 0; i < particle_emitter_system->entity_count; i++) {
         const CreEntity entity = particle_emitter_system->entities[i];
-        const Particles2DComponent* particles2DComponent = (Particles2DComponent*)cre_component_manager_get_component_unchecked(entity, CreComponentDataIndex_PARTICLES_2D);
-
-        if (particles2DComponent->state == Particle2DComponentState_INACTIVE) {
-            continue;
-        }
+        Particles2DComponent* particles2DComponent = (Particles2DComponent*)cre_component_manager_get_component_unchecked(entity, CreComponentDataIndex_PARTICLES_2D);
 
         Transform2DComponent* particleTransformComp = (Transform2DComponent*)cre_component_manager_get_component(entity, CreComponentDataIndex_TRANSFORM_2D);
         const CRECamera2D* renderCamera = particleTransformComp->ignoreCamera ? defaultCamera : camera2D;
@@ -150,7 +156,14 @@ void particle_emitter_system_render() {
         ska_transform2d_mat4_to_transform(globalTransform->model, &baseParticleTransform);
 
         for (int pi = 0; pi < particles2DComponent->amount; pi++) {
-            const CreParticle2D* particle2D = &particles2DComponent->particles[pi];
+            CreParticle2D* particle2D = &particles2DComponent->particles[pi];
+            if (particle2D->state != Particle2DState_ACTIVE) {
+                continue;
+            }
+            // TODO: Setting inactive here so we can render
+            if (particle2D->timeActive >= particles2DComponent->lifeTime) {
+                particle2D->state = Particle2DState_TIMED_WAITING_TO_BE_ACTIVE;
+            }
             const SKATransform2D particle2DTransform = {
                 .position = { .x = baseParticleTransform.position.x + particle2D->position.x, .y = baseParticleTransform.position.y + particle2D->position.y },
                 .scale = baseParticleTransform.scale,
