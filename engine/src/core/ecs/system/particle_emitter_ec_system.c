@@ -76,9 +76,6 @@ static void particle_emitter_emit_particle(Particles2DComponent* particles2DComp
             }
             case Particle2DState_ACTIVE: {
                 cre_particle_system_integrate(currentParticle, deltaTime);
-                if (currentParticle->timeActive >= particles2DComponent->lifeTime) {
-                    currentParticle->state = Particle2DState_TIMED_WAITING_TO_BE_ACTIVE;
-                }
                 break;
             }
             case Particle2DState_TIMED_WAITING_TO_BE_ACTIVE: {

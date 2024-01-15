@@ -28,7 +28,7 @@ typedef struct Particles2DComponent {
     float spread; // angle in degrees in which the particles are spread
     float lifeTime; // Sets initial 'timeActive' on CreParticle2D
     float damping;
-    float explosiveness; // How often particles in an emission cycle are emitted (0.0f - 1.0f)
+    float explosiveness; // How often particles in an emission cycle are emitted (0.0f - 1.0f), 1.0f meaning the longest delay and all particles come out at once
     Particle2DComponentState state;
     Particle2DComponentType type;
     // Using unions for struct members based on type
