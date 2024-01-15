@@ -20,7 +20,7 @@ static void particle_emitter_system_on_ec_system_destroy();
 static void particle_emitter_system_on_entity_registered(CreEntity entity);
 static void particle_emitter_system_on_entity_unregistered(CreEntity entity);
 static void particle_emitter_system_on_entity_entered_scene(CreEntity entity);
-static void particle_emitter_system_fixed_update(float deltaTime);
+static void particle_emitter_system_update(float deltaTime);
 static void particle_emitter_system_render();
 
 CreEntitySystem* cre_particle_emitter_ec_system_create() {
@@ -35,7 +35,7 @@ CreEntitySystem* cre_particle_emitter_ec_system_create_ex(SETexture* squareTextu
     particle_emitter_system->on_entity_unregistered_func = particle_emitter_system_on_entity_unregistered;
     particle_emitter_system->on_entity_entered_scene_func = particle_emitter_system_on_entity_entered_scene;
     particle_emitter_system->on_ec_system_destroy = particle_emitter_system_on_ec_system_destroy;
-    particle_emitter_system->fixed_update_func = particle_emitter_system_fixed_update;
+    particle_emitter_system->update_func = particle_emitter_system_update;
     particle_emitter_system->render_func = particle_emitter_system_render;
     particle_emitter_system->component_signature = CreComponentType_TRANSFORM_2D | CreComponentType_PARTICLES_2D;
 
@@ -66,7 +66,7 @@ void particle_emitter_system_on_entity_entered_scene(CreEntity entity) {
     particles2d_component_set_default_particles(particles2DComponent);
 }
 
-void particle_emitter_system_fixed_update(float deltaTime) {
+void particle_emitter_system_update(float deltaTime) {
     for (size_t i = 0; i < particle_emitter_system->entity_count; i++) {
         const CreEntity entity = particle_emitter_system->entities[i];
         Particles2DComponent* particles2DComponent = (Particles2DComponent*)cre_component_manager_get_component_unchecked(entity, CreComponentDataIndex_PARTICLES_2D);
