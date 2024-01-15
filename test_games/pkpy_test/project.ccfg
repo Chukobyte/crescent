@@ -9,7 +9,7 @@
     "target_fps": 666,
     "initial_node_path": "scenes/main.cscn",
     "colliders_visible": false,
-    "vsync_enabled": true,
+    "vsync_enabled": false,
     "version": "",
     "assets": {
         "audio_sources": [],
