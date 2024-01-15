@@ -8,6 +8,11 @@ extern "C" {
 
 #define CRE_PARTICLES_2D_MAX 100
 
+typedef enum Particle2DComponentState {
+    Particle2DComponentState_INACTIVE = 0,
+    Particle2DComponentState_EMITTING = 1
+} Particle2DComponentState;
+
 typedef enum Particle2DComponentType {
     Particle2DComponentType_SQUARE = 0,
     Particle2DComponentType_TEXTURE = 1
@@ -20,9 +25,10 @@ typedef struct Particles2DComponent {
     SKAVector2 linearAcceleration;
     SKAColor color;
     float spread; // angle in degrees in which the particles are spread
-    // Sets initial 'timeActive' on CreParticle2D
-    float lifeTime;
+    float lifeTime; // Sets initial 'timeActive' on CreParticle2D
     float damping;
+    float explosiveness; // How often particles in an emission cycle are emitted (0.0f - 1.0f)
+    Particle2DComponentState state;
     Particle2DComponentType type;
     // Using unions for struct members based on type
     union {

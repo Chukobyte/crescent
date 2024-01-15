@@ -45,6 +45,8 @@ Particles2DComponent* particles2d_component_create() {
     particles2DComponent->color = SKA_COLOR_WHITE;
     particles2DComponent->lifeTime = 4.0f;
     particles2DComponent->damping = 1.0f;
+    particles2DComponent->explosiveness = 1.0f;
+    particles2DComponent->state = Particle2DComponentState_EMITTING; // Defaulting to on for now
     particles2DComponent->type = Particle2DComponentType_SQUARE;
     particles2DComponent->squareSize = SKA_VECTOR2_ONE;
     memset(particles2DComponent->particles, 0, CRE_PARTICLES_2D_MAX * sizeof(CreParticle2D));
@@ -73,7 +75,8 @@ void particles2d_component_set_default_particles(Particles2DComponent* particles
     .color = particles2DComponent->color, \
     .timeActive = 0.0f, \
     .damping = CRE_PARTICLE2D_DEFAULT_DAMPING, \
-    .inverseMass = 1.0f \
+    .inverseMass = 1.0f, \
+    .state = Particle2DState_INACTIVE\
 }
 
     for (int i = 0; i < particles2DComponent->amount; i++) {

@@ -66,17 +66,57 @@ void particle_emitter_system_on_entity_entered_scene(CreEntity entity) {
     particles2d_component_set_default_particles(particles2DComponent);
 }
 
+static void particle_emitter_emit_particle(Particles2DComponent* particles2DComponent, float deltaTime) {
+    for (int pi = 0; pi < particles2DComponent->amount; pi++) {
+        CreParticle2D* currentParticle = &particles2DComponent->particles[pi];
+        switch (currentParticle->state) {
+            case Particle2DState_INACTIVE: {
+                currentParticle->state = Particle2DState_ACTIVE;
+                break;
+            }
+            case Particle2DState_ACTIVE: {
+                cre_particle_system_integrate(currentParticle, deltaTime);
+                if (currentParticle->timeActive >= particles2DComponent->lifeTime) {
+                    currentParticle->state = Particle2DState_TIMED_WAITING_TO_BE_ACTIVE;
+                }
+                break;
+            }
+            case Particle2DState_TIMED_WAITING_TO_BE_ACTIVE: {
+                const bool isComingFromActive = currentParticle->timeActive >= particles2DComponent->lifeTime;
+                if (isComingFromActive) {
+                    particles2d_component_reset_particle(particles2DComponent, currentParticle);
+                    // The particle becomes active again which based on explosiveness
+                    const float explosivenessAdjustedTimeInactive = -ska_math_map_to_range(particles2DComponent->explosiveness, 0.0f, 1.0f, 0.0f, particles2DComponent->lifeTime);
+                    currentParticle->timeActive = explosivenessAdjustedTimeInactive;
+                } else {
+                    // Uses negative time of 'currentParticle->timeActive' as time inactive
+                    const float timeInactive = -currentParticle->timeActive + deltaTime;
+                    if (timeInactive >= particles2DComponent->lifeTime) {
+                        currentParticle->timeActive = 0.0f;
+                        currentParticle->state = Particle2DState_ACTIVE;
+                    } else {
+                        currentParticle->timeActive -= deltaTime;
+                    }
+                }
+            }
+                break;
+        }
+    }
+}
+
 void particle_emitter_system_update(float deltaTime) {
     for (size_t i = 0; i < particle_emitter_system->entity_count; i++) {
         const CreEntity entity = particle_emitter_system->entities[i];
         Particles2DComponent* particles2DComponent = (Particles2DComponent*)cre_component_manager_get_component_unchecked(entity, CreComponentDataIndex_PARTICLES_2D);
-        for (int pi = 0; pi < particles2DComponent->amount; pi++) {
-            CreParticle2D* currentParticle = &particles2DComponent->particles[pi];
-            // Reset particle if time active is over lifetime
-            if (currentParticle->timeActive >= particles2DComponent->lifeTime) {
-                particles2d_component_reset_particle(particles2DComponent, currentParticle);
+
+        switch (particles2DComponent->state) {
+            case Particle2DComponentState_EMITTING: {
+                particle_emitter_emit_particle(particles2DComponent, deltaTime);
+                break;
             }
-            cre_particle_system_integrate(currentParticle, deltaTime);
+            case Particle2DComponentState_INACTIVE: {
+                break;
+            }
         }
     }
 }
@@ -88,6 +128,10 @@ void particle_emitter_system_render() {
     for (size_t i = 0; i < particle_emitter_system->entity_count; i++) {
         const CreEntity entity = particle_emitter_system->entities[i];
         const Particles2DComponent* particles2DComponent = (Particles2DComponent*)cre_component_manager_get_component_unchecked(entity, CreComponentDataIndex_PARTICLES_2D);
+
+        if (particles2DComponent->state == Particle2DComponentState_INACTIVE) {
+            continue;
+        }
 
         Transform2DComponent* particleTransformComp = (Transform2DComponent*)cre_component_manager_get_component(entity, CreComponentDataIndex_TRANSFORM_2D);
         const CRECamera2D* renderCamera = particleTransformComp->ignoreCamera ? defaultCamera : camera2D;
