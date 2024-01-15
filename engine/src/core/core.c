@@ -170,6 +170,8 @@ bool cre_load_assets_from_configuration() {
 }
 
 void cre_update() {
+    const uint32_t startFrameTime = sf_get_ticks();
+
     // Process Scene change if exists
     cre_scene_manager_process_queued_scene_change();
 
@@ -184,8 +186,10 @@ void cre_update() {
     cre_process_game_update();
     cre_render();
 
+    const uint32_t endFrameTime = sf_get_ticks();
+
     // Update FPS
-    cre_engine_context_update_stats();
+    cre_engine_context_update_stats(endFrameTime - startFrameTime);
 }
 
 void cre_process_game_update() {
