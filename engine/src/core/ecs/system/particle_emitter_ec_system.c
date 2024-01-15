@@ -83,7 +83,7 @@ static void particle_emitter_emit_particle(Particles2DComponent* particles2DComp
                 if (isComingFromActive) {
                     particles2d_component_reset_particle(particles2DComponent, currentParticle);
                     // The particle becomes active again which based on explosiveness
-                    const float explosivenessAdjustedTimeInactive = -ska_math_map_to_range(particles2DComponent->explosiveness, 0.0f, 1.0f, 0.0f, particles2DComponent->lifeTime);
+                    const float explosivenessAdjustedTimeInactive = -ska_math_map_to_range(particles2DComponent->explosiveness, 1.0f, 0.0f, 0.0f, particles2DComponent->lifeTime);
                     currentParticle->timeActive = explosivenessAdjustedTimeInactive;
                 }
                 // Uses negative time of 'currentParticle->timeActive' as time inactive
@@ -108,7 +108,7 @@ void particle_emitter_system_update(float deltaTime) {
         switch (particles2DComponent->state) {
             case Particle2DComponentState_WAITING_TO_INITIALIZE: {
                 // Spread out time active of particles on initialize so that they correspond to explosiveness
-                const float explosivenessAdjustedTimeInactive = -ska_math_map_to_range(particles2DComponent->explosiveness, 0.0f, 1.0f, 0.0f, particles2DComponent->lifeTime);
+                const float explosivenessAdjustedTimeInactive = -ska_math_map_to_range(particles2DComponent->explosiveness, 1.0f, 0.0f, 0.0f, particles2DComponent->lifeTime);
                 for (int pi = 0; pi < particles2DComponent->amount; pi++) {
                     CreParticle2D* currentParticle = &particles2DComponent->particles[pi];
                     currentParticle->state = Particle2DState_TIMED_WAITING_TO_BE_ACTIVE;
