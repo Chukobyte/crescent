@@ -79,10 +79,17 @@ void cre_engine_context_update_stats(uint32_t frameTime) {
     fpsCounter.currentFrame++;
 
     uint32_t averageFrameTime = 0;
+    uint32_t framesAboveZero = 0;
     for (int i = 0; i < NUM_FRAMES_TO_AVERAGE; i++) {
-        averageFrameTime += fpsCounter.frameTimes[i];
+        if (fpsCounter.frameTimes[i] != 0) {
+            averageFrameTime += fpsCounter.frameTimes[i];
+            framesAboveZero++;
+        }
+//        averageFrameTime += fpsCounter.frameTimes[i];
     }
-    averageFrameTime /= NUM_FRAMES_TO_AVERAGE;
+    SE_ASSERT(framesAboveZero > 0);
+    averageFrameTime /= framesAboveZero;
+//    averageFrameTime /= NUM_FRAMES_TO_AVERAGE;
 
     creEngineContext->stats.averageFPS = 1000.0f / (float)averageFrameTime;
 }

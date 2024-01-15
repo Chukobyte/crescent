@@ -199,10 +199,10 @@ void cre_process_game_update() {
     static uint32_t lastFrameTime = 0;
     const uint32_t targetFps = engineContext->targetFPS;
     const uint32_t FRAME_TARGET_TIME = MILLISECONDS_PER_TICK / targetFps;
-    const uint32_t timeToWait = FRAME_TARGET_TIME - (sf_get_ticks() - lastFrameTime);
-    if (timeToWait > 0 && timeToWait <= FRAME_TARGET_TIME) {
-        sf_delay(timeToWait);
-    }
+//    const uint32_t timeToWait = FRAME_TARGET_TIME - (sf_get_ticks() - lastFrameTime);
+//    if (timeToWait > 0 && timeToWait <= FRAME_TARGET_TIME) {
+//        sf_delay(timeToWait);
+//    }
 
     // Variable Time Step
     const float variableDeltaTime = (float) (sf_get_ticks() - lastFrameTime) / (float) MILLISECONDS_PER_TICK;
@@ -228,9 +228,10 @@ void cre_process_game_update() {
     }
 
     se_input_clean_up_flags();
-    lastFrameTime = sf_get_ticks();
 
     cre_ec_system_post_update_all_systems();
+
+    lastFrameTime = sf_get_ticks();
 }
 
 void cre_render() {
