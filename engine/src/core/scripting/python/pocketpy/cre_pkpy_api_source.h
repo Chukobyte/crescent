@@ -1301,6 +1301,14 @@
 "        crescent_internal.particles2d_set_damping(self.entity_id, value)\n"\
 "\n"\
 "    @property\n"\
+"    def explosiveness(self) -> float:\n"\
+"        return crescent_internal.particles2d_get_explosiveness(self.entity_id)\n"\
+"\n"\
+"    @explosiveness.setter\n"\
+"    def explosiveness(self, value: float) -> None:\n"\
+"        crescent_internal.particles2d_set_explosiveness(self.entity_id, value)\n"\
+"\n"\
+"    @property\n"\
 "    def color(self) -> Color:\n"\
 "        r, g, b, a = crescent_internal.particles2d_get_color(self.entity_id)\n"\
 "        return Color(r, g, b, a)\n"\

@@ -11,6 +11,7 @@ class Main(Node2D):
         particles2d = Particles2D.new()
         particles2d.position = Vector2(300, 300)
         particles2d.initial_velocity = Vector2(90, -60)
+        # particles2d.explosiveness = 1.0
         self.add_child(particles2d)
 
         Engine.set_fps_display_enabled(True)

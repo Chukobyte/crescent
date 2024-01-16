@@ -329,6 +329,14 @@ def particles2d_set_damping(entity_id: int, damping: float) -> None:
     pass
 
 
+def particles2d_get_explosiveness(entity_id: int) -> float:
+    return 0.999
+
+
+def particles2d_set_explosiveness(entity_id: int, explosiveness: float) -> None:
+    pass
+
+
 def particles2d_get_color(entity_id: int) -> Tuple[int, int, int, int]:
     return 0, 0, 0, 0
 
