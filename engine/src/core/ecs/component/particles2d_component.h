@@ -19,6 +19,11 @@ typedef enum Particle2DComponentType {
     Particle2DComponentType_TEXTURE = 1
 } Particle2DComponentType;
 
+typedef struct Particle2DTypeTexture {
+    struct SETexture* texture;
+    SKARect2 drawSource;
+} Particle2DTypeTexture;
+
 typedef struct Particles2DComponent {
     // Configuration
     int amount;
@@ -32,9 +37,13 @@ typedef struct Particles2DComponent {
     Particle2DComponentState state;
     Particle2DComponentType type;
     // Using unions for struct members based on type
+    // Shared unions between multiple type
     union {
-        struct SETexture* texture; // Particle2DComponentType_SQUARE
-        SKAVector2 squareSize; // Particle2DComponentType_TEXTURE
+        SKASize2D squareSize; // Particle2DComponentType_SQUARE | Particle2DComponentType_TEXTURE
+    };
+    // Specific type structs
+    union {
+        Particle2DTypeTexture typeTexture;
     };
 
     CreParticle2D particles[CRE_PARTICLES_2D_MAX];

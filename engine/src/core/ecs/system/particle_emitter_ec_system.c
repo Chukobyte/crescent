@@ -13,6 +13,11 @@
 #include "../../scene/scene_manager.h"
 #include "../../scene/scene_utils.h"
 
+typedef struct CreParticleRenderItem {
+    SETexture* texture;
+    SKASize2D size;
+}CreParticleRenderItem;
+
 CreEntitySystem* particle_emitter_system = NULL;
 SETexture* particleSquareTexture = NULL;
 
@@ -141,10 +146,13 @@ void particle_emitter_system_render() {
         const CRECamera2D* renderCamera = particleTransformComp->ignoreCamera ? defaultCamera : camera2D;
 
         // Particle types can only be Particle2DComponentType_SQUARE (default) and Particle2DComponentType_TEXTURE for now
-        SETexture* texture = particles2DComponent->type == Particle2DComponentType_TEXTURE ? particles2DComponent->texture : particleSquareTexture;
+        const CreParticleRenderItem renderItem = particles2DComponent->type == Particle2DComponentType_TEXTURE
+                ? (CreParticleRenderItem){ .texture = particles2DComponent->typeTexture.texture, .size = particles2DComponent->squareSize }
+                : (CreParticleRenderItem){ .texture = particleSquareTexture, .size = particles2DComponent->squareSize };
+
+        SETexture* texture = renderItem.texture;
         const SKARect2 particleDrawSource = (SKARect2){ 0.0f, 0.0f, 1.0f, 1.0f };
-        static const SKAVector2 tempParticleSize = { 32.0f, 32.0f };
-        const SKASize2D particleSize = (SKASize2D){ tempParticleSize.x * renderCamera->zoom.x, tempParticleSize.y * renderCamera->zoom.y };
+        const SKASize2D particleSize = (SKASize2D){ renderItem.size.w * renderCamera->zoom.x, renderItem.size.h * renderCamera->zoom.y };
         SKATransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity, particleTransformComp);
         cre_scene_utils_apply_camera_and_origin_translation(globalTransform, &SKA_VECTOR2_ZERO, particleTransformComp->ignoreCamera);
         particleTransformComp->isGlobalTransformDirty = true;

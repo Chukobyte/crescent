@@ -48,7 +48,7 @@ Particles2DComponent* particles2d_component_create() {
     particles2DComponent->explosiveness = 0.0f;
     particles2DComponent->state = Particle2DComponentState_WAITING_TO_INITIALIZE; // Defaulting to on for now
     particles2DComponent->type = Particle2DComponentType_SQUARE;
-    particles2DComponent->squareSize = SKA_VECTOR2_ONE;
+    particles2DComponent->squareSize = (SKASize2D){ .w = 4.0f, .h = 4.0f };
     memset(particles2DComponent->particles, 0, CRE_PARTICLES_2D_MAX * sizeof(CreParticle2D));
     return particles2DComponent;
 }
