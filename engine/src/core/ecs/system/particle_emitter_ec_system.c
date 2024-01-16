@@ -82,8 +82,9 @@ static void particle_emitter_emit_particle(Particles2DComponent* particles2DComp
                 if (isComingFromActive) {
                     particles2d_component_reset_particle(particles2DComponent, currentParticle);
                     // The particle becomes active again which based on explosiveness
-                    const float explosivenessAdjustedTimeInactive = -ska_math_map_to_range(particles2DComponent->explosiveness, 1.0f, 0.0f, 0.0f, particles2DComponent->lifeTime);
-                    currentParticle->timeActive = ska_math_lerpf(explosivenessAdjustedTimeInactive, -particles2DComponent->lifeTime, particles2DComponent->explosiveness);
+//                    const float explosivenessAdjustedTimeInactive = -ska_math_map_to_range(particles2DComponent->explosiveness, 1.0f, 0.0f, 0.0f, particles2DComponent->lifeTime);
+//                    currentParticle->timeActive = ska_math_lerpf(explosivenessAdjustedTimeInactive, -particles2DComponent->lifeTime, particles2DComponent->explosiveness);
+                    currentParticle->timeActive = -particles2DComponent->lifeTime;
 
                 }
                 // Uses negative time of 'currentParticle->timeActive' as time inactive
