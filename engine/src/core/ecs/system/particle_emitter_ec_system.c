@@ -72,7 +72,6 @@ static void particle_emitter_emit_particle(Particles2DComponent* particles2DComp
         switch (currentParticle->state) {
             case Particle2DState_INACTIVE: {
                 currentParticle->state = Particle2DState_ACTIVE;
-                break;
             }
             case Particle2DState_ACTIVE: {
                 cre_particle_system_integrate(currentParticle, deltaTime);
@@ -84,7 +83,8 @@ static void particle_emitter_emit_particle(Particles2DComponent* particles2DComp
                     particles2d_component_reset_particle(particles2DComponent, currentParticle);
                     // The particle becomes active again which based on explosiveness
                     const float explosivenessAdjustedTimeInactive = -ska_math_map_to_range(particles2DComponent->explosiveness, 1.0f, 0.0f, 0.0f, particles2DComponent->lifeTime);
-                    currentParticle->timeActive = explosivenessAdjustedTimeInactive;
+                    currentParticle->timeActive = ska_math_lerpf(explosivenessAdjustedTimeInactive, -particles2DComponent->lifeTime, particles2DComponent->explosiveness);
+
                 }
                 // Uses negative time of 'currentParticle->timeActive' as time inactive
                 const float timeInactive = -currentParticle->timeActive + deltaTime;
@@ -113,7 +113,7 @@ void particle_emitter_system_update(float deltaTime) {
                     CreParticle2D* currentParticle = &particles2DComponent->particles[pi];
                     currentParticle->state = Particle2DState_TIMED_WAITING_TO_BE_ACTIVE;
                     const float currentParticleLerpAlpha = ska_math_map_to_unit((float)pi, 0.0f, (float)particles2DComponent->amount);
-                    currentParticle->timeActive = explosivenessAdjustedTimeInactive * currentParticleLerpAlpha;
+                    currentParticle->timeActive = ska_math_lerpf(explosivenessAdjustedTimeInactive * currentParticleLerpAlpha, -particles2DComponent->lifeTime, particles2DComponent->explosiveness);
                 }
                 particles2DComponent->state = Particle2DComponentState_EMITTING;
             }
