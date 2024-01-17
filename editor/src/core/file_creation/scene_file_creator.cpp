@@ -176,6 +176,32 @@ nlohmann::ordered_json GetComponentsJsonArray(SceneNode* sceneNode) {
         }
         componentsJsonArray.emplace_back(parallaxJson);
     }
+    if (const Particles2DComp* particles2DComp = sceneNode->GetComponentSafe<Particles2DComp>()) {
+        nlohmann::ordered_json particles2DJson;
+        particles2DJson["type"] = "particles2d";
+        if (particles2DComp->amount != 8) {
+            particles2DJson["amount"] = particles2DComp->amount;
+        }
+        if (particles2DComp->initialVelocity.x != 0.0f || particles2DComp->initialVelocity.y != 0.0f) {
+            particles2DJson["initial_velocity"] = Vector2ToJson(particles2DComp->initialVelocity);
+        }
+        if (particles2DComp->color.r != 1.0f || particles2DComp->color.g != 1.0f || particles2DComp->color.b != 1.0f || particles2DComp->color.a != 1.0f) {
+            particles2DJson["color"] = ColorToJson(particles2DComp->color);
+        }
+        if (particles2DComp->spread != 45.0f) {
+            particles2DJson["spread"] = particles2DComp->spread;
+        }
+        if (particles2DComp->lifeTime != 4.0f) {
+            particles2DJson["life_time"] = particles2DComp->lifeTime;
+        }
+        if (particles2DComp->damping != 1.0f) {
+            particles2DJson["damping"] = particles2DComp->damping;
+        }
+        if (particles2DComp->explosiveness != 0.0f) {
+            particles2DJson["explosiveness"] = particles2DComp->explosiveness;
+        }
+        componentsJsonArray.emplace_back(particles2DJson);
+    }
     return componentsJsonArray;
 }
 

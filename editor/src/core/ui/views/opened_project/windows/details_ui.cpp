@@ -320,6 +320,7 @@ ImGuiHelper::Window OpenedProjectUI::Windows::GetDetailsWindow() {
                 ComponentDetailsDrawUtils::DrawCollider2D(selectedNode);
                 ComponentDetailsDrawUtils::DrawColorRect(selectedNode);
                 ComponentDetailsDrawUtils::DrawParallax(selectedNode);
+                ComponentDetailsDrawUtils::DrawParticles2D(selectedNode);
             }
         },
         .position = ImVec2{ 400.0f, 100.0f },

@@ -253,7 +253,7 @@ struct Particles2DComp : public EditorComponent {
     int amount = 8;
     SKAVector2 initialVelocity = SKA_VECTOR2_ZERO;
     SKAColor color = SKA_COLOR_WHITE;
-    float spread = 0.0f;
+    float spread = 45.0f;
     float lifeTime = 4.0f;
     float damping = 1.0f;
     float explosiveness = 0.0f;
