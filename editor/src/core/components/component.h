@@ -15,6 +15,7 @@
 #include "../engine/src/core/ecs/component/sprite_component.h"
 #include "../engine/src/core/ecs/component/text_label_component.h"
 #include "../engine/src/core/ecs/component/transform2d_component.h"
+#include "../engine/src/core/ecs/component/particles2d_component.h"
 
 struct EditorComponent {};
 
@@ -235,4 +236,25 @@ struct ParallaxComp : public EditorComponent {
         : scrollSpeed(parallaxComponent->scrollSpeed) {}
 
     SKAVector2 scrollSpeed = SKA_VECTOR2_ZERO;
+};
+
+struct Particles2DComp : public EditorComponent {
+    Particles2DComp() = default;
+
+    explicit Particles2DComp(const Particles2DComponent* particles2DComp)
+            : amount(particles2DComp->amount),
+              initialVelocity(particles2DComp->initialVelocity),
+              color(particles2DComp->color),
+              spread(particles2DComp->spread),
+              lifeTime(particles2DComp->lifeTime),
+              damping(particles2DComp->damping),
+              explosiveness(particles2DComp->explosiveness) {}
+
+    int amount = 8;
+    SKAVector2 initialVelocity = SKA_VECTOR2_ZERO;
+    SKAColor color = SKA_COLOR_WHITE;
+    float spread = 0.0f;
+    float lifeTime = 4.0f;
+    float damping = 1.0f;
+    float explosiveness = 0.0f;
 };

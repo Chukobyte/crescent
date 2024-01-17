@@ -201,6 +201,9 @@ void SceneManager::AddDefaultNodeAsChildToSelected(NodeBaseType type) {
     if ((NodeBaseInheritanceType_PARALLAX & inheritanceType) == NodeBaseInheritanceType_PARALLAX) {
         newNode->AddComponent<ParallaxComp>();
     }
+    if ((NodeBaseInheritanceType_PARTICLES2D & inheritanceType) == NodeBaseInheritanceType_PARTICLES2D) {
+        newNode->AddComponent<Particles2DComp>();
+    }
 
     if (selectedSceneFile->rootNode == nullptr) {
         selectedSceneFile->rootNode = newNode;
@@ -316,6 +319,9 @@ SceneNode* SceneManager::LoadSceneTreeJson(JsonSceneNode* node, SceneNode* paren
     }
     if (node->components[CreComponentDataIndex_PARALLAX] != nullptr) {
         sceneNode->AddComponent<ParallaxComp>((ParallaxComponent*) node->components[CreComponentDataIndex_PARALLAX]);
+    }
+    if (node->components[CreComponentDataIndex_PARTICLES_2D] != nullptr) {
+        sceneNode->AddComponent<Particles2DComp>((Particles2DComponent*) node->components[CreComponentDataIndex_PARTICLES_2D]);
     }
 
     // Load children

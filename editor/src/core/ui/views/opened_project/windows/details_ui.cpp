@@ -291,6 +291,14 @@ void DrawParallax(SceneNode* node) {
         ImGui::Separator();
     }
 }
+
+void DrawParticles2D(SceneNode* node) {
+    if (auto* parallaxComp = node->GetComponentSafe<ParallaxComp>()) {
+        ImGui::Text("Particles2D Component");
+
+        ImGui::Separator();
+    }
+}
 } // namespace ComponentDetailsDrawUtils
 
 ImGuiHelper::Window OpenedProjectUI::Windows::GetDetailsWindow() {
