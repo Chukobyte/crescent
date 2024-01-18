@@ -52,6 +52,8 @@ NodeBaseType node_get_base_type(const char* baseName) {
         return NodeBaseType_COLOR_RECT;
     } else if (strcmp(baseName, CRE_NODE_PARALLAX_STRING) == 0) {
         return NodeBaseType_PARALLAX;
+    } else if (strcmp(baseName, CRE_NODE_PARTICLES2D_STRING) == 0) {
+        return NodeBaseType_PARTICLES2D;
     }
     return NodeBaseType_INVALID;
 }

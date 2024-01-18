@@ -90,6 +90,8 @@ namespace WindowRenderUtils {
             };
             cre_scene_utils_apply_camera_and_origin_translation(&globalTransforms[index], &origin, transform2DComp->ignoreCamera);
             renderTargets.emplace_back(renderTarget);
+        } else if (auto* particles2dComp = node->GetComponentSafe<Particles2DComp>()) {
+
         }
 
         return renderTargets;

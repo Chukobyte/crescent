@@ -293,8 +293,11 @@ void DrawParallax(SceneNode* node) {
 }
 
 void DrawParticles2D(SceneNode* node) {
-    if (auto* parallaxComp = node->GetComponentSafe<ParallaxComp>()) {
+    if (auto* particles2dComp = node->GetComponentSafe<Particles2DComp>()) {
         ImGui::Text("Particles2D Component");
+
+        ImGuiHelper::DragInt amountDragInt("Amount", particles2dComp->amount);
+        ImGuiHelper::BeginDragInt(amountDragInt);
 
         ImGui::Separator();
     }
