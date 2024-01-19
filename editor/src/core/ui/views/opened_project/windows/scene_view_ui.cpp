@@ -2,6 +2,7 @@
 
 #include "../engine/src/core/scene/scene_utils.h"
 #include "../engine/src/core/game_properties.h"
+#include "../engine/src/core/ecs/system/particle_emitter_ec_system.h"
 
 #include "../../../imgui/imgui_window_renderer.h"
 #include "../../../../asset_manager.h"
@@ -35,7 +36,7 @@ namespace WindowRenderUtils {
         return {};
     }
 
-    std::vector<ImGuiHelper::TextureRenderTarget> GetNodeTextureRenderTargets(SceneNode* node, size_t index, Transform2DComp* transform2DComp) {
+    std::vector<ImGuiHelper::TextureRenderTarget> GetNodeTextureRenderTargets(SceneNode* node, size_t index, Transform2DComp* transform2DComp, float deltaTime) {
         static AssetManager* assetManager = AssetManager::Get();
         static SKATransformModel2D globalTransforms[CRE_MAX_ENTITIES] = {};
         static SETexture* whiteRectTexture = se_texture_create_solid_colored_texture(1, 1, 255);
@@ -91,7 +92,39 @@ namespace WindowRenderUtils {
             cre_scene_utils_apply_camera_and_origin_translation(&globalTransforms[index], &origin, transform2DComp->ignoreCamera);
             renderTargets.emplace_back(renderTarget);
         } else if (auto* particles2dComp = node->GetComponentSafe<Particles2DComp>()) {
+            cre_scene_utils_apply_camera_and_origin_translation(&globalTransforms[index], &origin, transform2DComp->ignoreCamera);
+            cre_particle_emitter_ec_system_update_component(particles2dComp->GetInternalComp(), deltaTime);
+            // Draw individual particles
+            SKATransform2D baseParticleTransform;
+            ska_transform2d_mat4_to_transform(globalTransforms[index].model, &baseParticleTransform);
 
+            for (int pi = 0; pi < particles2dComp->amount; pi++) {
+                auto internalParticleComp = particles2dComp->GetInternalComp();
+                CreParticle2D* particle2D = &internalParticleComp->particles[pi];
+                if (particle2D->state != Particle2DState_ACTIVE) {
+                    continue;
+                }
+                // TODO: Setting inactive here so we can render
+                if (particle2D->timeActive >= particles2dComp->lifeTime) {
+                    particle2D->state = Particle2DState_TIMED_WAITING_TO_BE_ACTIVE;
+                }
+                const SKATransform2D particle2DTransform = {
+                        .position = { .x = baseParticleTransform.position.x + particle2D->position.x, .y = baseParticleTransform.position.y + particle2D->position.y },
+                        .scale = baseParticleTransform.scale,
+                        .rotation = baseParticleTransform.rotation
+                };
+
+//                ImGuiHelper::TextureRenderTarget renderTarget = {
+//                        .texture = whiteRectTexture,
+//                        .sourceRect = { 0.0f, 0.0f, 1.0f, 1.0f },
+//                        .destSize = internalParticleComp->squareSize,
+//                        .color = particle2D->color,
+//                        .flipH = false,
+//                        .flipV = false,
+//                        .globalTransform = particle2DTransform,
+//                        .zIndex = globalTransforms[index].zIndex
+//                };
+            }
         }
 
         return renderTargets;
@@ -115,6 +148,7 @@ ImGuiHelper::Window OpenedProjectUI::Windows::GetSceneViewWindow() {
                     hasBindedSceneUtilsFuncs = true;
                 }
                 // Loop through and render all scene nodes starting from the root
+                static const float deltaTime = 0.1f; // TODO: Get from somewhere else...
                 if (sceneManager->selectedSceneFile && sceneManager->selectedSceneFile->rootNode) {
                     sceneManager->IterateAllSceneNodes(sceneManager->selectedSceneFile->rootNode, [&textureRenderTargets, &fontRenderTargets](SceneNode* node, size_t i) {
                         if (auto* transformComp = node->GetComponentSafe<Transform2DComp>()) {
@@ -134,7 +168,7 @@ ImGuiHelper::Window OpenedProjectUI::Windows::GetSceneViewWindow() {
                                 };
                                 fontRenderTargets.emplace_back(renderTarget);
                             } else {
-                                const auto renderTargets = WindowRenderUtils::GetNodeTextureRenderTargets(node, i, transformComp);
+                                const auto renderTargets = WindowRenderUtils::GetNodeTextureRenderTargets(node, i, transformComp, deltaTime);
                                 if (!renderTargets.empty()) {
                                     textureRenderTargets.insert(textureRenderTargets.end(), renderTargets.begin(), renderTargets.end());
                                 }

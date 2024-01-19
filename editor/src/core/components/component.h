@@ -241,20 +241,35 @@ struct ParallaxComp : public EditorComponent {
 struct Particles2DComp : public EditorComponent {
     Particles2DComp() = default;
 
-    explicit Particles2DComp(const Particles2DComponent* particles2DComp)
-            : amount(particles2DComp->amount),
-              initialVelocity(particles2DComp->initialVelocity),
-              color(particles2DComp->color),
-              spread(particles2DComp->spread),
-              lifeTime(particles2DComp->lifeTime),
-              damping(particles2DComp->damping),
-              explosiveness(particles2DComp->explosiveness) {}
+    explicit Particles2DComp(const Particles2DComponent* particles2DComp) {
+        memcpy(&internalComp, particles2DComp, sizeof(internalComp));
+    }
 
-    int amount = 8;
-    SKAVector2 initialVelocity = SKA_VECTOR2_ZERO;
-    SKAColor color = SKA_COLOR_WHITE;
-    float spread = 45.0f;
-    float lifeTime = 4.0f;
-    float damping = 1.0f;
-    float explosiveness = 0.0f;
+    int& amount = internalComp.amount;
+    SKAVector2& initialVelocity = internalComp.initialVelocity;
+    SKAColor& color = internalComp.color;
+    float& spread = internalComp.spread;
+    float& lifeTime = internalComp.lifeTime;
+    float& damping = internalComp.damping;
+    float& explosiveness = internalComp.explosiveness;
+
+    [[nodiscard]] Particles2DComponent* GetInternalComp() {
+        return &internalComp;
+    }
+
+private:
+    Particles2DComponent internalComp = {
+            .amount = 8,
+            .initialVelocity = SKA_VECTOR2_ZERO,
+            .color = SKA_COLOR_WHITE,
+            .spread = 45.0f,
+            .lifeTime = 4.0f,
+            .damping = 1.0f,
+            .explosiveness = 0.0f,
+            .state = Particle2DComponentState_WAITING_TO_INITIALIZE,
+            .type = Particle2DComponentType_SQUARE,
+            .squareSize = { .w = 4.0f, .h = 4.0f },
+            .typeTexture = { .texture = nullptr, .drawSource = { 0.0f, 0.0f, 1.0f, 1.0f } },
+            .particles = {0}
+    };
 };

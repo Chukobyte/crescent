@@ -16,7 +16,7 @@ struct TextureRenderTarget {
     SKAColor color = SKA_COLOR_WHITE;
     bool flipH = false;
     bool flipV = false;
-    SKATransformModel2D *globalTransform = nullptr;
+    SKATransformModel2D* globalTransform = nullptr;
     int zIndex = 0;
 };
 
