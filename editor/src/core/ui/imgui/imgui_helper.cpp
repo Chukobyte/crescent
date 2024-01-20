@@ -98,12 +98,12 @@ const char* ImGuiHelper::DragInt::GetInternalLabel() const {
     return internalLabel.c_str();
 }
 
-void ImGuiHelper::BeginDragInt(const DragInt& dragInt) {
+bool ImGuiHelper::BeginDragInt(const DragInt& dragInt) {
     if (!dragInt.label.empty()) {
         ImGui::Text("%s", dragInt.label.c_str());
         ImGui::SameLine();
     }
-    ImGui::DragInt(dragInt.GetInternalLabel(), &dragInt.value, dragInt.valueSpeed, dragInt.valueMin, dragInt.valueMax);
+    return ImGui::DragInt(dragInt.GetInternalLabel(), &dragInt.value, dragInt.valueSpeed, dragInt.valueMin, dragInt.valueMax);
 }
 
 //--- Drag Float ---//
@@ -117,12 +117,12 @@ const char* ImGuiHelper::DragFloat::GetInternalLabel() const {
     return internalLabel.c_str();
 }
 
-void ImGuiHelper::BeginDragFloat(const DragFloat& dragFloat) {
+bool ImGuiHelper::BeginDragFloat(const DragFloat& dragFloat) {
     if (!dragFloat.label.empty()) {
         ImGui::Text("%s", dragFloat.label.c_str());
         ImGui::SameLine();
     }
-    ImGui::DragFloat(dragFloat.GetInternalLabel(), &dragFloat.value, dragFloat.valueSpeed, dragFloat.valueMin, dragFloat.valueMax, dragFloat.format);
+    return ImGui::DragFloat(dragFloat.GetInternalLabel(), &dragFloat.value, dragFloat.valueSpeed, dragFloat.valueMin, dragFloat.valueMax, dragFloat.format);
 }
 
 //--- Drag Float 2 ---//

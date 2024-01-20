@@ -296,8 +296,21 @@ void DrawParticles2D(SceneNode* node) {
     if (auto* particles2dComp = node->GetComponentSafe<Particles2DComp>()) {
         ImGui::Text("Particles2D Component");
 
+        bool resetComponent = false;
+
         ImGuiHelper::DragInt amountDragInt("Amount", particles2dComp->amount);
-        ImGuiHelper::BeginDragInt(amountDragInt);
+        if (ImGuiHelper::BeginDragInt(amountDragInt)) {
+            resetComponent = true;
+        }
+
+        ImGuiHelper::DragFloat lifeTimeDragFloat("Life Time", particles2dComp->lifeTime);
+        if (ImGuiHelper::BeginDragFloat(lifeTimeDragFloat)) {
+            resetComponent = true;
+        }
+
+        if (resetComponent) {
+            particles2d_component_reset_component(particles2dComp->GetInternalComp());
+        }
 
         ImGui::Separator();
     }

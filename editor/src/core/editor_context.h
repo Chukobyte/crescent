@@ -60,4 +60,9 @@ class EditorContext : public Singleton<EditorContext> {
                                         );
     SDL_GLContext openGLContext = nullptr;
     std::string initialDir;
+
+    // stats
+    float currentFPS = 0.0f;
+    float editorDeltaTime = 0.0f;
+    float simDeltaTime = 0.0f;
 };

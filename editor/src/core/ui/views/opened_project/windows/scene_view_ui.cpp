@@ -5,6 +5,7 @@
 #include "../engine/src/core/ecs/system/particle_emitter_ec_system.h"
 
 #include "../../../imgui/imgui_window_renderer.h"
+#include "../../../../editor_context.h"
 #include "../../../../asset_manager.h"
 #include "../../../../scene/scene_manager.h"
 
@@ -153,9 +154,9 @@ ImGuiHelper::Window OpenedProjectUI::Windows::GetSceneViewWindow() {
                     hasBindedSceneUtilsFuncs = true;
                 }
                 // Loop through and render all scene nodes starting from the root
-                static const float deltaTime = 0.01f; // TODO: Get from somewhere else...
+                const float deltaTime = EditorContext::Get()->simDeltaTime;
                 if (sceneManager->selectedSceneFile && sceneManager->selectedSceneFile->rootNode) {
-                    sceneManager->IterateAllSceneNodes(sceneManager->selectedSceneFile->rootNode, [&textureRenderTargets, &fontRenderTargets](SceneNode* node, size_t i) {
+                    sceneManager->IterateAllSceneNodes(sceneManager->selectedSceneFile->rootNode, [&textureRenderTargets, &fontRenderTargets, deltaTime](SceneNode* node, size_t i) {
                         if (auto* transformComp = node->GetComponentSafe<Transform2DComp>()) {
                             if (auto* textLabelComp = node->GetComponentSafe<TextLabelComp>()) {
                                 SKATransformModel2D globalTransform = { transformComp->transform2D.position, transformComp->transform2D.scale, transformComp->transform2D.rotation };

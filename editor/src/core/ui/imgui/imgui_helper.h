@@ -238,8 +238,8 @@ class StaticPopupModalManager : public Singleton<StaticPopupModalManager> {
 void BeginMainMenuBar(const MenuBar& menuBar);
 void BeginPopupModal(const PopupModal& popupModal);
 void BeginInputText(const InputText& inputText);
-void BeginDragInt(const DragInt& dragInt);
-void BeginDragFloat(const DragFloat& dragFloat);
+bool BeginDragInt(const DragInt& dragInt);
+bool BeginDragFloat(const DragFloat& dragFloat);
 void BeginDragFloat2(const DragFloat2& dragFloat2);
 void BeginDragFloat4(const DragFloat4& dragFloat4);
 void BeginColorEdit4(const ColorEdit4& colorEdit4);

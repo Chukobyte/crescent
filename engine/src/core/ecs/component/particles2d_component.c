@@ -65,6 +65,10 @@ Particles2DComponent* particles2d_component_copy(const Particles2DComponent* par
     return copiedComponent;
 }
 
+void particles2d_component_reset_component(Particles2DComponent* particles2DComponent) {
+    particles2DComponent->state = Particle2DComponentState_WAITING_TO_INITIALIZE;
+}
+
 void particles2d_component_set_default_particles(Particles2DComponent* particles2DComponent) {
 #define DEFAULT_PARTICLE2D (CreParticle2D){ \
     .position = SKA_VECTOR2_ZERO, \
