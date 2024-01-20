@@ -308,6 +308,31 @@ void DrawParticles2D(SceneNode* node) {
             resetComponent = true;
         }
 
+        ImGuiHelper::DragFloat2 initialVelocityDragFloat("Initial Velocity", (float*)&particles2dComp->initialVelocity);
+        if (ImGuiHelper::BeginDragFloat2(initialVelocityDragFloat)) {
+            resetComponent = true;
+        }
+
+        ImGuiHelper::DragFloat spreadDragFloat("Spread", particles2dComp->spread);
+        if (ImGuiHelper::BeginDragFloat(spreadDragFloat)) {
+            resetComponent = true;
+        }
+
+        ImGuiHelper::DragFloat dampingDragFloat("Damping", particles2dComp->damping);
+        if (ImGuiHelper::BeginDragFloat(dampingDragFloat)) {
+            resetComponent = true;
+        }
+
+        ImGuiHelper::DragFloat explosivenessDragFloat("Explosiveness", particles2dComp->explosiveness);
+        if (ImGuiHelper::BeginDragFloat(explosivenessDragFloat)) {
+            resetComponent = true;
+        }
+
+        ImGuiHelper::ColorEdit4 colorColorEdit("Color", (float*) &particles2dComp->color);
+        if (ImGuiHelper::BeginColorEdit4(colorColorEdit)) {
+            resetComponent = true;
+        }
+
         if (resetComponent) {
             particles2d_component_reset_component(particles2dComp->GetInternalComp());
         }
