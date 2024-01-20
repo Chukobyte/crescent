@@ -53,8 +53,9 @@ namespace WindowRenderUtils {
                     .color = spriteComp->modulate,
                     .flipH = spriteComp->flipH,
                     .flipV = spriteComp->flipV,
+                    .zIndex = globalTransforms[index].zIndex,
+                    .useGlobalTransform = true,
                     .globalTransform = &globalTransforms[index],
-                    .zIndex = globalTransforms[index].zIndex
             };
             cre_scene_utils_apply_camera_and_origin_translation(&globalTransforms[index], &spriteComp->origin, transform2DComp->ignoreCamera);
             renderTargets.emplace_back(renderTarget);
@@ -71,8 +72,9 @@ namespace WindowRenderUtils {
                             .color = animSpriteComp->modulate,
                             .flipH = animSpriteComp->flipH,
                             .flipV = animSpriteComp->flipV,
+                            .zIndex = globalTransforms[index].zIndex,
+                            .useGlobalTransform = true,
                             .globalTransform = &globalTransforms[index],
-                            .zIndex = globalTransforms[index].zIndex
                     };
                     cre_scene_utils_apply_camera_and_origin_translation(&globalTransforms[index], &animSpriteComp->origin, transform2DComp->ignoreCamera);
                     renderTargets.emplace_back(renderTarget);
@@ -86,20 +88,21 @@ namespace WindowRenderUtils {
                     .color = colorSpriteComp->color,
                     .flipH = false,
                     .flipV = false,
+                    .zIndex = globalTransforms[index].zIndex,
+                    .useGlobalTransform = true,
                     .globalTransform = &globalTransforms[index],
-                    .zIndex = globalTransforms[index].zIndex
             };
             cre_scene_utils_apply_camera_and_origin_translation(&globalTransforms[index], &origin, transform2DComp->ignoreCamera);
             renderTargets.emplace_back(renderTarget);
         } else if (auto* particles2dComp = node->GetComponentSafe<Particles2DComp>()) {
             cre_scene_utils_apply_camera_and_origin_translation(&globalTransforms[index], &origin, transform2DComp->ignoreCamera);
-            cre_particle_emitter_ec_system_update_component(particles2dComp->GetInternalComp(), deltaTime);
+            auto internalParticleComp = particles2dComp->GetInternalComp();
+            cre_particle_emitter_ec_system_update_component(internalParticleComp, deltaTime);
             // Draw individual particles
             SKATransform2D baseParticleTransform;
             ska_transform2d_mat4_to_transform(globalTransforms[index].model, &baseParticleTransform);
 
             for (int pi = 0; pi < particles2dComp->amount; pi++) {
-                auto internalParticleComp = particles2dComp->GetInternalComp();
                 CreParticle2D* particle2D = &internalParticleComp->particles[pi];
                 if (particle2D->state != Particle2DState_ACTIVE) {
                     continue;
@@ -114,16 +117,18 @@ namespace WindowRenderUtils {
                         .rotation = baseParticleTransform.rotation
                 };
 
-//                ImGuiHelper::TextureRenderTarget renderTarget = {
-//                        .texture = whiteRectTexture,
-//                        .sourceRect = { 0.0f, 0.0f, 1.0f, 1.0f },
-//                        .destSize = internalParticleComp->squareSize,
-//                        .color = particle2D->color,
-//                        .flipH = false,
-//                        .flipV = false,
-//                        .globalTransform = particle2DTransform,
-//                        .zIndex = globalTransforms[index].zIndex
-//                };
+                ImGuiHelper::TextureRenderTarget renderTarget = {
+                        .texture = whiteRectTexture,
+                        .sourceRect = { 0.0f, 0.0f, 1.0f, 1.0f },
+                        .destSize = internalParticleComp->squareSize,
+                        .color = particle2D->color,
+                        .flipH = false,
+                        .flipV = false,
+                        .zIndex = globalTransforms[index].zIndex,
+                        .useGlobalTransform = false
+                };
+                renderTarget.transform2D = particle2DTransform;
+                renderTargets.emplace_back(renderTarget);
             }
         }
 
@@ -148,7 +153,7 @@ ImGuiHelper::Window OpenedProjectUI::Windows::GetSceneViewWindow() {
                     hasBindedSceneUtilsFuncs = true;
                 }
                 // Loop through and render all scene nodes starting from the root
-                static const float deltaTime = 0.1f; // TODO: Get from somewhere else...
+                static const float deltaTime = 0.01f; // TODO: Get from somewhere else...
                 if (sceneManager->selectedSceneFile && sceneManager->selectedSceneFile->rootNode) {
                     sceneManager->IterateAllSceneNodes(sceneManager->selectedSceneFile->rootNode, [&textureRenderTargets, &fontRenderTargets](SceneNode* node, size_t i) {
                         if (auto* transformComp = node->GetComponentSafe<Transform2DComp>()) {

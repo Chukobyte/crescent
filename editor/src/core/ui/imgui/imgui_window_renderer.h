@@ -10,14 +10,18 @@ struct SEFont;
 
 namespace ImGuiHelper {
 struct TextureRenderTarget {
-    SETexture *texture = nullptr;
+    SETexture* texture = nullptr;
     SKARect2 sourceRect = SKA_RECT2D_ZERO;
     SKASize2D destSize = SKA_SIZE2D_ZERO;
     SKAColor color = SKA_COLOR_WHITE;
     bool flipH = false;
     bool flipV = false;
-    SKATransformModel2D* globalTransform = nullptr;
     int zIndex = 0;
+    bool useGlobalTransform = true;
+    union {
+        SKATransformModel2D* globalTransform = nullptr;
+        SKATransform2D transform2D;
+    };
 };
 
 struct FontRenderTarget {

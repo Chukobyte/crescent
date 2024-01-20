@@ -239,7 +239,11 @@ struct ParallaxComp : public EditorComponent {
 };
 
 struct Particles2DComp : public EditorComponent {
-    Particles2DComp() = default;
+    Particles2DComp() {
+        // TODO: Clean up test
+        internalComp.initialVelocity = { 300.0f, 100.0f };
+        particles2d_component_set_default_particles(&internalComp);
+    }
 
     explicit Particles2DComp(const Particles2DComponent* particles2DComp) {
         memcpy(&internalComp, particles2DComp, sizeof(internalComp));

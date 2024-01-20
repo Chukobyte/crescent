@@ -19,9 +19,11 @@ void ImGuiHelper::WindowRenderer::Render(const std::vector<TextureRenderTarget>&
     // Textures
     for (auto& target : textureRenderTargets) {
         if (target.texture) {
-            ska_renderer_queue_sprite_draw2(target.texture, target.sourceRect, target.destSize, target.color,
-                                               target.flipH, target.flipV, target.globalTransform->model, target.zIndex,
-                                               nullptr);
+            if (target.useGlobalTransform) {
+                ska_renderer_queue_sprite_draw2(target.texture, target.sourceRect, target.destSize, target.color, target.flipH, target.flipV, target.globalTransform->model, target.zIndex,nullptr);
+            } else {
+                ska_renderer_queue_sprite_draw(target.texture, target.sourceRect, target.destSize, target.color, target.flipH, target.flipV, &target.transform2D, target.zIndex, nullptr);
+            }
         }
     }
     // Fonts
