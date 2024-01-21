@@ -21,11 +21,9 @@ float cre_particle2d_get_mass(CreParticle2D* particle2D) {
 //--- Particle System ---//
 
 void cre_particle_system_integrate(CreParticle2D* particle2D, float duration) {
-    if (particle2D->inverseMass <= 0.0f) {
+    if (particle2D->inverseMass <= 0.0f || duration <= 0.0f) {
         return;
     }
-
-    SE_ASSERT(duration > 0.0f);
 
     // Update position
     SKAVector2 currentVel = SKA_VECTOR2_ZERO;

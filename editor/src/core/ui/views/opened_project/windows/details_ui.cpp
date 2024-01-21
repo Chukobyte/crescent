@@ -307,33 +307,39 @@ void DrawParticles2D(SceneNode* node) {
             }
         }
 
+        const auto prevAmount = particles2dComp->amount;
         ImGuiHelper::DragInt amountDragInt("Amount", particles2dComp->amount);
-        if (ImGuiHelper::BeginDragInt(amountDragInt)) {
+        if (ImGuiHelper::BeginDragInt(amountDragInt) && particles2dComp->amount != prevAmount) {
             resetComponent = true;
         }
 
+        const auto prevLifeTime = particles2dComp->lifeTime;
         ImGuiHelper::DragFloat lifeTimeDragFloat("Life Time", particles2dComp->lifeTime);
-        if (ImGuiHelper::BeginDragFloat(lifeTimeDragFloat)) {
+        if (ImGuiHelper::BeginDragFloat(lifeTimeDragFloat) && particles2dComp->lifeTime != prevLifeTime) {
             resetComponent = true;
         }
 
+        const auto prevInitialVelocity = particles2dComp->initialVelocity;
         ImGuiHelper::DragFloat2 initialVelocityDragFloat("Initial Velocity", (float*)&particles2dComp->initialVelocity);
-        if (ImGuiHelper::BeginDragFloat2(initialVelocityDragFloat)) {
+        if (ImGuiHelper::BeginDragFloat2(initialVelocityDragFloat) && !ska_math_vec2_equals(&particles2dComp->initialVelocity, &prevInitialVelocity)) {
             resetComponent = true;
         }
 
+        const auto prevSpread = particles2dComp->spread;
         ImGuiHelper::DragFloat spreadDragFloat("Spread", particles2dComp->spread);
-        if (ImGuiHelper::BeginDragFloat(spreadDragFloat)) {
+        if (ImGuiHelper::BeginDragFloat(spreadDragFloat) && particles2dComp->spread != prevSpread) {
             resetComponent = true;
         }
 
+        const auto prevDamping = particles2dComp->damping;
         ImGuiHelper::DragFloat dampingDragFloat("Damping", particles2dComp->damping);
-        if (ImGuiHelper::BeginDragFloat(dampingDragFloat)) {
+        if (ImGuiHelper::BeginDragFloat(dampingDragFloat) && particles2dComp->damping != prevDamping) {
             resetComponent = true;
         }
 
+        const auto prevExplosiveness = particles2dComp->explosiveness;
         ImGuiHelper::DragFloat explosivenessDragFloat("Explosiveness", particles2dComp->explosiveness);
-        if (ImGuiHelper::BeginDragFloat(explosivenessDragFloat)) {
+        if (ImGuiHelper::BeginDragFloat(explosivenessDragFloat) && particles2dComp->explosiveness != prevExplosiveness) {
             resetComponent = true;
         }
 
