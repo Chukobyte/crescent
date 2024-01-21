@@ -226,7 +226,7 @@ struct DockSpace {
 
 class StaticPopupModalManager : public Singleton<StaticPopupModalManager> {
   public:
-    StaticPopupModalManager(singleton) {}
+    explicit StaticPopupModalManager(singleton) {}
     void QueueOpenPopop(PopupModal* popupModal);
     void Flush();
 
