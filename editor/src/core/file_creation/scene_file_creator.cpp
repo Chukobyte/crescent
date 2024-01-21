@@ -179,6 +179,9 @@ nlohmann::ordered_json GetComponentsJsonArray(SceneNode* sceneNode) {
     if (const Particles2DComp* particles2DComp = sceneNode->GetComponentSafe<Particles2DComp>()) {
         nlohmann::ordered_json particles2DJson;
         particles2DJson["type"] = "particles2d";
+        if (!particles2DComp->isEmitting) {
+            particles2DJson["is_emitting"] = particles2DComp->isEmitting;
+        }
         if (particles2DComp->amount != 8) {
             particles2DJson["amount"] = particles2DComp->amount;
         }
