@@ -298,6 +298,15 @@ void DrawParticles2D(SceneNode* node) {
 
         bool resetComponent = false;
 
+        ImGuiHelper::CheckBox isEmittingCheckBox("Is Emitting", particles2dComp->isEmitting);
+        if (ImGuiHelper::BeginCheckBox(isEmittingCheckBox)) {
+            if (particles2dComp->isEmitting) {
+                resetComponent = true;
+            } else {
+                particles2dComp->state = Particle2DComponentState_INACTIVE;
+            }
+        }
+
         ImGuiHelper::DragInt amountDragInt("Amount", particles2dComp->amount);
         if (ImGuiHelper::BeginDragInt(amountDragInt)) {
             resetComponent = true;

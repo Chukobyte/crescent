@@ -193,12 +193,12 @@ const char* ImGuiHelper::CheckBox::GetInternalLabel() const {
     return internalLabel.c_str();
 }
 
-void ImGuiHelper::BeginCheckBox(const CheckBox& checkBox) {
+bool ImGuiHelper::BeginCheckBox(const CheckBox& checkBox) {
     if (!checkBox.label.empty()) {
         ImGui::Text("%s", checkBox.label.c_str());
         ImGui::SameLine();
     }
-    ImGui::Checkbox(checkBox.GetInternalLabel(), &checkBox.value);
+    return ImGui::Checkbox(checkBox.GetInternalLabel(), &checkBox.value);
 }
 
 //--- ComboBox ---//

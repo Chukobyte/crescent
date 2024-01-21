@@ -96,40 +96,42 @@ namespace WindowRenderUtils {
             cre_scene_utils_apply_camera_and_origin_translation(&globalTransforms[index], &origin, transform2DComp->ignoreCamera);
             renderTargets.emplace_back(renderTarget);
         } else if (auto* particles2dComp = node->GetComponentSafe<Particles2DComp>()) {
-            cre_scene_utils_apply_camera_and_origin_translation(&globalTransforms[index], &origin, transform2DComp->ignoreCamera);
-            auto internalParticleComp = particles2dComp->GetInternalComp();
-            cre_particle_emitter_ec_system_update_component(internalParticleComp, deltaTime);
-            // Draw individual particles
-            SKATransform2D baseParticleTransform;
-            ska_transform2d_mat4_to_transform(globalTransforms[index].model, &baseParticleTransform);
+            if (particles2dComp->state != Particle2DComponentState_INACTIVE) {
+                cre_scene_utils_apply_camera_and_origin_translation(&globalTransforms[index], &origin, transform2DComp->ignoreCamera);
+                auto internalParticleComp = particles2dComp->GetInternalComp();
+                cre_particle_emitter_ec_system_update_component(internalParticleComp, deltaTime);
+                // Draw individual particles
+                SKATransform2D baseParticleTransform;
+                ska_transform2d_mat4_to_transform(globalTransforms[index].model, &baseParticleTransform);
 
-            for (int pi = 0; pi < particles2dComp->amount; pi++) {
-                CreParticle2D* particle2D = &internalParticleComp->particles[pi];
-                if (particle2D->state != Particle2DState_ACTIVE) {
-                    continue;
-                }
-                // TODO: Setting inactive here so we can render
-                if (particle2D->timeActive >= particles2dComp->lifeTime) {
-                    particle2D->state = Particle2DState_TIMED_WAITING_TO_BE_ACTIVE;
-                }
-                const SKATransform2D particle2DTransform = {
-                        .position = { .x = baseParticleTransform.position.x + particle2D->position.x, .y = baseParticleTransform.position.y + particle2D->position.y },
-                        .scale = baseParticleTransform.scale,
-                        .rotation = baseParticleTransform.rotation
-                };
+                for (int pi = 0; pi < particles2dComp->amount; pi++) {
+                    CreParticle2D* particle2D = &internalParticleComp->particles[pi];
+                    if (particle2D->state != Particle2DState_ACTIVE) {
+                        continue;
+                    }
+                    // TODO: Setting inactive here so we can render
+                    if (particle2D->timeActive >= particles2dComp->lifeTime) {
+                        particle2D->state = Particle2DState_TIMED_WAITING_TO_BE_ACTIVE;
+                    }
+                    const SKATransform2D particle2DTransform = {
+                            .position = { .x = baseParticleTransform.position.x + particle2D->position.x, .y = baseParticleTransform.position.y + particle2D->position.y },
+                            .scale = baseParticleTransform.scale,
+                            .rotation = baseParticleTransform.rotation
+                    };
 
-                ImGuiHelper::TextureRenderTarget renderTarget = {
-                        .texture = whiteRectTexture,
-                        .sourceRect = { 0.0f, 0.0f, 1.0f, 1.0f },
-                        .destSize = internalParticleComp->squareSize,
-                        .color = particle2D->color,
-                        .flipH = false,
-                        .flipV = false,
-                        .zIndex = globalTransforms[index].zIndex,
-                        .useGlobalTransform = false
-                };
-                renderTarget.transform2D = particle2DTransform;
-                renderTargets.emplace_back(renderTarget);
+                    ImGuiHelper::TextureRenderTarget renderTarget = {
+                            .texture = whiteRectTexture,
+                            .sourceRect = { 0.0f, 0.0f, 1.0f, 1.0f },
+                            .destSize = internalParticleComp->squareSize,
+                            .color = particle2D->color,
+                            .flipH = false,
+                            .flipV = false,
+                            .zIndex = globalTransforms[index].zIndex,
+                            .useGlobalTransform = false
+                    };
+                    renderTarget.transform2D = particle2DTransform;
+                    renderTargets.emplace_back(renderTarget);
+                }
             }
         }
 
@@ -154,9 +156,10 @@ ImGuiHelper::Window OpenedProjectUI::Windows::GetSceneViewWindow() {
                     hasBindedSceneUtilsFuncs = true;
                 }
                 // Loop through and render all scene nodes starting from the root
-                const float deltaTime = EditorContext::Get()->simDeltaTime;
+//                const float& deltaTime = EditorContext::Get()->simDeltaTime;
+                const float& deltaTime = EditorContext::Get()->editorDeltaTime;
                 if (sceneManager->selectedSceneFile && sceneManager->selectedSceneFile->rootNode) {
-                    sceneManager->IterateAllSceneNodes(sceneManager->selectedSceneFile->rootNode, [&textureRenderTargets, &fontRenderTargets, deltaTime](SceneNode* node, size_t i) {
+                    sceneManager->IterateAllSceneNodes(sceneManager->selectedSceneFile->rootNode, [&textureRenderTargets, &fontRenderTargets, &deltaTime](SceneNode* node, size_t i) {
                         if (auto* transformComp = node->GetComponentSafe<Transform2DComp>()) {
                             if (auto* textLabelComp = node->GetComponentSafe<TextLabelComp>()) {
                                 SKATransformModel2D globalTransform = { transformComp->transform2D.position, transformComp->transform2D.scale, transformComp->transform2D.rotation };

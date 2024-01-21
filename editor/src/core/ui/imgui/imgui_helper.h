@@ -243,7 +243,7 @@ bool BeginDragFloat(const DragFloat& dragFloat);
 bool BeginDragFloat2(const DragFloat2& dragFloat2);
 bool BeginDragFloat4(const DragFloat4& dragFloat4);
 bool BeginColorEdit4(const ColorEdit4& colorEdit4);
-void BeginCheckBox(const CheckBox& checkBox);
+bool BeginCheckBox(const CheckBox& checkBox);
 void BeginComboBox(ComboBox& comboBox);
 void BeginAssetBrowserComboBox(AssetBrowserComboBox& comboBox);
 void BeginTreeNode(const TreeNode& treeNode);

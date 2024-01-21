@@ -256,6 +256,8 @@ struct Particles2DComp : public EditorComponent {
     float& lifeTime = internalComp.lifeTime;
     float& damping = internalComp.damping;
     float& explosiveness = internalComp.explosiveness;
+    Particle2DComponentState& state = internalComp.state;
+    bool isEmitting = true;
 
     [[nodiscard]] Particles2DComponent* GetInternalComp() {
         return &internalComp;
