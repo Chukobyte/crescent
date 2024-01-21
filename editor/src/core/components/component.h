@@ -248,6 +248,7 @@ struct Particles2DComp : public EditorComponent {
     explicit Particles2DComp(const Particles2DComponent* particles2DComp) {
         memcpy(&internalComp, particles2DComp, sizeof(internalComp));
         isEmitting = particles2DComp->state != Particle2DComponentState_INACTIVE;
+        particles2d_component_set_default_particles(&internalComp);
     }
 
     int& amount = internalComp.amount;
