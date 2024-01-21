@@ -309,12 +309,14 @@ void DrawParticles2D(SceneNode* node) {
 
         const auto prevAmount = particles2dComp->amount;
         ImGuiHelper::DragInt amountDragInt("Amount", particles2dComp->amount);
+        amountDragInt.valueMin = 1;
         if (ImGuiHelper::BeginDragInt(amountDragInt) && particles2dComp->amount != prevAmount) {
             resetComponent = true;
         }
 
         const auto prevLifeTime = particles2dComp->lifeTime;
         ImGuiHelper::DragFloat lifeTimeDragFloat("Life Time", particles2dComp->lifeTime);
+        lifeTimeDragFloat.valueMin = 0.0f;
         if (ImGuiHelper::BeginDragFloat(lifeTimeDragFloat) && particles2dComp->lifeTime != prevLifeTime) {
             resetComponent = true;
         }
@@ -327,18 +329,24 @@ void DrawParticles2D(SceneNode* node) {
 
         const auto prevSpread = particles2dComp->spread;
         ImGuiHelper::DragFloat spreadDragFloat("Spread", particles2dComp->spread);
+        spreadDragFloat.valueMin = 0.0f;
+        spreadDragFloat.valueMax = 360.0f;
         if (ImGuiHelper::BeginDragFloat(spreadDragFloat) && particles2dComp->spread != prevSpread) {
             resetComponent = true;
         }
 
         const auto prevDamping = particles2dComp->damping;
         ImGuiHelper::DragFloat dampingDragFloat("Damping", particles2dComp->damping);
+        dampingDragFloat.valueMin = 0.0f;
+        dampingDragFloat.valueMax = 1.0f;
         if (ImGuiHelper::BeginDragFloat(dampingDragFloat) && particles2dComp->damping != prevDamping) {
             resetComponent = true;
         }
 
         const auto prevExplosiveness = particles2dComp->explosiveness;
         ImGuiHelper::DragFloat explosivenessDragFloat("Explosiveness", particles2dComp->explosiveness);
+        explosivenessDragFloat.valueMin = 0.0f;
+        explosivenessDragFloat.valueMax = 1.0f;
         if (ImGuiHelper::BeginDragFloat(explosivenessDragFloat) && particles2dComp->explosiveness != prevExplosiveness) {
             resetComponent = true;
         }
