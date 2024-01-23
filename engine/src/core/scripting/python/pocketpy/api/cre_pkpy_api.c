@@ -280,8 +280,8 @@ void cre_pkpy_api_load_internal_modules(pkpy_vm* vm) {
             {.signature = "particles2d_get_explosiveness(entity_id: int) -> float", .function = cre_pkpy_api_particles2d_get_explosiveness},
             {.signature = "particles2d_get_color(entity_id: int) -> Tuple[int, int, int, int]", .function = cre_pkpy_api_particles2d_get_color},
             {.signature = "particles2d_set_color(entity_id: int, r: int, g: int, b: int, a: int) -> None", .function = cre_pkpy_api_particles2d_set_color},
-            {.signature = "particles2d_get_initial_velocity(entity_id: int) -> Tuple[float, float]", .function = cre_pkpy_api_particles2d_get_initial_velocity},
-            {.signature = "particles2d_set_initial_velocity(entity_id: int, x: float, y: float) -> None", .function = cre_pkpy_api_particles2d_set_initial_velocity},
+            {.signature = "particles2d_get_initial_velocity(entity_id: int) -> Tuple[float, float, float, float]", .function = cre_pkpy_api_particles2d_get_initial_velocity},
+            {.signature = "particles2d_set_initial_velocity(entity_id: int, min_x: float, min_y: float, max_x: float, max_y: float) -> None", .function = cre_pkpy_api_particles2d_set_initial_velocity},
             {.signature = "particles2d_get_spread(entity_id: int) -> float", .function = cre_pkpy_api_particles2d_get_spread},
             {.signature = "particles2d_set_spread(entity_id: int, spread: float) -> None", .function = cre_pkpy_api_particles2d_set_spread},
             // Scene Tree

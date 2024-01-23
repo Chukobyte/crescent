@@ -389,6 +389,27 @@ class MinMax:
         return f"({self.min}, {self.max})"
 
 
+class MinMaxVector2:
+    def __init__(self, value_min: Vector2, value_max: Vector2):
+        self.min = value_min
+        self.max = value_max
+
+    def contain(self, value: Vector2) -> bool:
+        return self.min <= value <= self.max
+
+    def is_below(self, value: Vector2) -> bool:
+        return value < self.min
+
+    def is_above(self, value: Vector2) -> bool:
+        return value > self.max
+
+    def __str__(self):
+        return f"( {self.min}, {self.max} )"
+
+    def __repr__(self):
+        return f"( {self.min}, {self.max} )"
+
+
 class AudioSource:
     def __init__(self, path: str):
         self.path = path
@@ -1315,13 +1336,16 @@ class Particles2D(Node2D):
         crescent_internal.particles2d_set_color(self.entity_id, value.r, value.g, value.b, value.a)
 
     @property
-    def initial_velocity(self) -> Vector2:
-        x, y = crescent_internal.particles2d_get_initial_velocity(self.entity_id)
-        return Vector2(x, y)
+    def initial_velocity(self) -> MinMaxVector2:
+        min_x, min_y, max_x, max_y = crescent_internal.particles2d_get_initial_velocity(self.entity_id)
+        return MinMaxVector2(
+            Vector2(min_x, min_y),
+            Vector2(max_x, max_y)
+        )
 
     @initial_velocity.setter
-    def initial_velocity(self, value: Vector2) -> None:
-        crescent_internal.particles2d_set_initial_velocity(self.entity_id, value.x, value.y)
+    def initial_velocity(self, value: MinMaxVector2) -> None:
+        crescent_internal.particles2d_set_initial_velocity(self.entity_id, value.min.x, value.min.y, value.max.x, value.max.y)
 
     @property
     def spread(self) -> float:
