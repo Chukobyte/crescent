@@ -39,7 +39,8 @@ static inline float get_random_spread_angle_in_radians(const SKAVector2* directi
 Particles2DComponent* particles2d_component_create() {
     Particles2DComponent* particles2DComponent = SE_MEM_ALLOCATE(Particles2DComponent);
     particles2DComponent->amount = 8;
-    particles2DComponent->initialVelocity = SKA_VECTOR2_ZERO;
+    particles2DComponent->initialVelocity.min = SKA_VECTOR2_ZERO;
+    particles2DComponent->initialVelocity.max = SKA_VECTOR2_ZERO;
 //    particles2DComponent->linearAcceleration = SKA_VECTOR2_ZERO;
     particles2DComponent->spread = 45.0f;
     particles2DComponent->color = SKA_COLOR_WHITE;
@@ -100,9 +101,11 @@ void particles2d_component_reset_particle(Particles2DComponent* particles2DCompo
     particle2D->timeActive = 0.0f;
     particle2D->color = particles2DComponent->color;
     // Add initial velocity and spread
-    const bool hasInitialVelocity = particles2DComponent->initialVelocity.x != 0.0f || particles2DComponent->initialVelocity.y != 0.0f;
+    const bool hasInitialVelocity = particles2DComponent->initialVelocity.min.x != 0.0f || particles2DComponent->initialVelocity.min.y != 0.0f;
     if (hasInitialVelocity) {
-        const SKAVector2 initialVelocity = particles2DComponent->initialVelocity;
+        const SKAVector2 initialVelocity = ska_math_minmax_vec2_get_random_in_range(&particles2DComponent->initialVelocity);
+        particle2D->linearVelocity.x += initialVelocity.x;
+        particle2D->linearVelocity.y += initialVelocity.y;
 
         // Get random angle based on the degrees of spread
         SKAVector2 initialDirection = initialVelocity;
@@ -118,6 +121,8 @@ void particles2d_component_reset_particle(Particles2DComponent* particles2DCompo
 
         particle2D->linearVelocity.x += rotatedVelocity.x;
         particle2D->linearVelocity.y += rotatedVelocity.y;
+
+
 //        particle2D->linearVelocity.x += cosf(spreadAngle) * particles2DComponent->initialVelocity.x;
 //        particle2D->linearVelocity.y -= sinf(spreadAngle) * particles2DComponent->initialVelocity.y;
     }

@@ -27,7 +27,8 @@ typedef struct Particle2DTypeTexture {
 typedef struct Particles2DComponent {
     // Configuration
     int amount;
-    SKAVector2 initialVelocity;
+//    SKAVector2 initialVelocity;
+    SKAMinMaxVec2 initialVelocity;
 //    SKAVector2 linearAcceleration;
     SKAColor color;
     float spread; // angle in degrees in which the particles are spread
