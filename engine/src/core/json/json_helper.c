@@ -167,3 +167,15 @@ SKAColor json_get_linear_color_default(cJSON* json, const char* key, SKAColor de
     }
     return defaultValue;
 }
+
+SKAMinMaxVec2 json_get_minmax_vec2(cJSON* json, const char* key) {
+    const SKAVector2 valueMin = json_get_vec2(json, "min");
+    const SKAVector2 valueMax = json_get_vec2(json, "max");
+    return (SKAMinMaxVec2) { .min = valueMin, .max = valueMax };
+}
+
+SKAMinMaxVec2 json_get_minmax_vec2_default(cJSON* json, const char* key, SKAMinMaxVec2 minmax) {
+    const SKAVector2 valueMin = json_get_vec2_default(json, "min", (SKAVector2){ minmax.min.x, minmax.min.y });
+    const SKAVector2 valueMax = json_get_vec2_default(json, "max", (SKAVector2){ minmax.max.x, minmax.max.y });
+    return (SKAMinMaxVec2) { .min = valueMin, .max = valueMax };
+}

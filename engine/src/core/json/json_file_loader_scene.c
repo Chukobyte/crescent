@@ -386,7 +386,7 @@ void cre_json_particles2d_create_or_set_default(JsonSceneNode* node, cJSON* comp
         particles2dComponent = particles2d_component_create();
         isEmitting = json_get_bool_default(componentJson, "is_emitting", true);
         particles2dComponent->amount = json_get_int_default(componentJson, "amount", DEFAULT_COMPONENT_PARTICLES2D_AMOUNT);
-        particles2dComponent->initialVelocity.min = json_get_vec2_default(componentJson, "initial_velocity", SKA_VECTOR2_ZERO);
+        particles2dComponent->initialVelocity = json_get_minmax_vec2_default(componentJson, "initial_velocity", SKA_MINMAX_VEC2_ZERO);
         particles2dComponent->color = json_get_linear_color_default(componentJson, "color", SKA_COLOR_WHITE);
         particles2dComponent->spread = (float)json_get_double_default(componentJson, "spread", (double)DEFAULT_COMPONENT_PARTICLES2D_SPREAD);
         particles2dComponent->lifeTime = (float)json_get_double_default(componentJson, "life_time", (double)DEFAULT_COMPONENT_PARTICLES2D_LIFE_TIME);
@@ -397,7 +397,7 @@ void cre_json_particles2d_create_or_set_default(JsonSceneNode* node, cJSON* comp
         particles2dComponent = (Particles2DComponent*) node->components[CreComponentDataIndex_PARTICLES_2D];
         isEmitting = json_get_bool_default(componentJson, "is_emitting", particles2dComponent->state != Particle2DComponentState_INACTIVE);
         particles2dComponent->amount = json_get_int_default(componentJson, "amount", particles2dComponent->amount);
-        particles2dComponent->initialVelocity.min = json_get_vec2_default(componentJson, "initial_velocity", particles2dComponent->initialVelocity.min);
+        particles2dComponent->initialVelocity = json_get_minmax_vec2_default(componentJson, "initial_velocity", particles2dComponent->initialVelocity);
         particles2dComponent->color = json_get_linear_color_default(componentJson, "color", particles2dComponent->color);
         particles2dComponent->spread = (float)json_get_double_default(componentJson, "spread", (double)particles2dComponent->spread);
         particles2dComponent->lifeTime = (float)json_get_double_default(componentJson, "life_time", (double)particles2dComponent->lifeTime);

@@ -27,9 +27,7 @@ typedef struct Particle2DTypeTexture {
 typedef struct Particles2DComponent {
     // Configuration
     int amount;
-//    SKAVector2 initialVelocity;
     SKAMinMaxVec2 initialVelocity;
-//    SKAVector2 linearAcceleration;
     SKAColor color;
     float spread; // angle in degrees in which the particles are spread
     float lifeTime; // Sets initial 'timeActive' on CreParticle2D
@@ -38,14 +36,14 @@ typedef struct Particles2DComponent {
     Particle2DComponentState state;
     Particle2DComponentType type;
     // Using unions for struct members based on type
-    // Shared unions between multiple type
-    union {
-        SKASize2D squareSize; // Particle2DComponentType_SQUARE | Particle2DComponentType_TEXTURE
-    };
+    // Shared unions between multiple type (TODO: add later)
+//    union {
+    SKASize2D squareSize; // Particle2DComponentType_SQUARE | Particle2DComponentType_TEXTURE
+//    };
     // Specific type structs
-    union {
-        Particle2DTypeTexture typeTexture;
-    };
+//    union {
+    Particle2DTypeTexture typeTexture;
+//    };
 
     CreParticle2D particles[CRE_PARTICLES_2D_MAX];
 } Particles2DComponent;

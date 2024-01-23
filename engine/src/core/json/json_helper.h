@@ -34,3 +34,6 @@ SKARect2 json_get_rect2_default(cJSON* json, const char* key, SKARect2 defaultVa
 
 SKAColor json_get_linear_color(cJSON* json, const char* key);
 SKAColor json_get_linear_color_default(cJSON* json, const char* key, SKAColor defaultValue);
+
+SKAMinMaxVec2 json_get_minmax_vec2(cJSON* json, const char* key);
+SKAMinMaxVec2 json_get_minmax_vec2_default(cJSON* json, const char* key, SKAMinMaxVec2 minmax);
