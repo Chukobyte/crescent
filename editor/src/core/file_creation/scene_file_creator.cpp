@@ -47,7 +47,7 @@ nlohmann::ordered_json MinMaxVector2ToJson(const SKAMinMaxVec2& value) {
 
 nlohmann::ordered_json GetComponentsJsonArray(SceneNode* sceneNode) {
     nlohmann::ordered_json componentsJsonArray = nlohmann::ordered_json::array();
-    if (const Transform2DComp* transform2DComp = sceneNode->GetComponentSafe<Transform2DComp>()) {
+    if (const auto transform2DComp = sceneNode->GetComponentSafe<Transform2DComp>()) {
         nlohmann::ordered_json transform2dJson;
         transform2dJson["type"] = "transform_2d";
         if (transform2DComp->transform2D.position.x != 0.0f || transform2DComp->transform2D.position.y != 0.0f) {
@@ -70,7 +70,7 @@ nlohmann::ordered_json GetComponentsJsonArray(SceneNode* sceneNode) {
         }
         componentsJsonArray.emplace_back(transform2dJson);
     }
-    if (const SpriteComp* spriteComp = sceneNode->GetComponentSafe<SpriteComp>()) {
+    if (const auto spriteComp = sceneNode->GetComponentSafe<SpriteComp>()) {
         nlohmann::ordered_json spriteJson;
         spriteJson["type"] = "sprite";
         spriteJson["texture_path"] = spriteComp->texturePath;
@@ -92,7 +92,7 @@ nlohmann::ordered_json GetComponentsJsonArray(SceneNode* sceneNode) {
         }
         componentsJsonArray.emplace_back(spriteJson);
     }
-    if (const AnimatedSpriteComp* animatedSpriteComp = sceneNode->GetComponentSafe<AnimatedSpriteComp>()) {
+    if (const auto animatedSpriteComp = sceneNode->GetComponentSafe<AnimatedSpriteComp>()) {
         nlohmann::ordered_json animSpriteJson;
         animSpriteJson["type"] = "animated_sprite";
         animSpriteJson["current_animation_name"] = animatedSpriteComp->currentAnimationName;
@@ -138,7 +138,7 @@ nlohmann::ordered_json GetComponentsJsonArray(SceneNode* sceneNode) {
         animSpriteJson["animations"] = animationsJsonArray;
         componentsJsonArray.emplace_back(animSpriteJson);
     }
-    if (const TextLabelComp* textLabelComp = sceneNode->GetComponentSafe<TextLabelComp>()) {
+    if (const auto textLabelComp = sceneNode->GetComponentSafe<TextLabelComp>()) {
         nlohmann::ordered_json textLabelJson;
         textLabelJson["type"] = "text_label";
         if (!textLabelComp->fontUID.empty()) {
@@ -150,14 +150,14 @@ nlohmann::ordered_json GetComponentsJsonArray(SceneNode* sceneNode) {
         }
         componentsJsonArray.emplace_back(textLabelJson);
     }
-    if (const ScriptComp* scriptComp = sceneNode->GetComponentSafe<ScriptComp>()) {
+    if (const auto scriptComp = sceneNode->GetComponentSafe<ScriptComp>()) {
         nlohmann::ordered_json scriptJson;
         scriptJson["type"] = "script";
         scriptJson["class_path"] = scriptComp->classPath;
         scriptJson["class_name"] = scriptComp->className;
         componentsJsonArray.emplace_back(scriptJson);
     }
-    if (const Collider2DComp* collider2DComp = sceneNode->GetComponentSafe<Collider2DComp>()) {
+    if (const auto collider2DComp = sceneNode->GetComponentSafe<Collider2DComp>()) {
         nlohmann::ordered_json collider2DJson;
         collider2DJson["type"] = "collider_2d";
         collider2DJson["extents"] = Size2DToJson(collider2DComp->extents);
@@ -166,7 +166,7 @@ nlohmann::ordered_json GetComponentsJsonArray(SceneNode* sceneNode) {
         }
         componentsJsonArray.emplace_back(collider2DJson);
     }
-    if (const ColorRectComp* colorRectComp = sceneNode->GetComponentSafe<ColorRectComp>()) {
+    if (const auto colorRectComp = sceneNode->GetComponentSafe<ColorRectComp>()) {
         nlohmann::ordered_json colorRectJson;
         colorRectJson["type"] = "color_rect";
         colorRectJson["size"] = Size2DToJson(colorRectComp->size);
@@ -175,7 +175,7 @@ nlohmann::ordered_json GetComponentsJsonArray(SceneNode* sceneNode) {
         }
         componentsJsonArray.emplace_back(colorRectJson);
     }
-    if (const ParallaxComp* parallaxComp = sceneNode->GetComponentSafe<ParallaxComp>()) {
+    if (const auto parallaxComp = sceneNode->GetComponentSafe<ParallaxComp>()) {
         nlohmann::ordered_json parallaxJson;
         parallaxJson["type"] = "parallax";
         if (parallaxComp->scrollSpeed.x != 0.0f || parallaxComp->scrollSpeed.y != 0.0f) {
@@ -183,7 +183,7 @@ nlohmann::ordered_json GetComponentsJsonArray(SceneNode* sceneNode) {
         }
         componentsJsonArray.emplace_back(parallaxJson);
     }
-    if (const Particles2DComp* particles2DComp = sceneNode->GetComponentSafe<Particles2DComp>()) {
+    if (const auto particles2DComp = sceneNode->GetComponentSafe<Particles2DComp>()) {
         nlohmann::ordered_json particles2DJson;
         particles2DJson["type"] = "particles2d";
         if (!particles2DComp->isEmitting) {
