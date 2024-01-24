@@ -856,7 +856,6 @@
 "    def __init__(self, entity_id: int) -> None:\n"\
 "        self.entity_id = entity_id\n"\
 "\n"\
-"    # TODO: Replace with proper method once class method is added\n"\
 "    @classmethod\n"\
 "    def new(cls) -> \"Node\":\n"\
 "        return crescent_internal.node_new(str(cls.__module__.__name__), cls.__name__, NodeType.Node)\n"\

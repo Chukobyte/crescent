@@ -853,7 +853,6 @@ class Node:
     def __init__(self, entity_id: int) -> None:
         self.entity_id = entity_id
 
-    # TODO: Replace with proper method once class method is added
     @classmethod
     def new(cls) -> "Node":
         return crescent_internal.node_new(str(cls.__module__.__name__), cls.__name__, NodeType.Node)
