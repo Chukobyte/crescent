@@ -98,7 +98,7 @@ namespace WindowRenderUtils {
         } else if (auto* particles2dComp = node->GetComponentSafe<Particles2DComp>()) {
             if (particles2dComp->state != Particle2DComponentState_INACTIVE) {
                 cre_scene_utils_apply_camera_and_origin_translation(&globalTransforms[index], &origin, transform2DComp->ignoreCamera);
-                auto internalParticleComp = particles2dComp->GetInternalComp();
+                Particles2DComponent* internalParticleComp = particles2dComp->GetInternalComp();
                 cre_particle_emitter_ec_system_update_component(internalParticleComp, deltaTime);
                 // Draw individual particles
                 SKATransform2D baseParticleTransform;

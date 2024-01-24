@@ -109,6 +109,8 @@ void cre_particle_emitter_ec_system_update_component(Particles2DComponent* parti
             // Spread out time active of particles on initialize so that they correspond to explosiveness
             const float explosivenessAdjustedTimeInactive = ska_math_map_to_range(particles2DComponent->explosiveness, 1.0f, 0.0f, 0.0f, particles2DComponent->lifeTime);
             for (int pi = 0; pi < particles2DComponent->amount; pi++) {
+                // Reset particle to default first
+                particles2DComponent->particles[pi] = CRE_PARTICLE2D_DEFAULT;
                 CreParticle2D* currentParticle = &particles2DComponent->particles[pi];
                 particles2d_component_reset_particle(particles2DComponent, currentParticle);
                 currentParticle->state = Particle2DState_TIMED_WAITING_TO_BE_ACTIVE;

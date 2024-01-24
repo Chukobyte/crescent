@@ -70,25 +70,10 @@ void particles2d_component_reset_component(Particles2DComponent* particles2DComp
 }
 
 void particles2d_component_set_default_particles(Particles2DComponent* particles2DComponent) {
-#define DEFAULT_PARTICLE2D (CreParticle2D){ \
-    .position = SKA_VECTOR2_ZERO, \
-    .linearVelocity = SKA_VECTOR2_ZERO, \
-    .acceleration = SKA_VECTOR2_ZERO, \
-    .forceAccumulated = SKA_VECTOR2_ZERO, \
-    .gravity = (SKAVector2){ 0.0f, 32.0f }, \
-    .color = particles2DComponent->color, \
-    .timeActive = 0.0f, \
-    .damping = CRE_PARTICLE2D_DEFAULT_DAMPING, \
-    .inverseMass = 1.0f, \
-    .state = Particle2DState_INACTIVE\
-}
-
     for (int i = 0; i < particles2DComponent->amount; i++) {
-        particles2DComponent->particles[i] = DEFAULT_PARTICLE2D;
+        particles2DComponent->particles[i] = CRE_PARTICLE2D_DEFAULT;
         particles2d_component_reset_particle(particles2DComponent, &particles2DComponent->particles[i]);
     }
-
-#undef DEFAULT_PARTICLE2D
 }
 
 void particles2d_component_reset_particle(Particles2DComponent* particles2DComponent, CreParticle2D* particle2D) {

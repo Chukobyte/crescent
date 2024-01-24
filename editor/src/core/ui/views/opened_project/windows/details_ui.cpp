@@ -310,6 +310,7 @@ void DrawParticles2D(SceneNode* node) {
         const auto prevAmount = particles2dComp->amount;
         ImGuiHelper::DragInt amountDragInt("Amount", particles2dComp->amount);
         amountDragInt.valueMin = 1;
+        amountDragInt.valueMax = CRE_PARTICLES_2D_MAX;
         if (ImGuiHelper::BeginDragInt(amountDragInt) && particles2dComp->amount != prevAmount) {
             resetComponent = true;
         }

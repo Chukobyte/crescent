@@ -6,7 +6,7 @@ extern "C" {
 
 #include "../../physics/particle/particle.h"
 
-#define CRE_PARTICLES_2D_MAX 100
+#define CRE_PARTICLES_2D_MAX 1000
 
 typedef enum Particle2DComponentState {
     Particle2DComponentState_INACTIVE = 0,
