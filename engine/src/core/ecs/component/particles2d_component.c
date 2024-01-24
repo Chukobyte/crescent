@@ -41,7 +41,6 @@ Particles2DComponent* particles2d_component_create() {
     particles2DComponent->amount = 8;
     particles2DComponent->initialVelocity.min = SKA_VECTOR2_ZERO;
     particles2DComponent->initialVelocity.max = SKA_VECTOR2_ZERO;
-//    particles2DComponent->linearAcceleration = SKA_VECTOR2_ZERO;
     particles2DComponent->spread = 45.0f;
     particles2DComponent->color = SKA_COLOR_WHITE;
     particles2DComponent->lifeTime = 4.0f;
