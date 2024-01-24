@@ -27,8 +27,14 @@
                     "type": "particles2d",
                     "is_emitting": false,
                     "initial_velocity": {
-                        "x": 300.0,
-                        "y": 100.0
+                        "min": {
+                            "x": -90.0,
+                            "y": -60.0
+                        },
+                        "max": {
+                            "x": 900.0,
+                            "y": 600.0
+                        }
                     }
                 }
             ],

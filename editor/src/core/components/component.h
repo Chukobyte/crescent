@@ -252,7 +252,7 @@ struct Particles2DComp : public EditorComponent {
     }
 
     int& amount = internalComp.amount;
-    SKAVector2& initialVelocity = internalComp.initialVelocity;
+    SKAMinMaxVec2& initialVelocity = internalComp.initialVelocity;
     SKAColor& color = internalComp.color;
     float& spread = internalComp.spread;
     float& lifeTime = internalComp.lifeTime;

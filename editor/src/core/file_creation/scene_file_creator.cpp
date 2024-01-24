@@ -38,6 +38,13 @@ nlohmann::ordered_json ColorToJson(const SKAColor& value) {
     return rect;
 }
 
+nlohmann::ordered_json MinMaxVector2ToJson(const SKAMinMaxVec2& value) {
+    nlohmann::ordered_json minmaxVec2;
+    minmaxVec2["min"] = Vector2ToJson(value.min);
+    minmaxVec2["max"] = Vector2ToJson(value.max);
+    return minmaxVec2;
+}
+
 nlohmann::ordered_json GetComponentsJsonArray(SceneNode* sceneNode) {
     nlohmann::ordered_json componentsJsonArray = nlohmann::ordered_json::array();
     if (const Transform2DComp* transform2DComp = sceneNode->GetComponentSafe<Transform2DComp>()) {
@@ -185,8 +192,8 @@ nlohmann::ordered_json GetComponentsJsonArray(SceneNode* sceneNode) {
         if (particles2DComp->amount != 8) {
             particles2DJson["amount"] = particles2DComp->amount;
         }
-        if (particles2DComp->initialVelocity.x != 0.0f || particles2DComp->initialVelocity.y != 0.0f) {
-            particles2DJson["initial_velocity"] = Vector2ToJson(particles2DComp->initialVelocity);
+        if (particles2DComp->initialVelocity.min.x != 0.0f || particles2DComp->initialVelocity.min.y != 0.0f || particles2DComp->initialVelocity.max.x != 0.0f || particles2DComp->initialVelocity.max.y != 0.0f) {
+            particles2DJson["initial_velocity"] = MinMaxVector2ToJson(particles2DComp->initialVelocity);
         }
         if (particles2DComp->color.r != 1.0f || particles2DComp->color.g != 1.0f || particles2DComp->color.b != 1.0f || particles2DComp->color.a != 1.0f) {
             particles2DJson["color"] = ColorToJson(particles2DComp->color);

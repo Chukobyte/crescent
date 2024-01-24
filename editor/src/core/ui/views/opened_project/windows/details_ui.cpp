@@ -321,9 +321,14 @@ void DrawParticles2D(SceneNode* node) {
             resetComponent = true;
         }
 
-        const auto prevInitialVelocity = particles2dComp->initialVelocity;
-        ImGuiHelper::DragFloat2 initialVelocityDragFloat("Initial Velocity", (float*)&particles2dComp->initialVelocity);
-        if (ImGuiHelper::BeginDragFloat2(initialVelocityDragFloat) && !ska_math_vec2_equals(&particles2dComp->initialVelocity, &prevInitialVelocity)) {
+        const auto prevInitialMinVelocity = particles2dComp->initialVelocity.min;
+        ImGuiHelper::DragFloat2 initialVelocityMinDragFloat("Initial Vel Min", (float*)&particles2dComp->initialVelocity.min);
+        if (ImGuiHelper::BeginDragFloat2(initialVelocityMinDragFloat) && !ska_math_vec2_equals(&particles2dComp->initialVelocity.min, &prevInitialMinVelocity)) {
+            resetComponent = true;
+        }
+        const auto prevInitialMaxVelocity = particles2dComp->initialVelocity.max;
+        ImGuiHelper::DragFloat2 initialVelocityMaxDragFloat("Initial Vel Max", (float*)&particles2dComp->initialVelocity.max);
+        if (ImGuiHelper::BeginDragFloat2(initialVelocityMaxDragFloat) && !ska_math_vec2_equals(&particles2dComp->initialVelocity.max, &prevInitialMaxVelocity)) {
             resetComponent = true;
         }
 
