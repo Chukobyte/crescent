@@ -857,9 +857,9 @@
 "        self.entity_id = entity_id\n"\
 "\n"\
 "    # TODO: Replace with proper method once class method is added\n"\
-"    @staticmethod\n"\
-"    def new() -> \"Node\":\n"\
-"        return crescent_internal.node_new(\"crescent\", \"Node\", NodeType.Node)\n"\
+"    @classmethod\n"\
+"    def new(cls) -> \"Node\":\n"\
+"        return crescent_internal.node_new(str(cls.__module__.__name__), cls.__name__, NodeType.Node)\n"\
 "\n"\
 "    def get_name(self) -> str:\n"\
 "        return crescent_internal.node_get_name(self.entity_id)\n"\
@@ -929,9 +929,9 @@
 "\n"\
 "\n"\
 "class Node2D(Node):\n"\
-"    @staticmethod\n"\
-"    def new() -> \"Node2D\":\n"\
-"        return crescent_internal.node_new(\"crescent\", \"Node2D\", NodeType.Node2D)\n"\
+"    @classmethod\n"\
+"    def new(cls) -> \"Node2D\":\n"\
+"        return crescent_internal.node_new(str(cls.__module__.__name__), cls.__name__, NodeType.Node2D)\n"\
 "\n"\
 "    def set_position(self, value: Vector2) -> None:\n"\
 "        crescent_internal.node2d_set_position(self.entity_id, value.x, value.y)\n"\
@@ -1023,9 +1023,9 @@
 "\n"\
 "\n"\
 "class Sprite(Node2D):\n"\
-"    @staticmethod\n"\
-"    def new() -> \"Sprite\":\n"\
-"        return crescent_internal.node_new(\"crescent\", \"Sprite\", NodeType.Sprite)\n"\
+"    @classmethod\n"\
+"    def new(cls) -> \"Sprite\":\n"\
+"        return crescent_internal.node_new(str(cls.__module__.__name__), cls.__name__, NodeType.Sprite)\n"\
 "\n"\
 "    @property\n"\
 "    def texture(self) -> Texture:\n"\
@@ -1092,9 +1092,9 @@
 "\n"\
 "\n"\
 "class AnimatedSprite(Node2D):\n"\
-"    @staticmethod\n"\
-"    def new() -> \"AnimatedSprite\":\n"\
-"        return crescent_internal.node_new(\"crescent\", \"AnimatedSprite\", NodeType.AnimatedSprite)\n"\
+"    @classmethod\n"\
+"    def new(cls) -> \"AnimatedSprite\":\n"\
+"        return crescent_internal.node_new(str(cls.__module__.__name__), cls.__name__, NodeType.AnimatedSprite)\n"\
 "\n"\
 "    def play(self, name: str) -> bool:\n"\
 "        return crescent_internal.animated_sprite_play(self.entity_id, name)\n"\
@@ -1163,9 +1163,9 @@
 "\n"\
 "\n"\
 "class TextLabel(Node2D):\n"\
-"    @staticmethod\n"\
-"    def new() -> \"TextLabel\":\n"\
-"        return crescent_internal.node_new(\"crescent\", \"TextLabel\", NodeType.TextLabel)\n"\
+"    @classmethod\n"\
+"    def new(cls) -> \"TextLabel\":\n"\
+"        return crescent_internal.node_new(str(cls.__module__.__name__), cls.__name__, NodeType.TextLabel)\n"\
 "\n"\
 "    @property\n"\
 "    def text(self) -> str:\n"\
@@ -1202,9 +1202,9 @@
 "\n"\
 "\n"\
 "class Collider2D(Node2D):\n"\
-"    @staticmethod\n"\
-"    def new() -> \"Collider2D\":\n"\
-"        return crescent_internal.node_new(\"crescent\", \"Node2D\", NodeType.Collider2D)\n"\
+"    @classmethod\n"\
+"    def new(cls) -> \"Collider2D\":\n"\
+"        return crescent_internal.node_new(str(cls.__module__.__name__), cls.__name__, NodeType.Collider2D)\n"\
 "\n"\
 "    def get_extents(self) -> Size2D:\n"\
 "        w, h = crescent_internal.collider2d_get_extents(self.entity_id)\n"\
@@ -1240,9 +1240,9 @@
 "\n"\
 "\n"\
 "class ColorRect(Node2D):\n"\
-"    @staticmethod\n"\
-"    def new() -> \"ColorRect\":\n"\
-"        return crescent_internal.node_new(\"crescent\", \"Node2D\", NodeType.ColorRect)\n"\
+"    @classmethod\n"\
+"    def new(cls) -> \"ColorRect\":\n"\
+"        return crescent_internal.node_new(str(cls.__module__.__name__), cls.__name__, NodeType.ColorRect)\n"\
 "\n"\
 "    def get_size(self) -> Size2D:\n"\
 "        w, h = crescent_internal.color_rect_get_size(self.entity_id)\n"\
@@ -1278,9 +1278,9 @@
 "\n"\
 "\n"\
 "class Parallax(Node2D):\n"\
-"    @staticmethod\n"\
-"    def new() -> \"Parallax\":\n"\
-"        return crescent_internal.node_new(\"crescent\", \"Parallax\", NodeType.Parallax)\n"\
+"    @classmethod\n"\
+"    def new(cls) -> \"Parallax\":\n"\
+"        return crescent_internal.node_new(str(cls.__module__.__name__), cls.__name__, NodeType.Parallax)\n"\
 "\n"\
 "    @property\n"\
 "    def scroll_speed(self) -> Vector2:\n"\
@@ -1293,9 +1293,9 @@
 "\n"\
 "\n"\
 "class Particles2D(Node2D):\n"\
-"    @staticmethod\n"\
-"    def new() -> \"Particles2D\":\n"\
-"        return crescent_internal.node_new(\"crescent\", \"Particles2D\", NodeType.Particles2D)\n"\
+"    @classmethod\n"\
+"    def new(cls) -> \"Particles2D\":\n"\
+"        return crescent_internal.node_new(str(cls.__module__.__name__), cls.__name__, NodeType.Particles2D)\n"\
 "\n"\
 "    @property\n"\
 "    def amount(self) -> int:\n"\
