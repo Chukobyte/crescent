@@ -12,6 +12,7 @@
 #include <seika/data_structures/se_static_array.h>
 
 #include "scene_utils.h"
+#include "scene_template_cache.h"
 #include "../world.h"
 #include "../game_properties.h"
 #include "../ecs/system/ec_system.h"
@@ -21,9 +22,9 @@
 #include "../ecs/component/script_component.h"
 #include "../ecs/component/collider2d_component.h"
 #include "../ecs/component/color_rect_component.h"
-#include "../camera/camera_manager.h"
 #include "../ecs/component/parallax_component.h"
-#include "scene_template_cache.h"
+#include "../ecs/component/particles2d_component.h"
+#include "../camera/camera_manager.h"
 
 // --- Scene Tree --- //
 // Executes function on passed in tree node and all child tree nodes
@@ -470,6 +471,10 @@ SceneTreeNode* cre_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneN
     if (jsonSceneNode->components[CreComponentDataIndex_PARALLAX] != NULL) {
         ParallaxComponent* parallaxComponent = parallax_component_copy((ParallaxComponent *) jsonSceneNode->components[CreComponentDataIndex_PARALLAX]);
         cre_component_manager_set_component(node->entity, CreComponentDataIndex_PARALLAX, parallaxComponent);
+    }
+    if (jsonSceneNode->components[CreComponentDataIndex_PARTICLES_2D] != NULL) {
+        Particles2DComponent* particles2DComponent = particles2d_component_copy((Particles2DComponent*)jsonSceneNode->components[CreComponentDataIndex_PARTICLES_2D]);
+        cre_component_manager_set_component(node->entity, CreComponentDataIndex_PARTICLES_2D, particles2DComponent);
     }
 
     if (!isStagedNodes) {
