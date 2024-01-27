@@ -8,7 +8,7 @@ extern "C" {
 
 #include "../entity/entity.h"
 
-#define CRE_MAX_COMPONENTS 9
+#define CRE_MAX_COMPONENTS 10
 
 typedef enum CreComponentDataIndex {
     CreComponentDataIndex_NONE = -1,

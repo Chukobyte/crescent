@@ -11,5 +11,34 @@
             "class_name": "Main"
         }
     ],
-    "children": []
+    "children": [
+        {
+            "name": "Particles2D",
+            "type": "Particles2D",
+            "components": [
+                {
+                    "type": "transform_2d",
+                    "position": {
+                        "x": 300.0,
+                        "y": 200.0
+                    }
+                },
+                {
+                    "type": "particles2d",
+                    "amount": 160,
+                    "initial_velocity": {
+                        "min": {
+                            "x": -90.0,
+                            "y": -60.0
+                        },
+                        "max": {
+                            "x": 300.0,
+                            "y": 200.0
+                        }
+                    }
+                }
+            ],
+            "children": []
+        }
+    ]
 }

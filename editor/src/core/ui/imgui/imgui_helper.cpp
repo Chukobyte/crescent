@@ -98,12 +98,12 @@ const char* ImGuiHelper::DragInt::GetInternalLabel() const {
     return internalLabel.c_str();
 }
 
-void ImGuiHelper::BeginDragInt(const DragInt& dragInt) {
+bool ImGuiHelper::BeginDragInt(const DragInt& dragInt) {
     if (!dragInt.label.empty()) {
         ImGui::Text("%s", dragInt.label.c_str());
         ImGui::SameLine();
     }
-    ImGui::DragInt(dragInt.GetInternalLabel(), &dragInt.value, dragInt.valueSpeed, dragInt.valueMin, dragInt.valueMax);
+    return ImGui::DragInt(dragInt.GetInternalLabel(), &dragInt.value, dragInt.valueSpeed, dragInt.valueMin, dragInt.valueMax);
 }
 
 //--- Drag Float ---//
@@ -117,12 +117,12 @@ const char* ImGuiHelper::DragFloat::GetInternalLabel() const {
     return internalLabel.c_str();
 }
 
-void ImGuiHelper::BeginDragFloat(const DragFloat& dragFloat) {
+bool ImGuiHelper::BeginDragFloat(const DragFloat& dragFloat) {
     if (!dragFloat.label.empty()) {
         ImGui::Text("%s", dragFloat.label.c_str());
         ImGui::SameLine();
     }
-    ImGui::DragFloat(dragFloat.GetInternalLabel(), &dragFloat.value, dragFloat.valueSpeed, dragFloat.valueMin, dragFloat.valueMax, dragFloat.format);
+    return ImGui::DragFloat(dragFloat.GetInternalLabel(), &dragFloat.value, dragFloat.valueSpeed, dragFloat.valueMin, dragFloat.valueMax, dragFloat.format);
 }
 
 //--- Drag Float 2 ---//
@@ -136,12 +136,12 @@ const char* ImGuiHelper::DragFloat2::GetInternalLabel() const {
     return internalLabel.c_str();
 }
 
-void ImGuiHelper::BeginDragFloat2(const DragFloat2& dragFloat2) {
+bool ImGuiHelper::BeginDragFloat2(const DragFloat2& dragFloat2) {
     if (!dragFloat2.label.empty()) {
         ImGui::Text("%s", dragFloat2.label.c_str());
         ImGui::SameLine();
     }
-    ImGui::DragFloat2(dragFloat2.GetInternalLabel(), dragFloat2.value, dragFloat2.valueSpeed, dragFloat2.valueMin, dragFloat2.valueMax, dragFloat2.format);
+    return ImGui::DragFloat2(dragFloat2.GetInternalLabel(), dragFloat2.value, dragFloat2.valueSpeed, dragFloat2.valueMin, dragFloat2.valueMax, dragFloat2.format);
 }
 
 //--- DragFloat4 ---//
@@ -155,12 +155,12 @@ const char *ImGuiHelper::DragFloat4::GetInternalLabel() const {
     return internalLabel.c_str();
 }
 
-void ImGuiHelper::BeginDragFloat4(const DragFloat4& dragFloat4) {
+bool ImGuiHelper::BeginDragFloat4(const DragFloat4& dragFloat4) {
     if (!dragFloat4.label.empty()) {
         ImGui::Text("%s", dragFloat4.label.c_str());
         ImGui::SameLine();
     }
-    ImGui::DragFloat4(dragFloat4.GetInternalLabel(), dragFloat4.value, dragFloat4.valueSpeed, dragFloat4.valueMin, dragFloat4.valueMax, dragFloat4.format);
+    return ImGui::DragFloat4(dragFloat4.GetInternalLabel(), dragFloat4.value, dragFloat4.valueSpeed, dragFloat4.valueMin, dragFloat4.valueMax, dragFloat4.format);
 }
 
 //--- ColorEdit4 ---//
@@ -174,12 +174,12 @@ const char *ImGuiHelper::ColorEdit4::GetInternalLabel() const {
     return internalLabel.c_str();
 }
 
-void ImGuiHelper::BeginColorEdit4(const ImGuiHelper::ColorEdit4 &colorEdit4) {
+bool ImGuiHelper::BeginColorEdit4(const ImGuiHelper::ColorEdit4 &colorEdit4) {
     if (!colorEdit4.label.empty()) {
         ImGui::Text("%s", colorEdit4.label.c_str());
         ImGui::SameLine();
     }
-    ImGui::ColorEdit4(colorEdit4.GetInternalLabel(), colorEdit4.value, colorEdit4.flags);
+    return ImGui::ColorEdit4(colorEdit4.GetInternalLabel(), colorEdit4.value, colorEdit4.flags);
 }
 
 //--- CheckBox ---//
@@ -193,12 +193,12 @@ const char* ImGuiHelper::CheckBox::GetInternalLabel() const {
     return internalLabel.c_str();
 }
 
-void ImGuiHelper::BeginCheckBox(const CheckBox& checkBox) {
+bool ImGuiHelper::BeginCheckBox(const CheckBox& checkBox) {
     if (!checkBox.label.empty()) {
         ImGui::Text("%s", checkBox.label.c_str());
         ImGui::SameLine();
     }
-    ImGui::Checkbox(checkBox.GetInternalLabel(), &checkBox.value);
+    return ImGui::Checkbox(checkBox.GetInternalLabel(), &checkBox.value);
 }
 
 //--- ComboBox ---//

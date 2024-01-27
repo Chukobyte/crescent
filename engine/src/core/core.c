@@ -104,6 +104,8 @@ bool cre_initialize(int argv, char** args) {
         return false;
     }
 
+    sf_set_vsync_enabled(gameProperties->vsyncEnabled);
+
     // Initialize sub systems
     if (!cre_initialize_ecs()) {
         se_logger_error("Failed to initialize ecs!");
@@ -170,6 +172,8 @@ bool cre_load_assets_from_configuration() {
 }
 
 void cre_update() {
+    const uint32_t startFrameTime = sf_get_ticks();
+
     // Process Scene change if exists
     cre_scene_manager_process_queued_scene_change();
 
@@ -184,8 +188,10 @@ void cre_update() {
     cre_process_game_update();
     cre_render();
 
+    const uint32_t endFrameTime = sf_get_ticks();
+
     // Update FPS
-    cre_engine_context_update_stats();
+    cre_engine_context_update_stats(endFrameTime - startFrameTime);
 }
 
 void cre_process_game_update() {
@@ -224,9 +230,10 @@ void cre_process_game_update() {
     }
 
     se_input_clean_up_flags();
-    lastFrameTime = sf_get_ticks();
 
     cre_ec_system_post_update_all_systems();
+
+    lastFrameTime = sf_get_ticks();
 }
 
 void cre_render() {

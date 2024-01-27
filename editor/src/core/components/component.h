@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <cstring>
 #include <algorithm>
 #include <utility>
 
@@ -15,6 +16,7 @@
 #include "../engine/src/core/ecs/component/sprite_component.h"
 #include "../engine/src/core/ecs/component/text_label_component.h"
 #include "../engine/src/core/ecs/component/transform2d_component.h"
+#include "../engine/src/core/ecs/component/particles2d_component.h"
 
 struct EditorComponent {};
 
@@ -235,4 +237,48 @@ struct ParallaxComp : public EditorComponent {
         : scrollSpeed(parallaxComponent->scrollSpeed) {}
 
     SKAVector2 scrollSpeed = SKA_VECTOR2_ZERO;
+};
+
+struct Particles2DComp : public EditorComponent {
+    Particles2DComp() {
+        // TODO: Clean up test
+        internalComp.initialVelocity = { 300.0f, 100.0f };
+        particles2d_component_set_default_particles(&internalComp);
+    }
+
+    explicit Particles2DComp(const Particles2DComponent* particles2DComp) {
+        memcpy(&internalComp, particles2DComp, sizeof(internalComp));
+        isEmitting = particles2DComp->state != Particle2DComponentState_INACTIVE;
+        particles2d_component_set_default_particles(&internalComp);
+    }
+
+    int& amount = internalComp.amount;
+    SKAMinMaxVec2& initialVelocity = internalComp.initialVelocity;
+    SKAColor& color = internalComp.color;
+    float& spread = internalComp.spread;
+    float& lifeTime = internalComp.lifeTime;
+    float& damping = internalComp.damping;
+    float& explosiveness = internalComp.explosiveness;
+    Particle2DComponentState& state = internalComp.state;
+    bool isEmitting = true;
+
+    [[nodiscard]] Particles2DComponent* GetInternalComp() {
+        return &internalComp;
+    }
+
+private:
+    Particles2DComponent internalComp = {
+            .amount = 8,
+            .initialVelocity = SKA_VECTOR2_ZERO,
+            .color = SKA_COLOR_WHITE,
+            .spread = 45.0f,
+            .lifeTime = 4.0f,
+            .damping = 1.0f,
+            .explosiveness = 0.0f,
+            .state = Particle2DComponentState_WAITING_TO_INITIALIZE,
+            .type = Particle2DComponentType_SQUARE,
+            .squareSize = { .w = 4.0f, .h = 4.0f },
+            .typeTexture = { .texture = nullptr, .drawSource = { 0.0f, 0.0f, 1.0f, 1.0f } },
+            .particles = {0}
+    };
 };

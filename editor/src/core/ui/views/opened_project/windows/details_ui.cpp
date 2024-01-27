@@ -291,6 +291,84 @@ void DrawParallax(SceneNode* node) {
         ImGui::Separator();
     }
 }
+
+void DrawParticles2D(SceneNode* node) {
+    if (auto* particles2dComp = node->GetComponentSafe<Particles2DComp>()) {
+        ImGui::Text("Particles2D Component");
+
+        bool resetComponent = false;
+
+        ImGuiHelper::CheckBox isEmittingCheckBox("Is Emitting", particles2dComp->isEmitting);
+        if (ImGuiHelper::BeginCheckBox(isEmittingCheckBox)) {
+            if (particles2dComp->isEmitting) {
+                resetComponent = true;
+            } else {
+                particles2dComp->state = Particle2DComponentState_INACTIVE;
+            }
+        }
+
+        const auto prevAmount = particles2dComp->amount;
+        ImGuiHelper::DragInt amountDragInt("Amount", particles2dComp->amount);
+        amountDragInt.valueMin = 1;
+        amountDragInt.valueMax = CRE_PARTICLES_2D_MAX;
+        if (ImGuiHelper::BeginDragInt(amountDragInt) && particles2dComp->amount != prevAmount) {
+            resetComponent = true;
+        }
+
+        const auto prevLifeTime = particles2dComp->lifeTime;
+        ImGuiHelper::DragFloat lifeTimeDragFloat("Life Time", particles2dComp->lifeTime);
+        lifeTimeDragFloat.valueMin = 0.0f;
+        if (ImGuiHelper::BeginDragFloat(lifeTimeDragFloat) && particles2dComp->lifeTime != prevLifeTime) {
+            resetComponent = true;
+        }
+
+        const auto prevInitialMinVelocity = particles2dComp->initialVelocity.min;
+        ImGuiHelper::DragFloat2 initialVelocityMinDragFloat("Initial Vel Min", (float*)&particles2dComp->initialVelocity.min);
+        if (ImGuiHelper::BeginDragFloat2(initialVelocityMinDragFloat) && !ska_math_vec2_equals(&particles2dComp->initialVelocity.min, &prevInitialMinVelocity)) {
+            resetComponent = true;
+        }
+        const auto prevInitialMaxVelocity = particles2dComp->initialVelocity.max;
+        ImGuiHelper::DragFloat2 initialVelocityMaxDragFloat("Initial Vel Max", (float*)&particles2dComp->initialVelocity.max);
+        if (ImGuiHelper::BeginDragFloat2(initialVelocityMaxDragFloat) && !ska_math_vec2_equals(&particles2dComp->initialVelocity.max, &prevInitialMaxVelocity)) {
+            resetComponent = true;
+        }
+
+        const auto prevSpread = particles2dComp->spread;
+        ImGuiHelper::DragFloat spreadDragFloat("Spread", particles2dComp->spread);
+        spreadDragFloat.valueMin = 0.0f;
+        spreadDragFloat.valueMax = 360.0f;
+        if (ImGuiHelper::BeginDragFloat(spreadDragFloat) && particles2dComp->spread != prevSpread) {
+            resetComponent = true;
+        }
+
+        const auto prevDamping = particles2dComp->damping;
+        ImGuiHelper::DragFloat dampingDragFloat("Damping", particles2dComp->damping);
+        dampingDragFloat.valueMin = 0.0f;
+        dampingDragFloat.valueMax = 1.0f;
+        if (ImGuiHelper::BeginDragFloat(dampingDragFloat) && particles2dComp->damping != prevDamping) {
+            resetComponent = true;
+        }
+
+        const auto prevExplosiveness = particles2dComp->explosiveness;
+        ImGuiHelper::DragFloat explosivenessDragFloat("Explosiveness", particles2dComp->explosiveness);
+        explosivenessDragFloat.valueMin = 0.0f;
+        explosivenessDragFloat.valueMax = 1.0f;
+        if (ImGuiHelper::BeginDragFloat(explosivenessDragFloat) && particles2dComp->explosiveness != prevExplosiveness) {
+            resetComponent = true;
+        }
+
+        ImGuiHelper::ColorEdit4 colorColorEdit("Color", (float*) &particles2dComp->color);
+        if (ImGuiHelper::BeginColorEdit4(colorColorEdit)) {
+            resetComponent = true;
+        }
+
+        if (resetComponent) {
+            particles2d_component_reset_component(particles2dComp->GetInternalComp());
+        }
+
+        ImGui::Separator();
+    }
+}
 } // namespace ComponentDetailsDrawUtils
 
 ImGuiHelper::Window OpenedProjectUI::Windows::GetDetailsWindow() {
@@ -312,6 +390,7 @@ ImGuiHelper::Window OpenedProjectUI::Windows::GetDetailsWindow() {
                 ComponentDetailsDrawUtils::DrawCollider2D(selectedNode);
                 ComponentDetailsDrawUtils::DrawColorRect(selectedNode);
                 ComponentDetailsDrawUtils::DrawParallax(selectedNode);
+                ComponentDetailsDrawUtils::DrawParticles2D(selectedNode);
             }
         },
         .position = ImVec2{ 400.0f, 100.0f },

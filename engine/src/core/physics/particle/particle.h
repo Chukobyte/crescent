@@ -6,6 +6,12 @@
 
 #define CRE_PARTICLE2D_DEFAULT_DAMPING 0.999f
 
+typedef enum Particle2DState {
+    Particle2DState_INACTIVE = 0,
+    Particle2DState_ACTIVE = 1,
+    Particle2DState_TIMED_WAITING_TO_BE_ACTIVE = 2
+} Particle2DState;
+
 // CPU representation of a particle.
 typedef struct CreParticle2D {
     SKAVector2 position;
@@ -17,7 +23,21 @@ typedef struct CreParticle2D {
     float timeActive;
     float damping;
     float inverseMass;
+    Particle2DState state;
 } CreParticle2D;
+
+#define CRE_PARTICLE2D_DEFAULT SKA_STRUCT_LITERAL(CreParticle2D){ \
+    .position = SKA_VECTOR2_ZERO, \
+    .linearVelocity = SKA_VECTOR2_ZERO, \
+    .acceleration = SKA_VECTOR2_ZERO, \
+    .forceAccumulated = SKA_VECTOR2_ZERO, \
+    .gravity = (SKAVector2){ 0.0f, 32.0f }, \
+    .color = particles2DComponent->color, \
+    .timeActive = 0.0f, \
+    .damping = CRE_PARTICLE2D_DEFAULT_DAMPING, \
+    .inverseMass = 1.0f, \
+    .state = Particle2DState_INACTIVE\
+}
 
 void cre_particle2d_set_mass(CreParticle2D* particle2D, float mass);
 float cre_particle2d_get_mass(CreParticle2D* particle2D);

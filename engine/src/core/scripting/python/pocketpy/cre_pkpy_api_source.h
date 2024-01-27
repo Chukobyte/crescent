@@ -392,6 +392,27 @@
 "        return f\"({self.min}, {self.max})\"\n"\
 "\n"\
 "\n"\
+"class MinMaxVector2:\n"\
+"    def __init__(self, value_min: Vector2, value_max: Vector2):\n"\
+"        self.min = value_min\n"\
+"        self.max = value_max\n"\
+"\n"\
+"    def contain(self, value: Vector2) -> bool:\n"\
+"        return self.min <= value <= self.max\n"\
+"\n"\
+"    def is_below(self, value: Vector2) -> bool:\n"\
+"        return value < self.min\n"\
+"\n"\
+"    def is_above(self, value: Vector2) -> bool:\n"\
+"        return value > self.max\n"\
+"\n"\
+"    def __str__(self):\n"\
+"        return f\"( {self.min}, {self.max} )\"\n"\
+"\n"\
+"    def __repr__(self):\n"\
+"        return f\"( {self.min}, {self.max} )\"\n"\
+"\n"\
+"\n"\
 "class AudioSource:\n"\
 "    def __init__(self, path: str):\n"\
 "        self.path = path\n"\
@@ -835,10 +856,9 @@
 "    def __init__(self, entity_id: int) -> None:\n"\
 "        self.entity_id = entity_id\n"\
 "\n"\
-"    # TODO: Replace with proper method once class method is added\n"\
-"    @staticmethod\n"\
-"    def new() -> \"Node\":\n"\
-"        return crescent_internal.node_new(\"crescent\", \"Node\", NodeType.Node)\n"\
+"    @classmethod\n"\
+"    def new(cls) -> \"Node\":\n"\
+"        return crescent_internal.node_new(str(cls.__module__.__name__), cls.__name__, NodeType.Node)\n"\
 "\n"\
 "    def get_name(self) -> str:\n"\
 "        return crescent_internal.node_get_name(self.entity_id)\n"\
@@ -908,9 +928,9 @@
 "\n"\
 "\n"\
 "class Node2D(Node):\n"\
-"    @staticmethod\n"\
-"    def new() -> \"Node2D\":\n"\
-"        return crescent_internal.node_new(\"crescent\", \"Node2D\", NodeType.Node2D)\n"\
+"    @classmethod\n"\
+"    def new(cls) -> \"Node2D\":\n"\
+"        return crescent_internal.node_new(str(cls.__module__.__name__), cls.__name__, NodeType.Node2D)\n"\
 "\n"\
 "    def set_position(self, value: Vector2) -> None:\n"\
 "        crescent_internal.node2d_set_position(self.entity_id, value.x, value.y)\n"\
@@ -1002,9 +1022,9 @@
 "\n"\
 "\n"\
 "class Sprite(Node2D):\n"\
-"    @staticmethod\n"\
-"    def new() -> \"Sprite\":\n"\
-"        return crescent_internal.node_new(\"crescent\", \"Sprite\", NodeType.Sprite)\n"\
+"    @classmethod\n"\
+"    def new(cls) -> \"Sprite\":\n"\
+"        return crescent_internal.node_new(str(cls.__module__.__name__), cls.__name__, NodeType.Sprite)\n"\
 "\n"\
 "    @property\n"\
 "    def texture(self) -> Texture:\n"\
@@ -1071,9 +1091,9 @@
 "\n"\
 "\n"\
 "class AnimatedSprite(Node2D):\n"\
-"    @staticmethod\n"\
-"    def new() -> \"AnimatedSprite\":\n"\
-"        return crescent_internal.node_new(\"crescent\", \"AnimatedSprite\", NodeType.AnimatedSprite)\n"\
+"    @classmethod\n"\
+"    def new(cls) -> \"AnimatedSprite\":\n"\
+"        return crescent_internal.node_new(str(cls.__module__.__name__), cls.__name__, NodeType.AnimatedSprite)\n"\
 "\n"\
 "    def play(self, name: str) -> bool:\n"\
 "        return crescent_internal.animated_sprite_play(self.entity_id, name)\n"\
@@ -1142,9 +1162,9 @@
 "\n"\
 "\n"\
 "class TextLabel(Node2D):\n"\
-"    @staticmethod\n"\
-"    def new() -> \"TextLabel\":\n"\
-"        return crescent_internal.node_new(\"crescent\", \"TextLabel\", NodeType.TextLabel)\n"\
+"    @classmethod\n"\
+"    def new(cls) -> \"TextLabel\":\n"\
+"        return crescent_internal.node_new(str(cls.__module__.__name__), cls.__name__, NodeType.TextLabel)\n"\
 "\n"\
 "    @property\n"\
 "    def text(self) -> str:\n"\
@@ -1181,9 +1201,9 @@
 "\n"\
 "\n"\
 "class Collider2D(Node2D):\n"\
-"    @staticmethod\n"\
-"    def new() -> \"Collider2D\":\n"\
-"        return crescent_internal.node_new(\"crescent\", \"Node2D\", NodeType.Collider2D)\n"\
+"    @classmethod\n"\
+"    def new(cls) -> \"Collider2D\":\n"\
+"        return crescent_internal.node_new(str(cls.__module__.__name__), cls.__name__, NodeType.Collider2D)\n"\
 "\n"\
 "    def get_extents(self) -> Size2D:\n"\
 "        w, h = crescent_internal.collider2d_get_extents(self.entity_id)\n"\
@@ -1219,9 +1239,9 @@
 "\n"\
 "\n"\
 "class ColorRect(Node2D):\n"\
-"    @staticmethod\n"\
-"    def new() -> \"ColorRect\":\n"\
-"        return crescent_internal.node_new(\"crescent\", \"Node2D\", NodeType.ColorRect)\n"\
+"    @classmethod\n"\
+"    def new(cls) -> \"ColorRect\":\n"\
+"        return crescent_internal.node_new(str(cls.__module__.__name__), cls.__name__, NodeType.ColorRect)\n"\
 "\n"\
 "    def get_size(self) -> Size2D:\n"\
 "        w, h = crescent_internal.color_rect_get_size(self.entity_id)\n"\
@@ -1257,9 +1277,9 @@
 "\n"\
 "\n"\
 "class Parallax(Node2D):\n"\
-"    @staticmethod\n"\
-"    def new() -> \"Parallax\":\n"\
-"        return crescent_internal.node_new(\"crescent\", \"Parallax\", NodeType.Parallax)\n"\
+"    @classmethod\n"\
+"    def new(cls) -> \"Parallax\":\n"\
+"        return crescent_internal.node_new(str(cls.__module__.__name__), cls.__name__, NodeType.Parallax)\n"\
 "\n"\
 "    @property\n"\
 "    def scroll_speed(self) -> Vector2:\n"\
@@ -1272,9 +1292,9 @@
 "\n"\
 "\n"\
 "class Particles2D(Node2D):\n"\
-"    @staticmethod\n"\
-"    def new() -> \"Particles2D\":\n"\
-"        return crescent_internal.node_new(\"crescent\", \"Particles2D\", NodeType.Particles2D)\n"\
+"    @classmethod\n"\
+"    def new(cls) -> \"Particles2D\":\n"\
+"        return crescent_internal.node_new(str(cls.__module__.__name__), cls.__name__, NodeType.Particles2D)\n"\
 "\n"\
 "    @property\n"\
 "    def amount(self) -> int:\n"\
@@ -1301,6 +1321,14 @@
 "        crescent_internal.particles2d_set_damping(self.entity_id, value)\n"\
 "\n"\
 "    @property\n"\
+"    def explosiveness(self) -> float:\n"\
+"        return crescent_internal.particles2d_get_explosiveness(self.entity_id)\n"\
+"\n"\
+"    @explosiveness.setter\n"\
+"    def explosiveness(self, value: float) -> None:\n"\
+"        crescent_internal.particles2d_set_explosiveness(self.entity_id, value)\n"\
+"\n"\
+"    @property\n"\
 "    def color(self) -> Color:\n"\
 "        r, g, b, a = crescent_internal.particles2d_get_color(self.entity_id)\n"\
 "        return Color(r, g, b, a)\n"\
@@ -1310,13 +1338,16 @@
 "        crescent_internal.particles2d_set_color(self.entity_id, value.r, value.g, value.b, value.a)\n"\
 "\n"\
 "    @property\n"\
-"    def initial_velocity(self) -> Vector2:\n"\
-"        x, y = crescent_internal.particles2d_get_initial_velocity(self.entity_id)\n"\
-"        return Vector2(x, y)\n"\
+"    def initial_velocity(self) -> MinMaxVector2:\n"\
+"        min_x, min_y, max_x, max_y = crescent_internal.particles2d_get_initial_velocity(self.entity_id)\n"\
+"        return MinMaxVector2(\n"\
+"            Vector2(min_x, min_y),\n"\
+"            Vector2(max_x, max_y)\n"\
+"        )\n"\
 "\n"\
 "    @initial_velocity.setter\n"\
-"    def initial_velocity(self, value: Vector2) -> None:\n"\
-"        crescent_internal.particles2d_set_initial_velocity(self.entity_id, value.x, value.y)\n"\
+"    def initial_velocity(self, value: MinMaxVector2) -> None:\n"\
+"        crescent_internal.particles2d_set_initial_velocity(self.entity_id, value.min.x, value.min.y, value.max.x, value.max.y)\n"\
 "\n"\
 "    @property\n"\
 "    def spread(self) -> float:\n"\

@@ -166,6 +166,7 @@ nlohmann::ordered_json ProjectProperties::ToJson() const {
     configJson["target_fps"] = targetFPS;
     configJson["initial_node_path"] = initialNodePath;
     configJson["colliders_visible"] = areCollidersVisible;
+    configJson["vsync_enabled"] = vsyncEnabled;
     configJson["version"] = version;
 
     // Assets

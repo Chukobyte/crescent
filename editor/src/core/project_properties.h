@@ -90,6 +90,7 @@ class ProjectProperties : public Singleton<ProjectProperties> {
     bool maintainAspectRatio = false;
     int targetFPS;
     bool areCollidersVisible = false;
+    bool vsyncEnabled = false;
     std::string version;
     ProjectAssets assets;
     ProjectInputs inputs;

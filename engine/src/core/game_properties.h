@@ -62,6 +62,7 @@ typedef struct CREGameProperties {
     int targetFPS;
     char* initialScenePath;
     bool areCollidersVisible;
+    bool vsyncEnabled;
     CREAssetAudioSource audioSources[CRE_PROPERTIES_ASSET_LIMIT];
     size_t audioSourceCount;
     CREAssetTexture textures[CRE_PROPERTIES_ASSET_LIMIT];

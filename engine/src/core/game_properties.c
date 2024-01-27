@@ -16,6 +16,7 @@ CREGameProperties* cre_game_props_create() {
     props->targetFPS = 66;
     props->initialScenePath = NULL;
     props->areCollidersVisible = false;
+    props->vsyncEnabled = false;
     props->audioSourceCount = 0;
     props->textureCount = 0;
     props->fontCount = 0;

@@ -13,6 +13,7 @@
 #include "../ecs/component/collider2d_component.h"
 #include "../ecs/component/color_rect_component.h"
 #include "../ecs/component/parallax_component.h"
+#include "../ecs/component/particles2d_component.h"
 
 typedef struct ShaderInstancePaths {
     char* shader;
@@ -125,6 +126,9 @@ void cre_json_delete_json_scene_node(JsonSceneNode* node) {
     }
     if (node->components[CreComponentDataIndex_PARALLAX]) {
         parallax_component_delete(node->components[CreComponentDataIndex_PARALLAX]);
+    }
+    if (node->components[CreComponentDataIndex_PARTICLES_2D]) {
+        particles2d_component_delete(node->components[CreComponentDataIndex_PARTICLES_2D]);
     }
 
     if (node->shaderInstanceShaderPath) {
@@ -375,6 +379,35 @@ void cre_json_parallax_create_or_set_default(JsonSceneNode* node, cJSON* compone
     se_logger_debug("Parallax\nscroll_speed: (%f, %f)", parallaxComponent->scrollSpeed.x, parallaxComponent->scrollSpeed.y);
 }
 
+void cre_json_particles2d_create_or_set_default(JsonSceneNode* node, cJSON* componentJson) {
+    Particles2DComponent* particles2dComponent = NULL;
+    bool isEmitting = false;
+    if (node->components[CreComponentDataIndex_PARTICLES_2D] == NULL) {
+        particles2dComponent = particles2d_component_create();
+        isEmitting = json_get_bool_default(componentJson, "is_emitting", true);
+        particles2dComponent->amount = json_get_int_default(componentJson, "amount", DEFAULT_COMPONENT_PARTICLES2D_AMOUNT);
+        particles2dComponent->initialVelocity = json_get_minmax_vec2_default(componentJson, "initial_velocity", SKA_MINMAX_VEC2_ZERO);
+        particles2dComponent->color = json_get_linear_color_default(componentJson, "color", SKA_COLOR_WHITE);
+        particles2dComponent->spread = (float)json_get_double_default(componentJson, "spread", (double)DEFAULT_COMPONENT_PARTICLES2D_SPREAD);
+        particles2dComponent->lifeTime = (float)json_get_double_default(componentJson, "life_time", (double)DEFAULT_COMPONENT_PARTICLES2D_LIFE_TIME);
+        particles2dComponent->damping = (float)json_get_double_default(componentJson, "damping", (double)DEFAULT_COMPONENT_PARTICLES2D_DAMPING);
+        particles2dComponent->explosiveness = (float)json_get_double_default(componentJson, "explosiveness", (double)DEFAULT_COMPONENT_PARTICLES2D_EXPLOSIVENESS);
+        node->components[CreComponentDataIndex_PARTICLES_2D] = particles2dComponent;
+    } else {
+        particles2dComponent = (Particles2DComponent*) node->components[CreComponentDataIndex_PARTICLES_2D];
+        isEmitting = json_get_bool_default(componentJson, "is_emitting", particles2dComponent->state != Particle2DComponentState_INACTIVE);
+        particles2dComponent->amount = json_get_int_default(componentJson, "amount", particles2dComponent->amount);
+        particles2dComponent->initialVelocity = json_get_minmax_vec2_default(componentJson, "initial_velocity", particles2dComponent->initialVelocity);
+        particles2dComponent->color = json_get_linear_color_default(componentJson, "color", particles2dComponent->color);
+        particles2dComponent->spread = (float)json_get_double_default(componentJson, "spread", (double)particles2dComponent->spread);
+        particles2dComponent->lifeTime = (float)json_get_double_default(componentJson, "life_time", (double)particles2dComponent->lifeTime);
+        particles2dComponent->damping = (float)json_get_double_default(componentJson, "damping", (double)particles2dComponent->damping);
+        particles2dComponent->explosiveness = (float)json_get_double_default(componentJson, "explosiveness", (double)particles2dComponent->explosiveness);
+    }
+    particles2dComponent->state = isEmitting ? Particle2DComponentState_WAITING_TO_INITIALIZE : Particle2DComponentState_INACTIVE;
+    se_logger_debug("Particles2D\namount: %d", particles2dComponent->amount);
+}
+
 // Recursive
 void cre_json_set_all_child_nodes_from_external_source(JsonSceneNode* node) {
     node->fromExternalNodeSource = true;
@@ -431,6 +464,8 @@ JsonSceneNode* cre_json_load_scene_node(cJSON* nodeJson, JsonSceneNode* parentNo
             cre_json_script_create_or_set_default(node, componentJson);
         } else if (strcmp(componentType, "parallax") == 0) {
             cre_json_parallax_create_or_set_default(node, componentJson);
+        } else if (strcmp(componentType, "particles2d") == 0) {
+            cre_json_particles2d_create_or_set_default(node, componentJson);
         } else {
             se_logger_error("component type '%s' in invalid!", componentType);
         }

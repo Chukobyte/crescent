@@ -117,6 +117,9 @@ CREGameProperties* cre_json_load_config_file(const char* filePath) {
         // Colliders Visible
         properties->areCollidersVisible = json_get_bool(configJson, "colliders_visible");
         se_logger_debug("Colliders Visible '%s'", properties->areCollidersVisible == true ? "true" : "false");
+        // VSync Enabled
+        properties->vsyncEnabled = json_get_bool_default(configJson, "vsync_enabled", properties->vsyncEnabled);
+        se_logger_debug("VSync Enabled '%s'", properties->vsyncEnabled == true ? "true" : "false");
 
         cre_json_configure_assets(configJson, properties);
 

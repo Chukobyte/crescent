@@ -21,11 +21,11 @@ static inline float get_random_sign() {
     return ((rand() % 2) == 0) ? 1.0f : -1.0f;
 }
 
-static inline float get_random_spread_angle_in_radians(SKAVector2* direction, float spreadDegrees) {
-    math_vec2_normalize(direction);
+static inline float get_random_spread_angle_in_radians(const SKAVector2* direction, float spreadDegrees) {
     const float dirAngle = ska_math_vec2_angle(direction);
     // Generate a random angle based on direction and spread
-    const float randomAngle = SKA_DEG_2_RADF(fmodf((float)rand(), spreadDegrees / 2.0f)) * get_random_sign();
+//    const float randomAngle = SKA_DEG_2_RADF(fmodf((float)rand(), spreadDegrees / 2.0f)) * get_random_sign();
+    const float randomAngle = SKA_DEG_2_RADF(fmodf((float)rand(), spreadDegrees) - spreadDegrees / 2.0f) * get_random_sign();
     const float finalAngle = dirAngle + randomAngle;
     // Ensure the result is within [0, 2π]
     if (finalAngle < 0.0f) {
@@ -39,14 +39,15 @@ static inline float get_random_spread_angle_in_radians(SKAVector2* direction, fl
 Particles2DComponent* particles2d_component_create() {
     Particles2DComponent* particles2DComponent = SE_MEM_ALLOCATE(Particles2DComponent);
     particles2DComponent->amount = 8;
-    particles2DComponent->initialVelocity = SKA_VECTOR2_ZERO;
-    particles2DComponent->linearAcceleration = SKA_VECTOR2_ZERO;
+    particles2DComponent->initialVelocity = SKA_MINMAX_VEC2_ZERO;
     particles2DComponent->spread = 45.0f;
     particles2DComponent->color = SKA_COLOR_WHITE;
     particles2DComponent->lifeTime = 4.0f;
     particles2DComponent->damping = 1.0f;
+    particles2DComponent->explosiveness = 0.0f;
+    particles2DComponent->state = Particle2DComponentState_WAITING_TO_INITIALIZE; // Defaulting to on for now
     particles2DComponent->type = Particle2DComponentType_SQUARE;
-    particles2DComponent->squareSize = SKA_VECTOR2_ONE;
+    particles2DComponent->squareSize = (SKASize2D){ .w = 4.0f, .h = 4.0f };
     memset(particles2DComponent->particles, 0, CRE_PARTICLES_2D_MAX * sizeof(CreParticle2D));
     return particles2DComponent;
 }
@@ -63,25 +64,15 @@ Particles2DComponent* particles2d_component_copy(const Particles2DComponent* par
     return copiedComponent;
 }
 
-void particles2d_component_set_default_particles(Particles2DComponent* particles2DComponent) {
-#define DEFAULT_PARTICLE2D (CreParticle2D){ \
-    .position = SKA_VECTOR2_ZERO, \
-    .linearVelocity = SKA_VECTOR2_ZERO, \
-    .acceleration = SKA_VECTOR2_ZERO, \
-    .forceAccumulated = SKA_VECTOR2_ZERO, \
-    .gravity = (SKAVector2){ 0.0f, 32.0f }, \
-    .color = particles2DComponent->color, \
-    .timeActive = 0.0f, \
-    .damping = CRE_PARTICLE2D_DEFAULT_DAMPING, \
-    .inverseMass = 1.0f \
+void particles2d_component_reset_component(Particles2DComponent* particles2DComponent) {
+    particles2DComponent->state = Particle2DComponentState_WAITING_TO_INITIALIZE;
 }
 
+void particles2d_component_set_default_particles(Particles2DComponent* particles2DComponent) {
     for (int i = 0; i < particles2DComponent->amount; i++) {
-        particles2DComponent->particles[i] = DEFAULT_PARTICLE2D;
+        particles2DComponent->particles[i] = CRE_PARTICLE2D_DEFAULT;
         particles2d_component_reset_particle(particles2DComponent, &particles2DComponent->particles[i]);
     }
-
-#undef DEFAULT_PARTICLE2D
 }
 
 void particles2d_component_reset_particle(Particles2DComponent* particles2DComponent, CreParticle2D* particle2D) {
@@ -91,12 +82,31 @@ void particles2d_component_reset_particle(Particles2DComponent* particles2DCompo
     particle2D->acceleration = SKA_VECTOR2_ZERO;
     particle2D->forceAccumulated = SKA_VECTOR2_ZERO;
     particle2D->timeActive = 0.0f;
+    particle2D->color = particles2DComponent->color;
     // Add initial velocity and spread
-    const bool hasInitialVelocity = particles2DComponent->initialVelocity.x != 0.0f || particles2DComponent->initialVelocity.y != 0.0f;
+    const bool hasInitialVelocity = particles2DComponent->initialVelocity.min.x != 0.0f || particles2DComponent->initialVelocity.min.y != 0.0f;
     if (hasInitialVelocity) {
-        SKAVector2 initialVelocity = particles2DComponent->initialVelocity;
-        const float spreadAngle = get_random_spread_angle_in_radians(&initialVelocity, particles2DComponent->spread);
-        particle2D->linearVelocity.x += cosf(spreadAngle) * particles2DComponent->initialVelocity.x;
-        particle2D->linearVelocity.y -= sinf(spreadAngle) * particles2DComponent->initialVelocity.y;
+        const SKAVector2 initialVelocity = ska_math_minmax_vec2_get_random_in_range(&particles2DComponent->initialVelocity);
+        particle2D->linearVelocity.x += initialVelocity.x;
+        particle2D->linearVelocity.y += initialVelocity.y;
+
+        // Get random angle based on the degrees of spread
+        SKAVector2 initialDirection = initialVelocity;
+        math_vec2_normalize(&initialDirection);
+        const float spreadAngle = get_random_spread_angle_in_radians(&initialDirection, particles2DComponent->spread);
+        const float initialDirectionAngleDegrees = ska_math_vec2_angle(&initialDirection);
+        const float spreadAngleDegrees = SKA_RAD_2_DEGF(spreadAngle);
+
+        const SKAVector2 rotatedVelocity = (SKAVector2){
+            .x = initialVelocity.x * cosf(spreadAngle) - initialVelocity.y * sinf(spreadAngle),
+            .y = initialVelocity.x * sinf(spreadAngle) - initialVelocity.y * cosf(spreadAngle)
+        };
+
+        particle2D->linearVelocity.x += rotatedVelocity.x;
+        particle2D->linearVelocity.y += rotatedVelocity.y;
+
+
+//        particle2D->linearVelocity.x += cosf(spreadAngle) * particles2DComponent->initialVelocity.x;
+//        particle2D->linearVelocity.y -= sinf(spreadAngle) * particles2DComponent->initialVelocity.y;
     }
 }
