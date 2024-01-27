@@ -23,5 +23,9 @@ class Main(Node2D):
         if Input.is_action_just_pressed("exit"):
             Engine.exit()
 
+        particles2D = self.get_child("Particles2D")
+        if particles2D:
+            particles2D.position += Vector2(1, 1)
+
     def _fixed_process(self, delta_time: float) -> None:
         pass
