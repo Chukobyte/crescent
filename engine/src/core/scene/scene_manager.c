@@ -25,6 +25,7 @@
 #include "../ecs/component/parallax_component.h"
 #include "../ecs/component/particles2d_component.h"
 #include "../camera/camera_manager.h"
+#include "../camera/camera.h"
 
 // --- Scene Tree --- //
 // Executes function on passed in tree node and all child tree nodes
@@ -69,7 +70,7 @@ size_t entitiesQueuedForDeletionSize = 0;
 
 SE_STATIC_ARRAY_CREATE(CreEntity, CRE_MAX_ENTITIES, entitiesToUnlinkParent);
 // Will need a different mechanism for 3D (maybe just storing a vector3, but this is fine for now
-SE_STATIC_ARRAY_CREATE(SKAVector2 , CRE_MAX_ENTITIES, entityPrevGlobalPositions);
+SE_STATIC_ARRAY_CREATE(SKATransform2D , CRE_MAX_ENTITIES, entityPrevGlobalTransforms);
 
 Scene* activeScene = NULL;
 Scene* queuedSceneToChangeTo = NULL;
@@ -117,7 +118,7 @@ void cre_scene_manager_process_queued_creation_entities() {
         // TODO: Setup position history here, basically set previous position here
         Transform2DComponent* transformComponent = (Transform2DComponent*)cre_component_manager_get_component_unchecked(queuedEntity, CreComponentDataIndex_TRANSFORM_2D);
         if (transformComponent) {
-            entityPrevGlobalPositions[queuedEntity] = transformComponent->localTransform.position; // TODO: globalTransform isn't filled out yet, change that...
+            entityPrevGlobalTransforms[queuedEntity] = transformComponent->localTransform; // TODO: globalTransform isn't filled out yet, change that...
         }
     }
     entitiesQueuedForCreationSize = 0;
@@ -176,7 +177,7 @@ void cre_scene_manager_process_queued_deletion_entities() {
         // Return entity id to pool
         cre_ec_system_return_entity_uid(entityToDelete);
         // Reset entity previous position
-        entityPrevGlobalPositions[entityToDelete] = SKA_VECTOR2_ZERO;
+        entityPrevGlobalTransforms[entityToDelete] = SKA_TRANSFORM_IDENTITY;
     }
     entitiesQueuedForDeletionSize = 0;
 }
@@ -254,6 +255,19 @@ SKATransformModel2D* cre_scene_manager_get_scene_node_global_transform(CreEntity
         transform2DComponent->isGlobalTransformDirty = false;
     }
     return &transform2DComponent->globalTransform;
+}
+
+SKATransform2D cre_scene_manager_get_scene_node_global_render_transform(CreEntity entity, Transform2DComponent* transform2DComponent, const SKAVector2* origin, int* globalZIndex) {
+    SKATransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity, transform2DComponent);
+    cre_scene_utils_apply_camera_and_origin_translation(globalTransform, origin, transform2DComponent->ignoreCamera);
+    transform2DComponent->isGlobalTransformDirty = true; // TODO: Make global transform const
+    const SKATransform2D transform2D = ska_transform2d_model_convert_to_transform(globalTransform);
+    const SKATransform2D prevTransform2D = entityPrevGlobalTransforms[entity];
+    const SKATransform2D lerpedTransform2D = ska_transform2d_lerp(&transform2D, &prevTransform2D, 0.1f);
+    entityPrevGlobalTransforms[entity] = lerpedTransform2D; // Store prev
+    SE_ASSERT(globalZIndex);
+    *globalZIndex = globalTransform->zIndex;
+    return lerpedTransform2D;
 }
 
 float cre_scene_manager_get_node_full_time_dilation(CreEntity entity) {
@@ -358,7 +372,6 @@ void cre_scene_manager_invalidate_time_dilation_nodes_with_children(CreEntity en
 }
 
 void cre_scene_manager_notify_all_on_transform_events(CreEntity entity, Transform2DComponent* transformComp) {
-    entityPrevGlobalPositions[entity] = transformComp->localTransform.position; // TODO: Need to properly assign global position to transform
     se_event_notify_observers(&transformComp->onTransformChanged, &(SESubjectNotifyPayload) {
         .data = &(CreComponentEntityUpdatePayload) {.entity = entity, .component = transformComp, .componentType = CreComponentType_TRANSFORM_2D}
     });

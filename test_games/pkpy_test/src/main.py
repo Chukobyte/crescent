@@ -23,9 +23,15 @@ class Main(Node2D):
         if Input.is_action_just_pressed("exit"):
             Engine.exit()
 
-        particles2D = self.get_child("Particles2D")
-        if particles2D:
-            particles2D.position += Vector2(1, 1)
+        # particles2D = self.get_child("Particles2D")
+        # if particles2D:
+        #     particles2D.position += Vector2(1, 1)
+        sprite = self.get_child("Sprite")
+        if sprite:
+            sprite.position += Vector2(100, 100) * Vector2(delta_time, delta_time)
 
     def _fixed_process(self, delta_time: float) -> None:
         pass
+        # sprite = self.get_child("Sprite")
+        # if sprite:
+        #     sprite.position += Vector2(100, 100) * Vector2(delta_time, delta_time)
