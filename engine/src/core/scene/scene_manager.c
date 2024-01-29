@@ -263,7 +263,7 @@ SKATransform2D cre_scene_manager_get_scene_node_global_render_transform(CreEntit
     transform2DComponent->isGlobalTransformDirty = true; // TODO: Make global transform const
     const SKATransform2D transform2D = ska_transform2d_model_convert_to_transform(globalTransform);
     const SKATransform2D prevTransform2D = entityPrevGlobalTransforms[entity];
-    const SKATransform2D lerpedTransform2D = ska_transform2d_lerp(&transform2D, &prevTransform2D, 0.1f);
+    const SKATransform2D lerpedTransform2D = ska_transform2d_lerp(&prevTransform2D, &transform2D, 0.15f);
     entityPrevGlobalTransforms[entity] = lerpedTransform2D; // Store prev
     SE_ASSERT(globalZIndex);
     *globalZIndex = globalTransform->zIndex;

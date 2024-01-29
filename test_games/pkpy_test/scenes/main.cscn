@@ -63,6 +63,30 @@
                 }
             ],
             "children": []
+        },
+        {
+            "name": "Sprite2",
+            "type": "Sprite",
+            "components": [
+                {
+                    "type": "transform_2d",
+                    "position": {
+                        "x": 550.0,
+                        "y": 50.0
+                    }
+                },
+                {
+                    "type": "sprite",
+                    "texture_path": "assets/images/crescent_logo.png",
+                    "draw_source": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "w": 167.0,
+                        "h": 74.0
+                    }
+                }
+            ],
+            "children": []
         }
     ]
 }
