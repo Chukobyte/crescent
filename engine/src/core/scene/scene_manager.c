@@ -63,14 +63,19 @@ Scene* cre_scene_create_scene(const char* scenePath) {
 }
 
 // --- Scene Manager --- //
+#define CRE_SCENE_MANAGER_RENDER_INTERPOLATE_TRANSFORM2D
+
 CreEntity entitiesQueuedForCreation[CRE_MAX_ENTITIES];
 size_t entitiesQueuedForCreationSize = 0;
 CreEntity entitiesQueuedForDeletion[CRE_MAX_ENTITIES];
 size_t entitiesQueuedForDeletionSize = 0;
 
 SE_STATIC_ARRAY_CREATE(CreEntity, CRE_MAX_ENTITIES, entitiesToUnlinkParent);
+
+#ifdef CRE_SCENE_MANAGER_RENDER_INTERPOLATE_TRANSFORM2D
 // Will need a different mechanism for 3D (maybe just storing a vector3, but this is fine for now
 SE_STATIC_ARRAY_CREATE(SKATransform2D , CRE_MAX_ENTITIES, entityPrevGlobalTransforms);
+#endif // CRE_SCENE_MANAGER_RENDER_INTERPOLATE_TRANSFORM2D
 
 Scene* activeScene = NULL;
 Scene* queuedSceneToChangeTo = NULL;
@@ -115,11 +120,13 @@ void cre_scene_manager_process_queued_creation_entities() {
         cre_ec_system_update_entity_signature_with_systems(queuedEntity);
         cre_ec_system_entity_start(queuedEntity);
         cre_ec_system_entity_entered_scene(queuedEntity);
-        // TODO: Setup position history here, basically set previous position here
+
+#ifdef CRE_SCENE_MANAGER_RENDER_INTERPOLATE_TRANSFORM2D
         Transform2DComponent* transformComponent = (Transform2DComponent*)cre_component_manager_get_component_unchecked(queuedEntity, CreComponentDataIndex_TRANSFORM_2D);
         if (transformComponent) {
             entityPrevGlobalTransforms[queuedEntity] = transformComponent->localTransform; // TODO: globalTransform isn't filled out yet, change that...
         }
+#endif
     }
     entitiesQueuedForCreationSize = 0;
 }
@@ -176,8 +183,12 @@ void cre_scene_manager_process_queued_deletion_entities() {
         cre_component_manager_remove_all_components(entityToDelete);
         // Return entity id to pool
         cre_ec_system_return_entity_uid(entityToDelete);
+
+#ifdef CRE_SCENE_MANAGER_RENDER_INTERPOLATE_TRANSFORM2D
         // Reset entity previous position
         entityPrevGlobalTransforms[entityToDelete] = SKA_TRANSFORM_IDENTITY;
+#endif
+
     }
     entitiesQueuedForDeletionSize = 0;
 }
@@ -259,15 +270,20 @@ SKATransformModel2D* cre_scene_manager_get_scene_node_global_transform(CreEntity
 
 SKATransform2D cre_scene_manager_get_scene_node_global_render_transform(CreEntity entity, Transform2DComponent* transform2DComponent, const SKAVector2* origin, int* globalZIndex) {
     SKATransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity, transform2DComponent);
+    SE_ASSERT(globalZIndex);
+    *globalZIndex = globalTransform->zIndex;
+
     cre_scene_utils_apply_camera_and_origin_translation(globalTransform, origin, transform2DComponent->ignoreCamera);
     transform2DComponent->isGlobalTransformDirty = true; // TODO: Make global transform const
     const SKATransform2D transform2D = ska_transform2d_model_convert_to_transform(globalTransform);
+#ifdef CRE_SCENE_MANAGER_RENDER_INTERPOLATE_TRANSFORM2D
     const SKATransform2D prevTransform2D = entityPrevGlobalTransforms[entity];
+    // Favor keeping most of the previous value as that seems to look best especially when changes are done in '_fixed_process'
     const SKATransform2D lerpedTransform2D = ska_transform2d_lerp(&prevTransform2D, &transform2D, 0.15f);
     entityPrevGlobalTransforms[entity] = lerpedTransform2D; // Store prev
-    SE_ASSERT(globalZIndex);
-    *globalZIndex = globalTransform->zIndex;
     return lerpedTransform2D;
+#endif // CRE_SCENE_MANAGER_RENDER_INTERPOLATE_TRANSFORM2D
+    return transform2D;
 }
 
 float cre_scene_manager_get_node_full_time_dilation(CreEntity entity) {
@@ -373,7 +389,7 @@ void cre_scene_manager_invalidate_time_dilation_nodes_with_children(CreEntity en
 
 void cre_scene_manager_notify_all_on_transform_events(CreEntity entity, Transform2DComponent* transformComp) {
     se_event_notify_observers(&transformComp->onTransformChanged, &(SESubjectNotifyPayload) {
-        .data = &(CreComponentEntityUpdatePayload) {.entity = entity, .component = transformComp, .componentType = CreComponentType_TRANSFORM_2D}
+            .data = &(CreComponentEntityUpdatePayload) {.entity = entity, .component = transformComp, .componentType = CreComponentType_TRANSFORM_2D}
     });
     // Notify children by recursion
     if (cre_scene_manager_has_entity_tree_node(entity)) {
@@ -441,7 +457,7 @@ SceneTreeNode* cre_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneN
             se_renderer_set_sprite_shader_default_params(shaderInstance->shader);
         } else if (jsonSceneNode->shaderInstanceVertexPath && jsonSceneNode->shaderInstanceFragmentPath) {
             spriteComponent->shaderInstanceId = se_shader_cache_create_instance_and_add_from_raw(
-                                                    jsonSceneNode->shaderInstanceVertexPath, jsonSceneNode->shaderInstanceFragmentPath);
+                    jsonSceneNode->shaderInstanceVertexPath, jsonSceneNode->shaderInstanceFragmentPath);
             SEShaderInstance* shaderInstance = se_shader_cache_get_instance(spriteComponent->shaderInstanceId);
             se_renderer_set_sprite_shader_default_params(shaderInstance->shader);
         } else {
@@ -457,7 +473,7 @@ SceneTreeNode* cre_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneN
             se_renderer_set_sprite_shader_default_params(shaderInstance->shader);
         } else if (jsonSceneNode->shaderInstanceVertexPath && jsonSceneNode->shaderInstanceFragmentPath) {
             animatedSpriteComponent->shaderInstanceId = se_shader_cache_create_instance_and_add_from_raw(
-                        jsonSceneNode->shaderInstanceVertexPath, jsonSceneNode->shaderInstanceFragmentPath);
+                    jsonSceneNode->shaderInstanceVertexPath, jsonSceneNode->shaderInstanceFragmentPath);
             SEShaderInstance* shaderInstance = se_shader_cache_get_instance(animatedSpriteComponent->shaderInstanceId);
             se_renderer_set_sprite_shader_default_params(shaderInstance->shader);
         } else {
@@ -484,7 +500,7 @@ SceneTreeNode* cre_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneN
     }
     if (jsonSceneNode->components[CreComponentDataIndex_COLOR_RECT] != NULL) {
         ColorRectComponent* colorSquareComponent = color_rect_component_copy(
-                    (ColorRectComponent*) jsonSceneNode->components[CreComponentDataIndex_COLOR_RECT]);
+                (ColorRectComponent*) jsonSceneNode->components[CreComponentDataIndex_COLOR_RECT]);
         cre_component_manager_set_component(node->entity, CreComponentDataIndex_COLOR_RECT, colorSquareComponent);
     }
     if (jsonSceneNode->components[CreComponentDataIndex_PARALLAX] != NULL) {
