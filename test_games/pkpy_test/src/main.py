@@ -1,6 +1,20 @@
 from crescent import Node2D, Input, Engine, TextLabel, Vector2, Particles2D, Engine, MinMaxVector2
 
 
+class Timer:
+    def __init__(self, wait_time: float):
+        self.wait_time = wait_time
+        self.time = 0
+
+    def tick(self, delta_time: float) -> bool:
+        self.time += delta_time
+        if self.time >= self.wait_time:
+            return True
+        return False
+
+
+timer = Timer(1.0)
+
 class Main(Node2D):
     def _start(self) -> None:
         Engine.set_fps_display_enabled(True)
@@ -17,8 +31,10 @@ class Main(Node2D):
         if Input.is_action_just_pressed("exit"):
             Engine.exit()
 
-        self._sprite_test(delta_time)
+        # if timer.tick(delta_time):
+        #     self._sprite_test(delta_time)
 
     def _fixed_process(self, delta_time: float) -> None:
-        # self._sprite_test(delta_time)
+        if timer.tick(delta_time):
+            self._sprite_test(delta_time)
         pass
