@@ -15,6 +15,10 @@ extern "C" {
 SceneTreeNode* cre_scene_tree_create_tree_node(CreEntity entity, SceneTreeNode* parent);
 
 // Scene Manager
+// Will keep track of entity history and interpolate their position based on their prev and current positions
+// For example: renderTransform = lerp(prevTransform, currentTransform, CRE_SCENE_MANAGER_RENDER_INTERPOLATE_TRANSFORM2D_ALPHA)
+#define CRE_SCENE_MANAGER_RENDER_INTERPOLATE_TRANSFORM2D_ALPHA 0.15f
+
 typedef void (*OnNodeEnteredSceneFunc) (CreEntity);
 
 typedef struct SceneNodeCallbackSubscriber {

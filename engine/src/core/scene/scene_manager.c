@@ -63,8 +63,6 @@ Scene* cre_scene_create_scene(const char* scenePath) {
 }
 
 // --- Scene Manager --- //
-#define CRE_SCENE_MANAGER_RENDER_INTERPOLATE_TRANSFORM2D
-
 CreEntity entitiesQueuedForCreation[CRE_MAX_ENTITIES];
 size_t entitiesQueuedForCreationSize = 0;
 CreEntity entitiesQueuedForDeletion[CRE_MAX_ENTITIES];
@@ -72,10 +70,10 @@ size_t entitiesQueuedForDeletionSize = 0;
 
 SE_STATIC_ARRAY_CREATE(CreEntity, CRE_MAX_ENTITIES, entitiesToUnlinkParent);
 
-#ifdef CRE_SCENE_MANAGER_RENDER_INTERPOLATE_TRANSFORM2D
+#ifdef CRE_SCENE_MANAGER_RENDER_INTERPOLATE_TRANSFORM2D_ALPHA
 // Will need a different mechanism for 3D (maybe just storing a vector3, but this is fine for now
 SE_STATIC_ARRAY_CREATE(SKATransform2D , CRE_MAX_ENTITIES, entityPrevGlobalTransforms);
-#endif // CRE_SCENE_MANAGER_RENDER_INTERPOLATE_TRANSFORM2D
+#endif // CRE_SCENE_MANAGER_RENDER_INTERPOLATE_TRANSFORM2D_ALPHA
 
 Scene* activeScene = NULL;
 Scene* queuedSceneToChangeTo = NULL;
@@ -121,7 +119,7 @@ void cre_scene_manager_process_queued_creation_entities() {
         cre_ec_system_entity_start(queuedEntity);
         cre_ec_system_entity_entered_scene(queuedEntity);
 
-#ifdef CRE_SCENE_MANAGER_RENDER_INTERPOLATE_TRANSFORM2D
+#ifdef CRE_SCENE_MANAGER_RENDER_INTERPOLATE_TRANSFORM2D_ALPHA
         Transform2DComponent* transformComponent = (Transform2DComponent*)cre_component_manager_get_component_unchecked(queuedEntity, CreComponentDataIndex_TRANSFORM_2D);
         if (transformComponent) {
             entityPrevGlobalTransforms[queuedEntity] = transformComponent->localTransform; // TODO: globalTransform isn't filled out yet, change that...
@@ -184,7 +182,7 @@ void cre_scene_manager_process_queued_deletion_entities() {
         // Return entity id to pool
         cre_ec_system_return_entity_uid(entityToDelete);
 
-#ifdef CRE_SCENE_MANAGER_RENDER_INTERPOLATE_TRANSFORM2D
+#ifdef CRE_SCENE_MANAGER_RENDER_INTERPOLATE_TRANSFORM2D_ALPHA
         // Reset entity previous position
         entityPrevGlobalTransforms[entityToDelete] = SKA_TRANSFORM_IDENTITY;
 #endif
@@ -276,13 +274,13 @@ SKATransform2D cre_scene_manager_get_scene_node_global_render_transform(CreEntit
     cre_scene_utils_apply_camera_and_origin_translation(globalTransform, origin, transform2DComponent->ignoreCamera);
     transform2DComponent->isGlobalTransformDirty = true; // TODO: Make global transform const
     const SKATransform2D transform2D = ska_transform2d_model_convert_to_transform(globalTransform);
-#ifdef CRE_SCENE_MANAGER_RENDER_INTERPOLATE_TRANSFORM2D
+#ifdef CRE_SCENE_MANAGER_RENDER_INTERPOLATE_TRANSFORM2D_ALPHA
     const SKATransform2D prevTransform2D = entityPrevGlobalTransforms[entity];
     // Favor keeping most of the previous value as that seems to look best especially when changes are done in '_fixed_process'
-    const SKATransform2D lerpedTransform2D = ska_transform2d_lerp(&prevTransform2D, &transform2D, 0.15f);
+    const SKATransform2D lerpedTransform2D = ska_transform2d_lerp(&prevTransform2D, &transform2D, CRE_SCENE_MANAGER_RENDER_INTERPOLATE_TRANSFORM2D_ALPHA);
     entityPrevGlobalTransforms[entity] = lerpedTransform2D; // Store prev
     return lerpedTransform2D;
-#endif // CRE_SCENE_MANAGER_RENDER_INTERPOLATE_TRANSFORM2D
+#endif // CRE_SCENE_MANAGER_RENDER_INTERPOLATE_TRANSFORM2D_ALPHA
     return transform2D;
 }
 

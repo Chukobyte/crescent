@@ -17,8 +17,8 @@ class Main(Node2D):
         if Input.is_action_just_pressed("exit"):
             Engine.exit()
 
-        # self._sprite_test(delta_time)
+        self._sprite_test(delta_time)
 
     def _fixed_process(self, delta_time: float) -> None:
-        self._sprite_test(delta_time)
+        # self._sprite_test(delta_time)
         pass
