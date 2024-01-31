@@ -266,10 +266,8 @@ SKATransformModel2D* cre_scene_manager_get_scene_node_global_transform(CreEntity
     return &transform2DComponent->globalTransform;
 }
 
-SKATransform2D cre_scene_manager_get_scene_node_global_render_transform(CreEntity entity, Transform2DComponent* transform2DComponent, const SKAVector2* origin, int* globalZIndex) {
+SceneNodeRenderResource cre_scene_manager_get_scene_node_global_render_resource(CreEntity entity, Transform2DComponent* transform2DComponent, const SKAVector2* origin) {
     SKATransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity, transform2DComponent);
-    SE_ASSERT(globalZIndex);
-    *globalZIndex = globalTransform->zIndex;
 
     cre_scene_utils_apply_camera_and_origin_translation(globalTransform, origin, transform2DComponent->ignoreCamera);
     transform2DComponent->isGlobalTransformDirty = true; // TODO: Make global transform const
@@ -279,10 +277,17 @@ SKATransform2D cre_scene_manager_get_scene_node_global_render_transform(CreEntit
     // Favor keeping most of the previous value as that seems to look best especially when changes are done in '_fixed_process'
     const SKATransform2D lerpedTransform2D = ska_transform2d_lerp(&prevTransform2D, &transform2D, CRE_SCENE_MANAGER_RENDER_INTERPOLATE_TRANSFORM2D_ALPHA);
     entityPrevGlobalTransforms[entity] = lerpedTransform2D; // Store prev
-    return lerpedTransform2D;
+    return (SceneNodeRenderResource){
+        .transform2D = lerpedTransform2D,
+        .globalZIndex = globalTransform->zIndex
+    };
 #endif // CRE_SCENE_MANAGER_RENDER_INTERPOLATE_TRANSFORM2D_ALPHA
-    return transform2D;
+    return (SceneNodeRenderResource){
+        .transform2D = transform2D,
+        .globalZIndex = globalTransform->zIndex
+    };
 }
+
 
 float cre_scene_manager_get_node_full_time_dilation(CreEntity entity) {
     NodeComponent* nodeComp = (NodeComponent*)cre_component_manager_get_component_unchecked(entity, CreComponentDataIndex_NODE);

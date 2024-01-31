@@ -37,14 +37,8 @@ void sprite_rendering_system_render() {
         Transform2DComponent* spriteTransformComp = (Transform2DComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_TRANSFORM_2D);
         SpriteComponent* spriteComponent = (SpriteComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_SPRITE);
         const CRECamera2D* renderCamera = spriteTransformComp->ignoreCamera ? defaultCamera : camera2D;
-//        SKATransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity, spriteTransformComp);
-//        cre_scene_utils_apply_camera_and_origin_translation(globalTransform, &spriteComponent->origin, spriteTransformComp->ignoreCamera);
+        const SceneNodeRenderResource renderResource = cre_scene_manager_get_scene_node_global_render_resource(entity, spriteTransformComp, &spriteComponent->origin);
 
-        // TODO: Test
-        int globalZIndex = 0;
-        const SKATransform2D globalTransform = cre_scene_manager_get_scene_node_global_render_transform(entity, spriteTransformComp, &spriteComponent->origin, &globalZIndex);
-
-//        spriteTransformComp->isGlobalTransformDirty = true; // TODO: Make global transform const
         const SKASize2D destinationSize = {
             spriteComponent->drawSource.w * renderCamera->zoom.x,
             spriteComponent->drawSource.h * renderCamera->zoom.y
@@ -57,8 +51,8 @@ void sprite_rendering_system_render() {
                 spriteComponent->modulate,
                 spriteComponent->flipH,
                 spriteComponent->flipV,
-                &globalTransform,
-                globalZIndex,
+                &renderResource.transform2D,
+                renderResource.globalZIndex,
                 se_shader_cache_get_instance_checked(spriteComponent->shaderInstanceId)
         );
 
