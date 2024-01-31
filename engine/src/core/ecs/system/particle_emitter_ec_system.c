@@ -156,14 +156,10 @@ void particle_emitter_system_render() {
         SETexture* texture = renderItem.texture;
         const SKARect2 particleDrawSource = (SKARect2){ 0.0f, 0.0f, 1.0f, 1.0f };
         const SKASize2D particleSize = (SKASize2D){ renderItem.size.w * renderCamera->zoom.x, renderItem.size.h * renderCamera->zoom.y };
-        SKATransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity, particleTransformComp);
-        cre_scene_utils_apply_camera_and_origin_translation(globalTransform, &SKA_VECTOR2_ZERO, particleTransformComp->ignoreCamera);
-        particleTransformComp->isGlobalTransformDirty = true;
+        const SceneNodeRenderResource renderResource = cre_scene_manager_get_scene_node_global_render_resource(entity, particleTransformComp, &SKA_VECTOR2_ZERO);
 
         // Draw individual particles
-        SKATransform2D baseParticleTransform;
-        ska_transform2d_mat4_to_transform(globalTransform->model, &baseParticleTransform);
-
+        const SKATransform2D baseParticleTransform = renderResource.transform2D;
         for (int pi = 0; pi < particles2DComponent->amount; pi++) {
             CreParticle2D* particle2D = &particles2DComponent->particles[pi];
             if (particle2D->state != Particle2DState_ACTIVE) {
@@ -178,6 +174,22 @@ void particle_emitter_system_render() {
                 .scale = baseParticleTransform.scale,
                 .rotation = baseParticleTransform.rotation
             };
+
+#ifdef CRE_SCENE_MANAGER_RENDER_INTERPOLATE_TRANSFORM2D_ALPHA
+            const SKATransform2D lerpedTransform2D = ska_transform2d_lerp(&particle2D->prevTransform, &particle2DTransform, CRE_SCENE_MANAGER_RENDER_INTERPOLATE_TRANSFORM2D_ALPHA);
+            particle2D->prevTransform = particle2DTransform;
+            ska_renderer_queue_sprite_draw(
+                    texture,
+                    particleDrawSource,
+                    particleSize,
+                    particle2D->color,
+                    false,
+                    false,
+                    &lerpedTransform2D,
+                    particleTransformComp->zIndex,
+                    NULL
+            );
+#else
             ska_renderer_queue_sprite_draw(
                     texture,
                     particleDrawSource,
@@ -189,6 +201,7 @@ void particle_emitter_system_render() {
                     particleTransformComp->zIndex,
                     NULL
             );
+#endif
         }
     }
 }
