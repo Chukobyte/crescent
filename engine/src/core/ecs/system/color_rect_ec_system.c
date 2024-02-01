@@ -44,22 +44,21 @@ void color_rect_system_render() {
         Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_TRANSFORM_2D);
         const ColorRectComponent* colorRectComponent = (ColorRectComponent *) cre_component_manager_get_component(entity, CreComponentDataIndex_COLOR_RECT);
         const CRECamera2D* renderCamera = transformComp->ignoreCamera ? defaultCamera : camera2D;
-        SKATransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity, transformComp);
-        cre_scene_utils_apply_camera_and_origin_translation(globalTransform, &SKA_VECTOR2_ZERO, transformComp->ignoreCamera);
-        transformComp->isGlobalTransformDirty = true; // TODO: Make global transform const
+        const SceneNodeRenderResource renderResource = cre_scene_manager_get_scene_node_global_render_resource(entity, transformComp, &SKA_VECTOR2_ZERO);
         const SKASize2D destinationSize = {
             colorRectComponent->size.w * renderCamera->zoom.x,
             colorRectComponent->size.h * renderCamera->zoom.y
         };
-        ska_renderer_queue_sprite_draw2(
+
+        ska_renderer_queue_sprite_draw(
             colorRectTexture,
             colorRectDrawSource,
             destinationSize,
             colorRectComponent->color,
             false,
             false,
-            globalTransform->model,
-            globalTransform->zIndex,
+            &renderResource.transform2D,
+            renderResource.globalZIndex,
             NULL
         );
     }

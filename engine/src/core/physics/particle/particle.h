@@ -24,6 +24,7 @@ typedef struct CreParticle2D {
     float damping;
     float inverseMass;
     Particle2DState state;
+    SKATransform2D prevTransform;
 } CreParticle2D;
 
 #define CRE_PARTICLE2D_DEFAULT SKA_STRUCT_LITERAL(CreParticle2D){ \

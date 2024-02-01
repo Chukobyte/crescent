@@ -38,17 +38,16 @@ static void font_rendering_system_render() {
         Transform2DComponent* fontTransformComp = (Transform2DComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_TRANSFORM_2D);
         TextLabelComponent* textLabelComponent = (TextLabelComponent*) cre_component_manager_get_component(entity, CreComponentDataIndex_TEXT_LABEL);
         const CRECamera2D* renderCamera = fontTransformComp->ignoreCamera ? defaultCamera : camera2D;
-        fontTransformComp->isGlobalTransformDirty = true;
-        const SKATransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity, fontTransformComp);
+        const SceneNodeRenderResource renderResource = cre_scene_manager_get_scene_node_global_render_resource(entity, fontTransformComp, &SKA_VECTOR2_ZERO);
 
         se_renderer_queue_font_draw_call(
             textLabelComponent->font,
             textLabelComponent->text,
-            (globalTransform->position.x - renderCamera->viewport.x + renderCamera->offset.x) * renderCamera->zoom.x,
-            (globalTransform->position.y - renderCamera->viewport.y + renderCamera->offset.y) * renderCamera->zoom.y,
-            fontTransformComp->localTransform.scale.x * globalTransform->scale.x * renderCamera->zoom.x,
+            (renderResource.transform2D.position.x - renderCamera->viewport.x + renderCamera->offset.x) * renderCamera->zoom.x,
+            (renderResource.transform2D.position.y - renderCamera->viewport.y + renderCamera->offset.y) * renderCamera->zoom.y,
+            fontTransformComp->localTransform.scale.x * renderResource.transform2D.scale.x * renderCamera->zoom.x,
             textLabelComponent->color,
-            globalTransform->zIndex
+            renderResource.globalZIndex
         );
     }
 }

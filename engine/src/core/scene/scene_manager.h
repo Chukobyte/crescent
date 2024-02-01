@@ -15,11 +15,20 @@ extern "C" {
 SceneTreeNode* cre_scene_tree_create_tree_node(CreEntity entity, SceneTreeNode* parent);
 
 // Scene Manager
+// Will keep track of entity history and interpolate their position based on their prev and current positions
+// For example: renderTransform = lerp(prevTransform, currentTransform, CRE_SCENE_MANAGER_RENDER_INTERPOLATE_TRANSFORM2D_ALPHA)
+#define CRE_SCENE_MANAGER_RENDER_INTERPOLATE_TRANSFORM2D_ALPHA 0.15f
+
 typedef void (*OnNodeEnteredSceneFunc) (CreEntity);
 
 typedef struct SceneNodeCallbackSubscriber {
     OnNodeEnteredSceneFunc onNodeEnteredSceneFunc;
 } SceneNodeCallbackSubscriber;
+
+typedef struct SceneNodeRenderResource {
+    SKATransform2D transform2D;
+    int globalZIndex;
+} SceneNodeRenderResource;
 
 // First index is the child
 typedef struct EntityArray {
@@ -45,6 +54,7 @@ void cre_scene_manager_process_queued_scene_change();
 void cre_scene_manager_set_active_scene_root(SceneTreeNode* root);
 SceneTreeNode* cre_scene_manager_get_active_scene_root();
 SKATransformModel2D* cre_scene_manager_get_scene_node_global_transform(CreEntity entity, Transform2DComponent* transform2DComponent);
+SceneNodeRenderResource cre_scene_manager_get_scene_node_global_render_resource(CreEntity entity, Transform2DComponent* transform2DComponent, const SKAVector2* origin);
 float cre_scene_manager_get_node_full_time_dilation(CreEntity entity);
 CreEntity cre_scene_manager_get_entity_child_by_name(CreEntity parent, const char* childName);
 SceneTreeNode* cre_scene_manager_get_entity_tree_node(CreEntity entity);

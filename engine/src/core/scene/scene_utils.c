@@ -57,7 +57,7 @@ void cre_scene_utils_update_global_transform_model(CreEntity entity, SKATransfor
     globalTransform->rotation = transform2d_component_get_rotation_deg_from_model(rotation);
 }
 
-void cre_scene_utils_apply_camera_and_origin_translation(SKATransformModel2D* globalTransform, SKAVector2* origin, bool ignoreCamera) {
+void cre_scene_utils_apply_camera_and_origin_translation(SKATransformModel2D* globalTransform, const SKAVector2* origin, bool ignoreCamera) {
     const CRECamera2D* renderCamera = ignoreCamera ? cre_camera_manager_get_default_camera() : cre_camera_manager_get_current_camera();
     glm_translate(globalTransform->model, (vec3) {
         (renderCamera->offset.x - (renderCamera->viewport.x * globalTransform->scaleSign.x) - origin->x) * renderCamera->zoom.x,

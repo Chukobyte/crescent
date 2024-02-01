@@ -13,7 +13,14 @@
     "version": "",
     "assets": {
         "audio_sources": [],
-        "textures": [],
+        "textures": [
+            {
+                "file_path": "assets/images/crescent_logo.png",
+                "wrap_s": "clamp_to_border",
+                "wrap_t": "clamp_to_border",
+                "nearest_neighbor": true
+            }
+        ],
         "fonts": []
     },
     "inputs": [
@@ -24,5 +31,5 @@
             ]
         }
     ],
-    "crescent_core_version": "0.15.0"
+    "crescent_core_version": "0.16.0"
 }

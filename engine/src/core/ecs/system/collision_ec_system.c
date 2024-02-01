@@ -89,27 +89,23 @@ void collision_system_render() {
     const CRECamera2D* defaultCamera = cre_camera_manager_get_default_camera();
     for (size_t i = 0; i < collisionSystem->entity_count; i++) {
         const CreEntity entity = collisionSystem->entities[i];
-        Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity,
-                                              CreComponentDataIndex_TRANSFORM_2D);
-        const Collider2DComponent* colliderComp = (Collider2DComponent*) cre_component_manager_get_component(entity,
-                CreComponentDataIndex_COLLIDER_2D);
+        Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity,CreComponentDataIndex_TRANSFORM_2D);
+        const Collider2DComponent* colliderComp = (Collider2DComponent*) cre_component_manager_get_component(entity,CreComponentDataIndex_COLLIDER_2D);
         const CRECamera2D* renderCamera = transformComp->ignoreCamera ? defaultCamera : camera2D;
-        SKATransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity, transformComp);
-        static SKAVector2 origin = { 0.0f, 0.0f };
-        cre_scene_utils_apply_camera_and_origin_translation(globalTransform, &origin, transformComp->ignoreCamera);
-        transformComp->isGlobalTransformDirty = true; // TODO: Make global transform const
+        const SceneNodeRenderResource renderResource = cre_scene_manager_get_scene_node_global_render_resource(entity, transformComp, &SKA_VECTOR2_ZERO);
         const SKASize2D colliderDrawSize = {
             colliderComp->extents.w * renderCamera->zoom.x,
             colliderComp->extents.h * renderCamera->zoom.y
         };
-        ska_renderer_queue_sprite_draw2(
+
+        ska_renderer_queue_sprite_draw(
             collisionOutlineTexture,
             colliderDrawSource,
             colliderDrawSize,
             colliderComp->color,
             false,
             false,
-            globalTransform->model,
+            &renderResource.transform2D,
             SE_RENDERER_MAX_Z_INDEX, // Use the max possible z index value to draw colliders on top of other things...
             NULL
         );

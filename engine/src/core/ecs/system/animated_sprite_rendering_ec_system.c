@@ -74,22 +74,21 @@ void animated_sprite_rendering_system_render() {
             }
         }
         const CRECamera2D* renderCamera = spriteTransformComp->ignoreCamera ? defaultCamera : camera2D;
-        SKATransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity, spriteTransformComp);
-        cre_scene_utils_apply_camera_and_origin_translation(globalTransform, &animatedSpriteComponent->origin, spriteTransformComp->ignoreCamera);
-        spriteTransformComp->isGlobalTransformDirty = true; // TODO: Make global transform const
+        const SceneNodeRenderResource renderResource = cre_scene_manager_get_scene_node_global_render_resource(entity, spriteTransformComp, &animatedSpriteComponent->origin);
         const SKASize2D destinationSize = {
             currentFrame.drawSource.w * renderCamera->zoom.x,
             currentFrame.drawSource.h * renderCamera->zoom.y
         };
-        ska_renderer_queue_sprite_draw2(
+
+        ska_renderer_queue_sprite_draw(
             currentFrame.texture,
             currentFrame.drawSource,
             destinationSize,
             animatedSpriteComponent->modulate,
             animatedSpriteComponent->flipH,
             animatedSpriteComponent->flipV,
-            globalTransform->model,
-            globalTransform->zIndex,
+            &renderResource.transform2D,
+            renderResource.globalZIndex,
             se_shader_cache_get_instance_checked(animatedSpriteComponent->shaderInstanceId)
         );
     }

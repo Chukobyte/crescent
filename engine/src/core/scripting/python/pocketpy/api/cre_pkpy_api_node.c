@@ -11,6 +11,7 @@
 
 #include "../cre_pkpy_entity_instance_cache.h"
 #include "../cre_pkpy_script_context.h"
+#include "../cre_pkpy_util.h"
 #include "../../../../scene/scene_manager.h"
 #include "../../../../ecs/component/sprite_component.h"
 #include "../../../../ecs/component/animated_sprite_component.h"
@@ -22,7 +23,7 @@
 #include "../../../../ecs/system/ec_system.h"
 #include "../../../../ecs/component/particles2d_component.h"
 
-void set_node_component_from_type(CreEntity entity, const char* classPath, const char* className, NodeBaseType baseType) {
+static void set_node_component_from_type(CreEntity entity, const char* classPath, const char* className, NodeBaseType baseType) {
 
     // Set components that should be set for a base node (that has invoked .new() from scripting)
     cre_component_manager_set_component(entity, CreComponentDataIndex_NODE, node_component_create_ex(className, baseType));
@@ -109,7 +110,8 @@ int cre_pkpy_api_node_get_child(pkpy_vm* vm) {
     pkpy_to_int(vm, 0, &parentEntityId);
     pkpy_to_string(vm, 1, &childEntityName);
 
-    const CreEntity childEntity = cre_scene_manager_get_entity_child_by_name((CreEntity)parentEntityId, childEntityName.data);
+    const char* childName = cre_pkpy_util_convert_pkpy_CString(&childEntityName);
+    const CreEntity childEntity = cre_scene_manager_get_entity_child_by_name((CreEntity)parentEntityId, childName);
     if (childEntity != CRE_NULL_ENTITY) {
         cre_pkpy_script_context_create_instance_if_nonexistent_and_push_entity_instance(childEntity);
         return 1;

@@ -3,6 +3,7 @@
 
 #include <utility>
 
+#include <seika/math/se_math.h>
 #include <seika/utils/logger.h>
 
 #include "../../asset_browser.h"
@@ -103,7 +104,11 @@ bool ImGuiHelper::BeginDragInt(const DragInt& dragInt) {
         ImGui::Text("%s", dragInt.label.c_str());
         ImGui::SameLine();
     }
-    return ImGui::DragInt(dragInt.GetInternalLabel(), &dragInt.value, dragInt.valueSpeed, dragInt.valueMin, dragInt.valueMax);
+    const bool hasValueChanged = ImGui::DragInt(dragInt.GetInternalLabel(), &dragInt.value, dragInt.valueSpeed, dragInt.valueMin, dragInt.valueMax);
+    if (hasValueChanged) {
+        dragInt.value = ska_math_clamp_int(dragInt.value, dragInt.valueMin, dragInt.valueMax);
+    }
+    return hasValueChanged;
 }
 
 //--- Drag Float ---//
@@ -122,7 +127,11 @@ bool ImGuiHelper::BeginDragFloat(const DragFloat& dragFloat) {
         ImGui::Text("%s", dragFloat.label.c_str());
         ImGui::SameLine();
     }
-    return ImGui::DragFloat(dragFloat.GetInternalLabel(), &dragFloat.value, dragFloat.valueSpeed, dragFloat.valueMin, dragFloat.valueMax, dragFloat.format);
+    const bool hasValueChanged = ImGui::DragFloat(dragFloat.GetInternalLabel(), &dragFloat.value, dragFloat.valueSpeed, dragFloat.valueMin, dragFloat.valueMax, dragFloat.format);
+    if (hasValueChanged) {
+        dragFloat.value = ska_math_clamp_float(dragFloat.value, dragFloat.valueMin, dragFloat.valueMax);
+    }
+    return hasValueChanged;
 }
 
 //--- Drag Float 2 ---//
@@ -141,7 +150,12 @@ bool ImGuiHelper::BeginDragFloat2(const DragFloat2& dragFloat2) {
         ImGui::Text("%s", dragFloat2.label.c_str());
         ImGui::SameLine();
     }
-    return ImGui::DragFloat2(dragFloat2.GetInternalLabel(), dragFloat2.value, dragFloat2.valueSpeed, dragFloat2.valueMin, dragFloat2.valueMax, dragFloat2.format);
+    const bool hasValueChanged = ImGui::DragFloat2(dragFloat2.GetInternalLabel(), dragFloat2.value, dragFloat2.valueSpeed, dragFloat2.valueMin, dragFloat2.valueMax, dragFloat2.format);
+    if (hasValueChanged) {
+        dragFloat2.value[0] = ska_math_clamp_float(dragFloat2.value[0], dragFloat2.valueMin, dragFloat2.valueMax);
+        dragFloat2.value[1] = ska_math_clamp_float(dragFloat2.value[1], dragFloat2.valueMin, dragFloat2.valueMax);
+    }
+    return hasValueChanged;
 }
 
 //--- DragFloat4 ---//
@@ -160,7 +174,14 @@ bool ImGuiHelper::BeginDragFloat4(const DragFloat4& dragFloat4) {
         ImGui::Text("%s", dragFloat4.label.c_str());
         ImGui::SameLine();
     }
-    return ImGui::DragFloat4(dragFloat4.GetInternalLabel(), dragFloat4.value, dragFloat4.valueSpeed, dragFloat4.valueMin, dragFloat4.valueMax, dragFloat4.format);
+    const bool hasValueChanged = ImGui::DragFloat4(dragFloat4.GetInternalLabel(), dragFloat4.value, dragFloat4.valueSpeed, dragFloat4.valueMin, dragFloat4.valueMax, dragFloat4.format);
+    if (hasValueChanged) {
+        dragFloat4.value[0] = ska_math_clamp_float(dragFloat4.value[0], dragFloat4.valueMin, dragFloat4.valueMax);
+        dragFloat4.value[1] = ska_math_clamp_float(dragFloat4.value[1], dragFloat4.valueMin, dragFloat4.valueMax);
+        dragFloat4.value[2] = ska_math_clamp_float(dragFloat4.value[2], dragFloat4.valueMin, dragFloat4.valueMax);
+        dragFloat4.value[3] = ska_math_clamp_float(dragFloat4.value[3], dragFloat4.valueMin, dragFloat4.valueMax);
+    }
+    return hasValueChanged;
 }
 
 //--- ColorEdit4 ---//

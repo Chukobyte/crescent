@@ -60,10 +60,8 @@ void parallax_system_physics_process(float deltaTime) {
     CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
     for (size_t i = 0; i < parallaxSystem->entity_count; i++) {
         const CreEntity entity = parallaxSystem->entities[i];
-        Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity,
-                                              CreComponentDataIndex_TRANSFORM_2D);
-        ParallaxComponent* parallaxComp = (ParallaxComponent*) cre_component_manager_get_component(entity,
-                                          CreComponentDataIndex_PARALLAX);
+        Transform2DComponent* transformComp = (Transform2DComponent*) cre_component_manager_get_component(entity,CreComponentDataIndex_TRANSFORM_2D);
+        ParallaxComponent* parallaxComp = (ParallaxComponent*) cre_component_manager_get_component(entity,CreComponentDataIndex_PARALLAX);
         parallax_system_update_entity(entity, transformComp, parallaxComp, camera2D);
     }
 }
