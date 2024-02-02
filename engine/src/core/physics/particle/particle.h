@@ -37,7 +37,8 @@ typedef struct CreParticle2D {
     .timeActive = 0.0f, \
     .damping = CRE_PARTICLE2D_DEFAULT_DAMPING, \
     .inverseMass = 1.0f, \
-    .state = Particle2DState_INACTIVE\
+    .state = Particle2DState_INACTIVE, \
+    .prevTransform = SKA_TRANSFORM_IDENTITY \
 }
 
 void cre_particle2d_set_mass(CreParticle2D* particle2D, float mass);
