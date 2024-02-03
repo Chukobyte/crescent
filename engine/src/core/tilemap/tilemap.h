@@ -29,6 +29,8 @@ typedef struct CreTilemap {
     CreTile tiles[CRE_TILEMAP_MAX_ROWS][CRE_TILEMAP_MAX_COLS];
 } CreTilemap;
 
+#define CRE_TILEMAP_DEFAULT_EMPTY SKA_STRUCT_LITERAL(CreTilemap){ .activeSize = 0, .tiles = {{0}} }
+
 void cre_tilemap_set_tile_active(CreTilemap* tilemap, SKAVector2i* position, bool isActive);
 bool cre_tilemap_is_tile_active(CreTilemap* tilemap, SKAVector2i* position);
 CreTileBitmask cre_tilemap_get_tile_bitmask(CreTilemap* tilemap, SKAVector2i* position);

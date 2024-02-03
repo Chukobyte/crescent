@@ -25,6 +25,7 @@
 #include "../src/core/game_properties.h"
 #include "../src/core/engine_context.h"
 #include "../src/core/scene/scene_manager.h"
+#include "../src/core/tilemap/tilemap.h"
 
 inline static SETexture* create_mock_texture() {
     SETexture* texture = SE_MEM_ALLOCATE(SETexture);
@@ -50,13 +51,23 @@ void tearDown() {
 void cre_node_event_test(void);
 void cre_json_file_loader_scene_test(void);
 void cre_pocketpy_test(void);
+void cre_tilemap_test(void);
 
 int main(int argv, char** args) {
     UNITY_BEGIN();
     RUN_TEST(cre_node_event_test);
     RUN_TEST(cre_json_file_loader_scene_test);
     RUN_TEST(cre_pocketpy_test);
+    RUN_TEST(cre_tilemap_test);
     return UNITY_END();
+}
+
+// TODO: move
+void cre_tilemap_test(void) {
+    CreTilemap tilemap = CRE_TILEMAP_DEFAULT_EMPTY;
+    cre_tilemap_set_tile_active(&tilemap, &(SKAVector2i){ 5, 5 }, true);
+    const CreTileBitmask tileBitmask = cre_tilemap_get_tile_bitmask(&tilemap, &(SKAVector2i){ 5, 5 });
+    TEST_ASSERT_EQUAL_INT(CreTileType_CENTER, tileBitmask);
 }
 
 //--- Node event test ---//
