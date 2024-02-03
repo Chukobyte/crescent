@@ -36,6 +36,7 @@ add_library(${PROJECT_NAME} STATIC
         src/core/scripting/native/native_script_context.c
         src/core/scripting/native/native_script_class.c
         src/core/scripting/native/internal_classes/fps_display_class.c
+        src/core/tilemap/tilemap.c
         src/core/utils/command_line_args_util.c
         src/core/physics/collision/collision.c
         src/core/physics/particle/particle.c
