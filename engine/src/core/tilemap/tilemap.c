@@ -14,9 +14,26 @@ static inline void cre_tilemap_refresh_tilemap(CreTilemap* tilemap) {
     }
 }
 
+static inline void cre_tilemap_update_active_size(CreTilemap* tilemap, CreTile* updatedTile, SKAVector2i* position) {
+    if (updatedTile->isActive) {
+        if (position->x > tilemap->activeSize.w) {
+            tilemap->activeSize.w = position->x;
+        }
+        if (position->y > tilemap->activeSize.h) {
+            tilemap->activeSize.h = position->y;
+        }
+    } else {
+        // TODO: Handle case for shrinking active size
+    }
+}
+
 void cre_tilemap_set_tile_active(CreTilemap* tilemap, SKAVector2i* position, bool isActive) {
-    tilemap->tiles[position->y][position->x].isActive = isActive;
-    cre_tilemap_refresh_tilemap(tilemap);
+    CreTile* tile = &tilemap->tiles[position->y][position->x];
+    if (tile->isActive != isActive) {
+        tile->isActive = isActive;
+        cre_tilemap_update_active_size(tilemap, tile, position);
+        cre_tilemap_refresh_tilemap(tilemap);
+    }
 }
 
 bool cre_tilemap_is_tile_active(CreTilemap* tilemap, SKAVector2i* position) {

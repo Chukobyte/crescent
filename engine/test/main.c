@@ -66,6 +66,8 @@ int main(int argv, char** args) {
 void cre_tilemap_test(void) {
     CreTilemap tilemap = CRE_TILEMAP_DEFAULT_EMPTY;
     cre_tilemap_set_tile_active(&tilemap, &(SKAVector2i){ 5, 5 }, true);
+    TEST_ASSERT_EQUAL_INT(5, tilemap.activeSize.w);
+    TEST_ASSERT_EQUAL_INT(5, tilemap.activeSize.h);
     const CreTileBitmask tileBitmask = cre_tilemap_get_tile_bitmask(&tilemap, &(SKAVector2i){ 5, 5 });
     TEST_ASSERT_EQUAL_INT(CreTileType_CENTER, tileBitmask);
 }
