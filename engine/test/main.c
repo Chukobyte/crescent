@@ -64,16 +64,29 @@ int main(int argv, char** args) {
 
 // TODO: move
 void cre_tilemap_test(void) {
+    // Test setting (and unsetting) a single tile in an empty tile map
     const SKAVector2i tileOnePosition = { .x = 5, .y = 5 };
     CreTilemap tilemap = CRE_TILEMAP_DEFAULT_EMPTY;
     cre_tilemap_set_tile_active(&tilemap, &tileOnePosition, true);
     TEST_ASSERT_EQUAL_INT(5, tilemap.activeSize.w);
     TEST_ASSERT_EQUAL_INT(5, tilemap.activeSize.h);
-    const CreTileBitmask tileBitmask = cre_tilemap_get_tile_bitmask(&tilemap, &tileOnePosition);
-    TEST_ASSERT_EQUAL_INT(CreTileType_CENTER, tileBitmask);
+    TEST_ASSERT_EQUAL_INT(CreTileType_CENTER, cre_tilemap_get_tile_bitmask(&tilemap, &tileOnePosition));
     cre_tilemap_set_tile_active(&tilemap, &tileOnePosition, false);
     TEST_ASSERT_EQUAL_INT(0, tilemap.activeSize.w);
     TEST_ASSERT_EQUAL_INT(0, tilemap.activeSize.h);
+
+    // 3 x 3 minimal bitmask tests
+    const SKAVector2i tileTwoPosition = { .x = 9, .y = 4 };
+    const SKAVector2i tileThreePosition = { .x = 3, .y = 8 };
+    const SKAVector2i tileFourPosition = { .x = 3, .y = 7 };
+    cre_tilemap_set_tile_active(&tilemap, &tileTwoPosition, true);
+    cre_tilemap_set_tile_active(&tilemap, &tileThreePosition, true);
+    cre_tilemap_set_tile_active(&tilemap, &tileFourPosition, true);
+    TEST_ASSERT_EQUAL_INT(9, tilemap.activeSize.w);
+    TEST_ASSERT_EQUAL_INT(8, tilemap.activeSize.h);
+    TEST_ASSERT_EQUAL_INT(CreTileType_CENTER, cre_tilemap_get_tile_bitmask(&tilemap, &tileTwoPosition));
+    TEST_ASSERT_EQUAL_INT(CreTileType_CENTER | CreTileType_TOP, cre_tilemap_get_tile_bitmask(&tilemap, &tileThreePosition));
+    TEST_ASSERT_EQUAL_INT(CreTileType_CENTER | CreTileType_BOTTOM, cre_tilemap_get_tile_bitmask(&tilemap, &tileFourPosition));
 }
 
 //--- Node event test ---//
