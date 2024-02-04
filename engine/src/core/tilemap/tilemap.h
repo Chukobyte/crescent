@@ -25,12 +25,23 @@ typedef struct CreTileData {
     SKAVector2i position;
 } CreTileData;
 
+typedef enum CreTilemapBitmaskMode {
+    CreTilemapBitmaskMode_3x3_MINIMAL = 0,
+    CreTilemapBitmaskMode_2x2 = 1,
+    CreTilemapBitmaskMode_3x3 = 2,
+} CreTilemapBitmaskMode;
+
 typedef struct CreTilemap {
     SKASize2Di activeSize;
+    CreTilemapBitmaskMode bitmaskMode; // TODO: Actually implement multiple bitmask modes (instead of just default to 3x3 Minimal)
     CreTile tiles[CRE_TILEMAP_MAX_ROWS][CRE_TILEMAP_MAX_COLS];
 } CreTilemap;
 
-#define CRE_TILEMAP_DEFAULT_EMPTY SKA_STRUCT_LITERAL(CreTilemap){ .activeSize = 0, .tiles = {{0}} }
+#define CRE_TILEMAP_DEFAULT_EMPTY SKA_STRUCT_LITERAL(CreTilemap){ \
+.activeSize = 0, \
+.bitmaskMode = CreTilemapBitmaskMode_3x3_MINIMAL, \
+.tiles = {{0}} \
+}
 
 void cre_tilemap_set_tile_active(CreTilemap* tilemap, const SKAVector2i* position, bool isActive);
 bool cre_tilemap_is_tile_active(const CreTilemap* tilemap, const SKAVector2i* position);
