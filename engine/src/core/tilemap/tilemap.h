@@ -5,13 +5,14 @@
 #define CRE_TILEMAP_MAX_ROWS 32
 #define CRE_TILEMAP_MAX_COLS 32
 
+// Can determine which tiles are adjacent to the current one, all active tiles will have a center
 typedef enum CreTileBitmask {
     CreTileType_INVALID = 0,
-    CreTileType_TOP = 1 << 0,
-    CreTileType_RIGHT = 1 << 1,
-    CreTileType_BOTTOM = 1 << 2,
-    CreTileType_LEFT = 1 << 3,
-    CreTileType_CENTER = 1 << 4,
+    CreTileType_CENTER = 1 << 0,
+    CreTileType_TOP = 1 << 1,
+    CreTileType_RIGHT = 1 << 2,
+    CreTileType_BOTTOM = 1 << 3,
+    CreTileType_LEFT = 1 << 4,
 } CreTileBitmask;
 
 typedef struct CreTile {
