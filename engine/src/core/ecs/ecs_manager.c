@@ -1,13 +1,19 @@
 #include "ecs_manager.h"
 
 #include <seika/rendering/renderer.h>
+#include <seika/ecs/ecs.h>
 #include <seika/utils/se_string_util.h>
 #include <seika/utils/se_assert.h>
 #include <seika/asset/asset_manager.h>
 
 #include "component/component.h"
-#include "component/transform2d_component.h"
+#include "component/animated_sprite_component.h"
+#include "component/collider2d_component.h"
+#include "component/color_rect_component.h"
+#include "component/parallax_component.h"
+#include "component/particles2d_component.h"
 #include "component/text_label_component.h"
+#include "component/transform2d_component.h"
 #include "system/animated_sprite_rendering_ec_system.h"
 #include "system/collision_ec_system.h"
 #include "system/color_rect_ec_system.h"
@@ -19,10 +25,33 @@
 #include "system/sprite_rendering_ec_system.h"
 #include "../scene/scene_manager.h"
 #include "../game_properties.h"
+#include "component/sprite_component.h"
 
 static SceneTreeNode* fpsDisplayNode = NULL;
 
 void cre_ecs_manager_initialize() {
+    // New ecs stuff
+    ska_ecs_initialize();
+    SKA_ECS_REGISTER_COMPONENT(AnimatedSpriteComponent);
+    SKA_ECS_REGISTER_COMPONENT(Collider2DComponent);
+    SKA_ECS_REGISTER_COMPONENT(ColorRectComponent);
+    SKA_ECS_REGISTER_COMPONENT(NodeComponent);
+    SKA_ECS_REGISTER_COMPONENT(ParallaxComponent);
+    SKA_ECS_REGISTER_COMPONENT(Particles2DComponent);
+    SKA_ECS_REGISTER_COMPONENT(ScriptComponent);
+    SKA_ECS_REGISTER_COMPONENT(SpriteComponent);
+    SKA_ECS_REGISTER_COMPONENT(TextLabelComponent);
+    SKA_ECS_REGISTER_COMPONENT(Transform2DComponent);
+
+//    ska_ecs_system_register(cre_sprite_rendering_ec_system_create());
+//    ska_ecs_system_register(cre_animated_sprite_rendering_ec_system_create());
+//    ska_ecs_system_register(cre_font_rendering_ec_system_create());
+//    ska_ecs_system_register(cre_script_ec_system_create());
+//    ska_ecs_system_register(cre_collision_ec_system_create());
+//    ska_ecs_system_register(cre_color_rect_ec_system_create());
+//    ska_ecs_system_register(cre_parallax_ec_system_create());
+//    ska_ecs_system_register(cre_particle_emitter_ec_system_create());
+
     cre_component_manager_initialize();
     cre_ec_system_initialize();
     // Initialize and register ec systems
@@ -37,6 +66,8 @@ void cre_ecs_manager_initialize() {
 }
 
 void cre_ecs_manager_initialize_ex(SETexture* colorRectTexture, SETexture* particle2DSquareTexture) {
+    ska_ecs_initialize();
+
     cre_component_manager_initialize();
     cre_ec_system_initialize();
     // Initialize and register ec systems
@@ -87,6 +118,8 @@ void cre_ecs_manager_enable_fps_display_entity(bool enabled, const char* fontUID
 }
 
 void cre_ecs_manager_finalize() {
+    ska_ecs_finalize();
+
     cre_ec_system_finalize();
     cre_component_manager_finalize();
 }
