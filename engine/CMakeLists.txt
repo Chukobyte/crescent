@@ -4,7 +4,7 @@ set(CMAKE_C_STANDARD 11)
 
 project(crescent_core C)
 
-include(../Functions.cmake)
+include(../Dependencies.cmake)
 
 if (CMAKE_C_COMPILER_ID STREQUAL "MSVC")
     #    list(APPEND flags "/std:c11" "/W3" "/Zc:preprocessor") # TODO: Adding "/std:c11" breaks editor, fix later...
@@ -88,15 +88,7 @@ endif()
 
 find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
 
-# Include pocketpy as a dependency
-include(FetchContent)
-option(PK_BUILD_STATIC_LIB "Build static library" ON)
-FetchContent_Declare(
-        pocketpy_content
-        GIT_REPOSITORY https://github.com/blueloveTH/pocketpy.git
-        GIT_TAG v1.4.0
-)
-FetchContent_MakeAvailable(pocketpy_content)
+install_pocketpy()
 
 if (NOT TARGET glad)
     add_library(glad ../include/glad/glad.c)
@@ -112,11 +104,6 @@ install_seika()
 
 add_library(cJSON ../include/cjson/cJSON.c)
 
-target_include_directories(${PROJECT_NAME} PUBLIC
-        "${PROJECT_BINARY_DIR}"
-        "../include"
-        "${pocketpy_content_SOURCE_DIR}/include"
-)
 target_include_directories(glad PUBLIC
         "${PROJECT_BINARY_DIR}"
         "../include"
