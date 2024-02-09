@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../../scripting/script_context.h"
-#include "../component/script_component.h"
+void cre_script_ec_system_create_and_register();
 
-struct CreEntitySystem* cre_script_ec_system_create();
+//struct CreEntitySystem* cre_script_ec_system_create();

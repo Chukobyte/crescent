@@ -43,6 +43,7 @@ add_library(${PROJECT_NAME} STATIC
         src/core/camera/camera.c
         src/core/camera/camera_manager.c
         src/core/ecs/ecs_manager.c
+        src/core/ecs/ecs_globals.c
         src/core/ecs/component/animated_sprite_component.c
         src/core/ecs/component/collider2d_component.c
         src/core/ecs/component/color_rect_component.c

@@ -6,6 +6,8 @@ extern "C" {
 
 #include <stdbool.h>
 
+#include <seika/ecs/component.h>
+
 #include "../entity/entity.h"
 
 #define CRE_MAX_COMPONENTS 10
@@ -42,7 +44,8 @@ typedef enum CreComponentType {
 typedef struct CreComponentEntityUpdatePayload {
     CreEntity entity;
     void* component;
-    CreComponentType componentType;
+//    CreComponentType componentType;
+    SkaComponentType componentType;
 } CreComponentEntityUpdatePayload;
 
 // --- Component Manager --- //
