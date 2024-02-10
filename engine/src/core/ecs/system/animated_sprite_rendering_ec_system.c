@@ -26,7 +26,7 @@ void cre_animated_sprite_rendering_ec_system_create_and_register() {
 }
 
 void on_entity_registered(SkaECSSystem* system, SkaEntity entity) {
-    AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent *) cre_component_manager_get_component(entity, CreComponentDataIndex_ANIMATED_SPRITE);
+    AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*)ska_ecs_component_manager_get_component(entity, ANIMATED_SPRITE_COMPONENT_INDEX);
     SE_ASSERT(animatedSpriteComponent != NULL);
     animated_sprite_component_refresh_random_stagger_animation_time(animatedSpriteComponent);
     if (animatedSpriteComponent->isPlaying) {

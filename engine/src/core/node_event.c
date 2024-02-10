@@ -2,12 +2,14 @@
 
 #include <string.h>
 
-#include <seika/memory/se_mem.h>
+#include <seika/ecs/ecs.h>
 #include <seika/data_structures/se_hash_map_string.h>
 #include <seika/data_structures/se_array_utils.h>
+#include <seika/memory/se_mem.h>
 #include <seika/utils/se_string_util.h>
 #include <seika/utils/se_assert.h>
 
+#include "ecs/ecs_globals.h"
 #include "ecs/component/node_component.h"
 #include "ecs/component/component.h"
 
@@ -192,7 +194,7 @@ bool does_entity_have_observer_event_already(CreEntity observerEntity, NodeEvent
 
 void register_entity_to_on_scene_exit_callback(CreEntity entity) {
     NodeComponent* nodeComp = NULL;
-    if (!eventDatabase.hasEntityRegisteredOnSceneExitCallback[entity] && (nodeComp = cre_component_manager_get_component_unchecked(entity, CreComponentDataIndex_NODE))) {
+    if (!eventDatabase.hasEntityRegisteredOnSceneExitCallback[entity] && (nodeComp = ska_ecs_component_manager_get_component_unchecked(entity, NODE_COMPONENT_INDEX))) {
         se_event_register_observer(&nodeComp->onSceneTreeExit, &nodeEntityOnExitSceneObserver);
         eventDatabase.hasEntityRegisteredOnSceneExitCallback[entity] = true;
     }
@@ -200,7 +202,7 @@ void register_entity_to_on_scene_exit_callback(CreEntity entity) {
 
 void unregister_entity_to_on_scene_exit_callback(CreEntity entity) {
     NodeComponent* nodeComp = NULL;
-    if (eventDatabase.hasEntityRegisteredOnSceneExitCallback[entity] && (nodeComp = cre_component_manager_get_component_unchecked(entity, CreComponentDataIndex_NODE))) {
+    if (eventDatabase.hasEntityRegisteredOnSceneExitCallback[entity] && (nodeComp = ska_ecs_component_manager_get_component_unchecked(entity, NODE_COMPONENT_INDEX))) {
         se_event_unregister_observer(&nodeComp->onSceneTreeExit, &nodeEntityOnExitSceneObserver);
         eventDatabase.hasEntityRegisteredOnSceneExitCallback[entity] = false;
     }

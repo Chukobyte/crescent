@@ -135,7 +135,7 @@ void cre_ecs_manager_enable_fps_display_entity(bool enabled, const char* fontUID
     static CreEntity currentFpsEntity = CRE_NULL_ENTITY;
     // Create temp entity
     if (!isEnabled && enabled) {
-        fpsDisplayNode = cre_scene_tree_create_tree_node(cre_ec_system_create_entity_uid(), NULL);
+        fpsDisplayNode = cre_scene_tree_create_tree_node(ska_ecs_entity_create(), NULL);
         currentFpsEntity = fpsDisplayNode->entity;
         // Transform 2D
         Transform2DComponent* transform2DComponent = transform2d_component_create();

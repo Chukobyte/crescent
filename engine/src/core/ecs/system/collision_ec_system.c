@@ -73,8 +73,8 @@ void on_entity_unregistered(SkaECSSystem* system, SkaEntity entity) {
 }
 
 void on_entity_entered_scene(SkaECSSystem* system, SkaEntity entity) {
-    Transform2DComponent* transformComp = (Transform2DComponent*)ska_ecs_component_manager_get_component(entity,CreComponentDataIndex_TRANSFORM_2D);
-    Collider2DComponent* colliderComp = (Collider2DComponent*)ska_ecs_component_manager_get_component(entity,CreComponentDataIndex_COLLIDER_2D);
+    Transform2DComponent* transformComp = (Transform2DComponent*)ska_ecs_component_manager_get_component(entity, TRANSFORM2D_COMPONENT_INDEX);
+    Collider2DComponent* colliderComp = (Collider2DComponent*)ska_ecs_component_manager_get_component(entity, COLLIDER2D_COMPONENT_INDEX);
     if (transformComp != NULL && colliderComp != NULL) {
         SKARect2 collisionRect = cre_get_collision_rectangle(entity, transformComp, colliderComp);
         se_spatial_hash_map_insert_or_update(spatialHashMap, entity, &collisionRect);
@@ -124,8 +124,7 @@ void collision_system_on_transform_update(SESubjectNotifyPayload* payload) {
     Transform2DComponent* transformComp = (Transform2DComponent*) updatePayload->component;
     const CreEntity entity = updatePayload->entity;
 
-    Collider2DComponent* colliderComp = (Collider2DComponent*) cre_component_manager_get_component_unchecked(entity,
-                                                                                                             CreComponentDataIndex_COLLIDER_2D);
+    Collider2DComponent* colliderComp = (Collider2DComponent*)ska_ecs_component_manager_get_component_unchecked(entity, COLLIDER2D_COMPONENT_INDEX);
     if (transformComp != NULL && colliderComp != NULL) {
         SKARect2 collisionRect = cre_get_collision_rectangle(entity, transformComp, colliderComp);
         se_spatial_hash_map_insert_or_update(spatialHashMap, entity, &collisionRect);

@@ -2,12 +2,14 @@
 
 #include <stdio.h>
 
-#include "../seika/utils/se_assert.h"
+#include <seika/ecs/ecs.h>
+#include <seika/utils/se_assert.h>
 
 #include "cre_pkpy.h"
 #include "cre_pkpy_util.h"
 #include "cre_pkpy_api_source.h"
-#include "../../../ecs/system/ec_system.h"
+#include "../../../ecs/ecs_globals.h"
+//#include "../../../ecs/system/ec_system.h"
 #include "../../../ecs/component/node_component.h"
 #include "../../../ecs/component/script_component.h"
 
@@ -62,8 +64,8 @@ CreEntity cre_pkpy_entity_instance_cache_create_new_entity(pkpy_vm* vm, const ch
     pkpy_pop_top(vm);
 
     // Add script component if missing
-    if (!cre_component_manager_has_component(entity, CreComponentDataIndex_SCRIPT)) {
-        cre_component_manager_set_component(entity, CreComponentDataIndex_SCRIPT, script_component_create_ex(classPath, className, ScriptContextType_PYTHON));
+    if (!ska_ecs_component_manager_has_component(entity, SCRIPT_COMPONENT_INDEX)) {
+        ska_ecs_component_manager_set_component(entity, SCRIPT_COMPONENT_INDEX, script_component_create_ex(classPath, className, ScriptContextType_PYTHON));
     }
 
     return entity;

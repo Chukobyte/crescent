@@ -1,6 +1,9 @@
 #include "scene_utils.h"
 
+#include <seika/ecs/ecs.h>
+
 #include "scene_tree.h"
+#include "../ecs/ecs_globals.h"
 #include "../ecs/component/component.h"
 #include "../camera/camera.h"
 #include "../camera/camera_manager.h"
@@ -12,7 +15,7 @@ on_get_local_transform onGetLocalTransformFunc = &default_get_local_transform;
 
 // Default engine callbacks
 SKATransform2D default_get_local_transform(CreEntity entity, int* zIndex, bool* success) {
-    Transform2DComponent* transform2DComponent = cre_component_manager_get_component_unchecked(entity, CreComponentDataIndex_TRANSFORM_2D);
+    Transform2DComponent* transform2DComponent = ska_ecs_component_manager_get_component_unchecked(entity, TRANSFORM2D_COMPONENT_INDEX);
     if (transform2DComponent == NULL) {
         *success = false;
         return SKA_TRANSFORM_IDENTITY;

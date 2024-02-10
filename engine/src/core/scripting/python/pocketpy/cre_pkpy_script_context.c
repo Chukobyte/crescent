@@ -22,6 +22,7 @@
 #include "../../../ecs/component/node_component.h"
 #include "../../../ecs/component/script_component.h"
 #include "../../../engine_context.h"
+#include "../../../ecs/ecs_globals.h"
 
 //--- Script Context Interface ---//
 void pkpy_sc_on_delete_instance(CreEntity entity);
@@ -99,12 +100,12 @@ void cre_pkpy_script_context_setup_node_event(CreEntity entity) {
     if (!entityInitializedList[entity]) {
         entityInitializedList[entity] = true;
         // Node
-        NodeComponent* nodeComponent = (NodeComponent*) cre_component_manager_get_component_unchecked(entity, CreComponentDataIndex_NODE);
+        NodeComponent* nodeComponent = (NodeComponent*)ska_ecs_component_manager_get_component(entity, NODE_COMPONENT_INDEX);
         SE_ASSERT_FMT(nodeComponent, "Node component should never be null!  Node name: '%s', entity id: '%u'", nodeComponent->name, entity);
         se_event_register_observer(&nodeComponent->onSceneTreeEnter, &node_scene_entered_observer);
         se_event_register_observer(&nodeComponent->onSceneTreeExit, &node_scene_exited_observer);
         // Animated Sprite
-        AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) cre_component_manager_get_component_unchecked(entity, CreComponentDataIndex_ANIMATED_SPRITE);
+        AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) ska_ecs_component_manager_get_component_unchecked(entity, ANIMATED_SPRITE_COMPONENT_INDEX);
         if (animatedSpriteComponent) {
             se_event_register_observer(&animatedSpriteComponent->onFrameChanged, &animated_sprite_frame_changed_observer);
             se_event_register_observer(&animatedSpriteComponent->onAnimationFinished, &animated_sprite_animation_finished_observer);
@@ -130,15 +131,15 @@ void cre_pkpy_script_context_create_instance_if_nonexistent(CreEntity entity, co
 
 void cre_pkpy_script_context_create_instance_if_nonexistent_and_push_entity_instance(CreEntity entity) {
     SE_ASSERT(cre_pkpy_vm);
-    const NodeComponent* nodeComponent = (NodeComponent*) cre_component_manager_get_component_unchecked(entity, CreComponentDataIndex_NODE);
-    ScriptComponent* scriptComponent = (ScriptComponent*) cre_component_manager_get_component_unchecked(entity, CreComponentDataIndex_SCRIPT);
+    const NodeComponent* nodeComponent = (NodeComponent*)ska_ecs_component_manager_get_component(entity, NODE_COMPONENT_INDEX);
+    ScriptComponent* scriptComponent = (ScriptComponent*)ska_ecs_component_manager_get_component_unchecked(entity, SCRIPT_COMPONENT_INDEX);
     if (!scriptComponent) {
         // If an entity doesn't have a script component at this point, it should just be a plain base class from the crescent module.
         // Since that is the case, just create a script component so that we can clean up within the script context when the entity
         // needs to leave the instance cache.
         const char* baseClassName = node_get_base_type_string(nodeComponent->type);
         scriptComponent = script_component_create_ex(CRE_PKPY_MODULE_NAME_CRESCENT, baseClassName, ScriptContextType_PYTHON);
-        cre_component_manager_set_component(entity, CreComponentDataIndex_SCRIPT, scriptComponent);
+        ska_ecs_component_manager_set_component(entity, SCRIPT_COMPONENT_INDEX, scriptComponent);
     }
     cre_pkpy_script_context_create_instance_if_nonexistent(entity, scriptComponent->classPath, scriptComponent->className);
     cre_pkpy_entity_instance_cache_push_entity_instance(cre_pkpy_vm, entity);

@@ -1,8 +1,8 @@
 #include "camera.h"
 
 #include "../game_properties.h"
+#include "../ecs/ecs_globals.h"
 #include "../ecs/component/node_component.h"
-#include "../ecs/component/component.h"
 #include "../scene/scene_manager.h"
 
 void cre_camera2d_clamp_viewport_to_boundary(CRECamera2D* camera2D) {
@@ -28,13 +28,11 @@ void cre_camera2d_follow_entity(CRECamera2D* camera2D, CreEntity entity) {
     camera2D->entityFollowing = entity;
     camera2D->mode = CreCameraMode_FOLLOW_ENTITY;
     // Register to entity events
-    NodeComponent* nodeComponent = (NodeComponent*) cre_component_manager_get_component_unchecked(entity,
-                                   CreComponentDataIndex_NODE);
+    NodeComponent* nodeComponent = (NodeComponent*)ska_ecs_component_manager_get_component_unchecked(entity, NODE_COMPONENT_INDEX);
     if (nodeComponent != NULL) {
         se_event_register_observer(&nodeComponent->onSceneTreeExit, &camera2D->onEntityExitSceneObserver);
     }
-    Transform2DComponent* transform2DComponent = (Transform2DComponent *) cre_component_manager_get_component_unchecked(
-                entity, CreComponentDataIndex_TRANSFORM_2D);
+    Transform2DComponent* transform2DComponent = (Transform2DComponent *)ska_ecs_component_manager_get_component_unchecked(entity, TRANSFORM2D_COMPONENT_INDEX);
     if (transform2DComponent != NULL) {
         se_event_register_observer(&transform2DComponent->onTransformChanged, &camera2D->onEntityTransformChangeObserver);
         // Trigger update right away so camera can be in position
@@ -47,16 +45,13 @@ void cre_camera2d_unfollow_entity(CRECamera2D* camera2D, CreEntity entity) {
         camera2D->entityFollowing = CRE_NULL_ENTITY;
         camera2D->mode = CreCameraMode_MANUAL;
         // Unregister from entity events
-        NodeComponent* nodeComponent = (NodeComponent*) cre_component_manager_get_component_unchecked(entity,
-                                       CreComponentDataIndex_NODE);
+        NodeComponent* nodeComponent = (NodeComponent*)ska_ecs_component_manager_get_component_unchecked(entity, NODE_COMPONENT_INDEX);
         if (nodeComponent != NULL) {
             se_event_unregister_observer(&nodeComponent->onSceneTreeExit, &camera2D->onEntityExitSceneObserver);
         }
-        Transform2DComponent* transform2DComponent = (Transform2DComponent *) cre_component_manager_get_component_unchecked(
-                    entity, CreComponentDataIndex_TRANSFORM_2D);
+        Transform2DComponent* transform2DComponent = (Transform2DComponent*)ska_ecs_component_manager_get_component_unchecked(entity, TRANSFORM2D_COMPONENT_INDEX);
         if (transform2DComponent != NULL) {
-            se_event_unregister_observer(&transform2DComponent->onTransformChanged,
-                                         &camera2D->onEntityTransformChangeObserver);
+            se_event_unregister_observer(&transform2DComponent->onTransformChanged,&camera2D->onEntityTransformChangeObserver);
         }
     }
 }

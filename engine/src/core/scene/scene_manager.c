@@ -116,10 +116,21 @@ void cre_scene_manager_stage_child_node_to_be_added_later(SceneTreeNode* treeNod
 
 void cre_scene_manager_process_queued_creation_entities() {
     for (size_t i = 0; i < entitiesQueuedForCreationSize; i++) {
-        const CreEntity queuedEntity = entitiesQueuedForCreation[i];
+        CreEntity queuedEntity = entitiesQueuedForCreation[i];
         ska_ecs_system_update_entity_signature_with_systems(queuedEntity);
         ska_ecs_system_event_entity_start(queuedEntity);
+
+        // Notify scene enter observers before calling 'entered scene' on systems
+        NodeComponent* nodeComponent = (NodeComponent*) ska_ecs_component_manager_get_component_unchecked(queuedEntity, NODE_COMPONENT_INDEX);
+        if (nodeComponent != NULL) {
+            se_event_notify_observers(&nodeComponent->onSceneTreeEnter, &(SESubjectNotifyPayload) {
+                .data = &queuedEntity
+            });
+        }
+
         ska_ecs_system_event_entity_entered_scene(queuedEntity);
+        // broadcast to subscribers
+
 
 #ifdef CRE_SCENE_MANAGER_RENDER_INTERPOLATE_TRANSFORM2D_ALPHA
         Transform2DComponent* transformComponent = (Transform2DComponent*)ska_ecs_component_manager_get_component(queuedEntity, TRANSFORM2D_COMPONENT_INDEX);
@@ -143,6 +154,14 @@ void cre_scene_manager_queue_entity_for_deletion(CreEntity entity) {
     entitiesQueuedForDeletion[entitiesQueuedForDeletionSize++] = entity;
     // Clean up
     ska_ecs_system_event_entity_end(entity);
+    // broadcast to subscribers
+    NodeComponent* nodeComponent = (NodeComponent*)ska_ecs_component_manager_get_component_unchecked(entity, NODE_COMPONENT_INDEX);
+    if (nodeComponent != NULL) {
+        // Note: Node events should not be created during this time
+        se_event_notify_observers(&nodeComponent->onSceneTreeExit, &(SESubjectNotifyPayload) {
+                .data = &entity
+        });
+    }
 }
 
 void cre_scene_manager_process_queued_deletion_entities() {
@@ -470,7 +489,7 @@ SceneTreeNode* cre_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneN
         ska_ecs_component_manager_set_component(node->entity, SPRITE_COMPONENT_INDEX, spriteComponent);
     }
     if (jsonSceneNode->components[ANIMATED_SPRITE_COMPONENT_INDEX] != NULL) {
-        AnimatedSpriteComponent* animatedSpriteComponent = animated_sprite_component_data_copy_to_animated_sprite((AnimatedSpriteComponentData*) jsonSceneNode->components[CreComponentDataIndex_ANIMATED_SPRITE]);
+        AnimatedSpriteComponent* animatedSpriteComponent = animated_sprite_component_data_copy_to_animated_sprite((AnimatedSpriteComponentData*)jsonSceneNode->components[ANIMATED_SPRITE_COMPONENT_INDEX]);
         if (jsonSceneNode->shaderInstanceShaderPath) {
             animatedSpriteComponent->shaderInstanceId = se_shader_cache_create_instance_and_add(jsonSceneNode->shaderInstanceShaderPath);
             SEShaderInstance* shaderInstance = se_shader_cache_get_instance(animatedSpriteComponent->shaderInstanceId);

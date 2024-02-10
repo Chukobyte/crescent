@@ -6,6 +6,7 @@
 #include <seika/rendering/render_context.h>
 #include <seika/rendering/renderer.h>
 #include <seika/rendering/shader/shader_cache.h>
+#include <seika/ecs/ec_system.h>
 #include <seika/input/input.h>
 #include <seika/input/mouse.h>
 #include <seika/audio/audio.h>
@@ -29,10 +30,10 @@
 #include "../../../../scene/scene_utils.h"
 #include "../../../../scene/scene_template_cache.h"
 #include "../../../../ecs/ecs_manager.h"
-#include "../../../../ecs/system/ec_system.h"
 #include "../../../../camera/camera.h"
 #include "../../../../camera/camera_manager.h"
 #include "../../../../physics/collision/collision.h"
+#include "../../../../ecs/ecs_globals.h"
 
 // Shader Instance
 int cre_pkpy_api_shader_instance_delete(pkpy_vm* vm);
@@ -1038,8 +1039,7 @@ int cre_pkpy_api_camera2d_unfollow_node(pkpy_vm* vm) {
 
 //--- WORLD ---//
 void cre_pkpy_mark_scene_nodes_time_dilation_flag_dirty(SceneTreeNode* node) {
-    NodeComponent* nodeComponent = (NodeComponent*) cre_component_manager_get_component_unchecked(node->entity, CreComponentDataIndex_NODE);
-    SE_ASSERT(nodeComponent != NULL);
+    NodeComponent* nodeComponent = (NodeComponent*)ska_ecs_component_manager_get_component(node->entity, NODE_COMPONENT_INDEX);
     nodeComponent->timeDilation.cacheInvalid = true;
 }
 
@@ -1230,7 +1230,7 @@ int cre_pkpy_api_server_start(pkpy_vm* vm) {
     int pyPort;
     pkpy_to_int(vm, 0, &pyPort);
 
-    se_udp_server_initialize(pyPort, cre_ec_system_network_callback);
+    se_udp_server_initialize(pyPort, ska_ecs_system_event_network_callback);
     return 0;
 }
 
@@ -1256,7 +1256,7 @@ int cre_pkpy_api_client_start(pkpy_vm* vm) {
     pkpy_to_int(vm, 1, &pyPort);
 
     const char* host = cre_pkpy_util_convert_pkpy_CString(&pyHost);
-    se_udp_client_initialize(host, pyPort, cre_ec_system_network_callback);
+    se_udp_client_initialize(host, pyPort, ska_ecs_system_event_network_callback);
     return 0;
 }
 int cre_pkpy_api_client_stop(pkpy_vm* vm) {

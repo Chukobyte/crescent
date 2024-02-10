@@ -3,6 +3,7 @@
 #include <time.h>
 
 #include <seika/seika.h>
+#include <seika/ecs/ec_system.h>
 #include <seika/asset/asset_file_loader.h>
 #include <seika/asset/asset_manager.h>
 #include <seika/input/input.h>
@@ -17,7 +18,6 @@
 #include "embedded_assets.h"
 #include "utils/command_line_args_util.h"
 #include "ecs/ecs_manager.h"
-#include "ecs/system/ec_system.h"
 #include "scene/scene_manager.h"
 #include "json/json_file_loader.h"
 #include "math/curve_float_manager.h"
@@ -195,7 +195,7 @@ void cre_update() {
 }
 
 void cre_process_game_update() {
-    cre_ec_system_pre_update_all_systems();
+    ska_ecs_system_event_pre_update_all_systems();
 
     static const uint32_t MILLISECONDS_PER_TICK = 1000; // TODO: Put in another place
     static uint32_t lastFrameTime = 0;
@@ -208,7 +208,7 @@ void cre_process_game_update() {
 
     // Variable Time Step
     const float variableDeltaTime = (float) (sf_get_ticks() - lastFrameTime) / (float) MILLISECONDS_PER_TICK;
-    cre_ec_system_update_systems(variableDeltaTime);
+//    ska_ecs_system_event_update_systems(variableDeltaTime);
 
     // Fixed Time Step
     static uint32_t fixedCurrentTime = 0;
@@ -225,20 +225,20 @@ void cre_process_game_update() {
     while (accumulator >= CRE_GLOBAL_PHYSICS_DELTA_TIME) {
         accumulator -= CRE_GLOBAL_PHYSICS_DELTA_TIME;
         sf_fixed_update(CRE_GLOBAL_PHYSICS_DELTA_TIME);
-        cre_ec_system_fixed_update_systems(CRE_GLOBAL_PHYSICS_DELTA_TIME);
+        ska_ecs_system_event_fixed_update_systems(CRE_GLOBAL_PHYSICS_DELTA_TIME);
         se_input_clean_up_flags();
     }
 
     se_input_clean_up_flags();
 
-    cre_ec_system_post_update_all_systems();
+    ska_ecs_system_event_post_update_all_systems();
 
     lastFrameTime = sf_get_ticks();
 }
 
 void cre_render() {
     // Gather render data from ec systems
-    cre_ec_system_render_systems();
+    ska_ecs_system_event_render_systems();
     // Actually render
     sf_render();
 }

@@ -14,6 +14,7 @@
 #include "../../scripting/native/native_script_context.h"
 #include "../../scripting/native/internal_classes/fps_display_class.h"
 
+static void on_ec_system_registered(SkaECSSystem* system);
 static void on_ec_system_destroyed(SkaECSSystem* system);
 static void on_entity_registered(SkaECSSystem* system, CreEntity entity);
 static void on_entity_unregistered(SkaECSSystem* system, CreEntity entity);
@@ -30,6 +31,7 @@ static size_t scriptContextsCount = 0;
 
 void cre_script_ec_system_create_and_register() {
     SkaECSSystemTemplate systemTemplate = ska_ecs_system_create_default_template("Script");
+    systemTemplate.on_ec_system_register = on_ec_system_registered;
     systemTemplate.on_ec_system_destroy = on_ec_system_destroyed;
     systemTemplate.on_entity_registered_func = on_entity_registered;
     systemTemplate.on_entity_unregistered_func = on_entity_unregistered;
@@ -41,6 +43,18 @@ void cre_script_ec_system_create_and_register() {
     systemTemplate.fixed_update_func = script_system_instance_fixed_update;
     systemTemplate.network_callback_func = network_callback;
     SKA_ECS_SYSTEM_REGISTER_FROM_TEMPLATE(&systemTemplate, Transform2DComponent, ScriptComponent);
+}
+
+void on_ec_system_registered(SkaECSSystem* system) {
+    // Python Context
+    scriptContexts[ScriptContextType_PYTHON] = cre_pkpy_script_context_create();
+    scriptContextsCount++;
+    SE_ASSERT(scriptContexts[ScriptContextType_PYTHON] != NULL);
+    // Native Context
+    scriptContexts[ScriptContextType_NATIVE] = cre_native_create_script_context();
+    scriptContextsCount++;
+    // Register internal classed
+    cre_native_class_register_new_class(fps_display_native_class_create_new());
 }
 
 void on_ec_system_destroyed(SkaECSSystem* system) {

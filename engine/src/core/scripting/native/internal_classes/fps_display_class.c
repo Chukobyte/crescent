@@ -4,11 +4,13 @@
 #include <stdlib.h>
 
 #include <seika/rendering/renderer.h>
+#include <seika/ecs/ecs.h>
 #include <seika/memory/se_mem.h>
 #include <seika/utils/se_string_util.h>
 
 #include "../native_script_class.h"
 #include "../../../engine_context.h"
+#include "../../../ecs/ecs_globals.h"
 #include "../../../ecs/component/text_label_component.h"
 #include "../../../ecs/component/component.h"
 
@@ -51,7 +53,7 @@ void fps_display_update(CRENativeScriptClass* nativeScriptClass, float deltaTime
     static char fpsAmountBuffer[6];
     // FIXME: This is windows specific, needs to be replaced for other OS
     gcvt(cre_engine_context_get()->stats.averageFPS, 4, fpsAmountBuffer);
-    TextLabelComponent* textLabelComponent = (TextLabelComponent*) cre_component_manager_get_component(nativeScriptClass->entity, CreComponentDataIndex_TEXT_LABEL);
+    TextLabelComponent* textLabelComponent = (TextLabelComponent*)ska_ecs_component_manager_get_component(nativeScriptClass->entity, TEXT_LABEL_COMPONENT_INDEX);
     se_strcpy(textLabelComponent->text, "FPS: ");
     se_strcat(textLabelComponent->text, fpsAmountBuffer);
 }
