@@ -2,17 +2,17 @@
 
 #include <stddef.h>
 
-#include "../ecs/entity/entity.h"
+#include <seika/ecs/entity.h>
 
-typedef void (*OnCreateInstance) (CreEntity, const char*, const char*);
-typedef void (*OnDeleteInstance) (CreEntity);
-typedef void (*OnStart) (CreEntity);
-typedef void (*OnEnd) (CreEntity);
+typedef void (*OnCreateInstance) (SkaEntity, const char*, const char*);
+typedef void (*OnDeleteInstance) (SkaEntity);
+typedef void (*OnStart) (SkaEntity);
+typedef void (*OnEnd) (SkaEntity);
 
 typedef void (*OnPreUpdateAll) ();
 typedef void (*OnPostUpdateAll) ();
-typedef void (*OnUpdateInstance) (CreEntity, float);
-typedef void (*OnFixedUpdateInstance) (CreEntity, float);
+typedef void (*OnUpdateInstance) (SkaEntity, float);
+typedef void (*OnFixedUpdateInstance) (SkaEntity, float);
 
 typedef void (*OnNetworkCallback) (const char*);
 
@@ -20,7 +20,7 @@ typedef void (*OnScriptContextDestroy) ();
 
 // TODO: Make network callbacks not specific to python
 struct _object; // PyObject
-typedef void (*OnEntitySubscribeToNetworkCallback) (CreEntity, struct _object*, const char*);
+typedef void (*OnEntitySubscribeToNetworkCallback) (SkaEntity, struct _object*, const char*);
 
 // Generic script context to be used as an interface for game scripting
 // Note: Node event logics must be handled manually within the script context, refer to 'node_event.h' for the api.
@@ -52,8 +52,8 @@ typedef struct CREScriptContext {
     // even though it's not used in the script ec system
     size_t updateEntityCount;
     size_t fixedUpdateEntityCount;
-    CreEntity updateEntities[CRE_MAX_ENTITIES];
-    CreEntity fixedUpdateEntities[CRE_MAX_ENTITIES];
+    SkaEntity updateEntities[SKA_MAX_ENTITIES];
+    SkaEntity fixedUpdateEntities[SKA_MAX_ENTITIES];
 } CREScriptContext;
 
 CREScriptContext* cre_script_context_create();

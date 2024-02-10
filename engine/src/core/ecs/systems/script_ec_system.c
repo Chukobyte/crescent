@@ -14,10 +14,10 @@
 
 static void on_ec_system_registered(SkaECSSystem* system);
 static void on_ec_system_destroyed(SkaECSSystem* system);
-static void on_entity_registered(SkaECSSystem* system, CreEntity entity);
-static void on_entity_unregistered(SkaECSSystem* system, CreEntity entity);
-static void on_entity_start(SkaECSSystem* system, CreEntity entity);
-static void on_entity_end(SkaECSSystem* system, CreEntity entity);
+static void on_entity_registered(SkaECSSystem* system, SkaEntity entity);
+static void on_entity_unregistered(SkaECSSystem* system, SkaEntity entity);
+static void on_entity_start(SkaECSSystem* system, SkaEntity entity);
+static void on_entity_end(SkaECSSystem* system, SkaEntity entity);
 static void on_pre_update_all(SkaECSSystem* system);
 static void on_post_update_all(SkaECSSystem* system);
 static void script_system_instance_update(SkaECSSystem* system, float deltaTime);
@@ -64,7 +64,7 @@ void on_ec_system_destroyed(SkaECSSystem* system) {
     scriptContextsCount = 0;
 }
 
-void on_entity_registered(SkaECSSystem* system, CreEntity entity) {
+void on_entity_registered(SkaECSSystem* system, SkaEntity entity) {
     const ScriptComponent* scriptComponent = (ScriptComponent*)ska_ecs_component_manager_get_component(entity, SCRIPT_COMPONENT_INDEX);
     SE_ASSERT(scriptComponent->contextType != ScriptContextType_NONE);
     const CREScriptContext* scriptContext = scriptContexts[scriptComponent->contextType];
@@ -73,18 +73,18 @@ void on_entity_registered(SkaECSSystem* system, CreEntity entity) {
     scriptContext->on_create_instance(entity, scriptComponent->classPath, scriptComponent->className);
 }
 
-void on_entity_unregistered(SkaECSSystem* system, CreEntity entity) {
+void on_entity_unregistered(SkaECSSystem* system, SkaEntity entity) {
     const ScriptComponent* scriptComponent = (ScriptComponent*)ska_ecs_component_manager_get_component(entity, SCRIPT_COMPONENT_INDEX);
     scriptContexts[scriptComponent->contextType]->on_delete_instance(entity);
 }
 
-void on_entity_start(SkaECSSystem* system, CreEntity entity) {
+void on_entity_start(SkaECSSystem* system, SkaEntity entity) {
     const ScriptComponent* scriptComponent = (ScriptComponent*)ska_ecs_component_manager_get_component(entity, SCRIPT_COMPONENT_INDEX);
     SE_ASSERT_FMT(scriptComponent->contextType != ScriptContextType_NONE, "Invalid context type '%d' for entity '%d'", scriptComponent->contextType, entity);
     scriptContexts[scriptComponent->contextType]->on_start(entity);
 }
 
-void on_entity_end(SkaECSSystem* system, CreEntity entity) {
+void on_entity_end(SkaECSSystem* system, SkaEntity entity) {
     const ScriptComponent* scriptComponent = (ScriptComponent*)ska_ecs_component_manager_get_component(entity, SCRIPT_COMPONENT_INDEX);
     scriptContexts[scriptComponent->contextType]->on_end(entity);
 }
@@ -108,7 +108,7 @@ void on_post_update_all(SkaECSSystem* system) {
 void script_system_instance_update(SkaECSSystem* system, float deltaTime) {
     for (size_t i = 0; i < scriptContextsCount; i++) {
         for (size_t entityIndex = 0; entityIndex < scriptContexts[i]->updateEntityCount; entityIndex++) {
-            const CreEntity entity = scriptContexts[i]->updateEntities[entityIndex];
+            const SkaEntity entity = scriptContexts[i]->updateEntities[entityIndex];
             const float entityTimeDilation = cre_scene_manager_get_node_full_time_dilation(entity);
             scriptContexts[i]->on_update_instance(entity, deltaTime * entityTimeDilation);
         }
@@ -118,7 +118,7 @@ void script_system_instance_update(SkaECSSystem* system, float deltaTime) {
 void script_system_instance_fixed_update(SkaECSSystem* system, float deltaTime) {
     for (size_t i = 0; i < scriptContextsCount; i++) {
         for (size_t entityIndex = 0; entityIndex < scriptContexts[i]->fixedUpdateEntityCount; entityIndex++) {
-            const CreEntity entity = scriptContexts[i]->fixedUpdateEntities[entityIndex];
+            const SkaEntity entity = scriptContexts[i]->fixedUpdateEntities[entityIndex];
             const float entityTimeDilation = cre_scene_manager_get_node_full_time_dilation(entity);
             scriptContexts[i]->on_fixed_update_instance(entity, deltaTime * entityTimeDilation);
         }

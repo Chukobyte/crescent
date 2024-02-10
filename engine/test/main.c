@@ -109,8 +109,8 @@ void node_event_callback2(void* observerData, NodeEventNotifyPayload* notifyPayl
 }
 
 void cre_node_event_test(void) {
-    const CreEntity eventEntity = 1;
-    const CreEntity observerEntity = 2;
+    const SkaEntity eventEntity = 1;
+    const SkaEntity observerEntity = 2;
     const char* eventId = "walk";
 
     // Test Empty
@@ -130,7 +130,7 @@ void cre_node_event_test(void) {
     TEST_ASSERT_TRUE(hasBeenNotified);
     hasBeenNotified = false;
 
-    const CreEntity anotherObserverEntity = 3;
+    const SkaEntity anotherObserverEntity = 3;
     node_event_subscribe_to_event(eventEntity, eventId, anotherObserverEntity, node_event_callback2, NULL, NULL);
     TEST_ASSERT_EQUAL_UINT(2, node_event_get_event_observer_count(eventEntity, eventId));
     node_event_notify_observers(eventEntity, eventId, &(NodeEventNotifyPayload){ .data = &NODE_EVENT_TEST_NUMBER });
@@ -272,7 +272,7 @@ void cre_pocketpy_test(void) {
     TEST_ASSERT_EQUAL_INT(0, pkpy_stack_size(vm));
 
     TEST_MESSAGE("Testing entity instance cache");
-    const CreEntity entity = cre_pkpy_entity_instance_cache_create_new_entity(vm, CRE_PKPY_MODULE_NAME_CRESCENT, "Node", cre_ec_system_create_entity_uid());
+    const SkaEntity entity = cre_pkpy_entity_instance_cache_create_new_entity(vm, CRE_PKPY_MODULE_NAME_CRESCENT, "Node", cre_ec_system_create_entity_uid());
     cre_pkpy_entity_instance_cache_push_entity_instance(vm, entity);
     TEST_ASSERT_EQUAL_INT(1, pkpy_stack_size(vm));
     pkpy_getattr(vm, pkpy_name("entity_id"));

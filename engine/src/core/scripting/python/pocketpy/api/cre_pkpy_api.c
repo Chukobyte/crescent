@@ -1021,7 +1021,7 @@ int cre_pkpy_api_camera2d_follow_node(pkpy_vm* vm) {
     int pyEntityId;
     pkpy_to_int(vm, 0, &pyEntityId);
 
-    const CreEntity entity = (CreEntity)pyEntityId;
+    const SkaEntity entity = (SkaEntity)pyEntityId;
     CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
     cre_camera2d_follow_entity(camera2D, entity);
     return 0;
@@ -1031,7 +1031,7 @@ int cre_pkpy_api_camera2d_unfollow_node(pkpy_vm* vm) {
     int pyEntityId;
     pkpy_to_int(vm, 0, &pyEntityId);
 
-    const CreEntity entity = (CreEntity)pyEntityId;
+    const SkaEntity entity = (SkaEntity)pyEntityId;
     CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
     cre_camera2d_unfollow_entity(camera2D, entity);
     return 0;
@@ -1191,10 +1191,10 @@ int cre_pkpy_api_collision_handler_process_collisions(pkpy_vm* vm) {
     int pyEntityId;
     pkpy_to_int(vm, 0, &pyEntityId);
 
-    const CreEntity entity = (CreEntity)pyEntityId;
+    const SkaEntity entity = (SkaEntity)pyEntityId;
     const CollisionResult collisionResult = cre_collision_process_entity_collisions(entity);
     for (size_t i = 0; i < collisionResult.collidedEntityCount; i++) {
-        const CreEntity collidedEntity = collisionResult.collidedEntities[i];
+        const SkaEntity collidedEntity = collisionResult.collidedEntities[i];
         cre_pkpy_script_context_create_instance_if_nonexistent_and_push_entity_instance(collidedEntity);
     }
     return (int)collisionResult.collidedEntityCount;
@@ -1213,7 +1213,7 @@ int cre_pkpy_api_collision_handler_process_mouse_collisions(pkpy_vm* vm) {
     const SKARect2 collisionRect = { mouseWorldPos.x, mouseWorldPos.y, (float)pyCollisionSizeW, (float)pyCollisionSizeH };
     const CollisionResult collisionResult = cre_collision_process_mouse_collisions(&collisionRect);
     for (size_t i = 0; i < collisionResult.collidedEntityCount; i++) {
-        const CreEntity collidedEntity = collisionResult.collidedEntities[i];
+        const SkaEntity collidedEntity = collisionResult.collidedEntities[i];
         cre_pkpy_script_context_create_instance_if_nonexistent_and_push_entity_instance(collidedEntity);
     }
     return (int)collisionResult.collidedEntityCount;

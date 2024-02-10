@@ -37,7 +37,7 @@ void animated_sprite_render(SkaECSSystem* system) {
     const CRECamera2D* defaultCamera = cre_camera_manager_get_default_camera();
     const int currentTickTime = (int) sf_get_ticks();
     for (size_t i = 0; i < system->entity_count; i++) {
-        const CreEntity entity = system->entities[i];
+        const SkaEntity entity = system->entities[i];
         Transform2DComponent* spriteTransformComp = (Transform2DComponent*)ska_ecs_component_manager_get_component(entity, TRANSFORM2D_COMPONENT_INDEX);
         AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*)ska_ecs_component_manager_get_component(entity, ANIMATED_SPRITE_COMPONENT_INDEX);
         CreAnimationFrame currentFrame = animatedSpriteComponent->currentAnimation.animationFrames[animatedSpriteComponent->currentAnimation.currentFrame];

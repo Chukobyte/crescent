@@ -8,8 +8,6 @@ extern "C" {
 
 #include <seika/ecs/component.h>
 
-#include "../entity/entity.h"
-
 #define CRE_MAX_COMPONENTS 10
 
 //typedef enum CreComponentDataIndex {
@@ -42,7 +40,7 @@ extern "C" {
 
 // Struct that is used to pass information to observers from events
 typedef struct CreComponentEntityUpdatePayload {
-    CreEntity entity;
+    SkaEntity entity;
     void* component;
 //    CreComponentType componentType;
     SkaComponentType componentType;
@@ -51,14 +49,14 @@ typedef struct CreComponentEntityUpdatePayload {
 // --- Component Manager --- //
 //void cre_component_manager_initialize();
 //void cre_component_manager_finalize();
-//void* cre_component_manager_get_component(CreEntity entity, CreComponentDataIndex index);
-//void* cre_component_manager_get_component_unchecked(CreEntity entity, CreComponentDataIndex index); // No check, will probably consolidate later...
-//void cre_component_manager_set_component(CreEntity entity, CreComponentDataIndex index, void* component);
-//void cre_component_manager_remove_component(CreEntity entity, CreComponentDataIndex index);
-//void cre_component_manager_remove_all_components(CreEntity entity);
-//bool cre_component_manager_has_component(CreEntity entity, CreComponentDataIndex index);
-//void cre_component_manager_set_component_signature(CreEntity entity, CreComponentType componentTypeSignature);
-//CreComponentType cre_component_manager_get_component_signature(CreEntity entity);
+//void* cre_component_manager_get_component(SkaEntity entity, CreComponentDataIndex index);
+//void* cre_component_manager_get_component_unchecked(SkaEntity entity, CreComponentDataIndex index); // No check, will probably consolidate later...
+//void cre_component_manager_set_component(SkaEntity entity, CreComponentDataIndex index, void* component);
+//void cre_component_manager_remove_component(SkaEntity entity, CreComponentDataIndex index);
+//void cre_component_manager_remove_all_components(SkaEntity entity);
+//bool cre_component_manager_has_component(SkaEntity entity, CreComponentDataIndex index);
+//void cre_component_manager_set_component_signature(SkaEntity entity, CreComponentType componentTypeSignature);
+//CreComponentType cre_component_manager_get_component_signature(SkaEntity entity);
 //
 //const char* cre_component_get_component_data_index_string(CreComponentDataIndex index);
 

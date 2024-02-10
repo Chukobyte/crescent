@@ -9,8 +9,6 @@ extern "C" {
 #include <seika/utils/observer.h>
 #include <seika/data_structures/se_hash_map_string.h>
 
-#include "../entity/entity.h"
-
 #define CRE_NODE_NODE_STRING "Node"
 #define CRE_NODE_NODE2D_STRING "Node2D"
 #define CRE_NODE_SPRITE_STRING "Sprite"

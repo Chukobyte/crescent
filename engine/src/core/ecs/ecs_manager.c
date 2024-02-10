@@ -1,5 +1,7 @@
 #include "ecs_manager.h"
 
+#define SKA_MAX_ENTITIES 1000
+
 #include <seika/rendering/renderer.h>
 #include <seika/ecs/ecs.h>
 #include <seika/utils/se_string_util.h>
@@ -18,14 +20,14 @@
 #include "component/script_component.h"
 #include "component/text_label_component.h"
 #include "component/transform2d_component.h"
-#include "system/animated_sprite_rendering_ec_system.h"
-#include "system/collision_ec_system.h"
-#include "system/color_rect_ec_system.h"
-#include "system/font_rendering_ec_system.h"
-#include "system/parallax_ec_system.h"
-#include "system/particle_emitter_ec_system.h"
-#include "system/script_ec_system.h"
-#include "system/sprite_rendering_ec_system.h"
+#include "systems/animated_sprite_rendering_ec_system.h"
+#include "systems/collision_ec_system.h"
+#include "systems/color_rect_ec_system.h"
+#include "systems/font_rendering_ec_system.h"
+#include "systems/parallax_ec_system.h"
+#include "systems/particle_emitter_ec_system.h"
+#include "systems/script_ec_system.h"
+#include "systems/sprite_rendering_ec_system.h"
 #include "../scene/scene_manager.h"
 #include "../game_properties.h"
 
@@ -131,7 +133,7 @@ void cre_ecs_manager_initialize_ex(SETexture* colorRectTexture, SETexture* parti
 
 void cre_ecs_manager_enable_fps_display_entity(bool enabled, const char* fontUID, float positionX, float positionY) {
     static bool isEnabled = false;
-    static CreEntity currentFpsEntity = CRE_NULL_ENTITY;
+    static SkaEntity currentFpsEntity = SKA_NULL_ENTITY;
     // Create temp entity
     if (!isEnabled && enabled) {
         fpsDisplayNode = cre_scene_tree_create_tree_node(ska_ecs_entity_create(), NULL);
@@ -156,10 +158,10 @@ void cre_ecs_manager_enable_fps_display_entity(bool enabled, const char* fontUID
         ska_ecs_system_update_entity_signature_with_systems(currentFpsEntity);
         cre_scene_manager_queue_node_for_creation(fpsDisplayNode);
     } else if (isEnabled && !enabled) {
-        SE_ASSERT_FMT(currentFpsEntity != CRE_NULL_ENTITY, "Current fps entity is a null entity!?");
+        SE_ASSERT_FMT(currentFpsEntity != SKA_NULL_ENTITY, "Current fps entity is a null entity!?");
         SE_ASSERT_FMT(fpsDisplayNode != NULL, "FPS Display Node is NULL!?");
         cre_queue_destroy_tree_node_entity_all(fpsDisplayNode);
-        currentFpsEntity = CRE_NULL_ENTITY;
+        currentFpsEntity = SKA_NULL_ENTITY;
         fpsDisplayNode = NULL;
     }
     isEnabled = enabled;

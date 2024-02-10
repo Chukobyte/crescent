@@ -15,7 +15,7 @@ static void fixed_update(SkaECSSystem* system, float deltaTime);
 
 static void on_entity_transform_change(SESubjectNotifyPayload* payload);
 
-static void parallax_system_update_entity(CreEntity entity, Transform2DComponent* transformComp, ParallaxComponent* parallaxComp, CRECamera2D* camera2D);
+static void parallax_system_update_entity(SkaEntity entity, Transform2DComponent* transformComp, ParallaxComponent* parallaxComp, CRECamera2D* camera2D);
 
 SEObserver parallaxOnEntityTransformChangeObserver = { .on_notify = on_entity_transform_change };
 
@@ -46,14 +46,14 @@ void on_entity_unregistered(SkaECSSystem* system, SkaEntity entity) {
 void fixed_update(SkaECSSystem* system, float deltaTime) {
     CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
     for (size_t i = 0; i < system->entity_count; i++) {
-        const CreEntity entity = system->entities[i];
+        const SkaEntity entity = system->entities[i];
         Transform2DComponent* transformComp = (Transform2DComponent*)ska_ecs_component_manager_get_component(entity, TRANSFORM2D_COMPONENT_INDEX);
         ParallaxComponent* parallaxComp = (ParallaxComponent*)ska_ecs_component_manager_get_component(entity, PARALLAX_COMPONENT_INDEX);
         parallax_system_update_entity(entity, transformComp, parallaxComp, camera2D);
     }
 }
 
-void parallax_system_update_entity(CreEntity entity, Transform2DComponent* transformComp, ParallaxComponent* parallaxComp, CRECamera2D* camera2D) {
+void parallax_system_update_entity(SkaEntity entity, Transform2DComponent* transformComp, ParallaxComponent* parallaxComp, CRECamera2D* camera2D) {
     const SKAVector2 offset = {
         .x = (parallaxComp->cachedLocalPosition.x - (camera2D->viewport.x + camera2D->offset.x)) * camera2D->zoom.x * parallaxComp->scrollSpeed.x,
         .y = (parallaxComp->cachedLocalPosition.y - (camera2D->viewport.y + camera2D->offset.y)) * camera2D->zoom.y * parallaxComp->scrollSpeed.y
@@ -66,7 +66,7 @@ void parallax_system_update_entity(CreEntity entity, Transform2DComponent* trans
 void on_entity_transform_change(SESubjectNotifyPayload* payload) {
     CreComponentEntityUpdatePayload* updatePayload = (CreComponentEntityUpdatePayload*)payload->data;
     Transform2DComponent* transform2DComponent = (Transform2DComponent*)updatePayload->component;
-    const CreEntity entity = updatePayload->entity;
+    const SkaEntity entity = updatePayload->entity;
 
     ParallaxComponent* parallaxComp = (ParallaxComponent*)ska_ecs_component_manager_get_component(entity, PARALLAX_COMPONENT_INDEX);
 

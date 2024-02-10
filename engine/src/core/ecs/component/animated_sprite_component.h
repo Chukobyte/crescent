@@ -8,22 +8,22 @@ extern "C" {
 #include <stdbool.h>
 
 #include <seika/rendering/shader/shader_instance_minimal.h>
+#include <seika/ecs/entity.h>
 #include <seika/utils/observer.h>
 #include <seika/math/se_math.h>
 #include <seika/data_structures/se_hash_map_string.h>
 
-#include "../entity/entity.h"
 #include "../../animation/animation.h"
 
 #define ANIMATED_SPRITE_COMPONENT_MAX_ANIMATIONS 16
 
 typedef struct AnimatedSpriteFrameChangedPayload {
-    const CreEntity entity;
+    const SkaEntity entity;
     const int newFrame;
 } AnimatedSpriteFrameChangedPayload;
 
 typedef struct AnimatedSpriteAnimationFinishedPayload {
-    const CreEntity entity;
+    const SkaEntity entity;
     const CreAnimation* animation;
 } AnimatedSpriteAnimationFinishedPayload;
 

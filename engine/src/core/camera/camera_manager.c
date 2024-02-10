@@ -21,7 +21,7 @@ static CRECamera2D DEFAULT_CAMERA =   {
     .offset = { .x = 0.0f, .y = 0.0f },
     .mode = CreCameraMode_MANUAL,
     .archorMode = CreCameraArchorMode_FIXED_TOP_LEFT,
-    .entityFollowing = CRE_NULL_ENTITY,
+    .entityFollowing = SKA_NULL_ENTITY,
     .onEntityTransformChangeObserver = { .on_notify = camera2d_on_entity_transform_change },
     .onEntityExitSceneObserver = { .on_notify = camera2d_on_entity_exit_scene }
 };
@@ -38,7 +38,7 @@ static CRECamera2D currentCamera = {
     .offset = { .x = 0.0f, .y = 0.0f },
     .mode = CreCameraMode_MANUAL,
     .archorMode = CreCameraArchorMode_FIXED_TOP_LEFT,
-    .entityFollowing = CRE_NULL_ENTITY,
+    .entityFollowing = SKA_NULL_ENTITY,
     .onEntityTransformChangeObserver = { .on_notify = camera2d_on_entity_transform_change },
     .onEntityExitSceneObserver = { .on_notify = camera2d_on_entity_exit_scene }
 };
@@ -65,7 +65,7 @@ void camera2d_on_entity_transform_change(SESubjectNotifyPayload* payload) {
 }
 
 void camera2d_on_entity_exit_scene(SESubjectNotifyPayload* payload) {
-    const CreEntity entity = *(CreEntity*) payload->data;
+    const SkaEntity entity = *(SkaEntity*) payload->data;
 
     CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
     cre_camera2d_unfollow_entity(camera2D, entity);

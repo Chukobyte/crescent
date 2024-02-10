@@ -19,7 +19,7 @@ void cre_camera2d_clamp_viewport_to_boundary(CRECamera2D* camera2D) {
     }
 }
 
-void cre_camera2d_follow_entity(CRECamera2D* camera2D, CreEntity entity) {
+void cre_camera2d_follow_entity(CRECamera2D* camera2D, SkaEntity entity) {
     if (camera2D->entityFollowing == entity) {
         return;
     }
@@ -40,9 +40,9 @@ void cre_camera2d_follow_entity(CRECamera2D* camera2D, CreEntity entity) {
     }
 }
 
-void cre_camera2d_unfollow_entity(CRECamera2D* camera2D, CreEntity entity) {
-    if (entity != CRE_NULL_ENTITY && entity == camera2D->entityFollowing) {
-        camera2D->entityFollowing = CRE_NULL_ENTITY;
+void cre_camera2d_unfollow_entity(CRECamera2D* camera2D, SkaEntity entity) {
+    if (entity != SKA_NULL_ENTITY && entity == camera2D->entityFollowing) {
+        camera2D->entityFollowing = SKA_NULL_ENTITY;
         camera2D->mode = CreCameraMode_MANUAL;
         // Unregister from entity events
         NodeComponent* nodeComponent = (NodeComponent*)ska_ecs_component_manager_get_component_unchecked(entity, NODE_COMPONENT_INDEX);

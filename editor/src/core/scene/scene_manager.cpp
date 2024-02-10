@@ -347,11 +347,11 @@ void SceneManager::IterateAllSceneNodes(SceneNode* node, std::function<void(Scen
     LoopNodes(node, func, index);
 }
 
-SceneNode* SceneManager::GetNode(SceneNodeFile* nodeFile, CreEntity entity) {
+SceneNode* SceneManager::GetNode(SceneNodeFile* nodeFile, SkaEntity entity) {
     return GetNode(nodeFile->rootNode, entity);
 }
 
-SceneNode* SceneManager::GetNode(SceneNode* node, CreEntity entity) {
+SceneNode* SceneManager::GetNode(SceneNode* node, SkaEntity entity) {
     if (node->GetUID() == entity) {
         return node;
     }

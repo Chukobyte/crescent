@@ -54,7 +54,7 @@ void on_entity_entered_scene(SkaECSSystem* system, SkaEntity entity) {
 
 void ec_system_update(SkaECSSystem* system, float deltaTime) {
     for (size_t i = 0; i < system->entity_count; i++) {
-        const CreEntity entity = system->entities[i];
+        const SkaEntity entity = system->entities[i];
         Particles2DComponent* particles2DComponent = (Particles2DComponent*)ska_ecs_component_manager_get_component(entity, PARTICLES2D_COMPONENT_INDEX);
         cre_particle_emitter_ec_system_update_component(particles2DComponent, deltaTime);
     }
@@ -65,7 +65,7 @@ void ec_system_render(SkaECSSystem* system) {
     const CRECamera2D* defaultCamera = cre_camera_manager_get_default_camera();
 
     for (size_t i = 0; i < system->entity_count; i++) {
-        const CreEntity entity = system->entities[i];
+        const SkaEntity entity = system->entities[i];
         Transform2DComponent* particleTransformComp = (Transform2DComponent*)ska_ecs_component_manager_get_component(entity, TRANSFORM2D_COMPONENT_INDEX);
         Particles2DComponent* particles2DComponent = (Particles2DComponent*)ska_ecs_component_manager_get_component(entity, PARTICLES2D_COMPONENT_INDEX);
         const CRECamera2D* renderCamera = particleTransformComp->ignoreCamera ? defaultCamera : camera2D;

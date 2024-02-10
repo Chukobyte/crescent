@@ -76,18 +76,18 @@
 //    componentManager = NULL;
 //}
 //
-//void* cre_component_manager_get_component(CreEntity entity, CreComponentDataIndex index) {
+//void* cre_component_manager_get_component(SkaEntity entity, CreComponentDataIndex index) {
 //    void* component = component_array_get_component(componentManager->entityComponentArrays[entity], index);
 //    SE_ASSERT_FMT(component != NULL, "Entity '%d' doesn't have '%s' component!",
 //                  entity, cre_component_get_component_data_index_string(index));
 //    return component;
 //}
 //
-//void* cre_component_manager_get_component_unchecked(CreEntity entity, CreComponentDataIndex index) {
+//void* cre_component_manager_get_component_unchecked(SkaEntity entity, CreComponentDataIndex index) {
 //    return component_array_get_component(componentManager->entityComponentArrays[entity], index);
 //}
 //
-//void cre_component_manager_set_component(CreEntity entity, CreComponentDataIndex index, void* component) {
+//void cre_component_manager_set_component(SkaEntity entity, CreComponentDataIndex index, void* component) {
 ////    RBE_ASSERT_FMT(entity < MAX_ENTITIES, "Entity limit reached!  Try increasing MAX_ENTITIES count or implementing entity id pooling!");
 //    component_array_set_component(componentManager->entityComponentArrays[entity], index, component);
 //    // Update signature
@@ -96,27 +96,27 @@
 //    cre_component_manager_set_component_signature(entity, componentSignature);
 //}
 //
-//void cre_component_manager_remove_component(CreEntity entity, CreComponentDataIndex index) {
+//void cre_component_manager_remove_component(SkaEntity entity, CreComponentDataIndex index) {
 //    CreComponentType componentSignature = cre_component_manager_get_component_signature(entity);
 //    componentSignature &= component_manager_translate_index_to_type(index);
 //    cre_component_manager_set_component_signature(entity, componentSignature);
 //    component_array_remove_component(componentManager->entityComponentArrays[entity], index);
 //}
 //
-//void cre_component_manager_remove_all_components(CreEntity entity) {
+//void cre_component_manager_remove_all_components(SkaEntity entity) {
 //    component_array_remove_all_components(componentManager->entityComponentArrays[entity]);
 //    cre_component_manager_set_component_signature(entity, CreComponentType_NONE);
 //}
 //
-//bool cre_component_manager_has_component(CreEntity entity, CreComponentDataIndex index) {
+//bool cre_component_manager_has_component(SkaEntity entity, CreComponentDataIndex index) {
 //    return component_array_has_component(componentManager->entityComponentArrays[entity], index);
 //}
 //
-//void cre_component_manager_set_component_signature(CreEntity entity, CreComponentType componentTypeSignature) {
+//void cre_component_manager_set_component_signature(SkaEntity entity, CreComponentType componentTypeSignature) {
 //    componentManager->entityComponentSignatures[entity] = componentTypeSignature;
 //}
 //
-//CreComponentType cre_component_manager_get_component_signature(CreEntity entity) {
+//CreComponentType cre_component_manager_get_component_signature(SkaEntity entity) {
 //    return componentManager->entityComponentSignatures[entity];
 //}
 //

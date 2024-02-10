@@ -17,7 +17,6 @@
 #include "../world.h"
 #include "../game_properties.h"
 #include "../ecs/ecs_globals.h"
-//#include "../ecs/system/ec_system.h"
 #include "../ecs/component/sprite_component.h"
 #include "../ecs/component/animated_sprite_component.h"
 #include "../ecs/component/text_label_component.h"
@@ -42,7 +41,7 @@ typedef struct SceneTree {
     SceneTreeNode* root;
 } SceneTree;
 
-SceneTreeNode* cre_scene_tree_create_tree_node(CreEntity entity, SceneTreeNode* parent) {
+SceneTreeNode* cre_scene_tree_create_tree_node(SkaEntity entity, SceneTreeNode* parent) {
     SceneTreeNode* treeNode = SE_MEM_ALLOCATE(SceneTreeNode);
     treeNode->entity = entity;
     treeNode->parent = parent;
@@ -65,16 +64,16 @@ Scene* cre_scene_create_scene(const char* scenePath) {
 }
 
 // --- Scene Manager --- //
-CreEntity entitiesQueuedForCreation[CRE_MAX_ENTITIES];
+SkaEntity entitiesQueuedForCreation[SKA_MAX_ENTITIES];
 size_t entitiesQueuedForCreationSize = 0;
-CreEntity entitiesQueuedForDeletion[CRE_MAX_ENTITIES];
+SkaEntity entitiesQueuedForDeletion[SKA_MAX_ENTITIES];
 size_t entitiesQueuedForDeletionSize = 0;
 
-SE_STATIC_ARRAY_CREATE(CreEntity, CRE_MAX_ENTITIES, entitiesToUnlinkParent);
+SE_STATIC_ARRAY_CREATE(SkaEntity, SKA_MAX_ENTITIES, entitiesToUnlinkParent);
 
 #ifdef CRE_SCENE_MANAGER_RENDER_INTERPOLATE_TRANSFORM2D_ALPHA
 // Will need a different mechanism for 3D (maybe just storing a vector3, but this is fine for now
-SE_STATIC_ARRAY_CREATE(SKATransform2D , CRE_MAX_ENTITIES, entityPrevGlobalTransforms);
+SE_STATIC_ARRAY_CREATE(SKATransform2D , SKA_MAX_ENTITIES, entityPrevGlobalTransforms);
 #endif // CRE_SCENE_MANAGER_RENDER_INTERPOLATE_TRANSFORM2D_ALPHA
 
 Scene* activeScene = NULL;
@@ -83,15 +82,15 @@ Scene* queuedSceneToChangeTo = NULL;
 static SEHashMap* entityToTreeNodeMap = NULL;
 static SEHashMap* entityToStagedTreeNodeMap = NULL;
 
-SceneTreeNode* cre_scene_manager_pop_staged_entity_tree_node(CreEntity entity);
+SceneTreeNode* cre_scene_manager_pop_staged_entity_tree_node(SkaEntity entity);
 void cre_scene_manager_add_staged_node_children_to_scene(SceneTreeNode* treeNode);
 void cre_scene_manager_setup_scene_nodes_from_json(JsonSceneNode* jsonSceneNode);
 
 void cre_scene_manager_initialize() {
     SE_ASSERT(entityToTreeNodeMap == NULL);
     SE_ASSERT(entityToStagedTreeNodeMap == NULL);
-    entityToTreeNodeMap = se_hash_map_create(sizeof(CreEntity), sizeof(SceneTreeNode**), SE_HASH_MAP_MIN_CAPACITY);
-    entityToStagedTreeNodeMap = se_hash_map_create(sizeof(CreEntity), sizeof(SceneTreeNode**), SE_HASH_MAP_MIN_CAPACITY);
+    entityToTreeNodeMap = se_hash_map_create(sizeof(SkaEntity), sizeof(SceneTreeNode**), SE_HASH_MAP_MIN_CAPACITY);
+    entityToStagedTreeNodeMap = se_hash_map_create(sizeof(SkaEntity), sizeof(SceneTreeNode**), SE_HASH_MAP_MIN_CAPACITY);
     cre_scene_template_cache_initialize();
 }
 
@@ -116,7 +115,7 @@ void cre_scene_manager_stage_child_node_to_be_added_later(SceneTreeNode* treeNod
 
 void cre_scene_manager_process_queued_creation_entities() {
     for (size_t i = 0; i < entitiesQueuedForCreationSize; i++) {
-        CreEntity queuedEntity = entitiesQueuedForCreation[i];
+        SkaEntity queuedEntity = entitiesQueuedForCreation[i];
         ska_ecs_system_update_entity_signature_with_systems(queuedEntity);
         ska_ecs_system_event_entity_start(queuedEntity);
 
@@ -142,7 +141,7 @@ void cre_scene_manager_process_queued_creation_entities() {
     entitiesQueuedForCreationSize = 0;
 }
 
-void cre_scene_manager_queue_entity_for_deletion(CreEntity entity) {
+void cre_scene_manager_queue_entity_for_deletion(SkaEntity entity) {
     // Check if entity is already queued exit out early if so
     for (size_t i = 0; i < entitiesQueuedForDeletionSize; i++) {
         if (entitiesQueuedForDeletion[i] == entity) {
@@ -174,7 +173,7 @@ void cre_scene_manager_process_queued_deletion_entities() {
 
     for (size_t i = 0; i < entitiesQueuedForDeletionSize; i++) {
         // Remove entity from entity to tree node map
-        CreEntity entityToDelete = entitiesQueuedForDeletion[i];
+        SkaEntity entityToDelete = entitiesQueuedForDeletion[i];
         SE_ASSERT_FMT(se_hash_map_has(entityToTreeNodeMap, &entityToDelete), "Entity '%d' not in tree node map!?", entityToDelete);
         SceneTreeNode* treeNode = (SceneTreeNode*) *(SceneTreeNode**) se_hash_map_get(entityToTreeNodeMap,&entityToDelete);
         SE_MEM_FREE(treeNode);
@@ -276,7 +275,7 @@ SceneTreeNode* cre_scene_manager_get_active_scene_root() {
 }
 
 // TODO: Make function to update flags for all children
-SKATransformModel2D* cre_scene_manager_get_scene_node_global_transform(CreEntity entity, Transform2DComponent* transform2DComponent) {
+SKATransformModel2D* cre_scene_manager_get_scene_node_global_transform(SkaEntity entity, Transform2DComponent* transform2DComponent) {
     SE_ASSERT_FMT(transform2DComponent != NULL, "Transform Model is NULL for entity '%d'", entity);
     if (transform2DComponent->isGlobalTransformDirty) {
         // Walk up scene to root node and calculate global transform
@@ -287,7 +286,7 @@ SKATransformModel2D* cre_scene_manager_get_scene_node_global_transform(CreEntity
     return &transform2DComponent->globalTransform;
 }
 
-SceneNodeRenderResource cre_scene_manager_get_scene_node_global_render_resource(CreEntity entity, Transform2DComponent* transform2DComponent, const SKAVector2* origin) {
+SceneNodeRenderResource cre_scene_manager_get_scene_node_global_render_resource(SkaEntity entity, Transform2DComponent* transform2DComponent, const SKAVector2* origin) {
     SKATransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity, transform2DComponent);
 
     cre_scene_utils_apply_camera_and_origin_translation(globalTransform, origin, transform2DComponent->ignoreCamera);
@@ -310,7 +309,7 @@ SceneNodeRenderResource cre_scene_manager_get_scene_node_global_render_resource(
 }
 
 
-float cre_scene_manager_get_node_full_time_dilation(CreEntity entity) {
+float cre_scene_manager_get_node_full_time_dilation(SkaEntity entity) {
     NodeComponent* nodeComp = (NodeComponent*)ska_ecs_component_manager_get_component_unchecked(entity, NODE_COMPONENT_INDEX);
     // The only thing in the scene without nodes current are native script entities
     if (nodeComp == NULL) {
@@ -332,14 +331,14 @@ float cre_scene_manager_get_node_full_time_dilation(CreEntity entity) {
     return nodeComp->timeDilation.cachedFullValue;
 }
 
-SceneTreeNode* cre_scene_manager_get_entity_tree_node(CreEntity entity) {
+SceneTreeNode* cre_scene_manager_get_entity_tree_node(SkaEntity entity) {
     SE_ASSERT_FMT(se_hash_map_has(entityToTreeNodeMap, &entity), "Doesn't have entity '%d' in scene tree!", entity);
     SceneTreeNode* treeNode = (SceneTreeNode*) *(SceneTreeNode**) se_hash_map_get(entityToTreeNodeMap, &entity);
     SE_ASSERT_FMT(treeNode != NULL, "Failed to get tree node for entity '%d'", entity);
     return treeNode;
 }
 
-SceneTreeNode* cre_scene_manager_pop_staged_entity_tree_node(CreEntity entity) {
+SceneTreeNode* cre_scene_manager_pop_staged_entity_tree_node(SkaEntity entity) {
     SE_ASSERT_FMT(se_hash_map_has(entityToStagedTreeNodeMap, &entity), "Doesn't have entity '%d' in scene tree!", entity);
     SceneTreeNode* treeNode = (SceneTreeNode*) *(SceneTreeNode**) se_hash_map_get(entityToStagedTreeNodeMap, &entity);
     SE_ASSERT_FMT(treeNode != NULL, "Failed to get tree node for entity '%d'", entity);
@@ -348,10 +347,10 @@ SceneTreeNode* cre_scene_manager_pop_staged_entity_tree_node(CreEntity entity) {
     return treeNode;
 }
 
-CreEntity cre_scene_manager_get_entity_child_by_name(CreEntity parent, const char* childName) {
+SkaEntity cre_scene_manager_get_entity_child_by_name(SkaEntity parent, const char* childName) {
     SceneTreeNode* parentNode = cre_scene_manager_get_entity_tree_node(parent);
     for (size_t childIndex = 0; childIndex < parentNode->childCount; childIndex++) {
-        const CreEntity childEntity = parentNode->children[childIndex]->entity;
+        const SkaEntity childEntity = parentNode->children[childIndex]->entity;
         if (ska_ecs_component_manager_has_component(childEntity, NODE_COMPONENT_INDEX)) {
             NodeComponent* childNodeComponent = (NodeComponent*) ska_ecs_component_manager_get_component(childEntity,NODE_COMPONENT_INDEX);
             if (strcmp(childNodeComponent->name, childName) == 0) {
@@ -359,14 +358,14 @@ CreEntity cre_scene_manager_get_entity_child_by_name(CreEntity parent, const cha
             }
         }
     }
-    return CRE_NULL_ENTITY;
+    return SKA_NULL_ENTITY;
 }
 
-bool cre_scene_manager_has_entity_tree_node(CreEntity entity) {
+bool cre_scene_manager_has_entity_tree_node(SkaEntity entity) {
     return se_hash_map_has(entityToTreeNodeMap, &entity);
 }
 
-void cre_scene_manager_add_node_as_child(CreEntity childEntity, CreEntity parentEntity) {
+void cre_scene_manager_add_node_as_child(SkaEntity childEntity, SkaEntity parentEntity) {
     SceneTreeNode* parentNode = cre_scene_manager_get_entity_tree_node(parentEntity);
     SceneTreeNode* node = cre_scene_manager_pop_staged_entity_tree_node(childEntity);
     node->parent = parentNode;
@@ -387,7 +386,7 @@ void cre_scene_manager_add_staged_node_children_to_scene(SceneTreeNode* treeNode
     }
 }
 
-EntityArray cre_scene_manager_get_self_and_parent_nodes(CreEntity entity) {
+EntityArray cre_scene_manager_get_self_and_parent_nodes(SkaEntity entity) {
     EntityArray combineModelResult = { .entityCount = 0 };
     combineModelResult.entities[combineModelResult.entityCount++] = entity;
 
@@ -400,7 +399,7 @@ EntityArray cre_scene_manager_get_self_and_parent_nodes(CreEntity entity) {
     return combineModelResult;
 }
 
-void cre_scene_manager_invalidate_time_dilation_nodes_with_children(CreEntity entity) {
+void cre_scene_manager_invalidate_time_dilation_nodes_with_children(SkaEntity entity) {
     NodeComponent* nodeComponent = ska_ecs_component_manager_get_component(entity, NODE_COMPONENT_INDEX);
     nodeComponent->timeDilation.cacheInvalid = true;
     if (cre_scene_manager_has_entity_tree_node(entity)) {
@@ -411,7 +410,7 @@ void cre_scene_manager_invalidate_time_dilation_nodes_with_children(CreEntity en
     }
 }
 
-void cre_scene_manager_notify_all_on_transform_events(CreEntity entity, Transform2DComponent* transformComp) {
+void cre_scene_manager_notify_all_on_transform_events(SkaEntity entity, Transform2DComponent* transformComp) {
     se_event_notify_observers(&transformComp->onTransformChanged, &(SESubjectNotifyPayload) {
             .data = &(CreComponentEntityUpdatePayload) {.entity = entity, .component = transformComp, .componentType = TRANSFORM2D_COMPONENT_TYPE}
     });
@@ -419,7 +418,7 @@ void cre_scene_manager_notify_all_on_transform_events(CreEntity entity, Transfor
     if (cre_scene_manager_has_entity_tree_node(entity)) {
         SceneTreeNode* sceneTreeNode = cre_scene_manager_get_entity_tree_node(entity);
         for (size_t i = 0; i < sceneTreeNode->childCount; i++) {
-            const CreEntity childEntity = sceneTreeNode->children[i]->entity;
+            const SkaEntity childEntity = sceneTreeNode->children[i]->entity;
             Transform2DComponent* childTransformComp = (Transform2DComponent*) ska_ecs_component_manager_get_component(childEntity, TRANSFORM2D_COMPONENT_INDEX);
             if (childTransformComp != NULL) {
                 cre_scene_manager_notify_all_on_transform_events(childEntity, childTransformComp);
