@@ -311,7 +311,7 @@ SceneNodeRenderResource cre_scene_manager_get_scene_node_global_render_resource(
 
 
 float cre_scene_manager_get_node_full_time_dilation(CreEntity entity) {
-    NodeComponent* nodeComp = (NodeComponent*)ska_ecs_component_manager_get_component(entity, NODE_COMPONENT_INDEX);
+    NodeComponent* nodeComp = (NodeComponent*)ska_ecs_component_manager_get_component_unchecked(entity, NODE_COMPONENT_INDEX);
     // The only thing in the scene without nodes current are native script entities
     if (nodeComp == NULL) {
         return cre_world_get_time_dilation();

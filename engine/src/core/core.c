@@ -208,7 +208,7 @@ void cre_process_game_update() {
 
     // Variable Time Step
     const float variableDeltaTime = (float) (sf_get_ticks() - lastFrameTime) / (float) MILLISECONDS_PER_TICK;
-//    ska_ecs_system_event_update_systems(variableDeltaTime);
+    ska_ecs_system_event_update_systems(variableDeltaTime);
 
     // Fixed Time Step
     static uint32_t fixedCurrentTime = 0;
