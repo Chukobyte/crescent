@@ -8,15 +8,15 @@
 #include <seika/utils/logger.h>
 #include <seika/utils/se_assert.h>
 
-#include "../engine/src/core/ecs/component/animated_sprite_component.h"
-#include "../engine/src/core/ecs/component/collider2d_component.h"
-#include "../engine/src/core/ecs/component/color_rect_component.h"
-#include "../engine/src/core/ecs/component/parallax_component.h"
-#include "../engine/src/core/ecs/component/script_component.h"
-#include "../engine/src/core/ecs/component/sprite_component.h"
-#include "../engine/src/core/ecs/component/text_label_component.h"
-#include "../engine/src/core/ecs/component/transform2d_component.h"
-#include "../engine/src/core/ecs/component/particles2d_component.h"
+#include "../engine/src/core/ecs/components/animated_sprite_component.h"
+#include "../engine/src/core/ecs/components/collider2d_component.h"
+#include "../engine/src/core/ecs/components/color_rect_component.h"
+#include "../engine/src/core/ecs/components/parallax_component.h"
+#include "../engine/src/core/ecs/components/script_component.h"
+#include "../engine/src/core/ecs/components/sprite_component.h"
+#include "../engine/src/core/ecs/components/text_label_component.h"
+#include "../engine/src/core/ecs/components/transform2d_component.h"
+#include "../engine/src/core/ecs/components/particles2d_component.h"
 
 struct EditorComponent {};
 

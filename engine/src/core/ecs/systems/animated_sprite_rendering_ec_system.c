@@ -7,8 +7,8 @@
 #include <seika/utils/se_assert.h>
 
 #include "../ecs_globals.h"
-#include "../component/animated_sprite_component.h"
-#include "../component/transform2d_component.h"
+#include "../components/animated_sprite_component.h"
+#include "../components/transform2d_component.h"
 #include "../../scene/scene_manager.h"
 #include "../../camera/camera.h"
 #include "../../camera/camera_manager.h"

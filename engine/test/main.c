@@ -11,9 +11,9 @@
 
 #include "../src/core/node_event.h"
 #include "../src/core/ecs/component.h"
-#include "../src/core/ecs/component/transform2d_component.h"
-#include "../src/core/ecs/component/collider2d_component.h"
-#include "../src/core/ecs/component/text_label_component.h"
+#include "../src/core/ecs/components/transform2d_component.h"
+#include "../src/core/ecs/components/collider2d_component.h"
+#include "../src/core/ecs/components/text_label_component.h"
 #include "../src/core/ecs/ecs_manager.h"
 #include "../src/core/json/json_file_loader.h"
 #include "../src/core/scripting/python/pocketpy/cre_pkpy.h"

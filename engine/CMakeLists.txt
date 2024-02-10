@@ -44,17 +44,16 @@ add_library(${PROJECT_NAME} STATIC
         src/core/camera/camera_manager.c
         src/core/ecs/ecs_manager.c
         src/core/ecs/ecs_globals.c
-        src/core/ecs/component/animated_sprite_component.c
-        src/core/ecs/component/collider2d_component.c
-        src/core/ecs/component/color_rect_component.c
-        src/core/ecs/component.c
-        src/core/ecs/component/node_component.c
-        src/core/ecs/component/script_component.c
-        src/core/ecs/component/sprite_component.c
-        src/core/ecs/component/parallax_component.c
-        src/core/ecs/component/particles2d_component.c
-        src/core/ecs/component/text_label_component.c
-        src/core/ecs/component/transform2d_component.c
+        src/core/ecs/components/animated_sprite_component.c
+        src/core/ecs/components/collider2d_component.c
+        src/core/ecs/components/color_rect_component.c
+        src/core/ecs/components/node_component.c
+        src/core/ecs/components/script_component.c
+        src/core/ecs/components/sprite_component.c
+        src/core/ecs/components/parallax_component.c
+        src/core/ecs/components/particles2d_component.c
+        src/core/ecs/components/text_label_component.c
+        src/core/ecs/components/transform2d_component.c
         src/core/ecs/systems/animated_sprite_rendering_ec_system.c
         src/core/ecs/systems/color_rect_ec_system.c
         src/core/ecs/systems/collision_ec_system.c

@@ -17,10 +17,10 @@
 #include "cre_pkpy_node_event_manager.h"
 #include "api/cre_pkpy_api.h"
 #include "../../script_context.h"
-#include "../../../ecs/component/animated_sprite_component.h"
+#include "../../../ecs/components/animated_sprite_component.h"
 #include "../../../ecs/component.h"
-#include "../../../ecs/component/node_component.h"
-#include "../../../ecs/component/script_component.h"
+#include "../../../ecs/components/node_component.h"
+#include "../../../ecs/components/script_component.h"
 #include "../../../engine_context.h"
 #include "../../../ecs/ecs_globals.h"
 

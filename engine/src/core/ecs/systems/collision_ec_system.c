@@ -7,8 +7,8 @@
 
 #include "../ecs_globals.h"
 
-#include "../component/transform2d_component.h"
-#include "../component/collider2d_component.h"
+#include "../components/transform2d_component.h"
+#include "../components/collider2d_component.h"
 #include "../../physics/collision/collision.h"
 #include "../../scene/scene_manager.h"
 #include "../../game_properties.h"

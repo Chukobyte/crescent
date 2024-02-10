@@ -7,8 +7,8 @@
 
 #include "../ecs_globals.h"
 //#include "ec_system.h"
-#include "../component/particles2d_component.h"
-#include "../component/transform2d_component.h"
+#include "../components/particles2d_component.h"
+#include "../components/transform2d_component.h"
 #include "../../camera/camera.h"
 #include "../../camera/camera_manager.h"
 #include "../../scene/scene_manager.h"

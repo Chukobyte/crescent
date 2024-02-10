@@ -1,6 +1,6 @@
 #include "scene_file_creator.h"
 
-#include "../engine/src/core/ecs/component/component_defaults.h"
+#include "../engine/src/core/ecs/components/component_defaults.h"
 
 #include "../scene/scene_manager.h"
 #include "../utils/json_helper.h"

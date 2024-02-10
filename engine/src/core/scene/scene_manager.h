@@ -7,7 +7,7 @@ extern "C" {
 #include <seika/math/se_math.h>
 
 #include "scene_tree.h"
-#include "../ecs/component/transform2d_component.h"
+#include "../ecs/components/transform2d_component.h"
 #include "../json/json_file_loader.h"
 
 // Scene Tree

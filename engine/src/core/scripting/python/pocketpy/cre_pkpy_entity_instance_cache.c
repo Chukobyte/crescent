@@ -7,8 +7,8 @@
 #include "cre_pkpy_util.h"
 #include "cre_pkpy_api_source.h"
 #include "../../../ecs/ecs_globals.h"
-#include "../../../ecs/component/node_component.h"
-#include "../../../ecs/component/script_component.h"
+#include "../../../ecs/components/node_component.h"
+#include "../../../ecs/components/script_component.h"
 
 static bool entity_instance_cache_is_initialized = false;
 

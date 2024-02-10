@@ -5,7 +5,7 @@
 #include <seika/utils/se_assert.h>
 
 #include "../ecs_globals.h"
-#include "../component/script_component.h"
+#include "../components/script_component.h"
 #include "../../scene/scene_manager.h"
 #include "../../scripting/script_context.h"
 #include "../../scripting/python/pocketpy/cre_pkpy_script_context.h"

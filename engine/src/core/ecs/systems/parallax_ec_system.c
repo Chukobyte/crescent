@@ -3,8 +3,8 @@
 #include <seika/ecs/ecs.h>
 
 #include "../ecs_globals.h"
-#include "../component/transform2d_component.h"
-#include "../component/parallax_component.h"
+#include "../components/transform2d_component.h"
+#include "../components/parallax_component.h"
 #include "../../camera/camera.h"
 #include "../../camera/camera_manager.h"
 #include "../component.h"

@@ -8,7 +8,7 @@ extern "C" {
 #include <seika/utils/observer.h>
 #include <seika/math/se_math.h>
 
-#include "../ecs/component/transform2d_component.h"
+#include "../ecs/components/transform2d_component.h"
 
 typedef enum CreCameraMode {
     CreCameraMode_MANUAL = 0,

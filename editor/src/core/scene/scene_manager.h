@@ -9,7 +9,7 @@
 
 #include "../components/component.h"
 #include "../utils/singleton.h"
-#include "../engine/src/core/ecs/component/node_component.h"
+#include "../engine/src/core/ecs/components/node_component.h"
 
 class SceneNode {
   public:

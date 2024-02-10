@@ -16,14 +16,14 @@
 #include "../cre_pkpy_util.h"
 #include "../../../../scene/scene_manager.h"
 #include "../../../../ecs/ecs_globals.h"
-#include "../../../../ecs/component/sprite_component.h"
-#include "../../../../ecs/component/animated_sprite_component.h"
-#include "../../../../ecs/component/text_label_component.h"
-#include "../../../../ecs/component/collider2d_component.h"
-#include "../../../../ecs/component/color_rect_component.h"
-#include "../../../../ecs/component/parallax_component.h"
-#include "../../../../ecs/component/script_component.h"
-#include "../../../../ecs/component/particles2d_component.h"
+#include "../../../../ecs/components/sprite_component.h"
+#include "../../../../ecs/components/animated_sprite_component.h"
+#include "../../../../ecs/components/text_label_component.h"
+#include "../../../../ecs/components/collider2d_component.h"
+#include "../../../../ecs/components/color_rect_component.h"
+#include "../../../../ecs/components/parallax_component.h"
+#include "../../../../ecs/components/script_component.h"
+#include "../../../../ecs/components/particles2d_component.h"
 
 static void set_node_component_from_type(SkaEntity entity, const char* classPath, const char* className, NodeBaseType baseType) {
 

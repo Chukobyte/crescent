@@ -11,7 +11,7 @@
 #include "../native_script_class.h"
 #include "../../../engine_context.h"
 #include "../../../ecs/ecs_globals.h"
-#include "../../../ecs/component/text_label_component.h"
+#include "../../../ecs/components/text_label_component.h"
 #include "../../../ecs/component.h"
 
 typedef struct FpsDisplayClassData {

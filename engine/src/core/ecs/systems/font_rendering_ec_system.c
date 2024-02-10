@@ -10,7 +10,7 @@
 #include "../../scene/scene_manager.h"
 #include "../../camera/camera.h"
 #include "../../camera/camera_manager.h"
-#include "../component/text_label_component.h"
+#include "../components/text_label_component.h"
 
 static void font_render(SkaECSSystem* system);
 static void on_entity_registered(SkaECSSystem* system, SkaEntity entity);

@@ -10,7 +10,7 @@
 #include <seika/utils/se_assert.h>
 
 #include "ecs/ecs_globals.h"
-#include "ecs/component/node_component.h"
+#include "ecs/components/node_component.h"
 #include "ecs/component.h"
 
 #define CRE_NODE_EVENT_MAX_OBSERVERS 8

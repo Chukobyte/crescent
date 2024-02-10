@@ -2,7 +2,7 @@
 
 #include "../game_properties.h"
 #include "../ecs/ecs_globals.h"
-#include "../ecs/component/node_component.h"
+#include "../ecs/components/node_component.h"
 #include "../scene/scene_manager.h"
 
 void cre_camera2d_clamp_viewport_to_boundary(CRECamera2D* camera2D) {

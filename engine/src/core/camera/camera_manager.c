@@ -1,7 +1,7 @@
 #include "camera_manager.h"
 
 #include "camera.h"
-#include "../ecs/component/transform2d_component.h"
+#include "../ecs/components/transform2d_component.h"
 #include "../ecs/component.h"
 #include "../scene/scene_manager.h"
 #include "../game_properties.h"

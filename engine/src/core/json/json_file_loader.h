@@ -11,7 +11,7 @@ extern "C" {
 #include <seika/data_structures/se_array_list.h>
 
 #include "../ecs/component.h"
-#include "../ecs/component/node_component.h"
+#include "../ecs/components/node_component.h"
 
 typedef struct JsonSceneNode {
     char* name;

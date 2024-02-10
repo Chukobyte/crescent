@@ -5,8 +5,8 @@
 #include <seika/ecs/entity.h>
 #include <seika/data_structures/se_spatial_hash_map.h>
 
-#include "../../ecs/component/transform2d_component.h"
-#include "../../ecs/component/collider2d_component.h"
+#include "../../ecs/components/transform2d_component.h"
+#include "../../ecs/components/collider2d_component.h"
 
 #define CRE_MAX_ENTITY_COLLISION 8
 
