@@ -4,7 +4,7 @@
 
 #include "scene_tree.h"
 #include "../ecs/ecs_globals.h"
-#include "../ecs/component/component.h"
+#include "../ecs/component.h"
 #include "../camera/camera.h"
 #include "../camera/camera_manager.h"
 

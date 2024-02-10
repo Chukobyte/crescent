@@ -7,7 +7,7 @@
 #include "../component/parallax_component.h"
 #include "../../camera/camera.h"
 #include "../../camera/camera_manager.h"
-#include "../component/component.h"
+#include "../component.h"
 
 static void on_entity_entered_scene(SkaECSSystem* system, SkaEntity entity);
 static void on_entity_unregistered(SkaECSSystem* system, SkaEntity entity);

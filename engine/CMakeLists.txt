@@ -47,7 +47,7 @@ add_library(${PROJECT_NAME} STATIC
         src/core/ecs/component/animated_sprite_component.c
         src/core/ecs/component/collider2d_component.c
         src/core/ecs/component/color_rect_component.c
-        src/core/ecs/component/component.c
+        src/core/ecs/component.c
         src/core/ecs/component/node_component.c
         src/core/ecs/component/script_component.c
         src/core/ecs/component/sprite_component.c

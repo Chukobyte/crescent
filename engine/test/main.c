@@ -10,7 +10,7 @@
 #include <seika/utils/se_string_util.h>
 
 #include "../src/core/node_event.h"
-#include "../src/core/ecs/component/component.h"
+#include "../src/core/ecs/component.h"
 #include "../src/core/ecs/component/transform2d_component.h"
 #include "../src/core/ecs/component/collider2d_component.h"
 #include "../src/core/ecs/component/text_label_component.h"

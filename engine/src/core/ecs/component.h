@@ -6,7 +6,7 @@ extern "C" {
 
 #include <stdbool.h>
 
-#include <seika/ecs/component.h>
+#include "seika/ecs/component.h"
 
 #define CRE_MAX_COMPONENTS 10
 

@@ -10,7 +10,7 @@
 
 #include "ecs_globals.h"
 
-#include "component/component.h"
+#include "component.h"
 #include "component/animated_sprite_component.h"
 #include "component/collider2d_component.h"
 #include "component/color_rect_component.h"

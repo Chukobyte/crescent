@@ -11,7 +11,7 @@
 
 #include "ecs/ecs_globals.h"
 #include "ecs/component/node_component.h"
-#include "ecs/component/component.h"
+#include "ecs/component.h"
 
 #define CRE_NODE_EVENT_MAX_OBSERVERS 8
 #define MAX_EVENT_OBSERVER_ENTRY_COUNT 100

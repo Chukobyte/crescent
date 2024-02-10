@@ -12,7 +12,7 @@
 #include "../../../engine_context.h"
 #include "../../../ecs/ecs_globals.h"
 #include "../../../ecs/component/text_label_component.h"
-#include "../../../ecs/component/component.h"
+#include "../../../ecs/component.h"
 
 typedef struct FpsDisplayClassData {
     int value;
