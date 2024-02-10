@@ -18,6 +18,7 @@ typedef struct CreParticleRenderItem {
     SKASize2D size;
 }CreParticleRenderItem;
 
+static void on_ec_system_registered(SkaECSSystem* system);
 static void on_entity_entered_scene(SkaECSSystem* system, SkaEntity entity);
 static void ec_system_update(SkaECSSystem* system, float deltaTime);
 static void ec_system_render(SkaECSSystem* system);
@@ -32,10 +33,17 @@ void cre_particle_ec_system_create_and_register_ex(SETexture* squareTextureOverr
     particleSquareTexture = squareTextureOverride;
 
     SkaECSSystemTemplate systemTemplate = ska_ecs_system_create_default_template("Particle Emitter");
+    systemTemplate.on_ec_system_register = on_ec_system_registered;
     systemTemplate.on_entity_entered_scene_func = on_entity_entered_scene;
     systemTemplate.update_func = ec_system_update;
     systemTemplate.render_func = ec_system_render;
     SKA_ECS_SYSTEM_REGISTER_FROM_TEMPLATE(&systemTemplate, Transform2DComponent, Particles2DComponent);
+}
+
+void on_ec_system_registered(SkaECSSystem* system) {
+    if (particleSquareTexture == NULL) {
+        particleSquareTexture = se_texture_create_solid_colored_texture(1, 1, 255);
+    }
 }
 
 void on_entity_entered_scene(SkaECSSystem* system, SkaEntity entity) {
