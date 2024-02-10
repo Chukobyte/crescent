@@ -10,7 +10,7 @@
 #include <seika/utils/se_string_util.h>
 
 #include "../src/core/node_event.h"
-#include "../src/core/ecs/component.h"
+#include "../src/core/ecs/ecs_globals.h"
 #include "../src/core/ecs/components/transform2d_component.h"
 #include "../src/core/ecs/components/collider2d_component.h"
 #include "../src/core/ecs/components/text_label_component.h"
@@ -171,8 +171,8 @@ void cre_json_file_loader_scene_test(void) {
     TEST_ASSERT_NULL(rootNode->externalNodeSource);
     TEST_ASSERT_EQUAL_UINT(2, rootNode->childrenCount);
     // Root components
-    TEST_ASSERT_NOT_NULL(rootNode->components[CreComponentDataIndex_TRANSFORM_2D]);
-    Transform2DComponent* rootTransformComp = (Transform2DComponent*) rootNode->components[CreComponentDataIndex_TRANSFORM_2D];
+    TEST_ASSERT_NOT_NULL(rootNode->components[TRANSFORM2D_COMPONENT_INDEX]);
+    Transform2DComponent* rootTransformComp = (Transform2DComponent*) rootNode->components[TRANSFORM2D_COMPONENT_INDEX];
     TEST_ASSERT_EQUAL_FLOAT(0.0f, rootTransformComp->localTransform.position.x);
     TEST_ASSERT_EQUAL_FLOAT(0.0f, rootTransformComp->localTransform.position.y);
     TEST_ASSERT_EQUAL_FLOAT(1.0f, rootTransformComp->localTransform.scale.x);
@@ -191,8 +191,8 @@ void cre_json_file_loader_scene_test(void) {
     TEST_ASSERT_NULL(playerNode->externalNodeSource);
     TEST_ASSERT_EQUAL_INT(0, playerNode->childrenCount);
     // Player components
-    TEST_ASSERT_NOT_NULL(playerNode->components[CreComponentDataIndex_TRANSFORM_2D]);
-    Transform2DComponent* playerTransformComp = (Transform2DComponent*) playerNode->components[CreComponentDataIndex_TRANSFORM_2D];
+    TEST_ASSERT_NOT_NULL(playerNode->components[TRANSFORM2D_COMPONENT_INDEX]);
+    Transform2DComponent* playerTransformComp = (Transform2DComponent*) playerNode->components[TRANSFORM2D_COMPONENT_INDEX];
     TEST_ASSERT_EQUAL_FLOAT(0.0f, playerTransformComp->localTransform.position.x);
     TEST_ASSERT_EQUAL_FLOAT(0.0f, playerTransformComp->localTransform.position.y);
     TEST_ASSERT_EQUAL_FLOAT(1.0f, playerTransformComp->localTransform.scale.x);
@@ -211,8 +211,8 @@ void cre_json_file_loader_scene_test(void) {
     TEST_ASSERT_EQUAL_STRING("engine/test/resources/ball.cscn", ballNode->externalNodeSource);
     TEST_ASSERT_EQUAL_INT(2, ballNode->childrenCount);
     // Ball components
-    TEST_ASSERT_NOT_NULL(ballNode->components[CreComponentDataIndex_TRANSFORM_2D]);
-    Transform2DComponent* ballTransformComp = (Transform2DComponent*) ballNode->components[CreComponentDataIndex_TRANSFORM_2D];
+    TEST_ASSERT_NOT_NULL(ballNode->components[TRANSFORM2D_COMPONENT_INDEX]);
+    Transform2DComponent* ballTransformComp = (Transform2DComponent*) ballNode->components[TRANSFORM2D_COMPONENT_INDEX];
     // Testing to make sure position in current scene file overrides the default position in the 'ball.cscn'
     TEST_ASSERT_EQUAL_FLOAT(100.0f, ballTransformComp->localTransform.position.x);
     TEST_ASSERT_EQUAL_FLOAT(110.0f, ballTransformComp->localTransform.position.y);
@@ -225,16 +225,16 @@ void cre_json_file_loader_scene_test(void) {
     // BALL NODE CHILD COLLIDER
     JsonSceneNode* ballColliderNode = ballNode->children[0];
     TEST_ASSERT_NOT_NULL(ballColliderNode);
-    Transform2DComponent* ballColliderTransformComp = (Transform2DComponent*) ballColliderNode->components[CreComponentDataIndex_TRANSFORM_2D];
+    Transform2DComponent* ballColliderTransformComp = (Transform2DComponent*) ballColliderNode->components[TRANSFORM2D_COMPONENT_INDEX];
     TEST_ASSERT_NOT_NULL(ballColliderTransformComp);
-    Collider2DComponent* ballColliderCollider2DComp = (Collider2DComponent*) ballColliderNode->components[CreComponentDataIndex_COLLIDER_2D];
+    Collider2DComponent* ballColliderCollider2DComp = (Collider2DComponent*) ballColliderNode->components[COLLIDER2D_COMPONENT_INDEX];
     TEST_ASSERT_NOT_NULL(ballColliderCollider2DComp);
     // BALL TEXT LABEL (Not in external scene but added as a child to the local scene)
     JsonSceneNode* ballTextLabel = ballNode->children[1];
     TEST_ASSERT_NOT_NULL(ballTextLabel);
-    Transform2DComponent * ballTextTransform2DComp = (Transform2DComponent*) ballTextLabel->components[CreComponentDataIndex_TRANSFORM_2D];
+    Transform2DComponent * ballTextTransform2DComp = (Transform2DComponent*) ballTextLabel->components[TRANSFORM2D_COMPONENT_INDEX];
     TEST_ASSERT_NOT_NULL(ballTextTransform2DComp);
-    TextLabelComponent* ballTextLabelComp = (TextLabelComponent*) ballTextLabel->components[CreComponentDataIndex_TEXT_LABEL];
+    TextLabelComponent* ballTextLabelComp = (TextLabelComponent*) ballTextLabel->components[TEXT_LABEL_COMPONENT_INDEX];
     TEST_ASSERT_NOT_NULL(ballTextLabelComp);
 
 
@@ -272,7 +272,7 @@ void cre_pocketpy_test(void) {
     TEST_ASSERT_EQUAL_INT(0, pkpy_stack_size(vm));
 
     TEST_MESSAGE("Testing entity instance cache");
-    const SkaEntity entity = cre_pkpy_entity_instance_cache_create_new_entity(vm, CRE_PKPY_MODULE_NAME_CRESCENT, "Node", cre_ec_system_create_entity_uid());
+    const SkaEntity entity = cre_pkpy_entity_instance_cache_create_new_entity(vm, CRE_PKPY_MODULE_NAME_CRESCENT, "Node", ska_ecs_entity_create());
     cre_pkpy_entity_instance_cache_push_entity_instance(vm, entity);
     TEST_ASSERT_EQUAL_INT(1, pkpy_stack_size(vm));
     pkpy_getattr(vm, pkpy_name("entity_id"));

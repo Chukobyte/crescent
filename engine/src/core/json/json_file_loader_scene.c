@@ -147,7 +147,9 @@ void cre_json_delete_json_scene_node(JsonSceneNode* node) {
     if (node->fontUID) {
         SE_MEM_FREE(node->fontUID);
     }
-    SE_MEM_FREE(node->spriteTexturePath);
+    if (node->spriteTexturePath) {
+        SE_MEM_FREE(node->spriteTexturePath);
+    }
 }
 
 //--- Private functions ---//
