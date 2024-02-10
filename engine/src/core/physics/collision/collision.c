@@ -5,7 +5,6 @@
 #include <seika/utils/se_assert.h>
 
 #include "../../ecs/ecs_globals.h"
-#include "../../ecs/system/ec_system.h"
 #include "../../ecs/system/collision_ec_system.h"
 #include "../../scene/scene_manager.h"
 

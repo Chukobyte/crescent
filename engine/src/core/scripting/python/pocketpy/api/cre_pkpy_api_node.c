@@ -23,7 +23,6 @@
 #include "../../../../ecs/component/color_rect_component.h"
 #include "../../../../ecs/component/parallax_component.h"
 #include "../../../../ecs/component/script_component.h"
-#include "../../../../ecs/system/ec_system.h"
 #include "../../../../ecs/component/particles2d_component.h"
 
 static void set_node_component_from_type(CreEntity entity, const char* classPath, const char* className, NodeBaseType baseType) {

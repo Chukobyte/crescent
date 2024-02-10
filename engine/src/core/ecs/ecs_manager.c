@@ -21,7 +21,6 @@
 #include "system/animated_sprite_rendering_ec_system.h"
 #include "system/collision_ec_system.h"
 #include "system/color_rect_ec_system.h"
-#include "system/ec_system.h"
 #include "system/font_rendering_ec_system.h"
 #include "system/parallax_ec_system.h"
 #include "system/particle_emitter_ec_system.h"

@@ -58,7 +58,6 @@ add_library(${PROJECT_NAME} STATIC
         src/core/ecs/system/animated_sprite_rendering_ec_system.c
         src/core/ecs/system/color_rect_ec_system.c
         src/core/ecs/system/collision_ec_system.c
-        src/core/ecs/system/ec_system.c
         src/core/ecs/system/font_rendering_ec_system.c
         src/core/ecs/system/parallax_ec_system.c
         src/core/ecs/system/particle_emitter_ec_system.c
