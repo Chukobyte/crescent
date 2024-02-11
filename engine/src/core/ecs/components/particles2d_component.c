@@ -83,6 +83,7 @@ void particles2d_component_reset_particle(Particles2DComponent* particles2DCompo
     particle2D->forceAccumulated = SKA_VECTOR2_ZERO;
     particle2D->timeActive = 0.0f;
     particle2D->color = particles2DComponent->color;
+    particle2D->prevTransform = SKA_TRANSFORM_IDENTITY;
     // Add initial velocity and spread
     const bool hasInitialVelocity = particles2DComponent->initialVelocity.min.x != 0.0f || particles2DComponent->initialVelocity.min.y != 0.0f;
     if (hasInitialVelocity) {
@@ -94,8 +95,8 @@ void particles2d_component_reset_particle(Particles2DComponent* particles2DCompo
         SKAVector2 initialDirection = initialVelocity;
         math_vec2_normalize(&initialDirection);
         const float spreadAngle = get_random_spread_angle_in_radians(&initialDirection, particles2DComponent->spread);
-        const float initialDirectionAngleDegrees = ska_math_vec2_angle(&initialDirection);
-        const float spreadAngleDegrees = SKA_RAD_2_DEGF(spreadAngle);
+//        const float initialDirectionAngleDegrees = ska_math_vec2_angle(&initialDirection);
+//        const float spreadAngleDegrees = SKA_RAD_2_DEGF(spreadAngle);
 
         const SKAVector2 rotatedVelocity = (SKAVector2){
             .x = initialVelocity.x * cosf(spreadAngle) - initialVelocity.y * sinf(spreadAngle),

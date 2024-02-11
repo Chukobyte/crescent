@@ -6,13 +6,13 @@ extern "C" {
 
 #include <stddef.h>
 
-#include "../ecs/entity/entity.h"
+#include <seika/ecs/entity.h>
 
-#define SCENE_TREE_NODE_MAX_CHILDREN (CRE_MAX_ENTITIES - 1)
+#define SCENE_TREE_NODE_MAX_CHILDREN (SKA_MAX_ENTITIES - 1)
 
 // Maintains parent child relationship between nodes
 typedef struct SceneTreeNode {
-    CreEntity entity;
+    SkaEntity entity;
     struct SceneTreeNode* parent;
     struct SceneTreeNode* children[SCENE_TREE_NODE_MAX_CHILDREN];
     size_t childCount;

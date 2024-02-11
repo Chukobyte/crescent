@@ -4,7 +4,7 @@
 
 #include <seika/memory/se_mem.h>
 
-CRENativeScriptClass* cre_native_class_create_new(CreEntity entity, const char* path, const char* name) {
+CRENativeScriptClass* cre_native_class_create_new(SkaEntity entity, const char* path, const char* name) {
     CRENativeScriptClass* scriptClass = SE_MEM_ALLOCATE(CRENativeScriptClass);
     scriptClass->entity = entity;
     scriptClass->path = path;

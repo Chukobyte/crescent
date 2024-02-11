@@ -2,14 +2,13 @@
 
 #include <stdio.h>
 
-#include "../seika/utils/se_assert.h"
+#include <seika/utils/se_assert.h>
 
-#include "cre_pkpy.h"
 #include "cre_pkpy_util.h"
 #include "cre_pkpy_api_source.h"
-#include "../../../ecs/system/ec_system.h"
-#include "../../../ecs/component/node_component.h"
-#include "../../../ecs/component/script_component.h"
+#include "../../../ecs/ecs_globals.h"
+#include "../../../ecs/components/node_component.h"
+#include "../../../ecs/components/script_component.h"
 
 static bool entity_instance_cache_is_initialized = false;
 
@@ -33,8 +32,8 @@ void cre_pkpy_entity_instance_cache_finalize(pkpy_vm* vm) {
     }
 }
 
-CreEntity cre_pkpy_entity_instance_cache_create_new_entity(pkpy_vm* vm, const char* classPath, const char* className, CreEntity entity) {
-    SE_ASSERT(entity != CRE_NULL_ENTITY);
+SkaEntity cre_pkpy_entity_instance_cache_create_new_entity(pkpy_vm* vm, const char* classPath, const char* className, SkaEntity entity) {
+    SE_ASSERT(entity != SKA_NULL_ENTITY);
     // import module first
     char importCmdBuffer[96];
     sprintf(importCmdBuffer, "from %s import %s", classPath, className);
@@ -62,14 +61,14 @@ CreEntity cre_pkpy_entity_instance_cache_create_new_entity(pkpy_vm* vm, const ch
     pkpy_pop_top(vm);
 
     // Add script component if missing
-    if (!cre_component_manager_has_component(entity, CreComponentDataIndex_SCRIPT)) {
-        cre_component_manager_set_component(entity, CreComponentDataIndex_SCRIPT, script_component_create_ex(classPath, className, ScriptContextType_PYTHON));
+    if (!ska_ecs_component_manager_has_component(entity, SCRIPT_COMPONENT_INDEX)) {
+        ska_ecs_component_manager_set_component(entity, SCRIPT_COMPONENT_INDEX, script_component_create_ex(classPath, className, ScriptContextType_PYTHON));
     }
 
     return entity;
 }
 
-bool cre_pkpy_entity_instance_cache_create_new_entity_if_nonexistent(pkpy_vm* vm, const char* classPath, const char* className, CreEntity entity) {
+bool cre_pkpy_entity_instance_cache_create_new_entity_if_nonexistent(pkpy_vm* vm, const char* classPath, const char* className, SkaEntity entity) {
     if (!cre_pkpy_entity_instance_cache_has_entity(vm, entity)) {
         cre_pkpy_entity_instance_cache_create_new_entity(vm, classPath, className, entity);
         return true;
@@ -77,14 +76,14 @@ bool cre_pkpy_entity_instance_cache_create_new_entity_if_nonexistent(pkpy_vm* vm
     return false;
 }
 
-void cre_pkpy_entity_instance_cache_remove_entity(pkpy_vm* vm, CreEntity entity) {
+void cre_pkpy_entity_instance_cache_remove_entity(pkpy_vm* vm, SkaEntity entity) {
     char entityStringBuffer[56];
     sprintf(entityStringBuffer, "del crescent_internal_py.CRE_ENTITY_TO_NODE_MAP[%d]", entity);
     pkpy_exec(vm, entityStringBuffer);
     SE_ASSERT(!cre_pkpy_util_print_error_message(vm));
 }
 
-bool cre_pkpy_entity_instance_cache_has_entity(pkpy_vm *vm, CreEntity entity) {
+bool cre_pkpy_entity_instance_cache_has_entity(pkpy_vm *vm, SkaEntity entity) {
     const int stackSizeBeforeEval = pkpy_stack_size(vm);
     char entityStringBuffer[56];
     sprintf(entityStringBuffer, "%d in crescent_internal_py.CRE_ENTITY_TO_NODE_MAP", entity);
@@ -97,7 +96,7 @@ bool cre_pkpy_entity_instance_cache_has_entity(pkpy_vm *vm, CreEntity entity) {
     return doesKeyExist;
 }
 
-void cre_pkpy_entity_instance_cache_push_entity_instance(pkpy_vm* vm, CreEntity entity) {
+void cre_pkpy_entity_instance_cache_push_entity_instance(pkpy_vm* vm, SkaEntity entity) {
     char entityStringBuffer[56];
     sprintf(entityStringBuffer, "crescent_internal_py.CRE_ENTITY_TO_NODE_MAP[%d]", entity);
     pkpy_eval(vm, entityStringBuffer);

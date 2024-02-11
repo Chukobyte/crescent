@@ -10,9 +10,8 @@ extern "C" {
 #include <seika/math/se_curve_float.h>
 #include <seika/data_structures/se_array_list.h>
 
-#include "../ecs/entity/entity.h"
-#include "../ecs/component/component.h"
-#include "../ecs/component/node_component.h"
+#include "../ecs/component.h"
+#include "../ecs/components/node_component.h"
 
 typedef struct JsonSceneNode {
     char* name;
@@ -22,7 +21,7 @@ typedef struct JsonSceneNode {
     SEArrayList* tags;
     void* components[CRE_MAX_COMPONENTS];
     struct JsonSceneNode* parent;
-    struct JsonSceneNode* children[CRE_MAX_ENTITIES / 4]; // TODO: Change to an array list
+    struct JsonSceneNode* children[25]; // TODO: Change to an array list
     size_t childrenCount;
     char* spriteTexturePath;
     char* fontUID;

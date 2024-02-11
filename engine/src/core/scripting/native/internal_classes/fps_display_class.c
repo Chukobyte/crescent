@@ -4,30 +4,32 @@
 #include <stdlib.h>
 
 #include <seika/rendering/renderer.h>
+#include <seika/ecs/ecs.h>
 #include <seika/memory/se_mem.h>
 #include <seika/utils/se_string_util.h>
 
 #include "../native_script_class.h"
 #include "../../../engine_context.h"
-#include "../../../ecs/component/text_label_component.h"
-#include "../../../ecs/component/component.h"
+#include "../../../ecs/ecs_globals.h"
+#include "../../../ecs/components/text_label_component.h"
+#include "../../../ecs/component.h"
 
 typedef struct FpsDisplayClassData {
     int value;
 } FpsDisplayClassData;
 
-CRENativeScriptClass* fps_display_create_new_instance(CreEntity entity);
+CRENativeScriptClass* fps_display_create_new_instance(SkaEntity entity);
 void fps_display_on_start(CRENativeScriptClass* nativeScriptClass);
 void fps_display_on_end(CRENativeScriptClass* nativeScriptClass);
 void fps_display_update(CRENativeScriptClass* nativeScriptClass, float deltaTime);
 
 CRENativeScriptClass* fps_display_native_class_create_new() {
-    CRENativeScriptClass* fpsClassInstance = fps_display_create_new_instance(CRE_NULL_ENTITY);
+    CRENativeScriptClass* fpsClassInstance = fps_display_create_new_instance(SKA_NULL_ENTITY);
     fpsClassInstance->create_new_instance_func = fps_display_create_new_instance;
     return fpsClassInstance;
 }
 
-CRENativeScriptClass* fps_display_create_new_instance(CreEntity entity) {
+CRENativeScriptClass* fps_display_create_new_instance(SkaEntity entity) {
     CRENativeScriptClass* fpsClassInstance = cre_native_class_create_new(entity, "main", "FpsDisplay");
     fpsClassInstance->on_start_func = fps_display_on_start;
     fpsClassInstance->on_end_func = fps_display_on_end;
@@ -51,7 +53,7 @@ void fps_display_update(CRENativeScriptClass* nativeScriptClass, float deltaTime
     static char fpsAmountBuffer[6];
     // FIXME: This is windows specific, needs to be replaced for other OS
     gcvt(cre_engine_context_get()->stats.averageFPS, 4, fpsAmountBuffer);
-    TextLabelComponent* textLabelComponent = (TextLabelComponent*) cre_component_manager_get_component(nativeScriptClass->entity, CreComponentDataIndex_TEXT_LABEL);
+    TextLabelComponent* textLabelComponent = (TextLabelComponent*)ska_ecs_component_manager_get_component(nativeScriptClass->entity, TEXT_LABEL_COMPONENT_INDEX);
     se_strcpy(textLabelComponent->text, "FPS: ");
     se_strcat(textLabelComponent->text, fpsAmountBuffer);
 }

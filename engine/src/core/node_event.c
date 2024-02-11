@@ -2,20 +2,22 @@
 
 #include <string.h>
 
-#include <seika/memory/se_mem.h>
+#include <seika/ecs/ecs.h>
 #include <seika/data_structures/se_hash_map_string.h>
 #include <seika/data_structures/se_array_utils.h>
+#include <seika/memory/se_mem.h>
 #include <seika/utils/se_string_util.h>
 #include <seika/utils/se_assert.h>
 
-#include "ecs/component/node_component.h"
-#include "ecs/component/component.h"
+#include "ecs/ecs_globals.h"
+#include "ecs/components/node_component.h"
+#include "ecs/component.h"
 
 #define CRE_NODE_EVENT_MAX_OBSERVERS 8
 #define MAX_EVENT_OBSERVER_ENTRY_COUNT 100
 
 typedef struct NodeEventObserver {
-    CreEntity entity;
+    SkaEntity entity;
     NodeEventObserverCallback callback;
     void* data; // Used to store misc data from the caller
     NodeEventObserverDataDeleteCallback dataDeleteCallback;
@@ -23,7 +25,7 @@ typedef struct NodeEventObserver {
 } NodeEventObserver;
 
 typedef struct NodeEvent {
-    CreEntity entity;
+    SkaEntity entity;
     char* id;
     size_t observerCount;
     NodeEventObserver* observers[CRE_NODE_EVENT_MAX_OBSERVERS];
@@ -36,19 +38,19 @@ typedef struct NodeEventObserverEntry {
 
 typedef struct NodeEventDatabase {
     // Keeps tracks of an entity's events and observers
-    SEStringHashMap* entityEventMaps[CRE_MAX_ENTITIES];
+    SEStringHashMap* entityEventMaps[SKA_MAX_ENTITIES];
     // Keeps tracks of observers to events
-    NodeEventObserverEntry nodeEventObserverEntry[CRE_MAX_ENTITIES];
+    NodeEventObserverEntry nodeEventObserverEntry[SKA_MAX_ENTITIES];
     // Booleans for if entity has registered to the 'on scene exit' callback (TODO: Should be done better...)
-    bool hasEntityRegisteredOnSceneExitCallback[CRE_MAX_ENTITIES];
+    bool hasEntityRegisteredOnSceneExitCallback[SKA_MAX_ENTITIES];
 } NodeEventDatabase;
 
-NodeEvent* node_event_create_event_internal(CreEntity entity, const char* eventId);
-NodeEventObserver* node_create_observer_internal(CreEntity entity, NodeEvent* event, NodeEventObserverCallback observerCallback, void* observerData, NodeEventObserverDataDeleteCallback dataDeleteCallback);
+NodeEvent* node_event_create_event_internal(SkaEntity entity, const char* eventId);
+NodeEventObserver* node_create_observer_internal(SkaEntity entity, NodeEvent* event, NodeEventObserverCallback observerCallback, void* observerData, NodeEventObserverDataDeleteCallback dataDeleteCallback);
 void node_observer_free(NodeEventObserver* observer);
-bool does_entity_have_observer_event_already(CreEntity observerEntity, NodeEvent* event);
-void register_entity_to_on_scene_exit_callback(CreEntity entity);
-void unregister_entity_to_on_scene_exit_callback(CreEntity entity);
+bool does_entity_have_observer_event_already(SkaEntity observerEntity, NodeEvent* event);
+void register_entity_to_on_scene_exit_callback(SkaEntity entity);
+void unregister_entity_to_on_scene_exit_callback(SkaEntity entity);
 
 void cre_node_event_on_entity_exit_scene(SESubjectNotifyPayload* payload);
 
@@ -59,18 +61,18 @@ static NodeEventDatabase eventDatabase = {
 };
 static SEObserver nodeEntityOnExitSceneObserver = { .on_notify = cre_node_event_on_entity_exit_scene };
 
-void node_event_create_event(CreEntity entity, const char* eventId) {
+void node_event_create_event(SkaEntity entity, const char* eventId) {
     node_event_create_event_internal(entity, eventId);
 }
 
-void node_event_subscribe_to_event(CreEntity entity, const char* eventId, CreEntity observerEntity, NodeEventObserverCallback observerCallback, void* observerData, NodeEventObserverDataDeleteCallback dataDeleteCallback) {
+void node_event_subscribe_to_event(SkaEntity entity, const char* eventId, SkaEntity observerEntity, NodeEventObserverCallback observerCallback, void* observerData, NodeEventObserverDataDeleteCallback dataDeleteCallback) {
     NodeEvent* event = node_event_create_event_internal(entity, eventId);
     if (!does_entity_have_observer_event_already(observerEntity, event)) {
         event->observers[event->observerCount++] = node_create_observer_internal(observerEntity, event, observerCallback, observerData, dataDeleteCallback);
     }
 }
 
-void node_event_notify_observers(CreEntity entity, const char* eventId, NodeEventNotifyPayload* payload) {
+void node_event_notify_observers(SkaEntity entity, const char* eventId, NodeEventNotifyPayload* payload) {
     NodeEvent* event = node_event_create_event_internal(entity, eventId);
     // Copy observers in case they're deleted in a callback
     static NodeEventObserver* observersToNotify[CRE_NODE_EVENT_MAX_OBSERVERS];
@@ -84,7 +86,7 @@ void node_event_notify_observers(CreEntity entity, const char* eventId, NodeEven
     }
 }
 
-void node_event_destroy_all_entity_events_and_observers(CreEntity entity) {
+void node_event_destroy_all_entity_events_and_observers(SkaEntity entity) {
     // Remove all entity observers
     NodeEventObserverEntry* observerEntry = &eventDatabase.nodeEventObserverEntry[entity];
     for (size_t i = 0; i < observerEntry->entryCount; i++) {
@@ -125,11 +127,11 @@ void node_event_destroy_all_entity_events_and_observers(CreEntity entity) {
 }
 
 // Queries
-size_t node_event_get_event_count(CreEntity entity) {
+size_t node_event_get_event_count(SkaEntity entity) {
     return eventDatabase.entityEventMaps[entity] != NULL ? eventDatabase.entityEventMaps[entity]->size : 0;
 }
 
-size_t node_event_get_event_observer_count(CreEntity entity, const char* eventId) {
+size_t node_event_get_event_observer_count(SkaEntity entity, const char* eventId) {
     if (eventDatabase.entityEventMaps[entity] != NULL) {
         NodeEvent* event = node_event_create_event_internal(entity, eventId);
         return event->observerCount;
@@ -137,12 +139,12 @@ size_t node_event_get_event_observer_count(CreEntity entity, const char* eventId
     return 0;
 }
 
-size_t node_event_get_entity_observer_count(CreEntity entity) {
+size_t node_event_get_entity_observer_count(SkaEntity entity) {
     return eventDatabase.nodeEventObserverEntry[entity].entryCount;
 }
 
 // Internal
-NodeEvent* node_event_create_event_internal(CreEntity entity, const char* eventId) {
+NodeEvent* node_event_create_event_internal(SkaEntity entity, const char* eventId) {
     if (eventDatabase.entityEventMaps[entity] == NULL) {
         eventDatabase.entityEventMaps[entity] = se_string_hash_map_create_default_capacity();
         register_entity_to_on_scene_exit_callback(entity);
@@ -158,7 +160,7 @@ NodeEvent* node_event_create_event_internal(CreEntity entity, const char* eventI
     return event;
 }
 
-NodeEventObserver* node_create_observer_internal(CreEntity entity, NodeEvent* event, NodeEventObserverCallback observerCallback, void* observerData, NodeEventObserverDataDeleteCallback dataDeleteCallback) {
+NodeEventObserver* node_create_observer_internal(SkaEntity entity, NodeEvent* event, NodeEventObserverCallback observerCallback, void* observerData, NodeEventObserverDataDeleteCallback dataDeleteCallback) {
     NodeEventObserver* eventObserver = SE_MEM_ALLOCATE(NodeEventObserver);
     eventObserver->entity = entity;
     eventObserver->callback = observerCallback;
@@ -180,7 +182,7 @@ void node_observer_free(NodeEventObserver* observer) {
     SE_MEM_FREE(observer);
 }
 
-bool does_entity_have_observer_event_already(CreEntity observerEntity, NodeEvent* event) {
+bool does_entity_have_observer_event_already(SkaEntity observerEntity, NodeEvent* event) {
     for (size_t i = 0; i < eventDatabase.nodeEventObserverEntry[observerEntity].entryCount; i++) {
         const NodeEvent* observerEvent = eventDatabase.nodeEventObserverEntry[observerEntity].observers[i]->event;
         if (strcmp(observerEvent->id, event->id) == 0 && observerEvent->entity == event->entity) {
@@ -190,17 +192,17 @@ bool does_entity_have_observer_event_already(CreEntity observerEntity, NodeEvent
     return false;
 }
 
-void register_entity_to_on_scene_exit_callback(CreEntity entity) {
+void register_entity_to_on_scene_exit_callback(SkaEntity entity) {
     NodeComponent* nodeComp = NULL;
-    if (!eventDatabase.hasEntityRegisteredOnSceneExitCallback[entity] && (nodeComp = cre_component_manager_get_component_unchecked(entity, CreComponentDataIndex_NODE))) {
+    if (!eventDatabase.hasEntityRegisteredOnSceneExitCallback[entity] && (nodeComp = (NodeComponent*)ska_ecs_component_manager_get_component_unchecked(entity, NODE_COMPONENT_INDEX))) {
         se_event_register_observer(&nodeComp->onSceneTreeExit, &nodeEntityOnExitSceneObserver);
         eventDatabase.hasEntityRegisteredOnSceneExitCallback[entity] = true;
     }
 }
 
-void unregister_entity_to_on_scene_exit_callback(CreEntity entity) {
+void unregister_entity_to_on_scene_exit_callback(SkaEntity entity) {
     NodeComponent* nodeComp = NULL;
-    if (eventDatabase.hasEntityRegisteredOnSceneExitCallback[entity] && (nodeComp = cre_component_manager_get_component_unchecked(entity, CreComponentDataIndex_NODE))) {
+    if (eventDatabase.hasEntityRegisteredOnSceneExitCallback[entity] && (nodeComp = (NodeComponent*)ska_ecs_component_manager_get_component_unchecked(entity, NODE_COMPONENT_INDEX))) {
         se_event_unregister_observer(&nodeComp->onSceneTreeExit, &nodeEntityOnExitSceneObserver);
         eventDatabase.hasEntityRegisteredOnSceneExitCallback[entity] = false;
     }
@@ -208,6 +210,6 @@ void unregister_entity_to_on_scene_exit_callback(CreEntity entity) {
 
 // Callbacks
 void cre_node_event_on_entity_exit_scene(SESubjectNotifyPayload* payload) {
-    const CreEntity entity = *(CreEntity*) payload->data;
+    const SkaEntity entity = *(SkaEntity*) payload->data;
     node_event_destroy_all_entity_events_and_observers(entity);
 }

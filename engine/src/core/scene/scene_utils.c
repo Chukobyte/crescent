@@ -1,18 +1,21 @@
 #include "scene_utils.h"
 
+#include <seika/ecs/ecs.h>
+
 #include "scene_tree.h"
-#include "../ecs/component/component.h"
+#include "../ecs/ecs_globals.h"
+#include "../ecs/component.h"
 #include "../camera/camera.h"
 #include "../camera/camera_manager.h"
 
-SKATransform2D default_get_local_transform(CreEntity entity, int* zIndex, bool* success);
+SKATransform2D default_get_local_transform(SkaEntity entity, int* zIndex, bool* success);
 
 on_get_self_and_parent_entities onGetSelfAndParentEntitiesFunc = &cre_scene_manager_get_self_and_parent_nodes;
 on_get_local_transform onGetLocalTransformFunc = &default_get_local_transform;
 
 // Default engine callbacks
-SKATransform2D default_get_local_transform(CreEntity entity, int* zIndex, bool* success) {
-    Transform2DComponent* transform2DComponent = cre_component_manager_get_component_unchecked(entity, CreComponentDataIndex_TRANSFORM_2D);
+SKATransform2D default_get_local_transform(SkaEntity entity, int* zIndex, bool* success) {
+    Transform2DComponent* transform2DComponent = ska_ecs_component_manager_get_component_unchecked(entity, TRANSFORM2D_COMPONENT_INDEX);
     if (transform2DComponent == NULL) {
         *success = false;
         return SKA_TRANSFORM_IDENTITY;
@@ -22,13 +25,13 @@ SKATransform2D default_get_local_transform(CreEntity entity, int* zIndex, bool* 
     return transform2DComponent->localTransform;
 }
 
-void cre_scene_utils_update_global_transform_model(CreEntity entity, SKATransformModel2D* globalTransform) {
+void cre_scene_utils_update_global_transform_model(SkaEntity entity, SKATransformModel2D* globalTransform) {
     glm_mat4_identity(globalTransform->model);
     EntityArray combineModelResult = onGetSelfAndParentEntitiesFunc(entity);
     SKAVector2 scaleTotal = SKA_VECTOR2_ONE;
     globalTransform->zIndex = 0;
     for (int i = combineModelResult.entityCount - 1; i >= 0; i--) {
-        CreEntity currentEntity = combineModelResult.entities[i];
+        SkaEntity currentEntity = combineModelResult.entities[i];
         bool hasLocalTransform = false;
         int localZIndex = 0;
         const SKATransform2D localTransform = onGetLocalTransformFunc(currentEntity, &localZIndex, &hasLocalTransform);
@@ -74,7 +77,7 @@ void cre_scene_utils_override_on_get_local_transform_func(on_get_local_transform
     onGetLocalTransformFunc = func;
 }
 
-EntityArray cre_scene_utils_get_self_and_parent_entities(CreEntity entity) {
+EntityArray cre_scene_utils_get_self_and_parent_entities(SkaEntity entity) {
     return onGetSelfAndParentEntitiesFunc(entity);
 }
 

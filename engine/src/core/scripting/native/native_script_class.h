@@ -2,13 +2,13 @@
 
 #include <stddef.h>
 
-#include "../../ecs/entity/entity.h"
+#include <seika/ecs/entity.h>
 
 typedef struct CRENativeScriptClass {
     const char* path;
     const char* name;
-    CreEntity entity;
-    struct CRENativeScriptClass* (*create_new_instance_func)(CreEntity);
+    SkaEntity entity;
+    struct CRENativeScriptClass* (*create_new_instance_func)(SkaEntity);
     void (*on_start_func)(struct CRENativeScriptClass* nativeScriptClass);
     void (*on_end_func)(struct CRENativeScriptClass* nativeScriptClass);
     void (*update_func)(struct CRENativeScriptClass* nativeScriptClass, float deltaTime);
@@ -17,4 +17,4 @@ typedef struct CRENativeScriptClass {
     size_t class_instance_size;
 } CRENativeScriptClass;
 
-CRENativeScriptClass* cre_native_class_create_new(CreEntity entity, const char* path, const char* name);
+CRENativeScriptClass* cre_native_class_create_new(SkaEntity entity, const char* path, const char* name);

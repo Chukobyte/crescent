@@ -10,11 +10,10 @@
 #include <seika/utils/se_string_util.h>
 
 #include "../src/core/node_event.h"
-#include "../src/core/ecs/component/component.h"
-#include "../src/core/ecs/component/transform2d_component.h"
-#include "../src/core/ecs/component/collider2d_component.h"
-#include "../src/core/ecs/component/text_label_component.h"
-#include "../src/core/ecs/system/ec_system.h"
+#include "../src/core/ecs/ecs_globals.h"
+#include "../src/core/ecs/components/transform2d_component.h"
+#include "../src/core/ecs/components/collider2d_component.h"
+#include "../src/core/ecs/components/text_label_component.h"
 #include "../src/core/ecs/ecs_manager.h"
 #include "../src/core/json/json_file_loader.h"
 #include "../src/core/scripting/python/pocketpy/cre_pkpy.h"
@@ -25,6 +24,7 @@
 #include "../src/core/game_properties.h"
 #include "../src/core/engine_context.h"
 #include "../src/core/scene/scene_manager.h"
+#include "../src/core/tilemap/tilemap.h"
 
 inline static SETexture* create_mock_texture() {
     SETexture* texture = SE_MEM_ALLOCATE(SETexture);
@@ -50,13 +50,47 @@ void tearDown() {
 void cre_node_event_test(void);
 void cre_json_file_loader_scene_test(void);
 void cre_pocketpy_test(void);
+void cre_tilemap_test(void);
 
 int main(int argv, char** args) {
     UNITY_BEGIN();
     RUN_TEST(cre_node_event_test);
     RUN_TEST(cre_json_file_loader_scene_test);
     RUN_TEST(cre_pocketpy_test);
+    RUN_TEST(cre_tilemap_test);
     return UNITY_END();
+}
+
+// TODO: move
+void cre_tilemap_test(void) {
+    // Test setting (and unsetting) a single tile in an empty tile map
+    const SKAVector2i tileOnePosition = (SKAVector2i){ .x = 5, .y = 5 };
+    CreTilemap tilemap = CRE_TILEMAP_DEFAULT_EMPTY;
+    cre_tilemap_set_tile_active(&tilemap, &tileOnePosition, true);
+    TEST_ASSERT_EQUAL_INT(5, tilemap.activeSize.w);
+    TEST_ASSERT_EQUAL_INT(5, tilemap.activeSize.h);
+    TEST_ASSERT_EQUAL_INT(CreTileType_CENTER, cre_tilemap_get_tile_bitmask(&tilemap, &tileOnePosition));
+    cre_tilemap_set_tile_active(&tilemap, &tileOnePosition, false);
+    TEST_ASSERT_EQUAL_INT(0, tilemap.activeSize.w);
+    TEST_ASSERT_EQUAL_INT(0, tilemap.activeSize.h);
+
+    // 3 x 3 minimal bitmask tests
+    const SKAVector2i tileTwoPosition = { .x = 9, .y = 4 };
+    const SKAVector2i tileThreePosition = { .x = 8, .y = 4 };
+
+    const SKAVector2i tileFourPosition = { .x = 3, .y = 8 };
+    const SKAVector2i tileFivePosition = { .x = 3, .y = 7 };
+
+    cre_tilemap_set_tile_active(&tilemap, &tileTwoPosition, true);
+    cre_tilemap_set_tile_active(&tilemap, &tileThreePosition, true);
+    cre_tilemap_set_tile_active(&tilemap, &tileFourPosition, true);
+    cre_tilemap_set_tile_active(&tilemap, &tileFivePosition, true);
+    TEST_ASSERT_EQUAL_INT(9, tilemap.activeSize.w);
+    TEST_ASSERT_EQUAL_INT(8, tilemap.activeSize.h);
+    TEST_ASSERT_EQUAL_INT(CreTileType_CENTER | CreTileType_LEFT, cre_tilemap_get_tile_bitmask(&tilemap, &tileTwoPosition));
+    TEST_ASSERT_EQUAL_INT(CreTileType_CENTER | CreTileType_RIGHT, cre_tilemap_get_tile_bitmask(&tilemap, &tileThreePosition));
+    TEST_ASSERT_EQUAL_INT(CreTileType_CENTER | CreTileType_TOP, cre_tilemap_get_tile_bitmask(&tilemap, &tileFourPosition));
+    TEST_ASSERT_EQUAL_INT(CreTileType_CENTER | CreTileType_BOTTOM, cre_tilemap_get_tile_bitmask(&tilemap, &tileFivePosition));
 }
 
 //--- Node event test ---//
@@ -75,8 +109,8 @@ void node_event_callback2(void* observerData, NodeEventNotifyPayload* notifyPayl
 }
 
 void cre_node_event_test(void) {
-    const CreEntity eventEntity = 1;
-    const CreEntity observerEntity = 2;
+    const SkaEntity eventEntity = 1;
+    const SkaEntity observerEntity = 2;
     const char* eventId = "walk";
 
     // Test Empty
@@ -96,7 +130,7 @@ void cre_node_event_test(void) {
     TEST_ASSERT_TRUE(hasBeenNotified);
     hasBeenNotified = false;
 
-    const CreEntity anotherObserverEntity = 3;
+    const SkaEntity anotherObserverEntity = 3;
     node_event_subscribe_to_event(eventEntity, eventId, anotherObserverEntity, node_event_callback2, NULL, NULL);
     TEST_ASSERT_EQUAL_UINT(2, node_event_get_event_observer_count(eventEntity, eventId));
     node_event_notify_observers(eventEntity, eventId, &(NodeEventNotifyPayload){ .data = &NODE_EVENT_TEST_NUMBER });
@@ -137,8 +171,8 @@ void cre_json_file_loader_scene_test(void) {
     TEST_ASSERT_NULL(rootNode->externalNodeSource);
     TEST_ASSERT_EQUAL_UINT(2, rootNode->childrenCount);
     // Root components
-    TEST_ASSERT_NOT_NULL(rootNode->components[CreComponentDataIndex_TRANSFORM_2D]);
-    Transform2DComponent* rootTransformComp = (Transform2DComponent*) rootNode->components[CreComponentDataIndex_TRANSFORM_2D];
+    TEST_ASSERT_NOT_NULL(rootNode->components[TRANSFORM2D_COMPONENT_INDEX]);
+    Transform2DComponent* rootTransformComp = (Transform2DComponent*) rootNode->components[TRANSFORM2D_COMPONENT_INDEX];
     TEST_ASSERT_EQUAL_FLOAT(0.0f, rootTransformComp->localTransform.position.x);
     TEST_ASSERT_EQUAL_FLOAT(0.0f, rootTransformComp->localTransform.position.y);
     TEST_ASSERT_EQUAL_FLOAT(1.0f, rootTransformComp->localTransform.scale.x);
@@ -157,8 +191,8 @@ void cre_json_file_loader_scene_test(void) {
     TEST_ASSERT_NULL(playerNode->externalNodeSource);
     TEST_ASSERT_EQUAL_INT(0, playerNode->childrenCount);
     // Player components
-    TEST_ASSERT_NOT_NULL(playerNode->components[CreComponentDataIndex_TRANSFORM_2D]);
-    Transform2DComponent* playerTransformComp = (Transform2DComponent*) playerNode->components[CreComponentDataIndex_TRANSFORM_2D];
+    TEST_ASSERT_NOT_NULL(playerNode->components[TRANSFORM2D_COMPONENT_INDEX]);
+    Transform2DComponent* playerTransformComp = (Transform2DComponent*) playerNode->components[TRANSFORM2D_COMPONENT_INDEX];
     TEST_ASSERT_EQUAL_FLOAT(0.0f, playerTransformComp->localTransform.position.x);
     TEST_ASSERT_EQUAL_FLOAT(0.0f, playerTransformComp->localTransform.position.y);
     TEST_ASSERT_EQUAL_FLOAT(1.0f, playerTransformComp->localTransform.scale.x);
@@ -177,8 +211,8 @@ void cre_json_file_loader_scene_test(void) {
     TEST_ASSERT_EQUAL_STRING("engine/test/resources/ball.cscn", ballNode->externalNodeSource);
     TEST_ASSERT_EQUAL_INT(2, ballNode->childrenCount);
     // Ball components
-    TEST_ASSERT_NOT_NULL(ballNode->components[CreComponentDataIndex_TRANSFORM_2D]);
-    Transform2DComponent* ballTransformComp = (Transform2DComponent*) ballNode->components[CreComponentDataIndex_TRANSFORM_2D];
+    TEST_ASSERT_NOT_NULL(ballNode->components[TRANSFORM2D_COMPONENT_INDEX]);
+    Transform2DComponent* ballTransformComp = (Transform2DComponent*) ballNode->components[TRANSFORM2D_COMPONENT_INDEX];
     // Testing to make sure position in current scene file overrides the default position in the 'ball.cscn'
     TEST_ASSERT_EQUAL_FLOAT(100.0f, ballTransformComp->localTransform.position.x);
     TEST_ASSERT_EQUAL_FLOAT(110.0f, ballTransformComp->localTransform.position.y);
@@ -191,18 +225,17 @@ void cre_json_file_loader_scene_test(void) {
     // BALL NODE CHILD COLLIDER
     JsonSceneNode* ballColliderNode = ballNode->children[0];
     TEST_ASSERT_NOT_NULL(ballColliderNode);
-    Transform2DComponent* ballColliderTransformComp = (Transform2DComponent*) ballColliderNode->components[CreComponentDataIndex_TRANSFORM_2D];
+    Transform2DComponent* ballColliderTransformComp = (Transform2DComponent*) ballColliderNode->components[TRANSFORM2D_COMPONENT_INDEX];
     TEST_ASSERT_NOT_NULL(ballColliderTransformComp);
-    Collider2DComponent* ballColliderCollider2DComp = (Collider2DComponent*) ballColliderNode->components[CreComponentDataIndex_COLLIDER_2D];
+    Collider2DComponent* ballColliderCollider2DComp = (Collider2DComponent*) ballColliderNode->components[COLLIDER2D_COMPONENT_INDEX];
     TEST_ASSERT_NOT_NULL(ballColliderCollider2DComp);
     // BALL TEXT LABEL (Not in external scene but added as a child to the local scene)
     JsonSceneNode* ballTextLabel = ballNode->children[1];
     TEST_ASSERT_NOT_NULL(ballTextLabel);
-    Transform2DComponent * ballTextTransform2DComp = (Transform2DComponent*) ballTextLabel->components[CreComponentDataIndex_TRANSFORM_2D];
+    Transform2DComponent * ballTextTransform2DComp = (Transform2DComponent*) ballTextLabel->components[TRANSFORM2D_COMPONENT_INDEX];
     TEST_ASSERT_NOT_NULL(ballTextTransform2DComp);
-    TextLabelComponent* ballTextLabelComp = (TextLabelComponent*) ballTextLabel->components[CreComponentDataIndex_TEXT_LABEL];
+    TextLabelComponent* ballTextLabelComp = (TextLabelComponent*) ballTextLabel->components[TEXT_LABEL_COMPONENT_INDEX];
     TEST_ASSERT_NOT_NULL(ballTextLabelComp);
-
 
     cre_json_delete_json_scene_node(rootNode);
 }
@@ -238,7 +271,7 @@ void cre_pocketpy_test(void) {
     TEST_ASSERT_EQUAL_INT(0, pkpy_stack_size(vm));
 
     TEST_MESSAGE("Testing entity instance cache");
-    const CreEntity entity = cre_pkpy_entity_instance_cache_create_new_entity(vm, CRE_PKPY_MODULE_NAME_CRESCENT, "Node", cre_ec_system_create_entity_uid());
+    const SkaEntity entity = cre_pkpy_entity_instance_cache_create_new_entity(vm, CRE_PKPY_MODULE_NAME_CRESCENT, "Node", ska_ecs_entity_create());
     cre_pkpy_entity_instance_cache_push_entity_instance(vm, entity);
     TEST_ASSERT_EQUAL_INT(1, pkpy_stack_size(vm));
     pkpy_getattr(vm, pkpy_name("entity_id"));

@@ -7,19 +7,18 @@
 #include <seika/memory/se_mem.h>
 
 #include "native_script_class.h"
-
 #include "../script_context.h"
 
 #define MAX_NATIVE_CLASSES 4
 #define MAX_NATIVE_CLASS_ENTITIES 8
 
 // --- Script Context Interface --- //
-void native_on_create_instance(CreEntity entity, const char* classPath, const char* className);
-void native_on_delete_instance(CreEntity entity);
-void native_on_start(CreEntity entity);
-void native_on_update_instance(CreEntity entity, float deltaTime);
-void native_on_fixed_update_instance(CreEntity entity, float deltaTime);
-void native_on_end(CreEntity entity);
+void native_on_create_instance(SkaEntity entity, const char* classPath, const char* className);
+void native_on_delete_instance(SkaEntity entity);
+void native_on_start(SkaEntity entity);
+void native_on_update_instance(SkaEntity entity, float deltaTime);
+void native_on_fixed_update_instance(SkaEntity entity, float deltaTime);
+void native_on_end(SkaEntity entity);
 void native_on_script_context_destroy();
 
 // Script Cache
@@ -43,7 +42,7 @@ CREScriptContext* cre_native_create_script_context() {
     classCache = se_string_hash_map_create(MAX_NATIVE_CLASSES);
 
     SE_ASSERT(entityToClassName == NULL);
-    entityToClassName = se_hash_map_create(sizeof(CreEntity), sizeof(CRENativeScriptClass **), MAX_NATIVE_CLASS_ENTITIES);
+    entityToClassName = se_hash_map_create(sizeof(SkaEntity), sizeof(CRENativeScriptClass **), MAX_NATIVE_CLASS_ENTITIES);
 
     native_script_context = scriptContext;
 
@@ -60,7 +59,7 @@ void cre_native_class_register_new_class(CRENativeScriptClass* scriptClass) {
     se_string_hash_map_add(classCache, scriptClass->name, &scriptClass, scriptClass->class_instance_size);
 }
 
-void native_on_create_instance(CreEntity entity, const char* classPath, const char* className) {
+void native_on_create_instance(SkaEntity entity, const char* classPath, const char* className) {
     SE_ASSERT_FMT(se_string_hash_map_has(classCache, className), "Class ref not cached!  entity: '%d', class_path: '%s', class_name: '%s'", entity, classPath, className);
     CRENativeScriptClass* scriptClassRef = (CRENativeScriptClass*) *(CRENativeScriptClass**) se_string_hash_map_get(
             classCache, className);
@@ -70,7 +69,7 @@ void native_on_create_instance(CreEntity entity, const char* classPath, const ch
     se_hash_map_add(entityToClassName, &entity, &newScriptClass);
 }
 
-void native_on_delete_instance(CreEntity entity) {
+void native_on_delete_instance(SkaEntity entity) {
     CRENativeScriptClass* scriptClassRef = (CRENativeScriptClass*) *(CRENativeScriptClass**) se_hash_map_get(entityToClassName, &entity);
 
     if (scriptClassRef->update_func != NULL) {
@@ -78,7 +77,7 @@ void native_on_delete_instance(CreEntity entity) {
             native_script_context->updateEntities,
             &native_script_context->updateEntityCount,
             entity,
-            CRE_NULL_ENTITY
+            SKA_NULL_ENTITY
         );
     }
     if (scriptClassRef->fixed_update_func != NULL) {
@@ -86,7 +85,7 @@ void native_on_delete_instance(CreEntity entity) {
             native_script_context->fixedUpdateEntities,
             &native_script_context->fixedUpdateEntityCount,
             entity,
-            CRE_NULL_ENTITY
+            SKA_NULL_ENTITY
         );
     }
 
@@ -94,7 +93,7 @@ void native_on_delete_instance(CreEntity entity) {
     se_hash_map_erase(entityToClassName, &entity);
 }
 
-void native_on_start(CreEntity entity) {
+void native_on_start(SkaEntity entity) {
     SE_ASSERT(se_hash_map_has(entityToClassName, &entity));
     CRENativeScriptClass* scriptClassRef = (CRENativeScriptClass*) *(CRENativeScriptClass**) se_hash_map_get(entityToClassName, &entity);
     scriptClassRef->on_start_func(scriptClassRef);
@@ -107,17 +106,17 @@ void native_on_start(CreEntity entity) {
     }
 }
 
-void native_on_update_instance(CreEntity entity, float deltaTime) {
+void native_on_update_instance(SkaEntity entity, float deltaTime) {
     CRENativeScriptClass* scriptClass = (CRENativeScriptClass*) *(CRENativeScriptClass**) se_hash_map_get(entityToClassName, &entity);
     scriptClass->update_func(scriptClass, deltaTime);
 }
 
-void native_on_fixed_update_instance(CreEntity entity, float deltaTime) {
+void native_on_fixed_update_instance(SkaEntity entity, float deltaTime) {
     CRENativeScriptClass* scriptClass = (CRENativeScriptClass*) *(CRENativeScriptClass**) se_hash_map_get(entityToClassName, &entity);
     scriptClass->fixed_update_func(scriptClass, deltaTime);
 }
 
-void native_on_end(CreEntity entity) {
+void native_on_end(SkaEntity entity) {
     SE_ASSERT(se_hash_map_has(entityToClassName, &entity));
     CRENativeScriptClass* scriptClassRef = (CRENativeScriptClass*) *(CRENativeScriptClass**) se_hash_map_get(
             entityToClassName, &entity);

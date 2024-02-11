@@ -17,18 +17,19 @@
 #include "cre_pkpy_node_event_manager.h"
 #include "api/cre_pkpy_api.h"
 #include "../../script_context.h"
-#include "../../../ecs/component/animated_sprite_component.h"
-#include "../../../ecs/component/component.h"
-#include "../../../ecs/component/node_component.h"
-#include "../../../ecs/component/script_component.h"
+#include "../../../ecs/components/animated_sprite_component.h"
+#include "../../../ecs/component.h"
+#include "../../../ecs/components/node_component.h"
+#include "../../../ecs/components/script_component.h"
 #include "../../../engine_context.h"
+#include "../../../ecs/ecs_globals.h"
 
 //--- Script Context Interface ---//
-void pkpy_sc_on_delete_instance(CreEntity entity);
-void pkpy_sc_on_start(CreEntity entity);
-void pkpy_sc_on_update_instance(CreEntity entity, float deltaTime);
-void pkpy_sc_on_fixed_update_instance(CreEntity entity, float deltaTime);
-void pkpy_sc_on_end(CreEntity entity);
+void pkpy_sc_on_delete_instance(SkaEntity entity);
+void pkpy_sc_on_start(SkaEntity entity);
+void pkpy_sc_on_update_instance(SkaEntity entity, float deltaTime);
+void pkpy_sc_on_fixed_update_instance(SkaEntity entity, float deltaTime);
+void pkpy_sc_on_end(SkaEntity entity);
 void pkpy_sc_on_network_callback(const char* message);
 void pkpy_sc_on_script_context_destroy();
 
@@ -57,7 +58,7 @@ pkpy_CName pyProcessFunctionName;
 pkpy_CName pyFixedProcessFunctionName;
 pkpy_CName pyEndFunctionName;
 
-SE_STATIC_ARRAY_CREATE(CreEntity, CRE_MAX_ENTITIES, entityInitializedList);
+SE_STATIC_ARRAY_CREATE(SkaEntity, SKA_MAX_ENTITIES, entityInitializedList);
 
 CREScriptContext* cre_pkpy_script_context_create() {
     SE_ASSERT_FMT(pkpy_script_context == NULL, "Script context already created!");
@@ -95,16 +96,16 @@ CREScriptContext* cre_pkpy_script_context_get() {
     return pkpy_script_context;
 }
 
-void cre_pkpy_script_context_setup_node_event(CreEntity entity) {
+void cre_pkpy_script_context_setup_node_event(SkaEntity entity) {
     if (!entityInitializedList[entity]) {
         entityInitializedList[entity] = true;
         // Node
-        NodeComponent* nodeComponent = (NodeComponent*) cre_component_manager_get_component_unchecked(entity, CreComponentDataIndex_NODE);
+        NodeComponent* nodeComponent = (NodeComponent*)ska_ecs_component_manager_get_component(entity, NODE_COMPONENT_INDEX);
         SE_ASSERT_FMT(nodeComponent, "Node component should never be null!  Node name: '%s', entity id: '%u'", nodeComponent->name, entity);
         se_event_register_observer(&nodeComponent->onSceneTreeEnter, &node_scene_entered_observer);
         se_event_register_observer(&nodeComponent->onSceneTreeExit, &node_scene_exited_observer);
         // Animated Sprite
-        AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) cre_component_manager_get_component_unchecked(entity, CreComponentDataIndex_ANIMATED_SPRITE);
+        AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*) ska_ecs_component_manager_get_component_unchecked(entity, ANIMATED_SPRITE_COMPONENT_INDEX);
         if (animatedSpriteComponent) {
             se_event_register_observer(&animatedSpriteComponent->onFrameChanged, &animated_sprite_frame_changed_observer);
             se_event_register_observer(&animatedSpriteComponent->onAnimationFinished, &animated_sprite_animation_finished_observer);
@@ -112,13 +113,13 @@ void cre_pkpy_script_context_setup_node_event(CreEntity entity) {
     }
 }
 
-void cre_pkpy_script_context_create_instance(CreEntity entity, const char* classPath, const char* className) {
+void cre_pkpy_script_context_create_instance(SkaEntity entity, const char* classPath, const char* className) {
     SE_ASSERT(cre_pkpy_vm);
     cre_pkpy_entity_instance_cache_create_new_entity(cre_pkpy_vm, classPath, className, entity);
     cre_pkpy_script_context_setup_node_event(entity);
 }
 
-void cre_pkpy_script_context_create_instance_if_nonexistent(CreEntity entity, const char* classPath, const char* className) {
+void cre_pkpy_script_context_create_instance_if_nonexistent(SkaEntity entity, const char* classPath, const char* className) {
     SE_ASSERT(cre_pkpy_vm);
     // If exists, just make sure node events are setup
     if (cre_pkpy_entity_instance_cache_has_entity(cre_pkpy_vm, entity)) {
@@ -128,23 +129,23 @@ void cre_pkpy_script_context_create_instance_if_nonexistent(CreEntity entity, co
     }
 }
 
-void cre_pkpy_script_context_create_instance_if_nonexistent_and_push_entity_instance(CreEntity entity) {
+void cre_pkpy_script_context_create_instance_if_nonexistent_and_push_entity_instance(SkaEntity entity) {
     SE_ASSERT(cre_pkpy_vm);
-    const NodeComponent* nodeComponent = (NodeComponent*) cre_component_manager_get_component_unchecked(entity, CreComponentDataIndex_NODE);
-    ScriptComponent* scriptComponent = (ScriptComponent*) cre_component_manager_get_component_unchecked(entity, CreComponentDataIndex_SCRIPT);
+    const NodeComponent* nodeComponent = (NodeComponent*)ska_ecs_component_manager_get_component(entity, NODE_COMPONENT_INDEX);
+    ScriptComponent* scriptComponent = (ScriptComponent*)ska_ecs_component_manager_get_component_unchecked(entity, SCRIPT_COMPONENT_INDEX);
     if (!scriptComponent) {
         // If an entity doesn't have a script component at this point, it should just be a plain base class from the crescent module.
         // Since that is the case, just create a script component so that we can clean up within the script context when the entity
         // needs to leave the instance cache.
         const char* baseClassName = node_get_base_type_string(nodeComponent->type);
         scriptComponent = script_component_create_ex(CRE_PKPY_MODULE_NAME_CRESCENT, baseClassName, ScriptContextType_PYTHON);
-        cre_component_manager_set_component(entity, CreComponentDataIndex_SCRIPT, scriptComponent);
+        ska_ecs_component_manager_set_component(entity, SCRIPT_COMPONENT_INDEX, scriptComponent);
     }
     cre_pkpy_script_context_create_instance_if_nonexistent(entity, scriptComponent->classPath, scriptComponent->className);
     cre_pkpy_entity_instance_cache_push_entity_instance(cre_pkpy_vm, entity);
 }
 
-void pkpy_sc_on_delete_instance(CreEntity entity) {
+void pkpy_sc_on_delete_instance(SkaEntity entity) {
     SE_ASSERT(cre_pkpy_vm);
     cre_pkpy_entity_instance_cache_remove_entity(cre_pkpy_vm, entity);
 
@@ -152,20 +153,20 @@ void pkpy_sc_on_delete_instance(CreEntity entity) {
             pkpy_script_context->updateEntities,
             &pkpy_script_context->updateEntityCount,
             entity,
-            CRE_NULL_ENTITY
+            SKA_NULL_ENTITY
     );
 
     se_array_utils_remove_item_uint32(
             pkpy_script_context->fixedUpdateEntities,
             &pkpy_script_context->fixedUpdateEntityCount,
             entity,
-            CRE_NULL_ENTITY
+            SKA_NULL_ENTITY
     );
 
     entityInitializedList[entity] = false;
 }
 
-void pkpy_sc_on_start(CreEntity entity) {
+void pkpy_sc_on_start(SkaEntity entity) {
     SE_ASSERT(cre_pkpy_vm);
     // Check for process funcs
     cre_pkpy_entity_instance_cache_push_entity_instance(cre_pkpy_vm, entity);
@@ -186,7 +187,7 @@ void pkpy_sc_on_start(CreEntity entity) {
     pkpy_pop_top(cre_pkpy_vm);
 }
 
-void pkpy_sc_on_update_instance(CreEntity entity, float deltaTime) {
+void pkpy_sc_on_update_instance(SkaEntity entity, float deltaTime) {
     SE_ASSERT(cre_pkpy_vm);
     cre_pkpy_entity_instance_cache_push_entity_instance(cre_pkpy_vm, entity);
     const bool hasFunc = pkpy_getattr(cre_pkpy_vm, pyProcessFunctionName);
@@ -197,7 +198,7 @@ void pkpy_sc_on_update_instance(CreEntity entity, float deltaTime) {
     pkpy_pop_top(cre_pkpy_vm);
 }
 
-void pkpy_sc_on_fixed_update_instance(CreEntity entity, float deltaTime) {
+void pkpy_sc_on_fixed_update_instance(SkaEntity entity, float deltaTime) {
     SE_ASSERT(cre_pkpy_vm);
     cre_pkpy_entity_instance_cache_push_entity_instance(cre_pkpy_vm, entity);
     const bool hasFunc = pkpy_getattr(cre_pkpy_vm, pyFixedProcessFunctionName);
@@ -208,7 +209,7 @@ void pkpy_sc_on_fixed_update_instance(CreEntity entity, float deltaTime) {
     pkpy_pop_top(cre_pkpy_vm);
 }
 
-void pkpy_sc_on_end(CreEntity entity) {
+void pkpy_sc_on_end(SkaEntity entity) {
     SE_ASSERT(cre_pkpy_vm);
     cre_pkpy_entity_instance_cache_push_entity_instance(cre_pkpy_vm, entity);
     if (pkpy_getattr(cre_pkpy_vm, pyEndFunctionName)) {
@@ -274,12 +275,12 @@ unsigned char* cre_pkpy_import_handler(const char* path, int pathSize, int* outS
 
 // NODE
 void pkpy_node_event_node_scene_entered(SESubjectNotifyPayload* payload) {
-    const CreEntity entity = *(CreEntity*)payload->data;
+    const SkaEntity entity = *(SkaEntity*)payload->data;
     cre_pkpy_node_event_manager_broadcast_event(cre_pkpy_vm, (int)entity, CRE_PKPY_NODE_EVENT_NAME_SCENE_ENTERED);
 }
 
 void pkpy_node_event_node_scene_exited(SESubjectNotifyPayload* payload) {
-    const CreEntity entity = *(CreEntity*)payload->data;
+    const SkaEntity entity = *(SkaEntity*)payload->data;
     cre_pkpy_node_event_manager_broadcast_event(cre_pkpy_vm, (int)entity, CRE_PKPY_NODE_EVENT_NAME_SCENE_EXITED);
     cre_pkpy_node_event_manager_remove_entity_and_connections(cre_pkpy_vm, (int)entity);
 }

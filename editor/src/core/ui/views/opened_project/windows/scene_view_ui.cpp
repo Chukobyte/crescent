@@ -2,7 +2,7 @@
 
 #include "../engine/src/core/scene/scene_utils.h"
 #include "../engine/src/core/game_properties.h"
-#include "../engine/src/core/ecs/system/particle_emitter_ec_system.h"
+#include "../engine/src/core/ecs/systems/particle_emitter_ec_system.h"
 
 #include "../../../imgui/imgui_window_renderer.h"
 #include "../../../../editor_context.h"
@@ -10,7 +10,7 @@
 #include "../../../../scene/scene_manager.h"
 
 namespace WindowRenderUtils {
-    EntityArray OnGetSelfAndParentEntitiesFunc(CreEntity entity) {
+    EntityArray OnGetSelfAndParentEntitiesFunc(SkaEntity entity) {
         static auto* sceneManager = SceneManager::Get();
         EntityArray combineModelResult = { .entityCount = 0 };
         combineModelResult.entities[combineModelResult.entityCount++] = entity;
@@ -24,7 +24,7 @@ namespace WindowRenderUtils {
         return combineModelResult;
     }
 
-    SKATransform2D OnGetLocalTransformFunc(CreEntity entity, int* zIndex, bool* success) {
+    SKATransform2D OnGetLocalTransformFunc(SkaEntity entity, int* zIndex, bool* success) {
         static auto* sceneManager = SceneManager::Get();
         if (auto* node = sceneManager->GetNode(sceneManager->selectedSceneFile, entity)) {
             if (auto* transformComp = node->GetComponentSafe<Transform2DComp>()) {
@@ -39,7 +39,7 @@ namespace WindowRenderUtils {
 
     std::vector<ImGuiHelper::TextureRenderTarget> GetNodeTextureRenderTargets(SceneNode* node, size_t index, Transform2DComp* transform2DComp, float deltaTime) {
         static AssetManager* assetManager = AssetManager::Get();
-        static SKATransformModel2D globalTransforms[CRE_MAX_ENTITIES] = {};
+        static SKATransformModel2D globalTransforms[SKA_MAX_ENTITIES] = {};
         static SETexture* whiteRectTexture = se_texture_create_solid_colored_texture(1, 1, 255);
         static SKAVector2 origin = SKA_VECTOR2_ZERO;
 

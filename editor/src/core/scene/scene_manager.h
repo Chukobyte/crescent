@@ -9,7 +9,7 @@
 
 #include "../components/component.h"
 #include "../utils/singleton.h"
-#include "../engine/src/core/ecs/component/node_component.h"
+#include "../engine/src/core/ecs/components/node_component.h"
 
 class SceneNode {
   public:
@@ -136,8 +136,8 @@ class SceneManager : public Singleton<SceneManager> {
 
     void IterateAllSceneNodes(SceneNode* node, std::function<void(SceneNode*, size_t)> func);
 
-    SceneNode* GetNode(SceneNodeFile* nodeFile, CreEntity entity);
-    SceneNode* GetNode(SceneNode* node, CreEntity entity);
+    SceneNode* GetNode(SceneNodeFile* nodeFile, SkaEntity entity);
+    SceneNode* GetNode(SceneNode* node, SkaEntity entity);
 
     std::unordered_map<std::string, SceneNodeFile*> loadedSceneFiles;
     SceneNodeFile* selectedSceneFile = nullptr;

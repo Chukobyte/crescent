@@ -4,7 +4,7 @@ set(CMAKE_C_STANDARD 11)
 
 project(crescent_core C)
 
-include(../Functions.cmake)
+include(../Dependencies.cmake)
 
 if (CMAKE_C_COMPILER_ID STREQUAL "MSVC")
     #    list(APPEND flags "/std:c11" "/W3" "/Zc:preprocessor") # TODO: Adding "/std:c11" breaks editor, fix later...
@@ -36,32 +36,32 @@ add_library(${PROJECT_NAME} STATIC
         src/core/scripting/native/native_script_context.c
         src/core/scripting/native/native_script_class.c
         src/core/scripting/native/internal_classes/fps_display_class.c
+        src/core/tilemap/tilemap.c
         src/core/utils/command_line_args_util.c
         src/core/physics/collision/collision.c
         src/core/physics/particle/particle.c
         src/core/camera/camera.c
         src/core/camera/camera_manager.c
         src/core/ecs/ecs_manager.c
-        src/core/ecs/component/animated_sprite_component.c
-        src/core/ecs/component/collider2d_component.c
-        src/core/ecs/component/color_rect_component.c
-        src/core/ecs/component/component.c
-        src/core/ecs/component/node_component.c
-        src/core/ecs/component/script_component.c
-        src/core/ecs/component/sprite_component.c
-        src/core/ecs/component/parallax_component.c
-        src/core/ecs/component/particles2d_component.c
-        src/core/ecs/component/text_label_component.c
-        src/core/ecs/component/transform2d_component.c
-        src/core/ecs/system/animated_sprite_rendering_ec_system.c
-        src/core/ecs/system/color_rect_ec_system.c
-        src/core/ecs/system/collision_ec_system.c
-        src/core/ecs/system/ec_system.c
-        src/core/ecs/system/font_rendering_ec_system.c
-        src/core/ecs/system/parallax_ec_system.c
-        src/core/ecs/system/particle_emitter_ec_system.c
-        src/core/ecs/system/script_ec_system.c
-        src/core/ecs/system/sprite_rendering_ec_system.c
+        src/core/ecs/ecs_globals.c
+        src/core/ecs/components/animated_sprite_component.c
+        src/core/ecs/components/collider2d_component.c
+        src/core/ecs/components/color_rect_component.c
+        src/core/ecs/components/node_component.c
+        src/core/ecs/components/script_component.c
+        src/core/ecs/components/sprite_component.c
+        src/core/ecs/components/parallax_component.c
+        src/core/ecs/components/particles2d_component.c
+        src/core/ecs/components/text_label_component.c
+        src/core/ecs/components/transform2d_component.c
+        src/core/ecs/systems/animated_sprite_rendering_ec_system.c
+        src/core/ecs/systems/color_rect_ec_system.c
+        src/core/ecs/systems/collision_ec_system.c
+        src/core/ecs/systems/font_rendering_ec_system.c
+        src/core/ecs/systems/parallax_ec_system.c
+        src/core/ecs/systems/particle_emitter_ec_system.c
+        src/core/ecs/systems/script_ec_system.c
+        src/core/ecs/systems/sprite_rendering_ec_system.c
         src/core/json/json_file_loader.c
         src/core/json/json_file_loader_scene.c
         src/core/json/json_helper.c
@@ -87,15 +87,7 @@ endif()
 
 find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
 
-# Include pocketpy as a dependency
-include(FetchContent)
-option(PK_BUILD_STATIC_LIB "Build static library" ON)
-FetchContent_Declare(
-        pocketpy_content
-        GIT_REPOSITORY https://github.com/blueloveTH/pocketpy.git
-        GIT_TAG v1.4.0
-)
-FetchContent_MakeAvailable(pocketpy_content)
+install_pocketpy()
 
 if (NOT TARGET glad)
     add_library(glad ../include/glad/glad.c)
@@ -111,11 +103,6 @@ install_seika()
 
 add_library(cJSON ../include/cjson/cJSON.c)
 
-target_include_directories(${PROJECT_NAME} PUBLIC
-        "${PROJECT_BINARY_DIR}"
-        "../include"
-        "${pocketpy_content_SOURCE_DIR}/include"
-)
 target_include_directories(glad PUBLIC
         "${PROJECT_BINARY_DIR}"
         "../include"
