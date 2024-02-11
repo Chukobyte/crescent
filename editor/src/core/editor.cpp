@@ -9,6 +9,8 @@
 #include <seika/rendering/renderer.h>
 #include <seika/utils/logger.h>
 
+#include "../engine/src/core/ecs/ecs_manager.h"
+
 #include "editor_context.h"
 #include "scene/scene_manager.h"
 #include "color.h"
@@ -16,7 +18,6 @@
 #include "ui/imgui/imgui_handler.h"
 #include "ui/imgui/imgui_styler.h"
 #include "utils/file_system_helper.h"
-#include "../../../engine/src/core/ecs/ecs_manager.h"
 
 static EditorContext* editorContext = EditorContext::Get();
 
