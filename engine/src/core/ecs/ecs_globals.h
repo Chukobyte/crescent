@@ -17,6 +17,7 @@ extern SkaComponentIndex PARTICLES2D_COMPONENT_INDEX;
 extern SkaComponentIndex SCRIPT_COMPONENT_INDEX;
 extern SkaComponentIndex TEXT_LABEL_COMPONENT_INDEX;
 extern SkaComponentIndex COLLIDER2D_COMPONENT_INDEX;
+extern SkaComponentIndex TILEMAP_COMPONENT_INDEX;
 
 // type flags
 extern SkaComponentType ANIMATED_SPRITE_COMPONENT_TYPE;
@@ -29,6 +30,7 @@ extern SkaComponentType PARTICLES2D_COMPONENT_TYPE;
 extern SkaComponentType SCRIPT_COMPONENT_TYPE;
 extern SkaComponentType TEXT_LABEL_COMPONENT_TYPE;
 extern SkaComponentType COLLIDER2D_COMPONENT_TYPE;
+extern SkaComponentType TILEMAP_COMPONENT_TYPE;
 
 #ifdef __cplusplus
 }
