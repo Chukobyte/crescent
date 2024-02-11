@@ -39,6 +39,7 @@ Technically any game type will be able to be made with the engine.  But these ar
   * [Catch2](https://github.com/catchorg/Catch2) - Testing
   * [PVS-Studio](https://pvs-studio.com/pvs-studio/?utm_source=website&utm_medium=github&utm_campaign=open_source) - static analyzer for C++ code.
 * All
+  * [Seika](https://github.com/Chukobyte/seika) - Game framework that was originally part of crescent.
 
 ## Building
 
