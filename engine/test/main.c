@@ -237,7 +237,6 @@ void cre_json_file_loader_scene_test(void) {
     TextLabelComponent* ballTextLabelComp = (TextLabelComponent*) ballTextLabel->components[TEXT_LABEL_COMPONENT_INDEX];
     TEST_ASSERT_NOT_NULL(ballTextLabelComp);
 
-
     cre_json_delete_json_scene_node(rootNode);
 }
 
