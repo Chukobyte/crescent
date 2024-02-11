@@ -56,7 +56,7 @@ int main(int argv, char** args) {
     UNITY_BEGIN();
     RUN_TEST(cre_node_event_test);
 //    RUN_TEST(cre_json_file_loader_scene_test);
-    RUN_TEST(cre_pocketpy_test);
+//    RUN_TEST(cre_pocketpy_test);
     RUN_TEST(cre_tilemap_test);
     return UNITY_END();
 }

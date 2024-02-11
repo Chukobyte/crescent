@@ -21,7 +21,8 @@ typedef struct JsonSceneNode {
     SEArrayList* tags;
     void* components[CRE_MAX_COMPONENTS];
     struct JsonSceneNode* parent;
-    struct JsonSceneNode* children[SKA_MAX_ENTITIES / 4]; // TODO: Change to an array list
+//    struct JsonSceneNode* children[SKA_MAX_ENTITIES / 4]; // TODO: Change to an array list
+    struct JsonSceneNode* children[25]; // TODO: Change to an array list
     size_t childrenCount;
     char* spriteTexturePath;
     char* fontUID;
