@@ -135,3 +135,12 @@ void cre_ecs_manager_enable_fps_display_entity(bool enabled, const char* fontUID
 void cre_ecs_manager_finalize() {
     ska_ecs_finalize();
 }
+
+void cre_ecs_manager_initialize_editor() {
+    ska_ecs_initialize();
+    register_components();
+}
+
+void cre_ecs_manager_finalize_editor() {
+    ska_ecs_finalize();
+}

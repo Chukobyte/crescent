@@ -1,5 +1,9 @@
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <seika/ecs/component.h>
 
 // indices
@@ -25,3 +29,7 @@ extern SkaComponentType PARTICLES2D_COMPONENT_TYPE;
 extern SkaComponentType SCRIPT_COMPONENT_TYPE;
 extern SkaComponentType TEXT_LABEL_COMPONENT_TYPE;
 extern SkaComponentType COLLIDER2D_COMPONENT_TYPE;
+
+#ifdef __cplusplus
+}
+#endif

@@ -39,7 +39,7 @@ namespace WindowRenderUtils {
 
     std::vector<ImGuiHelper::TextureRenderTarget> GetNodeTextureRenderTargets(SceneNode* node, size_t index, Transform2DComp* transform2DComp, float deltaTime) {
         static AssetManager* assetManager = AssetManager::Get();
-        static SKATransformModel2D globalTransforms[CRE_MAX_ENTITIES] = {};
+        static SKATransformModel2D globalTransforms[SKA_MAX_ENTITIES] = {};
         static SETexture* whiteRectTexture = se_texture_create_solid_colored_texture(1, 1, 255);
         static SKAVector2 origin = SKA_VECTOR2_ZERO;
 

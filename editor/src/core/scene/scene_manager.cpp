@@ -4,6 +4,7 @@
 
 #include <seika/utils/se_assert.h>
 
+#include "../engine/src/core/ecs/ecs_globals.h"
 #include "../engine/src/core/json/json_file_loader.h"
 #include "../engine/src/core/game_properties.h"
 
@@ -292,36 +293,36 @@ SceneNode* SceneManager::LoadSceneTreeJson(JsonSceneNode* node, SceneNode* paren
     const std::string shaderPath = node->shaderInstanceShaderPath != nullptr ? std::string(node->shaderInstanceShaderPath) : "";
 
     // Components
-    if (node->components[CreComponentDataIndex_TRANSFORM_2D] != nullptr) {
-        sceneNode->AddComponent<Transform2DComp>((Transform2DComponent*) node->components[CreComponentDataIndex_TRANSFORM_2D]);
+    if (node->components[TRANSFORM2D_COMPONENT_INDEX] != nullptr) {
+        sceneNode->AddComponent<Transform2DComp>((Transform2DComponent*)node->components[TRANSFORM2D_COMPONENT_INDEX]);
     }
-    if (node->components[CreComponentDataIndex_SPRITE] != nullptr) {
-        sceneNode->AddComponent<SpriteComp>((SpriteComponent*) node->components[CreComponentDataIndex_SPRITE], node->spriteTexturePath, shaderPath);
+    if (node->components[SPRITE_COMPONENT_INDEX] != nullptr) {
+        sceneNode->AddComponent<SpriteComp>((SpriteComponent*)node->components[SPRITE_COMPONENT_INDEX], node->spriteTexturePath, shaderPath);
     }
-    if (node->components[CreComponentDataIndex_ANIMATED_SPRITE] != nullptr) {
-        sceneNode->AddComponent<AnimatedSpriteComp>((AnimatedSpriteComponentData*) node->components[CreComponentDataIndex_ANIMATED_SPRITE], shaderPath);
+    if (node->components[ANIMATED_SPRITE_COMPONENT_INDEX] != nullptr) {
+        sceneNode->AddComponent<AnimatedSpriteComp>((AnimatedSpriteComponentData*)node->components[ANIMATED_SPRITE_COMPONENT_INDEX], shaderPath);
     }
-    if (node->components[CreComponentDataIndex_TEXT_LABEL] != nullptr) {
+    if (node->components[TEXT_LABEL_COMPONENT_INDEX] != nullptr) {
         std::string nodeFontUID = std::string(node->fontUID);
         if (nodeFontUID == CRE_DEFAULT_FONT_ASSET.uid) {
             nodeFontUID.clear();
         }
-        sceneNode->AddComponent<TextLabelComp>((TextLabelComponent*) node->components[CreComponentDataIndex_TEXT_LABEL], nodeFontUID);
+        sceneNode->AddComponent<TextLabelComp>((TextLabelComponent*)node->components[TEXT_LABEL_COMPONENT_INDEX], nodeFontUID);
     }
-    if (node->components[CreComponentDataIndex_SCRIPT] != nullptr) {
-        sceneNode->AddComponent<ScriptComp>((ScriptComponent*) node->components[CreComponentDataIndex_SCRIPT]);
+    if (node->components[SCRIPT_COMPONENT_INDEX] != nullptr) {
+        sceneNode->AddComponent<ScriptComp>((ScriptComponent*)node->components[SCRIPT_COMPONENT_INDEX]);
     }
-    if (node->components[CreComponentDataIndex_COLLIDER_2D] != nullptr) {
-        sceneNode->AddComponent<Collider2DComp>((Collider2DComponent*) node->components[CreComponentDataIndex_COLLIDER_2D]);
+    if (node->components[COLLIDER2D_COMPONENT_INDEX] != nullptr) {
+        sceneNode->AddComponent<Collider2DComp>((Collider2DComponent*)node->components[COLLIDER2D_COMPONENT_INDEX]);
     }
-    if (node->components[CreComponentDataIndex_COLOR_RECT] != nullptr) {
-        sceneNode->AddComponent<ColorRectComp>((ColorRectComponent*) node->components[CreComponentDataIndex_COLOR_RECT]);
+    if (node->components[COLOR_RECT_COMPONENT_INDEX] != nullptr) {
+        sceneNode->AddComponent<ColorRectComp>((ColorRectComponent*)node->components[COLOR_RECT_COMPONENT_INDEX]);
     }
-    if (node->components[CreComponentDataIndex_PARALLAX] != nullptr) {
-        sceneNode->AddComponent<ParallaxComp>((ParallaxComponent*) node->components[CreComponentDataIndex_PARALLAX]);
+    if (node->components[PARALLAX_COMPONENT_INDEX] != nullptr) {
+        sceneNode->AddComponent<ParallaxComp>((ParallaxComponent*)node->components[PARALLAX_COMPONENT_INDEX]);
     }
-    if (node->components[CreComponentDataIndex_PARTICLES_2D] != nullptr) {
-        sceneNode->AddComponent<Particles2DComp>((Particles2DComponent*) node->components[CreComponentDataIndex_PARTICLES_2D]);
+    if (node->components[PARTICLES2D_COMPONENT_INDEX] != nullptr) {
+        sceneNode->AddComponent<Particles2DComp>((Particles2DComponent*)node->components[PARTICLES2D_COMPONENT_INDEX]);
     }
 
     // Load children

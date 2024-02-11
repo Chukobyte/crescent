@@ -16,6 +16,7 @@
 #include "ui/imgui/imgui_handler.h"
 #include "ui/imgui/imgui_styler.h"
 #include "utils/file_system_helper.h"
+#include "../../../engine/src/core/ecs/ecs_manager.h"
 
 static EditorContext* editorContext = EditorContext::Get();
 
@@ -36,6 +37,9 @@ bool Editor::Initialize() {
 
     // TODO: Figure out window stuff dimensions...
     se_renderer_initialize(800, 600, 800, 600, false);
+
+    // initialize ecs components to use index for now
+    cre_ecs_manager_initialize_editor();
 
     // Initialize Asset Manager
     AssetManager::Get()->Initialize();
@@ -170,6 +174,8 @@ bool Editor::IsRunning() const {
 }
 
 void Editor::Shutdown() {
+    cre_ecs_manager_finalize_editor();
+
     // IMGUI
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplSDL2_Shutdown();
