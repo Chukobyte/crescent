@@ -1,6 +1,8 @@
 name: windows-mingw-build
 
 on:
+  push:
+    branches: [ tmap ]
   pull_request:
     branches: [ main ]
 
