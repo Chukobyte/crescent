@@ -55,8 +55,8 @@ void cre_tilemap_test(void);
 int main(int argv, char** args) {
     UNITY_BEGIN();
     RUN_TEST(cre_node_event_test);
-//    RUN_TEST(cre_json_file_loader_scene_test);
-//    RUN_TEST(cre_pocketpy_test);
+    RUN_TEST(cre_json_file_loader_scene_test);
+    RUN_TEST(cre_pocketpy_test);
     RUN_TEST(cre_tilemap_test);
     return UNITY_END();
 }
@@ -64,7 +64,7 @@ int main(int argv, char** args) {
 // TODO: move
 void cre_tilemap_test(void) {
     // Test setting (and unsetting) a single tile in an empty tile map
-    const SKAVector2i tileOnePosition = { .x = 5, .y = 5 };
+    const SKAVector2i tileOnePosition = (SKAVector2i){ .x = 5, .y = 5 };
     CreTilemap tilemap = CRE_TILEMAP_DEFAULT_EMPTY;
     cre_tilemap_set_tile_active(&tilemap, &tileOnePosition, true);
     TEST_ASSERT_EQUAL_INT(5, tilemap.activeSize.w);
