@@ -1,6 +1,6 @@
 #include "ecs_manager.h"
 
-#define SKA_MAX_ENTITIES 100
+#define SKA_MAX_ENTITIES 1000
 
 #include <seika/rendering/renderer.h>
 #include <seika/ecs/ecs.h>
