@@ -1,5 +1,7 @@
 #include "core.h"
 
+#define SKA_MAX_ENTITIES 1000
+
 #include <time.h>
 
 #include <seika/seika.h>

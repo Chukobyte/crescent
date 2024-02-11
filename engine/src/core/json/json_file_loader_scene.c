@@ -64,20 +64,7 @@ JsonSceneNode* cre_json_load_scene_node(cJSON* nodeJson, JsonSceneNode* parentNo
 
 JsonSceneNode* cre_json_create_new_node() {
     JsonSceneNode* node = SE_MEM_ALLOCATE(JsonSceneNode);
-    node->name = NULL;
-    node->fontUID = NULL;
-    node->spriteTexturePath = NULL;
-    node->shaderInstanceShaderPath = NULL;
-    node->shaderInstanceVertexPath = NULL;
-    node->shaderInstanceFragmentPath = NULL;
-    node->externalNodeSource = NULL;
-    node->fromExternalNodeSource = false;
-    node->parent = NULL;
-    node->childrenCount = 0;
     node->type = NodeBaseType_INVALID;
-    for (size_t i = 0; i < CRE_MAX_COMPONENTS; i++) {
-        node->components[i] = NULL;
-    }
     return node;
 }
 
