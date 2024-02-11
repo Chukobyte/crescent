@@ -1,6 +1,6 @@
 function(install_seika)
     if (NOT TARGET seika)
-        set(SKA_MAX_ENTITIES 1000 CACHE STRING "Maximum number of entities")
+        set(SKA_MAX_ENTITIES 100 CACHE STRING "Maximum number of entities")
         add_definitions(-DSKA_MAX_ENTITIES=${SKA_MAX_ENTITIES})
 
         include(FetchContent)
