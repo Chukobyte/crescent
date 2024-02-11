@@ -57,20 +57,20 @@ void color_rect_render(SkaECSSystem* system) {
         const CRECamera2D* renderCamera = transformComp->ignoreCamera ? defaultCamera : camera2D;
         const SceneNodeRenderResource renderResource = cre_scene_manager_get_scene_node_global_render_resource(entity, transformComp, &SKA_VECTOR2_ZERO);
         const SKASize2D destinationSize = {
-                colorRectComponent->size.w * renderCamera->zoom.x,
-                colorRectComponent->size.h * renderCamera->zoom.y
+            .w = colorRectComponent->size.w * renderCamera->zoom.x,
+            .h = colorRectComponent->size.h * renderCamera->zoom.y
         };
 
         ska_renderer_queue_sprite_draw(
-                colorRectTexture,
-                colorRectDrawSource,
-                destinationSize,
-                colorRectComponent->color,
-                false,
-                false,
-                &renderResource.transform2D,
-                renderResource.globalZIndex,
-                NULL
+            colorRectTexture,
+            colorRectDrawSource,
+            destinationSize,
+            colorRectComponent->color,
+            false,
+            false,
+            &renderResource.transform2D,
+            renderResource.globalZIndex,
+            NULL
         );
     }
 }

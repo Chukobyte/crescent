@@ -100,20 +100,20 @@ void collision_render(SkaECSSystem* system) {
         const CRECamera2D* renderCamera = transformComp->ignoreCamera ? defaultCamera : camera2D;
         const SceneNodeRenderResource renderResource = cre_scene_manager_get_scene_node_global_render_resource(entity, transformComp, &SKA_VECTOR2_ZERO);
         const SKASize2D colliderDrawSize = {
-                colliderComp->extents.w * renderCamera->zoom.x,
-                colliderComp->extents.h * renderCamera->zoom.y
+            .w = colliderComp->extents.w * renderCamera->zoom.x,
+            .h = colliderComp->extents.h * renderCamera->zoom.y
         };
 
         ska_renderer_queue_sprite_draw(
-                collisionOutlineTexture,
-                colliderDrawSource,
-                colliderDrawSize,
-                colliderComp->color,
-                false,
-                false,
-                &renderResource.transform2D,
-                SE_RENDERER_MAX_Z_INDEX, // Use the max possible z index value to draw colliders on top of other things...
-                NULL
+            collisionOutlineTexture,
+            colliderDrawSource,
+            colliderDrawSize,
+            colliderComp->color,
+            false,
+            false,
+            &renderResource.transform2D,
+            SE_RENDERER_MAX_Z_INDEX, // Use the max possible z index value to draw colliders on top of other things...
+            NULL
         );
     }
 }

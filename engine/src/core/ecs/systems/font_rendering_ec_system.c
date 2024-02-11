@@ -41,13 +41,13 @@ void font_render(SkaECSSystem* system) {
         const SceneNodeRenderResource renderResource = cre_scene_manager_get_scene_node_global_render_resource(entity, fontTransformComp, &SKA_VECTOR2_ZERO);
 
         se_renderer_queue_font_draw_call(
-                textLabelComponent->font,
-                textLabelComponent->text,
-                (renderResource.transform2D.position.x - renderCamera->viewport.x + renderCamera->offset.x) * renderCamera->zoom.x,
-                (renderResource.transform2D.position.y - renderCamera->viewport.y + renderCamera->offset.y) * renderCamera->zoom.y,
-                fontTransformComp->localTransform.scale.x * renderResource.transform2D.scale.x * renderCamera->zoom.x,
-                textLabelComponent->color,
-                renderResource.globalZIndex
+            textLabelComponent->font,
+            textLabelComponent->text,
+            (renderResource.transform2D.position.x - renderCamera->viewport.x + renderCamera->offset.x) * renderCamera->zoom.x,
+            (renderResource.transform2D.position.y - renderCamera->viewport.y + renderCamera->offset.y) * renderCamera->zoom.y,
+            fontTransformComp->localTransform.scale.x * renderResource.transform2D.scale.x * renderCamera->zoom.x,
+            textLabelComponent->color,
+            renderResource.globalZIndex
         );
     }
 }

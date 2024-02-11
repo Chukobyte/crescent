@@ -30,20 +30,20 @@ void sprite_render(SkaECSSystem* system) {
         const CRECamera2D* renderCamera = spriteTransformComp->ignoreCamera ? defaultCamera : camera2D;
         const SceneNodeRenderResource renderResource = cre_scene_manager_get_scene_node_global_render_resource(entity, spriteTransformComp, &spriteComponent->origin);
         const SKASize2D destinationSize = {
-                spriteComponent->drawSource.w * renderCamera->zoom.x,
-                spriteComponent->drawSource.h * renderCamera->zoom.y
+            .w = spriteComponent->drawSource.w * renderCamera->zoom.x,
+            .h = spriteComponent->drawSource.h * renderCamera->zoom.y
         };
 
         ska_renderer_queue_sprite_draw(
-                spriteComponent->texture,
-                spriteComponent->drawSource,
-                destinationSize,
-                spriteComponent->modulate,
-                spriteComponent->flipH,
-                spriteComponent->flipV,
-                &renderResource.transform2D,
-                renderResource.globalZIndex,
-                se_shader_cache_get_instance_checked(spriteComponent->shaderInstanceId)
+            spriteComponent->texture,
+            spriteComponent->drawSource,
+            destinationSize,
+            spriteComponent->modulate,
+            spriteComponent->flipH,
+            spriteComponent->flipV,
+            &renderResource.transform2D,
+            renderResource.globalZIndex,
+            se_shader_cache_get_instance_checked(spriteComponent->shaderInstanceId)
         );
     }
 }

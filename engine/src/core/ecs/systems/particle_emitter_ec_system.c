@@ -6,7 +6,6 @@
 #include <seika/utils/se_assert.h>
 
 #include "../ecs_globals.h"
-//#include "ec_system.h"
 #include "../components/particles2d_component.h"
 #include "../components/transform2d_component.h"
 #include "../../camera/camera.h"
@@ -92,36 +91,36 @@ void ec_system_render(SkaECSSystem* system) {
                 particle2D->state = Particle2DState_TIMED_WAITING_TO_BE_ACTIVE;
             }
             const SKATransform2D particle2DTransform = {
-                    .position = { .x = baseParticleTransform.position.x + particle2D->position.x, .y = baseParticleTransform.position.y + particle2D->position.y },
-                    .scale = baseParticleTransform.scale,
-                    .rotation = baseParticleTransform.rotation
+                .position = { .x = baseParticleTransform.position.x + particle2D->position.x, .y = baseParticleTransform.position.y + particle2D->position.y },
+                .scale = baseParticleTransform.scale,
+                .rotation = baseParticleTransform.rotation
             };
 
 #ifdef CRE_SCENE_MANAGER_RENDER_INTERPOLATE_TRANSFORM2D_ALPHA
             const SKATransform2D lerpedTransform2D = ska_transform2d_lerp(&particle2D->prevTransform, &particle2DTransform, CRE_SCENE_MANAGER_RENDER_INTERPOLATE_TRANSFORM2D_ALPHA);
             particle2D->prevTransform = particle2DTransform;
             ska_renderer_queue_sprite_draw(
-                    texture,
-                    particleDrawSource,
-                    particleSize,
-                    particle2D->color,
-                    false,
-                    false,
-                    &lerpedTransform2D,
-                    particleTransformComp->zIndex,
-                    NULL
+                texture,
+                particleDrawSource,
+                particleSize,
+                particle2D->color,
+                false,
+                false,
+                &lerpedTransform2D,
+                particleTransformComp->zIndex,
+                NULL
             );
 #else
             ska_renderer_queue_sprite_draw(
-                    texture,
-                    particleDrawSource,
-                    particleSize,
-                    particle2D->color,
-                    false,
-                    false,
-                    &particle2DTransform,
-                    particleTransformComp->zIndex,
-                    NULL
+                texture,
+                particleDrawSource,
+                particleSize,
+                particle2D->color,
+                false,
+                false,
+                &particle2DTransform,
+                particleTransformComp->zIndex,
+                NULL
             );
 #endif
         }
