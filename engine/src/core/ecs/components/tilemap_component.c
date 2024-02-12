@@ -8,7 +8,6 @@
 
 TilemapComponent* tilemap_component_create() {
     TilemapComponent* tilemapComponent = SE_MEM_ALLOCATE(TilemapComponent);
-    tilemapComponent->tilemap = NULL;
     return tilemapComponent;
 }
 

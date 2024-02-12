@@ -4,7 +4,11 @@
 extern "C" {
 #endif
 
+struct SETexture;
+struct CreTilemap;
+
 typedef struct TilemapComponent {
+    struct SETexture* texture;
     struct CreTilemap* tilemap;
 } TilemapComponent;
 

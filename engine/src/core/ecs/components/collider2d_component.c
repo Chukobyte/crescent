@@ -4,15 +4,11 @@
 
 #include <seika/memory/se_mem.h>
 
+#define COLLIDER_2D_COMPONENT_COLOR SKA_STRUCT_LITERAL(SKAColor){ 95.0f / 255.0f, 205.0f / 255.0f, 228.0f / 255.0f, 0.75f }
+
 Collider2DComponent* collider2d_component_create() {
     Collider2DComponent* collider2DComponent = SE_MEM_ALLOCATE(Collider2DComponent);
-    collider2DComponent->extents.w = 0.0f;
-    collider2DComponent->extents.h = 0.0f;
-    collider2DComponent->collisionExceptionCount = 0;
-    collider2DComponent->color.r = 95.0f / 255.0f;
-    collider2DComponent->color.g = 205.0f / 255.0f;
-    collider2DComponent->color.b = 228.0f / 255.0f;
-    collider2DComponent->color.a = 0.75f;
+    collider2DComponent->color = COLLIDER_2D_COMPONENT_COLOR;
     return collider2DComponent;
 }
 

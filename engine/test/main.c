@@ -11,9 +11,10 @@
 
 #include "../src/core/node_event.h"
 #include "../src/core/ecs/ecs_globals.h"
-#include "../src/core/ecs/components/transform2d_component.h"
 #include "../src/core/ecs/components/collider2d_component.h"
 #include "../src/core/ecs/components/text_label_component.h"
+#include "../src/core/ecs/components/tilemap_component.h"
+#include "../src/core/ecs/components/transform2d_component.h"
 #include "../src/core/ecs/ecs_manager.h"
 #include "../src/core/json/json_file_loader.h"
 #include "../src/core/scripting/python/pocketpy/cre_pkpy.h"

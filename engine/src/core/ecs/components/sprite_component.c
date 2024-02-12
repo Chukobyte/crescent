@@ -6,19 +6,9 @@
 
 SpriteComponent* sprite_component_create() {
     SpriteComponent* spriteComponent = SE_MEM_ALLOCATE(SpriteComponent);
-    spriteComponent->texture = NULL;
-    spriteComponent->drawSource.x = 0.0f;
-    spriteComponent->drawSource.y = 0.0f;
-    spriteComponent->drawSource.w = 0.0f;
-    spriteComponent->drawSource.h = 0.0f;
-    spriteComponent->origin.x = 0.0f;
-    spriteComponent->origin.y = 0.0f;
     spriteComponent->flipH = false;
     spriteComponent->flipV = false;
-    spriteComponent->modulate.r = 1.0f;
-    spriteComponent->modulate.g = 1.0f;
-    spriteComponent->modulate.b = 1.0f;
-    spriteComponent->modulate.a = 1.0f;
+    spriteComponent->modulate = SKA_COLOR_WHITE;
     spriteComponent->shaderInstanceId = SE_SHADER_INSTANCE_INVALID_ID;
 
     return spriteComponent;
