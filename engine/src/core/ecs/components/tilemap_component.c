@@ -8,6 +8,7 @@
 
 TilemapComponent* tilemap_component_create() {
     TilemapComponent* tilemapComponent = SE_MEM_ALLOCATE(TilemapComponent);
+    tilemapComponent->tileSize = (SKASize2Di){ .w = 32, .h = 32 };
     return tilemapComponent;
 }
 
@@ -19,4 +20,8 @@ TilemapComponent* tilemap_component_copy(const TilemapComponent* tilemapComponen
     TilemapComponent* copiedComp = SE_MEM_ALLOCATE(TilemapComponent);
     memcpy(copiedComp, tilemapComponent, sizeof(TilemapComponent));
     return copiedComp;
+}
+
+static void tilemap_get_draw_source(const TilemapComponent* tilemapComponent, const SKAVector2i position) {
+
 }

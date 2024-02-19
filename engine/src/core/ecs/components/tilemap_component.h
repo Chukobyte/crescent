@@ -4,12 +4,15 @@
 extern "C" {
 #endif
 
+#include <seika/math/se_math.h>
+
 struct SETexture;
 struct CreTilemap;
 
 typedef struct TilemapComponent {
     struct SETexture* texture;
     struct CreTilemap* tilemap;
+    SKASize2Di tileSize; // The size of each tile
 } TilemapComponent;
 
 TilemapComponent* tilemap_component_create();

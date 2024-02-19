@@ -5,6 +5,8 @@
 #define CRE_TILEMAP_MAX_ROWS 32
 #define CRE_TILEMAP_MAX_COLS 32
 
+struct SETexture;
+
 // Can determine which tiles are adjacent to the current one, all active tiles will have a center
 typedef enum CreTileBitmask {
     CreTileType_INVALID = 0,
@@ -25,23 +27,38 @@ typedef struct CreTileData {
     SKAVector2i position;
 } CreTileData;
 
+typedef struct CreTileArray2D {
+    SKASize2Di size; // w = cols, h = rows
+    CreTile** array;
+} CreTileArray2D;
+
 typedef enum CreTilemapBitmaskMode {
     CreTilemapBitmaskMode_3x3_MINIMAL = 0,
     CreTilemapBitmaskMode_2x2 = 1,
     CreTilemapBitmaskMode_3x3 = 2,
 } CreTilemapBitmaskMode;
 
+typedef struct CreTileset {
+    struct SETexture* texture;
+    SKASize2Di tileSize;
+} CreTileset;
+
 typedef struct CreTilemap {
-    SKASize2Di activeSize;
+    CreTileset tileset;
     CreTilemapBitmaskMode bitmaskMode; // TODO: Actually implement multiple bitmask modes (instead of just default to 3x3 Minimal)
-    CreTile tiles[CRE_TILEMAP_MAX_ROWS][CRE_TILEMAP_MAX_COLS];
+    SKASize2Di activeSize;
+    CreTileArray2D tiles;
+//    CreTile tiles[CRE_TILEMAP_MAX_ROWS][CRE_TILEMAP_MAX_COLS];
 } CreTilemap;
 
 #define CRE_TILEMAP_DEFAULT_EMPTY SKA_STRUCT_LITERAL(CreTilemap){ \
 .activeSize = 0, \
 .bitmaskMode = CreTilemapBitmaskMode_3x3_MINIMAL, \
-.tiles = {{0}} \
+.tiles = { .size = { 32, 32 }, .array = NULL } \
 }
+
+void cre_tile_array2d_allocate(CreTileArray2D* tileArray);
+void cre_tile_array2d_deallocate(CreTileArray2D* tileArray);
 
 void cre_tilemap_set_tile_active(CreTilemap* tilemap, const SKAVector2i* position, bool isActive);
 bool cre_tilemap_is_tile_active(const CreTilemap* tilemap, const SKAVector2i* position);
