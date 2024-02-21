@@ -71,8 +71,8 @@ int cre_pkpy_api_node_new(pkpy_vm* vm) {
 
     char classPath[64];
     char className[32];
-    se_str_trim_by_size(pyClassPath.data, classPath, pyClassPath.size);
-    se_str_trim_by_size(pyClassName.data, className, pyClassName.size);
+    se_strcpy(classPath, pyClassPath);
+    se_strcpy(className, pyClassName);
     const SkaEntity entity = cre_pkpy_entity_instance_cache_create_new_entity(vm, classPath, className, ska_ecs_entity_create());
     SceneTreeNode* newNode = cre_scene_tree_create_tree_node(entity, NULL);
     cre_scene_manager_stage_child_node_to_be_added_later(newNode);
@@ -112,7 +112,7 @@ int cre_pkpy_api_node_get_child(pkpy_vm* vm) {
     pkpy_to_int(vm, 0, &parentEntityId);
     pkpy_to_string(vm, 1, &childEntityName);
 
-    const char* childName = cre_pkpy_util_convert_pkpy_CString(&childEntityName);
+    const char* childName = childEntityName;
     const SkaEntity childEntity = cre_scene_manager_get_entity_child_by_name((SkaEntity)parentEntityId, childName);
     if (childEntity != SKA_NULL_ENTITY) {
         cre_pkpy_script_context_create_instance_if_nonexistent_and_push_entity_instance(childEntity);
@@ -466,7 +466,7 @@ int cre_pkpy_api_sprite_set_texture(pkpy_vm* vm) {
     pkpy_to_string(vm, 1, &pyTexturePath);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
-    const char* texturePath = pyTexturePath.data;
+    const char* texturePath = pyTexturePath;
     SE_ASSERT_FMT(se_asset_manager_has_texture(texturePath), "Doesn't have texture with file path '%s'", texturePath);
     SpriteComponent* spriteComponent = (SpriteComponent*)ska_ecs_component_manager_get_component(entity, SPRITE_COMPONENT_INDEX);
     spriteComponent->texture = se_asset_manager_get_texture(texturePath);
@@ -638,7 +638,7 @@ int cre_pkpy_api_animated_sprite_play(pkpy_vm* vm) {
     pkpy_to_string(vm, 1, &pyAnimationName);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
-    const char* animationName = pyAnimationName.data;
+    const char* animationName = pyAnimationName;
     AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*)ska_ecs_component_manager_get_component(entity, ANIMATED_SPRITE_COMPONENT_INDEX);
     const bool hasSuccessfullyPlayedAnimation = animated_sprite_component_play_animation(animatedSpriteComponent, animationName);
     pkpy_push_bool(vm, hasSuccessfullyPlayedAnimation);
@@ -681,7 +681,7 @@ int cre_pkpy_api_animated_sprite_add_animation(pkpy_vm* vm) {
     pkpy_to_int(vm, 4, &pyFrameCount);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
-    const char* animationName = pyAnimationName.data;
+    const char* animationName = pyAnimationName;
     AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*)ska_ecs_component_manager_get_component(entity, ANIMATED_SPRITE_COMPONENT_INDEX);
     CreAnimation newAnim = { .frameCount = 0, .currentFrame = 0, .speed = pyAnimationSpeed, .name = {'\0'}, .doesLoop = pyAnimationDoesLoop, .isValid = true };
     se_strcpy(newAnim.name, animationName);
@@ -702,7 +702,7 @@ int cre_pkpy_api_animated_sprite_add_animation(pkpy_vm* vm) {
         pkpy_to_float(vm, dataIndex + 4, &pyDrawSourceW);
         pkpy_to_float(vm, dataIndex + 5, &pyDrawSourceH);
 
-        const char* texturePath = pyTexturePath.data;
+        const char* texturePath = pyTexturePath;
         CreAnimationFrame animationFrame = {
                 .frame = pyFrame,
                 .texture = se_asset_manager_get_texture(texturePath),
@@ -886,7 +886,7 @@ int cre_pkpy_api_text_label_set_text(pkpy_vm* vm) {
     pkpy_to_string(vm, 1, &pyText);
 
     static char textBuffer[2048];
-    se_str_trim_by_size(pyText.data, textBuffer, pyText.size);
+    se_strcpy(textBuffer, pyText);
     const SkaEntity entity = (SkaEntity)pyEntityId;
     TextLabelComponent* textLabelComponent = (TextLabelComponent*)ska_ecs_component_manager_get_component(entity, TEXT_LABEL_COMPONENT_INDEX);
     se_strcpy(textLabelComponent->text, textBuffer);
@@ -932,7 +932,7 @@ int cre_pkpy_api_text_label_set_font_uid(pkpy_vm* vm) {
     pkpy_to_string(vm, 1, &pyFontUID);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
-    const char* fontUID = pyFontUID.data;
+    const char* fontUID = pyFontUID;
     if (se_asset_manager_has_font(fontUID)) {
         TextLabelComponent* textLabelComponent = (TextLabelComponent*)ska_ecs_component_manager_get_component(entity, TEXT_LABEL_COMPONENT_INDEX);
         textLabelComponent->font = se_asset_manager_get_font(fontUID);

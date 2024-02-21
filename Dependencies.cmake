@@ -21,7 +21,7 @@ function(install_pocketpy)
         FetchContent_Declare(
                 pocketpy_content
                 GIT_REPOSITORY https://github.com/blueloveTH/pocketpy.git
-                GIT_TAG v1.4.0
+                GIT_TAG v1.4.1
         )
         FetchContent_MakeAvailable(pocketpy_content)
     endif ()
