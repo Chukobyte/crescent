@@ -296,11 +296,12 @@ void cre_pocketpy_test(void) {
 //--- Tilemap Test ---//
 void cre_tilemap_test(void) {
     CreTilemap tilemap = CRE_TILEMAP_DEFAULT_EMPTY;
-    cre_tile_array2d_allocate(&tilemap.tiles);
+    cre_tilemap_initialize(&tilemap);
 
     // Test setting (and unsetting) a single tile in an empty tile map
     const SKAVector2i tileOnePosition = (SKAVector2i){ .x = 5, .y = 5 };
     cre_tilemap_set_tile_active(&tilemap, &tileOnePosition, true);
+    cre_tilemap_commit_active_tile_changes(&tilemap);
     TEST_ASSERT_EQUAL_INT(5, tilemap.activeSize.w);
     TEST_ASSERT_EQUAL_INT(5, tilemap.activeSize.h);
     TEST_ASSERT_EQUAL_INT(CreTileType_CENTER, cre_tilemap_get_tile_bitmask(&tilemap, &tileOnePosition));
@@ -326,5 +327,5 @@ void cre_tilemap_test(void) {
     TEST_ASSERT_EQUAL_INT(CreTileType_CENTER | CreTileType_TOP, cre_tilemap_get_tile_bitmask(&tilemap, &tileFourPosition));
     TEST_ASSERT_EQUAL_INT(CreTileType_CENTER | CreTileType_BOTTOM, cre_tilemap_get_tile_bitmask(&tilemap, &tileFivePosition));
 
-    cre_tile_array2d_deallocate(&tilemap.tiles);
+    cre_tilemap_finalize(&tilemap);
 }

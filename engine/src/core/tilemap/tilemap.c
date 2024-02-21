@@ -4,85 +4,100 @@
 #include <seika/memory/se_mem.h>
 #include "seika/utils/se_assert.h"
 
-void cre_tile_array2d_allocate(CreTileArray2D* tileArray) {
-    SE_ASSERT(tileArray->array == NULL);
-    tileArray->array = (CreTile**)SE_MEM_ALLOCATE_SIZE(tileArray->size.h * sizeof(CreTile*));
-    for (int i = 0; i < tileArray->size.h; i++) {
-        tileArray->array[i] = (CreTile*) SE_MEM_ALLOCATE_SIZE(tileArray->size.w * sizeof(CreTile));
-    }
+void cre_tilemap_initialize(CreTilemap* tilemap) {
+    SE_ASSERT(tilemap->tilesArray == NULL);
+    tilemap->tilesArray = ska_array2d_create(tilemap->activeSize.w, tilemap->activeSize.h, sizeof(CreTileData));
 }
 
-void cre_tile_array2d_deallocate(CreTileArray2D* tileArray) {
-    SE_ASSERT(tileArray->array);
-    for (int i = 0; i < tileArray->size.h; i++) {
-        SE_MEM_FREE(tileArray->array[i]);
-    }
-    SE_MEM_FREE(tileArray->array);
-    tileArray->array = NULL;
+void cre_tilemap_finalize(CreTilemap* tilemap) {
+    SE_ASSERT(tilemap->tilesArray);
+    ska_array2d_destroy(tilemap->tilesArray);
 }
 
 static inline void cre_tilemap_refresh_tilemap(CreTilemap* tilemap) {
-    const int rows = tilemap->tiles.size.h;
-    const int cols = tilemap->tiles.size.w;
+    const int rows = tilemap->activeSize.h;
+    const int cols = tilemap->activeSize.w;
     for (int x = 0; x < rows; x++) {
         for (int y = 0; y < cols; y++) {
             CreTileBitmask bitmask = CreTileType_INVALID;
-            if (y - 1 >= 0 && tilemap->tiles.array[y - 1][x].isActive) { bitmask |= CreTileType_TOP; }
-            if (x + 1 < rows && tilemap->tiles.array[y][x + 1].isActive) { bitmask |= CreTileType_RIGHT; }
-            if (y + 1 < cols && tilemap->tiles.array[y + 1][x].isActive) { bitmask |= CreTileType_BOTTOM; }
-            if (x - 1 >= 0 && tilemap->tiles.array[y][x - 1].isActive) { bitmask |= CreTileType_LEFT; }
-            if (tilemap->tiles.array[y][x].isActive) { bitmask |= CreTileType_CENTER; }
-            tilemap->tiles.array[y][x].bitmask = bitmask;
-        }
-    }
-}
-
-static inline void cre_tilemap_update_active_size(CreTilemap* tilemap, CreTile* updatedTile, const SKAVector2i* position) {
-    if (updatedTile->isActive) {
-        if (position->x > tilemap->activeSize.w) {
-            tilemap->activeSize.w = position->x;
-        }
-        if (position->y > tilemap->activeSize.h) {
-            tilemap->activeSize.h = position->y;
-        }
-    } else {
-        // Only update active size if the current position matches
-        if (position->x == tilemap->activeSize.w || position->y == tilemap->activeSize.h) {
-            SKASize2Di currentLargestSize = SKA_STRUCT_LITERAL(SKASize2Di){ 0, 0 };
-            SE_ASSERT(tilemap->tiles.array);
-            for (int x = 0; x < tilemap->activeSize.w; x++) {
-                for (int y = 0; y < tilemap->activeSize.h; y++) {
-                    if (tilemap->tiles.array[y][x].isActive) {
-                        if (x > currentLargestSize.w) {
-                            currentLargestSize.w = x;
-                        }
-                        if (y > currentLargestSize.h) {
-                            currentLargestSize.h = y;
-                        }
-                    }
-                }
-            }
-            tilemap->activeSize = currentLargestSize;
+            CreTileData* centerTile = (CreTileData*)ska_array2d_get(tilemap->tilesArray, x, y);
+            const CreTileData* topTile = (CreTileData*)ska_array2d_get(tilemap->tilesArray, x, y - 1);
+            const CreTileData* rightTile = (CreTileData*)ska_array2d_get(tilemap->tilesArray, x + 1, y);
+            const CreTileData* bottomTile = (CreTileData*)ska_array2d_get(tilemap->tilesArray, x, y + 1);
+            const CreTileData* leftTile = (CreTileData*)ska_array2d_get(tilemap->tilesArray, x - 1, y);
+            if (centerTile->isActive) { bitmask |= CreTileType_CENTER; }
+            if (y - 1 >= 0 && topTile->isActive) { bitmask |= CreTileType_TOP; }
+            if (x + 1 < rows && rightTile->isActive) { bitmask |= CreTileType_RIGHT; }
+            if (y + 1 < cols && bottomTile->isActive) { bitmask |= CreTileType_BOTTOM; }
+            if (x - 1 >= 0 && leftTile->isActive) { bitmask |= CreTileType_LEFT; }
+            // Finally write the new bitmask to the tile data
+            centerTile->bitmask = bitmask;
         }
     }
 }
 
 void cre_tilemap_set_tile_active(CreTilemap* tilemap, const SKAVector2i* position, bool isActive) {
-    SE_ASSERT(tilemap->tiles.array);
-    CreTile* tile = &tilemap->tiles.array[position->y][position->x];
-    if (tile->isActive != isActive) {
-        tile->isActive = isActive;
-        cre_tilemap_update_active_size(tilemap, tile, position);
-        cre_tilemap_refresh_tilemap(tilemap);
+    if (tilemap->activeTransaction == NULL) {
+        tilemap->activeTransaction = SE_MEM_ALLOCATE(CreTilemapTransaction);
+        CreTilemapTransactionItem* rootItem = SE_MEM_ALLOCATE(CreTilemapTransactionItem);
+        rootItem->position = *position;
+        rootItem->isEnabled = isActive;
+        tilemap->activeTransaction->rootItem = rootItem;
+    } else {
+        CreTilemapTransactionItem* item = tilemap->activeTransaction->rootItem;
+        while (item != NULL) {
+            if (item->next) {
+                item = item->next;
+            } else {
+                break;
+            }
+        }
+        SE_ASSERT(item);
+        CreTilemapTransactionItem* newItem = SE_MEM_ALLOCATE(CreTilemapTransactionItem);
+        newItem->position = *position;
+        newItem->isEnabled = isActive;
+        item->next = newItem;
+    }
+    if (position->x + 1> tilemap->activeTransaction->totalSize.w) {
+        tilemap->activeTransaction->totalSize.w = position->x + 1;
+    }
+    if (position->y + 1> tilemap->activeTransaction->totalSize.h) {
+        tilemap->activeTransaction->totalSize.h = position->y + 1;
     }
 }
 
 bool cre_tilemap_is_tile_active(const CreTilemap* tilemap, const SKAVector2i* position) {
-    SE_ASSERT(tilemap->tiles.array);
-    return tilemap->tiles.array[position->y][position->x].isActive;
+    const CreTileData* tileData = (CreTileData*)ska_array2d_get(tilemap->tilesArray, position->x, position->y);
+    SE_ASSERT(tileData);
+    return tileData->isActive;
+}
+
+static void tilemap_set_tile(CreTilemap* tilemap, const SKAVector2i* position, bool isActive) {
+    CreTileData* tileData = (CreTileData*)ska_array2d_get(tilemap->tilesArray, position->x, position->y);
+    SE_ASSERT(tileData);
+    tileData->isActive = isActive;
+}
+
+void cre_tilemap_commit_active_tile_changes(CreTilemap* tilemap) {
+    if (tilemap->activeTransaction) {
+        // Resize if transaction size is bigger (TODO: Handle shrink cases
+        if (tilemap->activeTransaction->totalSize.w > tilemap->tilesArray->size.w || tilemap->activeTransaction->totalSize.h > tilemap->tilesArray->size.h) {
+            ska_array2d_resize(tilemap->tilesArray, tilemap->activeTransaction->totalSize.w, tilemap->activeTransaction->totalSize.h);
+        }
+
+        CreTilemapTransactionItem* item = tilemap->activeTransaction->rootItem;
+        while (item != NULL) {
+            tilemap_set_tile(tilemap, &item->position, item->isEnabled);
+            item = item->next;
+        }
+
+        SE_MEM_FREE(tilemap->activeTransaction);
+        tilemap->activeTransaction = NULL;
+    }
 }
 
 CreTileBitmask cre_tilemap_get_tile_bitmask(const CreTilemap* tilemap, const SKAVector2i* position) {
-    SE_ASSERT(tilemap->tiles.array);
-    return tilemap->tiles.array[position->y][position->x].bitmask;
+    const CreTileData* tileData = (CreTileData*)ska_array2d_get(tilemap->tilesArray, position->x, position->y);
+    SE_ASSERT(tileData);
+    return tileData->bitmask;
 }
