@@ -21,14 +21,15 @@ static inline void refresh_tilemap_bitmask(CreTilemap* tilemap) {
         for (int y = 0; y < cols; y++) {
             CreTileBitmask bitmask = CreTileType_INVALID;
             CreTileData* centerTile = (CreTileData*)ska_array2d_get(tilemap->tilesArray, x, y);
+            if (!centerTile) { continue; }
             const CreTileData* topTile = (CreTileData*)ska_array2d_get(tilemap->tilesArray, x, y - 1);
             const CreTileData* rightTile = (CreTileData*)ska_array2d_get(tilemap->tilesArray, x + 1, y);
             const CreTileData* bottomTile = (CreTileData*)ska_array2d_get(tilemap->tilesArray, x, y + 1);
             const CreTileData* leftTile = (CreTileData*)ska_array2d_get(tilemap->tilesArray, x - 1, y);
             if (centerTile->isActive) { bitmask |= CreTileType_CENTER; }
-            if (y - 1 >= 0 && topTile->isActive) { bitmask |= CreTileType_TOP; }
-            if (x + 1 < rows && rightTile->isActive) { bitmask |= CreTileType_RIGHT; }
-            if (y + 1 < cols && bottomTile->isActive) { bitmask |= CreTileType_BOTTOM; }
+            if (topTile && y - 1 >= 0 && topTile->isActive) { bitmask |= CreTileType_TOP; }
+            if (rightTile && x + 1 < rows && rightTile->isActive) { bitmask |= CreTileType_RIGHT; }
+            if (bottomTile && y + 1 < cols && bottomTile->isActive) { bitmask |= CreTileType_BOTTOM; }
             if (x - 1 >= 0 && leftTile->isActive) { bitmask |= CreTileType_LEFT; }
             // Finally write the new bitmask to the tile data
             centerTile->bitmask = bitmask;
