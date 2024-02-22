@@ -52,13 +52,13 @@ typedef struct CreTilemapTransactionItem {
 // Transaction for enabling/disable tiles, used to prevent updating and resizing every event
 typedef struct CreTilemapTransaction {
     CreTilemapTransactionItem* rootItem;
-    SKASize2Di totalSize;
+    SKASize2Di enabledSize;
+    SKASize2Di disabledSize;
 } CreTilemapTransaction;
 
 typedef struct CreTilemap {
     CreTileset tileset;
     CreTilemapAutotileBitmaskMode bitmaskMode; // TODO: Actually implement multiple bitmask modes (instead of just default to 3x3 Minimal)
-    SKASize2Di activeSize;
     SkaArray2D* tilesArray; // Contains tile data
     CreTilemapTransaction* activeTransaction;
 } CreTilemap;
@@ -66,10 +66,11 @@ typedef struct CreTilemap {
 #define CRE_TILEMAP_DEFAULT_EMPTY SKA_STRUCT_LITERAL(CreTilemap){ \
 .tileset = (CreTileset){ .texture = NULL, .tileSize = (SKASize2Di){ 32, 32 } }, \
 .bitmaskMode = CreTilemapBitmaskMode_3x3_MINIMAL, \
-.activeSize = (SKASize2Di){ 0, 0 }, \
 .tilesArray = NULL, \
 .activeTransaction = NULL \
 }
+
+#define CRE_TILEMAP_GET_ACTIVE_SIZE(TILEMAP) TILEMAP->tileArray.size
 
 void cre_tilemap_initialize(CreTilemap* tilemap);
 void cre_tilemap_finalize(CreTilemap* tilemap);

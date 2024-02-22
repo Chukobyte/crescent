@@ -302,12 +302,13 @@ void cre_tilemap_test(void) {
     const SKAVector2i tileOnePosition = (SKAVector2i){ .x = 5, .y = 5 };
     cre_tilemap_set_tile_active(&tilemap, &tileOnePosition, true);
     cre_tilemap_commit_active_tile_changes(&tilemap);
-    TEST_ASSERT_EQUAL_INT(5, tilemap.activeSize.w);
-    TEST_ASSERT_EQUAL_INT(5, tilemap.activeSize.h);
+    TEST_ASSERT_EQUAL_INT(6, tilemap.tilesArray->size.w);
+    TEST_ASSERT_EQUAL_INT(6, tilemap.tilesArray->size.h);
     TEST_ASSERT_EQUAL_INT(CreTileType_CENTER, cre_tilemap_get_tile_bitmask(&tilemap, &tileOnePosition));
     cre_tilemap_set_tile_active(&tilemap, &tileOnePosition, false);
-    TEST_ASSERT_EQUAL_INT(0, tilemap.activeSize.w);
-    TEST_ASSERT_EQUAL_INT(0, tilemap.activeSize.h);
+    cre_tilemap_commit_active_tile_changes(&tilemap);
+    TEST_ASSERT_EQUAL_INT(0, tilemap.tilesArray->size.w);
+    TEST_ASSERT_EQUAL_INT(0, tilemap.tilesArray->size.h);
 
     // 3 x 3 minimal bitmask tests
     const SKAVector2i tileTwoPosition = { .x = 9, .y = 4 };
@@ -320,8 +321,8 @@ void cre_tilemap_test(void) {
     cre_tilemap_set_tile_active(&tilemap, &tileThreePosition, true);
     cre_tilemap_set_tile_active(&tilemap, &tileFourPosition, true);
     cre_tilemap_set_tile_active(&tilemap, &tileFivePosition, true);
-    TEST_ASSERT_EQUAL_INT(9, tilemap.activeSize.w);
-    TEST_ASSERT_EQUAL_INT(8, tilemap.activeSize.h);
+    TEST_ASSERT_EQUAL_INT(9, tilemap.tilesArray->size.w);
+    TEST_ASSERT_EQUAL_INT(8, tilemap.tilesArray->size.h);
     TEST_ASSERT_EQUAL_INT(CreTileType_CENTER | CreTileType_LEFT, cre_tilemap_get_tile_bitmask(&tilemap, &tileTwoPosition));
     TEST_ASSERT_EQUAL_INT(CreTileType_CENTER | CreTileType_RIGHT, cre_tilemap_get_tile_bitmask(&tilemap, &tileThreePosition));
     TEST_ASSERT_EQUAL_INT(CreTileType_CENTER | CreTileType_TOP, cre_tilemap_get_tile_bitmask(&tilemap, &tileFourPosition));

@@ -6,7 +6,7 @@
 
 void cre_tilemap_initialize(CreTilemap* tilemap) {
     SE_ASSERT(tilemap->tilesArray == NULL);
-    tilemap->tilesArray = ska_array2d_create(tilemap->activeSize.w, tilemap->activeSize.h, sizeof(CreTileData));
+    tilemap->tilesArray = ska_array2d_create(0, 0, sizeof(CreTileData));
 }
 
 void cre_tilemap_finalize(CreTilemap* tilemap) {
@@ -14,9 +14,9 @@ void cre_tilemap_finalize(CreTilemap* tilemap) {
     ska_array2d_destroy(tilemap->tilesArray);
 }
 
-static inline void cre_tilemap_refresh_tilemap(CreTilemap* tilemap) {
-    const int rows = tilemap->activeSize.h;
-    const int cols = tilemap->activeSize.w;
+static inline void refresh_tilemap_bitmask(CreTilemap* tilemap) {
+    const int rows = tilemap->tilesArray->size.h;
+    const int cols = tilemap->tilesArray->size.w;
     for (int x = 0; x < rows; x++) {
         for (int y = 0; y < cols; y++) {
             CreTileBitmask bitmask = CreTileType_INVALID;
@@ -58,11 +58,14 @@ void cre_tilemap_set_tile_active(CreTilemap* tilemap, const SKAVector2i* positio
         newItem->isEnabled = isActive;
         item->next = newItem;
     }
-    if (position->x + 1> tilemap->activeTransaction->totalSize.w) {
-        tilemap->activeTransaction->totalSize.w = position->x + 1;
-    }
-    if (position->y + 1> tilemap->activeTransaction->totalSize.h) {
-        tilemap->activeTransaction->totalSize.h = position->y + 1;
+
+    if (isActive) {
+        if (position->x + 1 > tilemap->activeTransaction->enabledSize.w) {
+            tilemap->activeTransaction->enabledSize.w = position->x + 1;
+        }
+        if (position->y + 1 > tilemap->activeTransaction->enabledSize.h) {
+            tilemap->activeTransaction->enabledSize.h = position->y + 1;
+        }
     }
 }
 
@@ -80,9 +83,9 @@ static void tilemap_set_tile(CreTilemap* tilemap, const SKAVector2i* position, b
 
 void cre_tilemap_commit_active_tile_changes(CreTilemap* tilemap) {
     if (tilemap->activeTransaction) {
-        // Resize if transaction size is bigger (TODO: Handle shrink cases
-        if (tilemap->activeTransaction->totalSize.w > tilemap->tilesArray->size.w || tilemap->activeTransaction->totalSize.h > tilemap->tilesArray->size.h) {
-            ska_array2d_resize(tilemap->tilesArray, tilemap->activeTransaction->totalSize.w, tilemap->activeTransaction->totalSize.h);
+        // Resize if transaction size is bigger (TODO: Handle shrink cases)
+        if (tilemap->activeTransaction->enabledSize.w > tilemap->tilesArray->size.w || tilemap->activeTransaction->enabledSize.h > tilemap->tilesArray->size.h) {
+            ska_array2d_resize(tilemap->tilesArray, tilemap->activeTransaction->enabledSize.w, tilemap->activeTransaction->enabledSize.h);
         }
 
         CreTilemapTransactionItem* item = tilemap->activeTransaction->rootItem;
@@ -93,6 +96,8 @@ void cre_tilemap_commit_active_tile_changes(CreTilemap* tilemap) {
 
         SE_MEM_FREE(tilemap->activeTransaction);
         tilemap->activeTransaction = NULL;
+
+        refresh_tilemap_bitmask(tilemap);
     }
 }
 
