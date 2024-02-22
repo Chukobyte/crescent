@@ -43,6 +43,7 @@ void cre_tilemap_set_tile_active(CreTilemap* tilemap, const SKAVector2i* positio
         rootItem->position = *position;
         rootItem->isEnabled = isActive;
         tilemap->activeTransaction->rootItem = rootItem;
+        tilemap->activeTransaction->requestedSize = tilemap->tilesArray->size;
     } else {
         CreTilemapTransactionItem* item = tilemap->activeTransaction->rootItem;
         while (item != NULL) {
@@ -59,12 +60,48 @@ void cre_tilemap_set_tile_active(CreTilemap* tilemap, const SKAVector2i* positio
         item->next = newItem;
     }
 
+    // Update requested size
     if (isActive) {
-        if (position->x + 1 > tilemap->activeTransaction->enabledSize.w) {
-            tilemap->activeTransaction->enabledSize.w = position->x + 1;
+        if (position->x + 1 > tilemap->activeTransaction->requestedSize.w) {
+            tilemap->activeTransaction->requestedSize.w = position->x + 1;
         }
-        if (position->y + 1 > tilemap->activeTransaction->enabledSize.h) {
-            tilemap->activeTransaction->enabledSize.h = position->y + 1;
+        if (position->y + 1 > tilemap->activeTransaction->requestedSize.h) {
+            tilemap->activeTransaction->requestedSize.h = position->y + 1;
+        }
+    } else {
+        if (position->x + 1 >= tilemap->activeTransaction->requestedSize.w) {
+            int newWidth = 0;
+            const int rows = tilemap->tilesArray->size.h;
+            const int cols = tilemap->tilesArray->size.w;
+            for (int x = rows - 1; x >= 0; x--) {
+                for (int y = cols - 1; y >= 0; y--) {
+                    if (position->x != x && position->y != y) {
+                        CreTileData* tileData = (CreTileData*)ska_array2d_get(tilemap->tilesArray, x, y);
+                        if (tileData->isActive) {
+                            newWidth = tileData->position.x + 1;
+                            break;
+                        }
+                    }
+                }
+            }
+            tilemap->activeTransaction->requestedSize.w = newWidth;
+        }
+        if (position->y + 1 >= tilemap->activeTransaction->requestedSize.h) {
+            int newHeight = 0;
+            const int rows = tilemap->tilesArray->size.h;
+            const int cols = tilemap->tilesArray->size.w;
+            for (int x = rows - 1; x >= 0; x--) {
+                for (int y = cols - 1; y >= 0; y--) {
+                    if (position->x != x && position->y != y) {
+                        CreTileData* tileData = (CreTileData*)ska_array2d_get(tilemap->tilesArray, x, y);
+                        if (tileData->isActive) {
+                            newHeight = tileData->position.y + 1;
+                            break;
+                        }
+                    }
+                }
+            }
+            tilemap->activeTransaction->requestedSize.h = newHeight;
         }
     }
 }
@@ -83,14 +120,17 @@ static void tilemap_set_tile(CreTilemap* tilemap, const SKAVector2i* position, b
 
 void cre_tilemap_commit_active_tile_changes(CreTilemap* tilemap) {
     if (tilemap->activeTransaction) {
-        // Resize if transaction size is bigger (TODO: Handle shrink cases)
-        if (tilemap->activeTransaction->enabledSize.w > tilemap->tilesArray->size.w || tilemap->activeTransaction->enabledSize.h > tilemap->tilesArray->size.h) {
-            ska_array2d_resize(tilemap->tilesArray, tilemap->activeTransaction->enabledSize.w, tilemap->activeTransaction->enabledSize.h);
+        const SKASize2Di* requestedSize = &tilemap->activeTransaction->requestedSize;
+        // Resize if size changed
+        if (requestedSize->w != tilemap->tilesArray->size.w || requestedSize->h != tilemap->tilesArray->size.h) {
+            ska_array2d_resize(tilemap->tilesArray, requestedSize->w, requestedSize->h);
         }
 
         CreTilemapTransactionItem* item = tilemap->activeTransaction->rootItem;
         while (item != NULL) {
-            tilemap_set_tile(tilemap, &item->position, item->isEnabled);
+            if (item->position.x < requestedSize->w && item->position.y < requestedSize->h) {
+                tilemap_set_tile(tilemap, &item->position, item->isEnabled);
+            }
             item = item->next;
         }
 

@@ -52,8 +52,7 @@ typedef struct CreTilemapTransactionItem {
 // Transaction for enabling/disable tiles, used to prevent updating and resizing every event
 typedef struct CreTilemapTransaction {
     CreTilemapTransactionItem* rootItem;
-    SKASize2Di enabledSize;
-    SKASize2Di disabledSize;
+    SKASize2Di requestedSize;
 } CreTilemapTransaction;
 
 typedef struct CreTilemap {
