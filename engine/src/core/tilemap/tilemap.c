@@ -15,13 +15,13 @@ void cre_tilemap_finalize(CreTilemap* tilemap) {
 }
 
 static inline void refresh_tilemap_bitmask(CreTilemap* tilemap) {
-    const int rows = tilemap->tilesArray->size.h;
-    const int cols = tilemap->tilesArray->size.w;
-    for (int x = 0; x < rows; x++) {
-        for (int y = 0; y < cols; y++) {
+    const int rows = tilemap->tilesArray->size.w;
+    const int cols = tilemap->tilesArray->size.h;
+    for (int y = 0; y < cols; y++) {
+        for (int x = 0; x < rows; x++) {
             CreTileBitmask bitmask = CreTileType_INVALID;
             CreTileData* centerTile = (CreTileData*)ska_array2d_get(tilemap->tilesArray, x, y);
-            if (!centerTile) { continue; }
+            SE_ASSERT_FMT(centerTile, "Center tile should be present for (%d, %d)", x, y);
             const CreTileData* topTile = (CreTileData*)ska_array2d_get(tilemap->tilesArray, x, y - 1);
             const CreTileData* rightTile = (CreTileData*)ska_array2d_get(tilemap->tilesArray, x + 1, y);
             const CreTileData* bottomTile = (CreTileData*)ska_array2d_get(tilemap->tilesArray, x, y + 1);
