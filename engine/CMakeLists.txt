@@ -53,6 +53,7 @@ add_library(${PROJECT_NAME} STATIC
         src/core/ecs/components/parallax_component.c
         src/core/ecs/components/particles2d_component.c
         src/core/ecs/components/text_label_component.c
+        src/core/ecs/components/tilemap_component.c
         src/core/ecs/components/transform2d_component.c
         src/core/ecs/systems/animated_sprite_rendering_ec_system.c
         src/core/ecs/systems/color_rect_ec_system.c

@@ -15,6 +15,7 @@
 #include "components/sprite_component.h"
 #include "components/script_component.h"
 #include "components/text_label_component.h"
+#include "components/tilemap_component.h"
 #include "components/transform2d_component.h"
 #include "systems/animated_sprite_rendering_ec_system.h"
 #include "systems/collision_ec_system.h"
@@ -40,6 +41,7 @@ static void register_components() {
     const SkaComponentTypeInfo* spriteTypeInfo = SKA_ECS_REGISTER_COMPONENT(SpriteComponent);
     const SkaComponentTypeInfo* textLabelTypeInfo = SKA_ECS_REGISTER_COMPONENT(TextLabelComponent);
     const SkaComponentTypeInfo* transform2dTypeInfo = SKA_ECS_REGISTER_COMPONENT(Transform2DComponent);
+    const SkaComponentTypeInfo* tilemapTypeInfo = SKA_ECS_REGISTER_COMPONENT(TilemapComponent);
     // Update globals
     ANIMATED_SPRITE_COMPONENT_INDEX = animSpriteTypeInfo->index;
     ANIMATED_SPRITE_COMPONENT_TYPE = animSpriteTypeInfo->type;
@@ -61,6 +63,8 @@ static void register_components() {
     TEXT_LABEL_COMPONENT_TYPE = textLabelTypeInfo->type;
     TRANSFORM2D_COMPONENT_INDEX = transform2dTypeInfo->index;
     TRANSFORM2D_COMPONENT_TYPE = transform2dTypeInfo->type;
+    TILEMAP_COMPONENT_INDEX = tilemapTypeInfo->index;
+    TILEMAP_COMPONENT_TYPE = tilemapTypeInfo->type;
 }
 
 void cre_ecs_manager_initialize() {

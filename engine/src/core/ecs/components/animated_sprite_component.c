@@ -17,19 +17,10 @@ AnimatedSpriteComponent* animated_sprite_component_create() {
     animatedSpriteComponent->modulate.g = 1.0f;
     animatedSpriteComponent->modulate.b = 1.0f;
     animatedSpriteComponent->modulate.a = 1.0f;
-    animatedSpriteComponent->currentAnimation.isValid = false;
-    animatedSpriteComponent->origin.x = 0.0f;
-    animatedSpriteComponent->origin.y = 0.0f;
-    animatedSpriteComponent->isPlaying = false;
     animatedSpriteComponent->flipH = false;
     animatedSpriteComponent->flipV = false;
-    animatedSpriteComponent->startAnimationTickTime = 0;
     animatedSpriteComponent->staggerStartAnimationTimes = false;
-    animatedSpriteComponent->randomStaggerTime = 0;
     animatedSpriteComponent->shaderInstanceId = SE_SHADER_INSTANCE_INVALID_ID;
-    animatedSpriteComponent->onFrameChanged.observerCount = 0;
-    animatedSpriteComponent->onAnimationFinished.observerCount = 0;
-
     return animatedSpriteComponent;
 }
 
@@ -107,19 +98,7 @@ void animated_sprite_component_refresh_random_stagger_animation_time(AnimatedSpr
 //--- Animated Sprite Component Data ---//
 AnimatedSpriteComponentData* animated_sprite_component_data_create() {
     AnimatedSpriteComponentData* animatedSpriteComponent = SE_MEM_ALLOCATE(AnimatedSpriteComponentData);
-    animatedSpriteComponent->animationCount = 0;
-    animatedSpriteComponent->modulate.r = 1.0f;
-    animatedSpriteComponent->modulate.g = 1.0f;
-    animatedSpriteComponent->modulate.b = 1.0f;
-    animatedSpriteComponent->modulate.a = 1.0f;
-    animatedSpriteComponent->currentAnimation.isValid = false;
-    animatedSpriteComponent->origin.x = 0.0f;
-    animatedSpriteComponent->origin.y = 0.0f;
-    animatedSpriteComponent->isPlaying = false;
-    animatedSpriteComponent->flipH = false;
-    animatedSpriteComponent->flipV = false;
-    animatedSpriteComponent->staggerStartAnimationTimes = false;
-
+    animatedSpriteComponent->modulate = SKA_COLOR_WHITE;
     return animatedSpriteComponent;
 }
 

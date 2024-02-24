@@ -6,12 +6,8 @@
 
 ColorRectComponent* color_rect_component_create() {
     ColorRectComponent* colorRectComponent = SE_MEM_ALLOCATE(ColorRectComponent);
-    colorRectComponent->size.w = 32.0f;
-    colorRectComponent->size.h = 32.0f;
-    colorRectComponent->color.r = 1.0f;
-    colorRectComponent->color.g = 1.0f;
-    colorRectComponent->color.b = 1.0f;
-    colorRectComponent->color.a = 1.0f;
+    colorRectComponent->size = (SKASize2D){ .w = 32.0f, .h = 32.0f };
+    colorRectComponent->color = SKA_COLOR_WHITE;
     return colorRectComponent;
 }
 

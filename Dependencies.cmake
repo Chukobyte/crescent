@@ -1,13 +1,14 @@
 function(install_seika)
     if (NOT TARGET seika)
-        set(SKA_MAX_ENTITIES 100 CACHE STRING "Maximum number of entities")
+        # Setting to 10,000 as the default 200,000 is too much for our needs now
+        set(SKA_MAX_ENTITIES 10000 CACHE STRING "Maximum number of entities")
         add_definitions(-DSKA_MAX_ENTITIES=${SKA_MAX_ENTITIES})
 
         include(FetchContent)
         FetchContent_Declare(
                 seika
                 GIT_REPOSITORY https://github.com/Chukobyte/seika.git
-                GIT_TAG v0.0.36
+                GIT_TAG v0.0.39
         )
         FetchContent_MakeAvailable(seika)
     endif ()
@@ -20,7 +21,7 @@ function(install_pocketpy)
         FetchContent_Declare(
                 pocketpy_content
                 GIT_REPOSITORY https://github.com/blueloveTH/pocketpy.git
-                GIT_TAG v1.4.0
+                GIT_TAG v1.4.1
         )
         FetchContent_MakeAvailable(pocketpy_content)
     endif ()
