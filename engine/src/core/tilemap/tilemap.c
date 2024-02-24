@@ -1,5 +1,7 @@
 #include "tilemap.h"
 
+#include <string.h>
+
 #include <seika/rendering/texture.h>
 #include <seika/memory/se_mem.h>
 #include "seika/utils/se_assert.h"
@@ -7,6 +9,17 @@
 void cre_tilemap_initialize(CreTilemap* tilemap) {
     SE_ASSERT(tilemap->tilesArray == NULL);
     tilemap->tilesArray = ska_array2d_create(0, 0, sizeof(CreTileData));
+}
+
+CreTilemap* cre_tilemap_create_and_initialize() {
+    const CreTilemap defaultTilemap = CRE_TILEMAP_DEFAULT_EMPTY;
+
+    CreTilemap* newTilemap = SE_MEM_ALLOCATE(CreTilemap);
+    memcpy(newTilemap, &defaultTilemap, sizeof(CreTilemap));
+
+    cre_tilemap_initialize(newTilemap);
+
+    return newTilemap;
 }
 
 void cre_tilemap_finalize(CreTilemap* tilemap) {
@@ -113,6 +126,10 @@ bool cre_tilemap_is_tile_active(const CreTilemap* tilemap, const SKAVector2i* po
     return tileData->isActive;
 }
 
+void cre_tilemap_clear_all_tiles(const CreTilemap* tilemap) {
+    ska_array2d_resize(tilemap->tilesArray, 0, 0);
+}
+
 static void tilemap_set_tile(CreTilemap* tilemap, const SKAVector2i* position, bool isActive) {
     CreTileData* tileData = (CreTileData*)ska_array2d_get(tilemap->tilesArray, position->x, position->y);
     SE_ASSERT(tileData);
@@ -135,10 +152,22 @@ void cre_tilemap_commit_active_tile_changes(CreTilemap* tilemap) {
             item = item->next;
         }
 
-        SE_MEM_FREE(tilemap->activeTransaction);
-        tilemap->activeTransaction = NULL;
+        cre_tilemap_clear_active_tile_changes(tilemap);
 
         refresh_tilemap_bitmask(tilemap);
+    }
+}
+
+void cre_tilemap_clear_active_tile_changes(CreTilemap* tilemap) {
+    if (tilemap->activeTransaction) {
+        CreTilemapTransactionItem* item = tilemap->activeTransaction->rootItem;
+        while (item != NULL) {
+            CreTilemapTransactionItem* itemToDelete = item;
+            item = item->next;
+            SE_MEM_FREE(itemToDelete);
+        }
+        SE_MEM_FREE(tilemap->activeTransaction);
+        tilemap->activeTransaction = NULL;
     }
 }
 

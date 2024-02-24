@@ -25,6 +25,7 @@
 #include "systems/particle_emitter_ec_system.h"
 #include "systems/script_ec_system.h"
 #include "systems/sprite_rendering_ec_system.h"
+#include "systems/tilemap_ec_system.h"
 #include "../scene/scene_manager.h"
 #include "../game_properties.h"
 
@@ -81,6 +82,7 @@ void cre_ecs_manager_initialize() {
     cre_parallax_ec_system_create_and_register();
     cre_particle_ec_system_create_and_register();
     cre_script_ec_system_create_and_register();
+    cre_tilemap_ec_system_create_and_register();
 }
 
 void cre_ecs_manager_initialize_ex(SETexture* colorRectTexture, SETexture* particle2DSquareTexture) {
@@ -96,6 +98,7 @@ void cre_ecs_manager_initialize_ex(SETexture* colorRectTexture, SETexture* parti
     cre_parallax_ec_system_create_and_register();
     cre_particle_ec_system_create_and_register_ex(particle2DSquareTexture);
     cre_script_ec_system_create_and_register();
+    cre_tilemap_ec_system_create_and_register();
 }
 
 void cre_ecs_manager_enable_fps_display_entity(bool enabled, const char* fontUID, float positionX, float positionY) {
