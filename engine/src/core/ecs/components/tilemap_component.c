@@ -21,7 +21,3 @@ TilemapComponent* tilemap_component_copy(const TilemapComponent* tilemapComponen
     memcpy(copiedComp, tilemapComponent, sizeof(TilemapComponent));
     return copiedComp;
 }
-
-static void tilemap_get_draw_source(const TilemapComponent* tilemapComponent, const SKAVector2i position) {
-
-}
