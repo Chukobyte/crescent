@@ -69,8 +69,6 @@ typedef struct CreTilemap {
 .activeTransaction = NULL \
 }
 
-#define CRE_TILEMAP_GET_ACTIVE_SIZE(TILEMAP) TILEMAP->tileArray.size
-
 void cre_tilemap_initialize(CreTilemap* tilemap);
 void cre_tilemap_finalize(CreTilemap* tilemap);
 void cre_tilemap_set_tile_active(CreTilemap* tilemap, const SKAVector2i* position, bool isActive);
