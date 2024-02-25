@@ -37,11 +37,15 @@ void tilemap_render(SkaECSSystem* system) {
         const SkaEntity entity = system->entities[i];
         Transform2DComponent* tilemapTransformComp = (Transform2DComponent*)ska_ecs_component_manager_get_component(entity, TRANSFORM2D_COMPONENT_INDEX);
         TilemapComponent* tilemapComponent = (TilemapComponent*)ska_ecs_component_manager_get_component(entity, TILEMAP_COMPONENT_INDEX);
+        SE_ASSERT(tilemapComponent->tilemap);
+        SE_ASSERT(tilemapComponent->tilemap->tilesArray);
+        SE_ASSERT(tilemapComponent->tilemap->tileset.texture);
         const CRECamera2D* renderCamera = tilemapTransformComp->ignoreCamera ? defaultCamera : camera2D;
         const SceneNodeRenderResource renderResource = cre_scene_manager_get_scene_node_global_render_resource(entity, tilemapTransformComp, &tilemapComponent->origin);
-//        const SKASize2D destinationSize = {
-//            .w = spriteComponent->drawSource.w * renderCamera->zoom.x,
-//            .h = spriteComponent->drawSource.h * renderCamera->zoom.y
-//        };
+        const SKATransform2D baseTileTransform = renderResource.transform2D;
+        const SKASize2D baseTileSize = {
+            .w = (float)tilemapComponent->tilemap->tileset.tileSize.w * renderCamera->zoom.x,
+            .h = (float)tilemapComponent->tilemap->tileset.tileSize.h * renderCamera->zoom.y
+        };
     }
 }
