@@ -8,7 +8,7 @@ extern "C" {
 
 #include <seika/rendering/shader/shader_instance_minimal.h>
 #include <seika/math/se_curve_float.h>
-#include <seika/data_structures/se_array_list.h>
+#include <seika/data_structures/ska_array_list.h>
 
 #include "../ecs/component.h"
 #include "../ecs/components/node_component.h"
@@ -18,7 +18,7 @@ typedef struct JsonSceneNode {
     NodeBaseType type;
     char* externalNodeSource;
     bool fromExternalNodeSource;
-    SEArrayList* tags;
+    SkaArrayList* tags;
     void* components[CRE_MAX_COMPONENTS];
     struct JsonSceneNode* parent;
     struct JsonSceneNode* children[25]; // TODO: Change to an array list

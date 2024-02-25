@@ -1,6 +1,7 @@
 #include "tilemap_ec_system.h"
 
 #include <seika/ecs/ec_system.h>
+#include <seika/rendering/renderer.h>
 #include <seika/memory/se_mem.h>
 #include <seika/utils/se_assert.h>
 
@@ -47,5 +48,36 @@ void tilemap_render(SkaECSSystem* system) {
             .w = (float)tilemapComponent->tilemap->tileset.tileSize.w * renderCamera->zoom.x,
             .h = (float)tilemapComponent->tilemap->tileset.tileSize.h * renderCamera->zoom.y
         };
+        for (size_t j = 0; j < tilemapComponent->tilemap->activeTiles->size; j++) {
+            const CreTileData* tileData = (CreTileData*)(CreTileData**)ska_array_list_get(tilemapComponent->tilemap->activeTiles, j);
+            SE_ASSERT(tileData);
+            const SKAVector2 tilePosition = {
+                baseTileTransform.position.x + (float)(tileData->position.x * tilemapComponent->tilemap->tileset.tileSize.w * j),
+                baseTileTransform.position.y + (float)(tileData->position.y * tilemapComponent->tilemap->tileset.tileSize.h * j)
+            };
+            const SKATransform2D tileTransform = {
+                .position = tilePosition,
+                .scale = baseTileTransform.scale,
+                .rotation = baseTileTransform.rotation
+            };
+            const SKARect2 tileDrawSource = {
+                .x = (float)(tileData->renderCoords.x * tilemapComponent->tilemap->tileset.tileSize.w),
+                .y = (float)(tileData->renderCoords.y * tilemapComponent->tilemap->tileset.tileSize.h),
+                .w = (float)tilemapComponent->tilemap->tileset.tileSize.w,
+                .h = (float)tilemapComponent->tilemap->tileset.tileSize.h
+            };
+
+            ska_renderer_queue_sprite_draw(
+                tilemapComponent->tilemap->tileset.texture,
+                tileDrawSource,
+                baseTileSize,
+                SKA_COLOR_WHITE,
+                false,
+                false,
+                &tileTransform,
+                tilemapTransformComp->zIndex,
+                NULL
+            );
+        }
     }
 }

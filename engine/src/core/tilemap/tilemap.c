@@ -9,6 +9,7 @@
 void cre_tilemap_initialize(CreTilemap* tilemap) {
     SE_ASSERT(tilemap->tilesArray == NULL);
     tilemap->tilesArray = ska_array2d_create(0, 0, sizeof(CreTileData));
+    tilemap->activeTiles = ska_array_list_create(sizeof(CreTileData*), 128);
 }
 
 CreTilemap* cre_tilemap_create_and_initialize() {
@@ -25,15 +26,22 @@ CreTilemap* cre_tilemap_create_and_initialize() {
 void cre_tilemap_finalize(CreTilemap* tilemap) {
     SE_ASSERT(tilemap->tilesArray);
     ska_array2d_destroy(tilemap->tilesArray);
+    ska_array_list_destroy(tilemap->activeTiles);
 }
 
 static inline void refresh_tilemap_bitmask(CreTilemap* tilemap) {
+    ska_array_list_clear(tilemap->activeTiles);
     const int rows = tilemap->tilesArray->size.w;
     const int cols = tilemap->tilesArray->size.h;
     for (int y = 0; y < cols; y++) {
         for (int x = 0; x < rows; x++) {
-            CreTileBitmask bitmask = CreTileType_INVALID;
             CreTileData* centerTile = (CreTileData*)ska_array2d_get(tilemap->tilesArray, x, y);
+            // Update active tiles
+            if (centerTile->isActive) {
+                ska_array_list_push_back(tilemap->activeTiles, &centerTile);
+            }
+            // Update bitmask
+            CreTileBitmask bitmask = CreTileType_INVALID;
             SE_ASSERT_FMT(centerTile, "Center tile should be present for (%d, %d)", x, y);
             const CreTileData* topTile = (CreTileData*)ska_array2d_get(tilemap->tilesArray, x, y - 1);
             const CreTileData* rightTile = (CreTileData*)ska_array2d_get(tilemap->tilesArray, x + 1, y);
@@ -140,6 +148,7 @@ static void tilemap_set_tile(CreTilemap* tilemap, const SKAVector2i* position, b
     CreTileData* tileData = (CreTileData*)ska_array2d_get(tilemap->tilesArray, position->x, position->y);
     SE_ASSERT(tileData);
     tileData->isActive = isActive;
+    tileData->position = *position;
 }
 
 void cre_tilemap_commit_active_tile_changes(CreTilemap* tilemap) {
