@@ -13,14 +13,20 @@
 #include "../../camera/camera_manager.h"
 #include "../../scene/scene_manager.h"
 
+static void on_entity_registered(SkaECSSystem* system, SkaEntity entity);
 static void on_entity_unregistered(SkaECSSystem* system, SkaEntity entity);
 static void tilemap_render(SkaECSSystem* system);
 
 void cre_tilemap_ec_system_create_and_register() {
     SkaECSSystemTemplate systemTemplate = ska_ecs_system_create_default_template("Tilemap");
+    systemTemplate.on_entity_registered_func = on_entity_registered;
     systemTemplate.on_entity_unregistered_func = on_entity_unregistered;
     systemTemplate.render_func = tilemap_render;
     SKA_ECS_SYSTEM_REGISTER_FROM_TEMPLATE(&systemTemplate, Transform2DComponent, TilemapComponent);
+}
+
+void on_entity_registered(SkaECSSystem* system, SkaEntity entity) {
+    TilemapComponent* tilemapComponent = (TilemapComponent*)ska_ecs_component_manager_get_component(entity, TILEMAP_COMPONENT_INDEX);
 }
 
 void on_entity_unregistered(SkaECSSystem* system, SkaEntity entity) {
