@@ -92,7 +92,7 @@ void cre_tilemap_set_tile_active(CreTilemap* tilemap, const SKAVector2i* positio
                     if (position->x != x && position->y != y) {
                         CreTileData* tileData = (CreTileData*)ska_array2d_get(tilemap->tilesArray, x, y);
                         if (tileData->isActive) {
-                            newWidth = tileData->position.x + 1;
+                            newWidth = x + 1;
                             break;
                         }
                     }
@@ -109,7 +109,7 @@ void cre_tilemap_set_tile_active(CreTilemap* tilemap, const SKAVector2i* positio
                     if (position->x != x && position->y != y) {
                         CreTileData* tileData = (CreTileData*)ska_array2d_get(tilemap->tilesArray, x, y);
                         if (tileData->isActive) {
-                            newHeight = tileData->position.y + 1;
+                            newHeight = y + 1;
                             break;
                         }
                     }
@@ -118,6 +118,12 @@ void cre_tilemap_set_tile_active(CreTilemap* tilemap, const SKAVector2i* positio
             tilemap->activeTransaction->requestedSize.h = newHeight;
         }
     }
+}
+
+void cre_tilemap_set_tile_render_coord(CreTilemap* tilemap, const SKAVector2i* position, const SKAVector2i* coord) {
+    CreTileData* tileData = (CreTileData*)ska_array2d_get(tilemap->tilesArray, position->x, position->y);
+    SE_ASSERT(tileData);
+    tileData->renderCoords = *coord;
 }
 
 bool cre_tilemap_is_tile_active(const CreTilemap* tilemap, const SKAVector2i* position) {
@@ -175,4 +181,10 @@ CreTileBitmask cre_tilemap_get_tile_bitmask(const CreTilemap* tilemap, const SKA
     const CreTileData* tileData = (CreTileData*)ska_array2d_get(tilemap->tilesArray, position->x, position->y);
     SE_ASSERT(tileData);
     return tileData->bitmask;
+}
+
+const CreTileData* cre_tilemap_get_tile_data(const CreTilemap* tilemap, const SKAVector2i* position) {
+    const CreTileData* tileData = (CreTileData*)ska_array2d_get(tilemap->tilesArray, position->x, position->y);
+    SE_ASSERT(tileData);
+    return tileData;
 }
