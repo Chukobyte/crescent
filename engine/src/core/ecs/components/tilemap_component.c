@@ -9,7 +9,6 @@
 TilemapComponent* tilemap_component_create() {
     TilemapComponent* tilemapComponent = SE_MEM_ALLOCATE(TilemapComponent);
     tilemapComponent->tilemap = cre_tilemap_create_and_initialize();
-    tilemapComponent->tileSize = (SKASize2Di){ .w = 32, .h = 32 };
     return tilemapComponent;
 }
 

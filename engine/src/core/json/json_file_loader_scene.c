@@ -4,6 +4,7 @@
 #include <seika/utils/se_string_util.h>
 
 #include "json_helper.h"
+#include "../tilemap/tilemap.h"
 #include "../ecs/ecs_globals.h"
 #include "../ecs/components/component_defaults.h"
 #include "../ecs/components/transform2d_component.h"
@@ -403,9 +404,17 @@ static void cre_json_tilemap_create_or_set_default(JsonSceneNode* node, cJSON* c
     TilemapComponent* tilemapComponent = NULL;
     if (node->components[TILEMAP_COMPONENT_INDEX] == NULL) {
         tilemapComponent = tilemap_component_create();
+        node->spriteTexturePath = json_get_string_new(componentJson, "texture_path");
+        tilemapComponent->tilemap->tileset.tileSize = json_get_size2di(componentJson, "tile_size");
         node->components[TILEMAP_COMPONENT_INDEX] = tilemapComponent;
     } else {
         tilemapComponent = (TilemapComponent*)node->components[TILEMAP_COMPONENT_INDEX];
+        char* tilemapTexturePath = json_get_string_new_unchecked(componentJson, "texture_path");
+        if (tilemapTexturePath) {
+            SE_MEM_FREE(node->spriteTexturePath);
+            node->spriteTexturePath = tilemapTexturePath;
+        }
+        tilemapComponent->tilemap->tileset.tileSize = json_get_size2di_default(componentJson, "tile_size", tilemapComponent->tilemap->tileset.tileSize);
     }
     se_logger_debug("Tilemap");
 }
