@@ -141,7 +141,7 @@ bool cre_tilemap_is_tile_active(const CreTilemap* tilemap, const SKAVector2i* po
 }
 
 void cre_tilemap_clear_all_tiles(const CreTilemap* tilemap) {
-    ska_array2d_resize(tilemap->tilesArray, 0, 0);
+    ska_array2d_clear(tilemap->tilesArray);
 }
 
 static void tilemap_set_tile(CreTilemap* tilemap, const SKAVector2i* position, bool isActive) {
