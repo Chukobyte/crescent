@@ -16,6 +16,7 @@
 #include "scene_template_cache.h"
 #include "../world.h"
 #include "../game_properties.h"
+#include "../tilemap/tilemap.h"
 #include "../ecs/ecs_globals.h"
 #include "../ecs/components/sprite_component.h"
 #include "../ecs/components/animated_sprite_component.h"
@@ -25,9 +26,9 @@
 #include "../ecs/components/color_rect_component.h"
 #include "../ecs/components/parallax_component.h"
 #include "../ecs/components/particles2d_component.h"
+#include "../ecs/components/tilemap_component.h"
 #include "../camera/camera_manager.h"
 #include "../camera/camera.h"
-#include "../ecs/components/tilemap_component.h"
 
 // --- Scene Tree --- //
 // Executes function on passed in tree node and all child tree nodes
@@ -535,6 +536,7 @@ SceneTreeNode* cre_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneN
     }
     if (jsonSceneNode->components[TILEMAP_COMPONENT_INDEX] != NULL) {
         TilemapComponent* tilemapComponent = tilemap_component_copy((TilemapComponent*)jsonSceneNode->components[TILEMAP_COMPONENT_INDEX]);
+        tilemapComponent->tilemap->tileset.texture = se_asset_manager_get_texture(jsonSceneNode->spriteTexturePath);
         ska_ecs_component_manager_set_component(node->entity, TILEMAP_COMPONENT_INDEX, tilemapComponent);
     }
 
