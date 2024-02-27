@@ -120,25 +120,16 @@ void cre_json_delete_json_scene_node(JsonSceneNode* node) {
     if (node->components[PARTICLES2D_COMPONENT_INDEX]) {
         particles2d_component_delete(node->components[PARTICLES2D_COMPONENT_INDEX]);
     }
-
-    if (node->shaderInstanceShaderPath) {
-        SE_MEM_FREE(node->shaderInstanceShaderPath);
-    }
-    if (node->shaderInstanceVertexPath) {
-        SE_MEM_FREE(node->shaderInstanceVertexPath);
-    }
-    if (node->shaderInstanceFragmentPath) {
-        SE_MEM_FREE(node->shaderInstanceFragmentPath);
+    if (node->components[TILEMAP_COMPONENT_INDEX]) {
+        tilemap_component_delete(node->components[TILEMAP_COMPONENT_INDEX]);
     }
 
-    // String Arrays
+    SE_MEM_FREE(node->shaderInstanceShaderPath);
+    SE_MEM_FREE(node->shaderInstanceVertexPath);
+    SE_MEM_FREE(node->shaderInstanceFragmentPath);
     SE_MEM_FREE(node->name);
-    if (node->fontUID) {
-        SE_MEM_FREE(node->fontUID);
-    }
-    if (node->spriteTexturePath) {
-        SE_MEM_FREE(node->spriteTexturePath);
-    }
+    SE_MEM_FREE(node->fontUID);
+    SE_MEM_FREE(node->spriteTexturePath);
 }
 
 //--- Private functions ---//

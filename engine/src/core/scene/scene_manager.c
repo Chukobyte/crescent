@@ -27,6 +27,7 @@
 #include "../ecs/components/particles2d_component.h"
 #include "../camera/camera_manager.h"
 #include "../camera/camera.h"
+#include "../ecs/components/tilemap_component.h"
 
 // --- Scene Tree --- //
 // Executes function on passed in tree node and all child tree nodes
@@ -524,13 +525,17 @@ SceneTreeNode* cre_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneN
         ColorRectComponent* colorSquareComponent = color_rect_component_copy((ColorRectComponent*)jsonSceneNode->components[COLOR_RECT_COMPONENT_INDEX]);
         ska_ecs_component_manager_set_component(node->entity, COLOR_RECT_COMPONENT_INDEX, colorSquareComponent);
     }
-    if (jsonSceneNode->components[PARTICLES2D_COMPONENT_INDEX] != NULL) {
-        ParallaxComponent* parallaxComponent = parallax_component_copy((ParallaxComponent*)jsonSceneNode->components[PARTICLES2D_COMPONENT_INDEX]);
-        ska_ecs_component_manager_set_component(node->entity, PARTICLES2D_COMPONENT_INDEX, parallaxComponent);
+    if (jsonSceneNode->components[PARALLAX_COMPONENT_INDEX] != NULL) {
+        ParallaxComponent* parallaxComponent = parallax_component_copy((ParallaxComponent*)jsonSceneNode->components[PARALLAX_COMPONENT_INDEX]);
+        ska_ecs_component_manager_set_component(node->entity, PARALLAX_COMPONENT_INDEX, parallaxComponent);
     }
     if (jsonSceneNode->components[PARTICLES2D_COMPONENT_INDEX] != NULL) {
         Particles2DComponent* particles2DComponent = particles2d_component_copy((Particles2DComponent*)jsonSceneNode->components[PARTICLES2D_COMPONENT_INDEX]);
         ska_ecs_component_manager_set_component(node->entity, PARTICLES2D_COMPONENT_INDEX, particles2DComponent);
+    }
+    if (jsonSceneNode->components[TILEMAP_COMPONENT_INDEX] != NULL) {
+        TilemapComponent* tilemapComponent = tilemap_component_copy((TilemapComponent*)jsonSceneNode->components[TILEMAP_COMPONENT_INDEX]);
+        ska_ecs_component_manager_set_component(node->entity, TILEMAP_COMPONENT_INDEX, tilemapComponent);
     }
 
     if (!isStagedNodes) {

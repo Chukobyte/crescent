@@ -8,7 +8,7 @@ extern "C" {
 
 #include <seika/ecs/component.h>
 
-#define CRE_MAX_COMPONENTS 10
+#define CRE_MAX_COMPONENTS 11
 
 // Struct that is used to pass information to observers from events
 typedef struct CreComponentEntityUpdatePayload {
