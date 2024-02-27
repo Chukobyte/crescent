@@ -103,6 +103,25 @@ SKAVector2 json_get_vec2_default(cJSON* json, const char* key, SKAVector2 defaul
     return defaultValue;
 }
 
+SKAVector2i json_get_vec2i(cJSON* json, const char* key) {
+    cJSON* vec2Json = cJSON_GetObjectItemCaseSensitive(json, key);
+    return (SKAVector2i) {
+        .x = json_get_int(vec2Json, "x"),
+        .y = json_get_int(vec2Json, "y")
+    };
+}
+
+SKAVector2i json_get_vec2i_default(cJSON* json, const char* key, SKAVector2i defaultValue) {
+    cJSON* vec2Json = cJSON_GetObjectItemCaseSensitive(json, key);
+    if (vec2Json != NULL) {
+        return (SKAVector2i) {
+            .x = json_get_int_default(vec2Json, "x", defaultValue.x),
+            .y = json_get_int_default(vec2Json, "y", defaultValue.y)
+        };
+    }
+    return defaultValue;
+}
+
 SKASize2D json_get_size2d(cJSON* json, const char* key) {
     cJSON* size2dJson = cJSON_GetObjectItemCaseSensitive(json, key);
     return (SKASize2D) {

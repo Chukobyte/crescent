@@ -407,6 +407,15 @@ static void cre_json_tilemap_create_or_set_default(JsonSceneNode* node, cJSON* c
         }
         tilemapComponent->tilemap->tileset.tileSize = json_get_size2di_default(componentJson, "tile_size", tilemapComponent->tilemap->tileset.tileSize);
     }
+    // Will always override active tiles for now
+    cJSON* activeTilesJsonArray = cJSON_GetObjectItemCaseSensitive(componentJson, "active_tiles");
+    cJSON* activeTileJson = NULL;
+    cJSON_ArrayForEach(activeTileJson, activeTilesJsonArray) {
+        const SKAVector2i tilePosition = json_get_vec2i(activeTileJson, "position");
+        const SKAVector2i tileRenderCoord = json_get_vec2i(activeTileJson, "texture_coord");
+        cre_tilemap_set_tile_render_coord(tilemapComponent->tilemap, &tilePosition, &tileRenderCoord);
+    }
+    cre_tilemap_commit_active_tile_changes(tilemapComponent->tilemap);
     se_logger_debug("Tilemap");
 }
 
