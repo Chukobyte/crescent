@@ -51,9 +51,10 @@ void tilemap_render(SkaECSSystem* system) {
         for (size_t j = 0; j < tilemapComponent->tilemap->activeTiles->size; j++) {
             const CreTileData* tileData = (CreTileData*)*(CreTileData**)ska_array_list_get(tilemapComponent->tilemap->activeTiles, j);
             SE_ASSERT(tileData);
+            // TODO: Check if this is the correct calculation for tile position
             const SKAVector2 tilePosition = {
-                baseTileTransform.position.x + (float)(tileData->position.x * tilemapComponent->tilemap->tileset.tileSize.w),
-                baseTileTransform.position.y + (float)(tileData->position.y * tilemapComponent->tilemap->tileset.tileSize.h)
+                baseTileTransform.position.x + (float)(tileData->position.x * tilemapComponent->tilemap->tileset.tileSize.w) * baseTileTransform.scale.x,
+                baseTileTransform.position.y + (float)(tileData->position.y * tilemapComponent->tilemap->tileset.tileSize.h) * baseTileTransform.scale.y
             };
             const SKATransform2D tileTransform = {
                 .position = tilePosition,
