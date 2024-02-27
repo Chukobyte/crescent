@@ -321,8 +321,8 @@ void cre_tilemap_test(void) {
     cre_tilemap_set_tile_active(&tilemap, &tileThreePosition, true);
     cre_tilemap_set_tile_active(&tilemap, &tileFourPosition, true);
     cre_tilemap_set_tile_active(&tilemap, &tileFivePosition, true);
-    cre_tilemap_commit_active_tile_changes(&tilemap);
     cre_tilemap_set_tile_render_coord(&tilemap, &tileFourPosition, &(SKAVector2i){ 1, 3 });
+    cre_tilemap_commit_active_tile_changes(&tilemap);
     const CreTileData* tileFourData = cre_tilemap_get_tile_data(&tilemap, &tileFourPosition);
     TEST_ASSERT_EQUAL_INT(10, tilemap.tilesArray->size.w);
     TEST_ASSERT_EQUAL_INT(9, tilemap.tilesArray->size.h);

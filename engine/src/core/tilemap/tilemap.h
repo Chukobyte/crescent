@@ -34,8 +34,7 @@ typedef struct CreTileset {
 } CreTileset;
 
 typedef struct CreTilemapTransactionItem {
-    SKAVector2i position;
-    bool isEnabled;
+    CreTileData data;
     struct CreTilemapTransactionItem* next;
 } CreTilemapTransactionItem;
 
@@ -66,6 +65,7 @@ CreTilemap* cre_tilemap_create_and_initialize();
 void cre_tilemap_finalize(CreTilemap* tilemap);
 void cre_tilemap_set_tile_active(CreTilemap* tilemap, const SKAVector2i* position, bool isActive);
 void cre_tilemap_set_tile_render_coord(CreTilemap* tilemap, const SKAVector2i* position, const SKAVector2i* coord);
+void cre_tilemap_set_tile_data(CreTilemap* tilemap, const CreTileData* tileData);
 bool cre_tilemap_is_tile_active(const CreTilemap* tilemap, const SKAVector2i* position);
 void cre_tilemap_clear_all_tiles(const CreTilemap* tilemap);
 // Should be called once finished setting active tiles
