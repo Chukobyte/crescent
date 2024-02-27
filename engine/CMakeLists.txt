@@ -63,6 +63,7 @@ add_library(${PROJECT_NAME} STATIC
         src/core/ecs/systems/particle_emitter_ec_system.c
         src/core/ecs/systems/script_ec_system.c
         src/core/ecs/systems/sprite_rendering_ec_system.c
+        src/core/ecs/systems/tilemap_ec_system.c
         src/core/json/json_file_loader.c
         src/core/json/json_file_loader_scene.c
         src/core/json/json_helper.c

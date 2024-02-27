@@ -4,7 +4,6 @@
 
 #include <seika/rendering/renderer.h>
 #include <seika/rendering/shader/shader_cache.h>
-#include <seika/ecs/ecs.h>
 #include <seika/asset/asset_manager.h>
 #include <seika/utils/flag_util.h>
 #include <seika/utils/logger.h>
@@ -13,7 +12,6 @@
 
 #include "../cre_pkpy_entity_instance_cache.h"
 #include "../cre_pkpy_script_context.h"
-#include "../cre_pkpy_util.h"
 #include "../../../../scene/scene_manager.h"
 #include "../../../../ecs/ecs_globals.h"
 #include "../../../../ecs/components/sprite_component.h"
@@ -24,6 +22,7 @@
 #include "../../../../ecs/components/parallax_component.h"
 #include "../../../../ecs/components/script_component.h"
 #include "../../../../ecs/components/particles2d_component.h"
+#include "../../../../ecs/components/tilemap_component.h"
 
 static void set_node_component_from_type(SkaEntity entity, const char* classPath, const char* className, NodeBaseType baseType) {
 
@@ -56,6 +55,9 @@ static void set_node_component_from_type(SkaEntity entity, const char* classPath
     }
     if (SKA_FLAG_CONTAINS(NodeBaseInheritanceType_PARTICLES2D, inheritanceType)) {
         ska_ecs_component_manager_set_component(entity, PARTICLES2D_COMPONENT_INDEX, particles2d_component_create());
+    }
+    if (SKA_FLAG_CONTAINS(NodeBaseInheritanceType_TILEMAP, inheritanceType)) {
+        ska_ecs_component_manager_set_component(entity, TILEMAP_COMPONENT_INDEX, tilemap_component_create());
     }
 }
 

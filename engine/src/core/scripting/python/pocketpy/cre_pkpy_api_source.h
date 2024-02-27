@@ -850,6 +850,7 @@
 "    ColorRect = 64\n"\
 "    Parallax = 128\n"\
 "    Particles2D = 256\n"\
+"    Tilemap = 512\n"\
 "\n"\
 "\n"\
 "class Node:\n"\
@@ -1356,6 +1357,12 @@
 "    @spread.setter\n"\
 "    def spread(self, value: float) -> None:\n"\
 "        crescent_internal.particles2d_set_spread(self.entity_id, value)\n"\
+"\n"\
+"\n"\
+"class Tilemap(Node2D):\n"\
+"    @classmethod\n"\
+"    def new(cls) -> \"Tilemap\":\n"\
+"        return crescent_internal.node_new(str(cls.__module__.__name__), cls.__name__, NodeType.Tilemap)\n"\
 "\n"\
 "\n"\
 "class SceneTree:\n"\

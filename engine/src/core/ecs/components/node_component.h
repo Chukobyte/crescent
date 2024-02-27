@@ -18,6 +18,7 @@ extern "C" {
 #define CRE_NODE_COLOR_RECT_STRING "ColorRect"
 #define CRE_NODE_PARALLAX_STRING "Parallax"
 #define CRE_NODE_PARTICLES2D_STRING "Particles2D"
+#define CRE_NODE_TILEMAP_STRING "Tilemap"
 
 typedef enum NodeBaseType {
     NodeBaseType_INVALID = -1,
@@ -30,6 +31,7 @@ typedef enum NodeBaseType {
     NodeBaseType_COLOR_RECT = 1 << 6,
     NodeBaseType_PARALLAX = 1 << 7,
     NodeBaseType_PARTICLES2D = 1 << 8,
+    NodeBaseType_TILEMAP = 1 << 9,
 } NodeBaseType;
 
 typedef enum NodeBaseInheritanceType {
@@ -43,6 +45,7 @@ typedef enum NodeBaseInheritanceType {
     NodeBaseInheritanceType_COLOR_RECT = NodeBaseType_NODE | NodeBaseType_NODE2D | NodeBaseType_COLOR_RECT,
     NodeBaseInheritanceType_PARALLAX = NodeBaseType_NODE | NodeBaseType_NODE2D | NodeBaseType_PARALLAX,
     NodeBaseInheritanceType_PARTICLES2D = NodeBaseType_NODE | NodeBaseType_NODE2D | NodeBaseType_PARTICLES2D,
+    NodeBaseInheritanceType_TILEMAP = NodeBaseType_NODE | NodeBaseType_NODE2D | NodeBaseType_TILEMAP,
 } NodeBaseInheritanceType;
 
 typedef struct NodeTimeDilation {

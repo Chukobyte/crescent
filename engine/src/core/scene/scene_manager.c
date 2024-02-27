@@ -16,6 +16,7 @@
 #include "scene_template_cache.h"
 #include "../world.h"
 #include "../game_properties.h"
+#include "../tilemap/tilemap.h"
 #include "../ecs/ecs_globals.h"
 #include "../ecs/components/sprite_component.h"
 #include "../ecs/components/animated_sprite_component.h"
@@ -25,6 +26,7 @@
 #include "../ecs/components/color_rect_component.h"
 #include "../ecs/components/parallax_component.h"
 #include "../ecs/components/particles2d_component.h"
+#include "../ecs/components/tilemap_component.h"
 #include "../camera/camera_manager.h"
 #include "../camera/camera.h"
 
@@ -524,13 +526,18 @@ SceneTreeNode* cre_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneN
         ColorRectComponent* colorSquareComponent = color_rect_component_copy((ColorRectComponent*)jsonSceneNode->components[COLOR_RECT_COMPONENT_INDEX]);
         ska_ecs_component_manager_set_component(node->entity, COLOR_RECT_COMPONENT_INDEX, colorSquareComponent);
     }
-    if (jsonSceneNode->components[PARTICLES2D_COMPONENT_INDEX] != NULL) {
-        ParallaxComponent* parallaxComponent = parallax_component_copy((ParallaxComponent*)jsonSceneNode->components[PARTICLES2D_COMPONENT_INDEX]);
-        ska_ecs_component_manager_set_component(node->entity, PARTICLES2D_COMPONENT_INDEX, parallaxComponent);
+    if (jsonSceneNode->components[PARALLAX_COMPONENT_INDEX] != NULL) {
+        ParallaxComponent* parallaxComponent = parallax_component_copy((ParallaxComponent*)jsonSceneNode->components[PARALLAX_COMPONENT_INDEX]);
+        ska_ecs_component_manager_set_component(node->entity, PARALLAX_COMPONENT_INDEX, parallaxComponent);
     }
     if (jsonSceneNode->components[PARTICLES2D_COMPONENT_INDEX] != NULL) {
         Particles2DComponent* particles2DComponent = particles2d_component_copy((Particles2DComponent*)jsonSceneNode->components[PARTICLES2D_COMPONENT_INDEX]);
         ska_ecs_component_manager_set_component(node->entity, PARTICLES2D_COMPONENT_INDEX, particles2DComponent);
+    }
+    if (jsonSceneNode->components[TILEMAP_COMPONENT_INDEX] != NULL) {
+        TilemapComponent* tilemapComponent = tilemap_component_copy((TilemapComponent*)jsonSceneNode->components[TILEMAP_COMPONENT_INDEX]);
+        tilemapComponent->tilemap->tileset.texture = se_asset_manager_get_texture(jsonSceneNode->spriteTexturePath);
+        ska_ecs_component_manager_set_component(node->entity, TILEMAP_COMPONENT_INDEX, tilemapComponent);
     }
 
     if (!isStagedNodes) {

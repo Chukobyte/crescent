@@ -26,8 +26,14 @@ bool json_get_bool_default(cJSON* json, const char* key, bool defaultValue);
 SKAVector2 json_get_vec2(cJSON* json, const char* key);
 SKAVector2 json_get_vec2_default(cJSON* json, const char* key, SKAVector2 defaultValue);
 
+SKAVector2i json_get_vec2i(cJSON* json, const char* key);
+SKAVector2i json_get_vec2i_default(cJSON* json, const char* key, SKAVector2i defaultValue);
+
 SKASize2D json_get_size2d(cJSON* json, const char* key);
 SKASize2D json_get_size2d_default(cJSON* json, const char* key, SKASize2D defaultValue);
+
+SKASize2Di json_get_size2di(cJSON* json, const char* key);
+SKASize2Di json_get_size2di_default(cJSON* json, const char* key, SKASize2Di defaultValue);
 
 SKARect2 json_get_rect2(cJSON* json, const char* key);
 SKARect2 json_get_rect2_default(cJSON* json, const char* key, SKARect2 defaultValue);

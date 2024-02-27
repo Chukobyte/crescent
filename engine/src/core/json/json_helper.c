@@ -103,6 +103,25 @@ SKAVector2 json_get_vec2_default(cJSON* json, const char* key, SKAVector2 defaul
     return defaultValue;
 }
 
+SKAVector2i json_get_vec2i(cJSON* json, const char* key) {
+    cJSON* vec2Json = cJSON_GetObjectItemCaseSensitive(json, key);
+    return (SKAVector2i) {
+        .x = json_get_int(vec2Json, "x"),
+        .y = json_get_int(vec2Json, "y")
+    };
+}
+
+SKAVector2i json_get_vec2i_default(cJSON* json, const char* key, SKAVector2i defaultValue) {
+    cJSON* vec2Json = cJSON_GetObjectItemCaseSensitive(json, key);
+    if (vec2Json != NULL) {
+        return (SKAVector2i) {
+            .x = json_get_int_default(vec2Json, "x", defaultValue.x),
+            .y = json_get_int_default(vec2Json, "y", defaultValue.y)
+        };
+    }
+    return defaultValue;
+}
+
 SKASize2D json_get_size2d(cJSON* json, const char* key) {
     cJSON* size2dJson = cJSON_GetObjectItemCaseSensitive(json, key);
     return (SKASize2D) {
@@ -117,6 +136,25 @@ SKASize2D json_get_size2d_default(cJSON* json, const char* key, SKASize2D defaul
         return (SKASize2D) {
             .w = (float) json_get_double(size2dJson, "w"),
             .h = (float) json_get_double(size2dJson, "h")
+        };
+    }
+    return defaultValue;
+}
+
+SKASize2Di json_get_size2di(cJSON* json, const char* key) {
+    cJSON* size2dJson = cJSON_GetObjectItemCaseSensitive(json, key);
+    return (SKASize2Di ) {
+        .w = json_get_int(size2dJson, "w"),
+        .h = json_get_int(size2dJson, "h")
+    };
+}
+
+SKASize2Di json_get_size2di_default(cJSON* json, const char* key, SKASize2Di defaultValue) {
+    cJSON* size2dJson = cJSON_GetObjectItemCaseSensitive(json, key);
+    if (size2dJson != NULL) {
+        return (SKASize2Di) {
+            .w = json_get_int(size2dJson, "w"),
+            .h = json_get_int(size2dJson, "h")
         };
     }
     return defaultValue;

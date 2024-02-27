@@ -48,58 +48,39 @@ NodeBaseType node_get_base_type(const char* baseName) {
         return NodeBaseType_PARALLAX;
     } else if (strcmp(baseName, CRE_NODE_PARTICLES2D_STRING) == 0) {
         return NodeBaseType_PARTICLES2D;
+    } else if (strcmp(baseName, CRE_NODE_TILEMAP_STRING) == 0) {
+        return NodeBaseType_TILEMAP;
     }
     return NodeBaseType_INVALID;
 }
 
 NodeBaseInheritanceType node_get_type_inheritance(NodeBaseType type) {
     switch (type) {
-    case NodeBaseType_NODE:
-        return NodeBaseInheritanceType_NODE;
-    case NodeBaseType_NODE2D:
-        return NodeBaseInheritanceType_NODE2D;
-    case NodeBaseType_SPRITE:
-        return NodeBaseInheritanceType_SPRITE;
-    case NodeBaseType_ANIMATED_SPRITE:
-        return NodeBaseInheritanceType_ANIMATED_SPRITE;
-    case NodeBaseType_TEXT_LABEL:
-        return NodeBaseInheritanceType_TEXT_LABEL;
-    case NodeBaseType_COLLIDER2D:
-        return NodeBaseInheritanceType_COLLIDER2D;
-    case NodeBaseType_COLOR_RECT:
-        return NodeBaseInheritanceType_COLOR_RECT;
-    case NodeBaseType_PARALLAX:
-        return NodeBaseInheritanceType_PARALLAX;
-    case NodeBaseType_PARTICLES2D:
-        return NodeBaseInheritanceType_PARTICLES2D;
-    default:
-        break;
+    case NodeBaseType_NODE: return NodeBaseInheritanceType_NODE;
+    case NodeBaseType_NODE2D: return NodeBaseInheritanceType_NODE2D;
+    case NodeBaseType_SPRITE: return NodeBaseInheritanceType_SPRITE;
+    case NodeBaseType_ANIMATED_SPRITE: return NodeBaseInheritanceType_ANIMATED_SPRITE;
+    case NodeBaseType_TEXT_LABEL: return NodeBaseInheritanceType_TEXT_LABEL;
+    case NodeBaseType_COLLIDER2D: return NodeBaseInheritanceType_COLLIDER2D;
+    case NodeBaseType_COLOR_RECT: return NodeBaseInheritanceType_COLOR_RECT;
+    case NodeBaseType_PARALLAX: return NodeBaseInheritanceType_PARALLAX;
+    case NodeBaseType_PARTICLES2D: return NodeBaseInheritanceType_PARTICLES2D;
+    case NodeBaseType_TILEMAP: return NodeBaseInheritanceType_TILEMAP;
+    default: return NodeBaseInheritanceType_INVALID;
     }
-    return NodeBaseInheritanceType_INVALID;
 }
 
 const char* node_get_base_type_string(NodeBaseType type) {
     switch (type) {
-    case NodeBaseType_NODE:
-        return CRE_NODE_NODE_STRING;
-    case NodeBaseType_NODE2D:
-        return CRE_NODE_NODE2D_STRING;
-    case NodeBaseType_SPRITE:
-        return CRE_NODE_SPRITE_STRING;
-    case NodeBaseType_ANIMATED_SPRITE:
-        return CRE_NODE_ANIMATED_SPRITE_STRING;
-    case NodeBaseType_TEXT_LABEL:
-        return CRE_NODE_TEXT_LABEL_STRING;
-    case NodeBaseType_COLLIDER2D:
-        return CRE_NODE_COLLIDER2D_STRING;
-    case NodeBaseType_COLOR_RECT:
-        return CRE_NODE_COLOR_RECT_STRING;
-    case NodeBaseType_PARALLAX:
-        return CRE_NODE_PARALLAX_STRING;
-    case NodeBaseType_PARTICLES2D:
-        return CRE_NODE_PARTICLES2D_STRING;
-    default:
-        break;
+    case NodeBaseType_NODE: return CRE_NODE_NODE_STRING;
+    case NodeBaseType_NODE2D: return CRE_NODE_NODE2D_STRING;
+    case NodeBaseType_SPRITE: return CRE_NODE_SPRITE_STRING;
+    case NodeBaseType_ANIMATED_SPRITE: return CRE_NODE_ANIMATED_SPRITE_STRING;
+    case NodeBaseType_TEXT_LABEL: return CRE_NODE_TEXT_LABEL_STRING;
+    case NodeBaseType_COLLIDER2D: return CRE_NODE_COLLIDER2D_STRING;
+    case NodeBaseType_COLOR_RECT: return CRE_NODE_COLOR_RECT_STRING;
+    case NodeBaseType_PARALLAX: return CRE_NODE_PARALLAX_STRING;
+    case NodeBaseType_PARTICLES2D: return CRE_NODE_PARTICLES2D_STRING;
+    default: return NULL;
     }
-    return NULL;
 }

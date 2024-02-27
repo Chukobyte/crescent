@@ -4,6 +4,7 @@
 #include <seika/utils/se_string_util.h>
 
 #include "json_helper.h"
+#include "../tilemap/tilemap.h"
 #include "../ecs/ecs_globals.h"
 #include "../ecs/components/component_defaults.h"
 #include "../ecs/components/transform2d_component.h"
@@ -15,6 +16,7 @@
 #include "../ecs/components/color_rect_component.h"
 #include "../ecs/components/parallax_component.h"
 #include "../ecs/components/particles2d_component.h"
+#include "../ecs/components/tilemap_component.h"
 
 typedef struct ShaderInstancePaths {
     char* shader;
@@ -118,31 +120,22 @@ void cre_json_delete_json_scene_node(JsonSceneNode* node) {
     if (node->components[PARTICLES2D_COMPONENT_INDEX]) {
         particles2d_component_delete(node->components[PARTICLES2D_COMPONENT_INDEX]);
     }
-
-    if (node->shaderInstanceShaderPath) {
-        SE_MEM_FREE(node->shaderInstanceShaderPath);
-    }
-    if (node->shaderInstanceVertexPath) {
-        SE_MEM_FREE(node->shaderInstanceVertexPath);
-    }
-    if (node->shaderInstanceFragmentPath) {
-        SE_MEM_FREE(node->shaderInstanceFragmentPath);
+    if (node->components[TILEMAP_COMPONENT_INDEX]) {
+        tilemap_component_delete(node->components[TILEMAP_COMPONENT_INDEX]);
     }
 
-    // String Arrays
+    SE_MEM_FREE(node->shaderInstanceShaderPath);
+    SE_MEM_FREE(node->shaderInstanceVertexPath);
+    SE_MEM_FREE(node->shaderInstanceFragmentPath);
     SE_MEM_FREE(node->name);
-    if (node->fontUID) {
-        SE_MEM_FREE(node->fontUID);
-    }
-    if (node->spriteTexturePath) {
-        SE_MEM_FREE(node->spriteTexturePath);
-    }
+    SE_MEM_FREE(node->fontUID);
+    SE_MEM_FREE(node->spriteTexturePath);
 }
 
 //--- Private functions ---//
 
 // Component functions
-void cre_json_transform2d_create_or_set_default(JsonSceneNode* node, cJSON* componentJson) {
+static void cre_json_transform2d_create_or_set_default(JsonSceneNode* node, cJSON* componentJson) {
     Transform2DComponent* transform2DComponent = NULL;
     if (node->components[TRANSFORM2D_COMPONENT_INDEX] == NULL) {
         transform2DComponent = transform2d_component_create();
@@ -171,7 +164,7 @@ void cre_json_transform2d_create_or_set_default(JsonSceneNode* node, cJSON* comp
         se_bool_to_string(transform2DComponent->ignoreCamera));
 }
 
-void cre_json_sprite_create_or_set_default(JsonSceneNode* node, cJSON* componentJson) {
+static void cre_json_sprite_create_or_set_default(JsonSceneNode* node, cJSON* componentJson) {
     SpriteComponent* spriteComponent = NULL;
     if (node->components[SPRITE_COMPONENT_INDEX] == NULL) {
         spriteComponent = sprite_component_create();
@@ -208,7 +201,7 @@ void cre_json_sprite_create_or_set_default(JsonSceneNode* node, cJSON* component
         spriteComponent->modulate.a);
 }
 
-void cre_json_animated_sprite_create_or_set_default(JsonSceneNode* node, cJSON* componentJson) {
+static void cre_json_animated_sprite_create_or_set_default(JsonSceneNode* node, cJSON* componentJson) {
     AnimatedSpriteComponentData* animatedSpriteComponent = NULL;
     char* currentAnimationName = NULL;
     if (node->components[ANIMATED_SPRITE_COMPONENT_INDEX] == NULL) {
@@ -278,7 +271,7 @@ void cre_json_animated_sprite_create_or_set_default(JsonSceneNode* node, cJSON* 
     }
 }
 
-void cre_json_text_label_create_or_set_default(JsonSceneNode* node, cJSON* componentJson) {
+static void cre_json_text_label_create_or_set_default(JsonSceneNode* node, cJSON* componentJson) {
     TextLabelComponent* textLabelComponent = NULL;
     if (node->components[TEXT_LABEL_COMPONENT_INDEX] == NULL) {
         textLabelComponent = text_label_component_create();
@@ -303,7 +296,7 @@ void cre_json_text_label_create_or_set_default(JsonSceneNode* node, cJSON* compo
                     textLabelComponent->color.a);
 }
 
-void cre_json_collider2d_create_or_set_default(JsonSceneNode* node, cJSON* componentJson) {
+static void cre_json_collider2d_create_or_set_default(JsonSceneNode* node, cJSON* componentJson) {
     Collider2DComponent* collider2DComponent = NULL;
     if (node->components[COLLIDER2D_COMPONENT_INDEX] == NULL) {
         collider2DComponent = collider2d_component_create();
@@ -321,7 +314,7 @@ void cre_json_collider2d_create_or_set_default(JsonSceneNode* node, cJSON* compo
                     collider2DComponent->color.a);
 }
 
-void cre_json_color_rect_create_or_set_default(JsonSceneNode* node, cJSON* componentJson) {
+static void cre_json_color_rect_create_or_set_default(JsonSceneNode* node, cJSON* componentJson) {
     ColorRectComponent* colorRectComponent = NULL;
     if (node->components[COLOR_RECT_COMPONENT_INDEX] == NULL) {
         colorRectComponent = color_rect_component_create();
@@ -339,7 +332,7 @@ void cre_json_color_rect_create_or_set_default(JsonSceneNode* node, cJSON* compo
                     colorRectComponent->color.a);
 }
 
-void cre_json_script_create_or_set_default(JsonSceneNode* node, cJSON* componentJson) {
+static void cre_json_script_create_or_set_default(JsonSceneNode* node, cJSON* componentJson) {
     ScriptComponent* scriptComponent = NULL;
     if (node->components[SCRIPT_COMPONENT_INDEX] == NULL) {
         scriptComponent = script_component_create(
@@ -356,7 +349,7 @@ void cre_json_script_create_or_set_default(JsonSceneNode* node, cJSON* component
                     scriptComponent->classPath, scriptComponent->className);
 }
 
-void cre_json_parallax_create_or_set_default(JsonSceneNode* node, cJSON* componentJson) {
+static void cre_json_parallax_create_or_set_default(JsonSceneNode* node, cJSON* componentJson) {
     ParallaxComponent* parallaxComponent = NULL;
     if (node->components[PARALLAX_COMPONENT_INDEX] == NULL) {
         parallaxComponent = parallax_component_create();
@@ -369,7 +362,7 @@ void cre_json_parallax_create_or_set_default(JsonSceneNode* node, cJSON* compone
     se_logger_debug("Parallax\nscroll_speed: (%f, %f)", parallaxComponent->scrollSpeed.x, parallaxComponent->scrollSpeed.y);
 }
 
-void cre_json_particles2d_create_or_set_default(JsonSceneNode* node, cJSON* componentJson) {
+static void cre_json_particles2d_create_or_set_default(JsonSceneNode* node, cJSON* componentJson) {
     Particles2DComponent* particles2dComponent = NULL;
     bool isEmitting = false;
     if (node->components[PARTICLES2D_COMPONENT_INDEX] == NULL) {
@@ -396,6 +389,34 @@ void cre_json_particles2d_create_or_set_default(JsonSceneNode* node, cJSON* comp
     }
     particles2dComponent->state = isEmitting ? Particle2DComponentState_WAITING_TO_INITIALIZE : Particle2DComponentState_INACTIVE;
     se_logger_debug("Particles2D\namount: %d", particles2dComponent->amount);
+}
+
+static void cre_json_tilemap_create_or_set_default(JsonSceneNode* node, cJSON* componentJson) {
+    TilemapComponent* tilemapComponent = NULL;
+    if (node->components[TILEMAP_COMPONENT_INDEX] == NULL) {
+        tilemapComponent = tilemap_component_create();
+        node->spriteTexturePath = json_get_string_new(componentJson, "texture_path");
+        tilemapComponent->tilemap->tileset.tileSize = json_get_size2di(componentJson, "tile_size");
+        node->components[TILEMAP_COMPONENT_INDEX] = tilemapComponent;
+    } else {
+        tilemapComponent = (TilemapComponent*)node->components[TILEMAP_COMPONENT_INDEX];
+        char* tilemapTexturePath = json_get_string_new_unchecked(componentJson, "texture_path");
+        if (tilemapTexturePath) {
+            SE_MEM_FREE(node->spriteTexturePath);
+            node->spriteTexturePath = tilemapTexturePath;
+        }
+        tilemapComponent->tilemap->tileset.tileSize = json_get_size2di_default(componentJson, "tile_size", tilemapComponent->tilemap->tileset.tileSize);
+    }
+    // Will always override active tiles for now
+    cJSON* activeTilesJsonArray = cJSON_GetObjectItemCaseSensitive(componentJson, "active_tiles");
+    cJSON* activeTileJson = NULL;
+    cJSON_ArrayForEach(activeTileJson, activeTilesJsonArray) {
+        const SKAVector2i tilePosition = json_get_vec2i(activeTileJson, "position");
+        const SKAVector2i tileRenderCoord = json_get_vec2i(activeTileJson, "texture_coord");
+        cre_tilemap_set_tile_render_coord(tilemapComponent->tilemap, &tilePosition, &tileRenderCoord);
+    }
+    cre_tilemap_commit_active_tile_changes(tilemapComponent->tilemap);
+    se_logger_debug("Tilemap");
 }
 
 // Recursive
@@ -456,6 +477,8 @@ JsonSceneNode* cre_json_load_scene_node(cJSON* nodeJson, JsonSceneNode* parentNo
             cre_json_parallax_create_or_set_default(node, componentJson);
         } else if (strcmp(componentType, "particles2d") == 0) {
             cre_json_particles2d_create_or_set_default(node, componentJson);
+        } else if (strcmp(componentType, "tilemap") == 0) {
+            cre_json_tilemap_create_or_set_default(node, componentJson);
         } else {
             se_logger_error("component type '%s' in invalid!", componentType);
         }

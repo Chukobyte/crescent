@@ -8,7 +8,7 @@ function(install_seika)
         FetchContent_Declare(
                 seika
                 GIT_REPOSITORY https://github.com/Chukobyte/seika.git
-                GIT_TAG v0.0.39
+                GIT_TAG v0.0.43
         )
         FetchContent_MakeAvailable(seika)
     endif ()
