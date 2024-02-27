@@ -49,11 +49,11 @@ void tilemap_render(SkaECSSystem* system) {
             .h = (float)tilemapComponent->tilemap->tileset.tileSize.h * renderCamera->zoom.y
         };
         for (size_t j = 0; j < tilemapComponent->tilemap->activeTiles->size; j++) {
-            const CreTileData* tileData = (CreTileData*)(CreTileData**)ska_array_list_get(tilemapComponent->tilemap->activeTiles, j);
+            const CreTileData* tileData = (CreTileData*)*(CreTileData**)ska_array_list_get(tilemapComponent->tilemap->activeTiles, j);
             SE_ASSERT(tileData);
             const SKAVector2 tilePosition = {
-                baseTileTransform.position.x + (float)(tileData->position.x * tilemapComponent->tilemap->tileset.tileSize.w * j),
-                baseTileTransform.position.y + (float)(tileData->position.y * tilemapComponent->tilemap->tileset.tileSize.h * j)
+                baseTileTransform.position.x + (float)(tileData->position.x * tilemapComponent->tilemap->tileset.tileSize.w),
+                baseTileTransform.position.y + (float)(tileData->position.y * tilemapComponent->tilemap->tileset.tileSize.h)
             };
             const SKATransform2D tileTransform = {
                 .position = tilePosition,
