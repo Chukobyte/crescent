@@ -215,37 +215,37 @@ jobs:
           echo "Running crescent engine editor tests!"
           builds/Release/crescent_engine_editor_test
 
-      - name: decode private key and cert
-        run: |
-          echo "${{ secrets.MAC_CERT_KEY }}" >> cert.txt
-          echo "${{ secrets.MAC_PKEY }}" >> pkey.txt
-          base64 -D -i cert.txt -o cert.cer
-          base64 -D -i pkey.txt -o private.key
-
-      - name: setup keychain
-        run: |
-          security create-keychain -p '${{ secrets.MAC_KEYCHAIN_PASS }}' build.keychain
-          security default-keychain -s build.keychain
-          security unlock-keychain -p '${{ secrets.MAC_KEYCHAIN_PASS }}' build.keychain
-          security set-keychain-settings -t 3600 -u build.keychain
-
-      - name: import private key
-        run: |
-          security import private.key -A -k build.keychain
-
-      - name: import cert
-        run: |
-          security import cert.cer -A -k build.keychain
-
-      - name: set up code signing
-        run: |
-          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "${{ secrets.MAC_KEYCHAIN_PASS }}" build.keychain
-          security find-identity -v -p codesigning build.keychain
-
-      - name: sign app
-        run: |
-          codesign -s "${{ secrets.MAC_SIGNING_ID }}" -v crescent_engine_macosx
-          codesign -s "${{ secrets.MAC_SIGNING_ID }}" -v crescent_engine_editor_macosx
+#      - name: decode private key and cert
+#        run: |
+#          echo "${{ secrets.MAC_CERT_KEY }}" >> cert.txt
+#          echo "${{ secrets.MAC_PKEY }}" >> pkey.txt
+#          base64 -D -i cert.txt -o cert.cer
+#          base64 -D -i pkey.txt -o private.key
+#
+#      - name: setup keychain
+#        run: |
+#          security create-keychain -p '${{ secrets.MAC_KEYCHAIN_PASS }}' build.keychain
+#          security default-keychain -s build.keychain
+#          security unlock-keychain -p '${{ secrets.MAC_KEYCHAIN_PASS }}' build.keychain
+#          security set-keychain-settings -t 3600 -u build.keychain
+#
+#      - name: import private key
+#        run: |
+#          security import private.key -A -k build.keychain
+#
+#      - name: import cert
+#        run: |
+#          security import cert.cer -A -k build.keychain
+#
+#      - name: set up code signing
+#        run: |
+#          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "${{ secrets.MAC_KEYCHAIN_PASS }}" build.keychain
+#          security find-identity -v -p codesigning build.keychain
+#
+#      - name: sign app
+#        run: |
+#          codesign -s "${{ secrets.MAC_SIGNING_ID }}" -v crescent_engine_macosx
+#          codesign -s "${{ secrets.MAC_SIGNING_ID }}" -v crescent_engine_editor_macosx
 
       - name: store engine binary
         uses: actions/upload-artifact@v3
