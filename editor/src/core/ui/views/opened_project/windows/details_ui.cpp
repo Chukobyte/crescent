@@ -374,11 +374,9 @@ void DrawTilemap(SceneNode* node) {
     if (auto* tilemapComp = node->GetComponentSafe<TilemapComp>()) {
         ImGui::Text("Tilemap Component");
 
-//        ImGuiHelper::DragInt2 tileSizeDragInt2("Tile Size", (int*)&tilemapComp->tileSize);
-//        ImGuiHelper::BeginDragInt2(tileSizeDragInt2);
-
-//        ImGuiHelper::DragFloat2 scrollSpeedDragFloat2("Scroll Speed", (float*) &parallaxComp->scrollSpeed);
-//        ImGuiHelper::BeginDragFloat2(scrollSpeedDragFloat2);
+        ImGuiHelper::DragInt2 tileSizeDragInt2("Tile Size", (int*)&tilemapComp->GetTileSize());
+        tileSizeDragInt2.valueMin = 2;
+        ImGuiHelper::BeginDragInt2(tileSizeDragInt2);
 
         ImGui::Separator();
     }

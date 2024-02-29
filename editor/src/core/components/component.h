@@ -296,9 +296,15 @@ struct TilemapComp : public EditorComponent {
         cre_tilemap_finalize(internalComp.tilemap);
     }
 
+    [[nodiscard]] const SKASize2Di& GetTileSize() const {
+        return internalComp.tilemap->tileset.tileSize;
+    }
+
+    [[nodiscard]] const SETexture* GetTexture() const {
+        return internalComp.tilemap->tileset.texture;
+    }
+
     SKAVector2& origin = internalComp.origin;
-    SKASize2Di& tileSize = internalComp.tilemap->tileset.tileSize;
-    SETexture*& texture = internalComp.tilemap->tileset.texture;
 
     [[nodiscard]] TilemapComponent& GetInternalComp() {
         return internalComp;

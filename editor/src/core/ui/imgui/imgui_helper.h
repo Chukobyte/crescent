@@ -88,7 +88,7 @@ struct DragInt2 {
     std::string label;
     int* value;
     float valueSpeed = 1.0f;
-    int valueMin = 999999;
+    int valueMin = -999999;
     int valueMax = 999999;
 
   private:
