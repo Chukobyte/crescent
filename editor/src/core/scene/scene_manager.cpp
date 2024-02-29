@@ -328,6 +328,9 @@ SceneNode* SceneManager::LoadSceneTreeJson(JsonSceneNode* node, SceneNode* paren
     if (node->components[PARTICLES2D_COMPONENT_INDEX] != nullptr) {
         sceneNode->AddComponent<Particles2DComp>((Particles2DComponent*)node->components[PARTICLES2D_COMPONENT_INDEX]);
     }
+    if (node->components[TILEMAP_COMPONENT_INDEX] != nullptr) {
+        sceneNode->AddComponent<TilemapComp>((TilemapComponent*)node->components[TILEMAP_COMPONENT_INDEX]);
+    }
 
     // Load children
     for (size_t i = 0; i < node->childrenCount; i++) {
