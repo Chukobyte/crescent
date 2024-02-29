@@ -12,11 +12,13 @@
 #include "../engine/src/core/ecs/components/collider2d_component.h"
 #include "../engine/src/core/ecs/components/color_rect_component.h"
 #include "../engine/src/core/ecs/components/parallax_component.h"
+#include "../engine/src/core/ecs/components/particles2d_component.h"
 #include "../engine/src/core/ecs/components/script_component.h"
 #include "../engine/src/core/ecs/components/sprite_component.h"
 #include "../engine/src/core/ecs/components/text_label_component.h"
+#include "../engine/src/core/ecs/components/tilemap_component.h"
 #include "../engine/src/core/ecs/components/transform2d_component.h"
-#include "../engine/src/core/ecs/components/particles2d_component.h"
+#include "../../../../engine/src/core/tilemap/tilemap.h"
 
 struct EditorComponent {};
 
@@ -268,17 +270,43 @@ struct Particles2DComp : public EditorComponent {
 
 private:
     Particles2DComponent internalComp = {
-            .amount = 8,
-            .initialVelocity = SKA_VECTOR2_ZERO,
-            .color = SKA_COLOR_WHITE,
-            .spread = 45.0f,
-            .lifeTime = 4.0f,
-            .damping = 1.0f,
-            .explosiveness = 0.0f,
-            .state = Particle2DComponentState_WAITING_TO_INITIALIZE,
-            .type = Particle2DComponentType_SQUARE,
-            .squareSize = { .w = 4.0f, .h = 4.0f },
-            .typeTexture = { .texture = nullptr, .drawSource = { 0.0f, 0.0f, 1.0f, 1.0f } },
-            .particles = {0}
+        .amount = 8,
+        .initialVelocity = SKA_VECTOR2_ZERO,
+        .color = SKA_COLOR_WHITE,
+        .spread = 45.0f,
+        .lifeTime = 4.0f,
+        .damping = 1.0f,
+        .explosiveness = 0.0f,
+        .state = Particle2DComponentState_WAITING_TO_INITIALIZE,
+        .type = Particle2DComponentType_SQUARE,
+        .squareSize = { .w = 4.0f, .h = 4.0f },
+        .typeTexture = { .texture = nullptr, .drawSource = { 0.0f, 0.0f, 1.0f, 1.0f } },
+        .particles = {0}
+    };
+};
+
+struct TilemapComp : public EditorComponent {
+    TilemapComp() = default;
+
+    explicit TilemapComp(const TilemapComponent* tilemapComp) {
+        memcpy(&internalComp, tilemapComp, sizeof(TilemapComponent));
+    }
+
+    ~TilemapComp() {
+        cre_tilemap_finalize(internalComp.tilemap);
+    }
+
+    SKAVector2& origin = internalComp.origin;
+    SKASize2Di& tileSize = internalComp.tilemap->tileset.tileSize;
+    SETexture*& texture = internalComp.tilemap->tileset.texture;
+
+    [[nodiscard]] TilemapComponent& GetInternalComp() {
+        return internalComp;
+    }
+
+private:
+    TilemapComponent internalComp = {
+        .tilemap = cre_tilemap_create_and_initialize(),
+        .origin = SKA_VECTOR2_ZERO
     };
 };

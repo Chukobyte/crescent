@@ -81,6 +81,20 @@ struct DragInt {
     std::string internalLabel;
 };
 
+struct DragInt2 {
+    DragInt2(std::string label, int* value, int labelIndex = 0);
+    [[nodiscard]] const char* GetInternalLabel() const;
+
+    std::string label;
+    int* value;
+    float valueSpeed = 1.0f;
+    int valueMin = 999999;
+    int valueMax = 999999;
+
+  private:
+    std::string internalLabel;
+};
+
 struct DragFloat {
     DragFloat(std::string label, float& value, int labelIndex = 0);
     [[nodiscard]] const char* GetInternalLabel() const;
@@ -239,6 +253,7 @@ void BeginMainMenuBar(const MenuBar& menuBar);
 void BeginPopupModal(const PopupModal& popupModal);
 void BeginInputText(const InputText& inputText);
 bool BeginDragInt(const DragInt& dragInt);
+bool BeginDragInt2(const DragInt2& dragInt2);
 bool BeginDragFloat(const DragFloat& dragFloat);
 bool BeginDragFloat2(const DragFloat2& dragFloat2);
 bool BeginDragFloat4(const DragFloat4& dragFloat4);

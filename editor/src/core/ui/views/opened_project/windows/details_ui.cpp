@@ -369,6 +369,20 @@ void DrawParticles2D(SceneNode* node) {
         ImGui::Separator();
     }
 }
+
+void DrawTilemap(SceneNode* node) {
+    if (auto* tilemapComp = node->GetComponentSafe<TilemapComp>()) {
+        ImGui::Text("Tilemap Component");
+
+        ImGuiHelper::DragInt2 tileSizeDragInt2("Tile Size", (int*)&tilemapComp->tileSize);
+        ImGuiHelper::BeginDragInt2(tileSizeDragInt2);
+
+//        ImGuiHelper::DragFloat2 scrollSpeedDragFloat2("Scroll Speed", (float*) &parallaxComp->scrollSpeed);
+//        ImGuiHelper::BeginDragFloat2(scrollSpeedDragFloat2);
+
+        ImGui::Separator();
+    }
+}
 } // namespace ComponentDetailsDrawUtils
 
 ImGuiHelper::Window OpenedProjectUI::Windows::GetDetailsWindow() {
