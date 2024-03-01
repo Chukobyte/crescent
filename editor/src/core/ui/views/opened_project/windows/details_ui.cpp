@@ -374,9 +374,44 @@ void DrawTilemap(SceneNode* node) {
     if (auto* tilemapComp = node->GetComponentSafe<TilemapComp>()) {
         ImGui::Text("Tilemap Component");
 
+        // Texture Path Combo Box
+        static AssetBrowser* assetBrowser = AssetBrowser::Get();
+
+        static ImGuiHelper::AssetBrowserComboBox tilemapTexturePathComboBox("Texture Path", ".png");
+        tilemapTexturePathComboBox.onSelectionChangeCallback = [tilemapComp](const char* newItem) {
+            tilemapComp->texturePath = newItem;
+            if (tilemapComp->texturePath == ImGuiHelper::COMBO_BOX_LIST_NONE) {
+                tilemapComp->texturePath.clear();
+            }
+        };
+
+        static const FuncObject initializeFunc = FuncObject([tilemapComp] {
+            if (tilemapComp->texturePath.empty()) {
+                tilemapTexturePathComboBox.SetSelected(ImGuiHelper::COMBO_BOX_LIST_NONE);
+            } else {
+                tilemapTexturePathComboBox.SetSelected(tilemapComp->texturePath);
+            }
+            EditorCallbacks::Get()->RegisterOnSceneNodeSelected([](SceneNode* sceneNode) {
+                // Disable on selection call back while switching nodes to prevent previous node from being set
+                tilemapTexturePathComboBox.onSelectionChangeCallback = nullptr;
+                if (auto tilemapC = sceneNode->GetComponentSafe<TilemapComp>()) {
+                    if (tilemapC->texturePath.empty()) {
+                        tilemapTexturePathComboBox.SetSelected(ImGuiHelper::COMBO_BOX_LIST_NONE);
+                    } else {
+                        tilemapTexturePathComboBox.SetSelected(tilemapC->texturePath);
+                    }
+                }
+            });
+        });
+
+        ImGuiHelper::BeginAssetBrowserComboBox(tilemapTexturePathComboBox);
+
         ImGuiHelper::DragInt2 tileSizeDragInt2("Tile Size", (int*)&tilemapComp->GetTileSize());
         tileSizeDragInt2.valueMin = 2;
         ImGuiHelper::BeginDragInt2(tileSizeDragInt2);
+
+        ImGuiHelper::DragFloat2 originDragFloat2("Origin", (float*)&tilemapComp->origin);
+        ImGuiHelper::BeginDragFloat2(originDragFloat2);
 
         ImGui::Separator();
     }

@@ -329,7 +329,7 @@ SceneNode* SceneManager::LoadSceneTreeJson(JsonSceneNode* node, SceneNode* paren
         sceneNode->AddComponent<Particles2DComp>((Particles2DComponent*)node->components[PARTICLES2D_COMPONENT_INDEX]);
     }
     if (node->components[TILEMAP_COMPONENT_INDEX] != nullptr) {
-        sceneNode->AddComponent<TilemapComp>((TilemapComponent*)node->components[TILEMAP_COMPONENT_INDEX]);
+        sceneNode->AddComponent<TilemapComp>((TilemapComponent*)node->components[TILEMAP_COMPONENT_INDEX], node->spriteTexturePath);
     }
 
     // Load children

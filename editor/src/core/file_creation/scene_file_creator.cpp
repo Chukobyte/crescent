@@ -231,6 +231,7 @@ nlohmann::ordered_json GetComponentsJsonArray(SceneNode* sceneNode) {
             tileDataJson["texture_coord"]["y"] = tileData->renderCoords.y;
             activeTilesJsonArray.emplace_back(tileDataJson);
         });
+        tilemapJson["active_tiles"] = activeTilesJsonArray;
         componentsJsonArray.emplace_back(tilemapJson);
     }
     return componentsJsonArray;

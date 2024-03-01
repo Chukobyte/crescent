@@ -288,8 +288,17 @@ private:
 struct TilemapComp : public EditorComponent {
     TilemapComp() = default;
 
-    explicit TilemapComp(const TilemapComponent* tilemapComp) {
-        memcpy(&internalComp, tilemapComp, sizeof(TilemapComponent));
+    explicit TilemapComp(const TilemapComponent* tilemapComp, std::string tilemapTexturePath) : texturePath(std::move(tilemapTexturePath)) {
+        memcpy(&internalComp.tilemap->tileset, &tilemapComp->tilemap->tileset, sizeof(CreTileset));
+        memcpy(internalComp.tilemap, tilemapComp->tilemap, sizeof(CreTilemap));
+        memcpy(&internalComp.origin, &tilemapComp->origin, sizeof(SKAVector2));
+        // Copy active tiles
+        memcpy(internalComp.tilemap->activeTiles, tilemapComp->tilemap->activeTiles, sizeof(SkaArrayList));
+        for (size_t i = 0; i < tilemapComp->tilemap->activeTiles->size; i++) {
+            const CreTileData* tileData = (CreTileData*)*(CreTileData**)ska_array_list_get(tilemapComp->tilemap->activeTiles, i);
+            cre_tilemap_set_tile_data(internalComp.tilemap, tileData);
+        }
+        cre_tilemap_commit_active_tile_changes(internalComp.tilemap);
     }
 
     ~TilemapComp() {
@@ -315,6 +324,7 @@ struct TilemapComp : public EditorComponent {
         return internalComp;
     }
 
+    std::string texturePath;
     SKAVector2& origin = internalComp.origin;
 
 private:
