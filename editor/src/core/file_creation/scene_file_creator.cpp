@@ -222,6 +222,15 @@ nlohmann::ordered_json GetComponentsJsonArray(SceneNode* sceneNode) {
         if (tileSize.w != 32 || tileSize.h != 32) {
             tilemapJson["tile_size"] = Size2DToJson(tileSize);
         }
+        nlohmann::ordered_json activeTilesJsonArray = nlohmann::ordered_json::array();
+        tilemapComp->ForEachActiveTile([&activeTilesJsonArray](const CreTileData* tileData) {
+            nlohmann::ordered_json tileDataJson;
+            tileDataJson["position"]["x"] = tileData->position.x;
+            tileDataJson["position"]["y"] = tileData->position.y;
+            tileDataJson["texture_coord"]["x"] = tileData->renderCoords.x;
+            tileDataJson["texture_coord"]["y"] = tileData->renderCoords.y;
+            activeTilesJsonArray.emplace_back(tileDataJson);
+        });
         componentsJsonArray.emplace_back(tilemapJson);
     }
     return componentsJsonArray;

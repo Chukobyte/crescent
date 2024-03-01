@@ -304,11 +304,18 @@ struct TilemapComp : public EditorComponent {
         return internalComp.tilemap->tileset.texture;
     }
 
-    SKAVector2& origin = internalComp.origin;
+    void ForEachActiveTile(const std::function<void(const CreTileData*)>& func) const {
+        for (size_t i = 0; i < internalComp.tilemap->activeTiles->size; i++) {
+            const CreTileData* tileData = (CreTileData *) *(CreTileData **) ska_array_list_get(internalComp.tilemap->activeTiles, i);
+            func(tileData);
+        }
+    }
 
     [[nodiscard]] TilemapComponent& GetInternalComp() {
         return internalComp;
     }
+
+    SKAVector2& origin = internalComp.origin;
 
 private:
     TilemapComponent internalComp = {
