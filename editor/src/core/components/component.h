@@ -8,15 +8,17 @@
 #include <seika/utils/logger.h>
 #include <seika/utils/se_assert.h>
 
+#include "../engine/src/core/tilemap/tilemap.h"
 #include "../engine/src/core/ecs/components/animated_sprite_component.h"
 #include "../engine/src/core/ecs/components/collider2d_component.h"
 #include "../engine/src/core/ecs/components/color_rect_component.h"
 #include "../engine/src/core/ecs/components/parallax_component.h"
+#include "../engine/src/core/ecs/components/particles2d_component.h"
 #include "../engine/src/core/ecs/components/script_component.h"
 #include "../engine/src/core/ecs/components/sprite_component.h"
 #include "../engine/src/core/ecs/components/text_label_component.h"
+#include "../engine/src/core/ecs/components/tilemap_component.h"
 #include "../engine/src/core/ecs/components/transform2d_component.h"
-#include "../engine/src/core/ecs/components/particles2d_component.h"
 
 struct EditorComponent {};
 
@@ -268,17 +270,66 @@ struct Particles2DComp : public EditorComponent {
 
 private:
     Particles2DComponent internalComp = {
-            .amount = 8,
-            .initialVelocity = SKA_VECTOR2_ZERO,
-            .color = SKA_COLOR_WHITE,
-            .spread = 45.0f,
-            .lifeTime = 4.0f,
-            .damping = 1.0f,
-            .explosiveness = 0.0f,
-            .state = Particle2DComponentState_WAITING_TO_INITIALIZE,
-            .type = Particle2DComponentType_SQUARE,
-            .squareSize = { .w = 4.0f, .h = 4.0f },
-            .typeTexture = { .texture = nullptr, .drawSource = { 0.0f, 0.0f, 1.0f, 1.0f } },
-            .particles = {0}
+        .amount = 8,
+        .initialVelocity = SKA_VECTOR2_ZERO,
+        .color = SKA_COLOR_WHITE,
+        .spread = 45.0f,
+        .lifeTime = 4.0f,
+        .damping = 1.0f,
+        .explosiveness = 0.0f,
+        .state = Particle2DComponentState_WAITING_TO_INITIALIZE,
+        .type = Particle2DComponentType_SQUARE,
+        .squareSize = { .w = 4.0f, .h = 4.0f },
+        .typeTexture = { .texture = nullptr, .drawSource = { 0.0f, 0.0f, 1.0f, 1.0f } },
+        .particles = {0}
+    };
+};
+
+struct TilemapComp : public EditorComponent {
+    TilemapComp() = default;
+
+    explicit TilemapComp(const TilemapComponent* tilemapComp, std::string tilemapTexturePath) : texturePath(std::move(tilemapTexturePath)) {
+        memcpy(&internalComp.tilemap->tileset, &tilemapComp->tilemap->tileset, sizeof(CreTileset));
+        memcpy(internalComp.tilemap, tilemapComp->tilemap, sizeof(CreTilemap));
+        memcpy(&internalComp.origin, &tilemapComp->origin, sizeof(SKAVector2));
+        // Copy active tiles
+        memcpy(internalComp.tilemap->activeTiles, tilemapComp->tilemap->activeTiles, sizeof(SkaArrayList));
+        for (size_t i = 0; i < tilemapComp->tilemap->activeTiles->size; i++) {
+            const CreTileData* tileData = (CreTileData*)*(CreTileData**)ska_array_list_get(tilemapComp->tilemap->activeTiles, i);
+            cre_tilemap_set_tile_data(internalComp.tilemap, tileData);
+        }
+        cre_tilemap_commit_active_tile_changes(internalComp.tilemap);
+    }
+
+    ~TilemapComp() {
+        cre_tilemap_finalize(internalComp.tilemap);
+    }
+
+    [[nodiscard]] const SKASize2Di& GetTileSize() const {
+        return internalComp.tilemap->tileset.tileSize;
+    }
+
+    [[nodiscard]] const SETexture* GetTexture() const {
+        return internalComp.tilemap->tileset.texture;
+    }
+
+    void ForEachActiveTile(const std::function<void(const CreTileData*)>& func) const {
+        for (size_t i = 0; i < internalComp.tilemap->activeTiles->size; i++) {
+            const CreTileData* tileData = (CreTileData *) *(CreTileData **) ska_array_list_get(internalComp.tilemap->activeTiles, i);
+            func(tileData);
+        }
+    }
+
+    [[nodiscard]] TilemapComponent& GetInternalComp() {
+        return internalComp;
+    }
+
+    std::string texturePath;
+    SKAVector2& origin = internalComp.origin;
+
+private:
+    TilemapComponent internalComp = {
+        .tilemap = cre_tilemap_create_and_initialize(),
+        .origin = SKA_VECTOR2_ZERO
     };
 };

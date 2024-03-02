@@ -13,7 +13,8 @@ nlohmann::ordered_json Vector2ToJson(SKAVector2 value) {
     return vec;
 }
 
-nlohmann::ordered_json Size2DToJson(SKASize2D value) {
+template<typename T = SKASize2D>
+nlohmann::ordered_json Size2DToJson(T value) {
     nlohmann::ordered_json size;
     size["w"] = value.w;
     size["h"] = value.h;
@@ -211,6 +212,27 @@ nlohmann::ordered_json GetComponentsJsonArray(SceneNode* sceneNode) {
             particles2DJson["explosiveness"] = particles2DComp->explosiveness;
         }
         componentsJsonArray.emplace_back(particles2DJson);
+    }
+    if (const auto tilemapComp = sceneNode->GetComponentSafe<TilemapComp>()) {
+        nlohmann::ordered_json tilemapJson;
+        tilemapJson["type"] = "tilemap";
+        const char* tilemapTexturePath = "TODO: Add!";
+        tilemapJson["texture_path"] = tilemapTexturePath;
+        const auto& tileSize = tilemapComp->GetTileSize();
+        if (tileSize.w != 32 || tileSize.h != 32) {
+            tilemapJson["tile_size"] = Size2DToJson(tileSize);
+        }
+        nlohmann::ordered_json activeTilesJsonArray = nlohmann::ordered_json::array();
+        tilemapComp->ForEachActiveTile([&activeTilesJsonArray](const CreTileData* tileData) {
+            nlohmann::ordered_json tileDataJson;
+            tileDataJson["position"]["x"] = tileData->position.x;
+            tileDataJson["position"]["y"] = tileData->position.y;
+            tileDataJson["texture_coord"]["x"] = tileData->renderCoords.x;
+            tileDataJson["texture_coord"]["y"] = tileData->renderCoords.y;
+            activeTilesJsonArray.emplace_back(tileDataJson);
+        });
+        tilemapJson["active_tiles"] = activeTilesJsonArray;
+        componentsJsonArray.emplace_back(tilemapJson);
     }
     return componentsJsonArray;
 }

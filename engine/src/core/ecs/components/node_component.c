@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include <seika/memory/se_mem.h>
+#include <seika/utils/se_assert.h>
 #include <seika/utils/se_string_util.h>
 
 NodeComponent* node_component_create() {
@@ -81,6 +82,8 @@ const char* node_get_base_type_string(NodeBaseType type) {
     case NodeBaseType_COLOR_RECT: return CRE_NODE_COLOR_RECT_STRING;
     case NodeBaseType_PARALLAX: return CRE_NODE_PARALLAX_STRING;
     case NodeBaseType_PARTICLES2D: return CRE_NODE_PARTICLES2D_STRING;
-    default: return NULL;
+    case NodeBaseType_TILEMAP: return CRE_NODE_TILEMAP_STRING;
+    default: SE_ASSERT_FMT(false, "Invalid node base type '%d'", type);
     }
+    return NULL;
 }

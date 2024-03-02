@@ -111,6 +111,30 @@ bool ImGuiHelper::BeginDragInt(const DragInt& dragInt) {
     return hasValueChanged;
 }
 
+//--- Drag Int2 ---//
+ImGuiHelper::DragInt2::DragInt2(std::string label, int* value, int labelIndex)
+        : label(std::move(label)),
+          value(value) {
+    internalLabel = "##" + std::to_string(labelIndex) + this->label;
+}
+
+const char* ImGuiHelper::DragInt2::GetInternalLabel() const {
+    return internalLabel.c_str();
+}
+
+bool ImGuiHelper::BeginDragInt2(const DragInt2& dragInt2) {
+    if (!dragInt2.label.empty()) {
+        ImGui::Text("%s", dragInt2.label.c_str());
+        ImGui::SameLine();
+    }
+    const bool hasValueChanged = ImGui::DragInt2(dragInt2.GetInternalLabel(), dragInt2.value, dragInt2.valueSpeed, dragInt2.valueMin, dragInt2.valueMax);
+    if (hasValueChanged) {
+        dragInt2.value[0] = ska_math_clamp_int(dragInt2.value[0], dragInt2.valueMin, dragInt2.valueMax);
+        dragInt2.value[1] = ska_math_clamp_int(dragInt2.value[1], dragInt2.valueMin, dragInt2.valueMax);
+    }
+    return hasValueChanged;
+}
+
 //--- Drag Float ---//
 ImGuiHelper::DragFloat::DragFloat(std::string label, float &value, int labelIndex)
     : label(std::move(label)),

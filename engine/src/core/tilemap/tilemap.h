@@ -1,5 +1,9 @@
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <seika/data_structures/ska_array2d.h>
 #include <seika/data_structures/ska_array_list.h>
 
@@ -73,3 +77,7 @@ void cre_tilemap_commit_active_tile_changes(CreTilemap* tilemap);
 void cre_tilemap_clear_active_tile_changes(CreTilemap* tilemap);
 CreTileBitmask cre_tilemap_get_tile_bitmask(const CreTilemap* tilemap, const SKAVector2i* position);
 const CreTileData* cre_tilemap_get_tile_data(const CreTilemap* tilemap, const SKAVector2i* position);
+
+#ifdef __cplusplus
+}
+#endif

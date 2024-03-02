@@ -2,6 +2,7 @@
 
 #include <IconsFontAwesome6.h>
 
+#include <seika/utils/flag_util.h>
 #include <seika/utils/se_assert.h>
 
 #include "../engine/src/core/ecs/ecs_globals.h"
@@ -181,29 +182,32 @@ void SceneManager::AddDefaultNodeAsChildToSelected(NodeBaseType type) {
     }
     // Setup components based on type
     const NodeBaseInheritanceType inheritanceType = node_get_type_inheritance(type);
-    if ((NodeBaseInheritanceType_NODE2D & inheritanceType) == NodeBaseInheritanceType_NODE2D) {
+    if (SKA_FLAG_CONTAINS(inheritanceType, NodeBaseInheritanceType_NODE2D)) {
         newNode->AddComponent<Transform2DComp>();
     }
-    if ((NodeBaseInheritanceType_SPRITE & inheritanceType) == NodeBaseInheritanceType_SPRITE) {
+    if (SKA_FLAG_CONTAINS(inheritanceType, NodeBaseInheritanceType_SPRITE)) {
         newNode->AddComponent<SpriteComp>();
     }
-    if ((NodeBaseInheritanceType_ANIMATED_SPRITE & inheritanceType) == NodeBaseInheritanceType_ANIMATED_SPRITE) {
+    if (SKA_FLAG_CONTAINS(inheritanceType, NodeBaseInheritanceType_ANIMATED_SPRITE)) {
         newNode->AddComponent<AnimatedSpriteComp>();
     }
-    if ((NodeBaseInheritanceType_TEXT_LABEL & inheritanceType) == NodeBaseInheritanceType_TEXT_LABEL) {
+    if (SKA_FLAG_CONTAINS(inheritanceType, NodeBaseInheritanceType_TEXT_LABEL)) {
         newNode->AddComponent<TextLabelComp>();
     }
-    if ((NodeBaseInheritanceType_COLLIDER2D & inheritanceType) == NodeBaseInheritanceType_COLLIDER2D) {
+    if (SKA_FLAG_CONTAINS(inheritanceType, NodeBaseInheritanceType_COLLIDER2D)) {
         newNode->AddComponent<Collider2DComp>();
     }
-    if ((NodeBaseInheritanceType_COLOR_RECT & inheritanceType) == NodeBaseInheritanceType_COLOR_RECT) {
+    if (SKA_FLAG_CONTAINS(inheritanceType, NodeBaseInheritanceType_COLOR_RECT)) {
         newNode->AddComponent<ColorRectComp>();
     }
-    if ((NodeBaseInheritanceType_PARALLAX & inheritanceType) == NodeBaseInheritanceType_PARALLAX) {
+    if (SKA_FLAG_CONTAINS(inheritanceType, NodeBaseInheritanceType_PARALLAX)) {
         newNode->AddComponent<ParallaxComp>();
     }
-    if ((NodeBaseInheritanceType_PARTICLES2D & inheritanceType) == NodeBaseInheritanceType_PARTICLES2D) {
+    if (SKA_FLAG_CONTAINS(inheritanceType, NodeBaseInheritanceType_PARTICLES2D)) {
         newNode->AddComponent<Particles2DComp>();
+    }
+    if (SKA_FLAG_CONTAINS(inheritanceType, NodeBaseInheritanceType_TILEMAP)) {
+        newNode->AddComponent<TilemapComp>();
     }
 
     if (selectedSceneFile->rootNode == nullptr) {
@@ -323,6 +327,9 @@ SceneNode* SceneManager::LoadSceneTreeJson(JsonSceneNode* node, SceneNode* paren
     }
     if (node->components[PARTICLES2D_COMPONENT_INDEX] != nullptr) {
         sceneNode->AddComponent<Particles2DComp>((Particles2DComponent*)node->components[PARTICLES2D_COMPONENT_INDEX]);
+    }
+    if (node->components[TILEMAP_COMPONENT_INDEX] != nullptr) {
+        sceneNode->AddComponent<TilemapComp>((TilemapComponent*)node->components[TILEMAP_COMPONENT_INDEX], node->spriteTexturePath);
     }
 
     // Load children
