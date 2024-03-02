@@ -46,8 +46,6 @@ void DrawSprite(SceneNode* node) {
         ImGui::Text("Sprite Component");
 
         // Texture Path Combo Box
-        static AssetBrowser* assetBrowser = AssetBrowser::Get();
-
         static ImGuiHelper::AssetBrowserComboBox spriteTexturePathComboBox("Texture Path", ".png");
         spriteTexturePathComboBox.onSelectionChangeCallback = [spriteComp](const char* newItem) {
             spriteComp->texturePath = newItem;
@@ -375,8 +373,6 @@ void DrawTilemap(SceneNode* node) {
         ImGui::Text("Tilemap Component");
 
         // Texture Path Combo Box
-        static AssetBrowser* assetBrowser = AssetBrowser::Get();
-
         static ImGuiHelper::AssetBrowserComboBox tilemapTexturePathComboBox("Texture Path", ".png");
         tilemapTexturePathComboBox.onSelectionChangeCallback = [tilemapComp](const char* newItem) {
             tilemapComp->texturePath = newItem;
