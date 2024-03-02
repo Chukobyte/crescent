@@ -2,6 +2,7 @@
 
 #include <IconsFontAwesome6.h>
 
+#include <seika/utils/flag_util.h>
 #include <seika/utils/se_assert.h>
 
 #include "../engine/src/core/ecs/ecs_globals.h"
@@ -12,7 +13,6 @@
 #include "../ui/imgui/imgui_file_browser.h"
 #include "../editor_callbacks.h"
 #include "../project_properties.h"
-#include "seika/utils/flag_util.h"
 
 //--- Scene Node Utils ---//
 // TODO: Fix issue with not registering 'Right Click' logic because tree node is closed...
