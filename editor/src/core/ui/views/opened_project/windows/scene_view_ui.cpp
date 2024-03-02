@@ -141,8 +141,7 @@ namespace WindowRenderUtils {
                 ska_transform2d_mat4_to_transform(globalTransforms[index].model, &baseTileTransform);
                 const auto& internalTilemapComp = tilemapComp->GetInternalComp();
 
-                for (size_t i = 0; i < internalTilemapComp.tilemap->activeTiles->size; i++) {
-                    const CreTileData* tileData = (CreTileData*)*(CreTileData**)ska_array_list_get(internalTilemapComp.tilemap->activeTiles, i);
+                tilemapComp->ForEachActiveTile([tilemapComp, &renderTargets, &baseTileTransform, &internalTilemapComp, index](const CreTileData* tileData) {
                     const SKAVector2 tilePosition = {
                             baseTileTransform.position.x + (float)(tileData->position.x * internalTilemapComp.tilemap->tileset.tileSize.w) * baseTileTransform.scale.x,
                             baseTileTransform.position.y + (float)(tileData->position.y * internalTilemapComp.tilemap->tileset.tileSize.h) * baseTileTransform.scale.y
@@ -171,7 +170,7 @@ namespace WindowRenderUtils {
                     };
                     renderTarget.transform2D = tileTransform;
                     renderTargets.emplace_back(renderTarget);
-                }
+                });
             }
         }
 
