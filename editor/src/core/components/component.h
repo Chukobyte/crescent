@@ -8,6 +8,7 @@
 #include <seika/utils/logger.h>
 #include <seika/utils/se_assert.h>
 
+#include "../engine/src/core/tilemap/tilemap.h"
 #include "../engine/src/core/ecs/components/animated_sprite_component.h"
 #include "../engine/src/core/ecs/components/collider2d_component.h"
 #include "../engine/src/core/ecs/components/color_rect_component.h"
@@ -18,7 +19,6 @@
 #include "../engine/src/core/ecs/components/text_label_component.h"
 #include "../engine/src/core/ecs/components/tilemap_component.h"
 #include "../engine/src/core/ecs/components/transform2d_component.h"
-#include "../../../../engine/src/core/tilemap/tilemap.h"
 
 struct EditorComponent {};
 
