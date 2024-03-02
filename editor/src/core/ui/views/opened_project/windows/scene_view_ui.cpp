@@ -34,7 +34,7 @@ namespace WindowRenderUtils {
             }
         }
         *success = false;
-        return {};
+        return SKA_TRANSFORM_IDENTITY;
     }
 
     std::vector<ImGuiHelper::TextureRenderTarget> GetNodeTextureRenderTargets(SceneNode* node, size_t index, Transform2DComp* transform2DComp, float deltaTime) {
@@ -132,6 +132,44 @@ namespace WindowRenderUtils {
                     renderTarget.transform2D = particle2DTransform;
                     renderTargets.emplace_back(renderTarget);
                 }
+            }
+        } else if (auto* tilemapComp = node->GetComponentSafe<TilemapComp>()) {
+            cre_scene_utils_apply_camera_and_origin_translation(&globalTransforms[index], &origin, transform2DComp->ignoreCamera);
+            // Draw individual particles
+            SKATransform2D baseTileTransform;
+            ska_transform2d_mat4_to_transform(globalTransforms[index].model, &baseTileTransform);
+            const auto& internalTilemapComp = tilemapComp->GetInternalComp();
+
+            for (size_t i = 0; i < internalTilemapComp.tilemap->activeTiles->size; i++) {
+                const CreTileData* tileData = (CreTileData*)*(CreTileData**)ska_array_list_get(internalTilemapComp.tilemap->activeTiles, i);
+                const SKAVector2 tilePosition = {
+                    baseTileTransform.position.x + (float)(tileData->position.x * internalTilemapComp.tilemap->tileset.tileSize.w) * baseTileTransform.scale.x,
+                    baseTileTransform.position.y + (float)(tileData->position.y * internalTilemapComp.tilemap->tileset.tileSize.h) * baseTileTransform.scale.y
+                };
+                const SKATransform2D tileTransform = {
+                    .position = tilePosition,
+                    .scale = baseTileTransform.scale,
+                    .rotation = baseTileTransform.rotation
+                };
+                const SKARect2 tileDrawSource = {
+                    .x = (float)(tileData->renderCoords.x * internalTilemapComp.tilemap->tileset.tileSize.w),
+                    .y = (float)(tileData->renderCoords.y * internalTilemapComp.tilemap->tileset.tileSize.h),
+                    .w = (float)internalTilemapComp.tilemap->tileset.tileSize.w,
+                    .h = (float)internalTilemapComp.tilemap->tileset.tileSize.h
+                };
+
+                ImGuiHelper::TextureRenderTarget renderTarget = {
+                    .texture = assetManager->GetTexture(tilemapComp->texturePath.c_str()),
+                    .sourceRect = tileDrawSource,
+                    .destSize = { .w = (float)internalTilemapComp.tilemap->tileset.tileSize.w, .h = (float)internalTilemapComp.tilemap->tileset.tileSize.h },
+                    .color = SKA_COLOR_WHITE,
+                    .flipH = false,
+                    .flipV = false,
+                    .zIndex = globalTransforms[index].zIndex,
+                    .useGlobalTransform = false
+                };
+                renderTarget.transform2D = tileTransform;
+                renderTargets.emplace_back(renderTarget);
             }
         }
 
