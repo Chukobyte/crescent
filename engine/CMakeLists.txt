@@ -86,9 +86,6 @@ if (NOT freetype_FOUND)
     set(freetype_from_find_package FALSE)
 endif()
 
-
-find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
-
 install_pocketpy()
 
 if (NOT TARGET glad)
