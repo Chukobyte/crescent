@@ -67,3 +67,10 @@ void cre_camera2d_update_entity_follow(CRECamera2D* camera2D, Transform2DCompone
     camera2D->viewport = newCameraPos;
     cre_camera2d_clamp_viewport_to_boundary(camera2D);
 }
+
+void cre_camera2d_calculate_view_matrix(CRECamera2D* camera2D, mat4 viewMatrix) {
+    glm_mat4_identity(viewMatrix);
+    glm_scale(viewMatrix, (vec3){ 1.0f / camera2D->zoom.x, 1.0f / camera2D->zoom.y, 0.0f });
+    // Skip rotation
+    glm_translate(viewMatrix, (vec3){ -camera2D->viewport.x, -camera2D->viewport.y, 0.0f });
+}

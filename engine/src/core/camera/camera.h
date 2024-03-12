@@ -36,6 +36,7 @@ void cre_camera2d_clamp_viewport_to_boundary(CRECamera2D* camera2D);
 void cre_camera2d_follow_entity(CRECamera2D* camera2D, SkaEntity entity);
 void cre_camera2d_unfollow_entity(CRECamera2D* camera2D, SkaEntity entity);
 void cre_camera2d_update_entity_follow(CRECamera2D* camera2D, Transform2DComponent* transform2DComponent);
+void cre_camera2d_calculate_view_matrix(CRECamera2D* camera2D, mat4 viewMatrix);
 
 #ifdef __cplusplus
 }

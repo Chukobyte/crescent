@@ -29,8 +29,7 @@ void ImGuiHelper::WindowRenderer::Render(const std::vector<TextureRenderTarget>&
     // Fonts
     for (auto& target : fontRenderTargets) {
         if (target.font) {
-            se_renderer_queue_font_draw_call(target.font, target.text.c_str(), target.position.x, target.position.y,
-                                             target.scale, target.color, target.zIndex);
+            se_renderer_queue_font_draw_call(target.font, target.text.c_str(), target.position.x, target.position.y, target.scale, target.color, target.zIndex);
         }
     }
     // Flush queued calls and render to framebuffer
@@ -39,7 +38,7 @@ void ImGuiHelper::WindowRenderer::Render(const std::vector<TextureRenderTarget>&
     const ImVec2 cursorPos = ImGui::GetCursorScreenPos();
     const ImVec2 windowSize = ImGui::GetWindowSize();
     ImGui::GetWindowDrawList()->AddImage(
-        (ImTextureID) se_frame_buffer_get_color_buffer_texture(),
+        (ImTextureID)se_frame_buffer_get_color_buffer_texture(),
         cursorPos,
         ImVec2(cursorPos.x + windowSize.x, cursorPos.y + windowSize.y),
         ImVec2(0.0f, 1.0f),
