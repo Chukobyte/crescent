@@ -50,15 +50,15 @@ namespace WindowRenderUtils {
         cre_scene_utils_update_global_transform_model(node->GetUID(), &globalTransforms[index]);
         if (auto* spriteComp = node->GetComponentSafe<SpriteComp>()) {
             ImGuiHelper::TextureRenderTarget renderTarget = {
-                    .texture = assetManager->GetTexture(spriteComp->texturePath.c_str()),
-                    .sourceRect = spriteComp->drawSource,
-                    .destSize = { spriteComp->drawSource.w, spriteComp->drawSource.h },
-                    .color = spriteComp->modulate,
-                    .flipH = spriteComp->flipH,
-                    .flipV = spriteComp->flipV,
-                    .zIndex = globalTransforms[index].zIndex,
-                    .useGlobalTransform = true,
-                    .globalTransform = &globalTransforms[index],
+                .texture = assetManager->GetTexture(spriteComp->texturePath.c_str()),
+                .sourceRect = spriteComp->drawSource,
+                .destSize = { spriteComp->drawSource.w, spriteComp->drawSource.h },
+                .color = spriteComp->modulate,
+                .flipH = spriteComp->flipH,
+                .flipV = spriteComp->flipV,
+                .zIndex = globalTransforms[index].zIndex,
+                .useGlobalTransform = true,
+                .globalTransform = &globalTransforms[index],
             };
             cre_scene_utils_apply_camera_and_origin_translation(&globalTransforms[index], &spriteComp->origin, transform2DComp->ignoreCamera);
             renderTargets.emplace_back(renderTarget);
@@ -69,15 +69,15 @@ namespace WindowRenderUtils {
                     // TODO: Get frame from current index instead...
                     const auto& animFrame = anim.animationFrames[0];
                     ImGuiHelper::TextureRenderTarget renderTarget = {
-                            .texture = assetManager->GetTexture(animFrame.texturePath.c_str()),
-                            .sourceRect = animFrame.drawSource,
-                            .destSize = { animFrame.drawSource.w, animFrame.drawSource.h },
-                            .color = animSpriteComp->modulate,
-                            .flipH = animSpriteComp->flipH,
-                            .flipV = animSpriteComp->flipV,
-                            .zIndex = globalTransforms[index].zIndex,
-                            .useGlobalTransform = true,
-                            .globalTransform = &globalTransforms[index],
+                        .texture = assetManager->GetTexture(animFrame.texturePath.c_str()),
+                        .sourceRect = animFrame.drawSource,
+                        .destSize = { animFrame.drawSource.w, animFrame.drawSource.h },
+                        .color = animSpriteComp->modulate,
+                        .flipH = animSpriteComp->flipH,
+                        .flipV = animSpriteComp->flipV,
+                        .zIndex = globalTransforms[index].zIndex,
+                        .useGlobalTransform = true,
+                        .globalTransform = &globalTransforms[index],
                     };
                     cre_scene_utils_apply_camera_and_origin_translation(&globalTransforms[index], &animSpriteComp->origin, transform2DComp->ignoreCamera);
                     renderTargets.emplace_back(renderTarget);
@@ -85,15 +85,15 @@ namespace WindowRenderUtils {
             }
         } else if (auto* colorSpriteComp = node->GetComponentSafe<ColorRectComp>()) {
             ImGuiHelper::TextureRenderTarget renderTarget = {
-                    .texture = whiteRectTexture,
-                    .sourceRect = { 0.0f, 0.0f, 1.0f, 1.0f },
-                    .destSize = colorSpriteComp->size,
-                    .color = colorSpriteComp->color,
-                    .flipH = false,
-                    .flipV = false,
-                    .zIndex = globalTransforms[index].zIndex,
-                    .useGlobalTransform = true,
-                    .globalTransform = &globalTransforms[index],
+                .texture = whiteRectTexture,
+                .sourceRect = { 0.0f, 0.0f, 1.0f, 1.0f },
+                .destSize = colorSpriteComp->size,
+                .color = colorSpriteComp->color,
+                .flipH = false,
+                .flipV = false,
+                .zIndex = globalTransforms[index].zIndex,
+                .useGlobalTransform = true,
+                .globalTransform = &globalTransforms[index],
             };
             cre_scene_utils_apply_camera_and_origin_translation(&globalTransforms[index], &origin, transform2DComp->ignoreCamera);
             renderTargets.emplace_back(renderTarget);
@@ -116,20 +116,20 @@ namespace WindowRenderUtils {
                         particle2D->state = Particle2DState_TIMED_WAITING_TO_BE_ACTIVE;
                     }
                     const SKATransform2D particle2DTransform = {
-                            .position = { .x = baseParticleTransform.position.x + particle2D->position.x, .y = baseParticleTransform.position.y + particle2D->position.y },
-                            .scale = baseParticleTransform.scale,
-                            .rotation = baseParticleTransform.rotation
+                        .position = { .x = baseParticleTransform.position.x + particle2D->position.x, .y = baseParticleTransform.position.y + particle2D->position.y },
+                        .scale = baseParticleTransform.scale,
+                        .rotation = baseParticleTransform.rotation
                     };
 
                     ImGuiHelper::TextureRenderTarget renderTarget = {
-                            .texture = whiteRectTexture,
-                            .sourceRect = { 0.0f, 0.0f, 1.0f, 1.0f },
-                            .destSize = internalParticleComp->squareSize,
-                            .color = particle2D->color,
-                            .flipH = false,
-                            .flipV = false,
-                            .zIndex = globalTransforms[index].zIndex,
-                            .useGlobalTransform = false
+                        .texture = whiteRectTexture,
+                        .sourceRect = { 0.0f, 0.0f, 1.0f, 1.0f },
+                        .destSize = internalParticleComp->squareSize,
+                        .color = particle2D->color,
+                        .flipH = false,
+                        .flipV = false,
+                        .zIndex = globalTransforms[index].zIndex,
+                        .useGlobalTransform = false
                     };
                     renderTarget.transform2D = particle2DTransform;
                     renderTargets.emplace_back(renderTarget);
@@ -145,30 +145,30 @@ namespace WindowRenderUtils {
 
                 tilemapComp->ForEachActiveTile([tilemapComp, &renderTargets, &baseTileTransform, &internalTilemapComp, index](const CreTileData* tileData) {
                     const SKAVector2 tilePosition = {
-                            baseTileTransform.position.x + (float)(tileData->position.x * internalTilemapComp.tilemap->tileset.tileSize.w) * baseTileTransform.scale.x,
-                            baseTileTransform.position.y + (float)(tileData->position.y * internalTilemapComp.tilemap->tileset.tileSize.h) * baseTileTransform.scale.y
+                        baseTileTransform.position.x + (float)(tileData->position.x * internalTilemapComp.tilemap->tileset.tileSize.w) * baseTileTransform.scale.x,
+                        baseTileTransform.position.y + (float)(tileData->position.y * internalTilemapComp.tilemap->tileset.tileSize.h) * baseTileTransform.scale.y
                     };
                     const SKATransform2D tileTransform = {
-                            .position = tilePosition,
-                            .scale = baseTileTransform.scale,
-                            .rotation = baseTileTransform.rotation
+                        .position = tilePosition,
+                        .scale = baseTileTransform.scale,
+                        .rotation = baseTileTransform.rotation
                     };
                     const SKARect2 tileDrawSource = {
-                            .x = (float)(tileData->renderCoords.x * internalTilemapComp.tilemap->tileset.tileSize.w),
-                            .y = (float)(tileData->renderCoords.y * internalTilemapComp.tilemap->tileset.tileSize.h),
-                            .w = (float)internalTilemapComp.tilemap->tileset.tileSize.w,
-                            .h = (float)internalTilemapComp.tilemap->tileset.tileSize.h
+                        .x = (float)(tileData->renderCoords.x * internalTilemapComp.tilemap->tileset.tileSize.w),
+                        .y = (float)(tileData->renderCoords.y * internalTilemapComp.tilemap->tileset.tileSize.h),
+                        .w = (float)internalTilemapComp.tilemap->tileset.tileSize.w,
+                        .h = (float)internalTilemapComp.tilemap->tileset.tileSize.h
                     };
 
                     ImGuiHelper::TextureRenderTarget renderTarget = {
-                            .texture = assetManager->GetTexture(tilemapComp->texturePath.c_str()),
-                            .sourceRect = tileDrawSource,
-                            .destSize = { .w = (float)internalTilemapComp.tilemap->tileset.tileSize.w, .h = (float)internalTilemapComp.tilemap->tileset.tileSize.h },
-                            .color = SKA_COLOR_WHITE,
-                            .flipH = false,
-                            .flipV = false,
-                            .zIndex = globalTransforms[index].zIndex,
-                            .useGlobalTransform = false
+                        .texture = assetManager->GetTexture(tilemapComp->texturePath.c_str()),
+                        .sourceRect = tileDrawSource,
+                        .destSize = { .w = (float)internalTilemapComp.tilemap->tileset.tileSize.w, .h = (float)internalTilemapComp.tilemap->tileset.tileSize.h },
+                        .color = SKA_COLOR_WHITE,
+                        .flipH = false,
+                        .flipV = false,
+                        .zIndex = globalTransforms[index].zIndex,
+                        .useGlobalTransform = false
                     };
                     renderTarget.transform2D = tileTransform;
                     renderTargets.emplace_back(renderTarget);
@@ -209,12 +209,12 @@ ImGuiHelper::Window OpenedProjectUI::Windows::GetSceneViewWindow() {
                                 cre_scene_utils_apply_camera_and_origin_translation(&globalTransform, &textLabelOrigin, transformComp->ignoreCamera);
                                 const char* renderFontUID = !textLabelComp->fontUID.empty() ? textLabelComp->fontUID.c_str() : CRE_DEFAULT_FONT_ASSET.uid;
                                 const ImGuiHelper::FontRenderTarget renderTarget = {
-                                        .font = assetManager->GetFont(renderFontUID),
-                                        .text = textLabelComp->text,
-                                        .position = globalTransform.position,
-                                        .scale = globalTransform.scale.x,
-                                        .color = textLabelComp->color,
-                                        .zIndex = globalTransform.zIndex
+                                    .font = assetManager->GetFont(renderFontUID),
+                                    .text = textLabelComp->text,
+                                    .position = globalTransform.position,
+                                    .scale = globalTransform.scale.x,
+                                    .color = textLabelComp->color,
+                                    .zIndex = globalTransform.zIndex
                                 };
                                 fontRenderTargets.emplace_back(renderTarget);
                             } else {
@@ -224,7 +224,6 @@ ImGuiHelper::Window OpenedProjectUI::Windows::GetSceneViewWindow() {
                                 }
 
                                 // Temp tilemap
-
                                 if (auto* tilemapComp = node->GetComponentSafe<TilemapComp>()) {
                                     static TilemapEditor* tilemapEditor = TilemapEditor::Get();
                                     if (tilemapEditor->IsNodeSelected(node)) {

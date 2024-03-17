@@ -40,14 +40,18 @@ std::vector<ImGuiHelper::FontRenderTarget> TilemapEditor::GetFontRenderTargets()
         const SKAVector2 scroll = { .x = ImGui::GetScrollX(), .y = ImGui::GetScrollY() };
         const auto contentRegionMin = ImGui::GetWindowContentRegionMin();
         const SKAVector2 contentRegionPos = { .x = windowPos.x + contentRegionMin.x, .y = windowPos.y + contentRegionMin.y };
-        const SKAVector2 mousePosRelative = {
-                .x = mousePos.x - contentRegionPos.x + scroll.x,
-                .y = mousePos.y - contentRegionPos.y + scroll.y
+        SKAVector2 mousePosRelative = {
+            .x = mousePos.x - contentRegionPos.x + scroll.x,
+            .y = mousePos.y - contentRegionPos.y + scroll.y
         };
         static const SKAVector2 zoom = { .x = 1.0f, .y = 1.0f }; // Assuming zoom is not yet implemented. Adjust if zoom functionality exists.
+
+        mousePosRelative.x -= static_cast<float>(static_cast<int>(mousePosRelative.x) % static_cast<int>(tileSize.w * zoom.x));
+        mousePosRelative.y -= static_cast<float>(static_cast<int>(mousePosRelative.y) % static_cast<int>(tileSize.h * zoom.y));
+
         SKAVector2i tileCoords = {
-                .x = static_cast<int>(mousePosRelative.x / (tileSize.w * zoom.x)),
-                .y = static_cast<int>(mousePosRelative.y / (tileSize.h * zoom.y))
+            .x = static_cast<int>(mousePosRelative.x / (tileSize.w * zoom.x)),
+            .y = static_cast<int>(mousePosRelative.y / (tileSize.h * zoom.y))
         };
 
         tileCoords.x = ska_math_clamp_int(tileCoords.x, 0, tileSize.w);
