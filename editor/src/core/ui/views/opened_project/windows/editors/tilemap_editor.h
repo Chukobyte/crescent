@@ -13,7 +13,7 @@ public:
     explicit TilemapEditor(singleton) {}
     void Process(SceneNode* node, TilemapComp* tilemapComp);
     void End();
-    [[nodiscard]] std::vector<ImGuiHelper::TextureRenderTarget> GetRenderTargets() const;
+    [[nodiscard]] std::vector<ImGuiHelper::FontRenderTarget> GetFontRenderTargets() const;
     bool IsNodeSelected(SceneNode* node);
 
 private:

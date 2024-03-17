@@ -1,11 +1,12 @@
 #include "scene_view_ui.h"
 
+#include <seika/rendering/renderer.h>
+
 #include "../engine/src/core/scene/scene_utils.h"
 #include "../engine/src/core/game_properties.h"
 #include "../engine/src/core/ecs/systems/particle_emitter_ec_system.h"
 
 #include "editors/tilemap_editor.h"
-#include "../../../imgui/imgui_window_renderer.h"
 #include "../../../../editor_context.h"
 #include "../../../../asset_manager.h"
 #include "../../../../scene/scene_manager.h"
@@ -135,7 +136,6 @@ namespace WindowRenderUtils {
                 }
             }
         } else if (auto* tilemapComp = node->GetComponentSafe<TilemapComp>()) {
-            static TilemapEditor* tilemapEditor = TilemapEditor::Get();
             if (!tilemapComp->texturePath.empty()) {
                 cre_scene_utils_apply_camera_and_origin_translation(&globalTransforms[index], &tilemapComp->origin, transform2DComp->ignoreCamera);
                 // Draw individual tiles
@@ -173,11 +173,6 @@ namespace WindowRenderUtils {
                     renderTarget.transform2D = tileTransform;
                     renderTargets.emplace_back(renderTarget);
                 });
-            }
-            // Collect tilemap editor render targets
-            if (tilemapEditor->IsNodeSelected(node)) {
-                const auto tilemapEditorRenderTarget = tilemapEditor->GetRenderTargets();
-                renderTargets.insert(renderTargets.end(), tilemapEditorRenderTarget.begin(), tilemapEditorRenderTarget.end());
             }
         }
 
@@ -226,6 +221,16 @@ ImGuiHelper::Window OpenedProjectUI::Windows::GetSceneViewWindow() {
                                 const auto renderTargets = WindowRenderUtils::GetNodeTextureRenderTargets(node, i, transformComp, deltaTime);
                                 if (!renderTargets.empty()) {
                                     textureRenderTargets.insert(textureRenderTargets.end(), renderTargets.begin(), renderTargets.end());
+                                }
+
+                                // Temp tilemap
+
+                                if (auto* tilemapComp = node->GetComponentSafe<TilemapComp>()) {
+                                    static TilemapEditor* tilemapEditor = TilemapEditor::Get();
+                                    if (tilemapEditor->IsNodeSelected(node)) {
+                                        const auto tilemapRenderTargets = tilemapEditor->GetFontRenderTargets();
+                                        fontRenderTargets.insert(fontRenderTargets.end(), tilemapRenderTargets.begin(), tilemapRenderTargets.end());
+                                    }
                                 }
                             }
                         }
