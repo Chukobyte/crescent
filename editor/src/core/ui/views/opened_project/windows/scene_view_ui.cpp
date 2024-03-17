@@ -4,6 +4,7 @@
 #include "../engine/src/core/game_properties.h"
 #include "../engine/src/core/ecs/systems/particle_emitter_ec_system.h"
 
+#include "editors/tilemap_editor.h"
 #include "../../../imgui/imgui_window_renderer.h"
 #include "../../../../editor_context.h"
 #include "../../../../asset_manager.h"
@@ -134,9 +135,10 @@ namespace WindowRenderUtils {
                 }
             }
         } else if (auto* tilemapComp = node->GetComponentSafe<TilemapComp>()) {
+            static TilemapEditor* tilemapEditor = TilemapEditor::Get();
             if (!tilemapComp->texturePath.empty()) {
                 cre_scene_utils_apply_camera_and_origin_translation(&globalTransforms[index], &tilemapComp->origin, transform2DComp->ignoreCamera);
-                // Draw individual particles
+                // Draw individual tiles
                 SKATransform2D baseTileTransform;
                 ska_transform2d_mat4_to_transform(globalTransforms[index].model, &baseTileTransform);
                 const auto& internalTilemapComp = tilemapComp->GetInternalComp();
@@ -171,6 +173,11 @@ namespace WindowRenderUtils {
                     renderTarget.transform2D = tileTransform;
                     renderTargets.emplace_back(renderTarget);
                 });
+            }
+            // Collect tilemap editor render targets
+            if (tilemapEditor->IsNodeSelected(node)) {
+                const auto tilemapEditorRenderTarget = tilemapEditor->GetRenderTargets();
+                renderTargets.insert(renderTargets.end(), tilemapEditorRenderTarget.begin(), tilemapEditorRenderTarget.end());
             }
         }
 
