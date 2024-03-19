@@ -10,6 +10,8 @@
 
 #include "../../../../../scene/scene_manager.h"
 #include "../../../../../asset_manager.h"
+#include "../../../../../project_properties.h"
+
 
 static TilemapComp* cachedComp = nullptr;
 
@@ -34,26 +36,24 @@ bool TilemapEditor::IsNodeSelected(SceneNode* node) {
 
 std::vector<ImGuiHelper::FontRenderTarget> TilemapEditor::GetFontRenderTargets() const {
     if (isProcessing) {
+        const auto* gameProperties = ProjectProperties::Get();
         const auto tileSize = cachedComp->GetTileSize();
         const auto mousePos = ImGui::GetMousePos();
         const auto windowPos = ImGui::GetWindowPos();
+        const auto windowSize = ImGui::GetWindowSize();
         const SKAVector2 scroll = { .x = ImGui::GetScrollX(), .y = ImGui::GetScrollY() };
-        const auto contentRegionMin = ImGui::GetWindowContentRegionMin();
-        const SKAVector2 contentRegionPos = { .x = windowPos.x + contentRegionMin.x, .y = windowPos.y + contentRegionMin.y };
-        SKAVector2 mousePosRelative = {
-            .x = mousePos.x - contentRegionPos.x + scroll.x,
-            .y = mousePos.y - contentRegionPos.y + scroll.y
+        const SKAVector2 zoom = {
+            .x = windowSize.x / static_cast<float>(gameProperties->resolutionWidth),
+            .y = windowSize.y / static_cast<float>(gameProperties->resolutionHeight)
         };
-        static const SKAVector2 zoom = { .x = 1.0f, .y = 1.0f }; // Assuming zoom is not yet implemented. Adjust if zoom functionality exists.
-
-        mousePosRelative.x -= static_cast<float>(static_cast<int>(mousePosRelative.x) % static_cast<int>(tileSize.w * zoom.x));
-        mousePosRelative.y -= static_cast<float>(static_cast<int>(mousePosRelative.y) % static_cast<int>(tileSize.h * zoom.y));
-
+        const SKAVector2 mousePosRelative = {
+            .x = mousePos.x - windowPos.x + scroll.x,
+            .y = mousePos.y - windowPos.y + scroll.y
+        };
         SKAVector2i tileCoords = {
-            .x = static_cast<int>(mousePosRelative.x / (tileSize.w * zoom.x)),
-            .y = static_cast<int>(mousePosRelative.y / (tileSize.h * zoom.y))
+            .x = static_cast<int>(mousePosRelative.x / ((float)tileSize.w * zoom.x)),
+            .y = static_cast<int>(mousePosRelative.y / ((float)tileSize.h * zoom.y))
         };
-
         tileCoords.x = ska_math_clamp_int(tileCoords.x, 0, tileSize.w);
         tileCoords.y = ska_math_clamp_int(tileCoords.y, 0, tileSize.h);
 

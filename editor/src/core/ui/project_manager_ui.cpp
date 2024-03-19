@@ -112,8 +112,7 @@ void ProjectManagerUI::ProcessWindows() {
                 .mode = ImGuiHelper::FileBrowser::Mode::OpenFile,
                 .validExtensions = { ".ccfg" },
                 .onModeCompletedFunc = [](const std::filesystem::path& fullPath) {
-                    se_logger_debug("Opening project at file path = '%s'",
-                                    fullPath.parent_path().generic_string().c_str());
+                    se_logger_debug("Opening project at file path = '%s'", fullPath.parent_path().generic_string().c_str());
                     LoadProject(fullPath.parent_path().generic_string().c_str());
                 }
             };
