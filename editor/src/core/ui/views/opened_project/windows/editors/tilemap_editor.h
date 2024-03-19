@@ -14,9 +14,11 @@ public:
     void Process(SceneNode* node, TilemapComp* tilemapComp);
     void End();
     [[nodiscard]] std::vector<ImGuiHelper::FontRenderTarget> GetFontRenderTargets() const;
+    [[nodiscard]] std::vector<ImGuiHelper::TextureRenderTarget> GetTextureRenderTargets() const;
     bool IsNodeSelected(SceneNode* node);
 
 private:
     bool isProcessing = false;
     std::optional<unsigned int> selectedNodeUID;
+    static SKAVector2i GetMouseTileCoords();
 };
