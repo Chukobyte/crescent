@@ -14,10 +14,14 @@
 
 
 static TilemapComp* cachedComp = nullptr;
+SETexture* colorRectTexture = nullptr;
 
 void TilemapEditor::Process(SceneNode* node, TilemapComp* tilemapComp) {
     if (!isProcessing) {
         isProcessing = true;
+        if (!colorRectTexture) {
+            colorRectTexture = se_texture_create_solid_colored_texture(1, 1, 255);
+        }
     }
     selectedNodeUID = node->GetUID();
     cachedComp = tilemapComp;
@@ -55,7 +59,25 @@ std::vector<ImGuiHelper::FontRenderTarget> TilemapEditor::GetFontRenderTargets()
 
 std::vector<ImGuiHelper::TextureRenderTarget> TilemapEditor::GetTextureRenderTargets() const {
     if (isProcessing) {
-
+        const auto tileCoords = GetMouseTileCoords();
+        const auto tileSize = cachedComp->GetTileSize();
+        return {
+                {
+                    .texture = colorRectTexture,
+                    .sourceRect = { .x = 0.0f, .y = 0.0f, .w = 1.0f, .h = 1.0f },
+                    .destSize = { .w = (float)tileSize.w, .h = (float)tileSize.h },
+                    .color = SKA_COLOR_WHITE,
+                    .flipH = false,
+                    .flipV = false,
+                    .zIndex = SE_RENDERER_MAX_Z_INDEX,
+                    .useGlobalTransform = false,
+                    .transform2D = {
+                        .position = { .x = static_cast<float>(tileCoords.x * tileSize.w), .y = static_cast<float>(tileCoords.y * tileSize.h) },
+                        .scale = SKA_VECTOR2_ONE,
+                        .rotation = 0.0f
+                    }
+                }
+        };
     }
     return {};
 }

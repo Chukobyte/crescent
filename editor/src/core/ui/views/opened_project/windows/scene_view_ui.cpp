@@ -229,6 +229,8 @@ ImGuiHelper::Window OpenedProjectUI::Windows::GetSceneViewWindow() {
                                     if (tilemapEditor->IsNodeSelected(node)) {
                                         const auto tilemapRenderTargets = tilemapEditor->GetFontRenderTargets();
                                         fontRenderTargets.insert(fontRenderTargets.end(), tilemapRenderTargets.begin(), tilemapRenderTargets.end());
+                                        const auto tilemapTextureRenderTarget = tilemapEditor->GetTextureRenderTargets();
+                                        textureRenderTargets.insert(textureRenderTargets.end(), tilemapTextureRenderTarget.begin(), tilemapTextureRenderTarget.end());
                                     }
                                 }
                             }
