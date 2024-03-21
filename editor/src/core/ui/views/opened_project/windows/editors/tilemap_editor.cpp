@@ -17,14 +17,31 @@ static TilemapComp* cachedComp = nullptr;
 SETexture* colorRectTexture = nullptr;
 
 void TilemapEditor::Process(SceneNode* node, TilemapComp* tilemapComp) {
+    bool startedThisFrame = false;
     if (!isProcessing) {
         isProcessing = true;
+        startedThisFrame = true;
         if (!colorRectTexture) {
             colorRectTexture = se_texture_create_solid_colored_texture(1, 1, 255);
         }
     }
     selectedNodeUID = node->GetUID();
     cachedComp = tilemapComp;
+
+    if (ImGui::IsMouseClicked(0) && !startedThisFrame) {
+        const auto tileCoords = GetMouseTileCoords();
+        auto tilemap = cachedComp->GetInternalComp().tilemap;
+        const auto tileData = cre_tilemap_get_tile_data(tilemap, &tileCoords);
+        if (tileData) {
+            if (tileData->isActive) {
+                cre_tilemap_set_tile_active(tilemap, &tileCoords, false);
+            } else {
+                const auto renderCoords = SKAVector2i{ .x = 0, .y = 0 };
+                cre_tilemap_set_tile_render_coord(tilemap, &tileCoords, &renderCoords);
+            }
+            cre_tilemap_commit_active_tile_changes(tilemap);
+        }
+    }
 }
 
 void TilemapEditor::End() {
