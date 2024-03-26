@@ -207,11 +207,11 @@ void cre_update() {
 void cre_process_game_update() {
     ska_ecs_system_event_pre_update_all_systems();
 
-    static const uint32_t MILLISECONDS_PER_TICK = 1000; // TODO: Put in another place
-    static uint32_t lastFrameTime = 0;
-    const uint32_t targetFps = engineContext->targetFPS;
-    const uint32_t FRAME_TARGET_TIME = MILLISECONDS_PER_TICK / targetFps;
-    const uint32_t timeToWait = FRAME_TARGET_TIME - (ska_get_ticks() - lastFrameTime);
+    static const uint32 MILLISECONDS_PER_TICK = 1000; // TODO: Put in another place
+    static uint32 lastFrameTime = 0;
+    const uint32 targetFps = engineContext->targetFPS;
+    const uint32 FRAME_TARGET_TIME = MILLISECONDS_PER_TICK / targetFps;
+    const uint32 timeToWait = FRAME_TARGET_TIME - (ska_get_ticks() - lastFrameTime);
     if (timeToWait > 0 && timeToWait <= FRAME_TARGET_TIME) {
         ska_delay(timeToWait);
     }
@@ -221,16 +221,16 @@ void cre_process_game_update() {
     ska_ecs_system_event_update_systems(variableDeltaTime);
 
     // Fixed Time Step
-    static uint32_t fixedCurrentTime = 0;
+    static uint32 fixedCurrentTime = 0;
     static float accumulator = 0.0f;
-    uint32_t newTime = ska_get_ticks();
-    uint32_t frameTime = newTime - fixedCurrentTime;
-    static const uint32_t MAX_FRAME_TIME = 250;
+    uint32 newTime = ska_get_ticks();
+    uint32 frameTime = newTime - fixedCurrentTime;
+    static const uint32 MAX_FRAME_TIME = 250;
     if (frameTime > MAX_FRAME_TIME) {
         frameTime = MAX_FRAME_TIME;
     }
     fixedCurrentTime = newTime;
-    accumulator += (float) frameTime / 1000.0f;
+    accumulator += (f32)frameTime / 1000.0f;
 
     while (accumulator >= CRE_GLOBAL_PHYSICS_DELTA_TIME) {
         accumulator -= CRE_GLOBAL_PHYSICS_DELTA_TIME;
