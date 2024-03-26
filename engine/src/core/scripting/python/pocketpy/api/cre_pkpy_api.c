@@ -798,7 +798,7 @@ int cre_pkpy_api_input_add_action(pkpy_vm* vm) {
     const char* actionName = pyActionName;
     const char* actionValue = pyActionValue;
     const SkaInputKey actionValueKey = ska_input_string_to_key(actionValue);
-    SKA_ASSERT(actionValueKey != SkaInputKey_INVALID);
+    SKA_ASSERT(actionValueKey);
     ska_input_add_input_action(
         actionName,
         (SkaInputActionValue[]){ { .key = actionValueKey, .strengthThreshold = 0.5f }, { SkaInputKey_INVALID } },

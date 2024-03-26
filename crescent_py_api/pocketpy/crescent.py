@@ -637,8 +637,9 @@ class Input:
 
 
 class Mouse:
-    LEFT_BUTTON = "mb_left"
-    RIGHT_BUTTON = "mb_right"
+    LEFT_BUTTON = 148
+    RIGHT_BUTTON = 149
+    MIDDLE_BUTTON = 150
 
     @staticmethod
     def get_position() -> Vector2:
@@ -652,6 +653,8 @@ class Mouse:
 
 
 class Keyboard:
+    TAB = 29
+
     NUM_0 = "0"
     NUM_1 = "1"
     NUM_2 = "2"
@@ -713,31 +716,34 @@ class Keyboard:
 
 
 class Gamepad:
-    BUTTON_A = "joystick_button_a"
-    BUTTON_B = "joystick_button_b"
-    BUTTON_X = "joystick_button_x"
-    BUTTON_Y = "joystick_button_y"
-    BUTTON_START = "joystick_start"
-    BUTTON_BACK = "joystick_back"
-    BUTTON_DPAD_LEFT = "joystick_dpad_left"
-    BUTTON_DPAD_RIGHT = "joystick_dpad_right"
-    BUTTON_DPAD_UP = "joystick_dpad_up"
-    BUTTON_DPAD_DOWN = "joystick_dpad_down"
-    BUTTON_LEFT_SHOULDER = "joystick_left_shoulder"
-    BUTTON_RIGHT_SHOULDER = "joystick_right_shoulder"
-    BUTTON_LEFT_ANALOG = "joystick_left_analog"
-    BUTTON_RIGHT_ANALOG = "joystick_right_analog"
-
-    AXIS_LEFT_TRIGGER = "joystick_left_trigger"
-    AXIS_RIGHT_TRIGGER = "joystick_right_trigger"
-    AXIS_LEFT_ANALOG_LEFT = "joystick_left_analog_left"
-    AXIS_LEFT_ANALOG_RIGHT = "joystick_left_analog_right"
-    AXIS_LEFT_ANALOG_UP = "joystick_left_analog_up"
-    AXIS_LEFT_ANALOG_DOWN = "joystick_left_analog_down"
-    AXIS_RIGHT_ANALOG_LEFT = "joystick_right_analog_left"
-    AXIS_RIGHT_ANALOG_RIGHT = "joystick_right_analog_right"
-    AXIS_RIGHT_ANALOG_UP = "joystick_right_analog_up"
-    AXIS_RIGHT_ANALOG_DOWN = "joystick_right_analog_down"
+    BUTTON_DPAD_DOWN = 1
+    BUTTON_DPAD_UP = 2
+    BUTTON_DPAD_LEFT = 3
+    BUTTON_DPAD_RIGHT = 4
+    BUTTON_NORTH = 5
+    BUTTON_SOUTH = 6
+    BUTTON_EAST = 7
+    BUTTON_WEST = 8
+    BUTTON_START = 9
+    BUTTON_BACK = 10
+    BUTTON_LEFT_SHOULDER = 11
+    AXIS_LEFT_TRIGGER = 12
+    BUTTON_LEFT_ANALOG = 13
+    LEFT_ANALOG_2D_AXIS_X = 14
+    LEFT_ANALOG_2D_AXIS_Y = 15
+    BUTTON_RIGHT_SHOULDER = 16
+    AXIS_RIGHT_TRIGGER = 17
+    BUTTON_RIGHT_ANALOG = 18
+    RIGHT_ANALOG_2D_AXIS_X = 19
+    RIGHT_ANALOG_2D_AXIS_Y = 20
+    AXIS_LEFT_ANALOG_LEFT = 21
+    AXIS_LEFT_ANALOG_RIGHT = 22
+    AXIS_LEFT_ANALOG_UP = 23
+    AXIS_LEFT_ANALOG_DOWN = 24
+    AXIS_RIGHT_ANALOG_LEFT = 25
+    AXIS_RIGHT_ANALOG_RIGHT = 26
+    AXIS_RIGHT_ANALOG_UP = 27
+    AXIS_RIGHT_ANALOG_DOWN = 28
 
 
 class _NodeEventSubscriber:

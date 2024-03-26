@@ -170,7 +170,7 @@ bool cre_load_assets_from_configuration() {
         for (size_t valueIndex = 0; valueIndex < inputAction.valueCount; valueIndex++) {
             const char* actionValue = inputAction.values[valueIndex];
             const SkaInputKey actionValueKey = ska_input_string_to_key(actionValue);
-            SKA_ASSERT(actionValueKey != SkaInputKey_INVALID);
+            SKA_ASSERT(actionValueKey);
             actionValues[valueIndex] = (SkaInputActionValue){ .key = actionValueKey, .strengthThreshold = 0.5f };
             ska_logger_debug("action_name = %s, action_value = %s", inputAction.name, actionValue);
         }
