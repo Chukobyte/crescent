@@ -143,7 +143,7 @@ static void cre_json_transform2d_create_or_set_default(JsonSceneNode* node, cJSO
         transform2DComponent = transform2d_component_create();
         transform2DComponent->localTransform.position = json_get_vec2_default(componentJson, "position", DEFAULT_COMPONENT_TRANSFORM2D_POSITION);
         transform2DComponent->localTransform.scale = json_get_vec2_default(componentJson, "scale", DEFAULT_COMPONENT_TRANSFORM2D_SCALE);
-        transform2DComponent->localTransform.rotation = (float) json_get_double_default(componentJson, "rotation", DEFAULT_COMPONENT_TRANSFORM2D_ROTATION);
+        transform2DComponent->localTransform.rotation = (f32) json_get_double_default(componentJson, "rotation", DEFAULT_COMPONENT_TRANSFORM2D_ROTATION);
         transform2DComponent->zIndex = json_get_int_default(componentJson, "z_index", DEFAULT_COMPONENT_TRANSFORM2D_Z_INDEX);
         transform2DComponent->isZIndexRelativeToParent = json_get_bool_default(componentJson, "z_index_relative_to_parent", DEFAULT_COMPONENT_TRANSFORM2D_Z_INDEX_RELATIVE_TO_PARENT);
         transform2DComponent->ignoreCamera = json_get_bool_default(componentJson, "ignore_camera", DEFAULT_COMPONENT_TRANSFORM2D_IGNORE_CAMERA);
@@ -152,7 +152,7 @@ static void cre_json_transform2d_create_or_set_default(JsonSceneNode* node, cJSO
         transform2DComponent = (Transform2DComponent*) node->components[TRANSFORM2D_COMPONENT_INDEX];
         transform2DComponent->localTransform.position = json_get_vec2_default(componentJson, "position", transform2DComponent->localTransform.position);
         transform2DComponent->localTransform.scale = json_get_vec2_default(componentJson, "scale", transform2DComponent->localTransform.scale);
-        transform2DComponent->localTransform.rotation = (float) json_get_double_default(componentJson, "rotation", transform2DComponent->localTransform.rotation);
+        transform2DComponent->localTransform.rotation = (f32) json_get_double_default(componentJson, "rotation", transform2DComponent->localTransform.rotation);
         transform2DComponent->zIndex = json_get_int_default(componentJson, "z_index", transform2DComponent->zIndex);
         transform2DComponent->isZIndexRelativeToParent = json_get_bool_default(componentJson, "z_index_relative_to_parent", transform2DComponent->isZIndexRelativeToParent);
         transform2DComponent->ignoreCamera = json_get_bool_default(componentJson, "ignore_camera", transform2DComponent->ignoreCamera);
@@ -373,10 +373,10 @@ static void cre_json_particles2d_create_or_set_default(JsonSceneNode* node, cJSO
         particles2dComponent->amount = json_get_int_default(componentJson, "amount", DEFAULT_COMPONENT_PARTICLES2D_AMOUNT);
         particles2dComponent->initialVelocity = json_get_minmax_vec2_default(componentJson, "initial_velocity", SKA_MINMAX_VEC2_ZERO);
         particles2dComponent->color = json_get_linear_color_default(componentJson, "color", SKA_COLOR_WHITE);
-        particles2dComponent->spread = (float)json_get_double_default(componentJson, "spread", (double)DEFAULT_COMPONENT_PARTICLES2D_SPREAD);
-        particles2dComponent->lifeTime = (float)json_get_double_default(componentJson, "life_time", (double)DEFAULT_COMPONENT_PARTICLES2D_LIFE_TIME);
-        particles2dComponent->damping = (float)json_get_double_default(componentJson, "damping", (double)DEFAULT_COMPONENT_PARTICLES2D_DAMPING);
-        particles2dComponent->explosiveness = (float)json_get_double_default(componentJson, "explosiveness", (double)DEFAULT_COMPONENT_PARTICLES2D_EXPLOSIVENESS);
+        particles2dComponent->spread = (f32)json_get_double_default(componentJson, "spread", (f64)DEFAULT_COMPONENT_PARTICLES2D_SPREAD);
+        particles2dComponent->lifeTime = (float)json_get_double_default(componentJson, "life_time", (f64)DEFAULT_COMPONENT_PARTICLES2D_LIFE_TIME);
+        particles2dComponent->damping = (float)json_get_double_default(componentJson, "damping", (f64)DEFAULT_COMPONENT_PARTICLES2D_DAMPING);
+        particles2dComponent->explosiveness = (float)json_get_double_default(componentJson, "explosiveness", (f64)DEFAULT_COMPONENT_PARTICLES2D_EXPLOSIVENESS);
         node->components[PARTICLES2D_COMPONENT_INDEX] = particles2dComponent;
     } else {
         particles2dComponent = (Particles2DComponent*) node->components[PARTICLES2D_COMPONENT_INDEX];
@@ -384,10 +384,10 @@ static void cre_json_particles2d_create_or_set_default(JsonSceneNode* node, cJSO
         particles2dComponent->amount = json_get_int_default(componentJson, "amount", particles2dComponent->amount);
         particles2dComponent->initialVelocity = json_get_minmax_vec2_default(componentJson, "initial_velocity", particles2dComponent->initialVelocity);
         particles2dComponent->color = json_get_linear_color_default(componentJson, "color", particles2dComponent->color);
-        particles2dComponent->spread = (float)json_get_double_default(componentJson, "spread", (double)particles2dComponent->spread);
-        particles2dComponent->lifeTime = (float)json_get_double_default(componentJson, "life_time", (double)particles2dComponent->lifeTime);
-        particles2dComponent->damping = (float)json_get_double_default(componentJson, "damping", (double)particles2dComponent->damping);
-        particles2dComponent->explosiveness = (float)json_get_double_default(componentJson, "explosiveness", (double)particles2dComponent->explosiveness);
+        particles2dComponent->spread = (float)json_get_double_default(componentJson, "spread", (f64)particles2dComponent->spread);
+        particles2dComponent->lifeTime = (float)json_get_double_default(componentJson, "life_time", (f64)particles2dComponent->lifeTime);
+        particles2dComponent->damping = (float)json_get_double_default(componentJson, "damping", (f64)particles2dComponent->damping);
+        particles2dComponent->explosiveness = (float)json_get_double_default(componentJson, "explosiveness", (f64)particles2dComponent->explosiveness);
     }
     particles2dComponent->state = isEmitting ? Particle2DComponentState_WAITING_TO_INITIALIZE : Particle2DComponentState_INACTIVE;
     ska_logger_debug("Particles2D\namount: %d", particles2dComponent->amount);

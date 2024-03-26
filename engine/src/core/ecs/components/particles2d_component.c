@@ -5,24 +5,24 @@
 #include <seika/rendering/texture.h>
 #include <seika/memory.h>
 
-static inline float math_vec2_length(const SkaVector2* vector) {
+static inline f32 math_vec2_length(const SkaVector2* vector) {
     return sqrtf(vector->x * vector->x + vector->y * vector->y);
 }
 
 static inline void math_vec2_normalize(SkaVector2* vector) {
-    const float length = math_vec2_length(vector);
+    const f32 length = math_vec2_length(vector);
     if (length != 0.0f) {
         vector->x /= length;
         vector->y /= length;
     }
 }
 
-static inline float get_random_sign() {
+static inline f32 get_random_sign() {
     return ((rand() % 2) == 0) ? 1.0f : -1.0f;
 }
 
-static inline float get_random_spread_angle_in_radians(const SkaVector2* direction, float spreadDegrees) {
-    const float dirAngle = ska_math_vec2_angle(direction);
+static inline f32 get_random_spread_angle_in_radians(const SkaVector2* direction, f32 spreadDegrees) {
+    const f32 dirAngle = ska_math_vec2_angle(direction);
     // Generate a random angle based on direction and spread
 //    const float randomAngle = SKA_DEG_2_RADF(fmodf((float)rand(), spreadDegrees / 2.0f)) * get_random_sign();
     const float randomAngle = SKA_DEG_2_RADF(fmodf((float)rand(), spreadDegrees) - spreadDegrees / 2.0f) * get_random_sign();
@@ -69,7 +69,7 @@ void particles2d_component_reset_component(Particles2DComponent* particles2DComp
 }
 
 void particles2d_component_set_default_particles(Particles2DComponent* particles2DComponent) {
-    for (int i = 0; i < particles2DComponent->amount; i++) {
+    for (int32 i = 0; i < particles2DComponent->amount; i++) {
         particles2DComponent->particles[i] = CRE_PARTICLE2D_DEFAULT;
         particles2d_component_reset_particle(particles2DComponent, &particles2DComponent->particles[i]);
     }

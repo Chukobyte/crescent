@@ -42,13 +42,13 @@ char* json_get_string_default_new(cJSON* json, const char* key, const char* defa
     return ska_strdup(defaultValue);
 }
 
-int json_get_int(cJSON* json, const char* key) {
+int32 json_get_int(cJSON* json, const char* key) {
     cJSON* numJson = cJSON_GetObjectItemCaseSensitive(json, key);
     SKA_ASSERT_FMT(cJSON_IsNumber(numJson), "Not able to load json int value for key '%s'", key);
-    return (int) numJson->valuedouble;
+    return (int32) numJson->valuedouble;
 }
 
-int json_get_int_default(cJSON* json, const char* key, int defaultValue) {
+int32 json_get_int_default(cJSON* json, const char* key, int32 defaultValue) {
     cJSON* numJson = cJSON_GetObjectItemCaseSensitive(json, key);
     if (cJSON_IsNumber(numJson)) {
         return (int) numJson->valuedouble;
@@ -56,13 +56,13 @@ int json_get_int_default(cJSON* json, const char* key, int defaultValue) {
     return defaultValue;
 }
 
-double json_get_double(cJSON* json, const char* key) {
+f64 json_get_double(cJSON* json, const char* key) {
     cJSON* numJson = cJSON_GetObjectItemCaseSensitive(json, key);
     SKA_ASSERT_FMT(cJSON_IsNumber(numJson), "Not able to load json int value for key '%s'", key);
     return numJson->valuedouble;
 }
 
-double json_get_double_default(cJSON* json, const char* key, double defaultValue) {
+f64 json_get_double_default(cJSON* json, const char* key, f64 defaultValue) {
     cJSON* numJson = cJSON_GetObjectItemCaseSensitive(json, key);
     if (cJSON_IsNumber(numJson)) {
         return numJson->valuedouble;
@@ -87,7 +87,7 @@ bool json_get_bool_default(cJSON* json, const char* key, bool defaultValue) {
 SkaVector2 json_get_vec2(cJSON* json, const char* key) {
     cJSON* vec2Json = cJSON_GetObjectItemCaseSensitive(json, key);
     return (SkaVector2) {
-        .x = (float) json_get_double(vec2Json, "x"),
+        .x = (f32) json_get_double(vec2Json, "x"),
         .y = (float) json_get_double(vec2Json, "y")
     };
 }

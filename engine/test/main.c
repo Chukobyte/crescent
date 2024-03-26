@@ -54,7 +54,7 @@ void cre_json_file_loader_scene_test(void);
 void cre_pocketpy_test(void);
 void cre_tilemap_test(void);
 
-int main(int argv, char** args) {
+int32 main(int argv, char** args) {
     UNITY_BEGIN();
     RUN_TEST(cre_node_event_test);
     RUN_TEST(cre_json_file_loader_scene_test);

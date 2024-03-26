@@ -15,13 +15,13 @@
 #include "../../../ecs/component.h"
 
 typedef struct FpsDisplayClassData {
-    int value;
+    int32 value;
 } FpsDisplayClassData;
 
 CRENativeScriptClass* fps_display_create_new_instance(SkaEntity entity);
 void fps_display_on_start(CRENativeScriptClass* nativeScriptClass);
 void fps_display_on_end(CRENativeScriptClass* nativeScriptClass);
-void fps_display_update(CRENativeScriptClass* nativeScriptClass, float deltaTime);
+void fps_display_update(CRENativeScriptClass* nativeScriptClass, f32 deltaTime);
 
 CRENativeScriptClass* fps_display_native_class_create_new() {
     CRENativeScriptClass* fpsClassInstance = fps_display_create_new_instance(SKA_NULL_ENTITY);

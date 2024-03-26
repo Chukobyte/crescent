@@ -11,7 +11,7 @@
 
 static void on_entity_entered_scene(SkaECSSystem* system, SkaEntity entity);
 static void on_entity_unregistered(SkaECSSystem* system, SkaEntity entity);
-static void fixed_update(SkaECSSystem* system, float deltaTime);
+static void fixed_update(SkaECSSystem* system, f32 deltaTime);
 
 static void on_entity_transform_change(SkaSubjectNotifyPayload* payload);
 
@@ -43,7 +43,7 @@ void on_entity_unregistered(SkaECSSystem* system, SkaEntity entity) {
     ska_event_unregister_observer(&transformComp->onTransformChanged, &parallaxOnEntityTransformChangeObserver);
 }
 
-void fixed_update(SkaECSSystem* system, float deltaTime) {
+void fixed_update(SkaECSSystem* system, f32 deltaTime) {
     CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
     for (size_t i = 0; i < system->entity_count; i++) {
         const SkaEntity entity = system->entities[i];

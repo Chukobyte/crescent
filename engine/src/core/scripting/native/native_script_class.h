@@ -11,8 +11,8 @@ typedef struct CRENativeScriptClass {
     struct CRENativeScriptClass* (*create_new_instance_func)(SkaEntity);
     void (*on_start_func)(struct CRENativeScriptClass* nativeScriptClass);
     void (*on_end_func)(struct CRENativeScriptClass* nativeScriptClass);
-    void (*update_func)(struct CRENativeScriptClass* nativeScriptClass, float deltaTime);
-    void (*fixed_update_func)(struct CRENativeScriptClass* nativeScriptClass, float deltaTime);
+    void (*update_func)(struct CRENativeScriptClass* nativeScriptClass, f32 deltaTime);
+    void (*fixed_update_func)(struct CRENativeScriptClass* nativeScriptClass, f32 deltaTime);
     void* instance_data;
     size_t class_instance_size;
 } CRENativeScriptClass;

@@ -4,14 +4,15 @@
 #include <string.h>
 
 #include <seika/seika.h>
-#include <seika/ecs/ec_system.h>
-#include <seika/asset/asset_file_loader.h>
-#include <seika/asset/asset_manager.h>
-#include <seika/input/input.h>
 #include <seika/memory.h>
 #include <seika/logger.h>
 #include <seika/file_system.h>
 #include <seika/string.h>
+#include <seika/assert.h>
+#include <seika/ecs/ec_system.h>
+#include <seika/asset/asset_file_loader.h>
+#include <seika/asset/asset_manager.h>
+#include <seika/input/input.h>
 
 #include "core_info.h"
 #include "game_properties.h"
@@ -35,9 +36,9 @@ void cre_render();
 CREGameProperties* gameProperties = NULL;
 CREEngineContext* engineContext = NULL;
 
-bool cre_initialize(int argv, char** args) {
+bool cre_initialize(int32 argv, char** args) {
     // Set random seed
-    srand((int)time(NULL));
+    srand((int32)time(NULL));
 
     ska_logger_set_level(SkaLogLevel_ERROR);
 
@@ -160,14 +161,21 @@ bool cre_load_assets_from_configuration() {
     }
 
     // Inputs
+    SkaInputActionValue actionValues[SKA_INPUT_MAX_INPUT_ACTION_VALUES] = {0};
     for (size_t i = 0; i < gameProperties->inputActionCount; i++) {
         const CREInputAction inputAction = gameProperties->inputActions[i];
+        if (inputAction.valueCount == 0) {
+            continue;
+        }
         for (size_t valueIndex = 0; valueIndex < inputAction.valueCount; valueIndex++) {
             const char* actionValue = inputAction.values[valueIndex];
+            const SkaInputKey actionValueKey = ska_input_string_to_key(actionValue);
+            SKA_ASSERT(actionValueKey != SkaInputKey_INVALID);
+            actionValues[valueIndex] = (SkaInputActionValue){ .key = actionValueKey, .strengthThreshold = 0.5f };
             ska_logger_debug("action_name = %s, action_value = %s", inputAction.name, actionValue);
-            // TODO: Input - fix up
-//            se_input_add_action_value(inputAction.name, actionValue, inputAction.deviceId);
         }
+        actionValues[inputAction.valueCount] = (SkaInputActionValue){ SkaInputKey_INVALID };
+        ska_input_add_input_action(inputAction.name, actionValues, inputAction.deviceId);
     }
 
     return true;
@@ -209,7 +217,7 @@ void cre_process_game_update() {
     }
 
     // Variable Time Step
-    const float variableDeltaTime = (float) (ska_get_ticks() - lastFrameTime) / (float) MILLISECONDS_PER_TICK;
+    const f32 variableDeltaTime = (f32) (ska_get_ticks() - lastFrameTime) / (f32) MILLISECONDS_PER_TICK;
     ska_ecs_system_event_update_systems(variableDeltaTime);
 
     // Fixed Time Step
@@ -247,7 +255,7 @@ bool cre_is_running() {
     return engineContext->isRunning && ska_is_running();
 }
 
-int cre_shutdown() {
+int32 cre_shutdown() {
     ska_shutdown_all();
     cre_game_props_finalize();
     cre_scene_manager_finalize();

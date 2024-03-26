@@ -1,7 +1,8 @@
 #pragma once
 
-#include <stdint.h>
 #include <stdbool.h>
+
+#include <seika/defines.h>
 
 #define DEFAULT_START_PROJECT_PATH "test_games/cardboard_fighter"
 
@@ -9,12 +10,12 @@
 #define CRE_DEFAULT_FONT_KEY "_default"
 
 typedef struct CreEngineStats {
-    float averageFPS;
+    f32 averageFPS;
 } CreEngineStats;
 
 typedef struct CREEngineContext {
     bool isRunning;
-    int targetFPS;
+    int32 targetFPS;
     // Root directory for engine, where the executable binary is
     char* engineRootDir;
     // Where scripts, assets, in all other things are expected to be.  Also known as project directory.
@@ -22,7 +23,7 @@ typedef struct CREEngineContext {
     // Where the project archive file is located (used when reading assets from memory in shipping builds)
     char* projectArchivePath;
     CreEngineStats stats;
-    int exitCode;
+    int32 exitCode;
 } CREEngineContext;
 
 CREEngineContext* cre_engine_context_initialize();

@@ -28,7 +28,7 @@ static void on_ec_system_registered(SkaECSSystem* system);
 static void on_ec_system_destroyed(SkaECSSystem* system);
 static void on_entity_unregistered(SkaECSSystem* system, SkaEntity entity);
 static void on_entity_entered_scene(SkaECSSystem* system, SkaEntity entity);
-static void fixed_update(SkaECSSystem* system, float deltaTime);
+static void fixed_update(SkaECSSystem* system, f32 deltaTime);
 static void collision_render(SkaECSSystem* system);
 
 void cre_collision_ec_system_create_and_register() {
@@ -52,7 +52,7 @@ void on_ec_system_registered(SkaECSSystem* system) {
         SKA_ASSERT(collisionOutlineTexture != NULL);
     }
 
-    static const int initialCellSize = 64;
+    static const int32 initialCellSize = 64;
     spatialHashMap = ska_spatial_hash_map_create(initialCellSize);
     cre_collision_set_global_spatial_hash_map(spatialHashMap);
 }
@@ -82,7 +82,7 @@ void on_entity_entered_scene(SkaECSSystem* system, SkaEntity entity) {
     }
 }
 
-void fixed_update(SkaECSSystem* system, float deltaTime) {
+void fixed_update(SkaECSSystem* system, f32 deltaTime) {
     for (size_t i = 0; i < system->entity_count; i++) {
         const SkaEntity entity = system->entities[i];
         Transform2DComponent* transformComp = (Transform2DComponent*)ska_ecs_component_manager_get_component(entity,TRANSFORM2D_COMPONENT_INDEX);

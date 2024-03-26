@@ -20,8 +20,8 @@ static void on_entity_start(SkaECSSystem* system, SkaEntity entity);
 static void on_entity_end(SkaECSSystem* system, SkaEntity entity);
 static void on_pre_update_all(SkaECSSystem* system);
 static void on_post_update_all(SkaECSSystem* system);
-static void script_system_instance_update(SkaECSSystem* system, float deltaTime);
-static void script_system_instance_fixed_update(SkaECSSystem* system, float deltaTime);
+static void script_system_instance_update(SkaECSSystem* system, f32 deltaTime);
+static void script_system_instance_fixed_update(SkaECSSystem* system, f32 deltaTime);
 static void network_callback(SkaECSSystem* system, const char* message);
 
 static CREScriptContext* scriptContexts[ScriptContextType_TOTAL_TYPES];
@@ -105,21 +105,21 @@ void on_post_update_all(SkaECSSystem* system) {
     }
 }
 
-void script_system_instance_update(SkaECSSystem* system, float deltaTime) {
+void script_system_instance_update(SkaECSSystem* system, f32 deltaTime) {
     for (size_t i = 0; i < scriptContextsCount; i++) {
         for (size_t entityIndex = 0; entityIndex < scriptContexts[i]->updateEntityCount; entityIndex++) {
             const SkaEntity entity = scriptContexts[i]->updateEntities[entityIndex];
-            const float entityTimeDilation = cre_scene_manager_get_node_full_time_dilation(entity);
+            const f32 entityTimeDilation = cre_scene_manager_get_node_full_time_dilation(entity);
             scriptContexts[i]->on_update_instance(entity, deltaTime * entityTimeDilation);
         }
     }
 }
 
-void script_system_instance_fixed_update(SkaECSSystem* system, float deltaTime) {
+void script_system_instance_fixed_update(SkaECSSystem* system, f32 deltaTime) {
     for (size_t i = 0; i < scriptContextsCount; i++) {
         for (size_t entityIndex = 0; entityIndex < scriptContexts[i]->fixedUpdateEntityCount; entityIndex++) {
             const SkaEntity entity = scriptContexts[i]->fixedUpdateEntities[entityIndex];
-            const float entityTimeDilation = cre_scene_manager_get_node_full_time_dilation(entity);
+            const f32 entityTimeDilation = cre_scene_manager_get_node_full_time_dilation(entity);
             scriptContexts[i]->on_fixed_update_instance(entity, deltaTime * entityTimeDilation);
         }
     }

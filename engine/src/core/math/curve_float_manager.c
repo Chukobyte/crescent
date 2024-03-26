@@ -43,18 +43,18 @@ bool cre_curve_float_manager_load_from_file(CurveFloatId curveId, const char* fi
     return hasLoaded;
 }
 
-void cre_curve_float_manager_add_point(CurveFloatId curveId, double x, double y, double tangentIn, double tangentOut) {
+void cre_curve_float_manager_add_point(CurveFloatId curveId, f64 x, f64 y, f64 tangentIn, f64 tangentOut) {
     SKA_ASSERT_FMT(curveId < CRE_MAX_CURVE_FLOATS, "Invalid curve id");
     const SkaCurveControlPoint point = { .x = x, .y = y, .tangentIn = tangentIn, .tangentOut = tangentOut };
     ska_curve_float_add_control_point(&curves[curveId], point);
 }
 
-bool cre_curve_float_manager_remove_point(CurveFloatId curveId, double x, double y) {
+bool cre_curve_float_manager_remove_point(CurveFloatId curveId, f64 x, f64 y) {
     SKA_ASSERT_FMT(curveId < CRE_MAX_CURVE_FLOATS, "Invalid curve id");
     return ska_curve_float_remove_control_point(&curves[curveId], x, y);
 }
 
-double cre_curve_float_manager_eval(CurveFloatId curveId, double t) {
+f64 cre_curve_float_manager_eval(CurveFloatId curveId, f64 t) {
     SKA_ASSERT_FMT(curveId < CRE_MAX_CURVE_FLOATS, "Invalid curve id");
     return ska_curve_float_eval(&curves[curveId], t);
 }

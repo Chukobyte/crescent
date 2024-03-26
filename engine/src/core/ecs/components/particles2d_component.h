@@ -26,13 +26,13 @@ typedef struct Particle2DTypeTexture {
 
 typedef struct Particles2DComponent {
     // Configuration
-    int amount;
+    int32 amount;
     SkaMinMaxVec2 initialVelocity;
     SkaColor color;
-    float spread; // angle in degrees in which the particles are spread
-    float lifeTime; // Sets initial 'timeActive' on CreParticle2D
-    float damping;
-    float explosiveness; // How often particles in an emission cycle are emitted (0.0f - 1.0f), 1.0f meaning the longest delay and all particles come out at once
+    f32 spread; // angle in degrees in which the particles are spread
+    f32 lifeTime; // Sets initial 'timeActive' on CreParticle2D
+    f32 damping;
+    f32 explosiveness; // How often particles in an emission cycle are emitted (0.0f - 1.0f), 1.0f meaning the longest delay and all particles come out at once
     Particle2DComponentState state;
     Particle2DComponentType type;
     // Using unions for struct members based on type

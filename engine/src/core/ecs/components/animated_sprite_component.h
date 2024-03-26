@@ -19,7 +19,7 @@ extern "C" {
 
 typedef struct AnimatedSpriteFrameChangedPayload {
     const SkaEntity entity;
-    const int newFrame;
+    const int32 newFrame;
 } AnimatedSpriteFrameChangedPayload;
 
 typedef struct AnimatedSpriteAnimationFinishedPayload {
@@ -52,14 +52,14 @@ typedef struct AnimationQueryResult {
 typedef struct AnimationFrameData {
     char texturePath[64];
     SkaRect2 drawSource;
-    int frame;
+    int32 frame;
 } AnimationFrameData;
 
 typedef struct AnimationData {
     AnimationFrameData animationFrames[CRE_MAX_ANIMATION_FRAMES];
-    int frameCount;
-    int currentFrame;
-    int speed;
+    int32 frameCount;
+    int32 currentFrame;
+    int32 speed;
     char name[16];
     bool doesLoop;
     bool isValid;

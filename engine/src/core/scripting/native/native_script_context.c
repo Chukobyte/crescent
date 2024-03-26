@@ -17,8 +17,8 @@
 void native_on_create_instance(SkaEntity entity, const char* classPath, const char* className);
 void native_on_delete_instance(SkaEntity entity);
 void native_on_start(SkaEntity entity);
-void native_on_update_instance(SkaEntity entity, float deltaTime);
-void native_on_fixed_update_instance(SkaEntity entity, float deltaTime);
+void native_on_update_instance(SkaEntity entity, f32 deltaTime);
+void native_on_fixed_update_instance(SkaEntity entity, f32 deltaTime);
 void native_on_end(SkaEntity entity);
 void native_on_script_context_destroy();
 
@@ -107,7 +107,7 @@ void native_on_start(SkaEntity entity) {
     }
 }
 
-void native_on_update_instance(SkaEntity entity, float deltaTime) {
+void native_on_update_instance(SkaEntity entity, f32 deltaTime) {
     CRENativeScriptClass* scriptClass = (CRENativeScriptClass*) *(CRENativeScriptClass**) ska_hash_map_get(entityToClassName, &entity);
     scriptClass->update_func(scriptClass, deltaTime);
 }

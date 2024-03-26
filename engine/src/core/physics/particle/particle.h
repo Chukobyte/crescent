@@ -20,9 +20,9 @@ typedef struct CreParticle2D {
     SkaVector2 forceAccumulated;
     SkaVector2 gravity;
     SkaColor color;
-    float timeActive;
-    float damping;
-    float inverseMass;
+    f32 timeActive;
+    f32 damping;
+    f32 inverseMass;
     Particle2DState state;
     SkaTransform2D prevTransform;
 } CreParticle2D;
@@ -41,9 +41,9 @@ typedef struct CreParticle2D {
     .prevTransform = SKA_TRANSFORM_IDENTITY \
 }
 
-void cre_particle2d_set_mass(CreParticle2D* particle2D, float mass);
-float cre_particle2d_get_mass(CreParticle2D* particle2D);
+void cre_particle2d_set_mass(CreParticle2D* particle2D, f32 mass);
+f32 cre_particle2d_get_mass(CreParticle2D* particle2D);
 
 // Particle System
 
-void cre_particle_system_integrate(CreParticle2D* particle2D, float duration);
+void cre_particle_system_integrate(CreParticle2D* particle2D, f32 duration);

@@ -56,7 +56,7 @@ void cre_pkpy_util_create_module(pkpy_vm* vm, CrePPModule* module) {
 }
 
 void cre_pkpy_util_create_from_string(pkpy_vm* vm, const char* moduleName, const char* moduleSource) {
-    const int stackBeforePush = pkpy_stack_size(vm);
+    const int32 stackBeforePush = pkpy_stack_size(vm);
     char moduleFileName[64];
     ska_strcpy(moduleFileName, moduleName);
     ska_strcat(moduleFileName, ".py");

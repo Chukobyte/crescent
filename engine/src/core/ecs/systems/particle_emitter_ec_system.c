@@ -19,7 +19,7 @@ typedef struct CreParticleRenderItem {
 
 static void on_ec_system_registered(SkaECSSystem* system);
 static void on_entity_entered_scene(SkaECSSystem* system, SkaEntity entity);
-static void ec_system_update(SkaECSSystem* system, float deltaTime);
+static void ec_system_update(SkaECSSystem* system, f32 deltaTime);
 static void ec_system_render(SkaECSSystem* system);
 
 SkaTexture* particleSquareTexture = NULL;
@@ -81,7 +81,7 @@ void ec_system_render(SkaECSSystem* system) {
 
         // Draw individual particles
         const SkaTransform2D baseParticleTransform = renderResource.transform2D;
-        for (int pi = 0; pi < particles2DComponent->amount; pi++) {
+        for (int32 pi = 0; pi < particles2DComponent->amount; pi++) {
             CreParticle2D* particle2D = &particles2DComponent->particles[pi];
             if (particle2D->state != Particle2DState_ACTIVE) {
                 continue;
@@ -128,7 +128,7 @@ void ec_system_render(SkaECSSystem* system) {
 }
 
 static void particle_emitter_emit_particle(Particles2DComponent* particles2DComponent, float deltaTime) {
-    for (int i = 0; i < particles2DComponent->amount; i++) {
+    for (int32 i = 0; i < particles2DComponent->amount; i++) {
         CreParticle2D* currentParticle = &particles2DComponent->particles[i];
         switch (currentParticle->state) {
             case Particle2DState_INACTIVE: {
@@ -164,7 +164,7 @@ void cre_particle_emitter_ec_system_update_component(Particles2DComponent* parti
         case Particle2DComponentState_WAITING_TO_INITIALIZE: {
             // Spread out time active of particles on initialize so that they correspond to explosiveness
             const float explosivenessAdjustedTimeInactive = ska_math_map_to_range(particles2DComponent->explosiveness, 1.0f, 0.0f, 0.0f, particles2DComponent->lifeTime);
-            for (int pi = 0; pi < particles2DComponent->amount; pi++) {
+            for (int32 pi = 0; pi < particles2DComponent->amount; pi++) {
                 // Reset particle to default first
                 particles2DComponent->particles[pi] = CRE_PARTICLE2D_DEFAULT;
                 CreParticle2D* currentParticle = &particles2DComponent->particles[pi];

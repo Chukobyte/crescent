@@ -8,13 +8,13 @@
 #define NUM_FRAMES_TO_AVERAGE 60
 
 typedef struct CreFPSCounter {
-    int tickIndex;
-    int tickSum;
-    int tickList[MAX_FPS_SAMPLES];
+    int32 tickIndex;
+    int32 tickSum;
+    int32 tickList[MAX_FPS_SAMPLES];
 } CreFPSCounter;
 
 typedef struct FPSCounter {
-    int currentFrame;
+    int32 currentFrame;
     uint32_t frameTimes[NUM_FRAMES_TO_AVERAGE];
 } FPSCounter;
 
@@ -80,7 +80,7 @@ void cre_engine_context_update_stats(uint32_t frameTime) {
 
     uint32_t averageFrameTime = 0;
     uint32_t framesAboveZero = 0;
-    for (int i = 0; i < NUM_FRAMES_TO_AVERAGE; i++) {
+    for (int32 i = 0; i < NUM_FRAMES_TO_AVERAGE; i++) {
         if (fpsCounter.frameTimes[i] != 0) {
             averageFrameTime += fpsCounter.frameTimes[i];
             framesAboveZero++;
@@ -91,5 +91,5 @@ void cre_engine_context_update_stats(uint32_t frameTime) {
     averageFrameTime /= framesAboveZero;
 //    averageFrameTime /= NUM_FRAMES_TO_AVERAGE;
 
-    creEngineContext->stats.averageFPS = 1000.0f / (float)averageFrameTime;
+    creEngineContext->stats.averageFPS = 1000.0f / (f32)averageFrameTime;
 }

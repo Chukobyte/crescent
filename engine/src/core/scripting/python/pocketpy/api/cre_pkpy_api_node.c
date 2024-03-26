@@ -64,10 +64,10 @@ static void set_node_component_from_type(SkaEntity entity, const char* classPath
 
 //--- NODE ---//
 
-int cre_pkpy_api_node_new(pkpy_vm* vm) {
+int32 cre_pkpy_api_node_new(pkpy_vm* vm) {
     pkpy_CString pyClassPath;
     pkpy_CString pyClassName;
-    int pyNodeTypeFlag;
+    int32 pyNodeTypeFlag;
     pkpy_to_string(vm, 0, &pyClassPath);
     pkpy_to_string(vm, 1, &pyClassName);
     pkpy_to_int(vm, 2, &pyNodeTypeFlag);
@@ -87,8 +87,8 @@ int cre_pkpy_api_node_new(pkpy_vm* vm) {
     return 1;
 }
 
-int cre_pkpy_api_node_get_name(pkpy_vm* vm) {
-    int pyEntityId;
+int32 cre_pkpy_api_node_get_name(pkpy_vm* vm) {
+    int32 pyEntityId;
     pkpy_to_int(vm, 0, &pyEntityId);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
@@ -97,9 +97,9 @@ int cre_pkpy_api_node_get_name(pkpy_vm* vm) {
     return 1;
 }
 
-int cre_pkpy_api_node_add_child(pkpy_vm* vm) {
-    int childEntityId;
-    int parentEntityId;
+int32 cre_pkpy_api_node_add_child(pkpy_vm* vm) {
+    int32 childEntityId;
+    int32 parentEntityId;
     pkpy_to_int(vm, 0, &parentEntityId);
     pkpy_to_int(vm, 1, &childEntityId);
 
@@ -109,8 +109,8 @@ int cre_pkpy_api_node_add_child(pkpy_vm* vm) {
     return 0;
 }
 
-int cre_pkpy_api_node_get_child(pkpy_vm* vm) {
-    int parentEntityId;
+int32 cre_pkpy_api_node_get_child(pkpy_vm* vm) {
+    int32 parentEntityId;
     pkpy_CString childEntityName;
     pkpy_to_int(vm, 0, &parentEntityId);
     pkpy_to_string(vm, 1, &childEntityName);
@@ -124,8 +124,8 @@ int cre_pkpy_api_node_get_child(pkpy_vm* vm) {
     return 0;
 }
 
-int cre_pkpy_api_node_get_children(pkpy_vm* vm) {
-    int pyEntityId;
+int32 cre_pkpy_api_node_get_children(pkpy_vm* vm) {
+    int32 pyEntityId;
     pkpy_to_int(vm, 0, &pyEntityId);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
@@ -139,11 +139,11 @@ int cre_pkpy_api_node_get_children(pkpy_vm* vm) {
         cre_pkpy_script_context_create_instance_if_nonexistent_and_push_entity_instance(childTreeNode->entity);
     }
 
-    return (int)parentTreeNode->childCount;
+    return (int32)parentTreeNode->childCount;
 }
 
-int cre_pkpy_api_node_get_parent(pkpy_vm* vm) {
-    int childEntityId;
+int32 cre_pkpy_api_node_get_parent(pkpy_vm* vm) {
+    int32 childEntityId;
     pkpy_to_int(vm, 0, &childEntityId);
 
     const SkaEntity childEntity = (SkaEntity)childEntityId;
@@ -155,8 +155,8 @@ int cre_pkpy_api_node_get_parent(pkpy_vm* vm) {
     return 0;
 }
 
-int cre_pkpy_api_node_queue_deletion(pkpy_vm* vm) {
-    int pyEntityId;
+int32 cre_pkpy_api_node_queue_deletion(pkpy_vm* vm) {
+    int32 pyEntityId;
     pkpy_to_int(vm, 0, &pyEntityId);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
@@ -174,8 +174,8 @@ int cre_pkpy_api_node_queue_deletion(pkpy_vm* vm) {
     return 0;
 }
 
-int cre_pkpy_api_node_is_queued_for_deletion(pkpy_vm* vm) {
-    int pyEntityId;
+int32 cre_pkpy_api_node_is_queued_for_deletion(pkpy_vm* vm) {
+    int32 pyEntityId;
     pkpy_to_int(vm, 0, &pyEntityId);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
@@ -184,37 +184,37 @@ int cre_pkpy_api_node_is_queued_for_deletion(pkpy_vm* vm) {
     return 1;
 }
 
-int cre_pkpy_api_node_set_time_dilation(pkpy_vm* vm) {
-    int pyEntityId;
-    double timeDilation;
+int32 cre_pkpy_api_node_set_time_dilation(pkpy_vm* vm) {
+    int32 pyEntityId;
+    f64 timeDilation;
     pkpy_to_int(vm, 0, &pyEntityId);
     pkpy_to_float(vm, 1, &timeDilation);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
     NodeComponent* nodeComponent = (NodeComponent*)ska_ecs_component_manager_get_component(entity, NODE_COMPONENT_INDEX);
-    nodeComponent->timeDilation.value = (float)timeDilation;
+    nodeComponent->timeDilation.value = (f32)timeDilation;
     cre_scene_manager_invalidate_time_dilation_nodes_with_children(entity);
 
     return 0;
 }
 
-int cre_pkpy_api_node_get_time_dilation(pkpy_vm* vm) {
-    int pyEntityId;
+int32 cre_pkpy_api_node_get_time_dilation(pkpy_vm* vm) {
+    int32 pyEntityId;
     pkpy_to_int(vm, 0, &pyEntityId);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
     NodeComponent* nodeComponent = (NodeComponent*)ska_ecs_component_manager_get_component(entity, NODE_COMPONENT_INDEX);
-    const double timeDilation = (double)nodeComponent->timeDilation.value;
+    const f64 timeDilation = (f64)nodeComponent->timeDilation.value;
     pkpy_push_float(vm, timeDilation);
     return 1;
 }
 
-int cre_pkpy_api_node_get_total_time_dilation(pkpy_vm* vm) {
-    int pyEntityId;
+int32 cre_pkpy_api_node_get_total_time_dilation(pkpy_vm* vm) {
+    int32 pyEntityId;
     pkpy_to_int(vm, 0, &pyEntityId);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
-    const double totalTimeDilation = (double)cre_scene_manager_get_node_full_time_dilation(entity);
+    const f64 totalTimeDilation = (f64)cre_scene_manager_get_node_full_time_dilation(entity);
     pkpy_push_float(vm, totalTimeDilation);
     return 1;
 }
@@ -243,9 +243,9 @@ void cre_pkpy_update_entity_local_scale(SkaEntity entity, SkaVector2 * scale) {
     }
 }
 
-void cre_pkpy_update_entity_local_rotation(SkaEntity entity, float rotation) {
+void cre_pkpy_update_entity_local_rotation(SkaEntity entity, f32 rotation) {
     Transform2DComponent* transformComp = (Transform2DComponent*)ska_ecs_component_manager_get_component(entity, TRANSFORM2D_COMPONENT_INDEX);
-    const float prevRotation = transformComp->localTransform.rotation;
+    const f32 prevRotation = transformComp->localTransform.rotation;
     transformComp->localTransform.rotation = rotation;
     transformComp->isGlobalTransformDirty = true;
     if (transformComp->localTransform.rotation != prevRotation) {
@@ -253,23 +253,23 @@ void cre_pkpy_update_entity_local_rotation(SkaEntity entity, float rotation) {
     }
 }
 
-int cre_pkpy_api_node2d_set_position(pkpy_vm* vm) {
-    int pyEntityId;
-    double positionX;
-    double positionY;
+int32 cre_pkpy_api_node2d_set_position(pkpy_vm* vm) {
+    int32 pyEntityId;
+    f64 positionX;
+    f64 positionY;
     pkpy_to_int(vm, 0, &pyEntityId);
     pkpy_to_float(vm, 1, &positionX);
     pkpy_to_float(vm, 2, &positionY);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
-    cre_pkpy_update_entity_local_position(entity, &(SkaVector2){ (float)positionX, (float)positionY });
+    cre_pkpy_update_entity_local_position(entity, &(SkaVector2){ (f32)positionX, (f32)positionY });
     return 0;
 }
 
-int cre_pkpy_api_node2d_add_to_position(pkpy_vm* vm) {
-    int pyEntityId;
-    double positionX;
-    double positionY;
+int32 cre_pkpy_api_node2d_add_to_position(pkpy_vm* vm) {
+    int32 pyEntityId;
+    f64 positionX;
+    f64 positionY;
     pkpy_to_int(vm, 0, &pyEntityId);
     pkpy_to_float(vm, 1, &positionX);
     pkpy_to_float(vm, 2, &positionY);
@@ -277,52 +277,52 @@ int cre_pkpy_api_node2d_add_to_position(pkpy_vm* vm) {
     const SkaEntity entity = (SkaEntity)pyEntityId;
     const Transform2DComponent* transformComp = (Transform2DComponent*)ska_ecs_component_manager_get_component(entity, TRANSFORM2D_COMPONENT_INDEX);
     cre_pkpy_update_entity_local_position(entity, &(SkaVector2){
-            transformComp->localTransform.position.x + (float)positionX,
-            transformComp->localTransform.position.y + (float)positionY
+            transformComp->localTransform.position.x + (f32)positionX,
+            transformComp->localTransform.position.y + (f32)positionY
     });
     return 0;
 }
 
-int cre_pkpy_api_node2d_get_position(pkpy_vm* vm) {
-    int pyEntityId;
+int32 cre_pkpy_api_node2d_get_position(pkpy_vm* vm) {
+    int32 pyEntityId;
     pkpy_to_int(vm, 0, &pyEntityId);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
     const Transform2DComponent* transformComp = (Transform2DComponent*)ska_ecs_component_manager_get_component(entity, TRANSFORM2D_COMPONENT_INDEX);
-    pkpy_push_float(vm, (double)transformComp->localTransform.position.x);
-    pkpy_push_float(vm, (double)transformComp->localTransform.position.y);
+    pkpy_push_float(vm, (f64)transformComp->localTransform.position.x);
+    pkpy_push_float(vm, (f64)transformComp->localTransform.position.y);
     return 2;
 }
 
-int cre_pkpy_api_node2d_get_global_position(pkpy_vm* vm) {
-    int pyEntityId;
+int32 cre_pkpy_api_node2d_get_global_position(pkpy_vm* vm) {
+    int32 pyEntityId;
     pkpy_to_int(vm, 0, &pyEntityId);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
     Transform2DComponent* transformComp = (Transform2DComponent*)ska_ecs_component_manager_get_component(entity, TRANSFORM2D_COMPONENT_INDEX);
     SkaTransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity, transformComp);
-    pkpy_push_float(vm, (double)globalTransform->position.x);
-    pkpy_push_float(vm, (double)globalTransform->position.y);
+    pkpy_push_float(vm, (f64)globalTransform->position.x);
+    pkpy_push_float(vm, (f64)globalTransform->position.y);
     return 2;
 }
 
-int cre_pkpy_api_node2d_set_scale(pkpy_vm* vm) {
-    int pyEntityId;
-    double scaleX;
-    double scaleY;
+int32 cre_pkpy_api_node2d_set_scale(pkpy_vm* vm) {
+    int32 pyEntityId;
+    f64 scaleX;
+    f64 scaleY;
     pkpy_to_int(vm, 0, &pyEntityId);
     pkpy_to_float(vm, 1, &scaleX);
     pkpy_to_float(vm, 2, &scaleY);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
-    cre_pkpy_update_entity_local_scale(entity, &(SkaVector2){(float)scaleX, (float)scaleY });
+    cre_pkpy_update_entity_local_scale(entity, &(SkaVector2){(f32)scaleX, (f32)scaleY });
     return 0;
 }
 
-int cre_pkpy_api_node2d_add_to_scale(pkpy_vm* vm) {
-    int pyEntityId;
-    double scaleX;
-    double scaleY;
+int32 cre_pkpy_api_node2d_add_to_scale(pkpy_vm* vm) {
+    int32 pyEntityId;
+    f64 scaleX;
+    f64 scaleY;
     pkpy_to_int(vm, 0, &pyEntityId);
     pkpy_to_float(vm, 1, &scaleX);
     pkpy_to_float(vm, 2, &scaleY);
@@ -330,59 +330,59 @@ int cre_pkpy_api_node2d_add_to_scale(pkpy_vm* vm) {
     const SkaEntity entity = (SkaEntity)pyEntityId;
     const Transform2DComponent* transformComp = (Transform2DComponent*)ska_ecs_component_manager_get_component(entity, TRANSFORM2D_COMPONENT_INDEX);
     cre_pkpy_update_entity_local_scale(entity, &(SkaVector2){
-            transformComp->localTransform.scale.x + (float)scaleX,
-            transformComp->localTransform.scale.y + (float)scaleY
+            transformComp->localTransform.scale.x + (f32)scaleX,
+            transformComp->localTransform.scale.y + (f32)scaleY
     });
     return 0;
 }
 
-int cre_pkpy_api_node2d_get_scale(pkpy_vm* vm) {
-    int pyEntityId;
+int32 cre_pkpy_api_node2d_get_scale(pkpy_vm* vm) {
+    int32 pyEntityId;
     pkpy_to_int(vm, 0, &pyEntityId);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
     const Transform2DComponent* transformComp = (Transform2DComponent*)ska_ecs_component_manager_get_component(entity, TRANSFORM2D_COMPONENT_INDEX);
-    pkpy_push_float(vm, (double)transformComp->localTransform.scale.x);
-    pkpy_push_float(vm, (double)transformComp->localTransform.scale.y);
+    pkpy_push_float(vm, (f64)transformComp->localTransform.scale.x);
+    pkpy_push_float(vm, (f64)transformComp->localTransform.scale.y);
     return 2;
 }
 
-int cre_pkpy_api_node2d_set_rotation(pkpy_vm* vm) {
-    int pyEntityId;
-    double rotation;
+int32 cre_pkpy_api_node2d_set_rotation(pkpy_vm* vm) {
+    int32 pyEntityId;
+    f64 rotation;
     pkpy_to_int(vm, 0, &pyEntityId);
     pkpy_to_float(vm, 1, &rotation);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
-    cre_pkpy_update_entity_local_rotation(entity, (float)rotation);
+    cre_pkpy_update_entity_local_rotation(entity, (f32)rotation);
     return 0;
 }
 
-int cre_pkpy_api_node2d_add_to_rotation(pkpy_vm* vm) {
-    int pyEntityId;
-    double rotation;
+int32 cre_pkpy_api_node2d_add_to_rotation(pkpy_vm* vm) {
+    int32 pyEntityId;
+    f64 rotation;
     pkpy_to_int(vm, 0, &pyEntityId);
     pkpy_to_float(vm, 1, &rotation);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
     const Transform2DComponent* transformComp = (Transform2DComponent*)ska_ecs_component_manager_get_component(entity, TRANSFORM2D_COMPONENT_INDEX);
-    cre_pkpy_update_entity_local_rotation(entity, transformComp->localTransform.rotation + (float)rotation);
+    cre_pkpy_update_entity_local_rotation(entity, transformComp->localTransform.rotation + (f32)rotation);
     return 0;
 }
 
-int cre_pkpy_api_node2d_get_rotation(pkpy_vm* vm) {
-    int pyEntityId;
+int32 cre_pkpy_api_node2d_get_rotation(pkpy_vm* vm) {
+    int32 pyEntityId;
     pkpy_to_int(vm, 0, &pyEntityId);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
     const Transform2DComponent* transformComp = (Transform2DComponent*)ska_ecs_component_manager_get_component(entity, TRANSFORM2D_COMPONENT_INDEX);
-    pkpy_push_float(vm, (double)transformComp->localTransform.rotation);
+    pkpy_push_float(vm, (f64)transformComp->localTransform.rotation);
     return 1;
 }
 
-int cre_pkpy_api_node2d_set_z_index(pkpy_vm* vm) {
-    int pyEntityId;
-    int zIndex;
+int32 cre_pkpy_api_node2d_set_z_index(pkpy_vm* vm) {
+    int32 pyEntityId;
+    int32 zIndex;
     pkpy_to_int(vm, 0, &pyEntityId);
     pkpy_to_int(vm, 1, &zIndex);
 
@@ -392,8 +392,8 @@ int cre_pkpy_api_node2d_set_z_index(pkpy_vm* vm) {
     return 0;
 }
 
-int cre_pkpy_api_node2d_get_z_index(pkpy_vm* vm) {
-    int pyEntityId;
+int32 cre_pkpy_api_node2d_get_z_index(pkpy_vm* vm) {
+    int32 pyEntityId;
     pkpy_to_int(vm, 0, &pyEntityId);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
@@ -402,8 +402,8 @@ int cre_pkpy_api_node2d_get_z_index(pkpy_vm* vm) {
     return 1;
 }
 
-int cre_pkpy_api_node2d_set_z_index_relative_to_parent(pkpy_vm* vm) {
-    int pyEntityId;
+int32 cre_pkpy_api_node2d_set_z_index_relative_to_parent(pkpy_vm* vm) {
+    int32 pyEntityId;
     bool zIndexRelativeToParent;
     pkpy_to_int(vm, 0, &pyEntityId);
     pkpy_to_bool(vm, 1, &zIndexRelativeToParent);
@@ -414,8 +414,8 @@ int cre_pkpy_api_node2d_set_z_index_relative_to_parent(pkpy_vm* vm) {
     return 0;
 }
 
-int cre_pkpy_api_node2d_get_z_index_relative_to_parent(pkpy_vm* vm) {
-    int pyEntityId;
+int32 cre_pkpy_api_node2d_get_z_index_relative_to_parent(pkpy_vm* vm) {
+    int32 pyEntityId;
     pkpy_to_int(vm, 0, &pyEntityId);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
@@ -424,8 +424,8 @@ int cre_pkpy_api_node2d_get_z_index_relative_to_parent(pkpy_vm* vm) {
     return 1;
 }
 
-int cre_pkpy_api_node2d_set_ignore_camera(pkpy_vm* vm) {
-    int pyEntityId;
+int32 cre_pkpy_api_node2d_set_ignore_camera(pkpy_vm* vm) {
+    int32 pyEntityId;
     bool ignoreCamera;
     pkpy_to_int(vm, 0, &pyEntityId);
     pkpy_to_bool(vm, 1, &ignoreCamera);
@@ -436,8 +436,8 @@ int cre_pkpy_api_node2d_set_ignore_camera(pkpy_vm* vm) {
     return 0;
 }
 
-int cre_pkpy_api_node2d_get_ignore_camera(pkpy_vm* vm) {
-    int pyEntityId;
+int32 cre_pkpy_api_node2d_get_ignore_camera(pkpy_vm* vm) {
+    int32 pyEntityId;
     pkpy_to_int(vm, 0, &pyEntityId);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
@@ -448,8 +448,8 @@ int cre_pkpy_api_node2d_get_ignore_camera(pkpy_vm* vm) {
 
 //--- SPRITE ---//
 
-int cre_pkpy_api_sprite_get_texture(pkpy_vm* vm) {
-    int pyEntityId;
+int32 cre_pkpy_api_sprite_get_texture(pkpy_vm* vm) {
+    int32 pyEntityId;
     pkpy_to_int(vm, 0, &pyEntityId);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
@@ -462,8 +462,8 @@ int cre_pkpy_api_sprite_get_texture(pkpy_vm* vm) {
     return 4;
 }
 
-int cre_pkpy_api_sprite_set_texture(pkpy_vm* vm) {
-    int pyEntityId;
+int32 cre_pkpy_api_sprite_set_texture(pkpy_vm* vm) {
+    int32 pyEntityId;
     pkpy_CString pyTexturePath;
     pkpy_to_int(vm, 0, &pyEntityId);
     pkpy_to_string(vm, 1, &pyTexturePath);
@@ -476,25 +476,25 @@ int cre_pkpy_api_sprite_set_texture(pkpy_vm* vm) {
     return 0;
 }
 
-int cre_pkpy_api_sprite_get_draw_source(pkpy_vm* vm) {
-    int pyEntityId;
+int32 cre_pkpy_api_sprite_get_draw_source(pkpy_vm* vm) {
+    int32 pyEntityId;
     pkpy_to_int(vm, 0, &pyEntityId);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
     const SpriteComponent* spriteComponent = (SpriteComponent*)ska_ecs_component_manager_get_component(entity, SPRITE_COMPONENT_INDEX);
-    pkpy_push_float(vm, (double)spriteComponent->drawSource.x);
-    pkpy_push_float(vm, (double)spriteComponent->drawSource.y);
-    pkpy_push_float(vm, (double)spriteComponent->drawSource.w);
-    pkpy_push_float(vm, (double)spriteComponent->drawSource.h);
+    pkpy_push_float(vm, (f64)spriteComponent->drawSource.x);
+    pkpy_push_float(vm, (f64)spriteComponent->drawSource.y);
+    pkpy_push_float(vm, (f64)spriteComponent->drawSource.w);
+    pkpy_push_float(vm, (f64)spriteComponent->drawSource.h);
     return 4;
 }
 
-int cre_pkpy_api_sprite_set_draw_source(pkpy_vm* vm) {
-    int pyEntityId;
-    double pyDrawSourceX;
-    double pyDrawSourceY;
-    double pyDrawSourceW;
-    double pyDrawSourceH;
+int32 cre_pkpy_api_sprite_set_draw_source(pkpy_vm* vm) {
+    int32 pyEntityId;
+    f64 pyDrawSourceX;
+    f64 pyDrawSourceY;
+    f64 pyDrawSourceW;
+    f64 pyDrawSourceH;
     pkpy_to_int(vm, 0, &pyEntityId);
     pkpy_to_float(vm, 1, &pyDrawSourceX);
     pkpy_to_float(vm, 2, &pyDrawSourceY);
@@ -503,12 +503,12 @@ int cre_pkpy_api_sprite_set_draw_source(pkpy_vm* vm) {
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
     SpriteComponent* spriteComponent = (SpriteComponent*)ska_ecs_component_manager_get_component(entity, SPRITE_COMPONENT_INDEX);
-    spriteComponent->drawSource = (SkaRect2){ (float)pyDrawSourceX, (float)pyDrawSourceY, (float)pyDrawSourceW, (float)pyDrawSourceH };
+    spriteComponent->drawSource = (SkaRect2){ (f32)pyDrawSourceX, (f32)pyDrawSourceY, (f32)pyDrawSourceW, (f32)pyDrawSourceH };
     return 0;
 }
 
-int cre_pkpy_api_sprite_get_flip_h(pkpy_vm* vm) {
-    int pyEntityId;
+int32 cre_pkpy_api_sprite_get_flip_h(pkpy_vm* vm) {
+    int32 pyEntityId;
     pkpy_to_int(vm, 0, &pyEntityId);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
@@ -517,8 +517,8 @@ int cre_pkpy_api_sprite_get_flip_h(pkpy_vm* vm) {
     return 1;
 }
 
-int cre_pkpy_api_sprite_set_flip_h(pkpy_vm* vm) {
-    int pyEntityId;
+int32 cre_pkpy_api_sprite_set_flip_h(pkpy_vm* vm) {
+    int32 pyEntityId;
     bool pySetFlipH;
     pkpy_to_int(vm, 0, &pyEntityId);
     pkpy_to_bool(vm, 1, &pySetFlipH);
@@ -529,8 +529,8 @@ int cre_pkpy_api_sprite_set_flip_h(pkpy_vm* vm) {
     return 0;
 }
 
-int cre_pkpy_api_sprite_get_flip_v(pkpy_vm* vm) {
-    int pyEntityId;
+int32 cre_pkpy_api_sprite_get_flip_v(pkpy_vm* vm) {
+    int32 pyEntityId;
     pkpy_to_int(vm, 0, &pyEntityId);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
@@ -539,8 +539,8 @@ int cre_pkpy_api_sprite_get_flip_v(pkpy_vm* vm) {
     return 1;
 }
 
-int cre_pkpy_api_sprite_set_flip_v(pkpy_vm* vm) {
-    int pyEntityId;
+int32 cre_pkpy_api_sprite_set_flip_v(pkpy_vm* vm) {
+    int32 pyEntityId;
     bool pySetFlipV;
     pkpy_to_int(vm, 0, &pyEntityId);
     pkpy_to_bool(vm, 1, &pySetFlipV);
@@ -551,25 +551,25 @@ int cre_pkpy_api_sprite_set_flip_v(pkpy_vm* vm) {
     return 0;
 }
 
-int cre_pkpy_api_sprite_get_modulate(pkpy_vm* vm) {
-    int pyEntityId;
+int32 cre_pkpy_api_sprite_get_modulate(pkpy_vm* vm) {
+    int32 pyEntityId;
     pkpy_to_int(vm, 0, &pyEntityId);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
     const SpriteComponent* spriteComponent = (SpriteComponent*)ska_ecs_component_manager_get_component(entity, SPRITE_COMPONENT_INDEX);
-    pkpy_push_float(vm, (double)spriteComponent->modulate.r);
-    pkpy_push_float(vm, (double)spriteComponent->modulate.g);
-    pkpy_push_float(vm, (double)spriteComponent->modulate.b);
-    pkpy_push_float(vm, (double)spriteComponent->modulate.a);
+    pkpy_push_float(vm, (f64)spriteComponent->modulate.r);
+    pkpy_push_float(vm, (f64)spriteComponent->modulate.g);
+    pkpy_push_float(vm, (f64)spriteComponent->modulate.b);
+    pkpy_push_float(vm, (f64)spriteComponent->modulate.a);
     return 4;
 }
 
-int cre_pkpy_api_sprite_set_modulate(pkpy_vm* vm) {
-    int pyEntityId;
-    double pyModulateR;
-    double pyModulateG;
-    double pyModulateB;
-    double pyModulateA;
+int32 cre_pkpy_api_sprite_set_modulate(pkpy_vm* vm) {
+    int32 pyEntityId;
+    f64 pyModulateR;
+    f64 pyModulateG;
+    f64 pyModulateB;
+    f64 pyModulateA;
     pkpy_to_int(vm, 0, &pyEntityId);
     pkpy_to_float(vm, 1, &pyModulateR);
     pkpy_to_float(vm, 2, &pyModulateG);
@@ -578,49 +578,49 @@ int cre_pkpy_api_sprite_set_modulate(pkpy_vm* vm) {
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
     SpriteComponent* spriteComponent = (SpriteComponent*)ska_ecs_component_manager_get_component(entity, SPRITE_COMPONENT_INDEX);
-    spriteComponent->modulate = (SkaColor){(float)pyModulateR, (float)pyModulateG, (float)pyModulateB, (float)pyModulateA };
+    spriteComponent->modulate = (SkaColor){(f32)pyModulateR, (f32)pyModulateG, (f32)pyModulateB, (f32)pyModulateA };
     return 0;
 }
 
-int cre_pkpy_api_sprite_get_origin(pkpy_vm* vm) {
-    int pyEntityId;
+int32 cre_pkpy_api_sprite_get_origin(pkpy_vm* vm) {
+    int32 pyEntityId;
     pkpy_to_int(vm, 0, &pyEntityId);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
     const SpriteComponent* spriteComponent = (SpriteComponent*)ska_ecs_component_manager_get_component(entity, SPRITE_COMPONENT_INDEX);
-    pkpy_push_float(vm, (double)spriteComponent->origin.x);
-    pkpy_push_float(vm, (double)spriteComponent->origin.y);
+    pkpy_push_float(vm, (f64)spriteComponent->origin.x);
+    pkpy_push_float(vm, (f64)spriteComponent->origin.y);
     return 2;
 }
 
-int cre_pkpy_api_sprite_set_origin(pkpy_vm* vm) {
-    int pyEntityId;
-    double pyOriginX;
-    double pyOriginY;
+int32 cre_pkpy_api_sprite_set_origin(pkpy_vm* vm) {
+    int32 pyEntityId;
+    f64 pyOriginX;
+    f64 pyOriginY;
     pkpy_to_int(vm, 0, &pyEntityId);
     pkpy_to_float(vm, 1, &pyOriginX);
     pkpy_to_float(vm, 2, &pyOriginY);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
     SpriteComponent* spriteComponent = (SpriteComponent*)ska_ecs_component_manager_get_component(entity, SPRITE_COMPONENT_INDEX);
-    spriteComponent->origin = (SkaVector2){ (float)pyOriginX, (float)pyOriginY };
+    spriteComponent->origin = (SkaVector2){ (f32)pyOriginX, (f32)pyOriginY };
     return 0;
 }
 
-int cre_pkpy_api_sprite_get_shader_instance(pkpy_vm* vm) {
-    int pyEntityId;
+int32 cre_pkpy_api_sprite_get_shader_instance(pkpy_vm* vm) {
+    int32 pyEntityId;
     pkpy_to_int(vm, 0, &pyEntityId);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
     const SpriteComponent* spriteComponent = (SpriteComponent*)ska_ecs_component_manager_get_component(entity, SPRITE_COMPONENT_INDEX);
-    const int pyShaderInstanceId = spriteComponent->shaderInstanceId != SKA_SHADER_INSTANCE_INVALID_ID ? (int)spriteComponent->shaderInstanceId : -1;
+    const int32 pyShaderInstanceId = spriteComponent->shaderInstanceId != SKA_SHADER_INSTANCE_INVALID_ID ? (int32)spriteComponent->shaderInstanceId : -1;
     pkpy_push_int(vm, pyShaderInstanceId);
     return 1;
 }
 
-int cre_pkpy_api_sprite_set_shader_instance(pkpy_vm* vm) {
-    int pyEntityId;
-    int pyShaderInstanceId;
+int32 cre_pkpy_api_sprite_set_shader_instance(pkpy_vm* vm) {
+    int32 pyEntityId;
+    int32 pyShaderInstanceId;
     pkpy_to_int(vm, 0, &pyEntityId);
     pkpy_to_int(vm, 1, &pyShaderInstanceId);
 
@@ -634,8 +634,8 @@ int cre_pkpy_api_sprite_set_shader_instance(pkpy_vm* vm) {
 
 //--- ANIMATED SPRITE ---//
 
-int cre_pkpy_api_animated_sprite_play(pkpy_vm* vm) {
-    int pyEntityId;
+int32 cre_pkpy_api_animated_sprite_play(pkpy_vm* vm) {
+    int32 pyEntityId;
     pkpy_CString pyAnimationName;
     pkpy_to_int(vm, 0, &pyEntityId);
     pkpy_to_string(vm, 1, &pyAnimationName);
@@ -648,8 +648,8 @@ int cre_pkpy_api_animated_sprite_play(pkpy_vm* vm) {
     return 1;
 }
 
-int cre_pkpy_api_animated_sprite_stop(pkpy_vm* vm) {
-    int pyEntityId;
+int32 cre_pkpy_api_animated_sprite_stop(pkpy_vm* vm) {
+    int32 pyEntityId;
     pkpy_to_int(vm, 0, &pyEntityId);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
@@ -658,9 +658,9 @@ int cre_pkpy_api_animated_sprite_stop(pkpy_vm* vm) {
     return 0;
 }
 
-int cre_pkpy_api_animated_sprite_set_current_animation_frame(pkpy_vm* vm) {
-    int pyEntityId;
-    int pyFrame;
+int32 cre_pkpy_api_animated_sprite_set_current_animation_frame(pkpy_vm* vm) {
+    int32 pyEntityId;
+    int32 pyFrame;
     pkpy_to_int(vm, 0, &pyEntityId);
     pkpy_to_int(vm, 1, &pyFrame);
 
@@ -670,13 +670,13 @@ int cre_pkpy_api_animated_sprite_set_current_animation_frame(pkpy_vm* vm) {
     return 0;
 }
 
-int cre_pkpy_api_animated_sprite_add_animation(pkpy_vm* vm) {
+int32 cre_pkpy_api_animated_sprite_add_animation(pkpy_vm* vm) {
 #define CRE_PKPY_API_ANIM_FRAME_STRIDE 6
-    int pyEntityId;
+    int32 pyEntityId;
     pkpy_CString pyAnimationName;
-    int pyAnimationSpeed;
+    int32 pyAnimationSpeed;
     bool pyAnimationDoesLoop;
-    int pyFrameCount;
+    int32 pyFrameCount;
     pkpy_to_int(vm, 0, &pyEntityId);
     pkpy_to_string(vm, 1, &pyAnimationName);
     pkpy_to_int(vm, 2, &pyAnimationSpeed);
@@ -690,14 +690,14 @@ int cre_pkpy_api_animated_sprite_add_animation(pkpy_vm* vm) {
     ska_strcpy(newAnim.name, animationName);
     // Unpack *args filled with frame data
     pkpy_unpack_sequence(vm, pyFrameCount * CRE_PKPY_API_ANIM_FRAME_STRIDE);
-    for (int i = 0; i < pyFrameCount; i++) {
-        int pyFrame;
+    for (int32 i = 0; i < pyFrameCount; i++) {
+        int32 pyFrame;
         pkpy_CString pyTexturePath;
-        double pyDrawSourceX;
-        double pyDrawSourceY;
-        double pyDrawSourceW;
-        double pyDrawSourceH;
-        const int dataIndex = i * CRE_PKPY_API_ANIM_FRAME_STRIDE;
+        f64 pyDrawSourceX;
+        f64 pyDrawSourceY;
+        f64 pyDrawSourceW;
+        f64 pyDrawSourceH;
+        const int32 dataIndex = i * CRE_PKPY_API_ANIM_FRAME_STRIDE;
         pkpy_to_int(vm, dataIndex, &pyFrame);
         pkpy_to_string(vm, dataIndex + 1, &pyTexturePath);
         pkpy_to_float(vm, dataIndex + 2, &pyDrawSourceX);
@@ -709,7 +709,7 @@ int cre_pkpy_api_animated_sprite_add_animation(pkpy_vm* vm) {
         CreAnimationFrame animationFrame = {
                 .frame = pyFrame,
                 .texture = ska_asset_manager_get_texture(texturePath),
-                .drawSource = { (float)pyDrawSourceX, (float)pyDrawSourceY, (float)pyDrawSourceW, (float)pyDrawSourceH }
+                .drawSource = { (f32)pyDrawSourceX, (f32)pyDrawSourceY, (f32)pyDrawSourceW, (f32)pyDrawSourceH }
         };
         newAnim.animationFrames[newAnim.frameCount++] = animationFrame;
     }
@@ -723,8 +723,8 @@ int cre_pkpy_api_animated_sprite_add_animation(pkpy_vm* vm) {
 #undef CRE_PKPY_API_ANIM_FRAME_STRIDE
 }
 
-int cre_pkpy_api_animated_sprite_get_stagger_animation_start_times(pkpy_vm* vm) {
-    int pyEntityId;
+int32 cre_pkpy_api_animated_sprite_get_stagger_animation_start_times(pkpy_vm* vm) {
+    int32 pyEntityId;
     pkpy_to_int(vm, 0, &pyEntityId);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
@@ -733,8 +733,8 @@ int cre_pkpy_api_animated_sprite_get_stagger_animation_start_times(pkpy_vm* vm) 
     return 1;
 }
 
-int cre_pkpy_api_animated_sprite_set_stagger_animation_start_times(pkpy_vm* vm) {
-    int pyEntityId;
+int32 cre_pkpy_api_animated_sprite_set_stagger_animation_start_times(pkpy_vm* vm) {
+    int32 pyEntityId;
     bool pyStaggerStartAnimationTimes;
     pkpy_to_int(vm, 0, &pyEntityId);
     pkpy_to_bool(vm, 1, &pyStaggerStartAnimationTimes);
@@ -745,8 +745,8 @@ int cre_pkpy_api_animated_sprite_set_stagger_animation_start_times(pkpy_vm* vm) 
     return 0;
 }
 
-int cre_pkpy_api_animated_sprite_get_flip_h(pkpy_vm* vm) {
-    int pyEntityId;
+int32 cre_pkpy_api_animated_sprite_get_flip_h(pkpy_vm* vm) {
+    int32 pyEntityId;
     pkpy_to_int(vm, 0, &pyEntityId);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
@@ -755,8 +755,8 @@ int cre_pkpy_api_animated_sprite_get_flip_h(pkpy_vm* vm) {
     return 1;
 }
 
-int cre_pkpy_api_animated_sprite_set_flip_h(pkpy_vm* vm) {
-    int pyEntityId;
+int32 cre_pkpy_api_animated_sprite_set_flip_h(pkpy_vm* vm) {
+    int32 pyEntityId;
     bool pySetFlipH;
     pkpy_to_int(vm, 0, &pyEntityId);
     pkpy_to_bool(vm, 1, &pySetFlipH);
@@ -767,8 +767,8 @@ int cre_pkpy_api_animated_sprite_set_flip_h(pkpy_vm* vm) {
     return 0;
 }
 
-int cre_pkpy_api_animated_sprite_get_flip_v(pkpy_vm* vm) {
-    int pyEntityId;
+int32 cre_pkpy_api_animated_sprite_get_flip_v(pkpy_vm* vm) {
+    int32 pyEntityId;
     pkpy_to_int(vm, 0, &pyEntityId);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
@@ -777,8 +777,8 @@ int cre_pkpy_api_animated_sprite_get_flip_v(pkpy_vm* vm) {
     return 1;
 }
 
-int cre_pkpy_api_animated_sprite_set_flip_v(pkpy_vm* vm) {
-    int pyEntityId;
+int32 cre_pkpy_api_animated_sprite_set_flip_v(pkpy_vm* vm) {
+    int32 pyEntityId;
     bool pySetFlipV;
     pkpy_to_int(vm, 0, &pyEntityId);
     pkpy_to_bool(vm, 1, &pySetFlipV);
@@ -789,25 +789,25 @@ int cre_pkpy_api_animated_sprite_set_flip_v(pkpy_vm* vm) {
     return 0;
 }
 
-int cre_pkpy_api_animated_sprite_get_modulate(pkpy_vm* vm) {
-    int pyEntityId;
+int32 cre_pkpy_api_animated_sprite_get_modulate(pkpy_vm* vm) {
+    int32 pyEntityId;
     pkpy_to_int(vm, 0, &pyEntityId);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
     const AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*)ska_ecs_component_manager_get_component(entity, ANIMATED_SPRITE_COMPONENT_INDEX);
-    pkpy_push_float(vm, (double)animatedSpriteComponent->modulate.r);
-    pkpy_push_float(vm, (double)animatedSpriteComponent->modulate.g);
-    pkpy_push_float(vm, (double)animatedSpriteComponent->modulate.b);
-    pkpy_push_float(vm, (double)animatedSpriteComponent->modulate.a);
+    pkpy_push_float(vm, (f64)animatedSpriteComponent->modulate.r);
+    pkpy_push_float(vm, (f64)animatedSpriteComponent->modulate.g);
+    pkpy_push_float(vm, (f64)animatedSpriteComponent->modulate.b);
+    pkpy_push_float(vm, (f64)animatedSpriteComponent->modulate.a);
     return 4;
 }
 
-int cre_pkpy_api_animated_sprite_set_modulate(pkpy_vm* vm) {
-    int pyEntityId;
-    double pyModulateR;
-    double pyModulateG;
-    double pyModulateB;
-    double pyModulateA;
+int32 cre_pkpy_api_animated_sprite_set_modulate(pkpy_vm* vm) {
+    int32 pyEntityId;
+    f64 pyModulateR;
+    f64 pyModulateG;
+    f64 pyModulateB;
+    f64 pyModulateA;
     pkpy_to_int(vm, 0, &pyEntityId);
     pkpy_to_float(vm, 1, &pyModulateR);
     pkpy_to_float(vm, 2, &pyModulateG);
@@ -816,49 +816,49 @@ int cre_pkpy_api_animated_sprite_set_modulate(pkpy_vm* vm) {
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
     AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*)ska_ecs_component_manager_get_component(entity, ANIMATED_SPRITE_COMPONENT_INDEX);
-    animatedSpriteComponent->modulate = (SkaColor){(float)pyModulateR, (float)pyModulateG, (float)pyModulateB, (float)pyModulateA };
+    animatedSpriteComponent->modulate = (SkaColor){(f32)pyModulateR, (f32)pyModulateG, (f32)pyModulateB, (f32)pyModulateA };
     return 0;
 }
 
-int cre_pkpy_api_animated_sprite_get_origin(pkpy_vm* vm) {
-    int pyEntityId;
+int32 cre_pkpy_api_animated_sprite_get_origin(pkpy_vm* vm) {
+    int32 pyEntityId;
     pkpy_to_int(vm, 0, &pyEntityId);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
     const AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*)ska_ecs_component_manager_get_component(entity, ANIMATED_SPRITE_COMPONENT_INDEX);
-    pkpy_push_float(vm, (double)animatedSpriteComponent->origin.x);
-    pkpy_push_float(vm, (double)animatedSpriteComponent->origin.y);
+    pkpy_push_float(vm, (f64)animatedSpriteComponent->origin.x);
+    pkpy_push_float(vm, (f64)animatedSpriteComponent->origin.y);
     return 2;
 }
 
-int cre_pkpy_api_animated_sprite_set_origin(pkpy_vm* vm) {
-    int pyEntityId;
-    double pyOriginX;
-    double pyOriginY;
+int32 cre_pkpy_api_animated_sprite_set_origin(pkpy_vm* vm) {
+    int32 pyEntityId;
+    f64 pyOriginX;
+    f64 pyOriginY;
     pkpy_to_int(vm, 0, &pyEntityId);
     pkpy_to_float(vm, 1, &pyOriginX);
     pkpy_to_float(vm, 2, &pyOriginY);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
     AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*)ska_ecs_component_manager_get_component(entity, ANIMATED_SPRITE_COMPONENT_INDEX);
-    animatedSpriteComponent->origin = (SkaVector2){ (float)pyOriginX, (float)pyOriginY };
+    animatedSpriteComponent->origin = (SkaVector2){ (f32)pyOriginX, (f32)pyOriginY };
     return 0;
 }
 
-int cre_pkpy_api_animated_sprite_get_shader_instance(pkpy_vm* vm) {
-    int pyEntityId;
+int32 cre_pkpy_api_animated_sprite_get_shader_instance(pkpy_vm* vm) {
+    int32 pyEntityId;
     pkpy_to_int(vm, 0, &pyEntityId);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
     const AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*)ska_ecs_component_manager_get_component(entity, ANIMATED_SPRITE_COMPONENT_INDEX);
-    const int pyShaderInstanceId = animatedSpriteComponent->shaderInstanceId != SKA_SHADER_INSTANCE_INVALID_ID ? (int)animatedSpriteComponent->shaderInstanceId : -1;
+    const int32 pyShaderInstanceId = animatedSpriteComponent->shaderInstanceId != SKA_SHADER_INSTANCE_INVALID_ID ? (int32)animatedSpriteComponent->shaderInstanceId : -1;
     pkpy_push_int(vm, pyShaderInstanceId);
     return 1;
 }
 
-int cre_pkpy_api_animated_sprite_set_shader_instance(pkpy_vm* vm) {
-    int pyEntityId;
-    int pyShaderInstanceId;
+int32 cre_pkpy_api_animated_sprite_set_shader_instance(pkpy_vm* vm) {
+    int32 pyEntityId;
+    int32 pyShaderInstanceId;
     pkpy_to_int(vm, 0, &pyEntityId);
     pkpy_to_int(vm, 1, &pyShaderInstanceId);
 
@@ -872,8 +872,8 @@ int cre_pkpy_api_animated_sprite_set_shader_instance(pkpy_vm* vm) {
 
 //--- TEXT LABEL ---//
 
-int cre_pkpy_api_text_label_get_text(pkpy_vm* vm) {
-    int pyEntityId;
+int32 cre_pkpy_api_text_label_get_text(pkpy_vm* vm) {
+    int32 pyEntityId;
     pkpy_to_int(vm, 0, &pyEntityId);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
@@ -882,8 +882,8 @@ int cre_pkpy_api_text_label_get_text(pkpy_vm* vm) {
     return 1;
 }
 
-int cre_pkpy_api_text_label_set_text(pkpy_vm* vm) {
-    int pyEntityId;
+int32 cre_pkpy_api_text_label_set_text(pkpy_vm* vm) {
+    int32 pyEntityId;
     pkpy_CString pyText;
     pkpy_to_int(vm, 0, &pyEntityId);
     pkpy_to_string(vm, 1, &pyText);
@@ -896,16 +896,16 @@ int cre_pkpy_api_text_label_set_text(pkpy_vm* vm) {
     return 0;
 }
 
-int cre_pkpy_api_text_label_get_color(pkpy_vm* vm) {
-    int pyEntityId;
+int32 cre_pkpy_api_text_label_get_color(pkpy_vm* vm) {
+    int32 pyEntityId;
     pkpy_to_int(vm, 0, &pyEntityId);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
     const TextLabelComponent* textLabelComponent = (TextLabelComponent*)ska_ecs_component_manager_get_component(entity, TEXT_LABEL_COMPONENT_INDEX);
-    const int red = (int) (textLabelComponent->color.r * 255.0f);
-    const int green = (int) (textLabelComponent->color.g * 255.0f);
-    const int blue = (int) (textLabelComponent->color.b * 255.0f);
-    const int alpha = (int) (textLabelComponent->color.a * 255.0f);
+    const int32 red = (int32) (textLabelComponent->color.r * 255.0f);
+    const int32 green = (int32) (textLabelComponent->color.g * 255.0f);
+    const int32 blue = (int32) (textLabelComponent->color.b * 255.0f);
+    const int32 alpha = (int32) (textLabelComponent->color.a * 255.0f);
     pkpy_push_int(vm, red);
     pkpy_push_int(vm, green);
     pkpy_push_int(vm, blue);
@@ -913,9 +913,9 @@ int cre_pkpy_api_text_label_get_color(pkpy_vm* vm) {
     return 4;
 }
 
-int cre_pkpy_api_text_label_set_color(pkpy_vm* vm) {
-    int pyEntityId;
-    int pyRed, pyGreen, pyBlue, pyAlpha;
+int32 cre_pkpy_api_text_label_set_color(pkpy_vm* vm) {
+    int32 pyEntityId;
+    int32 pyRed, pyGreen, pyBlue, pyAlpha;
     pkpy_to_int(vm, 0, &pyEntityId);
     pkpy_to_int(vm, 1, &pyRed);
     pkpy_to_int(vm, 2, &pyGreen);
@@ -928,8 +928,8 @@ int cre_pkpy_api_text_label_set_color(pkpy_vm* vm) {
     return 0;
 }
 
-int cre_pkpy_api_text_label_set_font_uid(pkpy_vm* vm) {
-    int pyEntityId;
+int32 cre_pkpy_api_text_label_set_font_uid(pkpy_vm* vm) {
+    int32 pyEntityId;
     pkpy_CString pyFontUID;
     pkpy_to_int(vm, 0, &pyEntityId);
     pkpy_to_string(vm, 1, &pyFontUID);
@@ -947,46 +947,46 @@ int cre_pkpy_api_text_label_set_font_uid(pkpy_vm* vm) {
 
 // --- COLLIDER2D ---//
 
-int cre_pkpy_api_collider2d_get_extents(pkpy_vm* vm) {
-    int pyEntityId;
+int32 cre_pkpy_api_collider2d_get_extents(pkpy_vm* vm) {
+    int32 pyEntityId;
     pkpy_to_int(vm, 0, &pyEntityId);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
     const Collider2DComponent* collider2DComponent = (Collider2DComponent*)ska_ecs_component_manager_get_component(entity, COLLIDER2D_COMPONENT_INDEX);
-    pkpy_push_float(vm, (double)collider2DComponent->extents.w);
-    pkpy_push_float(vm, (double)collider2DComponent->extents.h);
+    pkpy_push_float(vm, (f64)collider2DComponent->extents.w);
+    pkpy_push_float(vm, (f64)collider2DComponent->extents.h);
     return 2;
 }
 
-int cre_pkpy_api_collider2d_set_extents(pkpy_vm* vm) {
-    int pyEntityId;
-    double pyExtentsX, pyExtentsY;
+int32 cre_pkpy_api_collider2d_set_extents(pkpy_vm* vm) {
+    int32 pyEntityId;
+    f64 pyExtentsX, pyExtentsY;
     pkpy_to_int(vm, 0, &pyEntityId);
     pkpy_to_float(vm, 1, &pyExtentsX);
     pkpy_to_float(vm, 2, &pyExtentsY);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
     Collider2DComponent* collider2DComponent = (Collider2DComponent*)ska_ecs_component_manager_get_component(entity, COLLIDER2D_COMPONENT_INDEX);
-    collider2DComponent->extents = (SkaSize2D){ (float)pyExtentsX, (float)pyExtentsY };
+    collider2DComponent->extents = (SkaSize2D){ (f32)pyExtentsX, (f32)pyExtentsY };
     return 0;
 }
 
-int cre_pkpy_api_collider2d_get_color(pkpy_vm* vm) {
-    int pyEntityId;
+int32 cre_pkpy_api_collider2d_get_color(pkpy_vm* vm) {
+    int32 pyEntityId;
     pkpy_to_int(vm, 0, &pyEntityId);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
     const Collider2DComponent* collider2DComponent = (Collider2DComponent*)ska_ecs_component_manager_get_component(entity, COLLIDER2D_COMPONENT_INDEX);
-    pkpy_push_float(vm, (double)collider2DComponent->color.r);
-    pkpy_push_float(vm, (double)collider2DComponent->color.g);
-    pkpy_push_float(vm, (double)collider2DComponent->color.b);
-    pkpy_push_float(vm, (double)collider2DComponent->color.a);
+    pkpy_push_float(vm, (f64)collider2DComponent->color.r);
+    pkpy_push_float(vm, (f64)collider2DComponent->color.g);
+    pkpy_push_float(vm, (f64)collider2DComponent->color.b);
+    pkpy_push_float(vm, (f64)collider2DComponent->color.a);
     return 4;
 }
 
-int cre_pkpy_api_collider2d_set_color(pkpy_vm* vm) {
-    int pyEntityId;
-    double pyRed, pyGreen, pyBlue, pyAlpha;
+int32 cre_pkpy_api_collider2d_set_color(pkpy_vm* vm) {
+    int32 pyEntityId;
+    f64 pyRed, pyGreen, pyBlue, pyAlpha;
     pkpy_to_int(vm, 0, &pyEntityId);
     pkpy_to_float(vm, 1, &pyRed);
     pkpy_to_float(vm, 2, &pyGreen);
@@ -995,52 +995,52 @@ int cre_pkpy_api_collider2d_set_color(pkpy_vm* vm) {
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
     Collider2DComponent* collider2DComponent = (Collider2DComponent*)ska_ecs_component_manager_get_component(entity, COLLIDER2D_COMPONENT_INDEX);
-    collider2DComponent->color = (SkaColor){ (float)pyRed, (float)pyGreen, (float)pyBlue, (float)pyAlpha };
+    collider2DComponent->color = (SkaColor){ (f32)pyRed, (f32)pyGreen, (f32)pyBlue, (f32)pyAlpha };
     return 0;
 }
 
 //--- COLOR RECT ---//
 
-int cre_pkpy_api_color_rect_get_size(pkpy_vm* vm) {
-    int pyEntityId;
+int32 cre_pkpy_api_color_rect_get_size(pkpy_vm* vm) {
+    int32 pyEntityId;
     pkpy_to_int(vm, 0, &pyEntityId);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
     const ColorRectComponent* colorRectComponent = (ColorRectComponent*)ska_ecs_component_manager_get_component(entity, COLOR_RECT_COMPONENT_INDEX);
-    pkpy_push_float(vm, (double)colorRectComponent->size.w);
-    pkpy_push_float(vm, (double)colorRectComponent->size.h);
+    pkpy_push_float(vm, (f64)colorRectComponent->size.w);
+    pkpy_push_float(vm, (f64)colorRectComponent->size.h);
     return 2;
 }
 
-int cre_pkpy_api_color_rect_set_size(pkpy_vm* vm) {
-    int pyEntityId;
-    double pySizeW, pySizeH;
+int32 cre_pkpy_api_color_rect_set_size(pkpy_vm* vm) {
+    int32 pyEntityId;
+    f64 pySizeW, pySizeH;
     pkpy_to_int(vm, 0, &pyEntityId);
     pkpy_to_float(vm, 1, &pySizeW);
     pkpy_to_float(vm, 2, &pySizeH);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
     ColorRectComponent* colorRectComponent = (ColorRectComponent*)ska_ecs_component_manager_get_component(entity, COLOR_RECT_COMPONENT_INDEX);
-    colorRectComponent->size = (SkaSize2D){ (float)pySizeW, (float)pySizeH };
+    colorRectComponent->size = (SkaSize2D){ (f32)pySizeW, (f32)pySizeH };
     return 0;
 }
 
-int cre_pkpy_api_color_rect_get_color(pkpy_vm* vm) {
-    int pyEntityId;
+int32 cre_pkpy_api_color_rect_get_color(pkpy_vm* vm) {
+    int32 pyEntityId;
     pkpy_to_int(vm, 0, &pyEntityId);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
     const ColorRectComponent* colorRectComponent = (ColorRectComponent*)ska_ecs_component_manager_get_component(entity, COLOR_RECT_COMPONENT_INDEX);
-    pkpy_push_float(vm, (double)colorRectComponent->color.r);
-    pkpy_push_float(vm, (double)colorRectComponent->color.g);
-    pkpy_push_float(vm, (double)colorRectComponent->color.b);
-    pkpy_push_float(vm, (double)colorRectComponent->color.a);
+    pkpy_push_float(vm, (f64)colorRectComponent->color.r);
+    pkpy_push_float(vm, (f64)colorRectComponent->color.g);
+    pkpy_push_float(vm, (f64)colorRectComponent->color.b);
+    pkpy_push_float(vm, (f64)colorRectComponent->color.a);
     return 4;
 }
 
-int cre_pkpy_api_color_rect_set_color(pkpy_vm* vm) {
-    int pyEntityId;
-    double pyRed, pyGreen, pyBlue, pyAlpha;
+int32 cre_pkpy_api_color_rect_set_color(pkpy_vm* vm) {
+    int32 pyEntityId;
+    f64 pyRed, pyGreen, pyBlue, pyAlpha;
     pkpy_to_int(vm, 0, &pyEntityId);
     pkpy_to_float(vm, 1, &pyRed);
     pkpy_to_float(vm, 2, &pyGreen);
@@ -1049,40 +1049,40 @@ int cre_pkpy_api_color_rect_set_color(pkpy_vm* vm) {
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
     ColorRectComponent* colorRectComponent = (ColorRectComponent*)ska_ecs_component_manager_get_component(entity, COLOR_RECT_COMPONENT_INDEX);
-    colorRectComponent->color = (SkaColor){ (float)pyRed, (float)pyGreen, (float)pyBlue, (float)pyAlpha };
+    colorRectComponent->color = (SkaColor){ (f32)pyRed, (f32)pyGreen, (f32)pyBlue, (f32)pyAlpha };
     return 0;
 }
 
 //--- PARALLAX ---//
 
-int cre_pkpy_api_parallax_get_scroll_speed(pkpy_vm* vm) {
-    int pyEntityId;
+int32 cre_pkpy_api_parallax_get_scroll_speed(pkpy_vm* vm) {
+    int32 pyEntityId;
     pkpy_to_int(vm, 0, &pyEntityId);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
     const ParallaxComponent* parallaxComponent = (ParallaxComponent*)ska_ecs_component_manager_get_component(entity, PARALLAX_COMPONENT_INDEX);
-    pkpy_push_float(vm, (double)parallaxComponent->scrollSpeed.x);
-    pkpy_push_float(vm, (double)parallaxComponent->scrollSpeed.y);
+    pkpy_push_float(vm, (f64)parallaxComponent->scrollSpeed.x);
+    pkpy_push_float(vm, (f64)parallaxComponent->scrollSpeed.y);
     return 2;
 }
 
-int cre_pkpy_api_parallax_set_scroll_speed(pkpy_vm* vm) {
-    int pyEntityId;
-    double pySpeedX, pySpeedY;
+int32 cre_pkpy_api_parallax_set_scroll_speed(pkpy_vm* vm) {
+    int32 pyEntityId;
+    f64 pySpeedX, pySpeedY;
     pkpy_to_int(vm, 0, &pyEntityId);
     pkpy_to_float(vm, 1, &pySpeedX);
     pkpy_to_float(vm, 2, &pySpeedY);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
     ParallaxComponent* parallaxComponent = (ParallaxComponent*)ska_ecs_component_manager_get_component(entity, PARALLAX_COMPONENT_INDEX);
-    parallaxComponent->scrollSpeed = (SkaVector2){ (float)pySpeedX, (float)pySpeedY };
+    parallaxComponent->scrollSpeed = (SkaVector2){ (f32)pySpeedX, (f32)pySpeedY };
     return 0;
 }
 
 //--- PARTICLES2D ---//
 
-int cre_pkpy_api_particles2d_get_amount(pkpy_vm* vm) {
-    int pyEntityId;
+int32 cre_pkpy_api_particles2d_get_amount(pkpy_vm* vm) {
+    int32 pyEntityId;
     pkpy_to_int(vm, 0, &pyEntityId);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
@@ -1091,9 +1091,9 @@ int cre_pkpy_api_particles2d_get_amount(pkpy_vm* vm) {
     return 1;
 }
 
-int cre_pkpy_api_particles2d_set_amount(pkpy_vm* vm) {
-    int pyEntityId;
-    int pyAmount;
+int32 cre_pkpy_api_particles2d_set_amount(pkpy_vm* vm) {
+    int32 pyEntityId;
+    int32 pyAmount;
     pkpy_to_int(vm, 0, &pyEntityId);
     pkpy_to_int(vm, 1, &pyAmount);
 
@@ -1104,82 +1104,82 @@ int cre_pkpy_api_particles2d_set_amount(pkpy_vm* vm) {
     return 0;
 }
 
-int cre_pkpy_api_particles2d_get_life_time(pkpy_vm* vm) {
-    int pyEntityId;
+int32 cre_pkpy_api_particles2d_get_life_time(pkpy_vm* vm) {
+    int32 pyEntityId;
     pkpy_to_int(vm, 0, &pyEntityId);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
     const Particles2DComponent* particles2dComponent = (Particles2DComponent*)ska_ecs_component_manager_get_component(entity, PARTICLES2D_COMPONENT_INDEX);
-    pkpy_push_float(vm, (double)particles2dComponent->lifeTime);
+    pkpy_push_float(vm, (f64)particles2dComponent->lifeTime);
     return 1;
 }
 
-int cre_pkpy_api_particles2d_set_life_time(pkpy_vm* vm) {
-    int pyEntityId;
-    double pyLifeTime;
+int32 cre_pkpy_api_particles2d_set_life_time(pkpy_vm* vm) {
+    int32 pyEntityId;
+    f64 pyLifeTime;
     pkpy_to_int(vm, 0, &pyEntityId);
     pkpy_to_float(vm, 1, &pyLifeTime);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
     Particles2DComponent* particles2dComponent = (Particles2DComponent*)ska_ecs_component_manager_get_component(entity, PARTICLES2D_COMPONENT_INDEX);
-    particles2dComponent->lifeTime = (float)pyLifeTime;
+    particles2dComponent->lifeTime = (f32)pyLifeTime;
     return 0;
 }
 
-int cre_pkpy_api_particles2d_get_damping(pkpy_vm* vm) {
-    int pyEntityId;
+int32 cre_pkpy_api_particles2d_get_damping(pkpy_vm* vm) {
+    int32 pyEntityId;
     pkpy_to_int(vm, 0, &pyEntityId);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
     const Particles2DComponent* particles2dComponent = (Particles2DComponent*)ska_ecs_component_manager_get_component(entity, PARTICLES2D_COMPONENT_INDEX);
-    pkpy_push_float(vm, (double)particles2dComponent->damping);
+    pkpy_push_float(vm, (f64)particles2dComponent->damping);
     return 1;
 }
 
-int cre_pkpy_api_particles2d_set_damping(pkpy_vm* vm) {
-    int pyEntityId;
-    double pyDamping;
+int32 cre_pkpy_api_particles2d_set_damping(pkpy_vm* vm) {
+    int32 pyEntityId;
+    f64 pyDamping;
     pkpy_to_int(vm, 0, &pyEntityId);
     pkpy_to_float(vm, 1, &pyDamping);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
     Particles2DComponent* particles2dComponent = (Particles2DComponent*)ska_ecs_component_manager_get_component(entity, PARTICLES2D_COMPONENT_INDEX);
-    particles2dComponent->damping = (float)pyDamping;
+    particles2dComponent->damping = (f32)pyDamping;
     return 0;
 }
 
-int cre_pkpy_api_particles2d_get_explosiveness(pkpy_vm* vm) {
-    int pyEntityId;
+int32 cre_pkpy_api_particles2d_get_explosiveness(pkpy_vm* vm) {
+    int32 pyEntityId;
     pkpy_to_int(vm, 0, &pyEntityId);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
     const Particles2DComponent* particles2dComponent = (Particles2DComponent*)ska_ecs_component_manager_get_component(entity, PARTICLES2D_COMPONENT_INDEX);
-    pkpy_push_float(vm, (double)particles2dComponent->explosiveness);
+    pkpy_push_float(vm, (f64)particles2dComponent->explosiveness);
     return 1;
 }
 
-int cre_pkpy_api_particles2d_set_explosiveness(pkpy_vm* vm) {
-    int pyEntityId;
-    double pyExplosiveness;
+int32 cre_pkpy_api_particles2d_set_explosiveness(pkpy_vm* vm) {
+    int32 pyEntityId;
+    f64 pyExplosiveness;
     pkpy_to_int(vm, 0, &pyEntityId);
     pkpy_to_float(vm, 1, &pyExplosiveness);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
     Particles2DComponent* particles2dComponent = (Particles2DComponent*)ska_ecs_component_manager_get_component(entity, PARTICLES2D_COMPONENT_INDEX);
-    particles2dComponent->explosiveness = ska_math_clamp_float((float)pyExplosiveness, 0.0f, 1.0f);
+    particles2dComponent->explosiveness = ska_math_clamp_float((f32)pyExplosiveness, 0.0f, 1.0f);
     return 0;
 }
 
-int cre_pkpy_api_particles2d_get_color(pkpy_vm* vm) {
-    int pyEntityId;
+int32 cre_pkpy_api_particles2d_get_color(pkpy_vm* vm) {
+    int32 pyEntityId;
     pkpy_to_int(vm, 0, &pyEntityId);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
     const Particles2DComponent* particles2dComponent = (Particles2DComponent*)ska_ecs_component_manager_get_component(entity, PARTICLES2D_COMPONENT_INDEX);
-    const int red = (int) (particles2dComponent->color.r * 255.0f);
-    const int green = (int) (particles2dComponent->color.g * 255.0f);
-    const int blue = (int) (particles2dComponent->color.b * 255.0f);
-    const int alpha = (int) (particles2dComponent->color.a * 255.0f);
+    const int32 red = (int32) (particles2dComponent->color.r * 255.0f);
+    const int32 green = (int32) (particles2dComponent->color.g * 255.0f);
+    const int32 blue = (int32) (particles2dComponent->color.b * 255.0f);
+    const int32 alpha = (int32) (particles2dComponent->color.a * 255.0f);
     pkpy_push_int(vm, red);
     pkpy_push_int(vm, green);
     pkpy_push_int(vm, blue);
@@ -1187,9 +1187,9 @@ int cre_pkpy_api_particles2d_get_color(pkpy_vm* vm) {
     return 4;
 }
 
-int cre_pkpy_api_particles2d_set_color(pkpy_vm* vm) {
-    int pyEntityId;
-    int pyRed, pyGreen, pyBlue, pyAlpha;
+int32 cre_pkpy_api_particles2d_set_color(pkpy_vm* vm) {
+    int32 pyEntityId;
+    int32 pyRed, pyGreen, pyBlue, pyAlpha;
     pkpy_to_int(vm, 0, &pyEntityId);
     pkpy_to_int(vm, 1, &pyRed);
     pkpy_to_int(vm, 2, &pyGreen);
@@ -1202,23 +1202,23 @@ int cre_pkpy_api_particles2d_set_color(pkpy_vm* vm) {
     return 0;
 }
 
-int cre_pkpy_api_particles2d_get_initial_velocity(pkpy_vm* vm) {
-    int pyEntityId;
+int32 cre_pkpy_api_particles2d_get_initial_velocity(pkpy_vm* vm) {
+    int32 pyEntityId;
     pkpy_to_int(vm, 0, &pyEntityId);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
     const Particles2DComponent* particles2dComponent = (Particles2DComponent*)ska_ecs_component_manager_get_component(entity, PARTICLES2D_COMPONENT_INDEX);
-    pkpy_push_float(vm, (double)particles2dComponent->initialVelocity.min.x);
-    pkpy_push_float(vm, (double)particles2dComponent->initialVelocity.min.y);
-    pkpy_push_float(vm, (double)particles2dComponent->initialVelocity.max.x);
-    pkpy_push_float(vm, (double)particles2dComponent->initialVelocity.max.y);
+    pkpy_push_float(vm, (f64)particles2dComponent->initialVelocity.min.x);
+    pkpy_push_float(vm, (f64)particles2dComponent->initialVelocity.min.y);
+    pkpy_push_float(vm, (f64)particles2dComponent->initialVelocity.max.x);
+    pkpy_push_float(vm, (f64)particles2dComponent->initialVelocity.max.y);
     return 4;
 }
 
-int cre_pkpy_api_particles2d_set_initial_velocity(pkpy_vm* vm) {
-    int pyEntityId;
-    double pyMinX, pyMinY;
-    double pyMaxX, pyMaxY;
+int32 cre_pkpy_api_particles2d_set_initial_velocity(pkpy_vm* vm) {
+    int32 pyEntityId;
+    f64 pyMinX, pyMinY;
+    f64 pyMaxX, pyMaxY;
     pkpy_to_int(vm, 0, &pyEntityId);
     pkpy_to_float(vm, 1, &pyMinX);
     pkpy_to_float(vm, 2, &pyMinY);
@@ -1228,30 +1228,30 @@ int cre_pkpy_api_particles2d_set_initial_velocity(pkpy_vm* vm) {
     const SkaEntity entity = (SkaEntity)pyEntityId;
     Particles2DComponent* particles2dComponent = (Particles2DComponent*)ska_ecs_component_manager_get_component(entity, PARTICLES2D_COMPONENT_INDEX);
     particles2dComponent->initialVelocity = (SkaMinMaxVec2){
-        .min = { .x = (float)pyMinX, .y = (float)pyMinY },
-        .max = { .x = (float)pyMaxX, .y = (float)pyMaxY }
+        .min = { .x = (f32)pyMinX, .y = (f32)pyMinY },
+        .max = { .x = (f32)pyMaxX, .y = (f32)pyMaxY }
     };
     return 0;
 }
 
-int cre_pkpy_api_particles2d_get_spread(pkpy_vm* vm) {
-    int pyEntityId;
+int32 cre_pkpy_api_particles2d_get_spread(pkpy_vm* vm) {
+    int32 pyEntityId;
     pkpy_to_int(vm, 0, &pyEntityId);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
     const Particles2DComponent* particles2dComponent = (Particles2DComponent*)ska_ecs_component_manager_get_component(entity, PARTICLES2D_COMPONENT_INDEX);
-    pkpy_push_float(vm, (double)particles2dComponent->spread);
+    pkpy_push_float(vm, (f64)particles2dComponent->spread);
     return 1;
 }
 
-int cre_pkpy_api_particles2d_set_spread(pkpy_vm* vm) {
-    int pyEntityId;
-    double pySpread;
+int32 cre_pkpy_api_particles2d_set_spread(pkpy_vm* vm) {
+    int32 pyEntityId;
+    f64 pySpread;
     pkpy_to_int(vm, 0, &pyEntityId);
     pkpy_to_float(vm, 1, &pySpread);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
     Particles2DComponent* particles2dComponent = (Particles2DComponent*)ska_ecs_component_manager_get_component(entity, PARTICLES2D_COMPONENT_INDEX);
-    particles2dComponent->spread = (float)pySpread;
+    particles2dComponent->spread = (f32)pySpread;
     return 0;
 }

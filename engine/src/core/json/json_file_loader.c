@@ -169,10 +169,10 @@ SkaCurveFloat cre_json_load_curve_float_file(const char* filePath, bool *isSucce
     SKA_ASSERT_FMT(controlPointsJsonArray != NULL, "Failed to read in control points json!");
     cJSON* pointJson = NULL;
     cJSON_ArrayForEach(pointJson, controlPointsJsonArray) {
-        const double x = json_get_double(pointJson, "x");
-        const double y = json_get_double(pointJson, "y");
-        const double tangentIn = json_get_double(pointJson, "tangent_in");
-        const double tangentOut = json_get_double(pointJson, "tangent_out");
+        const f64 x = json_get_double(pointJson, "x");
+        const f64 y = json_get_double(pointJson, "y");
+        const f64 tangentIn = json_get_double(pointJson, "tangent_in");
+        const f64 tangentOut = json_get_double(pointJson, "tangent_out");
         controlPoints[controlPointCount++] = (SkaCurveControlPoint) {
             .x = x, .y = y, .tangentIn = tangentIn, .tangentOut = tangentOut
         };

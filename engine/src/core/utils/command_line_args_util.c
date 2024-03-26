@@ -9,7 +9,7 @@
 #define CRE_DIR_OVERRIDE_CAPACITY  128
 #define CRE_LOG_LEVEL_CAPACITY  8
 
-CommandLineFlagResult cre_command_line_args_parse(int argv, char** args) {
+CommandLineFlagResult cre_command_line_args_parse(int32 argv, char** args) {
     SKA_ASSERT_FMT(argv > 0, "Starting arguments are 0 or less!?");
     CommandLineFlagResult flagResult;
     memset(flagResult.workingDirOverride, 0, CRE_DIR_OVERRIDE_CAPACITY);
@@ -20,11 +20,11 @@ CommandLineFlagResult cre_command_line_args_parse(int argv, char** args) {
         ska_logger_debug("No command line arguments passed!  single arg = '%s'", args[0]);
         return flagResult;
     }
-    for (int argumentIndex = 1; argumentIndex < argv; argumentIndex++) {
+    for (int32 argumentIndex = 1; argumentIndex < argv; argumentIndex++) {
         // Can process single argument if needed
         const char* argument = args[argumentIndex];
         // Process arg value
-        const int nextArgumentIndex = argumentIndex + 1;
+        const int32 nextArgumentIndex = argumentIndex + 1;
         if (nextArgumentIndex >= argv) {
             break;
         }

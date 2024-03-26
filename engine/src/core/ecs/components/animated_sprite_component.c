@@ -125,7 +125,7 @@ AnimatedSpriteComponent* animated_sprite_component_data_copy_to_animated_sprite(
         animation.isValid = true;
         animation.currentFrame = 0;
         animation.frameCount = animationData->frameCount;
-        for (size_t frameIndex = 0; (int) frameIndex < animationData->frameCount; frameIndex++) {
+        for (size_t frameIndex = 0; (int32) frameIndex < animationData->frameCount; frameIndex++) {
             const AnimationFrameData* animationFrameData = &animationData->animationFrames[frameIndex];
             CreAnimationFrame animationFrame;
             animationFrame.texture = ska_asset_manager_get_texture(animationFrameData->texturePath);

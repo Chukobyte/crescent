@@ -27,12 +27,12 @@ typedef struct SceneNodeCallbackSubscriber {
 
 typedef struct SceneNodeRenderResource {
     SkaTransform2D transform2D;
-    int globalZIndex;
+    int32 globalZIndex;
 } SceneNodeRenderResource;
 
 // First index is the child
 typedef struct EntityArray {
-    int entityCount;
+    int32 entityCount;
     SkaEntity entities[10];
 } EntityArray;
 
@@ -55,7 +55,7 @@ void cre_scene_manager_set_active_scene_root(SceneTreeNode* root);
 SceneTreeNode* cre_scene_manager_get_active_scene_root();
 SkaTransformModel2D* cre_scene_manager_get_scene_node_global_transform(SkaEntity entity, Transform2DComponent* transform2DComponent);
 SceneNodeRenderResource cre_scene_manager_get_scene_node_global_render_resource(SkaEntity entity, Transform2DComponent* transform2DComponent, const SkaVector2* origin);
-float cre_scene_manager_get_node_full_time_dilation(SkaEntity entity);
+f32 cre_scene_manager_get_node_full_time_dilation(SkaEntity entity);
 SkaEntity cre_scene_manager_get_entity_child_by_name(SkaEntity parent, const char* childName);
 SceneTreeNode* cre_scene_manager_get_entity_tree_node(SkaEntity entity);
 bool cre_scene_manager_has_entity_tree_node(SkaEntity entity);

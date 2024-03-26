@@ -14,11 +14,11 @@ char* json_get_string_new(cJSON* json, const char* key);
 char* json_get_string_new_unchecked(cJSON* json, const char* key);
 char* json_get_string_default_new(cJSON* json, const char* key, const char* defaultValue);
 
-int json_get_int(cJSON* json, const char* key);
-int json_get_int_default(cJSON* json, const char* key, int defaultValue);
+int32 json_get_int(cJSON* json, const char* key);
+int32 json_get_int_default(cJSON* json, const char* key, int32 defaultValue);
 
-double json_get_double(cJSON* json, const char* key);
-double json_get_double_default(cJSON* json, const char* key, double defaultValue);
+f64 json_get_double(cJSON* json, const char* key);
+f64 json_get_double_default(cJSON* json, const char* key, f64 defaultValue);
 
 bool json_get_bool(cJSON* json, const char* key);
 bool json_get_bool_default(cJSON* json, const char* key, bool defaultValue);

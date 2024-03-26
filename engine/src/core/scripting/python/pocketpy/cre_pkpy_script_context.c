@@ -28,14 +28,14 @@
 //--- Script Context Interface ---//
 void pkpy_sc_on_delete_instance(SkaEntity entity);
 void pkpy_sc_on_start(SkaEntity entity);
-void pkpy_sc_on_update_instance(SkaEntity entity, float deltaTime);
-void pkpy_sc_on_fixed_update_instance(SkaEntity entity, float deltaTime);
+void pkpy_sc_on_update_instance(SkaEntity entity, f32 deltaTime);
+void pkpy_sc_on_fixed_update_instance(SkaEntity entity, f32 deltaTime);
 void pkpy_sc_on_end(SkaEntity entity);
 void pkpy_sc_on_network_callback(const char* message);
 void pkpy_sc_on_script_context_destroy();
 
 // Custom Import Handler
-unsigned char*  cre_pkpy_import_handler(const char* path, int pathSize, int* outSize);
+unsigned char*  cre_pkpy_import_handler(const char* path, int32 pathSize, int32* outSize);
 
 //--- Node Event Callbacks ---//
 void pkpy_node_event_node_scene_entered(SkaSubjectNotifyPayload* payload);
@@ -194,7 +194,7 @@ void pkpy_sc_on_update_instance(SkaEntity entity, float deltaTime) {
     const bool hasFunc = pkpy_getattr(cre_pkpy_vm, pyProcessFunctionName);
     SKA_ASSERT(hasFunc);
     pkpy_push_null(cre_pkpy_vm);
-    pkpy_push_float(cre_pkpy_vm, (double)deltaTime);
+    pkpy_push_float(cre_pkpy_vm, (f64)deltaTime);
     pkpy_vectorcall(cre_pkpy_vm, 1);
     pkpy_pop_top(cre_pkpy_vm);
 }
@@ -205,7 +205,7 @@ void pkpy_sc_on_fixed_update_instance(SkaEntity entity, float deltaTime) {
     const bool hasFunc = pkpy_getattr(cre_pkpy_vm, pyFixedProcessFunctionName);
     SKA_ASSERT(hasFunc);
     pkpy_push_null(cre_pkpy_vm);
-    pkpy_push_float(cre_pkpy_vm, (double)deltaTime);
+    pkpy_push_float(cre_pkpy_vm, (f64)deltaTime);
     pkpy_vectorcall(cre_pkpy_vm, 1);
     pkpy_pop_top(cre_pkpy_vm);
 }

@@ -37,15 +37,15 @@
 #include "../../../../ecs/ecs_globals.h"
 
 // Shader Instance
-int cre_pkpy_api_shader_instance_delete(pkpy_vm* vm);
-int cre_pkpy_api_shader_instance_create_bool_param(pkpy_vm* vm);
-int cre_pkpy_api_shader_instance_set_bool_param(pkpy_vm* vm);
-int cre_pkpy_api_shader_instance_get_bool_param(pkpy_vm* vm);
-int cre_pkpy_api_shader_instance_create_int_param(pkpy_vm* vm);
-int cre_pkpy_api_shader_instance_set_int_param(pkpy_vm* vm);
-int cre_pkpy_api_shader_instance_get_int_param(pkpy_vm* vm);
-int cre_pkpy_api_shader_instance_create_float_param(pkpy_vm* vm);
-int cre_pkpy_api_shader_instance_set_float_param(pkpy_vm* vm);
+int32 cre_pkpy_api_shader_instance_delete(pkpy_vm* vm);
+int32 cre_pkpy_api_shader_instance_create_bool_param(pkpy_vm* vm);
+int32 cre_pkpy_api_shader_instance_set_bool_param(pkpy_vm* vm);
+int32 cre_pkpy_api_shader_instance_get_bool_param(pkpy_vm* vm);
+int32 cre_pkpy_api_shader_instance_create_int_param(pkpy_vm* vm);
+int32 cre_pkpy_api_shader_instance_set_int_param(pkpy_vm* vm);
+int32 cre_pkpy_api_shader_instance_get_int_param(pkpy_vm* vm);
+int32 cre_pkpy_api_shader_instance_create_float_param(pkpy_vm* vm);
+int32 cre_pkpy_api_shader_instance_set_float_param(pkpy_vm* vm);
 int cre_pkpy_api_shader_instance_get_float_param(pkpy_vm* vm);
 int cre_pkpy_api_shader_instance_create_float2_param(pkpy_vm* vm);
 int cre_pkpy_api_shader_instance_set_float2_param(pkpy_vm* vm);
@@ -472,7 +472,7 @@ int cre_pkpy_api_shader_instance_get_int_param(pkpy_vm* vm) {
 int cre_pkpy_api_shader_instance_create_float_param(pkpy_vm* vm) {
     int pyShaderId;
     pkpy_CString pyParamName;
-    double value;
+    f64 value;
     pkpy_to_int(vm, 0, &pyShaderId);
     pkpy_to_string(vm, 1, &pyParamName);
     pkpy_to_float(vm, 2, &value);
@@ -487,7 +487,7 @@ int cre_pkpy_api_shader_instance_create_float_param(pkpy_vm* vm) {
 int cre_pkpy_api_shader_instance_set_float_param(pkpy_vm* vm) {
     int pyShaderId;
     pkpy_CString pyParamName;
-    double value;
+    f64 value;
     pkpy_to_int(vm, 0, &pyShaderId);
     pkpy_to_string(vm, 1, &pyParamName);
     pkpy_to_float(vm, 2, &value);
@@ -516,8 +516,8 @@ int cre_pkpy_api_shader_instance_get_float_param(pkpy_vm* vm) {
 int cre_pkpy_api_shader_instance_create_float2_param(pkpy_vm* vm) {
     int pyShaderId;
     pkpy_CString pyParamName;
-    double valueX;
-    double valueY;
+    f64 valueX;
+    f64 valueY;
     pkpy_to_int(vm, 0, &pyShaderId);
     pkpy_to_string(vm, 1, &pyParamName);
     pkpy_to_float(vm, 2, &valueX);
@@ -533,8 +533,8 @@ int cre_pkpy_api_shader_instance_create_float2_param(pkpy_vm* vm) {
 int cre_pkpy_api_shader_instance_set_float2_param(pkpy_vm* vm) {
     int pyShaderId;
     pkpy_CString pyParamName;
-    double valueX;
-    double valueY;
+    f64 valueX;
+    f64 valueY;
     pkpy_to_int(vm, 0, &pyShaderId);
     pkpy_to_string(vm, 1, &pyParamName);
     pkpy_to_float(vm, 2, &valueX);
@@ -565,9 +565,9 @@ int cre_pkpy_api_shader_instance_get_float2_param(pkpy_vm* vm) {
 int cre_pkpy_api_shader_instance_create_float3_param(pkpy_vm* vm) {
     int pyShaderId;
     pkpy_CString pyParamName;
-    double valueX;
-    double valueY;
-    double valueZ;
+    f64 valueX;
+    f64 valueY;
+    f64 valueZ;
     pkpy_to_int(vm, 0, &pyShaderId);
     pkpy_to_string(vm, 1, &pyParamName);
     pkpy_to_float(vm, 2, &valueX);
@@ -584,9 +584,9 @@ int cre_pkpy_api_shader_instance_create_float3_param(pkpy_vm* vm) {
 int cre_pkpy_api_shader_instance_set_float3_param(pkpy_vm* vm) {
     int pyShaderId;
     pkpy_CString pyParamName;
-    double valueX;
-    double valueY;
-    double valueZ;
+    f64 valueX;
+    f64 valueY;
+    f64 valueZ;
     pkpy_to_int(vm, 0, &pyShaderId);
     pkpy_to_string(vm, 1, &pyParamName);
     pkpy_to_float(vm, 2, &valueX);
@@ -619,10 +619,10 @@ int cre_pkpy_api_shader_instance_get_float3_param(pkpy_vm* vm) {
 int cre_pkpy_api_shader_instance_create_float4_param(pkpy_vm* vm) {
     int pyShaderId;
     pkpy_CString pyParamName;
-    double valueX;
-    double valueY;
-    double valueZ;
-    double valueW;
+    f64 valueX;
+    f64 valueY;
+    f64 valueZ;
+    f64 valueW;
     pkpy_to_int(vm, 0, &pyShaderId);
     pkpy_to_string(vm, 1, &pyParamName);
     pkpy_to_float(vm, 2, &valueX);
@@ -640,10 +640,10 @@ int cre_pkpy_api_shader_instance_create_float4_param(pkpy_vm* vm) {
 int cre_pkpy_api_shader_instance_set_float4_param(pkpy_vm* vm) {
     int pyShaderId;
     pkpy_CString pyParamName;
-    double valueX;
-    double valueY;
-    double valueZ;
-    double valueW;
+    f64 valueX;
+    f64 valueY;
+    f64 valueZ;
+    f64 valueW;
     pkpy_to_int(vm, 0, &pyShaderId);
     pkpy_to_string(vm, 1, &pyParamName);
     pkpy_to_float(vm, 2, &valueX);
@@ -764,7 +764,7 @@ int cre_pkpy_api_engine_get_average_fps(pkpy_vm* vm) {
 int cre_pkpy_api_engine_set_fps_display_enabled(pkpy_vm* vm) {
     bool pyIsEnabled;
     pkpy_CString pyFontUID;
-    double pyPositionX, pyPositionY;
+    f64 pyPositionX, pyPositionY;
     pkpy_to_bool(vm, 0, &pyIsEnabled);
     pkpy_to_string(vm, 1, &pyFontUID);
     pkpy_to_float(vm, 2, &pyPositionX);
@@ -781,7 +781,7 @@ int cre_pkpy_api_engine_set_fps_display_enabled(pkpy_vm* vm) {
 }
 
 int cre_pkpy_api_engine_get_global_physics_delta_time(pkpy_vm* vm) {
-    pkpy_push_float(vm, (double)CRE_GLOBAL_PHYSICS_DELTA_TIME);
+    pkpy_push_float(vm, (f64)CRE_GLOBAL_PHYSICS_DELTA_TIME);
     return 1;
 }
 
@@ -797,8 +797,13 @@ int cre_pkpy_api_input_add_action(pkpy_vm* vm) {
 
     const char* actionName = pyActionName;
     const char* actionValue = pyActionValue;
-    // TODO: Input - fix up
-//    se_input_add_action_value(actionName, actionValue, pyDeviceId);
+    const SkaInputKey actionValueKey = ska_input_string_to_key(actionValue);
+    SKA_ASSERT(actionValueKey != SkaInputKey_INVALID);
+    ska_input_add_input_action(
+        actionName,
+        (SkaInputActionValue[]){ { .key = actionValueKey, .strengthThreshold = 0.5f }, { SkaInputKey_INVALID } },
+        (SkaInputDeviceIndex)pyDeviceId
+    );
     return 0;
 }
 
@@ -808,7 +813,8 @@ int cre_pkpy_api_input_is_action_pressed(pkpy_vm* vm) {
 
     const char* actionName = pyActionName;
     const SkaInputActionHandle handle = ska_input_find_input_action_handle(actionName, 0);
-    pkpy_push_bool(vm, ska_input_is_input_action_pressed(handle, 0));
+    const bool isPressed = handle != SKA_INPUT_INVALID_INPUT_ACTION_HANDLE ? ska_input_is_input_action_pressed(handle, 0) : false;
+    pkpy_push_bool(vm, isPressed);
     return 1;
 }
 
@@ -818,7 +824,8 @@ int cre_pkpy_api_input_is_action_just_pressed(pkpy_vm* vm) {
 
     const char* actionName = pyActionName;
     const SkaInputActionHandle handle = ska_input_find_input_action_handle(actionName, 0);
-    pkpy_push_bool(vm, ska_input_is_input_action_just_pressed(handle, 0));
+    const bool isJustPressed = handle != SKA_INPUT_INVALID_INPUT_ACTION_HANDLE ? ska_input_is_input_action_just_pressed(handle, 0) : false;
+    pkpy_push_bool(vm, isJustPressed);
     return 1;
 }
 
@@ -828,15 +835,16 @@ int cre_pkpy_api_input_is_action_just_released(pkpy_vm* vm) {
 
     const char* actionName = pyActionName;
     const SkaInputActionHandle handle = ska_input_find_input_action_handle(actionName, 0);
-    pkpy_push_bool(vm, ska_input_is_input_action_just_released(handle, 0));
+    const bool isJustReleased = handle != SKA_INPUT_INVALID_INPUT_ACTION_HANDLE ? ska_input_is_input_action_just_released(handle, 0) : false;
+    pkpy_push_bool(vm, isJustReleased);
     return 1;
 }
 
 int cre_pkpy_api_input_start_gamepad_vibration(pkpy_vm* vm) {
     int pyDeviceId;
-    double pyWeakMagnitude;
-    double pyStrongMagnitude;
-    double pyDurationSeconds;
+    f64 pyWeakMagnitude;
+    f64 pyStrongMagnitude;
+    f64 pyDurationSeconds;
     pkpy_to_int(vm, 0, &pyDeviceId);
     pkpy_to_float(vm, 1, &pyWeakMagnitude);
     pkpy_to_float(vm, 2, &pyStrongMagnitude);
@@ -858,15 +866,15 @@ int cre_pkpy_api_input_stop_gamepad_vibration(pkpy_vm* vm) {
 
 int cre_pkpy_api_input_mouse_get_position(pkpy_vm* vm) {
     const SkaMouse* globalMouse = ska_input_get_mouse();
-    pkpy_push_float(vm, (double)globalMouse->position.x);
-    pkpy_push_float(vm, (double)globalMouse->position.y);
+    pkpy_push_float(vm, (f64)globalMouse->position.x);
+    pkpy_push_float(vm, (f64)globalMouse->position.y);
     return 2;
 }
 
 int cre_pkpy_api_input_mouse_get_world_position(pkpy_vm* vm) {
     const SkaVector2 mouseWorldPosition = cre_pkpy_api_helper_mouse_get_global_position(&SKA_VECTOR2_ZERO);
-    pkpy_push_float(vm, (double)mouseWorldPosition.x);
-    pkpy_push_float(vm, (double)mouseWorldPosition.y);
+    pkpy_push_float(vm, (f64)mouseWorldPosition.x);
+    pkpy_push_float(vm, (f64)mouseWorldPosition.y);
     return 2;
 }
 
@@ -920,7 +928,7 @@ int cre_pkpy_api_game_properties_get(pkpy_vm* vm) {
 //--- CAMERA2D ---//
 
 int cre_pkpy_api_camera2d_set_position(pkpy_vm* vm) {
-    double pyPositionX, pyPositionY;
+    f64 pyPositionX, pyPositionY;
     pkpy_to_float(vm, 0, &pyPositionX);
     pkpy_to_float(vm, 1, &pyPositionY);
 
@@ -931,7 +939,7 @@ int cre_pkpy_api_camera2d_set_position(pkpy_vm* vm) {
 }
 
 int cre_pkpy_api_camera2d_add_to_position(pkpy_vm* vm) {
-    double pyPositionX, pyPositionY;
+    f64 pyPositionX, pyPositionY;
     pkpy_to_float(vm, 0, &pyPositionX);
     pkpy_to_float(vm, 1, &pyPositionY);
 
@@ -943,13 +951,13 @@ int cre_pkpy_api_camera2d_add_to_position(pkpy_vm* vm) {
 
 int cre_pkpy_api_camera2d_get_position(pkpy_vm* vm) {
     const CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
-    pkpy_push_float(vm, (double)camera2D->viewport.x);
-    pkpy_push_float(vm, (double)camera2D->viewport.y);
+    pkpy_push_float(vm, (f64)camera2D->viewport.x);
+    pkpy_push_float(vm, (f64)camera2D->viewport.y);
     return 2;
 }
 
 int cre_pkpy_api_camera2d_set_offset(pkpy_vm* vm) {
-    double pyOffsetX, pyOffsetY;
+    f64 pyOffsetX, pyOffsetY;
     pkpy_to_float(vm, 0, &pyOffsetX);
     pkpy_to_float(vm, 1, &pyOffsetY);
 
@@ -959,7 +967,7 @@ int cre_pkpy_api_camera2d_set_offset(pkpy_vm* vm) {
 }
 
 int cre_pkpy_api_camera2d_add_to_offset(pkpy_vm* vm) {
-    double pyOffsetX, pyOffsetY;
+    f64 pyOffsetX, pyOffsetY;
     pkpy_to_float(vm, 0, &pyOffsetX);
     pkpy_to_float(vm, 1, &pyOffsetY);
 
@@ -970,13 +978,13 @@ int cre_pkpy_api_camera2d_add_to_offset(pkpy_vm* vm) {
 
 int cre_pkpy_api_camera2d_get_offset(pkpy_vm* vm) {
     const CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
-    pkpy_push_float(vm, (double)camera2D->offset.x);
-    pkpy_push_float(vm, (double)camera2D->offset.y);
+    pkpy_push_float(vm, (f64)camera2D->offset.x);
+    pkpy_push_float(vm, (f64)camera2D->offset.y);
     return 2;
 }
 
 int cre_pkpy_api_camera2d_set_zoom(pkpy_vm* vm) {
-    double pyZoomX, pyZoomY;
+    f64 pyZoomX, pyZoomY;
     pkpy_to_float(vm, 0, &pyZoomX);
     pkpy_to_float(vm, 1, &pyZoomY);
 
@@ -986,7 +994,7 @@ int cre_pkpy_api_camera2d_set_zoom(pkpy_vm* vm) {
 }
 
 int cre_pkpy_api_camera2d_add_to_zoom(pkpy_vm* vm) {
-    double pyZoomX, pyZoomY;
+    f64 pyZoomX, pyZoomY;
     pkpy_to_float(vm, 0, &pyZoomX);
     pkpy_to_float(vm, 1, &pyZoomY);
 
@@ -997,13 +1005,13 @@ int cre_pkpy_api_camera2d_add_to_zoom(pkpy_vm* vm) {
 
 int cre_pkpy_api_camera2d_get_zoom(pkpy_vm* vm) {
     const CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
-    pkpy_push_float(vm, (double)camera2D->zoom.x);
-    pkpy_push_float(vm, (double)camera2D->zoom.y);
+    pkpy_push_float(vm, (f64)camera2D->zoom.x);
+    pkpy_push_float(vm, (f64)camera2D->zoom.y);
     return 2;
 }
 
 int cre_pkpy_api_camera2d_set_boundary(pkpy_vm* vm) {
-    double pyBoundaryX, pyBoundaryY, pyBoundaryW, pyBoundaryH;
+    f64 pyBoundaryX, pyBoundaryY, pyBoundaryW, pyBoundaryH;
     pkpy_to_float(vm, 0, &pyBoundaryX);
     pkpy_to_float(vm, 1, &pyBoundaryY);
     pkpy_to_float(vm, 2, &pyBoundaryW);
@@ -1017,10 +1025,10 @@ int cre_pkpy_api_camera2d_set_boundary(pkpy_vm* vm) {
 
 int cre_pkpy_api_camera2d_get_boundary(pkpy_vm* vm) {
     const CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
-    pkpy_push_float(vm, (double)camera2D->boundary.x);
-    pkpy_push_float(vm, (double)camera2D->boundary.y);
-    pkpy_push_float(vm, (double)camera2D->boundary.w);
-    pkpy_push_float(vm, (double)camera2D->boundary.h);
+    pkpy_push_float(vm, (f64)camera2D->boundary.x);
+    pkpy_push_float(vm, (f64)camera2D->boundary.y);
+    pkpy_push_float(vm, (f64)camera2D->boundary.w);
+    pkpy_push_float(vm, (f64)camera2D->boundary.h);
     return 4;
 }
 
@@ -1051,7 +1059,7 @@ void cre_pkpy_mark_scene_nodes_time_dilation_flag_dirty(SceneTreeNode* node) {
 }
 
 int cre_pkpy_api_world_set_time_dilation(pkpy_vm* vm) {
-    double pyTimeDilation;
+    f64 pyTimeDilation;
     pkpy_to_float(vm, 0, &pyTimeDilation);
 
     cre_world_set_time_dilation((float)pyTimeDilation);
@@ -1060,12 +1068,12 @@ int cre_pkpy_api_world_set_time_dilation(pkpy_vm* vm) {
 }
 
 int cre_pkpy_api_world_get_time_dilation(pkpy_vm* vm) {
-    pkpy_push_float(vm, (double)cre_world_get_time_dilation());
+    pkpy_push_float(vm, (f64)cre_world_get_time_dilation());
     return 1;
 }
 
 int cre_pkpy_api_world_get_delta_time(pkpy_vm* vm) {
-    pkpy_push_float(vm, (double)(cre_world_get_time_dilation() * CRE_GLOBAL_PHYSICS_DELTA_TIME));
+    pkpy_push_float(vm, (f64)(cre_world_get_time_dilation() * CRE_GLOBAL_PHYSICS_DELTA_TIME));
     return 1;
 }
 
@@ -1073,7 +1081,7 @@ int cre_pkpy_api_world_get_delta_time(pkpy_vm* vm) {
 
 int cre_pkpy_api_audio_source_set_pitch(pkpy_vm* vm) {
     pkpy_CString pyPath;
-    double pyPitch;
+    f64 pyPitch;
     pkpy_to_string(vm, 0, &pyPath);
     pkpy_to_float(vm, 1, &pyPitch);
 
@@ -1208,8 +1216,8 @@ int cre_pkpy_api_collision_handler_process_collisions(pkpy_vm* vm) {
 }
 
 int cre_pkpy_api_collision_handler_process_mouse_collisions(pkpy_vm* vm) {
-    double pyPosOffsetX, pyPosOffsetY;
-    double pyCollisionSizeW, pyCollisionSizeH;
+    f64 pyPosOffsetX, pyPosOffsetY;
+    f64 pyCollisionSizeW, pyCollisionSizeH;
     pkpy_to_float(vm, 0, &pyPosOffsetX);
     pkpy_to_float(vm, 1, &pyPosOffsetY);
     pkpy_to_float(vm, 2, &pyCollisionSizeW);

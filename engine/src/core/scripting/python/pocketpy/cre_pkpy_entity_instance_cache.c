@@ -42,7 +42,7 @@ SkaEntity cre_pkpy_entity_instance_cache_create_new_entity(pkpy_vm* vm, const ch
 
     pkpy_getglobal(vm, pkpy_name(className));
     pkpy_push_null(vm);
-    pkpy_push_int(vm, (int)entity);
+    pkpy_push_int(vm, (int32)entity);
     pkpy_vectorcall(vm, 1);
     SKA_ASSERT(!cre_pkpy_util_print_error_message(vm));
 

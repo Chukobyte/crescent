@@ -28,24 +28,24 @@ void on_entity_registered(SkaECSSystem* system, SkaEntity entity) {
     SKA_ASSERT(animatedSpriteComponent != NULL);
     animated_sprite_component_refresh_random_stagger_animation_time(animatedSpriteComponent);
     if (animatedSpriteComponent->isPlaying) {
-        animatedSpriteComponent->startAnimationTickTime = ska_get_ticks() + animatedSpriteComponent->randomStaggerTime;
+        animatedSpriteComponent->startAnimationTickTime = (int32)ska_get_ticks() + animatedSpriteComponent->randomStaggerTime;
     }
 }
 
 void animated_sprite_render(SkaECSSystem* system) {
     const CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
     const CRECamera2D* defaultCamera = cre_camera_manager_get_default_camera();
-    const int currentTickTime = (int) ska_get_ticks();
+    const int32 currentTickTime = (int32)ska_get_ticks();
     for (size_t i = 0; i < system->entity_count; i++) {
         const SkaEntity entity = system->entities[i];
         Transform2DComponent* spriteTransformComp = (Transform2DComponent*)ska_ecs_component_manager_get_component(entity, TRANSFORM2D_COMPONENT_INDEX);
         AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*)ska_ecs_component_manager_get_component(entity, ANIMATED_SPRITE_COMPONENT_INDEX);
         CreAnimationFrame currentFrame = animatedSpriteComponent->currentAnimation.animationFrames[animatedSpriteComponent->currentAnimation.currentFrame];
         if (animatedSpriteComponent->isPlaying) {
-            const float entityTimeDilation = cre_scene_manager_get_node_full_time_dilation(entity);
-            const float spriteCurrentTickTime = (float) currentTickTime + (float) animatedSpriteComponent->randomStaggerTime;
-            const int tickRate = (int) (((spriteCurrentTickTime - (float) animatedSpriteComponent->startAnimationTickTime) / (float) animatedSpriteComponent->currentAnimation.speed) * entityTimeDilation);
-            const int newIndex = tickRate % animatedSpriteComponent->currentAnimation.frameCount;
+            const f32 entityTimeDilation = cre_scene_manager_get_node_full_time_dilation(entity);
+            const f32 spriteCurrentTickTime = (f32) currentTickTime + (f32) animatedSpriteComponent->randomStaggerTime;
+            const int32 tickRate = (int32) (((spriteCurrentTickTime - (f32) animatedSpriteComponent->startAnimationTickTime) / (f32) animatedSpriteComponent->currentAnimation.speed) * entityTimeDilation);
+            const int32 newIndex = tickRate % animatedSpriteComponent->currentAnimation.frameCount;
             if (newIndex != animatedSpriteComponent->currentAnimation.currentFrame) {
                 // Notify observers that frame has changed
                 ska_event_notify_observers(&animatedSpriteComponent->onFrameChanged, &(SkaSubjectNotifyPayload){

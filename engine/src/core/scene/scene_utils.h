@@ -11,7 +11,7 @@ extern "C" {
 struct SkaTransformModel2D;
 
 typedef EntityArray (*on_get_self_and_parent_entities) (SkaEntity);
-typedef SkaTransform2D (*on_get_local_transform) (SkaEntity, int*, bool*);
+typedef SkaTransform2D (*on_get_local_transform) (SkaEntity, int32*, bool*);
 
 void cre_scene_utils_update_global_transform_model(SkaEntity entity, SkaTransformModel2D* globalTransform);
 void cre_scene_utils_apply_camera_and_origin_translation(SkaTransformModel2D* globalTransform, const SkaVector2* offset, bool ignoreCamera);

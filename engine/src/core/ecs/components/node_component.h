@@ -49,8 +49,8 @@ typedef enum NodeBaseInheritanceType {
 } NodeBaseInheritanceType;
 
 typedef struct NodeTimeDilation {
-    float value;
-    float cachedFullValue;
+    f32 value;
+    f32 cachedFullValue;
     bool cacheInvalid;
 } NodeTimeDilation;
 

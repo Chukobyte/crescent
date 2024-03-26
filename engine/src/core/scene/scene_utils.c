@@ -8,13 +8,13 @@
 #include "../camera/camera.h"
 #include "../camera/camera_manager.h"
 
-SkaTransform2D default_get_local_transform(SkaEntity entity, int* zIndex, bool* success);
+SkaTransform2D default_get_local_transform(SkaEntity entity, int32* zIndex, bool* success);
 
 on_get_self_and_parent_entities onGetSelfAndParentEntitiesFunc = &cre_scene_manager_get_self_and_parent_nodes;
 on_get_local_transform onGetLocalTransformFunc = &default_get_local_transform;
 
 // Default engine callbacks
-SkaTransform2D default_get_local_transform(SkaEntity entity, int* zIndex, bool* success) {
+SkaTransform2D default_get_local_transform(SkaEntity entity, int32* zIndex, bool* success) {
     Transform2DComponent* transform2DComponent = ska_ecs_component_manager_get_component_unchecked(entity, TRANSFORM2D_COMPONENT_INDEX);
     if (transform2DComponent == NULL) {
         *success = false;
@@ -30,7 +30,7 @@ void cre_scene_utils_update_global_transform_model(SkaEntity entity, SkaTransfor
     EntityArray combineModelResult = onGetSelfAndParentEntitiesFunc(entity);
     SkaVector2 scaleTotal = SKA_VECTOR2_ONE;
     globalTransform->zIndex = 0;
-    for (int i = combineModelResult.entityCount - 1; i >= 0; i--) {
+    for (int32 i = combineModelResult.entityCount - 1; i >= 0; i--) {
         SkaEntity currentEntity = combineModelResult.entities[i];
         bool hasLocalTransform = false;
         int localZIndex = 0;

@@ -312,7 +312,7 @@ SceneNodeRenderResource cre_scene_manager_get_scene_node_global_render_resource(
 }
 
 
-float cre_scene_manager_get_node_full_time_dilation(SkaEntity entity) {
+f32 cre_scene_manager_get_node_full_time_dilation(SkaEntity entity) {
     NodeComponent* nodeComp = (NodeComponent*)ska_ecs_component_manager_get_component_unchecked(entity, NODE_COMPONENT_INDEX);
     // The only thing in the scene without nodes current are native script entities
     if (nodeComp == NULL) {
@@ -325,7 +325,7 @@ float cre_scene_manager_get_node_full_time_dilation(SkaEntity entity) {
     // Set starting value
     nodeComp->timeDilation.cachedFullValue = cre_world_get_time_dilation();
     const EntityArray entityArray = cre_scene_manager_get_self_and_parent_nodes(entity);
-    for (size_t i = 0; (int) i < entityArray.entityCount; i++) {
+    for (size_t i = 0; (int32) i < entityArray.entityCount; i++) {
         NodeComponent* entityNodeComp = (NodeComponent*)ska_ecs_component_manager_get_component(entityArray.entities[i],NODE_COMPONENT_INDEX);
         SKA_ASSERT_FMT(entityNodeComp != NULL, "node comp is NULL!");
         nodeComp->timeDilation.cachedFullValue *= entityNodeComp->timeDilation.value;

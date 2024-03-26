@@ -33,7 +33,7 @@ void transform2d_component_get_local_model_matrix(mat4 model, const SkaTransform
         transform->position.x, transform->position.y, 0.0f
     });
     // 2. Rotation
-    float rotation = transform->rotation;
+    f32 rotation = transform->rotation;
     glm_make_rad(&rotation);
     glm_rotate(model, rotation, (vec3) {
         0.0f, 0.0f, 1.0f
@@ -44,10 +44,10 @@ void transform2d_component_get_local_model_matrix(mat4 model, const SkaTransform
     });
 }
 
-float transform2d_component_get_rotation_deg_from_model(mat4 model) {
+f32 transform2d_component_get_rotation_deg_from_model(mat4 model) {
     versor quat;
     glm_mat4_quat(model, quat);
-    const float angleRadians = glm_quat_angle(quat);
+    const f32 angleRadians = glm_quat_angle(quat);
     return glm_deg(angleRadians);
 }
 
