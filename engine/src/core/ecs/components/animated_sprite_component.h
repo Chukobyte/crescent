@@ -9,9 +9,9 @@ extern "C" {
 
 #include <seika/rendering/shader/shader_instance_minimal.h>
 #include <seika/ecs/entity.h>
-#include <seika/utils/observer.h>
-#include <seika/math/se_math.h>
-#include <seika/data_structures/se_hash_map_string.h>
+#include <seika/event.h>
+#include <seika/math/math.h>
+#include <seika/data_structures/hash_map_string.h>
 
 #include "../../animation/animation.h"
 
@@ -31,17 +31,17 @@ typedef struct AnimatedSpriteComponent {
     CreAnimation animations[ANIMATED_SPRITE_COMPONENT_MAX_ANIMATIONS];
     CreAnimation currentAnimation;
     size_t animationCount;
-    SKAColor modulate;
+    SkaColor modulate;
     bool isPlaying;
-    SKAVector2 origin;
+    SkaVector2 origin;
     bool flipH;
     bool flipV;
     uint32_t startAnimationTickTime;
     bool staggerStartAnimationTimes; // If true, will apply a random start time modifier when being played
     uint32_t randomStaggerTime; // Used to stagger animations
-    SEShaderInstanceId shaderInstanceId;
-    SEEvent onFrameChanged; // { data = AnimatedSpriteFrameChangedPayload(self) }
-    SEEvent onAnimationFinished; // { data = AnimatedSpriteAnimationFinishedPayload(self) }
+    SkaShaderInstanceId shaderInstanceId;
+    SkaEvent onFrameChanged; // { data = AnimatedSpriteFrameChangedPayload(self) }
+    SkaEvent onAnimationFinished; // { data = AnimatedSpriteAnimationFinishedPayload(self) }
 } AnimatedSpriteComponent;
 
 typedef struct AnimationQueryResult {
@@ -51,7 +51,7 @@ typedef struct AnimationQueryResult {
 
 typedef struct AnimationFrameData {
     char texturePath[64];
-    SKARect2 drawSource;
+    SkaRect2 drawSource;
     int frame;
 } AnimationFrameData;
 
@@ -69,9 +69,9 @@ typedef struct AnimatedSpriteComponentData {
     AnimationData animations[ANIMATED_SPRITE_COMPONENT_MAX_ANIMATIONS];
     AnimationData currentAnimation;
     size_t animationCount;
-    SKAColor modulate;
+    SkaColor modulate;
     bool isPlaying;
-    SKAVector2 origin;
+    SkaVector2 origin;
     bool flipH;
     bool flipV;
     bool staggerStartAnimationTimes;

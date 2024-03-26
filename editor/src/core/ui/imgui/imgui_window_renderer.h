@@ -3,33 +3,33 @@
 #include <string>
 #include <vector>
 
-#include <seika/math/se_math.h>
+#include <seika/math/math.h>
 
-struct SETexture;
-struct SEFont;
+struct SkaTexture;
+struct SkaFont;
 
 namespace ImGuiHelper {
 struct TextureRenderTarget {
-    SETexture* texture = nullptr;
-    SKARect2 sourceRect = SKA_RECT2D_ZERO;
-    SKASize2D destSize = SKA_SIZE2D_ZERO;
-    SKAColor color = SKA_COLOR_WHITE;
+    SkaTexture* texture = nullptr;
+    SkaRect2 sourceRect = SKA_RECT2D_ZERO;
+    SkaSize2D destSize = SKA_SIZE2D_ZERO;
+    SkaColor color = SKA_COLOR_WHITE;
     bool flipH = false;
     bool flipV = false;
     int zIndex = 0;
     bool useGlobalTransform = true;
     union {
-        SKATransformModel2D* globalTransform = nullptr;
-        SKATransform2D transform2D;
+        SkaTransformModel2D* globalTransform = nullptr;
+        SkaTransform2D transform2D;
     };
 };
 
 struct FontRenderTarget {
-    SEFont* font = nullptr;
+    SkaFont* font = nullptr;
     std::string text;
-    SKAVector2 position = SKA_VECTOR2_ZERO;
+    SkaVector2 position = SKA_VECTOR2_ZERO;
     float scale = 1.0f;
-    SKAColor color = SKA_COLOR_WHITE;
+    SkaColor color = SKA_COLOR_WHITE;
     int zIndex = 0;
 };
 

@@ -9,7 +9,7 @@
 
 #include "../../editor_context.h"
 
-const SKAColor WINDOW_BACKGROUND_COLOR = { 0.1f, 0.1f, 0.1f, 1.0f };
+const SkaColor WINDOW_BACKGROUND_COLOR = { 0.1f, 0.1f, 0.1f, 1.0f };
 
 void ImGuiHelper::WindowRenderer::Render(const std::vector<TextureRenderTarget>& textureRenderTargets, const std::vector<FontRenderTarget>& fontRenderTargets) {
     // New frame
@@ -29,7 +29,7 @@ void ImGuiHelper::WindowRenderer::Render(const std::vector<TextureRenderTarget>&
     // Fonts
     for (auto& target : fontRenderTargets) {
         if (target.font) {
-            se_renderer_queue_font_draw_call(target.font, target.text.c_str(), target.position.x, target.position.y, target.scale, target.color, target.zIndex);
+            ska_renderer_queue_font_draw_call(target.font, target.text.c_str(), target.position.x, target.position.y, target.scale, target.color, target.zIndex);
         }
     }
     // Flush queued calls and render to framebuffer

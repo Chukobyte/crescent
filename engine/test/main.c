@@ -2,12 +2,13 @@
 
 #include <stdbool.h>
 
-#include <SDL2/SDL_main.h>
+#include <SDL3/SDL_main.h>
 
+#include <seika/memory.h>
+#include <seika/file_system.h>
+#include <seika/string.h>
 #include <seika/asset/asset_manager.h>
 #include <seika/rendering/texture.h>
-#include <seika/utils/se_file_system_utils.h>
-#include <seika/utils/se_string_util.h>
 
 #include "../src/core/node_event.h"
 #include "../src/core/ecs/ecs_globals.h"
@@ -27,9 +28,9 @@
 #include "../src/core/scene/scene_manager.h"
 #include "../src/core/tilemap/tilemap.h"
 
-inline static SETexture* create_mock_texture() {
-    SETexture* texture = SE_MEM_ALLOCATE(SETexture);
-    memset(texture, 0, sizeof(SETexture));
+inline static SkaTexture* create_mock_texture() {
+    SkaTexture* texture = SKA_MEM_ALLOCATE(SkaTexture);
+    memset(texture, 0, sizeof(SkaTexture));
     return texture;
 }
 
@@ -39,8 +40,8 @@ void setUp() {
     cre_ecs_manager_initialize_ex(create_mock_texture(), create_mock_texture());
 
     CREEngineContext* engineContext = cre_engine_context_initialize();
-    engineContext->engineRootDir = se_fs_get_cwd();
-    engineContext->internalAssetsDir = se_fs_get_cwd();
+    engineContext->engineRootDir = ska_fs_get_cwd();
+    engineContext->internalAssetsDir = ska_fs_get_cwd();
 }
 void tearDown() {
     cre_ecs_manager_finalize();
@@ -255,29 +256,29 @@ void cre_pocketpy_test(void) {
     pkpy_pop_top(vm);
     TEST_ASSERT_EQUAL_INT(0, pkpy_stack_size(vm));
 
-    se_asset_manager_initialize();
+    ska_asset_manager_initialize();
     cre_scene_manager_initialize();
     cre_scene_manager_queue_scene_change("engine/test/resources/test_scene1.cscn");
     cre_scene_manager_process_queued_scene_change();
 
     CREGameProperties* testGameProps = cre_game_props_create();
-    testGameProps->gameTitle = se_strdup("Test Game");
+    testGameProps->gameTitle = ska_strdup("Test Game");
     testGameProps->resolutionWidth = 400;
     testGameProps->resolutionHeight = 300;
-    testGameProps->initialScenePath = se_strdup("main.cscn");
+    testGameProps->initialScenePath = ska_strdup("main.cscn");
     cre_game_props_initialize(testGameProps);
 
     TEST_MESSAGE("Testing python api");
 
     // Load test node
-    char* testCustomNodesSource = se_fs_read_file_contents("engine/test/resources/test_custom_nodes.py", NULL);
+    char* testCustomNodesSource = ska_fs_read_file_contents("engine/test/resources/test_custom_nodes.py", NULL);
     cre_pkpy_util_create_from_string(vm, "test_custom_nodes", testCustomNodesSource);
     // Load test file
-    char* pythonText = se_fs_read_file_contents("engine/test/resources/crescent_api_test.py", NULL);
+    char* pythonText = ska_fs_read_file_contents("engine/test/resources/crescent_api_test.py", NULL);
     TEST_ASSERT_NOT_NULL(pythonText);
     pkpy_exec_2(vm, pythonText, "crescent_api_test.py", 0, NULL);
-    SE_MEM_FREE(testCustomNodesSource);
-    SE_MEM_FREE(pythonText);
+    SKA_MEM_FREE(testCustomNodesSource);
+    SKA_MEM_FREE(pythonText);
     TEST_ASSERT_FALSE(cre_pkpy_util_print_error_message(vm));
 
     // Testing pushing broadcast event func for node manager
@@ -289,7 +290,7 @@ void cre_pocketpy_test(void) {
     TEST_ASSERT_EQUAL_INT(0, pkpy_stack_size(vm));
 
     cre_scene_manager_finalize();
-    se_asset_manager_finalize();
+    ska_asset_manager_finalize();
     cre_game_props_finalize();
 }
 
@@ -299,7 +300,7 @@ void cre_tilemap_test(void) {
     cre_tilemap_initialize(&tilemap);
 
     // Test setting (and unsetting) a single tile in an empty tile map
-    const SKAVector2i tileOnePosition = (SKAVector2i){ .x = 5, .y = 5 };
+    const SkaVector2i tileOnePosition = (SkaVector2i){ .x = 5, .y = 5 };
     cre_tilemap_set_tile_active(&tilemap, &tileOnePosition, true);
     cre_tilemap_commit_active_tile_changes(&tilemap);
     TEST_ASSERT_EQUAL_INT(6, tilemap.tilesArray->size.w);
@@ -311,17 +312,17 @@ void cre_tilemap_test(void) {
     TEST_ASSERT_EQUAL_INT(0, tilemap.tilesArray->size.h);
 
     // 3 x 3 minimal bitmask tests
-    const SKAVector2i tileTwoPosition = { .x = 9, .y = 4 };
-    const SKAVector2i tileThreePosition = { .x = 8, .y = 4 };
+    const SkaVector2i tileTwoPosition = { .x = 9, .y = 4 };
+    const SkaVector2i tileThreePosition = { .x = 8, .y = 4 };
 
-    const SKAVector2i tileFourPosition = { .x = 3, .y = 8 };
-    const SKAVector2i tileFivePosition = { .x = 3, .y = 7 };
+    const SkaVector2i tileFourPosition = { .x = 3, .y = 8 };
+    const SkaVector2i tileFivePosition = { .x = 3, .y = 7 };
 
     cre_tilemap_set_tile_active(&tilemap, &tileTwoPosition, true);
     cre_tilemap_set_tile_active(&tilemap, &tileThreePosition, true);
     cre_tilemap_set_tile_active(&tilemap, &tileFourPosition, true);
     cre_tilemap_set_tile_active(&tilemap, &tileFivePosition, true);
-    cre_tilemap_set_tile_render_coord(&tilemap, &tileFourPosition, &(SKAVector2i){ 1, 3 });
+    cre_tilemap_set_tile_render_coord(&tilemap, &tileFourPosition, &(SkaVector2i){ 1, 3 });
     cre_tilemap_commit_active_tile_changes(&tilemap);
     const CreTileData* tileFourData = cre_tilemap_get_tile_data(&tilemap, &tileFourPosition);
     TEST_ASSERT_EQUAL_INT(10, tilemap.tilesArray->size.w);

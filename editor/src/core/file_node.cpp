@@ -1,7 +1,7 @@
 #include <fstream>
 #include "file_node.h"
 
-#include <seika/utils/logger.h>
+#include <seika/logger.h>
 
 #include "utils/file_system_helper.h"
 
@@ -49,7 +49,7 @@ std::vector<FileNode> FileNodeCache::GetFilesWithExtension(const std::string& ex
 void FileNodeCache::LoadRootNodeDir(const std::string& filePath, LoadFlag loadFlag) {
     rootNode.path = filePath;
     if (!std::filesystem::is_directory(rootNode.path)) {
-        se_logger_error("Failed to load root dir node at file path '%s'", filePath.c_str());
+        ska_logger_error("Failed to load root dir node at file path '%s'", filePath.c_str());
         return;
     }
     nodeIndexCount = 0;
@@ -86,7 +86,7 @@ void FileNodeCache::LoadFileNodeEntries(FileNode &fileNode, LoadFlag loadFlag) {
             }
         } else {
             // Can print out error code here if we want...
-//            se_logger_debug("Not able to open up path '%s', skipping!  Error code: %s", dir_entry.path().c_str(), errorCode.message().c_str());
+//            ska_logger_debug("Not able to open up path '%s', skipping!  Error code: %s", dir_entry.path().c_str(), errorCode.message().c_str());
         }
 
     }

@@ -14,7 +14,7 @@
 
 
 static TilemapComp* cachedComp = nullptr;
-SETexture* colorRectTexture = nullptr;
+SkaTexture* colorRectTexture = nullptr;
 
 void TilemapEditor::Process(SceneNode* node, TilemapComp* tilemapComp) {
     bool startedThisFrame = false;
@@ -22,7 +22,7 @@ void TilemapEditor::Process(SceneNode* node, TilemapComp* tilemapComp) {
         isProcessing = true;
         startedThisFrame = true;
         if (!colorRectTexture) {
-            colorRectTexture = se_texture_create_solid_colored_texture(1, 1, 255);
+            colorRectTexture = ska_texture_create_solid_colored_texture(1, 1, 255);
         }
     }
     selectedNodeUID = node->GetUID();
@@ -36,7 +36,7 @@ void TilemapEditor::Process(SceneNode* node, TilemapComp* tilemapComp) {
             if (tileData->isActive) {
                 cre_tilemap_set_tile_active(tilemap, &tileCoords, false);
             } else {
-                const auto renderCoords = SKAVector2i{ .x = 0, .y = 0 };
+                const auto renderCoords = SkaVector2i{ .x = 0, .y = 0 };
                 cre_tilemap_set_tile_render_coord(tilemap, &tileCoords, &renderCoords);
             }
             cre_tilemap_commit_active_tile_changes(tilemap);
@@ -64,10 +64,10 @@ std::vector<ImGuiHelper::FontRenderTarget> TilemapEditor::GetFontRenderTargets()
                 {
                     .font = AssetManager::Get()->GetFont(CRE_DEFAULT_FONT_ASSET.uid),
                     .text = formattedText,
-                    .position = SKAVector2{ 16.0f, 16.0f },
+                    .position = SkaVector2{ 16.0f, 16.0f },
                     .scale = 1.0f,
                     .color = SKA_COLOR_WHITE,
-                    .zIndex = SE_RENDERER_MAX_Z_INDEX
+                    .zIndex = SKA_RENDERER_MAX_Z_INDEX
                 }
         };
     }
@@ -86,7 +86,7 @@ std::vector<ImGuiHelper::TextureRenderTarget> TilemapEditor::GetTextureRenderTar
                     .color = SKA_COLOR_WHITE,
                     .flipH = false,
                     .flipV = false,
-                    .zIndex = SE_RENDERER_MAX_Z_INDEX,
+                    .zIndex = SKA_RENDERER_MAX_Z_INDEX,
                     .useGlobalTransform = false,
                     .transform2D = {
                         .position = { .x = static_cast<float>(tileCoords.x * tileSize.w), .y = static_cast<float>(tileCoords.y * tileSize.h) },
@@ -99,22 +99,22 @@ std::vector<ImGuiHelper::TextureRenderTarget> TilemapEditor::GetTextureRenderTar
     return {};
 }
 
-SKAVector2i TilemapEditor::GetMouseTileCoords() {
+SkaVector2i TilemapEditor::GetMouseTileCoords() {
     const auto* gameProperties = ProjectProperties::Get();
     const auto tileSize = cachedComp->GetTileSize();
     const auto mousePos = ImGui::GetMousePos();
     const auto windowPos = ImGui::GetWindowPos();
     const auto windowSize = ImGui::GetWindowSize();
-    const SKAVector2 scroll = { .x = ImGui::GetScrollX(), .y = ImGui::GetScrollY() };
-    const SKAVector2 zoom = {
+    const SkaVector2 scroll = { .x = ImGui::GetScrollX(), .y = ImGui::GetScrollY() };
+    const SkaVector2 zoom = {
             .x = windowSize.x / static_cast<float>(gameProperties->resolutionWidth),
             .y = windowSize.y / static_cast<float>(gameProperties->resolutionHeight)
     };
-    const SKAVector2 mousePosRelative = {
+    const SkaVector2 mousePosRelative = {
             .x = mousePos.x - windowPos.x + scroll.x,
             .y = mousePos.y - windowPos.y + scroll.y
     };
-    SKAVector2i tileCoords = {
+    SkaVector2i tileCoords = {
             .x = static_cast<int>(mousePosRelative.x / ((float)tileSize.w * zoom.x)),
             .y = static_cast<int>(mousePosRelative.y / ((float)tileSize.h * zoom.y))
     };

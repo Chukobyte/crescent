@@ -6,14 +6,14 @@
 #include "../utils/json_helper.h"
 
 namespace {
-nlohmann::ordered_json Vector2ToJson(SKAVector2 value) {
+nlohmann::ordered_json Vector2ToJson(SkaVector2 value) {
     nlohmann::ordered_json vec;
     vec["x"] = value.x;
     vec["y"] = value.y;
     return vec;
 }
 
-template<typename T = SKASize2D>
+template<typename T = SkaSize2D>
 nlohmann::ordered_json Size2DToJson(T value) {
     nlohmann::ordered_json size;
     size["w"] = value.w;
@@ -21,7 +21,7 @@ nlohmann::ordered_json Size2DToJson(T value) {
     return size;
 }
 
-nlohmann::ordered_json Rect2ToJson(const SKARect2& value) {
+nlohmann::ordered_json Rect2ToJson(const SkaRect2& value) {
     nlohmann::ordered_json rect;
     rect["x"] = value.x;
     rect["y"] = value.y;
@@ -30,7 +30,7 @@ nlohmann::ordered_json Rect2ToJson(const SKARect2& value) {
     return rect;
 }
 
-nlohmann::ordered_json ColorToJson(const SKAColor& value) {
+nlohmann::ordered_json ColorToJson(const SkaColor& value) {
     nlohmann::ordered_json rect;
     rect["r"] = (int) (value.r * 255);
     rect["g"] = (int) (value.g * 255);
@@ -39,7 +39,7 @@ nlohmann::ordered_json ColorToJson(const SKAColor& value) {
     return rect;
 }
 
-nlohmann::ordered_json MinMaxVector2ToJson(const SKAMinMaxVec2& value) {
+nlohmann::ordered_json MinMaxVector2ToJson(const SkaMinMaxVec2& value) {
     nlohmann::ordered_json minmaxVec2;
     minmaxVec2["min"] = Vector2ToJson(value.min);
     minmaxVec2["max"] = Vector2ToJson(value.max);

@@ -2,7 +2,7 @@
 
 #include <IconsFontAwesome6.h>
 
-#include <seika/utils/logger.h>
+#include <seika/logger.h>
 
 #include "ui/imgui/imgui_helper.h"
 #include "utils/file_system_helper.h"
@@ -128,11 +128,11 @@ void AssetBrowser::RefreshCache() {
 void AssetBrowser::RenameFile(const std::filesystem::path& oldPath, const std::string& newName) {
     const std::filesystem::path parentPath = oldPath.parent_path();
     const std::filesystem::path newFilePath = parentPath / newName;
-    se_logger_debug("old file path = %s, new file path = %s", oldPath.string().c_str(), newFilePath.string().c_str());
+    ska_logger_debug("old file path = %s, new file path = %s", oldPath.string().c_str(), newFilePath.string().c_str());
     std::error_code ec;
     std::filesystem::rename(oldPath, newFilePath, ec);
     if (ec.value() != 0) {
-        se_logger_error("ec value = %d, message = %s", ec.value(), ec.message().c_str());
+        ska_logger_error("ec value = %d, message = %s", ec.value(), ec.message().c_str());
     } else {
         RefreshCache();
     }
@@ -143,12 +143,12 @@ void AssetBrowser::DeleteFile(const std::filesystem::path& path) {
     std::error_code ec;
     if (std::filesystem::is_directory(path)) {
         std::uintmax_t numberDeleted = std::filesystem::remove_all(path, ec);
-        se_logger_debug("Number of files deleted from path '%s' = '%zu'", path.string().c_str(), numberDeleted);
+        ska_logger_debug("Number of files deleted from path '%s' = '%zu'", path.string().c_str(), numberDeleted);
     } else {
         std::filesystem::remove(path, ec);
     }
     if (ec.value() != 0) {
-        se_logger_error("Error deleting from path '%s'!\nec value = %d, message = %s",
+        ska_logger_error("Error deleting from path '%s'!\nec value = %d, message = %s",
                         path.string().c_str(), ec.value(), ec.message().c_str());
     } else {
         RefreshCache();
@@ -159,12 +159,12 @@ void AssetBrowser::CreateDirectory(const std::filesystem::path& path, const std:
     std::error_code ec;
     const std::filesystem::path fullDirPath = path / name;
     if (std::filesystem::is_directory(fullDirPath)) {
-        se_logger_warn("Directory '%s' already exists, not creating!", fullDirPath.string().c_str());
+        ska_logger_warn("Directory '%s' already exists, not creating!", fullDirPath.string().c_str());
         return;
     }
     std::filesystem::create_directory(fullDirPath, ec);
     if (ec.value() != 0) {
-        se_logger_error("Create directory failed for asset path '%s'!\nec value = %d, message = %s",
+        ska_logger_error("Create directory failed for asset path '%s'!\nec value = %d, message = %s",
                         fullDirPath.string().c_str(), ec.value(), ec.message().c_str());
     } else {
         RefreshCache();

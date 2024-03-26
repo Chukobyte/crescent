@@ -59,25 +59,8 @@ Linux (Ubuntu):
 MacOS:
 - clang
 
-##### VCPkg
-
-Crescent uses [vcpkg](https://github.com/Microsoft/vcpkg) to install dependencies for crescent.  Set `-DCMAKE_TOOLCHAIN_FILE` to the appropriate vcpkg cmake toolchain file.
-
 Example of running on command line in the project source directory:
 ```sh
-cmake . -DCMAKE_TOOLCHAIN_FILE=$VCPKG_DIR/../vcpkg/scripts/buildsystems/vcpkg.cmake
+cmake .
 cmake --build .
 ```
-
-##### MinGW build
-
-SDL2 and freetype needs to be installed manually for mingw builds.  Below are instructions on how to do so.
-1. Install MinGW through MSYS2
-2. Update pacman: `pacman -Syu`
-3. Install the following packages:
-    * `pacman -S mingw-w64-x86_64-SDL2`
-    * `pacman -S mingw-w64-x86_64-freetype`
-    * `pacman -S mingw-w64-x86_64-python`
-4. Run cmake
-
-*Note: There is an [example](.github/workflows/windows-mingw-build.yml) of building with mingw in the `.github/workflow` folder.*

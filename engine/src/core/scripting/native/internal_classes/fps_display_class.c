@@ -5,8 +5,8 @@
 
 #include <seika/rendering/renderer.h>
 #include <seika/ecs/ecs.h>
-#include <seika/memory/se_mem.h>
-#include <seika/utils/se_string_util.h>
+#include <seika/memory.h>
+#include <seika/string.h>
 
 #include "../native_script_class.h"
 #include "../../../engine_context.h"
@@ -34,7 +34,7 @@ CRENativeScriptClass* fps_display_create_new_instance(SkaEntity entity) {
     fpsClassInstance->on_start_func = fps_display_on_start;
     fpsClassInstance->on_end_func = fps_display_on_end;
     fpsClassInstance->update_func = fps_display_update;
-    FpsDisplayClassData* classData = SE_MEM_ALLOCATE(FpsDisplayClassData);
+    FpsDisplayClassData* classData = SKA_MEM_ALLOCATE(FpsDisplayClassData);
     classData->value = 10;
     fpsClassInstance->instance_data = classData;
     fpsClassInstance->class_instance_size = (sizeof(CRENativeScriptClass*) + sizeof(FpsDisplayClassData*)) * 4;
@@ -54,6 +54,6 @@ void fps_display_update(CRENativeScriptClass* nativeScriptClass, float deltaTime
     // FIXME: This is windows specific, needs to be replaced for other OS
     gcvt(cre_engine_context_get()->stats.averageFPS, 4, fpsAmountBuffer);
     TextLabelComponent* textLabelComponent = (TextLabelComponent*)ska_ecs_component_manager_get_component(nativeScriptClass->entity, TEXT_LABEL_COMPONENT_INDEX);
-    se_strcpy(textLabelComponent->text, "FPS: ");
-    se_strcat(textLabelComponent->text, fpsAmountBuffer);
+    ska_strcpy(textLabelComponent->text, "FPS: ");
+    ska_strcat(textLabelComponent->text, fpsAmountBuffer);
 }

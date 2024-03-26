@@ -2,13 +2,13 @@
 
 #include <string.h>
 
-#include <seika/memory/se_mem.h>
-#include <seika/utils/se_string_util.h>
+#include <seika/memory.h>
+#include <seika/string.h>
 
 ScriptComponent* script_component_create(const char* path, const char* name) {
-    ScriptComponent* scriptComponent = SE_MEM_ALLOCATE(ScriptComponent);
-    se_strcpy(scriptComponent->classPath, path);
-    se_strcpy(scriptComponent->className, name);
+    ScriptComponent* scriptComponent = SKA_MEM_ALLOCATE(ScriptComponent);
+    ska_strcpy(scriptComponent->classPath, path);
+    ska_strcpy(scriptComponent->className, name);
     scriptComponent->contextType = ScriptContextType_NONE;
     return scriptComponent;
 }
@@ -20,11 +20,11 @@ ScriptComponent* script_component_create_ex(const char* path, const char* name, 
 }
 
 void script_component_delete(ScriptComponent* scriptComponent) {
-    SE_MEM_FREE(scriptComponent);
+    SKA_MEM_FREE(scriptComponent);
 }
 
 ScriptComponent* script_component_copy(const ScriptComponent* scriptComponent) {
-    ScriptComponent* copiedNode = SE_MEM_ALLOCATE(ScriptComponent);
+    ScriptComponent* copiedNode = SKA_MEM_ALLOCATE(ScriptComponent);
     memcpy(copiedNode, scriptComponent, sizeof(ScriptComponent));
     return copiedNode;
 }

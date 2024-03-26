@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-#include <seika/utils/logger.h>
+#include <seika/logger.h>
 
 #define EDITOR_SETTINGS_FILE_NAME "editor_settings.json"
 
@@ -38,6 +38,6 @@ class EditorSettings {
     std::vector<RecentlyLoadedProjectData> recentlyLoadedProjects;
 
   private:
-    SELogLevel editorLogLevel = SELogLevel_ERROR;
-    SELogLevel gameLogLevel = SELogLevel_ERROR;
+    SELogLevel editorLogLevel = SkaLogLevel_ERROR;
+    SELogLevel gameLogLevel = SkaLogLevel_ERROR;
 };

@@ -7,7 +7,7 @@
 #include <IconsFontAwesome6.h>
 
 #include <seika/rendering/renderer.h>
-#include <seika/utils/logger.h>
+#include <seika/logger.h>
 
 #include "../engine/src/core/ecs/ecs_manager.h"
 
@@ -46,7 +46,7 @@ bool Editor::Initialize() {
     AssetManager::Get()->Initialize();
 
     editorContext->isRunning = true;
-    se_logger_info("Crescent Engine Editor has started!");
+    ska_logger_info("Crescent Engine Editor has started!");
     return true;
 }
 
@@ -58,7 +58,7 @@ void Editor::Update() {
 
 bool Editor::InitializeSDL() {
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-        se_logger_error("Failed to initialize SDL!  Error: '%s'", SDL_GetError());
+        ska_logger_error("Failed to initialize SDL!  Error: '%s'", SDL_GetError());
         return false;
     }
 
@@ -81,7 +81,7 @@ bool Editor::InitializeSDL() {
                                 editorContext->windowFlags
                             );
     if (!editorContext->window) {
-        se_logger_error("Failed to create window!  SDL error: '%s'", SDL_GetError());
+        ska_logger_error("Failed to create window!  SDL error: '%s'", SDL_GetError());
         return false;
     }
 
@@ -94,7 +94,7 @@ bool Editor::InitializeSDL() {
     SDL_GL_SetSwapInterval(1);
 
     if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
-        se_logger_error("Couldn't initialize glad!");
+        ska_logger_error("Couldn't initialize glad!");
         return false;
     }
 
@@ -186,5 +186,5 @@ void Editor::Shutdown() {
     SDL_DestroyWindow(editorContext->window);
     SDL_Quit();
 
-    se_logger_info("Crescent Engine Editor has been shutdown!");
+    ska_logger_info("Crescent Engine Editor has been shutdown!");
 }

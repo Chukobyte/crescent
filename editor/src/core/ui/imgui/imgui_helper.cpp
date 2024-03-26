@@ -3,8 +3,8 @@
 
 #include <utility>
 
-#include <seika/math/se_math.h>
-#include <seika/utils/logger.h>
+#include <seika/math/math.h>
+#include <seika/logger.h>
 
 #include "../../asset_browser.h"
 
@@ -275,7 +275,7 @@ void ImGuiHelper::ComboBox::SetSelected(const std::string& itemToSelect, bool ex
             return;
         }
     }
-    se_logger_error("Combo Box failed to select item '%s'", itemToSelect.c_str());
+    ska_logger_error("Combo Box failed to select item '%s'", itemToSelect.c_str());
 }
 
 void ImGuiHelper::BeginComboBox(ImGuiHelper::ComboBox &comboBox) {
@@ -342,7 +342,7 @@ void ImGuiHelper::AssetBrowserComboBox::SetSelected(const std::string& itemToSel
             return;
         }
     }
-    se_logger_error("Asset Browser Combo Box failed to select item '%s'", itemToSelect.c_str());
+    ska_logger_error("Asset Browser Combo Box failed to select item '%s'", itemToSelect.c_str());
 }
 
 void ImGuiHelper::AssetBrowserComboBox::RefreshListFromBrowser() {

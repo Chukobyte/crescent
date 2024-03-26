@@ -6,8 +6,8 @@ extern "C" {
 
 #include <stdbool.h>
 
-#include <seika/utils/observer.h>
-#include <seika/data_structures/se_hash_map_string.h>
+#include <seika/event.h>
+#include <seika/data_structures/hash_map_string.h>
 
 #define CRE_NODE_NODE_STRING "Node"
 #define CRE_NODE_NODE2D_STRING "Node2D"
@@ -61,9 +61,9 @@ typedef struct NodeComponent {
     bool queuedForDeletion;
     NodeTimeDilation timeDilation;
     // Called after '_start' is called on an entity
-    SEEvent onSceneTreeEnter; // { data = entity (unsigned int), type = 0 (not used) }
+    SkaEvent onSceneTreeEnter; // { data = entity (unsigned int), type = 0 (not used) }
     // Called before '_end' is called on an entity
-    SEEvent onSceneTreeExit; // { data = entity (unsigned int), type = 0 (not used) }
+    SkaEvent onSceneTreeExit; // { data = entity (unsigned int), type = 0 (not used) }
 } NodeComponent;
 
 NodeComponent* node_component_create();

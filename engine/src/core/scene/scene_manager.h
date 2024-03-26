@@ -4,7 +4,7 @@
 extern "C" {
 #endif
 
-#include <seika/math/se_math.h>
+#include <seika/math/math.h>
 
 #include "scene_tree.h"
 #include "../ecs/components/transform2d_component.h"
@@ -26,7 +26,7 @@ typedef struct SceneNodeCallbackSubscriber {
 } SceneNodeCallbackSubscriber;
 
 typedef struct SceneNodeRenderResource {
-    SKATransform2D transform2D;
+    SkaTransform2D transform2D;
     int globalZIndex;
 } SceneNodeRenderResource;
 
@@ -53,8 +53,8 @@ void cre_scene_manager_process_queued_scene_change();
 // Scene Tree related stuff, may separate into separate functionality later.
 void cre_scene_manager_set_active_scene_root(SceneTreeNode* root);
 SceneTreeNode* cre_scene_manager_get_active_scene_root();
-SKATransformModel2D* cre_scene_manager_get_scene_node_global_transform(SkaEntity entity, Transform2DComponent* transform2DComponent);
-SceneNodeRenderResource cre_scene_manager_get_scene_node_global_render_resource(SkaEntity entity, Transform2DComponent* transform2DComponent, const SKAVector2* origin);
+SkaTransformModel2D* cre_scene_manager_get_scene_node_global_transform(SkaEntity entity, Transform2DComponent* transform2DComponent);
+SceneNodeRenderResource cre_scene_manager_get_scene_node_global_render_resource(SkaEntity entity, Transform2DComponent* transform2DComponent, const SkaVector2* origin);
 float cre_scene_manager_get_node_full_time_dilation(SkaEntity entity);
 SkaEntity cre_scene_manager_get_entity_child_by_name(SkaEntity parent, const char* childName);
 SceneTreeNode* cre_scene_manager_get_entity_tree_node(SkaEntity entity);

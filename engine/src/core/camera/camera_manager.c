@@ -6,8 +6,8 @@
 #include "../scene/scene_manager.h"
 #include "../game_properties.h"
 
-void camera2d_on_entity_transform_change(SESubjectNotifyPayload* payload);
-void camera2d_on_entity_exit_scene(SESubjectNotifyPayload* payload);
+void camera2d_on_entity_transform_change(SkaSubjectNotifyPayload* payload);
+void camera2d_on_entity_exit_scene(SkaSubjectNotifyPayload* payload);
 
 static CRECamera2D DEFAULT_CAMERA =   {
     .boundary = {
@@ -56,7 +56,7 @@ void cre_camera_manager_reset_current_camera() {
 }
 
 // Observer callbacks
-void camera2d_on_entity_transform_change(SESubjectNotifyPayload* payload) {
+void camera2d_on_entity_transform_change(SkaSubjectNotifyPayload* payload) {
     CreComponentEntityUpdatePayload* updatePayload = (CreComponentEntityUpdatePayload*) payload->data;
     Transform2DComponent* transform2DComponent = (Transform2DComponent*) updatePayload->component;
 
@@ -64,7 +64,7 @@ void camera2d_on_entity_transform_change(SESubjectNotifyPayload* payload) {
     cre_camera2d_update_entity_follow(camera2D, transform2DComponent);
 }
 
-void camera2d_on_entity_exit_scene(SESubjectNotifyPayload* payload) {
+void camera2d_on_entity_exit_scene(SkaSubjectNotifyPayload* payload) {
     const SkaEntity entity = *(SkaEntity*) payload->data;
 
     CRECamera2D* camera2D = cre_camera_manager_get_current_camera();

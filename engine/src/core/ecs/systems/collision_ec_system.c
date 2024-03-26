@@ -2,8 +2,8 @@
 
 #include <seika/rendering/renderer.h>
 #include <seika/ecs/ecs.h>
-#include <seika/utils/se_string_util.h>
-#include <seika/utils/se_assert.h>
+#include <seika/string.h>
+#include <seika/assert.h>
 
 #include "../ecs_globals.h"
 
@@ -15,14 +15,14 @@
 #include "../../camera/camera.h"
 #include "../../camera/camera_manager.h"
 
-static void collision_system_on_transform_update(SESubjectNotifyPayload* payload);
+static void collision_system_on_transform_update(SkaSubjectNotifyPayload* payload);
 
 SkaECSSystem* collisionSystem = NULL;
-SETexture* collisionOutlineTexture = NULL;
-SKARect2 colliderDrawSource = { .x=0.0f, .y=0.0f, .w=1.0f, .h=1.0f };
+SkaTexture* collisionOutlineTexture = NULL;
+SkaRect2 colliderDrawSource = { .x=0.0f, .y=0.0f, .w=1.0f, .h=1.0f };
 
-SEObserver collisionOnEntityTransformChangeObserver = { .on_notify = collision_system_on_transform_update };
-SESpatialHashMap* spatialHashMap = NULL;
+SkaObserver collisionOnEntityTransformChangeObserver = { .on_notify = collision_system_on_transform_update };
+SkaSpatialHashMap* spatialHashMap = NULL;
 
 static void on_ec_system_registered(SkaECSSystem* system);
 static void on_ec_system_destroyed(SkaECSSystem* system);
@@ -45,40 +45,40 @@ void cre_collision_ec_system_create_and_register() {
 void on_ec_system_registered(SkaECSSystem* system) {
     collisionSystem = system;
     CREGameProperties* gameProps = cre_game_props_get();
-    SE_ASSERT(cre_game_props_get() != NULL);
+    SKA_ASSERT(cre_game_props_get() != NULL);
     if (gameProps->areCollidersVisible) {
         system->render_func = collision_render;
-        collisionOutlineTexture = se_texture_create_solid_colored_texture(1, 1, 255);
-        SE_ASSERT(collisionOutlineTexture != NULL);
+        collisionOutlineTexture = ska_texture_create_solid_colored_texture(1, 1, 255);
+        SKA_ASSERT(collisionOutlineTexture != NULL);
     }
 
     static const int initialCellSize = 64;
-    spatialHashMap = se_spatial_hash_map_create(initialCellSize);
+    spatialHashMap = ska_spatial_hash_map_create(initialCellSize);
     cre_collision_set_global_spatial_hash_map(spatialHashMap);
 }
 
 void on_ec_system_destroyed(SkaECSSystem* system) {
-    se_spatial_hash_map_destroy(spatialHashMap);
+    ska_spatial_hash_map_destroy(spatialHashMap);
     spatialHashMap = NULL;
     collisionSystem = NULL;
 }
 
 void on_entity_unregistered(SkaECSSystem* system, SkaEntity entity) {
-    se_spatial_hash_map_remove(spatialHashMap, entity);
+    ska_spatial_hash_map_remove(spatialHashMap, entity);
     // Register to entity's 'on transform changed' event
     Transform2DComponent* transformComp = (Transform2DComponent*)ska_ecs_component_manager_get_component(entity,TRANSFORM2D_COMPONENT_INDEX);
-    SE_ASSERT(transformComp != NULL);
-    se_event_unregister_observer(&transformComp->onTransformChanged, &collisionOnEntityTransformChangeObserver);
+    SKA_ASSERT(transformComp != NULL);
+    ska_event_unregister_observer(&transformComp->onTransformChanged, &collisionOnEntityTransformChangeObserver);
 }
 
 void on_entity_entered_scene(SkaECSSystem* system, SkaEntity entity) {
     Transform2DComponent* transformComp = (Transform2DComponent*)ska_ecs_component_manager_get_component(entity, TRANSFORM2D_COMPONENT_INDEX);
     Collider2DComponent* colliderComp = (Collider2DComponent*)ska_ecs_component_manager_get_component(entity, COLLIDER2D_COMPONENT_INDEX);
     if (transformComp != NULL && colliderComp != NULL) {
-        SKARect2 collisionRect = cre_get_collision_rectangle(entity, transformComp, colliderComp);
-        se_spatial_hash_map_insert_or_update(spatialHashMap, entity, &collisionRect);
+        SkaRect2 collisionRect = cre_get_collision_rectangle(entity, transformComp, colliderComp);
+        ska_spatial_hash_map_insert_or_update(spatialHashMap, entity, &collisionRect);
         // Register to entity's 'on transform changed' event
-        se_event_register_observer(&transformComp->onTransformChanged, &collisionOnEntityTransformChangeObserver);
+        ska_event_register_observer(&transformComp->onTransformChanged, &collisionOnEntityTransformChangeObserver);
     }
 }
 
@@ -99,7 +99,7 @@ void collision_render(SkaECSSystem* system) {
         const Collider2DComponent* colliderComp = (Collider2DComponent*)ska_ecs_component_manager_get_component(entity,COLLIDER2D_COMPONENT_INDEX);
         const CRECamera2D* renderCamera = transformComp->ignoreCamera ? defaultCamera : camera2D;
         const SceneNodeRenderResource renderResource = cre_scene_manager_get_scene_node_global_render_resource(entity, transformComp, &SKA_VECTOR2_ZERO);
-        const SKASize2D colliderDrawSize = {
+        const SkaSize2D colliderDrawSize = {
             .w = colliderComp->extents.w * renderCamera->zoom.x,
             .h = colliderComp->extents.h * renderCamera->zoom.y
         };
@@ -112,21 +112,21 @@ void collision_render(SkaECSSystem* system) {
             false,
             false,
             &renderResource.transform2D,
-            SE_RENDERER_MAX_Z_INDEX, // Use the max possible z index value to draw colliders on top of other things...
+            SKA_RENDERER_MAX_Z_INDEX, // Use the max possible z index value to draw colliders on top of other things...
             NULL
         );
     }
 }
 
-void collision_system_on_transform_update(SESubjectNotifyPayload* payload) {
+void collision_system_on_transform_update(SkaSubjectNotifyPayload* payload) {
     CreComponentEntityUpdatePayload* updatePayload = (CreComponentEntityUpdatePayload*) payload->data;
     Transform2DComponent* transformComp = (Transform2DComponent*) updatePayload->component;
     const SkaEntity entity = updatePayload->entity;
 
     Collider2DComponent* colliderComp = (Collider2DComponent*)ska_ecs_component_manager_get_component_unchecked(entity, COLLIDER2D_COMPONENT_INDEX);
     if (transformComp != NULL && colliderComp != NULL) {
-        SKARect2 collisionRect = cre_get_collision_rectangle(entity, transformComp, colliderComp);
-        se_spatial_hash_map_insert_or_update(spatialHashMap, entity, &collisionRect);
+        SkaRect2 collisionRect = cre_get_collision_rectangle(entity, transformComp, colliderComp);
+        ska_spatial_hash_map_insert_or_update(spatialHashMap, entity, &collisionRect);
     }
 }
 

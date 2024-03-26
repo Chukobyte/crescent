@@ -1,8 +1,8 @@
 #include "engine_context.h"
 
 #include <seika/seika.h>
-#include <seika/memory/se_mem.h>
-#include <seika/utils/se_assert.h>
+#include <seika/memory.h>
+#include <seika/assert.h>
 
 #define MAX_FPS_SAMPLES 100
 #define NUM_FRAMES_TO_AVERAGE 60
@@ -23,8 +23,8 @@ CREEngineContext* creEngineContext = NULL;
 FPSCounter fpsCounter = { .currentFrame = 0, .frameTimes = {0} };
 
 CREEngineContext* cre_engine_context_initialize() {
-    SE_ASSERT(creEngineContext == NULL);
-    creEngineContext = SE_MEM_ALLOCATE(CREEngineContext);
+    SKA_ASSERT(creEngineContext == NULL);
+    creEngineContext = SKA_MEM_ALLOCATE(CREEngineContext);
     creEngineContext->isRunning = false;
     creEngineContext->targetFPS = 66;
     creEngineContext->stats.averageFPS = 0.0f;
@@ -39,14 +39,14 @@ CREEngineContext* cre_engine_context_initialize() {
 }
 
 void cre_engine_context_finalize() {
-    SE_ASSERT(creEngineContext != NULL);
+    SKA_ASSERT(creEngineContext != NULL);
     if (creEngineContext->internalAssetsDir != NULL) {
-        SE_MEM_FREE(creEngineContext->internalAssetsDir);
+        SKA_MEM_FREE(creEngineContext->internalAssetsDir);
     }
     if (creEngineContext->projectArchivePath != NULL) {
-        SE_MEM_FREE(creEngineContext->projectArchivePath);
+        SKA_MEM_FREE(creEngineContext->projectArchivePath);
     }
-    SE_MEM_FREE(creEngineContext);
+    SKA_MEM_FREE(creEngineContext);
     creEngineContext = NULL;
 }
 
@@ -62,10 +62,10 @@ void cre_engine_context_update_stats(uint32_t frameTime) {
 //    } else {
 //        countedFrames++;
 //    }
-//    float averageFPS = (float) countedFrames / ((float) sf_get_ticks() / 1000.f);
+//    float averageFPS = (float) countedFrames / ((float) ska_get_ticks() / 1000.f);
 //    creEngineContext->stats.averageFPS = averageFPS;
 
-//    const int newTick = (int)sf_get_ticks();
+//    const int newTick = (int)ska_get_ticks();
 //    fpsCounter.tickSum -= fpsCounter.tickList[fpsCounter.tickIndex];
 //    fpsCounter.tickSum += newTick;
 //    fpsCounter.tickList[fpsCounter.tickIndex] = newTick;
@@ -87,7 +87,7 @@ void cre_engine_context_update_stats(uint32_t frameTime) {
         }
 //        averageFrameTime += fpsCounter.frameTimes[i];
     }
-    SE_ASSERT(framesAboveZero > 0);
+    SKA_ASSERT(framesAboveZero > 0);
     averageFrameTime /= framesAboveZero;
 //    averageFrameTime /= NUM_FRAMES_TO_AVERAGE;
 

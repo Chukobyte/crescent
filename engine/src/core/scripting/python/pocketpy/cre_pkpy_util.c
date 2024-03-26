@@ -2,14 +2,15 @@
 
 #include <string.h>
 
-#include <seika/utils/se_string_util.h>
-#include <seika/utils/se_assert.h>
+#include <seika/string.h>
+#include <seika/logger.h>
+#include <seika/assert.h>
 
 void cre_copy_name_from_signature(char* target, const char* signature) {
     const char* open_parenthesis = strchr(signature, '(');
     if (open_parenthesis) {
         const size_t nameLength = open_parenthesis - signature;
-        se_strncpy(target, sizeof(char) * (nameLength + 1), signature, nameLength);
+        ska_strncpy(target, sizeof(char) * (nameLength + 1), signature, nameLength);
     }
 }
 
@@ -22,7 +23,7 @@ char* cre_pkpy_util_get_error_message(pkpy_vm* vm) {
 bool cre_pkpy_util_print_error_message(pkpy_vm* vm) {
     char* errorMessage = cre_pkpy_util_get_error_message(vm);
     if (errorMessage) {
-        se_logger_error("python error:\n%s", errorMessage);
+        ska_logger_error("python error:\n%s", errorMessage);
         pkpy_free(errorMessage);
         return true;
     }
@@ -31,38 +32,38 @@ bool cre_pkpy_util_print_error_message(pkpy_vm* vm) {
 
 void cre_pkpy_util_create_module(pkpy_vm* vm, CrePPModule* module) {
     pkpy_push_module(vm, module->name);
-    SE_ASSERT(!cre_pkpy_util_print_error_message(vm));
+    SKA_ASSERT(!cre_pkpy_util_print_error_message(vm));
     pkpy_pop_top(vm);
     char nameBuffer[64];
-    se_strncpy(nameBuffer, sizeof(char) * 8, "import ", 8);
-    se_strcat(nameBuffer, module->name);
+    ska_strncpy(nameBuffer, sizeof(char) * 8, "import ", 8);
+    ska_strcat(nameBuffer, module->name);
     pkpy_exec(vm, nameBuffer); // import { module->name }
-    SE_ASSERT(!cre_pkpy_util_print_error_message(vm));
+    SKA_ASSERT(!cre_pkpy_util_print_error_message(vm));
     for (size_t i = 0; i < CRE_PKPY_MODULE_FUNCTION_LIMIT; i++) {
         const CrePPFunction* func = &module->functions[i];
         if (!func->signature || !func->function) {
             break;
         }
         pkpy_push_function(vm, func->signature, func->function);
-        SE_ASSERT(!cre_pkpy_util_print_error_message(vm));
+        SKA_ASSERT(!cre_pkpy_util_print_error_message(vm));
         pkpy_eval(vm, module->name);
-        SE_ASSERT(!cre_pkpy_util_print_error_message(vm));
+        SKA_ASSERT(!cre_pkpy_util_print_error_message(vm));
 
         cre_copy_name_from_signature(nameBuffer, func->signature);
         pkpy_setattr(vm, pkpy_name(nameBuffer));
-        SE_ASSERT(!cre_pkpy_util_print_error_message(vm));
+        SKA_ASSERT(!cre_pkpy_util_print_error_message(vm));
     }
 }
 
 void cre_pkpy_util_create_from_string(pkpy_vm* vm, const char* moduleName, const char* moduleSource) {
     const int stackBeforePush = pkpy_stack_size(vm);
     char moduleFileName[64];
-    se_strcpy(moduleFileName, moduleName);
-    se_strcat(moduleFileName, ".py");
+    ska_strcpy(moduleFileName, moduleName);
+    ska_strcat(moduleFileName, ".py");
 
     pkpy_push_module(vm, moduleName);
     pkpy_exec_2(vm, moduleSource, moduleFileName, 0, moduleName);
-    SE_ASSERT(!cre_pkpy_util_print_error_message(vm));
+    SKA_ASSERT(!cre_pkpy_util_print_error_message(vm));
     pkpy_pop_top(vm);
-    SE_ASSERT(stackBeforePush == pkpy_stack_size(vm));
+    SKA_ASSERT(stackBeforePush == pkpy_stack_size(vm));
 }

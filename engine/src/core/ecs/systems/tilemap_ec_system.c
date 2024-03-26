@@ -2,8 +2,8 @@
 
 #include <seika/ecs/ec_system.h>
 #include <seika/rendering/renderer.h>
-#include <seika/memory/se_mem.h>
-#include <seika/utils/se_assert.h>
+#include <seika/memory.h>
+#include <seika/assert.h>
 
 #include "../ecs_globals.h"
 #include "../../tilemap/tilemap.h"
@@ -25,9 +25,9 @@ void cre_tilemap_ec_system_create_and_register() {
 
 void on_entity_unregistered(SkaECSSystem* system, SkaEntity entity) {
     TilemapComponent* tilemapComponent = (TilemapComponent*)ska_ecs_component_manager_get_component(entity, TILEMAP_COMPONENT_INDEX);
-    SE_ASSERT(tilemapComponent->tilemap);
+    SKA_ASSERT(tilemapComponent->tilemap);
     cre_tilemap_finalize(tilemapComponent->tilemap);
-    SE_MEM_FREE(tilemapComponent->tilemap);
+    SKA_MEM_FREE(tilemapComponent->tilemap);
     tilemapComponent->tilemap = NULL;
 }
 
@@ -38,30 +38,30 @@ void tilemap_render(SkaECSSystem* system) {
         const SkaEntity entity = system->entities[i];
         Transform2DComponent* tilemapTransformComp = (Transform2DComponent*)ska_ecs_component_manager_get_component(entity, TRANSFORM2D_COMPONENT_INDEX);
         TilemapComponent* tilemapComponent = (TilemapComponent*)ska_ecs_component_manager_get_component(entity, TILEMAP_COMPONENT_INDEX);
-        SE_ASSERT(tilemapComponent->tilemap);
-        SE_ASSERT(tilemapComponent->tilemap->tilesArray);
-        SE_ASSERT(tilemapComponent->tilemap->tileset.texture);
+        SKA_ASSERT(tilemapComponent->tilemap);
+        SKA_ASSERT(tilemapComponent->tilemap->tilesArray);
+        SKA_ASSERT(tilemapComponent->tilemap->tileset.texture);
         const CRECamera2D* renderCamera = tilemapTransformComp->ignoreCamera ? defaultCamera : camera2D;
         const SceneNodeRenderResource renderResource = cre_scene_manager_get_scene_node_global_render_resource(entity, tilemapTransformComp, &tilemapComponent->origin);
-        const SKATransform2D baseTileTransform = renderResource.transform2D;
-        const SKASize2D baseTileSize = {
+        const SkaTransform2D baseTileTransform = renderResource.transform2D;
+        const SkaSize2D baseTileSize = {
             .w = (float)tilemapComponent->tilemap->tileset.tileSize.w * renderCamera->zoom.x,
             .h = (float)tilemapComponent->tilemap->tileset.tileSize.h * renderCamera->zoom.y
         };
         for (size_t j = 0; j < tilemapComponent->tilemap->activeTiles->size; j++) {
             const CreTileData* tileData = (CreTileData*)*(CreTileData**)ska_array_list_get(tilemapComponent->tilemap->activeTiles, j);
-            SE_ASSERT(tileData);
+            SKA_ASSERT(tileData);
             // TODO: Check if this is the correct calculation for tile position
-            const SKAVector2 tilePosition = {
+            const SkaVector2 tilePosition = {
                 baseTileTransform.position.x + (float)(tileData->position.x * tilemapComponent->tilemap->tileset.tileSize.w) * baseTileTransform.scale.x,
                 baseTileTransform.position.y + (float)(tileData->position.y * tilemapComponent->tilemap->tileset.tileSize.h) * baseTileTransform.scale.y
             };
-            const SKATransform2D tileTransform = {
+            const SkaTransform2D tileTransform = {
                 .position = tilePosition,
                 .scale = baseTileTransform.scale,
                 .rotation = baseTileTransform.rotation
             };
-            const SKARect2 tileDrawSource = {
+            const SkaRect2 tileDrawSource = {
                 .x = (float)(tileData->renderCoords.x * tilemapComponent->tilemap->tileset.tileSize.w),
                 .y = (float)(tileData->renderCoords.y * tilemapComponent->tilemap->tileset.tileSize.h),
                 .w = (float)tilemapComponent->tilemap->tileset.tileSize.w,

@@ -1,6 +1,6 @@
 #include "file_system_helper.h"
 #include "seika/utils/logger.h"
-#include "seika/utils/se_assert.h"
+#include <seika/assert.h>
 
 #include <iostream>
 #include <fstream>
@@ -122,11 +122,11 @@ void FileSystemHelper::ZipDirectory(const std::string &zipName, const std::files
         }
         zip_close(zip);
     } else {
-        se_logger_error("Failed to change to dir '%s' when creating zip archive '%s'", sourceDirectory.string().c_str(), zipName.c_str());
+        ska_logger_error("Failed to change to dir '%s' when creating zip archive '%s'", sourceDirectory.string().c_str(), zipName.c_str());
     }
 
     SetCurrentDir(originalPath);
-    SE_ASSERT(originalPath == GetCurrentDir());
+    SKA_ASSERT(originalPath == GetCurrentDir());
 }
 
 FileSystemHelper::ReturnStatus FileSystemHelper::DeleteDirectory(const std::filesystem::path &directory) {

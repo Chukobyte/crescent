@@ -2,11 +2,11 @@
 
 #include <string.h>
 
-#include <seika/utils/logger.h>
-#include <seika/memory/se_mem.h>
+#include <seika/logger.h>
+#include <seika/memory.h>
 
 Transform2DComponent* transform2d_component_create() {
-    Transform2DComponent* transform2DComponent = SE_MEM_ALLOCATE(Transform2DComponent);
+    Transform2DComponent* transform2DComponent = SKA_MEM_ALLOCATE(Transform2DComponent);
     transform2DComponent->localTransform = SKA_TRANSFORM_IDENTITY;
     transform2DComponent->globalTransform = SKA_TRANSFORM_MODEL_IDENTITY;
     transform2DComponent->zIndex = 0;
@@ -17,16 +17,16 @@ Transform2DComponent* transform2d_component_create() {
 }
 
 void transform2d_component_delete(Transform2DComponent* transform2DComponent) {
-    SE_MEM_FREE(transform2DComponent);
+    SKA_MEM_FREE(transform2DComponent);
 }
 
 Transform2DComponent* transform2d_component_copy(const Transform2DComponent* transform2DComponent) {
-    Transform2DComponent* copiedNode = SE_MEM_ALLOCATE(Transform2DComponent);
+    Transform2DComponent* copiedNode = SKA_MEM_ALLOCATE(Transform2DComponent);
     memcpy(copiedNode, transform2DComponent, sizeof(Transform2DComponent));
     return copiedNode;
 }
 
-void transform2d_component_get_local_model_matrix(mat4 model, const SKATransform2D* transform) {
+void transform2d_component_get_local_model_matrix(mat4 model, const SkaTransform2D* transform) {
     glm_mat4_identity(model);
     // 1. Translation
     glm_translate(model, (vec3) {
@@ -52,7 +52,7 @@ float transform2d_component_get_rotation_deg_from_model(mat4 model) {
 }
 
 void transform2d_component_print(Transform2DComponent* transform2DComponent) {
-    se_logger_print_err("{ position: (%f, %f), scale: (%f, %f), rotation: %f }",
+    ska_logger_message("{ position: (%f, %f), scale: (%f, %f), rotation: %f }",
                         transform2DComponent->localTransform.position.x,
                         transform2DComponent->localTransform.position.y,
                         transform2DComponent->localTransform.scale.x, transform2DComponent->localTransform.scale.y,

@@ -1,8 +1,8 @@
 #include "particle.h"
 
-#include <seika/utils/se_assert.h>
+#include <seika/assert.h>
 
-static inline void add_scaled_vector2(SKAVector2* target, const SKAVector2* source, float scale) {
+static inline void add_scaled_vector2(SkaVector2* target, const SkaVector2* source, float scale) {
     target->x += source->x * scale;
     target->y += source->y * scale;
 }
@@ -10,7 +10,7 @@ static inline void add_scaled_vector2(SKAVector2* target, const SKAVector2* sour
 //--- Particle2D ---//
 
 void cre_particle2d_set_mass(CreParticle2D* particle2D, float mass) {
-    SE_ASSERT(mass != 0.0f);
+    SKA_ASSERT(mass != 0.0f);
     particle2D->inverseMass = 1.0f / mass;
 }
 
@@ -26,7 +26,7 @@ void cre_particle_system_integrate(CreParticle2D* particle2D, float duration) {
     }
 
     // Update position
-    SKAVector2 currentVel = SKA_VECTOR2_ZERO;
+    SkaVector2 currentVel = SKA_VECTOR2_ZERO;
     add_scaled_vector2(&currentVel, &particle2D->linearVelocity, duration);
     particle2D->position.x += currentVel.x;
     particle2D->position.y += currentVel.y;
@@ -36,7 +36,7 @@ void cre_particle_system_integrate(CreParticle2D* particle2D, float duration) {
     particle2D->forceAccumulated.y += particle2D->gravity.y;
 
     // Update acceleration
-    SKAVector2 acceleration = particle2D->acceleration;
+    SkaVector2 acceleration = particle2D->acceleration;
     add_scaled_vector2(&acceleration, &particle2D->forceAccumulated, particle2D->inverseMass);
 
     // Update linear velocity

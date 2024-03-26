@@ -9,7 +9,7 @@ TEST_CASE("Curve Float", "[curve_float]") {
     }
 
     SECTION("Curve Float one point") {
-        const std::vector<SECurveControlPoint> controlPoints = {
+        const std::vector<SkaCurveControlPoint> controlPoints = {
             { .x = 0.3f, .y = 10.0f, .tangentIn = 0.0f, .tangentOut = 0.0f },
         };
         CurveFloat curveFloat = CurveFloat(controlPoints);
@@ -17,7 +17,7 @@ TEST_CASE("Curve Float", "[curve_float]") {
     }
 
     SECTION("Curve Float two points") {
-        const std::vector<SECurveControlPoint> controlPoints = {
+        const std::vector<SkaCurveControlPoint> controlPoints = {
             { .x = 0.3f, .y = 10.0f, .tangentIn = 0.0f, .tangentOut = 0.0f },
             { .x = 1.0f, .y = 20.0f, .tangentIn = 0.0f, .tangentOut = 0.0f },
         };
@@ -27,7 +27,7 @@ TEST_CASE("Curve Float", "[curve_float]") {
     }
 
     SECTION("Curve Float three points") {
-        const std::vector<SECurveControlPoint> controlPoints = {
+        const std::vector<SkaCurveControlPoint> controlPoints = {
             { .x = 0.0f, .y = 10.0f, .tangentIn = 0.0f, .tangentOut = 0.0f },
             { .x = 5.0f, .y = 20.0f, .tangentIn = 0.0f, .tangentOut = 0.0f },
             { .x = 10.0f, .y = 30.0f, .tangentIn = 0.0f, .tangentOut = 0.0f },

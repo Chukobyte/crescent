@@ -1,8 +1,8 @@
 #include "collision.h"
 
 #include <seika/ecs/ecs.h>
-#include <seika/utils/logger.h>
-#include <seika/utils/se_assert.h>
+#include <seika/logger.h>
+#include <seika/assert.h>
 
 #include "../../ecs/ecs_globals.h"
 #include "../../ecs/systems/collision_ec_system.h"
@@ -10,33 +10,33 @@
 
 static bool is_entity_in_collision_exceptions(SkaEntity entity, Collider2DComponent* collider2DComponent);
 
-SESpatialHashMap* globalSpatialHashMap = NULL;
+SkaSpatialHashMap* globalSpatialHashMap = NULL;
 
 CollisionResult cre_collision_process_entity_collisions(SkaEntity entity) {
     Collider2DComponent* colliderComponent = (Collider2DComponent*)ska_ecs_component_manager_get_component(entity, COLLIDER2D_COMPONENT_INDEX);
     CollisionResult collisionResult = { .sourceEntity = entity, .collidedEntityCount = 0 };
-    SESpatialHashMapCollisionResult hashMapCollisionResult = se_spatial_hash_map_compute_collision(globalSpatialHashMap, entity);
+    SkaSpatialHashMapCollisionResult hashMapCollisionResult = ska_spatial_hash_map_compute_collision(globalSpatialHashMap, entity);
     for (size_t i = 0; i < hashMapCollisionResult.collisionCount; i++) {
         if (!is_entity_in_collision_exceptions(hashMapCollisionResult.collisions[i], colliderComponent)) {
-            SE_ASSERT_FMT(collisionResult.collidedEntityCount < CRE_MAX_ENTITY_COLLISION, "Collisions for entity '%d' beyond the limit of %d.  Consider increasing 'CRE_MAX_ENTITY_COLLISION'!", entity, CRE_MAX_ENTITY_COLLISION);
+            SKA_ASSERT_FMT(collisionResult.collidedEntityCount < CRE_MAX_ENTITY_COLLISION, "Collisions for entity '%d' beyond the limit of %d.  Consider increasing 'CRE_MAX_ENTITY_COLLISION'!", entity, CRE_MAX_ENTITY_COLLISION);
             collisionResult.collidedEntities[collisionResult.collidedEntityCount++] = hashMapCollisionResult.collisions[i];
         }
     }
     return collisionResult;
 }
 
-CollisionResult cre_collision_process_mouse_collisions(const SKARect2* collisionRect) {
+CollisionResult cre_collision_process_mouse_collisions(const SkaRect2* collisionRect) {
     CollisionResult collisionResult = { .sourceEntity = SKA_NULL_ENTITY, .collidedEntityCount = 0 };
     const SkaECSSystem* collisionSystem = cre_collision_ec_system_get();
     for (size_t i = 0; i < collisionSystem->entity_count; i++) {
         const SkaEntity otherEntity = collisionSystem->entities[i];
         Transform2DComponent* otherTransformComponent = (Transform2DComponent*)ska_ecs_component_manager_get_component(otherEntity,TRANSFORM2D_COMPONENT_INDEX);
         Collider2DComponent* otherColliderComponent = (Collider2DComponent*)ska_ecs_component_manager_get_component(otherEntity,COLLIDER2D_COMPONENT_INDEX);
-        SKARect2 otherCollisionRect = cre_get_collision_rectangle(otherEntity, otherTransformComponent, otherColliderComponent);
+        SkaRect2 otherCollisionRect = cre_get_collision_rectangle(otherEntity, otherTransformComponent, otherColliderComponent);
         if (se_rect2_does_rectangles_overlap(collisionRect, &otherCollisionRect)) {
             collisionResult.collidedEntities[collisionResult.collidedEntityCount++] = otherEntity;
             if (collisionResult.collidedEntityCount >= CRE_MAX_ENTITY_COLLISION) {
-                se_logger_warn("Reached collided entity limit of '%d' (with mouse)", CRE_MAX_ENTITY_COLLISION);
+                ska_logger_warn("Reached collided entity limit of '%d' (with mouse)", CRE_MAX_ENTITY_COLLISION);
                 break;
             }
         }
@@ -44,11 +44,11 @@ CollisionResult cre_collision_process_mouse_collisions(const SKARect2* collision
     return collisionResult;
 }
 
-void cre_collision_set_global_spatial_hash_map(SESpatialHashMap* hashMap) {
+void cre_collision_set_global_spatial_hash_map(SkaSpatialHashMap* hashMap) {
     globalSpatialHashMap = hashMap;
 }
 
-SESpatialHashMap* cre_collision_get_global_spatial_hash_map() {
+SkaSpatialHashMap* cre_collision_get_global_spatial_hash_map() {
     return globalSpatialHashMap;
 }
 
@@ -62,9 +62,9 @@ bool is_entity_in_collision_exceptions(SkaEntity entity, Collider2DComponent* co
     return false;
 }
 
-SKARect2 cre_get_collision_rectangle(SkaEntity entity, Transform2DComponent* transform2DComponent, Collider2DComponent* collider2DComponent) {
-    const SKATransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity, transform2DComponent);
-    SKARect2 collisionRect = {
+SkaRect2 cre_get_collision_rectangle(SkaEntity entity, Transform2DComponent* transform2DComponent, Collider2DComponent* collider2DComponent) {
+    const SkaTransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity, transform2DComponent);
+    SkaRect2 collisionRect = {
         .x = globalTransform->position.x,
         .y = globalTransform->position.y,
         .w = globalTransform->scale.x * collider2DComponent->extents.w,

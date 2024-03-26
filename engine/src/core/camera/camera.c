@@ -30,11 +30,11 @@ void cre_camera2d_follow_entity(CRECamera2D* camera2D, SkaEntity entity) {
     // Register to entity events
     NodeComponent* nodeComponent = (NodeComponent*)ska_ecs_component_manager_get_component_unchecked(entity, NODE_COMPONENT_INDEX);
     if (nodeComponent != NULL) {
-        se_event_register_observer(&nodeComponent->onSceneTreeExit, &camera2D->onEntityExitSceneObserver);
+        ska_event_register_observer(&nodeComponent->onSceneTreeExit, &camera2D->onEntityExitSceneObserver);
     }
     Transform2DComponent* transform2DComponent = (Transform2DComponent *)ska_ecs_component_manager_get_component_unchecked(entity, TRANSFORM2D_COMPONENT_INDEX);
     if (transform2DComponent != NULL) {
-        se_event_register_observer(&transform2DComponent->onTransformChanged, &camera2D->onEntityTransformChangeObserver);
+        ska_event_register_observer(&transform2DComponent->onTransformChanged, &camera2D->onEntityTransformChangeObserver);
         // Trigger update right away so camera can be in position
         cre_camera2d_update_entity_follow(camera2D, transform2DComponent);
     }
@@ -47,20 +47,20 @@ void cre_camera2d_unfollow_entity(CRECamera2D* camera2D, SkaEntity entity) {
         // Unregister from entity events
         NodeComponent* nodeComponent = (NodeComponent*)ska_ecs_component_manager_get_component_unchecked(entity, NODE_COMPONENT_INDEX);
         if (nodeComponent != NULL) {
-            se_event_unregister_observer(&nodeComponent->onSceneTreeExit, &camera2D->onEntityExitSceneObserver);
+            ska_event_unregister_observer(&nodeComponent->onSceneTreeExit, &camera2D->onEntityExitSceneObserver);
         }
         Transform2DComponent* transform2DComponent = (Transform2DComponent*)ska_ecs_component_manager_get_component_unchecked(entity, TRANSFORM2D_COMPONENT_INDEX);
         if (transform2DComponent != NULL) {
-            se_event_unregister_observer(&transform2DComponent->onTransformChanged,&camera2D->onEntityTransformChangeObserver);
+            ska_event_unregister_observer(&transform2DComponent->onTransformChanged,&camera2D->onEntityTransformChangeObserver);
         }
     }
 }
 
 void cre_camera2d_update_entity_follow(CRECamera2D* camera2D, Transform2DComponent* transform2DComponent) {
-    SKATransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(camera2D->entityFollowing, transform2DComponent);
+    SkaTransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(camera2D->entityFollowing, transform2DComponent);
     CREGameProperties* gameProperties = cre_game_props_get();
     // TODO: Check for mode
-    SKAVector2 newCameraPos = {
+    SkaVector2 newCameraPos = {
         globalTransform->position.x - ((float) gameProperties->resolutionWidth / 2.0f),
         globalTransform->position.y - ((float) gameProperties->resolutionHeight / 2.0f)
     };

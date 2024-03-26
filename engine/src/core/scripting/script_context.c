@@ -1,9 +1,9 @@
 #include "script_context.h"
 
-#include <seika/memory/se_mem.h>
+#include <seika/memory.h>
 
 CREScriptContext* cre_script_context_create() {
-    CREScriptContext* newScriptContext = SE_MEM_ALLOCATE(CREScriptContext);
+    CREScriptContext* newScriptContext = SKA_MEM_ALLOCATE(CREScriptContext);
     newScriptContext->on_create_instance = NULL;
     newScriptContext->on_delete_instance = NULL;
     newScriptContext->on_start = NULL;

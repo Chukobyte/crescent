@@ -7,8 +7,8 @@
 #include <algorithm>
 #include <utility>
 
-#include <seika/utils/logger.h>
-#include <seika/utils/se_assert.h>
+#include <seika/logger.h>
+#include <seika/assert.h>
 
 #include "../engine/src/core/tilemap/tilemap.h"
 #include "../engine/src/core/ecs/components/animated_sprite_component.h"
@@ -33,7 +33,7 @@ struct Transform2DComp : public EditorComponent {
           isZIndexRelativeToParent(transform2DComponent->isZIndexRelativeToParent),
           ignoreCamera(transform2DComponent->ignoreCamera) {}
 
-    SKATransform2D transform2D = SKA_TRANSFORM_IDENTITY;
+    SkaTransform2D transform2D = SKA_TRANSFORM_IDENTITY;
     int zIndex = 0;
     bool isZIndexRelativeToParent = true;
     bool ignoreCamera = false;
@@ -52,18 +52,18 @@ struct SpriteComp : public EditorComponent {
           shaderPath(std::move(shaderPath)) {}
 
     std::string texturePath;
-    SKARect2 drawSource = SKA_RECT2D_ZERO;
-    SKAVector2 origin = SKA_VECTOR2_ZERO;
+    SkaRect2 drawSource = SKA_RECT2D_ZERO;
+    SkaVector2 origin = SKA_VECTOR2_ZERO;
     bool flipH = false;
     bool flipV = false;
-    SKAColor modulate = SKA_COLOR_WHITE;
+    SkaColor modulate = SKA_COLOR_WHITE;
     std::string shaderPath;
 };
 
 // TODO: Put editor animation stuff in another file...
 struct EditorAnimationFrame {
     std::string texturePath;
-    SKARect2 drawSource = SKA_RECT2D_ZERO;
+    SkaRect2 drawSource = SKA_RECT2D_ZERO;
     int frame = -1;
 };
 
@@ -86,7 +86,7 @@ struct EditorAnimation {
                 }
             }
         } else {
-            se_logger_error("Tried to remove frame nonexistent frame '%d' from animation '%s'", frameIndex,
+            ska_logger_error("Tried to remove frame nonexistent frame '%d' from animation '%s'", frameIndex,
                             name.c_str());
         }
     }
@@ -106,7 +106,7 @@ struct EditorAnimation {
                 return animFrame;
             }
         }
-        se_logger_error("Anim '%s' doesn't have frame '%d'", name.c_str(), frameIndex);
+        ska_logger_error("Anim '%s' doesn't have frame '%d'", name.c_str(), frameIndex);
         static EditorAnimationFrame errorAnimFrame;
         return errorAnimFrame;
     }
@@ -132,7 +132,7 @@ struct AnimatedSpriteComp : public EditorComponent {
         for (size_t animationIndex = 0; animationIndex < animatedSpriteComponentData->animationCount; animationIndex++) {
             const AnimationData& animData = animatedSpriteComponentData->animations[animationIndex];
             EditorAnimation animation = { animData.name, animData.speed, animData.doesLoop };
-            SE_ASSERT_FMT(!animation.name.empty(), "Animation is empty!");
+            SKA_ASSERT_FMT(!animation.name.empty(), "Animation is empty!");
             for (size_t frameIndex = 0; (int) frameIndex < animData.frameCount; frameIndex++) {
                 const AnimationFrameData& frameData = animData.animationFrames[frameIndex];
                 const EditorAnimationFrame animationFrame = { frameData.texturePath, frameData.drawSource, frameData.frame };
@@ -166,7 +166,7 @@ struct AnimatedSpriteComp : public EditorComponent {
                 return const_cast<EditorAnimation &>(anim);
             }
         }
-        se_logger_error("Failed to get anim at with name '%s'", name.c_str());
+        ska_logger_error("Failed to get anim at with name '%s'", name.c_str());
         static EditorAnimation failedAnim;
         return failedAnim;
     }
@@ -179,9 +179,9 @@ struct AnimatedSpriteComp : public EditorComponent {
 
     std::string currentAnimationName;
     std::vector<EditorAnimation> animations;
-    SKAColor modulate = SKA_COLOR_WHITE;
+    SkaColor modulate = SKA_COLOR_WHITE;
     bool isPlaying = false;
-    SKAVector2 origin = SKA_VECTOR2_ZERO;
+    SkaVector2 origin = SKA_VECTOR2_ZERO;
     bool flipH = false;
     bool flipV = false;
     bool staggerStartAnimationTimes = false;
@@ -198,7 +198,7 @@ struct TextLabelComp : public EditorComponent {
 
     std::string text;
     std::string fontUID;
-    SKAColor color = SKA_COLOR_WHITE;
+    SkaColor color = SKA_COLOR_WHITE;
 };
 
 struct ScriptComp : public EditorComponent {
@@ -219,8 +219,8 @@ struct Collider2DComp : public EditorComponent {
         : extents(collider2DComponent->extents),
           color(collider2DComponent->color) {}
 
-    SKASize2D extents = SKA_SIZE2D_ZERO;
-    SKAColor color = { .r = 0.0f, .g = 0.0f, .b = 0.8f, .a = 0.8f };
+    SkaSize2D extents = SKA_SIZE2D_ZERO;
+    SkaColor color = { .r = 0.0f, .g = 0.0f, .b = 0.8f, .a = 0.8f };
 };
 
 struct ColorRectComp : public EditorComponent {
@@ -230,8 +230,8 @@ struct ColorRectComp : public EditorComponent {
         : size(colorSquareComp->size),
           color(colorSquareComp->color) {}
 
-    SKASize2D size = { .w = 32.0f, .h = 32.0f };
-    SKAColor color = SKA_COLOR_WHITE;
+    SkaSize2D size = { .w = 32.0f, .h = 32.0f };
+    SkaColor color = SKA_COLOR_WHITE;
 };
 
 struct ParallaxComp : public EditorComponent {
@@ -240,7 +240,7 @@ struct ParallaxComp : public EditorComponent {
     explicit ParallaxComp(const ParallaxComponent* parallaxComponent)
         : scrollSpeed(parallaxComponent->scrollSpeed) {}
 
-    SKAVector2 scrollSpeed = SKA_VECTOR2_ZERO;
+    SkaVector2 scrollSpeed = SKA_VECTOR2_ZERO;
 };
 
 struct Particles2DComp : public EditorComponent {
@@ -257,8 +257,8 @@ struct Particles2DComp : public EditorComponent {
     }
 
     int& amount = internalComp.amount;
-    SKAMinMaxVec2& initialVelocity = internalComp.initialVelocity;
-    SKAColor& color = internalComp.color;
+    SkaMinMaxVec2& initialVelocity = internalComp.initialVelocity;
+    SkaColor& color = internalComp.color;
     float& spread = internalComp.spread;
     float& lifeTime = internalComp.lifeTime;
     float& damping = internalComp.damping;
@@ -293,7 +293,7 @@ struct TilemapComp : public EditorComponent {
     explicit TilemapComp(const TilemapComponent* tilemapComp, std::string tilemapTexturePath) : texturePath(std::move(tilemapTexturePath)) {
         memcpy(&internalComp.tilemap->tileset, &tilemapComp->tilemap->tileset, sizeof(CreTileset));
         memcpy(internalComp.tilemap, tilemapComp->tilemap, sizeof(CreTilemap));
-        memcpy(&internalComp.origin, &tilemapComp->origin, sizeof(SKAVector2));
+        memcpy(&internalComp.origin, &tilemapComp->origin, sizeof(SkaVector2));
         // Copy active tiles
         memcpy(internalComp.tilemap->activeTiles, tilemapComp->tilemap->activeTiles, sizeof(SkaArrayList));
         for (size_t i = 0; i < tilemapComp->tilemap->activeTiles->size; i++) {
@@ -307,11 +307,11 @@ struct TilemapComp : public EditorComponent {
         cre_tilemap_finalize(internalComp.tilemap);
     }
 
-    [[nodiscard]] const SKASize2Di& GetTileSize() const {
+    [[nodiscard]] const SkaSize2Di& GetTileSize() const {
         return internalComp.tilemap->tileset.tileSize;
     }
 
-    [[nodiscard]] const SETexture* GetTexture() const {
+    [[nodiscard]] const SkaTexture* GetTexture() const {
         return internalComp.tilemap->tileset.texture;
     }
 
@@ -327,7 +327,7 @@ struct TilemapComp : public EditorComponent {
     }
 
     std::string texturePath;
-    SKAVector2& origin = internalComp.origin;
+    SkaVector2& origin = internalComp.origin;
 
 private:
     TilemapComponent internalComp = {

@@ -2,21 +2,22 @@
 
 #include <string.h>
 
+#include <seika/assert.h>
+#include <seika/string.h>
+#include <seika/memory.h>
+#include <seika/file_system.h>
+#include <seika/logger.h>
 #include <seika/rendering/frame_buffer.h>
 #include <seika/rendering/render_context.h>
 #include <seika/rendering/renderer.h>
 #include <seika/rendering/shader/shader_cache.h>
 #include <seika/ecs/ec_system.h>
 #include <seika/input/input.h>
-#include <seika/input/mouse.h>
 #include <seika/audio/audio.h>
 #include <seika/audio/audio_manager.h>
 #include <seika/asset/asset_manager.h>
 #include <seika/asset/asset_file_loader.h>
-#include <seika/networking/se_network.h>
-#include <seika/utils/se_assert.h>
-#include <seika/utils/se_string_util.h>
-#include <seika/utils/se_file_system_utils.h>
+#include <seika/networking/network.h>
 
 #include "cre_pkpy_api_node.h"
 #include "../cre_pkpy.h"
@@ -346,16 +347,16 @@ void cre_pkpy_api_load_internal_modules(pkpy_vm* vm) {
 }
 
 // Helper functions
-static inline SKAVector2 cre_pkpy_api_helper_mouse_get_global_position(const SKAVector2* offset) {
-    SEMouse* globalMouse = se_mouse_get();
+static inline SkaVector2 cre_pkpy_api_helper_mouse_get_global_position(const SkaVector2* offset) {
+    SkaMouse* globalMouse = ska_input_get_mouse();
     const CRECamera2D* camera = cre_camera_manager_get_current_camera();
     CREGameProperties* gameProps = cre_game_props_get();
-    SERenderContext* renderContext = se_render_context_get();
-    const SKAVector2 mouse_pixel_coord = {
+    SkaRenderContext* renderContext = ska_render_context_get();
+    const SkaVector2 mouse_pixel_coord = {
             ska_math_map_to_range(globalMouse->position.x, 0.0f, (float) renderContext->windowWidth, 0.0f, (float) gameProps->resolutionWidth),
             ska_math_map_to_range(globalMouse->position.y, 0.0f, (float) renderContext->windowHeight, 0.0f, (float) gameProps->resolutionHeight)
     };
-    const SKAVector2 mouseWorldPos = {
+    const SkaVector2 mouseWorldPos = {
             (camera->viewport.x + camera->offset.x + mouse_pixel_coord.x + offset->x) * camera->zoom.x,
             (camera->viewport.y + camera->offset.y + mouse_pixel_coord.y + offset->y) * camera->zoom.y
     };
@@ -368,12 +369,12 @@ int cre_pkpy_api_shader_instance_delete(pkpy_vm* vm) {
     int pyShaderId;
     pkpy_to_int(vm, 0, &pyShaderId);
 
-    const SEShaderInstanceId shaderId = (SEShaderInstanceId)pyShaderId;
-    SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
+    const SkaShaderInstanceId shaderId = (SkaShaderInstanceId)pyShaderId;
+    SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(shaderId);
     bool hasDeletedInstance = false;
     if (shaderInstance != NULL) {
-        se_shader_cache_remove_instance(shaderId);
-        se_shader_instance_destroy(shaderInstance);
+        ska_shader_cache_remove_instance(shaderId);
+        ska_shader_instance_destroy(shaderInstance);
         hasDeletedInstance = true;
     }
     pkpy_push_bool(vm, hasDeletedInstance);
@@ -388,10 +389,10 @@ int cre_pkpy_api_shader_instance_create_bool_param(pkpy_vm* vm) {
     pkpy_to_string(vm, 1, &pyParamName);
     pkpy_to_bool(vm, 2, &value);
 
-    const SEShaderInstanceId shaderId = (SEShaderInstanceId)pyShaderId;
+    const SkaShaderInstanceId shaderId = (SkaShaderInstanceId)pyShaderId;
     const char* paramName = pyParamName;
-    SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
-    se_shader_instance_param_create_bool(shaderInstance, paramName, value);
+    SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(shaderId);
+    ska_shader_instance_param_create_bool(shaderInstance, paramName, value);
     return 0;
 }
 
@@ -403,10 +404,10 @@ int cre_pkpy_api_shader_instance_set_bool_param(pkpy_vm* vm) {
     pkpy_to_string(vm, 1, &pyParamName);
     pkpy_to_bool(vm, 2, &value);
 
-    const SEShaderInstanceId shaderId = (SEShaderInstanceId)pyShaderId;
+    const SkaShaderInstanceId shaderId = (SkaShaderInstanceId)pyShaderId;
     const char* paramName = pyParamName;
-    SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
-    se_shader_instance_param_update_bool(shaderInstance, paramName, value);
+    SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(shaderId);
+    ska_shader_instance_param_update_bool(shaderInstance, paramName, value);
     return 0;
 }
 
@@ -416,10 +417,10 @@ int cre_pkpy_api_shader_instance_get_bool_param(pkpy_vm* vm) {
     pkpy_to_int(vm, 0, &pyShaderId);
     pkpy_to_string(vm, 1, &pyParamName);
 
-    const SEShaderInstanceId shaderId = (SEShaderInstanceId)pyShaderId;
+    const SkaShaderInstanceId shaderId = (SkaShaderInstanceId)pyShaderId;
     const char* paramName = pyParamName;
-    SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
-    const bool paramValue = se_shader_instance_param_get_bool(shaderInstance, paramName);
+    SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(shaderId);
+    const bool paramValue = ska_shader_instance_param_get_bool(shaderInstance, paramName);
     pkpy_push_bool(vm, paramValue);
     return 1;
 }
@@ -432,10 +433,10 @@ int cre_pkpy_api_shader_instance_create_int_param(pkpy_vm* vm) {
     pkpy_to_string(vm, 1, &pyParamName);
     pkpy_to_int(vm, 2, &value);
 
-    const SEShaderInstanceId shaderId = (SEShaderInstanceId)pyShaderId;
+    const SkaShaderInstanceId shaderId = (SkaShaderInstanceId)pyShaderId;
     const char* paramName = pyParamName;
-    SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
-    se_shader_instance_param_create_int(shaderInstance, paramName, value);
+    SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(shaderId);
+    ska_shader_instance_param_create_int(shaderInstance, paramName, value);
     return 0;
 }
 
@@ -447,10 +448,10 @@ int cre_pkpy_api_shader_instance_set_int_param(pkpy_vm* vm) {
     pkpy_to_string(vm, 1, &pyParamName);
     pkpy_to_int(vm, 2, &value);
 
-    const SEShaderInstanceId shaderId = (SEShaderInstanceId)pyShaderId;
+    const SkaShaderInstanceId shaderId = (SkaShaderInstanceId)pyShaderId;
     const char* paramName = pyParamName;
-    SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
-    se_shader_instance_param_update_int(shaderInstance, paramName, value);
+    SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(shaderId);
+    ska_shader_instance_param_update_int(shaderInstance, paramName, value);
     return 0;
 }
 
@@ -460,10 +461,10 @@ int cre_pkpy_api_shader_instance_get_int_param(pkpy_vm* vm) {
     pkpy_to_int(vm, 0, &pyShaderId);
     pkpy_to_string(vm, 1, &pyParamName);
 
-    const SEShaderInstanceId shaderId = (SEShaderInstanceId)pyShaderId;
+    const SkaShaderInstanceId shaderId = (SkaShaderInstanceId)pyShaderId;
     const char* paramName = pyParamName;
-    SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
-    const int paramValue = se_shader_instance_param_get_int(shaderInstance, paramName);
+    SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(shaderId);
+    const int paramValue = ska_shader_instance_param_get_int(shaderInstance, paramName);
     pkpy_push_int(vm, paramValue);
     return 1;
 }
@@ -476,10 +477,10 @@ int cre_pkpy_api_shader_instance_create_float_param(pkpy_vm* vm) {
     pkpy_to_string(vm, 1, &pyParamName);
     pkpy_to_float(vm, 2, &value);
 
-    const SEShaderInstanceId shaderId = (SEShaderInstanceId)pyShaderId;
+    const SkaShaderInstanceId shaderId = (SkaShaderInstanceId)pyShaderId;
     const char* paramName = pyParamName;
-    SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
-    se_shader_instance_param_create_float(shaderInstance, paramName, (float)value);
+    SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(shaderId);
+    ska_shader_instance_param_create_float(shaderInstance, paramName, (float)value);
     return 0;
 }
 
@@ -491,10 +492,10 @@ int cre_pkpy_api_shader_instance_set_float_param(pkpy_vm* vm) {
     pkpy_to_string(vm, 1, &pyParamName);
     pkpy_to_float(vm, 2, &value);
 
-    const SEShaderInstanceId shaderId = (SEShaderInstanceId)pyShaderId;
+    const SkaShaderInstanceId shaderId = (SkaShaderInstanceId)pyShaderId;
     const char* paramName = pyParamName;
-    SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
-    se_shader_instance_param_update_float(shaderInstance, paramName, (float)value);
+    SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(shaderId);
+    ska_shader_instance_param_update_float(shaderInstance, paramName, (float)value);
     return 0;
 }
 
@@ -504,10 +505,10 @@ int cre_pkpy_api_shader_instance_get_float_param(pkpy_vm* vm) {
     pkpy_to_int(vm, 0, &pyShaderId);
     pkpy_to_string(vm, 1, &pyParamName);
 
-    const SEShaderInstanceId shaderId = (SEShaderInstanceId)pyShaderId;
+    const SkaShaderInstanceId shaderId = (SkaShaderInstanceId)pyShaderId;
     const char* paramName = pyParamName;
-    SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
-    const float paramValue = se_shader_instance_param_get_float(shaderInstance, paramName);
+    SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(shaderId);
+    const float paramValue = ska_shader_instance_param_get_float(shaderInstance, paramName);
     pkpy_push_float(vm, paramValue);
     return 1;
 }
@@ -522,10 +523,10 @@ int cre_pkpy_api_shader_instance_create_float2_param(pkpy_vm* vm) {
     pkpy_to_float(vm, 2, &valueX);
     pkpy_to_float(vm, 3, &valueY);
 
-    const SEShaderInstanceId shaderId = (SEShaderInstanceId)pyShaderId;
+    const SkaShaderInstanceId shaderId = (SkaShaderInstanceId)pyShaderId;
     const char* paramName = pyParamName;
-    SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
-    se_shader_instance_param_create_float2(shaderInstance, paramName, (SKAVector2){ (float)valueX, (float)valueY });
+    SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(shaderId);
+    ska_shader_instance_param_create_float2(shaderInstance, paramName, (SkaVector2){ (float)valueX, (float)valueY });
     return 0;
 }
 
@@ -539,10 +540,10 @@ int cre_pkpy_api_shader_instance_set_float2_param(pkpy_vm* vm) {
     pkpy_to_float(vm, 2, &valueX);
     pkpy_to_float(vm, 3, &valueY);
 
-    const SEShaderInstanceId shaderId = (SEShaderInstanceId)pyShaderId;
+    const SkaShaderInstanceId shaderId = (SkaShaderInstanceId)pyShaderId;
     const char* paramName = pyParamName;
-    SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
-    se_shader_instance_param_update_float2(shaderInstance, paramName, (SKAVector2){ (float)valueX, (float)valueY });
+    SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(shaderId);
+    ska_shader_instance_param_update_float2(shaderInstance, paramName, (SkaVector2){ (float)valueX, (float)valueY });
     return 0;
 }
 
@@ -552,10 +553,10 @@ int cre_pkpy_api_shader_instance_get_float2_param(pkpy_vm* vm) {
     pkpy_to_int(vm, 0, &pyShaderId);
     pkpy_to_string(vm, 1, &pyParamName);
 
-    const SEShaderInstanceId shaderId = (SEShaderInstanceId)pyShaderId;
+    const SkaShaderInstanceId shaderId = (SkaShaderInstanceId)pyShaderId;
     const char* paramName = pyParamName;
-    SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
-    const SKAVector2 paramValue = se_shader_instance_param_get_float2(shaderInstance, paramName);
+    SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(shaderId);
+    const SkaVector2 paramValue = ska_shader_instance_param_get_float2(shaderInstance, paramName);
     pkpy_push_float(vm, paramValue.x);
     pkpy_push_float(vm, paramValue.y);
     return 2;
@@ -573,10 +574,10 @@ int cre_pkpy_api_shader_instance_create_float3_param(pkpy_vm* vm) {
     pkpy_to_float(vm, 3, &valueY);
     pkpy_to_float(vm, 4, &valueZ);
 
-    const SEShaderInstanceId shaderId = (SEShaderInstanceId)pyShaderId;
+    const SkaShaderInstanceId shaderId = (SkaShaderInstanceId)pyShaderId;
     const char* paramName = pyParamName;
-    SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
-    se_shader_instance_param_create_float3(shaderInstance, paramName, (SKAVector3){ (float)valueX, (float)valueY, (float)valueZ });
+    SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(shaderId);
+    ska_shader_instance_param_create_float3(shaderInstance, paramName, (SkaVector3){ (float)valueX, (float)valueY, (float)valueZ });
     return 0;
 }
 
@@ -592,10 +593,10 @@ int cre_pkpy_api_shader_instance_set_float3_param(pkpy_vm* vm) {
     pkpy_to_float(vm, 3, &valueY);
     pkpy_to_float(vm, 4, &valueZ);
 
-    const SEShaderInstanceId shaderId = (SEShaderInstanceId)pyShaderId;
+    const SkaShaderInstanceId shaderId = (SkaShaderInstanceId)pyShaderId;
     const char* paramName = pyParamName;
-    SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
-    se_shader_instance_param_update_float3(shaderInstance, paramName, (SKAVector3){ (float)valueX, (float)valueY, (float)valueZ });
+    SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(shaderId);
+    ska_shader_instance_param_update_float3(shaderInstance, paramName, (SkaVector3){ (float)valueX, (float)valueY, (float)valueZ });
     return 0;
 }
 
@@ -605,10 +606,10 @@ int cre_pkpy_api_shader_instance_get_float3_param(pkpy_vm* vm) {
     pkpy_to_int(vm, 0, &pyShaderId);
     pkpy_to_string(vm, 1, &pyParamName);
 
-    const SEShaderInstanceId shaderId = (SEShaderInstanceId)pyShaderId;
+    const SkaShaderInstanceId shaderId = (SkaShaderInstanceId)pyShaderId;
     const char* paramName = pyParamName;
-    SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
-    const SKAVector3 paramValue = se_shader_instance_param_get_float3(shaderInstance, paramName);
+    SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(shaderId);
+    const SkaVector3 paramValue = ska_shader_instance_param_get_float3(shaderInstance, paramName);
     pkpy_push_float(vm, paramValue.x);
     pkpy_push_float(vm, paramValue.y);
     pkpy_push_float(vm, paramValue.z);
@@ -629,10 +630,10 @@ int cre_pkpy_api_shader_instance_create_float4_param(pkpy_vm* vm) {
     pkpy_to_float(vm, 4, &valueZ);
     pkpy_to_float(vm, 5, &valueW);
 
-    const SEShaderInstanceId shaderId = (SEShaderInstanceId)pyShaderId;
+    const SkaShaderInstanceId shaderId = (SkaShaderInstanceId)pyShaderId;
     const char* paramName = pyParamName;
-    SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
-    se_shader_instance_param_create_float4(shaderInstance, paramName, (SKAVector4){ (float)valueX, (float)valueY, (float)valueZ, (float)valueW });
+    SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(shaderId);
+    ska_shader_instance_param_create_float4(shaderInstance, paramName, (SkaVector4){ (float)valueX, (float)valueY, (float)valueZ, (float)valueW });
     return 0;
 }
 
@@ -650,10 +651,10 @@ int cre_pkpy_api_shader_instance_set_float4_param(pkpy_vm* vm) {
     pkpy_to_float(vm, 4, &valueZ);
     pkpy_to_float(vm, 5, &valueW);
 
-    const SEShaderInstanceId shaderId = (SEShaderInstanceId)pyShaderId;
+    const SkaShaderInstanceId shaderId = (SkaShaderInstanceId)pyShaderId;
     const char* paramName = pyParamName;
-    SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
-    se_shader_instance_param_update_float4(shaderInstance, paramName, (SKAVector4){ (float)valueX, (float)valueY, (float)valueZ, (float)valueW });
+    SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(shaderId);
+    ska_shader_instance_param_update_float4(shaderInstance, paramName, (SkaVector4){ (float)valueX, (float)valueY, (float)valueZ, (float)valueW });
     return 0;
 }
 
@@ -663,10 +664,10 @@ int cre_pkpy_api_shader_instance_get_float4_param(pkpy_vm* vm) {
     pkpy_to_int(vm, 0, &pyShaderId);
     pkpy_to_string(vm, 1, &pyParamName);
 
-    const SEShaderInstanceId shaderId = (SEShaderInstanceId)pyShaderId;
+    const SkaShaderInstanceId shaderId = (SkaShaderInstanceId)pyShaderId;
     const char* paramName = pyParamName;
-    SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
-    const SKAVector4 paramValue = se_shader_instance_param_get_float4(shaderInstance, paramName);
+    SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(shaderId);
+    const SkaVector4 paramValue = ska_shader_instance_param_get_float4(shaderInstance, paramName);
     pkpy_push_float(vm, paramValue.x);
     pkpy_push_float(vm, paramValue.y);
     pkpy_push_float(vm, paramValue.z);
@@ -681,8 +682,8 @@ int cre_pkpy_api_shader_util_compile_shader(pkpy_vm* vm) {
     pkpy_to_string(vm, 0, &pyShaderPath);
 
     const char* shaderPath = pyShaderPath;
-    const SEShaderInstanceId newId = se_shader_cache_create_instance_and_add(shaderPath);
-    SE_ASSERT_FMT(newId != SE_SHADER_INSTANCE_INVALID_ID, "Invalid shader id reading from path '%s'", shaderPath);
+    const SkaShaderInstanceId newId = ska_shader_cache_create_instance_and_add(shaderPath);
+    SKA_ASSERT_FMT(newId != SKA_SHADER_INSTANCE_INVALID_ID, "Invalid shader id reading from path '%s'", shaderPath);
     pkpy_push_int(vm, (int)newId);
     return 1;
 }
@@ -695,8 +696,8 @@ int cre_pkpy_api_shader_util_compile_shader_raw(pkpy_vm* vm) {
 
     const char* vertexPath = pyVertexPath;
     const char* fragmentPath = pyFragmentPath;
-    const SEShaderInstanceId newId = se_shader_cache_create_instance_and_add_from_raw(vertexPath, fragmentPath);
-    SE_ASSERT_FMT(newId != SE_SHADER_INSTANCE_INVALID_ID, "Invalid shader id reading from paths: vertex = '%s', fragment = '%s'", vertexPath, fragmentPath);
+    const SkaShaderInstanceId newId = ska_shader_cache_create_instance_and_add_from_raw(vertexPath, fragmentPath);
+    SKA_ASSERT_FMT(newId != SKA_SHADER_INSTANCE_INVALID_ID, "Invalid shader id reading from paths: vertex = '%s', fragment = '%s'", vertexPath, fragmentPath);
     pkpy_push_int(vm, (int)newId);
     return 1;
 }
@@ -705,11 +706,11 @@ int cre_pkpy_api_shader_util_set_screen_shader(pkpy_vm* vm) {
     int pyShaderId;
     pkpy_to_int(vm, 0, &pyShaderId);
 
-    const SEShaderInstanceId shaderId = (SEShaderInstanceId)pyShaderId;
-    SEShaderInstance* shaderInstance = se_shader_cache_get_instance(shaderId);
+    const SkaShaderInstanceId shaderId = (SkaShaderInstanceId)pyShaderId;
+    SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(shaderId);
     bool hasSetShaderInstance = false;
     if (shaderInstance) {
-        se_frame_buffer_set_screen_shader(shaderInstance);
+        ska_frame_buffer_set_screen_shader(shaderInstance);
         hasSetShaderInstance = true;
     }
     pkpy_push_bool(vm, hasSetShaderInstance);
@@ -717,13 +718,13 @@ int cre_pkpy_api_shader_util_set_screen_shader(pkpy_vm* vm) {
 }
 
 int cre_pkpy_api_shader_util_get_current_screen_shader(pkpy_vm* vm) {
-    const SEShaderInstanceId currentScreenShaderId = 0; // TODO: Keep track of current screen shader somewhere
+    const SkaShaderInstanceId currentScreenShaderId = 0; // TODO: Keep track of current screen shader somewhere
     pkpy_push_int(vm, (int)currentScreenShaderId);
     return 1;
 }
 
 int cre_pkpy_api_shader_util_reset_screen_shader_to_default(pkpy_vm* vm) {
-    se_frame_buffer_reset_to_default_screen_shader();
+    ska_frame_buffer_reset_to_default_screen_shader();
     return 0;
 }
 
@@ -796,7 +797,8 @@ int cre_pkpy_api_input_add_action(pkpy_vm* vm) {
 
     const char* actionName = pyActionName;
     const char* actionValue = pyActionValue;
-    se_input_add_action_value(actionName, actionValue, pyDeviceId);
+    // TODO: Input - fix up
+//    se_input_add_action_value(actionName, actionValue, pyDeviceId);
     return 0;
 }
 
@@ -805,7 +807,8 @@ int cre_pkpy_api_input_is_action_pressed(pkpy_vm* vm) {
     pkpy_to_string(vm, 0, &pyActionName);
 
     const char* actionName = pyActionName;
-    pkpy_push_bool(vm, se_input_is_action_pressed(actionName));
+    const SkaInputActionHandle handle = ska_input_find_input_action_handle(actionName, 0);
+    pkpy_push_bool(vm, ska_input_is_input_action_pressed(handle, 0));
     return 1;
 }
 
@@ -814,7 +817,8 @@ int cre_pkpy_api_input_is_action_just_pressed(pkpy_vm* vm) {
     pkpy_to_string(vm, 0, &pyActionName);
 
     const char* actionName = pyActionName;
-    pkpy_push_bool(vm, se_input_is_action_just_pressed(actionName));
+    const SkaInputActionHandle handle = ska_input_find_input_action_handle(actionName, 0);
+    pkpy_push_bool(vm, ska_input_is_input_action_just_pressed(handle, 0));
     return 1;
 }
 
@@ -823,7 +827,8 @@ int cre_pkpy_api_input_is_action_just_released(pkpy_vm* vm) {
     pkpy_to_string(vm, 0, &pyActionName);
 
     const char* actionName = pyActionName;
-    pkpy_push_bool(vm, se_input_is_action_just_released(actionName));
+    const SkaInputActionHandle handle = ska_input_find_input_action_handle(actionName, 0);
+    pkpy_push_bool(vm, ska_input_is_input_action_just_released(handle, 0));
     return 1;
 }
 
@@ -837,7 +842,8 @@ int cre_pkpy_api_input_start_gamepad_vibration(pkpy_vm* vm) {
     pkpy_to_float(vm, 2, &pyStrongMagnitude);
     pkpy_to_float(vm, 3, &pyDurationSeconds);
 
-    se_input_gamepad_start_vibration(pyDeviceId, (float)pyWeakMagnitude, (float)pyStrongMagnitude, (float)pyDurationSeconds);
+    // TODO: Input - fix up
+//    se_input_gamepad_start_vibration(pyDeviceId, (float)pyWeakMagnitude, (float)pyStrongMagnitude, (float)pyDurationSeconds);
     return 0;
 }
 
@@ -845,19 +851,20 @@ int cre_pkpy_api_input_stop_gamepad_vibration(pkpy_vm* vm) {
     int pyDeviceId;
     pkpy_to_int(vm, 0, &pyDeviceId);
 
-    se_input_gamepad_stop_vibration(pyDeviceId);
+    // TODO: Input - fix up
+//    se_input_gamepad_stop_vibration(pyDeviceId);
     return 0;
 }
 
 int cre_pkpy_api_input_mouse_get_position(pkpy_vm* vm) {
-    const SEMouse* globalMouse = se_mouse_get();
+    const SkaMouse* globalMouse = ska_input_get_mouse();
     pkpy_push_float(vm, (double)globalMouse->position.x);
     pkpy_push_float(vm, (double)globalMouse->position.y);
     return 2;
 }
 
 int cre_pkpy_api_input_mouse_get_world_position(pkpy_vm* vm) {
-    const SKAVector2 mouseWorldPosition = cre_pkpy_api_helper_mouse_get_global_position(&SKA_VECTOR2_ZERO);
+    const SkaVector2 mouseWorldPosition = cre_pkpy_api_helper_mouse_get_global_position(&SKA_VECTOR2_ZERO);
     pkpy_push_float(vm, (double)mouseWorldPosition.x);
     pkpy_push_float(vm, (double)mouseWorldPosition.y);
     return 2;
@@ -876,7 +883,7 @@ int cre_pkpy_api_scene_tree_change_scene(pkpy_vm* vm) {
 
 int cre_pkpy_api_scene_tree_get_root(pkpy_vm* vm) {
     SceneTreeNode* rootNode = cre_scene_manager_get_active_scene_root();
-    SE_ASSERT(rootNode != NULL);
+    SKA_ASSERT(rootNode != NULL);
     cre_pkpy_script_context_create_instance_if_nonexistent_and_push_entity_instance(rootNode->entity);
     return 1;
 }
@@ -897,8 +904,8 @@ int cre_pkpy_api_scene_manager_process_queued_scene_change(pkpy_vm* vm) {
 
 int cre_pkpy_api_game_properties_get(pkpy_vm* vm) {
     const CREGameProperties* gameProps = cre_game_props_get();
-    SE_ASSERT(gameProps->gameTitle);
-    SE_ASSERT(gameProps->initialScenePath);
+    SKA_ASSERT(gameProps->gameTitle);
+    SKA_ASSERT(gameProps->initialScenePath);
     pkpy_push_string(vm, pkpy_string(gameProps->gameTitle));
     pkpy_push_int(vm, gameProps->resolutionWidth);
     pkpy_push_int(vm, gameProps->resolutionHeight);
@@ -918,7 +925,7 @@ int cre_pkpy_api_camera2d_set_position(pkpy_vm* vm) {
     pkpy_to_float(vm, 1, &pyPositionY);
 
     CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
-    camera2D->viewport = (SKAVector2){ (float)pyPositionX, (float)pyPositionY };
+    camera2D->viewport = (SkaVector2){ (float)pyPositionX, (float)pyPositionY };
     cre_camera2d_clamp_viewport_to_boundary(camera2D);
     return 0;
 }
@@ -929,7 +936,7 @@ int cre_pkpy_api_camera2d_add_to_position(pkpy_vm* vm) {
     pkpy_to_float(vm, 1, &pyPositionY);
 
     CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
-    camera2D->viewport = (SKAVector2){  camera2D->viewport.x + (float)pyPositionX, camera2D->viewport.y + (float)pyPositionY };
+    camera2D->viewport = (SkaVector2){  camera2D->viewport.x + (float)pyPositionX, camera2D->viewport.y + (float)pyPositionY };
     cre_camera2d_clamp_viewport_to_boundary(camera2D);
     return 0;
 }
@@ -947,7 +954,7 @@ int cre_pkpy_api_camera2d_set_offset(pkpy_vm* vm) {
     pkpy_to_float(vm, 1, &pyOffsetY);
 
     CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
-    camera2D->offset = (SKAVector2){(float)pyOffsetX, (float)pyOffsetY };
+    camera2D->offset = (SkaVector2){(float)pyOffsetX, (float)pyOffsetY };
     return 0;
 }
 
@@ -957,7 +964,7 @@ int cre_pkpy_api_camera2d_add_to_offset(pkpy_vm* vm) {
     pkpy_to_float(vm, 1, &pyOffsetY);
 
     CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
-    camera2D->offset = (SKAVector2){camera2D->offset.x + (float)pyOffsetX, camera2D->offset.y + (float)pyOffsetY };
+    camera2D->offset = (SkaVector2){camera2D->offset.x + (float)pyOffsetX, camera2D->offset.y + (float)pyOffsetY };
     return 0;
 }
 
@@ -974,7 +981,7 @@ int cre_pkpy_api_camera2d_set_zoom(pkpy_vm* vm) {
     pkpy_to_float(vm, 1, &pyZoomY);
 
     CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
-    camera2D->zoom = (SKAVector2){(float)pyZoomX, (float)pyZoomY };
+    camera2D->zoom = (SkaVector2){(float)pyZoomX, (float)pyZoomY };
     return 0;
 }
 
@@ -984,7 +991,7 @@ int cre_pkpy_api_camera2d_add_to_zoom(pkpy_vm* vm) {
     pkpy_to_float(vm, 1, &pyZoomY);
 
     CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
-    camera2D->zoom = (SKAVector2){camera2D->zoom.x + (float)pyZoomX, camera2D->zoom.y + (float)pyZoomY };
+    camera2D->zoom = (SkaVector2){camera2D->zoom.x + (float)pyZoomX, camera2D->zoom.y + (float)pyZoomY };
     return 0;
 }
 
@@ -1003,7 +1010,7 @@ int cre_pkpy_api_camera2d_set_boundary(pkpy_vm* vm) {
     pkpy_to_float(vm, 3, &pyBoundaryH);
 
     CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
-    camera2D->boundary = (SKARect2){ (float)pyBoundaryX, (float)pyBoundaryY, (float)pyBoundaryW, (float)pyBoundaryH };
+    camera2D->boundary = (SkaRect2){ (float)pyBoundaryX, (float)pyBoundaryY, (float)pyBoundaryW, (float)pyBoundaryH };
     cre_camera2d_clamp_viewport_to_boundary(camera2D);
     return 0;
 }
@@ -1071,11 +1078,11 @@ int cre_pkpy_api_audio_source_set_pitch(pkpy_vm* vm) {
     pkpy_to_float(vm, 1, &pyPitch);
 
     const char* path = pyPath;
-    if (se_asset_manager_has_audio_source(path)) {
-        SEAudioSource* audioSource = se_asset_manager_get_audio_source(path);
+    if (ska_asset_manager_has_audio_source(path)) {
+        SkaAudioSource* audioSource = ska_asset_manager_get_audio_source(path);
         audioSource->pitch = pyPitch;
     } else {
-        se_logger_warn("Tried to set non-existent audio source's pitch at '%s'", path);
+        ska_logger_warn("Tried to set non-existent audio source's pitch at '%s'", path);
     }
     return 0;
 }
@@ -1084,11 +1091,11 @@ int cre_pkpy_api_audio_source_get_pitch(pkpy_vm* vm) {
     pkpy_to_string(vm, 0, &pyPath);
 
     const char* path = pyPath;
-    if (se_asset_manager_has_audio_source(path)) {
-        SEAudioSource* audioSource = se_asset_manager_get_audio_source(path);
+    if (ska_asset_manager_has_audio_source(path)) {
+        SkaAudioSource* audioSource = ska_asset_manager_get_audio_source(path);
         pkpy_push_float(vm, audioSource->pitch);
     } else {
-        se_logger_warn("Tried to get non-existent audio source's pitch at '%s'", path);
+        ska_logger_warn("Tried to get non-existent audio source's pitch at '%s'", path);
         pkpy_push_float(vm, 1.0);
     }
     return 1;
@@ -1103,7 +1110,7 @@ int cre_pkpy_api_audio_manager_play_sound(pkpy_vm* vm) {
     pkpy_to_bool(vm, 1, &pyLoops);
 
     const char* path = pyPath;
-    se_audio_manager_play_sound(path, pyLoops);
+    ska_audio_manager_play_sound(path, pyLoops);
     return 0;
 }
 
@@ -1112,7 +1119,7 @@ int cre_pkpy_api_audio_manager_stop_sound(pkpy_vm* vm) {
     pkpy_to_string(vm, 0, &pyPath);
 
     const char* path = pyPath;
-    se_audio_manager_stop_sound(path);
+    ska_audio_manager_stop_sound(path);
     return 0;
 }
 
@@ -1130,12 +1137,12 @@ int cre_pkpy_api_game_config_save(pkpy_vm* vm) {
     const char* dataJson = pyDataJson;
     const char* encryptionKey = pyEncryptionKey; // TODO: Use
     const CREGameProperties* gameProps = cre_game_props_get();
-    char* validGameTitle = se_strdup(gameProps->gameTitle);
-    se_str_to_lower_and_underscore_whitespace(validGameTitle);
-    char* fullSavePath = se_fs_get_user_save_path("crescent", validGameTitle, path);
-    const bool success = se_fs_write_to_file(fullSavePath, dataJson);
-    SE_MEM_FREE(fullSavePath);
-    SE_MEM_FREE(validGameTitle);
+    char* validGameTitle = ska_strdup(gameProps->gameTitle);
+    ska_str_to_lower_and_underscore_whitespace(validGameTitle);
+    char* fullSavePath = ska_fs_get_user_save_path("crescent", validGameTitle, path);
+    const bool success = ska_fs_write_to_file(fullSavePath, dataJson);
+    SKA_MEM_FREE(fullSavePath);
+    SKA_MEM_FREE(validGameTitle);
     pkpy_push_bool(vm, success);
     return 1;
 }
@@ -1149,14 +1156,14 @@ int cre_pkpy_api_game_config_load(pkpy_vm* vm) {
     const char* path = pyPath;
     const char* encryptionKey = pyEncryptionKey; // TODO: Use
     const CREGameProperties* gameProps = cre_game_props_get();
-    char* validGameTitle = se_strdup(gameProps->gameTitle);
-    se_str_to_lower_and_underscore_whitespace(validGameTitle);
-    char* fullSavePath = se_fs_get_user_save_path("crescent", validGameTitle, path);
-    char* fileContents = sf_asset_file_loader_read_file_contents_as_string(fullSavePath, NULL);
+    char* validGameTitle = ska_strdup(gameProps->gameTitle);
+    ska_str_to_lower_and_underscore_whitespace(validGameTitle);
+    char* fullSavePath = ska_fs_get_user_save_path("crescent", validGameTitle, path);
+    char* fileContents = ska_asset_file_loader_read_file_contents_as_string(fullSavePath, NULL);
     pkpy_push_string(vm, pkpy_string(fileContents));
-    SE_MEM_FREE(validGameTitle);
-    SE_MEM_FREE(fullSavePath);
-    SE_MEM_FREE(fileContents);
+    SKA_MEM_FREE(validGameTitle);
+    SKA_MEM_FREE(fullSavePath);
+    SKA_MEM_FREE(fileContents);
     return 1;
 }
 
@@ -1208,9 +1215,9 @@ int cre_pkpy_api_collision_handler_process_mouse_collisions(pkpy_vm* vm) {
     pkpy_to_float(vm, 2, &pyCollisionSizeW);
     pkpy_to_float(vm, 3, &pyCollisionSizeH);
 
-    const SKAVector2 positionOffset = { (float)pyPosOffsetX, (float)pyPosOffsetY };
-    const SKAVector2 mouseWorldPos = cre_pkpy_api_helper_mouse_get_global_position(&positionOffset);
-    const SKARect2 collisionRect = { mouseWorldPos.x, mouseWorldPos.y, (float)pyCollisionSizeW, (float)pyCollisionSizeH };
+    const SkaVector2 positionOffset = { (float)pyPosOffsetX, (float)pyPosOffsetY };
+    const SkaVector2 mouseWorldPos = cre_pkpy_api_helper_mouse_get_global_position(&positionOffset);
+    const SkaRect2 collisionRect = { mouseWorldPos.x, mouseWorldPos.y, (float)pyCollisionSizeW, (float)pyCollisionSizeH };
     const CollisionResult collisionResult = cre_collision_process_mouse_collisions(&collisionRect);
     for (size_t i = 0; i < collisionResult.collidedEntityCount; i++) {
         const SkaEntity collidedEntity = collisionResult.collidedEntities[i];
@@ -1221,7 +1228,7 @@ int cre_pkpy_api_collision_handler_process_mouse_collisions(pkpy_vm* vm) {
 
 //--- Network ---//
 int cre_pkpy_api_network_is_server(pkpy_vm* vm) {
-    pkpy_push_bool(vm, se_network_is_server());
+    pkpy_push_bool(vm, ska_network_is_server());
     return 1;
 }
 
@@ -1230,12 +1237,12 @@ int cre_pkpy_api_server_start(pkpy_vm* vm) {
     int pyPort;
     pkpy_to_int(vm, 0, &pyPort);
 
-    se_udp_server_initialize(pyPort, ska_ecs_system_event_network_callback);
+    ska_udp_server_initialize(pyPort, ska_ecs_system_event_network_callback);
     return 0;
 }
 
 int cre_pkpy_api_server_stop(pkpy_vm* vm) {
-    se_udp_server_finalize();
+    ska_udp_server_finalize();
     return 0;
 }
 
@@ -1244,7 +1251,7 @@ int cre_pkpy_api_server_send(pkpy_vm* vm) {
     pkpy_to_string(vm, 0, &pyMessage);
 
     const char* message = pyMessage;
-    se_udp_server_send_message(message);
+    ska_udp_server_send_message(message);
     return 0;
 }
 
@@ -1256,11 +1263,11 @@ int cre_pkpy_api_client_start(pkpy_vm* vm) {
     pkpy_to_int(vm, 1, &pyPort);
 
     const char* host = pyHost;
-    se_udp_client_initialize(host, pyPort, ska_ecs_system_event_network_callback);
+    ska_udp_client_initialize(host, pyPort, ska_ecs_system_event_network_callback);
     return 0;
 }
 int cre_pkpy_api_client_stop(pkpy_vm* vm) {
-    se_udp_client_finalize();
+    ska_udp_client_finalize();
     return 0;
 }
 int cre_pkpy_api_client_send(pkpy_vm* vm) {
@@ -1268,6 +1275,6 @@ int cre_pkpy_api_client_send(pkpy_vm* vm) {
     pkpy_to_string(vm, 0, &pyMessage);
 
     const char* message = pyMessage;
-    se_udp_client_send_message(message);
+    ska_udp_client_send_message(message);
     return 0;
 }

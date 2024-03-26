@@ -8,16 +8,16 @@ extern "C" {
 
 #include <seika/rendering/texture.h>
 #include <seika/rendering/shader/shader_instance_minimal.h>
-#include <seika/math/se_math.h>
+#include <seika/math/math.h>
 
 typedef struct SpriteComponent {
-    SETexture* texture;
-    SKARect2 drawSource;
-    SKAVector2 origin;
+    SkaTexture* texture;
+    SkaRect2 drawSource;
+    SkaVector2 origin;
     bool flipH;
     bool flipV;
-    SKAColor modulate;
-    SEShaderInstanceId shaderInstanceId;
+    SkaColor modulate;
+    SkaShaderInstanceId shaderInstanceId;
 } SpriteComponent;
 
 SpriteComponent* sprite_component_create();

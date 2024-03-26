@@ -18,7 +18,7 @@ std::string EditorContext::GetEngineBinPathByOS(const std::string &osType) const
     if (osType == "windows" || osType == "macosx" || osType == "linux") {
         return GetEngineBinRoot() + osType;
     }
-    se_logger_error("osType '%s' is invalid!", osType.c_str());
+    ska_logger_error("osType '%s' is invalid!", osType.c_str());
     return {};
 }
 

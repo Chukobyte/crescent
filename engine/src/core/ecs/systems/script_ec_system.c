@@ -1,8 +1,8 @@
 #include "script_ec_system.h"
 
-#include <seika/data_structures/se_hash_map.h>
+#include <seika/data_structures/hash_map.h>
 #include <seika/ecs/ecs.h>
-#include <seika/utils/se_assert.h>
+#include <seika/assert.h>
 
 #include "../ecs_globals.h"
 #include "../components/script_component.h"
@@ -47,7 +47,7 @@ void on_ec_system_registered(SkaECSSystem* system) {
     // Python Context
     scriptContexts[ScriptContextType_PYTHON] = cre_pkpy_script_context_create();
     scriptContextsCount++;
-    SE_ASSERT(scriptContexts[ScriptContextType_PYTHON] != NULL);
+    SKA_ASSERT(scriptContexts[ScriptContextType_PYTHON] != NULL);
     // Native Context
     scriptContexts[ScriptContextType_NATIVE] = cre_native_create_script_context();
     scriptContextsCount++;
@@ -66,10 +66,10 @@ void on_ec_system_destroyed(SkaECSSystem* system) {
 
 void on_entity_registered(SkaECSSystem* system, SkaEntity entity) {
     const ScriptComponent* scriptComponent = (ScriptComponent*)ska_ecs_component_manager_get_component(entity, SCRIPT_COMPONENT_INDEX);
-    SE_ASSERT(scriptComponent->contextType != ScriptContextType_NONE);
+    SKA_ASSERT(scriptComponent->contextType != ScriptContextType_NONE);
     const CREScriptContext* scriptContext = scriptContexts[scriptComponent->contextType];
-    SE_ASSERT(scriptContext != NULL);
-    SE_ASSERT(scriptContext->on_create_instance != NULL);
+    SKA_ASSERT(scriptContext != NULL);
+    SKA_ASSERT(scriptContext->on_create_instance != NULL);
     scriptContext->on_create_instance(entity, scriptComponent->classPath, scriptComponent->className);
 }
 
@@ -80,7 +80,7 @@ void on_entity_unregistered(SkaECSSystem* system, SkaEntity entity) {
 
 void on_entity_start(SkaECSSystem* system, SkaEntity entity) {
     const ScriptComponent* scriptComponent = (ScriptComponent*)ska_ecs_component_manager_get_component(entity, SCRIPT_COMPONENT_INDEX);
-    SE_ASSERT_FMT(scriptComponent->contextType != ScriptContextType_NONE, "Invalid context type '%d' for entity '%d'", scriptComponent->contextType, entity);
+    SKA_ASSERT_FMT(scriptComponent->contextType != ScriptContextType_NONE, "Invalid context type '%d' for entity '%d'", scriptComponent->contextType, entity);
     scriptContexts[scriptComponent->contextType]->on_start(entity);
 }
 

@@ -20,5 +20,5 @@ public:
 private:
     bool isProcessing = false;
     std::optional<unsigned int> selectedNodeUID;
-    static SKAVector2i GetMouseTileCoords();
+    static SkaVector2i GetMouseTileCoords();
 };

@@ -1,11 +1,11 @@
 #include "json_helper.h"
 
-#include <seika/utils/se_string_util.h>
-#include <seika/utils/se_assert.h>
+#include <seika/string.h>
+#include <seika/assert.h>
 
 const char* json_get_string(cJSON* json, const char* key) {
     cJSON* stringJson = cJSON_GetObjectItemCaseSensitive(json, key);
-    SE_ASSERT_FMT(cJSON_IsString(stringJson) && (stringJson->valuestring != NULL), "Not able to load json string value for key '%s'", key);
+    SKA_ASSERT_FMT(cJSON_IsString(stringJson) && (stringJson->valuestring != NULL), "Not able to load json string value for key '%s'", key);
     return stringJson->valuestring;
 }
 
@@ -19,14 +19,14 @@ const char* json_get_string_default(cJSON* json, const char* key, const char* de
 
 char* json_get_string_new(cJSON* json, const char* key) {
     cJSON* stringJson = cJSON_GetObjectItemCaseSensitive(json, key);
-    SE_ASSERT_FMT(cJSON_IsString(stringJson) && (stringJson->valuestring != NULL), "Not able to load json string value for key '%s'", key);
-    return se_strdup(stringJson->valuestring);
+    SKA_ASSERT_FMT(cJSON_IsString(stringJson) && (stringJson->valuestring != NULL), "Not able to load json string value for key '%s'", key);
+    return ska_strdup(stringJson->valuestring);
 }
 
 char* json_get_string_new_unchecked(cJSON* json, const char* key) {
     cJSON* stringJson = cJSON_GetObjectItemCaseSensitive(json, key);
     if (cJSON_IsString(stringJson) && stringJson->valuestring != NULL) {
-        return se_strdup(stringJson->valuestring);
+        return ska_strdup(stringJson->valuestring);
     }
     return NULL;
 }
@@ -34,17 +34,17 @@ char* json_get_string_new_unchecked(cJSON* json, const char* key) {
 char* json_get_string_default_new(cJSON* json, const char* key, const char* defaultValue) {
     cJSON* stringJson = cJSON_GetObjectItemCaseSensitive(json, key);
     if (cJSON_IsString(stringJson) && (stringJson->valuestring != NULL)) {
-        return se_strdup(stringJson->valuestring);
+        return ska_strdup(stringJson->valuestring);
     }
     if (defaultValue == NULL) {
         return NULL;
     }
-    return se_strdup(defaultValue);
+    return ska_strdup(defaultValue);
 }
 
 int json_get_int(cJSON* json, const char* key) {
     cJSON* numJson = cJSON_GetObjectItemCaseSensitive(json, key);
-    SE_ASSERT_FMT(cJSON_IsNumber(numJson), "Not able to load json int value for key '%s'", key);
+    SKA_ASSERT_FMT(cJSON_IsNumber(numJson), "Not able to load json int value for key '%s'", key);
     return (int) numJson->valuedouble;
 }
 
@@ -58,7 +58,7 @@ int json_get_int_default(cJSON* json, const char* key, int defaultValue) {
 
 double json_get_double(cJSON* json, const char* key) {
     cJSON* numJson = cJSON_GetObjectItemCaseSensitive(json, key);
-    SE_ASSERT_FMT(cJSON_IsNumber(numJson), "Not able to load json int value for key '%s'", key);
+    SKA_ASSERT_FMT(cJSON_IsNumber(numJson), "Not able to load json int value for key '%s'", key);
     return numJson->valuedouble;
 }
 
@@ -72,7 +72,7 @@ double json_get_double_default(cJSON* json, const char* key, double defaultValue
 
 bool json_get_bool(cJSON* json, const char* key) {
     cJSON* boolJson = cJSON_GetObjectItemCaseSensitive(json, key);
-    SE_ASSERT_FMT(cJSON_IsBool(boolJson), "Not able to load json bool value for key '%s'", key);
+    SKA_ASSERT_FMT(cJSON_IsBool(boolJson), "Not able to load json bool value for key '%s'", key);
     return cJSON_IsTrue(boolJson) ? true : false;
 }
 
@@ -84,18 +84,18 @@ bool json_get_bool_default(cJSON* json, const char* key, bool defaultValue) {
     return defaultValue;
 }
 
-SKAVector2 json_get_vec2(cJSON* json, const char* key) {
+SkaVector2 json_get_vec2(cJSON* json, const char* key) {
     cJSON* vec2Json = cJSON_GetObjectItemCaseSensitive(json, key);
-    return (SKAVector2) {
+    return (SkaVector2) {
         .x = (float) json_get_double(vec2Json, "x"),
         .y = (float) json_get_double(vec2Json, "y")
     };
 }
 
-SKAVector2 json_get_vec2_default(cJSON* json, const char* key, SKAVector2 defaultValue) {
+SkaVector2 json_get_vec2_default(cJSON* json, const char* key, SkaVector2 defaultValue) {
     cJSON* vec2Json = cJSON_GetObjectItemCaseSensitive(json, key);
     if (vec2Json != NULL) {
-        return (SKAVector2) {
+        return (SkaVector2) {
             .x = (float) json_get_double_default(vec2Json, "x", defaultValue.x),
             .y = (float) json_get_double_default(vec2Json, "y", defaultValue.y)
         };
@@ -103,18 +103,18 @@ SKAVector2 json_get_vec2_default(cJSON* json, const char* key, SKAVector2 defaul
     return defaultValue;
 }
 
-SKAVector2i json_get_vec2i(cJSON* json, const char* key) {
+SkaVector2i json_get_vec2i(cJSON* json, const char* key) {
     cJSON* vec2Json = cJSON_GetObjectItemCaseSensitive(json, key);
-    return (SKAVector2i) {
+    return (SkaVector2i) {
         .x = json_get_int(vec2Json, "x"),
         .y = json_get_int(vec2Json, "y")
     };
 }
 
-SKAVector2i json_get_vec2i_default(cJSON* json, const char* key, SKAVector2i defaultValue) {
+SkaVector2i json_get_vec2i_default(cJSON* json, const char* key, SkaVector2i defaultValue) {
     cJSON* vec2Json = cJSON_GetObjectItemCaseSensitive(json, key);
     if (vec2Json != NULL) {
-        return (SKAVector2i) {
+        return (SkaVector2i) {
             .x = json_get_int_default(vec2Json, "x", defaultValue.x),
             .y = json_get_int_default(vec2Json, "y", defaultValue.y)
         };
@@ -122,18 +122,18 @@ SKAVector2i json_get_vec2i_default(cJSON* json, const char* key, SKAVector2i def
     return defaultValue;
 }
 
-SKASize2D json_get_size2d(cJSON* json, const char* key) {
+SkaSize2D json_get_size2d(cJSON* json, const char* key) {
     cJSON* size2dJson = cJSON_GetObjectItemCaseSensitive(json, key);
-    return (SKASize2D) {
+    return (SkaSize2D) {
         .w = (float) json_get_double(size2dJson, "w"),
         .h = (float) json_get_double(size2dJson, "h")
     };
 }
 
-SKASize2D json_get_size2d_default(cJSON* json, const char* key, SKASize2D defaultValue) {
+SkaSize2D json_get_size2d_default(cJSON* json, const char* key, SkaSize2D defaultValue) {
     cJSON* size2dJson = cJSON_GetObjectItemCaseSensitive(json, key);
     if (size2dJson != NULL) {
-        return (SKASize2D) {
+        return (SkaSize2D) {
             .w = (float) json_get_double(size2dJson, "w"),
             .h = (float) json_get_double(size2dJson, "h")
         };
@@ -141,18 +141,18 @@ SKASize2D json_get_size2d_default(cJSON* json, const char* key, SKASize2D defaul
     return defaultValue;
 }
 
-SKASize2Di json_get_size2di(cJSON* json, const char* key) {
+SkaSize2Di json_get_size2di(cJSON* json, const char* key) {
     cJSON* size2dJson = cJSON_GetObjectItemCaseSensitive(json, key);
-    return (SKASize2Di ) {
+    return (SkaSize2Di ) {
         .w = json_get_int(size2dJson, "w"),
         .h = json_get_int(size2dJson, "h")
     };
 }
 
-SKASize2Di json_get_size2di_default(cJSON* json, const char* key, SKASize2Di defaultValue) {
+SkaSize2Di json_get_size2di_default(cJSON* json, const char* key, SkaSize2Di defaultValue) {
     cJSON* size2dJson = cJSON_GetObjectItemCaseSensitive(json, key);
     if (size2dJson != NULL) {
-        return (SKASize2Di) {
+        return (SkaSize2Di) {
             .w = json_get_int(size2dJson, "w"),
             .h = json_get_int(size2dJson, "h")
         };
@@ -160,9 +160,9 @@ SKASize2Di json_get_size2di_default(cJSON* json, const char* key, SKASize2Di def
     return defaultValue;
 }
 
-SKARect2 json_get_rect2(cJSON* json, const char* key) {
+SkaRect2 json_get_rect2(cJSON* json, const char* key) {
     cJSON* rect2Json = cJSON_GetObjectItemCaseSensitive(json, key);
-    return (SKARect2) {
+    return (SkaRect2) {
         .x = (float) json_get_double(rect2Json, "x"),
         .y = (float) json_get_double(rect2Json, "y"),
         .w = (float) json_get_double(rect2Json, "w"),
@@ -170,10 +170,10 @@ SKARect2 json_get_rect2(cJSON* json, const char* key) {
     };
 }
 
-SKARect2 json_get_rect2_default(cJSON* json, const char* key, SKARect2 defaultValue) {
+SkaRect2 json_get_rect2_default(cJSON* json, const char* key, SkaRect2 defaultValue) {
     cJSON* rect2Json = cJSON_GetObjectItemCaseSensitive(json, key);
     if (rect2Json != NULL) {
-        return (SKARect2) {
+        return (SkaRect2) {
             .x = (float) json_get_double(rect2Json, "x"),
             .y = (float) json_get_double(rect2Json, "y"),
             .w = (float) json_get_double(rect2Json, "w"),
@@ -183,9 +183,9 @@ SKARect2 json_get_rect2_default(cJSON* json, const char* key, SKARect2 defaultVa
     return defaultValue;
 }
 
-SKAColor json_get_linear_color(cJSON* json, const char* key) {
+SkaColor json_get_linear_color(cJSON* json, const char* key) {
     cJSON* colorJson = cJSON_GetObjectItemCaseSensitive(json, key);
-    return (SKAColor) {
+    return (SkaColor) {
         .r = ((float) json_get_int(colorJson, "r") / 255.0f),
         .g = ((float) json_get_int(colorJson, "g") / 255.0f),
         .b = ((float) json_get_int(colorJson, "b") / 255.0f),
@@ -193,10 +193,10 @@ SKAColor json_get_linear_color(cJSON* json, const char* key) {
     };
 }
 
-SKAColor json_get_linear_color_default(cJSON* json, const char* key, SKAColor defaultValue) {
+SkaColor json_get_linear_color_default(cJSON* json, const char* key, SkaColor defaultValue) {
     cJSON* colorJson = cJSON_GetObjectItemCaseSensitive(json, key);
     if (colorJson != NULL) {
-        return (SKAColor) {
+        return (SkaColor) {
             .r = ((float) json_get_int_default(colorJson, "r", 255) / 255.0f),
             .g = ((float) json_get_int_default(colorJson, "g", 255) / 255.0f),
             .b = ((float) json_get_int_default(colorJson, "b", 255) / 255.0f),
@@ -206,19 +206,19 @@ SKAColor json_get_linear_color_default(cJSON* json, const char* key, SKAColor de
     return defaultValue;
 }
 
-SKAMinMaxVec2 json_get_minmax_vec2(cJSON* json, const char* key) {
+SkaMinMaxVec2 json_get_minmax_vec2(cJSON* json, const char* key) {
     cJSON* minmaxJson = cJSON_GetObjectItemCaseSensitive(json, key);
-    const SKAVector2 valueMin = json_get_vec2(minmaxJson, "min");
-    const SKAVector2 valueMax = json_get_vec2(minmaxJson, "max");
-    return (SKAMinMaxVec2) { .min = valueMin, .max = valueMax };
+    const SkaVector2 valueMin = json_get_vec2(minmaxJson, "min");
+    const SkaVector2 valueMax = json_get_vec2(minmaxJson, "max");
+    return (SkaMinMaxVec2) { .min = valueMin, .max = valueMax };
 }
 
-SKAMinMaxVec2 json_get_minmax_vec2_default(cJSON* json, const char* key, SKAMinMaxVec2 minmax) {
+SkaMinMaxVec2 json_get_minmax_vec2_default(cJSON* json, const char* key, SkaMinMaxVec2 minmax) {
     cJSON* minmaxJson = cJSON_GetObjectItemCaseSensitive(json, key);
     if (minmaxJson) {
-        const SKAVector2 valueMin = json_get_vec2(minmaxJson, "min");
-        const SKAVector2 valueMax = json_get_vec2(minmaxJson, "max");
-        return (SKAMinMaxVec2) { .min = valueMin, .max = valueMax };
+        const SkaVector2 valueMin = json_get_vec2(minmaxJson, "min");
+        const SkaVector2 valueMax = json_get_vec2(minmaxJson, "max");
+        return (SkaMinMaxVec2) { .min = valueMin, .max = valueMax };
     }
     return minmax;
 }

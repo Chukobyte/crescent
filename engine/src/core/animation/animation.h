@@ -3,13 +3,13 @@
 #include <stdbool.h>
 
 #include <seika/rendering/texture.h>
-#include <seika/math/se_math.h>
+#include <seika/math/math.h>
 
 #define CRE_MAX_ANIMATION_FRAMES 16
 
 typedef struct CreAnimationFrame {
-    SETexture* texture;
-    SKARect2 drawSource;
+    SkaTexture* texture;
+    SkaRect2 drawSource;
     int frame;
 } CreAnimationFrame;
 

@@ -3,9 +3,9 @@
 #include <algorithm>
 #include <cctype>
 
-#include <seika/utils/se_file_system_utils.h>
+#include <seika/file_system.h>
 #include <seika/utils/se_platform.h>
-#include <seika/utils/se_assert.h>
+#include <seika/assert.h>
 
 #include "../../../engine/src/core/core_info.h"
 
@@ -92,7 +92,7 @@ namespace
 
     void GeneratePListInfoFile(const std::filesystem::path& filePath, const PListInfoData& data) {
         const std::string infoFilePath = filePath.string().substr(2);
-        se_fs_write_to_file(infoFilePath.c_str(), data.GetFileString().c_str());
+        ska_fs_write_to_file(infoFilePath.c_str(), data.GetFileString().c_str());
     }
 } // namespace
 
@@ -100,7 +100,7 @@ void GameExporter::Export(const GameExporter::ExportProperties& props) {
     const Platform platform = GetPlatformFromString(props.platform);
     const std::filesystem::path binPath = EditorContext::Get()->GetEngineBinPathByOS(props.platform);
     ConsoleLogger* consoleLogger = ConsoleLogger::Get();
-    SE_ASSERT(platform != Platform::Undefined);
+    SKA_ASSERT(platform != Platform::Undefined);
     // 1. Fix up game title
     const std::string gameFileName = ConvertGameTitleToFileName(props.gameTitle);
     // 2. Remove old dir (if exists) and create new one

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <seika/math/se_math.h>
+#include <seika/math/math.h>
 
 // Particle
 
@@ -14,17 +14,17 @@ typedef enum Particle2DState {
 
 // CPU representation of a particle.
 typedef struct CreParticle2D {
-    SKAVector2 position;
-    SKAVector2 linearVelocity;
-    SKAVector2 acceleration;
-    SKAVector2 forceAccumulated;
-    SKAVector2 gravity;
-    SKAColor color;
+    SkaVector2 position;
+    SkaVector2 linearVelocity;
+    SkaVector2 acceleration;
+    SkaVector2 forceAccumulated;
+    SkaVector2 gravity;
+    SkaColor color;
     float timeActive;
     float damping;
     float inverseMass;
     Particle2DState state;
-    SKATransform2D prevTransform;
+    SkaTransform2D prevTransform;
 } CreParticle2D;
 
 #define CRE_PARTICLE2D_DEFAULT SKA_STRUCT_LITERAL(CreParticle2D){ \
@@ -32,7 +32,7 @@ typedef struct CreParticle2D {
     .linearVelocity = SKA_VECTOR2_ZERO, \
     .acceleration = SKA_VECTOR2_ZERO, \
     .forceAccumulated = SKA_VECTOR2_ZERO, \
-    .gravity = (SKAVector2){ 0.0f, 32.0f }, \
+    .gravity = (SkaVector2){ 0.0f, 32.0f }, \
     .color = particles2DComponent->color, \
     .timeActive = 0.0f, \
     .damping = CRE_PARTICLE2D_DEFAULT_DAMPING, \

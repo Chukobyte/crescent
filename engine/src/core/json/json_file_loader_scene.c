@@ -1,7 +1,9 @@
 #include "json_file_loader.h"
 
+#include <seika/string.h>
+#include <seika/memory.h>
+#include <seika/logger.h>
 #include <seika/asset/asset_file_loader.h>
-#include <seika/utils/se_string_util.h>
 
 #include "json_helper.h"
 #include "../tilemap/tilemap.h"
@@ -42,13 +44,13 @@ void json_node_set_shader_instance_paths(JsonSceneNode* node, cJSON* componentJs
     ShaderInstancePaths shaderInstancePaths = json_get_shader_instance_paths(componentJson, key);
     if (shaderInstancePaths.shader) {
         if (node->shaderInstanceShaderPath) {
-            SE_MEM_FREE(node->shaderInstanceShaderPath);
+            SKA_MEM_FREE(node->shaderInstanceShaderPath);
         }
         node->shaderInstanceShaderPath = shaderInstancePaths.shader;
     } else if (shaderInstancePaths.vertex && shaderInstancePaths.fragment) {
         if (node->shaderInstanceVertexPath && node->shaderInstanceFragmentPath) {
-            SE_MEM_FREE(node->shaderInstanceVertexPath);
-            SE_MEM_FREE(node->shaderInstanceFragmentPath);
+            SKA_MEM_FREE(node->shaderInstanceVertexPath);
+            SKA_MEM_FREE(node->shaderInstanceFragmentPath);
         }
         node->shaderInstanceVertexPath = shaderInstancePaths.vertex;
         node->shaderInstanceFragmentPath = shaderInstancePaths.fragment;
@@ -65,23 +67,23 @@ void json_node_set_shader_instance_paths(JsonSceneNode* node, cJSON* componentJs
 JsonSceneNode* cre_json_load_scene_node(cJSON* nodeJson, JsonSceneNode* parentNode);
 
 JsonSceneNode* cre_json_create_new_node() {
-    JsonSceneNode* node = SE_MEM_ALLOCATE(JsonSceneNode);
+    JsonSceneNode* node = SKA_MEM_ALLOCATE(JsonSceneNode);
     node->type = NodeBaseType_INVALID;
     return node;
 }
 
 
 JsonSceneNode* cre_json_load_scene_file(const char* filePath) {
-    char* fileContent = sf_asset_file_loader_read_file_contents_as_string(filePath, NULL);
+    char* fileContent = ska_asset_file_loader_read_file_contents_as_string(filePath, NULL);
 
-    se_logger_debug("Loading scene from path '%s'", filePath);
+    ska_logger_debug("Loading scene from path '%s'", filePath);
 
     cJSON* sceneJson = cJSON_Parse(fileContent);
-    SE_MEM_FREE(fileContent);
+    SKA_MEM_FREE(fileContent);
     if (sceneJson != NULL) {
         return cre_json_load_scene_node(sceneJson, NULL); // Return root node
     }
-    se_logger_error("Error loading scene file from path '%s', wasn't able to locate file!", filePath);
+    ska_logger_error("Error loading scene file from path '%s', wasn't able to locate file!", filePath);
 
     return NULL;
 }
@@ -124,12 +126,12 @@ void cre_json_delete_json_scene_node(JsonSceneNode* node) {
         tilemap_component_delete(node->components[TILEMAP_COMPONENT_INDEX]);
     }
 
-    SE_MEM_FREE(node->shaderInstanceShaderPath);
-    SE_MEM_FREE(node->shaderInstanceVertexPath);
-    SE_MEM_FREE(node->shaderInstanceFragmentPath);
-    SE_MEM_FREE(node->name);
-    SE_MEM_FREE(node->fontUID);
-    SE_MEM_FREE(node->spriteTexturePath);
+    SKA_MEM_FREE(node->shaderInstanceShaderPath);
+    SKA_MEM_FREE(node->shaderInstanceVertexPath);
+    SKA_MEM_FREE(node->shaderInstanceFragmentPath);
+    SKA_MEM_FREE(node->name);
+    SKA_MEM_FREE(node->fontUID);
+    SKA_MEM_FREE(node->spriteTexturePath);
 }
 
 //--- Private functions ---//
@@ -155,13 +157,13 @@ static void cre_json_transform2d_create_or_set_default(JsonSceneNode* node, cJSO
         transform2DComponent->isZIndexRelativeToParent = json_get_bool_default(componentJson, "z_index_relative_to_parent", transform2DComponent->isZIndexRelativeToParent);
         transform2DComponent->ignoreCamera = json_get_bool_default(componentJson, "ignore_camera", transform2DComponent->ignoreCamera);
     }
-    se_logger_debug(
+    ska_logger_debug(
         "Transform2D\nposition: (%f, %f)\nscale: (%f, %f)\nrotation: %f\nz_index: %d\nz_index_relative_to_parent: %s\nignore_camera: %s",
         transform2DComponent->localTransform.position.x, transform2DComponent->localTransform.position.y,
         transform2DComponent->localTransform.scale.x, transform2DComponent->localTransform.scale.y,
         transform2DComponent->localTransform.rotation,
-        transform2DComponent->zIndex, se_bool_to_string(transform2DComponent->isZIndexRelativeToParent),
-        se_bool_to_string(transform2DComponent->ignoreCamera));
+        transform2DComponent->zIndex, ska_bool_to_string(transform2DComponent->isZIndexRelativeToParent),
+        ska_bool_to_string(transform2DComponent->ignoreCamera));
 }
 
 static void cre_json_sprite_create_or_set_default(JsonSceneNode* node, cJSON* componentJson) {
@@ -180,7 +182,7 @@ static void cre_json_sprite_create_or_set_default(JsonSceneNode* node, cJSON* co
         spriteComponent = node->components[SPRITE_COMPONENT_INDEX];
         char* newTexturePath = json_get_string_new_unchecked(componentJson, "texture_path");
         if (newTexturePath != NULL) {
-            SE_MEM_FREE(node->spriteTexturePath);
+            SKA_MEM_FREE(node->spriteTexturePath);
             node->spriteTexturePath = newTexturePath;
         }
         spriteComponent->drawSource = json_get_rect2_default(componentJson, "draw_source", spriteComponent->drawSource);
@@ -190,13 +192,13 @@ static void cre_json_sprite_create_or_set_default(JsonSceneNode* node, cJSON* co
         spriteComponent->modulate = json_get_linear_color_default(componentJson, "modulate", spriteComponent->modulate);
         json_node_set_shader_instance_paths(node, componentJson, "shader_instance");
     }
-    se_logger_debug(
+    ska_logger_debug(
         "Sprite\ntexture_path: '%s'\ndraw_source = (%f, %f, %f, %f)\norigin: (%f, %f)\nflip_h: %s\nflip_v: %s\nmodulate: (%f, %f, %f, %f)",
         node->spriteTexturePath,
         spriteComponent->drawSource.x, spriteComponent->drawSource.y, spriteComponent->drawSource.w,
         spriteComponent->drawSource.h,
         spriteComponent->origin.x, spriteComponent->origin.y,
-        se_bool_to_string(spriteComponent->flipH), se_bool_to_string(spriteComponent->flipV),
+        ska_bool_to_string(spriteComponent->flipH), ska_bool_to_string(spriteComponent->flipV),
         spriteComponent->modulate.r, spriteComponent->modulate.g, spriteComponent->modulate.b,
         spriteComponent->modulate.a);
 }
@@ -219,22 +221,22 @@ static void cre_json_animated_sprite_create_or_set_default(JsonSceneNode* node, 
         cJSON* animationJson = NULL;
         cJSON_ArrayForEach(animationJson, animationsJsonArray) {
             AnimationData animation;
-            se_strcpy(animation.name, json_get_string(animationJson, "name"));
+            ska_strcpy(animation.name, json_get_string(animationJson, "name"));
             animation.speed = json_get_int(animationJson, "speed");
             animation.doesLoop = json_get_bool(animationJson, "loops");
             animation.frameCount = 0;
             animation.isValid = true;
-            se_logger_debug("Animation\nname: '%s'\nspeed: %d\nloops: %s",
-                            animation.name, animation.speed, se_bool_to_string(animation.doesLoop));
+            ska_logger_debug("Animation\nname: '%s'\nspeed: %d\nloops: %s",
+                            animation.name, animation.speed, ska_bool_to_string(animation.doesLoop));
             // Animation Frames
             cJSON* framesJsonArray = cJSON_GetObjectItemCaseSensitive(animationJson, "frames");
             cJSON* frameJson = NULL;
             cJSON_ArrayForEach(frameJson, framesJsonArray) {
                 AnimationFrameData frameData;
                 frameData.frame = json_get_int(frameJson, "frame");
-                se_strcpy(frameData.texturePath, json_get_string(frameJson, "texture_path"));
+                ska_strcpy(frameData.texturePath, json_get_string(frameJson, "texture_path"));
                 frameData.drawSource = json_get_rect2(frameJson, "draw_source");
-                se_logger_debug("Frame\nframe: %d\ntexture path: '%s'\ndraw source: (%f, %f, %f, %f)",
+                ska_logger_debug("Frame\nframe: %d\ntexture path: '%s'\ndraw source: (%f, %f, %f, %f)",
                                 frameData.frame, frameData.texturePath,
                                 frameData.drawSource.x, frameData.drawSource.y, frameData.drawSource.w,
                                 frameData.drawSource.h);
@@ -257,17 +259,17 @@ static void cre_json_animated_sprite_create_or_set_default(JsonSceneNode* node, 
         animatedSpriteComponent->staggerStartAnimationTimes = json_get_bool_default(componentJson, "stagger_start_animation_times", animatedSpriteComponent->staggerStartAnimationTimes);
         json_node_set_shader_instance_paths(node, componentJson, "shader_instance");
     }
-    se_logger_debug(
+    ska_logger_debug(
         "Animated Sprite\ncurrent animation name: '%s'\nis playing: %s\norigin: (%f, %f)\nmodulate: (%f, %f, %f, %f)\nflip x: %s\nflip y: %s\nstagger start animation times: %s",
-        currentAnimationName, se_bool_to_string(animatedSpriteComponent->isPlaying),
+        currentAnimationName, ska_bool_to_string(animatedSpriteComponent->isPlaying),
         animatedSpriteComponent->origin.x, animatedSpriteComponent->origin.y,
         animatedSpriteComponent->modulate.r, animatedSpriteComponent->modulate.g,
         animatedSpriteComponent->modulate.b, animatedSpriteComponent->modulate.a,
-        se_bool_to_string(animatedSpriteComponent->flipH),
-        se_bool_to_string(animatedSpriteComponent->flipV),
-        se_bool_to_string(animatedSpriteComponent->staggerStartAnimationTimes));
+        ska_bool_to_string(animatedSpriteComponent->flipH),
+        ska_bool_to_string(animatedSpriteComponent->flipV),
+        ska_bool_to_string(animatedSpriteComponent->staggerStartAnimationTimes));
     if (currentAnimationName != NULL) {
-        SE_MEM_FREE(currentAnimationName);
+        SKA_MEM_FREE(currentAnimationName);
     }
 }
 
@@ -276,20 +278,20 @@ static void cre_json_text_label_create_or_set_default(JsonSceneNode* node, cJSON
     if (node->components[TEXT_LABEL_COMPONENT_INDEX] == NULL) {
         textLabelComponent = text_label_component_create();
         node->fontUID = json_get_string_new_unchecked(componentJson, "uid");
-        se_strcpy(textLabelComponent->text, json_get_string(componentJson, "text"));
+        ska_strcpy(textLabelComponent->text, json_get_string(componentJson, "text"));
         textLabelComponent->color = json_get_linear_color_default(componentJson, "color", DEFAULT_COMPONENT_TEXT_LABEL_COLOR);
         node->components[TEXT_LABEL_COMPONENT_INDEX] = textLabelComponent;
     } else {
         textLabelComponent = (TextLabelComponent*) node->components[TEXT_LABEL_COMPONENT_INDEX];
         char* newFontUID = json_get_string_new_unchecked(componentJson, "uid");
         if (newFontUID != NULL) {
-            SE_MEM_FREE(node->fontUID);
+            SKA_MEM_FREE(node->fontUID);
             node->fontUID = newFontUID;
         }
-        se_strcpy(textLabelComponent->text, json_get_string_default(componentJson, "text", textLabelComponent->text));
+        ska_strcpy(textLabelComponent->text, json_get_string_default(componentJson, "text", textLabelComponent->text));
         textLabelComponent->color = json_get_linear_color_default(componentJson, "color", textLabelComponent->color);
     }
-    se_logger_debug("Text Label\nuid: '%s'\ntext: '%s'\ncolor: (%f, %f, %f, %f)",
+    ska_logger_debug("Text Label\nuid: '%s'\ntext: '%s'\ncolor: (%f, %f, %f, %f)",
                     node->fontUID,
                     textLabelComponent->text,
                     textLabelComponent->color.r, textLabelComponent->color.g, textLabelComponent->color.b,
@@ -308,7 +310,7 @@ static void cre_json_collider2d_create_or_set_default(JsonSceneNode* node, cJSON
         collider2DComponent->extents = json_get_size2d_default(componentJson, "extents", collider2DComponent->extents);
         collider2DComponent->color = json_get_linear_color_default(componentJson, "color", collider2DComponent->color);
     }
-    se_logger_debug("Collider2D\nextents: (%f, %f)\ncolor: (%f, %f, %f, %f)",
+    ska_logger_debug("Collider2D\nextents: (%f, %f)\ncolor: (%f, %f, %f, %f)",
                     collider2DComponent->extents.w, collider2DComponent->extents.h,
                     collider2DComponent->color.r, collider2DComponent->color.g, collider2DComponent->color.b,
                     collider2DComponent->color.a);
@@ -326,7 +328,7 @@ static void cre_json_color_rect_create_or_set_default(JsonSceneNode* node, cJSON
         colorRectComponent->size = json_get_size2d_default(componentJson, "size", colorRectComponent->size);
         colorRectComponent->color = json_get_linear_color_default(componentJson, "color", colorRectComponent->color);
     }
-    se_logger_debug("Color Rext\nsize: (%f, %f)\ncolor: (%f, %f, %f, %f)",
+    ska_logger_debug("Color Rext\nsize: (%f, %f)\ncolor: (%f, %f, %f, %f)",
                     colorRectComponent->size.w, colorRectComponent->size.h,
                     colorRectComponent->color.r, colorRectComponent->color.g, colorRectComponent->color.b,
                     colorRectComponent->color.a);
@@ -345,7 +347,7 @@ static void cre_json_script_create_or_set_default(JsonSceneNode* node, cJSON* co
         // No override for scripts for now...
         scriptComponent = (ScriptComponent*) node->components[SCRIPT_COMPONENT_INDEX];
     }
-    se_logger_debug("Script\nclass path: '%s'\nclass name: '%s'",
+    ska_logger_debug("Script\nclass path: '%s'\nclass name: '%s'",
                     scriptComponent->classPath, scriptComponent->className);
 }
 
@@ -359,7 +361,7 @@ static void cre_json_parallax_create_or_set_default(JsonSceneNode* node, cJSON* 
         parallaxComponent = (ParallaxComponent*) node->components[PARALLAX_COMPONENT_INDEX];
         parallaxComponent->scrollSpeed = json_get_vec2_default(componentJson, "scroll_speed", parallaxComponent->scrollSpeed);
     }
-    se_logger_debug("Parallax\nscroll_speed: (%f, %f)", parallaxComponent->scrollSpeed.x, parallaxComponent->scrollSpeed.y);
+    ska_logger_debug("Parallax\nscroll_speed: (%f, %f)", parallaxComponent->scrollSpeed.x, parallaxComponent->scrollSpeed.y);
 }
 
 static void cre_json_particles2d_create_or_set_default(JsonSceneNode* node, cJSON* componentJson) {
@@ -388,7 +390,7 @@ static void cre_json_particles2d_create_or_set_default(JsonSceneNode* node, cJSO
         particles2dComponent->explosiveness = (float)json_get_double_default(componentJson, "explosiveness", (double)particles2dComponent->explosiveness);
     }
     particles2dComponent->state = isEmitting ? Particle2DComponentState_WAITING_TO_INITIALIZE : Particle2DComponentState_INACTIVE;
-    se_logger_debug("Particles2D\namount: %d", particles2dComponent->amount);
+    ska_logger_debug("Particles2D\namount: %d", particles2dComponent->amount);
 }
 
 static void cre_json_tilemap_create_or_set_default(JsonSceneNode* node, cJSON* componentJson) {
@@ -402,7 +404,7 @@ static void cre_json_tilemap_create_or_set_default(JsonSceneNode* node, cJSON* c
         tilemapComponent = (TilemapComponent*)node->components[TILEMAP_COMPONENT_INDEX];
         char* tilemapTexturePath = json_get_string_new_unchecked(componentJson, "texture_path");
         if (tilemapTexturePath) {
-            SE_MEM_FREE(node->spriteTexturePath);
+            SKA_MEM_FREE(node->spriteTexturePath);
             node->spriteTexturePath = tilemapTexturePath;
         }
         tilemapComponent->tilemap->tileset.tileSize = json_get_size2di_default(componentJson, "tile_size", tilemapComponent->tilemap->tileset.tileSize);
@@ -411,12 +413,12 @@ static void cre_json_tilemap_create_or_set_default(JsonSceneNode* node, cJSON* c
     cJSON* activeTilesJsonArray = cJSON_GetObjectItemCaseSensitive(componentJson, "active_tiles");
     cJSON* activeTileJson = NULL;
     cJSON_ArrayForEach(activeTileJson, activeTilesJsonArray) {
-        const SKAVector2i tilePosition = json_get_vec2i(activeTileJson, "position");
-        const SKAVector2i tileRenderCoord = json_get_vec2i(activeTileJson, "texture_coord");
+        const SkaVector2i tilePosition = json_get_vec2i(activeTileJson, "position");
+        const SkaVector2i tileRenderCoord = json_get_vec2i(activeTileJson, "texture_coord");
         cre_tilemap_set_tile_render_coord(tilemapComponent->tilemap, &tilePosition, &tileRenderCoord);
     }
     cre_tilemap_commit_active_tile_changes(tilemapComponent->tilemap);
-    se_logger_debug("Tilemap");
+    ska_logger_debug("Tilemap");
 }
 
 // Recursive
@@ -436,7 +438,7 @@ JsonSceneNode* cre_json_load_scene_node(cJSON* nodeJson, JsonSceneNode* parentNo
     char* externalSceneNodeString = json_get_string_default_new(nodeJson, "external_node_source", NULL);
     if (externalSceneNodeString != NULL) {
         node = cre_json_load_scene_file(externalSceneNodeString);
-        SE_MEM_FREE(node->name);
+        SKA_MEM_FREE(node->name);
         cre_json_set_all_child_nodes_from_external_source(node);
     } else {
         node = cre_json_create_new_node();
@@ -446,7 +448,7 @@ JsonSceneNode* cre_json_load_scene_node(cJSON* nodeJson, JsonSceneNode* parentNo
     node->tags = NULL;
     node->parent = parentNode;
     node->externalNodeSource = externalSceneNodeString;
-    se_logger_debug("Node Name: '%s', Base Type: '%s'", node->name, node_get_base_type_string(node->type));
+    ska_logger_debug("Node Name: '%s', Base Type: '%s'", node->name, node_get_base_type_string(node->type));
 
     // Checking if not root
     if (parentNode) {
@@ -454,7 +456,7 @@ JsonSceneNode* cre_json_load_scene_node(cJSON* nodeJson, JsonSceneNode* parentNo
     }
 
     // Load Components
-    se_logger_debug("Loading components for '%'s", node->name);
+    ska_logger_debug("Loading components for '%'s", node->name);
     cJSON* componentsJsonArray = cJSON_GetObjectItemCaseSensitive(nodeJson, "components");
     cJSON* componentJson = NULL;
     cJSON_ArrayForEach(componentJson, componentsJsonArray) {
@@ -480,7 +482,7 @@ JsonSceneNode* cre_json_load_scene_node(cJSON* nodeJson, JsonSceneNode* parentNo
         } else if (strcmp(componentType, "tilemap") == 0) {
             cre_json_tilemap_create_or_set_default(node, componentJson);
         } else {
-            se_logger_error("component type '%s' in invalid!", componentType);
+            ska_logger_error("component type '%s' in invalid!", componentType);
         }
     }
     // Load Children

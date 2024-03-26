@@ -1,6 +1,6 @@
 #include "menu_bar_ui.h"
 
-#include <seika/utils/se_file_system_utils.h>
+#include <seika/file_system.h>
 
 #include "../../imgui/imgui_file_browser.h"
 #include "../../../scene/scene_manager.h"
@@ -54,13 +54,13 @@ ImGuiHelper::MenuBar OpenedProjectUI::MenuBar::GetMenuBar() {
                                 .validExtensions = { ".cscn" },
                                 .onModeCompletedFunc = [](const std::filesystem::path& fullPath) {
                                     const std::string relativePath = projectProperties->GetPathRelativeToProjectPath(fullPath.generic_string());
-                                    se_logger_debug("Open scene at file path = '%s'", relativePath.c_str());
+                                    ska_logger_debug("Open scene at file path = '%s'", relativePath.c_str());
 
                                     static SceneManager* sceneManager = SceneManager::Get();
                                     const std::string validSceneFilePath = Helper::ConvertFilePathToFilePathExtension(relativePath, ".cscn");
                                     if (!validSceneFilePath.empty() && FileSystemHelper::DoesFileExist(validSceneFilePath)) {
                                         sceneManager->selectedSceneFile = sceneManager->LoadSceneFromFile(validSceneFilePath.c_str());
-                                        SE_ASSERT_FMT(sceneManager->selectedSceneFile != nullptr, "selected scene node file at path '%s' is NULL!",
+                                        SKA_ASSERT_FMT(sceneManager->selectedSceneFile != nullptr, "selected scene node file at path '%s' is NULL!",
                                                       sceneManager->selectedSceneFile);
                                         sceneManager->selectedSceneNode = sceneManager->selectedSceneFile->rootNode;
                                     }
@@ -93,7 +93,7 @@ ImGuiHelper::MenuBar OpenedProjectUI::MenuBar::GetMenuBar() {
                                             auto* selectedSceneFile = SceneManager::Get()->selectedSceneFile;
                                             const std::string validFullFilePath = Helper::ConvertFilePathToFilePathExtension(relativePath, ".cscn");
                                             selectedSceneFile->filePath = validFullFilePath;
-                                            se_logger_debug("New project at file path = '%s'",
+                                            ska_logger_debug("New project at file path = '%s'",
                                                             selectedSceneFile->filePath.c_str());
                                             SceneFileCreator::GenerateSceneFile(selectedSceneFile, validFullFilePath.c_str());
                                             selectedSceneFile->hasBeenSaved = true;
@@ -110,9 +110,9 @@ ImGuiHelper::MenuBar OpenedProjectUI::MenuBar::GetMenuBar() {
                         .name = "Go To Project Manager",
                         .keyboardShortcut = "Ctrl+Shift+Q",
                         .callbackFunc = [] (ImGuiHelper::Context* context) {
-                            se_fs_chdir(editorContext->initialDir.c_str());
+                            ska_fs_chdir(editorContext->initialDir.c_str());
                             editorContext->projectState = EditorProjectState::ProjectManager;
-                            se_logger_debug("Going back to project manager at path = %s",
+                            ska_logger_debug("Going back to project manager at path = %s",
                                             editorContext->initialDir.c_str());
                             // TODO: Clean up scene manager and stuff...
                         },
@@ -186,7 +186,7 @@ ImGuiHelper::MenuBar OpenedProjectUI::MenuBar::GetMenuBar() {
                                         } else if (selectedAudioWavSampleRate == "48000") {
                                             projectProperties->audioWavSampleRate = 48000;
                                         } else {
-                                            se_logger_error("Unsupported audio wav sample rate '%s'", selectedAudioWavSampleRate.c_str());
+                                            ska_logger_error("Unsupported audio wav sample rate '%s'", selectedAudioWavSampleRate.c_str());
                                         }
                                         // Update wav sample rate for audio system
                                         se_audio_set_wav_sample_rate(projectProperties->audioWavSampleRate);
@@ -487,7 +487,7 @@ ImGuiHelper::MenuBar OpenedProjectUI::MenuBar::GetMenuBar() {
                                         .validExtensions = { ".zip" },
                                         .onModeCompletedFunc = [](const std::filesystem::path& fullPath) {
                                             const std::string exportPath = fullPath.generic_string();
-                                            se_logger_debug("Setting project export path to '%s'", exportPath.c_str());
+                                            ska_logger_debug("Setting project export path to '%s'", exportPath.c_str());
                                             exportPathInputText.SetValue(exportPath);
                                             lastKnownFileExtension = "." + Helper::GetFileExtension(exportPath);
                                         }

@@ -84,7 +84,7 @@ void ProjectProperties::ResetToDefault() {
 }
 
 void ProjectProperties::LoadPropertiesFromConfig(const char* filePath) {
-    se_logger_debug("Loading game properties");
+    ska_logger_debug("Loading game properties");
     nlohmann::json propertyJson = JsonHelper::LoadFile(filePath);
     gameTitle = JsonHelper::Get<std::string>(propertyJson, "name");
     initialNodePath = JsonHelper::Get<std::string>(propertyJson, "initial_node_path");
@@ -92,18 +92,18 @@ void ProjectProperties::LoadPropertiesFromConfig(const char* filePath) {
     windowHeight = JsonHelper::Get<int>(propertyJson, "window_height");
     resolutionWidth = JsonHelper::Get<int>(propertyJson, "resolution_width");
     resolutionHeight = JsonHelper::Get<int>(propertyJson, "resolution_height");
-    audioWavSampleRate = JsonHelper::GetDefault<uint32_t>(propertyJson, "audio_wav_sample_rate", SE_AUDIO_SOURCE_DEFAULT_WAV_SAMPLE_RATE);
+    audioWavSampleRate = JsonHelper::GetDefault<uint32_t>(propertyJson, "audio_wav_sample_rate", SKA_AUDIO_SOURCE_DEFAULT_WAV_SAMPLE_RATE);
     maintainAspectRatio = JsonHelper::GetDefault<bool>(propertyJson, "maintain_aspect_ratio", false);
     targetFPS = JsonHelper::Get<int>(propertyJson, "target_fps");
     areCollidersVisible = JsonHelper::Get<bool>(propertyJson, "colliders_visible");
     version = JsonHelper::GetDefault<std::string>(propertyJson, "version", "0.0.1");
     assets.SetAssets(JsonHelper::Get<nlohmann::json>(propertyJson, "assets"));
     inputs.SetInputs(JsonHelper::Get<nlohmann::json>(propertyJson, "inputs"));
-    se_logger_debug("Loading game properties finished");
+    ska_logger_debug("Loading game properties finished");
 }
 
 void ProjectProperties::PrintProperties() const {
-    se_logger_debug("game_title = %s, window_width = %d, window_height = %d, target_fps = %d",
+    ska_logger_debug("game_title = %s, window_width = %d, window_height = %d, target_fps = %d",
                     gameTitle.c_str(), windowWidth, windowHeight, targetFPS);
 }
 
@@ -131,7 +131,7 @@ TextureAsset& ProjectProperties::GetTextureAsset(const std::string &texturePath)
             return asset;
         }
     }
-    se_logger_error("Couldn't find texture at path '%s'", texturePath.c_str());
+    ska_logger_error("Couldn't find texture at path '%s'", texturePath.c_str());
     static TextureAsset invalid("invalid", "invalid", "invalid", true);
     return invalid;
 }

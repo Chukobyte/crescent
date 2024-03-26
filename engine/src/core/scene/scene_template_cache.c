@@ -2,9 +2,10 @@
 
 #include <string.h>
 
+#include <seika/string.h>
+#include <seika/memory.h>
 #include <seika/asset/asset_file_loader.h>
-#include <seika/data_structures/se_hash_map_string.h>
-#include <seika/utils/se_string_util.h>
+#include <seika/data_structures/hash_map_string.h>
 
 #include "../json/json_file_loader.h"
 
@@ -23,7 +24,7 @@ void cre_scene_template_cache_initialize() {}
 void cre_scene_template_cache_finalize() {
     for (CreSceneCacheId cacheId = 0; cacheId < numberOfCachedSceneTemplates; cacheId++) {
         if (cachedSceneTemplates[cacheId].path) {
-            SE_MEM_FREE(cachedSceneTemplates[cacheId].path);
+            SKA_MEM_FREE(cachedSceneTemplates[cacheId].path);
         }
         if (cachedSceneTemplates[cacheId].rootNode) {
             cre_json_delete_json_scene_node(cachedSceneTemplates[cacheId].rootNode);
@@ -34,14 +35,14 @@ void cre_scene_template_cache_finalize() {
 
 CreSceneCacheId cre_scene_template_cache_load_scene(const char* scenePath) {
     CreSceneCacheId cacheId = CRE_SCENE_CACHE_INVALID_ID;
-    char* sceneText = sf_asset_file_loader_read_file_contents_as_string(scenePath, NULL);
+    char* sceneText = ska_asset_file_loader_read_file_contents_as_string(scenePath, NULL);
     if (sceneText) {
         // Check if we already have the scene cached
         cacheId = scene_template_get_cache_id(scenePath);
         if (cacheId == CRE_SCENE_CACHE_INVALID_ID) {
             // We don't have it cached, so create a new one
             cacheId = numberOfCachedSceneTemplates++;
-            cachedSceneTemplates[cacheId].path = se_strdup(scenePath);
+            cachedSceneTemplates[cacheId].path = ska_strdup(scenePath);
             cachedSceneTemplates[cacheId].rootNode = cre_json_load_scene_file(scenePath);
         }
     }

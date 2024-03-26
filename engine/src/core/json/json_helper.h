@@ -4,8 +4,8 @@
 
 #include <cjson/cJSON.h>
 
-#include <seika/math/se_math.h>
-#include <seika/utils/se_assert.h>
+#include <seika/math/math.h>
+#include <seika/assert.h>
 
 // Utility Functions
 const char* json_get_string(cJSON* json, const char* key);
@@ -23,23 +23,23 @@ double json_get_double_default(cJSON* json, const char* key, double defaultValue
 bool json_get_bool(cJSON* json, const char* key);
 bool json_get_bool_default(cJSON* json, const char* key, bool defaultValue);
 
-SKAVector2 json_get_vec2(cJSON* json, const char* key);
-SKAVector2 json_get_vec2_default(cJSON* json, const char* key, SKAVector2 defaultValue);
+SkaVector2 json_get_vec2(cJSON* json, const char* key);
+SkaVector2 json_get_vec2_default(cJSON* json, const char* key, SkaVector2 defaultValue);
 
-SKAVector2i json_get_vec2i(cJSON* json, const char* key);
-SKAVector2i json_get_vec2i_default(cJSON* json, const char* key, SKAVector2i defaultValue);
+SkaVector2i json_get_vec2i(cJSON* json, const char* key);
+SkaVector2i json_get_vec2i_default(cJSON* json, const char* key, SkaVector2i defaultValue);
 
-SKASize2D json_get_size2d(cJSON* json, const char* key);
-SKASize2D json_get_size2d_default(cJSON* json, const char* key, SKASize2D defaultValue);
+SkaSize2D json_get_size2d(cJSON* json, const char* key);
+SkaSize2D json_get_size2d_default(cJSON* json, const char* key, SkaSize2D defaultValue);
 
-SKASize2Di json_get_size2di(cJSON* json, const char* key);
-SKASize2Di json_get_size2di_default(cJSON* json, const char* key, SKASize2Di defaultValue);
+SkaSize2Di json_get_size2di(cJSON* json, const char* key);
+SkaSize2Di json_get_size2di_default(cJSON* json, const char* key, SkaSize2Di defaultValue);
 
-SKARect2 json_get_rect2(cJSON* json, const char* key);
-SKARect2 json_get_rect2_default(cJSON* json, const char* key, SKARect2 defaultValue);
+SkaRect2 json_get_rect2(cJSON* json, const char* key);
+SkaRect2 json_get_rect2_default(cJSON* json, const char* key, SkaRect2 defaultValue);
 
-SKAColor json_get_linear_color(cJSON* json, const char* key);
-SKAColor json_get_linear_color_default(cJSON* json, const char* key, SKAColor defaultValue);
+SkaColor json_get_linear_color(cJSON* json, const char* key);
+SkaColor json_get_linear_color_default(cJSON* json, const char* key, SkaColor defaultValue);
 
-SKAMinMaxVec2 json_get_minmax_vec2(cJSON* json, const char* key);
-SKAMinMaxVec2 json_get_minmax_vec2_default(cJSON* json, const char* key, SKAMinMaxVec2 minmax);
+SkaMinMaxVec2 json_get_minmax_vec2(cJSON* json, const char* key);
+SkaMinMaxVec2 json_get_minmax_vec2_default(cJSON* json, const char* key, SkaMinMaxVec2 minmax);

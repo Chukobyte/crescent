@@ -1,16 +1,17 @@
 #include "core.h"
 
 #include <time.h>
+#include <string.h>
 
 #include <seika/seika.h>
 #include <seika/ecs/ec_system.h>
 #include <seika/asset/asset_file_loader.h>
 #include <seika/asset/asset_manager.h>
 #include <seika/input/input.h>
-#include <seika/memory/se_mem.h>
-#include <seika/utils/logger.h>
-#include <seika/utils/se_file_system_utils.h>
-#include <seika/utils/se_string_util.h>
+#include <seika/memory.h>
+#include <seika/logger.h>
+#include <seika/file_system.h>
+#include <seika/string.h>
 
 #include "core_info.h"
 #include "game_properties.h"
@@ -38,50 +39,50 @@ bool cre_initialize(int argv, char** args) {
     // Set random seed
     srand((int)time(NULL));
 
-    se_logger_set_level(SELogLevel_ERROR);
+    ska_logger_set_level(SkaLogLevel_ERROR);
 
     engineContext = cre_engine_context_initialize();
-    engineContext->engineRootDir = se_fs_get_cwd();
+    engineContext->engineRootDir = ska_fs_get_cwd();
 
     // Handle command line flags
     CommandLineFlagResult commandLineFlagResult = cre_command_line_args_parse(argv, args);
     // log level
     if (strcmp(commandLineFlagResult.logLevel, "") != 0) {
-        se_logger_set_level(se_logger_get_log_level_enum(commandLineFlagResult.logLevel));
-        se_logger_debug("Log level override set to '%s'", commandLineFlagResult.logLevel);
+        ska_logger_set_level(ska_logger_get_log_level_enum(commandLineFlagResult.logLevel));
+        ska_logger_debug("Log level override set to '%s'", commandLineFlagResult.logLevel);
     }
     // working dir override
     if (strcmp(commandLineFlagResult.workingDirOverride, "") != 0) {
-        se_logger_debug("Changing working directory from override to '%s'.", commandLineFlagResult.workingDirOverride);
-        se_fs_chdir(commandLineFlagResult.workingDirOverride);
-        se_fs_print_cwd();
+        ska_logger_debug("Changing working directory from override to '%s'.", commandLineFlagResult.workingDirOverride);
+        ska_fs_chdir(commandLineFlagResult.workingDirOverride);
+        ska_fs_print_cwd();
     }
     // Check if default project is present, if so change to the directory.  Will probably want to change at some point...
-    else if (se_fs_does_dir_exist(DEFAULT_START_PROJECT_PATH)) {
-        se_logger_debug("No directory override given and default project found.  Starting default project at '%s'", DEFAULT_START_PROJECT_PATH);
-        se_fs_chdir(DEFAULT_START_PROJECT_PATH);
-        se_fs_print_cwd();
+    else if (ska_fs_does_dir_exist(DEFAULT_START_PROJECT_PATH)) {
+        ska_logger_debug("No directory override given and default project found.  Starting default project at '%s'", DEFAULT_START_PROJECT_PATH);
+        ska_fs_chdir(DEFAULT_START_PROJECT_PATH);
+        ska_fs_print_cwd();
     }
     // Load project archive if it exists
 #ifdef _WIN32
-    engineContext->projectArchivePath = se_str_trim_and_replace(args[0], '.', ".pck");
+    engineContext->projectArchivePath = ska_str_trim_and_replace(args[0], '.', ".pck");
 #else
     char packArchivePath[1024];
     snprintf(packArchivePath, sizeof(packArchivePath), "%s.pck", args[0]);
-    engineContext->projectArchivePath = se_strdup(packArchivePath);
+    engineContext->projectArchivePath = ska_strdup(packArchivePath);
 #endif
-    if (sf_asset_file_loader_load_archive(engineContext->projectArchivePath)) {
-        se_logger_debug("Setting asset read mode to 'archive', found pck file at '%s'", engineContext->projectArchivePath);
-        sf_asset_file_loader_set_read_mode(SEAssetFileLoaderReadMode_ARCHIVE);
+    if (ska_asset_file_loader_load_archive(engineContext->projectArchivePath)) {
+        ska_logger_debug("Setting asset read mode to 'archive', found pck file at '%s'", engineContext->projectArchivePath);
+        ska_asset_file_loader_set_read_mode(SkaAssetFileLoaderReadMode_ARCHIVE);
     } else {
-        se_logger_debug("Not able to find .pck file at '%s', setting asset read mode to 'disk'", engineContext->projectArchivePath);
-        sf_asset_file_loader_set_read_mode(SEAssetFileLoaderReadMode_DISK);
+        ska_logger_debug("Not able to find .pck file at '%s', setting asset read mode to 'disk'", engineContext->projectArchivePath);
+        ska_asset_file_loader_set_read_mode(SkaAssetFileLoaderReadMode_DISK);
     }
     // Internal Assets Override
     if (strcmp(commandLineFlagResult.internalAssetsDirOverride, "") != 0) {
-        engineContext->internalAssetsDir = se_strdup(commandLineFlagResult.internalAssetsDirOverride); // TODO: Clean up properly
+        engineContext->internalAssetsDir = ska_strdup(commandLineFlagResult.internalAssetsDirOverride); // TODO: Clean up properly
     } else {
-        engineContext->internalAssetsDir = se_strdup(engineContext->engineRootDir); // TODO: Clean up properly
+        engineContext->internalAssetsDir = ska_strdup(engineContext->engineRootDir); // TODO: Clean up properly
     }
 
     cre_curve_float_manager_init();
@@ -91,7 +92,7 @@ bool cre_initialize(int argv, char** args) {
     cre_game_props_print();
 
     // Initialize seika framework
-    const bool hasSeikaInitialized = sf_initialize(
+    const bool hasSeikaInitialized = ska_init_all2(
                                          gameProperties->gameTitle,
                                          gameProperties->windowWidth,
                                          gameProperties->windowHeight,
@@ -100,15 +101,15 @@ bool cre_initialize(int argv, char** args) {
                                          gameProperties->audioWavSampleRate,
                                          gameProperties->maintainAspectRatio);
     if (!hasSeikaInitialized) {
-        se_logger_error("Failed to initialize seika framework!");
+        ska_logger_error("Failed to initialize seika framework!");
         return false;
     }
 
-    sf_set_vsync_enabled(gameProperties->vsyncEnabled);
+    ska_set_vsync_enabled(gameProperties->vsyncEnabled);
 
     // Initialize sub systems
     if (!cre_initialize_ecs()) {
-        se_logger_error("Failed to initialize ecs!");
+        ska_logger_error("Failed to initialize ecs!");
         return false;
     }
 
@@ -117,7 +118,7 @@ bool cre_initialize(int argv, char** args) {
     cre_load_built_in_assets();
     cre_load_assets_from_configuration();
 
-    se_logger_info("Crescent Engine v%s initialized!", CRE_CORE_VERSION);
+    ska_logger_info("Crescent Engine v%s initialized!", CRE_CORE_VERSION);
     engineContext->targetFPS = gameProperties->targetFPS;
     engineContext->isRunning = true;
 
@@ -134,7 +135,7 @@ bool cre_initialize_ecs() {
 
 bool cre_load_built_in_assets() {
     // Load default font
-    se_asset_manager_load_font_from_memory(CRE_DEFAULT_FONT_KEY, CRE_EMBEDDED_ASSET_FONT_VERDANA_TTF_HEX, CRE_EMBEDDED_ASSET_FONT_VERDANA_TTF_SIZE, CRE_DEFAULT_FONT_ASSET.size, CRE_DEFAULT_FONT_ASSET.applyNearestNeighbor);
+    ska_asset_manager_load_font_from_memory(CRE_DEFAULT_FONT_KEY, CRE_EMBEDDED_ASSET_FONT_VERDANA_TTF_HEX, CRE_EMBEDDED_ASSET_FONT_VERDANA_TTF_SIZE, CRE_DEFAULT_FONT_ASSET.size, CRE_DEFAULT_FONT_ASSET.applyNearestNeighbor);
 
     return true;
 }
@@ -143,19 +144,19 @@ bool cre_load_assets_from_configuration() {
     // Audio Sources
     for (size_t i = 0; i < gameProperties->audioSourceCount; i++) {
         const CREAssetAudioSource assetAudioSource = gameProperties->audioSources[i];
-        se_asset_manager_load_audio_source_wav(assetAudioSource.file_path, assetAudioSource.file_path);
+        ska_asset_manager_load_audio_source_wav(assetAudioSource.file_path, assetAudioSource.file_path);
     }
 
     // Textures
     for (size_t i = 0; i < gameProperties->textureCount; i++) {
         const CREAssetTexture assetTexture = gameProperties->textures[i];
-        se_asset_manager_load_texture_ex(assetTexture.file_path, assetTexture.file_path, assetTexture.wrap_s, assetTexture.wrap_t, assetTexture.applyNearestNeighbor);
+        ska_asset_manager_load_texture_ex(assetTexture.file_path, assetTexture.file_path, assetTexture.wrap_s, assetTexture.wrap_t, assetTexture.applyNearestNeighbor);
     }
 
     // Fonts
     for (size_t i = 0; i < gameProperties->fontCount; i++) {
         const CREAssetFont assetFont = gameProperties->fonts[i];
-        se_asset_manager_load_font(assetFont.file_path, assetFont.uid, assetFont.size, assetFont.applyNearestNeighbor);
+        ska_asset_manager_load_font(assetFont.file_path, assetFont.uid, assetFont.size, assetFont.applyNearestNeighbor);
     }
 
     // Inputs
@@ -163,8 +164,9 @@ bool cre_load_assets_from_configuration() {
         const CREInputAction inputAction = gameProperties->inputActions[i];
         for (size_t valueIndex = 0; valueIndex < inputAction.valueCount; valueIndex++) {
             const char* actionValue = inputAction.values[valueIndex];
-            se_logger_debug("action_name = %s, action_value = %s", inputAction.name, actionValue);
-            se_input_add_action_value(inputAction.name, actionValue, inputAction.deviceId);
+            ska_logger_debug("action_name = %s, action_value = %s", inputAction.name, actionValue);
+            // TODO: Input - fix up
+//            se_input_add_action_value(inputAction.name, actionValue, inputAction.deviceId);
         }
     }
 
@@ -172,7 +174,7 @@ bool cre_load_assets_from_configuration() {
 }
 
 void cre_update() {
-    const uint32_t startFrameTime = sf_get_ticks();
+    const uint32_t startFrameTime = ska_get_ticks();
 
     // Process Scene change if exists
     cre_scene_manager_process_queued_scene_change();
@@ -184,11 +186,11 @@ void cre_update() {
     cre_scene_manager_process_queued_creation_entities();
 
     // Main loop
-    sf_process_inputs();
+    ska_update();
     cre_process_game_update();
     cre_render();
 
-    const uint32_t endFrameTime = sf_get_ticks();
+    const uint32_t endFrameTime = ska_get_ticks();
 
     // Update FPS
     cre_engine_context_update_stats(endFrameTime - startFrameTime);
@@ -201,19 +203,19 @@ void cre_process_game_update() {
     static uint32_t lastFrameTime = 0;
     const uint32_t targetFps = engineContext->targetFPS;
     const uint32_t FRAME_TARGET_TIME = MILLISECONDS_PER_TICK / targetFps;
-    const uint32_t timeToWait = FRAME_TARGET_TIME - (sf_get_ticks() - lastFrameTime);
+    const uint32_t timeToWait = FRAME_TARGET_TIME - (ska_get_ticks() - lastFrameTime);
     if (timeToWait > 0 && timeToWait <= FRAME_TARGET_TIME) {
-        sf_delay(timeToWait);
+        ska_delay(timeToWait);
     }
 
     // Variable Time Step
-    const float variableDeltaTime = (float) (sf_get_ticks() - lastFrameTime) / (float) MILLISECONDS_PER_TICK;
+    const float variableDeltaTime = (float) (ska_get_ticks() - lastFrameTime) / (float) MILLISECONDS_PER_TICK;
     ska_ecs_system_event_update_systems(variableDeltaTime);
 
     // Fixed Time Step
     static uint32_t fixedCurrentTime = 0;
     static float accumulator = 0.0f;
-    uint32_t newTime = sf_get_ticks();
+    uint32_t newTime = ska_get_ticks();
     uint32_t frameTime = newTime - fixedCurrentTime;
     static const uint32_t MAX_FRAME_TIME = 250;
     if (frameTime > MAX_FRAME_TIME) {
@@ -224,31 +226,29 @@ void cre_process_game_update() {
 
     while (accumulator >= CRE_GLOBAL_PHYSICS_DELTA_TIME) {
         accumulator -= CRE_GLOBAL_PHYSICS_DELTA_TIME;
-        sf_fixed_update(CRE_GLOBAL_PHYSICS_DELTA_TIME);
+        ska_fixed_update(CRE_GLOBAL_PHYSICS_DELTA_TIME);
         ska_ecs_system_event_fixed_update_systems(CRE_GLOBAL_PHYSICS_DELTA_TIME);
-        se_input_clean_up_flags();
+        ska_input_new_frame();
     }
-
-    se_input_clean_up_flags();
 
     ska_ecs_system_event_post_update_all_systems();
 
-    lastFrameTime = sf_get_ticks();
+    lastFrameTime = ska_get_ticks();
 }
 
 void cre_render() {
     // Gather render data from ec systems
     ska_ecs_system_event_render_systems();
     // Actually render
-    sf_render();
+    ska_window_render();
 }
 
 bool cre_is_running() {
-    return engineContext->isRunning && sf_is_running();
+    return engineContext->isRunning && ska_is_running();
 }
 
 int cre_shutdown() {
-    sf_shutdown();
+    ska_shutdown_all();
     cre_game_props_finalize();
     cre_scene_manager_finalize();
     cre_ecs_manager_finalize();
@@ -256,6 +256,6 @@ int cre_shutdown() {
     const int finalExitCode = engineContext->exitCode;
     engineContext = NULL;
     cre_engine_context_finalize();
-    se_logger_info("Crescent Engine shutdown!");
+    ska_logger_info("Crescent Engine shutdown!");
     return finalExitCode;
 }

@@ -5,13 +5,13 @@ extern "C" {
 #endif
 
 #include <seika/rendering/font.h>
-#include <seika/math/se_math.h>
+#include <seika/math/math.h>
 
 #define TEXT_LABEL_BUFFER_SIZE 64
 
 typedef struct TextLabelComponent {
-    SEFont* font;
-    SKAColor color;
+    SkaFont* font;
+    SkaColor color;
     char text[TEXT_LABEL_BUFFER_SIZE];
 } TextLabelComponent;
 
