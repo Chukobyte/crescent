@@ -23,6 +23,7 @@ if (NOT TARGET pocketpy)
     FetchContent_MakeAvailable(pocketpy_content)
 endif ()
 
+# https://github.com/DaveGamble/cJSON
 if (NOT TARGET cJSON)
     add_library(cJSON "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/cjson/cJSON.c")
     target_include_directories(cJSON PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty")
@@ -67,6 +68,7 @@ if (NOT TARGET implot)
     target_link_libraries(implot PRIVATE imgui)
 endif ()
 
+# https://github.com/FortAwesome/Font-Awesome
 if (NOT TARGET font_awesome)
     add_library(font_awesome INTERFACE thirdparty/font_awesome/IconsFontAwesome6.h)
     target_include_directories(font_awesome INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/font_awesome")

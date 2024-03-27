@@ -30,12 +30,6 @@ jobs:
           useCloudCache: false
           cmakeVersion: "3.25.0"
 
-      - name: run-vcpkg
-        uses: lukka/run-vcpkg@v11
-        with:
-          vcpkgDirectory: '${{ github.workspace }}/vcpkg'
-          vcpkgGitCommitId: 'efca044b75fbf481d6650ce4d3b223d8af94f7a7'
-
       - name: run build
         uses: lukka/run-cmake@v10.7
         with:
@@ -116,12 +110,6 @@ jobs:
           useCloudCache: false
           cmakeVersion: "3.25.0"
 
-      - name: run-vcpkg
-        uses: lukka/run-vcpkg@v11
-        with:
-          vcpkgDirectory: '${{ github.workspace }}/vcpkg'
-          vcpkgGitCommitId: 'efca044b75fbf481d6650ce4d3b223d8af94f7a7'
-
       - name: run build
         uses: lukka/run-cmake@v10.7
         with:
@@ -182,12 +170,6 @@ jobs:
           useLocalCache: true
           useCloudCache: false
           cmakeVersion: "3.25.0"
-
-      - name: run-vcpkg
-        uses: lukka/run-vcpkg@v11
-        with:
-          vcpkgDirectory: '${{ github.workspace }}/vcpkg'
-          vcpkgGitCommitId: 'efca044b75fbf481d6650ce4d3b223d8af94f7a7'
 
       - name: run build
         uses: lukka/run-cmake@v10.7
