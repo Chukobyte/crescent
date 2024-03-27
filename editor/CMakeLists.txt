@@ -4,8 +4,6 @@ set(CMAKE_CXX_STANDARD 20)
 
 project(crescent_editor)
 
-include(../Dependencies.cmake)
-
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     list(APPEND flags "/std:c++20" "/W3" "/Zc:preprocessor")
 elseif (APPLE)
@@ -18,80 +16,18 @@ else ()
             "-Wno-missing-field-initializers")
 endif ()
 
-find_package(SDL2 CONFIG REQUIRED)
-
-add_library(${PROJECT_NAME} STATIC
-        src/core/asset_manager.cpp
-        src/core/file_node.cpp
-        src/core/editor.cpp
-        src/core/editor_callbacks.cpp
-        src/core/editor_context.cpp
-        src/core/editor_settings.cpp
-        src/core/project_properties.cpp
-        src/core/asset_browser.cpp
-        src/core/game_exporter.cpp
-        src/core/file_creation/config_file_creator.cpp
-        src/core/file_creation/scene_file_creator.cpp
-        src/core/scene/scene_manager.cpp
-        src/core/ui/opened_project_ui.cpp
-        src/core/ui/project_manager_ui.cpp
-        src/core/ui/imgui/imgui_file_browser.cpp
-        src/core/ui/imgui/imgui_handler.cpp
-        src/core/ui/imgui/imgui_helper.cpp
-        src/core/ui/imgui/imgui_styler.cpp
-        src/core/ui/imgui/imgui_window_renderer.cpp
-        src/core/ui/views/opened_project/menu_bar_ui.cpp
-        src/core/ui/views/opened_project/windows/animation_editor_ui.cpp
-        src/core/ui/views/opened_project/windows/asset_browser_ui.cpp
-        src/core/ui/views/opened_project/windows/asset_import_ui.cpp
-        src/core/ui/views/opened_project/windows/console_ui.cpp
-        src/core/ui/views/opened_project/windows/details_ui.cpp
-        src/core/ui/views/opened_project/windows/scene_outliner_ui.cpp
-        src/core/ui/views/opened_project/windows/scene_view_ui.cpp
-        src/core/ui/views/opened_project/windows/editors/tilemap_editor.cpp
-        src/core/utils/console_logger.cpp
-        src/core/utils/curve_editor.cpp
-        src/core/utils/file_system_helper.cpp
-        src/core/utils/process_runner/process_runner.cpp
-        src/core/utils/process_runner/process_context.cpp
-        )
-
-#--- Dependencies ---#
-add_library(imgui STATIC
-        ../include/imgui.cpp
-        ../include/imgui_demo.cpp
-        ../include/imgui_draw.cpp
-        ../include/imgui_tables.cpp
-        ../include/imgui_widgets.cpp
-        ../include/imgui_impl_opengl3.cpp
-        ../include/imgui_impl_sdl.cpp
-)
-
-target_include_directories(imgui PRIVATE
-        ${SDL2_INCLUDE_DIRS}
-)
-
-add_library(implot STATIC
-        ../include/implot.cpp
-        ../include/implot_demo.cpp
-        ../include/implot_items.cpp
-)
-
-install_seika()
-
-target_include_directories(${PROJECT_NAME} PUBLIC
-        "${PROJECT_BINARY_DIR}"
-        "../include"
-        )
+file(GLOB_RECURSE CRESCENT_EDITOR_SRC src/core/*.cpp src/core/*.h)
+add_library(${PROJECT_NAME} STATIC ${CRESCENT_EDITOR_SRC})
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image SDL2::SDL2main SDL2::SDL2 imgui implot seika)
+    target_link_libraries(${PROJECT_NAME} PUBLIC imgui implot seika font_awesome stdcapture nlohmann_json kuba_zip)
 elseif (WIN32)
-    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image -lmingw32 -static-libgcc SDL2::SDL2main SDL2::SDL2 imgui implot seika)
+    target_link_libraries(${PROJECT_NAME} PUBLIC -lmingw32 -static-libgcc imgui implot seika font_awesome stdcapture nlohmann_json kuba_zip)
 elseif (APPLE)
-    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image -Xlinker SDL2::SDL2main SDL2::SDL2 imgui implot seika)
+    target_link_libraries(${PROJECT_NAME} PUBLIC -Xlinker imgui implot seika font_awesome stdcapture nlohmann_json kuba_zip)
 else ()
-    target_link_libraries(${PROJECT_NAME} PUBLIC glad stb_image -static-libgcc -Xlinker -export-dynamic SDL2::SDL2main SDL2::SDL2 imgui implot seika)
+    target_link_libraries(${PROJECT_NAME} PUBLIC -static-libgcc -Xlinker -export-dynamic imgui implot seika font_awesome stdcapture nlohmann_json kuba_zip)
 endif ()
 
 target_compile_options(${PROJECT_NAME} PUBLIC ${flags})
@@ -216,11 +152,11 @@ if (IS_CI_BUILD STREQUAL "false")
                     $<TARGET_FILE_DIR:${PROJECT_NAME}>/../libpng16.dll
                     $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/${OS_BIN_DIR}/libpng16.dll
                     )
-            add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-                    COMMAND ${CMAKE_COMMAND} -E copy
-                    $<TARGET_FILE_DIR:${PROJECT_NAME}>/../SDL2.dll
-                    $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/${OS_BIN_DIR}/SDL2.dll
-                    )
+#            add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+#                    COMMAND ${CMAKE_COMMAND} -E copy
+#                    $<TARGET_FILE_DIR:${PROJECT_NAME}>/../SDL2.dll
+#                    $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/${OS_BIN_DIR}/SDL2.dll
+#                    )
             add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
                     COMMAND ${CMAKE_COMMAND} -E copy
                     $<TARGET_FILE_DIR:${PROJECT_NAME}>/../zlib1.dll

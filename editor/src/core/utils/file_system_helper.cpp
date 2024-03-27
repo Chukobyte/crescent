@@ -1,12 +1,12 @@
 #include "file_system_helper.h"
-#include "seika/utils/logger.h"
+#include <seika/logger.h>
 #include <seika/assert.h>
 
 #include <iostream>
 #include <fstream>
 #include <sstream>
 
-#include <kuba_zip/zip.h>
+#include <zip.h>
 
 #include <seika/asset/asset_file_loader.h>
 
@@ -115,7 +115,7 @@ void FileSystemHelper::ZipDirectory(const std::string &zipName, const std::files
             zip_entry_open(zip, entryPathString.c_str());
             {
                 // If it's not a directory, write the file content to the zip
-                const SEArchiveFileAsset asset = sf_asset_file_loader_load_asset_from_disk(entry.path().string().c_str());
+                const SkaArchiveFileAsset asset = ska_asset_file_loader_load_asset_from_disk(entry.path().string().c_str());
                 zip_entry_write(zip, asset.buffer, asset.bufferSize);
             }
             zip_entry_close(zip);

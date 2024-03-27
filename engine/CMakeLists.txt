@@ -14,7 +14,7 @@ else ()
             "-Wno-unused-variable" "-Wno-cast-function-type" "-Wno-unused-parameter" "-Wno-missing-field-initializers")
 endif ()
 
-file(GLOB_RECURSE CRESCENT_SRC src/*.c src/*.h)
+file(GLOB_RECURSE CRESCENT_SRC src/core/*.c src/core/*.h)
 add_library(${PROJECT_NAME} STATIC ${CRESCENT_SRC})
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 

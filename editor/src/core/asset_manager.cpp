@@ -72,12 +72,12 @@ void AssetManager::RefreshFromProperties(ProjectProperties* projectProperties) {
         }
     }
     // Set wav sample rate for audio system
-    se_audio_set_wav_sample_rate(projectProperties->audioWavSampleRate);
+    ska_audio_set_wav_sample_rate(projectProperties->audioWavSampleRate);
 }
 
 // Texture
 SkaTexture* AssetManager::LoadTexture(const char* fileName, const char* key) {
-    return se_asset_manager_load_texture(fileName, key);
+    return ska_asset_manager_load_texture(fileName, key);
 }
 
 SkaTexture* AssetManager::GetTexture(const char* key) {

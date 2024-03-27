@@ -28,3 +28,61 @@ if (NOT TARGET cJSON)
     target_include_directories(cJSON PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty")
 endif ()
 
+if (NOT TARGET imgui)
+    include(FetchContent)
+    FetchContent_Declare(
+            imgui_content
+            GIT_REPOSITORY https://github.com/ocornut/imgui.git
+            GIT_TAG v1.90.4-docking
+    )
+    FetchContent_MakeAvailable(imgui_content)
+
+    add_library(imgui STATIC
+            ${imgui_content_SOURCE_DIR}/imgui.cpp
+            ${imgui_content_SOURCE_DIR}/imgui_demo.cpp
+            ${imgui_content_SOURCE_DIR}/imgui_draw.cpp
+            ${imgui_content_SOURCE_DIR}/imgui_tables.cpp
+            ${imgui_content_SOURCE_DIR}/imgui_widgets.cpp
+            ${imgui_content_SOURCE_DIR}/backends/imgui_impl_opengl3.cpp
+            ${imgui_content_SOURCE_DIR}/backends/imgui_impl_sdl3.cpp)
+    target_include_directories(imgui PUBLIC ${imgui_content_SOURCE_DIR} ${imgui_content_SOURCE_DIR}/backends)
+    target_link_libraries(imgui PRIVATE seika)
+endif ()
+
+if (NOT TARGET implot)
+    include(FetchContent)
+    FetchContent_Declare(
+            implot_content
+            GIT_REPOSITORY https://github.com/epezent/implot.git
+            GIT_TAG v0.16
+    )
+    FetchContent_MakeAvailable(implot_content)
+
+    add_library(implot STATIC
+            ${implot_content_SOURCE_DIR}/implot.cpp
+            ${implot_content_SOURCE_DIR}/implot_demo.cpp
+            ${implot_content_SOURCE_DIR}/implot_items.cpp
+    )
+    target_include_directories(implot PUBLIC ${implot_content_SOURCE_DIR})
+    target_link_libraries(implot PRIVATE imgui)
+endif ()
+
+if (NOT TARGET font_awesome)
+    add_library(font_awesome INTERFACE thirdparty/font_awesome/IconsFontAwesome6.h)
+    target_include_directories(font_awesome INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/font_awesome")
+endif ()
+
+if (NOT TARGET stdcapture)
+    add_library(stdcapture INTERFACE thirdparty/stdcapture/stdcapture.h)
+    target_include_directories(stdcapture INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/stdcapture")
+endif ()
+
+if (NOT TARGET nlohmann_json)
+    add_library(nlohmann_json INTERFACE thirdparty/nlohmann/json.hpp)
+    target_include_directories(nlohmann_json INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty")
+endif ()
+
+if (NOT TARGET catch)
+    add_library(catch INTERFACE thirdparty/catch/catch.hpp)
+    target_include_directories(catch INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/catch")
+endif ()

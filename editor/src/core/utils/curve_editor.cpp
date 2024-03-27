@@ -3,6 +3,8 @@
 #include <implot.h>
 #include <implot_internal.h>
 
+#include <seika/logger.h>
+
 #include "../ui/views/opened_project/menu_bar_ui.h"
 #include "../ui/imgui/imgui_file_browser.h"
 

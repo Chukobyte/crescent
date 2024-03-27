@@ -189,7 +189,7 @@ ImGuiHelper::MenuBar OpenedProjectUI::MenuBar::GetMenuBar() {
                                             ska_logger_error("Unsupported audio wav sample rate '%s'", selectedAudioWavSampleRate.c_str());
                                         }
                                         // Update wav sample rate for audio system
-                                        se_audio_set_wav_sample_rate(projectProperties->audioWavSampleRate);
+                                        ska_audio_set_wav_sample_rate(projectProperties->audioWavSampleRate);
                                     }
                                     );
                                     ImGuiHelper::BeginComboBox(audioWavSampleRateComboBox);

@@ -4,7 +4,7 @@
 #include <cctype>
 
 #include <seika/file_system.h>
-#include <seika/utils/se_platform.h>
+#include <seika/platform.h>
 #include <seika/assert.h>
 
 #include "../../../engine/src/core/core_info.h"

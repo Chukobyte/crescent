@@ -4,7 +4,7 @@
 
 #include "singleton.h"
 
-#include "stdcapture/stdcapture.h"
+#include <stdcapture.h>
 
 class ConsoleLogCapture {
   public:

@@ -1,6 +1,6 @@
 #include "editor_settings.h"
 
-#include <SDL2/SDL.h>
+#include <SDL3/SDL.h>
 
 #include "utils/file_system_helper.h"
 #include "utils/json_helper.h"
@@ -78,7 +78,7 @@ void EditorSettings::AddToRecentlyLoadedProjectsList(const std::string& name, co
     }
 }
 
-void EditorSettings::SetEditorLogLevel(SELogLevel level) {
+void EditorSettings::SetEditorLogLevel(SkaLogLevel level) {
     editorLogLevel = level;
     ska_logger_set_level(editorLogLevel);
 }
@@ -88,7 +88,7 @@ void EditorSettings::SetEditorLogLevel(const std::string& level) {
     SetEditorLogLevel(logLevel);
 }
 
-void EditorSettings::SetGameLogLevel(SELogLevel level) {
+void EditorSettings::SetGameLogLevel(SkaLogLevel level) {
     gameLogLevel = level;
 }
 
