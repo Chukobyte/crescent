@@ -489,7 +489,19 @@ def engine_get_global_physics_delta_time() -> float:
 
 # --- INPUT --- #
 
-def input_add_action(name: str, value: str, device_id: int) -> None:
+def input_is_key_pressed(key: int) -> bool:
+    return False
+
+
+def input_is_key_just_pressed(key: int) -> bool:
+    return False
+
+
+def input_is_key_just_released(key: int) -> bool:
+    return False
+
+
+def input_add_action(name: str, value_key: int, device_id: int) -> None:
     pass
 
 

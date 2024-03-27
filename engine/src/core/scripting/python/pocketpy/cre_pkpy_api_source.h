@@ -615,8 +615,20 @@
 "\n"\
 "class Input:\n"\
 "    @staticmethod\n"\
-"    def add_action(name: str, value: str, device_id=0) -> None:\n"\
-"        crescent_internal.input_add_action(name, value, device_id)\n"\
+"    def is_key_pressed(key: int) -> bool:\n"\
+"        return crescent_internal.input_is_key_pressed(key)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def is_key_just_pressed(key: int) -> bool:\n"\
+"        return crescent_internal.input_is_key_just_pressed(key)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def is_key_just_released(key: int) -> bool:\n"\
+"        return crescent_internal.input_is_key_just_released(key)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def add_action(name: str, value_key: int, device_id=0) -> None:\n"\
+"        crescent_internal.input_add_action(name, value_key, device_id)\n"\
 "\n"\
 "    @staticmethod\n"\
 "    def is_action_pressed(name: str) -> bool:\n"\
