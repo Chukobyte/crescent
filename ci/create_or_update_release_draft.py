@@ -30,18 +30,14 @@ class GithubRepoInstance:
         return None
 
 
-def create_release_draft_stub(token: str, files_to_upload: list):
+def create_release_draft_stub(token: str, release_version: str, files_to_upload: list):
     repo_instance = GithubRepoInstance(token=token, repo_name="Chukobyte/crescent")
 
-    vcpkg_file_path = "vcpkg.json"
-    with open(vcpkg_file_path, "r") as f:
-        json_data = json.load(f)
-        release_version = json_data["version"]
-        tag_name = f"v{release_version}"
+    tag_name = f"v{release_version}"
 
     if repo_instance.does_full_release_exist(release_name=tag_name):
         print(
-            "Release already exists, skipping!  Consider incrementing the version number in vcpkg.json!"
+            "Release already exists, skipping!  Consider incrementing the version number in core_info.h!"
         )
         return None
 
@@ -81,11 +77,12 @@ def create_release_draft_stub(token: str, files_to_upload: list):
             )
 
 
-if len(sys.argv) >= 3:
+if len(sys.argv) >= 4:
     github_token = sys.argv[1]
+    release_version = sys.argv[2]
     files_to_upload = []
-    for i, file in enumerate(sys.argv[2:], 2):
+    for i, file in enumerate(sys.argv[3:], 3):
         files_to_upload.append(file)
-    create_release_draft_stub(token=github_token, files_to_upload=files_to_upload)
+    create_release_draft_stub(token=github_token, release_version=release_version, files_to_upload=files_to_upload)
 else:
     raise Exception("Didn't pass in another args!")
