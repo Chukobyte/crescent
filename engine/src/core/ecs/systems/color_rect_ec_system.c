@@ -12,8 +12,8 @@
 #include "../../camera/camera.h"
 #include "../../camera/camera_manager.h"
 
-SkaTexture* colorRectTexture = NULL;
-SkaRect2 colorRectDrawSource = { 0.0f, 0.0f, 1.0f, 1.0f };
+static SkaTexture* colorRectTexture = NULL;
+static SkaRect2 colorRectDrawSource = { 0.0f, 0.0f, 1.0f, 1.0f };
 
 static void on_ec_system_registered(SkaECSSystem* system);
 static void on_ec_system_destroyed(SkaECSSystem* system);

@@ -12,7 +12,7 @@
 
 
 static TilemapComp* cachedComp = nullptr;
-SkaTexture* colorRectTexture = nullptr;
+static SkaTexture* colorRectTexture = nullptr;
 
 void TilemapEditor::Process(SceneNode* node, TilemapComp* tilemapComp) {
     bool startedThisFrame = false;
