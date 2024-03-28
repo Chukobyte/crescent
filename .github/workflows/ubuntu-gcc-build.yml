@@ -19,7 +19,6 @@ jobs:
       - name: set env vars
         run: |
           echo "CRESCENT_VERSION=$(python3 ${{ github.workspace }}/ci/get_engine_version.py ${{ github.workspace }}/engine/src/core/core_info.h)" >> $GITHUB_ENV
-          echo ${{ env.CRESCENT_VERSION }}
 
       - name: print env vars
         run: |
