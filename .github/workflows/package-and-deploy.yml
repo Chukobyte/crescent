@@ -12,12 +12,6 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
-      - name: install dependencies (just jq for now)
-        run: |
-          Invoke-WebRequest https://github.com/stedolan/jq/releases/download/jq-1.6/jq-win64.exe -OutFile jq.exe
-          Move-Item jq.exe C:\Windows\System32\WindowsPowerShell\v1.0\
-          $env:PATH += ';C:\Windows\System32\WindowsPowerShell\v1.0\'
-
       - name: get cmake
         uses: lukka/get-cmake@latest
         with:
@@ -92,7 +86,7 @@ jobs:
         run: |
           sudo apt install gcc-11
           sudo apt install g++-11
-          sudo apt install libgl1-mesa-dev libglu1-mesa-dev jq
+          sudo apt install libgl1-mesa-dev libglu1-mesa-dev
 
       - name: get cmake
         uses: lukka/get-cmake@latest
@@ -149,7 +143,7 @@ jobs:
 
       - name: install dependencies
         run: |
-          brew install pkg-config jq
+          brew install pkg-config
 
       - name: get cmake
         uses: lukka/get-cmake@latest
