@@ -16,15 +16,6 @@ jobs:
           sudo apt install gcc-11
           sudo apt install g++-11
 
-      - name: set env vars
-        run: |
-          CRESCENT_VERSION=$(python3 ${{ github.workspace }}/ci/get_engine_version.py ${{ github.workspace }}/engine/src/core/core_info.h)
-          echo "CRESCENT_VERSION=$CRESCENT_VERSION" >> $GITHUB_ENV
-
-      - name: print env vars
-        run: |
-          echo ${{ env.CRESCENT_VERSION }}
-
       - name: get cmake
         uses: lukka/get-cmake@latest
         with:
