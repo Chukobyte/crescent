@@ -26,7 +26,7 @@ jobs:
         with:
           useLocalCache: true
           useCloudCache: false
-          cmakeVersion: "3.25.0"
+          cmakeVersion: "3.27.0"
 
       - name: run build
         uses: lukka/run-cmake@v10.7
