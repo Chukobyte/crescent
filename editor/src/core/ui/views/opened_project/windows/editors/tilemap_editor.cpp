@@ -1,7 +1,5 @@
 #include "tilemap_editor.h"
 
-#include <format>
-
 #include <imgui.h>
 
 #include <seika/rendering/renderer.h>
