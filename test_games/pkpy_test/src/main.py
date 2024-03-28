@@ -1,4 +1,4 @@
-from crescent import Node2D, Input, Engine, TextLabel, Vector2, Particles2D, Engine, MinMaxVector2
+from crescent import Node2D, Input, Engine, Vector2, Engine
 
 
 class Timer:
@@ -37,4 +37,3 @@ class Main(Node2D):
     def _fixed_process(self, delta_time: float) -> None:
         if timer.tick(delta_time):
             self._sprite_test(delta_time)
-        pass
