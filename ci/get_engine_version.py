@@ -22,4 +22,4 @@ parser.add_argument('header_file_path', type=str, help='Path to the C header fil
 
 args = parser.parse_args()
 engine_version = parse_version_from_header(args.header_file_path)
-print(f"\n{engine_version}\n")
+print(engine_version)
