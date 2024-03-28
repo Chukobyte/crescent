@@ -2,8 +2,8 @@
 
 #include <implot.h>
 
-#include <seika/utils/se_file_system_utils.h>
-#include <seika/utils/logger.h>
+#include <seika/file_system.h>
+#include <seika/logger.h>
 
 #include "../engine/src/core/engine_context.h"
 #include "../engine/src/core/core_info.h"
@@ -65,11 +65,11 @@ void ProjectManagerUI::ProcessWindows() {
             static auto* editorContext = EditorContext::Get();
             static auto LoadProject = [](const char* projectPath) {
                 if (FileSystemHelper::GetCurrentDirStr() != std::string(projectPath)) {
-                    se_fs_chdir(projectPath);
+                    ska_fs_chdir(projectPath);
                 }
                 gameProperties->projectPath = projectPath;
                 editorContext->projectState = EditorProjectState::OpenedProject;
-                se_logger_debug("Opening project at directory = %s", projectPath);
+                ska_logger_debug("Opening project at directory = %s", projectPath);
                 gameProperties->LoadPropertiesFromConfig("project.ccfg");
                 gameProperties->PrintProperties();
                 // Update recently opened projects list
@@ -86,7 +86,7 @@ void ProjectManagerUI::ProcessWindows() {
                     sceneManager->selectedSceneFile = sceneManager->GenerateDefaultSceneNodeFile();
                 } else {
                     if (!sceneManager->LoadSceneFromFile(gameProperties->initialNodePath.c_str())) {
-                        se_logger_error("Failed to load scene from file at path '%s'",
+                        ska_logger_error("Failed to load scene from file at path '%s'",
                                         gameProperties->initialNodePath.c_str());
                     }
                 }
@@ -112,8 +112,7 @@ void ProjectManagerUI::ProcessWindows() {
                 .mode = ImGuiHelper::FileBrowser::Mode::OpenFile,
                 .validExtensions = { ".ccfg" },
                 .onModeCompletedFunc = [](const std::filesystem::path& fullPath) {
-                    se_logger_debug("Opening project at file path = '%s'",
-                                    fullPath.parent_path().generic_string().c_str());
+                    ska_logger_debug("Opening project at file path = '%s'", fullPath.parent_path().generic_string().c_str());
                     LoadProject(fullPath.parent_path().generic_string().c_str());
                 }
             };
@@ -158,7 +157,7 @@ void ProjectManagerUI::ProcessWindows() {
                 .mode = ImGuiHelper::FileBrowser::Mode::SelectDir,
                 .validExtensions = {},
                 .onModeCompletedFunc = [](const std::filesystem::path& fullPath) {
-                    se_logger_debug("New project at file path = '%s'", fullPath.generic_string().c_str());
+                    ska_logger_debug("New project at file path = '%s'", fullPath.generic_string().c_str());
                     newProjectPathInputText.SetValue(fullPath.generic_string());
                 }
             };
@@ -170,7 +169,7 @@ void ProjectManagerUI::ProcessWindows() {
             const std::string newProjectPathText = newProjectPathInputText.GetValue();
             const std::string fullNewProjectPath = Helper::RemoveExtensionFromFilePath(newProjectPathText);
             if (ImGui::Button("Create New Project") && FileSystemHelper::DirectoryExistsAndIsEmpty(fullNewProjectPath)) {
-                se_fs_chdir(std::filesystem::path(fullNewProjectPath).string().c_str());
+                ska_fs_chdir(std::filesystem::path(fullNewProjectPath).string().c_str());
                 // Create New Project Stuff
                 gameProperties->ResetToDefault();
                 gameProperties->gameTitle = newProjectName;

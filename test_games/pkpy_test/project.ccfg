@@ -33,7 +33,7 @@
         {
             "name": "exit",
             "values": [
-                "esc"
+                "Escape"
             ]
         }
     ],

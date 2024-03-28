@@ -11,13 +11,13 @@
 
 static void on_entity_entered_scene(SkaECSSystem* system, SkaEntity entity);
 static void on_entity_unregistered(SkaECSSystem* system, SkaEntity entity);
-static void fixed_update(SkaECSSystem* system, float deltaTime);
+static void fixed_update(SkaECSSystem* system, f32 deltaTime);
 
-static void on_entity_transform_change(SESubjectNotifyPayload* payload);
+static void on_entity_transform_change(SkaSubjectNotifyPayload* payload);
 
 static void parallax_system_update_entity(SkaEntity entity, Transform2DComponent* transformComp, ParallaxComponent* parallaxComp, CRECamera2D* camera2D);
 
-SEObserver parallaxOnEntityTransformChangeObserver = { .on_notify = on_entity_transform_change };
+SkaObserver parallaxOnEntityTransformChangeObserver = { .on_notify = on_entity_transform_change };
 
 void cre_parallax_ec_system_create_and_register() {
     SkaECSSystemTemplate systemTemplate = ska_ecs_system_create_default_template("Parallax");
@@ -34,16 +34,16 @@ void on_entity_entered_scene(SkaECSSystem* system, SkaEntity entity) {
     parallaxComp->cachedLocalPosition = transformComp->localTransform.position;
     parallax_system_update_entity(entity, transformComp, parallaxComp, cre_camera_manager_get_current_camera());
     // Add observer
-    se_event_register_observer(&transformComp->onTransformChanged, &parallaxOnEntityTransformChangeObserver);
+    ska_event_register_observer(&transformComp->onTransformChanged, &parallaxOnEntityTransformChangeObserver);
 }
 
 void on_entity_unregistered(SkaECSSystem* system, SkaEntity entity) {
     // Remove observer
     Transform2DComponent* transformComp = (Transform2DComponent*)ska_ecs_component_manager_get_component(entity, TRANSFORM2D_COMPONENT_INDEX);
-    se_event_unregister_observer(&transformComp->onTransformChanged, &parallaxOnEntityTransformChangeObserver);
+    ska_event_unregister_observer(&transformComp->onTransformChanged, &parallaxOnEntityTransformChangeObserver);
 }
 
-void fixed_update(SkaECSSystem* system, float deltaTime) {
+void fixed_update(SkaECSSystem* system, f32 deltaTime) {
     CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
     for (size_t i = 0; i < system->entity_count; i++) {
         const SkaEntity entity = system->entities[i];
@@ -54,7 +54,7 @@ void fixed_update(SkaECSSystem* system, float deltaTime) {
 }
 
 void parallax_system_update_entity(SkaEntity entity, Transform2DComponent* transformComp, ParallaxComponent* parallaxComp, CRECamera2D* camera2D) {
-    const SKAVector2 offset = {
+    const SkaVector2 offset = {
         .x = (parallaxComp->cachedLocalPosition.x - (camera2D->viewport.x + camera2D->offset.x)) * camera2D->zoom.x * parallaxComp->scrollSpeed.x,
         .y = (parallaxComp->cachedLocalPosition.y - (camera2D->viewport.y + camera2D->offset.y)) * camera2D->zoom.y * parallaxComp->scrollSpeed.y
     };
@@ -63,7 +63,7 @@ void parallax_system_update_entity(SkaEntity entity, Transform2DComponent* trans
 }
 
 // Observer callbacks
-void on_entity_transform_change(SESubjectNotifyPayload* payload) {
+void on_entity_transform_change(SkaSubjectNotifyPayload* payload) {
     CreComponentEntityUpdatePayload* updatePayload = (CreComponentEntityUpdatePayload*)payload->data;
     Transform2DComponent* transform2DComponent = (Transform2DComponent*)updatePayload->component;
     const SkaEntity entity = updatePayload->entity;

@@ -25,25 +25,20 @@ Technically any game type will be able to be made with the engine.  But these ar
 
 * Engine
   * [C](https://en.wikipedia.org/wiki/C_(programming_language)) (c11) - Engine Core
-  * [SDL2](https://github.com/libsdl-org/SDL) - Windowing, inputs
-  * [MiniAudio](https://github.com/mackron/miniaudio) - Audio
+  * [Seika](https://github.com/Chukobyte/seika) - Game framework that was originally part of crescent.  Also have dependencies of its own which can be found [here](https://github.com/Chukobyte/seika?tab=readme-ov-file#tech-stack).
   * [pocketpy](https://github.com/blueloveth/pocketpy) - Python Scripting
-  * [Unity](https://github.com/ThrowTheSwitch/Unity) - Testing
-  * [PVS-Studio](https://pvs-studio.com/pvs-studio/?utm_source=website&utm_medium=github&utm_campaign=open_source) - static analyzer for C code.
+  * [cJSON](https://github.com/DaveGamble/cJSON) - Used to parse json
 * Editor
   * [C++](https://en.wikipedia.org/wiki/C%2B%2B) (c++20) - Editor Core
-  * [SDL2](https://github.com/libsdl-org/SDL) - Windowing, inputs
   * [ImGui](https://github.com/ocornut/imgui) - GUI Library
   * [ImPlot](https://github.com/epezent/implot) - Plotting Library (Used with ImGui)
-  * [MiniAudio](https://github.com/mackron/miniaudio) - Audio
+  * [nlohmann json](https://github.com/epezent/implot) - Used to read and write json files
+  * [Font Awesome](https://github.com/FortAwesome/Font-Awesome) - For font icons
   * [Catch2](https://github.com/catchorg/Catch2) - Testing
-  * [PVS-Studio](https://pvs-studio.com/pvs-studio/?utm_source=website&utm_medium=github&utm_campaign=open_source) - static analyzer for C++ code.
-* All
-  * [Seika](https://github.com/Chukobyte/seika) - Game framework that was originally part of crescent.
 
 ## Building
 
-Supports windows, linux, and macos builds at the moment.  Crescent engine uses cmake to build.
+Supports windows, linux, and macos builds at the moment.  Crescent engine uses cmake to build.  [PVS-Studio](https://pvs-studio.com/pvs-studio/?utm_source=website&utm_medium=github&utm_campaign=open_source) is used as a static analyzer for C and C++ code and has it's own github workflow that is triggered automatically with every commit to main and pull request.
 
 ### CMake
 
@@ -59,25 +54,8 @@ Linux (Ubuntu):
 MacOS:
 - clang
 
-##### VCPkg
-
-Crescent uses [vcpkg](https://github.com/Microsoft/vcpkg) to install dependencies for crescent.  Set `-DCMAKE_TOOLCHAIN_FILE` to the appropriate vcpkg cmake toolchain file.
-
 Example of running on command line in the project source directory:
 ```sh
-cmake . -DCMAKE_TOOLCHAIN_FILE=$VCPKG_DIR/../vcpkg/scripts/buildsystems/vcpkg.cmake
+cmake .
 cmake --build .
 ```
-
-##### MinGW build
-
-SDL2 and freetype needs to be installed manually for mingw builds.  Below are instructions on how to do so.
-1. Install MinGW through MSYS2
-2. Update pacman: `pacman -Syu`
-3. Install the following packages:
-    * `pacman -S mingw-w64-x86_64-SDL2`
-    * `pacman -S mingw-w64-x86_64-freetype`
-    * `pacman -S mingw-w64-x86_64-python`
-4. Run cmake
-
-*Note: There is an [example](.github/workflows/windows-mingw-build.yml) of building with mingw in the `.github/workflow` folder.*

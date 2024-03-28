@@ -2,15 +2,16 @@
 
 #include <string.h>
 
+#include <seika/logger.h>
+#include <seika/string.h>
+#include <seika/assert.h>
+#include <seika/memory.h>
 #include <seika/rendering/shader/shader_cache.h>
 #include <seika/rendering/renderer.h>
 #include <seika/ecs/ecs.h>
 #include <seika/asset/asset_manager.h>
-#include <seika/utils/logger.h>
-#include <seika/utils/se_string_util.h>
-#include <seika/utils/se_assert.h>
-#include <seika/data_structures/se_hash_map.h>
-#include <seika/data_structures/se_static_array.h>
+#include <seika/data_structures/hash_map.h>
+#include <seika/data_structures/static_array.h>
 
 #include "scene_utils.h"
 #include "scene_template_cache.h"
@@ -44,7 +45,7 @@ typedef struct SceneTree {
 } SceneTree;
 
 SceneTreeNode* cre_scene_tree_create_tree_node(SkaEntity entity, SceneTreeNode* parent) {
-    SceneTreeNode* treeNode = SE_MEM_ALLOCATE(SceneTreeNode);
+    SceneTreeNode* treeNode = SKA_MEM_ALLOCATE(SceneTreeNode);
     treeNode->entity = entity;
     treeNode->parent = parent;
     treeNode->childCount = 0;
@@ -58,9 +59,9 @@ typedef struct Scene {
 } Scene;
 
 Scene* cre_scene_create_scene(const char* scenePath) {
-    Scene* scene = SE_MEM_ALLOCATE(Scene);
+    Scene* scene = SKA_MEM_ALLOCATE(Scene);
     scene->scenePath = scenePath;
-    scene->sceneTree = SE_MEM_ALLOCATE(SceneTree);
+    scene->sceneTree = SKA_MEM_ALLOCATE(SceneTree);
     scene->sceneTree->root = NULL;
     return scene;
 }
@@ -71,48 +72,48 @@ size_t entitiesQueuedForCreationSize = 0;
 SkaEntity entitiesQueuedForDeletion[SKA_MAX_ENTITIES];
 size_t entitiesQueuedForDeletionSize = 0;
 
-SE_STATIC_ARRAY_CREATE(SkaEntity, SKA_MAX_ENTITIES, entitiesToUnlinkParent);
+SKA_STATIC_ARRAY_CREATE(SkaEntity, SKA_MAX_ENTITIES, entitiesToUnlinkParent);
 
 #ifdef CRE_SCENE_MANAGER_RENDER_INTERPOLATE_TRANSFORM2D_ALPHA
 // Will need a different mechanism for 3D (maybe just storing a vector3, but this is fine for now
-SE_STATIC_ARRAY_CREATE(SKATransform2D , SKA_MAX_ENTITIES, entityPrevGlobalTransforms);
+SKA_STATIC_ARRAY_CREATE(SkaTransform2D , SKA_MAX_ENTITIES, entityPrevGlobalTransforms);
 #endif // CRE_SCENE_MANAGER_RENDER_INTERPOLATE_TRANSFORM2D_ALPHA
 
 Scene* activeScene = NULL;
 Scene* queuedSceneToChangeTo = NULL;
 
-static SEHashMap* entityToTreeNodeMap = NULL;
-static SEHashMap* entityToStagedTreeNodeMap = NULL;
+static SkaHashMap* entityToTreeNodeMap = NULL;
+static SkaHashMap* entityToStagedTreeNodeMap = NULL;
 
 SceneTreeNode* cre_scene_manager_pop_staged_entity_tree_node(SkaEntity entity);
 void cre_scene_manager_add_staged_node_children_to_scene(SceneTreeNode* treeNode);
 void cre_scene_manager_setup_scene_nodes_from_json(JsonSceneNode* jsonSceneNode);
 
 void cre_scene_manager_initialize() {
-    SE_ASSERT(entityToTreeNodeMap == NULL);
-    SE_ASSERT(entityToStagedTreeNodeMap == NULL);
-    entityToTreeNodeMap = se_hash_map_create(sizeof(SkaEntity), sizeof(SceneTreeNode**), SE_HASH_MAP_MIN_CAPACITY);
-    entityToStagedTreeNodeMap = se_hash_map_create(sizeof(SkaEntity), sizeof(SceneTreeNode**), SE_HASH_MAP_MIN_CAPACITY);
+    SKA_ASSERT(entityToTreeNodeMap == NULL);
+    SKA_ASSERT(entityToStagedTreeNodeMap == NULL);
+    entityToTreeNodeMap = ska_hash_map_create(sizeof(SkaEntity), sizeof(SceneTreeNode**), SKA_HASH_MAP_MIN_CAPACITY);
+    entityToStagedTreeNodeMap = ska_hash_map_create(sizeof(SkaEntity), sizeof(SceneTreeNode**), SKA_HASH_MAP_MIN_CAPACITY);
     cre_scene_template_cache_initialize();
 }
 
 void cre_scene_manager_finalize() {
-    SE_ASSERT(entityToTreeNodeMap != NULL);
-    SE_ASSERT(entityToStagedTreeNodeMap != NULL);
-    se_hash_map_destroy(entityToTreeNodeMap);
-    se_hash_map_destroy(entityToStagedTreeNodeMap);
+    SKA_ASSERT(entityToTreeNodeMap != NULL);
+    SKA_ASSERT(entityToStagedTreeNodeMap != NULL);
+    ska_hash_map_destroy(entityToTreeNodeMap);
+    ska_hash_map_destroy(entityToStagedTreeNodeMap);
     cre_scene_template_cache_finalize();
 }
 
 void cre_scene_manager_queue_node_for_creation(SceneTreeNode* treeNode) {
     entitiesQueuedForCreation[entitiesQueuedForCreationSize++] = treeNode->entity;
-    SE_ASSERT_FMT(!se_hash_map_has(entityToTreeNodeMap, &treeNode->entity), "Entity '%d' already in entity to tree map!", treeNode->entity);
-    se_hash_map_add(entityToTreeNodeMap, &treeNode->entity, &treeNode);
+    SKA_ASSERT_FMT(!ska_hash_map_has(entityToTreeNodeMap, &treeNode->entity), "Entity '%d' already in entity to tree map!", treeNode->entity);
+    ska_hash_map_add(entityToTreeNodeMap, &treeNode->entity, &treeNode);
 }
 
 void cre_scene_manager_stage_child_node_to_be_added_later(SceneTreeNode* treeNode) {
-    SE_ASSERT_FMT(!se_hash_map_has(entityToTreeNodeMap, &treeNode->entity), "Entity '%d' already staged to be added!", treeNode->entity);
-    se_hash_map_add(entityToStagedTreeNodeMap, &treeNode->entity, &treeNode);
+    SKA_ASSERT_FMT(!ska_hash_map_has(entityToTreeNodeMap, &treeNode->entity), "Entity '%d' already staged to be added!", treeNode->entity);
+    ska_hash_map_add(entityToStagedTreeNodeMap, &treeNode->entity, &treeNode);
 }
 
 void cre_scene_manager_process_queued_creation_entities() {
@@ -124,7 +125,7 @@ void cre_scene_manager_process_queued_creation_entities() {
         // Notify scene enter observers before calling 'entered scene' on systems
         NodeComponent* nodeComponent = (NodeComponent*) ska_ecs_component_manager_get_component_unchecked(queuedEntity, NODE_COMPONENT_INDEX);
         if (nodeComponent != NULL) {
-            se_event_notify_observers(&nodeComponent->onSceneTreeEnter, &(SESubjectNotifyPayload) {
+            ska_event_notify_observers(&nodeComponent->onSceneTreeEnter, &(SkaSubjectNotifyPayload) {
                 .data = &queuedEntity
             });
         }
@@ -147,7 +148,7 @@ void cre_scene_manager_queue_entity_for_deletion(SkaEntity entity) {
     // Check if entity is already queued exit out early if so
     for (size_t i = 0; i < entitiesQueuedForDeletionSize; i++) {
         if (entitiesQueuedForDeletion[i] == entity) {
-            se_logger_warn("Entity '%d' already queued for deletion!", entity);
+            ska_logger_warn("Entity '%d' already queued for deletion!", entity);
             return;
         }
     }
@@ -159,7 +160,7 @@ void cre_scene_manager_queue_entity_for_deletion(SkaEntity entity) {
     NodeComponent* nodeComponent = (NodeComponent*)ska_ecs_component_manager_get_component_unchecked(entity, NODE_COMPONENT_INDEX);
     if (nodeComponent != NULL) {
         // Note: Node events should not be created during this time
-        se_event_notify_observers(&nodeComponent->onSceneTreeExit, &(SESubjectNotifyPayload) {
+        ska_event_notify_observers(&nodeComponent->onSceneTreeExit, &(SkaSubjectNotifyPayload) {
                 .data = &entity
         });
     }
@@ -167,36 +168,36 @@ void cre_scene_manager_queue_entity_for_deletion(SkaEntity entity) {
 
 void cre_scene_manager_process_queued_deletion_entities() {
     for (size_t i = 0; i < entitiesToUnlinkParent_count; i++) {
-        SceneTreeNode* treeNode = (SceneTreeNode*) *(SceneTreeNode**) se_hash_map_get(entityToTreeNodeMap,&entitiesToUnlinkParent[i]);
+        SceneTreeNode* treeNode = (SceneTreeNode*) *(SceneTreeNode**) ska_hash_map_get(entityToTreeNodeMap,&entitiesToUnlinkParent[i]);
         SceneTreeNode* parentNode = treeNode->parent;
-        SE_ARRAY_REMOVE_AND_CONDENSE(parentNode->children, parentNode->childCount, treeNode, NULL);
+        SKA_ARRAY_REMOVE_AND_CONDENSE(parentNode->children, parentNode->childCount, treeNode, NULL);
     }
     entitiesToUnlinkParent_count = 0;
 
     for (size_t i = 0; i < entitiesQueuedForDeletionSize; i++) {
         // Remove entity from entity to tree node map
         SkaEntity entityToDelete = entitiesQueuedForDeletion[i];
-        SE_ASSERT_FMT(se_hash_map_has(entityToTreeNodeMap, &entityToDelete), "Entity '%d' not in tree node map!?", entityToDelete);
-        SceneTreeNode* treeNode = (SceneTreeNode*) *(SceneTreeNode**) se_hash_map_get(entityToTreeNodeMap,&entityToDelete);
-        SE_MEM_FREE(treeNode);
-        se_hash_map_erase(entityToTreeNodeMap, &entityToDelete);
+        SKA_ASSERT_FMT(ska_hash_map_has(entityToTreeNodeMap, &entityToDelete), "Entity '%d' not in tree node map!?", entityToDelete);
+        SceneTreeNode* treeNode = (SceneTreeNode*) *(SceneTreeNode**) ska_hash_map_get(entityToTreeNodeMap,&entityToDelete);
+        SKA_MEM_FREE(treeNode);
+        ska_hash_map_erase(entityToTreeNodeMap, &entityToDelete);
         // Remove entity from systems
         ska_ecs_system_remove_entity_from_all_systems(entityToDelete);
         // Remove shader instances if applicable
         SpriteComponent* spriteComponent = (SpriteComponent*)ska_ecs_component_manager_get_component(entityToDelete, SPRITE_COMPONENT_INDEX);
-        if (spriteComponent != NULL && spriteComponent->shaderInstanceId != SE_SHADER_INSTANCE_INVALID_ID) {
-            SEShaderInstance* shaderInstance = se_shader_cache_get_instance(spriteComponent->shaderInstanceId);
+        if (spriteComponent != NULL && spriteComponent->shaderInstanceId != SKA_SHADER_INSTANCE_INVALID_ID) {
+            SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(spriteComponent->shaderInstanceId);
             if (shaderInstance) {
-                se_shader_cache_remove_instance(spriteComponent->shaderInstanceId);
-                se_shader_instance_destroy(shaderInstance);
+                ska_shader_cache_remove_instance(spriteComponent->shaderInstanceId);
+                ska_shader_instance_destroy(shaderInstance);
             }
         }
         AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*)ska_ecs_component_manager_get_component(entityToDelete, ANIMATED_SPRITE_COMPONENT_INDEX);
-        if (animatedSpriteComponent != NULL && animatedSpriteComponent->shaderInstanceId != SE_SHADER_INSTANCE_INVALID_ID) {
-            SEShaderInstance* shaderInstance = se_shader_cache_get_instance(animatedSpriteComponent->shaderInstanceId);
+        if (animatedSpriteComponent != NULL && animatedSpriteComponent->shaderInstanceId != SKA_SHADER_INSTANCE_INVALID_ID) {
+            SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(animatedSpriteComponent->shaderInstanceId);
             if (shaderInstance) {
-                se_shader_cache_remove_instance(animatedSpriteComponent->shaderInstanceId);
-                se_shader_instance_destroy(shaderInstance);
+                ska_shader_cache_remove_instance(animatedSpriteComponent->shaderInstanceId);
+                ska_shader_instance_destroy(shaderInstance);
             }
         }
         // Remove all components
@@ -217,7 +218,7 @@ void cre_scene_manager_queue_scene_change(const char* scenePath) {
     if (queuedSceneToChangeTo == NULL) {
         queuedSceneToChangeTo = cre_scene_create_scene(scenePath);
     } else {
-        se_logger_warn("Scene already queued, not loading '%s'", scenePath);
+        ska_logger_warn("Scene already queued, not loading '%s'", scenePath);
     }
 }
 
@@ -229,14 +230,14 @@ void cre_queue_destroy_tree_node_entity_all(SceneTreeNode* treeNode) {
     NodeComponent* nodeComp = (NodeComponent*)ska_ecs_component_manager_get_component(treeNode->entity, NODE_COMPONENT_INDEX);
     if (nodeComp) {
         if (nodeComp->queuedForDeletion) {
-            se_logger_warn("Entity '%s' already queued for deletion, skipping queue deletion!", nodeComp->name);
+            ska_logger_warn("Entity '%s' already queued for deletion, skipping queue deletion!", nodeComp->name);
             return;
         }
         nodeComp->queuedForDeletion = true;
     }
     cre_scene_execute_on_all_tree_nodes(treeNode, cre_queue_destroy_tree_node_entity);
     if (treeNode->parent != NULL) {
-        SE_STATIC_ARRAY_ADD(entitiesToUnlinkParent, treeNode->entity);
+        SKA_STATIC_ARRAY_ADD(entitiesToUnlinkParent, treeNode->entity);
     }
 }
 
@@ -245,7 +246,7 @@ void cre_scene_manager_process_queued_scene_change() {
         // Destroy old scene
         if (activeScene != NULL) {
             cre_queue_destroy_tree_node_entity_all(activeScene->sceneTree->root);
-            SE_MEM_FREE(activeScene);
+            SKA_MEM_FREE(activeScene);
         }
 
         // Reset Camera
@@ -254,18 +255,18 @@ void cre_scene_manager_process_queued_scene_change() {
         // Setup new scene
         activeScene = queuedSceneToChangeTo;
         queuedSceneToChangeTo = NULL;
-        SE_ASSERT(activeScene->scenePath != NULL);
+        SKA_ASSERT(activeScene->scenePath != NULL);
         // Load scene file
         JsonSceneNode* rootJsonSceneNode = cre_json_load_scene_file(activeScene->scenePath);
-        SE_ASSERT_FMT(rootJsonSceneNode != NULL, "Root scene file at path '%s' is NULL!", activeScene->scenePath);
+        SKA_ASSERT_FMT(rootJsonSceneNode != NULL, "Root scene file at path '%s' is NULL!", activeScene->scenePath);
         cre_scene_manager_setup_scene_nodes_from_json(rootJsonSceneNode);
         cre_json_delete_json_scene_node(rootJsonSceneNode);
     }
 }
 
 void cre_scene_manager_set_active_scene_root(SceneTreeNode* root) {
-    SE_ASSERT_FMT(activeScene != NULL, "There is no active scene!");
-    SE_ASSERT_FMT(activeScene->sceneTree->root == NULL, "Trying to overwrite an already existing scene root!");
+    SKA_ASSERT_FMT(activeScene != NULL, "There is no active scene!");
+    SKA_ASSERT_FMT(activeScene->sceneTree->root == NULL, "Trying to overwrite an already existing scene root!");
     activeScene->sceneTree->root = root;
 }
 
@@ -277,8 +278,8 @@ SceneTreeNode* cre_scene_manager_get_active_scene_root() {
 }
 
 // TODO: Make function to update flags for all children
-SKATransformModel2D* cre_scene_manager_get_scene_node_global_transform(SkaEntity entity, Transform2DComponent* transform2DComponent) {
-    SE_ASSERT_FMT(transform2DComponent != NULL, "Transform Model is NULL for entity '%d'", entity);
+SkaTransformModel2D* cre_scene_manager_get_scene_node_global_transform(SkaEntity entity, Transform2DComponent* transform2DComponent) {
+    SKA_ASSERT_FMT(transform2DComponent != NULL, "Transform Model is NULL for entity '%d'", entity);
     if (transform2DComponent->isGlobalTransformDirty) {
         // Walk up scene to root node and calculate global transform
         cre_scene_utils_update_global_transform_model(entity, &transform2DComponent->globalTransform);
@@ -288,16 +289,16 @@ SKATransformModel2D* cre_scene_manager_get_scene_node_global_transform(SkaEntity
     return &transform2DComponent->globalTransform;
 }
 
-SceneNodeRenderResource cre_scene_manager_get_scene_node_global_render_resource(SkaEntity entity, Transform2DComponent* transform2DComponent, const SKAVector2* origin) {
-    SKATransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity, transform2DComponent);
+SceneNodeRenderResource cre_scene_manager_get_scene_node_global_render_resource(SkaEntity entity, Transform2DComponent* transform2DComponent, const SkaVector2* origin) {
+    SkaTransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity, transform2DComponent);
 
     cre_scene_utils_apply_camera_and_origin_translation(globalTransform, origin, transform2DComponent->ignoreCamera);
     transform2DComponent->isGlobalTransformDirty = true; // TODO: Make global transform const
-    const SKATransform2D transform2D = ska_transform2d_model_convert_to_transform(globalTransform);
+    const SkaTransform2D transform2D = ska_transform2d_model_convert_to_transform(globalTransform);
 #ifdef CRE_SCENE_MANAGER_RENDER_INTERPOLATE_TRANSFORM2D_ALPHA
-    const SKATransform2D prevTransform2D = entityPrevGlobalTransforms[entity];
+    const SkaTransform2D prevTransform2D = entityPrevGlobalTransforms[entity];
     // Favor keeping most of the previous value as that seems to look best especially when changes are done in '_fixed_process'
-    const SKATransform2D lerpedTransform2D = ska_transform2d_lerp(&prevTransform2D, &transform2D, CRE_SCENE_MANAGER_RENDER_INTERPOLATE_TRANSFORM2D_ALPHA);
+    const SkaTransform2D lerpedTransform2D = ska_transform2d_lerp(&prevTransform2D, &transform2D, CRE_SCENE_MANAGER_RENDER_INTERPOLATE_TRANSFORM2D_ALPHA);
     entityPrevGlobalTransforms[entity] = lerpedTransform2D; // Store prev
     return (SceneNodeRenderResource){
         .transform2D = lerpedTransform2D,
@@ -311,7 +312,7 @@ SceneNodeRenderResource cre_scene_manager_get_scene_node_global_render_resource(
 }
 
 
-float cre_scene_manager_get_node_full_time_dilation(SkaEntity entity) {
+f32 cre_scene_manager_get_node_full_time_dilation(SkaEntity entity) {
     NodeComponent* nodeComp = (NodeComponent*)ska_ecs_component_manager_get_component_unchecked(entity, NODE_COMPONENT_INDEX);
     // The only thing in the scene without nodes current are native script entities
     if (nodeComp == NULL) {
@@ -324,9 +325,9 @@ float cre_scene_manager_get_node_full_time_dilation(SkaEntity entity) {
     // Set starting value
     nodeComp->timeDilation.cachedFullValue = cre_world_get_time_dilation();
     const EntityArray entityArray = cre_scene_manager_get_self_and_parent_nodes(entity);
-    for (size_t i = 0; (int) i < entityArray.entityCount; i++) {
+    for (size_t i = 0; (int32) i < entityArray.entityCount; i++) {
         NodeComponent* entityNodeComp = (NodeComponent*)ska_ecs_component_manager_get_component(entityArray.entities[i],NODE_COMPONENT_INDEX);
-        SE_ASSERT_FMT(entityNodeComp != NULL, "node comp is NULL!");
+        SKA_ASSERT_FMT(entityNodeComp != NULL, "node comp is NULL!");
         nodeComp->timeDilation.cachedFullValue *= entityNodeComp->timeDilation.value;
     }
     nodeComp->timeDilation.cacheInvalid = false;
@@ -334,18 +335,18 @@ float cre_scene_manager_get_node_full_time_dilation(SkaEntity entity) {
 }
 
 SceneTreeNode* cre_scene_manager_get_entity_tree_node(SkaEntity entity) {
-    SE_ASSERT_FMT(se_hash_map_has(entityToTreeNodeMap, &entity), "Doesn't have entity '%d' in scene tree!", entity);
-    SceneTreeNode* treeNode = (SceneTreeNode*) *(SceneTreeNode**) se_hash_map_get(entityToTreeNodeMap, &entity);
-    SE_ASSERT_FMT(treeNode != NULL, "Failed to get tree node for entity '%d'", entity);
+    SKA_ASSERT_FMT(ska_hash_map_has(entityToTreeNodeMap, &entity), "Doesn't have entity '%d' in scene tree!", entity);
+    SceneTreeNode* treeNode = (SceneTreeNode*) *(SceneTreeNode**) ska_hash_map_get(entityToTreeNodeMap, &entity);
+    SKA_ASSERT_FMT(treeNode != NULL, "Failed to get tree node for entity '%d'", entity);
     return treeNode;
 }
 
 SceneTreeNode* cre_scene_manager_pop_staged_entity_tree_node(SkaEntity entity) {
-    SE_ASSERT_FMT(se_hash_map_has(entityToStagedTreeNodeMap, &entity), "Doesn't have entity '%d' in scene tree!", entity);
-    SceneTreeNode* treeNode = (SceneTreeNode*) *(SceneTreeNode**) se_hash_map_get(entityToStagedTreeNodeMap, &entity);
-    SE_ASSERT_FMT(treeNode != NULL, "Failed to get tree node for entity '%d'", entity);
+    SKA_ASSERT_FMT(ska_hash_map_has(entityToStagedTreeNodeMap, &entity), "Doesn't have entity '%d' in scene tree!", entity);
+    SceneTreeNode* treeNode = (SceneTreeNode*) *(SceneTreeNode**) ska_hash_map_get(entityToStagedTreeNodeMap, &entity);
+    SKA_ASSERT_FMT(treeNode != NULL, "Failed to get tree node for entity '%d'", entity);
     // Now that we have the staged tree node, remove the reference from the staged hash map
-    se_hash_map_erase(entityToStagedTreeNodeMap, &entity);
+    ska_hash_map_erase(entityToStagedTreeNodeMap, &entity);
     return treeNode;
 }
 
@@ -364,14 +365,14 @@ SkaEntity cre_scene_manager_get_entity_child_by_name(SkaEntity parent, const cha
 }
 
 bool cre_scene_manager_has_entity_tree_node(SkaEntity entity) {
-    return se_hash_map_has(entityToTreeNodeMap, &entity);
+    return ska_hash_map_has(entityToTreeNodeMap, &entity);
 }
 
 void cre_scene_manager_add_node_as_child(SkaEntity childEntity, SkaEntity parentEntity) {
     SceneTreeNode* parentNode = cre_scene_manager_get_entity_tree_node(parentEntity);
     SceneTreeNode* node = cre_scene_manager_pop_staged_entity_tree_node(childEntity);
     node->parent = parentNode;
-    SE_ASSERT(parentNode->childCount + 1 < SCENE_TREE_NODE_MAX_CHILDREN);
+    SKA_ASSERT(parentNode->childCount + 1 < SCENE_TREE_NODE_MAX_CHILDREN);
     parentNode->children[parentNode->childCount++] = node;
     cre_scene_manager_queue_node_for_creation(node);
     // If there are child nodes, they are already parented to the current child entity
@@ -413,7 +414,7 @@ void cre_scene_manager_invalidate_time_dilation_nodes_with_children(SkaEntity en
 }
 
 void cre_scene_manager_notify_all_on_transform_events(SkaEntity entity, Transform2DComponent* transformComp) {
-    se_event_notify_observers(&transformComp->onTransformChanged, &(SESubjectNotifyPayload) {
+    ska_event_notify_observers(&transformComp->onTransformChanged, &(SkaSubjectNotifyPayload) {
             .data = &(CreComponentEntityUpdatePayload) {.entity = entity, .component = transformComp, .componentType = TRANSFORM2D_COMPONENT_TYPE}
     });
     // Notify children by recursion
@@ -456,17 +457,17 @@ SceneTreeNode* cre_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneN
     if (isRoot && !isStagedNodes) {
         cre_scene_manager_set_active_scene_root(node);
     }  else if (parent) {
-        SE_ASSERT(parent->childCount + 1 < SCENE_TREE_NODE_MAX_CHILDREN);
+        SKA_ASSERT(parent->childCount + 1 < SCENE_TREE_NODE_MAX_CHILDREN);
         parent->children[parent->childCount++] = node;
     }
 
     // Components
     NodeComponent* nodeComponent = node_component_create();
-    se_strcpy(nodeComponent->name, jsonSceneNode->name);
+    ska_strcpy(nodeComponent->name, jsonSceneNode->name);
     nodeComponent->type = jsonSceneNode->type;
-    SE_ASSERT_FMT(nodeComponent->type != NodeBaseType_INVALID, "Node '%s' has an invalid node type '%d'", nodeComponent->name, nodeComponent->type);
+    SKA_ASSERT_FMT(nodeComponent->type != NodeBaseType_INVALID, "Node '%s' has an invalid node type '%d'", nodeComponent->name, nodeComponent->type);
     ska_ecs_component_manager_set_component(node->entity, NODE_COMPONENT_INDEX, nodeComponent);
-    se_logger_info("Creating entity - name: '%s', entity_id = '%d', type: '%s'", nodeComponent->name, node->entity, node_get_base_type_string(nodeComponent->type));
+    ska_logger_info("Creating entity - name: '%s', entity_id = '%d', type: '%s'", nodeComponent->name, node->entity, node_get_base_type_string(nodeComponent->type));
 
     if (jsonSceneNode->components[TRANSFORM2D_COMPONENT_INDEX] != NULL) {
         Transform2DComponent* transform2DComponent = transform2d_component_copy((Transform2DComponent*) jsonSceneNode->components[TRANSFORM2D_COMPONENT_INDEX]);
@@ -474,43 +475,43 @@ SceneTreeNode* cre_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneN
     }
     if (jsonSceneNode->components[SPRITE_COMPONENT_INDEX] != NULL) {
         SpriteComponent* spriteComponent = sprite_component_copy((SpriteComponent*) jsonSceneNode->components[SPRITE_COMPONENT_INDEX]);
-        spriteComponent->texture = se_asset_manager_get_texture(jsonSceneNode->spriteTexturePath);
+        spriteComponent->texture = ska_asset_manager_get_texture(jsonSceneNode->spriteTexturePath);
         if (jsonSceneNode->shaderInstanceShaderPath) {
-            spriteComponent->shaderInstanceId = se_shader_cache_create_instance_and_add(jsonSceneNode->shaderInstanceShaderPath);
-            SEShaderInstance* shaderInstance = se_shader_cache_get_instance(spriteComponent->shaderInstanceId);
-            se_renderer_set_sprite_shader_default_params(shaderInstance->shader);
+            spriteComponent->shaderInstanceId = ska_shader_cache_create_instance_and_add(jsonSceneNode->shaderInstanceShaderPath);
+            SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(spriteComponent->shaderInstanceId);
+            ska_renderer_set_sprite_shader_default_params(shaderInstance->shader);
         } else if (jsonSceneNode->shaderInstanceVertexPath && jsonSceneNode->shaderInstanceFragmentPath) {
-            spriteComponent->shaderInstanceId = se_shader_cache_create_instance_and_add_from_raw(
+            spriteComponent->shaderInstanceId = ska_shader_cache_create_instance_and_add_from_raw(
                     jsonSceneNode->shaderInstanceVertexPath, jsonSceneNode->shaderInstanceFragmentPath);
-            SEShaderInstance* shaderInstance = se_shader_cache_get_instance(spriteComponent->shaderInstanceId);
-            se_renderer_set_sprite_shader_default_params(shaderInstance->shader);
+            SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(spriteComponent->shaderInstanceId);
+            ska_renderer_set_sprite_shader_default_params(shaderInstance->shader);
         } else {
-            spriteComponent->shaderInstanceId = SE_SHADER_INSTANCE_INVALID_ID;
+            spriteComponent->shaderInstanceId = SKA_SHADER_INSTANCE_INVALID_ID;
         }
         ska_ecs_component_manager_set_component(node->entity, SPRITE_COMPONENT_INDEX, spriteComponent);
     }
     if (jsonSceneNode->components[ANIMATED_SPRITE_COMPONENT_INDEX] != NULL) {
         AnimatedSpriteComponent* animatedSpriteComponent = animated_sprite_component_data_copy_to_animated_sprite((AnimatedSpriteComponentData*)jsonSceneNode->components[ANIMATED_SPRITE_COMPONENT_INDEX]);
         if (jsonSceneNode->shaderInstanceShaderPath) {
-            animatedSpriteComponent->shaderInstanceId = se_shader_cache_create_instance_and_add(jsonSceneNode->shaderInstanceShaderPath);
-            SEShaderInstance* shaderInstance = se_shader_cache_get_instance(animatedSpriteComponent->shaderInstanceId);
-            se_renderer_set_sprite_shader_default_params(shaderInstance->shader);
+            animatedSpriteComponent->shaderInstanceId = ska_shader_cache_create_instance_and_add(jsonSceneNode->shaderInstanceShaderPath);
+            SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(animatedSpriteComponent->shaderInstanceId);
+            ska_renderer_set_sprite_shader_default_params(shaderInstance->shader);
         } else if (jsonSceneNode->shaderInstanceVertexPath && jsonSceneNode->shaderInstanceFragmentPath) {
-            animatedSpriteComponent->shaderInstanceId = se_shader_cache_create_instance_and_add_from_raw(
+            animatedSpriteComponent->shaderInstanceId = ska_shader_cache_create_instance_and_add_from_raw(
                     jsonSceneNode->shaderInstanceVertexPath, jsonSceneNode->shaderInstanceFragmentPath);
-            SEShaderInstance* shaderInstance = se_shader_cache_get_instance(animatedSpriteComponent->shaderInstanceId);
-            se_renderer_set_sprite_shader_default_params(shaderInstance->shader);
+            SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(animatedSpriteComponent->shaderInstanceId);
+            ska_renderer_set_sprite_shader_default_params(shaderInstance->shader);
         } else {
-            animatedSpriteComponent->shaderInstanceId = SE_SHADER_INSTANCE_INVALID_ID;
+            animatedSpriteComponent->shaderInstanceId = SKA_SHADER_INSTANCE_INVALID_ID;
         }
         ska_ecs_component_manager_set_component(node->entity, ANIMATED_SPRITE_COMPONENT_INDEX, animatedSpriteComponent);
     }
     if (jsonSceneNode->components[TEXT_LABEL_COMPONENT_INDEX] != NULL) {
         TextLabelComponent* textLabelComponent = text_label_component_copy((TextLabelComponent*) jsonSceneNode->components[TEXT_LABEL_COMPONENT_INDEX]);
         if (jsonSceneNode->fontUID != NULL) {
-            textLabelComponent->font = se_asset_manager_get_font(jsonSceneNode->fontUID);
+            textLabelComponent->font = ska_asset_manager_get_font(jsonSceneNode->fontUID);
         } else {
-            textLabelComponent->font = se_asset_manager_get_font(CRE_DEFAULT_FONT_ASSET.uid);
+            textLabelComponent->font = ska_asset_manager_get_font(CRE_DEFAULT_FONT_ASSET.uid);
         }
         ska_ecs_component_manager_set_component(node->entity, TEXT_LABEL_COMPONENT_INDEX, textLabelComponent);
     }
@@ -536,7 +537,7 @@ SceneTreeNode* cre_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneN
     }
     if (jsonSceneNode->components[TILEMAP_COMPONENT_INDEX] != NULL) {
         TilemapComponent* tilemapComponent = tilemap_component_copy((TilemapComponent*)jsonSceneNode->components[TILEMAP_COMPONENT_INDEX]);
-        tilemapComponent->tilemap->tileset.texture = se_asset_manager_get_texture(jsonSceneNode->spriteTexturePath);
+        tilemapComponent->tilemap->tileset.texture = ska_asset_manager_get_texture(jsonSceneNode->spriteTexturePath);
         ska_ecs_component_manager_set_component(node->entity, TILEMAP_COMPONENT_INDEX, tilemapComponent);
     }
 

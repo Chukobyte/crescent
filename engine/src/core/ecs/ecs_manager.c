@@ -2,8 +2,8 @@
 
 #include <seika/rendering/renderer.h>
 #include <seika/ecs/ecs.h>
-#include <seika/utils/se_string_util.h>
-#include <seika/utils/se_assert.h>
+#include <seika/string.h>
+#include <seika/assert.h>
 #include <seika/asset/asset_manager.h>
 
 #include "ecs_globals.h"
@@ -85,7 +85,7 @@ void cre_ecs_manager_initialize() {
     cre_tilemap_ec_system_create_and_register();
 }
 
-void cre_ecs_manager_initialize_ex(SETexture* colorRectTexture, SETexture* particle2DSquareTexture) {
+void cre_ecs_manager_initialize_ex(SkaTexture* colorRectTexture, SkaTexture* particle2DSquareTexture) {
     ska_ecs_initialize();
 
     register_components();
@@ -101,7 +101,7 @@ void cre_ecs_manager_initialize_ex(SETexture* colorRectTexture, SETexture* parti
     cre_tilemap_ec_system_create_and_register();
 }
 
-void cre_ecs_manager_enable_fps_display_entity(bool enabled, const char* fontUID, float positionX, float positionY) {
+void cre_ecs_manager_enable_fps_display_entity(bool enabled, const char* fontUID, f32 positionX, f32 positionY) {
     static bool isEnabled = false;
     static SkaEntity currentFpsEntity = SKA_NULL_ENTITY;
     // Create temp entity
@@ -113,12 +113,12 @@ void cre_ecs_manager_enable_fps_display_entity(bool enabled, const char* fontUID
         transform2DComponent->localTransform.position.x = positionX;
         transform2DComponent->localTransform.position.y = positionY;
         transform2DComponent->ignoreCamera = true;
-        transform2DComponent->zIndex = SE_RENDERER_MAX_Z_INDEX;
+        transform2DComponent->zIndex = SKA_RENDERER_MAX_Z_INDEX;
         ska_ecs_component_manager_set_component(currentFpsEntity, TRANSFORM2D_COMPONENT_INDEX, transform2DComponent);
         // Text Label Component
         TextLabelComponent* textLabelComponent = text_label_component_create();
-        textLabelComponent->font = se_asset_manager_get_font(fontUID != NULL ? fontUID : CRE_DEFAULT_FONT_ASSET.uid);
-        se_strcpy(textLabelComponent->text, "FPS: ");
+        textLabelComponent->font = ska_asset_manager_get_font(fontUID != NULL ? fontUID : CRE_DEFAULT_FONT_ASSET.uid);
+        ska_strcpy(textLabelComponent->text, "FPS: ");
         ska_ecs_component_manager_set_component(currentFpsEntity, TEXT_LABEL_COMPONENT_INDEX, textLabelComponent);
         // Script Component
         ScriptComponent* scriptComponent = script_component_create("main", "FpsDisplay");
@@ -128,8 +128,8 @@ void cre_ecs_manager_enable_fps_display_entity(bool enabled, const char* fontUID
         ska_ecs_system_update_entity_signature_with_systems(currentFpsEntity);
         cre_scene_manager_queue_node_for_creation(fpsDisplayNode);
     } else if (isEnabled && !enabled) {
-        SE_ASSERT_FMT(currentFpsEntity != SKA_NULL_ENTITY, "Current fps entity is a null entity!?");
-        SE_ASSERT_FMT(fpsDisplayNode != NULL, "FPS Display Node is NULL!?");
+        SKA_ASSERT_FMT(currentFpsEntity != SKA_NULL_ENTITY, "Current fps entity is a null entity!?");
+        SKA_ASSERT_FMT(fpsDisplayNode != NULL, "FPS Display Node is NULL!?");
         cre_queue_destroy_tree_node_entity_all(fpsDisplayNode);
         currentFpsEntity = SKA_NULL_ENTITY;
         fpsDisplayNode = NULL;

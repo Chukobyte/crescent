@@ -4,14 +4,14 @@
 
 #include <seika/seika.h>
 #include <seika/asset/asset_manager.h>
-#include <seika/memory/se_mem.h>
-#include <seika/utils/se_string_util.h>
-#include <seika/utils/se_assert.h>
+#include <seika/memory.h>
+#include <seika/string.h>
+#include <seika/assert.h>
 
 #define RBE_MAX_ANIMATIONS 16
 
 AnimatedSpriteComponent* animated_sprite_component_create() {
-    AnimatedSpriteComponent* animatedSpriteComponent = SE_MEM_ALLOCATE(AnimatedSpriteComponent);
+    AnimatedSpriteComponent* animatedSpriteComponent = SKA_MEM_ALLOCATE(AnimatedSpriteComponent);
     animatedSpriteComponent->animationCount = 0;
     animatedSpriteComponent->modulate.r = 1.0f;
     animatedSpriteComponent->modulate.g = 1.0f;
@@ -20,22 +20,22 @@ AnimatedSpriteComponent* animated_sprite_component_create() {
     animatedSpriteComponent->flipH = false;
     animatedSpriteComponent->flipV = false;
     animatedSpriteComponent->staggerStartAnimationTimes = false;
-    animatedSpriteComponent->shaderInstanceId = SE_SHADER_INSTANCE_INVALID_ID;
+    animatedSpriteComponent->shaderInstanceId = SKA_SHADER_INSTANCE_INVALID_ID;
     return animatedSpriteComponent;
 }
 
 void animated_sprite_component_delete(AnimatedSpriteComponent* animatedSpriteComponent) {
-    SE_MEM_FREE(animatedSpriteComponent);
+    SKA_MEM_FREE(animatedSpriteComponent);
 }
 
 AnimatedSpriteComponent* animated_sprite_component_copy(const AnimatedSpriteComponent* animatedSpriteComponent) {
-    AnimatedSpriteComponent* copiedNode = SE_MEM_ALLOCATE(AnimatedSpriteComponent);
+    AnimatedSpriteComponent* copiedNode = SKA_MEM_ALLOCATE(AnimatedSpriteComponent);
     memcpy(copiedNode, animatedSpriteComponent, sizeof(AnimatedSpriteComponent));
     return copiedNode;
 }
 
 void animated_sprite_component_add_animation(AnimatedSpriteComponent* animatedSpriteComponent, CreAnimation animation) {
-    SE_ASSERT_FMT(animatedSpriteComponent->animationCount + 1 < RBE_MAX_ANIMATIONS,
+    SKA_ASSERT_FMT(animatedSpriteComponent->animationCount + 1 < RBE_MAX_ANIMATIONS,
                   "Adding animation '%s' exceeds the max limit of animations which is '%d'", animation.name, RBE_MAX_ANIMATIONS);
     animatedSpriteComponent->animations[animatedSpriteComponent->animationCount++] = animation;
 }
@@ -80,7 +80,7 @@ bool animated_sprite_component_play_animation(AnimatedSpriteComponent *animatedS
     }
     if (playAnimationSuccess) {
         animatedSpriteComponent->isPlaying = true;
-        animatedSpriteComponent->startAnimationTickTime = sf_get_ticks() + animatedSpriteComponent->randomStaggerTime;
+        animatedSpriteComponent->startAnimationTickTime = ska_get_ticks() + animatedSpriteComponent->randomStaggerTime;
     }
     return isPlayingNewAnimation;
 }
@@ -97,17 +97,17 @@ void animated_sprite_component_refresh_random_stagger_animation_time(AnimatedSpr
 
 //--- Animated Sprite Component Data ---//
 AnimatedSpriteComponentData* animated_sprite_component_data_create() {
-    AnimatedSpriteComponentData* animatedSpriteComponent = SE_MEM_ALLOCATE(AnimatedSpriteComponentData);
+    AnimatedSpriteComponentData* animatedSpriteComponent = SKA_MEM_ALLOCATE(AnimatedSpriteComponentData);
     animatedSpriteComponent->modulate = SKA_COLOR_WHITE;
     return animatedSpriteComponent;
 }
 
 void animated_sprite_component_data_delete(AnimatedSpriteComponentData* animatedSpriteComponent) {
-    SE_MEM_FREE(animatedSpriteComponent);
+    SKA_MEM_FREE(animatedSpriteComponent);
 }
 
 AnimatedSpriteComponent* animated_sprite_component_data_copy_to_animated_sprite(const AnimatedSpriteComponentData* animatedSpriteComponentData) {
-    AnimatedSpriteComponent* copiedNode = SE_MEM_ALLOCATE(AnimatedSpriteComponent);
+    AnimatedSpriteComponent* copiedNode = SKA_MEM_ALLOCATE(AnimatedSpriteComponent);
     copiedNode->animationCount = animatedSpriteComponentData->animationCount;
     copiedNode->modulate = animatedSpriteComponentData->modulate;
     copiedNode->origin = animatedSpriteComponentData->origin;
@@ -115,20 +115,20 @@ AnimatedSpriteComponent* animated_sprite_component_data_copy_to_animated_sprite(
     copiedNode->flipH = animatedSpriteComponentData->flipH;
     copiedNode->flipV = animatedSpriteComponentData->flipV;
     copiedNode->staggerStartAnimationTimes = animatedSpriteComponentData->staggerStartAnimationTimes;
-    se_strcpy(copiedNode->currentAnimation.name, animatedSpriteComponentData->currentAnimation.name);
+    ska_strcpy(copiedNode->currentAnimation.name, animatedSpriteComponentData->currentAnimation.name);
     for (size_t animationIndex = 0; animationIndex < animatedSpriteComponentData->animationCount; animationIndex++) {
         const AnimationData* animationData = &animatedSpriteComponentData->animations[animationIndex];
         CreAnimation animation;
-        se_strcpy(animation.name, animationData->name);
+        ska_strcpy(animation.name, animationData->name);
         animation.doesLoop = animationData->doesLoop;
         animation.speed = animationData->speed;
         animation.isValid = true;
         animation.currentFrame = 0;
         animation.frameCount = animationData->frameCount;
-        for (size_t frameIndex = 0; (int) frameIndex < animationData->frameCount; frameIndex++) {
+        for (size_t frameIndex = 0; (int32) frameIndex < animationData->frameCount; frameIndex++) {
             const AnimationFrameData* animationFrameData = &animationData->animationFrames[frameIndex];
             CreAnimationFrame animationFrame;
-            animationFrame.texture = se_asset_manager_get_texture(animationFrameData->texturePath);
+            animationFrame.texture = ska_asset_manager_get_texture(animationFrameData->texturePath);
             animationFrame.drawSource = animationFrameData->drawSource;
             animationFrame.frame = animationFrameData->frame;
             animation.animationFrames[frameIndex] = animationFrame;
@@ -143,7 +143,7 @@ AnimatedSpriteComponent* animated_sprite_component_data_copy_to_animated_sprite(
 }
 
 void animated_sprite_component_data_add_animation(AnimatedSpriteComponentData* animatedSpriteComponent, AnimationData animation) {
-    SE_ASSERT_FMT(animatedSpriteComponent->animationCount + 1 < RBE_MAX_ANIMATIONS,
+    SKA_ASSERT_FMT(animatedSpriteComponent->animationCount + 1 < RBE_MAX_ANIMATIONS,
                   "Adding animation '%s' exceeds the max limit of animations which is '%d'", animation.name, RBE_MAX_ANIMATIONS);
     animatedSpriteComponent->animations[animatedSpriteComponent->animationCount++] = animation;
 }

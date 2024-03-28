@@ -1,6 +1,6 @@
 #pragma once
 
-#include <seika/math/se_math.h>
+#include <seika/math/math.h>
 
 #define DEFAULT_COMPONENT_TRANSFORM2D_POSITION SKA_VECTOR2_ZERO
 #define DEFAULT_COMPONENT_TRANSFORM2D_SCALE SKA_VECTOR2_ONE

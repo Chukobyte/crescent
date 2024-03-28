@@ -16,13 +16,7 @@ jobs:
         with:
           useLocalCache: true
           useCloudCache: false
-          cmakeVersion: "3.25.0"
-
-      - name: run-vcpkg
-        uses: lukka/run-vcpkg@v11
-        with:
-          vcpkgDirectory: '${{ github.workspace }}/vcpkg'
-          vcpkgGitCommitId: 'efca044b75fbf481d6650ce4d3b223d8af94f7a7'
+          cmakeVersion: "3.27.0"
 
       - name: run build
         uses: lukka/run-cmake@v10.7

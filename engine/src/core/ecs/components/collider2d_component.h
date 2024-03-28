@@ -7,13 +7,13 @@ extern "C" {
 #include <stddef.h>
 
 #include <seika/ecs/entity.h>
-#include <seika/math/se_math.h>
+#include <seika/math/math.h>
 
 typedef struct Collider2DComponent {
-    SKASize2D extents; // TODO: Default to a box, implement other colliders later.  Also should use extents instead of rect!
+    SkaSize2D extents; // TODO: Default to a box, implement other colliders later.  Also should use extents instead of rect!
     SkaEntity collisionExceptions[4];
     size_t collisionExceptionCount;
-    SKAColor color; // For debug purposes
+    SkaColor color; // For debug purposes
 } Collider2DComponent;
 
 Collider2DComponent* collider2d_component_create();

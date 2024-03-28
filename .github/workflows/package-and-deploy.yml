@@ -12,29 +12,12 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
-      - name: install dependencies (just jq for now)
-        run: |
-          Invoke-WebRequest https://github.com/stedolan/jq/releases/download/jq-1.6/jq-win64.exe -OutFile jq.exe
-          Move-Item jq.exe C:\Windows\System32\WindowsPowerShell\v1.0\
-          $env:PATH += ';C:\Windows\System32\WindowsPowerShell\v1.0\'
-
-      - name: set env vars
-        run: |
-          $crescent_version = jq -r '.version' vcpkg.json
-          "CRESCENT_VERSION=$crescent_version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-
       - name: get cmake
         uses: lukka/get-cmake@latest
         with:
           useLocalCache: true
           useCloudCache: false
-          cmakeVersion: "3.25.0"
-
-      - name: run-vcpkg
-        uses: lukka/run-vcpkg@v11
-        with:
-          vcpkgDirectory: '${{ github.workspace }}/vcpkg'
-          vcpkgGitCommitId: 'efca044b75fbf481d6650ce4d3b223d8af94f7a7'
+          cmakeVersion: "3.27.0"
 
       - name: run build
         uses: lukka/run-cmake@v10.7
@@ -103,24 +86,14 @@ jobs:
         run: |
           sudo apt install gcc-11
           sudo apt install g++-11
-          sudo apt install libgl1-mesa-dev libglu1-mesa-dev jq
-
-      - name: set env vars
-        run: |
-          echo "CRESCENT_VERSION=$(jq -r '.version' vcpkg.json)" >> $GITHUB_ENV
+          sudo apt install libgl1-mesa-dev libglu1-mesa-dev
 
       - name: get cmake
         uses: lukka/get-cmake@latest
         with:
           useLocalCache: true
           useCloudCache: false
-          cmakeVersion: "3.25.0"
-
-      - name: run-vcpkg
-        uses: lukka/run-vcpkg@v11
-        with:
-          vcpkgDirectory: '${{ github.workspace }}/vcpkg'
-          vcpkgGitCommitId: 'efca044b75fbf481d6650ce4d3b223d8af94f7a7'
+          cmakeVersion: "3.27.0"
 
       - name: run build
         uses: lukka/run-cmake@v10.7
@@ -170,24 +143,14 @@ jobs:
 
       - name: install dependencies
         run: |
-          brew install pkg-config jq
-
-      - name: set env vars
-        run: |
-          echo "CRESCENT_VERSION=$(jq -r '.version' vcpkg.json)" >> $GITHUB_ENV
+          brew install pkg-config
 
       - name: get cmake
         uses: lukka/get-cmake@latest
         with:
           useLocalCache: true
           useCloudCache: false
-          cmakeVersion: "3.25.0"
-
-      - name: run-vcpkg
-        uses: lukka/run-vcpkg@v11
-        with:
-          vcpkgDirectory: '${{ github.workspace }}/vcpkg'
-          vcpkgGitCommitId: 'efca044b75fbf481d6650ce4d3b223d8af94f7a7'
+          cmakeVersion: "3.27.0"
 
       - name: run build
         uses: lukka/run-cmake@v10.7
@@ -268,13 +231,10 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
-      - name: install dependencies
-        run: |
-          sudo apt install jq
-
       - name: set env vars
         run: |
-          echo "CRESCENT_VERSION=$(jq -r '.version' vcpkg.json)" >> $GITHUB_ENV
+          CRESCENT_VERSION=$(python3 ${{ github.workspace }}/ci/get_engine_version.py ${{ github.workspace }}/engine/src/core/core_info.h)
+          echo "CRESCENT_VERSION=$CRESCENT_VERSION" >> $GITHUB_ENV
 
       - name: install pip packages
         run: |

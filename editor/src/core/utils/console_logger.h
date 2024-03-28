@@ -4,7 +4,10 @@
 
 #include "singleton.h"
 
-#include "stdcapture/stdcapture.h"
+#include <string>
+#include <functional>
+
+//#include <stdcapture.h>
 
 class ConsoleLogCapture {
   public:
@@ -12,8 +15,8 @@ class ConsoleLogCapture {
     ~ConsoleLogCapture();
 
   private:
-    std::capture::CaptureStdout* captureStdout = nullptr;
-    std::capture::CaptureStderr* captureStderr = nullptr;
+//    std::capture::CaptureStdout* captureStdout = nullptr;
+//    std::capture::CaptureStderr* captureStderr = nullptr;
 };
 
 class ConsoleLogger : public Singleton<ConsoleLogger> {

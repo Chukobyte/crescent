@@ -8,13 +8,13 @@
 #include "../camera/camera.h"
 #include "../camera/camera_manager.h"
 
-SKATransform2D default_get_local_transform(SkaEntity entity, int* zIndex, bool* success);
+SkaTransform2D default_get_local_transform(SkaEntity entity, int32* zIndex, bool* success);
 
 on_get_self_and_parent_entities onGetSelfAndParentEntitiesFunc = &cre_scene_manager_get_self_and_parent_nodes;
 on_get_local_transform onGetLocalTransformFunc = &default_get_local_transform;
 
 // Default engine callbacks
-SKATransform2D default_get_local_transform(SkaEntity entity, int* zIndex, bool* success) {
+SkaTransform2D default_get_local_transform(SkaEntity entity, int32* zIndex, bool* success) {
     Transform2DComponent* transform2DComponent = ska_ecs_component_manager_get_component_unchecked(entity, TRANSFORM2D_COMPONENT_INDEX);
     if (transform2DComponent == NULL) {
         *success = false;
@@ -25,16 +25,16 @@ SKATransform2D default_get_local_transform(SkaEntity entity, int* zIndex, bool* 
     return transform2DComponent->localTransform;
 }
 
-void cre_scene_utils_update_global_transform_model(SkaEntity entity, SKATransformModel2D* globalTransform) {
+void cre_scene_utils_update_global_transform_model(SkaEntity entity, SkaTransformModel2D* globalTransform) {
     glm_mat4_identity(globalTransform->model);
     EntityArray combineModelResult = onGetSelfAndParentEntitiesFunc(entity);
-    SKAVector2 scaleTotal = SKA_VECTOR2_ONE;
+    SkaVector2 scaleTotal = SKA_VECTOR2_ONE;
     globalTransform->zIndex = 0;
-    for (int i = combineModelResult.entityCount - 1; i >= 0; i--) {
+    for (int32 i = combineModelResult.entityCount - 1; i >= 0; i--) {
         SkaEntity currentEntity = combineModelResult.entities[i];
         bool hasLocalTransform = false;
         int localZIndex = 0;
-        const SKATransform2D localTransform = onGetLocalTransformFunc(currentEntity, &localZIndex, &hasLocalTransform);
+        const SkaTransform2D localTransform = onGetLocalTransformFunc(currentEntity, &localZIndex, &hasLocalTransform);
         if (!hasLocalTransform) {
             continue;
         }
@@ -60,7 +60,7 @@ void cre_scene_utils_update_global_transform_model(SkaEntity entity, SKATransfor
     globalTransform->rotation = transform2d_component_get_rotation_deg_from_model(rotation);
 }
 
-void cre_scene_utils_apply_camera_and_origin_translation(SKATransformModel2D* globalTransform, const SKAVector2* origin, bool ignoreCamera) {
+void cre_scene_utils_apply_camera_and_origin_translation(SkaTransformModel2D* globalTransform, const SkaVector2* origin, bool ignoreCamera) {
     const CRECamera2D* renderCamera = ignoreCamera ? cre_camera_manager_get_default_camera() : cre_camera_manager_get_current_camera();
     glm_translate(globalTransform->model, (vec3) {
         (renderCamera->offset.x - (renderCamera->viewport.x * globalTransform->scaleSign.x) - origin->x) * renderCamera->zoom.x,

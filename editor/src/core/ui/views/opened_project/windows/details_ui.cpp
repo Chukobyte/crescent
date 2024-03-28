@@ -1,8 +1,8 @@
 #include "details_ui.h"
 #include "animation_editor_ui.h"
+#include "editors/tilemap_editor.h"
 #include "../../../../scene/scene_manager.h"
 #include "../../../../project_properties.h"
-#include "../../../../asset_browser.h"
 #include "../../../../editor_callbacks.h"
 
 // Temp
@@ -369,7 +369,11 @@ void DrawParticles2D(SceneNode* node) {
 }
 
 void DrawTilemap(SceneNode* node) {
+    auto tilemapEditor = TilemapEditor::Get();
+
     if (auto* tilemapComp = node->GetComponentSafe<TilemapComp>()) {
+        tilemapEditor->Process(node, tilemapComp);
+
         ImGui::Text("Tilemap Component");
 
         // Texture Path Combo Box
@@ -410,6 +414,8 @@ void DrawTilemap(SceneNode* node) {
         ImGuiHelper::BeginDragFloat2(originDragFloat2);
 
         ImGui::Separator();
+    } else {
+        tilemapEditor->End();
     }
 }
 } // namespace ComponentDetailsDrawUtils

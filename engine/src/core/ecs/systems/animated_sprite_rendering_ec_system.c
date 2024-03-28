@@ -4,7 +4,7 @@
 #include <seika/rendering/renderer.h>
 #include <seika/rendering/shader/shader_cache.h>
 #include <seika/ecs/ecs.h>
-#include <seika/utils/se_assert.h>
+#include <seika/assert.h>
 
 #include "../ecs_globals.h"
 #include "../components/animated_sprite_component.h"
@@ -25,37 +25,37 @@ void cre_animated_sprite_rendering_ec_system_create_and_register() {
 
 void on_entity_registered(SkaECSSystem* system, SkaEntity entity) {
     AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*)ska_ecs_component_manager_get_component(entity, ANIMATED_SPRITE_COMPONENT_INDEX);
-    SE_ASSERT(animatedSpriteComponent != NULL);
+    SKA_ASSERT(animatedSpriteComponent != NULL);
     animated_sprite_component_refresh_random_stagger_animation_time(animatedSpriteComponent);
     if (animatedSpriteComponent->isPlaying) {
-        animatedSpriteComponent->startAnimationTickTime = sf_get_ticks() + animatedSpriteComponent->randomStaggerTime;
+        animatedSpriteComponent->startAnimationTickTime = (int32)ska_get_ticks() + animatedSpriteComponent->randomStaggerTime;
     }
 }
 
 void animated_sprite_render(SkaECSSystem* system) {
     const CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
     const CRECamera2D* defaultCamera = cre_camera_manager_get_default_camera();
-    const int currentTickTime = (int) sf_get_ticks();
+    const int32 currentTickTime = (int32)ska_get_ticks();
     for (size_t i = 0; i < system->entity_count; i++) {
         const SkaEntity entity = system->entities[i];
         Transform2DComponent* spriteTransformComp = (Transform2DComponent*)ska_ecs_component_manager_get_component(entity, TRANSFORM2D_COMPONENT_INDEX);
         AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*)ska_ecs_component_manager_get_component(entity, ANIMATED_SPRITE_COMPONENT_INDEX);
         CreAnimationFrame currentFrame = animatedSpriteComponent->currentAnimation.animationFrames[animatedSpriteComponent->currentAnimation.currentFrame];
         if (animatedSpriteComponent->isPlaying) {
-            const float entityTimeDilation = cre_scene_manager_get_node_full_time_dilation(entity);
-            const float spriteCurrentTickTime = (float) currentTickTime + (float) animatedSpriteComponent->randomStaggerTime;
-            const int tickRate = (int) (((spriteCurrentTickTime - (float) animatedSpriteComponent->startAnimationTickTime) / (float) animatedSpriteComponent->currentAnimation.speed) * entityTimeDilation);
-            const int newIndex = tickRate % animatedSpriteComponent->currentAnimation.frameCount;
+            const f32 entityTimeDilation = cre_scene_manager_get_node_full_time_dilation(entity);
+            const f32 spriteCurrentTickTime = (f32) currentTickTime + (f32) animatedSpriteComponent->randomStaggerTime;
+            const int32 tickRate = (int32) (((spriteCurrentTickTime - (f32) animatedSpriteComponent->startAnimationTickTime) / (f32) animatedSpriteComponent->currentAnimation.speed) * entityTimeDilation);
+            const int32 newIndex = tickRate % animatedSpriteComponent->currentAnimation.frameCount;
             if (newIndex != animatedSpriteComponent->currentAnimation.currentFrame) {
                 // Notify observers that frame has changed
-                se_event_notify_observers(&animatedSpriteComponent->onFrameChanged, &(SESubjectNotifyPayload){
+                ska_event_notify_observers(&animatedSpriteComponent->onFrameChanged, &(SkaSubjectNotifyPayload){
                     .data = &(AnimatedSpriteFrameChangedPayload){ .entity = entity, .newFrame = newIndex }
                 });
 
                 currentFrame = animatedSpriteComponent->currentAnimation.animationFrames[newIndex];
                 if (newIndex + 1 == animatedSpriteComponent->currentAnimation.frameCount) {
                     // Notify the observers that the animation has finished
-                    se_event_notify_observers(&animatedSpriteComponent->onFrameChanged, &(SESubjectNotifyPayload){
+                    ska_event_notify_observers(&animatedSpriteComponent->onFrameChanged, &(SkaSubjectNotifyPayload){
                         .data = &(AnimatedSpriteAnimationFinishedPayload){ .entity = entity, .animation = &animatedSpriteComponent->currentAnimation }
                     });
                     if (!animatedSpriteComponent->currentAnimation.doesLoop) {
@@ -67,7 +67,7 @@ void animated_sprite_render(SkaECSSystem* system) {
         }
         const CRECamera2D* renderCamera = spriteTransformComp->ignoreCamera ? defaultCamera : camera2D;
         const SceneNodeRenderResource renderResource = cre_scene_manager_get_scene_node_global_render_resource(entity, spriteTransformComp, &animatedSpriteComponent->origin);
-        const SKASize2D destinationSize = {
+        const SkaSize2D destinationSize = {
             .w = currentFrame.drawSource.w * renderCamera->zoom.x,
             .h = currentFrame.drawSource.h * renderCamera->zoom.y
         };
@@ -81,7 +81,7 @@ void animated_sprite_render(SkaECSSystem* system) {
             animatedSpriteComponent->flipV,
             &renderResource.transform2D,
             renderResource.globalZIndex,
-            se_shader_cache_get_instance_checked(animatedSpriteComponent->shaderInstanceId)
+            ska_shader_cache_get_instance_checked(animatedSpriteComponent->shaderInstanceId)
         );
     }
 }

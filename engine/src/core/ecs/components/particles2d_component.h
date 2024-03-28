@@ -20,25 +20,25 @@ typedef enum Particle2DComponentType {
 } Particle2DComponentType;
 
 typedef struct Particle2DTypeTexture {
-    struct SETexture* texture;
-    SKARect2 drawSource;
+    struct SkaTexture* texture;
+    SkaRect2 drawSource;
 } Particle2DTypeTexture;
 
 typedef struct Particles2DComponent {
     // Configuration
-    int amount;
-    SKAMinMaxVec2 initialVelocity;
-    SKAColor color;
-    float spread; // angle in degrees in which the particles are spread
-    float lifeTime; // Sets initial 'timeActive' on CreParticle2D
-    float damping;
-    float explosiveness; // How often particles in an emission cycle are emitted (0.0f - 1.0f), 1.0f meaning the longest delay and all particles come out at once
+    int32 amount;
+    SkaMinMaxVec2 initialVelocity;
+    SkaColor color;
+    f32 spread; // angle in degrees in which the particles are spread
+    f32 lifeTime; // Sets initial 'timeActive' on CreParticle2D
+    f32 damping;
+    f32 explosiveness; // How often particles in an emission cycle are emitted (0.0f - 1.0f), 1.0f meaning the longest delay and all particles come out at once
     Particle2DComponentState state;
     Particle2DComponentType type;
     // Using unions for struct members based on type
     // Shared unions between multiple type (TODO: add later)
 //    union {
-    SKASize2D squareSize; // Particle2DComponentType_SQUARE | Particle2DComponentType_TEXTURE
+    SkaSize2D squareSize; // Particle2DComponentType_SQUARE | Particle2DComponentType_TEXTURE
 //    };
     // Specific type structs
 //    union {

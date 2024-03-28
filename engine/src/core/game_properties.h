@@ -6,7 +6,8 @@ extern "C" {
 
 #include <stdbool.h>
 #include <stddef.h>
-#include <stdint.h>
+
+#include <seika/defines.h>
 
 typedef struct CREAssetAudioSource {
     char* file_path;
@@ -22,7 +23,7 @@ typedef struct CREAssetTexture {
 typedef struct CREAssetFont {
     char* file_path;
     char* uid;
-    int size;
+    int32 size;
     bool applyNearestNeighbor;
 } CREAssetFont;
 
@@ -30,7 +31,7 @@ typedef struct CREAssetFont {
 struct CreAssetFontDefault {
     const char* file_path;
     const char* uid;
-    int size;
+    int32 size;
     bool applyNearestNeighbor;
 };
 static struct CreAssetFontDefault CRE_DEFAULT_FONT_ASSET = {
@@ -44,7 +45,7 @@ static struct CreAssetFontDefault CRE_DEFAULT_FONT_ASSET = {
 
 typedef struct CREInputAction {
     char* name;
-    int deviceId;
+    int32 deviceId;
     size_t valueCount;
     char* values[CRE_INPUT_VALUES_LIMIT];
 } CREInputAction;
@@ -53,13 +54,13 @@ typedef struct CREInputAction {
 
 typedef struct CREGameProperties {
     char* gameTitle;
-    int resolutionWidth;
-    int resolutionHeight;
-    int windowWidth;
-    int windowHeight;
+    int32 resolutionWidth;
+    int32 resolutionHeight;
+    int32 windowWidth;
+    int32 windowHeight;
     bool maintainAspectRatio;
     uint32_t audioWavSampleRate;
-    int targetFPS;
+    int32 targetFPS;
     char* initialScenePath;
     bool areCollidersVisible;
     bool vsyncEnabled;

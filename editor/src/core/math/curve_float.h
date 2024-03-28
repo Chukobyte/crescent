@@ -2,8 +2,8 @@
 
 #include <vector>
 
-#include <seika/math/se_curve_float.h>
-#include <seika/utils/se_assert.h>
+#include <seika/math/curve_float.h>
+#include <seika/assert.h>
 
 #include "../utils/json_helper.h"
 
@@ -12,13 +12,13 @@ class CurveFloat {
   public:
     CurveFloat() = default;
 
-    explicit CurveFloat(std::vector<SECurveControlPoint> points) {
-        se_curve_float_add_control_points(&curve, points.data(), points.size());
+    explicit CurveFloat(std::vector<SkaCurveControlPoint> points) {
+        ska_curve_float_add_control_points(&curve, points.data(), points.size());
         UpdateInternalPointsCache();
     }
 
     void AddControlPoint(double position, double value, double tangentIn, double tangentOut) {
-        se_curve_float_add_control_point(
+        ska_curve_float_add_control_point(
             &curve,
         { .x = position, .y = value, .tangentIn = tangentIn, .tangentOut = tangentOut }
         );
@@ -26,7 +26,7 @@ class CurveFloat {
     }
 
     bool RemoveControlPoint(double position, double value) {
-        const bool hasRemovedPoint = se_curve_float_remove_control_point(&curve, position, value);
+        const bool hasRemovedPoint = ska_curve_float_remove_control_point(&curve, position, value);
         if (hasRemovedPoint) {
             UpdateInternalPointsCache();
         }
@@ -34,11 +34,11 @@ class CurveFloat {
     }
 
     [[nodiscard]] double Eval(double t) const {
-        return se_curve_float_eval(&curve, t);
+        return ska_curve_float_eval(&curve, t);
     }
 
 
-    [[nodiscard]] std::vector<SECurveControlPoint*>& GetControlPoints() {
+    [[nodiscard]] std::vector<SkaCurveControlPoint*>& GetControlPoints() {
         return internalPointsCache;
     }
 
@@ -47,12 +47,12 @@ class CurveFloat {
     }
 
     [[nodiscard]] double GetFirstPosition() const {
-        SE_ASSERT_FMT(curve.controlPointCount > 0, "Control points are empty!");
+        SKA_ASSERT_FMT(curve.controlPointCount > 0, "Control points are empty!");
         return curve.controlPoints[0].x;
     }
 
     [[nodiscard]] double GetLastPosition() const {
-        SE_ASSERT_FMT(curve.controlPointCount > 0, "Control points are empty!");
+        SKA_ASSERT_FMT(curve.controlPointCount > 0, "Control points are empty!");
         return curve.controlPoints[curve.controlPointCount - 1].x;
     }
 
@@ -77,18 +77,18 @@ class CurveFloat {
     void SetFromJson(const JsonType& json) {
         curve.controlPointCount = 0; // Reset control point count
         const std::string type = JsonHelper::Get<std::string>(json, "type");
-        SE_ASSERT_FMT(type == "curve", "Attempted to read json that is not a curve!");
-        std::vector<SECurveControlPoint> points;
+        SKA_ASSERT_FMT(type == "curve", "Attempted to read json that is not a curve!");
+        std::vector<SkaCurveControlPoint> points;
         JsonType controlPointsArray = JsonHelper::Get<JsonType>(json, "control_points");
         for (const JsonType& pointJson : controlPointsArray) {
             const double x = JsonHelper::Get<double>(pointJson, "x");
             const double y = JsonHelper::Get<double>(pointJson, "y");
             const double tangentIn = JsonHelper::Get<double>(pointJson, "tangent_in");
             const double tangentOut = JsonHelper::Get<double>(pointJson, "tangent_out");
-            const SECurveControlPoint point = { .x = x, .y = y, .tangentIn = tangentIn, .tangentOut = tangentOut };
+            const SkaCurveControlPoint point = { .x = x, .y = y, .tangentIn = tangentIn, .tangentOut = tangentOut };
             points.emplace_back(point);
         }
-        se_curve_float_add_control_points(&curve, points.data(), points.size());
+        ska_curve_float_add_control_points(&curve, points.data(), points.size());
         UpdateInternalPointsCache();
     }
 
@@ -100,6 +100,6 @@ class CurveFloat {
         }
     }
 
-    SECurveFloat curve = { .controlPointCount = 0 };
-    std::vector<SECurveControlPoint*> internalPointsCache = {}; // To prevent having to create new vectors when getting control points
+    SkaCurveFloat curve = { .controlPointCount = 0 };
+    std::vector<SkaCurveControlPoint*> internalPointsCache = {}; // To prevent having to create new vectors when getting control points
 };

@@ -4,14 +4,14 @@
 extern "C" {
 #endif
 
-#include <seika/math/se_math.h>
+#include <seika/math/math.h>
 
-struct SETexture;
+struct SkaTexture;
 struct CreTilemap;
 
 typedef struct TilemapComponent {
     struct CreTilemap* tilemap;
-    SKAVector2 origin; // Used to calculate the global starting position of the first tile (0, 0)
+    SkaVector2 origin; // Used to calculate the global starting position of the first tile (0, 0)
 } TilemapComponent;
 
 TilemapComponent* tilemap_component_create();

@@ -32,7 +32,7 @@ void RefreshAllAudioSources(AssetManager* assetManager, const std::vector<FileNo
 
 void AssetManager::Initialize() {
     if (!isInitialized) {
-        se_asset_manager_initialize();
+        ska_asset_manager_initialize();
         AssetBrowser* assetBrowser = AssetBrowser::Get();
         // Load default font
         EditorContext* editorContext = EditorContext::Get();
@@ -54,7 +54,7 @@ void AssetManager::Initialize() {
 
 void AssetManager::Finalize() {
     if (isInitialized) {
-        se_asset_manager_finalize();
+        ska_asset_manager_finalize();
         AssetBrowser::Get()->UnregisterRefreshCallback(subscriberHandle);
         isInitialized = false;
     }
@@ -72,48 +72,48 @@ void AssetManager::RefreshFromProperties(ProjectProperties* projectProperties) {
         }
     }
     // Set wav sample rate for audio system
-    se_audio_set_wav_sample_rate(projectProperties->audioWavSampleRate);
+    ska_audio_set_wav_sample_rate(projectProperties->audioWavSampleRate);
 }
 
 // Texture
-SETexture* AssetManager::LoadTexture(const char* fileName, const char* key) {
-    return se_asset_manager_load_texture(fileName, key);
+SkaTexture* AssetManager::LoadTexture(const char* fileName, const char* key) {
+    return ska_asset_manager_load_texture(fileName, key);
 }
 
-SETexture* AssetManager::GetTexture(const char* key) {
-    return se_asset_manager_get_texture(key);
+SkaTexture* AssetManager::GetTexture(const char* key) {
+    return ska_asset_manager_get_texture(key);
 }
 
-SETexture* AssetManager::GetTextureSafe(const char *key) {
-    return se_asset_manager_has_texture(key) ? se_asset_manager_get_texture(key) : nullptr;
+SkaTexture* AssetManager::GetTextureSafe(const char *key) {
+    return ska_asset_manager_has_texture(key) ? ska_asset_manager_get_texture(key) : nullptr;
 }
 
 bool AssetManager::HasTexture(const char* key) const {
-    return se_asset_manager_has_texture(key);
+    return ska_asset_manager_has_texture(key);
 }
 
 // Font
-SEFont* AssetManager::LoadFont(const char* fileName, const char* key, int size, bool applyNearestNeighbor) {
-    return se_asset_manager_load_font(fileName, key, size, applyNearestNeighbor);
+SkaFont* AssetManager::LoadFont(const char* fileName, const char* key, int size, bool applyNearestNeighbor) {
+    return ska_asset_manager_load_font(fileName, key, size, applyNearestNeighbor);
 }
 
-SEFont* AssetManager::GetFont(const char* key) {
-    return se_asset_manager_get_font(key);
+SkaFont* AssetManager::GetFont(const char* key) {
+    return ska_asset_manager_get_font(key);
 }
 
 bool AssetManager::HasFont(const char* key) const {
-    return se_asset_manager_has_font(key);
+    return ska_asset_manager_has_font(key);
 }
 
 // Audio Source
-SEAudioSource* AssetManager::LoadAudioSource(const char* fileName, const char* key) {
-    return se_asset_manager_load_audio_source_wav(fileName, key);
+SkaAudioSource* AssetManager::LoadAudioSource(const char* fileName, const char* key) {
+    return ska_asset_manager_load_audio_source_wav(fileName, key);
 }
 
-SEAudioSource* AssetManager::GetAudioSource(const char* key) {
-    return se_asset_manager_get_audio_source(key);
+SkaAudioSource* AssetManager::GetAudioSource(const char* key) {
+    return ska_asset_manager_get_audio_source(key);
 }
 
 bool AssetManager::HasAudioSource(const char* key) const {
-    return se_asset_manager_has_audio_source(key);
+    return ska_asset_manager_has_audio_source(key);
 }

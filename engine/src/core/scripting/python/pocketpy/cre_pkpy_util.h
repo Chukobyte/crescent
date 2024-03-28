@@ -2,8 +2,8 @@
 
 #include <pocketpy/pocketpy_c.h>
 
-#include <seika/utils/se_string_util.h>
-#include <seika/utils/se_assert.h>
+#include <seika/string.h>
+#include <seika/assert.h>
 
 #define CRE_PKPY_MODULE_FUNCTION_LIMIT 256
 

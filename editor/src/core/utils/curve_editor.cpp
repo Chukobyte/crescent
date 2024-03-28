@@ -3,6 +3,8 @@
 #include <implot.h>
 #include <implot_internal.h>
 
+#include <seika/logger.h>
+
 #include "../ui/views/opened_project/menu_bar_ui.h"
 #include "../ui/imgui/imgui_file_browser.h"
 
@@ -169,7 +171,7 @@ void CurveEditor::Begin() {
                 const nlohmann::ordered_json curveJson = curve.ToJson();
                 const std::string curveFilePath = fullPath.generic_string();
                 JsonHelper::SaveFile(curveFilePath, curveJson);
-                se_logger_debug("Saving curve file = '%s'", curveFilePath.c_str());
+                ska_logger_debug("Saving curve file = '%s'", curveFilePath.c_str());
             };
             ImGuiHelper::BeginFileBrowser(saveCurveFileBrowser);
             if (ImGui::Button("Save")) {
@@ -193,7 +195,7 @@ void CurveEditor::Begin() {
                 const std::string curveFilePath = fullPath.generic_string();
                 const nlohmann::ordered_json curveJson = JsonHelper::LoadFile<nlohmann::ordered_json>(curveFilePath);
                 curve.SetFromJson(curveJson);
-                se_logger_debug("Loading curve file path = '%s'", curveFilePath.c_str());
+                ska_logger_debug("Loading curve file path = '%s'", curveFilePath.c_str());
             };
             ImGuiHelper::BeginFileBrowser(loadCurveFileBrowser);
             if (ImGui::Button("Load")) {

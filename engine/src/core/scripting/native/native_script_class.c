@@ -2,10 +2,10 @@
 
 #include <stddef.h>
 
-#include <seika/memory/se_mem.h>
+#include <seika/memory.h>
 
 CRENativeScriptClass* cre_native_class_create_new(SkaEntity entity, const char* path, const char* name) {
-    CRENativeScriptClass* scriptClass = SE_MEM_ALLOCATE(CRENativeScriptClass);
+    CRENativeScriptClass* scriptClass = SKA_MEM_ALLOCATE(CRENativeScriptClass);
     scriptClass->entity = entity;
     scriptClass->path = path;
     scriptClass->name = name;

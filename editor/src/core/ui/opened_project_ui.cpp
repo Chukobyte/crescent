@@ -1,6 +1,6 @@
 #include "opened_project_ui.h"
 
-#include <seika/utils/logger.h>
+#include <seika/logger.h>
 
 #include "views/opened_project/menu_bar_ui.h"
 #include "views/opened_project/windows/asset_browser_ui.h"
@@ -59,10 +59,10 @@ void OpenedProjectUI::ProcessWindows() {
                     consoleLogger->Clear();
                     processLogCapture = consoleLogger->CaptureOutput();
                     if (!engineProcess.Start(editorContext->GetEngineBinaryPath(), editorContext->GetEngineBinaryProgramArgs())) {
-                        se_logger_error("Failed to start engine process at path '%s'",
+                        ska_logger_error("Failed to start engine process at path '%s'",
                                         editorContext->GetEngineBinaryPath().c_str());
                     }
-                    se_logger_debug("Starting engine process at path '%s' with args '%s'",
+                    ska_logger_debug("Starting engine process at path '%s' with args '%s'",
                                     editorContext->GetEngineBinaryPath().c_str(),
                                     editorContext->GetEngineBinaryProgramArgs().c_str());
                 } else {

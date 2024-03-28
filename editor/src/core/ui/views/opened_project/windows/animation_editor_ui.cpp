@@ -140,11 +140,11 @@ ImGuiHelper::PopupModal& OpenedProjectUI::Windows::AnimationEditor::GetPopup(Ani
                 ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, framePaddingSize);
                 ImGui::PushID(i);
                 const auto& animFrame = selectedAnim.GetAnimationFrame(i);
-                if (SETexture* texture = assetManager->GetTextureSafe(animFrame.texturePath.c_str())) {
+                if (SkaTexture* texture = assetManager->GetTextureSafe(animFrame.texturePath.c_str())) {
                     // TODO: Fix up stuff with rendering to image button...
                     static ImVec2 buttonSize = ImVec2(64.0f, 64.0f);
-                    const SKASize2D imageSize = { animFrame.drawSource.w, animFrame.drawSource.h };
-                    const SKASize2D textureSize = { (float) texture->width, (float) texture->height };
+                    const SkaSize2D imageSize = { animFrame.drawSource.w, animFrame.drawSource.h };
+                    const SkaSize2D textureSize = { (float) texture->width, (float) texture->height };
                     const ImVec2 uv0 = ImVec2(animFrame.drawSource.x / textureSize.w, animFrame.drawSource.y / textureSize.h); // lower-left
                     const ImVec2 uv1 = ImVec2(uv0.x + imageSize.w / textureSize.w, uv0.y + imageSize.h / textureSize.h); // top right
                     const ImVec4 bg_col = ImVec4(0.1f, 0.1f, 0.1f, 1.0f);

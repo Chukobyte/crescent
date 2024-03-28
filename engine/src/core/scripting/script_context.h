@@ -11,8 +11,8 @@ typedef void (*OnEnd) (SkaEntity);
 
 typedef void (*OnPreUpdateAll) ();
 typedef void (*OnPostUpdateAll) ();
-typedef void (*OnUpdateInstance) (SkaEntity, float);
-typedef void (*OnFixedUpdateInstance) (SkaEntity, float);
+typedef void (*OnUpdateInstance) (SkaEntity, f32);
+typedef void (*OnFixedUpdateInstance) (SkaEntity, f32);
 
 typedef void (*OnNetworkCallback) (const char*);
 

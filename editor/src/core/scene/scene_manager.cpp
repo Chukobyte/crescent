@@ -2,8 +2,8 @@
 
 #include <IconsFontAwesome6.h>
 
-#include <seika/utils/flag_util.h>
-#include <seika/utils/se_assert.h>
+#include <seika/flag_utils.h>
+#include <seika/assert.h>
 
 #include "../engine/src/core/ecs/ecs_globals.h"
 #include "../engine/src/core/json/json_file_loader.h"
@@ -156,7 +156,7 @@ SceneNodeFile *SceneManager::GenerateDefaultSceneNodeFile() const {
 }
 
 SceneNodeFile* SceneManager::GenerateDefaultSceneNodeFile(SceneNode* rootSceneNode) const {
-    SE_ASSERT_FMT(rootSceneNode->parent == nullptr, "Scene tree root has a parent!?");
+    SKA_ASSERT_FMT(rootSceneNode->parent == nullptr, "Scene tree root has a parent!?");
     SceneNodeFile* nodeFile = new SceneNodeFile();
     nodeFile->rootNode = rootSceneNode;
     return nodeFile;
@@ -277,7 +277,7 @@ std::string SceneManager::GetUniqueNodeName(const std::string& nameCandidate, Sc
 }
 
 SceneNodeFile* SceneManager::GenerateSceneNodeFileFromJson(JsonSceneNode* rootTreeNode, const char* sceneFilePath) {
-    SE_ASSERT_FMT(rootTreeNode->parent == nullptr, "Scene tree root has a parent!?  At path '%s'", sceneFilePath);
+    SKA_ASSERT_FMT(rootTreeNode->parent == nullptr, "Scene tree root has a parent!?  At path '%s'", sceneFilePath);
     auto* nodeFile = new SceneNodeFile{ sceneFilePath };
     nodeFile->rootNode = LoadSceneTreeJson(rootTreeNode);
     return nodeFile;

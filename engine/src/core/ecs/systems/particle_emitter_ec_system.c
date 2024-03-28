@@ -2,8 +2,8 @@
 
 #include <seika/rendering/renderer.h>
 #include <seika/ecs/ecs.h>
-#include <seika/utils/se_string_util.h>
-#include <seika/utils/se_assert.h>
+#include <seika/string.h>
+#include <seika/assert.h>
 
 #include "../ecs_globals.h"
 #include "../components/particles2d_component.h"
@@ -13,22 +13,22 @@
 #include "../../scene/scene_manager.h"
 
 typedef struct CreParticleRenderItem {
-    SETexture* texture;
-    SKASize2D size;
+    SkaTexture* texture;
+    SkaSize2D size;
 }CreParticleRenderItem;
 
 static void on_ec_system_registered(SkaECSSystem* system);
 static void on_entity_entered_scene(SkaECSSystem* system, SkaEntity entity);
-static void ec_system_update(SkaECSSystem* system, float deltaTime);
+static void ec_system_update(SkaECSSystem* system, f32 deltaTime);
 static void ec_system_render(SkaECSSystem* system);
 
-SETexture* particleSquareTexture = NULL;
+SkaTexture* particleSquareTexture = NULL;
 
 void cre_particle_ec_system_create_and_register() {
     cre_particle_ec_system_create_and_register_ex(NULL);
 }
 
-void cre_particle_ec_system_create_and_register_ex(SETexture* squareTextureOverride) {
+void cre_particle_ec_system_create_and_register_ex(SkaTexture* squareTextureOverride) {
     particleSquareTexture = squareTextureOverride;
 
     SkaECSSystemTemplate systemTemplate = ska_ecs_system_create_default_template("Particle Emitter");
@@ -41,7 +41,7 @@ void cre_particle_ec_system_create_and_register_ex(SETexture* squareTextureOverr
 
 void on_ec_system_registered(SkaECSSystem* system) {
     if (particleSquareTexture == NULL) {
-        particleSquareTexture = se_texture_create_solid_colored_texture(1, 1, 255);
+        particleSquareTexture = ska_texture_create_solid_colored_texture(1, 1, 255);
     }
 }
 
@@ -74,14 +74,14 @@ void ec_system_render(SkaECSSystem* system) {
                                                  ? (CreParticleRenderItem){ .texture = particles2DComponent->typeTexture.texture, .size = particles2DComponent->squareSize }
                                                  : (CreParticleRenderItem){ .texture = particleSquareTexture, .size = particles2DComponent->squareSize };
 
-        SETexture* texture = renderItem.texture;
-        const SKARect2 particleDrawSource = (SKARect2){ 0.0f, 0.0f, 1.0f, 1.0f };
-        const SKASize2D particleSize = (SKASize2D){ renderItem.size.w * renderCamera->zoom.x, renderItem.size.h * renderCamera->zoom.y };
+        SkaTexture* texture = renderItem.texture;
+        const SkaRect2 particleDrawSource = (SkaRect2){ 0.0f, 0.0f, 1.0f, 1.0f };
+        const SkaSize2D particleSize = (SkaSize2D){ renderItem.size.w * renderCamera->zoom.x, renderItem.size.h * renderCamera->zoom.y };
         const SceneNodeRenderResource renderResource = cre_scene_manager_get_scene_node_global_render_resource(entity, particleTransformComp, &SKA_VECTOR2_ZERO);
 
         // Draw individual particles
-        const SKATransform2D baseParticleTransform = renderResource.transform2D;
-        for (int pi = 0; pi < particles2DComponent->amount; pi++) {
+        const SkaTransform2D baseParticleTransform = renderResource.transform2D;
+        for (int32 pi = 0; pi < particles2DComponent->amount; pi++) {
             CreParticle2D* particle2D = &particles2DComponent->particles[pi];
             if (particle2D->state != Particle2DState_ACTIVE) {
                 continue;
@@ -90,14 +90,14 @@ void ec_system_render(SkaECSSystem* system) {
             if (particle2D->timeActive >= particles2DComponent->lifeTime) {
                 particle2D->state = Particle2DState_TIMED_WAITING_TO_BE_ACTIVE;
             }
-            const SKATransform2D particle2DTransform = {
+            const SkaTransform2D particle2DTransform = {
                 .position = { .x = baseParticleTransform.position.x + particle2D->position.x, .y = baseParticleTransform.position.y + particle2D->position.y },
                 .scale = baseParticleTransform.scale,
                 .rotation = baseParticleTransform.rotation
             };
 
 #ifdef CRE_SCENE_MANAGER_RENDER_INTERPOLATE_TRANSFORM2D_ALPHA
-            const SKATransform2D lerpedTransform2D = ska_transform2d_lerp(&particle2D->prevTransform, &particle2DTransform, CRE_SCENE_MANAGER_RENDER_INTERPOLATE_TRANSFORM2D_ALPHA);
+            const SkaTransform2D lerpedTransform2D = ska_transform2d_lerp(&particle2D->prevTransform, &particle2DTransform, CRE_SCENE_MANAGER_RENDER_INTERPOLATE_TRANSFORM2D_ALPHA);
             particle2D->prevTransform = particle2DTransform;
             ska_renderer_queue_sprite_draw(
                 texture,
@@ -128,7 +128,7 @@ void ec_system_render(SkaECSSystem* system) {
 }
 
 static void particle_emitter_emit_particle(Particles2DComponent* particles2DComponent, float deltaTime) {
-    for (int i = 0; i < particles2DComponent->amount; i++) {
+    for (int32 i = 0; i < particles2DComponent->amount; i++) {
         CreParticle2D* currentParticle = &particles2DComponent->particles[i];
         switch (currentParticle->state) {
             case Particle2DState_INACTIVE: {
@@ -164,7 +164,7 @@ void cre_particle_emitter_ec_system_update_component(Particles2DComponent* parti
         case Particle2DComponentState_WAITING_TO_INITIALIZE: {
             // Spread out time active of particles on initialize so that they correspond to explosiveness
             const float explosivenessAdjustedTimeInactive = ska_math_map_to_range(particles2DComponent->explosiveness, 1.0f, 0.0f, 0.0f, particles2DComponent->lifeTime);
-            for (int pi = 0; pi < particles2DComponent->amount; pi++) {
+            for (int32 pi = 0; pi < particles2DComponent->amount; pi++) {
                 // Reset particle to default first
                 particles2DComponent->particles[pi] = CRE_PARTICLE2D_DEFAULT;
                 CreParticle2D* currentParticle = &particles2DComponent->particles[pi];

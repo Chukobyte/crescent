@@ -3,7 +3,9 @@
 #define CRE_SCENE_CACHE_MAX_ITEMS 100
 #define CRE_SCENE_CACHE_INVALID_ID (-1)
 
-typedef int CreSceneCacheId;
+#include <seika/defines.h>
+
+typedef int32 CreSceneCacheId;
 
 void cre_scene_template_cache_initialize();
 void cre_scene_template_cache_finalize();

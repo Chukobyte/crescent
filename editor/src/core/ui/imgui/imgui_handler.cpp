@@ -58,13 +58,13 @@ void ImGuiHandler::Process() {
     static EditorContext* editorContext = EditorContext::Get();
     static EditorFPSCapture fpsCapture;
 
-    static auto lastFrameTime = sf_get_ticks();
-    const auto currentFrameTime = sf_get_ticks();
+    static auto lastFrameTime = ska_get_ticks();
+    const auto currentFrameTime = ska_get_ticks();
     const auto editorDeltaTime = (static_cast<float>(currentFrameTime) - static_cast<float>(lastFrameTime)) / 1000.0f;
 
     // Capture fps when scope collapses
     auto CaptureFPSGuard = EditorScopeGuard([currentFrameTime, editorDeltaTime] {
-        editorContext->currentFPS = fpsCapture.CaptureFPS(static_cast<float>(currentFrameTime), static_cast<float>(sf_get_ticks()));
+        editorContext->currentFPS = fpsCapture.CaptureFPS(static_cast<float>(currentFrameTime), static_cast<float>(ska_get_ticks()));
 
         const auto simTargetFPS = static_cast<float>(ProjectProperties::Get()->targetFPS);
         const float simDeltaTime = editorDeltaTime * ((float)simTargetFPS / editorContext->currentFPS);

@@ -2,16 +2,16 @@
 
 #include <string.h>
 
+#include <seika/memory.h>
+#include <seika/assert.h>
 #include <seika/rendering/texture.h>
-#include <seika/memory/se_mem.h>
-#include "seika/utils/se_assert.h"
 
 static CreTilemapTransactionItem* get_transaction_item_tail(const CreTilemapTransaction* transaction);
-static CreTilemapTransactionItem* find_transaction_item(const CreTilemapTransaction* transaction, const SKAVector2i* position);
-static const CreTileData* find_existing_transaction_item_or_tile_data(const CreTilemap* tilemap, const SKAVector2i* position);
+static CreTilemapTransactionItem* find_transaction_item(const CreTilemapTransaction* transaction, const SkaVector2i* position);
+static const CreTileData* find_existing_transaction_item_or_tile_data(const CreTilemap* tilemap, const SkaVector2i* position);
 
 void cre_tilemap_initialize(CreTilemap* tilemap) {
-    SE_ASSERT(tilemap->tilesArray == NULL);
+    SKA_ASSERT(tilemap->tilesArray == NULL);
     tilemap->tilesArray = ska_array2d_create(0, 0, sizeof(CreTileData));
     tilemap->activeTiles = ska_array_list_create(sizeof(CreTileData*), 128);
 }
@@ -19,7 +19,7 @@ void cre_tilemap_initialize(CreTilemap* tilemap) {
 CreTilemap* cre_tilemap_create_and_initialize() {
     const CreTilemap defaultTilemap = CRE_TILEMAP_DEFAULT_EMPTY;
 
-    CreTilemap* newTilemap = SE_MEM_ALLOCATE(CreTilemap);
+    CreTilemap* newTilemap = SKA_MEM_ALLOCATE(CreTilemap);
     memcpy(newTilemap, &defaultTilemap, sizeof(CreTilemap));
 
     cre_tilemap_initialize(newTilemap);
@@ -28,7 +28,7 @@ CreTilemap* cre_tilemap_create_and_initialize() {
 }
 
 void cre_tilemap_finalize(CreTilemap* tilemap) {
-    SE_ASSERT(tilemap->tilesArray);
+    SKA_ASSERT(tilemap->tilesArray);
     ska_array2d_destroy(tilemap->tilesArray);
     ska_array_list_destroy(tilemap->activeTiles);
 }
@@ -46,7 +46,7 @@ static inline void refresh_tilemap_bitmask(CreTilemap* tilemap) {
             }
             // Update bitmask
             CreTileBitmask bitmask = CreTileType_INVALID;
-            SE_ASSERT_FMT(centerTile, "Center tile should be present for (%d, %d)", x, y);
+            SKA_ASSERT_FMT(centerTile, "Center tile should be present for (%d, %d)", x, y);
             const CreTileData* topTile = (CreTileData*)ska_array2d_get(tilemap->tilesArray, x, y - 1);
             const CreTileData* rightTile = (CreTileData*)ska_array2d_get(tilemap->tilesArray, x + 1, y);
             const CreTileData* bottomTile = (CreTileData*)ska_array2d_get(tilemap->tilesArray, x, y + 1);
@@ -62,7 +62,7 @@ static inline void refresh_tilemap_bitmask(CreTilemap* tilemap) {
     }
 }
 
-void cre_tilemap_set_tile_active(CreTilemap* tilemap, const SKAVector2i* position, bool isActive) {
+void cre_tilemap_set_tile_active(CreTilemap* tilemap, const SkaVector2i* position, bool isActive) {
     CreTileData tileData = { .isActive = isActive, .bitmask = 0, .position = *position, .renderCoords = SKA_VECTOR2I_ZERO };
     const CreTileData* existingData = find_existing_transaction_item_or_tile_data(tilemap, position);
     if (existingData) {
@@ -72,7 +72,7 @@ void cre_tilemap_set_tile_active(CreTilemap* tilemap, const SKAVector2i* positio
     cre_tilemap_set_tile_data(tilemap, &tileData);
 }
 
-void cre_tilemap_set_tile_render_coord(CreTilemap* tilemap, const SKAVector2i* position, const SKAVector2i* coord) {
+void cre_tilemap_set_tile_render_coord(CreTilemap* tilemap, const SkaVector2i* position, const SkaVector2i* coord) {
     CreTileData tileData = { .isActive = true, .bitmask = 0, .renderCoords = *coord, .position = *position };
     const CreTileData* existingData = find_existing_transaction_item_or_tile_data(tilemap, position);
     if (existingData) {
@@ -85,8 +85,8 @@ void cre_tilemap_set_tile_render_coord(CreTilemap* tilemap, const SKAVector2i* p
 void cre_tilemap_set_tile_data(CreTilemap* tilemap, const CreTileData* tileData) {
     bool shouldValidateTiles = false;
     if (tilemap->activeTransaction == NULL) {
-        tilemap->activeTransaction = SE_MEM_ALLOCATE(CreTilemapTransaction);
-        CreTilemapTransactionItem* rootItem = SE_MEM_ALLOCATE(CreTilemapTransactionItem);
+        tilemap->activeTransaction = SKA_MEM_ALLOCATE(CreTilemapTransaction);
+        CreTilemapTransactionItem* rootItem = SKA_MEM_ALLOCATE(CreTilemapTransactionItem);
         rootItem->data = *tileData;
         tilemap->activeTransaction->rootItem = rootItem;
         tilemap->activeTransaction->requestedSize = tilemap->tilesArray->size;
@@ -94,10 +94,10 @@ void cre_tilemap_set_tile_data(CreTilemap* tilemap, const CreTileData* tileData)
     } else {
         CreTilemapTransactionItem* item = find_transaction_item(tilemap->activeTransaction, &tileData->position);
         if (!item) {
-            item = SE_MEM_ALLOCATE(CreTilemapTransactionItem);
+            item = SKA_MEM_ALLOCATE(CreTilemapTransactionItem);
             // Add new item to tail
             CreTilemapTransactionItem* tailItem = get_transaction_item_tail(tilemap->activeTransaction);
-            SE_ASSERT(tailItem);
+            SKA_ASSERT(tailItem);
             tailItem->next = item;
         }
         // Only validate tiles when one is enabled or disabled
@@ -156,9 +156,9 @@ void cre_tilemap_set_tile_data(CreTilemap* tilemap, const CreTileData* tileData)
     }
 }
 
-bool cre_tilemap_is_tile_active(const CreTilemap* tilemap, const SKAVector2i* position) {
+bool cre_tilemap_is_tile_active(const CreTilemap* tilemap, const SkaVector2i* position) {
     const CreTileData* tileData = (CreTileData*)ska_array2d_get(tilemap->tilesArray, position->x, position->y);
-    SE_ASSERT(tileData);
+    SKA_ASSERT(tileData);
     return tileData->isActive;
 }
 
@@ -168,7 +168,7 @@ void cre_tilemap_clear_all_tiles(const CreTilemap* tilemap) {
 
 void cre_tilemap_commit_active_tile_changes(CreTilemap* tilemap) {
     if (tilemap->activeTransaction) {
-        const SKASize2Di* requestedSize = &tilemap->activeTransaction->requestedSize;
+        const SkaSize2Di* requestedSize = &tilemap->activeTransaction->requestedSize;
         // Resize if size changed
         if (requestedSize->w != tilemap->tilesArray->size.w || requestedSize->h != tilemap->tilesArray->size.h) {
             ska_array2d_resize(tilemap->tilesArray, requestedSize->w, requestedSize->h);
@@ -179,7 +179,7 @@ void cre_tilemap_commit_active_tile_changes(CreTilemap* tilemap) {
             if (item->data.position.x < requestedSize->w && item->data.position.y < requestedSize->h) {
                 // Set tile data
                 CreTileData* tileData = (CreTileData*)ska_array2d_get(tilemap->tilesArray, item->data.position.x, item->data.position.y);
-                SE_ASSERT(tileData);
+                SKA_ASSERT(tileData);
                 memcpy(tileData, &item->data, sizeof(CreTileData));
             }
             item = item->next;
@@ -197,22 +197,22 @@ void cre_tilemap_clear_active_tile_changes(CreTilemap* tilemap) {
         while (item != NULL) {
             CreTilemapTransactionItem* itemToDelete = item;
             item = item->next;
-            SE_MEM_FREE(itemToDelete);
+            SKA_MEM_FREE(itemToDelete);
         }
-        SE_MEM_FREE(tilemap->activeTransaction);
+        SKA_MEM_FREE(tilemap->activeTransaction);
         tilemap->activeTransaction = NULL;
     }
 }
 
-CreTileBitmask cre_tilemap_get_tile_bitmask(const CreTilemap* tilemap, const SKAVector2i* position) {
+CreTileBitmask cre_tilemap_get_tile_bitmask(const CreTilemap* tilemap, const SkaVector2i* position) {
     const CreTileData* tileData = (CreTileData*)ska_array2d_get(tilemap->tilesArray, position->x, position->y);
-    SE_ASSERT(tileData);
+    SKA_ASSERT(tileData);
     return tileData->bitmask;
 }
 
-const CreTileData* cre_tilemap_get_tile_data(const CreTilemap* tilemap, const SKAVector2i* position) {
+const CreTileData* cre_tilemap_get_tile_data(const CreTilemap* tilemap, const SkaVector2i* position) {
     const CreTileData* tileData = (CreTileData*)ska_array2d_get(tilemap->tilesArray, position->x, position->y);
-    SE_ASSERT(tileData);
+    SKA_ASSERT(tileData);
     return tileData;
 }
 
@@ -227,7 +227,7 @@ CreTilemapTransactionItem* get_transaction_item_tail(const CreTilemapTransaction
     return item;
 }
 
-CreTilemapTransactionItem* find_transaction_item(const CreTilemapTransaction* transaction, const SKAVector2i* position) {
+CreTilemapTransactionItem* find_transaction_item(const CreTilemapTransaction* transaction, const SkaVector2i* position) {
     if (transaction) {
         CreTilemapTransactionItem* item = transaction->rootItem;
         while (item != NULL) {
@@ -240,7 +240,7 @@ CreTilemapTransactionItem* find_transaction_item(const CreTilemapTransaction* tr
     return NULL;
 }
 
-const CreTileData* find_existing_transaction_item_or_tile_data(const CreTilemap* tilemap, const SKAVector2i* position) {
+const CreTileData* find_existing_transaction_item_or_tile_data(const CreTilemap* tilemap, const SkaVector2i* position) {
     const CreTilemapTransactionItem* item = find_transaction_item(tilemap->activeTransaction, position);
     if (item) {
         return &item->data;

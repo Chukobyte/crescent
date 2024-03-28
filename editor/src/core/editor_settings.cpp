@@ -1,6 +1,6 @@
 #include "editor_settings.h"
 
-#include <SDL2/SDL.h>
+#include <SDL3/SDL.h>
 
 #include "utils/file_system_helper.h"
 #include "utils/json_helper.h"
@@ -22,7 +22,7 @@ std::string GetEditorSettingSaveFilePath() {
 bool EditorSettings::Load() {
     const std::string saveFilePath = GetEditorSettingSaveFilePath();
     if (!FileSystemHelper::DoesFileExist(saveFilePath)) {
-        se_logger_debug("Settings doesn't exist at path '%s', skipping...", saveFilePath.c_str());
+        ska_logger_debug("Settings doesn't exist at path '%s', skipping...", saveFilePath.c_str());
         return false;
     }
     nlohmann::json settingsJson = JsonHelper::LoadFile(saveFilePath);
@@ -78,21 +78,21 @@ void EditorSettings::AddToRecentlyLoadedProjectsList(const std::string& name, co
     }
 }
 
-void EditorSettings::SetEditorLogLevel(SELogLevel level) {
+void EditorSettings::SetEditorLogLevel(SkaLogLevel level) {
     editorLogLevel = level;
-    se_logger_set_level(editorLogLevel);
+    ska_logger_set_level(editorLogLevel);
 }
 
 void EditorSettings::SetEditorLogLevel(const std::string& level) {
-    const auto logLevel = se_logger_get_log_level_enum(level.c_str());
+    const auto logLevel = ska_logger_get_log_level_enum(level.c_str());
     SetEditorLogLevel(logLevel);
 }
 
-void EditorSettings::SetGameLogLevel(SELogLevel level) {
+void EditorSettings::SetGameLogLevel(SkaLogLevel level) {
     gameLogLevel = level;
 }
 
 void EditorSettings::SetGameLogLevel(const std::string& level) {
-    const auto logLevel = se_logger_get_log_level_enum(level.c_str());
+    const auto logLevel = ska_logger_get_log_level_enum(level.c_str());
     SetGameLogLevel(logLevel);
 }

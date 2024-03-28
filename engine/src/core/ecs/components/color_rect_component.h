@@ -4,11 +4,11 @@
 extern "C" {
 #endif
 
-#include <seika/math/se_math.h>
+#include <seika/math/math.h>
 
 typedef struct ColorRectComponent {
-    SKASize2D size;
-    SKAColor color;
+    SkaSize2D size;
+    SkaColor color;
 } ColorRectComponent;
 
 ColorRectComponent* color_rect_component_create();

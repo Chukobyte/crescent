@@ -612,8 +612,20 @@ class Engine:
 
 class Input:
     @staticmethod
-    def add_action(name: str, value: str, device_id=0) -> None:
-        crescent_internal.input_add_action(name, value, device_id)
+    def is_key_pressed(key: int) -> bool:
+        return crescent_internal.input_is_key_pressed(key)
+
+    @staticmethod
+    def is_key_just_pressed(key: int) -> bool:
+        return crescent_internal.input_is_key_just_pressed(key)
+
+    @staticmethod
+    def is_key_just_released(key: int) -> bool:
+        return crescent_internal.input_is_key_just_released(key)
+
+    @staticmethod
+    def add_action(name: str, value_key: int, device_id=0) -> None:
+        crescent_internal.input_add_action(name, value_key, device_id)
 
     @staticmethod
     def is_action_pressed(name: str) -> bool:
@@ -637,8 +649,9 @@ class Input:
 
 
 class Mouse:
-    LEFT_BUTTON = "mb_left"
-    RIGHT_BUTTON = "mb_right"
+    LEFT_BUTTON = 148
+    RIGHT_BUTTON = 149
+    MIDDLE_BUTTON = 150
 
     @staticmethod
     def get_position() -> Vector2:
@@ -652,92 +665,159 @@ class Mouse:
 
 
 class Keyboard:
-    NUM_0 = "0"
-    NUM_1 = "1"
-    NUM_2 = "2"
-    NUM_3 = "3"
-    NUM_4 = "4"
-    NUM_5 = "5"
-    NUM_6 = "6"
-    NUM_7 = "7"
-    NUM_8 = "8"
-    NUM_9 = "9"
+    TAB = 29
 
-    A = "a"
-    B = "b"
-    C = "c"
-    D = "d"
-    E = "e"
-    F = "f"
-    G = "g"
-    H = "h"
-    I = "i"
-    J = "j"
-    K = "k"
-    L = "l"
-    M = "m"
-    N = "n"
-    O = "o"
-    P = "p"
-    Q = "q"
-    R = "r"
-    S = "s"
-    T = "t"
-    U = "u"
-    V = "v"
-    W = "w"
-    X = "x"
-    Y = "y"
-    Z = "z"
+    A = 97
+    B = 98
+    C = 99
+    D = 100
+    E = 101
+    F = 102
+    G = 103
+    H = 104
+    I = 105
+    J = 106
+    K = 107
+    L = 108
+    M = 109
+    N = 110
+    O = 111
+    P = 112
+    Q = 113
+    R = 114
+    S = 115
+    T = 116
+    U = 117
+    V = 118
+    W = 119
+    X = 120
+    Y = 121
+    Z = 122
 
-    UP = "up"
-    DOWN = "down"
-    LEFT = "left"
-    RIGHT = "right"
-    SPACE = "space"
-    ESC = "esc"
-    RETURN = "return"
+    LEFT = 30
+    RIGHT = 31
+    UP = 32
+    DOWN = 33
+    PAGE_DOWN = 34
+    PAGE_UP = 35
+    HOME = 36
+    END = 37
+    INSERT = 38
+    DELETE = 39
+    BACKSPACE = 40
+    SPACE = 41
+    RETURN = 42
+    ESC = 43
+    QUOTE = 44
+    COMMA = 45
+    MINUS = 46
+    PERIOD = 47
+    SLASH = 48
+    SEMICOLON = 49
+    EQUALS = 50
+    LEFT_BRACKET = 51
+    RIGHT_BRACKET = 52
+    BACKSLASH = 53
+    BACKQUOTE = 54
+    CAPS_LOCK = 55
+    SCROLL_LOCK = 56
+    NUM_LOCK_CLEAR = 57
+    PRINT_SCREEN = 58
+    PAUSE = 59
+    KEYPAD_0 = 60
+    KEYPAD_1 = 61
+    KEYPAD_2 = 62
+    KEYPAD_3 = 63
+    KEYPAD_4 = 64
+    KEYPAD_5 = 65
+    KEYPAD_6 = 66
+    KEYPAD_7 = 67
+    KEYPAD_8 = 68
+    KEYPAD_9 = 69
+    KEYPAD_PERIOD = 70
+    KEYPAD_DIVIDE = 71
+    KEYPAD_MULTIPLY = 72
+    KEYPAD_MINUS = 73
+    KEYPAD_PLUS = 74
+    KEYPAD_ENTER = 75
+    KEYPAD_EQUALS = 76
+    LEFT_CONTROL = 77
+    LEFT_SHIFT = 78
+    LEFT_ALT = 79
+    LEFT_GUI = 80
+    RIGHT_CONTROL = 81
+    RIGHT_SHIFT = 82
+    RIGHT_ALT = 83
+    RIGHT_GUI = 84
+    APPLICATION = 85
+    NUM_0 = 86
+    NUM_1 = 87
+    NUM_2 = 88
+    NUM_3 = 89
+    NUM_4 = 90
+    NUM_5 = 91
+    NUM_6 = 92
+    NUM_7 = 93
+    NUM_8 = 95
+    NUM_9 = 96
 
-    F1 = "f1"
-    F2 = "f2"
-    F3 = "f3"
-    F4 = "f4"
-    F5 = "f5"
-    F6 = "f6"
-    F7 = "f7"
-    F8 = "f8"
-    F9 = "f9"
-    F10 = "f10"
-    F11 = "f11"
-    F12 = "f12"
+    F1 = 122
+    F2 = 123
+    F3 = 124
+    F4 = 125
+    F5 = 126
+    F6 = 127
+    F7 = 128
+    F8 = 129
+    F9 = 130
+    F10 = 131
+    F11 = 132
+    F12 = 133
+    F13 = 134
+    F14 = 135
+    F15 = 136
+    F16 = 137
+    F17 = 138
+    F18 = 139
+    F19 = 140
+    F20 = 141
+    F21 = 142
+    F22 = 143
+    F23 = 144
+    F24 = 145
+    APP_FORWARD = 146
+    APP_BACK = 147
 
 
 class Gamepad:
-    BUTTON_A = "joystick_button_a"
-    BUTTON_B = "joystick_button_b"
-    BUTTON_X = "joystick_button_x"
-    BUTTON_Y = "joystick_button_y"
-    BUTTON_START = "joystick_start"
-    BUTTON_BACK = "joystick_back"
-    BUTTON_DPAD_LEFT = "joystick_dpad_left"
-    BUTTON_DPAD_RIGHT = "joystick_dpad_right"
-    BUTTON_DPAD_UP = "joystick_dpad_up"
-    BUTTON_DPAD_DOWN = "joystick_dpad_down"
-    BUTTON_LEFT_SHOULDER = "joystick_left_shoulder"
-    BUTTON_RIGHT_SHOULDER = "joystick_right_shoulder"
-    BUTTON_LEFT_ANALOG = "joystick_left_analog"
-    BUTTON_RIGHT_ANALOG = "joystick_right_analog"
-
-    AXIS_LEFT_TRIGGER = "joystick_left_trigger"
-    AXIS_RIGHT_TRIGGER = "joystick_right_trigger"
-    AXIS_LEFT_ANALOG_LEFT = "joystick_left_analog_left"
-    AXIS_LEFT_ANALOG_RIGHT = "joystick_left_analog_right"
-    AXIS_LEFT_ANALOG_UP = "joystick_left_analog_up"
-    AXIS_LEFT_ANALOG_DOWN = "joystick_left_analog_down"
-    AXIS_RIGHT_ANALOG_LEFT = "joystick_right_analog_left"
-    AXIS_RIGHT_ANALOG_RIGHT = "joystick_right_analog_right"
-    AXIS_RIGHT_ANALOG_UP = "joystick_right_analog_up"
-    AXIS_RIGHT_ANALOG_DOWN = "joystick_right_analog_down"
+    BUTTON_DPAD_DOWN = 1
+    BUTTON_DPAD_UP = 2
+    BUTTON_DPAD_LEFT = 3
+    BUTTON_DPAD_RIGHT = 4
+    BUTTON_NORTH = 5
+    BUTTON_SOUTH = 6
+    BUTTON_EAST = 7
+    BUTTON_WEST = 8
+    BUTTON_START = 9
+    BUTTON_BACK = 10
+    BUTTON_LEFT_SHOULDER = 11
+    AXIS_LEFT_TRIGGER = 12
+    BUTTON_LEFT_ANALOG = 13
+    LEFT_ANALOG_2D_AXIS_X = 14
+    LEFT_ANALOG_2D_AXIS_Y = 15
+    BUTTON_RIGHT_SHOULDER = 16
+    AXIS_RIGHT_TRIGGER = 17
+    BUTTON_RIGHT_ANALOG = 18
+    RIGHT_ANALOG_2D_AXIS_X = 19
+    RIGHT_ANALOG_2D_AXIS_Y = 20
+    AXIS_LEFT_ANALOG_LEFT = 21
+    AXIS_LEFT_ANALOG_RIGHT = 22
+    AXIS_LEFT_ANALOG_UP = 23
+    AXIS_LEFT_ANALOG_DOWN = 24
+    AXIS_RIGHT_ANALOG_LEFT = 25
+    AXIS_RIGHT_ANALOG_RIGHT = 26
+    AXIS_RIGHT_ANALOG_UP = 27
+    AXIS_RIGHT_ANALOG_DOWN = 28
 
 
 class _NodeEventSubscriber:

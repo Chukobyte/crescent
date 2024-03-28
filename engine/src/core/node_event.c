@@ -3,11 +3,11 @@
 #include <string.h>
 
 #include <seika/ecs/ecs.h>
-#include <seika/data_structures/se_hash_map_string.h>
-#include <seika/data_structures/se_array_utils.h>
-#include <seika/memory/se_mem.h>
-#include <seika/utils/se_string_util.h>
-#include <seika/utils/se_assert.h>
+#include <seika/data_structures/hash_map_string.h>
+#include <seika/data_structures/array_utils.h>
+#include <seika/memory.h>
+#include <seika/string.h>
+#include <seika/assert.h>
 
 #include "ecs/ecs_globals.h"
 #include "ecs/components/node_component.h"
@@ -38,7 +38,7 @@ typedef struct NodeEventObserverEntry {
 
 typedef struct NodeEventDatabase {
     // Keeps tracks of an entity's events and observers
-    SEStringHashMap* entityEventMaps[SKA_MAX_ENTITIES];
+    SkaStringHashMap* entityEventMaps[SKA_MAX_ENTITIES];
     // Keeps tracks of observers to events
     NodeEventObserverEntry nodeEventObserverEntry[SKA_MAX_ENTITIES];
     // Booleans for if entity has registered to the 'on scene exit' callback (TODO: Should be done better...)
@@ -52,14 +52,14 @@ bool does_entity_have_observer_event_already(SkaEntity observerEntity, NodeEvent
 void register_entity_to_on_scene_exit_callback(SkaEntity entity);
 void unregister_entity_to_on_scene_exit_callback(SkaEntity entity);
 
-void cre_node_event_on_entity_exit_scene(SESubjectNotifyPayload* payload);
+void cre_node_event_on_entity_exit_scene(SkaSubjectNotifyPayload* payload);
 
 static NodeEventDatabase eventDatabase = {
     .entityEventMaps = {NULL},
     .nodeEventObserverEntry = {{0}},
     .hasEntityRegisteredOnSceneExitCallback = {false}
 };
-static SEObserver nodeEntityOnExitSceneObserver = { .on_notify = cre_node_event_on_entity_exit_scene };
+static SkaObserver nodeEntityOnExitSceneObserver = { .on_notify = cre_node_event_on_entity_exit_scene };
 
 void node_event_create_event(SkaEntity entity, const char* eventId) {
     node_event_create_event_internal(entity, eventId);
@@ -95,19 +95,19 @@ void node_event_destroy_all_entity_events_and_observers(SkaEntity entity) {
             continue;
         }
         NodeEvent* nodeEvent = nodeEventObserver->event;
-        SE_ARRAY_UTILS_REMOVE_ARRAY_ITEM(nodeEvent->observers, nodeEvent->observerCount, nodeEventObserver, NULL);
+        SKA_ARRAY_UTILS_REMOVE_ARRAY_ITEM(nodeEvent->observers, nodeEvent->observerCount, nodeEventObserver, NULL);
         node_observer_free(nodeEventObserver);
         observerEntry->observers[i] = NULL;
     }
     observerEntry->entryCount = 0;
     // Remove all entity events
     if (eventDatabase.entityEventMaps[entity] != NULL) {
-        SE_STRING_HASH_MAP_FOR_EACH(eventDatabase.entityEventMaps[entity], iter) {
-            StringHashMapNode* node = iter.pair;
+        SKA_STRING_HASH_MAP_FOR_EACH(eventDatabase.entityEventMaps[entity], iter) {
+            SkaStringHashMapNode* node = iter.pair;
             NodeEvent* nodeEvent = (NodeEvent*) *(NodeEvent**) node->value;
             // Remove all observers attached to event
             for (size_t i = 0; i < nodeEvent->observerCount; i++) {
-                SE_ARRAY_UTILS_REMOVE_ARRAY_ITEM(
+                SKA_ARRAY_UTILS_REMOVE_ARRAY_ITEM(
                     eventDatabase.nodeEventObserverEntry[nodeEvent->observers[i]->entity].observers,
                     eventDatabase.nodeEventObserverEntry[nodeEvent->observers[i]->entity].entryCount,
                     nodeEvent->observers[i],
@@ -116,10 +116,10 @@ void node_event_destroy_all_entity_events_and_observers(SkaEntity entity) {
                 node_observer_free(nodeEvent->observers[i]);
             }
             // Delete event
-            SE_MEM_FREE(nodeEvent->id);
-            SE_MEM_FREE(nodeEvent);
+            SKA_MEM_FREE(nodeEvent->id);
+            SKA_MEM_FREE(nodeEvent);
         }
-        se_string_hash_map_destroy(eventDatabase.entityEventMaps[entity]);
+        ska_string_hash_map_destroy(eventDatabase.entityEventMaps[entity]);
         eventDatabase.entityEventMaps[entity] = NULL;
     }
     unregister_entity_to_on_scene_exit_callback(entity);
@@ -146,22 +146,22 @@ size_t node_event_get_entity_observer_count(SkaEntity entity) {
 // Internal
 NodeEvent* node_event_create_event_internal(SkaEntity entity, const char* eventId) {
     if (eventDatabase.entityEventMaps[entity] == NULL) {
-        eventDatabase.entityEventMaps[entity] = se_string_hash_map_create_default_capacity();
+        eventDatabase.entityEventMaps[entity] = ska_string_hash_map_create_default_capacity();
         register_entity_to_on_scene_exit_callback(entity);
     }
-    if (!se_string_hash_map_has(eventDatabase.entityEventMaps[entity], eventId)) {
-        NodeEvent* event = SE_MEM_ALLOCATE(NodeEvent);
+    if (!ska_string_hash_map_has(eventDatabase.entityEventMaps[entity], eventId)) {
+        NodeEvent* event = SKA_MEM_ALLOCATE(NodeEvent);
         event->entity = entity;
-        event->id = se_strdup(eventId);
+        event->id = ska_strdup(eventId);
         event->observerCount = 0;
-        se_string_hash_map_add(eventDatabase.entityEventMaps[entity], eventId, &event, sizeof(NodeEvent**));
+        ska_string_hash_map_add(eventDatabase.entityEventMaps[entity], eventId, &event, sizeof(NodeEvent**));
     }
-    NodeEvent* event = (NodeEvent*) *(NodeEvent**) se_string_hash_map_get(eventDatabase.entityEventMaps[entity], eventId);
+    NodeEvent* event = (NodeEvent*) *(NodeEvent**)ska_string_hash_map_get(eventDatabase.entityEventMaps[entity], eventId);
     return event;
 }
 
 NodeEventObserver* node_create_observer_internal(SkaEntity entity, NodeEvent* event, NodeEventObserverCallback observerCallback, void* observerData, NodeEventObserverDataDeleteCallback dataDeleteCallback) {
-    NodeEventObserver* eventObserver = SE_MEM_ALLOCATE(NodeEventObserver);
+    NodeEventObserver* eventObserver = SKA_MEM_ALLOCATE(NodeEventObserver);
     eventObserver->entity = entity;
     eventObserver->callback = observerCallback;
     eventObserver->data = observerData;
@@ -169,7 +169,7 @@ NodeEventObserver* node_create_observer_internal(SkaEntity entity, NodeEvent* ev
     eventObserver->event = event;
     // Get alias to shorten the expression
     NodeEventObserverEntry* observerEntry = &eventDatabase.nodeEventObserverEntry[entity];
-    SE_ASSERT(observerEntry->entryCount + 1 < MAX_EVENT_OBSERVER_ENTRY_COUNT);
+    SKA_ASSERT(observerEntry->entryCount + 1 < MAX_EVENT_OBSERVER_ENTRY_COUNT);
     observerEntry->observers[observerEntry->entryCount++] = eventObserver;
     register_entity_to_on_scene_exit_callback(entity);
     return eventObserver;
@@ -179,7 +179,7 @@ void node_observer_free(NodeEventObserver* observer) {
     if (observer->data != NULL && observer->dataDeleteCallback != NULL) {
         observer->dataDeleteCallback(observer->data);
     }
-    SE_MEM_FREE(observer);
+    SKA_MEM_FREE(observer);
 }
 
 bool does_entity_have_observer_event_already(SkaEntity observerEntity, NodeEvent* event) {
@@ -195,7 +195,7 @@ bool does_entity_have_observer_event_already(SkaEntity observerEntity, NodeEvent
 void register_entity_to_on_scene_exit_callback(SkaEntity entity) {
     NodeComponent* nodeComp = NULL;
     if (!eventDatabase.hasEntityRegisteredOnSceneExitCallback[entity] && (nodeComp = (NodeComponent*)ska_ecs_component_manager_get_component_unchecked(entity, NODE_COMPONENT_INDEX))) {
-        se_event_register_observer(&nodeComp->onSceneTreeExit, &nodeEntityOnExitSceneObserver);
+        ska_event_register_observer(&nodeComp->onSceneTreeExit, &nodeEntityOnExitSceneObserver);
         eventDatabase.hasEntityRegisteredOnSceneExitCallback[entity] = true;
     }
 }
@@ -203,13 +203,13 @@ void register_entity_to_on_scene_exit_callback(SkaEntity entity) {
 void unregister_entity_to_on_scene_exit_callback(SkaEntity entity) {
     NodeComponent* nodeComp = NULL;
     if (eventDatabase.hasEntityRegisteredOnSceneExitCallback[entity] && (nodeComp = (NodeComponent*)ska_ecs_component_manager_get_component_unchecked(entity, NODE_COMPONENT_INDEX))) {
-        se_event_unregister_observer(&nodeComp->onSceneTreeExit, &nodeEntityOnExitSceneObserver);
+        ska_event_unregister_observer(&nodeComp->onSceneTreeExit, &nodeEntityOnExitSceneObserver);
         eventDatabase.hasEntityRegisteredOnSceneExitCallback[entity] = false;
     }
 }
 
 // Callbacks
-void cre_node_event_on_entity_exit_scene(SESubjectNotifyPayload* payload) {
+void cre_node_event_on_entity_exit_scene(SkaSubjectNotifyPayload* payload) {
     const SkaEntity entity = *(SkaEntity*) payload->data;
     node_event_destroy_all_entity_events_and_observers(entity);
 }

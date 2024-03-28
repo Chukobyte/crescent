@@ -1,13 +1,13 @@
 #include "editor.h"
 
-#include <imgui_impl_sdl.h>
+#include <imgui_impl_sdl3.h>
 #include <imgui_impl_opengl3.h>
 
 #include <implot.h>
 #include <IconsFontAwesome6.h>
 
 #include <seika/rendering/renderer.h>
-#include <seika/utils/logger.h>
+#include <seika/logger.h>
 
 #include "../engine/src/core/ecs/ecs_manager.h"
 
@@ -18,6 +18,7 @@
 #include "ui/imgui/imgui_handler.h"
 #include "ui/imgui/imgui_styler.h"
 #include "utils/file_system_helper.h"
+#include "seika/seika.h"
 
 static EditorContext* editorContext = EditorContext::Get();
 
@@ -36,8 +37,10 @@ bool Editor::Initialize() {
         return false;
     }
 
+    // Init seika
+    ska_init();
     // TODO: Figure out window stuff dimensions...
-    se_renderer_initialize(800, 600, 800, 600, false);
+    ska_renderer_initialize(800, 600, 800, 600, false);
 
     // initialize ecs components to use index for now
     cre_ecs_manager_initialize_editor();
@@ -46,7 +49,7 @@ bool Editor::Initialize() {
     AssetManager::Get()->Initialize();
 
     editorContext->isRunning = true;
-    se_logger_info("Crescent Engine Editor has started!");
+    ska_logger_info("Crescent Engine Editor has started!");
     return true;
 }
 
@@ -58,7 +61,7 @@ void Editor::Update() {
 
 bool Editor::InitializeSDL() {
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-        se_logger_error("Failed to initialize SDL!  Error: '%s'", SDL_GetError());
+        ska_logger_error("Failed to initialize SDL!  Error: '%s'", SDL_GetError());
         return false;
     }
 
@@ -74,14 +77,12 @@ bool Editor::InitializeSDL() {
 
     editorContext->window = SDL_CreateWindow(
                                 "Crescent Engine Editor",
-                                SDL_WINDOWPOS_CENTERED,
-                                SDL_WINDOWPOS_CENTERED,
                                 windowWidth,
                                 windowHeight,
                                 editorContext->windowFlags
                             );
     if (!editorContext->window) {
-        se_logger_error("Failed to create window!  SDL error: '%s'", SDL_GetError());
+        ska_logger_error("Failed to create window!  SDL error: '%s'", SDL_GetError());
         return false;
     }
 
@@ -94,7 +95,7 @@ bool Editor::InitializeSDL() {
     SDL_GL_SetSwapInterval(1);
 
     if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
-        se_logger_error("Couldn't initialize glad!");
+        ska_logger_error("Couldn't initialize glad!");
         return false;
     }
 
@@ -120,7 +121,7 @@ bool Editor::InitializeImGui() {
     icons_config.PixelSnapH = true;
     io.Fonts->AddFontFromFileTTF(FONT_ICON_FILE_NAME_FAS, 12.0f, &icons_config, icons_ranges);
 
-    ImGui_ImplSDL2_InitForOpenGL(editorContext->window, editorContext->openGLContext);
+    ImGui_ImplSDL3_InitForOpenGL(editorContext->window, editorContext->openGLContext);
     ImGui_ImplOpenGL3_Init("#version 330");
 
     ImGuiStyler::ApplyStyle(ImGuiStyler::Style::Crescent);
@@ -131,9 +132,9 @@ bool Editor::InitializeImGui() {
 void Editor::ProcessInput() {
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
-        ImGui_ImplSDL2_ProcessEvent(&event);
+        ImGui_ImplSDL3_ProcessEvent(&event);
         switch(event.type) {
-        case SDL_QUIT:
+        case SDL_EVENT_QUIT:
             editorContext->isRunning = false;
             break;
         default:
@@ -153,7 +154,7 @@ void Editor::Render() {
 
     // start the Dear ImGui frame
     ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplSDL2_NewFrame(editorContext->window);
+    ImGui_ImplSDL3_NewFrame();
     ImGui::NewFrame();
 
     ProcessWindows();
@@ -175,16 +176,18 @@ bool Editor::IsRunning() const {
 }
 
 void Editor::Shutdown() {
+    ska_shutdown_all();
+
     cre_ecs_manager_finalize_editor();
 
     // IMGUI
     ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplSDL2_Shutdown();
+    ImGui_ImplSDL3_Shutdown();
     ImGui::DestroyContext();
     // SDL
     SDL_GL_DeleteContext(editorContext->openGLContext);
     SDL_DestroyWindow(editorContext->window);
     SDL_Quit();
 
-    se_logger_info("Crescent Engine Editor has been shutdown!");
+    ska_logger_info("Crescent Engine Editor has been shutdown!");
 }

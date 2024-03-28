@@ -2,12 +2,12 @@
 
 #include <string.h>
 
-#include <seika/memory/se_mem.h>
-#include <seika/utils/se_assert.h>
-#include <seika/utils/se_string_util.h>
+#include <seika/memory.h>
+#include <seika/assert.h>
+#include <seika/string.h>
 
 NodeComponent* node_component_create() {
-    NodeComponent* nodeComponent = SE_MEM_ALLOCATE(NodeComponent);
+    NodeComponent* nodeComponent = SKA_MEM_ALLOCATE(NodeComponent);
     nodeComponent->name[0] = '\0';
     nodeComponent->timeDilation = (NodeTimeDilation){ .value = 1.0f, .cachedFullValue = 1.0f, .cacheInvalid = true };
     return nodeComponent;
@@ -15,17 +15,17 @@ NodeComponent* node_component_create() {
 
 NodeComponent* node_component_create_ex(const char* name, NodeBaseType baseType) {
     NodeComponent* nodeComponent = node_component_create();
-    se_strcpy(nodeComponent->name, name);
+    ska_strcpy(nodeComponent->name, name);
     nodeComponent->type = baseType;
     return nodeComponent;
 }
 
 void node_component_delete(NodeComponent* nodeComponent) {
-    SE_MEM_FREE(nodeComponent);
+    SKA_MEM_FREE(nodeComponent);
 }
 
 NodeComponent* node_component_copy(const NodeComponent* nodeComponent) {
-    NodeComponent* copiedNode = SE_MEM_ALLOCATE(NodeComponent);
+    NodeComponent* copiedNode = SKA_MEM_ALLOCATE(NodeComponent);
     memcpy(copiedNode, nodeComponent, sizeof(NodeComponent));
     return copiedNode;
 }
@@ -83,7 +83,7 @@ const char* node_get_base_type_string(NodeBaseType type) {
     case NodeBaseType_PARALLAX: return CRE_NODE_PARALLAX_STRING;
     case NodeBaseType_PARTICLES2D: return CRE_NODE_PARTICLES2D_STRING;
     case NodeBaseType_TILEMAP: return CRE_NODE_TILEMAP_STRING;
-    default: SE_ASSERT_FMT(false, "Invalid node base type '%d'", type);
+    default: SKA_ASSERT_FMT(false, "Invalid node base type '%d'", type);
     }
     return NULL;
 }

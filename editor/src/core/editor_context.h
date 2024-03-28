@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include <SDL2/SDL.h>
+#include <SDL3/SDL.h>
 
 #include "editor_settings.h"
 #include "utils/singleton.h"
@@ -53,11 +53,7 @@ class EditorContext : public Singleton<EditorContext> {
     EditorProjectState projectState = EditorProjectState::ProjectManager;
     // Rendering
     SDL_Window* window = nullptr;
-    const SDL_WindowFlags windowFlags = (SDL_WindowFlags)(
-                                            SDL_WINDOW_OPENGL
-                                            | SDL_WINDOW_RESIZABLE
-                                            | SDL_WINDOW_ALLOW_HIGHDPI
-                                        );
+    const uint32_t windowFlags = SDL_WINDOW_OPENGL |SDL_WINDOW_RESIZABLE;
     SDL_GLContext openGLContext = nullptr;
     std::string initialDir;
 

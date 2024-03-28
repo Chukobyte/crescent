@@ -2,7 +2,9 @@
 
 #include <stdbool.h>
 
-bool cre_initialize(int argv, char** args);
+#include <seika/defines.h>
+
+bool cre_initialize(int32 argv, char** args);
 void cre_update();
 bool cre_is_running();
-int cre_shutdown();
+int32 cre_shutdown();

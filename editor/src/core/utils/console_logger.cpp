@@ -1,14 +1,16 @@
 #include "console_logger.h"
 
+// TODO: Capture log from running runtime executable
+
 //--- Console Log Capture ---//
 ConsoleLogCapture::ConsoleLogCapture(std::function<void(const char *, size_t)> callback) {
-    captureStdout = new std::capture::CaptureStdout(callback);
-    captureStderr = new std::capture::CaptureStderr(callback);
+//    captureStdout = new std::capture::CaptureStdout(callback);
+//    captureStderr = new std::capture::CaptureStderr(callback);
 }
 
 ConsoleLogCapture::~ConsoleLogCapture() {
-    delete captureStdout;
-    delete captureStderr;
+//    delete captureStdout;
+//    delete captureStderr;
 }
 
 //--- Console Logger ---//

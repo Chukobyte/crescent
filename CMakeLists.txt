@@ -1,6 +1,8 @@
-cmake_minimum_required(VERSION 3.25.0)
+cmake_minimum_required(VERSION 3.27.0)
 
 project(crescent_engine)
+
+include(Dependencies.cmake)
 
 add_subdirectory(engine)
 add_subdirectory(editor)
@@ -19,6 +21,5 @@ add_dependencies(${PROJECT_NAME}_editor ${PROJECT_NAME})
 target_link_libraries(${PROJECT_NAME}_editor crescent_editor crescent_core)
 
 # Create test editor exe
-find_package(SDL2 CONFIG REQUIRED)
 add_executable(${PROJECT_NAME}_editor_test editor/test/main.cpp editor/test/unit/curve_float_test.cpp editor/test/unit/game_exporter_test.cpp)
-target_link_libraries(${PROJECT_NAME}_editor_test crescent_editor crescent_core SDL2::SDL2main SDL2::SDL2)
+target_link_libraries(${PROJECT_NAME}_editor_test crescent_editor crescent_core catch)

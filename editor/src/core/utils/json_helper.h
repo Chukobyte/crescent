@@ -5,7 +5,7 @@
 
 #include <nlohmann/json.hpp>
 
-#include <seika/utils/se_assert.h>
+#include <seika/assert.h>
 
 
 namespace JsonHelper {
@@ -26,7 +26,7 @@ inline T Get(const JsonType& json, const std::string& key) {
     if (HasKey(json, key)) {
         return json.at(key);
     }
-    SE_ASSERT_FMT(false, "Key '%s' doesn't exist in json!", key.c_str());
+    SKA_ASSERT_FMT(false, "Key '%s' doesn't exist in json!", key.c_str());
     return T();
 }
 
