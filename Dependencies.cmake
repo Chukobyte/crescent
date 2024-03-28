@@ -37,7 +37,6 @@ if (NOT TARGET imgui)
             GIT_TAG v1.90.4-docking
     )
     FetchContent_MakeAvailable(imgui_content)
-
     add_library(imgui STATIC
             ${imgui_content_SOURCE_DIR}/imgui.cpp
             ${imgui_content_SOURCE_DIR}/imgui_demo.cpp
@@ -46,6 +45,11 @@ if (NOT TARGET imgui)
             ${imgui_content_SOURCE_DIR}/imgui_widgets.cpp
             ${imgui_content_SOURCE_DIR}/backends/imgui_impl_opengl3.cpp
             ${imgui_content_SOURCE_DIR}/backends/imgui_impl_sdl3.cpp)
+    set_target_properties(imgui PROPERTIES
+            CXX_STANDARD 20
+            CXX_STANDARD_REQUIRED YES
+            CXX_EXTENSIONS OFF
+    )
     target_include_directories(imgui PUBLIC ${imgui_content_SOURCE_DIR} ${imgui_content_SOURCE_DIR}/backends)
     target_link_libraries(imgui PRIVATE seika)
 endif ()
@@ -63,6 +67,11 @@ if (NOT TARGET implot)
             ${implot_content_SOURCE_DIR}/implot.cpp
             ${implot_content_SOURCE_DIR}/implot_demo.cpp
             ${implot_content_SOURCE_DIR}/implot_items.cpp
+    )
+    set_target_properties(imgui PROPERTIES
+            CXX_STANDARD 20
+            CXX_STANDARD_REQUIRED YES
+            CXX_EXTENSIONS OFF
     )
     target_include_directories(implot PUBLIC ${implot_content_SOURCE_DIR})
     target_link_libraries(implot PRIVATE imgui)
