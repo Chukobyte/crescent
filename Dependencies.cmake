@@ -74,11 +74,6 @@ if (NOT TARGET font_awesome)
     target_include_directories(font_awesome INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/font_awesome")
 endif ()
 
-if (NOT TARGET stdcapture)
-    add_library(stdcapture INTERFACE thirdparty/stdcapture/stdcapture.h)
-    target_include_directories(stdcapture INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/stdcapture")
-endif ()
-
 if (NOT TARGET nlohmann_json)
     add_library(nlohmann_json INTERFACE thirdparty/nlohmann/json.hpp)
     target_include_directories(nlohmann_json INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty")

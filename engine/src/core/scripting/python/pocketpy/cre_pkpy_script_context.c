@@ -102,7 +102,7 @@ void cre_pkpy_script_context_setup_node_event(SkaEntity entity) {
         entityInitializedList[entity] = true;
         // Node
         NodeComponent* nodeComponent = (NodeComponent*)ska_ecs_component_manager_get_component(entity, NODE_COMPONENT_INDEX);
-        SKA_ASSERT_FMT(nodeComponent, "Node component should never be null!  Node name: '%s', entity id: '%u'", nodeComponent->name, entity);
+        SKA_ASSERT_FMT(nodeComponent, "Node component should never be null!  Entity id: '%u'", entity);
         ska_event_register_observer(&nodeComponent->onSceneTreeEnter, &node_scene_entered_observer);
         ska_event_register_observer(&nodeComponent->onSceneTreeExit, &node_scene_exited_observer);
         // Animated Sprite
