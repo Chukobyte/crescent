@@ -68,7 +68,7 @@ if (NOT TARGET implot)
             ${implot_content_SOURCE_DIR}/implot_demo.cpp
             ${implot_content_SOURCE_DIR}/implot_items.cpp
     )
-    set_target_properties(imgui PROPERTIES
+    set_target_properties(implot PROPERTIES
             CXX_STANDARD 20
             CXX_STANDARD_REQUIRED YES
             CXX_EXTENSIONS OFF
