@@ -32,7 +32,7 @@ Technically any game type will be able to be made with the engine.  But these ar
   * [C++](https://en.wikipedia.org/wiki/C%2B%2B) (c++20) - Editor Core
   * [ImGui](https://github.com/ocornut/imgui) - GUI Library
   * [ImPlot](https://github.com/epezent/implot) - Plotting Library (Used with ImGui)
-  * [nlohmann json](https://github.com/epezent/implot) - Used to read and write json files
+  * [nlohmann json](https://github.com/nlohmann/json) - Used to read and write JSON files
   * [Font Awesome](https://github.com/FortAwesome/Font-Awesome) - For font icons
   * [Catch2](https://github.com/catchorg/Catch2) - Testing
 
