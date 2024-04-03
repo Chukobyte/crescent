@@ -1,6 +1,8 @@
 name: windows-msvc-build
 
 on:
+  push:
+    branches: [ test ]
   pull_request:
     branches: [ main ]
 
