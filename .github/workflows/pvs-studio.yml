@@ -39,9 +39,9 @@ jobs:
         uses: lukka/run-cmake@v10.7
         with:
           cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
-          configurePreset: 'ninja-multi-vcpkg'
+          configurePreset: 'ninja-multi-default'
           configurePresetAdditionalArgs: "['-DIS_CI_BUILD=true', '-DCMAKE_EXPORT_COMPILE_COMMANDS=On']"
-          buildPreset: 'ninja-multi-vcpkg'
+          buildPreset: 'ninja-multi-default'
 
       - name: run pvs studio
         run: |

@@ -25,9 +25,9 @@ jobs:
         uses: lukka/run-cmake@v10.3
         with:
           cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
-          configurePreset: 'ninja-multi-vcpkg'
+          configurePreset: 'mingw-default'
           configurePresetAdditionalArgs: "['-DIS_CI_BUILD=true']"
-          buildPreset: 'ninja-multi-vcpkg'
+          buildPreset: 'mingw-default'
 
       - name: run unit tests
         run: |

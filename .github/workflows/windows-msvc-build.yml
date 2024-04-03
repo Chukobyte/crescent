@@ -22,14 +22,14 @@ jobs:
         uses: lukka/run-cmake@v10.7
         with:
           cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
-          configurePreset: 'ninja-multi-vcpkg'
+          configurePreset: 'ninja-multi-default'
           configurePresetAdditionalArgs: "['-DIS_CI_BUILD=true']"
-          buildPreset: 'ninja-multi-vcpkg'
+          buildPreset: 'ninja-multi-default'
 
       - name: run unit tests
         run: |
           echo "Running crescent engine tests!"
-          ${{ github.workspace }}\builds\Debug\crescent_engine_test.exe
+          ${{ github.workspace }}/builds/Debug/crescent_engine_test.exe
           echo ""
           echo "Running crescent engine editor tests!"
-          ${{ github.workspace }}\builds\Debug\crescent_engine_editor_test.exe
+          ${{ github.workspace }}/builds/Debug/crescent_engine_editor_test.exe
