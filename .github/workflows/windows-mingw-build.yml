@@ -34,7 +34,7 @@ jobs:
       - name: run unit tests
         run: |
           echo "Running crescent engine tests!"
-          ${{ github.workspace }}/builds/Debug/crescent_engine_test.exe
+          ${{ github.workspace }}/crescent_engine_test.exe
           echo ""
           echo "Running crescent engine editor tests!"
-          ${{ github.workspace }}/builds/Debug/crescent_engine_editor_test.exe
+          ${{ github.workspace }}/crescent_engine_editor_test.exe
