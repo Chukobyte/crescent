@@ -33,9 +33,7 @@ jobs:
 
       - name: run unit tests
         run: |
-          dir /s
-          dir builds
-          dir builds/Debug
+          Get-ChildItem -Path "." -Recurse -File
           echo "Running crescent engine tests!"
           ${{ github.workspace }}/builds/crescent_engine_test.exe
           echo ""
