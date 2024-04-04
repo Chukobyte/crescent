@@ -37,7 +37,7 @@ jobs:
           ls -la ${{ github.workspace }} 
           ls -la ${{ github.workspace }}/builds
           echo "Running crescent engine tests!"
-          ${{ github.workspace }}/builds/Debug/crescent_engine_test
+          ${{ github.workspace }}/builds/crescent_engine_test
           echo ""
           echo "Running crescent engine editor tests!"
-          ${{ github.workspace }}/builds/Debug/crescent_engine_editor_test
+          ${{ github.workspace }}/builds/crescent_engine_editor_test
