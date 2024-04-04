@@ -2,7 +2,7 @@ name: package-and-deploy
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, test ]
 
 jobs:
   # WINDOWS BUILD
@@ -90,29 +90,27 @@ jobs:
           cmakeVersion: "3.27.0"
 
       - name: run build
-        uses: lukka/run-cmake@v10.7
-        with:
-          cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
-          configurePreset: 'ninja-multi-default'
-          configurePresetAdditionalArgs: "['-DIS_CI_BUILD=true']"
-          buildPreset: 'ninja-multi-default'
-          buildPresetAdditionalArgs: "['--config Release']"
+        run: |
+          cd ${{ github.workspace }}
+          mkdir -p builds
+          cmake -S . -B builds -DCMAKE_BUILD_TYPE=Release -DIS_CI_BUILD="true"
+          cmake --build builds
 
       - name: rename binaries
         run: |
           cd ${{ github.workspace }}
-          mv builds/Release/crescent_engine crescent_engine_linux
-          mv builds/Release/crescent_engine_editor crescent_engine_editor_linux
+          mv builds/crescent_engine crescent_engine_linux
+          mv builds/crescent_engine_editor crescent_engine_editor_linux
           chmod +x crescent_engine_linux
           chmod +x crescent_engine_editor_linux
 
       - name: run unit tests
         run: |
           echo "Running crescent engine tests!"
-          ${{ github.workspace }}/builds/Release/crescent_engine_test
+          ${{ github.workspace }}/builds/crescent_engine_test
           echo ""
           echo "Running crescent engine editor tests!"
-          ${{ github.workspace }}/builds/Release/crescent_engine_editor_test
+          ${{ github.workspace }}/builds/crescent_engine_editor_test
 
       - name: store engine binary
         uses: actions/upload-artifact@v3
@@ -147,19 +145,17 @@ jobs:
           cmakeVersion: "3.27.0"
 
       - name: run build
-        uses: lukka/run-cmake@v10.7
-        with:
-          cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
-          configurePreset: 'ninja-multi-default'
-          configurePresetAdditionalArgs: "['-DIS_CI_BUILD=true']"
-          buildPreset: 'ninja-multi-default'
-          buildPresetAdditionalArgs: "['--config Release']"
+        run: |
+          cd ${{ github.workspace }}
+          mkdir -p builds
+          cmake -S . -B builds -DCMAKE_BUILD_TYPE=Release -DIS_CI_BUILD="true"
+          cmake --build builds
 
       - name: rename binaries
         run: |
           cd ${{ github.workspace }}
-          mv builds/Release/crescent_engine crescent_engine_macosx
-          mv builds/Release/crescent_engine_editor crescent_engine_editor_macosx
+          mv builds/crescent_engine crescent_engine_macosx
+          mv builds/crescent_engine_editor crescent_engine_editor_macosx
           chmod +x crescent_engine_macosx
           chmod +x crescent_engine_editor_macosx
 
@@ -167,10 +163,10 @@ jobs:
         run: |
           cd ${{ github.workspace }}
           echo "Running crescent engine tests!"
-          builds/Release/crescent_engine_test
+          builds/crescent_engine_test
           echo ""
           echo "Running crescent engine editor tests!"
-          builds/Release/crescent_engine_editor_test
+          builds/crescent_engine_editor_test
 
       #      - name: decode private key and cert
       #        run: |

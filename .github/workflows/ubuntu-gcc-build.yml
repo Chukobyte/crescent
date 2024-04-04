@@ -1,8 +1,6 @@
 name: ubuntu-gcc-build
 
 on:
-  push:
-    branches: [ test ]
   pull_request:
     branches: [ main ]
 
@@ -34,8 +32,6 @@ jobs:
 
       - name: run unit tests
         run: |
-          ls -la ${{ github.workspace }} 
-          ls -la ${{ github.workspace }}/builds
           echo "Running crescent engine tests!"
           ${{ github.workspace }}/builds/crescent_engine_test
           echo ""
