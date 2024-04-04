@@ -24,8 +24,8 @@ jobs:
         run: |
           cd ${{ github.workspace }}
           mkdir -p builds/debug
-          cmake -S . -B builds/debug -DIS_CI_BUILD="true"
-          cmake --build builds/debug
+          cmake -S . -B builds -DIS_CI_BUILD="true"
+          cmake --build builds
 
       - name: run unit tests
         run: |
@@ -33,4 +33,4 @@ jobs:
           ${{ github.workspace }}/builds/debug/crescent_engine_test.exe
           echo ""
           echo "Running crescent engine editor tests!"
-          ${{ github.workspace }}/builds/debug/crescent_engine_editor_test.exe
+          ${{ github.workspace }}/builds/Debug/crescent_engine_editor_test.exe
