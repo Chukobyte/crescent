@@ -24,7 +24,7 @@ jobs:
           cd ${{ github.workspace }}
           mkdir -p builds
           cmake -S . -B builds -DCMAKE_BUILD_TYPE=Release -DIS_CI_BUILD="true"
-          cmake --build builds
+          cmake --build builds --config Release
 
       - name: rename binaries
         run: |
@@ -94,7 +94,7 @@ jobs:
           cd ${{ github.workspace }}
           mkdir -p builds
           cmake -S . -B builds -DCMAKE_BUILD_TYPE=Release -DIS_CI_BUILD="true"
-          cmake --build builds
+          cmake --build builds --config Release
 
       - name: rename binaries
         run: |
@@ -149,7 +149,7 @@ jobs:
           cd ${{ github.workspace }}
           mkdir -p builds
           cmake -S . -B builds -DCMAKE_BUILD_TYPE=Release -DIS_CI_BUILD="true"
-          cmake --build builds
+          cmake --build builds --config Release
 
       - name: rename binaries
         run: |
