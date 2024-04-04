@@ -28,16 +28,16 @@ jobs:
 
       - name: rename binaries
         run: |
-          move ${{ github.workspace }}\builds\Release\crescent_engine.exe ${{ github.workspace }}\crescent_engine_windows.exe
-          move ${{ github.workspace }}\builds\Release\crescent_engine_editor.exe ${{ github.workspace }}\crescent_engine_editor_windows.exe
+          move ${{ github.workspace }}\builds\crescent_engine.exe ${{ github.workspace }}\crescent_engine_windows.exe
+          move ${{ github.workspace }}\builds\crescent_engine_editor.exe ${{ github.workspace }}\crescent_engine_editor_windows.exe
 
       - name: run unit tests
         run: |
           echo "Running crescent engine tests!"
-          ${{ github.workspace }}\builds\Release\crescent_engine_test.exe
+          ${{ github.workspace }}\builds\crescent_engine_test.exe
           echo ""
           echo "Running crescent engine editor tests!"
-          ${{ github.workspace }}\builds\Release\crescent_engine_editor_test.exe
+          ${{ github.workspace }}\builds\crescent_engine_editor_test.exe
 
       - name: package dlls (and python zip)
         run: |
