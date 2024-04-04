@@ -46,6 +46,7 @@ jobs:
           cd ${{ github.workspace }}
           mkdir -p windows_run_dependencies
           copy builds\Release\*.dll windows_run_dependencies\
+          dir windows_run_dependencies
           Compress-Archive -Path windows_run_dependencies -DestinationPath ${{ github.workspace }}\windows_run_dependencies.zip
 
       - name: store engine binary
