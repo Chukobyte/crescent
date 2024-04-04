@@ -20,18 +20,10 @@ jobs:
           useCloudCache: false
           cmakeVersion: "3.27.0"
 
-#      - name: run build
-#        uses: lukka/run-cmake@v10.7
-#        with:
-#          cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
-#          configurePreset: 'ninja-multi-default'
-#          configurePresetAdditionalArgs: "['-DIS_CI_BUILD=true']"
-#          buildPreset: 'ninja-multi-default'
-
       - name: run build
         run: |
           cd ${{ github.workspace }}
-          cmake .
+          cmake . -DIS_CI_BUILD="true"
           cmake --build .
 
       - name: run unit tests
