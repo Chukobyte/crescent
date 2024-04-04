@@ -24,8 +24,8 @@ jobs:
         run: |
           cd ${{ github.workspace }}
           mkdir -p builds/debug
-          cmake -S . -B builds -DIS_CI_BUILD="true"
-          cmake --build .
+          cmake -S . -B builds/debug -DIS_CI_BUILD="true"
+          cmake --build builds/debug
 
       - name: run unit tests
         run: |
