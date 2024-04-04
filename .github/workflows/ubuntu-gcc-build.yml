@@ -1,6 +1,8 @@
 name: ubuntu-gcc-build
 
 on:
+  push:
+    branches: [ test ]
   pull_request:
     branches: [ main ]
 
@@ -26,8 +28,8 @@ jobs:
       - name: run build
         run: |
           cd ${{ github.workspace }}
-          cmake . -DIS_CI_BUILD="true"
-          cmake --build .
+          cmake -S . -B builds -DIS_CI_BUILD="true"
+          cmake --build builds
 
       - name: run unit tests
         run: |

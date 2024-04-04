@@ -24,8 +24,8 @@ jobs:
       - name: run build
         run: |
           cd ${{ github.workspace }}
-          cmake -G "MinGW Makefiles" . -DIS_CI_BUILD="true"
-          cmake --build .
+          cmake -S . -G "MinGW Makefiles" -B builds -DIS_CI_BUILD="true"
+          cmake --build builds
 
       - name: run unit tests
         run: |
