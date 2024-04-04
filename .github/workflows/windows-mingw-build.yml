@@ -1,6 +1,8 @@
 name: windows-mingw-build
 
 on:
+  push:
+    branches: [ test ]
   pull_request:
     branches: [ main ]
 
@@ -24,6 +26,7 @@ jobs:
       - name: run build
         run: |
           cd ${{ github.workspace }}
+          mkdir -p builds
           cmake -S . -G "MinGW Makefiles" -B builds -DIS_CI_BUILD="true"
           cmake --build builds
 
