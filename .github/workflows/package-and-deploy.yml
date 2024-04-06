@@ -20,13 +20,11 @@ jobs:
           cmakeVersion: "3.27.0"
 
       - name: run build
-        uses: lukka/run-cmake@v10.7
-        with:
-          cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
-          configurePreset: 'ninja-multi-vcpkg'
-          configurePresetAdditionalArgs: "['-DIS_CI_BUILD=true']"
-          buildPreset: 'ninja-multi-vcpkg'
-          buildPresetAdditionalArgs: "['--config Release']"
+        run: |
+          cd ${{ github.workspace }}
+          mkdir -p builds
+          cmake -S . -B builds -DCMAKE_BUILD_TYPE=Release -DIS_CI_BUILD="true"
+          cmake --build builds --config Release
 
       - name: rename binaries
         run: |
@@ -41,6 +39,19 @@ jobs:
           echo "Running crescent engine editor tests!"
           ${{ github.workspace }}\builds\Release\crescent_engine_editor_test.exe
 
+      - name: package dlls (and python zip)
+        run: |
+          cd ${{ github.workspace }}
+          mkdir -p windows_run_dependencies
+          # Get all dll files
+          $dllFiles = Get-ChildItem -Path . -Filter *.dll -Recurse
+          # Copy dlls
+          foreach ($file in $dllFiles) {
+            $destPath = Join-Path -Path windows_run_dependencies\ -ChildPath $file.Name
+            Copy-Item -Path $file.FullName -Destination $destPath
+          }
+          Compress-Archive -Path windows_run_dependencies -DestinationPath ${{ github.workspace }}\windows_run_dependencies.zip
+
       - name: store engine binary
         uses: actions/upload-artifact@v3
         with:
@@ -53,6 +64,13 @@ jobs:
         with:
           name: crescent_engine_editor_windows.exe
           path: crescent_engine_editor_windows.exe
+          if-no-files-found: error
+
+      - name: store windows deps
+        uses: actions/upload-artifact@v3
+        with:
+          name: windows_run_dependencies.zip
+          path: windows_run_dependencies.zip
           if-no-files-found: error
 
   # LINUX BUILD
@@ -76,29 +94,27 @@ jobs:
           cmakeVersion: "3.27.0"
 
       - name: run build
-        uses: lukka/run-cmake@v10.7
-        with:
-          cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
-          configurePreset: 'ninja-multi-vcpkg'
-          configurePresetAdditionalArgs: "['-DIS_CI_BUILD=true']"
-          buildPreset: 'ninja-multi-vcpkg'
-          buildPresetAdditionalArgs: "['--config Release']"
+        run: |
+          cd ${{ github.workspace }}
+          mkdir -p builds
+          cmake -S . -B builds -DCMAKE_BUILD_TYPE=Release -DIS_CI_BUILD="true"
+          cmake --build builds --config Release
 
       - name: rename binaries
         run: |
           cd ${{ github.workspace }}
-          mv builds/Release/crescent_engine crescent_engine_linux
-          mv builds/Release/crescent_engine_editor crescent_engine_editor_linux
+          mv builds/crescent_engine crescent_engine_linux
+          mv builds/crescent_engine_editor crescent_engine_editor_linux
           chmod +x crescent_engine_linux
           chmod +x crescent_engine_editor_linux
 
       - name: run unit tests
         run: |
           echo "Running crescent engine tests!"
-          ${{ github.workspace }}/builds/Release/crescent_engine_test
+          ${{ github.workspace }}/builds/crescent_engine_test
           echo ""
           echo "Running crescent engine editor tests!"
-          ${{ github.workspace }}/builds/Release/crescent_engine_editor_test
+          ${{ github.workspace }}/builds/crescent_engine_editor_test
 
       - name: store engine binary
         uses: actions/upload-artifact@v3
@@ -133,19 +149,17 @@ jobs:
           cmakeVersion: "3.27.0"
 
       - name: run build
-        uses: lukka/run-cmake@v10.7
-        with:
-          cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
-          configurePreset: 'ninja-multi-vcpkg'
-          configurePresetAdditionalArgs: "['-DIS_CI_BUILD=true']"
-          buildPreset: 'ninja-multi-vcpkg'
-          buildPresetAdditionalArgs: "['--config Release']"
+        run: |
+          cd ${{ github.workspace }}
+          mkdir -p builds
+          cmake -S . -B builds -DCMAKE_BUILD_TYPE=Release -DIS_CI_BUILD="true"
+          cmake --build builds --config Release
 
       - name: rename binaries
         run: |
           cd ${{ github.workspace }}
-          mv builds/Release/crescent_engine crescent_engine_macosx
-          mv builds/Release/crescent_engine_editor crescent_engine_editor_macosx
+          mv builds/crescent_engine crescent_engine_macosx
+          mv builds/crescent_engine_editor crescent_engine_editor_macosx
           chmod +x crescent_engine_macosx
           chmod +x crescent_engine_editor_macosx
 
@@ -153,10 +167,10 @@ jobs:
         run: |
           cd ${{ github.workspace }}
           echo "Running crescent engine tests!"
-          builds/Release/crescent_engine_test
+          builds/crescent_engine_test
           echo ""
           echo "Running crescent engine editor tests!"
-          builds/Release/crescent_engine_editor_test
+          builds/crescent_engine_editor_test
 
       #      - name: decode private key and cert
       #        run: |
@@ -248,6 +262,11 @@ jobs:
         with:
           name: crescent_engine_editor_windows.exe
 
+      - name: download windows deps
+        uses: actions/download-artifact@v3
+        with:
+          name: windows_run_dependencies.zip
+
       - name: download linux engine binary
         uses: actions/download-artifact@v3
         with:
@@ -283,6 +302,10 @@ jobs:
           # Move editor
           mv crescent_engine_editor_windows.exe crescent_windows/crescent.exe
           # Copy windows runtime deps
+          # Copy windows runtime deps
+          unzip windows_run_dependencies.zip
+          cp windows_run_dependencies/*  crescent_windows/
+          cp windows_run_dependencies/*  crescent_windows/bin/windows/
           chmod -R 755 crescent_windows
           zip -r crescent_windows.zip crescent_windows/
 
@@ -301,6 +324,7 @@ jobs:
           # Move editor
           mv crescent_engine_editor_linux crescent_linux/crescent
           # Copy runtime deps
+          cp windows_run_dependencies/*  crescent_linux/bin/windows/
           chmod -R 755 crescent_linux
           zip -r crescent_linux.zip crescent_linux/
           tar -czvf crescent_linux.tar.gz crescent_linux/
@@ -328,6 +352,7 @@ jobs:
           # Move editor
           mv crescent_engine_editor_macosx crescent.app/Contents/MacOS/crescent
           # Copy runtime deps
+          cp windows_run_dependencies/*  crescent.app/Contents/MacOS/bin/windows/
           chmod -R 755 crescent.app
           zip -r crescent_macosx.zip crescent.app/
           tar -czvf crescent_macosx.tar.gz crescent.app/
