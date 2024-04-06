@@ -39,7 +39,7 @@ jobs:
         run: |
           cd ${{ github.workspace }}
           mkdir -p builds
-          cmake -S . -B builds -DIS_CI_BUILD="true"
+          cmake -S . -B builds -DIS_CI_BUILD="true" -DCMAKE_EXPORT_COMPILE_COMMANDS=On
           cmake --build builds
 
       - name: run pvs studio

@@ -1,5 +1,4 @@
 if (NOT TARGET seika)
-#    set(SDL_STATIC_VCRT ON)
     set(SEIKA_STATIC_LIB OFF)
 
     # Setting to 10,000 as the default 200,000 is too much for our needs now
