@@ -2,7 +2,7 @@ name: package-and-deploy
 
 on:
   push:
-    branches: [ main, test ]
+    branches: [ main ]
 
 jobs:
   # WINDOWS BUILD
