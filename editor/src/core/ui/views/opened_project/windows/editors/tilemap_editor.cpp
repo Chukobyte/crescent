@@ -13,6 +13,7 @@
 
 static TilemapComp* cachedComp = nullptr;
 static SkaTexture* colorRectTexture = nullptr;
+SkaVector2i cachedMouseTileCoord = SKA_VECTOR2I_ZERO;
 
 void TilemapEditor::Process(SceneNode* node, TilemapComp* tilemapComp) {
     bool startedThisFrame = false;
@@ -27,18 +28,17 @@ void TilemapEditor::Process(SceneNode* node, TilemapComp* tilemapComp) {
     cachedComp = tilemapComp;
 
     if (ImGui::IsMouseClicked(0) && !startedThisFrame) {
-        const auto tileCoords = GetMouseTileCoords();
+        const auto* tileCoords = &cachedMouseTileCoord;
         auto tilemap = cachedComp->GetInternalComp().tilemap;
-        const auto tileData = cre_tilemap_get_tile_data(tilemap, &tileCoords);
-        if (tileData) {
-            if (tileData->isActive) {
-                cre_tilemap_set_tile_active(tilemap, &tileCoords, false);
-            } else {
-                const auto renderCoords = SkaVector2i{ .x = 0, .y = 0 };
-                cre_tilemap_set_tile_render_coord(tilemap, &tileCoords, &renderCoords);
-            }
-            cre_tilemap_commit_active_tile_changes(tilemap);
+        const auto tileData = cre_tilemap_get_tile_data(tilemap, tileCoords);
+        // TODO: Do this better...
+        static const auto renderCoords = SkaVector2i{ .x = 0, .y = 0 }; // TODO: Take in render coords
+        if (tileData && tileData->isActive) {
+            cre_tilemap_set_tile_active(tilemap, tileCoords, false);
+        } else {
+            cre_tilemap_set_tile_render_coord(tilemap, tileCoords, &renderCoords);
         }
+        cre_tilemap_commit_active_tile_changes(tilemap);
     }
 }
 
@@ -108,15 +108,20 @@ SkaVector2i TilemapEditor::GetMouseTileCoords() {
         .x = windowSize.x / static_cast<float>(gameProperties->resolutionWidth),
         .y = windowSize.y / static_cast<float>(gameProperties->resolutionHeight)
     };
+    // Adjust scroll values for zoom
+    const SkaVector2 adjustedScroll = { .x = scroll.x * zoom.x, .y = scroll.y * zoom.y };
+    // Calculate mouse position relative to the tilemap, adjusting for window position, scroll and zoom
     const SkaVector2 mousePosRelative = {
-        .x = mousePos.x - windowPos.x + scroll.x,
-        .y = mousePos.y - windowPos.y + scroll.y
+        .x = (mousePos.x - windowPos.x + adjustedScroll.x) / zoom.x,
+        .y = (mousePos.y - windowPos.y + adjustedScroll.y) / zoom.y
     };
+    // Calculate tile coordinates
     SkaVector2i tileCoords = {
-        .x = static_cast<int>(mousePosRelative.x / ((float)tileSize.w * zoom.x)),
-        .y = static_cast<int>(mousePosRelative.y / ((float)tileSize.h * zoom.y))
+        .x = static_cast<int>(mousePosRelative.x / static_cast<float>(tileSize.w)),
+        .y = static_cast<int>(mousePosRelative.y / static_cast<float>(tileSize.h))
     };
     tileCoords.x = ska_math_clamp_int(tileCoords.x, 0, tileSize.w);
     tileCoords.y = ska_math_clamp_int(tileCoords.y, 0, tileSize.h);
+    cachedMouseTileCoord = tileCoords;
     return tileCoords;
 }

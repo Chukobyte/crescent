@@ -214,7 +214,6 @@ CreTileBitmask cre_tilemap_get_tile_bitmask(const CreTilemap* tilemap, const Ska
 
 const CreTileData* cre_tilemap_get_tile_data(const CreTilemap* tilemap, const SkaVector2i* position) {
     const CreTileData* tileData = (CreTileData*)ska_array2d_get(tilemap->tilesArray, position->x, position->y);
-    SKA_ASSERT(tileData);
     return tileData;
 }
 
