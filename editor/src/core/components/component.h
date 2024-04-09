@@ -317,7 +317,7 @@ struct TilemapComp : public EditorComponent {
 
     void ForEachActiveTile(const std::function<void(const CreTileData*)>& func) const {
         for (size_t i = 0; i < internalComp.tilemap->activeTiles->size; i++) {
-            const CreTileData* tileData = (CreTileData *) *(CreTileData **) ska_array_list_get(internalComp.tilemap->activeTiles, i);
+            const CreTileData* tileData = (CreTileData*)*(CreTileData**)ska_array_list_get(internalComp.tilemap->activeTiles, i);
             func(tileData);
         }
     }

@@ -33,8 +33,8 @@ void TilemapEditor::Process(SceneNode* node, TilemapComp* tilemapComp) {
         const auto tileData = cre_tilemap_get_tile_data(tilemap, tileCoords);
         // TODO: Do this better...
         static const auto renderCoords = SkaVector2i{ .x = 0, .y = 0 }; // TODO: Take in render coords
-        if (tileData && tileData->isActive) {
-            cre_tilemap_set_tile_active(tilemap, tileCoords, false);
+        if (tileData) {
+            cre_tilemap_set_tile_active(tilemap, tileCoords, !tileData->isActive);
         } else {
             cre_tilemap_set_tile_render_coord(tilemap, tileCoords, &renderCoords);
         }

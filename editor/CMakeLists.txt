@@ -32,10 +32,6 @@ endif ()
 
 target_compile_options(${PROJECT_NAME} PUBLIC ${flags})
 
-if (NOT DEFINED IS_CI_BUILD)
-    set(IS_CI_BUILD "false")
-endif()
-
 if (WIN32)
     set(OS_BIN_DIR "windows")
 elseif (APPLE)
@@ -45,7 +41,7 @@ else ()
 endif()
 
 # Create bin and export directories to be used by the editor
-if (IS_CI_BUILD STREQUAL "false")
+if (NOT IS_CI_BUILD)
     # Copy files for font awesome
     add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy
@@ -59,6 +55,11 @@ if (IS_CI_BUILD STREQUAL "false")
             $<TARGET_FILE_DIR:${PROJECT_NAME}>/../fa-solid-900.ttf
             )
 
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${CMAKE_SOURCE_DIR}/assets
+            ${CMAKE_BINARY_DIR}/assets
+    )
     add_custom_command(TARGET ${PROJECT_NAME} PRE_BUILD
             COMMAND ${CMAKE_COMMAND} -E make_directory
             $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin
@@ -82,16 +83,4 @@ if (IS_CI_BUILD STREQUAL "false")
             $<TARGET_FILE_DIR:${PROJECT_NAME}>/../assets
             $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin/${OS_BIN_DIR}/assets
             )
-    # For export
-    # TODO: Fix this
-#    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-#            COMMAND ${CMAKE_COMMAND} -E copy
-#            $<TARGET_FILE_DIR:${PROJECT_NAME}>/../crescent_engine_editor${CMAKE_EXECUTABLE_SUFFIX}
-#            $<TARGET_FILE_DIR:${PROJECT_NAME}>/../export/crescent/crescent${CMAKE_EXECUTABLE_SUFFIX}
-#            )
-#    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-#            COMMAND ${CMAKE_COMMAND} -E copy_directory
-#            $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin
-#            $<TARGET_FILE_DIR:${PROJECT_NAME}>/../export/crescent/bin
-#            )
 endif()
