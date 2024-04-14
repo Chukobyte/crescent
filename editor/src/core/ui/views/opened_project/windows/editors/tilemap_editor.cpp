@@ -13,8 +13,21 @@
 
 static TilemapComp* cachedComp = nullptr;
 static SkaTexture* colorRectTexture = nullptr;
-SkaVector2i cachedMouseTileCoord = SKA_VECTOR2I_ZERO;
-bool cachedIsWindowFocused = false;
+
+struct TilemapCachedState
+{
+    SkaVector2i mouseTileCoord = SKA_VECTOR2I_ZERO;
+    bool isWindowFocused = false;
+    bool isWindowHovered = false;
+
+    void Reset() {
+        mouseTileCoord = SKA_VECTOR2I_ZERO;
+        isWindowFocused = false;
+        isWindowHovered = false;
+    }
+};
+
+static TilemapCachedState cachedState;
 
 void TilemapEditor::Process(SceneNode* node, TilemapComp* tilemapComp) {
     bool startedThisFrame = false;
@@ -28,8 +41,8 @@ void TilemapEditor::Process(SceneNode* node, TilemapComp* tilemapComp) {
     selectedNodeUID = node->GetUID();
     cachedComp = tilemapComp;
 
-    if (ImGui::IsMouseClicked(0) && !startedThisFrame && cachedIsWindowFocused) {
-        const auto* tileCoords = &cachedMouseTileCoord;
+    if (ImGui::IsMouseClicked(0) && !startedThisFrame && cachedState.isWindowFocused && cachedState.isWindowHovered) {
+        const auto* tileCoords = &cachedState.mouseTileCoord;
         auto tilemap = cachedComp->GetInternalComp().tilemap;
         const auto tileData = cre_tilemap_get_tile_data(tilemap, tileCoords);
         // TODO: Do this better...
@@ -46,7 +59,7 @@ void TilemapEditor::Process(SceneNode* node, TilemapComp* tilemapComp) {
 void TilemapEditor::End() {
     if (isProcessing) {
         isProcessing = false;
-        cachedIsWindowFocused = false;
+        cachedState.Reset();
         selectedNodeUID.reset();
     }
 }
@@ -100,9 +113,10 @@ std::vector<ImGuiHelper::TextureRenderTarget> TilemapEditor::GetTextureRenderTar
 }
 
 SkaVector2i TilemapEditor::GetMouseTileCoords() {
-    cachedIsWindowFocused = ImGui::IsWindowFocused();
-    if (!cachedIsWindowFocused) {
-        return cachedMouseTileCoord;
+    cachedState.isWindowFocused = ImGui::IsWindowFocused();
+    cachedState.isWindowHovered = ImGui::IsWindowHovered();
+    if (!cachedState.isWindowFocused) {
+        return cachedState.mouseTileCoord;
     }
 
     const auto* gameProperties = ProjectProperties::Get();
@@ -117,20 +131,27 @@ SkaVector2i TilemapEditor::GetMouseTileCoords() {
         .y = windowSize.y / gameResolution.h,
     };
 
-    const SkaVector2 mousePosRelative = {
-        .x = (mousePos.x - windowPos.x) / scaleFactor.x,
-        .y = (mousePos.x - windowPos.y) / scaleFactor.y
+    const SkaVector2 mousePosRelativeRaw = {
+        .x = mousePos.x - windowPos.x,
+        .y = mousePos.x - windowPos.y
     };
+
+    SkaVector2 mousePosRelative = {
+        .x = mousePosRelativeRaw.x / scaleFactor.x,
+        .y = mousePosRelativeRaw.y / scaleFactor.y
+    };
+    mousePosRelative.x = ska_math_clamp_float(mousePosRelative.x, 0.0f, windowSize.x);
+    mousePosRelative.y = ska_math_clamp_float(mousePosRelative.y, 0.0f, windowSize.y);
 
     SkaVector2i tileCoords = {
         .x = static_cast<int>(mousePosRelative.x / (f32)tileSize.w),
         .y = static_cast<int>(mousePosRelative.y / (f32)tileSize.h)
     };
-    static const int tempTileLimit = 256;
-    tileCoords.x = ska_math_clamp_int(tileCoords.x, 0, tempTileLimit);
-    tileCoords.y = ska_math_clamp_int(tileCoords.y, 0, tempTileLimit);
+    const SkaSize2Di tileLimit = { .w = static_cast<int>(windowSize.x / (f32)tileSize.w) * 2, .h = static_cast<int>(windowSize.y / (f32)tileSize.h) * 2 };
+    tileCoords.x = ska_math_clamp_int(tileCoords.x, 0, tileLimit.w);
+    tileCoords.y = ska_math_clamp_int(tileCoords.y, 0, tileLimit.h);
 
-    cachedMouseTileCoord = tileCoords;
+    cachedState.mouseTileCoord = tileCoords;
 
     return tileCoords;
 }
