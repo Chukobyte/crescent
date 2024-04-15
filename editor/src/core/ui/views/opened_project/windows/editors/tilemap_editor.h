@@ -13,12 +13,27 @@ public:
     explicit TilemapEditor(singleton) {}
     void Process(SceneNode* node, TilemapComp* tilemapComp);
     void End();
-    [[nodiscard]] std::vector<ImGuiHelper::FontRenderTarget> GetFontRenderTargets() const;
-    [[nodiscard]] std::vector<ImGuiHelper::TextureRenderTarget> GetTextureRenderTargets() const;
+    [[nodiscard]] std::vector<ImGuiHelper::FontRenderTarget> GetFontRenderTargets();
+    [[nodiscard]] std::vector<ImGuiHelper::TextureRenderTarget> GetTextureRenderTargets();
     bool IsNodeSelected(SceneNode* node);
 
 private:
     bool isProcessing = false;
     std::optional<unsigned int> selectedNodeUID;
-    static SkaVector2i GetMouseTileCoords();
+
+    struct TilemapCachedState {
+        SkaVector2i mouseTileCoord = SKA_VECTOR2I_ZERO;
+        bool isWindowFocused = false;
+        bool isWindowHovered = false;
+
+        void Reset() {
+            mouseTileCoord = SKA_VECTOR2I_ZERO;
+            isWindowFocused = false;
+            isWindowHovered = false;
+        }
+    };
+
+    TilemapCachedState cachedState;
+
+    void UpdateCachedState();
 };
