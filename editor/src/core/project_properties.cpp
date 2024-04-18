@@ -232,3 +232,10 @@ std::string ProjectProperties::GetPathRelativeToProjectPath(const std::string& p
     const std::filesystem::path relativePath = std::filesystem::relative(path, projectPath);
     return relativePath.generic_string();
 }
+
+SkaSize2D ProjectProperties::GetResolutionSize() const {
+    return {
+        .w = static_cast<f32>(resolutionWidth),
+        .h = static_cast<f32>(resolutionHeight)
+    };
+}

@@ -144,8 +144,7 @@ void cre_tilemap_set_tile_data(CreTilemap* tilemap, const CreTileData* tileData)
                 for (int y = cols - 1; y >= 0; y--) {
                     if (tileData->position.x != x && tileData->position.y != y) {
                         const CreTileData* data = (CreTileData*)ska_array2d_get(tilemap->tilesArray, x, y);
-                        if (!data) { continue; }
-//                        SKA_ASSERT(data);
+                        SKA_ASSERT_FMT(data, "Tile data at pos (%d, %d) is null, this should never happen!", x, y);
                         if (data->isActive) {
                             newHeight = y + 1;
                             break;

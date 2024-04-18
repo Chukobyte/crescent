@@ -6,6 +6,7 @@
 
 #include "utils/json_helper.h"
 #include "utils/singleton.h"
+#include "seika/math/math.h"
 
 struct TextureAsset {
     TextureAsset() = default;
@@ -109,4 +110,5 @@ class ProjectProperties : public Singleton<ProjectProperties> {
     bool HasTextureWithPath(const std::string& path) const;
     bool HasAudioSourceWithPath(const std::string& path) const;
     std::string GetPathRelativeToProjectPath(const std::string& relativePath);
+    SkaSize2D GetResolutionSize() const;
 };

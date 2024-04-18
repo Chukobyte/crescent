@@ -13,34 +13,29 @@
 namespace {
     SkaVector2i GetMouseTileCoords(const SkaSize2Di& tileSize) {
         const auto* gameProperties = ProjectProperties::Get();
-        const auto mousePos = ImGui::GetMousePos();
-        const auto windowPos = ImGui::GetWindowPos();
-        const auto windowSize = ImGui::GetWindowSize();
-        const SkaVector2 rawWindowScroll = { .x = ImGui::GetScrollX(), .y = ImGui::GetScrollY() };
-        const SkaSize2D gameResolution = { .w = (f32)gameProperties->resolutionWidth, .h = (f32)gameProperties->resolutionHeight };
+        const ImVec2 mousePos = ImGui::GetMousePos();
+        const ImVec2 windowPos = ImGui::GetWindowPos();
+        const ImVec2 windowSize = ImGui::GetWindowSize();
+        const ImVec2 contentRegionMin = ImGui::GetWindowContentRegionMin();
+        // Calculate scaling factors based on the difference between actual window size and game resolution.
+        const SkaSize2D gameResolution = gameProperties->GetResolutionSize();
         const SkaVector2 scaleFactor = {
-            .x = windowSize.x / gameResolution.w,
-            .y = windowSize.y / gameResolution.h,
+            gameResolution.w / windowSize.x,
+            gameResolution.h / windowSize.y
         };
-        const SkaVector2 windowScroll = { .x = rawWindowScroll.x * scaleFactor.x, .y = rawWindowScroll.y * scaleFactor.y };
-        const SkaVector2 mousePosRelativeRaw = {
-            .x = mousePos.x - windowPos.x + windowScroll.x,
-            .y = mousePos.y - windowPos.y + windowScroll.y
+        const SkaVector2 relativeMousePos = {
+            (mousePos.x - windowPos.x - contentRegionMin.x) * scaleFactor.x,
+            (mousePos.y - windowPos.y - contentRegionMin.y) * scaleFactor.y
         };
-        SkaVector2 mousePosRelative = {
-            .x = mousePosRelativeRaw.x / scaleFactor.x,
-            .y = mousePosRelativeRaw.y / scaleFactor.y
-        };
-        mousePosRelative.x = ska_math_clamp_float(mousePosRelative.x, 0.0f, windowSize.x / scaleFactor.x);
-        mousePosRelative.y = ska_math_clamp_float(mousePosRelative.y, 0.0f, windowSize.y / scaleFactor.y);
-
         SkaVector2i tileCoords = {
-            .x = static_cast<int>(mousePosRelative.x / (f32)tileSize.w),
-            .y = static_cast<int>(mousePosRelative.y / (f32)tileSize.h)
+            static_cast<int32>(relativeMousePos.x) / tileSize.w,
+            static_cast<int32>(relativeMousePos.y) / tileSize.h
         };
-        const SkaSize2Di tileLimit = { .w = static_cast<int>(windowSize.x / (f32)tileSize.w) * 2, .h = static_cast<int>(windowSize.y / (f32)tileSize.h) * 2 };
-        tileCoords.x = ska_math_clamp_int(tileCoords.x, 0, tileLimit.w);
-        tileCoords.y = ska_math_clamp_int(tileCoords.y, 0, tileLimit.h);
+        // TODO: Make a range based on something (e.g.  max map size)
+        const SkaVector2i tilePosMax = {999999,999999 };
+        tileCoords.x = ska_math_clamp_int(tileCoords.x, 0, tilePosMax.x - 1);
+        tileCoords.y = ska_math_clamp_int(tileCoords.y, 0, tilePosMax.y - 1);
+
         return tileCoords;
     }
 }
@@ -104,7 +99,7 @@ std::vector<ImGuiHelper::FontRenderTarget> TilemapEditor::GetFontRenderTargets()
                 }
         };
     }
-//    return {};
+    return {};
 }
 
 std::vector<ImGuiHelper::TextureRenderTarget> TilemapEditor::GetTextureRenderTargets() {
