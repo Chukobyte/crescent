@@ -19,7 +19,7 @@ bool ProcessContext::Start(const std::string& processPath, const std::string& st
     TCHAR startProcessArgs[MAX_START_PROCESS_ARGS_BUFFER_SIZE];
     strcpy(startProcessArgs, fullStartProcessArgs.c_str());
 
-    CreateProcess(processPath.c_str(),
+    const bool success = CreateProcess(processPath.c_str(),
                   startArgs.empty() ? nullptr : startProcessArgs,
                   nullptr,
                   nullptr,
@@ -30,7 +30,7 @@ bool ProcessContext::Start(const std::string& processPath, const std::string& st
                   &startUpInfo,
                   &processInformation
                  );
-    return true;
+    return success;
 }
 
 void ProcessContext::Stop() {

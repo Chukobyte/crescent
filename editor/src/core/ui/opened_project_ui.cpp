@@ -49,7 +49,7 @@ void OpenedProjectUI::ProcessWindows() {
         .size = ImVec2((float) windowWidth, (float) windowHeight),
         .onMainWindowUpdateCallback = [] {
             static ConsoleLogger* consoleLogger = ConsoleLogger::Get();
-            static std::shared_ptr<ConsoleLogCapture> processLogCapture;
+//            static std::shared_ptr<ConsoleLogCapture> processLogCapture;
             static ProcessRunner engineProcess;
             static bool wasProcessRunningLastFrame = false;
             const bool isProcessRunning = engineProcess.IsRunning();
@@ -57,7 +57,7 @@ void OpenedProjectUI::ProcessWindows() {
                 if (!ProjectProperties::Get()->initialNodePath.empty()) {
                     // Clear console log
                     consoleLogger->Clear();
-                    processLogCapture = consoleLogger->CaptureOutput();
+//                    processLogCapture = consoleLogger->CaptureOutput();
                     if (!engineProcess.Start(editorContext->GetEngineBinaryPath(), editorContext->GetEngineBinaryProgramArgs())) {
                         ska_logger_error("Failed to start engine process at path '%s'",
                                         editorContext->GetEngineBinaryPath().c_str());
@@ -83,12 +83,12 @@ void OpenedProjectUI::ProcessWindows() {
                 }
             }
             if (!isProcessRunning && wasProcessRunningLastFrame) {
-                processLogCapture.reset();
+//                processLogCapture.reset();
             }
             ImGui::SameLine();
             if (ImGui::Button("[]") && isProcessRunning) {
                 engineProcess.Stop();
-                processLogCapture.reset();
+//                processLogCapture.reset();
             }
             wasProcessRunningLastFrame = isProcessRunning;
         },

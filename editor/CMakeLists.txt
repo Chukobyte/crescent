@@ -32,6 +32,10 @@ endif ()
 
 target_compile_options(${PROJECT_NAME} PUBLIC ${flags})
 
+if (NOT DEFINED IS_CI_BUILD)
+    set(IS_CI_BUILD "false")
+endif()
+
 if (WIN32)
     set(OS_BIN_DIR "windows")
 elseif (APPLE)
@@ -55,11 +59,6 @@ if (NOT IS_CI_BUILD)
             $<TARGET_FILE_DIR:${PROJECT_NAME}>/../fa-solid-900.ttf
             )
 
-    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy_directory
-            ${CMAKE_SOURCE_DIR}/assets
-            ${CMAKE_BINARY_DIR}/assets
-    )
     add_custom_command(TARGET ${PROJECT_NAME} PRE_BUILD
             COMMAND ${CMAKE_COMMAND} -E make_directory
             $<TARGET_FILE_DIR:${PROJECT_NAME}>/../bin
