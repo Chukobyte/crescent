@@ -18,10 +18,6 @@ file(GLOB_RECURSE CRESCENT_SRC src/core/*.c src/core/*.h)
 add_library(${PROJECT_NAME} STATIC ${CRESCENT_SRC})
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
-if (NOT DEFINED IS_CI_BUILD)
-    set(IS_CI_BUILD "false")
-endif()
-
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     target_link_libraries(${PROJECT_NAME} PUBLIC Ws2_32 seika cJSON pocketpy)
 elseif (WIN32)
@@ -35,7 +31,7 @@ endif ()
 target_compile_options(${PROJECT_NAME} PUBLIC ${flags})
 
 # Copy directories over that are needed to run the engine and games
-if (IS_CI_BUILD STREQUAL "false")
+if (NOT IS_CI_BUILD)
     add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_directory
             ${PROJECT_SOURCE_DIR}/../assets

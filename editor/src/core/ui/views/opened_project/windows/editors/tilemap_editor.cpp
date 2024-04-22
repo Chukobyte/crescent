@@ -1,5 +1,7 @@
 #include "tilemap_editor.h"
 
+//#include <format>
+
 #include <imgui.h>
 
 #include <seika/rendering/renderer.h>
@@ -10,6 +12,35 @@
 #include "../../../../../asset_manager.h"
 #include "../../../../../project_properties.h"
 
+namespace {
+    SkaVector2i GetMouseTileCoords(const SkaSize2Di& tileSize) {
+        const auto* gameProperties = ProjectProperties::Get();
+        const ImVec2 mousePos = ImGui::GetMousePos();
+        const ImVec2 windowPos = ImGui::GetWindowPos();
+        const ImVec2 windowSize = ImGui::GetWindowSize();
+        const ImVec2 contentRegionMin = ImGui::GetWindowContentRegionMin();
+        // Calculate scaling factors based on the difference between actual window size and game resolution.
+        const SkaSize2D gameResolution = gameProperties->GetResolutionSize();
+        const SkaVector2 scaleFactor = {
+            gameResolution.w / windowSize.x,
+            gameResolution.h / windowSize.y
+        };
+        const SkaVector2 relativeMousePos = {
+            (mousePos.x - windowPos.x - contentRegionMin.x) * scaleFactor.x,
+            (mousePos.y - windowPos.y - contentRegionMin.y) * scaleFactor.y
+        };
+        SkaVector2i tileCoords = {
+            static_cast<int32>(relativeMousePos.x) / tileSize.w,
+            static_cast<int32>(relativeMousePos.y) / tileSize.h
+        };
+        // TODO: Make a range based on something (e.g.  max map size)
+        const SkaVector2i tilePosMax = {999999,999999 };
+        tileCoords.x = ska_math_clamp_int(tileCoords.x, 0, tilePosMax.x - 1);
+        tileCoords.y = ska_math_clamp_int(tileCoords.y, 0, tilePosMax.y - 1);
+
+        return tileCoords;
+    }
+}
 
 static TilemapComp* cachedComp = nullptr;
 static SkaTexture* colorRectTexture = nullptr;
@@ -26,25 +57,25 @@ void TilemapEditor::Process(SceneNode* node, TilemapComp* tilemapComp) {
     selectedNodeUID = node->GetUID();
     cachedComp = tilemapComp;
 
-    if (ImGui::IsMouseClicked(0) && !startedThisFrame) {
-        const auto tileCoords = GetMouseTileCoords();
+    if (ImGui::IsMouseClicked(0) && !startedThisFrame && cachedState.isWindowFocused && cachedState.isWindowHovered) {
+        const auto* tileCoords = &cachedState.mouseTileCoord;
         auto tilemap = cachedComp->GetInternalComp().tilemap;
-        const auto tileData = cre_tilemap_get_tile_data(tilemap, &tileCoords);
+        const auto tileData = cre_tilemap_get_tile_data(tilemap, tileCoords);
+        // TODO: Do this better...
+        static const auto renderCoords = SkaVector2i{ .x = 0, .y = 0 }; // TODO: Take in render coords
         if (tileData) {
-            if (tileData->isActive) {
-                cre_tilemap_set_tile_active(tilemap, &tileCoords, false);
-            } else {
-                const auto renderCoords = SkaVector2i{ .x = 0, .y = 0 };
-                cre_tilemap_set_tile_render_coord(tilemap, &tileCoords, &renderCoords);
-            }
-            cre_tilemap_commit_active_tile_changes(tilemap);
+            cre_tilemap_set_tile_active(tilemap, tileCoords, !tileData->isActive);
+        } else {
+            cre_tilemap_set_tile_render_coord(tilemap, tileCoords, &renderCoords);
         }
+        cre_tilemap_commit_active_tile_changes(tilemap);
     }
 }
 
 void TilemapEditor::End() {
     if (isProcessing) {
         isProcessing = false;
+        cachedState.Reset();
         selectedNodeUID.reset();
     }
 }
@@ -53,9 +84,10 @@ bool TilemapEditor::IsNodeSelected(SceneNode* node) {
     return selectedNodeUID.has_value() && selectedNodeUID.value() == node->GetUID();
 }
 
-std::vector<ImGuiHelper::FontRenderTarget> TilemapEditor::GetFontRenderTargets() const {
+std::vector<ImGuiHelper::FontRenderTarget> TilemapEditor::GetFontRenderTargets() {
 //    if (isProcessing) {
-//        const auto tileCoords = GetMouseTileCoords();
+//        UpdateCachedState();
+//        const auto& tileCoords = cachedState.mouseTileCoord;
 //        const std::string formattedText = std::format("Tile Coords: ({}, {})", tileCoords.x, tileCoords.y);
 //
 //        return {
@@ -72,9 +104,10 @@ std::vector<ImGuiHelper::FontRenderTarget> TilemapEditor::GetFontRenderTargets()
     return {};
 }
 
-std::vector<ImGuiHelper::TextureRenderTarget> TilemapEditor::GetTextureRenderTargets() const {
-    if (isProcessing) {
-        const auto tileCoords = GetMouseTileCoords();
+std::vector<ImGuiHelper::TextureRenderTarget> TilemapEditor::GetTextureRenderTargets() {
+    if (isProcessing && ImGui::IsWindowFocused()) {
+        UpdateCachedState();
+        const auto& tileCoords = cachedState.mouseTileCoord;
         const auto tileSize = cachedComp->GetTileSize();
         return {
                 {
@@ -97,26 +130,10 @@ std::vector<ImGuiHelper::TextureRenderTarget> TilemapEditor::GetTextureRenderTar
     return {};
 }
 
-SkaVector2i TilemapEditor::GetMouseTileCoords() {
-    const auto* gameProperties = ProjectProperties::Get();
-    const auto tileSize = cachedComp->GetTileSize();
-    const auto mousePos = ImGui::GetMousePos();
-    const auto windowPos = ImGui::GetWindowPos();
-    const auto windowSize = ImGui::GetWindowSize();
-    const SkaVector2 scroll = { .x = ImGui::GetScrollX(), .y = ImGui::GetScrollY() };
-    const SkaVector2 zoom = {
-            .x = windowSize.x / static_cast<float>(gameProperties->resolutionWidth),
-            .y = windowSize.y / static_cast<float>(gameProperties->resolutionHeight)
-    };
-    const SkaVector2 mousePosRelative = {
-            .x = mousePos.x - windowPos.x + scroll.x,
-            .y = mousePos.y - windowPos.y + scroll.y
-    };
-    SkaVector2i tileCoords = {
-            .x = static_cast<int>(mousePosRelative.x / ((float)tileSize.w * zoom.x)),
-            .y = static_cast<int>(mousePosRelative.y / ((float)tileSize.h * zoom.y))
-    };
-    tileCoords.x = ska_math_clamp_int(tileCoords.x, 0, tileSize.w);
-    tileCoords.y = ska_math_clamp_int(tileCoords.y, 0, tileSize.h);
-    return tileCoords;
+void TilemapEditor::UpdateCachedState() {
+    cachedState.isWindowFocused = ImGui::IsWindowFocused();
+    cachedState.isWindowHovered = ImGui::IsWindowHovered();
+    if (cachedState.isWindowFocused && cachedState.isWindowHovered) {
+        cachedState.mouseTileCoord = GetMouseTileCoords(cachedComp->GetTileSize());
+    }
 }

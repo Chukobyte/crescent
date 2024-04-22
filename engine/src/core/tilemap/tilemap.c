@@ -127,7 +127,7 @@ void cre_tilemap_set_tile_data(CreTilemap* tilemap, const CreTileData* tileData)
                 for (int y = cols - 1; y >= 0; y--) {
                     if (tileData->position.x != x && tileData->position.y != y) {
                         const CreTileData* data = (CreTileData*)ska_array2d_get(tilemap->tilesArray, x, y);
-                        if (data->isActive) {
+                        if (data && data->isActive) {
                             newWidth = x + 1;
                             break;
                         }
@@ -144,6 +144,7 @@ void cre_tilemap_set_tile_data(CreTilemap* tilemap, const CreTileData* tileData)
                 for (int y = cols - 1; y >= 0; y--) {
                     if (tileData->position.x != x && tileData->position.y != y) {
                         const CreTileData* data = (CreTileData*)ska_array2d_get(tilemap->tilesArray, x, y);
+                        SKA_ASSERT_FMT(data, "Tile data at pos (%d, %d) is null, this should never happen!", x, y);
                         if (data->isActive) {
                             newHeight = y + 1;
                             break;
@@ -212,7 +213,6 @@ CreTileBitmask cre_tilemap_get_tile_bitmask(const CreTilemap* tilemap, const Ska
 
 const CreTileData* cre_tilemap_get_tile_data(const CreTilemap* tilemap, const SkaVector2i* position) {
     const CreTileData* tileData = (CreTileData*)ska_array2d_get(tilemap->tilesArray, position->x, position->y);
-    SKA_ASSERT(tileData);
     return tileData;
 }
 
