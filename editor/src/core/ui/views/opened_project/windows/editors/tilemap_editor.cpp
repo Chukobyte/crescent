@@ -1,6 +1,6 @@
 #include "tilemap_editor.h"
 
-#include <format>
+//#include <format>
 
 #include <imgui.h>
 
@@ -85,22 +85,22 @@ bool TilemapEditor::IsNodeSelected(SceneNode* node) {
 }
 
 std::vector<ImGuiHelper::FontRenderTarget> TilemapEditor::GetFontRenderTargets() {
-    if (isProcessing) {
-        UpdateCachedState();
-        const auto& tileCoords = cachedState.mouseTileCoord;
-        const std::string formattedText = std::format("Tile Coords: ({}, {})", tileCoords.x, tileCoords.y);
-
-        return {
-                {
-                    .font = AssetManager::Get()->GetFont(CRE_DEFAULT_FONT_ASSET.uid),
-                    .text = formattedText,
-                    .position = SkaVector2{ 16.0f, 16.0f },
-                    .scale = 1.0f,
-                    .color = SKA_COLOR_WHITE,
-                    .zIndex = SKA_RENDERER_MAX_Z_INDEX
-                }
-        };
-    }
+//    if (isProcessing) {
+//        UpdateCachedState();
+//        const auto& tileCoords = cachedState.mouseTileCoord;
+//        const std::string formattedText = std::format("Tile Coords: ({}, {})", tileCoords.x, tileCoords.y);
+//
+//        return {
+//                {
+//                    .font = AssetManager::Get()->GetFont(CRE_DEFAULT_FONT_ASSET.uid),
+//                    .text = formattedText,
+//                    .position = SkaVector2{ 16.0f, 16.0f },
+//                    .scale = 1.0f,
+//                    .color = SKA_COLOR_WHITE,
+//                    .zIndex = SKA_RENDERER_MAX_Z_INDEX
+//                }
+//        };
+//    }
     return {};
 }
 
