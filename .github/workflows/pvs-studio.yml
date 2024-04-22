@@ -44,7 +44,7 @@ jobs:
 
       - name: run pvs studio
         run: |
-          pvs-studio-analyzer analyze -f builds/compile_commands.json -j -e include -e docs -e assets -e test_games
+          pvs-studio-analyzer analyze -f builds/compile_commands.json -j -e include -e docs -e assets -e test_games --disableLicenseExpirationCheck
 
       - name: convert pvs studio report
         run: |
