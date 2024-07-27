@@ -33,31 +33,32 @@ static void set_node_component_from_type(SkaEntity entity, const char* classPath
 
     const NodeBaseInheritanceType inheritanceType = node_get_type_inheritance(baseType);
 
-    if (SKA_FLAG_CONTAINS(inheritanceType, NodeBaseInheritanceType_NODE2D)) {
+    if (SKA_FLAG_CONTAINS(NodeBaseInheritanceType_NODE2D, inheritanceType)) {
+    // if (SKA_FLAG_CONTAINS(inheritanceType, NodeBaseInheritanceType_NODE2D)) {
         ska_ecs_component_manager_set_component(entity, TRANSFORM2D_COMPONENT_INDEX, transform2d_component_create());
     }
-    if (SKA_FLAG_CONTAINS(inheritanceType, NodeBaseInheritanceType_SPRITE)) {
+    if (SKA_FLAG_CONTAINS(NodeBaseInheritanceType_SPRITE, inheritanceType)) {
         ska_ecs_component_manager_set_component(entity, SPRITE_COMPONENT_INDEX, sprite_component_create());
     }
-    if (SKA_FLAG_CONTAINS(inheritanceType, NodeBaseInheritanceType_ANIMATED_SPRITE)) {
+    if (SKA_FLAG_CONTAINS(NodeBaseInheritanceType_ANIMATED_SPRITE, inheritanceType)) {
         ska_ecs_component_manager_set_component(entity, ANIMATED_SPRITE_COMPONENT_INDEX, animated_sprite_component_create());
     }
-    if (SKA_FLAG_CONTAINS(inheritanceType, NodeBaseInheritanceType_TEXT_LABEL)) {
+    if (SKA_FLAG_CONTAINS(NodeBaseInheritanceType_TEXT_LABEL, inheritanceType)) {
         ska_ecs_component_manager_set_component(entity, TEXT_LABEL_COMPONENT_INDEX, text_label_component_create());
     }
-    if (SKA_FLAG_CONTAINS(inheritanceType, NodeBaseInheritanceType_COLLIDER2D)) {
+    if (SKA_FLAG_CONTAINS(NodeBaseInheritanceType_COLLIDER2D, inheritanceType)) {
         ska_ecs_component_manager_set_component(entity, COLLIDER2D_COMPONENT_INDEX, collider2d_component_create());
     }
-    if (SKA_FLAG_CONTAINS(inheritanceType, NodeBaseInheritanceType_COLOR_RECT)) {
+    if (SKA_FLAG_CONTAINS(NodeBaseInheritanceType_COLOR_RECT, inheritanceType)) {
         ska_ecs_component_manager_set_component(entity, COLOR_RECT_COMPONENT_INDEX, color_rect_component_create());
     }
-    if (SKA_FLAG_CONTAINS(inheritanceType, NodeBaseInheritanceType_PARALLAX)) {
+    if (SKA_FLAG_CONTAINS(NodeBaseInheritanceType_PARALLAX, inheritanceType)) {
         ska_ecs_component_manager_set_component(entity, PARALLAX_COMPONENT_INDEX, parallax_component_create());
     }
-    if (SKA_FLAG_CONTAINS(inheritanceType, NodeBaseInheritanceType_PARTICLES2D)) {
+    if (SKA_FLAG_CONTAINS(NodeBaseInheritanceType_PARTICLES2D, inheritanceType)) {
         ska_ecs_component_manager_set_component(entity, PARTICLES2D_COMPONENT_INDEX, particles2d_component_create());
     }
-    if (SKA_FLAG_CONTAINS(inheritanceType, NodeBaseInheritanceType_TILEMAP)) {
+    if (SKA_FLAG_CONTAINS(NodeBaseInheritanceType_TILEMAP, inheritanceType)) {
         ska_ecs_component_manager_set_component(entity, TILEMAP_COMPONENT_INDEX, tilemap_component_create());
     }
 }
