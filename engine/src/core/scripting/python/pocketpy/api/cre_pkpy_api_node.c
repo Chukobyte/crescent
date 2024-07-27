@@ -34,7 +34,6 @@ static void set_node_component_from_type(SkaEntity entity, const char* classPath
     const NodeBaseInheritanceType inheritanceType = node_get_type_inheritance(baseType);
 
     if (SKA_FLAG_CONTAINS(NodeBaseInheritanceType_NODE2D, inheritanceType)) {
-    // if (SKA_FLAG_CONTAINS(inheritanceType, NodeBaseInheritanceType_NODE2D)) {
         ska_ecs_component_manager_set_component(entity, TRANSFORM2D_COMPONENT_INDEX, transform2d_component_create());
     }
     if (SKA_FLAG_CONTAINS(NodeBaseInheritanceType_SPRITE, inheritanceType)) {
