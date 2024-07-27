@@ -230,7 +230,8 @@ void pkpy_sc_on_script_context_destroy() {
     cre_pkpy_entity_instance_cache_finalize(cre_pkpy_vm);
 
     SKA_ASSERT(cre_pkpy_vm);
-    pkpy_delete_vm(cre_pkpy_vm);
+    // TODO: Known memory leak here due to issue with deleting pkpy vm multiple times during testing, not an issue in real world since we won't re-init the vm
+    // pkpy_delete_vm(cre_pkpy_vm);
     cre_pkpy_vm = NULL;
 
     SKA_MEM_FREE(pkpy_script_context);

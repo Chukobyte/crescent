@@ -26,8 +26,9 @@ void cre_pkpy_entity_instance_cache_initialize(pkpy_vm* vm) {
 
 void cre_pkpy_entity_instance_cache_finalize(pkpy_vm* vm) {
     if (entity_instance_cache_is_initialized) {
-        pkpy_exec(vm, "crescent_internal_py.CRE_ENTITY_TO_NODE_MAP.clear()");
-        SKA_ASSERT(!cre_pkpy_util_print_error_message(vm));
+        // TODO: Similar to 'pkpy_sc_on_script_context_destroy' commenting out since we're leaking the vm instance for now
+        // pkpy_exec(vm, "crescent_internal_py.CRE_ENTITY_TO_NODE_MAP.clear()");
+        // SKA_ASSERT(!cre_pkpy_util_print_error_message(vm));
         entity_instance_cache_is_initialized = false;
     }
 }
