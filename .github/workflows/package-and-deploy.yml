@@ -132,7 +132,7 @@ jobs:
 
   # MACOSX BUILD
   macosx-build:
-    runs-on: macOS-11
+    runs-on: macOS-latest
 
     steps:
       - uses: actions/checkout@v1
