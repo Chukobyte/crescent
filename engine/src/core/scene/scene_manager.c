@@ -516,27 +516,27 @@ SceneTreeNode* cre_scene_manager_setup_json_scene_node(JsonSceneNode* jsonSceneN
         ska_ecs_component_manager_set_component(node->entity, TEXT_LABEL_COMPONENT_INDEX, textLabelComponent);
     }
     if (jsonSceneNode->components[SCRIPT_COMPONENT_INDEX] != NULL) {
-        ScriptComponent* scriptComponent = script_component_copy((ScriptComponent*)jsonSceneNode->components[SCRIPT_COMPONENT_INDEX]);
+        ScriptComponent* scriptComponent = script_component_copy(jsonSceneNode->components[SCRIPT_COMPONENT_INDEX]);
         ska_ecs_component_manager_set_component(node->entity, SCRIPT_COMPONENT_INDEX, scriptComponent);
     }
     if (jsonSceneNode->components[COLLIDER2D_COMPONENT_INDEX] != NULL) {
-        Collider2DComponent* collider2DComponent = collider2d_component_copy((Collider2DComponent*)jsonSceneNode->components[COLLIDER2D_COMPONENT_INDEX]);
+        Collider2DComponent* collider2DComponent = collider2d_component_copy(jsonSceneNode->components[COLLIDER2D_COMPONENT_INDEX]);
         ska_ecs_component_manager_set_component(node->entity, COLLIDER2D_COMPONENT_INDEX, collider2DComponent);
     }
     if (jsonSceneNode->components[COLOR_RECT_COMPONENT_INDEX] != NULL) {
-        ColorRectComponent* colorSquareComponent = color_rect_component_copy((ColorRectComponent*)jsonSceneNode->components[COLOR_RECT_COMPONENT_INDEX]);
+        ColorRectComponent* colorSquareComponent = color_rect_component_copy(jsonSceneNode->components[COLOR_RECT_COMPONENT_INDEX]);
         ska_ecs_component_manager_set_component(node->entity, COLOR_RECT_COMPONENT_INDEX, colorSquareComponent);
     }
     if (jsonSceneNode->components[PARALLAX_COMPONENT_INDEX] != NULL) {
-        ParallaxComponent* parallaxComponent = parallax_component_copy((ParallaxComponent*)jsonSceneNode->components[PARALLAX_COMPONENT_INDEX]);
+        ParallaxComponent* parallaxComponent = parallax_component_copy(jsonSceneNode->components[PARALLAX_COMPONENT_INDEX]);
         ska_ecs_component_manager_set_component(node->entity, PARALLAX_COMPONENT_INDEX, parallaxComponent);
     }
     if (jsonSceneNode->components[PARTICLES2D_COMPONENT_INDEX] != NULL) {
-        Particles2DComponent* particles2DComponent = particles2d_component_copy((Particles2DComponent*)jsonSceneNode->components[PARTICLES2D_COMPONENT_INDEX]);
+        Particles2DComponent* particles2DComponent = particles2d_component_copy(jsonSceneNode->components[PARTICLES2D_COMPONENT_INDEX]);
         ska_ecs_component_manager_set_component(node->entity, PARTICLES2D_COMPONENT_INDEX, particles2DComponent);
     }
     if (jsonSceneNode->components[TILEMAP_COMPONENT_INDEX] != NULL) {
-        TilemapComponent* tilemapComponent = tilemap_component_copy((TilemapComponent*)jsonSceneNode->components[TILEMAP_COMPONENT_INDEX]);
+        TilemapComponent* tilemapComponent = tilemap_component_copy(jsonSceneNode->components[TILEMAP_COMPONENT_INDEX]);
         tilemapComponent->tilemap->tileset.texture = ska_asset_manager_get_texture(jsonSceneNode->spriteTexturePath);
         ska_ecs_component_manager_set_component(node->entity, TILEMAP_COMPONENT_INDEX, tilemapComponent);
     }
