@@ -4,9 +4,11 @@
 #include <utility>
 #include <vector>
 
+#include <seika/audio/audio.h>
+#include <seika/math/math.h>
+
 #include "utils/json_helper.h"
 #include "utils/singleton.h"
-#include "seika/math/math.h"
 
 struct TextureAsset {
     TextureAsset() = default;
@@ -83,13 +85,13 @@ class ProjectProperties : public Singleton<ProjectProperties> {
   public:
     std::string gameTitle;
     std::string initialNodePath;
-    int windowWidth;
-    int windowHeight;
-    int resolutionWidth;
-    int resolutionHeight;
-    uint32_t audioWavSampleRate;
+    int32 windowWidth;
+    int32 windowHeight;
+    int32 resolutionWidth;
+    int32 resolutionHeight;
+    uint32 audioWavSampleRate = SKA_AUDIO_SOURCE_DEFAULT_WAV_SAMPLE_RATE;
     bool maintainAspectRatio = false;
-    int targetFPS;
+    int32 targetFPS;
     bool areCollidersVisible = false;
     bool vsyncEnabled = false;
     std::string version;
