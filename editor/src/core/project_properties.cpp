@@ -98,6 +98,15 @@ void ProjectProperties::LoadPropertiesFromConfig(const char* filePath) {
     targetFPS = JsonHelper::Get<int>(propertyJson, "target_fps");
     areCollidersVisible = JsonHelper::Get<bool>(propertyJson, "colliders_visible");
     version = JsonHelper::GetDefault<std::string>(propertyJson, "version", "0.0.1");
+    if (JsonHelper::HasKey(propertyJson, "window_background_color"))
+    {
+        auto windowBackgroundColorJson = JsonHelper::Get<nlohmann::json>(propertyJson, "window_background_color");
+        const int r = JsonHelper::Get<int>(windowBackgroundColorJson, "r");
+        const int g = JsonHelper::Get<int>(windowBackgroundColorJson, "g");
+        const int b = JsonHelper::Get<int>(windowBackgroundColorJson, "b");
+        const int a = JsonHelper::Get<int>(windowBackgroundColorJson, "a");
+        windowBackgroundColor = SkaColor{ r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f };
+    }
     assets.SetAssets(JsonHelper::Get<nlohmann::json>(propertyJson, "assets"));
     inputs.SetInputs(JsonHelper::Get<nlohmann::json>(propertyJson, "inputs"));
     ska_logger_debug("Loading game properties finished");
@@ -168,6 +177,7 @@ nlohmann::ordered_json ProjectProperties::ToJson() const {
     configJson["initial_node_path"] = initialNodePath;
     configJson["colliders_visible"] = areCollidersVisible;
     configJson["vsync_enabled"] = vsyncEnabled;
+    configJson["window_background_color"] = JsonHelper::ColorToJson(windowBackgroundColor);
     configJson["version"] = version;
 
     // Assets

@@ -93,6 +93,7 @@ class ProjectProperties : public Singleton<ProjectProperties> {
     bool maintainAspectRatio = false;
     int32 targetFPS;
     bool areCollidersVisible = false;
+    SkaColor windowBackgroundColor = {33.0f / 255.0f, 33.0f / 255.0f, 33.0f / 255.0f, 1.0f };
     bool vsyncEnabled = false;
     std::string version;
     ProjectAssets assets;
