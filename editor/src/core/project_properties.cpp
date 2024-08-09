@@ -98,9 +98,8 @@ void ProjectProperties::LoadPropertiesFromConfig(const char* filePath) {
     targetFPS = JsonHelper::Get<int>(propertyJson, "target_fps");
     areCollidersVisible = JsonHelper::Get<bool>(propertyJson, "colliders_visible");
     version = JsonHelper::GetDefault<std::string>(propertyJson, "version", "0.0.1");
-    if (JsonHelper::HasKey(propertyJson, "window_background_color"))
-    {
-        auto windowBackgroundColorJson = JsonHelper::Get<nlohmann::json>(propertyJson, "window_background_color");
+    if (JsonHelper::HasKey(propertyJson, "window_background_color")) {
+        const auto windowBackgroundColorJson = JsonHelper::Get<nlohmann::json>(propertyJson, "window_background_color");
         const int r = JsonHelper::Get<int>(windowBackgroundColorJson, "r");
         const int g = JsonHelper::Get<int>(windowBackgroundColorJson, "g");
         const int b = JsonHelper::Get<int>(windowBackgroundColorJson, "b");
