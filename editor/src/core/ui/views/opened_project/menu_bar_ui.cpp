@@ -203,6 +203,9 @@ ImGuiHelper::MenuBar OpenedProjectUI::MenuBar::GetMenuBar() {
                                     static ImGuiHelper::CheckBox areCollidersVisibleCheckBox("Are Colliders Visible", projectProperties->areCollidersVisible);
                                     ImGuiHelper::BeginCheckBox(areCollidersVisibleCheckBox);
 
+                                    static ImGuiHelper::ColorEdit4 windowBackgroundColorEdit("Window Background Color", (float*)&projectProperties->windowBackgroundColor);
+                                    ImGuiHelper::BeginColorEdit4(windowBackgroundColorEdit);
+
                                     static ImGuiHelper::InputText versionText("Version", projectProperties->version);
                                     ImGuiHelper::BeginInputText(versionText);
                                 },

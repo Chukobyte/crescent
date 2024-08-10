@@ -5,9 +5,9 @@ extern "C" {
 #endif
 
 #include <stdbool.h>
-#include <stddef.h>
 
 #include <seika/defines.h>
+#include <seika/math/math.h>
 
 typedef struct CREAssetAudioSource {
     char* file_path;
@@ -64,6 +64,7 @@ typedef struct CREGameProperties {
     char* initialScenePath;
     bool areCollidersVisible;
     bool vsyncEnabled;
+    SkaColor windowBackgroundColor;
     CREAssetAudioSource audioSources[CRE_PROPERTIES_ASSET_LIMIT];
     size_t audioSourceCount;
     CREAssetTexture textures[CRE_PROPERTIES_ASSET_LIMIT];

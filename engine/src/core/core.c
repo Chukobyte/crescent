@@ -248,7 +248,7 @@ void cre_render() {
     // Gather render data from ec systems
     ska_ecs_system_event_render_systems();
     // Actually render
-    ska_window_render();
+    ska_window_render(&gameProperties->windowBackgroundColor);
 }
 
 bool cre_is_running() {

@@ -123,6 +123,11 @@ CREGameProperties* cre_json_load_config_file(const char* filePath) {
         // VSync Enabled
         properties->vsyncEnabled = json_get_bool_default(configJson, "vsync_enabled", properties->vsyncEnabled);
         ska_logger_debug("VSync Enabled '%s'", properties->vsyncEnabled == true ? "true" : "false");
+        // Window Background Color
+        const SkaColor defaultBackgroundColor = (SkaColor){33.0f / 255.0f, 33.0f / 255.0f, 33.0f / 255.0f, 1.0f };
+        properties->windowBackgroundColor = json_get_linear_color_default(configJson, "window_background_color", defaultBackgroundColor);
+        ska_logger_debug("Window Background Color (%f, %f, %f, %f)",
+            properties->windowBackgroundColor.r, properties->windowBackgroundColor.g, properties->windowBackgroundColor.b, properties->windowBackgroundColor.a);
 
         cre_json_configure_assets(configJson, properties);
 
