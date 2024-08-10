@@ -137,7 +137,8 @@ void cre_scene_manager_process_queued_creation_entities() {
 #ifdef CRE_SCENE_MANAGER_RENDER_INTERPOLATE_TRANSFORM2D_ALPHA
         Transform2DComponent* transformComponent = (Transform2DComponent*)ska_ecs_component_manager_get_component(queuedEntity, TRANSFORM2D_COMPONENT_INDEX);
         if (transformComponent) {
-            entityPrevGlobalTransforms[queuedEntity] = transformComponent->localTransform; // TODO: globalTransform isn't filled out yet, change that...
+            SkaTransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(queuedEntity, transformComponent);
+            entityPrevGlobalTransforms[queuedEntity] = ska_transform2d_model_convert_to_transform(globalTransform);
         }
 #endif
     }
