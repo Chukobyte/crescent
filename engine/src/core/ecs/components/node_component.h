@@ -38,14 +38,14 @@ typedef enum NodeBaseInheritanceType {
     NodeBaseInheritanceType_INVALID = -1,
     NodeBaseInheritanceType_NODE = NodeBaseType_NODE,
     NodeBaseInheritanceType_NODE2D = NodeBaseType_NODE | NodeBaseType_NODE2D,
-    NodeBaseInheritanceType_SPRITE = NodeBaseType_NODE | NodeBaseType_NODE2D | NodeBaseType_SPRITE,
-    NodeBaseInheritanceType_ANIMATED_SPRITE = NodeBaseType_NODE | NodeBaseType_NODE2D | NodeBaseType_ANIMATED_SPRITE,
-    NodeBaseInheritanceType_TEXT_LABEL = NodeBaseType_NODE | NodeBaseType_NODE2D | NodeBaseType_TEXT_LABEL,
-    NodeBaseInheritanceType_COLLIDER2D = NodeBaseType_NODE | NodeBaseType_NODE2D | NodeBaseType_COLLIDER2D,
-    NodeBaseInheritanceType_COLOR_RECT = NodeBaseType_NODE | NodeBaseType_NODE2D | NodeBaseType_COLOR_RECT,
-    NodeBaseInheritanceType_PARALLAX = NodeBaseType_NODE | NodeBaseType_NODE2D | NodeBaseType_PARALLAX,
-    NodeBaseInheritanceType_PARTICLES2D = NodeBaseType_NODE | NodeBaseType_NODE2D | NodeBaseType_PARTICLES2D,
-    NodeBaseInheritanceType_TILEMAP = NodeBaseType_NODE | NodeBaseType_NODE2D | NodeBaseType_TILEMAP,
+    NodeBaseInheritanceType_SPRITE = NodeBaseInheritanceType_NODE2D | NodeBaseType_SPRITE,
+    NodeBaseInheritanceType_ANIMATED_SPRITE = NodeBaseInheritanceType_NODE2D | NodeBaseType_ANIMATED_SPRITE,
+    NodeBaseInheritanceType_TEXT_LABEL = NodeBaseInheritanceType_NODE2D | NodeBaseType_TEXT_LABEL,
+    NodeBaseInheritanceType_COLLIDER2D = NodeBaseInheritanceType_NODE2D | NodeBaseType_COLLIDER2D,
+    NodeBaseInheritanceType_COLOR_RECT = NodeBaseInheritanceType_NODE2D | NodeBaseType_COLOR_RECT,
+    NodeBaseInheritanceType_PARALLAX = NodeBaseInheritanceType_NODE2D | NodeBaseType_PARALLAX,
+    NodeBaseInheritanceType_PARTICLES2D = NodeBaseInheritanceType_NODE2D | NodeBaseType_PARTICLES2D,
+    NodeBaseInheritanceType_TILEMAP = NodeBaseInheritanceType_NODE2D | NodeBaseType_TILEMAP,
 } NodeBaseInheritanceType;
 
 typedef struct NodeTimeDilation {

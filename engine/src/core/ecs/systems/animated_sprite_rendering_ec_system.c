@@ -55,7 +55,7 @@ void animated_sprite_render(SkaECSSystem* system) {
                 currentFrame = animatedSpriteComponent->currentAnimation.animationFrames[newIndex];
                 if (newIndex + 1 == animatedSpriteComponent->currentAnimation.frameCount) {
                     // Notify the observers that the animation has finished
-                    ska_event_notify_observers(&animatedSpriteComponent->onFrameChanged, &(SkaSubjectNotifyPayload){
+                    ska_event_notify_observers(&animatedSpriteComponent->onAnimationFinished, &(SkaSubjectNotifyPayload){
                         .data = &(AnimatedSpriteAnimationFinishedPayload){ .entity = entity, .animation = &animatedSpriteComponent->currentAnimation }
                     });
                     if (!animatedSpriteComponent->currentAnimation.doesLoop) {

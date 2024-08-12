@@ -1,5 +1,5 @@
 import crescent_internal
-from crescent import Node, NodeType
+from crescent import Node2D, NodeType
 
 start_call_count = 0
 process_call_count = 0
@@ -21,8 +21,11 @@ def run_end_of_test_asserts() -> bool:
     return True
 
 
-class TestNode(Node):
+# TODO: Node breaks on not calling '_start', '_end', etc... look into later or don't user Node...
+
+class TestNode(Node2D):
     def _start(self) -> None:
+        print("No")
         global start_call_count
         start_call_count += 1
 
@@ -37,7 +40,3 @@ class TestNode(Node):
     def _end(self) -> None:
         global end_call_count
         end_call_count += 1
-
-    @staticmethod
-    def new() -> "TestNode":
-        return crescent_internal.node_new("test_custom_nodes", "TestNode", NodeType.Node)
