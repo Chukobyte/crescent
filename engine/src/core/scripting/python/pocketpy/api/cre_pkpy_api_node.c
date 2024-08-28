@@ -25,6 +25,22 @@
 #include "../../../../ecs/components/particles2d_component.h"
 #include "../../../../ecs/components/tilemap_component.h"
 
+typedef struct CreColor {
+    int32 r;
+    int32 g;
+    int32 b;
+    int32 a;
+} CreColor;
+
+static CreColor convert_ska_color_to_cre(const SkaColor* color) {
+    return (CreColor){
+        .r = (int32)(color->r * 255.0f),
+        .g = (int32)(color->g * 255.0f),
+        .b = (int32)(color->b * 255.0f),
+        .a = (int32)(color->a * 255.0f)
+    };
+}
+
 static void set_node_component_from_type(SkaEntity entity, const char* classPath, const char* className, NodeBaseType baseType) {
 
     // Set components that should be set for a base node (that has invoked .new() from scripting)
@@ -557,28 +573,26 @@ int32 cre_pkpy_api_sprite_get_modulate(pkpy_vm* vm) {
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
     const SpriteComponent* spriteComponent = (SpriteComponent*)ska_ecs_component_manager_get_component(entity, SPRITE_COMPONENT_INDEX);
-    pkpy_push_float(vm, (f64)spriteComponent->modulate.r);
-    pkpy_push_float(vm, (f64)spriteComponent->modulate.g);
-    pkpy_push_float(vm, (f64)spriteComponent->modulate.b);
-    pkpy_push_float(vm, (f64)spriteComponent->modulate.a);
+    const CreColor color = convert_ska_color_to_cre(&spriteComponent->modulate);
+    pkpy_push_int(vm, color.r);
+    pkpy_push_int(vm, color.g);
+    pkpy_push_int(vm, color.b);
+    pkpy_push_int(vm, color.a);
     return 4;
 }
 
 int32 cre_pkpy_api_sprite_set_modulate(pkpy_vm* vm) {
     int32 pyEntityId;
-    f64 pyModulateR;
-    f64 pyModulateG;
-    f64 pyModulateB;
-    f64 pyModulateA;
+    int32 pyModulateR, pyModulateG, pyModulateB, pyModulateA;
     pkpy_to_int(vm, 0, &pyEntityId);
-    pkpy_to_float(vm, 1, &pyModulateR);
-    pkpy_to_float(vm, 2, &pyModulateG);
-    pkpy_to_float(vm, 3, &pyModulateB);
-    pkpy_to_float(vm, 4, &pyModulateA);
+    pkpy_to_int(vm, 1, &pyModulateR);
+    pkpy_to_int(vm, 2, &pyModulateG);
+    pkpy_to_int(vm, 3, &pyModulateB);
+    pkpy_to_int(vm, 4, &pyModulateA);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
     SpriteComponent* spriteComponent = (SpriteComponent*)ska_ecs_component_manager_get_component(entity, SPRITE_COMPONENT_INDEX);
-    spriteComponent->modulate = (SkaColor){(f32)pyModulateR, (f32)pyModulateG, (f32)pyModulateB, (f32)pyModulateA };
+    spriteComponent->modulate = ska_color_get_normalized_color(pyModulateR, pyModulateB, pyModulateG, pyModulateA);
     return 0;
 }
 
@@ -795,28 +809,26 @@ int32 cre_pkpy_api_animated_sprite_get_modulate(pkpy_vm* vm) {
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
     const AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*)ska_ecs_component_manager_get_component(entity, ANIMATED_SPRITE_COMPONENT_INDEX);
-    pkpy_push_float(vm, (f64)animatedSpriteComponent->modulate.r);
-    pkpy_push_float(vm, (f64)animatedSpriteComponent->modulate.g);
-    pkpy_push_float(vm, (f64)animatedSpriteComponent->modulate.b);
-    pkpy_push_float(vm, (f64)animatedSpriteComponent->modulate.a);
+    const CreColor color = convert_ska_color_to_cre(&animatedSpriteComponent->modulate);
+    pkpy_push_int(vm, color.r);
+    pkpy_push_int(vm, color.g);
+    pkpy_push_int(vm, color.b);
+    pkpy_push_int(vm, color.a);
     return 4;
 }
 
 int32 cre_pkpy_api_animated_sprite_set_modulate(pkpy_vm* vm) {
     int32 pyEntityId;
-    f64 pyModulateR;
-    f64 pyModulateG;
-    f64 pyModulateB;
-    f64 pyModulateA;
+    int32 pyModulateR, pyModulateG, pyModulateB, pyModulateA;
     pkpy_to_int(vm, 0, &pyEntityId);
-    pkpy_to_float(vm, 1, &pyModulateR);
-    pkpy_to_float(vm, 2, &pyModulateG);
-    pkpy_to_float(vm, 3, &pyModulateB);
-    pkpy_to_float(vm, 4, &pyModulateA);
+    pkpy_to_int(vm, 1, &pyModulateR);
+    pkpy_to_int(vm, 2, &pyModulateG);
+    pkpy_to_int(vm, 3, &pyModulateB);
+    pkpy_to_int(vm, 4, &pyModulateA);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
     AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*)ska_ecs_component_manager_get_component(entity, ANIMATED_SPRITE_COMPONENT_INDEX);
-    animatedSpriteComponent->modulate = (SkaColor){(f32)pyModulateR, (f32)pyModulateG, (f32)pyModulateB, (f32)pyModulateA };
+    animatedSpriteComponent->modulate = ska_color_get_normalized_color(pyModulateR, pyModulateB, pyModulateG, pyModulateA);
     return 0;
 }
 
@@ -902,14 +914,11 @@ int32 cre_pkpy_api_text_label_get_color(pkpy_vm* vm) {
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
     const TextLabelComponent* textLabelComponent = (TextLabelComponent*)ska_ecs_component_manager_get_component(entity, TEXT_LABEL_COMPONENT_INDEX);
-    const int32 red = (int32) (textLabelComponent->color.r * 255.0f);
-    const int32 green = (int32) (textLabelComponent->color.g * 255.0f);
-    const int32 blue = (int32) (textLabelComponent->color.b * 255.0f);
-    const int32 alpha = (int32) (textLabelComponent->color.a * 255.0f);
-    pkpy_push_int(vm, red);
-    pkpy_push_int(vm, green);
-    pkpy_push_int(vm, blue);
-    pkpy_push_int(vm, alpha);
+    const CreColor color = convert_ska_color_to_cre(&textLabelComponent->color);
+    pkpy_push_int(vm, color.r);
+    pkpy_push_int(vm, color.g);
+    pkpy_push_int(vm, color.b);
+    pkpy_push_int(vm, color.a);
     return 4;
 }
 
@@ -977,25 +986,26 @@ int32 cre_pkpy_api_collider2d_get_color(pkpy_vm* vm) {
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
     const Collider2DComponent* collider2DComponent = (Collider2DComponent*)ska_ecs_component_manager_get_component(entity, COLLIDER2D_COMPONENT_INDEX);
-    pkpy_push_float(vm, (f64)collider2DComponent->color.r);
-    pkpy_push_float(vm, (f64)collider2DComponent->color.g);
-    pkpy_push_float(vm, (f64)collider2DComponent->color.b);
-    pkpy_push_float(vm, (f64)collider2DComponent->color.a);
+    const CreColor color = convert_ska_color_to_cre(&collider2DComponent->color);
+    pkpy_push_int(vm, color.r);
+    pkpy_push_int(vm, color.g);
+    pkpy_push_int(vm, color.b);
+    pkpy_push_int(vm, color.a);
     return 4;
 }
 
 int32 cre_pkpy_api_collider2d_set_color(pkpy_vm* vm) {
     int32 pyEntityId;
-    f64 pyRed, pyGreen, pyBlue, pyAlpha;
+    int32 pyRed, pyGreen, pyBlue, pyAlpha;
     pkpy_to_int(vm, 0, &pyEntityId);
-    pkpy_to_float(vm, 1, &pyRed);
-    pkpy_to_float(vm, 2, &pyGreen);
-    pkpy_to_float(vm, 3, &pyBlue);
-    pkpy_to_float(vm, 4, &pyAlpha);
+    pkpy_to_int(vm, 1, &pyRed);
+    pkpy_to_int(vm, 2, &pyGreen);
+    pkpy_to_int(vm, 3, &pyBlue);
+    pkpy_to_int(vm, 4, &pyAlpha);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
     Collider2DComponent* collider2DComponent = (Collider2DComponent*)ska_ecs_component_manager_get_component(entity, COLLIDER2D_COMPONENT_INDEX);
-    collider2DComponent->color = (SkaColor){ (f32)pyRed, (f32)pyGreen, (f32)pyBlue, (f32)pyAlpha };
+    collider2DComponent->color = ska_color_get_normalized_color(pyRed, pyGreen, pyBlue, pyAlpha);
     return 0;
 }
 
@@ -1031,25 +1041,26 @@ int32 cre_pkpy_api_color_rect_get_color(pkpy_vm* vm) {
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
     const ColorRectComponent* colorRectComponent = (ColorRectComponent*)ska_ecs_component_manager_get_component(entity, COLOR_RECT_COMPONENT_INDEX);
-    pkpy_push_float(vm, (f64)colorRectComponent->color.r);
-    pkpy_push_float(vm, (f64)colorRectComponent->color.g);
-    pkpy_push_float(vm, (f64)colorRectComponent->color.b);
-    pkpy_push_float(vm, (f64)colorRectComponent->color.a);
+    const CreColor color = convert_ska_color_to_cre(&colorRectComponent->color);
+    pkpy_push_int(vm, color.r);
+    pkpy_push_int(vm, color.g);
+    pkpy_push_int(vm, color.b);
+    pkpy_push_int(vm, color.a);
     return 4;
 }
 
 int32 cre_pkpy_api_color_rect_set_color(pkpy_vm* vm) {
     int32 pyEntityId;
-    f64 pyRed, pyGreen, pyBlue, pyAlpha;
+    int32 pyRed, pyGreen, pyBlue, pyAlpha;
     pkpy_to_int(vm, 0, &pyEntityId);
-    pkpy_to_float(vm, 1, &pyRed);
-    pkpy_to_float(vm, 2, &pyGreen);
-    pkpy_to_float(vm, 3, &pyBlue);
-    pkpy_to_float(vm, 4, &pyAlpha);
+    pkpy_to_int(vm, 1, &pyRed);
+    pkpy_to_int(vm, 2, &pyGreen);
+    pkpy_to_int(vm, 3, &pyBlue);
+    pkpy_to_int(vm, 4, &pyAlpha);
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
     ColorRectComponent* colorRectComponent = (ColorRectComponent*)ska_ecs_component_manager_get_component(entity, COLOR_RECT_COMPONENT_INDEX);
-    colorRectComponent->color = (SkaColor){ (f32)pyRed, (f32)pyGreen, (f32)pyBlue, (f32)pyAlpha };
+    colorRectComponent->color = ska_color_get_normalized_color(pyRed, pyGreen, pyBlue, pyAlpha);
     return 0;
 }
 
@@ -1176,14 +1187,11 @@ int32 cre_pkpy_api_particles2d_get_color(pkpy_vm* vm) {
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
     const Particles2DComponent* particles2dComponent = (Particles2DComponent*)ska_ecs_component_manager_get_component(entity, PARTICLES2D_COMPONENT_INDEX);
-    const int32 red = (int32) (particles2dComponent->color.r * 255.0f);
-    const int32 green = (int32) (particles2dComponent->color.g * 255.0f);
-    const int32 blue = (int32) (particles2dComponent->color.b * 255.0f);
-    const int32 alpha = (int32) (particles2dComponent->color.a * 255.0f);
-    pkpy_push_int(vm, red);
-    pkpy_push_int(vm, green);
-    pkpy_push_int(vm, blue);
-    pkpy_push_int(vm, alpha);
+    const CreColor color = convert_ska_color_to_cre(&particles2dComponent->color);
+    pkpy_push_int(vm, color.r);
+    pkpy_push_int(vm, color.g);
+    pkpy_push_int(vm, color.b);
+    pkpy_push_int(vm, color.a);
     return 4;
 }
 
