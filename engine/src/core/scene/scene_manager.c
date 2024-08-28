@@ -185,7 +185,7 @@ void cre_scene_manager_process_queued_deletion_entities() {
         // Remove entity from systems
         ska_ecs_system_remove_entity_from_all_systems(entityToDelete);
         // Remove shader instances if applicable
-        SpriteComponent* spriteComponent = (SpriteComponent*)ska_ecs_component_manager_get_component(entityToDelete, SPRITE_COMPONENT_INDEX);
+        SpriteComponent* spriteComponent = (SpriteComponent*)ska_ecs_component_manager_get_component_unchecked(entityToDelete, SPRITE_COMPONENT_INDEX);
         if (spriteComponent != NULL && spriteComponent->shaderInstanceId != SKA_SHADER_INSTANCE_INVALID_ID) {
             SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(spriteComponent->shaderInstanceId);
             if (shaderInstance) {
@@ -193,7 +193,7 @@ void cre_scene_manager_process_queued_deletion_entities() {
                 ska_shader_instance_destroy(shaderInstance);
             }
         }
-        AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*)ska_ecs_component_manager_get_component(entityToDelete, ANIMATED_SPRITE_COMPONENT_INDEX);
+        AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*)ska_ecs_component_manager_get_component_unchecked(entityToDelete, ANIMATED_SPRITE_COMPONENT_INDEX);
         if (animatedSpriteComponent != NULL && animatedSpriteComponent->shaderInstanceId != SKA_SHADER_INSTANCE_INVALID_ID) {
             SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(animatedSpriteComponent->shaderInstanceId);
             if (shaderInstance) {
