@@ -8,3 +8,5 @@
 
 void cre_world_set_time_dilation(f32 timeDilation);
 f32 cre_world_get_time_dilation();
+void cre_world_set_frame_delta_time(f32 frameDeltaTime);
+f32 cre_world_get_frame_delta_time();

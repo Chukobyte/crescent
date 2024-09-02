@@ -115,6 +115,7 @@ static int cre_pkpy_api_camera2d_unfollow_node(pkpy_vm* vm);
 static int cre_pkpy_api_world_set_time_dilation(pkpy_vm* vm);
 static int cre_pkpy_api_world_get_time_dilation(pkpy_vm* vm);
 static int cre_pkpy_api_world_get_delta_time(pkpy_vm* vm);
+static int cre_pkpy_api_world_get_variable_delta_time(pkpy_vm* vm);
 
 // Audio Source
 static int cre_pkpy_api_audio_source_set_pitch(pkpy_vm* vm);
@@ -318,6 +319,7 @@ void cre_pkpy_api_load_internal_modules(pkpy_vm* vm) {
             {.signature = "world_set_time_dilation(time_dilation: float) -> None", .function = cre_pkpy_api_world_set_time_dilation},
             {.signature = "world_get_time_dilation() -> float", .function = cre_pkpy_api_world_get_time_dilation},
             {.signature = "world_get_delta_time() -> float", .function = cre_pkpy_api_world_get_delta_time},
+            {.signature = "world_get_variable_delta_time() -> float", .function = cre_pkpy_api_world_get_variable_delta_time},
             // Audio Source
             {.signature = "audio_source_set_pitch(path: str, pitch: float) -> None", .function = cre_pkpy_api_audio_source_set_pitch},
             {.signature = "audio_source_get_pitch(path: str) -> float", .function = cre_pkpy_api_audio_source_get_pitch},
@@ -1106,6 +1108,11 @@ int cre_pkpy_api_world_get_time_dilation(pkpy_vm* vm) {
 
 int cre_pkpy_api_world_get_delta_time(pkpy_vm* vm) {
     pkpy_push_float(vm, (f64)(cre_world_get_time_dilation() * CRE_GLOBAL_PHYSICS_DELTA_TIME));
+    return 1;
+}
+
+int cre_pkpy_api_world_get_variable_delta_time(pkpy_vm* vm) {
+    pkpy_push_float(vm, (f64)cre_world_get_frame_delta_time());
     return 1;
 }
 

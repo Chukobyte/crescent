@@ -627,6 +627,10 @@ def world_get_delta_time() -> float:
     return 0.1
 
 
+def world_get_variable_delta_time() -> float:
+    return 0.1
+
+
 # --- Audio Source --- #
 
 def audio_source_get_pitch(path: str) -> float:
