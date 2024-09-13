@@ -35,6 +35,7 @@
 #include "../../../../camera/camera_manager.h"
 #include "../../../../physics/collision/collision.h"
 #include "../../../../ecs/ecs_globals.h"
+#include "../../../../ecs/components/script_component.h"
 
 // Shader Instance
 static int cre_pkpy_api_shader_instance_delete(pkpy_vm* vm);
@@ -1224,7 +1225,13 @@ int cre_pkpy_api_packed_scene_create_instance(pkpy_vm* vm) {
     JsonSceneNode* sceneNode = cre_scene_template_cache_get_scene(cacheId);
     SceneTreeNode* rootNode = cre_scene_manager_stage_scene_nodes_from_json(sceneNode);
 
-    cre_pkpy_script_context_create_instance(rootNode->entity, CRE_PKPY_MODULE_NAME_CRESCENT, node_get_base_type_string(sceneNode->type));
+    // Get class path and name from root node if it has a script component
+    if (sceneNode->components[SCRIPT_COMPONENT_INDEX] != NULL) {
+        ScriptComponent* scriptComp = (ScriptComponent*)sceneNode->components[SCRIPT_COMPONENT_INDEX];
+        cre_pkpy_script_context_create_instance(rootNode->entity, scriptComp->classPath, scriptComp->className);
+    } else {
+        cre_pkpy_script_context_create_instance(rootNode->entity, CRE_PKPY_MODULE_NAME_CRESCENT, node_get_base_type_string(sceneNode->type));
+    }
     cre_pkpy_entity_instance_cache_push_entity_instance(vm, rootNode->entity);
     return 1;
 }

@@ -38,7 +38,7 @@ void cre_collision_ec_system_create_and_register() {
     systemTemplate.on_entity_unregistered_func = on_entity_unregistered;
     systemTemplate.on_entity_entered_scene_func = on_entity_entered_scene;
     systemTemplate.fixed_update_func = fixed_update;
-    systemTemplate.render_func = collision_render;
+    // systemTemplate.render_func = collision_render; // TODO: Make it based on if collision debug is enabled
     SKA_ECS_SYSTEM_REGISTER_FROM_TEMPLATE(&systemTemplate, Transform2DComponent, Collider2DComponent);
 }
 
