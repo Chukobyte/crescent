@@ -29,7 +29,7 @@ typedef struct AnimatedSpriteAnimationFinishedPayload {
 
 typedef struct AnimatedSpriteComponent {
     CreAnimation animations[ANIMATED_SPRITE_COMPONENT_MAX_ANIMATIONS];
-    CreAnimation currentAnimation;
+    CreAnimation* currentAnimation;
     size_t animationCount;
     SkaColor modulate;
     bool isPlaying;

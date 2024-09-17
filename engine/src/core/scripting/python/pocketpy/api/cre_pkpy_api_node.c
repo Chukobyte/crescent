@@ -684,7 +684,7 @@ int32 cre_pkpy_api_animated_sprite_set_current_animation_frame(pkpy_vm* vm) {
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
     AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*)ska_ecs_component_manager_get_component(entity, ANIMATED_SPRITE_COMPONENT_INDEX);
-    animatedSpriteComponent->currentAnimation.currentFrame = ska_math_clamp_int(pyFrame, 0, animatedSpriteComponent->currentAnimation.frameCount - 1);
+    animatedSpriteComponent->currentAnimation->currentFrame = ska_math_clamp_int(pyFrame, 0, animatedSpriteComponent->currentAnimation->frameCount - 1);
     return 0;
 }
 
