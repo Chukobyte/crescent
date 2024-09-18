@@ -29,25 +29,25 @@ static size_t scriptContextsCount = 0;
 
 void cre_script_ec_system_create_and_register() {
     SkaECSSystemTemplate systemTemplate = ska_ecs_system_create_default_template("Script");
-    systemTemplate.on_ec_system_register = on_ec_system_registered;
-    systemTemplate.on_ec_system_destroy = on_ec_system_destroyed;
-    systemTemplate.on_entity_registered_func = on_entity_registered;
-    systemTemplate.on_entity_unregistered_func = on_entity_unregistered;
-    systemTemplate.on_entity_start_func = on_entity_start;
-    systemTemplate.on_entity_end_func = on_entity_end;
-    systemTemplate.pre_update_all_func = on_pre_update_all;
-    systemTemplate.post_update_all_func = on_post_update_all;
-    systemTemplate.update_func = script_system_instance_update;
-    systemTemplate.fixed_update_func = script_system_instance_fixed_update;
-    systemTemplate.network_callback_func = network_callback;
+    // systemTemplate.on_ec_system_register = on_ec_system_registered;
+    // systemTemplate.on_ec_system_destroy = on_ec_system_destroyed;
+    // systemTemplate.on_entity_registered_func = on_entity_registered;
+    // systemTemplate.on_entity_unregistered_func = on_entity_unregistered;
+    // systemTemplate.on_entity_start_func = on_entity_start;
+    // systemTemplate.on_entity_end_func = on_entity_end;
+    // systemTemplate.pre_update_all_func = on_pre_update_all;
+    // systemTemplate.post_update_all_func = on_post_update_all;
+    // systemTemplate.update_func = script_system_instance_update;
+    // systemTemplate.fixed_update_func = script_system_instance_fixed_update;
+    // systemTemplate.network_callback_func = network_callback;
     SKA_ECS_SYSTEM_REGISTER_FROM_TEMPLATE(&systemTemplate, Transform2DComponent, ScriptComponent);
 }
 
 void on_ec_system_registered(SkaECSSystem* system) {
     // Python Context
-    scriptContexts[ScriptContextType_PYTHON] = cre_pkpy_script_context_create();
-    scriptContextsCount++;
-    SKA_ASSERT(scriptContexts[ScriptContextType_PYTHON] != NULL);
+    // scriptContexts[ScriptContextType_PYTHON] = cre_pkpy_script_context_create();
+    // scriptContextsCount++;
+    // SKA_ASSERT(scriptContexts[ScriptContextType_PYTHON] != NULL);
     // Native Context
     scriptContexts[ScriptContextType_NATIVE] = cre_native_create_script_context();
     scriptContextsCount++;
