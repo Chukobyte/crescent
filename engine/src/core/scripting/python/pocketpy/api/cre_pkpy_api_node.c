@@ -165,7 +165,11 @@ int32 cre_pkpy_api_node_get_parent(pkpy_vm* vm) {
     const SkaEntity childEntity = (SkaEntity)childEntityId;
     if (cre_scene_manager_has_entity_tree_node(childEntity)) {
         const SceneTreeNode* treeNode = cre_scene_manager_get_entity_tree_node(childEntity);
-        cre_pkpy_script_context_create_instance_if_nonexistent_and_push_entity_instance(treeNode->entity);
+        if (treeNode->parent) {
+            cre_pkpy_script_context_create_instance_if_nonexistent_and_push_entity_instance(treeNode->parent->entity);
+        } else {
+            pkpy_push_none(vm);
+        }
         return 1;
     }
     return 0;
@@ -680,7 +684,7 @@ int32 cre_pkpy_api_animated_sprite_set_current_animation_frame(pkpy_vm* vm) {
 
     const SkaEntity entity = (SkaEntity)pyEntityId;
     AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*)ska_ecs_component_manager_get_component(entity, ANIMATED_SPRITE_COMPONENT_INDEX);
-    animatedSpriteComponent->currentAnimation.currentFrame = ska_math_clamp_int(pyFrame, 0, animatedSpriteComponent->currentAnimation.frameCount - 1);
+    animatedSpriteComponent->currentAnimation->currentFrame = ska_math_clamp_int(pyFrame, 0, animatedSpriteComponent->currentAnimation->frameCount - 1);
     return 0;
 }
 

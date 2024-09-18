@@ -40,41 +40,43 @@ void animated_sprite_render(SkaECSSystem* system) {
         const SkaEntity entity = system->entities[i];
         Transform2DComponent* spriteTransformComp = (Transform2DComponent*)ska_ecs_component_manager_get_component(entity, TRANSFORM2D_COMPONENT_INDEX);
         AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*)ska_ecs_component_manager_get_component(entity, ANIMATED_SPRITE_COMPONENT_INDEX);
-        CreAnimationFrame currentFrame = animatedSpriteComponent->currentAnimation.animationFrames[animatedSpriteComponent->currentAnimation.currentFrame];
+        CreAnimationFrame* currentFrame = &animatedSpriteComponent->currentAnimation->animationFrames[animatedSpriteComponent->currentAnimation->currentFrame];
         if (animatedSpriteComponent->isPlaying) {
             const f32 entityTimeDilation = cre_scene_manager_get_node_full_time_dilation(entity);
             const f32 spriteCurrentTickTime = (f32) currentTickTime + (f32) animatedSpriteComponent->randomStaggerTime;
-            const int32 tickRate = (int32) (((spriteCurrentTickTime - (f32) animatedSpriteComponent->startAnimationTickTime) / (f32) animatedSpriteComponent->currentAnimation.speed) * entityTimeDilation);
-            const int32 newIndex = tickRate % animatedSpriteComponent->currentAnimation.frameCount;
-            if (newIndex != animatedSpriteComponent->currentAnimation.currentFrame) {
+            const int32 tickRate = (int32) (((spriteCurrentTickTime - (f32) animatedSpriteComponent->startAnimationTickTime) / (f32) animatedSpriteComponent->currentAnimation->speed) * entityTimeDilation);
+            const int32 newIndex = tickRate % animatedSpriteComponent->currentAnimation->frameCount;
+            if (newIndex != animatedSpriteComponent->currentAnimation->currentFrame) {
                 // Notify observers that frame has changed
                 ska_event_notify_observers(&animatedSpriteComponent->onFrameChanged, &(SkaSubjectNotifyPayload){
                     .data = &(AnimatedSpriteFrameChangedPayload){ .entity = entity, .newFrame = newIndex }
                 });
 
-                currentFrame = animatedSpriteComponent->currentAnimation.animationFrames[newIndex];
-                if (newIndex + 1 == animatedSpriteComponent->currentAnimation.frameCount) {
+                currentFrame = &animatedSpriteComponent->currentAnimation->animationFrames[newIndex];
+                const CreAnimation* animationBeforeNotification = animatedSpriteComponent->currentAnimation;
+                if (newIndex + 1 == animatedSpriteComponent->currentAnimation->frameCount) {
                     // Notify the observers that the animation has finished
                     ska_event_notify_observers(&animatedSpriteComponent->onAnimationFinished, &(SkaSubjectNotifyPayload){
-                        .data = &(AnimatedSpriteAnimationFinishedPayload){ .entity = entity, .animation = &animatedSpriteComponent->currentAnimation }
+                        .data = &(AnimatedSpriteAnimationFinishedPayload){ .entity = entity, .animation = animatedSpriteComponent->currentAnimation }
                     });
-                    if (!animatedSpriteComponent->currentAnimation.doesLoop) {
+                    if (!animatedSpriteComponent->currentAnimation->doesLoop) {
                         animatedSpriteComponent->isPlaying = false;
                     }
                 }
-                animatedSpriteComponent->currentAnimation.currentFrame = newIndex;
+                // Make sure it's the same animation before assinging new index, if not reset to 0 index
+                animatedSpriteComponent->currentAnimation->currentFrame = animationBeforeNotification == animatedSpriteComponent->currentAnimation ? newIndex : 0;
             }
         }
         const CRECamera2D* renderCamera = spriteTransformComp->ignoreCamera ? defaultCamera : camera2D;
         const SceneNodeRenderResource renderResource = cre_scene_manager_get_scene_node_global_render_resource(entity, spriteTransformComp, &animatedSpriteComponent->origin);
         const SkaSize2D destinationSize = {
-            .w = currentFrame.drawSource.w * renderCamera->zoom.x,
-            .h = currentFrame.drawSource.h * renderCamera->zoom.y
+            .w = currentFrame->drawSource.w * renderCamera->zoom.x,
+            .h = currentFrame->drawSource.h * renderCamera->zoom.y
         };
 
         ska_renderer_queue_sprite_draw(
-            currentFrame.texture,
-            currentFrame.drawSource,
+            currentFrame->texture,
+            currentFrame->drawSource,
             destinationSize,
             animatedSpriteComponent->modulate,
             animatedSpriteComponent->flipH,

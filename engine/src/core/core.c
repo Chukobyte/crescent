@@ -18,6 +18,7 @@
 #include "game_properties.h"
 #include "engine_context.h"
 #include "embedded_assets.h"
+#include "world.h"
 #include "utils/command_line_args_util.h"
 #include "ecs/ecs_manager.h"
 #include "scene/scene_manager.h"
@@ -218,6 +219,7 @@ void cre_process_game_update() {
 
     // Variable Time Step
     const f32 variableDeltaTime = (f32) (ska_get_ticks() - lastFrameTime) / (f32) MILLISECONDS_PER_TICK;
+    cre_world_set_frame_delta_time(variableDeltaTime);
     ska_ecs_system_event_update_systems(variableDeltaTime);
 
     // Fixed Time Step

@@ -1468,6 +1468,10 @@
 "    def get_delta_time() -> float:\n"\
 "        return crescent_internal.world_get_delta_time()\n"\
 "\n"\
+"    @staticmethod\n"\
+"    def get_variable_delta_time() -> float:\n"\
+"        return crescent_internal.world_get_variable_delta_time()\n"\
+"\n"\
 "\n"\
 "class CollisionHandler:\n"\
 "    \"\"\"\n"\

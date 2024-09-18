@@ -43,7 +43,7 @@ void animated_sprite_component_add_animation(AnimatedSpriteComponent* animatedSp
 bool animated_sprite_component_set_animation(AnimatedSpriteComponent* animatedSpriteComponent, const char* name) {
     for (size_t i = 0; i < animatedSpriteComponent->animationCount; i++) {
         if (strcmp(animatedSpriteComponent->animations[i].name, name) == 0) {
-            animatedSpriteComponent->currentAnimation = animatedSpriteComponent->animations[i];
+            animatedSpriteComponent->currentAnimation = &animatedSpriteComponent->animations[i];
             return true;
         }
     }
@@ -67,7 +67,7 @@ bool animated_sprite_component_play_animation(AnimatedSpriteComponent *animatedS
     // First checks if new animation, if not just play the currently set animation (if not playing)
     bool isPlayingNewAnimation = false;
     bool playAnimationSuccess = false;
-    if (strcmp(animatedSpriteComponent->currentAnimation.name, name) != 0) {
+    if (strcmp(animatedSpriteComponent->currentAnimation->name, name) != 0) {
         playAnimationSuccess = animated_sprite_component_set_animation(animatedSpriteComponent, name);
         if (playAnimationSuccess) {
             isPlayingNewAnimation = true;
@@ -115,26 +115,24 @@ AnimatedSpriteComponent* animated_sprite_component_data_copy_to_animated_sprite(
     copiedNode->flipH = animatedSpriteComponentData->flipH;
     copiedNode->flipV = animatedSpriteComponentData->flipV;
     copiedNode->staggerStartAnimationTimes = animatedSpriteComponentData->staggerStartAnimationTimes;
-    ska_strcpy(copiedNode->currentAnimation.name, animatedSpriteComponentData->currentAnimation.name);
     for (size_t animationIndex = 0; animationIndex < animatedSpriteComponentData->animationCount; animationIndex++) {
         const AnimationData* animationData = &animatedSpriteComponentData->animations[animationIndex];
-        CreAnimation animation;
-        ska_strcpy(animation.name, animationData->name);
-        animation.doesLoop = animationData->doesLoop;
-        animation.speed = animationData->speed;
-        animation.isValid = true;
-        animation.currentFrame = 0;
-        animation.frameCount = animationData->frameCount;
+        CreAnimation* animation = &copiedNode->animations[animationIndex];
+        ska_strcpy(animation->name, animationData->name);
+        animation->doesLoop = animationData->doesLoop;
+        animation->speed = animationData->speed;
+        animation->isValid = true;
+        animation->currentFrame = 0;
+        animation->frameCount = animationData->frameCount;
         for (size_t frameIndex = 0; (int32) frameIndex < animationData->frameCount; frameIndex++) {
             const AnimationFrameData* animationFrameData = &animationData->animationFrames[frameIndex];
             CreAnimationFrame animationFrame;
             animationFrame.texture = ska_asset_manager_get_texture(animationFrameData->texturePath);
             animationFrame.drawSource = animationFrameData->drawSource;
             animationFrame.frame = animationFrameData->frame;
-            animation.animationFrames[frameIndex] = animationFrame;
+            animation->animationFrames[frameIndex] = animationFrame;
         }
-        copiedNode->animations[animationIndex] = animation;
-        if (strcmp(animatedSpriteComponentData->currentAnimation.name, animation.name) == 0) {
+        if (strcmp(animatedSpriteComponentData->currentAnimation.name, animation->name) == 0) {
             copiedNode->currentAnimation = animation;
         }
     }
