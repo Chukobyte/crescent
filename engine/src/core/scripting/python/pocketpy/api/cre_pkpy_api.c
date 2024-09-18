@@ -1,5 +1,5 @@
 #include "cre_pkpy_api.h"
-
+/*
 #include <string.h>
 
 #include <seika/assert.h>
@@ -1332,3 +1332,4 @@ int cre_pkpy_api_client_send(pkpy_vm* vm) {
     ska_udp_client_send_message(message);
     return 0;
 }
+*/

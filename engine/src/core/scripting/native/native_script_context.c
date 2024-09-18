@@ -8,7 +8,7 @@
 #include <seika/data_structures/static_array.h>
 
 #include "native_script_class.h"
-#include "../script_context.h"
+#include "internal_classes/fps_display_class.h"
 
 #define MAX_NATIVE_CLASSES 4
 #define MAX_NATIVE_CLASS_ENTITIES 8
@@ -20,7 +20,8 @@ void native_on_start(SkaEntity entity);
 void native_on_update_instance(SkaEntity entity, f32 deltaTime);
 void native_on_fixed_update_instance(SkaEntity entity, f32 deltaTime);
 void native_on_end(SkaEntity entity);
-void native_on_script_context_destroy();
+static void on_script_context_init(CREScriptContext* scriptContext);
+static void on_script_context_finalize(CREScriptContext* scriptContext);
 
 // Script Cache
 SkaStringHashMap* classCache = NULL;
@@ -28,26 +29,47 @@ SkaHashMap* entityToClassName = NULL;
 
 CREScriptContext* native_script_context = NULL;
 
-CREScriptContext* cre_native_create_script_context() {
-    SKA_ASSERT(native_script_context == NULL);
-    CREScriptContext* scriptContext = cre_script_context_create();
-    scriptContext->on_create_instance = native_on_create_instance;
-    scriptContext->on_delete_instance = native_on_delete_instance;
-    scriptContext->on_start = native_on_start;
-    scriptContext->on_update_instance = native_on_update_instance;
-    scriptContext->on_fixed_update_instance = native_on_fixed_update_instance;
-    scriptContext->on_end = native_on_end;
-    scriptContext->on_script_context_destroy = native_on_script_context_destroy;
+CREScriptContextTemplate cre_native_get_script_context_template() {
+    return (CREScriptContextTemplate) {
+        .contextType = CreScriptContextType_NATIVE,
+        .on_script_context_init = on_script_context_init,
+        .on_script_context_finalize = on_script_context_finalize,
+        .on_create_instance = native_on_create_instance,
+        .on_delete_instance = native_on_delete_instance,
+        .on_start = native_on_start,
+        .on_pre_update_all = NULL,
+        .on_post_update_all = NULL,
+        .on_update_instance = native_on_update_instance,
+        .on_fixed_update_instance = native_on_fixed_update_instance,
+        .on_end = native_on_end,
+        .on_network_callback = NULL,
+    };
+}
 
+void on_script_context_init(CREScriptContext* context) {
     SKA_ASSERT(classCache == NULL);
     classCache = ska_string_hash_map_create(MAX_NATIVE_CLASSES);
 
     SKA_ASSERT(entityToClassName == NULL);
     entityToClassName = ska_hash_map_create(sizeof(SkaEntity), sizeof(CRENativeScriptClass **), MAX_NATIVE_CLASS_ENTITIES);
 
-    native_script_context = scriptContext;
+    // Register internal classes
+    cre_native_class_register_new_class(fps_display_native_class_create_new());
 
-    return scriptContext;
+    native_script_context = context;
+}
+
+void on_script_context_finalize(CREScriptContext* context) {
+    SKA_ASSERT(classCache != NULL);
+    SKA_ASSERT(entityToClassName != NULL);
+    SKA_ASSERT(native_script_context != NULL);
+
+    native_script_context = NULL;
+
+    ska_string_hash_map_destroy(classCache);
+    ska_hash_map_destroy(entityToClassName);
+    classCache = NULL;
+    entityToClassName = NULL;
 }
 
 void cre_native_class_register_new_class(CRENativeScriptClass* scriptClass) {
@@ -119,16 +141,6 @@ void native_on_fixed_update_instance(SkaEntity entity, float deltaTime) {
 
 void native_on_end(SkaEntity entity) {
     SKA_ASSERT(ska_hash_map_has(entityToClassName, &entity));
-    CRENativeScriptClass* scriptClassRef = (CRENativeScriptClass*) *(CRENativeScriptClass**) ska_hash_map_get(
-            entityToClassName, &entity);
+    CRENativeScriptClass* scriptClassRef = (CRENativeScriptClass*) *(CRENativeScriptClass**) ska_hash_map_get(entityToClassName, &entity);
     scriptClassRef->on_end_func(scriptClassRef);
-}
-
-void native_on_script_context_destroy() {
-    native_script_context = NULL;
-
-    ska_string_hash_map_destroy(classCache);
-    ska_hash_map_destroy(entityToClassName);
-    classCache = NULL;
-    entityToClassName = NULL;
 }

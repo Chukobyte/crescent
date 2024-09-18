@@ -1,5 +1,5 @@
 #pragma once
-
+/*
 #include <pocketpy_c.h>
 
 #include <seika/ecs/entity.h>
@@ -13,3 +13,4 @@ bool cre_pkpy_entity_instance_cache_create_new_entity_if_nonexistent(pkpy_vm* vm
 void cre_pkpy_entity_instance_cache_remove_entity(pkpy_vm* vm, SkaEntity entity);
 bool cre_pkpy_entity_instance_cache_has_entity(pkpy_vm* vm, SkaEntity entity);
 void cre_pkpy_entity_instance_cache_push_entity_instance(pkpy_vm* vm, SkaEntity entity);
+*/

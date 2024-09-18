@@ -1,5 +1,5 @@
 #include "cre_pkpy_util.h"
-
+/*
 #include <string.h>
 
 #include <seika/string.h>
@@ -67,3 +67,4 @@ void cre_pkpy_util_create_from_string(pkpy_vm* vm, const char* moduleName, const
     pkpy_pop_top(vm);
     SKA_ASSERT(stackBeforePush == pkpy_stack_size(vm));
 }
+*/

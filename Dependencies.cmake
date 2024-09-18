@@ -20,9 +20,11 @@ if (NOT TARGET pocketpy)
     FetchContent_Declare(
             pocketpy_content
             GIT_REPOSITORY https://github.com/blueloveTH/pocketpy.git
-            GIT_TAG v1.4.5
+#            GIT_TAG v1.4.5
+            GIT_TAG 4aab227b53ceaca69e839978f6fb7d321ad5cdd5
     )
     FetchContent_MakeAvailable(pocketpy_content)
+    target_include_directories(pocketpy PUBLIC ${pocketpy_content_SOURCE_DIR} ${pocketpy_content_SOURCE_DIR}/include)
 endif ()
 
 # https://github.com/DaveGamble/cJSON

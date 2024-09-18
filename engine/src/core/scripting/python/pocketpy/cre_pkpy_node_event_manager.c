@@ -1,5 +1,5 @@
 #include "cre_pkpy_node_event_manager.h"
-
+/*
 #include <seika/assert.h>
 
 #include "cre_pkpy_util.h"
@@ -89,3 +89,4 @@ void cre_pkpy_node_event_manager_broadcast_event_string(pkpy_vm* vm, int32 owner
     SKA_ASSERT(!cre_pkpy_util_print_error_message(vm));
     pkpy_pop_top(vm);
 }
+*/

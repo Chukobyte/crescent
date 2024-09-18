@@ -1,5 +1,5 @@
 #include "cre_pkpy_api_node.h"
-
+/*
 #include <pocketpy_c.h>
 
 #include <seika/flag_utils.h>
@@ -1267,3 +1267,4 @@ int32 cre_pkpy_api_particles2d_set_spread(pkpy_vm* vm) {
     particles2dComponent->spread = (f32)pySpread;
     return 0;
 }
+*/

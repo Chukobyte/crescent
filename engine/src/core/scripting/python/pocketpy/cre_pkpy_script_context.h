@@ -1,5 +1,5 @@
 #pragma once
-
+/*
 #include <seika/ecs/entity.h>
 
 struct CREScriptContext* cre_pkpy_script_context_create();
@@ -11,3 +11,4 @@ void cre_pkpy_script_context_on_network_udp_server_client_connected();
 void cre_pkpy_script_context_create_instance(SkaEntity entity, const char* classPath, const char* className);
 void cre_pkpy_script_context_create_instance_if_nonexistent(SkaEntity entity, const char* classPath, const char* className);
 void cre_pkpy_script_context_create_instance_if_nonexistent_and_push_entity_instance(SkaEntity entity);
+*/

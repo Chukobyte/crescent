@@ -1,5 +1,5 @@
 #include "cre_pkpy_script_context.h"
-
+/*
 #include <string.h>
 
 #include <pocketpy/pocketpy_c.h>
@@ -297,3 +297,4 @@ void pkpy_node_event_animated_sprite_animation_finished(SkaSubjectNotifyPayload*
     const AnimatedSpriteAnimationFinishedPayload* eventPayload = (AnimatedSpriteAnimationFinishedPayload*)payload->data;
     cre_pkpy_node_event_manager_broadcast_event_string(cre_pkpy_vm, (int)eventPayload->entity, CRE_PKPY_NODE_EVENT_NAME_ANIMATION_FINISHED, eventPayload->animation->name);
 }
+*/

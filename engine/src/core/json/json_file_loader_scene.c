@@ -341,7 +341,7 @@ static void cre_json_script_create_or_set_default(JsonSceneNode* node, cJSON* co
                               json_get_string(componentJson, "class_path"),
                               json_get_string(componentJson, "class_name")
                           );
-        scriptComponent->contextType = ScriptContextType_PYTHON;
+        scriptComponent->contextType = CreScriptContextType_PYTHON;
         node->components[SCRIPT_COMPONENT_INDEX] = scriptComponent;
     } else {
         // No override for scripts for now...

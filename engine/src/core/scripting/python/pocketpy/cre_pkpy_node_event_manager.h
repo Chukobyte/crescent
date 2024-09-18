@@ -1,5 +1,5 @@
 #pragma once
-
+/*
 #include <stdbool.h>
 
 #include <seika/defines.h>
@@ -20,3 +20,4 @@ void cre_pkpy_node_event_manager_broadcast_event_bool(struct pkpy_vm_handle* vm,
 void cre_pkpy_node_event_manager_broadcast_event_int(struct pkpy_vm_handle* vm, int32 ownerId, const char* eventName, int32 value);
 void cre_pkpy_node_event_manager_broadcast_event_float(struct pkpy_vm_handle* vm, int32 ownerId, const char* eventName, f32 value);
 void cre_pkpy_node_event_manager_broadcast_event_string(struct pkpy_vm_handle* vm, int32 ownerId, const char* eventName, const char* value);
+*/

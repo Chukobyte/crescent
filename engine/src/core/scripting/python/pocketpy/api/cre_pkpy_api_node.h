@@ -1,5 +1,5 @@
 #pragma once
-
+/*
 #include <seika/defines.h>
 
 struct pkpy_vm_handle;
@@ -107,3 +107,4 @@ int32 cre_pkpy_api_particles2d_get_initial_velocity(struct pkpy_vm_handle* vm);
 int32 cre_pkpy_api_particles2d_set_initial_velocity(struct pkpy_vm_handle* vm);
 int32 cre_pkpy_api_particles2d_get_spread(struct pkpy_vm_handle* vm);
 int32 cre_pkpy_api_particles2d_set_spread(struct pkpy_vm_handle* vm);
+*/

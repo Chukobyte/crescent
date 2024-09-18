@@ -8,7 +8,9 @@
 #include "../components/script_component.h"
 #include "../../scene/scene_manager.h"
 #include "../../scripting/script_context.h"
-#include "../../scripting/python/pocketpy/cre_pkpy_script_context.h"
+// #include "../../scripting/python/pocketpy/cre_pkpy_script_context.h"
+#include "../../../../../cmake-build-release-mingw/_deps/seika_content-src/seika/logger.h"
+#include "../../scripting/python/pocketpy/pkpy_script_context.h"
 #include "../../scripting/native/native_script_context.h"
 #include "../../scripting/native/internal_classes/fps_display_class.h"
 
@@ -24,7 +26,7 @@ static void script_system_instance_update(SkaECSSystem* system, f32 deltaTime);
 static void script_system_instance_fixed_update(SkaECSSystem* system, f32 deltaTime);
 static void network_callback(SkaECSSystem* system, const char* message);
 
-static CREScriptContext* scriptContexts[ScriptContextType_TOTAL_TYPES];
+static CREScriptContext* scriptContexts[CreScriptContextType_TOTAL_TYPES];
 static size_t scriptContextsCount = 0;
 
 void cre_script_ec_system_create_and_register() {
@@ -44,21 +46,28 @@ void cre_script_ec_system_create_and_register() {
 }
 
 void on_ec_system_registered(SkaECSSystem* system) {
-    // Python Context
-    // scriptContexts[ScriptContextType_PYTHON] = cre_pkpy_script_context_create();
-    // scriptContextsCount++;
-    // SKA_ASSERT(scriptContexts[ScriptContextType_PYTHON] != NULL);
-    // Native Context
-    scriptContexts[ScriptContextType_NATIVE] = cre_native_create_script_context();
-    scriptContextsCount++;
-    // Register internal classed
-    cre_native_class_register_new_class(fps_display_native_class_create_new());
+    CREScriptContextTemplate templates[8];
+    size_t templateCount = 0;
+
+    templates[templateCount++] = cre_pkpy_get_script_context_template();
+    templates[templateCount++] = cre_native_get_script_context_template();
+
+    for (size_t i = 0; i < templateCount; i++) {
+        const CREScriptContextTemplate* template = &templates[i];
+        if (scriptContexts[template->contextType] != NULL) {
+            ska_logger_warn("Attempted to override script context type '%d', ignoring!", template->contextType);
+            continue;
+        }
+        scriptContexts[template->contextType] = cre_script_context_create_from_template(template);
+        scriptContexts[template->contextType]->on_script_context_init(scriptContexts[template->contextType]);
+        scriptContextsCount++;
+    }
 }
 
 void on_ec_system_destroyed(SkaECSSystem* system) {
     for (size_t i = 0; i < scriptContextsCount; i++) {
-        if (scriptContexts[i]->on_script_context_destroy != NULL) {
-            scriptContexts[i]->on_script_context_destroy();
+        if (scriptContexts[i]->on_script_context_finalize != NULL) {
+            scriptContexts[i]->on_script_context_finalize(scriptContexts[i]);
         }
     }
     scriptContextsCount = 0;
@@ -66,7 +75,7 @@ void on_ec_system_destroyed(SkaECSSystem* system) {
 
 void on_entity_registered(SkaECSSystem* system, SkaEntity entity) {
     const ScriptComponent* scriptComponent = (ScriptComponent*)ska_ecs_component_manager_get_component(entity, SCRIPT_COMPONENT_INDEX);
-    SKA_ASSERT(scriptComponent->contextType != ScriptContextType_NONE);
+    SKA_ASSERT(scriptComponent->contextType != CreScriptContextType_NONE);
     const CREScriptContext* scriptContext = scriptContexts[scriptComponent->contextType];
     SKA_ASSERT(scriptContext != NULL);
     SKA_ASSERT(scriptContext->on_create_instance != NULL);
@@ -80,7 +89,7 @@ void on_entity_unregistered(SkaECSSystem* system, SkaEntity entity) {
 
 void on_entity_start(SkaECSSystem* system, SkaEntity entity) {
     const ScriptComponent* scriptComponent = (ScriptComponent*)ska_ecs_component_manager_get_component(entity, SCRIPT_COMPONENT_INDEX);
-    SKA_ASSERT_FMT(scriptComponent->contextType != ScriptContextType_NONE, "Invalid context type '%d' for entity '%d'", scriptComponent->contextType, entity);
+    SKA_ASSERT_FMT(scriptComponent->contextType != CreScriptContextType_NONE, "Invalid context type '%d' for entity '%d'", scriptComponent->contextType, entity);
     scriptContexts[scriptComponent->contextType]->on_start(entity);
 }
 
@@ -127,5 +136,5 @@ void script_system_instance_fixed_update(SkaECSSystem* system, f32 deltaTime) {
 
 void network_callback(SkaECSSystem* system, const char* message) {
     // Hard coding python for now  TODO: Keep an array of script contexts that contain this callback
-    scriptContexts[ScriptContextType_PYTHON]->on_network_callback(message);
+    scriptContexts[CreScriptContextType_PYTHON]->on_network_callback(message);
 }

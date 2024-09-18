@@ -9,7 +9,7 @@
 #include "../../../ecs/ecs_globals.h"
 #include "../../../ecs/components/node_component.h"
 #include "../../../ecs/components/script_component.h"
-
+/*
 static bool entity_instance_cache_is_initialized = false;
 
 void cre_pkpy_entity_instance_cache_initialize(pkpy_vm* vm) {
@@ -103,3 +103,4 @@ void cre_pkpy_entity_instance_cache_push_entity_instance(pkpy_vm* vm, SkaEntity 
     pkpy_eval(vm, entityStringBuffer);
     SKA_ASSERT(!cre_pkpy_util_print_error_message(vm));
 }
+*/
