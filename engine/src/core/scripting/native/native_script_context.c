@@ -14,14 +14,14 @@
 #define MAX_NATIVE_CLASS_ENTITIES 8
 
 // --- Script Context Interface --- //
-void native_on_create_instance(SkaEntity entity, const char* classPath, const char* className);
-void native_on_delete_instance(SkaEntity entity);
-void native_on_start(SkaEntity entity);
-void native_on_update_instance(SkaEntity entity, f32 deltaTime);
-void native_on_fixed_update_instance(SkaEntity entity, f32 deltaTime);
-void native_on_end(SkaEntity entity);
-static void on_script_context_init(CREScriptContext* scriptContext);
-static void on_script_context_finalize(CREScriptContext* scriptContext);
+static void native_init(CREScriptContext* scriptContext);
+static void native_finalize(CREScriptContext* scriptContext);
+static void native_on_create_instance(SkaEntity entity, const char* classPath, const char* className);
+static void native_on_delete_instance(SkaEntity entity);
+static void native_on_start(SkaEntity entity);
+static void native_on_update_instance(SkaEntity entity, f32 deltaTime);
+static void native_on_fixed_update_instance(SkaEntity entity, f32 deltaTime);
+static void native_on_end(SkaEntity entity);
 
 // Script Cache
 SkaStringHashMap* classCache = NULL;
@@ -32,8 +32,8 @@ CREScriptContext* native_script_context = NULL;
 CREScriptContextTemplate cre_native_get_script_context_template() {
     return (CREScriptContextTemplate) {
         .contextType = CreScriptContextType_NATIVE,
-        .on_script_context_init = on_script_context_init,
-        .on_script_context_finalize = on_script_context_finalize,
+        .on_script_context_init = native_init,
+        .on_script_context_finalize = native_finalize,
         .on_create_instance = native_on_create_instance,
         .on_delete_instance = native_on_delete_instance,
         .on_start = native_on_start,
@@ -46,7 +46,7 @@ CREScriptContextTemplate cre_native_get_script_context_template() {
     };
 }
 
-void on_script_context_init(CREScriptContext* context) {
+void native_init(CREScriptContext* context) {
     SKA_ASSERT(classCache == NULL);
     classCache = ska_string_hash_map_create(MAX_NATIVE_CLASSES);
 
@@ -59,7 +59,7 @@ void on_script_context_init(CREScriptContext* context) {
     native_script_context = context;
 }
 
-void on_script_context_finalize(CREScriptContext* context) {
+void native_finalize(CREScriptContext* context) {
     SKA_ASSERT(classCache != NULL);
     SKA_ASSERT(entityToClassName != NULL);
     SKA_ASSERT(native_script_context != NULL);

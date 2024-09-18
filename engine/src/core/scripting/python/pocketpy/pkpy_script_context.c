@@ -27,7 +27,7 @@ static void pkpy_network_callback(const char* message);
 
 
 CREScriptContextTemplate cre_pkpy_get_script_context_template() {
-    return (CREScriptContextTemplate){
+    return (CREScriptContextTemplate) {
         .contextType = CreScriptContextType_PYTHON,
         .on_script_context_init = pkpy_init,
         .on_script_context_finalize = pkpy_finalize,
