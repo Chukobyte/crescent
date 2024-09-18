@@ -6,8 +6,6 @@
 #include <seika/logger.h>
 #include <seika/asset/asset_file_loader.h>
 
-#include "seika/memory.h"
-
 static CREScriptContext* scriptContext = NULL;
 static py_Name startFunctionName;
 static py_Name processFunctionName;
