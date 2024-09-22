@@ -6,6 +6,57 @@
 #include <seika/logger.h>
 #include <seika/asset/asset_file_loader.h>
 
+//--- Entity Instance Cache ---//
+typedef struct CreEntityInstanceCache {
+    py_Ref cacheDict;
+    py_Ref instances[SKA_MAX_ENTITIES];
+} CreEntityInstanceCache;
+
+static CreEntityInstanceCache entityInstanceCache = {0};
+static char entityCacheStringBuffer[16];
+
+static void instance_cache_init() {
+    py_newdict(entityInstanceCache.cacheDict);
+}
+
+static void instance_cache_finalize() {
+    memset(entityInstanceCache.instances, 0, sizeof(entityInstanceCache.instances));
+}
+
+static py_Ref instance_cache_add(SkaEntity entity,const char* classPath, const char* className) {
+    // Early out if entity already exists
+    if (entityInstanceCache.instances[entity] != NULL) {
+        ska_logger_warn("Attempting to add entity '%u' from '%s.%s'!", entity, classPath, className);
+        return entityInstanceCache.instances[entity];
+    }
+    const bool wasImportSuccessful = py_import(classPath) == 1;
+    SKA_ASSERT(wasImportSuccessful);
+    py_Ref module = py_getmodule(classPath);
+    SKA_ASSERT_FMT(module, "module '%s' not found!", classPath);
+    static char callInstanceBuffer[96];
+    sprintf_s(callInstanceBuffer, sizeof(callInstanceBuffer), "%s(%d)", className, entity);
+    py_eval(callInstanceBuffer, module);
+    py_Ref instanceRef = py_retval();
+    SKA_ASSERT_FMT(instanceRef, "Unable to create instance from '%s.%s'!", classPath, className);
+    entityInstanceCache.instances[entity] = instanceRef;
+    snprintf(entityCacheStringBuffer, sizeof(entityCacheStringBuffer), "%u", entity);
+    py_setdict(entityInstanceCache.cacheDict, py_name(entityCacheStringBuffer), instanceRef);
+    return instanceRef;
+}
+
+static void instance_cache_remove(SkaEntity entity) {
+    if (entityInstanceCache.instances[entity]) {
+        snprintf(entityCacheStringBuffer, sizeof(entityCacheStringBuffer), "%u", entity);
+        py_deldict(entityInstanceCache.cacheDict, py_name(entityCacheStringBuffer));
+        entityInstanceCache.instances[entity] = NULL;
+    }
+}
+
+static py_Ref instance_cache_get(SkaEntity entity) {
+    return entityInstanceCache.instances[entity];
+}
+
+
 static CREScriptContext* scriptContext = NULL;
 static py_Name startFunctionName;
 static py_Name processFunctionName;
@@ -45,6 +96,7 @@ CREScriptContextTemplate cre_pkpy_get_script_context_template() {
 
 void pkpy_init(CREScriptContext* context) {
     py_initialize();
+    instance_cache_init();
     // Cache function names
     startFunctionName = py_name("_start");
     processFunctionName = py_name("_process");
@@ -59,18 +111,44 @@ void pkpy_init(CREScriptContext* context) {
 
 void pkpy_finalize(CREScriptContext* context) {
     scriptContext = NULL;
+    instance_cache_finalize();
     py_finalize();
 }
 
-void pkpy_create_instance(SkaEntity entity, const char* classPath, const char* className) {}
+void pkpy_create_instance(SkaEntity entity, const char* classPath, const char* className) {
+    instance_cache_add(entity, classPath, className);
+}
 
-void pkpy_delete_instance(SkaEntity entity) {}
+void pkpy_delete_instance(SkaEntity entity) {
+    instance_cache_remove(entity);
+}
 
-void pkpy_on_start(SkaEntity entity) {}
+void pkpy_on_start(SkaEntity entity) {
+    py_Ref self = instance_cache_get(entity);
+    SKA_ASSERT(self);
+    if (py_getattr(self, startFunctionName)) {
+        py_Ref func = py_retval();
+        py_call(func, 1, self);
+    }
+}
 
-void pkpy_on_end(SkaEntity entity) {}
+void pkpy_on_end(SkaEntity entity) {
+    py_Ref self = instance_cache_get(entity);
+    SKA_ASSERT(self);
+    if (py_getattr(self, endFunctionName)) {
+        py_Ref func = py_retval();
+        py_call(func, 1, self);
+    }
+}
 
-void pkpy_on_update(SkaEntity entity, f32 deltaTime) {}
+void pkpy_on_update(SkaEntity entity, f32 deltaTime) {
+    py_Ref self = instance_cache_get(entity);
+    SKA_ASSERT(self);
+    if (py_getattr(self, endFunctionName)) {
+        py_Ref func = py_retval();
+        py_call(func, 1, self);
+    }
+}
 
 void pkpy_on_fixed_update(SkaEntity entity, f32 deltaTime) {}
 
