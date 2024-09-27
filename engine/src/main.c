@@ -20,7 +20,12 @@ int main(int argv, char** args) {
 
     py_initialize();
 
-    py_exec("class A:\n def start(self): print('start')\n\na = A()", "main.py", EXEC_MODE, NULL);
+    py_Ref aModule = py_newmodule("a");
+
+    py_exec("class A:\n def start(self): print('start')\n", "a.py", EXEC_MODE, aModule);
+
+    py_exec("from a import A\n\na = A()", "main.py", EXEC_MODE, NULL);
+
     py_Ref self = py_getglobal(py_name("a"));
     if (py_getattr(self, py_name("start"))) {
         py_push(py_retval());

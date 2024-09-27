@@ -48,10 +48,10 @@ static py_Ref instance_cache_add(SkaEntity entity,const char* classPath, const c
     // py_eval(entityCacheStringBuffer, NULL);
     // snprintf(entityCacheStringBuffer, sizeof(entityCacheStringBuffer), "_e_%u = %s.%s(%u)", entity, classPath, className, entity);
     snprintf(entityCacheStringBuffer, sizeof(entityCacheStringBuffer), "from %s import %s", classPath, className);
-    py_exec(entityCacheStringBuffer, "<main>", EXEC_MODE, NULL);
+    py_exec(entityCacheStringBuffer, "main.py", EXEC_MODE, NULL);
     PY_ASSERT_NO_EXC();
     snprintf(entityCacheStringBuffer, sizeof(entityCacheStringBuffer), "_e_%u = %s(%u)", entity, className, entity);
-    py_exec(entityCacheStringBuffer, "<main>", EXEC_MODE, NULL);
+    py_exec(entityCacheStringBuffer, "main.py", EXEC_MODE, NULL);
     PY_ASSERT_NO_EXC();
 
     // py_Type instType = py_gettype(classPath, py_name(className));
@@ -184,9 +184,9 @@ void pkpy_delete_instance(SkaEntity entity) {
 void pkpy_on_start(SkaEntity entity) {
     py_Ref self = instance_cache_get_checked(entity);
     if (py_getattr(self, startFunctionName)) {
-        // py_exec("_e_1._start()", "__main__", EXEC_MODE, NULL);
+        py_exec("_e_1._start()", "main.py", EXEC_MODE, NULL);
         // py_exec("print(_e_1.entity_id)", "__main__", EXEC_MODE, NULL);
-        py_smartexec("_._start()", NULL, self);
+        // py_smartexec("_._start()", NULL, self);
         // py_Ref func = py_retval();
         // const char* typeName = py_tpname(func->type);
         // py_Type funcType = func->type;
