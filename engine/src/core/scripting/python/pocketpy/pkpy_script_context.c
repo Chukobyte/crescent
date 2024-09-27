@@ -1,22 +1,32 @@
 #include "pkpy_script_context.h"
 
 #include <pocketpy.h>
+#include <pocketpy/objects/base.h>
 
 #include <seika/assert.h>
 #include <seika/logger.h>
 #include <seika/asset/asset_file_loader.h>
 
+#include "pkpy_util.h"
+#include "api/pkpy_api.h"
+
+#define PY_ASSERT_NO_EXC() SKA_ASSERT_FMT(!py_checkexc(false), "PKPY Error:\n%s", py_formatexc());
+
 //--- Entity Instance Cache ---//
+
 typedef struct CreEntityInstanceCache {
-    py_Ref cacheDict;
+    py_Name name;
     py_Ref instances[SKA_MAX_ENTITIES];
 } CreEntityInstanceCache;
 
 static CreEntityInstanceCache entityInstanceCache = {0};
-static char entityCacheStringBuffer[16];
+static char entityCacheStringBuffer[48];
 
 static void instance_cache_init() {
-    py_newdict(entityInstanceCache.cacheDict);
+    // entityInstanceCache.name = py_name("_inst_cache");
+    // py_Ref cacheDict = py_retval();
+    // py_newdict(cacheDict);
+    // py_setglobal(entityInstanceCache.name, cacheDict);
 }
 
 static void instance_cache_finalize() {
@@ -33,29 +43,73 @@ static py_Ref instance_cache_add(SkaEntity entity,const char* classPath, const c
     SKA_ASSERT(wasImportSuccessful);
     py_Ref module = py_getmodule(classPath);
     SKA_ASSERT_FMT(module, "module '%s' not found!", classPath);
-    static char callInstanceBuffer[96];
-    sprintf_s(callInstanceBuffer, sizeof(callInstanceBuffer), "%s(%d)", className, entity);
-    py_eval(callInstanceBuffer, module);
-    py_Ref instanceRef = py_retval();
+
+    // snprintf(entityCacheStringBuffer, sizeof(entityCacheStringBuffer), "%s.%s(%u)", classPath, className, entity);
+    // py_eval(entityCacheStringBuffer, NULL);
+    // snprintf(entityCacheStringBuffer, sizeof(entityCacheStringBuffer), "_e_%u = %s.%s(%u)", entity, classPath, className, entity);
+    snprintf(entityCacheStringBuffer, sizeof(entityCacheStringBuffer), "from %s import %s", classPath, className);
+    py_exec(entityCacheStringBuffer, "<main>", EXEC_MODE, NULL);
+    PY_ASSERT_NO_EXC();
+    snprintf(entityCacheStringBuffer, sizeof(entityCacheStringBuffer), "_e_%u = %s(%u)", entity, className, entity);
+    py_exec(entityCacheStringBuffer, "<main>", EXEC_MODE, NULL);
+    PY_ASSERT_NO_EXC();
+
+    // py_Type instType = py_gettype(classPath, py_name(className));
+    // SKA_ASSERT(instType);
+    // py_Ref instanceRef = py_retval();
+    // py_newobject(instanceRef, instType, 1, 0);
+    // py_Ref pyEntity = py_pushtmp();
+    // py_newint(pyEntity, entity);
+    // py_setslot(instanceRef, 0, pyEntity);
+
+    snprintf(entityCacheStringBuffer, sizeof(entityCacheStringBuffer), "_e_%u", entity);
+    // py_Ref instanceRef = py_peek(-1);
+    py_Ref instanceRef = py_getglobal(py_name(entityCacheStringBuffer));
+    // py_pop();
+
+    // static char callInstanceBuffer[96];
+    // sprintf_s(callInstanceBuffer, sizeof(callInstanceBuffer), "%s(%d)", className, entity);
+    // py_eval(callInstanceBuffer, module);
+    // py_Ref instanceRef = py_retval();
     SKA_ASSERT_FMT(instanceRef, "Unable to create instance from '%s.%s'!", classPath, className);
     entityInstanceCache.instances[entity] = instanceRef;
-    snprintf(entityCacheStringBuffer, sizeof(entityCacheStringBuffer), "%u", entity);
-    py_setdict(entityInstanceCache.cacheDict, py_name(entityCacheStringBuffer), instanceRef);
+    // snprintf(entityCacheStringBuffer, sizeof(entityCacheStringBuffer), "_e_%u", entity);
+    // py_setglobal(py_name(entityCacheStringBuffer), instanceRef);
+    // py_Ref cacheDict = py_getglobal(entityInstanceCache.name);
+    // SKA_ASSERT(py_isdict(cacheDict));
+    // py_setdict(cacheDict, py_name(entityCacheStringBuffer), instanceRef);
+    // py_pop();
+
     return instanceRef;
 }
 
 static void instance_cache_remove(SkaEntity entity) {
     if (entityInstanceCache.instances[entity]) {
-        snprintf(entityCacheStringBuffer, sizeof(entityCacheStringBuffer), "%u", entity);
-        py_deldict(entityInstanceCache.cacheDict, py_name(entityCacheStringBuffer));
+        snprintf(entityCacheStringBuffer, sizeof(entityCacheStringBuffer), "_e_%u", entity);
+        // py_Ref cacheDict = py_getglobal(entityInstanceCache.name);
+        // SKA_ASSERT(cacheDict);
+        // py_deldict(cacheDict, py_name(entityCacheStringBuffer));
+        py_setglobal(py_name(entityCacheStringBuffer), py_None);
         entityInstanceCache.instances[entity] = NULL;
     }
 }
 
 static py_Ref instance_cache_get(SkaEntity entity) {
-    return entityInstanceCache.instances[entity];
+    // return entityInstanceCache.instances[entity];
+    snprintf(entityCacheStringBuffer, sizeof(entityCacheStringBuffer), "_e_%u", entity);
+    return py_getglobal(py_name(entityCacheStringBuffer));
 }
 
+static py_Ref instance_cache_get_checked(SkaEntity entity) {
+    SKA_ASSERT(entityInstanceCache.instances[entity]);
+    return instance_cache_get(entity);
+    // py_Ref cacheDict = py_getglobal(entityInstanceCache.name);
+    // SKA_ASSERT(py_isdict(cacheDict));
+    // py_dict_getitem_by_str(cacheDict, entityCacheStringBuffer);
+    // return entityInstanceCache.instances[entity];
+
+    // return py_retval();
+}
 
 static CREScriptContext* scriptContext = NULL;
 static py_Name startFunctionName;
@@ -66,6 +120,7 @@ static py_Name endFunctionName;
 static char* pkpy_import_file(const char* path);
 
 //--- Script Context Interface ---//
+
 static void pkpy_init(CREScriptContext* context);
 static void pkpy_finalize(CREScriptContext* context);
 static void pkpy_create_instance(SkaEntity entity, const char* classPath, const char* className);
@@ -106,6 +161,9 @@ void pkpy_init(CREScriptContext* context) {
     py_Callbacks* callbacks = py_callbacks();
     callbacks->importfile = pkpy_import_file;
 
+    // Import internal modules
+    cre_pkpy_api_load_internal_modules();
+
     scriptContext = context;
 }
 
@@ -124,17 +182,26 @@ void pkpy_delete_instance(SkaEntity entity) {
 }
 
 void pkpy_on_start(SkaEntity entity) {
-    py_Ref self = instance_cache_get(entity);
-    SKA_ASSERT(self);
+    py_Ref self = instance_cache_get_checked(entity);
     if (py_getattr(self, startFunctionName)) {
-        py_Ref func = py_retval();
-        py_call(func, 1, self);
+        // py_exec("_e_1._start()", "__main__", EXEC_MODE, NULL);
+        // py_exec("print(_e_1.entity_id)", "__main__", EXEC_MODE, NULL);
+        py_smartexec("_._start()", NULL, self);
+        // py_Ref func = py_retval();
+        // const char* typeName = py_tpname(func->type);
+        // py_Type funcType = func->type;
+        // py_pushmethod(startFunctionName);
+        // py_push(func);
+        // py_pushnil();
+        // py_vectorcall(0, 0);
+        PY_ASSERT_NO_EXC();
+    } else {
+        py_clearexc(NULL);
     }
 }
 
 void pkpy_on_end(SkaEntity entity) {
-    py_Ref self = instance_cache_get(entity);
-    SKA_ASSERT(self);
+    py_Ref self = instance_cache_get_checked(entity);
     if (py_getattr(self, endFunctionName)) {
         py_Ref func = py_retval();
         py_call(func, 1, self);
@@ -142,24 +209,38 @@ void pkpy_on_end(SkaEntity entity) {
 }
 
 void pkpy_on_update(SkaEntity entity, f32 deltaTime) {
-    py_Ref self = instance_cache_get(entity);
-    SKA_ASSERT(self);
-    if (py_getattr(self, endFunctionName)) {
+    py_Ref self = instance_cache_get_checked(entity);
+    if (py_getattr(self, processFunctionName)) {
         py_Ref func = py_retval();
-        py_call(func, 1, self);
+        py_Ref pyDeltaTime = NULL;
+        py_newfloat(pyDeltaTime, deltaTime);
+        py_push(func);
+        py_pushnil();
+        py_push(pyDeltaTime);
+        py_vectorcall(2, 0);
     }
 }
 
-void pkpy_on_fixed_update(SkaEntity entity, f32 deltaTime) {}
+void pkpy_on_fixed_update(SkaEntity entity, f32 deltaTime) {
+    py_Ref self = instance_cache_get_checked(entity);
+    if (py_getattr(self, fixedProcessFunctionName)) {
+        py_Ref func = py_retval();
+        py_Ref pyDeltaTime = NULL;
+        py_newfloat(pyDeltaTime, deltaTime);
+        py_push(func);
+        py_pushnil();
+        py_push(pyDeltaTime);
+        py_vectorcall(2, 0);
+    }
+}
 
-void pkpy_network_callback(const char* message) {}
+void pkpy_network_callback(const char* message) {
+    SKA_ASSERT_FMT(false, "TODO: Implement!");
+}
 
 char* pkpy_import_file(const char* path) {
     // Use built in asset loader to load script instead of pkpy's default
     char* moduleString = ska_asset_file_loader_read_file_contents_as_string(path, NULL);
-    if (!moduleString) {
-        ska_logger_error("Failed to load pkpy module at path'%s'", path);
-        return NULL;
-    }
+    SKA_ASSERT_FMT(moduleString, "Failed to load pkpy module at path '%s'", path);
     return moduleString;
 }
