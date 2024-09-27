@@ -7,7 +7,6 @@ void cre_pkpy_util_create_module(CrePPModule* module) {
         const CrePPFunction* func = &module->functions[i];
         if (!func->signature || !func->function) { break; }
         py_bind(newModule, func->signature, func->function);
-        // py_bindfunc(newModule, func->signature, func->function);
     }
 }
 

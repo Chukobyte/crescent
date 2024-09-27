@@ -33,10 +33,6 @@ static py_Ref instance_cache_add(SkaEntity entity,const char* classPath, const c
         ska_logger_warn("Attempting to add entity '%u' from '%s.%s'!", entity, classPath, className);
         return entityInstanceCache.instances[entity];
     }
-    // const bool wasImportSuccessful = py_import(classPath) == 1;
-    // SKA_ASSERT(wasImportSuccessful);
-    // py_Ref module = py_getmodule(classPath);
-    // SKA_ASSERT_FMT(module, "module '%s' not found!", classPath);
 
     snprintf(entityCacheStringBuffer, sizeof(entityCacheStringBuffer), "from %s import %s", classPath, className);
     py_exec(entityCacheStringBuffer, "main.py", EXEC_MODE, NULL);
@@ -161,34 +157,44 @@ void pkpy_on_start(SkaEntity entity) {
 void pkpy_on_end(SkaEntity entity) {
     py_Ref self = instance_cache_get_checked(entity);
     if (py_getattr(self, endFunctionName)) {
-        py_Ref func = py_retval();
-        py_call(func, 1, self);
+        py_push(py_retval());
+        py_pushnil();
+        py_vectorcall(0, 0);
+        PY_ASSERT_NO_EXC();
+    } else {
+        py_clearexc(NULL);
     }
 }
 
 void pkpy_on_update(SkaEntity entity, f32 deltaTime) {
     py_Ref self = instance_cache_get_checked(entity);
     if (py_getattr(self, processFunctionName)) {
-        py_Ref func = py_retval();
         py_Ref pyDeltaTime = NULL;
         py_newfloat(pyDeltaTime, deltaTime);
-        py_push(func);
+
+        py_push(py_retval());
         py_pushnil();
         py_push(pyDeltaTime);
-        py_vectorcall(2, 0);
+        py_vectorcall(1, 0);
+        PY_ASSERT_NO_EXC();
+    } else {
+        py_clearexc(NULL);
     }
 }
 
 void pkpy_on_fixed_update(SkaEntity entity, f32 deltaTime) {
     py_Ref self = instance_cache_get_checked(entity);
     if (py_getattr(self, fixedProcessFunctionName)) {
-        py_Ref func = py_retval();
         py_Ref pyDeltaTime = NULL;
         py_newfloat(pyDeltaTime, deltaTime);
-        py_push(func);
+
+        py_push(py_retval());
         py_pushnil();
         py_push(pyDeltaTime);
-        py_vectorcall(2, 0);
+        py_vectorcall(1, 0);
+        PY_ASSERT_NO_EXC();
+    } else {
+        py_clearexc(NULL);
     }
 }
 
