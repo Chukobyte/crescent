@@ -15,19 +15,13 @@
 //--- Entity Instance Cache ---//
 
 typedef struct CreEntityInstanceCache {
-    py_Name name;
     py_Ref instances[SKA_MAX_ENTITIES];
 } CreEntityInstanceCache;
 
 static CreEntityInstanceCache entityInstanceCache = {0};
 static char entityCacheStringBuffer[48];
 
-static void instance_cache_init() {
-    // entityInstanceCache.name = py_name("_inst_cache");
-    // py_Ref cacheDict = py_retval();
-    // py_newdict(cacheDict);
-    // py_setglobal(entityInstanceCache.name, cacheDict);
-}
+static void instance_cache_init() {}
 
 static void instance_cache_finalize() {
     memset(entityInstanceCache.instances, 0, sizeof(entityInstanceCache.instances));
@@ -39,14 +33,11 @@ static py_Ref instance_cache_add(SkaEntity entity,const char* classPath, const c
         ska_logger_warn("Attempting to add entity '%u' from '%s.%s'!", entity, classPath, className);
         return entityInstanceCache.instances[entity];
     }
-    const bool wasImportSuccessful = py_import(classPath) == 1;
-    SKA_ASSERT(wasImportSuccessful);
-    py_Ref module = py_getmodule(classPath);
-    SKA_ASSERT_FMT(module, "module '%s' not found!", classPath);
+    // const bool wasImportSuccessful = py_import(classPath) == 1;
+    // SKA_ASSERT(wasImportSuccessful);
+    // py_Ref module = py_getmodule(classPath);
+    // SKA_ASSERT_FMT(module, "module '%s' not found!", classPath);
 
-    // snprintf(entityCacheStringBuffer, sizeof(entityCacheStringBuffer), "%s.%s(%u)", classPath, className, entity);
-    // py_eval(entityCacheStringBuffer, NULL);
-    // snprintf(entityCacheStringBuffer, sizeof(entityCacheStringBuffer), "_e_%u = %s.%s(%u)", entity, classPath, className, entity);
     snprintf(entityCacheStringBuffer, sizeof(entityCacheStringBuffer), "from %s import %s", classPath, className);
     py_exec(entityCacheStringBuffer, "main.py", EXEC_MODE, NULL);
     PY_ASSERT_NO_EXC();
@@ -54,31 +45,11 @@ static py_Ref instance_cache_add(SkaEntity entity,const char* classPath, const c
     py_exec(entityCacheStringBuffer, "main.py", EXEC_MODE, NULL);
     PY_ASSERT_NO_EXC();
 
-    // py_Type instType = py_gettype(classPath, py_name(className));
-    // SKA_ASSERT(instType);
-    // py_Ref instanceRef = py_retval();
-    // py_newobject(instanceRef, instType, 1, 0);
-    // py_Ref pyEntity = py_pushtmp();
-    // py_newint(pyEntity, entity);
-    // py_setslot(instanceRef, 0, pyEntity);
-
     snprintf(entityCacheStringBuffer, sizeof(entityCacheStringBuffer), "_e_%u", entity);
-    // py_Ref instanceRef = py_peek(-1);
     py_Ref instanceRef = py_getglobal(py_name(entityCacheStringBuffer));
-    // py_pop();
 
-    // static char callInstanceBuffer[96];
-    // sprintf_s(callInstanceBuffer, sizeof(callInstanceBuffer), "%s(%d)", className, entity);
-    // py_eval(callInstanceBuffer, module);
-    // py_Ref instanceRef = py_retval();
     SKA_ASSERT_FMT(instanceRef, "Unable to create instance from '%s.%s'!", classPath, className);
     entityInstanceCache.instances[entity] = instanceRef;
-    // snprintf(entityCacheStringBuffer, sizeof(entityCacheStringBuffer), "_e_%u", entity);
-    // py_setglobal(py_name(entityCacheStringBuffer), instanceRef);
-    // py_Ref cacheDict = py_getglobal(entityInstanceCache.name);
-    // SKA_ASSERT(py_isdict(cacheDict));
-    // py_setdict(cacheDict, py_name(entityCacheStringBuffer), instanceRef);
-    // py_pop();
 
     return instanceRef;
 }
@@ -86,16 +57,12 @@ static py_Ref instance_cache_add(SkaEntity entity,const char* classPath, const c
 static void instance_cache_remove(SkaEntity entity) {
     if (entityInstanceCache.instances[entity]) {
         snprintf(entityCacheStringBuffer, sizeof(entityCacheStringBuffer), "_e_%u", entity);
-        // py_Ref cacheDict = py_getglobal(entityInstanceCache.name);
-        // SKA_ASSERT(cacheDict);
-        // py_deldict(cacheDict, py_name(entityCacheStringBuffer));
         py_setglobal(py_name(entityCacheStringBuffer), py_None);
         entityInstanceCache.instances[entity] = NULL;
     }
 }
 
 static py_Ref instance_cache_get(SkaEntity entity) {
-    // return entityInstanceCache.instances[entity];
     snprintf(entityCacheStringBuffer, sizeof(entityCacheStringBuffer), "_e_%u", entity);
     return py_getglobal(py_name(entityCacheStringBuffer));
 }
@@ -103,12 +70,6 @@ static py_Ref instance_cache_get(SkaEntity entity) {
 static py_Ref instance_cache_get_checked(SkaEntity entity) {
     SKA_ASSERT(entityInstanceCache.instances[entity]);
     return instance_cache_get(entity);
-    // py_Ref cacheDict = py_getglobal(entityInstanceCache.name);
-    // SKA_ASSERT(py_isdict(cacheDict));
-    // py_dict_getitem_by_str(cacheDict, entityCacheStringBuffer);
-    // return entityInstanceCache.instances[entity];
-
-    // return py_retval();
 }
 
 static CREScriptContext* scriptContext = NULL;

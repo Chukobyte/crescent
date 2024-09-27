@@ -14,6 +14,5 @@ void cre_pkpy_util_create_module(CrePPModule* module) {
 void cre_pkpy_util_create_from_string(const char* moduleName, const char* moduleSource) {
     py_Ref newModule = py_newmodule(moduleName);
     SKA_ASSERT(newModule);
-    // py_exec(moduleSource, moduleName, EXEC_MODE, newModule);
-    py_exec(moduleSource, moduleName, EXEC_MODE, NULL);
+    py_exec(moduleSource, moduleName, EXEC_MODE, newModule);
 }
