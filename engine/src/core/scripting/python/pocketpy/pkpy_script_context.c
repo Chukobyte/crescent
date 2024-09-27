@@ -47,6 +47,7 @@ static py_Ref instance_cache_add(SkaEntity entity,const char* classPath, const c
 
     snprintf(entityCacheStringBuffer, sizeof(entityCacheStringBuffer), "_e_%u", entity);
     py_Ref instanceRef = py_getglobal(py_name(entityCacheStringBuffer));
+    PY_ASSERT_NO_EXC();
 
     SKA_ASSERT_FMT(instanceRef, "Unable to create instance from '%s.%s'!", classPath, className);
     entityInstanceCache.instances[entity] = instanceRef;
@@ -58,13 +59,16 @@ static void instance_cache_remove(SkaEntity entity) {
     if (entityInstanceCache.instances[entity]) {
         snprintf(entityCacheStringBuffer, sizeof(entityCacheStringBuffer), "_e_%u", entity);
         py_setglobal(py_name(entityCacheStringBuffer), py_None);
+        PY_ASSERT_NO_EXC();
         entityInstanceCache.instances[entity] = NULL;
     }
 }
 
 static py_Ref instance_cache_get(SkaEntity entity) {
     snprintf(entityCacheStringBuffer, sizeof(entityCacheStringBuffer), "_e_%u", entity);
-    return py_getglobal(py_name(entityCacheStringBuffer));
+    py_Ref instance = py_getglobal(py_name(entityCacheStringBuffer));
+    PY_ASSERT_NO_EXC();
+    return instance;
 }
 
 static py_Ref instance_cache_get_checked(SkaEntity entity) {
@@ -145,16 +149,9 @@ void pkpy_delete_instance(SkaEntity entity) {
 void pkpy_on_start(SkaEntity entity) {
     py_Ref self = instance_cache_get_checked(entity);
     if (py_getattr(self, startFunctionName)) {
-        py_exec("_e_1._start()", "main.py", EXEC_MODE, NULL);
-        // py_exec("print(_e_1.entity_id)", "__main__", EXEC_MODE, NULL);
-        // py_smartexec("_._start()", NULL, self);
-        // py_Ref func = py_retval();
-        // const char* typeName = py_tpname(func->type);
-        // py_Type funcType = func->type;
-        // py_pushmethod(startFunctionName);
-        // py_push(func);
-        // py_pushnil();
-        // py_vectorcall(0, 0);
+        py_push(py_retval());
+        py_pushnil();
+        py_vectorcall(0, 0);
         PY_ASSERT_NO_EXC();
     } else {
         py_clearexc(NULL);
