@@ -1,8 +1,11 @@
 #include "pkpy_api_impl.h"
 
+#include <seika/assert.h>
+#include <seika/rendering/frame_buffer.h>
 #include <seika/rendering/shader/shader_instance_minimal.h>
 #include <seika/rendering/shader/shader_instance.h>
 #include <seika/rendering/shader/shader_cache.h>
+
 
 // Shader Instance
 bool cre_pkpy_api_shader_instance_delete(int argc, py_StackRef argv) {
@@ -173,35 +176,152 @@ bool cre_pkpy_api_shader_instance_get_float2_param(int argc, py_StackRef argv) {
 }
 
 bool cre_pkpy_api_shader_instance_create_float3_param(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(5);
+    const py_i64 pyShaderId = py_toint(py_arg(0));
+    const char* paramName = py_tostr(py_arg(1));
+    const f64 valueX = py_tofloat(py_arg(2));
+    const f64 valueY = py_tofloat(py_arg(3));
+    const f64 valueZ = py_tofloat(py_arg(4));
+
+    const SkaShaderInstanceId shaderId = (SkaShaderInstanceId)pyShaderId;
+    SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(shaderId);
+    const SkaVector3 vecValue = (SkaVector3){ .x = (f32)valueX, .y = (f32)valueY, .z = (f32)valueZ };
+    ska_shader_instance_param_create_float3(shaderInstance, paramName, vecValue);
     return true;
 }
 
 bool cre_pkpy_api_shader_instance_set_float3_param(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(5);
+    const py_i64 pyShaderId = py_toint(py_arg(0));
+    const char* paramName = py_tostr(py_arg(1));
+    const f64 valueX = py_tofloat(py_arg(2));
+    const f64 valueY = py_tofloat(py_arg(3));
+    const f64 valueZ = py_tofloat(py_arg(4));
+
+    const SkaShaderInstanceId shaderId = (SkaShaderInstanceId)pyShaderId;
+    SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(shaderId);
+    const SkaVector3 vecValue = (SkaVector3){ .x = (f32)valueX, .y = (f32)valueY, .z = (f32)valueZ };
+    ska_shader_instance_param_update_float3(shaderInstance, paramName, vecValue);
     return true;
 }
 
 bool cre_pkpy_api_shader_instance_get_float3_param(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(2);
+    const py_i64 pyShaderId = py_toint(py_arg(0));
+    const char* paramName = py_tostr(py_arg(1));
+
+    const SkaShaderInstanceId shaderId = (SkaShaderInstanceId)pyShaderId;
+    SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(shaderId);
+    const SkaVector3 value = ska_shader_instance_param_get_float3(shaderInstance, paramName);
+    py_newtuple(py_retval(), 3);
+    py_Ref pyX = py_tuple_getitem(py_retval(), 0);
+    py_Ref pyY = py_tuple_getitem(py_retval(), 1);
+    py_Ref pyZ = py_tuple_getitem(py_retval(), 2);
+    py_newfloat(pyX, value.x);
+    py_newfloat(pyY, value.y);
+    py_newfloat(pyZ, value.z);
     return true;
 }
 
 bool cre_pkpy_api_shader_instance_create_float4_param(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(6);
+    const py_i64 pyShaderId = py_toint(py_arg(0));
+    const char* paramName = py_tostr(py_arg(1));
+    const f64 valueX = py_tofloat(py_arg(2));
+    const f64 valueY = py_tofloat(py_arg(3));
+    const f64 valueZ = py_tofloat(py_arg(4));
+    const f64 valueW = py_tofloat(py_arg(5));
+
+    const SkaShaderInstanceId shaderId = (SkaShaderInstanceId)pyShaderId;
+    SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(shaderId);
+    const SkaVector4 vecValue = (SkaVector4){ .x = (f32)valueX, .y = (f32)valueY, .z = (f32)valueZ, .w = (f32)valueW };
+    ska_shader_instance_param_create_float4(shaderInstance, paramName, vecValue);
     return true;
 }
 
 bool cre_pkpy_api_shader_instance_set_float4_param(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(6);
+    const py_i64 pyShaderId = py_toint(py_arg(0));
+    const char* paramName = py_tostr(py_arg(1));
+    const f64 valueX = py_tofloat(py_arg(2));
+    const f64 valueY = py_tofloat(py_arg(3));
+    const f64 valueZ = py_tofloat(py_arg(4));
+    const f64 valueW = py_tofloat(py_arg(5));
+
+    const SkaShaderInstanceId shaderId = (SkaShaderInstanceId)pyShaderId;
+    SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(shaderId);
+    const SkaVector4 vecValue = (SkaVector4){ .x = (f32)valueX, .y = (f32)valueY, .z = (f32)valueZ, .w = (f32)valueW };
+    ska_shader_instance_param_update_float4(shaderInstance, paramName, vecValue);
     return true;
 }
 
 bool cre_pkpy_api_shader_instance_get_float4_param(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(2);
+    const py_i64 pyShaderId = py_toint(py_arg(0));
+    const char* paramName = py_tostr(py_arg(1));
+
+    const SkaShaderInstanceId shaderId = (SkaShaderInstanceId)pyShaderId;
+    SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(shaderId);
+    const SkaVector4 value = ska_shader_instance_param_get_float4(shaderInstance, paramName);
+    py_newtuple(py_retval(), 4);
+    py_Ref pyX = py_tuple_getitem(py_retval(), 0);
+    py_Ref pyY = py_tuple_getitem(py_retval(), 1);
+    py_Ref pyZ = py_tuple_getitem(py_retval(), 2);
+    py_Ref pyW = py_tuple_getitem(py_retval(), 3);
+    py_newfloat(pyX, value.x);
+    py_newfloat(pyY, value.y);
+    py_newfloat(pyZ, value.z);
+    py_newfloat(pyW, value.w);
     return true;
 }
 
 // Shader Util
-bool cre_pkpy_api_shader_util_compile_shader(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_shader_util_compile_shader_raw(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_shader_util_set_screen_shader(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_shader_util_get_current_screen_shader(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_shader_util_reset_screen_shader_to_default(int argc, py_StackRef argv) { return true; }
+bool cre_pkpy_api_shader_util_compile_shader(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    const char* shaderPath = py_tostr(py_arg(0));
+
+    const SkaShaderInstanceId newId = ska_shader_cache_create_instance_and_add(shaderPath);
+    SKA_ASSERT_FMT(newId != SKA_SHADER_INSTANCE_INVALID_ID, "Invalid shader id reading from path '%s'", shaderPath);
+    py_newint(py_retval(), newId);
+    return true;
+}
+
+bool cre_pkpy_api_shader_util_compile_shader_raw(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(2);
+    const char* vertexPath = py_tostr(py_arg(0));
+    const char* fragmentPath = py_tostr(py_arg(1));
+
+    const SkaShaderInstanceId newId = ska_shader_cache_create_instance_and_add_from_raw(vertexPath, fragmentPath);
+    SKA_ASSERT_FMT(newId != SKA_SHADER_INSTANCE_INVALID_ID, "Invalid shader id reading from paths: vertex = '%s', fragment = '%s'", vertexPath, fragmentPath);
+    py_newint(py_retval(), newId);
+    return true;
+}
+
+bool cre_pkpy_api_shader_util_set_screen_shader(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    const py_i64 pyShaderId = py_toint(py_arg(0));
+
+    const SkaShaderInstanceId shaderId = (SkaShaderInstanceId)pyShaderId;
+    SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(shaderId);
+    bool hasSetShaderInstance = false;
+    if (shaderInstance) {
+        ska_frame_buffer_set_screen_shader(shaderInstance);
+        hasSetShaderInstance = true;
+    }
+    py_newbool(py_retval(), hasSetShaderInstance);
+    return true;
+}
+
+// TODO: Keep track of current screen shader
+bool cre_pkpy_api_shader_util_get_current_screen_shader(int argc, py_StackRef argv) {
+    py_newint(py_retval(), 0);
+    return true;
+}
+
+bool cre_pkpy_api_shader_util_reset_screen_shader_to_default(int argc, py_StackRef argv) {
+    ska_frame_buffer_reset_to_default_screen_shader();
+    return true;
+}
 
 // Engine
 bool cre_pkpy_api_engine_exit(int argc, py_StackRef argv) { return true; }
