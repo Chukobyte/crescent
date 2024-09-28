@@ -129,14 +129,46 @@ bool cre_pkpy_api_shader_instance_get_float_param(int argc, py_StackRef argv) {
 }
 
 bool cre_pkpy_api_shader_instance_create_float2_param(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(4);
+    const py_i64 pyShaderId = py_toint(py_arg(0));
+    const char* paramName = py_tostr(py_arg(1));
+    const f64 valueX = py_tofloat(py_arg(2));
+    const f64 valueY = py_tofloat(py_arg(3));
+
+    const SkaShaderInstanceId shaderId = (SkaShaderInstanceId)pyShaderId;
+    SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(shaderId);
+    const SkaVector2 vecValue = (SkaVector2){ .x = (f32)valueX, .y = (f32)valueY };
+    ska_shader_instance_param_create_float2(shaderInstance, paramName, vecValue);
     return true;
 }
 
 bool cre_pkpy_api_shader_instance_set_float2_param(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(4);
+    const py_i64 pyShaderId = py_toint(py_arg(0));
+    const char* paramName = py_tostr(py_arg(1));
+    const f64 valueX = py_tofloat(py_arg(2));
+    const f64 valueY = py_tofloat(py_arg(3));
+
+    const SkaShaderInstanceId shaderId = (SkaShaderInstanceId)pyShaderId;
+    SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(shaderId);
+    const SkaVector2 vecValue = (SkaVector2){ .x = (f32)valueX, .y = (f32)valueY };
+    ska_shader_instance_param_update_float2(shaderInstance, paramName, vecValue);
     return true;
 }
 
 bool cre_pkpy_api_shader_instance_get_float2_param(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(2);
+    const py_i64 pyShaderId = py_toint(py_arg(0));
+    const char* paramName = py_tostr(py_arg(1));
+
+    const SkaShaderInstanceId shaderId = (SkaShaderInstanceId)pyShaderId;
+    SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(shaderId);
+    const SkaVector2 value = ska_shader_instance_param_get_float2(shaderInstance, paramName);
+    py_newtuple(py_retval(), 2);
+    py_Ref pyX = py_tuple_getitem(py_retval(), 0);
+    py_Ref pyY = py_tuple_getitem(py_retval(), 1);
+    py_newfloat(pyX, value.x);
+    py_newfloat(pyY, value.y);
     return true;
 }
 
