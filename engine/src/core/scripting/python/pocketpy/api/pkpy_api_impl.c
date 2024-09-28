@@ -1,25 +1,168 @@
 #include "pkpy_api_impl.h"
 
+#include <seika/rendering/shader/shader_instance_minimal.h>
+#include <seika/rendering/shader/shader_instance.h>
+#include <seika/rendering/shader/shader_cache.h>
+
 // Shader Instance
-bool cre_pkpy_api_shader_instance_delete(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_shader_instance_create_bool_param(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_shader_instance_set_bool_param(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_shader_instance_get_bool_param(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_shader_instance_create_int_param(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_shader_instance_set_int_param(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_shader_instance_get_int_param(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_shader_instance_create_float_param(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_shader_instance_set_float_param(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_shader_instance_get_float_param(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_shader_instance_create_float2_param(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_shader_instance_set_float2_param(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_shader_instance_get_float2_param(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_shader_instance_create_float3_param(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_shader_instance_set_float3_param(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_shader_instance_get_float3_param(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_shader_instance_create_float4_param(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_shader_instance_set_float4_param(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_shader_instance_get_float4_param(int argc, py_StackRef argv) { return true; }
+bool cre_pkpy_api_shader_instance_delete(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    const py_i64 pyShaderId = py_toint(py_arg(0));
+
+    const SkaShaderInstanceId shaderId = (SkaShaderInstanceId)pyShaderId;
+    SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(shaderId);
+    bool hasDeletedInstance = false;
+    if (shaderInstance) {
+        ska_shader_cache_remove_instance(shaderId);
+        ska_shader_instance_destroy(shaderInstance);
+    }
+    py_newbool(py_retval(), hasDeletedInstance);
+    return true;
+}
+
+bool cre_pkpy_api_shader_instance_create_bool_param(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(3);
+    const py_i64 pyShaderId = py_toint(py_arg(0));
+    const char* paramName = py_tostr(py_arg(1));
+    const bool value = py_tobool(py_arg(2));
+
+    const SkaShaderInstanceId shaderId = (SkaShaderInstanceId)pyShaderId;
+    SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(shaderId);
+    ska_shader_instance_param_create_bool(shaderInstance, paramName, value);
+    return true;
+}
+
+bool cre_pkpy_api_shader_instance_set_bool_param(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(3);
+    const py_i64 pyShaderId = py_toint(py_arg(0));
+    const char* paramName = py_tostr(py_arg(1));
+    const bool value = py_tobool(py_arg(2));
+
+    const SkaShaderInstanceId shaderId = (SkaShaderInstanceId)pyShaderId;
+    SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(shaderId);
+    ska_shader_instance_param_update_bool(shaderInstance, paramName, value);
+    return true;
+}
+
+bool cre_pkpy_api_shader_instance_get_bool_param(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(2);
+    const py_i64 pyShaderId = py_toint(py_arg(0));
+    const char* paramName = py_tostr(py_arg(1));
+
+    const SkaShaderInstanceId shaderId = (SkaShaderInstanceId)pyShaderId;
+    SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(shaderId);
+    const bool value = ska_shader_instance_param_get_bool(shaderInstance, paramName);
+    py_newbool(py_retval(), value);
+    return true;
+}
+
+bool cre_pkpy_api_shader_instance_create_int_param(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(3);
+    const py_i64 pyShaderId = py_toint(py_arg(0));
+    const char* paramName = py_tostr(py_arg(1));
+    const py_i64 value = py_toint(py_arg(2));
+
+    const SkaShaderInstanceId shaderId = (SkaShaderInstanceId)pyShaderId;
+    SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(shaderId);
+    ska_shader_instance_param_create_int(shaderInstance, paramName, (int32)value);
+    return true;
+}
+
+bool cre_pkpy_api_shader_instance_set_int_param(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(3);
+    const py_i64 pyShaderId = py_toint(py_arg(0));
+    const char* paramName = py_tostr(py_arg(1));
+    const py_i64 value = py_toint(py_arg(2));
+
+    const SkaShaderInstanceId shaderId = (SkaShaderInstanceId)pyShaderId;
+    SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(shaderId);
+    ska_shader_instance_param_update_int(shaderInstance, paramName, (int32)value);
+    return true;
+}
+
+bool cre_pkpy_api_shader_instance_get_int_param(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(2);
+    const py_i64 pyShaderId = py_toint(py_arg(0));
+    const char* paramName = py_tostr(py_arg(1));
+
+    const SkaShaderInstanceId shaderId = (SkaShaderInstanceId)pyShaderId;
+    SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(shaderId);
+    const int32 value = ska_shader_instance_param_get_int(shaderInstance, paramName);
+    py_newint(py_retval(), value);
+    return true;
+}
+
+bool cre_pkpy_api_shader_instance_create_float_param(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(3);
+    const py_i64 pyShaderId = py_toint(py_arg(0));
+    const char* paramName = py_tostr(py_arg(1));
+    const f64 value = py_tofloat(py_arg(2));
+
+    const SkaShaderInstanceId shaderId = (SkaShaderInstanceId)pyShaderId;
+    SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(shaderId);
+    ska_shader_instance_param_create_float(shaderInstance, paramName, (f32)value);
+    return true;
+}
+
+bool cre_pkpy_api_shader_instance_set_float_param(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(3);
+    const py_i64 pyShaderId = py_toint(py_arg(0));
+    const char* paramName = py_tostr(py_arg(1));
+    const f64 value = py_tofloat(py_arg(2));
+
+    const SkaShaderInstanceId shaderId = (SkaShaderInstanceId)pyShaderId;
+    SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(shaderId);
+    ska_shader_instance_param_update_float(shaderInstance, paramName, (f32)value);
+    return true;
+}
+
+bool cre_pkpy_api_shader_instance_get_float_param(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(2);
+    const py_i64 pyShaderId = py_toint(py_arg(0));
+    const char* paramName = py_tostr(py_arg(1));
+
+    const SkaShaderInstanceId shaderId = (SkaShaderInstanceId)pyShaderId;
+    SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(shaderId);
+    const f32 value = ska_shader_instance_param_get_float(shaderInstance, paramName);
+    py_newfloat(py_retval(), value);
+    return true;
+}
+
+bool cre_pkpy_api_shader_instance_create_float2_param(int argc, py_StackRef argv) {
+    return true;
+}
+
+bool cre_pkpy_api_shader_instance_set_float2_param(int argc, py_StackRef argv) {
+    return true;
+}
+
+bool cre_pkpy_api_shader_instance_get_float2_param(int argc, py_StackRef argv) {
+    return true;
+}
+
+bool cre_pkpy_api_shader_instance_create_float3_param(int argc, py_StackRef argv) {
+    return true;
+}
+
+bool cre_pkpy_api_shader_instance_set_float3_param(int argc, py_StackRef argv) {
+    return true;
+}
+
+bool cre_pkpy_api_shader_instance_get_float3_param(int argc, py_StackRef argv) {
+    return true;
+}
+
+bool cre_pkpy_api_shader_instance_create_float4_param(int argc, py_StackRef argv) {
+    return true;
+}
+
+bool cre_pkpy_api_shader_instance_set_float4_param(int argc, py_StackRef argv) {
+    return true;
+}
+
+bool cre_pkpy_api_shader_instance_get_float4_param(int argc, py_StackRef argv) {
+    return true;
+}
 
 // Shader Util
 bool cre_pkpy_api_shader_util_compile_shader(int argc, py_StackRef argv) { return true; }
