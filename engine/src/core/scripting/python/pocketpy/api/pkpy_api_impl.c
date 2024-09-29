@@ -1,14 +1,36 @@
 #include "pkpy_api_impl.h"
 
 #include <seika/assert.h>
+#include <seika/input/input.h>
+#include <seika/rendering/render_context.h>
 #include <seika/rendering/frame_buffer.h>
 #include <seika/rendering/shader/shader_instance_minimal.h>
 #include <seika/rendering/shader/shader_instance.h>
 #include <seika/rendering/shader/shader_cache.h>
 
 #include "core/engine_context.h"
+#include "core/game_properties.h"
+#include "core/camera/camera.h"
+#include "core/camera/camera_manager.h"
 #include "core/ecs/ecs_manager.h"
 
+
+// Helper functions
+static inline SkaVector2 cre_pkpy_api_helper_mouse_get_global_position(const SkaVector2* offset) {
+    SkaMouse* globalMouse = ska_input_get_mouse();
+    const CRECamera2D* camera = cre_camera_manager_get_current_camera();
+    CREGameProperties* gameProps = cre_game_props_get();
+    SkaRenderContext* renderContext = ska_render_context_get();
+    const SkaVector2 mouse_pixel_coord = {
+        ska_math_map_to_range(globalMouse->position.x, 0.0f, (float) renderContext->windowWidth, 0.0f, (float) gameProps->resolutionWidth),
+        ska_math_map_to_range(globalMouse->position.y, 0.0f, (float) renderContext->windowHeight, 0.0f, (float) gameProps->resolutionHeight)
+};
+    const SkaVector2 mouseWorldPos = {
+        (camera->viewport.x + camera->offset.x + mouse_pixel_coord.x + offset->x) * camera->zoom.x,
+        (camera->viewport.y + camera->offset.y + mouse_pixel_coord.y + offset->y) * camera->zoom.y
+};
+    return mouseWorldPos;
+}
 
 // Shader Instance
 bool cre_pkpy_api_shader_instance_delete(int argc, py_StackRef argv) {
@@ -362,8 +384,8 @@ bool cre_pkpy_api_engine_set_fps_display_enabled(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(4);
     const bool isEnabled = py_tobool(py_arg(0));
     const char* fontUID = py_tostr(py_arg(1));
-    const double pyPosX = py_tofloat(py_arg(2));
-    const double pyPosY = py_tofloat(py_arg(3));
+    const py_f64 pyPosX = py_tofloat(py_arg(2));
+    const py_f64 pyPosY = py_tofloat(py_arg(3));
 
     cre_ecs_manager_enable_fps_display_entity(isEnabled, fontUID, (f32)pyPosX, (f32)pyPosY);
     return true;
@@ -375,17 +397,122 @@ bool cre_pkpy_api_engine_get_global_physics_delta_time(int argc, py_StackRef arg
 }
 
 // Input
-bool cre_pkpy_api_input_is_key_pressed(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_input_is_key_just_pressed(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_input_is_key_just_released(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_input_add_action(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_input_is_action_pressed(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_input_is_action_just_pressed(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_input_is_action_just_released(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_input_start_gamepad_vibration(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_input_stop_gamepad_vibration(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_input_mouse_get_position(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_input_mouse_get_world_position(int argc, py_StackRef argv) { return true; }
+
+bool cre_pkpy_api_input_is_key_pressed(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    const py_i64 pyKey = py_toint(py_arg(0));
+
+    const bool isPressed = ska_input_is_key_pressed((SkaInputKey)pyKey, SKA_INPUT_FIRST_PLAYER_DEVICE_INDEX);
+    py_newbool(py_retval(), isPressed);
+    return true;
+}
+
+bool cre_pkpy_api_input_is_key_just_pressed(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    const py_i64 pyKey = py_toint(py_arg(0));
+
+    const bool isPressed = ska_input_is_key_just_pressed((SkaInputKey)pyKey, SKA_INPUT_FIRST_PLAYER_DEVICE_INDEX);
+    py_newbool(py_retval(), isPressed);
+    return true;
+}
+
+bool cre_pkpy_api_input_is_key_just_released(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    const py_i64 pyKey = py_toint(py_arg(0));
+
+    const bool isPressed = ska_input_is_key_just_released((SkaInputKey)pyKey, SKA_INPUT_FIRST_PLAYER_DEVICE_INDEX);
+    py_newbool(py_retval(), isPressed);
+    return true;
+}
+
+bool cre_pkpy_api_input_add_action(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(3);
+    const char* actionName = py_tostr(py_arg(0));
+    const py_i64 pyValueKey = py_toint(py_arg(1));
+    const py_i64 pyDeviceId = py_toint(py_arg(2));
+
+    ska_input_add_input_action(
+        actionName,
+        (SkaInputActionValue[]){ { .key = (SkaInputKey)pyValueKey, .strengthThreshold = 0.5f }, { SkaInputKey_INVALID } },
+        (SkaInputDeviceIndex)pyDeviceId
+    );
+    return true;
+}
+
+bool cre_pkpy_api_input_is_action_pressed(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    const char* actionName = py_tostr(py_arg(0));
+
+    // TODO: Probably should take device index as a param
+    const SkaInputDeviceIndex deviceIndex = SKA_INPUT_FIRST_PLAYER_DEVICE_INDEX;
+    const SkaInputActionHandle handle = ska_input_find_input_action_handle(actionName, deviceIndex);
+    const bool isPressed = handle != SKA_INPUT_INVALID_INPUT_ACTION_HANDLE ? ska_input_is_input_action_pressed(handle, deviceIndex) : false;
+    py_newbool(py_retval(), isPressed);
+    return true;
+}
+
+bool cre_pkpy_api_input_is_action_just_pressed(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    const char* actionName = py_tostr(py_arg(0));
+
+    const SkaInputDeviceIndex deviceIndex = SKA_INPUT_FIRST_PLAYER_DEVICE_INDEX;
+    const SkaInputActionHandle handle = ska_input_find_input_action_handle(actionName, deviceIndex);
+    const bool isPressed = handle != SKA_INPUT_INVALID_INPUT_ACTION_HANDLE ? ska_input_is_input_action_just_pressed(handle, deviceIndex) : false;
+    py_newbool(py_retval(), isPressed);
+    return true;
+}
+
+bool cre_pkpy_api_input_is_action_just_released(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    const char* actionName = py_tostr(py_arg(0));
+
+    const SkaInputDeviceIndex deviceIndex = SKA_INPUT_FIRST_PLAYER_DEVICE_INDEX;
+    const SkaInputActionHandle handle = ska_input_find_input_action_handle(actionName, deviceIndex);
+    const bool isReleased = handle != SKA_INPUT_INVALID_INPUT_ACTION_HANDLE ? ska_input_is_input_action_just_released(handle, deviceIndex) : false;
+    py_newbool(py_retval(), isReleased);
+    return true;
+}
+
+// TODO: Finish implementing
+bool cre_pkpy_api_input_start_gamepad_vibration(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(4);
+    const py_i64 pyDeviceId = py_toint(py_arg(0));
+    const py_f64 pyWeakMagnitude = py_tofloat(py_arg(1));
+    const py_f64 pyStrongMagnitude = py_tofloat(py_arg(2));
+    const py_f64 pyDurationSeconds = py_tofloat(py_arg(3));
+
+    // ska_input_gamepad_start_vibration((int32)pyDeviceId, (f32)pyWeakMagnitude, (f32)pyStrongMagnitude, (f32)pyDurationSeconds);
+    return true;
+}
+
+// TODO: Finish implementing
+bool cre_pkpy_api_input_stop_gamepad_vibration(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    const py_i64 pyDeviceId = py_toint(py_arg(0));
+
+    // ska_input_gamepad_stop_vibration((SkaInputDeviceIndex)pyDeviceId);
+    return true;
+}
+
+bool cre_pkpy_api_input_mouse_get_position(int argc, py_StackRef argv) {
+    const SkaMouse* globalMouse = ska_input_get_mouse();
+    py_newtuple(py_retval(), 2);
+    py_Ref pyX = py_tuple_getitem(py_retval(), 0);
+    py_Ref pyY = py_tuple_getitem(py_retval(), 1);
+    py_newfloat(pyX, (py_f64)globalMouse->position.x);
+    py_newfloat(pyY, (py_f64)globalMouse->position.y);
+    return true;
+}
+
+bool cre_pkpy_api_input_mouse_get_world_position(int argc, py_StackRef argv) {
+    const SkaVector2 mouseWorldPosition = cre_pkpy_api_helper_mouse_get_global_position(&SKA_VECTOR2_ZERO);
+    py_newtuple(py_retval(), 2);
+    py_Ref pyX = py_tuple_getitem(py_retval(), 0);
+    py_Ref pyY = py_tuple_getitem(py_retval(), 1);
+    py_newfloat(pyX, (py_f64)mouseWorldPosition.x);
+    py_newfloat(pyY, (py_f64)mouseWorldPosition.y);
+    return true;
+}
 
 // Scene Tree
 bool cre_pkpy_api_scene_tree_change_scene(int argc, py_StackRef argv) { return true; }
