@@ -6,6 +6,9 @@
 #include <seika/rendering/shader/shader_instance.h>
 #include <seika/rendering/shader/shader_cache.h>
 
+#include "core/engine_context.h"
+#include "core/ecs/ecs_manager.h"
+
 
 // Shader Instance
 bool cre_pkpy_api_shader_instance_delete(int argc, py_StackRef argv) {
@@ -324,12 +327,52 @@ bool cre_pkpy_api_shader_util_reset_screen_shader_to_default(int argc, py_StackR
 }
 
 // Engine
-bool cre_pkpy_api_engine_exit(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_engine_set_target_fps(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_engine_get_target_fps(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_engine_get_average_fps(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_engine_set_fps_display_enabled(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_engine_get_global_physics_delta_time(int argc, py_StackRef argv) { return true; }
+bool cre_pkpy_api_engine_exit(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    const py_i64 pyExitCode = py_toint(py_arg(0));
+
+    CREEngineContext* engineContext = cre_engine_context_get();
+    engineContext->isRunning = false;
+    engineContext->exitCode = (int32)pyExitCode;
+    return true;
+}
+
+bool cre_pkpy_api_engine_set_target_fps(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    const py_i64 pyTargetFPS = py_toint(py_arg(0));
+
+    CREEngineContext* engineContext = cre_engine_context_get();
+    engineContext->targetFPS = (int32)pyTargetFPS;
+    return true;
+}
+
+bool cre_pkpy_api_engine_get_target_fps(int argc, py_StackRef argv) {
+    CREEngineContext* engineContext = cre_engine_context_get();
+    py_newint(py_retval(), engineContext->targetFPS);
+    return true;
+}
+
+bool cre_pkpy_api_engine_get_average_fps(int argc, py_StackRef argv) {
+    CREEngineContext* engineContext = cre_engine_context_get();
+    py_newint(py_retval(), (py_i64)engineContext->stats.averageFPS);
+    return true;
+}
+
+bool cre_pkpy_api_engine_set_fps_display_enabled(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(4);
+    const bool isEnabled = py_tobool(py_arg(0));
+    const char* fontUID = py_tostr(py_arg(1));
+    const double pyPosX = py_tofloat(py_arg(2));
+    const double pyPosY = py_tofloat(py_arg(3));
+
+    cre_ecs_manager_enable_fps_display_entity(isEnabled, fontUID, (f32)pyPosX, (f32)pyPosY);
+    return true;
+}
+
+bool cre_pkpy_api_engine_get_global_physics_delta_time(int argc, py_StackRef argv) {
+    py_newfloat(py_retval(), CRE_GLOBAL_PHYSICS_DELTA_TIME);
+    return true;
+}
 
 // Input
 bool cre_pkpy_api_input_is_key_pressed(int argc, py_StackRef argv) { return true; }
