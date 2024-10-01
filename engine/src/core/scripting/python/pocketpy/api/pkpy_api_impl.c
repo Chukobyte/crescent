@@ -14,7 +14,7 @@
 #include "core/camera/camera_manager.h"
 #include "core/ecs/ecs_manager.h"
 #include "core/scene/scene_manager.h"
-
+#include "core/scripting/python/pocketpy/pkpy_instance_cache.h"
 
 // Helper functions
 static inline SkaVector2 cre_pkpy_api_helper_mouse_get_global_position(const SkaVector2* offset) {
@@ -33,7 +33,10 @@ static inline SkaVector2 cre_pkpy_api_helper_mouse_get_global_position(const Ska
     return mouseWorldPos;
 }
 
+// TODO: Check parameter types to ensure the correct parameters are passed into the api functions
+
 // Shader Instance
+
 bool cre_pkpy_api_shader_instance_delete(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(1);
     const py_i64 pyShaderId = py_toint(py_arg(0));
@@ -302,6 +305,7 @@ bool cre_pkpy_api_shader_instance_get_float4_param(int argc, py_StackRef argv) {
 }
 
 // Shader Util
+
 bool cre_pkpy_api_shader_util_compile_shader(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(1);
     const char* shaderPath = py_tostr(py_arg(0));
@@ -350,6 +354,7 @@ bool cre_pkpy_api_shader_util_reset_screen_shader_to_default(int argc, py_StackR
 }
 
 // Engine
+
 bool cre_pkpy_api_engine_exit(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(1);
     const py_i64 pyExitCode = py_toint(py_arg(0));
@@ -528,18 +533,52 @@ bool cre_pkpy_api_scene_tree_change_scene(int argc, py_StackRef argv) {
 bool cre_pkpy_api_scene_tree_get_root(int argc, py_StackRef argv) {
     SceneTreeNode* rootNode = cre_scene_manager_get_active_scene_root();
     SKA_ASSERT(rootNode != NULL);
-
+    py_Ref rootInstance = cre_pkpy_instance_cache_add2(rootNode->entity);
+    py_assign(py_retval(), rootInstance);
     return true;
 }
 
 // Scene Manager
-bool cre_pkpy_api_scene_manager_process_queued_creation_entities(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_scene_manager_process_queued_scene_change(int argc, py_StackRef argv) { return true; }
+
+bool cre_pkpy_api_scene_manager_process_queued_creation_entities(int argc, py_StackRef argv) {
+    cre_scene_manager_process_queued_creation_entities();
+    return true;
+}
+
+bool cre_pkpy_api_scene_manager_process_queued_scene_change(int argc, py_StackRef argv) {
+    cre_scene_manager_process_queued_scene_change();
+    return true;
+}
 
 // Game Properties
-bool cre_pkpy_api_game_properties_get(int argc, py_StackRef argv) { return true; }
+
+bool cre_pkpy_api_game_properties_get(int argc, py_StackRef argv) {
+    const CREGameProperties* gameProps = cre_game_props_get();
+    SKA_ASSERT(gameProps->gameTitle);
+    SKA_ASSERT(gameProps->initialScenePath);
+    py_newtuple(py_retval(), 8);
+    py_Ref pyGameTitle = py_tuple_getitem(py_retval(), 0);
+    py_Ref pyResolutionWidth = py_tuple_getitem(py_retval(), 1);
+    py_Ref pyResolutionHeight = py_tuple_getitem(py_retval(), 2);
+    py_Ref pyWindowWidth = py_tuple_getitem(py_retval(), 3);
+    py_Ref pyWindowHeight = py_tuple_getitem(py_retval(), 4);
+    py_Ref pyTargetFPS = py_tuple_getitem(py_retval(), 5);
+    py_Ref pyInitialScenePath = py_tuple_getitem(py_retval(), 6);
+    py_Ref pyAreColliderVisible = py_tuple_getitem(py_retval(), 7);
+
+    py_newstr(pyGameTitle, gameProps->gameTitle);
+    py_newint(pyResolutionWidth, gameProps->resolutionWidth);
+    py_newint(pyResolutionHeight, gameProps->resolutionHeight);
+    py_newint(pyWindowWidth, gameProps->windowWidth);
+    py_newint(pyWindowHeight, gameProps->windowHeight);
+    py_newint(pyTargetFPS, gameProps->targetFPS);
+    py_newstr(pyInitialScenePath, gameProps->initialScenePath);
+    py_newbool(pyAreColliderVisible, gameProps->areCollidersVisible);
+    return true;
+}
 
 // Camera2D
+
 bool cre_pkpy_api_camera2d_set_position(int argc, py_StackRef argv) { return true; }
 bool cre_pkpy_api_camera2d_add_to_position(int argc, py_StackRef argv) { return true; }
 bool cre_pkpy_api_camera2d_get_position(int argc, py_StackRef argv) { return true; }
@@ -555,34 +594,43 @@ bool cre_pkpy_api_camera2d_follow_node(int argc, py_StackRef argv) { return true
 bool cre_pkpy_api_camera2d_unfollow_node(int argc, py_StackRef argv) { return true; }
 
 // World
+
 bool cre_pkpy_api_world_set_time_dilation(int argc, py_StackRef argv) { return true; }
 bool cre_pkpy_api_world_get_time_dilation(int argc, py_StackRef argv) { return true; }
 bool cre_pkpy_api_world_get_delta_time(int argc, py_StackRef argv) { return true; }
 bool cre_pkpy_api_world_get_variable_delta_time(int argc, py_StackRef argv) { return true; }
 
 // Audio Source
+
 bool cre_pkpy_api_audio_source_set_pitch(int argc, py_StackRef argv) { return true; }
 bool cre_pkpy_api_audio_source_get_pitch(int argc, py_StackRef argv) { return true; }
 
 // Audio Manager
+
 bool cre_pkpy_api_audio_manager_play_sound(int argc, py_StackRef argv) { return true; }
 bool cre_pkpy_api_audio_manager_stop_sound(int argc, py_StackRef argv) { return true; }
 
 // Game Config
+
 bool cre_pkpy_api_game_config_save(int argc, py_StackRef argv) { return true; }
 bool cre_pkpy_api_game_config_load(int argc, py_StackRef argv) { return true; }
 
 // Packed Scene
+
 bool cre_pkpy_api_packed_scene_create_instance(int argc, py_StackRef argv) { return true; }
 bool cre_pkpy_api_packed_scene_load(int argc, py_StackRef argv) { return true; }
 
 // Collision Handler
+
 bool cre_pkpy_api_collision_handler_process_collisions(int argc, py_StackRef argv) { return true; }
 bool cre_pkpy_api_collision_handler_process_mouse_collisions(int argc, py_StackRef argv) { return true; }
 
 // Network
+
 bool cre_pkpy_api_network_is_server(int argc, py_StackRef argv) { return true; }
+
 // Server
+
 bool cre_pkpy_api_server_start(int argc, py_StackRef argv) { return true; }
 bool cre_pkpy_api_server_stop(int argc, py_StackRef argv) { return true; }
 bool cre_pkpy_api_server_send(int argc, py_StackRef argv) { return true; }
@@ -592,6 +640,7 @@ bool cre_pkpy_api_client_stop(int argc, py_StackRef argv) { return true; }
 bool cre_pkpy_api_client_send(int argc, py_StackRef argv) { return true; }
 
 // Node
+
 bool cre_pkpy_api_node_new(int argc, py_StackRef argv) { return true; }
 bool cre_pkpy_api_node_get_name(int argc, py_StackRef argv) { return true; }
 bool cre_pkpy_api_node_add_child(int argc, py_StackRef argv) { return true; }
@@ -605,6 +654,7 @@ bool cre_pkpy_api_node_get_time_dilation(int argc, py_StackRef argv) { return tr
 bool cre_pkpy_api_node_get_total_time_dilation(int argc, py_StackRef argv) { return true; }
 
 // Node2D
+
 bool cre_pkpy_api_node2d_set_position(int argc, py_StackRef argv) { return true; }
 bool cre_pkpy_api_node2d_add_to_position(int argc, py_StackRef argv) { return true; }
 bool cre_pkpy_api_node2d_get_position(int argc, py_StackRef argv) { return true; }
@@ -623,6 +673,7 @@ bool cre_pkpy_api_node2d_set_ignore_camera(int argc, py_StackRef argv) { return 
 bool cre_pkpy_api_node2d_get_ignore_camera(int argc, py_StackRef argv) { return true; }
 
 // Sprite
+
 bool cre_pkpy_api_sprite_get_texture(int argc, py_StackRef argv) { return true; }
 bool cre_pkpy_api_sprite_set_texture(int argc, py_StackRef argv) { return true; }
 bool cre_pkpy_api_sprite_get_draw_source(int argc, py_StackRef argv) { return true; }
@@ -639,6 +690,7 @@ bool cre_pkpy_api_sprite_get_shader_instance(int argc, py_StackRef argv) { retur
 bool cre_pkpy_api_sprite_set_shader_instance(int argc, py_StackRef argv) { return true; }
 
 // Animated Sprite
+
 bool cre_pkpy_api_animated_sprite_play(int argc, py_StackRef argv) { return true; }
 bool cre_pkpy_api_animated_sprite_stop(int argc, py_StackRef argv) { return true; }
 bool cre_pkpy_api_animated_sprite_set_current_animation_frame(int argc, py_StackRef argv) { return true; }
@@ -657,6 +709,7 @@ bool cre_pkpy_api_animated_sprite_get_shader_instance(int argc, py_StackRef argv
 bool cre_pkpy_api_animated_sprite_set_shader_instance(int argc, py_StackRef argv) { return true; }
 
 // Text Label
+
 bool cre_pkpy_api_text_label_get_text(int argc, py_StackRef argv) { return true; }
 bool cre_pkpy_api_text_label_set_text(int argc, py_StackRef argv) { return true; }
 bool cre_pkpy_api_text_label_get_color(int argc, py_StackRef argv) { return true; }
@@ -664,22 +717,26 @@ bool cre_pkpy_api_text_label_set_color(int argc, py_StackRef argv) { return true
 bool cre_pkpy_api_text_label_set_font_uid(int argc, py_StackRef argv) { return true; }
 
 // Collider2D
+
 bool cre_pkpy_api_collider2d_get_extents(int argc, py_StackRef argv) { return true; }
 bool cre_pkpy_api_collider2d_set_extents(int argc, py_StackRef argv) { return true; }
 bool cre_pkpy_api_collider2d_get_color(int argc, py_StackRef argv) { return true; }
 bool cre_pkpy_api_collider2d_set_color(int argc, py_StackRef argv) { return true; }
 
 // Color Rect
+
 bool cre_pkpy_api_color_rect_get_size(int argc, py_StackRef argv) { return true; }
 bool cre_pkpy_api_color_rect_set_size(int argc, py_StackRef argv) { return true; }
 bool cre_pkpy_api_color_rect_get_color(int argc, py_StackRef argv) { return true; }
 bool cre_pkpy_api_color_rect_set_color(int argc, py_StackRef argv) { return true; }
 
 // Parallax
+
 bool cre_pkpy_api_parallax_get_scroll_speed(int argc, py_StackRef argv) { return true; }
 bool cre_pkpy_api_parallax_set_scroll_speed(int argc, py_StackRef argv) { return true; }
 
 // Particles2D
+
 bool cre_pkpy_api_particles2d_get_amount(int argc, py_StackRef argv) { return true; }
 bool cre_pkpy_api_particles2d_set_amount(int argc, py_StackRef argv) { return true; }
 bool cre_pkpy_api_particles2d_get_life_time(int argc, py_StackRef argv) { return true; }
