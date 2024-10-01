@@ -2,10 +2,11 @@
 
 #include <pocketpy.h>
 
-#include <seika/string.h>
 #include <seika/assert.h>
 
 #define CRE_PKPY_MODULE_FUNCTION_LIMIT 256
+
+#define PY_ASSERT_NO_EXC() SKA_ASSERT_FMT(!py_checkexc(false), "PKPY Error:\n%s", py_formatexc());
 
 typedef struct CrePPFunction {
     const char* signature;

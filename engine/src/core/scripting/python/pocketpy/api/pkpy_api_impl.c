@@ -13,6 +13,7 @@
 #include "core/camera/camera.h"
 #include "core/camera/camera_manager.h"
 #include "core/ecs/ecs_manager.h"
+#include "core/scene/scene_manager.h"
 
 
 // Helper functions
@@ -515,8 +516,21 @@ bool cre_pkpy_api_input_mouse_get_world_position(int argc, py_StackRef argv) {
 }
 
 // Scene Tree
-bool cre_pkpy_api_scene_tree_change_scene(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_scene_tree_get_root(int argc, py_StackRef argv) { return true; }
+
+bool cre_pkpy_api_scene_tree_change_scene(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    const char* scenePath = py_tostr(py_arg(0));
+
+    cre_scene_manager_queue_scene_change(scenePath);
+    return true;
+}
+
+bool cre_pkpy_api_scene_tree_get_root(int argc, py_StackRef argv) {
+    SceneTreeNode* rootNode = cre_scene_manager_get_active_scene_root();
+    SKA_ASSERT(rootNode != NULL);
+
+    return true;
+}
 
 // Scene Manager
 bool cre_pkpy_api_scene_manager_process_queued_creation_entities(int argc, py_StackRef argv) { return true; }
