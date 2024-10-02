@@ -9,6 +9,8 @@
 #include <seika/asset/asset_manager.h>
 #include <seika/audio/audio.h>
 #include <seika/audio/audio_manager.h>
+#include <seika/ecs/ec_system.h>
+#include <seika/networking/network.h>
 #include <seika/rendering/render_context.h>
 #include <seika/rendering/frame_buffer.h>
 #include <seika/rendering/shader/shader_instance_minimal.h>
@@ -23,6 +25,7 @@
 #include "core/ecs/ecs_globals.h"
 #include "core/ecs/ecs_manager.h"
 #include "core/ecs/components/script_component.h"
+#include "core/physics/collision/collision.h"
 #include "core/scene/scene_manager.h"
 #include "core/scene/scene_template_cache.h"
 #include "core/scripting/python/pocketpy/pkpy_instance_cache.h"
@@ -878,24 +881,95 @@ bool cre_pkpy_api_packed_scene_load(int argc, py_StackRef argv) {
 
 // Collision Handler
 
-bool cre_pkpy_api_collision_handler_process_collisions(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_collision_handler_process_mouse_collisions(int argc, py_StackRef argv) { return true; }
+bool cre_pkpy_api_collision_handler_process_collisions(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    const py_i64 entityId = py_toint(py_arg(0));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    const CollisionResult collisionResult = cre_collision_process_entity_collisions(entity);
+    py_newtuple(py_retval(), (int)collisionResult.collidedEntityCount);
+    for (size_t i = 0; i < collisionResult.collidedEntityCount; i++) {
+        const SkaEntity collidedEntity = collisionResult.collidedEntities[i];
+        py_Ref pyNode = py_tuple_getitem(py_retval(), (int)i);
+        py_assign(pyNode, cre_pkpy_instance_cache_add2(collidedEntity));
+    }
+    return true;
+}
+
+bool cre_pkpy_api_collision_handler_process_mouse_collisions(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(4);
+    const f64 offsetX = py_tofloat(py_arg(0));
+    const f64 offsetY = py_tofloat(py_arg(1));
+    const f64 sizeW = py_tofloat(py_arg(2));
+    const f64 sizeH = py_tofloat(py_arg(3));
+
+    const SkaVector2 positionOffset = { .x = (f32)offsetX, .y = (f32)offsetY };
+    const SkaVector2 mouseWorldPos = cre_pkpy_api_helper_mouse_get_global_position(&positionOffset);
+    const SkaRect2 collisionRect = { mouseWorldPos.x, mouseWorldPos.y, (f32)sizeW, (f32)sizeH };
+    const CollisionResult collisionResult = cre_collision_process_mouse_collisions(&collisionRect);
+    py_newtuple(py_retval(), (int)collisionResult.collidedEntityCount);
+    for (size_t i = 0; i < collisionResult.collidedEntityCount; i++) {
+        const SkaEntity collidedEntity = collisionResult.collidedEntities[i];
+        py_Ref pyNode = py_tuple_getitem(py_retval(), (int)i);
+        py_assign(pyNode, cre_pkpy_instance_cache_add2(collidedEntity));
+    }
+    return true;
+}
 
 // Network
 
-bool cre_pkpy_api_network_is_server(int argc, py_StackRef argv) { return true; }
+bool cre_pkpy_api_network_is_server(int argc, py_StackRef argv) {
+    py_newbool(py_retval(), ska_network_is_server());
+    return true;
+}
 
 // Server
 
-bool cre_pkpy_api_server_start(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_server_stop(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_server_send(int argc, py_StackRef argv) { return true; }
+
+bool cre_pkpy_api_server_start(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    const py_i64 port = py_toint(py_arg(0));
+
+    ska_udp_server_initialize((int32)port, ska_ecs_system_event_network_callback);
+    return true;
+}
+
+bool cre_pkpy_api_server_stop(int argc, py_StackRef argv) {
+    ska_udp_server_finalize();
+    return true;
+}
+
+bool cre_pkpy_api_server_send(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    const char* message = py_tostr(py_arg(0));
+
+    ska_udp_server_send_message(message);
+    return true;
+}
 
 // Client
 
-bool cre_pkpy_api_client_start(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_client_stop(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_client_send(int argc, py_StackRef argv) { return true; }
+bool cre_pkpy_api_client_start(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(2);
+    const char* host = py_tostr(py_arg(0));
+    const py_i64 port = py_toint(py_arg(1));
+
+    ska_udp_client_initialize(host, (int32)port, ska_ecs_system_event_network_callback);
+    return true;
+}
+
+bool cre_pkpy_api_client_stop(int argc, py_StackRef argv) {
+    ska_udp_client_finalize();
+    return true;
+}
+
+bool cre_pkpy_api_client_send(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    const char* message = py_tostr(py_arg(0));
+
+    ska_udp_client_send_message(message);
+    return true;
+}
 
 // Node
 
