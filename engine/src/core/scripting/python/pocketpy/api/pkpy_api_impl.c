@@ -10,8 +10,10 @@
 
 #include "core/engine_context.h"
 #include "core/game_properties.h"
+#include "core/world.h"
 #include "core/camera/camera.h"
 #include "core/camera/camera_manager.h"
+#include "core/ecs/ecs_globals.h"
 #include "core/ecs/ecs_manager.h"
 #include "core/scene/scene_manager.h"
 #include "core/scripting/python/pocketpy/pkpy_instance_cache.h"
@@ -720,10 +722,34 @@ bool cre_pkpy_api_camera2d_unfollow_node(int argc, py_StackRef argv) {
 
 // World
 
-bool cre_pkpy_api_world_set_time_dilation(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_world_get_time_dilation(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_world_get_delta_time(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_world_get_variable_delta_time(int argc, py_StackRef argv) { return true; }
+static void mark_scene_nodes_time_dilation_flag_dirty(SceneTreeNode* node) {
+    NodeComponent* nodeComponent = (NodeComponent*)ska_ecs_component_manager_get_component(node->entity, NODE_COMPONENT_INDEX);
+    nodeComponent->timeDilation.cacheInvalid = true;
+}
+
+bool cre_pkpy_api_world_set_time_dilation(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    const f64 timeDilation = py_tofloat(py_arg(0));
+
+    cre_world_set_time_dilation(timeDilation);
+    cre_scene_manager_execute_on_root_and_child_nodes(mark_scene_nodes_time_dilation_flag_dirty);
+    return true;
+}
+
+bool cre_pkpy_api_world_get_time_dilation(int argc, py_StackRef argv) {
+    py_newfloat(py_retval(), (f64)cre_world_get_time_dilation());
+    return true;
+}
+
+bool cre_pkpy_api_world_get_delta_time(int argc, py_StackRef argv) {
+    py_newfloat(py_retval(), (f64)(cre_world_get_time_dilation() * CRE_GLOBAL_PHYSICS_DELTA_TIME));
+    return true;
+}
+
+bool cre_pkpy_api_world_get_variable_delta_time(int argc, py_StackRef argv) {
+    py_newfloat(py_retval(), (f64)cre_world_get_frame_delta_time());
+    return true;
+}
 
 // Audio Source
 
@@ -759,7 +785,9 @@ bool cre_pkpy_api_network_is_server(int argc, py_StackRef argv) { return true; }
 bool cre_pkpy_api_server_start(int argc, py_StackRef argv) { return true; }
 bool cre_pkpy_api_server_stop(int argc, py_StackRef argv) { return true; }
 bool cre_pkpy_api_server_send(int argc, py_StackRef argv) { return true; }
+
 // Client
+
 bool cre_pkpy_api_client_start(int argc, py_StackRef argv) { return true; }
 bool cre_pkpy_api_client_stop(int argc, py_StackRef argv) { return true; }
 bool cre_pkpy_api_client_send(int argc, py_StackRef argv) { return true; }
