@@ -1,9 +1,13 @@
 #include "pkpy_api_impl.h"
 
 #include <seika/assert.h>
+#include <seika/file_system.h>
 #include <seika/logger.h>
+#include <seika/memory.h>
 #include <seika/input/input.h>
+#include <seika/asset/asset_file_loader.h>
 #include <seika/asset/asset_manager.h>
+#include <seika/audio/audio.h>
 #include <seika/audio/audio_manager.h>
 #include <seika/rendering/render_context.h>
 #include <seika/rendering/frame_buffer.h>
@@ -20,7 +24,6 @@
 #include "core/ecs/ecs_manager.h"
 #include "core/scene/scene_manager.h"
 #include "core/scripting/python/pocketpy/pkpy_instance_cache.h"
-#include "seika/audio/audio.h"
 
 // Helper functions
 static inline SkaVector2 cre_pkpy_api_helper_mouse_get_global_position(const SkaVector2* offset) {
@@ -735,7 +738,7 @@ bool cre_pkpy_api_world_set_time_dilation(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(1);
     const f64 timeDilation = py_tofloat(py_arg(0));
 
-    cre_world_set_time_dilation(timeDilation);
+    cre_world_set_time_dilation((f32)timeDilation);
     cre_scene_manager_execute_on_root_and_child_nodes(mark_scene_nodes_time_dilation_flag_dirty);
     return true;
 }
@@ -808,8 +811,39 @@ bool cre_pkpy_api_audio_manager_stop_sound(int argc, py_StackRef argv) {
 
 // Game Config
 
-bool cre_pkpy_api_game_config_save(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_game_config_load(int argc, py_StackRef argv) { return true; }
+bool cre_pkpy_api_game_config_save(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(3);
+    const char* path = py_tostr(py_arg(0));
+    const char* jsonData = py_tostr(py_arg(1));
+    const char* encryptionKey = py_tostr(py_arg(2));
+
+    const CREGameProperties* gameProps = cre_game_props_get();
+    char* validGameTitle = ska_strdup(gameProps->gameTitle);
+    ska_str_to_lower_and_underscore_whitespace(validGameTitle);
+    char* fullSavePath = ska_fs_get_user_save_path("crescent", validGameTitle, path);
+    const bool success = ska_fs_write_to_file(fullSavePath, jsonData);
+    SKA_MEM_FREE(fullSavePath);
+    SKA_MEM_FREE(validGameTitle);
+    py_newbool(py_retval(), success);
+    return true;
+}
+
+bool cre_pkpy_api_game_config_load(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(3);
+    const char* path = py_tostr(py_arg(0));
+    const char* encryptionKey = py_tostr(py_arg(1));
+
+    const CREGameProperties* gameProps = cre_game_props_get();
+    char* validGameTitle = ska_strdup(gameProps->gameTitle);
+    ska_str_to_lower_and_underscore_whitespace(validGameTitle);
+    char* fullSavePath = ska_fs_get_user_save_path("crescent", validGameTitle, path);
+    char* fileContents = ska_asset_file_loader_read_file_contents_as_string(fullSavePath, NULL);
+    py_newstr(py_retval(), fileContents);
+    SKA_MEM_FREE(validGameTitle);
+    SKA_MEM_FREE(fullSavePath);
+    SKA_MEM_FREE(fileContents);
+    return true;
+}
 
 // Packed Scene
 
