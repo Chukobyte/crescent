@@ -22,7 +22,9 @@
 #include "core/camera/camera_manager.h"
 #include "core/ecs/ecs_globals.h"
 #include "core/ecs/ecs_manager.h"
+#include "core/ecs/components/script_component.h"
 #include "core/scene/scene_manager.h"
+#include "core/scene/scene_template_cache.h"
 #include "core/scripting/python/pocketpy/pkpy_instance_cache.h"
 
 // Helper functions
@@ -847,8 +849,32 @@ bool cre_pkpy_api_game_config_load(int argc, py_StackRef argv) {
 
 // Packed Scene
 
-bool cre_pkpy_api_packed_scene_create_instance(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_packed_scene_load(int argc, py_StackRef argv) { return true; }
+bool cre_pkpy_api_packed_scene_create_instance(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    const py_i64 cacheId = py_toint(py_arg(0));
+
+    JsonSceneNode* sceneNode = cre_scene_template_cache_get_scene((CreSceneCacheId)cacheId);
+    SceneTreeNode* rootNode = cre_scene_manager_stage_scene_nodes_from_json(sceneNode);
+
+    py_Ref newInstance;
+    if (sceneNode->components[SCRIPT_COMPONENT_INDEX] != NULL) {
+        ScriptComponent* scriptComp = (ScriptComponent*)sceneNode->components[SCRIPT_COMPONENT_INDEX];
+        newInstance = cre_pkpy_instance_cache_add(rootNode->entity, scriptComp->classPath, scriptComp->className);
+    } else {
+        newInstance = cre_pkpy_instance_cache_add2(rootNode->entity);
+    }
+    py_assign(py_retval(), newInstance);
+    return true;
+}
+
+bool cre_pkpy_api_packed_scene_load(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    const char* path = py_tostr(py_arg(0));
+
+    const CreSceneCacheId cacheId = cre_scene_template_cache_load_scene(path);
+    py_newint(py_retval(), (py_i64)cacheId);
+    return true;
+}
 
 // Collision Handler
 
