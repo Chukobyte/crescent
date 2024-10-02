@@ -1,7 +1,10 @@
 #include "pkpy_api_impl.h"
 
 #include <seika/assert.h>
+#include <seika/logger.h>
 #include <seika/input/input.h>
+#include <seika/asset/asset_manager.h>
+#include <seika/audio/audio_manager.h>
 #include <seika/rendering/render_context.h>
 #include <seika/rendering/frame_buffer.h>
 #include <seika/rendering/shader/shader_instance_minimal.h>
@@ -17,6 +20,7 @@
 #include "core/ecs/ecs_manager.h"
 #include "core/scene/scene_manager.h"
 #include "core/scripting/python/pocketpy/pkpy_instance_cache.h"
+#include "seika/audio/audio.h"
 
 // Helper functions
 static inline SkaVector2 cre_pkpy_api_helper_mouse_get_global_position(const SkaVector2* offset) {
@@ -753,13 +757,54 @@ bool cre_pkpy_api_world_get_variable_delta_time(int argc, py_StackRef argv) {
 
 // Audio Source
 
-bool cre_pkpy_api_audio_source_set_pitch(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_audio_source_get_pitch(int argc, py_StackRef argv) { return true; }
+bool cre_pkpy_api_audio_source_set_pitch(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(2);
+    const char* path = py_tostr(py_arg(0));
+    const f64 pitch = py_tofloat(py_arg(1));
+
+    if (ska_asset_manager_has_audio_source(path)) {
+        SkaAudioSource* audioSource = ska_asset_manager_get_audio_source(path);
+        audioSource->pitch = pitch;
+    } else {
+        ska_logger_warn("Tried to set non-existent audio source's pitch at '%s'", path);
+    }
+    return true;
+}
+
+bool cre_pkpy_api_audio_source_get_pitch(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    const char* path = py_tostr(py_arg(0));
+
+    f64 pitch;
+    if (ska_asset_manager_has_audio_source(path)) {
+        SkaAudioSource* audioSource = ska_asset_manager_get_audio_source(path);
+        pitch = (f64)audioSource->pitch;
+    } else {
+        ska_logger_warn("Tried to get non-existent audio source's pitch at '%s'", path);
+        pitch = 1.0;
+    }
+    py_newfloat(py_retval(), pitch);
+    return true;
+}
 
 // Audio Manager
 
-bool cre_pkpy_api_audio_manager_play_sound(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_audio_manager_stop_sound(int argc, py_StackRef argv) { return true; }
+bool cre_pkpy_api_audio_manager_play_sound(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(2);
+    const char* path = py_tostr(py_arg(0));
+    const bool loops = py_tobool(py_arg(1));
+
+    ska_audio_manager_play_sound(path, loops);
+    return true;
+}
+
+bool cre_pkpy_api_audio_manager_stop_sound(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    const char* path = py_tostr(py_arg(0));
+
+    ska_audio_manager_stop_sound(path);
+    return true;
+}
 
 // Game Config
 
