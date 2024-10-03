@@ -61,6 +61,7 @@ static inline SkaVector2 cre_pkpy_api_helper_mouse_get_global_position(const Ska
 
 bool cre_pkpy_api_shader_instance_delete(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_int);
     const py_i64 pyShaderId = py_toint(py_arg(0));
 
     const SkaShaderInstanceId shaderId = (SkaShaderInstanceId)pyShaderId;
@@ -76,6 +77,7 @@ bool cre_pkpy_api_shader_instance_delete(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_shader_instance_create_bool_param(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(3);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(1, tp_str); PY_CHECK_ARG_TYPE(2, tp_bool);
     const py_i64 pyShaderId = py_toint(py_arg(0));
     const char* paramName = py_tostr(py_arg(1));
     const bool value = py_tobool(py_arg(2));
@@ -88,6 +90,7 @@ bool cre_pkpy_api_shader_instance_create_bool_param(int argc, py_StackRef argv) 
 
 bool cre_pkpy_api_shader_instance_set_bool_param(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(3);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(1, tp_str); PY_CHECK_ARG_TYPE(2, tp_bool);
     const py_i64 pyShaderId = py_toint(py_arg(0));
     const char* paramName = py_tostr(py_arg(1));
     const bool value = py_tobool(py_arg(2));
@@ -100,6 +103,7 @@ bool cre_pkpy_api_shader_instance_set_bool_param(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_shader_instance_get_bool_param(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(2);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(1, tp_str);
     const py_i64 pyShaderId = py_toint(py_arg(0));
     const char* paramName = py_tostr(py_arg(1));
 
@@ -112,6 +116,7 @@ bool cre_pkpy_api_shader_instance_get_bool_param(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_shader_instance_create_int_param(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(3);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(1, tp_str); PY_CHECK_ARG_TYPE(2, tp_int);
     const py_i64 pyShaderId = py_toint(py_arg(0));
     const char* paramName = py_tostr(py_arg(1));
     const py_i64 value = py_toint(py_arg(2));
@@ -124,6 +129,7 @@ bool cre_pkpy_api_shader_instance_create_int_param(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_shader_instance_set_int_param(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(3);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(1, tp_str); PY_CHECK_ARG_TYPE(2, tp_int);
     const py_i64 pyShaderId = py_toint(py_arg(0));
     const char* paramName = py_tostr(py_arg(1));
     const py_i64 value = py_toint(py_arg(2));
@@ -136,6 +142,7 @@ bool cre_pkpy_api_shader_instance_set_int_param(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_shader_instance_get_int_param(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(2);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(1, tp_str);
     const py_i64 pyShaderId = py_toint(py_arg(0));
     const char* paramName = py_tostr(py_arg(1));
 
@@ -148,6 +155,7 @@ bool cre_pkpy_api_shader_instance_get_int_param(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_shader_instance_create_float_param(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(3);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(1, tp_str); PY_CHECK_ARG_TYPE(2, tp_float);
     const py_i64 pyShaderId = py_toint(py_arg(0));
     const char* paramName = py_tostr(py_arg(1));
     const f64 value = py_tofloat(py_arg(2));
@@ -160,6 +168,7 @@ bool cre_pkpy_api_shader_instance_create_float_param(int argc, py_StackRef argv)
 
 bool cre_pkpy_api_shader_instance_set_float_param(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(3);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(1, tp_str); PY_CHECK_ARG_TYPE(2, tp_float);
     const py_i64 pyShaderId = py_toint(py_arg(0));
     const char* paramName = py_tostr(py_arg(1));
     const f64 value = py_tofloat(py_arg(2));
@@ -172,6 +181,7 @@ bool cre_pkpy_api_shader_instance_set_float_param(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_shader_instance_get_float_param(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(2);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(1, tp_str);
     const py_i64 pyShaderId = py_toint(py_arg(0));
     const char* paramName = py_tostr(py_arg(1));
 
@@ -184,6 +194,7 @@ bool cre_pkpy_api_shader_instance_get_float_param(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_shader_instance_create_float2_param(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(4);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(1, tp_str); PY_CHECK_ARG_TYPE(2, tp_float); PY_CHECK_ARG_TYPE(3, tp_float);
     const py_i64 pyShaderId = py_toint(py_arg(0));
     const char* paramName = py_tostr(py_arg(1));
     const f64 valueX = py_tofloat(py_arg(2));
@@ -198,6 +209,7 @@ bool cre_pkpy_api_shader_instance_create_float2_param(int argc, py_StackRef argv
 
 bool cre_pkpy_api_shader_instance_set_float2_param(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(4);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(1, tp_str); PY_CHECK_ARG_TYPE(2, tp_float); PY_CHECK_ARG_TYPE(3, tp_float);
     const py_i64 pyShaderId = py_toint(py_arg(0));
     const char* paramName = py_tostr(py_arg(1));
     const f64 valueX = py_tofloat(py_arg(2));
@@ -212,6 +224,7 @@ bool cre_pkpy_api_shader_instance_set_float2_param(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_shader_instance_get_float2_param(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(2);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(1, tp_str);
     const py_i64 pyShaderId = py_toint(py_arg(0));
     const char* paramName = py_tostr(py_arg(1));
 
@@ -228,6 +241,7 @@ bool cre_pkpy_api_shader_instance_get_float2_param(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_shader_instance_create_float3_param(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(5);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(1, tp_str); PY_CHECK_ARG_TYPE(2, tp_float); PY_CHECK_ARG_TYPE(3, tp_float); PY_CHECK_ARG_TYPE(4, tp_float);
     const py_i64 pyShaderId = py_toint(py_arg(0));
     const char* paramName = py_tostr(py_arg(1));
     const f64 valueX = py_tofloat(py_arg(2));
@@ -243,6 +257,7 @@ bool cre_pkpy_api_shader_instance_create_float3_param(int argc, py_StackRef argv
 
 bool cre_pkpy_api_shader_instance_set_float3_param(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(5);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(1, tp_str); PY_CHECK_ARG_TYPE(2, tp_float); PY_CHECK_ARG_TYPE(3, tp_float); PY_CHECK_ARG_TYPE(4, tp_float);
     const py_i64 pyShaderId = py_toint(py_arg(0));
     const char* paramName = py_tostr(py_arg(1));
     const f64 valueX = py_tofloat(py_arg(2));
@@ -258,6 +273,7 @@ bool cre_pkpy_api_shader_instance_set_float3_param(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_shader_instance_get_float3_param(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(2);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(1, tp_str);
     const py_i64 pyShaderId = py_toint(py_arg(0));
     const char* paramName = py_tostr(py_arg(1));
 
@@ -276,6 +292,7 @@ bool cre_pkpy_api_shader_instance_get_float3_param(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_shader_instance_create_float4_param(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(6);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(1, tp_str); PY_CHECK_ARG_TYPE(2, tp_float); PY_CHECK_ARG_TYPE(3, tp_float); PY_CHECK_ARG_TYPE(4, tp_float); PY_CHECK_ARG_TYPE(5, tp_float);
     const py_i64 pyShaderId = py_toint(py_arg(0));
     const char* paramName = py_tostr(py_arg(1));
     const f64 valueX = py_tofloat(py_arg(2));
@@ -292,6 +309,7 @@ bool cre_pkpy_api_shader_instance_create_float4_param(int argc, py_StackRef argv
 
 bool cre_pkpy_api_shader_instance_set_float4_param(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(6);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(1, tp_str); PY_CHECK_ARG_TYPE(2, tp_float); PY_CHECK_ARG_TYPE(3, tp_float); PY_CHECK_ARG_TYPE(4, tp_float); PY_CHECK_ARG_TYPE(5, tp_float);
     const py_i64 pyShaderId = py_toint(py_arg(0));
     const char* paramName = py_tostr(py_arg(1));
     const f64 valueX = py_tofloat(py_arg(2));
@@ -308,6 +326,7 @@ bool cre_pkpy_api_shader_instance_set_float4_param(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_shader_instance_get_float4_param(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(2);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(1, tp_str);
     const py_i64 pyShaderId = py_toint(py_arg(0));
     const char* paramName = py_tostr(py_arg(1));
 
@@ -330,6 +349,7 @@ bool cre_pkpy_api_shader_instance_get_float4_param(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_shader_util_compile_shader(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_str);
     const char* shaderPath = py_tostr(py_arg(0));
 
     const SkaShaderInstanceId newId = ska_shader_cache_create_instance_and_add(shaderPath);
@@ -340,6 +360,7 @@ bool cre_pkpy_api_shader_util_compile_shader(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_shader_util_compile_shader_raw(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(2);
+    PY_CHECK_ARG_TYPE(0, tp_str); PY_CHECK_ARG_TYPE(1, tp_str);
     const char* vertexPath = py_tostr(py_arg(0));
     const char* fragmentPath = py_tostr(py_arg(1));
 
@@ -351,6 +372,7 @@ bool cre_pkpy_api_shader_util_compile_shader_raw(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_shader_util_set_screen_shader(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_int);
     const py_i64 pyShaderId = py_toint(py_arg(0));
 
     const SkaShaderInstanceId shaderId = (SkaShaderInstanceId)pyShaderId;
@@ -379,6 +401,7 @@ bool cre_pkpy_api_shader_util_reset_screen_shader_to_default(int argc, py_StackR
 
 bool cre_pkpy_api_engine_exit(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_int);
     const py_i64 pyExitCode = py_toint(py_arg(0));
 
     CREEngineContext* engineContext = cre_engine_context_get();
@@ -410,6 +433,7 @@ bool cre_pkpy_api_engine_get_average_fps(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_engine_set_fps_display_enabled(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(4);
+    PY_CHECK_ARG_TYPE(0, tp_bool); PY_CHECK_ARG_TYPE(1, tp_str); PY_CHECK_ARG_TYPE(2, tp_float); PY_CHECK_ARG_TYPE(3, tp_float);
     const bool isEnabled = py_tobool(py_arg(0));
     const char* fontUID = py_tostr(py_arg(1));
     const py_f64 pyPosX = py_tofloat(py_arg(2));
@@ -428,6 +452,7 @@ bool cre_pkpy_api_engine_get_global_physics_delta_time(int argc, py_StackRef arg
 
 bool cre_pkpy_api_input_is_key_pressed(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_int);
     const py_i64 pyKey = py_toint(py_arg(0));
 
     const bool isPressed = ska_input_is_key_pressed((SkaInputKey)pyKey, SKA_INPUT_FIRST_PLAYER_DEVICE_INDEX);
@@ -437,6 +462,7 @@ bool cre_pkpy_api_input_is_key_pressed(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_input_is_key_just_pressed(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_int);
     const py_i64 pyKey = py_toint(py_arg(0));
 
     const bool isPressed = ska_input_is_key_just_pressed((SkaInputKey)pyKey, SKA_INPUT_FIRST_PLAYER_DEVICE_INDEX);
@@ -446,6 +472,7 @@ bool cre_pkpy_api_input_is_key_just_pressed(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_input_is_key_just_released(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_int);
     const py_i64 pyKey = py_toint(py_arg(0));
 
     const bool isPressed = ska_input_is_key_just_released((SkaInputKey)pyKey, SKA_INPUT_FIRST_PLAYER_DEVICE_INDEX);
@@ -455,6 +482,7 @@ bool cre_pkpy_api_input_is_key_just_released(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_input_add_action(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(3);
+    PY_CHECK_ARG_TYPE(0, tp_str); PY_CHECK_ARG_TYPE(1, tp_int); PY_CHECK_ARG_TYPE(2, tp_int);
     const char* actionName = py_tostr(py_arg(0));
     const py_i64 pyValueKey = py_toint(py_arg(1));
     const py_i64 pyDeviceId = py_toint(py_arg(2));
@@ -469,6 +497,7 @@ bool cre_pkpy_api_input_add_action(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_input_is_action_pressed(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_str);
     const char* actionName = py_tostr(py_arg(0));
 
     // TODO: Probably should take device index as a param
@@ -481,6 +510,7 @@ bool cre_pkpy_api_input_is_action_pressed(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_input_is_action_just_pressed(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_str);
     const char* actionName = py_tostr(py_arg(0));
 
     const SkaInputDeviceIndex deviceIndex = SKA_INPUT_FIRST_PLAYER_DEVICE_INDEX;
@@ -492,6 +522,7 @@ bool cre_pkpy_api_input_is_action_just_pressed(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_input_is_action_just_released(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_str);
     const char* actionName = py_tostr(py_arg(0));
 
     const SkaInputDeviceIndex deviceIndex = SKA_INPUT_FIRST_PLAYER_DEVICE_INDEX;
@@ -504,6 +535,7 @@ bool cre_pkpy_api_input_is_action_just_released(int argc, py_StackRef argv) {
 // TODO: Finish implementing
 bool cre_pkpy_api_input_start_gamepad_vibration(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(4);
+    PY_CHECK_ARG_TYPE(0, tp_float); PY_CHECK_ARG_TYPE(1, tp_float); PY_CHECK_ARG_TYPE(2, tp_float); PY_CHECK_ARG_TYPE(3, tp_float);
     const py_i64 pyDeviceId = py_toint(py_arg(0));
     const py_f64 pyWeakMagnitude = py_tofloat(py_arg(1));
     const py_f64 pyStrongMagnitude = py_tofloat(py_arg(2));
@@ -516,6 +548,7 @@ bool cre_pkpy_api_input_start_gamepad_vibration(int argc, py_StackRef argv) {
 // TODO: Finish implementing
 bool cre_pkpy_api_input_stop_gamepad_vibration(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_int);
     const py_i64 pyDeviceId = py_toint(py_arg(0));
 
     // ska_input_gamepad_stop_vibration((SkaInputDeviceIndex)pyDeviceId);
@@ -546,6 +579,7 @@ bool cre_pkpy_api_input_mouse_get_world_position(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_scene_tree_change_scene(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_str);
     const char* scenePath = py_tostr(py_arg(0));
 
     cre_scene_manager_queue_scene_change(scenePath);
@@ -603,6 +637,7 @@ bool cre_pkpy_api_game_properties_get(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_camera2d_set_position(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(2);
+    PY_CHECK_ARG_TYPE(0, tp_float); PY_CHECK_ARG_TYPE(1, tp_float);
     const f64 posX = py_tofloat(py_arg(0));
     const f64 posY = py_tofloat(py_arg(1));
 
@@ -614,6 +649,7 @@ bool cre_pkpy_api_camera2d_set_position(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_camera2d_add_to_position(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(2);
+    PY_CHECK_ARG_TYPE(0, tp_float); PY_CHECK_ARG_TYPE(1, tp_float);
     const f64 posX = py_tofloat(py_arg(0));
     const f64 posY = py_tofloat(py_arg(1));
 
@@ -635,6 +671,7 @@ bool cre_pkpy_api_camera2d_get_position(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_camera2d_set_offset(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(2);
+    PY_CHECK_ARG_TYPE(0, tp_float); PY_CHECK_ARG_TYPE(1, tp_float);
     const f64 offsetX = py_tofloat(py_arg(0));
     const f64 offsetY = py_tofloat(py_arg(1));
 
@@ -645,6 +682,7 @@ bool cre_pkpy_api_camera2d_set_offset(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_camera2d_add_to_offset(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(2);
+    PY_CHECK_ARG_TYPE(0, tp_float); PY_CHECK_ARG_TYPE(1, tp_float);
     const f64 offsetX = py_tofloat(py_arg(0));
     const f64 offsetY = py_tofloat(py_arg(1));
 
@@ -665,6 +703,7 @@ bool cre_pkpy_api_camera2d_get_offset(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_camera2d_set_zoom(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(2);
+    PY_CHECK_ARG_TYPE(0, tp_float); PY_CHECK_ARG_TYPE(1, tp_float);
     const f64 zoomX = py_tofloat(py_arg(0));
     const f64 zoomY = py_tofloat(py_arg(1));
 
@@ -675,6 +714,7 @@ bool cre_pkpy_api_camera2d_set_zoom(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_camera2d_add_to_zoom(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(2);
+    PY_CHECK_ARG_TYPE(0, tp_float); PY_CHECK_ARG_TYPE(1, tp_float);
     const f64 zoomX = py_tofloat(py_arg(0));
     const f64 zoomY = py_tofloat(py_arg(1));
 
@@ -695,6 +735,7 @@ bool cre_pkpy_api_camera2d_get_zoom(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_camera2d_set_boundary(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(4);
+    PY_CHECK_ARG_TYPE(0, tp_float); PY_CHECK_ARG_TYPE(1, tp_float); PY_CHECK_ARG_TYPE(2, tp_float); PY_CHECK_ARG_TYPE(3, tp_float);
     const f64 x = py_tofloat(py_arg(0));
     const f64 y = py_tofloat(py_arg(1));
     const f64 w = py_tofloat(py_arg(2));
@@ -722,6 +763,7 @@ bool cre_pkpy_api_camera2d_get_boundary(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_camera2d_follow_node(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_int);
     const py_i64 entityId = py_toint(py_arg(0));
 
     const SkaEntity entity = (SkaEntity)entityId;
@@ -732,6 +774,7 @@ bool cre_pkpy_api_camera2d_follow_node(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_camera2d_unfollow_node(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_int);
     const py_i64 entityId = py_toint(py_arg(0));
 
     const SkaEntity entity = (SkaEntity)entityId;
@@ -749,6 +792,7 @@ static void mark_scene_nodes_time_dilation_flag_dirty(SceneTreeNode* node) {
 
 bool cre_pkpy_api_world_set_time_dilation(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_float);
     const f64 timeDilation = py_tofloat(py_arg(0));
 
     cre_world_set_time_dilation((f32)timeDilation);
@@ -775,6 +819,7 @@ bool cre_pkpy_api_world_get_variable_delta_time(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_audio_source_set_pitch(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(2);
+    PY_CHECK_ARG_TYPE(0, tp_str); PY_CHECK_ARG_TYPE(1, tp_float);
     const char* path = py_tostr(py_arg(0));
     const f64 pitch = py_tofloat(py_arg(1));
 
@@ -789,6 +834,7 @@ bool cre_pkpy_api_audio_source_set_pitch(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_audio_source_get_pitch(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_str);
     const char* path = py_tostr(py_arg(0));
 
     f64 pitch;
@@ -807,6 +853,7 @@ bool cre_pkpy_api_audio_source_get_pitch(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_audio_manager_play_sound(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(2);
+    PY_CHECK_ARG_TYPE(0, tp_str); PY_CHECK_ARG_TYPE(1, tp_bool);
     const char* path = py_tostr(py_arg(0));
     const bool loops = py_tobool(py_arg(1));
 
@@ -816,6 +863,7 @@ bool cre_pkpy_api_audio_manager_play_sound(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_audio_manager_stop_sound(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_str);
     const char* path = py_tostr(py_arg(0));
 
     ska_audio_manager_stop_sound(path);
@@ -826,6 +874,7 @@ bool cre_pkpy_api_audio_manager_stop_sound(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_game_config_save(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(3);
+    PY_CHECK_ARG_TYPE(0, tp_str); PY_CHECK_ARG_TYPE(1, tp_str); PY_CHECK_ARG_TYPE(2, tp_str);
     const char* path = py_tostr(py_arg(0));
     const char* jsonData = py_tostr(py_arg(1));
     const char* encryptionKey = py_tostr(py_arg(2));
@@ -842,7 +891,8 @@ bool cre_pkpy_api_game_config_save(int argc, py_StackRef argv) {
 }
 
 bool cre_pkpy_api_game_config_load(int argc, py_StackRef argv) {
-    PY_CHECK_ARGC(3);
+    PY_CHECK_ARGC(2);
+    PY_CHECK_ARG_TYPE(0, tp_str); PY_CHECK_ARG_TYPE(1, tp_str);
     const char* path = py_tostr(py_arg(0));
     const char* encryptionKey = py_tostr(py_arg(1));
 
@@ -862,6 +912,7 @@ bool cre_pkpy_api_game_config_load(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_packed_scene_create_instance(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_int);
     const py_i64 cacheId = py_toint(py_arg(0));
 
     JsonSceneNode* sceneNode = cre_scene_template_cache_get_scene((CreSceneCacheId)cacheId);
@@ -880,6 +931,7 @@ bool cre_pkpy_api_packed_scene_create_instance(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_packed_scene_load(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_str);
     const char* path = py_tostr(py_arg(0));
 
     const CreSceneCacheId cacheId = cre_scene_template_cache_load_scene(path);
@@ -891,6 +943,7 @@ bool cre_pkpy_api_packed_scene_load(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_collision_handler_process_collisions(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_int);
     const py_i64 entityId = py_toint(py_arg(0));
 
     const SkaEntity entity = (SkaEntity)entityId;
@@ -905,6 +958,7 @@ bool cre_pkpy_api_collision_handler_process_collisions(int argc, py_StackRef arg
 
 bool cre_pkpy_api_collision_handler_process_mouse_collisions(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(4);
+    PY_CHECK_ARG_TYPE(0, tp_float); PY_CHECK_ARG_TYPE(1, tp_float); PY_CHECK_ARG_TYPE(2, tp_float); PY_CHECK_ARG_TYPE(3, tp_float);
     const f64 offsetX = py_tofloat(py_arg(0));
     const f64 offsetY = py_tofloat(py_arg(1));
     const f64 sizeW = py_tofloat(py_arg(2));
@@ -934,6 +988,7 @@ bool cre_pkpy_api_network_is_server(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_server_start(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_int);
     const py_i64 port = py_toint(py_arg(0));
 
     ska_udp_server_initialize((int32)port, ska_ecs_system_event_network_callback);
@@ -947,6 +1002,7 @@ bool cre_pkpy_api_server_stop(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_server_send(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_str);
     const char* message = py_tostr(py_arg(0));
 
     ska_udp_server_send_message(message);
@@ -957,6 +1013,7 @@ bool cre_pkpy_api_server_send(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_client_start(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(2);
+    PY_CHECK_ARG_TYPE(0, tp_str); PY_CHECK_ARG_TYPE(1, tp_int);
     const char* host = py_tostr(py_arg(0));
     const py_i64 port = py_toint(py_arg(1));
 
@@ -971,6 +1028,7 @@ bool cre_pkpy_api_client_stop(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_client_send(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_str);
     const char* message = py_tostr(py_arg(0));
 
     ska_udp_client_send_message(message);
@@ -1018,6 +1076,7 @@ static void set_node_component_from_type(SkaEntity entity, const char* classPath
 
 bool cre_pkpy_api_node_new(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(3);
+    PY_CHECK_ARG_TYPE(0, tp_str); PY_CHECK_ARG_TYPE(1, tp_str); PY_CHECK_ARG_TYPE(2, tp_int);
     const char* classPath = py_tostr(py_arg(0));
     const char* className = py_tostr(py_arg(1));
     const py_i64 nodeTypeFlag = py_toint(py_arg(2));
@@ -1033,6 +1092,7 @@ bool cre_pkpy_api_node_new(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_node_get_name(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_int);
     const py_i64 entityId = py_toint(py_arg(0));
 
     const SkaEntity entity = (SkaEntity)entityId;
@@ -1043,6 +1103,7 @@ bool cre_pkpy_api_node_get_name(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_node_add_child(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(2);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(1, tp_int);
     const py_i64 childEntityId = py_toint(py_arg(0));
     const py_i64 parentEntityId = py_toint(py_arg(1));
 
@@ -1052,6 +1113,7 @@ bool cre_pkpy_api_node_add_child(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_node_get_child(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(2);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(1, tp_str);
     const py_i64 parentEntityId = py_toint(py_arg(0));
     const char* childName = py_tostr(py_arg(1));
 
@@ -1067,6 +1129,7 @@ bool cre_pkpy_api_node_get_child(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_node_get_children(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_int);
     const py_i64 entityId = py_toint(py_arg(0));
 
     const SkaEntity entity = (SkaEntity)entityId;
@@ -1087,6 +1150,7 @@ bool cre_pkpy_api_node_get_children(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_node_get_parent(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_int);
     const py_i64 childEntityId = py_toint(py_arg(0));
 
     const SkaEntity childEntity = (SkaEntity)childEntityId;
@@ -1103,6 +1167,7 @@ bool cre_pkpy_api_node_get_parent(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_node_queue_deletion(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_int);
     const py_i64 entityId = py_toint(py_arg(0));
 
     const SkaEntity entity = (SkaEntity)entityId;
@@ -1122,6 +1187,7 @@ bool cre_pkpy_api_node_queue_deletion(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_node_is_queued_for_deletion(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_int);
     const py_i64 entityId = py_toint(py_arg(0));
 
     const SkaEntity entity = (SkaEntity)entityId;
@@ -1132,6 +1198,7 @@ bool cre_pkpy_api_node_is_queued_for_deletion(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_node_set_time_dilation(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(2);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(1, tp_float);
     const py_i64 entityId = py_toint(py_arg(0));
     const f64 timeDilation = py_tofloat(py_arg(1));
 
@@ -1144,6 +1211,7 @@ bool cre_pkpy_api_node_set_time_dilation(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_node_get_time_dilation(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_int);
     const py_i64 entityId = py_toint(py_arg(0));
 
     const SkaEntity entity = (SkaEntity)entityId;
@@ -1155,6 +1223,7 @@ bool cre_pkpy_api_node_get_time_dilation(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_node_get_total_time_dilation(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_int);
     const py_i64 entityId = py_toint(py_arg(0));
 
     const SkaEntity entity = (SkaEntity)entityId;
