@@ -26,7 +26,7 @@ void cre_pkpy_instance_cache_finalize() {
 py_Ref cre_pkpy_instance_cache_add(SkaEntity entity,const char* classPath, const char* className) {
     // Early out if entity already exists
     if (cre_pkpy_instance_cache_has(entity)) {
-        ska_logger_warn("Attempting to add entity '%u' from '%s.%s'!", entity, classPath, className);
+        ska_logger_info("Attempted to add entity '%u' from '%s.%s', but it already exists!", entity, classPath, className);
         return cre_pkpy_instance_cache_get(entity);
     }
 
@@ -51,7 +51,7 @@ py_Ref cre_pkpy_instance_cache_add2(SkaEntity entity) {
     // Early out if entity already exists
     if (cre_pkpy_instance_cache_has(entity)) {
         const ScriptComponent* scriptComponent = (ScriptComponent*)ska_ecs_component_manager_get_component(entity, SCRIPT_COMPONENT_INDEX);
-        ska_logger_warn("Attempting to add entity '%u' from '%s.%s'!", entity, scriptComponent->classPath, scriptComponent->className);
+        ska_logger_info("Attempted to add entity '%u' from '%s.%s', but it already exists!", entity, scriptComponent->classPath, scriptComponent->className);
         return cre_pkpy_instance_cache_get(entity);
     }
 

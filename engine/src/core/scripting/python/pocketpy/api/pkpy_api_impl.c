@@ -24,11 +24,19 @@
 #include "core/camera/camera_manager.h"
 #include "core/ecs/ecs_globals.h"
 #include "core/ecs/ecs_manager.h"
+#include "core/ecs/components/animated_sprite_component.h"
+#include "core/ecs/components/color_rect_component.h"
+#include "core/ecs/components/parallax_component.h"
+#include "core/ecs/components/particles2d_component.h"
 #include "core/ecs/components/script_component.h"
+#include "core/ecs/components/sprite_component.h"
+#include "core/ecs/components/text_label_component.h"
+#include "core/ecs/components/tilemap_component.h"
 #include "core/physics/collision/collision.h"
 #include "core/scene/scene_manager.h"
 #include "core/scene/scene_template_cache.h"
 #include "core/scripting/python/pocketpy/pkpy_instance_cache.h"
+#include "seika/flag_utils.h"
 
 // Helper functions
 static inline SkaVector2 cre_pkpy_api_helper_mouse_get_global_position(const SkaVector2* offset) {
@@ -971,17 +979,189 @@ bool cre_pkpy_api_client_send(int argc, py_StackRef argv) {
 
 // Node
 
-bool cre_pkpy_api_node_new(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_node_get_name(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_node_add_child(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_node_get_child(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_node_get_children(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_node_get_parent(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_node_queue_deletion(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_node_is_queued_for_deletion(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_node_set_time_dilation(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_node_get_time_dilation(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_node_get_total_time_dilation(int argc, py_StackRef argv) { return true; }
+static void set_node_component_from_type(SkaEntity entity, const char* classPath, const char* className, NodeBaseType baseType) {
+
+    // Set components that should be set for a base node (that has invoked .new() from scripting)
+    ska_ecs_component_manager_set_component(entity, NODE_COMPONENT_INDEX, node_component_create_ex(className, baseType));
+    ska_ecs_component_manager_set_component(entity, SCRIPT_COMPONENT_INDEX, script_component_create_ex(classPath, className, CreScriptContextType_PYTHON));
+
+    const NodeBaseInheritanceType inheritanceType = node_get_type_inheritance(baseType);
+
+    if (SKA_FLAG_CONTAINS(inheritanceType, NodeBaseInheritanceType_NODE2D)) {
+        ska_ecs_component_manager_set_component(entity, TRANSFORM2D_COMPONENT_INDEX, transform2d_component_create());
+    }
+    if (SKA_FLAG_CONTAINS(inheritanceType, NodeBaseInheritanceType_SPRITE)) {
+        ska_ecs_component_manager_set_component(entity, SPRITE_COMPONENT_INDEX, sprite_component_create());
+    }
+    if (SKA_FLAG_CONTAINS(inheritanceType, NodeBaseInheritanceType_ANIMATED_SPRITE)) {
+        ska_ecs_component_manager_set_component(entity, ANIMATED_SPRITE_COMPONENT_INDEX, animated_sprite_component_create());
+    }
+    if (SKA_FLAG_CONTAINS(inheritanceType, NodeBaseInheritanceType_TEXT_LABEL)) {
+        ska_ecs_component_manager_set_component(entity, TEXT_LABEL_COMPONENT_INDEX, text_label_component_create());
+    }
+    if (SKA_FLAG_CONTAINS(inheritanceType, NodeBaseInheritanceType_COLLIDER2D)) {
+        ska_ecs_component_manager_set_component(entity, COLLIDER2D_COMPONENT_INDEX, collider2d_component_create());
+    }
+    if (SKA_FLAG_CONTAINS(inheritanceType, NodeBaseInheritanceType_COLOR_RECT)) {
+        ska_ecs_component_manager_set_component(entity, COLOR_RECT_COMPONENT_INDEX, color_rect_component_create());
+    }
+    if (SKA_FLAG_CONTAINS(inheritanceType, NodeBaseInheritanceType_PARALLAX)) {
+        ska_ecs_component_manager_set_component(entity, PARALLAX_COMPONENT_INDEX, parallax_component_create());
+    }
+    if (SKA_FLAG_CONTAINS(inheritanceType, NodeBaseInheritanceType_PARTICLES2D)) {
+        ska_ecs_component_manager_set_component(entity, PARTICLES2D_COMPONENT_INDEX, particles2d_component_create());
+    }
+    if (SKA_FLAG_CONTAINS(inheritanceType, NodeBaseInheritanceType_TILEMAP)) {
+        ska_ecs_component_manager_set_component(entity, TILEMAP_COMPONENT_INDEX, tilemap_component_create());
+    }
+}
+
+bool cre_pkpy_api_node_new(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(3);
+    const char* classPath = py_tostr(py_arg(0));
+    const char* className = py_tostr(py_arg(1));
+    const py_i64 nodeTypeFlag = py_toint(py_arg(2));
+
+    const SkaEntity entity = ska_ecs_entity_create();
+    py_Ref newInstance = cre_pkpy_instance_cache_add(entity, classPath, className);
+    SceneTreeNode* newNode = cre_scene_tree_create_tree_node(entity, NULL);
+    cre_scene_manager_stage_child_node_to_be_added_later(newNode);
+    set_node_component_from_type(entity, classPath, className, (NodeBaseType)nodeTypeFlag);
+    py_assign(py_retval(), newInstance);
+    return true;
+}
+
+bool cre_pkpy_api_node_get_name(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    const py_i64 entityId = py_toint(py_arg(0));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    const NodeComponent* nodeComponent = (NodeComponent*)ska_ecs_component_manager_get_component(entity, NODE_COMPONENT_INDEX);
+    py_newstr(py_retval(), nodeComponent->name);
+    return true;
+}
+
+bool cre_pkpy_api_node_add_child(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(2);
+    const py_i64 childEntityId = py_toint(py_arg(0));
+    const py_i64 parentEntityId = py_toint(py_arg(1));
+
+    cre_scene_manager_add_node_as_child((SkaEntity)childEntityId, (SkaEntity)parentEntityId);
+    return true;
+}
+
+bool cre_pkpy_api_node_get_child(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(2);
+    const py_i64 parentEntityId = py_toint(py_arg(0));
+    const char* childName = py_tostr(py_arg(1));
+
+    const SkaEntity childEntity = cre_scene_manager_get_entity_child_by_name((SkaEntity)parentEntityId, childName);
+    if (childEntity != SKA_NULL_ENTITY) {
+        py_assign(py_retval(), cre_pkpy_instance_cache_add2(childEntity));
+    } else {
+        ska_logger_warn("Unable to find child '%s' from entity '%u'", childName, parentEntityId);
+        py_newnone(py_retval());
+    }
+    return true;
+}
+
+bool cre_pkpy_api_node_get_children(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    const py_i64 entityId = py_toint(py_arg(0));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    if (cre_scene_manager_has_entity_tree_node(entity)) {
+        const SceneTreeNode* parentTreeNode = cre_scene_manager_get_entity_tree_node(entity);
+        py_newlistn(py_retval(), (int)parentTreeNode->childCount);
+        for (size_t i = 0; i < parentTreeNode->childCount; i++) {
+            const SceneTreeNode* childTreeNode = parentTreeNode->children[i];
+            py_list_setitem(py_retval(), (int)i, cre_pkpy_instance_cache_add2(childTreeNode->entity));
+        }
+    } else {
+        ska_logger_warn("Doesn't have tree node when trying to get children from %u", entity);
+        py_newlist(py_retval());
+    }
+
+    return true;
+}
+
+bool cre_pkpy_api_node_get_parent(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    const py_i64 childEntityId = py_toint(py_arg(0));
+
+    const SkaEntity childEntity = (SkaEntity)childEntityId;
+    if (cre_scene_manager_has_entity_tree_node(childEntity)) {
+        const SceneTreeNode* treeNode = cre_scene_manager_get_entity_tree_node(childEntity);
+        if (treeNode->parent) {
+            py_assign(py_retval(), cre_pkpy_instance_cache_add2(treeNode->parent->entity));
+        } else {
+            py_newnone(py_retval());
+        }
+    }
+    return true;
+}
+
+bool cre_pkpy_api_node_queue_deletion(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    const py_i64 entityId = py_toint(py_arg(0));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    const NodeComponent* nodeComponent = (NodeComponent*)ska_ecs_component_manager_get_component(entity, NODE_COMPONENT_INDEX);
+    if (!nodeComponent->queuedForDeletion) {
+        if (cre_scene_manager_has_entity_tree_node(entity)) {
+            SceneTreeNode* node = cre_scene_manager_get_entity_tree_node(entity);
+            cre_queue_destroy_tree_node_entity_all(node);
+        } else {
+            ska_logger_warn("Entity not found in tree, skipping queue deletion.");
+        }
+    } else {
+        ska_logger_warn("Node '%s' already queued for deletion!", nodeComponent->name);
+    }
+    return true;
+}
+
+bool cre_pkpy_api_node_is_queued_for_deletion(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    const py_i64 entityId = py_toint(py_arg(0));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    const NodeComponent* nodeComponent = (NodeComponent*)ska_ecs_component_manager_get_component(entity, NODE_COMPONENT_INDEX);
+    py_newbool(py_retval(), nodeComponent->queuedForDeletion);
+    return true;
+}
+
+bool cre_pkpy_api_node_set_time_dilation(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(2);
+    const py_i64 entityId = py_toint(py_arg(0));
+    const f64 timeDilation = py_tofloat(py_arg(1));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    NodeComponent* nodeComponent = (NodeComponent*)ska_ecs_component_manager_get_component(entity, NODE_COMPONENT_INDEX);
+    nodeComponent->timeDilation.value = (f32)timeDilation;
+    cre_scene_manager_invalidate_time_dilation_nodes_with_children(entity);
+    return true;
+}
+
+bool cre_pkpy_api_node_get_time_dilation(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    const py_i64 entityId = py_toint(py_arg(0));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    const NodeComponent* nodeComponent = (NodeComponent*)ska_ecs_component_manager_get_component(entity, NODE_COMPONENT_INDEX);
+    const f64 timeDilation = (f64)nodeComponent->timeDilation.value;
+    py_newfloat(py_retval(), timeDilation);
+    return true;
+}
+
+bool cre_pkpy_api_node_get_total_time_dilation(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    const py_i64 entityId = py_toint(py_arg(0));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    const f64 totalTimeDilation = (f64)cre_scene_manager_get_node_full_time_dilation(entity);
+    py_newfloat(py_retval(), totalTimeDilation);
+    return true;
+}
 
 // Node2D
 
