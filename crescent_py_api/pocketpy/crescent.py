@@ -1476,13 +1476,7 @@ class CollisionHandler:
     """
     @staticmethod
     def process_collisions(collider: Collider2D) -> List[Node]:
-        collided_entities = crescent_internal.collision_handler_process_collisions(collider.entity_id)
-        if collided_entities:
-            if isinstance(collided_entities, tuple):
-                return list(collided_entities)
-            elif isinstance(collided_entities, Node):
-                return [collided_entities]
-        return []
+        return crescent_internal.collision_handler_process_collisions(collider.entity_id)
 
     @staticmethod
     def process_mouse_collisions(pos_offset: Optional[Vector2] = None, collision_size: Optional[Size2D] = None) -> List[Node]:
@@ -1490,13 +1484,7 @@ class CollisionHandler:
             pos_offset = Vector2.ZERO()
         if not collision_size:
             collision_size = Size2D(1.0, 1.0)
-        collided_entities = crescent_internal.collision_handler_process_mouse_collisions(pos_offset.x, pos_offset.y, collision_size.w, collision_size.h)
-        if collided_entities:
-            if isinstance(collided_entities, tuple):
-                return list(collided_entities)
-            elif isinstance(collided_entities, Node):
-                return [collided_entities]
-        return []
+        return crescent_internal.collision_handler_process_mouse_collisions(pos_offset.x, pos_offset.y, collision_size.w, collision_size.h)
 
 
 # Work around for singleton until class methods are in

@@ -887,11 +887,10 @@ bool cre_pkpy_api_collision_handler_process_collisions(int argc, py_StackRef arg
 
     const SkaEntity entity = (SkaEntity)entityId;
     const CollisionResult collisionResult = cre_collision_process_entity_collisions(entity);
-    py_newtuple(py_retval(), (int)collisionResult.collidedEntityCount);
+    py_newlistn(py_retval(), (int)collisionResult.collidedEntityCount);
     for (size_t i = 0; i < collisionResult.collidedEntityCount; i++) {
         const SkaEntity collidedEntity = collisionResult.collidedEntities[i];
-        py_Ref pyNode = py_tuple_getitem(py_retval(), (int)i);
-        py_assign(pyNode, cre_pkpy_instance_cache_add2(collidedEntity));
+        py_list_setitem(py_retval(), (int)i, cre_pkpy_instance_cache_add2(collidedEntity));
     }
     return true;
 }
@@ -907,11 +906,10 @@ bool cre_pkpy_api_collision_handler_process_mouse_collisions(int argc, py_StackR
     const SkaVector2 mouseWorldPos = cre_pkpy_api_helper_mouse_get_global_position(&positionOffset);
     const SkaRect2 collisionRect = { mouseWorldPos.x, mouseWorldPos.y, (f32)sizeW, (f32)sizeH };
     const CollisionResult collisionResult = cre_collision_process_mouse_collisions(&collisionRect);
-    py_newtuple(py_retval(), (int)collisionResult.collidedEntityCount);
+    py_newlistn(py_retval(), (int)collisionResult.collidedEntityCount);
     for (size_t i = 0; i < collisionResult.collidedEntityCount; i++) {
         const SkaEntity collidedEntity = collisionResult.collidedEntities[i];
-        py_Ref pyNode = py_tuple_getitem(py_retval(), (int)i);
-        py_assign(pyNode, cre_pkpy_instance_cache_add2(collidedEntity));
+        py_list_setitem(py_retval(), (int)i, cre_pkpy_instance_cache_add2(collidedEntity));
     }
     return true;
 }

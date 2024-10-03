@@ -1,4 +1,4 @@
-from typing import Tuple, Optional
+from typing import Tuple, Optional, List
 
 
 # Mock class for engine's internal c python module
@@ -673,11 +673,11 @@ def packed_scene_load(path: str) -> int:
 
 # --- Collision Handler --- #
 
-def collision_handler_process_collisions(entity_id: float) -> Tuple["Node", ...]:
+def collision_handler_process_collisions(entity_id: float) -> List["Node"]:
     return ()
 
 
-def collision_handler_process_mouse_collisions(pos_offset_x: float, pos_offset_y: float, collision_size_w: float, collision_size_h: float) -> Tuple["Node", ...]:
+def collision_handler_process_mouse_collisions(pos_offset_x: float, pos_offset_y: float, collision_size_w: float, collision_size_h: float) -> List["Node"]:
     return ()
 
 
