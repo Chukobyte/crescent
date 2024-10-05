@@ -1234,22 +1234,239 @@ bool cre_pkpy_api_node_get_total_time_dilation(int argc, py_StackRef argv) {
 
 // Node2D
 
-bool cre_pkpy_api_node2d_set_position(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_node2d_add_to_position(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_node2d_get_position(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_node2d_get_global_position(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_node2d_set_scale(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_node2d_add_to_scale(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_node2d_get_scale(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_node2d_set_rotation(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_node2d_add_to_rotation(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_node2d_get_rotation(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_node2d_set_z_index(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_node2d_get_z_index(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_node2d_set_z_index_relative_to_parent(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_node2d_get_z_index_relative_to_parent(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_node2d_set_ignore_camera(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_node2d_get_ignore_camera(int argc, py_StackRef argv) { return true; }
+static void pkpy_update_entity_local_position(SkaEntity entity, SkaVector2* position) {
+    Transform2DComponent* transformComp = (Transform2DComponent*)ska_ecs_component_manager_get_component(entity,TRANSFORM2D_COMPONENT_INDEX);
+    const SkaVector2 prevPosition = transformComp->localTransform.position;
+    transformComp->localTransform.position.x = position->x;
+    transformComp->localTransform.position.y = position->y;
+    transformComp->isGlobalTransformDirty = true;
+    if (transformComp->localTransform.position.x != prevPosition.x || transformComp->localTransform.position.y != prevPosition.y) {
+        cre_scene_manager_notify_all_on_transform_events(entity, transformComp);
+    }
+}
+
+static void pkpy_update_entity_local_scale(SkaEntity entity, SkaVector2 * scale) {
+    Transform2DComponent* transformComp = (Transform2DComponent*)ska_ecs_component_manager_get_component(entity,TRANSFORM2D_COMPONENT_INDEX);
+    const SkaVector2 prevScale = transformComp->localTransform.scale;
+    transformComp->localTransform.scale.x = scale->x;
+    transformComp->localTransform.scale.y = scale->y;
+    transformComp->isGlobalTransformDirty = true;
+    if (transformComp->localTransform.scale.x != prevScale.x || transformComp->localTransform.scale.y != prevScale.y) {
+        cre_scene_manager_notify_all_on_transform_events(entity, transformComp);
+    }
+}
+
+static void pkpy_update_entity_local_rotation(SkaEntity entity, f32 rotation) {
+    Transform2DComponent* transformComp = (Transform2DComponent*)ska_ecs_component_manager_get_component(entity, TRANSFORM2D_COMPONENT_INDEX);
+    const f32 prevRotation = transformComp->localTransform.rotation;
+    transformComp->localTransform.rotation = rotation;
+    transformComp->isGlobalTransformDirty = true;
+    if (transformComp->localTransform.rotation != prevRotation) {
+        cre_scene_manager_notify_all_on_transform_events(entity, transformComp);
+    }
+}
+
+bool cre_pkpy_api_node2d_set_position(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(3);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(0, tp_float); PY_CHECK_ARG_TYPE(0, tp_float);
+    const py_i64 entityId = py_toint(py_arg(0));
+    const f64 posX = py_tofloat(py_arg(1));
+    const f64 posY = py_tofloat(py_arg(2));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    pkpy_update_entity_local_position(entity, &(SkaVector2) { .x = (f32)posX, .y = (f32)posY });
+    return true;
+}
+
+bool cre_pkpy_api_node2d_add_to_position(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(3);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(0, tp_float); PY_CHECK_ARG_TYPE(0, tp_float);
+    const py_i64 entityId = py_toint(py_arg(0));
+    const f64 posX = py_tofloat(py_arg(1));
+    const f64 posY = py_tofloat(py_arg(2));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    const Transform2DComponent* transformComp = (Transform2DComponent*)ska_ecs_component_manager_get_component(entity, TRANSFORM2D_COMPONENT_INDEX);
+    pkpy_update_entity_local_position(entity, &(SkaVector2) {
+        .x = transformComp->localTransform.position.x + (f32)posX,
+        .y = transformComp->localTransform.position.y + (f32)posY
+    });
+    return true;
+}
+
+bool cre_pkpy_api_node2d_get_position(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_int);
+    const py_i64 entityId = py_toint(py_arg(0));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    const Transform2DComponent* transformComp = (Transform2DComponent*)ska_ecs_component_manager_get_component(entity, TRANSFORM2D_COMPONENT_INDEX);
+    py_newtuple(py_retval(), 2);
+    py_Ref pyX = py_tuple_getitem(py_retval(), 0);
+    py_Ref pyY = py_tuple_getitem(py_retval(), 1);
+    py_newfloat(pyX, (f64)transformComp->localTransform.position.x);
+    py_newfloat(pyY, (f64)transformComp->localTransform.position.y);
+    return true;
+}
+
+bool cre_pkpy_api_node2d_get_global_position(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_int);
+    const py_i64 entityId = py_toint(py_arg(0));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    Transform2DComponent* transformComp = (Transform2DComponent*)ska_ecs_component_manager_get_component(entity, TRANSFORM2D_COMPONENT_INDEX);
+    SkaTransformModel2D* globalTransform = cre_scene_manager_get_scene_node_global_transform(entity, transformComp);
+    py_newtuple(py_retval(), 2);
+    py_Ref pyX = py_tuple_getitem(py_retval(), 0);
+    py_Ref pyY = py_tuple_getitem(py_retval(), 1);
+    py_newfloat(pyX, (f64)globalTransform->position.x);
+    py_newfloat(pyY, (f64)globalTransform->position.y);
+    return true;
+}
+
+bool cre_pkpy_api_node2d_set_scale(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(3);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(0, tp_float); PY_CHECK_ARG_TYPE(0, tp_float);
+    const py_i64 entityId = py_toint(py_arg(0));
+    const f64 scaleX = py_tofloat(py_arg(1));
+    const f64 scaleY = py_tofloat(py_arg(2));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    pkpy_update_entity_local_scale(entity, &(SkaVector2) { .x = (f32)scaleX, .y = (f32)scaleY });
+    return true;
+}
+
+bool cre_pkpy_api_node2d_add_to_scale(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(3);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(0, tp_float); PY_CHECK_ARG_TYPE(0, tp_float);
+    const py_i64 entityId = py_toint(py_arg(0));
+    const f64 scaleX = py_tofloat(py_arg(1));
+    const f64 scaleY = py_tofloat(py_arg(2));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    const Transform2DComponent* transformComp = (Transform2DComponent*)ska_ecs_component_manager_get_component(entity, TRANSFORM2D_COMPONENT_INDEX);
+    pkpy_update_entity_local_scale(entity, &(SkaVector2) { .x = transformComp->localTransform.scale.x + (f32)scaleX, .y = transformComp->localTransform.scale.y + (f32)scaleY });
+    return true;
+}
+
+bool cre_pkpy_api_node2d_get_scale(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_int);
+    const py_i64 entityId = py_toint(py_arg(0));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    const Transform2DComponent* transformComp = (Transform2DComponent*)ska_ecs_component_manager_get_component(entity, TRANSFORM2D_COMPONENT_INDEX);
+    py_newtuple(py_retval(), 2);
+    py_Ref pyX = py_tuple_getitem(py_retval(), 0);
+    py_Ref pyY = py_tuple_getitem(py_retval(), 1);
+    py_newfloat(pyX, (f64)transformComp->localTransform.scale.x);
+    py_newfloat(pyY, (f64)transformComp->localTransform.scale.y);
+    return true;
+}
+
+bool cre_pkpy_api_node2d_set_rotation(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(2);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(0, tp_float);;
+    const py_i64 entityId = py_toint(py_arg(0));
+    const f64 rotation = py_tofloat(py_arg(1));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    pkpy_update_entity_local_rotation(entity, (f32)rotation);
+    return true;
+}
+
+bool cre_pkpy_api_node2d_add_to_rotation(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(2);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(0, tp_float);;
+    const py_i64 entityId = py_toint(py_arg(0));
+    const f64 rotation = py_tofloat(py_arg(1));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    const Transform2DComponent* transformComp = (Transform2DComponent*)ska_ecs_component_manager_get_component(entity, TRANSFORM2D_COMPONENT_INDEX);
+    pkpy_update_entity_local_rotation(entity, transformComp->localTransform.rotation + (f32)rotation);
+    return true;
+}
+
+bool cre_pkpy_api_node2d_get_rotation(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_int);
+    const py_i64 entityId = py_toint(py_arg(0));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    const Transform2DComponent* transformComp = (Transform2DComponent*)ska_ecs_component_manager_get_component(entity, TRANSFORM2D_COMPONENT_INDEX);
+    py_newfloat(py_retval(), (f64)transformComp->localTransform.rotation);
+    return true;
+}
+
+bool cre_pkpy_api_node2d_set_z_index(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(2);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(0, tp_int);;
+    const py_i64 entityId = py_toint(py_arg(0));
+    const py_i64 zIndex = py_toint(py_arg(1));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    Transform2DComponent* transformComp = (Transform2DComponent*)ska_ecs_component_manager_get_component(entity, TRANSFORM2D_COMPONENT_INDEX);
+    transformComp->zIndex = (int32)zIndex;
+    return true;
+}
+
+bool cre_pkpy_api_node2d_get_z_index(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_int);
+    const py_i64 entityId = py_toint(py_arg(0));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    const Transform2DComponent* transformComp = (Transform2DComponent*)ska_ecs_component_manager_get_component(entity, TRANSFORM2D_COMPONENT_INDEX);
+    py_newint(py_retval(), transformComp->zIndex);
+    return true;
+}
+
+bool cre_pkpy_api_node2d_set_z_index_relative_to_parent(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(2);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(0, tp_bool);;
+    const py_i64 entityId = py_toint(py_arg(0));
+    const bool zIndexRelativeToParent = py_tobool(py_arg(1));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    Transform2DComponent* transformComp = (Transform2DComponent*)ska_ecs_component_manager_get_component(entity, TRANSFORM2D_COMPONENT_INDEX);
+    transformComp->isZIndexRelativeToParent = zIndexRelativeToParent;
+    return true;
+}
+
+bool cre_pkpy_api_node2d_get_z_index_relative_to_parent(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_int);
+    const py_i64 entityId = py_toint(py_arg(0));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    const Transform2DComponent* transformComp = (Transform2DComponent*)ska_ecs_component_manager_get_component(entity, TRANSFORM2D_COMPONENT_INDEX);
+    py_newbool(py_retval(), transformComp->isZIndexRelativeToParent);
+    return true;
+}
+
+bool cre_pkpy_api_node2d_set_ignore_camera(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(2);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(0, tp_bool);;
+    const py_i64 entityId = py_toint(py_arg(0));
+    const bool ignoreCamera = py_tobool(py_arg(1));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    Transform2DComponent* transformComp = (Transform2DComponent*)ska_ecs_component_manager_get_component(entity, TRANSFORM2D_COMPONENT_INDEX);
+    transformComp->ignoreCamera = ignoreCamera;
+    return true;
+}
+
+bool cre_pkpy_api_node2d_get_ignore_camera(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_int);
+    const py_i64 entityId = py_toint(py_arg(0));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    const Transform2DComponent* transformComp = (Transform2DComponent*)ska_ecs_component_manager_get_component(entity, TRANSFORM2D_COMPONENT_INDEX);
+    py_newbool(py_retval(), transformComp->ignoreCamera);
+    return true;
+}
 
 // Sprite
 
