@@ -1162,7 +1162,7 @@
 "    @property\n"\
 "    def shader_instance(self) -> Optional[ShaderInstance]:\n"\
 "        shader_instance_id = crescent_internal.sprite_get_shader_instance(self.entity_id)\n"\
-"        if shader_instance_id >= 0:\n"\
+"        if shader_instance_id:\n"\
 "            return ShaderInstance(shader_instance_id)\n"\
 "        return None\n"\
 "\n"\

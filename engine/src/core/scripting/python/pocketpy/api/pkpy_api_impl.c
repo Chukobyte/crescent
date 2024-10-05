@@ -12,6 +12,7 @@
 #include <seika/ecs/ec_system.h>
 #include <seika/networking/network.h>
 #include <seika/rendering/render_context.h>
+#include <seika/rendering/renderer.h>
 #include <seika/rendering/frame_buffer.h>
 #include <seika/rendering/shader/shader_instance_minimal.h>
 #include <seika/rendering/shader/shader_instance.h>
@@ -1268,7 +1269,7 @@ static void pkpy_update_entity_local_rotation(SkaEntity entity, f32 rotation) {
 
 bool cre_pkpy_api_node2d_set_position(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(3);
-    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(0, tp_float); PY_CHECK_ARG_TYPE(0, tp_float);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(1, tp_float); PY_CHECK_ARG_TYPE(2, tp_float);
     const py_i64 entityId = py_toint(py_arg(0));
     const f64 posX = py_tofloat(py_arg(1));
     const f64 posY = py_tofloat(py_arg(2));
@@ -1280,7 +1281,7 @@ bool cre_pkpy_api_node2d_set_position(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_node2d_add_to_position(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(3);
-    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(0, tp_float); PY_CHECK_ARG_TYPE(0, tp_float);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(1, tp_float); PY_CHECK_ARG_TYPE(2, tp_float);
     const py_i64 entityId = py_toint(py_arg(0));
     const f64 posX = py_tofloat(py_arg(1));
     const f64 posY = py_tofloat(py_arg(2));
@@ -1327,7 +1328,7 @@ bool cre_pkpy_api_node2d_get_global_position(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_node2d_set_scale(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(3);
-    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(0, tp_float); PY_CHECK_ARG_TYPE(0, tp_float);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(1, tp_float); PY_CHECK_ARG_TYPE(2, tp_float);
     const py_i64 entityId = py_toint(py_arg(0));
     const f64 scaleX = py_tofloat(py_arg(1));
     const f64 scaleY = py_tofloat(py_arg(2));
@@ -1339,7 +1340,7 @@ bool cre_pkpy_api_node2d_set_scale(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_node2d_add_to_scale(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(3);
-    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(0, tp_float); PY_CHECK_ARG_TYPE(0, tp_float);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(1, tp_float); PY_CHECK_ARG_TYPE(2, tp_float);
     const py_i64 entityId = py_toint(py_arg(0));
     const f64 scaleX = py_tofloat(py_arg(1));
     const f64 scaleY = py_tofloat(py_arg(2));
@@ -1367,7 +1368,7 @@ bool cre_pkpy_api_node2d_get_scale(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_node2d_set_rotation(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(2);
-    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(0, tp_float);;
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(1, tp_float);;
     const py_i64 entityId = py_toint(py_arg(0));
     const f64 rotation = py_tofloat(py_arg(1));
 
@@ -1378,7 +1379,7 @@ bool cre_pkpy_api_node2d_set_rotation(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_node2d_add_to_rotation(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(2);
-    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(0, tp_float);;
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(1, tp_float);;
     const py_i64 entityId = py_toint(py_arg(0));
     const f64 rotation = py_tofloat(py_arg(1));
 
@@ -1401,7 +1402,7 @@ bool cre_pkpy_api_node2d_get_rotation(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_node2d_set_z_index(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(2);
-    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(0, tp_int);;
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(1, tp_int);;
     const py_i64 entityId = py_toint(py_arg(0));
     const py_i64 zIndex = py_toint(py_arg(1));
 
@@ -1424,7 +1425,7 @@ bool cre_pkpy_api_node2d_get_z_index(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_node2d_set_z_index_relative_to_parent(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(2);
-    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(0, tp_bool);;
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(1, tp_bool);;
     const py_i64 entityId = py_toint(py_arg(0));
     const bool zIndexRelativeToParent = py_tobool(py_arg(1));
 
@@ -1447,7 +1448,7 @@ bool cre_pkpy_api_node2d_get_z_index_relative_to_parent(int argc, py_StackRef ar
 
 bool cre_pkpy_api_node2d_set_ignore_camera(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(2);
-    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(0, tp_bool);;
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(1, tp_bool);;
     const py_i64 entityId = py_toint(py_arg(0));
     const bool ignoreCamera = py_tobool(py_arg(1));
 
@@ -1470,20 +1471,215 @@ bool cre_pkpy_api_node2d_get_ignore_camera(int argc, py_StackRef argv) {
 
 // Sprite
 
-bool cre_pkpy_api_sprite_get_texture(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_sprite_set_texture(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_sprite_get_draw_source(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_sprite_set_draw_source(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_sprite_get_flip_h(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_sprite_set_flip_h(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_sprite_get_flip_v(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_sprite_set_flip_v(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_sprite_get_modulate(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_sprite_set_modulate(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_sprite_get_origin(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_sprite_set_origin(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_sprite_get_shader_instance(int argc, py_StackRef argv) { return true; }
-bool cre_pkpy_api_sprite_set_shader_instance(int argc, py_StackRef argv) { return true; }
+bool cre_pkpy_api_sprite_get_texture(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_int);
+    const py_i64 entityId = py_toint(py_arg(0));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    const SpriteComponent* spriteComponent = (SpriteComponent*)ska_ecs_component_manager_get_component(entity, SPRITE_COMPONENT_INDEX);
+    const SkaTexture* texture = spriteComponent->texture;
+    py_newtuple(py_retval(), 4);
+    py_Ref pyFileName = py_tuple_getitem(py_retval(), 0);
+    py_Ref pyWrapS = py_tuple_getitem(py_retval(), 1);
+    py_Ref pyWrapT = py_tuple_getitem(py_retval(), 2);
+    py_Ref pyApplyNearestNeighbor = py_tuple_getitem(py_retval(), 3);
+    py_newstr(pyFileName, texture->fileName);
+    py_newstr(pyWrapS, ska_texture_get_wrap_s_string(texture));
+    py_newstr(pyWrapT, ska_texture_get_wrap_t_string(texture));
+    py_newbool(pyApplyNearestNeighbor, texture->applyNearestNeighbor);
+    return true;
+}
+
+bool cre_pkpy_api_sprite_set_texture(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(2);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(1, tp_str);
+    const py_i64 entityId = py_toint(py_arg(0));
+    const char* texturePath = py_tostr(py_arg(1));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    SkaTexture* texture = ska_asset_manager_get_texture(texturePath);
+    if (texture) {
+        SpriteComponent* spriteComponent = (SpriteComponent*)ska_ecs_component_manager_get_component(entity, SPRITE_COMPONENT_INDEX);
+        spriteComponent->texture = texture;
+    } else {
+        ska_logger_warn("Failed to find texture at path '%s'", texturePath);
+    }
+    return true;
+}
+
+bool cre_pkpy_api_sprite_get_draw_source(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_int);
+    const py_i64 entityId = py_toint(py_arg(0));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    const SpriteComponent* spriteComponent = (SpriteComponent*)ska_ecs_component_manager_get_component(entity, SPRITE_COMPONENT_INDEX);
+    const SkaRect2* drawSource = &spriteComponent->drawSource;
+    py_newtuple(py_retval(), 4);
+    py_Ref pyX = py_tuple_getitem(py_retval(), 0);
+    py_Ref pyY = py_tuple_getitem(py_retval(), 1);
+    py_Ref pyW = py_tuple_getitem(py_retval(), 2);
+    py_Ref pyH = py_tuple_getitem(py_retval(), 3);
+    py_newfloat(pyX, drawSource->x);
+    py_newfloat(pyY, drawSource->y);
+    py_newfloat(pyW, drawSource->w);
+    py_newfloat(pyH, drawSource->h);
+    return true;
+}
+
+bool cre_pkpy_api_sprite_set_draw_source(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(5);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(2, tp_float); PY_CHECK_ARG_TYPE(3, tp_float); PY_CHECK_ARG_TYPE(4, tp_float); PY_CHECK_ARG_TYPE(5, tp_float);
+    const py_i64 entityId = py_toint(py_arg(0));
+    const f64 x = py_tofloat(py_arg(1));
+    const f64 y = py_tofloat(py_arg(2));
+    const f64 w = py_tofloat(py_arg(3));
+    const f64 h = py_tofloat(py_arg(4));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    SpriteComponent* spriteComponent = (SpriteComponent*)ska_ecs_component_manager_get_component(entity, SPRITE_COMPONENT_INDEX);
+    spriteComponent->drawSource = (SkaRect2){ (f32)x, (f32)y, (f32)w, (f32)h };
+    return true;
+}
+
+bool cre_pkpy_api_sprite_get_flip_h(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_int);
+    const py_i64 entityId = py_toint(py_arg(0));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    const SpriteComponent* spriteComponent = (SpriteComponent*)ska_ecs_component_manager_get_component(entity, SPRITE_COMPONENT_INDEX);
+    py_newbool(py_retval(), spriteComponent->flipH);
+    return true;
+}
+
+bool cre_pkpy_api_sprite_set_flip_h(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(2);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(1, tp_bool);
+    const py_i64 entityId = py_toint(py_arg(0));
+    const bool flipH = py_tobool(py_arg(1));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    SpriteComponent* spriteComponent = (SpriteComponent*)ska_ecs_component_manager_get_component(entity, SPRITE_COMPONENT_INDEX);
+    spriteComponent->flipH = flipH;
+    return true;
+}
+
+bool cre_pkpy_api_sprite_get_flip_v(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_int);
+    const py_i64 entityId = py_toint(py_arg(0));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    const SpriteComponent* spriteComponent = (SpriteComponent*)ska_ecs_component_manager_get_component(entity, SPRITE_COMPONENT_INDEX);
+    py_newbool(py_retval(), spriteComponent->flipV);
+    return true;
+}
+
+bool cre_pkpy_api_sprite_set_flip_v(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(2);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(1, tp_bool);
+    const py_i64 entityId = py_toint(py_arg(0));
+    const bool flipV = py_tobool(py_arg(1));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    SpriteComponent* spriteComponent = (SpriteComponent*)ska_ecs_component_manager_get_component(entity, SPRITE_COMPONENT_INDEX);
+    spriteComponent->flipV = flipV;
+    return true;
+}
+
+bool cre_pkpy_api_sprite_get_modulate(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_int);
+    const py_i64 entityId = py_toint(py_arg(0));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    const SpriteComponent* spriteComponent = (SpriteComponent*)ska_ecs_component_manager_get_component(entity, SPRITE_COMPONENT_INDEX);
+    py_newtuple(py_retval(), 4);
+    py_Ref pyR = py_tuple_getitem(py_retval(), 0);
+    py_Ref pyG = py_tuple_getitem(py_retval(), 1);
+    py_Ref pyB = py_tuple_getitem(py_retval(), 2);
+    py_Ref pyA = py_tuple_getitem(py_retval(), 3);
+    py_newfloat(pyR, spriteComponent->modulate.r);
+    py_newfloat(pyG, spriteComponent->modulate.g);
+    py_newfloat(pyB, spriteComponent->modulate.b);
+    py_newfloat(pyA, spriteComponent->modulate.a);
+    return true;
+}
+
+bool cre_pkpy_api_sprite_set_modulate(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(5);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(1, tp_int); PY_CHECK_ARG_TYPE(2, tp_int); PY_CHECK_ARG_TYPE(3, tp_int); PY_CHECK_ARG_TYPE(4, tp_int);
+    const py_i64 entityId = py_toint(py_arg(0));
+    const py_i64 r = py_toint(py_arg(1));
+    const py_i64 g = py_toint(py_arg(2));
+    const py_i64 b = py_toint(py_arg(3));
+    const py_i64 a = py_toint(py_arg(4));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    SpriteComponent* spriteComponent = (SpriteComponent*)ska_ecs_component_manager_get_component(entity, SPRITE_COMPONENT_INDEX);
+    spriteComponent->modulate = ska_color_get_normalized_color((uint32)r, (uint32)g, (uint32)b, (uint32)a);
+    return true;
+}
+
+bool cre_pkpy_api_sprite_get_origin(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_int);
+    const py_i64 entityId = py_toint(py_arg(0));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    const SpriteComponent* spriteComponent = (SpriteComponent*)ska_ecs_component_manager_get_component(entity, SPRITE_COMPONENT_INDEX);
+    py_newtuple(py_retval(), 2);
+    py_Ref pyX = py_tuple_getitem(py_retval(), 0);
+    py_Ref pyY = py_tuple_getitem(py_retval(), 1);
+    py_newfloat(pyX, spriteComponent->origin.x);
+    py_newfloat(pyY, spriteComponent->origin.y);
+    return true;
+}
+
+bool cre_pkpy_api_sprite_set_origin(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(5);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(1, tp_float); PY_CHECK_ARG_TYPE(2, tp_float);
+    const py_i64 entityId = py_toint(py_arg(0));
+    const f64 x = py_tofloat(py_arg(1));
+    const f64 y = py_tofloat(py_arg(2));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    SpriteComponent* spriteComponent = (SpriteComponent*)ska_ecs_component_manager_get_component(entity, SPRITE_COMPONENT_INDEX);
+    spriteComponent->origin = (SkaVector2){ (f32)x, (f32)y };
+    return true;
+}
+
+bool cre_pkpy_api_sprite_get_shader_instance(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_int);
+    const py_i64 entityId = py_toint(py_arg(0));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    const SpriteComponent* spriteComponent = (SpriteComponent*)ska_ecs_component_manager_get_component(entity, SPRITE_COMPONENT_INDEX);
+    if (spriteComponent->shaderInstanceId != SKA_SHADER_INSTANCE_INVALID_ID) {
+        py_newint(py_retval(), (py_i64)spriteComponent->shaderInstanceId);
+    } else {
+        py_newnone(py_retval());
+    }
+    return true;
+}
+
+bool cre_pkpy_api_sprite_set_shader_instance(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(5);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(1, tp_int);
+    const py_i64 entityId = py_toint(py_arg(0));
+    const py_i64 pyShaderInstanceId = py_toint(py_arg(1));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    const SkaShaderInstanceId instanceId = (SkaShaderInstanceId)pyShaderInstanceId;
+    SpriteComponent* spriteComponent = (SpriteComponent*)ska_ecs_component_manager_get_component(entity, SPRITE_COMPONENT_INDEX);
+    spriteComponent->shaderInstanceId = instanceId;
+    SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(instanceId);
+    ska_renderer_set_sprite_shader_default_params(shaderInstance->shader);
+    return true;
+}
 
 // Animated Sprite
 
