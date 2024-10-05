@@ -1,11 +1,9 @@
 #include "pkpy_api.h"
 
-#include <pocketpy.h>
-
 #include "pkpy_api_impl.h"
-#include "../pkpy_util.h"
-#include "../cre_pkpy.h"
-#include "../cre_pkpy_api_source.h"
+#include "core/scripting/python/pocketpy/pkpy_util.h"
+#include "core/scripting/python/pocketpy/cre_pkpy.h"
+#include "core/scripting/python/pocketpy/cre_pkpy_api_source.h"
 
 void cre_pkpy_api_load_internal_modules() {
     // Load crescent internal first
