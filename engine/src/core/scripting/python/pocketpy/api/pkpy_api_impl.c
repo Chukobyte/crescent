@@ -1471,6 +1471,22 @@ bool cre_pkpy_api_node2d_get_ignore_camera(int argc, py_StackRef argv) {
 
 // Sprite
 
+typedef struct CreColor {
+    int32 r;
+    int32 g;
+    int32 b;
+    int32 a;
+} CreColor;
+
+static CreColor convert_ska_color_to_cre(const SkaColor* color) {
+    return (CreColor){
+        .r = (int32)(color->r * 255.0f),
+        .g = (int32)(color->g * 255.0f),
+        .b = (int32)(color->b * 255.0f),
+        .a = (int32)(color->a * 255.0f)
+    };
+}
+
 bool cre_pkpy_api_sprite_get_texture(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(1);
     PY_CHECK_ARG_TYPE(0, tp_int);
@@ -1596,15 +1612,16 @@ bool cre_pkpy_api_sprite_get_modulate(int argc, py_StackRef argv) {
 
     const SkaEntity entity = (SkaEntity)entityId;
     const SpriteComponent* spriteComponent = (SpriteComponent*)ska_ecs_component_manager_get_component(entity, SPRITE_COMPONENT_INDEX);
+    const CreColor color = convert_ska_color_to_cre(&spriteComponent->modulate);
     py_newtuple(py_retval(), 4);
     py_Ref pyR = py_tuple_getitem(py_retval(), 0);
     py_Ref pyG = py_tuple_getitem(py_retval(), 1);
     py_Ref pyB = py_tuple_getitem(py_retval(), 2);
     py_Ref pyA = py_tuple_getitem(py_retval(), 3);
-    py_newfloat(pyR, spriteComponent->modulate.r);
-    py_newfloat(pyG, spriteComponent->modulate.g);
-    py_newfloat(pyB, spriteComponent->modulate.b);
-    py_newfloat(pyA, spriteComponent->modulate.a);
+    py_newint(pyR, color.r);
+    py_newint(pyG, color.g);
+    py_newint(pyB, color.b);
+    py_newint(pyA, color.a);
     return true;
 }
 
@@ -1639,7 +1656,7 @@ bool cre_pkpy_api_sprite_get_origin(int argc, py_StackRef argv) {
 }
 
 bool cre_pkpy_api_sprite_set_origin(int argc, py_StackRef argv) {
-    PY_CHECK_ARGC(5);
+    PY_CHECK_ARGC(3);
     PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(1, tp_float); PY_CHECK_ARG_TYPE(2, tp_float);
     const py_i64 entityId = py_toint(py_arg(0));
     const f64 x = py_tofloat(py_arg(1));
@@ -1800,15 +1817,16 @@ bool cre_pkpy_api_animated_sprite_get_modulate(int argc, py_StackRef argv) {
 
     const SkaEntity entity = (SkaEntity)entityId;
     const AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*)ska_ecs_component_manager_get_component(entity, ANIMATED_SPRITE_COMPONENT_INDEX);
+    const CreColor color = convert_ska_color_to_cre(&animatedSpriteComponent->modulate);
     py_newtuple(py_retval(), 4);
     py_Ref pyR = py_tuple_getitem(py_retval(), 0);
     py_Ref pyG = py_tuple_getitem(py_retval(), 1);
     py_Ref pyB = py_tuple_getitem(py_retval(), 2);
     py_Ref pyA = py_tuple_getitem(py_retval(), 3);
-    py_newfloat(pyR, animatedSpriteComponent->modulate.r);
-    py_newfloat(pyG, animatedSpriteComponent->modulate.g);
-    py_newfloat(pyB, animatedSpriteComponent->modulate.b);
-    py_newfloat(pyA, animatedSpriteComponent->modulate.a);
+    py_newint(pyR, color.r);
+    py_newint(pyG, color.g);
+    py_newint(pyB, color.b);
+    py_newint(pyA, color.a);
     return true;
 }
 
@@ -1888,66 +1906,237 @@ bool cre_pkpy_api_animated_sprite_set_shader_instance(int argc, py_StackRef argv
 // Text Label
 
 bool cre_pkpy_api_text_label_get_text(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_int);
+    const py_i64 entityId = py_toint(py_arg(0));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    const TextLabelComponent* textLabelComponent = (TextLabelComponent*)ska_ecs_component_manager_get_component(entity, TEXT_LABEL_COMPONENT_INDEX);
+    py_newstr(py_retval(), textLabelComponent->text);
     return true;
 }
 
 bool cre_pkpy_api_text_label_set_text(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(2);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(1, tp_str);
+    const py_i64 entityId = py_toint(py_arg(0));
+    const char* text = py_tostr(py_arg(1));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    TextLabelComponent* textLabelComponent = (TextLabelComponent*)ska_ecs_component_manager_get_component(entity, TEXT_LABEL_COMPONENT_INDEX);
+    ska_strcpy(textLabelComponent->text, text);
     return true;
 }
 
 bool cre_pkpy_api_text_label_get_color(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_int);
+    const py_i64 entityId = py_toint(py_arg(0));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    const TextLabelComponent* textLabelComponent = (TextLabelComponent*)ska_ecs_component_manager_get_component(entity, TEXT_LABEL_COMPONENT_INDEX);
+    const CreColor color = convert_ska_color_to_cre(&textLabelComponent->color);
+    py_newtuple(py_retval(), 4);
+    py_Ref pyR = py_tuple_getitem(py_retval(), 0);
+    py_Ref pyG = py_tuple_getitem(py_retval(), 1);
+    py_Ref pyB = py_tuple_getitem(py_retval(), 2);
+    py_Ref pyA = py_tuple_getitem(py_retval(), 3);
+    py_newint(pyR, color.r);
+    py_newint(pyG, color.g);
+    py_newint(pyB, color.b);
+    py_newint(pyA, color.a);
     return true;
 }
 
 bool cre_pkpy_api_text_label_set_color(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(5);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(1, tp_int); PY_CHECK_ARG_TYPE(2, tp_int); PY_CHECK_ARG_TYPE(3, tp_int); PY_CHECK_ARG_TYPE(4, tp_int);
+    const py_i64 entityId = py_toint(py_arg(0));
+    const py_i64 r = py_toint(py_arg(1));
+    const py_i64 g = py_toint(py_arg(2));
+    const py_i64 b = py_toint(py_arg(3));
+    const py_i64 a = py_toint(py_arg(4));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    TextLabelComponent* textLabelComponent = (TextLabelComponent*)ska_ecs_component_manager_get_component(entity, TEXT_LABEL_COMPONENT_INDEX);
+    textLabelComponent->color = ska_color_get_normalized_color((uint32)r, (uint32)g, (uint32)b, (uint32)a);
     return true;
 }
 
 bool cre_pkpy_api_text_label_set_font_uid(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(2);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(1, tp_str);
+    const py_i64 entityId = py_toint(py_arg(0));
+    const char* fontUID = py_tostr(py_arg(1));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    SkaFont* font = ska_asset_manager_get_font(fontUID);
+    if (font) {
+        TextLabelComponent* textLabelComponent = (TextLabelComponent*)ska_ecs_component_manager_get_component(entity, TEXT_LABEL_COMPONENT_INDEX);
+        textLabelComponent->font = font;
+    } else {
+        ska_logger_warn("Failed to set font to '%s' as it doesn't exist in the asset manager!", fontUID);
+    }
     return true;
 }
 
 // Collider2D
 
 bool cre_pkpy_api_collider2d_get_extents(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_int);
+    const py_i64 entityId = py_toint(py_arg(0));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    const Collider2DComponent* collider2DComponent = (Collider2DComponent*)ska_ecs_component_manager_get_component(entity, COLLIDER2D_COMPONENT_INDEX);
+    py_newtuple(py_retval(), 2);
+    py_Ref pyW = py_tuple_getitem(py_retval(), 0);
+    py_Ref pyH = py_tuple_getitem(py_retval(), 1);
+    py_newfloat(pyW, collider2DComponent->extents.w);
+    py_newfloat(pyH, collider2DComponent->extents.h);
     return true;
 }
 
 bool cre_pkpy_api_collider2d_set_extents(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(3);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(1, tp_float); PY_CHECK_ARG_TYPE(2, tp_float);
+    const py_i64 entityId = py_toint(py_arg(0));
+    const f64 w = py_tofloat(py_arg(1));
+    const f64 h = py_tofloat(py_arg(2));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    Collider2DComponent* collider2DComponent = (Collider2DComponent*)ska_ecs_component_manager_get_component(entity, COLLIDER2D_COMPONENT_INDEX);
+    collider2DComponent->extents = (SkaSize2D){ (f32)w, (f32)h };
     return true;
 }
 
 bool cre_pkpy_api_collider2d_get_color(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_int);
+    const py_i64 entityId = py_toint(py_arg(0));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    const Collider2DComponent* collider2DComponent = (Collider2DComponent*)ska_ecs_component_manager_get_component(entity, COLLIDER2D_COMPONENT_INDEX);
+    const CreColor color = convert_ska_color_to_cre(&collider2DComponent->color);
+    py_newtuple(py_retval(), 4);
+    py_Ref pyR = py_tuple_getitem(py_retval(), 0);
+    py_Ref pyG = py_tuple_getitem(py_retval(), 1);
+    py_Ref pyB = py_tuple_getitem(py_retval(), 2);
+    py_Ref pyA = py_tuple_getitem(py_retval(), 3);
+    py_newint(pyR, color.r);
+    py_newint(pyG, color.g);
+    py_newint(pyB, color.b);
+    py_newint(pyA, color.a);
     return true;
 }
 
-bool cre_pkpy_api_collider2d_set_color(int argc, py_StackRef argv) { return true; }
+bool cre_pkpy_api_collider2d_set_color(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(5);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(1, tp_int); PY_CHECK_ARG_TYPE(2, tp_int); PY_CHECK_ARG_TYPE(3, tp_int); PY_CHECK_ARG_TYPE(4, tp_int);
+    const py_i64 entityId = py_toint(py_arg(0));
+    const py_i64 r = py_toint(py_arg(1));
+    const py_i64 g = py_toint(py_arg(2));
+    const py_i64 b = py_toint(py_arg(3));
+    const py_i64 a = py_toint(py_arg(4));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    Collider2DComponent* collider2DComponent = (Collider2DComponent*)ska_ecs_component_manager_get_component(entity, COLLIDER2D_COMPONENT_INDEX);
+    collider2DComponent->color = ska_color_get_normalized_color((uint32)r, (uint32)g, (uint32)b, (uint32)a);
+    return true;
+}
 
 // Color Rect
 
 bool cre_pkpy_api_color_rect_get_size(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_int);
+    const py_i64 entityId = py_toint(py_arg(0));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    const ColorRectComponent* colorRectComponent = (ColorRectComponent*)ska_ecs_component_manager_get_component(entity, COLOR_RECT_COMPONENT_INDEX);
+    py_newtuple(py_retval(), 2);
+    py_Ref pyW = py_tuple_getitem(py_retval(), 0);
+    py_Ref pyH = py_tuple_getitem(py_retval(), 1);
+    py_newfloat(pyW, colorRectComponent->size.w);
+    py_newfloat(pyH, colorRectComponent->size.h);
     return true;
 }
 
 bool cre_pkpy_api_color_rect_set_size(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(3);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(1, tp_float); PY_CHECK_ARG_TYPE(2, tp_float);
+    const py_i64 entityId = py_toint(py_arg(0));
+    const f64 w = py_tofloat(py_arg(1));
+    const f64 h = py_tofloat(py_arg(2));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    ColorRectComponent* colorRectComponent = (ColorRectComponent*)ska_ecs_component_manager_get_component(entity, COLOR_RECT_COMPONENT_INDEX);
+    colorRectComponent->size = (SkaSize2D){ (f32)w, (f32)h };
     return true;
 }
 
 bool cre_pkpy_api_color_rect_get_color(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_int);
+    const py_i64 entityId = py_toint(py_arg(0));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    const ColorRectComponent* colorRectComponent = (ColorRectComponent*)ska_ecs_component_manager_get_component(entity, COLOR_RECT_COMPONENT_INDEX);
+    const CreColor color = convert_ska_color_to_cre(&colorRectComponent->color);
+    py_newtuple(py_retval(), 4);
+    py_Ref pyR = py_tuple_getitem(py_retval(), 0);
+    py_Ref pyG = py_tuple_getitem(py_retval(), 1);
+    py_Ref pyB = py_tuple_getitem(py_retval(), 2);
+    py_Ref pyA = py_tuple_getitem(py_retval(), 3);
+    py_newint(pyR, color.r);
+    py_newint(pyG, color.g);
+    py_newint(pyB, color.b);
+    py_newint(pyA, color.a);
     return true;
 }
 
 bool cre_pkpy_api_color_rect_set_color(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(5);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(1, tp_int); PY_CHECK_ARG_TYPE(2, tp_int); PY_CHECK_ARG_TYPE(3, tp_int); PY_CHECK_ARG_TYPE(4, tp_int);
+    const py_i64 entityId = py_toint(py_arg(0));
+    const py_i64 r = py_toint(py_arg(1));
+    const py_i64 g = py_toint(py_arg(2));
+    const py_i64 b = py_toint(py_arg(3));
+    const py_i64 a = py_toint(py_arg(4));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    ColorRectComponent* colorRectComponent = (ColorRectComponent*)ska_ecs_component_manager_get_component(entity, COLOR_RECT_COMPONENT_INDEX);
+    colorRectComponent->color = ska_color_get_normalized_color((uint32)r, (uint32)g, (uint32)b, (uint32)a);
     return true;
 }
 
 // Parallax
 
 bool cre_pkpy_api_parallax_get_scroll_speed(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_int);
+    const py_i64 entityId = py_toint(py_arg(0));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    const ParallaxComponent* parallaxComponent = (ParallaxComponent*)ska_ecs_component_manager_get_component(entity, PARALLAX_COMPONENT_INDEX);
+    py_newtuple(py_retval(), 2);
+    py_Ref pyX = py_tuple_getitem(py_retval(), 0);
+    py_Ref pyY = py_tuple_getitem(py_retval(), 1);
+    py_newfloat(pyX, parallaxComponent->scrollSpeed.x);
+    py_newfloat(pyY, parallaxComponent->scrollSpeed.y);
     return true;
 }
 
 bool cre_pkpy_api_parallax_set_scroll_speed(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(3);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(1, tp_float); PY_CHECK_ARG_TYPE(2, tp_float);
+    const py_i64 entityId = py_toint(py_arg(0));
+    const f64 x = py_tofloat(py_arg(1));
+    const f64 y = py_tofloat(py_arg(2));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    ParallaxComponent* parallaxComponent = (ParallaxComponent*)ska_ecs_component_manager_get_component(entity, PARALLAX_COMPONENT_INDEX);
+    parallaxComponent->scrollSpeed = (SkaVector2){ (f32)x, (f32)y };
     return true;
 }
 
@@ -1986,10 +2175,37 @@ bool cre_pkpy_api_particles2d_set_explosiveness(int argc, py_StackRef argv) {
 }
 
 bool cre_pkpy_api_particles2d_get_color(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_int);
+    const py_i64 entityId = py_toint(py_arg(0));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    const Particles2DComponent* particles2dComponent = (Particles2DComponent*)ska_ecs_component_manager_get_component(entity, PARTICLES2D_COMPONENT_INDEX);
+    const CreColor color = convert_ska_color_to_cre(&particles2dComponent->color);
+    py_newtuple(py_retval(), 4);
+    py_Ref pyR = py_tuple_getitem(py_retval(), 0);
+    py_Ref pyG = py_tuple_getitem(py_retval(), 1);
+    py_Ref pyB = py_tuple_getitem(py_retval(), 2);
+    py_Ref pyA = py_tuple_getitem(py_retval(), 3);
+    py_newint(pyR, color.r);
+    py_newint(pyG, color.g);
+    py_newint(pyB, color.b);
+    py_newint(pyA, color.a);
     return true;
 }
 
 bool cre_pkpy_api_particles2d_set_color(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(5);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(1, tp_int); PY_CHECK_ARG_TYPE(2, tp_int); PY_CHECK_ARG_TYPE(3, tp_int); PY_CHECK_ARG_TYPE(4, tp_int);
+    const py_i64 entityId = py_toint(py_arg(0));
+    const py_i64 r = py_toint(py_arg(1));
+    const py_i64 g = py_toint(py_arg(2));
+    const py_i64 b = py_toint(py_arg(3));
+    const py_i64 a = py_toint(py_arg(4));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    Particles2DComponent* particles2dComponent = (Particles2DComponent*)ska_ecs_component_manager_get_component(entity, PARTICLES2D_COMPONENT_INDEX);
+    particles2dComponent->color = ska_color_get_normalized_color((uint32)r, (uint32)g, (uint32)b, (uint32)a);
     return true;
 }
 
