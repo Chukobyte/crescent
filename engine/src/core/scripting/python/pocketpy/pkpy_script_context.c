@@ -7,6 +7,7 @@
 
 #include "pkpy_util.h"
 #include "pkpy_instance_cache.h"
+#include "../../../../../../cmake-build-release-msvc/_deps/seika_content-src/seika/data_structures/array_utils.h"
 #include "api/pkpy_api.h"
 
 static CREScriptContext* scriptContext = NULL;
@@ -72,11 +73,33 @@ void pkpy_finalize(CREScriptContext* context) {
 }
 
 void pkpy_create_instance(SkaEntity entity, const char* classPath, const char* className) {
-    cre_pkpy_instance_cache_add(entity, classPath, className);
+    py_Ref newInstance = cre_pkpy_instance_cache_add(entity, classPath, className);
+    if (py_getattr(newInstance, processFunctionName)) {
+        scriptContext->updateEntities[scriptContext->updateEntityCount++] = entity;
+    } else {
+        py_clearexc(NULL);
+    }
+    if (py_getattr(newInstance, fixedProcessFunctionName)) {
+        scriptContext->fixedUpdateEntities[scriptContext->fixedUpdateEntityCount++] = entity;
+    } else {
+        py_clearexc(NULL);
+    }
 }
 
 void pkpy_delete_instance(SkaEntity entity) {
     cre_pkpy_instance_cache_remove(entity);
+    ska_array_utils_remove_item_uint32(
+        scriptContext->updateEntities,
+        &scriptContext->updateEntityCount,
+        entity,
+        SKA_NULL_ENTITY
+    );
+    ska_array_utils_remove_item_uint32(
+        scriptContext->fixedUpdateEntities,
+        &scriptContext->fixedUpdateEntityCount,
+        entity,
+        SKA_NULL_ENTITY
+    );
 }
 
 void pkpy_on_start(SkaEntity entity) {
@@ -106,7 +129,7 @@ void pkpy_on_end(SkaEntity entity) {
 void pkpy_on_update(SkaEntity entity, f32 deltaTime) {
     py_Ref self = cre_pkpy_instance_cache_get_checked(entity);
     if (py_getattr(self, processFunctionName)) {
-        py_Ref pyDeltaTime = NULL;
+        py_Ref pyDeltaTime = py_pushtmp();
         py_newfloat(pyDeltaTime, deltaTime);
 
         py_push(py_retval());

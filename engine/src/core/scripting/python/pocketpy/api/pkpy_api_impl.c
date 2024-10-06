@@ -84,6 +84,7 @@ bool cre_pkpy_api_shader_instance_create_bool_param(int argc, py_StackRef argv) 
     const SkaShaderInstanceId shaderId = (SkaShaderInstanceId)pyShaderId;
     SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(shaderId);
     ska_shader_instance_param_create_bool(shaderInstance, paramName, value);
+    py_newnone(py_retval());
     return true;
 }
 
@@ -97,6 +98,7 @@ bool cre_pkpy_api_shader_instance_set_bool_param(int argc, py_StackRef argv) {
     const SkaShaderInstanceId shaderId = (SkaShaderInstanceId)pyShaderId;
     SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(shaderId);
     ska_shader_instance_param_update_bool(shaderInstance, paramName, value);
+    py_newnone(py_retval());
     return true;
 }
 
@@ -123,6 +125,7 @@ bool cre_pkpy_api_shader_instance_create_int_param(int argc, py_StackRef argv) {
     const SkaShaderInstanceId shaderId = (SkaShaderInstanceId)pyShaderId;
     SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(shaderId);
     ska_shader_instance_param_create_int(shaderInstance, paramName, (int32)value);
+    py_newnone(py_retval());
     return true;
 }
 
@@ -136,6 +139,7 @@ bool cre_pkpy_api_shader_instance_set_int_param(int argc, py_StackRef argv) {
     const SkaShaderInstanceId shaderId = (SkaShaderInstanceId)pyShaderId;
     SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(shaderId);
     ska_shader_instance_param_update_int(shaderInstance, paramName, (int32)value);
+    py_newnone(py_retval());
     return true;
 }
 
@@ -162,6 +166,7 @@ bool cre_pkpy_api_shader_instance_create_float_param(int argc, py_StackRef argv)
     const SkaShaderInstanceId shaderId = (SkaShaderInstanceId)pyShaderId;
     SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(shaderId);
     ska_shader_instance_param_create_float(shaderInstance, paramName, (f32)value);
+    py_newnone(py_retval());
     return true;
 }
 
@@ -175,6 +180,7 @@ bool cre_pkpy_api_shader_instance_set_float_param(int argc, py_StackRef argv) {
     const SkaShaderInstanceId shaderId = (SkaShaderInstanceId)pyShaderId;
     SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(shaderId);
     ska_shader_instance_param_update_float(shaderInstance, paramName, (f32)value);
+    py_newnone(py_retval());
     return true;
 }
 
@@ -203,6 +209,7 @@ bool cre_pkpy_api_shader_instance_create_float2_param(int argc, py_StackRef argv
     SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(shaderId);
     const SkaVector2 vecValue = (SkaVector2){ .x = (f32)valueX, .y = (f32)valueY };
     ska_shader_instance_param_create_float2(shaderInstance, paramName, vecValue);
+    py_newnone(py_retval());
     return true;
 }
 
@@ -218,6 +225,7 @@ bool cre_pkpy_api_shader_instance_set_float2_param(int argc, py_StackRef argv) {
     SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(shaderId);
     const SkaVector2 vecValue = (SkaVector2){ .x = (f32)valueX, .y = (f32)valueY };
     ska_shader_instance_param_update_float2(shaderInstance, paramName, vecValue);
+    py_newnone(py_retval());
     return true;
 }
 
@@ -251,6 +259,7 @@ bool cre_pkpy_api_shader_instance_create_float3_param(int argc, py_StackRef argv
     SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(shaderId);
     const SkaVector3 vecValue = (SkaVector3){ .x = (f32)valueX, .y = (f32)valueY, .z = (f32)valueZ };
     ska_shader_instance_param_create_float3(shaderInstance, paramName, vecValue);
+    py_newnone(py_retval());
     return true;
 }
 
@@ -267,6 +276,7 @@ bool cre_pkpy_api_shader_instance_set_float3_param(int argc, py_StackRef argv) {
     SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(shaderId);
     const SkaVector3 vecValue = (SkaVector3){ .x = (f32)valueX, .y = (f32)valueY, .z = (f32)valueZ };
     ska_shader_instance_param_update_float3(shaderInstance, paramName, vecValue);
+    py_newnone(py_retval());
     return true;
 }
 
@@ -303,6 +313,7 @@ bool cre_pkpy_api_shader_instance_create_float4_param(int argc, py_StackRef argv
     SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(shaderId);
     const SkaVector4 vecValue = (SkaVector4){ .x = (f32)valueX, .y = (f32)valueY, .z = (f32)valueZ, .w = (f32)valueW };
     ska_shader_instance_param_create_float4(shaderInstance, paramName, vecValue);
+    py_newnone(py_retval());
     return true;
 }
 
@@ -320,6 +331,7 @@ bool cre_pkpy_api_shader_instance_set_float4_param(int argc, py_StackRef argv) {
     SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(shaderId);
     const SkaVector4 vecValue = (SkaVector4){ .x = (f32)valueX, .y = (f32)valueY, .z = (f32)valueZ, .w = (f32)valueW };
     ska_shader_instance_param_update_float4(shaderInstance, paramName, vecValue);
+    py_newnone(py_retval());
     return true;
 }
 
@@ -393,6 +405,7 @@ bool cre_pkpy_api_shader_util_get_current_screen_shader(int argc, py_StackRef ar
 
 bool cre_pkpy_api_shader_util_reset_screen_shader_to_default(int argc, py_StackRef argv) {
     ska_frame_buffer_reset_to_default_screen_shader();
+    py_newnone(py_retval());
     return true;
 }
 
@@ -406,6 +419,7 @@ bool cre_pkpy_api_engine_exit(int argc, py_StackRef argv) {
     CREEngineContext* engineContext = cre_engine_context_get();
     engineContext->isRunning = false;
     engineContext->exitCode = (int32)pyExitCode;
+    py_newnone(py_retval());
     return true;
 }
 
@@ -415,6 +429,7 @@ bool cre_pkpy_api_engine_set_target_fps(int argc, py_StackRef argv) {
 
     CREEngineContext* engineContext = cre_engine_context_get();
     engineContext->targetFPS = (int32)pyTargetFPS;
+    py_newnone(py_retval());
     return true;
 }
 
@@ -439,6 +454,7 @@ bool cre_pkpy_api_engine_set_fps_display_enabled(int argc, py_StackRef argv) {
     const py_f64 pyPosY = py_tofloat(py_arg(3));
 
     cre_ecs_manager_enable_fps_display_entity(isEnabled, fontUID, (f32)pyPosX, (f32)pyPosY);
+    py_newnone(py_retval());
     return true;
 }
 
@@ -491,6 +507,7 @@ bool cre_pkpy_api_input_add_action(int argc, py_StackRef argv) {
         (SkaInputActionValue[]){ { .key = (SkaInputKey)pyValueKey, .strengthThreshold = 0.5f }, { SkaInputKey_INVALID } },
         (SkaInputDeviceIndex)pyDeviceId
     );
+    py_newnone(py_retval());
     return true;
 }
 
@@ -541,6 +558,7 @@ bool cre_pkpy_api_input_start_gamepad_vibration(int argc, py_StackRef argv) {
     const py_f64 pyDurationSeconds = py_tofloat(py_arg(3));
 
     // ska_input_gamepad_start_vibration((int32)pyDeviceId, (f32)pyWeakMagnitude, (f32)pyStrongMagnitude, (f32)pyDurationSeconds);
+    py_newnone(py_retval());
     return true;
 }
 
@@ -551,6 +569,7 @@ bool cre_pkpy_api_input_stop_gamepad_vibration(int argc, py_StackRef argv) {
     const py_i64 pyDeviceId = py_toint(py_arg(0));
 
     // ska_input_gamepad_stop_vibration((SkaInputDeviceIndex)pyDeviceId);
+    py_newnone(py_retval());
     return true;
 }
 
@@ -582,6 +601,7 @@ bool cre_pkpy_api_scene_tree_change_scene(int argc, py_StackRef argv) {
     const char* scenePath = py_tostr(py_arg(0));
 
     cre_scene_manager_queue_scene_change(scenePath);
+    py_newnone(py_retval());
     return true;
 }
 
@@ -597,11 +617,13 @@ bool cre_pkpy_api_scene_tree_get_root(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_scene_manager_process_queued_creation_entities(int argc, py_StackRef argv) {
     cre_scene_manager_process_queued_creation_entities();
+    py_newnone(py_retval());
     return true;
 }
 
 bool cre_pkpy_api_scene_manager_process_queued_scene_change(int argc, py_StackRef argv) {
     cre_scene_manager_process_queued_scene_change();
+    py_newnone(py_retval());
     return true;
 }
 
@@ -643,6 +665,7 @@ bool cre_pkpy_api_camera2d_set_position(int argc, py_StackRef argv) {
     CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
     camera2D->viewport = (SkaVector2){ .x = (f32)posX, .y = (f32)posY };
     cre_camera2d_clamp_viewport_to_boundary(camera2D);
+    py_newnone(py_retval());
     return true;
 }
 
@@ -655,6 +678,7 @@ bool cre_pkpy_api_camera2d_add_to_position(int argc, py_StackRef argv) {
     CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
     camera2D->viewport = (SkaVector2){ .x = camera2D->viewport.x + (f32)posX, .y = camera2D->viewport.y + (f32)posY };
     cre_camera2d_clamp_viewport_to_boundary(camera2D);
+    py_newnone(py_retval());
     return true;
 }
 
@@ -676,6 +700,7 @@ bool cre_pkpy_api_camera2d_set_offset(int argc, py_StackRef argv) {
 
     CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
     camera2D->offset = (SkaVector2){ .x = (f32)offsetX, .y = (f32)offsetY };
+    py_newnone(py_retval());
     return true;
 }
 
@@ -687,6 +712,7 @@ bool cre_pkpy_api_camera2d_add_to_offset(int argc, py_StackRef argv) {
 
     CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
     camera2D->offset = (SkaVector2){ .x = camera2D->offset.x + (f32)offsetX, .y = camera2D->offset.y + (f32)offsetY };
+    py_newnone(py_retval());
     return true;
 }
 
@@ -708,6 +734,7 @@ bool cre_pkpy_api_camera2d_set_zoom(int argc, py_StackRef argv) {
 
     CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
     camera2D->zoom = (SkaVector2){ .x = (f32)zoomX, .y = (f32)zoomY };
+    py_newnone(py_retval());
     return true;
 }
 
@@ -719,6 +746,7 @@ bool cre_pkpy_api_camera2d_add_to_zoom(int argc, py_StackRef argv) {
 
     CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
     camera2D->zoom = (SkaVector2){ .x = camera2D->zoom.x + (f32)zoomX, .y = camera2D->zoom.y + (f32)zoomY };
+    py_newnone(py_retval());
     return true;
 }
 
@@ -743,6 +771,7 @@ bool cre_pkpy_api_camera2d_set_boundary(int argc, py_StackRef argv) {
     CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
     camera2D->boundary = (SkaRect2){ .x = (f32)x, .y = (f32)y, .w = (f32)w, .h = (f32)h };
     cre_camera2d_clamp_viewport_to_boundary(camera2D);
+    py_newnone(py_retval());
     return true;
 }
 
@@ -768,6 +797,7 @@ bool cre_pkpy_api_camera2d_follow_node(int argc, py_StackRef argv) {
     const SkaEntity entity = (SkaEntity)entityId;
     CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
     cre_camera2d_follow_entity(camera2D, entity);
+    py_newnone(py_retval());
     return true;
 }
 
@@ -779,6 +809,7 @@ bool cre_pkpy_api_camera2d_unfollow_node(int argc, py_StackRef argv) {
     const SkaEntity entity = (SkaEntity)entityId;
     CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
     cre_camera2d_unfollow_entity(camera2D, entity);
+    py_newnone(py_retval());
     return true;
 }
 
@@ -796,6 +827,7 @@ bool cre_pkpy_api_world_set_time_dilation(int argc, py_StackRef argv) {
 
     cre_world_set_time_dilation((f32)timeDilation);
     cre_scene_manager_execute_on_root_and_child_nodes(mark_scene_nodes_time_dilation_flag_dirty);
+    py_newnone(py_retval());
     return true;
 }
 
@@ -828,6 +860,7 @@ bool cre_pkpy_api_audio_source_set_pitch(int argc, py_StackRef argv) {
     } else {
         ska_logger_warn("Tried to set non-existent audio source's pitch at '%s'", path);
     }
+    py_newnone(py_retval());
     return true;
 }
 
@@ -857,6 +890,7 @@ bool cre_pkpy_api_audio_manager_play_sound(int argc, py_StackRef argv) {
     const bool loops = py_tobool(py_arg(1));
 
     ska_audio_manager_play_sound(path, loops);
+    py_newnone(py_retval());
     return true;
 }
 
@@ -866,6 +900,7 @@ bool cre_pkpy_api_audio_manager_stop_sound(int argc, py_StackRef argv) {
     const char* path = py_tostr(py_arg(0));
 
     ska_audio_manager_stop_sound(path);
+    py_newnone(py_retval());
     return true;
 }
 
@@ -996,6 +1031,7 @@ bool cre_pkpy_api_server_start(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_server_stop(int argc, py_StackRef argv) {
     ska_udp_server_finalize();
+    py_newnone(py_retval());
     return true;
 }
 
@@ -1005,6 +1041,7 @@ bool cre_pkpy_api_server_send(int argc, py_StackRef argv) {
     const char* message = py_tostr(py_arg(0));
 
     ska_udp_server_send_message(message);
+    py_newnone(py_retval());
     return true;
 }
 
@@ -1017,11 +1054,13 @@ bool cre_pkpy_api_client_start(int argc, py_StackRef argv) {
     const py_i64 port = py_toint(py_arg(1));
 
     ska_udp_client_initialize(host, (int32)port, ska_ecs_system_event_network_callback);
+    py_newnone(py_retval());
     return true;
 }
 
 bool cre_pkpy_api_client_stop(int argc, py_StackRef argv) {
     ska_udp_client_finalize();
+    py_newnone(py_retval());
     return true;
 }
 
@@ -1031,6 +1070,7 @@ bool cre_pkpy_api_client_send(int argc, py_StackRef argv) {
     const char* message = py_tostr(py_arg(0));
 
     ska_udp_client_send_message(message);
+    py_newnone(py_retval());
     return true;
 }
 
@@ -1107,6 +1147,7 @@ bool cre_pkpy_api_node_add_child(int argc, py_StackRef argv) {
     const py_i64 parentEntityId = py_toint(py_arg(1));
 
     cre_scene_manager_add_node_as_child((SkaEntity)childEntityId, (SkaEntity)parentEntityId);
+    py_newnone(py_retval());
     return true;
 }
 
@@ -1181,6 +1222,7 @@ bool cre_pkpy_api_node_queue_deletion(int argc, py_StackRef argv) {
     } else {
         ska_logger_warn("Node '%s' already queued for deletion!", nodeComponent->name);
     }
+    py_newnone(py_retval());
     return true;
 }
 
@@ -1205,6 +1247,7 @@ bool cre_pkpy_api_node_set_time_dilation(int argc, py_StackRef argv) {
     NodeComponent* nodeComponent = (NodeComponent*)ska_ecs_component_manager_get_component(entity, NODE_COMPONENT_INDEX);
     nodeComponent->timeDilation.value = (f32)timeDilation;
     cre_scene_manager_invalidate_time_dilation_nodes_with_children(entity);
+    py_newnone(py_retval());
     return true;
 }
 
@@ -1274,6 +1317,7 @@ bool cre_pkpy_api_node2d_set_position(int argc, py_StackRef argv) {
 
     const SkaEntity entity = (SkaEntity)entityId;
     pkpy_update_entity_local_position(entity, &(SkaVector2) { .x = (f32)posX, .y = (f32)posY });
+    py_newnone(py_retval());
     return true;
 }
 
@@ -1333,6 +1377,7 @@ bool cre_pkpy_api_node2d_set_scale(int argc, py_StackRef argv) {
 
     const SkaEntity entity = (SkaEntity)entityId;
     pkpy_update_entity_local_scale(entity, &(SkaVector2) { .x = (f32)scaleX, .y = (f32)scaleY });
+    py_newnone(py_retval());
     return true;
 }
 
@@ -1346,6 +1391,7 @@ bool cre_pkpy_api_node2d_add_to_scale(int argc, py_StackRef argv) {
     const SkaEntity entity = (SkaEntity)entityId;
     const Transform2DComponent* transformComp = (Transform2DComponent*)ska_ecs_component_manager_get_component(entity, TRANSFORM2D_COMPONENT_INDEX);
     pkpy_update_entity_local_scale(entity, &(SkaVector2) { .x = transformComp->localTransform.scale.x + (f32)scaleX, .y = transformComp->localTransform.scale.y + (f32)scaleY });
+    py_newnone(py_retval());
     return true;
 }
 
@@ -1372,6 +1418,7 @@ bool cre_pkpy_api_node2d_set_rotation(int argc, py_StackRef argv) {
 
     const SkaEntity entity = (SkaEntity)entityId;
     pkpy_update_entity_local_rotation(entity, (f32)rotation);
+    py_newnone(py_retval());
     return true;
 }
 
@@ -1384,6 +1431,7 @@ bool cre_pkpy_api_node2d_add_to_rotation(int argc, py_StackRef argv) {
     const SkaEntity entity = (SkaEntity)entityId;
     const Transform2DComponent* transformComp = (Transform2DComponent*)ska_ecs_component_manager_get_component(entity, TRANSFORM2D_COMPONENT_INDEX);
     pkpy_update_entity_local_rotation(entity, transformComp->localTransform.rotation + (f32)rotation);
+    py_newnone(py_retval());
     return true;
 }
 
@@ -1407,6 +1455,7 @@ bool cre_pkpy_api_node2d_set_z_index(int argc, py_StackRef argv) {
     const SkaEntity entity = (SkaEntity)entityId;
     Transform2DComponent* transformComp = (Transform2DComponent*)ska_ecs_component_manager_get_component(entity, TRANSFORM2D_COMPONENT_INDEX);
     transformComp->zIndex = (int32)zIndex;
+    py_newnone(py_retval());
     return true;
 }
 
@@ -1430,6 +1479,7 @@ bool cre_pkpy_api_node2d_set_z_index_relative_to_parent(int argc, py_StackRef ar
     const SkaEntity entity = (SkaEntity)entityId;
     Transform2DComponent* transformComp = (Transform2DComponent*)ska_ecs_component_manager_get_component(entity, TRANSFORM2D_COMPONENT_INDEX);
     transformComp->isZIndexRelativeToParent = zIndexRelativeToParent;
+    py_newnone(py_retval());
     return true;
 }
 
@@ -1453,6 +1503,7 @@ bool cre_pkpy_api_node2d_set_ignore_camera(int argc, py_StackRef argv) {
     const SkaEntity entity = (SkaEntity)entityId;
     Transform2DComponent* transformComp = (Transform2DComponent*)ska_ecs_component_manager_get_component(entity, TRANSFORM2D_COMPONENT_INDEX);
     transformComp->ignoreCamera = ignoreCamera;
+    py_newnone(py_retval());
     return true;
 }
 
@@ -1519,6 +1570,7 @@ bool cre_pkpy_api_sprite_set_texture(int argc, py_StackRef argv) {
     } else {
         ska_logger_warn("Failed to find texture at path '%s'", texturePath);
     }
+    py_newnone(py_retval());
     return true;
 }
 
@@ -1554,6 +1606,7 @@ bool cre_pkpy_api_sprite_set_draw_source(int argc, py_StackRef argv) {
     const SkaEntity entity = (SkaEntity)entityId;
     SpriteComponent* spriteComponent = (SpriteComponent*)ska_ecs_component_manager_get_component(entity, SPRITE_COMPONENT_INDEX);
     spriteComponent->drawSource = (SkaRect2){ (f32)x, (f32)y, (f32)w, (f32)h };
+    py_newnone(py_retval());
     return true;
 }
 
@@ -1577,6 +1630,7 @@ bool cre_pkpy_api_sprite_set_flip_h(int argc, py_StackRef argv) {
     const SkaEntity entity = (SkaEntity)entityId;
     SpriteComponent* spriteComponent = (SpriteComponent*)ska_ecs_component_manager_get_component(entity, SPRITE_COMPONENT_INDEX);
     spriteComponent->flipH = flipH;
+    py_newnone(py_retval());
     return true;
 }
 
@@ -1600,6 +1654,7 @@ bool cre_pkpy_api_sprite_set_flip_v(int argc, py_StackRef argv) {
     const SkaEntity entity = (SkaEntity)entityId;
     SpriteComponent* spriteComponent = (SpriteComponent*)ska_ecs_component_manager_get_component(entity, SPRITE_COMPONENT_INDEX);
     spriteComponent->flipV = flipV;
+    py_newnone(py_retval());
     return true;
 }
 
@@ -1635,6 +1690,7 @@ bool cre_pkpy_api_sprite_set_modulate(int argc, py_StackRef argv) {
     const SkaEntity entity = (SkaEntity)entityId;
     SpriteComponent* spriteComponent = (SpriteComponent*)ska_ecs_component_manager_get_component(entity, SPRITE_COMPONENT_INDEX);
     spriteComponent->modulate = ska_color_get_normalized_color((uint32)r, (uint32)g, (uint32)b, (uint32)a);
+    py_newnone(py_retval());
     return true;
 }
 
@@ -1663,6 +1719,7 @@ bool cre_pkpy_api_sprite_set_origin(int argc, py_StackRef argv) {
     const SkaEntity entity = (SkaEntity)entityId;
     SpriteComponent* spriteComponent = (SpriteComponent*)ska_ecs_component_manager_get_component(entity, SPRITE_COMPONENT_INDEX);
     spriteComponent->origin = (SkaVector2){ (f32)x, (f32)y };
+    py_newnone(py_retval());
     return true;
 }
 
@@ -1693,6 +1750,7 @@ bool cre_pkpy_api_sprite_set_shader_instance(int argc, py_StackRef argv) {
     spriteComponent->shaderInstanceId = instanceId;
     SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(instanceId);
     ska_renderer_set_sprite_shader_default_params(shaderInstance->shader);
+    py_newnone(py_retval());
     return true;
 }
 
@@ -1719,6 +1777,7 @@ bool cre_pkpy_api_animated_sprite_stop(int argc, py_StackRef argv) {
     const SkaEntity entity = (SkaEntity)entityId;
     AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*)ska_ecs_component_manager_get_component(entity, ANIMATED_SPRITE_COMPONENT_INDEX);
     animatedSpriteComponent->isPlaying = false;
+    py_newnone(py_retval());
     return true;
 }
 
@@ -1731,11 +1790,13 @@ bool cre_pkpy_api_animated_sprite_set_current_animation_frame(int argc, py_Stack
     const SkaEntity entity = (SkaEntity)entityId;
     AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*)ska_ecs_component_manager_get_component(entity, ANIMATED_SPRITE_COMPONENT_INDEX);
     animatedSpriteComponent->currentAnimation->currentFrame = ska_math_clamp_int((int32)frame, 0, animatedSpriteComponent->currentAnimation->frameCount - 1);
+    py_newnone(py_retval());
     return true;
 }
 
 // TODO: Do later as it's too hard to figure out now :D
 bool cre_pkpy_api_animated_sprite_add_animation(int argc, py_StackRef argv) {
+    py_newnone(py_retval());
     return true;
 }
 
@@ -1759,6 +1820,7 @@ bool cre_pkpy_api_animated_sprite_set_stagger_animation_start_times(int argc, py
     const SkaEntity entity = (SkaEntity)entityId;
     AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*)ska_ecs_component_manager_get_component(entity, ANIMATED_SPRITE_COMPONENT_INDEX);
     animatedSpriteComponent->staggerStartAnimationTimes = staggerAnimationsStartTimes;
+    py_newnone(py_retval());
     return true;
 }
 
@@ -1782,6 +1844,7 @@ bool cre_pkpy_api_animated_sprite_set_flip_h(int argc, py_StackRef argv) {
     const SkaEntity entity = (SkaEntity)entityId;
     AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*)ska_ecs_component_manager_get_component(entity, ANIMATED_SPRITE_COMPONENT_INDEX);
     animatedSpriteComponent->flipH = flipH;
+    py_newnone(py_retval());
     return true;
 }
 
@@ -1805,6 +1868,7 @@ bool cre_pkpy_api_animated_sprite_set_flip_v(int argc, py_StackRef argv) {
     const SkaEntity entity = (SkaEntity)entityId;
     AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*)ska_ecs_component_manager_get_component(entity, ANIMATED_SPRITE_COMPONENT_INDEX);
     animatedSpriteComponent->flipV = flipV;
+    py_newnone(py_retval());
     return true;
 }
 
@@ -1840,6 +1904,7 @@ bool cre_pkpy_api_animated_sprite_set_modulate(int argc, py_StackRef argv) {
     const SkaEntity entity = (SkaEntity)entityId;
     AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*)ska_ecs_component_manager_get_component(entity, ANIMATED_SPRITE_COMPONENT_INDEX);
     animatedSpriteComponent->modulate = ska_color_get_normalized_color((uint32)r, (uint32)g, (uint32)b, (uint32)a);
+    py_newnone(py_retval());
     return true;
 }
 
@@ -1868,6 +1933,7 @@ bool cre_pkpy_api_animated_sprite_set_origin(int argc, py_StackRef argv) {
     const SkaEntity entity = (SkaEntity)entityId;
     AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*)ska_ecs_component_manager_get_component(entity, ANIMATED_SPRITE_COMPONENT_INDEX);
     animatedSpriteComponent->origin = (SkaVector2){ (f32)x, (f32)y };
+    py_newnone(py_retval());
     return true;
 }
 
@@ -1898,6 +1964,7 @@ bool cre_pkpy_api_animated_sprite_set_shader_instance(int argc, py_StackRef argv
     animatedSpriteComponent->shaderInstanceId = instanceId;
     SkaShaderInstance* shaderInstance = ska_shader_cache_get_instance(instanceId);
     ska_renderer_set_sprite_shader_default_params(shaderInstance->shader);
+    py_newnone(py_retval());
     return true;
 }
 
@@ -1923,6 +1990,7 @@ bool cre_pkpy_api_text_label_set_text(int argc, py_StackRef argv) {
     const SkaEntity entity = (SkaEntity)entityId;
     TextLabelComponent* textLabelComponent = (TextLabelComponent*)ska_ecs_component_manager_get_component(entity, TEXT_LABEL_COMPONENT_INDEX);
     ska_strcpy(textLabelComponent->text, text);
+    py_newnone(py_retval());
     return true;
 }
 
@@ -1958,6 +2026,7 @@ bool cre_pkpy_api_text_label_set_color(int argc, py_StackRef argv) {
     const SkaEntity entity = (SkaEntity)entityId;
     TextLabelComponent* textLabelComponent = (TextLabelComponent*)ska_ecs_component_manager_get_component(entity, TEXT_LABEL_COMPONENT_INDEX);
     textLabelComponent->color = ska_color_get_normalized_color((uint32)r, (uint32)g, (uint32)b, (uint32)a);
+    py_newnone(py_retval());
     return true;
 }
 
@@ -1975,6 +2044,7 @@ bool cre_pkpy_api_text_label_set_font_uid(int argc, py_StackRef argv) {
     } else {
         ska_logger_warn("Failed to set font to '%s' as it doesn't exist in the asset manager!", fontUID);
     }
+    py_newnone(py_retval());
     return true;
 }
 
@@ -2005,6 +2075,7 @@ bool cre_pkpy_api_collider2d_set_extents(int argc, py_StackRef argv) {
     const SkaEntity entity = (SkaEntity)entityId;
     Collider2DComponent* collider2DComponent = (Collider2DComponent*)ska_ecs_component_manager_get_component(entity, COLLIDER2D_COMPONENT_INDEX);
     collider2DComponent->extents = (SkaSize2D){ (f32)w, (f32)h };
+    py_newnone(py_retval());
     return true;
 }
 
@@ -2040,6 +2111,7 @@ bool cre_pkpy_api_collider2d_set_color(int argc, py_StackRef argv) {
     const SkaEntity entity = (SkaEntity)entityId;
     Collider2DComponent* collider2DComponent = (Collider2DComponent*)ska_ecs_component_manager_get_component(entity, COLLIDER2D_COMPONENT_INDEX);
     collider2DComponent->color = ska_color_get_normalized_color((uint32)r, (uint32)g, (uint32)b, (uint32)a);
+    py_newnone(py_retval());
     return true;
 }
 
@@ -2070,6 +2142,7 @@ bool cre_pkpy_api_color_rect_set_size(int argc, py_StackRef argv) {
     const SkaEntity entity = (SkaEntity)entityId;
     ColorRectComponent* colorRectComponent = (ColorRectComponent*)ska_ecs_component_manager_get_component(entity, COLOR_RECT_COMPONENT_INDEX);
     colorRectComponent->size = (SkaSize2D){ (f32)w, (f32)h };
+    py_newnone(py_retval());
     return true;
 }
 
@@ -2105,6 +2178,7 @@ bool cre_pkpy_api_color_rect_set_color(int argc, py_StackRef argv) {
     const SkaEntity entity = (SkaEntity)entityId;
     ColorRectComponent* colorRectComponent = (ColorRectComponent*)ska_ecs_component_manager_get_component(entity, COLOR_RECT_COMPONENT_INDEX);
     colorRectComponent->color = ska_color_get_normalized_color((uint32)r, (uint32)g, (uint32)b, (uint32)a);
+    py_newnone(py_retval());
     return true;
 }
 
@@ -2135,6 +2209,7 @@ bool cre_pkpy_api_parallax_set_scroll_speed(int argc, py_StackRef argv) {
     const SkaEntity entity = (SkaEntity)entityId;
     ParallaxComponent* parallaxComponent = (ParallaxComponent*)ska_ecs_component_manager_get_component(entity, PARALLAX_COMPONENT_INDEX);
     parallaxComponent->scrollSpeed = (SkaVector2){ (f32)x, (f32)y };
+    py_newnone(py_retval());
     return true;
 }
 
@@ -2160,6 +2235,7 @@ bool cre_pkpy_api_particles2d_set_amount(int argc, py_StackRef argv) {
     const SkaEntity entity = (SkaEntity)entityId;
     Particles2DComponent* particles2dComponent = (Particles2DComponent*)ska_ecs_component_manager_get_component(entity, PARTICLES2D_COMPONENT_INDEX);
     particles2dComponent->amount = (int32)amount;
+    py_newnone(py_retval());
     return true;
 }
 
@@ -2183,6 +2259,7 @@ bool cre_pkpy_api_particles2d_set_life_time(int argc, py_StackRef argv) {
     const SkaEntity entity = (SkaEntity)entityId;
     Particles2DComponent* particles2dComponent = (Particles2DComponent*)ska_ecs_component_manager_get_component(entity, PARTICLES2D_COMPONENT_INDEX);
     particles2dComponent->lifeTime = (f32)lifeTime;
+    py_newnone(py_retval());
     return true;
 }
 
@@ -2206,6 +2283,7 @@ bool cre_pkpy_api_particles2d_set_damping(int argc, py_StackRef argv) {
     const SkaEntity entity = (SkaEntity)entityId;
     Particles2DComponent* particles2dComponent = (Particles2DComponent*)ska_ecs_component_manager_get_component(entity, PARTICLES2D_COMPONENT_INDEX);
     particles2dComponent->damping = (f32)damping;
+    py_newnone(py_retval());
     return true;
 }
 
@@ -2229,6 +2307,7 @@ bool cre_pkpy_api_particles2d_set_explosiveness(int argc, py_StackRef argv) {
     const SkaEntity entity = (SkaEntity)entityId;
     Particles2DComponent* particles2dComponent = (Particles2DComponent*)ska_ecs_component_manager_get_component(entity, PARTICLES2D_COMPONENT_INDEX);
     particles2dComponent->lifeTime = (f32)explosiveness;
+    py_newnone(py_retval());
     return true;
 }
 
@@ -2264,6 +2343,7 @@ bool cre_pkpy_api_particles2d_set_color(int argc, py_StackRef argv) {
     const SkaEntity entity = (SkaEntity)entityId;
     Particles2DComponent* particles2dComponent = (Particles2DComponent*)ska_ecs_component_manager_get_component(entity, PARTICLES2D_COMPONENT_INDEX);
     particles2dComponent->color = ska_color_get_normalized_color((uint32)r, (uint32)g, (uint32)b, (uint32)a);
+    py_newnone(py_retval());
     return true;
 }
 
@@ -2301,6 +2381,7 @@ bool cre_pkpy_api_particles2d_set_initial_velocity(int argc, py_StackRef argv) {
         .min = { .x = (f32)minX, .y = (f32)minY },
         .max = { .x = (f32)maxX, .y = (f32)maxY }
     };
+    py_newnone(py_retval());
     return true;
 }
 
@@ -2324,5 +2405,6 @@ bool cre_pkpy_api_particles2d_set_spread(int argc, py_StackRef argv) {
     const SkaEntity entity = (SkaEntity)entityId;
     Particles2DComponent* particles2dComponent = (Particles2DComponent*)ska_ecs_component_manager_get_component(entity, PARTICLES2D_COMPONENT_INDEX);
     particles2dComponent->spread = (f32)spread;
+    py_newnone(py_retval());
     return true;
 }
