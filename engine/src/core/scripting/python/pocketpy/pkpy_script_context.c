@@ -145,7 +145,7 @@ void pkpy_on_update(SkaEntity entity, f32 deltaTime) {
 void pkpy_on_fixed_update(SkaEntity entity, f32 deltaTime) {
     py_Ref self = cre_pkpy_instance_cache_get_checked(entity);
     if (py_getattr(self, fixedProcessFunctionName)) {
-        py_Ref pyDeltaTime = NULL;
+        py_Ref pyDeltaTime = py_pushtmp();
         py_newfloat(pyDeltaTime, deltaTime);
 
         py_push(py_retval());
