@@ -56,8 +56,6 @@ static inline SkaVector2 cre_pkpy_api_helper_mouse_get_global_position(const Ska
     return mouseWorldPos;
 }
 
-// TODO: Check parameter types to ensure the correct parameters are passed into the api functions
-
 // Shader Instance
 
 bool cre_pkpy_api_shader_instance_delete(int argc, py_StackRef argv) {
