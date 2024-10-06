@@ -4,10 +4,10 @@
 
 #include <seika/logger.h>
 #include <seika/asset/asset_file_loader.h>
+#include <seika/data_structures/array_utils.h>
 
 #include "pkpy_util.h"
 #include "pkpy_instance_cache.h"
-#include "../../../../../../cmake-build-release-msvc/_deps/seika_content-src/seika/data_structures/array_utils.h"
 #include "api/pkpy_api.h"
 
 static CREScriptContext* scriptContext = NULL;
