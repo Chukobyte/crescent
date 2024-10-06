@@ -1230,7 +1230,7 @@ class AnimatedSprite(Node2D):
     @property
     def shader_instance(self) -> Optional[ShaderInstance]:
         shader_instance_id = crescent_internal.animated_sprite_get_shader_instance(self.entity_id)
-        if shader_instance_id >= 0:
+        if shader_instance_id:
             return ShaderInstance(shader_instance_id)
         return None
 

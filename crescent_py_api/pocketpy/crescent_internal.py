@@ -229,7 +229,7 @@ def animated_sprite_set_origin(entity_id: int, x: float, y: float) -> None:
     pass
 
 
-def animated_sprite_get_shader_instance(entity_id: int) -> int:
+def animated_sprite_get_shader_instance(entity_id: int) -> Optional[int]:
     return 0
 
 
