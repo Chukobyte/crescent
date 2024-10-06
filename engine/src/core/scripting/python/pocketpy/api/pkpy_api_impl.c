@@ -2143,34 +2143,94 @@ bool cre_pkpy_api_parallax_set_scroll_speed(int argc, py_StackRef argv) {
 // Particles2D
 
 bool cre_pkpy_api_particles2d_get_amount(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_int);
+    const py_i64 entityId = py_toint(py_arg(0));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    const Particles2DComponent* particles2dComponent = (Particles2DComponent*)ska_ecs_component_manager_get_component(entity, PARTICLES2D_COMPONENT_INDEX);
+    py_newint(py_retval(), (py_i64)particles2dComponent->amount);
     return true;
 }
 
 bool cre_pkpy_api_particles2d_set_amount(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(1, tp_int);
+    const py_i64 entityId = py_toint(py_arg(0));
+    const py_i64 amount = py_toint(py_arg(1));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    Particles2DComponent* particles2dComponent = (Particles2DComponent*)ska_ecs_component_manager_get_component(entity, PARTICLES2D_COMPONENT_INDEX);
+    particles2dComponent->amount = (int32)amount;
     return true;
 }
 
 bool cre_pkpy_api_particles2d_get_life_time(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_int);
+    const py_i64 entityId = py_toint(py_arg(0));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    const Particles2DComponent* particles2dComponent = (Particles2DComponent*)ska_ecs_component_manager_get_component(entity, PARTICLES2D_COMPONENT_INDEX);
+    py_newfloat(py_retval(), (f64)particles2dComponent->lifeTime);
     return true;
 }
 
 bool cre_pkpy_api_particles2d_set_life_time(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(1, tp_float);
+    const py_i64 entityId = py_toint(py_arg(0));
+    const f64 lifeTime = py_tofloat(py_arg(1));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    Particles2DComponent* particles2dComponent = (Particles2DComponent*)ska_ecs_component_manager_get_component(entity, PARTICLES2D_COMPONENT_INDEX);
+    particles2dComponent->lifeTime = (f32)lifeTime;
     return true;
 }
 
 bool cre_pkpy_api_particles2d_get_damping(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_int);
+    const py_i64 entityId = py_toint(py_arg(0));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    const Particles2DComponent* particles2dComponent = (Particles2DComponent*)ska_ecs_component_manager_get_component(entity, PARTICLES2D_COMPONENT_INDEX);
+    py_newfloat(py_retval(), (f64)particles2dComponent->damping);
     return true;
 }
 
 bool cre_pkpy_api_particles2d_set_damping(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(1, tp_float);
+    const py_i64 entityId = py_toint(py_arg(0));
+    const f64 damping = py_tofloat(py_arg(1));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    Particles2DComponent* particles2dComponent = (Particles2DComponent*)ska_ecs_component_manager_get_component(entity, PARTICLES2D_COMPONENT_INDEX);
+    particles2dComponent->damping = (f32)damping;
     return true;
 }
 
 bool cre_pkpy_api_particles2d_get_explosiveness(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_int);
+    const py_i64 entityId = py_toint(py_arg(0));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    const Particles2DComponent* particles2dComponent = (Particles2DComponent*)ska_ecs_component_manager_get_component(entity, PARTICLES2D_COMPONENT_INDEX);
+    py_newfloat(py_retval(), (f64)particles2dComponent->explosiveness);
     return true;
 }
 
 bool cre_pkpy_api_particles2d_set_explosiveness(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(1, tp_float);
+    const py_i64 entityId = py_toint(py_arg(0));
+    const f64 explosiveness = py_tofloat(py_arg(1));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    Particles2DComponent* particles2dComponent = (Particles2DComponent*)ska_ecs_component_manager_get_component(entity, PARTICLES2D_COMPONENT_INDEX);
+    particles2dComponent->lifeTime = (f32)explosiveness;
     return true;
 }
 
@@ -2210,17 +2270,61 @@ bool cre_pkpy_api_particles2d_set_color(int argc, py_StackRef argv) {
 }
 
 bool cre_pkpy_api_particles2d_get_initial_velocity(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_int);
+    const py_i64 entityId = py_toint(py_arg(0));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    const Particles2DComponent* particles2dComponent = (Particles2DComponent*)ska_ecs_component_manager_get_component(entity, PARTICLES2D_COMPONENT_INDEX);
+    py_newtuple(py_retval(), 4);
+    py_Ref pyMinX = py_tuple_getitem(py_retval(), 0);
+    py_Ref pyMinY = py_tuple_getitem(py_retval(), 1);
+    py_Ref pyMaxX = py_tuple_getitem(py_retval(), 2);
+    py_Ref pyMaxY = py_tuple_getitem(py_retval(), 3);
+    py_newfloat(pyMinX, (f64)particles2dComponent->initialVelocity.min.x);
+    py_newfloat(pyMinY, (f64)particles2dComponent->initialVelocity.min.y);
+    py_newfloat(pyMaxX, (f64)particles2dComponent->initialVelocity.max.x);
+    py_newfloat(pyMaxY, (f64)particles2dComponent->initialVelocity.max.y);
     return true;
 }
 
 bool cre_pkpy_api_particles2d_set_initial_velocity(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(5);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(1, tp_float); PY_CHECK_ARG_TYPE(2, tp_float); PY_CHECK_ARG_TYPE(3, tp_float); PY_CHECK_ARG_TYPE(4, tp_float);
+    const py_i64 entityId = py_toint(py_arg(0));
+    const f64 minX = py_tofloat(py_arg(1));
+    const f64 minY = py_tofloat(py_arg(2));
+    const f64 maxX = py_tofloat(py_arg(3));
+    const f64 maxY = py_tofloat(py_arg(4));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    Particles2DComponent* particles2dComponent = (Particles2DComponent*)ska_ecs_component_manager_get_component(entity, PARTICLES2D_COMPONENT_INDEX);
+    particles2dComponent->initialVelocity = (SkaMinMaxVec2) {
+        .min = { .x = (f32)minX, .y = (f32)minY },
+        .max = { .x = (f32)maxX, .y = (f32)maxY }
+    };
     return true;
 }
 
 bool cre_pkpy_api_particles2d_get_spread(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_int);
+    const py_i64 entityId = py_toint(py_arg(0));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    const Particles2DComponent* particles2dComponent = (Particles2DComponent*)ska_ecs_component_manager_get_component(entity, PARTICLES2D_COMPONENT_INDEX);
+    py_newfloat(py_retval(), (f64)particles2dComponent->spread);
     return true;
 }
 
 bool cre_pkpy_api_particles2d_set_spread(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(1);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(1, tp_float);
+    const py_i64 entityId = py_toint(py_arg(0));
+    const f64 spread = py_tofloat(py_arg(1));
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    Particles2DComponent* particles2dComponent = (Particles2DComponent*)ska_ecs_component_manager_get_component(entity, PARTICLES2D_COMPONENT_INDEX);
+    particles2dComponent->spread = (f32)spread;
     return true;
 }
