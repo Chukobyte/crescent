@@ -20,7 +20,6 @@ if (NOT TARGET pocketpy)
     FetchContent_Declare(
             pocketpy_content
             GIT_REPOSITORY https://github.com/blueloveTH/pocketpy.git
-#            GIT_TAG v1.4.5
             GIT_TAG v2.0.0
     )
     FetchContent_MakeAvailable(pocketpy_content)
