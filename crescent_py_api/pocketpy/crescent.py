@@ -1183,7 +1183,7 @@ class AnimatedSprite(Node2D):
         crescent_internal.animated_sprite_set_current_animation_frame(self.entity_id, frame)
 
     def add_animation(self, animation: Animation) -> None:
-        crescent_internal.animated_sprite_add_animation(self.entity_id, animation.name, animation.speed, animation.loops, len(animation.frames), *animation.frames)
+        crescent_internal.animated_sprite_add_animation(self.entity_id, animation.name, animation.speed, animation.loops, animation.frames)
 
     @property
     def flip_h(self) -> bool:

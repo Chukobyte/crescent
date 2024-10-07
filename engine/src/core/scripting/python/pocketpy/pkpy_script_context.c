@@ -73,6 +73,7 @@ void pkpy_finalize(CREScriptContext* context) {
 }
 
 void pkpy_create_instance(SkaEntity entity, const char* classPath, const char* className) {
+    if (cre_pkpy_instance_cache_has(entity)) { return; }
     py_Ref newInstance = cre_pkpy_instance_cache_add(entity, classPath, className);
     if (py_getattr(newInstance, processFunctionName)) {
         scriptContext->updateEntities[scriptContext->updateEntityCount++] = entity;

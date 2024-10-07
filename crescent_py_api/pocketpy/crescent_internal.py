@@ -185,7 +185,7 @@ def animated_sprite_set_current_animation_frame(entity_id: int, frame: int) -> N
     pass
 
 
-def animated_sprite_add_animation(entity_id: int, name: str, speed: float, does_loop: bool, frame_count: int, *args) -> None:
+def animated_sprite_add_animation(entity_id: int, name: str, speed: int, does_loop: bool, frames: List["AnimationFrame"]) -> None:
     pass
 
 

@@ -1186,7 +1186,7 @@
 "        crescent_internal.animated_sprite_set_current_animation_frame(self.entity_id, frame)\n"\
 "\n"\
 "    def add_animation(self, animation: Animation) -> None:\n"\
-"        crescent_internal.animated_sprite_add_animation(self.entity_id, animation.name, animation.speed, animation.loops, len(animation.frames), *animation.frames)\n"\
+"        crescent_internal.animated_sprite_add_animation(self.entity_id, animation.name, animation.speed, animation.loops, animation.frames)\n"\
 "\n"\
 "    @property\n"\
 "    def flip_h(self) -> bool:\n"\

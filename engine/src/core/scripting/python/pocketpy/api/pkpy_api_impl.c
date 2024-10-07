@@ -1796,6 +1796,52 @@ bool cre_pkpy_api_animated_sprite_set_current_animation_frame(int argc, py_Stack
 
 // TODO: Do later as it's too hard to figure out now :D
 bool cre_pkpy_api_animated_sprite_add_animation(int argc, py_StackRef argv) {
+    PY_CHECK_ARGC(5);
+    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(1, tp_str); PY_CHECK_ARG_TYPE(2, tp_int); PY_CHECK_ARG_TYPE(3, tp_bool); PY_CHECK_ARG_TYPE(4, tp_list);
+    const py_i64 entityId = py_toint(py_arg(0));
+    const char* animationName = py_tostr(py_arg(1));
+    const py_i64 animationSpeed = py_toint(py_arg(2));
+    const bool doesLoop = py_tobool(py_arg(3));
+    const py_Ref pyFramesList = py_arg(4);
+
+    const SkaEntity entity = (SkaEntity)entityId;
+    AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*)ska_ecs_component_manager_get_component(entity, ANIMATED_SPRITE_COMPONENT_INDEX);
+    CreAnimation newAnim = { .frameCount = 0, .currentFrame = 0, .speed = (int32)animationSpeed, .name = {'\0'}, .doesLoop = doesLoop, .isValid = true };
+    ska_strcpy(newAnim.name, animationName);
+    // Add frames to animation
+    const int listLength = py_list_len(pyFramesList);
+    for (int i = 0; i < listLength; i++) {
+        CreAnimationFrame animFrame;
+        py_Ref pyAnimFrame = py_list_getitem(pyFramesList, i);
+        bool hasAttribute = py_getattr(pyAnimFrame, py_name("frame"));
+        SKA_ASSERT(hasAttribute);
+        animFrame.frame = (int32)py_toint(py_retval());
+        hasAttribute = py_getattr(pyAnimFrame, py_name("texture_path"));
+        SKA_ASSERT(hasAttribute);
+        animFrame.texture = ska_asset_manager_get_texture(py_tostr(py_retval()));
+        hasAttribute = py_getattr(pyAnimFrame, py_name("draw_source"));
+        SKA_ASSERT(hasAttribute);
+        py_Ref pyDrawSource = py_retval();
+        hasAttribute = py_getattr(pyDrawSource, py_name("x"));
+        SKA_ASSERT(hasAttribute);
+        animFrame.drawSource.x = (f32)py_tofloat(py_retval());
+        hasAttribute = py_getattr(pyDrawSource, py_name("y"));
+        SKA_ASSERT(hasAttribute);
+        animFrame.drawSource.y = (f32)py_tofloat(py_retval());
+        hasAttribute = py_getattr(pyDrawSource, py_name("2"));
+        SKA_ASSERT(hasAttribute);
+        animFrame.drawSource.w = (f32)py_tofloat(py_retval());
+        hasAttribute = py_getattr(pyDrawSource, py_name("h"));
+        SKA_ASSERT(hasAttribute);
+        animFrame.drawSource.h = (f32)py_tofloat(py_retval());
+        newAnim.animationFrames[newAnim.frameCount++] = animFrame;
+    }
+    // Add animation
+    animated_sprite_component_add_animation(animatedSpriteComponent, newAnim);
+    const bool isFirstAnim = animatedSpriteComponent->animationCount == 1;
+    if (isFirstAnim) {
+        animated_sprite_component_set_animation(animatedSpriteComponent, newAnim.name);
+    }
     py_newnone(py_retval());
     return true;
 }
