@@ -1,10 +1,10 @@
 #pragma once
 
+#include "core/scripting/script_context.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-#include "src/core/scripting/script_context.h"
 
 // TODO: Give a way for components to clean up themselves (e.g. call '[component_name]_component_delete' when deleted)
 // TODO: (Part2) This way we can have less memory overhead by having flexibility for objects to clean themselves up
