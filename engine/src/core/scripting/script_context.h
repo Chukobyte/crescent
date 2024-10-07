@@ -4,6 +4,10 @@
 
 #include <seika/ecs/entity.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef void (*OnCreateInstance) (SkaEntity, const char*, const char*);
 typedef void (*OnDeleteInstance) (SkaEntity);
 typedef void (*OnStart) (SkaEntity);
@@ -83,5 +87,9 @@ typedef struct CREScriptContextTemplate {
 } CREScriptContextTemplate;
 
 CREScriptContext* cre_script_context_create();
-CREScriptContext* cre_script_context_create_from_template(const CREScriptContextTemplate* template);
+CREScriptContext* cre_script_context_create_from_template(const CREScriptContextTemplate* temp);
 void cre_script_context_destroy(CREScriptContext* scriptContext);
+
+#ifdef __cplusplus
+}
+#endif

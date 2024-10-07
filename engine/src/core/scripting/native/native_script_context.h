@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../script_context.h"
+#include "core/scripting/script_context.h"
 
 struct CRENativeScriptClass;
 
