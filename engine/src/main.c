@@ -4,7 +4,6 @@
 
 #include "core/core.h"
 
-
 int main(int argv, char** args) {
     if (!cre_initialize(argv, args)) {
         return EXIT_FAILURE;
