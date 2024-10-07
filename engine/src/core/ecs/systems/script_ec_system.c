@@ -1,18 +1,16 @@
 #include "script_ec_system.h"
 
+#include <seika/assert.h>
+#include <seika/logger.h>
 #include <seika/data_structures/hash_map.h>
 #include <seika/ecs/ecs.h>
-#include <seika/assert.h>
 
-#include "../ecs_globals.h"
-#include "../components/script_component.h"
-#include "../../scene/scene_manager.h"
-#include "../../scripting/script_context.h"
-// #include "../../scripting/python/pocketpy/cre_pkpy_script_context.h"
-#include "../../../../../cmake-build-release-mingw/_deps/seika_content-src/seika/logger.h"
-#include "../../scripting/python/pocketpy/pkpy_script_context.h"
-#include "../../scripting/native/native_script_context.h"
-#include "../../scripting/native/internal_classes/fps_display_class.h"
+#include "core/ecs/ecs_globals.h"
+#include "core/ecs/components/script_component.h"
+#include "core/scene/scene_manager.h"
+#include "core/scripting/script_context.h"
+#include "core/scripting/python/pocketpy/pkpy_script_context.h"
+#include "core/scripting/native/native_script_context.h"
 
 static void on_ec_system_registered(SkaECSSystem* system);
 static void on_ec_system_destroyed(SkaECSSystem* system);
