@@ -69,7 +69,8 @@ void pkpy_init(CREScriptContext* context) {
 void pkpy_finalize(CREScriptContext* context) {
     scriptContext = NULL;
     cre_pkpy_instance_cache_finalize();
-    py_finalize();
+    // TODO: Doesn't work with test, so we won't free until we figure this out...
+    // py_finalize();
 }
 
 void pkpy_create_instance(SkaEntity entity, const char* classPath, const char* className) {
