@@ -20,10 +20,6 @@ typedef void (*OnFixedUpdateInstance) (SkaEntity, f32);
 
 typedef void (*OnNetworkCallback) (const char*);
 
-// TODO: Make network callbacks not specific to python
-struct _object; // PyObject
-typedef void (*OnEntitySubscribeToNetworkCallback) (SkaEntity, struct _object*, const char*);
-
 typedef enum CreScriptContextType {
     CreScriptContextType_NONE = -1, // INVALID
     CreScriptContextType_PYTHON = 0,
@@ -58,7 +54,6 @@ typedef struct CREScriptContext {
     OnEnd on_end;
     // The main network callback for forwarding network data to the script context
     OnNetworkCallback on_network_callback;
-//    OnEntitySubscribeToNetworkCallback on_entity_subscribe_to_network_callback;
     // We could have a validation step on the script contexts to check if the update, fixed_update, etc... funcs exists
     // in the class within the scripting language.  For now, the script context is responsible for entity and entity count
     // even though it's not used in the script ec system
