@@ -20,9 +20,6 @@ typedef void (*OnFixedUpdateInstance) (SkaEntity, f32);
 
 typedef void (*OnNetworkCallback) (const char*);
 
-typedef void (*OnScriptContextInit) (struct CREScriptContext*);
-typedef void (*OnScriptContextFinalize) (struct CREScriptContext*);
-
 // TODO: Make network callbacks not specific to python
 struct _object; // PyObject
 typedef void (*OnEntitySubscribeToNetworkCallback) (SkaEntity, struct _object*, const char*);
@@ -40,9 +37,9 @@ typedef enum CreScriptContextType {
 // Also check out other script contexts for examples.
 typedef struct CREScriptContext {
     // Called when the script context is created
-    OnScriptContextInit on_script_context_init;
+    void (*on_script_context_init)(struct CREScriptContext*);
     // Called when the script context is destroyed
-    OnScriptContextFinalize on_script_context_finalize;
+    void (*on_script_context_finalize)(struct CREScriptContext*);
     // Called when a new entity instance is requested to be created once a node has entered the scene.
     // If using the same function to dynamically create instance from the script side, be sure to check if the instance
     // Isn't already created
@@ -70,6 +67,9 @@ typedef struct CREScriptContext {
     SkaEntity updateEntities[SKA_MAX_ENTITIES];
     SkaEntity fixedUpdateEntities[SKA_MAX_ENTITIES];
 } CREScriptContext;
+
+typedef void (*OnScriptContextInit) (struct CREScriptContext*);
+typedef void (*OnScriptContextFinalize) (struct CREScriptContext*);
 
 typedef struct CREScriptContextTemplate {
     CreScriptContextType contextType;
