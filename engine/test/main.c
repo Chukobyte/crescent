@@ -226,14 +226,14 @@ void cre_pocketpy_api_test(void) {
     // Load test node
     char* testCustomNodesSource = ska_fs_read_file_contents("engine/test/resources/test_custom_nodes.py", NULL);
     cre_pkpy_util_create_from_string("test_custom_nodes", testCustomNodesSource);
-    // // Load test file
+    // Load test file
     char* pythonText = ska_fs_read_file_contents("engine/test/resources/crescent_api_test.py", NULL);
     TEST_ASSERT_NOT_NULL(pythonText);
     py_exec(pythonText, "crescent_api_test.py", EXEC_MODE, NULL);
-    // pkpy_exec_2(vm, pythonText, "crescent_api_test.py", 0, NULL);
     SKA_MEM_FREE(testCustomNodesSource);
     SKA_MEM_FREE(pythonText);
-    // TEST_ASSERT_FALSE(cre_pkpy_util_print_error_message(vm));
+    if (py_checkexc(false)) { printf("PKPY Error:\n%s", py_formatexc()); }
+    TEST_ASSERT_FALSE(py_checkexc(false));
 
     cre_scene_manager_finalize();
     ska_asset_manager_finalize();

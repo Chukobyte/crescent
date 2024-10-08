@@ -936,7 +936,7 @@ class Node:
 
     @classmethod
     def new(cls) -> "Node":
-        return crescent_internal.node_new(str(cls.__module__.__name__), cls.__name__, NodeType.Node)
+        return crescent_internal.node_new(cls.__module__, cls.__name__, NodeType.Node)
 
     def get_name(self) -> str:
         return crescent_internal.node_get_name(self.entity_id)
@@ -1008,7 +1008,7 @@ class Node:
 class Node2D(Node):
     @classmethod
     def new(cls) -> "Node2D":
-        return crescent_internal.node_new(str(cls.__module__.__name__), cls.__name__, NodeType.Node2D)
+        return crescent_internal.node_new(cls.__module__, cls.__name__, NodeType.Node2D)
 
     def set_position(self, value: Vector2) -> None:
         crescent_internal.node2d_set_position(self.entity_id, value.x, value.y)
@@ -1102,7 +1102,7 @@ class Node2D(Node):
 class Sprite(Node2D):
     @classmethod
     def new(cls) -> "Sprite":
-        return crescent_internal.node_new(str(cls.__module__.__name__), cls.__name__, NodeType.Sprite)
+        return crescent_internal.node_new(cls.__module__, cls.__name__, NodeType.Sprite)
 
     @property
     def texture(self) -> Texture:
@@ -1171,7 +1171,7 @@ class Sprite(Node2D):
 class AnimatedSprite(Node2D):
     @classmethod
     def new(cls) -> "AnimatedSprite":
-        return crescent_internal.node_new(str(cls.__module__.__name__), cls.__name__, NodeType.AnimatedSprite)
+        return crescent_internal.node_new(cls.__module__, cls.__name__, NodeType.AnimatedSprite)
 
     def play(self, name: str) -> bool:
         return crescent_internal.animated_sprite_play(self.entity_id, name)
@@ -1242,7 +1242,7 @@ class AnimatedSprite(Node2D):
 class TextLabel(Node2D):
     @classmethod
     def new(cls) -> "TextLabel":
-        return crescent_internal.node_new(str(cls.__module__.__name__), cls.__name__, NodeType.TextLabel)
+        return crescent_internal.node_new(cls.__module__, cls.__name__, NodeType.TextLabel)
 
     @property
     def text(self) -> str:
@@ -1281,7 +1281,7 @@ class TextLabel(Node2D):
 class Collider2D(Node2D):
     @classmethod
     def new(cls) -> "Collider2D":
-        return crescent_internal.node_new(str(cls.__module__.__name__), cls.__name__, NodeType.Collider2D)
+        return crescent_internal.node_new(cls.__module__, cls.__name__, NodeType.Collider2D)
 
     def get_extents(self) -> Size2D:
         w, h = crescent_internal.collider2d_get_extents(self.entity_id)
@@ -1319,7 +1319,7 @@ class Collider2D(Node2D):
 class ColorRect(Node2D):
     @classmethod
     def new(cls) -> "ColorRect":
-        return crescent_internal.node_new(str(cls.__module__.__name__), cls.__name__, NodeType.ColorRect)
+        return crescent_internal.node_new(cls.__module__, cls.__name__, NodeType.ColorRect)
 
     def get_size(self) -> Size2D:
         w, h = crescent_internal.color_rect_get_size(self.entity_id)
@@ -1357,7 +1357,7 @@ class ColorRect(Node2D):
 class Parallax(Node2D):
     @classmethod
     def new(cls) -> "Parallax":
-        return crescent_internal.node_new(str(cls.__module__.__name__), cls.__name__, NodeType.Parallax)
+        return crescent_internal.node_new(cls.__module__, cls.__name__, NodeType.Parallax)
 
     @property
     def scroll_speed(self) -> Vector2:
@@ -1372,7 +1372,7 @@ class Parallax(Node2D):
 class Particles2D(Node2D):
     @classmethod
     def new(cls) -> "Particles2D":
-        return crescent_internal.node_new(str(cls.__module__.__name__), cls.__name__, NodeType.Particles2D)
+        return crescent_internal.node_new(cls.__module__, cls.__name__, NodeType.Particles2D)
 
     @property
     def amount(self) -> int:
@@ -1439,7 +1439,7 @@ class Particles2D(Node2D):
 class Tilemap(Node2D):
     @classmethod
     def new(cls) -> "Tilemap":
-        return crescent_internal.node_new(str(cls.__module__.__name__), cls.__name__, NodeType.Tilemap)
+        return crescent_internal.node_new(cls.__module__, cls.__name__, NodeType.Tilemap)
 
 
 class SceneTree:

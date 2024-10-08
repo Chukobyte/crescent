@@ -1143,10 +1143,10 @@ bool cre_pkpy_api_node_get_name(int argc, py_StackRef argv) {
 bool cre_pkpy_api_node_add_child(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(2);
     PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(1, tp_int);
-    const py_i64 childEntityId = py_toint(py_arg(0));
-    const py_i64 parentEntityId = py_toint(py_arg(1));
+    const py_i64 parentEntityId = py_toint(py_arg(0));
+    const py_i64 childEntityId = py_toint(py_arg(1));
 
-    cre_scene_manager_add_node_as_child((SkaEntity)childEntityId, (SkaEntity)parentEntityId);
+    cre_scene_manager_add_node_as_child((SkaEntity)parentEntityId, (SkaEntity)childEntityId);
     py_newnone(py_retval());
     return true;
 }
@@ -1171,6 +1171,7 @@ bool cre_pkpy_api_node_get_children(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(1);
     PY_CHECK_ARG_TYPE(0, tp_int);
     const py_i64 entityId = py_toint(py_arg(0));
+
 
     const SkaEntity entity = (SkaEntity)entityId;
     if (cre_scene_manager_has_entity_tree_node(entity)) {
