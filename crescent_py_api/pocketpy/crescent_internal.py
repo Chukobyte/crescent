@@ -20,8 +20,8 @@ def node_get_child(parent_entity_id: int, child_entity_name: str) -> Optional["N
     return None
 
 
-def node_get_children(entity_id: int) -> Tuple["Node", ...]:
-    return ()
+def node_get_children(entity_id: int) -> List["Node"]:
+    return []
 
 
 def node_get_parent(entity_id: int) -> Optional["Node"]:

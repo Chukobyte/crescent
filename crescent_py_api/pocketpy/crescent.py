@@ -58,8 +58,8 @@ class Math:
 
 class Vector2:
     def __init__(self, x=0.0, y=0.0):
-        self.x = x
-        self.y = y
+        self.x = float(x)
+        self.y = float(y)
 
     def dot_product(self, other) -> float:
         return (self.x * other.x) + (self.y * other.y)
@@ -952,13 +952,7 @@ class Node:
         return crescent_internal.node_get_child(self.entity_id, child_name)
 
     def get_children(self) -> List["Node"]:
-        children = crescent_internal.node_get_children(self.entity_id)
-        if children:
-            if isinstance(children, tuple):
-                return list(children)
-            elif isinstance(children, Node):
-                return [children]
-        return []
+        return crescent_internal.node_get_children(self.entity_id)
 
     def get_parent(self) -> Optional["Node"]:
         return crescent_internal.node_get_parent(self.entity_id)

@@ -61,8 +61,8 @@
 "\n"\
 "class Vector2:\n"\
 "    def __init__(self, x=0.0, y=0.0):\n"\
-"        self.x = x\n"\
-"        self.y = y\n"\
+"        self.x = float(x)\n"\
+"        self.y = float(y)\n"\
 "\n"\
 "    def dot_product(self, other) -> float:\n"\
 "        return (self.x * other.x) + (self.y * other.y)\n"\
@@ -955,13 +955,7 @@
 "        return crescent_internal.node_get_child(self.entity_id, child_name)\n"\
 "\n"\
 "    def get_children(self) -> List[\"Node\"]:\n"\
-"        children = crescent_internal.node_get_children(self.entity_id)\n"\
-"        if children:\n"\
-"            if isinstance(children, tuple):\n"\
-"                return list(children)\n"\
-"            elif isinstance(children, Node):\n"\
-"                return [children]\n"\
-"        return []\n"\
+"        return crescent_internal.node_get_children(self.entity_id)\n"\
 "\n"\
 "    def get_parent(self) -> Optional[\"Node\"]:\n"\
 "        return crescent_internal.node_get_parent(self.entity_id)\n"\

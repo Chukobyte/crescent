@@ -1172,7 +1172,6 @@ bool cre_pkpy_api_node_get_children(int argc, py_StackRef argv) {
     PY_CHECK_ARG_TYPE(0, tp_int);
     const py_i64 entityId = py_toint(py_arg(0));
 
-
     const SkaEntity entity = (SkaEntity)entityId;
     if (cre_scene_manager_has_entity_tree_node(entity)) {
         const SceneTreeNode* parentTreeNode = cre_scene_manager_get_entity_tree_node(entity);
@@ -1335,6 +1334,7 @@ bool cre_pkpy_api_node2d_add_to_position(int argc, py_StackRef argv) {
         .x = transformComp->localTransform.position.x + (f32)posX,
         .y = transformComp->localTransform.position.y + (f32)posY
     });
+    py_newnone(py_retval());
     return true;
 }
 
