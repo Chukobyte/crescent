@@ -10,19 +10,17 @@
 #include <seika/asset/asset_manager.h>
 #include <seika/rendering/texture.h>
 
-#include "../src/core/node_event.h"
-#include "../src/core/ecs/ecs_globals.h"
-#include "../src/core/ecs/components/collider2d_component.h"
-#include "../src/core/ecs/components/text_label_component.h"
-#include "../src/core/ecs/components/tilemap_component.h"
-#include "../src/core/ecs/components/transform2d_component.h"
-#include "../src/core/ecs/ecs_manager.h"
-#include "../src/core/json/json_file_loader.h"
-#include "../src/core/scripting/python/pocketpy/cre_pkpy.h"
-#include "../src/core/game_properties.h"
-#include "../src/core/engine_context.h"
-#include "../src/core/scene/scene_manager.h"
-#include "../src/core/tilemap/tilemap.h"
+#include "core/node_event.h"
+#include "core/ecs/ecs_globals.h"
+#include "core/ecs/components/collider2d_component.h"
+#include "core/ecs/components/text_label_component.h"
+#include "core/ecs/components/transform2d_component.h"
+#include "core/ecs/ecs_manager.h"
+#include "core/json/json_file_loader.h"
+#include "core/game_properties.h"
+#include "core/engine_context.h"
+#include "core/scene/scene_manager.h"
+#include "core/tilemap/tilemap.h"
 #include "core/scripting/python/pocketpy/pkpy_util.h"
 
 inline static SkaTexture* create_mock_texture() {
