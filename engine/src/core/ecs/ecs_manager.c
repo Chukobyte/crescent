@@ -81,8 +81,8 @@ void cre_ecs_manager_initialize() {
     cre_font_rendering_ec_system_create_and_register();
     cre_parallax_ec_system_create_and_register();
     cre_particle_ec_system_create_and_register();
-    cre_script_ec_system_create_and_register();
     cre_tilemap_ec_system_create_and_register();
+    cre_script_ec_system_create_and_register();
 }
 
 void cre_ecs_manager_initialize_ex(SkaTexture* colorRectTexture, SkaTexture* particle2DSquareTexture) {
@@ -97,8 +97,8 @@ void cre_ecs_manager_initialize_ex(SkaTexture* colorRectTexture, SkaTexture* par
     cre_font_rendering_ec_system_create_and_register();
     cre_parallax_ec_system_create_and_register();
     cre_particle_ec_system_create_and_register_ex(particle2DSquareTexture);
-    cre_script_ec_system_create_and_register();
     cre_tilemap_ec_system_create_and_register();
+    cre_script_ec_system_create_and_register();
 }
 
 void cre_ecs_manager_enable_fps_display_entity(bool enabled, const char* fontUID, f32 positionX, f32 positionY) {
@@ -122,7 +122,7 @@ void cre_ecs_manager_enable_fps_display_entity(bool enabled, const char* fontUID
         ska_ecs_component_manager_set_component(currentFpsEntity, TEXT_LABEL_COMPONENT_INDEX, textLabelComponent);
         // Script Component
         ScriptComponent* scriptComponent = script_component_create("main", "FpsDisplay");
-        scriptComponent->contextType = ScriptContextType_NATIVE;
+        scriptComponent->contextType = CreScriptContextType_NATIVE;
         ska_ecs_component_manager_set_component(currentFpsEntity, SCRIPT_COMPONENT_INDEX, scriptComponent);
         // Update systems
         ska_ecs_system_update_entity_signature_with_systems(currentFpsEntity);

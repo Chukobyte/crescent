@@ -1,4 +1,4 @@
-from typing import Tuple, Optional
+from typing import Tuple, Optional, List
 
 
 # Mock class for engine's internal c python module
@@ -20,8 +20,8 @@ def node_get_child(parent_entity_id: int, child_entity_name: str) -> Optional["N
     return None
 
 
-def node_get_children(entity_id: int) -> Tuple["Node", ...]:
-    return ()
+def node_get_children(entity_id: int) -> List["Node"]:
+    return []
 
 
 def node_get_parent(entity_id: int) -> Optional["Node"]:
@@ -163,7 +163,7 @@ def sprite_set_origin(entity_id: int, x: float, y: float) -> None:
     pass
 
 
-def sprite_get_shader_instance(entity_id: int) -> int:
+def sprite_get_shader_instance(entity_id: int) -> Optional[int]:
     return 0
 
 
@@ -185,7 +185,7 @@ def animated_sprite_set_current_animation_frame(entity_id: int, frame: int) -> N
     pass
 
 
-def animated_sprite_add_animation(entity_id: int, name: str, speed: float, does_loop: bool, frame_count: int, *args) -> None:
+def animated_sprite_add_animation(entity_id: int, name: str, speed: int, does_loop: bool, frames: List["AnimationFrame"]) -> None:
     pass
 
 
@@ -229,7 +229,7 @@ def animated_sprite_set_origin(entity_id: int, x: float, y: float) -> None:
     pass
 
 
-def animated_sprite_get_shader_instance(entity_id: int) -> int:
+def animated_sprite_get_shader_instance(entity_id: int) -> Optional[int]:
     return 0
 
 
@@ -673,11 +673,11 @@ def packed_scene_load(path: str) -> int:
 
 # --- Collision Handler --- #
 
-def collision_handler_process_collisions(entity_id: float) -> Tuple["Node", ...]:
+def collision_handler_process_collisions(entity_id: float) -> List["Node"]:
     return ()
 
 
-def collision_handler_process_mouse_collisions(pos_offset_x: float, pos_offset_y: float, collision_size_w: float, collision_size_h: float) -> Tuple["Node", ...]:
+def collision_handler_process_mouse_collisions(pos_offset_x: float, pos_offset_y: float, collision_size_w: float, collision_size_h: float) -> List["Node"]:
     return ()
 
 

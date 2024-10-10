@@ -61,8 +61,8 @@
 "\n"\
 "class Vector2:\n"\
 "    def __init__(self, x=0.0, y=0.0):\n"\
-"        self.x = x\n"\
-"        self.y = y\n"\
+"        self.x = float(x)\n"\
+"        self.y = float(y)\n"\
 "\n"\
 "    def dot_product(self, other) -> float:\n"\
 "        return (self.x * other.x) + (self.y * other.y)\n"\
@@ -297,10 +297,10 @@
 "\n"\
 "class Rect2:\n"\
 "    def __init__(self, x=0.0, y=0.0, w=0.0, h=0.0):\n"\
-"        self.x = x\n"\
-"        self.y = y\n"\
-"        self.w = w\n"\
-"        self.h = h\n"\
+"        self.x = float(x)\n"\
+"        self.y = float(y)\n"\
+"        self.w = float(w)\n"\
+"        self.h = float(h)\n"\
 "\n"\
 "    def __eq__(self, other) -> bool:\n"\
 "        if self.x == other.x and self.y == other.y and self.w == other.w and self.h == other.h:\n"\
@@ -933,13 +933,57 @@
 "    Tilemap = 512\n"\
 "\n"\
 "\n"\
+"class NodeEventSubscriber:\n"\
+"    def __init__(self, entity_id: int, callback: Callable[..., None]):\n"\
+"        self.entity_id = entity_id\n"\
+"        self.callback = callback\n"\
+"\n"\
+"    def __eq__(self, other: \"NodeEventSubscriber\") -> bool:\n"\
+"        return self.entity_id == other.entity_id\n"\
+"\n"\
+"\n"\
+"_node_event_subscriber_links = {}\n"\
+"\n"\
+"\n"\
+"class NodeEvent:\n"\
+"    def __init__(self, owner: \"Node\") -> None:\n"\
+"        self.owner_id = owner.entity_id\n"\
+"        self.subscribers = []\n"\
+"\n"\
+"    def subscribe(self, subscriber: \"Node\", callback: Callable[..., None]) -> None:\n"\
+"        if subscriber.entity_id not in _node_event_subscriber_links:\n"\
+"            _node_event_subscriber_links[subscriber.entity_id] = []\n"\
+"        if self not in _node_event_subscriber_links[subscriber.entity_id]:\n"\
+"            _node_event_subscriber_links[subscriber.entity_id].append(self)\n"\
+"        self.subscribers.append(NodeEventSubscriber(subscriber.entity_id, callback))\n"\
+"\n"\
+"    def unsubscribe(self, subscriber: \"Node\") -> None:\n"\
+"        for sub in self.subscribers[:]:\n"\
+"            if sub == subscriber:\n"\
+"                self.subscribers.remove(sub)\n"\
+"\n"\
+"    def broadcast(self, *args) -> None:\n"\
+"        for sub in self.subscribers:\n"\
+"            sub.callback(args)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def unsubscribe_from_all(subscriber: \"Node\") -> None:\n"\
+"        if subscriber.entity_id in _node_event_subscriber_links:\n"\
+"            for event in _node_event_subscriber_links[subscriber.entity_id]:\n"\
+"                event.unsubscribe(subscriber)\n"\
+"            del _node_event_subscriber_links[subscriber.entity_id]\n"\
+"\n"\
+"\n"\
 "class Node:\n"\
+"\n"\
 "    def __init__(self, entity_id: int) -> None:\n"\
 "        self.entity_id = entity_id\n"\
+"        self.scene_entered = NodeEvent(self)\n"\
+"        self.scene_exited = NodeEvent(self)\n"\
 "\n"\
 "    @classmethod\n"\
 "    def new(cls) -> \"Node\":\n"\
-"        return crescent_internal.node_new(str(cls.__module__.__name__), cls.__name__, NodeType.Node)\n"\
+"        return crescent_internal.node_new(cls.__module__, cls.__name__, NodeType.Node)\n"\
 "\n"\
 "    def get_name(self) -> str:\n"\
 "        return crescent_internal.node_get_name(self.entity_id)\n"\
@@ -955,13 +999,7 @@
 "        return crescent_internal.node_get_child(self.entity_id, child_name)\n"\
 "\n"\
 "    def get_children(self) -> List[\"Node\"]:\n"\
-"        children = crescent_internal.node_get_children(self.entity_id)\n"\
-"        if children:\n"\
-"            if isinstance(children, tuple):\n"\
-"                return list(children)\n"\
-"            elif isinstance(children, Node):\n"\
-"                return [children]\n"\
-"        return []\n"\
+"        return crescent_internal.node_get_children(self.entity_id)\n"\
 "\n"\
 "    def get_parent(self) -> Optional[\"Node\"]:\n"\
 "        return crescent_internal.node_get_parent(self.entity_id)\n"\
@@ -1011,7 +1049,7 @@
 "class Node2D(Node):\n"\
 "    @classmethod\n"\
 "    def new(cls) -> \"Node2D\":\n"\
-"        return crescent_internal.node_new(str(cls.__module__.__name__), cls.__name__, NodeType.Node2D)\n"\
+"        return crescent_internal.node_new(cls.__module__, cls.__name__, NodeType.Node2D)\n"\
 "\n"\
 "    def set_position(self, value: Vector2) -> None:\n"\
 "        crescent_internal.node2d_set_position(self.entity_id, value.x, value.y)\n"\
@@ -1105,7 +1143,7 @@
 "class Sprite(Node2D):\n"\
 "    @classmethod\n"\
 "    def new(cls) -> \"Sprite\":\n"\
-"        return crescent_internal.node_new(str(cls.__module__.__name__), cls.__name__, NodeType.Sprite)\n"\
+"        return crescent_internal.node_new(cls.__module__, cls.__name__, NodeType.Sprite)\n"\
 "\n"\
 "    @property\n"\
 "    def texture(self) -> Texture:\n"\
@@ -1162,7 +1200,7 @@
 "    @property\n"\
 "    def shader_instance(self) -> Optional[ShaderInstance]:\n"\
 "        shader_instance_id = crescent_internal.sprite_get_shader_instance(self.entity_id)\n"\
-"        if shader_instance_id >= 0:\n"\
+"        if shader_instance_id:\n"\
 "            return ShaderInstance(shader_instance_id)\n"\
 "        return None\n"\
 "\n"\
@@ -1172,9 +1210,15 @@
 "\n"\
 "\n"\
 "class AnimatedSprite(Node2D):\n"\
+"\n"\
+"    def __init__(self, entity_id: int) -> None:\n"\
+"        super().__init__(entity_id)\n"\
+"        self.frame_changed = NodeEvent(self)\n"\
+"        self.animation_finished = NodeEvent(self)\n"\
+"\n"\
 "    @classmethod\n"\
 "    def new(cls) -> \"AnimatedSprite\":\n"\
-"        return crescent_internal.node_new(str(cls.__module__.__name__), cls.__name__, NodeType.AnimatedSprite)\n"\
+"        return crescent_internal.node_new(cls.__module__, cls.__name__, NodeType.AnimatedSprite)\n"\
 "\n"\
 "    def play(self, name: str) -> bool:\n"\
 "        return crescent_internal.animated_sprite_play(self.entity_id, name)\n"\
@@ -1186,7 +1230,7 @@
 "        crescent_internal.animated_sprite_set_current_animation_frame(self.entity_id, frame)\n"\
 "\n"\
 "    def add_animation(self, animation: Animation) -> None:\n"\
-"        crescent_internal.animated_sprite_add_animation(self.entity_id, animation.name, animation.speed, animation.loops, len(animation.frames), *animation.frames)\n"\
+"        crescent_internal.animated_sprite_add_animation(self.entity_id, animation.name, animation.speed, animation.loops, animation.frames)\n"\
 "\n"\
 "    @property\n"\
 "    def flip_h(self) -> bool:\n"\
@@ -1233,7 +1277,7 @@
 "    @property\n"\
 "    def shader_instance(self) -> Optional[ShaderInstance]:\n"\
 "        shader_instance_id = crescent_internal.animated_sprite_get_shader_instance(self.entity_id)\n"\
-"        if shader_instance_id >= 0:\n"\
+"        if shader_instance_id:\n"\
 "            return ShaderInstance(shader_instance_id)\n"\
 "        return None\n"\
 "\n"\
@@ -1245,7 +1289,7 @@
 "class TextLabel(Node2D):\n"\
 "    @classmethod\n"\
 "    def new(cls) -> \"TextLabel\":\n"\
-"        return crescent_internal.node_new(str(cls.__module__.__name__), cls.__name__, NodeType.TextLabel)\n"\
+"        return crescent_internal.node_new(cls.__module__, cls.__name__, NodeType.TextLabel)\n"\
 "\n"\
 "    @property\n"\
 "    def text(self) -> str:\n"\
@@ -1284,7 +1328,7 @@
 "class Collider2D(Node2D):\n"\
 "    @classmethod\n"\
 "    def new(cls) -> \"Collider2D\":\n"\
-"        return crescent_internal.node_new(str(cls.__module__.__name__), cls.__name__, NodeType.Collider2D)\n"\
+"        return crescent_internal.node_new(cls.__module__, cls.__name__, NodeType.Collider2D)\n"\
 "\n"\
 "    def get_extents(self) -> Size2D:\n"\
 "        w, h = crescent_internal.collider2d_get_extents(self.entity_id)\n"\
@@ -1322,7 +1366,7 @@
 "class ColorRect(Node2D):\n"\
 "    @classmethod\n"\
 "    def new(cls) -> \"ColorRect\":\n"\
-"        return crescent_internal.node_new(str(cls.__module__.__name__), cls.__name__, NodeType.ColorRect)\n"\
+"        return crescent_internal.node_new(cls.__module__, cls.__name__, NodeType.ColorRect)\n"\
 "\n"\
 "    def get_size(self) -> Size2D:\n"\
 "        w, h = crescent_internal.color_rect_get_size(self.entity_id)\n"\
@@ -1360,7 +1404,7 @@
 "class Parallax(Node2D):\n"\
 "    @classmethod\n"\
 "    def new(cls) -> \"Parallax\":\n"\
-"        return crescent_internal.node_new(str(cls.__module__.__name__), cls.__name__, NodeType.Parallax)\n"\
+"        return crescent_internal.node_new(cls.__module__, cls.__name__, NodeType.Parallax)\n"\
 "\n"\
 "    @property\n"\
 "    def scroll_speed(self) -> Vector2:\n"\
@@ -1375,7 +1419,7 @@
 "class Particles2D(Node2D):\n"\
 "    @classmethod\n"\
 "    def new(cls) -> \"Particles2D\":\n"\
-"        return crescent_internal.node_new(str(cls.__module__.__name__), cls.__name__, NodeType.Particles2D)\n"\
+"        return crescent_internal.node_new(cls.__module__, cls.__name__, NodeType.Particles2D)\n"\
 "\n"\
 "    @property\n"\
 "    def amount(self) -> int:\n"\
@@ -1442,7 +1486,7 @@
 "class Tilemap(Node2D):\n"\
 "    @classmethod\n"\
 "    def new(cls) -> \"Tilemap\":\n"\
-"        return crescent_internal.node_new(str(cls.__module__.__name__), cls.__name__, NodeType.Tilemap)\n"\
+"        return crescent_internal.node_new(cls.__module__, cls.__name__, NodeType.Tilemap)\n"\
 "\n"\
 "\n"\
 "class SceneTree:\n"\
@@ -1479,13 +1523,7 @@
 "    \"\"\"\n"\
 "    @staticmethod\n"\
 "    def process_collisions(collider: Collider2D) -> List[Node]:\n"\
-"        collided_entities = crescent_internal.collision_handler_process_collisions(collider.entity_id)\n"\
-"        if collided_entities:\n"\
-"            if isinstance(collided_entities, tuple):\n"\
-"                return list(collided_entities)\n"\
-"            elif isinstance(collided_entities, Node):\n"\
-"                return [collided_entities]\n"\
-"        return []\n"\
+"        return crescent_internal.collision_handler_process_collisions(collider.entity_id)\n"\
 "\n"\
 "    @staticmethod\n"\
 "    def process_mouse_collisions(pos_offset: Optional[Vector2] = None, collision_size: Optional[Size2D] = None) -> List[Node]:\n"\
@@ -1493,13 +1531,7 @@
 "            pos_offset = Vector2.ZERO()\n"\
 "        if not collision_size:\n"\
 "            collision_size = Size2D(1.0, 1.0)\n"\
-"        collided_entities = crescent_internal.collision_handler_process_mouse_collisions(pos_offset.x, pos_offset.y, collision_size.w, collision_size.h)\n"\
-"        if collided_entities:\n"\
-"            if isinstance(collided_entities, tuple):\n"\
-"                return list(collided_entities)\n"\
-"            elif isinstance(collided_entities, Node):\n"\
-"                return [collided_entities]\n"\
-"        return []\n"\
+"        return crescent_internal.collision_handler_process_mouse_collisions(pos_offset.x, pos_offset.y, collision_size.w, collision_size.h)\n"\
 "\n"\
 "\n"\
 "# Work around for singleton until class methods are in\n"\
@@ -1692,23 +1724,5 @@
 "    @staticmethod\n"\
 "    def subscribe(event_name: str, listener_node: Node, listener_func: Callable) -> None:\n"\
 "        _node_event_manager.subscribe_to_event(-100, event_name, listener_node.entity_id, listener_func)\n"\
-"\n"
-
-#define CRE_PKPY_CRESCENT_INTERNAL_PY_SOURCE ""\
-"from typing import Dict, List, Optional, Callable, Tuple\n"\
-"\n"\
-"from crescent import Node\n"\
-"\n"\
-"# Engine's python api used for internal functionality\n"\
-"\n"\
-"CRE_ENTITY_TO_NODE_MAP: Dict[int, Node] = {}\n"\
-"\n"\
-"\n"\
-"def get_entity(entity_id: int) -> Node:\n"\
-"    return CRE_ENTITY_TO_NODE_MAP[entity_id]\n"\
-"\n"\
-"\n"\
-"def set_entity(node: Node) -> None:\n"\
-"    CRE_ENTITY_TO_NODE_MAP[node.entity_id] = node\n"\
 "\n"
 

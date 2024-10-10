@@ -19,6 +19,7 @@ endif ()
 file(GLOB_RECURSE CRESCENT_EDITOR_SRC src/core/*.cpp src/core/*.h)
 add_library(${PROJECT_NAME} STATIC ${CRESCENT_EDITOR_SRC})
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../engine/src)
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     target_link_libraries(${PROJECT_NAME} PUBLIC imgui implot seika font_awesome nlohmann_json zip)

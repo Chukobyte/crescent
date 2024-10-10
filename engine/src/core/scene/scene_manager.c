@@ -336,7 +336,11 @@ f32 cre_scene_manager_get_node_full_time_dilation(SkaEntity entity) {
 }
 
 SceneTreeNode* cre_scene_manager_get_entity_tree_node(SkaEntity entity) {
-    SKA_ASSERT_FMT(ska_hash_map_has(entityToTreeNodeMap, &entity), "Doesn't have entity '%d' in scene tree!", entity);
+    if (!ska_hash_map_has(entityToTreeNodeMap, &entity)) {
+        const NodeComponent* nodeComponent = (NodeComponent*)ska_ecs_component_manager_get_component(entity, NODE_COMPONENT_INDEX);
+        SKA_ASSERT_FMT(ska_hash_map_has(entityToTreeNodeMap, &entity), "Doesn't have entity '%d' in scene tree!", entity);
+    }
+    // SKA_ASSERT_FMT(ska_hash_map_has(entityToTreeNodeMap, &entity), "Doesn't have entity '%d' in scene tree!", entity);
     SceneTreeNode* treeNode = (SceneTreeNode*) *(SceneTreeNode**) ska_hash_map_get(entityToTreeNodeMap, &entity);
     SKA_ASSERT_FMT(treeNode != NULL, "Failed to get tree node for entity '%d'", entity);
     return treeNode;
@@ -369,7 +373,7 @@ bool cre_scene_manager_has_entity_tree_node(SkaEntity entity) {
     return ska_hash_map_has(entityToTreeNodeMap, &entity);
 }
 
-void cre_scene_manager_add_node_as_child(SkaEntity childEntity, SkaEntity parentEntity) {
+void cre_scene_manager_add_node_as_child(SkaEntity parentEntity, SkaEntity childEntity) {
     SceneTreeNode* parentNode = cre_scene_manager_get_entity_tree_node(parentEntity);
     SceneTreeNode* node = cre_scene_manager_pop_staged_entity_tree_node(childEntity);
     node->parent = parentNode;

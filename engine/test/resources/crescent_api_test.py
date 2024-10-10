@@ -157,8 +157,8 @@ with TestCase("Node Tests") as test_case:
         global has_exited_scene
         has_exited_scene = True
 
-    test_node.subscribe_to_event("scene_entered", root_node, on_has_entered_scene)
-    test_node.subscribe_to_event("scene_exited", root_node, on_has_exited_scene)
+    test_node.scene_entered.subscribe(root_node, on_has_entered_scene)
+    test_node.scene_exited.subscribe(root_node, on_has_exited_scene)
     root_node.add_child(test_node)
 
     crescent_internal._scene_manager_process_queued_creation_entities()

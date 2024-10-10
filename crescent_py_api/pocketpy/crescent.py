@@ -58,8 +58,8 @@ class Math:
 
 class Vector2:
     def __init__(self, x=0.0, y=0.0):
-        self.x = x
-        self.y = y
+        self.x = float(x)
+        self.y = float(y)
 
     def dot_product(self, other) -> float:
         return (self.x * other.x) + (self.y * other.y)
@@ -294,10 +294,10 @@ class Size2D:
 
 class Rect2:
     def __init__(self, x=0.0, y=0.0, w=0.0, h=0.0):
-        self.x = x
-        self.y = y
-        self.w = w
-        self.h = h
+        self.x = float(x)
+        self.y = float(y)
+        self.w = float(w)
+        self.h = float(h)
 
     def __eq__(self, other) -> bool:
         if self.x == other.x and self.y == other.y and self.w == other.w and self.h == other.h:
@@ -930,13 +930,57 @@ class NodeType:
     Tilemap = 512
 
 
+class NodeEventSubscriber:
+    def __init__(self, entity_id: int, callback: Callable[..., None]):
+        self.entity_id = entity_id
+        self.callback = callback
+
+    def __eq__(self, other: "NodeEventSubscriber") -> bool:
+        return self.entity_id == other.entity_id
+
+
+_node_event_subscriber_links = {}
+
+
+class NodeEvent:
+    def __init__(self, owner: "Node") -> None:
+        self.owner_id = owner.entity_id
+        self.subscribers = []
+
+    def subscribe(self, subscriber: "Node", callback: Callable[..., None]) -> None:
+        if subscriber.entity_id not in _node_event_subscriber_links:
+            _node_event_subscriber_links[subscriber.entity_id] = []
+        if self not in _node_event_subscriber_links[subscriber.entity_id]:
+            _node_event_subscriber_links[subscriber.entity_id].append(self)
+        self.subscribers.append(NodeEventSubscriber(subscriber.entity_id, callback))
+
+    def unsubscribe(self, subscriber: "Node") -> None:
+        for sub in self.subscribers[:]:
+            if sub == subscriber:
+                self.subscribers.remove(sub)
+
+    def broadcast(self, *args) -> None:
+        for sub in self.subscribers:
+            sub.callback(args)
+
+    @staticmethod
+    def unsubscribe_from_all(subscriber: "Node") -> None:
+        if subscriber.entity_id in _node_event_subscriber_links:
+            for event in _node_event_subscriber_links[subscriber.entity_id]:
+                event.unsubscribe(subscriber)
+            del _node_event_subscriber_links[subscriber.entity_id]
+
+
 class Node:
+
     def __init__(self, entity_id: int) -> None:
         self.entity_id = entity_id
+        self.scene_entered = NodeEvent(self)
+        self.scene_exited = NodeEvent(self)
 
     @classmethod
     def new(cls) -> "Node":
-        return crescent_internal.node_new(str(cls.__module__.__name__), cls.__name__, NodeType.Node)
+        return crescent_internal.node_new(cls.__module__, cls.__name__, NodeType.Node)
 
     def get_name(self) -> str:
         return crescent_internal.node_get_name(self.entity_id)
@@ -952,13 +996,7 @@ class Node:
         return crescent_internal.node_get_child(self.entity_id, child_name)
 
     def get_children(self) -> List["Node"]:
-        children = crescent_internal.node_get_children(self.entity_id)
-        if children:
-            if isinstance(children, tuple):
-                return list(children)
-            elif isinstance(children, Node):
-                return [children]
-        return []
+        return crescent_internal.node_get_children(self.entity_id)
 
     def get_parent(self) -> Optional["Node"]:
         return crescent_internal.node_get_parent(self.entity_id)
@@ -1008,7 +1046,7 @@ class Node:
 class Node2D(Node):
     @classmethod
     def new(cls) -> "Node2D":
-        return crescent_internal.node_new(str(cls.__module__.__name__), cls.__name__, NodeType.Node2D)
+        return crescent_internal.node_new(cls.__module__, cls.__name__, NodeType.Node2D)
 
     def set_position(self, value: Vector2) -> None:
         crescent_internal.node2d_set_position(self.entity_id, value.x, value.y)
@@ -1102,7 +1140,7 @@ class Node2D(Node):
 class Sprite(Node2D):
     @classmethod
     def new(cls) -> "Sprite":
-        return crescent_internal.node_new(str(cls.__module__.__name__), cls.__name__, NodeType.Sprite)
+        return crescent_internal.node_new(cls.__module__, cls.__name__, NodeType.Sprite)
 
     @property
     def texture(self) -> Texture:
@@ -1159,7 +1197,7 @@ class Sprite(Node2D):
     @property
     def shader_instance(self) -> Optional[ShaderInstance]:
         shader_instance_id = crescent_internal.sprite_get_shader_instance(self.entity_id)
-        if shader_instance_id >= 0:
+        if shader_instance_id:
             return ShaderInstance(shader_instance_id)
         return None
 
@@ -1169,9 +1207,15 @@ class Sprite(Node2D):
 
 
 class AnimatedSprite(Node2D):
+
+    def __init__(self, entity_id: int) -> None:
+        super().__init__(entity_id)
+        self.frame_changed = NodeEvent(self)
+        self.animation_finished = NodeEvent(self)
+
     @classmethod
     def new(cls) -> "AnimatedSprite":
-        return crescent_internal.node_new(str(cls.__module__.__name__), cls.__name__, NodeType.AnimatedSprite)
+        return crescent_internal.node_new(cls.__module__, cls.__name__, NodeType.AnimatedSprite)
 
     def play(self, name: str) -> bool:
         return crescent_internal.animated_sprite_play(self.entity_id, name)
@@ -1183,7 +1227,7 @@ class AnimatedSprite(Node2D):
         crescent_internal.animated_sprite_set_current_animation_frame(self.entity_id, frame)
 
     def add_animation(self, animation: Animation) -> None:
-        crescent_internal.animated_sprite_add_animation(self.entity_id, animation.name, animation.speed, animation.loops, len(animation.frames), *animation.frames)
+        crescent_internal.animated_sprite_add_animation(self.entity_id, animation.name, animation.speed, animation.loops, animation.frames)
 
     @property
     def flip_h(self) -> bool:
@@ -1230,7 +1274,7 @@ class AnimatedSprite(Node2D):
     @property
     def shader_instance(self) -> Optional[ShaderInstance]:
         shader_instance_id = crescent_internal.animated_sprite_get_shader_instance(self.entity_id)
-        if shader_instance_id >= 0:
+        if shader_instance_id:
             return ShaderInstance(shader_instance_id)
         return None
 
@@ -1242,7 +1286,7 @@ class AnimatedSprite(Node2D):
 class TextLabel(Node2D):
     @classmethod
     def new(cls) -> "TextLabel":
-        return crescent_internal.node_new(str(cls.__module__.__name__), cls.__name__, NodeType.TextLabel)
+        return crescent_internal.node_new(cls.__module__, cls.__name__, NodeType.TextLabel)
 
     @property
     def text(self) -> str:
@@ -1281,7 +1325,7 @@ class TextLabel(Node2D):
 class Collider2D(Node2D):
     @classmethod
     def new(cls) -> "Collider2D":
-        return crescent_internal.node_new(str(cls.__module__.__name__), cls.__name__, NodeType.Collider2D)
+        return crescent_internal.node_new(cls.__module__, cls.__name__, NodeType.Collider2D)
 
     def get_extents(self) -> Size2D:
         w, h = crescent_internal.collider2d_get_extents(self.entity_id)
@@ -1319,7 +1363,7 @@ class Collider2D(Node2D):
 class ColorRect(Node2D):
     @classmethod
     def new(cls) -> "ColorRect":
-        return crescent_internal.node_new(str(cls.__module__.__name__), cls.__name__, NodeType.ColorRect)
+        return crescent_internal.node_new(cls.__module__, cls.__name__, NodeType.ColorRect)
 
     def get_size(self) -> Size2D:
         w, h = crescent_internal.color_rect_get_size(self.entity_id)
@@ -1357,7 +1401,7 @@ class ColorRect(Node2D):
 class Parallax(Node2D):
     @classmethod
     def new(cls) -> "Parallax":
-        return crescent_internal.node_new(str(cls.__module__.__name__), cls.__name__, NodeType.Parallax)
+        return crescent_internal.node_new(cls.__module__, cls.__name__, NodeType.Parallax)
 
     @property
     def scroll_speed(self) -> Vector2:
@@ -1372,7 +1416,7 @@ class Parallax(Node2D):
 class Particles2D(Node2D):
     @classmethod
     def new(cls) -> "Particles2D":
-        return crescent_internal.node_new(str(cls.__module__.__name__), cls.__name__, NodeType.Particles2D)
+        return crescent_internal.node_new(cls.__module__, cls.__name__, NodeType.Particles2D)
 
     @property
     def amount(self) -> int:
@@ -1439,7 +1483,7 @@ class Particles2D(Node2D):
 class Tilemap(Node2D):
     @classmethod
     def new(cls) -> "Tilemap":
-        return crescent_internal.node_new(str(cls.__module__.__name__), cls.__name__, NodeType.Tilemap)
+        return crescent_internal.node_new(cls.__module__, cls.__name__, NodeType.Tilemap)
 
 
 class SceneTree:
@@ -1476,13 +1520,7 @@ class CollisionHandler:
     """
     @staticmethod
     def process_collisions(collider: Collider2D) -> List[Node]:
-        collided_entities = crescent_internal.collision_handler_process_collisions(collider.entity_id)
-        if collided_entities:
-            if isinstance(collided_entities, tuple):
-                return list(collided_entities)
-            elif isinstance(collided_entities, Node):
-                return [collided_entities]
-        return []
+        return crescent_internal.collision_handler_process_collisions(collider.entity_id)
 
     @staticmethod
     def process_mouse_collisions(pos_offset: Optional[Vector2] = None, collision_size: Optional[Size2D] = None) -> List[Node]:
@@ -1490,13 +1528,7 @@ class CollisionHandler:
             pos_offset = Vector2.ZERO()
         if not collision_size:
             collision_size = Size2D(1.0, 1.0)
-        collided_entities = crescent_internal.collision_handler_process_mouse_collisions(pos_offset.x, pos_offset.y, collision_size.w, collision_size.h)
-        if collided_entities:
-            if isinstance(collided_entities, tuple):
-                return list(collided_entities)
-            elif isinstance(collided_entities, Node):
-                return [collided_entities]
-        return []
+        return crescent_internal.collision_handler_process_mouse_collisions(pos_offset.x, pos_offset.y, collision_size.w, collision_size.h)
 
 
 # Work around for singleton until class methods are in
