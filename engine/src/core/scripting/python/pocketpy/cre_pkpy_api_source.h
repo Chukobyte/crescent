@@ -61,8 +61,8 @@
 "\n"\
 "class Vector2:\n"\
 "    def __init__(self, x=0.0, y=0.0):\n"\
-"        self.x = float(x)\n"\
-"        self.y = float(y)\n"\
+"        self.x = x\n"\
+"        self.y = y\n"\
 "\n"\
 "    def dot_product(self, other) -> float:\n"\
 "        return (self.x * other.x) + (self.y * other.y)\n"\
@@ -297,10 +297,10 @@
 "\n"\
 "class Rect2:\n"\
 "    def __init__(self, x=0.0, y=0.0, w=0.0, h=0.0):\n"\
-"        self.x = float(x)\n"\
-"        self.y = float(y)\n"\
-"        self.w = float(w)\n"\
-"        self.h = float(h)\n"\
+"        self.x = x\n"\
+"        self.y = y\n"\
+"        self.w = w\n"\
+"        self.h = h\n"\
 "\n"\
 "    def __eq__(self, other) -> bool:\n"\
 "        if self.x == other.x and self.y == other.y and self.w == other.w and self.h == other.h:\n"\
@@ -823,103 +823,6 @@
 "    AXIS_RIGHT_ANALOG_DOWN = 28\n"\
 "\n"\
 "\n"\
-"class _NodeEventSubscriber:\n"\
-"    def __init__(self, entity_id: int, call_back: Callable[[Tuple], None], event_owner_entity_id: int, event_name: str) -> None:\n"\
-"        self.entity_id = entity_id\n"\
-"        self.call_back = call_back\n"\
-"        self.event_owner_entity_id = event_owner_entity_id\n"\
-"        self.event_name = event_name\n"\
-"\n"\
-"\n"\
-"class _NodeEvent:\n"\
-"    def __init__(self, entity_id: int, name: str, subscribers: List[_NodeEventSubscriber] = None) -> None:\n"\
-"        self.entity_id = entity_id\n"\
-"        self.name = name\n"\
-"        if not subscribers:\n"\
-"            subscribers = []\n"\
-"        self.subscribers = subscribers\n"\
-"\n"\
-"    def add_or_update_subscriber(self, entity_id: int, call_back: Callable[[Tuple], None]) -> _NodeEventSubscriber:\n"\
-"        for sub in self.subscribers:\n"\
-"            if entity_id == sub.entity_id:\n"\
-"                sub.call_back = call_back\n"\
-"                return sub\n"\
-"        subscriber = _NodeEventSubscriber(entity_id, call_back, self.entity_id, self.name)\n"\
-"        self.subscribers.append(subscriber)\n"\
-"        return subscriber\n"\
-"\n"\
-"    def remove_subscriber(self, subscribe_entity_id: int) -> None:\n"\
-"        for sub in self.subscribers:\n"\
-"            if subscribe_entity_id == sub.entity_id:\n"\
-"                self.subscribers.remove(sub)\n"\
-"                break\n"\
-"\n"\
-"\n"\
-"class _NodeEventManager:\n"\
-"    \"\"\"\n"\
-"    Used to manage events between nodes\n"\
-"    \"\"\"\n"\
-"    def __init__(self, events: Dict[int, Dict[str, _NodeEvent]] = None, entity_subscribers: Dict[int, List[_NodeEventSubscriber]] = None) -> None:\n"\
-"        if not events:\n"\
-"            events = {}\n"\
-"        if not entity_subscribers:\n"\
-"            entity_subscribers = {}\n"\
-"        self.events = events\n"\
-"        self.entity_subscribers = entity_subscribers\n"\
-"\n"\
-"    def create_event(self, entity_id: int, event_name: str) -> _NodeEvent:\n"\
-"        if entity_id not in self.events:\n"\
-"            self.events[entity_id] = {}\n"\
-"        if event_name not in self.events[entity_id]:\n"\
-"            self.events[entity_id][event_name] = _NodeEvent(entity_id, event_name)\n"\
-"        return self.events[entity_id][event_name]\n"\
-"\n"\
-"    def remove_event(self, entity_id: int, event_name: str) -> None:\n"\
-"        if self.has_event(entity_id, event_name):\n"\
-"            del self.events[entity_id][event_name]\n"\
-"\n"\
-"    def remove_entity_and_connections(self, entity_id: int) -> None:\n"\
-"        if entity_id in self.events:\n"\
-"            del self.events[entity_id]\n"\
-"        if entity_id in self.entity_subscribers:\n"\
-"            for sub in self.entity_subscribers[entity_id]:\n"\
-"                event = self.get_event(sub.event_owner_entity_id, sub.event_name)\n"\
-"                if event:\n"\
-"                    event.remove_subscriber(entity_id)\n"\
-"            del self.entity_subscribers[entity_id]\n"\
-"\n"\
-"    def get_event(self, entity_id: int, event_name: str) -> Optional[_NodeEvent]:\n"\
-"        if self.has_event(entity_id, event_name):\n"\
-"            return self.events[entity_id][event_name]\n"\
-"        return None\n"\
-"\n"\
-"    def has_event(self, entity_id: int, event_name: str) -> bool:\n"\
-"        return entity_id in self.events and event_name in self.events[entity_id]\n"\
-"\n"\
-"    def broadcast_event(self, entity_id: int, event_name: str, *args) -> None:\n"\
-"        event = self.create_event(entity_id, event_name)\n"\
-"        for sub in event.subscribers:\n"\
-"            sub.call_back(*args)\n"\
-"\n"\
-"    def subscribe_to_event(self, owner_entity: int, event_name: str, subscriber_entity: int, subscriber_call_back: Callable[[...], None]) -> None:\n"\
-"        event = self.create_event(owner_entity, event_name)\n"\
-"        subscriber = event.add_or_update_subscriber(\n"\
-"            subscriber_entity, subscriber_call_back\n"\
-"        )\n"\
-"        if subscriber_entity not in self.entity_subscribers:\n"\
-"            self.entity_subscribers[subscriber_entity] = []\n"\
-"        sub_list = self.entity_subscribers.get(subscriber_entity, [])\n"\
-"        if subscriber not in sub_list:\n"\
-"            sub_list.append(subscriber)\n"\
-"\n"\
-"    def clear_all_data(self) -> None:\n"\
-"        self.events.clear()\n"\
-"        self.entity_subscribers.clear()\n"\
-"\n"\
-"\n"\
-"_node_event_manager = _NodeEventManager()\n"\
-"\n"\
-"\n"\
 "class NodeType:\n"\
 "    Node = 1\n"\
 "    Node2D = 2\n"\
@@ -1027,15 +930,6 @@
 "    def get_total_time_dilation(self) -> float:\n"\
 "        return crescent_internal.node_get_total_time_dilation(self.entity_id)\n"\
 "\n"\
-"    def create_event(self, event_name: str) -> None:\n"\
-"        _node_event_manager.create_event(self.entity_id, event_name)\n"\
-"\n"\
-"    def subscribe_to_event(self, event_name: str, subscriber: \"Node\", callback_func: Callable[[...], None]) -> None:\n"\
-"        _node_event_manager.subscribe_to_event(self.entity_id, event_name, subscriber.entity_id, callback_func)\n"\
-"\n"\
-"    def broadcast_event(self, event_name: str, *args) -> None:\n"\
-"        _node_event_manager.broadcast_event(self.entity_id, event_name, *args)\n"\
-"\n"\
 "    def __eq__(self, other: \"Node\") -> bool:\n"\
 "        return self.entity_id == other.entity_id\n"\
 "\n"\
@@ -1052,10 +946,10 @@
 "        return crescent_internal.node_new(cls.__module__, cls.__name__, NodeType.Node2D)\n"\
 "\n"\
 "    def set_position(self, value: Vector2) -> None:\n"\
-"        crescent_internal.node2d_set_position(self.entity_id, value.x, value.y)\n"\
+"        crescent_internal.node2d_set_position(self.entity_id, float(value.x), float(value.y))\n"\
 "\n"\
 "    def add_to_position(self, value: Vector2) -> None:\n"\
-"        crescent_internal.node2d_add_to_position(self.entity_id, value.x, value.y)\n"\
+"        crescent_internal.node2d_add_to_position(self.entity_id, float(value.x), float(value.y))\n"\
 "\n"\
 "    def get_position(self) -> Vector2:\n"\
 "        px, py = crescent_internal.node2d_get_position(self.entity_id)\n"\
@@ -1068,7 +962,7 @@
 "\n"\
 "    @position.setter\n"\
 "    def position(self, value: Vector2) -> None:\n"\
-"        crescent_internal.node2d_set_position(self.entity_id, value.x, value.y)\n"\
+"        crescent_internal.node2d_set_position(self.entity_id, float(value.x), float(value.y))\n"\
 "\n"\
 "    def get_global_position(self) -> Vector2:\n"\
 "        px, py = crescent_internal.node2d_get_global_position(self.entity_id)\n"\
@@ -1080,10 +974,10 @@
 "        return Vector2(px, py)\n"\
 "\n"\
 "    def set_scale(self, value: Vector2) -> None:\n"\
-"        crescent_internal.node2d_set_scale(self.entity_id, value.x, value.y)\n"\
+"        crescent_internal.node2d_set_scale(self.entity_id, float(value.x), float(value.y))\n"\
 "\n"\
 "    def add_to_scale(self, value: Vector2) -> None:\n"\
-"        crescent_internal.node2d_add_to_scale(self.entity_id, value.x, value.y)\n"\
+"        crescent_internal.node2d_add_to_scale(self.entity_id, float(value.x), float(value.y))\n"\
 "\n"\
 "    def get_scale(self) -> Vector2:\n"\
 "        sx, sy = crescent_internal.node2d_get_scale(self.entity_id)\n"\
@@ -1096,7 +990,7 @@
 "\n"\
 "    @scale.setter\n"\
 "    def scale(self, value: Vector2) -> None:\n"\
-"        crescent_internal.node2d_set_scale(self.entity_id, value.x, value.y)\n"\
+"        crescent_internal.node2d_set_scale(self.entity_id, float(value.x), float(value.y))\n"\
 "\n"\
 "    def set_rotation(self, value: float) -> None:\n"\
 "        crescent_internal.node2d_set_rotation(self.entity_id, value)\n"\
@@ -1589,11 +1483,11 @@
 "class Camera2D:\n"\
 "    @staticmethod\n"\
 "    def set_position(position: Vector2) -> None:\n"\
-"        crescent_internal.camera2d_set_position(position.x, position.y)\n"\
+"        crescent_internal.camera2d_set_position(float(position.x), float(position.y))\n"\
 "\n"\
 "    @staticmethod\n"\
 "    def add_to_position(position: Vector2) -> None:\n"\
-"        crescent_internal.camera2d_add_to_position(position.x, position.y)\n"\
+"        crescent_internal.camera2d_add_to_position(float(position.x), float(position.y))\n"\
 "\n"\
 "    @staticmethod\n"\
 "    def get_position() -> Vector2:\n"\
@@ -1602,11 +1496,11 @@
 "\n"\
 "    @staticmethod\n"\
 "    def set_offset(offset: Vector2) -> None:\n"\
-"        crescent_internal.camera2d_set_offset(offset.x, offset.y)\n"\
+"        crescent_internal.camera2d_set_offset(float(offset.x), float(offset.y))\n"\
 "\n"\
 "    @staticmethod\n"\
 "    def add_to_offset(offset: Vector2) -> None:\n"\
-"        crescent_internal.camera2d_add_to_offset(offset.x, offset.y)\n"\
+"        crescent_internal.camera2d_add_to_offset(float(offset.x), float(offset.y))\n"\
 "\n"\
 "    @staticmethod\n"\
 "    def get_offset() -> Vector2:\n"\
@@ -1615,11 +1509,11 @@
 "\n"\
 "    @staticmethod\n"\
 "    def set_zoom(zoom: Vector2) -> None:\n"\
-"        crescent_internal.camera2d_set_zoom(zoom.x, zoom.y)\n"\
+"        crescent_internal.camera2d_set_zoom(float(zoom.x), float(zoom.y))\n"\
 "\n"\
 "    @staticmethod\n"\
 "    def add_to_zoom(zoom: Vector2) -> None:\n"\
-"        crescent_internal.camera2d_add_to_zoom(zoom.x, zoom.y)\n"\
+"        crescent_internal.camera2d_add_to_zoom(float(zoom.x), float(zoom.y))\n"\
 "\n"\
 "    @staticmethod\n"\
 "    def get_zoom() -> Vector2:\n"\
@@ -1629,7 +1523,7 @@
 "    @staticmethod\n"\
 "    def set_boundary(boundary: Rect2) -> None:\n"\
 "        crescent_internal.camera2d_set_boundary(\n"\
-"            boundary.x, boundary.y, boundary.w, boundary.h\n"\
+"            float(boundary.x), float(boundary.y), float(boundary.w), float(boundary.h)\n"\
 "        )\n"\
 "\n"\
 "    @staticmethod\n"\
