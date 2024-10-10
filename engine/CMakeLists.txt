@@ -17,6 +17,7 @@ endif ()
 file(GLOB_RECURSE CRESCENT_SRC src/core/*.c src/core/*.h)
 add_library(${PROJECT_NAME} STATIC ${CRESCENT_SRC})
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     target_link_libraries(${PROJECT_NAME} PUBLIC Ws2_32 seika cJSON pocketpy)

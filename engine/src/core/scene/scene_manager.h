@@ -59,7 +59,7 @@ f32 cre_scene_manager_get_node_full_time_dilation(SkaEntity entity);
 SkaEntity cre_scene_manager_get_entity_child_by_name(SkaEntity parent, const char* childName);
 SceneTreeNode* cre_scene_manager_get_entity_tree_node(SkaEntity entity);
 bool cre_scene_manager_has_entity_tree_node(SkaEntity entity);
-void cre_scene_manager_add_node_as_child(SkaEntity childEntity, SkaEntity parentEntity);
+void cre_scene_manager_add_node_as_child(SkaEntity parentEntity, SkaEntity childEntity);
 EntityArray cre_scene_manager_get_self_and_parent_nodes(SkaEntity entity);
 void cre_scene_manager_invalidate_time_dilation_nodes_with_children(SkaEntity entity);
 

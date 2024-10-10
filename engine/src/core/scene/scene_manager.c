@@ -369,7 +369,7 @@ bool cre_scene_manager_has_entity_tree_node(SkaEntity entity) {
     return ska_hash_map_has(entityToTreeNodeMap, &entity);
 }
 
-void cre_scene_manager_add_node_as_child(SkaEntity childEntity, SkaEntity parentEntity) {
+void cre_scene_manager_add_node_as_child(SkaEntity parentEntity, SkaEntity childEntity) {
     SceneTreeNode* parentNode = cre_scene_manager_get_entity_tree_node(parentEntity);
     SceneTreeNode* node = cre_scene_manager_pop_staged_entity_tree_node(childEntity);
     node->parent = parentNode;

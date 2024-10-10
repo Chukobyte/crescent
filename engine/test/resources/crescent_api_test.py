@@ -1,7 +1,7 @@
 from typing import Optional
 
 import crescent_internal
-from crescent import Node, SceneTree, Node2D, Vector2, GameProperties, Size2D, Camera2D, Rect2, World
+from crescent import Node, SceneTree, Node2D, Vector2, GameProperties, Size2D, Camera2D, Rect2, World, NodeEvent
 
 import test_custom_nodes
 
@@ -138,11 +138,17 @@ with TestCase("Node Tests") as test_case:
     subscriber_node = Node2D.new()
     root_node = SceneTree.get_root()
     root_node.add_child(subscriber_node)
-    root_node.subscribe_to_event("talk", subscriber_node, test_node_event_manager_callback)
-    root_node.subscribe_to_event("talk_string", subscriber_node, test_node_event_manager_callback_one_param_string)
-    root_node.subscribe_to_event("talk_int", subscriber_node, test_node_event_manager_callback_one_param_int)
-    root_node.subscribe_to_event("talk_float", subscriber_node, test_node_event_manager_callback_one_param_float)
-    root_node.subscribe_to_event("talk_bool", subscriber_node, test_node_event_manager_callback_one_param_bool)
+
+    root_node.talk = NodeEvent(root_node)
+    root_node.talk_string = NodeEvent(root_node)
+    root_node.talk_int = NodeEvent(root_node)
+    root_node.talk_float = NodeEvent(root_node)
+    root_node.talk_bool = NodeEvent(root_node)
+    root_node.talk.subscribe(subscriber_node, test_node_event_manager_callback)
+    root_node.talk_string.subscribe(subscriber_node, test_node_event_manager_callback_one_param_string)
+    root_node.talk_int.subscribe(subscriber_node, test_node_event_manager_callback_one_param_int)
+    root_node.talk_float.subscribe(subscriber_node, test_node_event_manager_callback_one_param_float)
+    root_node.talk_bool.subscribe(subscriber_node, test_node_event_manager_callback_one_param_bool)
 
     # Testing node events
     test_node = Node2D.new()
@@ -157,8 +163,8 @@ with TestCase("Node Tests") as test_case:
         global has_exited_scene
         has_exited_scene = True
 
-    test_node.subscribe_to_event("scene_entered", root_node, on_has_entered_scene)
-    test_node.subscribe_to_event("scene_exited", root_node, on_has_exited_scene)
+    test_node.scene_entered.subscribe(root_node, on_has_entered_scene)
+    test_node.scene_exited.subscribe(root_node, on_has_exited_scene)
     root_node.add_child(test_node)
 
     crescent_internal._scene_manager_process_queued_creation_entities()
@@ -170,8 +176,7 @@ with TestCase("Node Tests") as test_case:
 
 with TestCase("Scene Tree Tests") as test_case:
     SceneTree.change_scene("test_scene1.cscn")
-    # TODO: Fix once scene manager updates are in
-    # assert SceneTree.get_root()
+    assert SceneTree.get_root()
 
 with TestCase("Game Properties Tests") as test_case:
     game_props = GameProperties()
