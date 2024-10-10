@@ -297,10 +297,10 @@
 "\n"\
 "class Rect2:\n"\
 "    def __init__(self, x=0.0, y=0.0, w=0.0, h=0.0):\n"\
-"        self.x = x\n"\
-"        self.y = y\n"\
-"        self.w = w\n"\
-"        self.h = h\n"\
+"        self.x = float(x)\n"\
+"        self.y = float(y)\n"\
+"        self.w = float(w)\n"\
+"        self.h = float(h)\n"\
 "\n"\
 "    def __eq__(self, other) -> bool:\n"\
 "        if self.x == other.x and self.y == other.y and self.w == other.w and self.h == other.h:\n"\
@@ -933,9 +933,53 @@
 "    Tilemap = 512\n"\
 "\n"\
 "\n"\
+"class NodeEventSubscriber:\n"\
+"    def __init__(self, entity_id: int, callback: Callable[..., None]):\n"\
+"        self.entity_id = entity_id\n"\
+"        self.callback = callback\n"\
+"\n"\
+"    def __eq__(self, other: \"NodeEventSubscriber\") -> bool:\n"\
+"        return self.entity_id == other.entity_id\n"\
+"\n"\
+"\n"\
+"_node_event_subscriber_links = {}\n"\
+"\n"\
+"\n"\
+"class NodeEvent:\n"\
+"    def __init__(self, owner: \"Node\") -> None:\n"\
+"        self.owner_id = owner.entity_id\n"\
+"        self.subscribers = []\n"\
+"\n"\
+"    def subscribe(self, subscriber: \"Node\", callback: Callable[..., None]) -> None:\n"\
+"        if subscriber.entity_id not in _node_event_subscriber_links:\n"\
+"            _node_event_subscriber_links[subscriber.entity_id] = []\n"\
+"        if self not in _node_event_subscriber_links[subscriber.entity_id]:\n"\
+"            _node_event_subscriber_links[subscriber.entity_id].append(self)\n"\
+"        self.subscribers.append(NodeEventSubscriber(subscriber.entity_id, callback))\n"\
+"\n"\
+"    def unsubscribe(self, subscriber: \"Node\") -> None:\n"\
+"        for sub in self.subscribers[:]:\n"\
+"            if sub == subscriber:\n"\
+"                self.subscribers.remove(sub)\n"\
+"\n"\
+"    def broadcast(self, *args) -> None:\n"\
+"        for sub in self.subscribers:\n"\
+"            sub.callback(args)\n"\
+"\n"\
+"    @staticmethod\n"\
+"    def unsubscribe_from_all(subscriber: \"Node\") -> None:\n"\
+"        if subscriber.entity_id in _node_event_subscriber_links:\n"\
+"            for event in _node_event_subscriber_links[subscriber.entity_id]:\n"\
+"                event.unsubscribe(subscriber)\n"\
+"            del _node_event_subscriber_links[subscriber.entity_id]\n"\
+"\n"\
+"\n"\
 "class Node:\n"\
+"\n"\
 "    def __init__(self, entity_id: int) -> None:\n"\
 "        self.entity_id = entity_id\n"\
+"        self.scene_entered = NodeEvent(self)\n"\
+"        self.scene_exited = NodeEvent(self)\n"\
 "\n"\
 "    @classmethod\n"\
 "    def new(cls) -> \"Node\":\n"\
@@ -1166,6 +1210,12 @@
 "\n"\
 "\n"\
 "class AnimatedSprite(Node2D):\n"\
+"\n"\
+"    def __init__(self, entity_id: int) -> None:\n"\
+"        super().__init__(entity_id)\n"\
+"        self.frame_changed = NodeEvent(self)\n"\
+"        self.animation_finished = NodeEvent(self)\n"\
+"\n"\
 "    @classmethod\n"\
 "    def new(cls) -> \"AnimatedSprite\":\n"\
 "        return crescent_internal.node_new(cls.__module__, cls.__name__, NodeType.AnimatedSprite)\n"\
@@ -1674,23 +1724,5 @@
 "    @staticmethod\n"\
 "    def subscribe(event_name: str, listener_node: Node, listener_func: Callable) -> None:\n"\
 "        _node_event_manager.subscribe_to_event(-100, event_name, listener_node.entity_id, listener_func)\n"\
-"\n"
-
-#define CRE_PKPY_CRESCENT_INTERNAL_PY_SOURCE ""\
-"from typing import Dict, List, Optional, Callable, Tuple\n"\
-"\n"\
-"from crescent import Node\n"\
-"\n"\
-"# Engine's python api used for internal functionality\n"\
-"\n"\
-"CRE_ENTITY_TO_NODE_MAP: Dict[int, Node] = {}\n"\
-"\n"\
-"\n"\
-"def get_entity(entity_id: int) -> Node:\n"\
-"    return CRE_ENTITY_TO_NODE_MAP[entity_id]\n"\
-"\n"\
-"\n"\
-"def set_entity(node: Node) -> None:\n"\
-"    CRE_ENTITY_TO_NODE_MAP[node.entity_id] = node\n"\
 "\n"
 

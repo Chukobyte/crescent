@@ -294,10 +294,10 @@ class Size2D:
 
 class Rect2:
     def __init__(self, x=0.0, y=0.0, w=0.0, h=0.0):
-        self.x = x
-        self.y = y
-        self.w = w
-        self.h = h
+        self.x = float(x)
+        self.y = float(y)
+        self.w = float(w)
+        self.h = float(h)
 
     def __eq__(self, other) -> bool:
         if self.x == other.x and self.y == other.y and self.w == other.w and self.h == other.h:
@@ -930,9 +930,53 @@ class NodeType:
     Tilemap = 512
 
 
+class NodeEventSubscriber:
+    def __init__(self, entity_id: int, callback: Callable[..., None]):
+        self.entity_id = entity_id
+        self.callback = callback
+
+    def __eq__(self, other: "NodeEventSubscriber") -> bool:
+        return self.entity_id == other.entity_id
+
+
+_node_event_subscriber_links = {}
+
+
+class NodeEvent:
+    def __init__(self, owner: "Node") -> None:
+        self.owner_id = owner.entity_id
+        self.subscribers = []
+
+    def subscribe(self, subscriber: "Node", callback: Callable[..., None]) -> None:
+        if subscriber.entity_id not in _node_event_subscriber_links:
+            _node_event_subscriber_links[subscriber.entity_id] = []
+        if self not in _node_event_subscriber_links[subscriber.entity_id]:
+            _node_event_subscriber_links[subscriber.entity_id].append(self)
+        self.subscribers.append(NodeEventSubscriber(subscriber.entity_id, callback))
+
+    def unsubscribe(self, subscriber: "Node") -> None:
+        for sub in self.subscribers[:]:
+            if sub == subscriber:
+                self.subscribers.remove(sub)
+
+    def broadcast(self, *args) -> None:
+        for sub in self.subscribers:
+            sub.callback(args)
+
+    @staticmethod
+    def unsubscribe_from_all(subscriber: "Node") -> None:
+        if subscriber.entity_id in _node_event_subscriber_links:
+            for event in _node_event_subscriber_links[subscriber.entity_id]:
+                event.unsubscribe(subscriber)
+            del _node_event_subscriber_links[subscriber.entity_id]
+
+
 class Node:
+
     def __init__(self, entity_id: int) -> None:
         self.entity_id = entity_id
+        self.scene_entered = NodeEvent(self)
+        self.scene_exited = NodeEvent(self)
 
     @classmethod
     def new(cls) -> "Node":
@@ -1163,6 +1207,12 @@ class Sprite(Node2D):
 
 
 class AnimatedSprite(Node2D):
+
+    def __init__(self, entity_id: int) -> None:
+        super().__init__(entity_id)
+        self.frame_changed = NodeEvent(self)
+        self.animation_finished = NodeEvent(self)
+
     @classmethod
     def new(cls) -> "AnimatedSprite":
         return crescent_internal.node_new(cls.__module__, cls.__name__, NodeType.AnimatedSprite)

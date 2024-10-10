@@ -104,6 +104,13 @@ void pkpy_delete_instance(SkaEntity entity) {
     );
 }
 
+static void broadcast_internal_event(SkaEntity entity, py_Ref self, const char* eventName) {
+    static char broadcastStringBuffer[64];
+    snprintf(broadcastStringBuffer, sizeof(broadcastStringBuffer), "_e_%u.%s.broadcast()", entity, eventName);
+    py_exec(broadcastStringBuffer, "<main>", EXEC_MODE, NULL);
+    PY_ASSERT_NO_EXC();
+}
+
 void pkpy_on_start(SkaEntity entity) {
     py_Ref self = cre_pkpy_instance_cache_get_checked(entity);
     if (py_getattr(self, startFunctionName)) {
@@ -114,6 +121,7 @@ void pkpy_on_start(SkaEntity entity) {
     } else {
         py_clearexc(NULL);
     }
+    broadcast_internal_event(entity, self, "scene_entered");
 }
 
 void pkpy_on_end(SkaEntity entity) {
@@ -126,6 +134,7 @@ void pkpy_on_end(SkaEntity entity) {
     } else {
         py_clearexc(NULL);
     }
+    broadcast_internal_event(entity, self, "scene_exited");
 }
 
 void pkpy_on_update(SkaEntity entity, f32 deltaTime) {
