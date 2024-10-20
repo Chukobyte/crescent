@@ -16,7 +16,7 @@
 #define EDITOR_ENGINE_EXTENSION ""
 #endif
 
-#ifdef _WINDOWS
+#ifdef _WIN32
 #define CRESCENT_OS_BIN_DIR "windows"
 #elif __APPLE__
 #define CRESCENT_OS_BIN_DIR "macosx"
