@@ -34,7 +34,7 @@ CRENativeScriptClass* fps_display_create_new_instance(SkaEntity entity) {
     fpsClassInstance->on_start_func = fps_display_on_start;
     fpsClassInstance->on_end_func = fps_display_on_end;
     fpsClassInstance->update_func = fps_display_update;
-    FpsDisplayClassData* classData = SKA_MEM_ALLOCATE(FpsDisplayClassData);
+    FpsDisplayClassData* classData = SKA_ALLOC(FpsDisplayClassData);
     classData->value = 10;
     fpsClassInstance->instance_data = classData;
     fpsClassInstance->class_instance_size = (sizeof(CRENativeScriptClass*) + sizeof(FpsDisplayClassData*)) * 4;

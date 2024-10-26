@@ -7,7 +7,7 @@
 #include <seika/string.h>
 
 NodeComponent* node_component_create() {
-    NodeComponent* nodeComponent = SKA_MEM_ALLOCATE(NodeComponent);
+    NodeComponent* nodeComponent = SKA_ALLOC_ZEROED(NodeComponent);
     nodeComponent->name[0] = '\0';
     nodeComponent->timeDilation = (NodeTimeDilation){ .value = 1.0f, .cachedFullValue = 1.0f, .cacheInvalid = true };
     return nodeComponent;
@@ -21,11 +21,11 @@ NodeComponent* node_component_create_ex(const char* name, NodeBaseType baseType)
 }
 
 void node_component_delete(NodeComponent* nodeComponent) {
-    SKA_MEM_FREE(nodeComponent);
+    SKA_FREE(nodeComponent);
 }
 
 NodeComponent* node_component_copy(const NodeComponent* nodeComponent) {
-    NodeComponent* copiedNode = SKA_MEM_ALLOCATE(NodeComponent);
+    NodeComponent* copiedNode = SKA_ALLOC(NodeComponent);
     memcpy(copiedNode, nodeComponent, sizeof(NodeComponent));
     return copiedNode;
 }

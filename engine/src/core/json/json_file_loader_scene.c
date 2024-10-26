@@ -44,13 +44,13 @@ void json_node_set_shader_instance_paths(JsonSceneNode* node, cJSON* componentJs
     ShaderInstancePaths shaderInstancePaths = json_get_shader_instance_paths(componentJson, key);
     if (shaderInstancePaths.shader) {
         if (node->shaderInstanceShaderPath) {
-            SKA_MEM_FREE(node->shaderInstanceShaderPath);
+            SKA_FREE(node->shaderInstanceShaderPath);
         }
         node->shaderInstanceShaderPath = shaderInstancePaths.shader;
     } else if (shaderInstancePaths.vertex && shaderInstancePaths.fragment) {
         if (node->shaderInstanceVertexPath && node->shaderInstanceFragmentPath) {
-            SKA_MEM_FREE(node->shaderInstanceVertexPath);
-            SKA_MEM_FREE(node->shaderInstanceFragmentPath);
+            SKA_FREE(node->shaderInstanceVertexPath);
+            SKA_FREE(node->shaderInstanceFragmentPath);
         }
         node->shaderInstanceVertexPath = shaderInstancePaths.vertex;
         node->shaderInstanceFragmentPath = shaderInstancePaths.fragment;
@@ -67,7 +67,7 @@ void json_node_set_shader_instance_paths(JsonSceneNode* node, cJSON* componentJs
 JsonSceneNode* cre_json_load_scene_node(cJSON* nodeJson, JsonSceneNode* parentNode);
 
 JsonSceneNode* cre_json_create_new_node() {
-    JsonSceneNode* node = SKA_MEM_ALLOCATE(JsonSceneNode);
+    JsonSceneNode* node = SKA_ALLOC_ZEROED(JsonSceneNode);
     node->type = NodeBaseType_INVALID;
     return node;
 }
@@ -79,7 +79,7 @@ JsonSceneNode* cre_json_load_scene_file(const char* filePath) {
     ska_logger_debug("Loading scene from path '%s'", filePath);
 
     cJSON* sceneJson = cJSON_Parse(fileContent);
-    SKA_MEM_FREE(fileContent);
+    SKA_FREE(fileContent);
     if (sceneJson != NULL) {
         return cre_json_load_scene_node(sceneJson, NULL); // Return root node
     }
@@ -126,12 +126,12 @@ void cre_json_delete_json_scene_node(JsonSceneNode* node) {
         tilemap_component_delete(node->components[TILEMAP_COMPONENT_INDEX]);
     }
 
-    SKA_MEM_FREE(node->shaderInstanceShaderPath);
-    SKA_MEM_FREE(node->shaderInstanceVertexPath);
-    SKA_MEM_FREE(node->shaderInstanceFragmentPath);
-    SKA_MEM_FREE(node->name);
-    SKA_MEM_FREE(node->fontUID);
-    SKA_MEM_FREE(node->spriteTexturePath);
+    SKA_FREE(node->shaderInstanceShaderPath);
+    SKA_FREE(node->shaderInstanceVertexPath);
+    SKA_FREE(node->shaderInstanceFragmentPath);
+    SKA_FREE(node->name);
+    SKA_FREE(node->fontUID);
+    SKA_FREE(node->spriteTexturePath);
 }
 
 //--- Private functions ---//
@@ -182,7 +182,7 @@ static void cre_json_sprite_create_or_set_default(JsonSceneNode* node, cJSON* co
         spriteComponent = node->components[SPRITE_COMPONENT_INDEX];
         char* newTexturePath = json_get_string_new_unchecked(componentJson, "texture_path");
         if (newTexturePath != NULL) {
-            SKA_MEM_FREE(node->spriteTexturePath);
+            SKA_FREE(node->spriteTexturePath);
             node->spriteTexturePath = newTexturePath;
         }
         spriteComponent->drawSource = json_get_rect2_default(componentJson, "draw_source", spriteComponent->drawSource);
@@ -269,7 +269,7 @@ static void cre_json_animated_sprite_create_or_set_default(JsonSceneNode* node, 
         ska_bool_to_string(animatedSpriteComponent->flipV),
         ska_bool_to_string(animatedSpriteComponent->staggerStartAnimationTimes));
     if (currentAnimationName != NULL) {
-        SKA_MEM_FREE(currentAnimationName);
+        SKA_FREE(currentAnimationName);
     }
 }
 
@@ -285,7 +285,7 @@ static void cre_json_text_label_create_or_set_default(JsonSceneNode* node, cJSON
         textLabelComponent = (TextLabelComponent*) node->components[TEXT_LABEL_COMPONENT_INDEX];
         char* newFontUID = json_get_string_new_unchecked(componentJson, "uid");
         if (newFontUID != NULL) {
-            SKA_MEM_FREE(node->fontUID);
+            SKA_FREE(node->fontUID);
             node->fontUID = newFontUID;
         }
         ska_strcpy(textLabelComponent->text, json_get_string_default(componentJson, "text", textLabelComponent->text));
@@ -404,7 +404,7 @@ static void cre_json_tilemap_create_or_set_default(JsonSceneNode* node, cJSON* c
         tilemapComponent = (TilemapComponent*)node->components[TILEMAP_COMPONENT_INDEX];
         char* tilemapTexturePath = json_get_string_new_unchecked(componentJson, "texture_path");
         if (tilemapTexturePath) {
-            SKA_MEM_FREE(node->spriteTexturePath);
+            SKA_FREE(node->spriteTexturePath);
             node->spriteTexturePath = tilemapTexturePath;
         }
         tilemapComponent->tilemap->tileset.tileSize = json_get_size2di_default(componentJson, "tile_size", tilemapComponent->tilemap->tileset.tileSize);
@@ -438,7 +438,7 @@ JsonSceneNode* cre_json_load_scene_node(cJSON* nodeJson, JsonSceneNode* parentNo
     char* externalSceneNodeString = json_get_string_default_new(nodeJson, "external_node_source", NULL);
     if (externalSceneNodeString != NULL) {
         node = cre_json_load_scene_file(externalSceneNodeString);
-        SKA_MEM_FREE(node->name);
+        SKA_FREE(node->name);
         cre_json_set_all_child_nodes_from_external_source(node);
     } else {
         node = cre_json_create_new_node();

@@ -136,7 +136,7 @@ CREGameProperties* cre_json_load_config_file(const char* filePath) {
 
 
     cJSON_Delete(configJson);
-    SKA_MEM_FREE(fileContent);
+    SKA_FREE(fileContent);
 
     return properties;
 }
@@ -147,7 +147,7 @@ SkaCurveFloat cre_json_load_curve_float_file(const char* filePath, bool *isSucce
     char* fileContent = ska_asset_file_loader_read_file_contents_as_string(filePath, NULL);
     ska_logger_debug("Loading curve file from path '%s'", filePath);
     cJSON* curveJson = cJSON_Parse(fileContent);
-    SKA_MEM_FREE(fileContent);
+    SKA_FREE(fileContent);
 
     // Make sure curve file is valid json
     if (curveJson == NULL) {
@@ -165,7 +165,7 @@ SkaCurveFloat cre_json_load_curve_float_file(const char* filePath, bool *isSucce
         }
         return newCurve;
     }
-    SKA_MEM_FREE(assetType);
+    SKA_FREE(assetType);
 
     // Now we know it's a valid file, read in the control points
     SkaCurveControlPoint controlPoints[SKA_CURVE_MAX_CONTROL_POINTS];

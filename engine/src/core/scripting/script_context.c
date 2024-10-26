@@ -3,7 +3,7 @@
 #include <seika/memory.h>
 
 CREScriptContext* cre_script_context_create() {
-    return SKA_MEM_ALLOCATE(CREScriptContext);
+    return SKA_ALLOC(CREScriptContext);
 }
 
 CREScriptContext* cre_script_context_create_from_template(const CREScriptContextTemplate* temp) {
@@ -23,5 +23,5 @@ CREScriptContext* cre_script_context_create_from_template(const CREScriptContext
 }
 
 void cre_script_context_destroy(CREScriptContext* scriptContext) {
-    SKA_MEM_FREE(scriptContext);
+    SKA_FREE(scriptContext);
 }

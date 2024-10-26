@@ -19,7 +19,7 @@ void cre_tilemap_initialize(CreTilemap* tilemap) {
 CreTilemap* cre_tilemap_create_and_initialize() {
     const CreTilemap defaultTilemap = CRE_TILEMAP_DEFAULT_EMPTY;
 
-    CreTilemap* newTilemap = SKA_MEM_ALLOCATE(CreTilemap);
+    CreTilemap* newTilemap = SKA_ALLOC_ZEROED(CreTilemap);
     memcpy(newTilemap, &defaultTilemap, sizeof(CreTilemap));
 
     cre_tilemap_initialize(newTilemap);
@@ -85,8 +85,8 @@ void cre_tilemap_set_tile_render_coord(CreTilemap* tilemap, const SkaVector2i* p
 void cre_tilemap_set_tile_data(CreTilemap* tilemap, const CreTileData* tileData) {
     bool shouldValidateTiles = false;
     if (tilemap->activeTransaction == NULL) {
-        tilemap->activeTransaction = SKA_MEM_ALLOCATE(CreTilemapTransaction);
-        CreTilemapTransactionItem* rootItem = SKA_MEM_ALLOCATE(CreTilemapTransactionItem);
+        tilemap->activeTransaction = SKA_ALLOC_ZEROED(CreTilemapTransaction);
+        CreTilemapTransactionItem* rootItem = SKA_ALLOC_ZEROED(CreTilemapTransactionItem);
         rootItem->data = *tileData;
         tilemap->activeTransaction->rootItem = rootItem;
         tilemap->activeTransaction->requestedSize = tilemap->tilesArray->size;
@@ -94,7 +94,7 @@ void cre_tilemap_set_tile_data(CreTilemap* tilemap, const CreTileData* tileData)
     } else {
         CreTilemapTransactionItem* item = find_transaction_item(tilemap->activeTransaction, &tileData->position);
         if (!item) {
-            item = SKA_MEM_ALLOCATE(CreTilemapTransactionItem);
+            item = SKA_ALLOC_ZEROED(CreTilemapTransactionItem);
             // Add new item to tail
             CreTilemapTransactionItem* tailItem = get_transaction_item_tail(tilemap->activeTransaction);
             SKA_ASSERT(tailItem);
@@ -198,9 +198,9 @@ void cre_tilemap_clear_active_tile_changes(CreTilemap* tilemap) {
         while (item != NULL) {
             CreTilemapTransactionItem* itemToDelete = item;
             item = item->next;
-            SKA_MEM_FREE(itemToDelete);
+            SKA_FREE(itemToDelete);
         }
-        SKA_MEM_FREE(tilemap->activeTransaction);
+        SKA_FREE(tilemap->activeTransaction);
         tilemap->activeTransaction = NULL;
     }
 }

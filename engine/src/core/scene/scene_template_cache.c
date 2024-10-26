@@ -24,7 +24,7 @@ void cre_scene_template_cache_initialize() {}
 void cre_scene_template_cache_finalize() {
     for (CreSceneCacheId cacheId = 0; cacheId < numberOfCachedSceneTemplates; cacheId++) {
         if (cachedSceneTemplates[cacheId].path) {
-            SKA_MEM_FREE(cachedSceneTemplates[cacheId].path);
+            SKA_FREE(cachedSceneTemplates[cacheId].path);
         }
         if (cachedSceneTemplates[cacheId].rootNode) {
             cre_json_delete_json_scene_node(cachedSceneTemplates[cacheId].rootNode);

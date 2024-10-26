@@ -24,7 +24,7 @@ FPSCounter fpsCounter = { .currentFrame = 0, .frameTimes = {0} };
 
 CREEngineContext* cre_engine_context_initialize() {
     SKA_ASSERT(creEngineContext == NULL);
-    creEngineContext = SKA_MEM_ALLOCATE(CREEngineContext);
+    creEngineContext = SKA_ALLOC(CREEngineContext);
     creEngineContext->isRunning = false;
     creEngineContext->targetFPS = 66;
     creEngineContext->stats.averageFPS = 0.0f;
@@ -41,12 +41,12 @@ CREEngineContext* cre_engine_context_initialize() {
 void cre_engine_context_finalize() {
     SKA_ASSERT(creEngineContext != NULL);
     if (creEngineContext->internalAssetsDir != NULL) {
-        SKA_MEM_FREE(creEngineContext->internalAssetsDir);
+        SKA_FREE(creEngineContext->internalAssetsDir);
     }
     if (creEngineContext->projectArchivePath != NULL) {
-        SKA_MEM_FREE(creEngineContext->projectArchivePath);
+        SKA_FREE(creEngineContext->projectArchivePath);
     }
-    SKA_MEM_FREE(creEngineContext);
+    SKA_FREE(creEngineContext);
     creEngineContext = NULL;
 }
 

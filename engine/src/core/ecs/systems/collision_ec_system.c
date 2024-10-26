@@ -83,8 +83,8 @@ void on_entity_entered_scene(SkaECSSystem* system, SkaEntity entity) {
 }
 
 void fixed_update(SkaECSSystem* system, f32 deltaTime) {
-    for (size_t i = 0; i < system->entity_count; i++) {
-        const SkaEntity entity = system->entities[i];
+    SKA_ARRAY_LIST_FOR_EACH(system->entities, SkaEntity, entityPtr) {
+        const SkaEntity entity = *entityPtr;
         Transform2DComponent* transformComp = (Transform2DComponent*)ska_ecs_component_manager_get_component(entity,TRANSFORM2D_COMPONENT_INDEX);
         transformComp->isGlobalTransformDirty = true;
     }
@@ -93,8 +93,8 @@ void fixed_update(SkaECSSystem* system, f32 deltaTime) {
 void collision_render(SkaECSSystem* system) {
     const CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
     const CRECamera2D* defaultCamera = cre_camera_manager_get_default_camera();
-    for (size_t i = 0; i < system->entity_count; i++) {
-        const SkaEntity entity = system->entities[i];
+    SKA_ARRAY_LIST_FOR_EACH(system->entities, SkaEntity, entityPtr) {
+        const SkaEntity entity = *entityPtr;
         Transform2DComponent* transformComp = (Transform2DComponent*)ska_ecs_component_manager_get_component(entity,TRANSFORM2D_COMPONENT_INDEX);
         const Collider2DComponent* colliderComp = (Collider2DComponent*)ska_ecs_component_manager_get_component(entity,COLLIDER2D_COMPONENT_INDEX);
         const CRECamera2D* renderCamera = transformComp->ignoreCamera ? defaultCamera : camera2D;

@@ -2,8 +2,10 @@
 
 #include <seika/assert.h>
 #include <seika/file_system.h>
+#include <seika/flag_utils.h>
 #include <seika/logger.h>
 #include <seika/memory.h>
+#include <seika/string.h>
 #include <seika/input/input.h>
 #include <seika/asset/asset_file_loader.h>
 #include <seika/asset/asset_manager.h>
@@ -37,7 +39,6 @@
 #include "core/scene/scene_manager.h"
 #include "core/scene/scene_template_cache.h"
 #include "core/scripting/python/pocketpy/pkpy_instance_cache.h"
-#include "seika/flag_utils.h"
 
 // Helper functions
 static inline SkaVector2 cre_pkpy_api_helper_mouse_get_global_position(const SkaVector2* offset) {
@@ -918,8 +919,8 @@ bool cre_pkpy_api_game_config_save(int argc, py_StackRef argv) {
     ska_str_to_lower_and_underscore_whitespace(validGameTitle);
     char* fullSavePath = ska_fs_get_user_save_path("crescent", validGameTitle, path);
     const bool success = ska_fs_write_to_file(fullSavePath, jsonData);
-    SKA_MEM_FREE(fullSavePath);
-    SKA_MEM_FREE(validGameTitle);
+    SKA_FREE(fullSavePath);
+    SKA_FREE(validGameTitle);
     py_newbool(py_retval(), success);
     return true;
 }
@@ -936,9 +937,9 @@ bool cre_pkpy_api_game_config_load(int argc, py_StackRef argv) {
     char* fullSavePath = ska_fs_get_user_save_path("crescent", validGameTitle, path);
     char* fileContents = ska_asset_file_loader_read_file_contents_as_string(fullSavePath, NULL);
     py_newstr(py_retval(), fileContents);
-    SKA_MEM_FREE(validGameTitle);
-    SKA_MEM_FREE(fullSavePath);
-    SKA_MEM_FREE(fileContents);
+    SKA_FREE(validGameTitle);
+    SKA_FREE(fullSavePath);
+    SKA_FREE(fileContents);
     return true;
 }
 

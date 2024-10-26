@@ -6,7 +6,7 @@
 static CREGameProperties* properties = NULL;
 
 CREGameProperties* cre_game_props_create() {
-    CREGameProperties* props = SKA_MEM_ALLOCATE(CREGameProperties);
+    CREGameProperties* props = SKA_ALLOC(CREGameProperties);
     props->gameTitle = NULL;
     props->windowWidth = 800;
     props->windowHeight = 600;
@@ -31,12 +31,12 @@ void cre_game_props_initialize(CREGameProperties* initialProps) {
 void cre_game_props_finalize() {
     if (properties != NULL) {
         if (properties->gameTitle != NULL) {
-            SKA_MEM_FREE(properties->gameTitle);
+            SKA_FREE(properties->gameTitle);
         }
         if (properties->initialScenePath != NULL) {
-            SKA_MEM_FREE(properties->initialScenePath);
+            SKA_FREE(properties->initialScenePath);
         }
-        SKA_MEM_FREE(properties);
+        SKA_FREE(properties);
         properties = NULL;
     }
 }

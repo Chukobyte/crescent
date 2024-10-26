@@ -116,8 +116,8 @@ void node_event_destroy_all_entity_events_and_observers(SkaEntity entity) {
                 node_observer_free(nodeEvent->observers[i]);
             }
             // Delete event
-            SKA_MEM_FREE(nodeEvent->id);
-            SKA_MEM_FREE(nodeEvent);
+            SKA_FREE(nodeEvent->id);
+            SKA_FREE(nodeEvent);
         }
         ska_string_hash_map_destroy(eventDatabase.entityEventMaps[entity]);
         eventDatabase.entityEventMaps[entity] = NULL;
@@ -150,7 +150,7 @@ NodeEvent* node_event_create_event_internal(SkaEntity entity, const char* eventI
         register_entity_to_on_scene_exit_callback(entity);
     }
     if (!ska_string_hash_map_has(eventDatabase.entityEventMaps[entity], eventId)) {
-        NodeEvent* event = SKA_MEM_ALLOCATE(NodeEvent);
+        NodeEvent* event = SKA_ALLOC(NodeEvent);
         event->entity = entity;
         event->id = ska_strdup(eventId);
         event->observerCount = 0;
@@ -161,7 +161,7 @@ NodeEvent* node_event_create_event_internal(SkaEntity entity, const char* eventI
 }
 
 NodeEventObserver* node_create_observer_internal(SkaEntity entity, NodeEvent* event, NodeEventObserverCallback observerCallback, void* observerData, NodeEventObserverDataDeleteCallback dataDeleteCallback) {
-    NodeEventObserver* eventObserver = SKA_MEM_ALLOCATE(NodeEventObserver);
+    NodeEventObserver* eventObserver = SKA_ALLOC(NodeEventObserver);
     eventObserver->entity = entity;
     eventObserver->callback = observerCallback;
     eventObserver->data = observerData;
@@ -179,7 +179,7 @@ void node_observer_free(NodeEventObserver* observer) {
     if (observer->data != NULL && observer->dataDeleteCallback != NULL) {
         observer->dataDeleteCallback(observer->data);
     }
-    SKA_MEM_FREE(observer);
+    SKA_FREE(observer);
 }
 
 bool does_entity_have_observer_event_already(SkaEntity observerEntity, NodeEvent* event) {
@@ -193,16 +193,16 @@ bool does_entity_have_observer_event_already(SkaEntity observerEntity, NodeEvent
 }
 
 void register_entity_to_on_scene_exit_callback(SkaEntity entity) {
-    NodeComponent* nodeComp = NULL;
-    if (!eventDatabase.hasEntityRegisteredOnSceneExitCallback[entity] && (nodeComp = (NodeComponent*)ska_ecs_component_manager_get_component_unchecked(entity, NODE_COMPONENT_INDEX))) {
+    NodeComponent* nodeComp = (NodeComponent*)ska_ecs_component_manager_get_component_unchecked(entity, NODE_COMPONENT_INDEX);
+    if (nodeComp && !eventDatabase.hasEntityRegisteredOnSceneExitCallback[entity]) {
         ska_event_register_observer(&nodeComp->onSceneTreeExit, &nodeEntityOnExitSceneObserver);
         eventDatabase.hasEntityRegisteredOnSceneExitCallback[entity] = true;
     }
 }
 
 void unregister_entity_to_on_scene_exit_callback(SkaEntity entity) {
-    NodeComponent* nodeComp = NULL;
-    if (eventDatabase.hasEntityRegisteredOnSceneExitCallback[entity] && (nodeComp = (NodeComponent*)ska_ecs_component_manager_get_component_unchecked(entity, NODE_COMPONENT_INDEX))) {
+    NodeComponent* nodeComp = (NodeComponent*)ska_ecs_component_manager_get_component_unchecked(entity, NODE_COMPONENT_INDEX);
+    if (nodeComp && eventDatabase.hasEntityRegisteredOnSceneExitCallback[entity]) {
         ska_event_unregister_observer(&nodeComp->onSceneTreeExit, &nodeEntityOnExitSceneObserver);
         eventDatabase.hasEntityRegisteredOnSceneExitCallback[entity] = false;
     }

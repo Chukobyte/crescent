@@ -37,7 +37,7 @@ static inline f32 get_random_spread_angle_in_radians(const SkaVector2* direction
 }
 
 Particles2DComponent* particles2d_component_create() {
-    Particles2DComponent* particles2DComponent = SKA_MEM_ALLOCATE(Particles2DComponent);
+    Particles2DComponent* particles2DComponent = SKA_ALLOC_ZEROED(Particles2DComponent);
     particles2DComponent->amount = 8;
     particles2DComponent->initialVelocity = SKA_MINMAX_VEC2_ZERO;
     particles2DComponent->spread = 45.0f;
@@ -54,12 +54,12 @@ Particles2DComponent* particles2d_component_create() {
 
 void particles2d_component_delete(Particles2DComponent* particles2DComponent) {
     if (particles2DComponent) {
-        SKA_MEM_FREE(particles2DComponent);
+        SKA_FREE(particles2DComponent);
     }
 }
 
 Particles2DComponent* particles2d_component_copy(const Particles2DComponent* particles2DComponent) {
-    Particles2DComponent* copiedComponent = SKA_MEM_ALLOCATE(Particles2DComponent);
+    Particles2DComponent* copiedComponent = SKA_ALLOC(Particles2DComponent);
     memcpy(copiedComponent, particles2DComponent, sizeof(Particles2DComponent));
     return copiedComponent;
 }

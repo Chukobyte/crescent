@@ -6,7 +6,7 @@
 #include <seika/string.h>
 
 ScriptComponent* script_component_create(const char* path, const char* name) {
-    ScriptComponent* scriptComponent = SKA_MEM_ALLOCATE(ScriptComponent);
+    ScriptComponent* scriptComponent = SKA_ALLOC(ScriptComponent);
     ska_strcpy(scriptComponent->classPath, path);
     ska_strcpy(scriptComponent->className, name);
     scriptComponent->contextType = CreScriptContextType_NONE;
@@ -20,11 +20,11 @@ ScriptComponent* script_component_create_ex(const char* path, const char* name, 
 }
 
 void script_component_delete(ScriptComponent* scriptComponent) {
-    SKA_MEM_FREE(scriptComponent);
+    SKA_FREE(scriptComponent);
 }
 
 ScriptComponent* script_component_copy(const ScriptComponent* scriptComponent) {
-    ScriptComponent* copiedNode = SKA_MEM_ALLOCATE(ScriptComponent);
+    ScriptComponent* copiedNode = SKA_ALLOC(ScriptComponent);
     memcpy(copiedNode, scriptComponent, sizeof(ScriptComponent));
     return copiedNode;
 }

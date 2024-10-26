@@ -45,7 +45,7 @@ typedef struct SceneTree {
 } SceneTree;
 
 SceneTreeNode* cre_scene_tree_create_tree_node(SkaEntity entity, SceneTreeNode* parent) {
-    SceneTreeNode* treeNode = SKA_MEM_ALLOCATE(SceneTreeNode);
+    SceneTreeNode* treeNode = SKA_ALLOC(SceneTreeNode);
     treeNode->entity = entity;
     treeNode->parent = parent;
     treeNode->childCount = 0;
@@ -59,9 +59,9 @@ typedef struct Scene {
 } Scene;
 
 Scene* cre_scene_create_scene(const char* scenePath) {
-    Scene* scene = SKA_MEM_ALLOCATE(Scene);
+    Scene* scene = SKA_ALLOC(Scene);
     scene->scenePath = scenePath;
-    scene->sceneTree = SKA_MEM_ALLOCATE(SceneTree);
+    scene->sceneTree = SKA_ALLOC(SceneTree);
     scene->sceneTree->root = NULL;
     return scene;
 }
@@ -180,7 +180,7 @@ void cre_scene_manager_process_queued_deletion_entities() {
         SkaEntity entityToDelete = entitiesQueuedForDeletion[i];
         SKA_ASSERT_FMT(ska_hash_map_has(entityToTreeNodeMap, &entityToDelete), "Entity '%d' not in tree node map!?", entityToDelete);
         SceneTreeNode* treeNode = (SceneTreeNode*) *(SceneTreeNode**) ska_hash_map_get(entityToTreeNodeMap,&entityToDelete);
-        SKA_MEM_FREE(treeNode);
+        SKA_FREE(treeNode);
         ska_hash_map_erase(entityToTreeNodeMap, &entityToDelete);
         // Remove entity from systems
         ska_ecs_system_remove_entity_from_all_systems(entityToDelete);
@@ -247,7 +247,7 @@ void cre_scene_manager_process_queued_scene_change() {
         // Destroy old scene
         if (activeScene != NULL) {
             cre_queue_destroy_tree_node_entity_all(activeScene->sceneTree->root);
-            SKA_MEM_FREE(activeScene);
+            SKA_FREE(activeScene);
         }
 
         // Reset Camera
