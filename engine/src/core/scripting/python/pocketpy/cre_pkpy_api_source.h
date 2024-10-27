@@ -1055,7 +1055,7 @@
 "\n"\
 "    @draw_source.setter\n"\
 "    def draw_source(self, value: Rect2) -> None:\n"\
-"        crescent_internal.sprite_set_draw_source(self.entity_id, value.x, value.y, value.w, value.h)\n"\
+"        crescent_internal.sprite_set_draw_source(self.entity_id, float(value.x), float(value.y), float(value.w), float(value.h))\n"\
 "\n"\
 "    @property\n"\
 "    def flip_h(self) -> bool:\n"\
@@ -1229,7 +1229,7 @@
 "        return Size2D(w, h)\n"\
 "\n"\
 "    def set_extents(self, extents: Size2D) -> None:\n"\
-"        crescent_internal.collider2d_set_extents(self.entity_id, extents.w, extents.h)\n"\
+"        crescent_internal.collider2d_set_extents(self.entity_id, float(extents.w), float(extents.h))\n"\
 "\n"\
 "    @property\n"\
 "    def extents(self) -> Size2D:\n"\

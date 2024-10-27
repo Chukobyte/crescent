@@ -1052,7 +1052,7 @@ class Sprite(Node2D):
 
     @draw_source.setter
     def draw_source(self, value: Rect2) -> None:
-        crescent_internal.sprite_set_draw_source(self.entity_id, value.x, value.y, value.w, value.h)
+        crescent_internal.sprite_set_draw_source(self.entity_id, float(value.x), float(value.y), float(value.w), float(value.h))
 
     @property
     def flip_h(self) -> bool:
@@ -1226,7 +1226,7 @@ class Collider2D(Node2D):
         return Size2D(w, h)
 
     def set_extents(self, extents: Size2D) -> None:
-        crescent_internal.collider2d_set_extents(self.entity_id, extents.w, extents.h)
+        crescent_internal.collider2d_set_extents(self.entity_id, float(extents.w), float(extents.h))
 
     @property
     def extents(self) -> Size2D:

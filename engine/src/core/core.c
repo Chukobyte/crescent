@@ -3,16 +3,17 @@
 #include <time.h>
 #include <string.h>
 
-#include <seika/seika.h>
-#include <seika/memory.h>
+#include <seika/assert.h>
 #include <seika/logger.h>
 #include <seika/file_system.h>
 #include <seika/string.h>
-#include <seika/assert.h>
+#include <seika/time.h>
+#include <seika/audio/audio.h>
 #include <seika/ecs/ec_system.h>
 #include <seika/asset/asset_file_loader.h>
 #include <seika/asset/asset_manager.h>
 #include <seika/input/input.h>
+#include <seika/rendering/window.h>
 
 #include "core_info.h"
 #include "game_properties.h"
@@ -24,15 +25,16 @@
 #include "scene/scene_manager.h"
 #include "json/json_file_loader.h"
 #include "math/curve_float_manager.h"
+#include "seika/rendering/renderer.h"
 
 // The default project path if no directory override is provided
 #define CRE_PROJECT_CONFIG_FILE_NAME "project.ccfg"
 
-bool cre_initialize_ecs();
-bool cre_load_built_in_assets();
-bool cre_load_assets_from_configuration();
-void cre_process_game_update();
-void cre_render();
+static bool cre_initialize_ecs();
+static bool cre_load_built_in_assets();
+static bool cre_load_assets_from_configuration();
+static void cre_process_game_update();
+static void cre_render();
 
 CREGameProperties* gameProperties = NULL;
 CREEngineContext* engineContext = NULL;
@@ -94,20 +96,34 @@ bool cre_initialize(int32 argv, char** args) {
     cre_game_props_print();
 
     // Initialize seika framework
-    const bool hasSeikaInitialized = ska_init_all2(
-                                         gameProperties->gameTitle,
-                                         gameProperties->windowWidth,
-                                         gameProperties->windowHeight,
-                                         gameProperties->resolutionWidth,
-                                         gameProperties->resolutionHeight,
-                                         gameProperties->audioWavSampleRate,
-                                         gameProperties->maintainAspectRatio);
-    if (!hasSeikaInitialized) {
-        ska_logger_error("Failed to initialize seika framework!");
-        return false;
-    }
+    ska_asset_manager_initialize();
+    bool hasInitialized = ska_window_initialize((SkaWindowProperties){
+        .title = gameProperties->gameTitle,
+        .windowWidth = gameProperties->windowWidth,
+        .windowHeight = gameProperties->windowHeight,
+        .resolutionWidth = gameProperties->resolutionWidth,
+        .resolutionHeight = gameProperties->resolutionHeight,
+        .maintainAspectRatio = gameProperties->maintainAspectRatio,
+    });
+    SKA_ASSERT(hasInitialized);
+    hasInitialized = ska_input_initialize();
+    SKA_ASSERT(hasInitialized);
+    hasInitialized = ska_audio_initialize();
+    SKA_ASSERT(hasInitialized);
+    // const bool hasSeikaInitialized = ska_init_all2(
+    //                                      gameProperties->gameTitle,
+    //                                      gameProperties->windowWidth,
+    //                                      gameProperties->windowHeight,
+    //                                      gameProperties->resolutionWidth,
+    //                                      gameProperties->resolutionHeight,
+    //                                      gameProperties->audioWavSampleRate,
+    //                                      gameProperties->maintainAspectRatio);
+    // if (!hasSeikaInitialized) {
+    //     ska_logger_error("Failed to initialize seika framework!");
+    //     return false;
+    // }
 
-    ska_set_vsync_enabled(gameProperties->vsyncEnabled);
+    ska_window_set_vsync(gameProperties->vsyncEnabled);
 
     // Initialize sub systems
     if (!cre_initialize_ecs()) {
@@ -195,7 +211,7 @@ void cre_update() {
     cre_scene_manager_process_queued_creation_entities();
 
     // Main loop
-    ska_update();
+    // ska_update();
     cre_process_game_update();
     cre_render();
 
@@ -236,7 +252,12 @@ void cre_process_game_update() {
 
     while (accumulator >= CRE_GLOBAL_PHYSICS_DELTA_TIME) {
         accumulator -= CRE_GLOBAL_PHYSICS_DELTA_TIME;
-        ska_fixed_update(CRE_GLOBAL_PHYSICS_DELTA_TIME);
+        // ska_fixed_update(CRE_GLOBAL_PHYSICS_DELTA_TIME);
+
+        static f32 globalTime = 0.0f;
+        globalTime += CRE_GLOBAL_PHYSICS_DELTA_TIME;
+        ska_renderer_set_global_shader_param_time(globalTime);
+
         ska_ecs_system_event_fixed_update_systems(CRE_GLOBAL_PHYSICS_DELTA_TIME);
         ska_input_new_frame();
     }
@@ -254,11 +275,17 @@ void cre_render() {
 }
 
 bool cre_is_running() {
-    return engineContext->isRunning && ska_is_running();
+    // return engineContext->isRunning && ska_is_running();
+    return engineContext->isRunning;
 }
 
 int32 cre_shutdown() {
-    ska_shutdown_all();
+    // ska_shutdown_all();
+    ska_window_finalize();
+    ska_input_finalize();
+    ska_audio_finalize();
+    ska_asset_manager_finalize();
+
     cre_game_props_finalize();
     cre_scene_manager_finalize();
     cre_ecs_manager_finalize();

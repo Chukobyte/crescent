@@ -2001,7 +2001,7 @@ bool cre_pkpy_api_animated_sprite_get_shader_instance(int argc, py_StackRef argv
 }
 
 bool cre_pkpy_api_animated_sprite_set_shader_instance(int argc, py_StackRef argv) {
-    PY_CHECK_ARGC(5);
+    PY_CHECK_ARGC(2);
     PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(1, tp_int);
     const py_i64 entityId = py_toint(py_arg(0));
     const py_i64 pyShaderInstanceId = py_toint(py_arg(1));
