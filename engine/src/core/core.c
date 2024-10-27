@@ -25,6 +25,7 @@
 #include "scene/scene_manager.h"
 #include "json/json_file_loader.h"
 #include "math/curve_float_manager.h"
+#include "seika/input/sdl_input.h"
 #include "seika/rendering/renderer.h"
 
 // The default project path if no directory override is provided
@@ -222,6 +223,29 @@ void cre_update() {
 }
 
 void cre_process_game_update() {
+    ska_input_new_frame();
+
+    SDL_Event event;
+    while (SDL_PollEvent(&event)) {
+        switch(event.type) {
+            case SDL_EVENT_QUIT: {
+                engineContext->isRunning = false;
+                break;
+            }
+            case SDL_EVENT_WINDOW_RESIZED: {
+                const Sint32 windowWidth = event.window.data1;
+                const Sint32 windowHeight = event.window.data2;
+                ska_renderer_update_window_size(windowWidth, windowHeight);
+                break;
+            }
+            default: {
+                ska_sdl_process_event(event);
+                break;
+            }
+        }
+    }
+    ska_sdl_process_axis_events();
+
     ska_ecs_system_event_pre_update_all_systems();
 
     static const uint32 MILLISECONDS_PER_TICK = 1000; // TODO: Put in another place
