@@ -1598,7 +1598,7 @@ bool cre_pkpy_api_sprite_get_draw_source(int argc, py_StackRef argv) {
 
 bool cre_pkpy_api_sprite_set_draw_source(int argc, py_StackRef argv) {
     PY_CHECK_ARGC(5);
-    PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(2, tp_float); PY_CHECK_ARG_TYPE(3, tp_float); PY_CHECK_ARG_TYPE(4, tp_float); PY_CHECK_ARG_TYPE(5, tp_float);
+    // PY_CHECK_ARG_TYPE(0, tp_int); PY_CHECK_ARG_TYPE(2, tp_float); PY_CHECK_ARG_TYPE(3, tp_float); PY_CHECK_ARG_TYPE(4, tp_float); PY_CHECK_ARG_TYPE(5, tp_float);
     const py_i64 entityId = py_toint(py_arg(0));
     const f64 x = py_tofloat(py_arg(1));
     const f64 y = py_tofloat(py_arg(2));

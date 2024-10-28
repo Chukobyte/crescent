@@ -31,10 +31,11 @@
 // The default project path if no directory override is provided
 #define CRE_PROJECT_CONFIG_FILE_NAME "project.ccfg"
 
-static bool cre_initialize_ecs();
-static bool cre_load_built_in_assets();
-static bool cre_load_assets_from_configuration();
-static void cre_process_game_update();
+static bool initialize_ecs();
+static bool load_built_in_assets();
+static bool load_assets_from_configuration();
+static void process_game_update();
+static void process_sdl_events();
 static void cre_render();
 
 CREGameProperties* gameProperties = NULL;
@@ -127,15 +128,15 @@ bool cre_initialize(int32 argv, char** args) {
     ska_window_set_vsync(gameProperties->vsyncEnabled);
 
     // Initialize sub systems
-    if (!cre_initialize_ecs()) {
+    if (!initialize_ecs()) {
         ska_logger_error("Failed to initialize ecs!");
         return false;
     }
 
     cre_scene_manager_initialize();
 
-    cre_load_built_in_assets();
-    cre_load_assets_from_configuration();
+    load_built_in_assets();
+    load_assets_from_configuration();
 
     ska_logger_info("Crescent Engine v%s initialized!", CRE_CORE_VERSION);
     engineContext->targetFPS = gameProperties->targetFPS;
@@ -147,19 +148,18 @@ bool cre_initialize(int32 argv, char** args) {
     return true;
 }
 
-bool cre_initialize_ecs() {
+bool initialize_ecs() {
     cre_ecs_manager_initialize();
     return true;
 }
 
-bool cre_load_built_in_assets() {
+bool load_built_in_assets() {
     // Load default font
     ska_asset_manager_load_font_from_memory(CRE_DEFAULT_FONT_KEY, CRE_EMBEDDED_ASSET_FONT_VERDANA_TTF_HEX, CRE_EMBEDDED_ASSET_FONT_VERDANA_TTF_SIZE, CRE_DEFAULT_FONT_ASSET.size, CRE_DEFAULT_FONT_ASSET.applyNearestNeighbor);
-
     return true;
 }
 
-bool cre_load_assets_from_configuration() {
+bool load_assets_from_configuration() {
     // Audio Sources
     for (size_t i = 0; i < gameProperties->audioSourceCount; i++) {
         const CREAssetAudioSource assetAudioSource = gameProperties->audioSources[i];
@@ -213,7 +213,7 @@ void cre_update() {
 
     // Main loop
     // ska_update();
-    cre_process_game_update();
+    process_game_update();
     cre_render();
 
     const uint32_t endFrameTime = ska_get_ticks();
@@ -222,9 +222,7 @@ void cre_update() {
     cre_engine_context_update_stats(endFrameTime - startFrameTime);
 }
 
-void cre_process_game_update() {
-    ska_input_new_frame();
-
+void process_sdl_events() {
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
         switch(event.type) {
@@ -245,6 +243,12 @@ void cre_process_game_update() {
         }
     }
     ska_sdl_process_axis_events();
+}
+
+void process_game_update() {
+    ska_input_new_frame();
+
+    process_sdl_events();
 
     ska_ecs_system_event_pre_update_all_systems();
 
