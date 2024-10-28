@@ -112,18 +112,6 @@ bool cre_initialize(int32 argv, char** args) {
     SKA_ASSERT(hasInitialized);
     hasInitialized = ska_audio_initialize();
     SKA_ASSERT(hasInitialized);
-    // const bool hasSeikaInitialized = ska_init_all2(
-    //                                      gameProperties->gameTitle,
-    //                                      gameProperties->windowWidth,
-    //                                      gameProperties->windowHeight,
-    //                                      gameProperties->resolutionWidth,
-    //                                      gameProperties->resolutionHeight,
-    //                                      gameProperties->audioWavSampleRate,
-    //                                      gameProperties->maintainAspectRatio);
-    // if (!hasSeikaInitialized) {
-    //     ska_logger_error("Failed to initialize seika framework!");
-    //     return false;
-    // }
 
     ska_window_set_vsync(gameProperties->vsyncEnabled);
 
@@ -212,7 +200,6 @@ void cre_update() {
     cre_scene_manager_process_queued_creation_entities();
 
     // Main loop
-    // ska_update();
     process_game_update();
     cre_render();
 
@@ -303,12 +290,10 @@ void cre_render() {
 }
 
 bool cre_is_running() {
-    // return engineContext->isRunning && ska_is_running();
     return engineContext->isRunning;
 }
 
 int32 cre_shutdown() {
-    // ska_shutdown_all();
     ska_window_finalize();
     ska_input_finalize();
     ska_audio_finalize();
