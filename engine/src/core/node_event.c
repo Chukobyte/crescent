@@ -193,6 +193,7 @@ bool does_entity_have_observer_event_already(SkaEntity observerEntity, NodeEvent
 }
 
 void register_entity_to_on_scene_exit_callback(SkaEntity entity) {
+    ska_ecs_component_manager_reserve(entity);
     NodeComponent* nodeComp = (NodeComponent*)ska_ecs_component_manager_get_component_unchecked(entity, NODE_COMPONENT_INDEX);
     if (nodeComp && !eventDatabase.hasEntityRegisteredOnSceneExitCallback[entity]) {
         ska_event_register_observer(&nodeComp->onSceneTreeExit, &nodeEntityOnExitSceneObserver);
