@@ -13,7 +13,9 @@
 #include <seika/asset/asset_file_loader.h>
 #include <seika/asset/asset_manager.h>
 #include <seika/input/input.h>
+#include <seika/input/sdl_input.h>
 #include <seika/rendering/window.h>
+#include <seika/rendering/renderer.h>
 
 #include "core_info.h"
 #include "game_properties.h"
@@ -26,8 +28,6 @@
 #include "scene/scene_manager.h"
 #include "json/json_file_loader.h"
 #include "math/curve_float_manager.h"
-#include "seika/input/sdl_input.h"
-#include "seika/rendering/renderer.h"
 
 // The default project path if no directory override is provided
 #define CRE_PROJECT_CONFIG_FILE_NAME "project.ccfg"
