@@ -45,7 +45,7 @@ typedef struct SceneTree {
 } SceneTree;
 
 SceneTreeNode* cre_scene_tree_create_tree_node(SkaEntity entity, SceneTreeNode* parent) {
-    SceneTreeNode* treeNode = SKA_ALLOC(SceneTreeNode);
+    SceneTreeNode* treeNode = SKA_ALLOC_ZEROED(SceneTreeNode);
     treeNode->entity = entity;
     treeNode->parent = parent;
     treeNode->childCount = 0;
