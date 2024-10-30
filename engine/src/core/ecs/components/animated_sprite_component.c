@@ -108,7 +108,7 @@ void animated_sprite_component_data_delete(AnimatedSpriteComponentData* animated
 }
 
 AnimatedSpriteComponent* animated_sprite_component_data_copy_to_animated_sprite(const AnimatedSpriteComponentData* animatedSpriteComponentData) {
-    AnimatedSpriteComponent* copiedNode = SKA_ALLOC(AnimatedSpriteComponent);
+    AnimatedSpriteComponent* copiedNode = SKA_ALLOC_ZEROED(AnimatedSpriteComponent);
     copiedNode->animationCount = animatedSpriteComponentData->animationCount;
     copiedNode->modulate = animatedSpriteComponentData->modulate;
     copiedNode->origin = animatedSpriteComponentData->origin;
