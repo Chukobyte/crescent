@@ -9,8 +9,7 @@ if (NOT TARGET seika)
     FetchContent_Declare(
             seika_content
             GIT_REPOSITORY https://github.com/Chukobyte/seika.git
-#            GIT_TAG v0.1.6
-            GIT_TAG 1.0
+            GIT_TAG v0.2.0
     )
     FetchContent_MakeAvailable(seika_content)
 endif ()
@@ -21,7 +20,7 @@ if (NOT TARGET pocketpy)
     FetchContent_Declare(
             pocketpy_content
             GIT_REPOSITORY https://github.com/blueloveTH/pocketpy.git
-            GIT_TAG v2.0.0
+            GIT_TAG v2.0.1
     )
     FetchContent_MakeAvailable(pocketpy_content)
     target_include_directories(pocketpy PUBLIC ${pocketpy_content_SOURCE_DIR} ${pocketpy_content_SOURCE_DIR}/include)
