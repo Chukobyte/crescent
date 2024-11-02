@@ -6,6 +6,7 @@
 #include <implot.h>
 #include <IconsFontAwesome6.h>
 
+#include <seika/rendering/window.h>
 #include <seika/rendering/renderer.h>
 #include <seika/logger.h>
 
@@ -18,7 +19,6 @@
 #include "ui/imgui/imgui_handler.h"
 #include "ui/imgui/imgui_styler.h"
 #include "utils/file_system_helper.h"
-#include "seika/seika.h"
 
 static EditorContext* editorContext = EditorContext::Get();
 
@@ -37,9 +37,7 @@ bool Editor::Initialize() {
         return false;
     }
 
-    // Init seika
-    ska_init();
-    // TODO: Figure out window stuff dimensions...
+    // Init seika renderer for simulation purposes
     ska_renderer_initialize(800, 600, 800, 600, false);
 
     // initialize ecs components to use index for now
@@ -176,7 +174,7 @@ bool Editor::IsRunning() const {
 }
 
 void Editor::Shutdown() {
-    ska_shutdown_all();
+    ska_renderer_finalize();
 
     cre_ecs_manager_finalize_editor();
 
