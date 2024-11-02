@@ -5,7 +5,7 @@
 #include <seika/memory.h>
 
 SpriteComponent* sprite_component_create() {
-    SpriteComponent* spriteComponent = SKA_MEM_ALLOCATE(SpriteComponent);
+    SpriteComponent* spriteComponent = SKA_ALLOC_ZEROED(SpriteComponent);
     spriteComponent->flipH = false;
     spriteComponent->flipV = false;
     spriteComponent->modulate = SKA_COLOR_WHITE;
@@ -15,11 +15,11 @@ SpriteComponent* sprite_component_create() {
 }
 
 void sprite_component_delete(SpriteComponent* spriteComponent) {
-    SKA_MEM_FREE(spriteComponent);
+    SKA_FREE(spriteComponent);
 }
 
 SpriteComponent* sprite_component_copy(const SpriteComponent* spriteComponent) {
-    SpriteComponent* copiedNode = SKA_MEM_ALLOCATE(SpriteComponent);
+    SpriteComponent* copiedNode = SKA_ALLOC(SpriteComponent);
     memcpy(copiedNode, spriteComponent, sizeof(SpriteComponent));
     return copiedNode;
 }

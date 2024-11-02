@@ -1,40 +1,38 @@
 #include "curve_float_manager.h"
 
 #include <seika/math/curve_float.h>
-#include <seika/data_structures/queue.h>
+#include <seika/data_structures/id_queue.h>
 #include <seika/assert.h>
 
 #include "../json/json_file_loader.h"
 
 static SkaCurveFloat curves[CRE_MAX_CURVE_FLOATS] = {0};
-static SkaQueue* idQueue = NULL;
+static SkaIdQueue* idQueue = NULL;
 
 void cre_curve_float_manager_init() {
     if (idQueue == NULL) {
-        idQueue = ska_queue_create(CRE_MAX_CURVE_FLOATS, CRE_CURVE_FLOAT_INVALID_ID);
-        for (uint32_t i = 0; i < CRE_MAX_CURVE_FLOATS; i++) {
-            ska_queue_enqueue(idQueue, i);
-        }
+        idQueue = ska_id_queue_create(CRE_MAX_CURVE_FLOATS);
     }
 }
 
 void cre_curve_float_manager_finalize() {
     if (idQueue != NULL) {
-        ska_queue_destroy(idQueue);
+        ska_id_queue_destroy(idQueue);
         idQueue = NULL;
     }
 }
 
 CurveFloatId cre_curve_float_manager_create_new() {
-    SKA_ASSERT_FMT(!ska_queue_is_empty(idQueue), "Curve float id queue is empty!");
-    CurveFloatId newId = ska_queue_dequeue(idQueue);
+    SKA_ASSERT_FMT(!ska_id_queue_is_empty(idQueue), "Curve float id queue is empty!");
+    CurveFloatId newId;;
+    const bool success = ska_id_queue_dequeue(idQueue, &newId);
+    SKA_ASSERT(success);
     curves[newId].controlPointCount = 0;
     return newId;
 }
 
 void cre_curve_float_manager_delete(CurveFloatId curveId) {
-    SKA_ASSERT_FMT(!ska_queue_is_full(idQueue), "Curve float id queue is full!");
-    ska_queue_enqueue(idQueue, curveId);
+    ska_id_queue_enqueue(idQueue, curveId);
 }
 
 bool cre_curve_float_manager_load_from_file(CurveFloatId curveId, const char* filePath) {

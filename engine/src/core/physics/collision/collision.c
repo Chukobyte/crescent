@@ -28,8 +28,8 @@ CollisionResult cre_collision_process_entity_collisions(SkaEntity entity) {
 CollisionResult cre_collision_process_mouse_collisions(const SkaRect2* collisionRect) {
     CollisionResult collisionResult = { .sourceEntity = SKA_NULL_ENTITY, .collidedEntityCount = 0 };
     const SkaECSSystem* collisionSystem = cre_collision_ec_system_get();
-    for (size_t i = 0; i < collisionSystem->entity_count; i++) {
-        const SkaEntity otherEntity = collisionSystem->entities[i];
+    SKA_ARRAY_LIST_FOR_EACH(collisionSystem->entities, SkaEntity, entityPtr) {
+        const SkaEntity otherEntity = *entityPtr;
         Transform2DComponent* otherTransformComponent = (Transform2DComponent*)ska_ecs_component_manager_get_component(otherEntity,TRANSFORM2D_COMPONENT_INDEX);
         Collider2DComponent* otherColliderComponent = (Collider2DComponent*)ska_ecs_component_manager_get_component(otherEntity,COLLIDER2D_COMPONENT_INDEX);
         SkaRect2 otherCollisionRect = cre_get_collision_rectangle(otherEntity, otherTransformComponent, otherColliderComponent);

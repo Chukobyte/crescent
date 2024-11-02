@@ -27,15 +27,14 @@ void on_entity_unregistered(SkaECSSystem* system, SkaEntity entity) {
     TilemapComponent* tilemapComponent = (TilemapComponent*)ska_ecs_component_manager_get_component(entity, TILEMAP_COMPONENT_INDEX);
     SKA_ASSERT(tilemapComponent->tilemap);
     cre_tilemap_finalize(tilemapComponent->tilemap);
-    SKA_MEM_FREE(tilemapComponent->tilemap);
+    SKA_FREE(tilemapComponent->tilemap);
     tilemapComponent->tilemap = NULL;
 }
 
 void tilemap_render(SkaECSSystem* system) {
     const CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
     const CRECamera2D* defaultCamera = cre_camera_manager_get_default_camera();
-    for (size_t i = 0; i < system->entity_count; i++) {
-        const SkaEntity entity = system->entities[i];
+    SKA_ECS_SYSTEM_ENTITIES_FOR(system, entity) {
         Transform2DComponent* tilemapTransformComp = (Transform2DComponent*)ska_ecs_component_manager_get_component(entity, TRANSFORM2D_COMPONENT_INDEX);
         TilemapComponent* tilemapComponent = (TilemapComponent*)ska_ecs_component_manager_get_component(entity, TILEMAP_COMPONENT_INDEX);
         SKA_ASSERT(tilemapComponent->tilemap);

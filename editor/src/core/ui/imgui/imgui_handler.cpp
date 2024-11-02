@@ -3,9 +3,7 @@
 #include <functional>
 #include <utility>
 
-#include "imgui.h"
-
-#include <seika/seika.h>
+#include <seika/time.h>
 
 // UIs
 #include "../project_manager_ui.h"

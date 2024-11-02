@@ -45,8 +45,7 @@ void on_entity_unregistered(SkaECSSystem* system, SkaEntity entity) {
 
 void fixed_update(SkaECSSystem* system, f32 deltaTime) {
     CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
-    for (size_t i = 0; i < system->entity_count; i++) {
-        const SkaEntity entity = system->entities[i];
+    SKA_ECS_SYSTEM_ENTITIES_FOR(system, entity) {
         Transform2DComponent* transformComp = (Transform2DComponent*)ska_ecs_component_manager_get_component(entity, TRANSFORM2D_COMPONENT_INDEX);
         ParallaxComponent* parallaxComp = (ParallaxComponent*)ska_ecs_component_manager_get_component(entity, PARALLAX_COMPONENT_INDEX);
         parallax_system_update_entity(entity, transformComp, parallaxComp, camera2D);

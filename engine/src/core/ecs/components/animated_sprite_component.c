@@ -7,11 +7,12 @@
 #include <seika/memory.h>
 #include <seika/string.h>
 #include <seika/assert.h>
+#include <seika/time.h>
 
 #define RBE_MAX_ANIMATIONS 16
 
 AnimatedSpriteComponent* animated_sprite_component_create() {
-    AnimatedSpriteComponent* animatedSpriteComponent = SKA_MEM_ALLOCATE(AnimatedSpriteComponent);
+    AnimatedSpriteComponent* animatedSpriteComponent = SKA_ALLOC_ZEROED(AnimatedSpriteComponent);
     animatedSpriteComponent->animationCount = 0;
     animatedSpriteComponent->modulate.r = 1.0f;
     animatedSpriteComponent->modulate.g = 1.0f;
@@ -25,11 +26,11 @@ AnimatedSpriteComponent* animated_sprite_component_create() {
 }
 
 void animated_sprite_component_delete(AnimatedSpriteComponent* animatedSpriteComponent) {
-    SKA_MEM_FREE(animatedSpriteComponent);
+    SKA_FREE(animatedSpriteComponent);
 }
 
 AnimatedSpriteComponent* animated_sprite_component_copy(const AnimatedSpriteComponent* animatedSpriteComponent) {
-    AnimatedSpriteComponent* copiedNode = SKA_MEM_ALLOCATE(AnimatedSpriteComponent);
+    AnimatedSpriteComponent* copiedNode = SKA_ALLOC(AnimatedSpriteComponent);
     memcpy(copiedNode, animatedSpriteComponent, sizeof(AnimatedSpriteComponent));
     return copiedNode;
 }
@@ -97,17 +98,17 @@ void animated_sprite_component_refresh_random_stagger_animation_time(AnimatedSpr
 
 //--- Animated Sprite Component Data ---//
 AnimatedSpriteComponentData* animated_sprite_component_data_create() {
-    AnimatedSpriteComponentData* animatedSpriteComponent = SKA_MEM_ALLOCATE(AnimatedSpriteComponentData);
+    AnimatedSpriteComponentData* animatedSpriteComponent = SKA_ALLOC_ZEROED(AnimatedSpriteComponentData);
     animatedSpriteComponent->modulate = SKA_COLOR_WHITE;
     return animatedSpriteComponent;
 }
 
 void animated_sprite_component_data_delete(AnimatedSpriteComponentData* animatedSpriteComponent) {
-    SKA_MEM_FREE(animatedSpriteComponent);
+    SKA_FREE(animatedSpriteComponent);
 }
 
 AnimatedSpriteComponent* animated_sprite_component_data_copy_to_animated_sprite(const AnimatedSpriteComponentData* animatedSpriteComponentData) {
-    AnimatedSpriteComponent* copiedNode = SKA_MEM_ALLOCATE(AnimatedSpriteComponent);
+    AnimatedSpriteComponent* copiedNode = SKA_ALLOC_ZEROED(AnimatedSpriteComponent);
     copiedNode->animationCount = animatedSpriteComponentData->animationCount;
     copiedNode->modulate = animatedSpriteComponentData->modulate;
     copiedNode->origin = animatedSpriteComponentData->origin;

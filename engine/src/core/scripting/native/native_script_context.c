@@ -112,7 +112,7 @@ void native_on_delete_instance(SkaEntity entity) {
         );
     }
 
-    SKA_MEM_FREE(scriptClassRef);
+    SKA_FREE(scriptClassRef);
     ska_hash_map_erase(entityToClassName, &entity);
 }
 

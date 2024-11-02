@@ -24,8 +24,7 @@
 #include "core/scripting/python/pocketpy/pkpy_util.h"
 
 inline static SkaTexture* create_mock_texture() {
-    SkaTexture* texture = SKA_MEM_ALLOCATE(SkaTexture);
-    memset(texture, 0, sizeof(SkaTexture));
+    SkaTexture* texture = SKA_ALLOC_ZEROED(SkaTexture);
     return texture;
 }
 
@@ -228,8 +227,8 @@ void cre_pocketpy_api_test(void) {
     char* pythonText = ska_fs_read_file_contents("engine/test/resources/crescent_api_test.py", NULL);
     TEST_ASSERT_NOT_NULL(pythonText);
     py_exec(pythonText, "crescent_api_test.py", EXEC_MODE, NULL);
-    SKA_MEM_FREE(testCustomNodesSource);
-    SKA_MEM_FREE(pythonText);
+    SKA_FREE(testCustomNodesSource);
+    SKA_FREE(pythonText);
     if (py_checkexc(false)) { printf("PKPY Error:\n%s", py_formatexc()); }
     TEST_ASSERT_FALSE(py_checkexc(false));
 

@@ -6,7 +6,7 @@
 #include <seika/memory.h>
 
 Transform2DComponent* transform2d_component_create() {
-    Transform2DComponent* transform2DComponent = SKA_MEM_ALLOCATE(Transform2DComponent);
+    Transform2DComponent* transform2DComponent = SKA_ALLOC_ZEROED(Transform2DComponent);
     transform2DComponent->localTransform = SKA_TRANSFORM_IDENTITY;
     transform2DComponent->globalTransform = SKA_TRANSFORM_MODEL_IDENTITY;
     transform2DComponent->zIndex = 0;
@@ -17,11 +17,11 @@ Transform2DComponent* transform2d_component_create() {
 }
 
 void transform2d_component_delete(Transform2DComponent* transform2DComponent) {
-    SKA_MEM_FREE(transform2DComponent);
+    SKA_FREE(transform2DComponent);
 }
 
 Transform2DComponent* transform2d_component_copy(const Transform2DComponent* transform2DComponent) {
-    Transform2DComponent* copiedNode = SKA_MEM_ALLOCATE(Transform2DComponent);
+    Transform2DComponent* copiedNode = SKA_ALLOC(Transform2DComponent);
     memcpy(copiedNode, transform2DComponent, sizeof(Transform2DComponent));
     return copiedNode;
 }

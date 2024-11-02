@@ -1,5 +1,7 @@
 #include "pkpy_instance_cache.h"
 
+#include <stdio.h>
+
 #include <seika/logger.h>
 #include <seika/ecs/component.h>
 

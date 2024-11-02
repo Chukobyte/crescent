@@ -1,5 +1,7 @@
 #include "pkpy_script_context.h"
 
+#include <stdio.h>
+
 #include <pocketpy.h>
 
 #include <seika/logger.h>
