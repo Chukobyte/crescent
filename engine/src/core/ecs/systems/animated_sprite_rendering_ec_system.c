@@ -1,10 +1,10 @@
 #include "animated_sprite_rendering_ec_system.h"
 
-#include <seika/seika.h>
+#include <seika/assert.h>
+#include <seika/time.h>
 #include <seika/rendering/renderer.h>
 #include <seika/rendering/shader/shader_cache.h>
 #include <seika/ecs/ecs.h>
-#include <seika/assert.h>
 
 #include "../ecs_globals.h"
 #include "../components/animated_sprite_component.h"
@@ -36,8 +36,7 @@ void animated_sprite_render(SkaECSSystem* system) {
     const CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
     const CRECamera2D* defaultCamera = cre_camera_manager_get_default_camera();
     const int32 currentTickTime = (int32)ska_get_ticks();
-    SKA_ARRAY_LIST_FOR_EACH(system->entities, SkaEntity, entityPtr) {
-        const SkaEntity entity = *entityPtr;
+    SKA_ECS_SYSTEM_ENTITIES_FOR(system, entity) {
         Transform2DComponent* spriteTransformComp = (Transform2DComponent*)ska_ecs_component_manager_get_component(entity, TRANSFORM2D_COMPONENT_INDEX);
         AnimatedSpriteComponent* animatedSpriteComponent = (AnimatedSpriteComponent*)ska_ecs_component_manager_get_component(entity, ANIMATED_SPRITE_COMPONENT_INDEX);
         CreAnimationFrame* currentFrame = &animatedSpriteComponent->currentAnimation->animationFrames[animatedSpriteComponent->currentAnimation->currentFrame];

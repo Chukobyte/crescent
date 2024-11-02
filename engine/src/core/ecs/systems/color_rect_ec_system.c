@@ -50,8 +50,7 @@ void color_rect_render(SkaECSSystem* system) {
     const CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
     const CRECamera2D* defaultCamera = cre_camera_manager_get_default_camera();
 
-    SKA_ARRAY_LIST_FOR_EACH(system->entities, SkaEntity, entityPtr) {
-        const SkaEntity entity = *entityPtr;
+    SKA_ECS_SYSTEM_ENTITIES_FOR(system, entity) {
         Transform2DComponent* transformComp = (Transform2DComponent*)ska_ecs_component_manager_get_component(entity, TRANSFORM2D_COMPONENT_INDEX);
         const ColorRectComponent* colorRectComponent = (ColorRectComponent*)ska_ecs_component_manager_get_component(entity, COLOR_RECT_COMPONENT_INDEX);
         const CRECamera2D* renderCamera = transformComp->ignoreCamera ? defaultCamera : camera2D;

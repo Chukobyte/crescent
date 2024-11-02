@@ -34,8 +34,7 @@ void on_entity_unregistered(SkaECSSystem* system, SkaEntity entity) {
 void tilemap_render(SkaECSSystem* system) {
     const CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
     const CRECamera2D* defaultCamera = cre_camera_manager_get_default_camera();
-    SKA_ARRAY_LIST_FOR_EACH(system->entities, SkaEntity, entityPtr) {
-        const SkaEntity entity = *entityPtr;
+    SKA_ECS_SYSTEM_ENTITIES_FOR(system, entity) {
         Transform2DComponent* tilemapTransformComp = (Transform2DComponent*)ska_ecs_component_manager_get_component(entity, TRANSFORM2D_COMPONENT_INDEX);
         TilemapComponent* tilemapComponent = (TilemapComponent*)ska_ecs_component_manager_get_component(entity, TILEMAP_COMPONENT_INDEX);
         SKA_ASSERT(tilemapComponent->tilemap);

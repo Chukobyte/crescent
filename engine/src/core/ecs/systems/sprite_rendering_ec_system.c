@@ -23,10 +23,9 @@ void sprite_render(SkaECSSystem* system) {
     const CRECamera2D* camera2D = cre_camera_manager_get_current_camera();
     const CRECamera2D* defaultCamera = cre_camera_manager_get_default_camera();
 
-    SKA_ARRAY_LIST_FOR_EACH(system->entities, SkaEntity, entityPtr) {
-        const SkaEntity entity = *entityPtr;
-        Transform2DComponent* spriteTransformComp = (Transform2DComponent*) ska_ecs_component_manager_get_component(entity, TRANSFORM2D_COMPONENT_INDEX);
-        SpriteComponent* spriteComponent = (SpriteComponent*) ska_ecs_component_manager_get_component(entity, SPRITE_COMPONENT_INDEX);
+    SKA_ECS_SYSTEM_ENTITIES_FOR(system, entity) {
+        Transform2DComponent* spriteTransformComp = (Transform2DComponent*)ska_ecs_component_manager_get_component(entity, TRANSFORM2D_COMPONENT_INDEX);
+        SpriteComponent* spriteComponent = (SpriteComponent*)ska_ecs_component_manager_get_component(entity, SPRITE_COMPONENT_INDEX);
         const CRECamera2D* renderCamera = spriteTransformComp->ignoreCamera ? defaultCamera : camera2D;
         const SceneNodeRenderResource renderResource = cre_scene_manager_get_scene_node_global_render_resource(entity, spriteTransformComp, &spriteComponent->origin);
         const SkaSize2D destinationSize = {
