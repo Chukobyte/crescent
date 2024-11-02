@@ -6,7 +6,6 @@
 #include <implot.h>
 #include <IconsFontAwesome6.h>
 
-#include <seika/rendering/window.h>
 #include <seika/rendering/renderer.h>
 #include <seika/logger.h>
 
