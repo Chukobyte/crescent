@@ -9,7 +9,7 @@ if (NOT TARGET seika)
     FetchContent_Declare(
             seika_content
             GIT_REPOSITORY https://github.com/Chukobyte/seika.git
-            GIT_TAG v0.2.0
+            GIT_TAG v0.2.1
     )
     FetchContent_MakeAvailable(seika_content)
 endif ()

@@ -6,6 +6,7 @@
 #include <seika/assert.h>
 #include <seika/logger.h>
 #include <seika/file_system.h>
+#include <seika/ska_sdl.h>
 #include <seika/string.h>
 #include <seika/time.h>
 #include <seika/audio/audio.h>
@@ -35,7 +36,6 @@
 static bool initialize_ecs();
 static bool load_built_in_assets();
 static bool load_assets_from_configuration();
-static void process_sdl_events();
 static void engine_render();
 static void engine_update(f32 deltaTime);
 static void engine_fixed_update(f32 deltaTime);
@@ -216,7 +216,10 @@ void cre_update() {
 
     // Main loop
     ska_input_new_frame();
-    process_sdl_events();
+    const bool shouldQuit = ska_sdl_update();
+    if (shouldQuit) {
+        engineContext->isRunning = false;
+    }
     ska_ecs_system_event_pre_update_all_systems();
     cre_tick_update();
     ska_ecs_system_event_post_update_all_systems();
@@ -227,29 +230,6 @@ void cre_update() {
 
     // Update FPS
     cre_engine_context_update_stats(endFrameTime - startFrameTime);
-}
-
-void process_sdl_events() {
-    SDL_Event event;
-    while (SDL_PollEvent(&event)) {
-        switch(event.type) {
-            case SDL_EVENT_QUIT: {
-                engineContext->isRunning = false;
-                break;
-            }
-            case SDL_EVENT_WINDOW_RESIZED: {
-                const Sint32 windowWidth = event.window.data1;
-                const Sint32 windowHeight = event.window.data2;
-                ska_renderer_update_window_size(windowWidth, windowHeight);
-                break;
-            }
-            default: {
-                ska_sdl_process_event(event);
-                break;
-            }
-        }
-    }
-    ska_sdl_process_axis_events();
 }
 
 void engine_update(f32 deltaTime) {
