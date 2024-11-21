@@ -36,16 +36,16 @@ void cre_tick_update() {
     const uint64 newTime = ska_get_ticks();
     const uint64 deltaTime = newTime - mainTick.currentTime;
     mainTick.currentTime = newTime;
-    // Handle variable update first
+    // Handle variable updates
     const f32 deltaTimeSeconds = (f32)deltaTime / 1000.f;
     mainTick.updateFunc(deltaTimeSeconds);
-    // Follow by fixed update
-    mainTick.accumulator += deltaTime;
+    // Handle fixed updates
+    mainTick.accumulator += (uint64)mainTick.fixedDeltaTime;
     while (mainTick.accumulator >= mainTick.fixedUpdateInterval) {
-        mainTick.fixedUpdateFunc(deltaTimeSeconds);
+        mainTick.fixedUpdateFunc(mainTick.fixedDeltaTime);
         mainTick.accumulator -= mainTick.fixedUpdateInterval;
     }
-    // Last delay os based on target fps and frame time
+    // Apply delay to control frame rate based on target FPS
     const uint64 frameTime = ska_get_ticks() - mainTick.currentTime;
     if (frameTime < mainTick.updateInterval) {
         ska_delay(mainTick.updateInterval - frameTime);
