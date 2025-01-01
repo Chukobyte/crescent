@@ -20,7 +20,7 @@ if (NOT TARGET pocketpy)
     FetchContent_Declare(
             pocketpy_content
             GIT_REPOSITORY https://github.com/blueloveTH/pocketpy.git
-            GIT_TAG v2.0.2
+            GIT_TAG v2.0.3
     )
     FetchContent_MakeAvailable(pocketpy_content)
     target_include_directories(pocketpy PUBLIC ${pocketpy_content_SOURCE_DIR} ${pocketpy_content_SOURCE_DIR}/include)
