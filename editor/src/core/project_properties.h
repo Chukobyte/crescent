@@ -89,7 +89,6 @@ class ProjectProperties : public Singleton<ProjectProperties> {
     int32 windowHeight;
     int32 resolutionWidth;
     int32 resolutionHeight;
-    uint32 audioWavSampleRate = SKA_AUDIO_SOURCE_DEFAULT_WAV_SAMPLE_RATE;
     bool maintainAspectRatio = false;
     int32 targetFPS;
     bool areCollidersVisible = false;

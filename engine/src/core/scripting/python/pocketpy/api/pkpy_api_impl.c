@@ -890,7 +890,7 @@ bool cre_pkpy_api_audio_manager_play_sound(int argc, py_StackRef argv) {
     const char* path = py_tostr(py_arg(0));
     const bool loops = py_tobool(py_arg(1));
 
-    ska_audio_manager_play_sound(path, loops);
+    ska_audio_manager_play_sound2(path, loops);
     py_newnone(py_retval());
     return true;
 }
@@ -900,7 +900,7 @@ bool cre_pkpy_api_audio_manager_stop_sound(int argc, py_StackRef argv) {
     PY_CHECK_ARG_TYPE(0, tp_str);
     const char* path = py_tostr(py_arg(0));
 
-    ska_audio_manager_stop_sound(path);
+    ska_audio_manager_stop_sound2(path);
     py_newnone(py_retval());
     return true;
 }

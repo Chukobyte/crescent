@@ -108,9 +108,6 @@ CREGameProperties* cre_json_load_config_file(const char* filePath) {
         // Maintain Aspect Ratio
         properties->maintainAspectRatio = json_get_bool_default(configJson, "maintain_aspect_ratio", false);
         ska_logger_debug("Maintain Aspect Ratio '%s'", properties->maintainAspectRatio == true ? "true" : "false");
-        // Wav Sample Rate
-        properties->audioWavSampleRate = json_get_int_default(configJson, "audio_wav_sample_rate", SKA_AUDIO_SOURCE_DEFAULT_WAV_SAMPLE_RATE);
-        ska_logger_debug("Wav Sample Rate '%u'", properties->audioWavSampleRate);
         // Target FPS
         properties->targetFPS = json_get_int(configJson, "target_fps");
         ska_logger_debug("Target FPS '%d'", properties->targetFPS);
