@@ -59,7 +59,6 @@ typedef struct CREGameProperties {
     int32 windowWidth;
     int32 windowHeight;
     bool maintainAspectRatio;
-    uint32_t audioWavSampleRate;
     int32 targetFPS;
     char* initialScenePath;
     bool areCollidersVisible;
