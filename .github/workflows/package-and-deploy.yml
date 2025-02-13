@@ -82,9 +82,7 @@ jobs:
 
       - name: install dependencies
         run: |
-          sudo apt install gcc-11
-          sudo apt install g++-11
-          sudo apt install libgl1-mesa-dev libglu1-mesa-dev
+          sudo apt install gcc-11 g++-11 libgl1-mesa-dev libglu1-mesa-dev libxext-dev
 
       - name: get cmake
         uses: lukka/get-cmake@latest
