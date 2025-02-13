@@ -251,37 +251,37 @@ jobs:
           echo "${{ secrets.GDRIVE_CREDENTIALS }}" >> creds.json
 
       - name: download windows engine binary
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: crescent_engine_windows.exe
 
       - name: download windows editor binary
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: crescent_engine_editor_windows.exe
 
       - name: download windows deps
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: windows_run_dependencies.zip
 
       - name: download linux engine binary
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: crescent_engine_linux
 
       - name: download linux editor binary
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: crescent_engine_editor_linux
 
       - name: download macosx signed engine binary
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: crescent_engine_macosx
 
       - name: download macosx signed editor binary
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: crescent_engine_editor_macosx
 
